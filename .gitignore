@@ -4,6 +4,9 @@
 # Except this file itself
 !.gitignore
 
+# Root redirect
+!index.html
+
 # App file
 !Desktop/
 Desktop/*
