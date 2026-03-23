@@ -7,13 +7,18 @@
 # Root redirect
 !index.html
 
-# App file
+# App folder
 !Desktop/
 Desktop/*
-!Desktop/QuickScreen-BOM-Generator.html
-!Desktop/quickscreen_bom_ai_intake.html
-!Desktop/fence-mapper.js
-!Desktop/fence-mapper.css
+!Desktop/Claude Glass Outlet Project/
+Desktop/Claude Glass Outlet Project/*
+!Desktop/Claude Glass Outlet Project/QuickScreen-BOM-Generator.html
+!Desktop/Claude Glass Outlet Project/fence-mapper.js
+!Desktop/Claude Glass Outlet Project/fence-mapper.css
+!Desktop/Claude Glass Outlet Project/archive/
+Desktop/Claude Glass Outlet Project/archive/*
+!Desktop/Claude Glass Outlet Project/archive/quickscreen_bom_ai_intake.html
+!Desktop/Claude Glass Outlet Project/archive/QuickScreen-BOM-Generator-BACKUP.html
 
 # Skill folder
 !.claude/
