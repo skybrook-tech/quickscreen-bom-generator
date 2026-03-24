@@ -415,6 +415,30 @@ These catalogue items could not be matched to price list SKUs. Flag for manual p
 
 This section documents every fix applied to the BOM generator app. Update this immediately after any change.
 
+### 2026-03-24 — Fence mapper v3: multi-run, per-run config, gate types, Google Maps
+
+**fence-mapper.js — complete rewrite**
+- Multi-run support: `S.nodes[]` → `S.runs[]`; single click places node, double-click finishes run; next click starts a new independent run
+- Each run has its own colour (palette cycling), label (Run 1, Run 2…), and `config` overrides (height, slat size, gap, colour, post mount, terminations, max panel)
+- Run node labels reset to A, B, C… per run
+- **Inline segment length editing**: click segment label pill → input appears over canvas → type mm → Enter moves all downstream nodes
+- **Per-run config panel**: click ⚙ gear icon on any segment label → floating panel to edit run settings + delete run
+- **Gate modal**: click in Gate mode → modal with gate type (single/double swing/sliding), width (mm), direction (left/right); gate drawn with arc symbol (swing) or arrow (sliding) + distance-to-end annotations
+- **Post positions**: `window.fmSetPostPositions(runIdx, positions)` draws gold/red squares on plan after BOM generation
+- **Google Maps satellite underlay**: address input + "Load Map" button in toolbar; uses Geocoding API + Static Maps API; stored in `S.mapImage`; opacity slider; API key stored in localStorage `qs_gmaps_key`
+- `window.applyFenceLayout()` now writes `window.fmRuns` array with per-run totals, gates, corners, config overrides
+- Exports: `fmGetState`/`fmLoadState` now serialise full `S.runs` array
+
+**QuickScreen-BOM-Generator.html — targeted changes**
+- "Describe the Job" card is now collapsible (▼ toggle, state saved to localStorage)
+- Google Maps API key UI added to Describe card (saves to `localStorage('qs_gmaps_key')`)
+- Gates card: **Gate Post Size** selector added (50mm / 65mm HD default / 75mm / 100mm with confirm warnings)
+- `addGate()` now captures `postSize` from selector
+- `generateSwingGateBOM()` and `generateSlidingGateBOM()` read `gate.postSize` to select correct post code; 75+mm posts flag "confirm with supplier"
+- New `generateRunBOM(runCfg, sectionPrefix)` helper — generates BOM sections for one run with given config
+- `generateBOM()` now checks `window.fmRuns`; if set, iterates runs using per-run config overrides (falling back to form values for nulls), generates one BOM block per run, and processes mapper gates per run. Manual gate list is only added when mapper gates aren't present.
+- BOM config summary shows multi-run info when mapper runs are active
+
 ### 2026-03-20 — Full audit and rewrite of generateBOM()
 
 **Colour dropdown**

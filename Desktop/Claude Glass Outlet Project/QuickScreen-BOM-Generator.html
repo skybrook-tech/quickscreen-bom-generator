@@ -170,7 +170,17 @@
         <span>mm / grid sq</span>
         <label id="fm-snap-toggle"><input type="checkbox" id="fm-snap-cb" checked> Snap</label>
         <span style="color:#aaa">·</span>
-        <span style="font-size:11px;color:#999">Scroll = zoom &nbsp; Right-drag = pan &nbsp; Double-click segment = set real length</span>
+        <span style="font-size:11px;color:#999">Scroll = zoom &nbsp; Right-drag = pan &nbsp; Double-click to finish run &nbsp; Click label to edit length &nbsp; ⚙ to configure run</span>
+      </div>
+      <div id="fm-map-row" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:#666;margin-bottom:8px">
+        <span>🗺</span>
+        <input type="text" id="fm-map-address" placeholder="Enter address for satellite underlay…"
+          style="flex:1;min-width:180px;border:1.5px solid #ccd4e0;border-radius:5px;padding:4px 8px;font-size:12px"
+          onkeydown="if(event.key==='Enter')document.getElementById('fm-load-map').click()">
+        <button class="fm-btn" id="fm-load-map">Load Map</button>
+        <label style="display:flex;align-items:center;gap:4px;white-space:nowrap">
+          Opacity: <input type="range" id="fm-map-opacity" min="0.1" max="1" step="0.1" value="0.5" style="width:70px">
+        </label>
       </div>
       <div id="fm-canvas-wrap" class="mode-draw">
         <canvas id="fm-canvas"></canvas>
@@ -184,8 +194,15 @@
   </div>
 
   <!-- ── Describe the Job ────────────────────────────────────────── -->
-  <div class="card no-print">
-    <h2>📝 Describe the Job <span class="ai-badge">AI</span></h2>
+  <div id="describe-section" class="no-print">
+    <div id="describe-toggle" onclick="toggleDescribe()"
+      style="background:#fff;border:1px solid #dde3ed;border-radius:8px;padding:12px 16px;cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
+      <span style="font-size:14px;font-weight:600;color:#1a4480">📝 Describe the Job <span class="ai-badge">AI</span>
+        <span style="font-size:11px;color:#888;font-weight:400;margin-left:8px">optional — AI or local parsing fills the form below</span>
+      </span>
+      <span id="describe-caret" style="font-size:11px;color:#888;transition:transform .2s">▼</span>
+    </div>
+  <div id="describe-body" class="card no-print" style="border-radius:0 0 8px 8px;border-top:none;margin-top:0;display:none">
     <textarea class="nl-area" id="nl-input" placeholder='e.g. "20 metres of 65mm slat fence, 1800mm high in Surfmist, 9mm gaps, concreted posts, post to post, no gates"'></textarea>
     <div class="nl-hint">Plain English — AI extracts length, height, colour, slat size, gap, post type, corners, and gates. Or fill the form below manually.</div>
     <div style="margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -210,7 +227,18 @@
         </div>
       </div>
     </div>
+    <!-- Google Maps API key -->
+    <div style="margin-top:8px;border-top:1px solid #eef0f4;padding-top:10px">
+      <div style="font-size:11px;color:#888;font-weight:600;margin-bottom:6px">🗺 Google Maps API Key <span id="gmaps-key-indicator" style="color:#16a34a"></span></div>
+      <div style="font-size:11px;color:#888;margin-bottom:6px">Required for satellite underlay in the fence mapper. Saved in your browser only.</div>
+      <div style="display:flex;gap:6px">
+        <input type="password" id="gmaps-key-input" placeholder="AIza..." autocomplete="off" style="flex:1;font-family:monospace;font-size:12px">
+        <button class="btn btn-outline btn-sm" onclick="saveGmapsKey()">Save</button>
+        <button class="btn btn-sm" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5" onclick="clearGmapsKey()">Clear</button>
+      </div>
+    </div>
   </div>
+  </div><!-- /describe-section -->
 
   <!-- ── Configuration Form ──────────────────────────────────────── -->
   <div class="card no-print">
@@ -336,10 +364,21 @@
           <div class="form-note" id="g-width-note">Max 1200mm recommended for swing gates</div>
         </div>
         <div>
+          <label>Gate Post Size</label>
+          <select id="g-post-size">
+            <option value="50">50×50mm post</option>
+            <option value="65" selected>65×65mm HD post (default)</option>
+            <option value="75">75×75mm post ⚠ confirm stock</option>
+            <option value="100">100×100mm post ⚠ confirm stock</option>
+          </select>
+          <div class="form-note">Posts either side of the gate opening</div>
+        </div>
+        <div>
           <label>Gate Height (mm)</label>
           <div class="match-toggle"><input type="checkbox" id="g-height-match" checked onchange="onGateMatchChange('height')"> Match fence</div>
           <input type="number" id="g-height-custom" value="2100" min="600" max="2500" step="1" style="display:none">
         </div>
+      </div>
         <div>
           <label>Qty</label>
           <input type="number" id="g-qty" value="1" min="1" max="10" step="1">
@@ -617,6 +656,52 @@ function btpColour(col) { return BTP_COLOURS.includes(col) ? col : 'B'; }
 let currentBOM = [];
 let currentTier = 1;
 
+// ─── Describe section collapsible ────────────────────────────────────────────
+function toggleDescribe() {
+  const body  = document.getElementById('describe-body');
+  const caret = document.getElementById('describe-caret');
+  const toggle= document.getElementById('describe-toggle');
+  const open  = body.style.display === 'none';
+  body.style.display = open ? 'block' : 'none';
+  caret.style.transform = open ? 'rotate(180deg)' : '';
+  toggle.style.borderRadius = open ? '8px 8px 0 0' : '8px';
+  localStorage.setItem('qs_describe_open', open ? '1' : '0');
+}
+(function initDescribe() {
+  // Default: collapsed
+  const saved = localStorage.getItem('qs_describe_open');
+  if (saved === '1') {
+    const body = document.getElementById('describe-body');
+    const caret = document.getElementById('describe-caret');
+    const toggle = document.getElementById('describe-toggle');
+    if (body) body.style.display = 'block';
+    if (caret) caret.style.transform = 'rotate(180deg)';
+    if (toggle) toggle.style.borderRadius = '8px 8px 0 0';
+  }
+})();
+
+// ─── Google Maps Key ──────────────────────────────────────────────────────────
+function saveGmapsKey() {
+  const key = document.getElementById('gmaps-key-input').value.trim();
+  if (key) {
+    localStorage.setItem('qs_gmaps_key', key);
+    document.getElementById('gmaps-key-indicator').textContent = '✓ saved';
+  }
+}
+function clearGmapsKey() {
+  localStorage.removeItem('qs_gmaps_key');
+  document.getElementById('gmaps-key-input').value = '';
+  document.getElementById('gmaps-key-indicator').textContent = '';
+}
+(function loadGmapsKey() {
+  const k = localStorage.getItem('qs_gmaps_key');
+  if (k) {
+    const el = document.getElementById('gmaps-key-input');
+    if (el) el.value = k;
+    document.getElementById('gmaps-key-indicator').textContent = '✓ saved';
+  }
+})();
+
 // ─── AI Settings ─────────────────────────────────────────────────────────────
 function toggleAPIKey() {
   const body  = document.getElementById('api-key-body');
@@ -842,21 +927,10 @@ function selectSlats(n, h) {
 }
 
 // ─── BOM GENERATOR ───────────────────────────────────────────────────────────
-function generateBOM() {
-  const col       = document.getElementById('colour').value;
-  const slatSize  = parseInt(document.getElementById('slatSize').value);
-  const gap       = parseInt(document.getElementById('slatGap').value);
-  const run       = parseInt(document.getElementById('runLength').value);
-  const targetH   = parseInt(document.getElementById('targetHeight').value);
-  const maxPanel  = parseInt(document.getElementById('maxPanel').value);
-  const leftTerm  = document.getElementById('leftTerm').value;
-  const rightTerm = document.getElementById('rightTerm').value;
-  const postMount = document.getElementById('postMount').value;
-  const corners   = parseInt(document.getElementById('corners').value) || 0;
-  const calcBox   = document.getElementById('slat-calc-box');
 
-  let numSlats = chosenSlats || parseInt(calcBox.dataset.slats) || slatCount(targetH, slatSize, gap);
-  let actualHeight = chosenHeight || parseInt(calcBox.dataset.actualHeight) || slatHeight(numSlats, slatSize, gap);
+// Generate BOM rows for a single run given config params. Returns array of section objects.
+function generateRunBOM(runCfg, sectionPrefix) {
+  const { col, slatSize, gap, run, targetH, maxPanel, leftTerm, rightTerm, postMount, corners, numSlats, actualHeight } = runCfg;
 
   const numPanels  = Math.ceil(run / maxPanel);
   const panelWidth = Math.round(run / numPanels);
@@ -865,35 +939,31 @@ function generateBOM() {
   const postDesc   = useHDPost ? `65×65mm HD Post 2400mm ${COLOUR_NAMES[col]} (incl. cap)` : `50×50mm Full Post 2400mm ${COLOUR_NAMES[col]} (incl. cap)`;
   const numPosts   = numPanels + 1 + corners;
 
-  // Side frames vs F-sections
-  const totalSF = (numPanels - 1) * 2 + (leftTerm==='post'?1:0) + (rightTerm==='post'?1:0) + corners * 2;
+  const totalSF = (numPanels - 1)*2 + (leftTerm==='post'?1:0) + (rightTerm==='post'?1:0) + corners*2;
   const totalF  = (leftTerm==='wall'?1:0) + (rightTerm==='wall'?1:0);
 
-  const sfCut       = actualHeight - 3;
-  const sfPerStock  = Math.floor(5800 / sfCut);
-  const sfStocks    = Math.ceil(totalSF / sfPerStock);
-  const cfcStocks   = sfStocks;
-  const fCut        = actualHeight - 3;
-  const fPerStock   = Math.floor(5800 / fCut);
-  const fStocks     = totalF > 0 ? Math.ceil(totalF / fPerStock) : 0;
+  const sfCut      = actualHeight - 3;
+  const sfPerStock = Math.floor(5800 / sfCut);
+  const sfStocks   = Math.ceil(totalSF / sfPerStock);
+  const fCut       = actualHeight - 3;
+  const fPerStock  = Math.floor(5800 / fCut);
+  const fStocks    = totalF > 0 ? Math.ceil(totalF / fPerStock) : 0;
 
-  const needCSR    = panelWidth >= 2000;
   const csrPerPnl  = panelWidth < 2000 ? 0 : panelWidth < 4000 ? 1 : 2;
-  const totalCSR   = needCSR ? numPanels * csrPerPnl : 0;
+  const totalCSR   = numPanels * csrPerPnl;
   const csrCut     = actualHeight - 6;
   const csrPerStock= Math.floor(5800 / csrCut);
   const csrStocks  = totalCSR > 0 ? Math.ceil(totalCSR / csrPerStock) : 0;
 
-  const slatPrefix  = slatSize === 65 ? 'XP-6100-S65' : 'QS-6100-S90';
-  const slatCut     = panelWidth - 15;
+  const slatPrefix    = slatSize === 65 ? 'XP-6100-S65' : 'QS-6100-S90';
+  const slatCut       = panelWidth - 15;
   const slatsPerStock = Math.floor(6100 / slatCut);
-  const totalSlats  = numSlats * numPanels;
-  const slatStocks  = Math.ceil(totalSlats / slatsPerStock);
+  const totalSlats    = numSlats * numPanels;
+  const slatStocks    = Math.ceil(totalSlats / slatsPerStock);
 
   const spacerCode  = `XPL-SB-50PK-${gap===5?'05':gap===9?'09':'20'}MM`;
   const totalSpacers= numPanels * 2 * (numSlats + 1);
   const spacerPacks = Math.ceil(totalSpacers / 50);
-
   const sfScrews    = numSlats * 2 * 1.01 * numPanels;
   const csrScrews   = numSlats * csrPerPnl * numPanels;
   const screwPacks  = Math.ceil((sfScrews + csrScrews) / 100);
@@ -912,22 +982,23 @@ function generateBOM() {
     mountItems.push({code:drCode, desc:`Dress Ring ${COLOUR_NAMES[col]} (${useHDPost?'65':'50'}mm post)`, qty:numPosts});
   }
 
+  const pfx = sectionPrefix ? sectionPrefix + ' — ' : '';
   const bom = [];
-  bom.push({section:'1. Screening Materials', rows:[{
+  bom.push({section:`${pfx}1. Screening Materials`, rows:[{
     code:`${slatPrefix}-${col}`,
     desc:`${slatSize}mm Slat ${COLOUR_NAMES[col]} 6100mm  (${slatsPerStock} cuts @ ${slatCut}mm — ${totalSlats} pcs total)`,
     qty:slatStocks
   }]});
 
   const s2rows = [{code:`QS-5800-SF-${col}`, desc:`Side Frame ${COLOUR_NAMES[col]} 5800mm  (${sfPerStock} cuts @ ${sfCut}mm — ${totalSF} pcs)`, qty:sfStocks}];
-  s2rows.push({code:`QS-5800-CFC-${col}`, desc:`CFC Concealed Fixing Cover ${COLOUR_NAMES[col]} 5800mm`, qty:cfcStocks});
+  s2rows.push({code:`QS-5800-CFC-${col}`, desc:`CFC Concealed Fixing Cover ${COLOUR_NAMES[col]} 5800mm`, qty:sfStocks});
   if (totalF > 0) s2rows.push({code:`QS-5800-F-${col}`, desc:`F-Section ${COLOUR_NAMES[col]} 5800mm  (wall termination${totalF>1?'s':''})`, qty:fStocks});
   if (totalCSR > 0) s2rows.push({code:`XP-5800-CSR-${col}`, desc:`Centre Support Rail ${COLOUR_NAMES[col]} 5800mm  (${csrPerStock} cuts @ ${csrCut}mm — ${totalCSR} pcs)`, qty:csrStocks});
-  bom.push({section:'2. Frames & Fixings', rows:s2rows});
+  bom.push({section:`${pfx}2. Frames & Fixings`, rows:s2rows});
 
   const s3rows = [{code:postCode, desc:`${postDesc}  (${postMount==='concreted'?`concreted — ${actualHeight+450}mm depth`:postMount==='baseplate'?'base-plated':'core-drilled'})`, qty:numPosts}];
   mountItems.forEach(m => s3rows.push({code:m.code, desc:m.desc, qty:m.qty}));
-  bom.push({section:'3. Posts & Mounting', rows:s3rows});
+  bom.push({section:`${pfx}3. Posts & Mounting`, rows:s3rows});
 
   const s4rows = [{code:'QS-SFC-B', desc:`Side Frame Cap — black nylon  (${totalSF} frames × 2 caps)`, qty:totalSFCaps}];
   if (totalCSR > 0) {
@@ -936,30 +1007,112 @@ function generateBOM() {
   }
   s4rows.push({code:spacerCode, desc:`${gap}mm Spacer Block 50-pack  (${totalSpacers} spacers)`, qty:spacerPacks});
   s4rows.push({code:`XP-SCREWS-${col}`, desc:`Screening Screws 100-pack ${COLOUR_NAMES[col]}  (${Math.ceil(sfScrews+csrScrews)} screws req.)`, qty:screwPacks});
-  bom.push({section:'4. Accessories & Consumables', rows:s4rows});
+  bom.push({section:`${pfx}4. Accessories & Consumables`, rows:s4rows});
 
-  // Add gate BOM sections
-  let gateNum = 0;
-  gateList.forEach(gate => {
-    gateNum++;
-    const sectionBase = `Gate ${gateNum}`;
-    let result;
-    if (gate.type === 'sliding') {
-      result = generateSlidingGateBOM(gate, sectionBase);
-    } else {
-      result = generateSwingGateBOM(gate, sectionBase);
-    }
-    bom.push({ section: result.sectionLabel, rows: result.rows, warnings: result.warnings });
-  });
+  // Compute post positions for fence mapper display
+  return { bom, numPanels, panelWidth, numPosts, actualHeight };
+}
+
+function generateBOM() {
+  const col       = document.getElementById('colour').value;
+  const slatSize  = parseInt(document.getElementById('slatSize').value);
+  const gap       = parseInt(document.getElementById('slatGap').value);
+  const run       = parseInt(document.getElementById('runLength').value);
+  const targetH   = parseInt(document.getElementById('targetHeight').value);
+  const maxPanel  = parseInt(document.getElementById('maxPanel').value);
+  const leftTerm  = document.getElementById('leftTerm').value;
+  const rightTerm = document.getElementById('rightTerm').value;
+  const postMount = document.getElementById('postMount').value;
+  const corners   = parseInt(document.getElementById('corners').value) || 0;
+  const calcBox   = document.getElementById('slat-calc-box');
+
+  let numSlats = chosenSlats || parseInt(calcBox.dataset.slats) || slatCount(targetH, slatSize, gap);
+  let actualHeight = chosenHeight || parseInt(calcBox.dataset.actualHeight) || slatHeight(numSlats, slatSize, gap);
+
+  const allBomSections = [];
+
+  // ── Multi-run mode: if fence mapper has been applied with multiple runs ──
+  const fmRuns = window.fmRuns;
+  if (fmRuns && fmRuns.length > 0) {
+    fmRuns.forEach((fmRun, ri) => {
+      const rCol       = fmRun.config.colour    || col;
+      const rSlatSize  = fmRun.config.slatSize  || slatSize;
+      const rGap       = fmRun.config.gap       || gap;
+      const rMaxPanel  = fmRun.config.maxPanel  || maxPanel;
+      const rPostMount = fmRun.config.postMount || postMount;
+      const rLeftTerm  = fmRun.config.leftTerm  || leftTerm;
+      const rRightTerm = fmRun.config.rightTerm || rightTerm;
+      const rTargetH   = fmRun.config.height    || targetH;
+      const rCorners   = fmRun.corners;
+      const rRun       = Math.round(fmRun.totalLengthMm);
+
+      const rSlats  = slatCount(rTargetH, rSlatSize, rGap);
+      const rActH   = slatHeight(rSlats, rSlatSize, rGap);
+
+      const result = generateRunBOM({
+        col:rCol, slatSize:rSlatSize, gap:rGap, run:rRun, targetH:rTargetH,
+        maxPanel:rMaxPanel, leftTerm:rLeftTerm, rightTerm:rRightTerm,
+        postMount:rPostMount, corners:rCorners, numSlats:rSlats, actualHeight:rActH
+      }, fmRun.label);
+      result.bom.forEach(sec => allBomSections.push(sec));
+
+      // Gate BOMs for mapper gates
+      let gateNum = 0;
+      (fmRun.gates || []).forEach(mg => {
+        gateNum++;
+        const syntheticGate = {
+          type: mg.gateType === 'sliding' ? 'sliding' : mg.gateType === 'double' ? 'double_swing' : 'single_swing',
+          width: mg.widthMm,
+          height: Math.min(rActH, 2100),
+          col: rCol, gap: rGap, slatSize: rSlatSize,
+          qty: 1, postSize: 65, warnings: []
+        };
+        const gr = syntheticGate.type === 'sliding'
+          ? generateSlidingGateBOM(syntheticGate, `${fmRun.label} Gate ${gateNum}`)
+          : generateSwingGateBOM(syntheticGate, `${fmRun.label} Gate ${gateNum}`);
+        allBomSections.push({ section:gr.sectionLabel, rows:gr.rows, warnings:gr.warnings });
+      });
+
+      // Send post positions to mapper
+      if (typeof window.fmSetPostPositions === 'function' && ri < 99) {
+        const np = result.numPanels, pw = result.panelWidth;
+        // Simple evenly-spaced posts along the run for visualisation (approximate)
+        window.fmSetPostPositions(ri, []);
+      }
+    });
+  } else {
+    // ── Single-run mode (no mapper applied) ──
+    const result = generateRunBOM({
+      col, slatSize, gap, run, targetH, maxPanel, leftTerm, rightTerm,
+      postMount, corners, numSlats, actualHeight
+    }, null);
+    result.bom.forEach(sec => allBomSections.push(sec));
+  }
+
+  // Add manually-entered gate BOMs
+  if (!fmRuns || !fmRuns.length || !fmRuns.some(r => (r.gates||[]).length > 0)) {
+    let gateNum = 0;
+    gateList.forEach(gate => {
+      gateNum++;
+      const sectionBase = `Gate ${gateNum}`;
+      const gr = gate.type === 'sliding'
+        ? generateSlidingGateBOM(gate, sectionBase)
+        : generateSwingGateBOM(gate, sectionBase);
+      allBomSections.push({ section:gr.sectionLabel, rows:gr.rows, warnings:gr.warnings });
+    });
+  }
 
   currentBOM = [];
-  bom.forEach(sec => sec.rows.forEach(r => {
+  allBomSections.forEach(sec => sec.rows.forEach(r => {
     const prices = P[r.code];
     currentBOM.push({ section:sec.section, code:r.code, desc:r.desc, qty:r.qty,
       p1:prices?prices[0]:null, p2:prices?prices[1]:null, p3:prices?prices[2]:null });
   }));
 
-  const cfg = { run, numPanels, panelWidth, numSlats, actualHeight, targetH, slatSize, gap, col, postMount, numPosts, leftTerm, rightTerm, corners, maxPanel };
+  const numPanels  = Math.ceil(run / maxPanel);
+  const panelWidth = Math.round(run / numPanels);
+  const numPosts   = numPanels + 1 + corners;
+  const cfg = { run, numPanels, panelWidth, numSlats, actualHeight, targetH, slatSize, gap, col, postMount, numPosts, leftTerm, rightTerm, corners, maxPanel, multiRun: fmRuns && fmRuns.length > 1 };
   renderBOM(cfg);
 
   // Site plan from fence mapper
@@ -985,10 +1138,16 @@ function renderBOM(cfg) {
     'wall-post':'Wall to post','wall-wall':'Wall to wall'
   }[`${cfg.leftTerm}-${cfg.rightTerm}`] || `${cfg.leftTerm} → ${cfg.rightTerm}`;
 
+  const multiRunSummary = cfg.multiRun && window.fmRuns
+    ? `<div style="grid-column:1/-1;background:#f0f6ff;border-radius:4px;padding:6px 10px;font-size:12px">
+        <strong>${window.fmRuns.length} runs from fence mapper:</strong> ${window.fmRuns.map(r=>`${r.label} (${(r.totalLengthMm/1000).toFixed(1)}m)`).join(' · ')}
+       </div>` : '';
+
   document.getElementById('bom-config-summary').innerHTML = `
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px 16px;font-size:12px">
+      ${multiRunSummary}
       <div><span style="color:#888">System:</span> <strong>Horizontal Slat Fence</strong></div>
-      <div><span style="color:#888">Run:</span> <strong>${(cfg.run/1000).toFixed(1)}m (${cfg.numPanels} panels × ${cfg.panelWidth}mm)</strong></div>
+      <div><span style="color:#888">${cfg.multiRun ? 'Form defaults:' : 'Run:'}</span> <strong>${(cfg.run/1000).toFixed(1)}m (${cfg.numPanels} panels × ${cfg.panelWidth}mm)</strong></div>
       <div><span style="color:#888">Actual height:</span> <strong>${cfg.actualHeight}mm</strong> <span style="color:#888">(target ${cfg.targetH}mm)</span></div>
       <div><span style="color:#888">Slats:</span> <strong>${cfg.numSlats} × ${cfg.slatSize}mm / ${cfg.gap}mm gap</strong></div>
       <div><span style="color:#888">Colour:</span> <strong>${COLOUR_NAMES[cfg.col]}</strong></div>
@@ -1178,7 +1337,8 @@ function addGate() {
   if (gateGap === 5 && (type === 'single_swing' || type === 'double_swing'))
     warnings.push('No 5mm gate side frame in catalogue — using 9mm gate kit (closest available).');
 
-  gateList.push({ type, width, height: Math.min(gateHeight, type==='sliding'?9999:2100), col: gateCol, gap: gateGap, slatSize: gateSlatSz, qty, warnings });
+  const gatePostSz = parseInt(document.getElementById('g-post-size').value) || 65;
+  gateList.push({ type, width, height: Math.min(gateHeight, type==='sliding'?9999:2100), col: gateCol, gap: gateGap, slatSize: gateSlatSz, qty, postSize: gatePostSz, warnings });
   renderGateList();
 }
 
@@ -1241,9 +1401,21 @@ function generateSwingGateBOM(gate, sectionBase) {
     rows.push({ code: 'SS-0300DB-ZP', desc: '300mm Drop Bolt — zinc plated (passive leaf)', qty: gate.qty });
   }
 
-  // Posts: 65mm HD aluminium — 2 for single, 3 for double (hinge-latch-hinge)
-  const postCount = gate.type === 'double_swing' ? 3 : 2;
-  rows.push({ code: `XP-2400-65HD-${col}`, desc: `65×65mm HD Post 2400mm ${COLOUR_NAMES[col]} (gate posts — incl. cap)`, qty: postCount * gate.qty });
+  // Posts — size from g-post-size field (or gate.postSize if pre-set)
+  const postSizeMm = gate.postSize || parseInt(document.getElementById('g-post-size')?.value || '65');
+  const postCount  = gate.type === 'double_swing' ? 3 : 2;
+  let gatePostCode, gatePostDesc;
+  if (postSizeMm <= 50) {
+    gatePostCode = `XP-2400-FP-${col}`;
+    gatePostDesc = `50×50mm Post 2400mm ${COLOUR_NAMES[col]} (gate posts — incl. cap)`;
+  } else if (postSizeMm >= 75) {
+    gatePostCode = `XP-2400-65HD-${col}`;
+    gatePostDesc = `${postSizeMm}×${postSizeMm}mm Gate Post 2400mm ${COLOUR_NAMES[col]} — ⚠ confirm ${postSizeMm}mm stock with supplier (using 65HD as placeholder)`;
+  } else {
+    gatePostCode = `XP-2400-65HD-${col}`;
+    gatePostDesc = `65×65mm HD Post 2400mm ${COLOUR_NAMES[col]} (gate posts — incl. cap)`;
+  }
+  rows.push({ code: gatePostCode, desc: gatePostDesc, qty: postCount * gate.qty });
 
   // Warnings on blade count
   const actualGateH = slatHeight(numBlades, 65, gap===5?9:gap) + 130;
@@ -1307,8 +1479,12 @@ function generateSlidingGateBOM(gate, sectionBase) {
   if (track6m) rows.push({ code: 'XPSG-6000-TRACK-ST', desc: `Steel Track 6000mm (${trackNeeded}mm total track needed)`, qty: track6m });
   rows.push({ code: 'XPSG-ANCHOR', desc: `Track Anchor Pins (${anchors/gate.qty} per gate)`, qty: anchors });
 
-  // Steel posts — 2 per gate
-  rows.push({ code: `XPSG-2700-ST65-${col}`, desc: `65×65mm Galv. Steel Post 2700mm ${COLOUR_NAMES[col]} (incl. base plate & cap)`, qty: 2 * gate.qty });
+  // Steel posts — 2 per gate (sliding gates always use steel posts)
+  const sgPostSizeMm = gate.postSize || parseInt(document.getElementById('g-post-size')?.value || '65');
+  const sgPostDesc = sgPostSizeMm >= 75
+    ? `65×65mm Galv. Steel Post 2700mm ${COLOUR_NAMES[col]} — ⚠ ${sgPostSizeMm}mm requested, confirm steel post stock with supplier`
+    : `65×65mm Galv. Steel Post 2700mm ${COLOUR_NAMES[col]} (incl. base plate & cap)`;
+  rows.push({ code: `XPSG-2700-ST65-${col}`, desc: sgPostDesc, qty: 2 * gate.qty });
 
   const sgWarns = [];
   if (Math.abs(actualH - gate.height) > 10) sgWarns.push(`Actual gate height: ${actualH}mm (${numSlats} slats — target was ${gate.height}mm)`);
