@@ -135,26 +135,47 @@
       activeIdx = idx;
     }
 
+    // Format a Photon feature into a readable address string
+    function photonLabel(props) {
+      const parts = [];
+      if (props.housenumber) parts.push(props.housenumber);
+      if (props.street)      parts.push(props.street);
+      else if (props.name)   parts.push(props.name);
+      if (props.suburb)      parts.push(props.suburb);
+      if (props.city || props.town || props.village)
+        parts.push(props.city || props.town || props.village);
+      if (props.state)       parts.push(props.state);
+      if (props.country)     parts.push(props.country);
+      return parts.filter(Boolean).join(', ');
+    }
+
     input.addEventListener('input', () => {
+      input._lat = null; input._lng = null; // clear stale coords on manual edit
       clearTimeout(debounceTimer);
       const q = input.value.trim();
       if (q.length < 3) { hideList(); return; }
       debounceTimer = setTimeout(async () => {
         try {
+          // Photon (Komoot) — OSM-based, free, CORS-friendly, street-number level
           const res = await fetch(
-            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&addressdetails=1&limit=6`,
-            { headers: { 'Accept-Language': 'en' } }
+            `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=6&lang=en`
           );
           const data = await res.json();
           list.innerHTML = '';
           activeIdx = -1;
-          if (!data.length) { hideList(); return; }
-          data.forEach(item => {
+          const features = data.features || [];
+          if (!features.length) { hideList(); return; }
+          features.forEach(feat => {
+            const label = photonLabel(feat.properties);
+            const [lng, lat] = feat.geometry.coordinates;
             const li = document.createElement('li');
-            li.textContent = item.display_name;
+            li.textContent = label;
+            li._lat = lat; li._lng = lng;
             li.addEventListener('mousedown', e => {
               e.preventDefault();
-              input.value = item.display_name;
+              input.value = label;
+              input._lat = lat;
+              input._lng = lng;
               hideList();
             });
             list.appendChild(li);
@@ -171,7 +192,10 @@
       else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(Math.max(activeIdx-1, 0)); }
       else if (e.key === 'Enter' && activeIdx >= 0) {
         e.preventDefault();
-        input.value = items[activeIdx].textContent;
+        const sel = items[activeIdx];
+        input.value = sel.textContent;
+        input._lat = sel._lat;
+        input._lng = sel._lng;
         hideList();
       } else if (e.key === 'Escape') { hideList(); }
     });
@@ -1156,16 +1180,21 @@
     showToast('Loading satellite map…');
 
     try {
-      const geoRes=await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`);
-      const geoData=await geoRes.json();
-      if (geoData.status!=='OK'||!geoData.results.length) {
-        showToast('Address not found — check address or API key'); return;
+      let lat, lng;
+      // Use coords from autocomplete selection if available, otherwise geocode
+      if (addrEl._lat != null && addrEl._lng != null) {
+        lat = addrEl._lat; lng = addrEl._lng;
+      } else {
+        const geoRes=await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`);
+        const geoData=await geoRes.json();
+        if (geoData.status!=='OK'||!geoData.results.length) {
+          showToast('Address not found — check address or API key'); return;
+        }
+        ({lat,lng}=geoData.results[0].geometry.location);
       }
-      const {lat,lng}=geoData.results[0].geometry.location;
       const zoom=20, imgW=800, imgH=600;
       const mapUrl=`https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=${imgW}x${imgH}&maptype=satellite&key=${apiKey}`;
       const img=new Image();
-      img.crossOrigin='anonymous';
       img.onload=()=>{
         S.mapImage=img;
         // meters per pixel at this lat/zoom
