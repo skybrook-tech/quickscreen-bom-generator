@@ -66,6 +66,16 @@
   /* AI box */
   .ai-badge{display:inline-block;background:#7c3aed;color:#fff;font-size:10px;padding:1px 6px;border-radius:3px;margin-left:6px;font-weight:600;vertical-align:middle}
   .ai-summary-box{background:#f5f3ff;border:1px solid #c4b5fd;border-radius:6px;padding:10px 14px;margin-top:10px;font-size:13px;color:#4c1d95;display:none}
+  /* Gate card */
+  .gate-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px}
+  .gate-row-3{grid-template-columns:1fr 1fr 1fr}
+  .gate-list-item{display:flex;align-items:center;justify-content:space-between;background:#f0f6ff;border:1px solid #bfd4f0;border-radius:5px;padding:8px 12px;margin-bottom:6px;font-size:13px}
+  .gate-list-item .gate-info strong{color:#1a4480}
+  .gate-empty{color:#999;font-style:italic;font-size:13px;padding:8px 0}
+  .gate-warn{background:#fff7ed;border:1px solid #f59e0b;border-radius:5px;padding:6px 10px;font-size:12px;color:#92400e;margin-top:6px}
+  .gate-warn::before{content:'⚠ '}
+  .match-toggle{display:flex;align-items:center;gap:6px;font-size:12px;color:#555;margin-bottom:4px}
+  .match-toggle input[type=checkbox]{width:auto;margin:0}
   /* Fence mapper overrides to match Generator style */
   #fm-section{margin-bottom:16px}
   #fm-toggle-bar{background:#fff;border:1px solid #dde3ed;border-radius:8px;padding:12px 16px;cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center}
@@ -303,6 +313,81 @@
     </div>
   </div>
 
+  <!-- ── Gates ──────────────────────────────────────────────────── -->
+  <div class="card no-print" id="gates-card">
+    <h2>🚪 Gates</h2>
+    <div id="gate-list"></div>
+
+    <!-- Add gate form -->
+    <div style="border-top:1px solid #eef0f4;padding-top:12px;margin-top:4px">
+      <div style="font-size:12px;font-weight:600;color:#444;margin-bottom:8px">Add a gate:</div>
+      <div class="gate-row">
+        <div>
+          <label>Gate Type</label>
+          <select id="g-type" onchange="onGateTypeChange()">
+            <option value="single_swing">Single Swing (pedestrian)</option>
+            <option value="double_swing">Double Swing (pedestrian)</option>
+            <option value="sliding">Sliding Gate (driveway)</option>
+          </select>
+        </div>
+        <div>
+          <label>Opening Width (mm)</label>
+          <input type="number" id="g-width" value="1000" min="400" max="6000" step="50">
+          <div class="form-note" id="g-width-note">Max 1200mm recommended for swing gates</div>
+        </div>
+        <div>
+          <label>Gate Height (mm)</label>
+          <div class="match-toggle"><input type="checkbox" id="g-height-match" checked onchange="onGateMatchChange('height')"> Match fence</div>
+          <input type="number" id="g-height-custom" value="2100" min="600" max="2500" step="1" style="display:none">
+        </div>
+        <div>
+          <label>Qty</label>
+          <input type="number" id="g-qty" value="1" min="1" max="10" step="1">
+        </div>
+      </div>
+      <div class="gate-row gate-row-3">
+        <div>
+          <label>Colour</label>
+          <div class="match-toggle"><input type="checkbox" id="g-colour-match" checked onchange="onGateMatchChange('colour')"> Match fence</div>
+          <select id="g-colour-custom" style="display:none">
+            <option value="B">Black Satin</option>
+            <option value="MN">Monument Matt</option>
+            <option value="G">Woodland Grey Matt</option>
+            <option value="SM">Surfmist Matt</option>
+            <option value="W">Pearl White Gloss</option>
+            <option value="BS">Basalt Satin</option>
+            <option value="D">Dune Satin</option>
+            <option value="M">Mill (raw aluminium)</option>
+            <option value="P">Primrose ⚠ Limited</option>
+            <option value="PB">Paperbark ⚠ Limited</option>
+            <option value="S">Palladium Silver Pearl</option>
+          </select>
+        </div>
+        <div>
+          <label>Slat Gap</label>
+          <div class="match-toggle"><input type="checkbox" id="g-gap-match" checked onchange="onGateMatchChange('gap')"> Match fence</div>
+          <select id="g-gap-custom" style="display:none">
+            <option value="5">5mm</option>
+            <option value="9" selected>9mm</option>
+            <option value="20">20mm</option>
+          </select>
+        </div>
+        <div id="g-slatsize-wrap">
+          <label>Slat Size <span id="g-slatsize-note" style="font-weight:400;color:#888">(swing gates always use 65mm blades)</span></label>
+          <div class="match-toggle"><input type="checkbox" id="g-slatsize-match" checked onchange="onGateMatchChange('slatsize')"> Match fence</div>
+          <select id="g-slatsize-custom" style="display:none">
+            <option value="65">65mm</option>
+            <option value="90">90mm</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:4px">
+        <button class="btn btn-primary btn-sm" onclick="addGate()">＋ Add Gate to BOM</button>
+      </div>
+    </div>
+    <div id="gate-ai-hint" class="gate-warn" style="display:none"></div>
+  </div>
+
   <!-- ── BOM Output ──────────────────────────────────────────────── -->
   <div id="bom-output">
 
@@ -453,6 +538,70 @@ const P = {
   'XP-SCREWS-M':[6.06,5.7,4.91],'XP-SCREWS-MN':[6.06,5.7,4.91],
   'XP-SCREWS-P':[6.06,5.7,4.91],'XP-SCREWS-S':[6.06,5.7,4.91],
   'XP-SCREWS-SM':[6.06,5.7,4.91],'XP-SCREWS-W':[6.06,5.7,4.91],
+  // ── Gate Blades ─────────────────────────────────────────────────
+  'XP-6100-GB65-B':[55.36,50.93,48.72],'XP-6100-GB65-BS':[55.36,50.93,48.72],
+  'XP-6100-GB65-D':[55.36,50.93,48.72],'XP-6100-GB65-G':[55.36,50.93,48.72],
+  'XP-6100-GB65-M':[47.05,43.27,41.40],'XP-6100-GB65-MN':[55.36,50.93,48.72],
+  'XP-6100-GB65-P':[55.36,50.93,48.72],'XP-6100-GB65-PB':[50.33,46.30,44.29],
+  'XP-6100-GB65-S':[55.36,50.93,48.72],'XP-6100-GB65-SM':[55.36,50.93,48.72],
+  'XP-6100-GB65-W':[55.36,50.93,48.72],
+  // ── HD Rail (pedestrian gate top/bottom) ─────────────────────────
+  'XP-6100-HD6545-B':[124.56,118.33,112.10],'XP-6100-HD6545-BS':[124.56,118.33,112.10],
+  'XP-6100-HD6545-D':[124.56,118.33,112.10],'XP-6100-HD6545-G':[124.56,118.33,112.10],
+  'XP-6100-HD6545-M':[113.62,107.93,102.27],'XP-6100-HD6545-MN':[124.56,118.33,112.10],
+  'XP-6100-HD6545-P':[113.24,107.57,101.91],'XP-6100-HD6545-PB':[113.24,107.57,101.91],
+  'XP-6100-HD6545-S':[124.56,118.33,112.10],'XP-6100-HD6545-SM':[124.56,118.33,112.10],
+  'XP-6100-HD6545-W':[124.56,118.33,112.10],
+  // ── Gate Kits (9mm and 20mm) ─────────────────────────────────────
+  'XP-GKIT-LSET09-B':[157.41,146.40,133.81],'XP-GKIT-LSET09-BS':[157.41,146.40,133.81],
+  'XP-GKIT-LSET09-D':[157.41,146.40,133.81],'XP-GKIT-LSET09-G':[157.41,146.40,133.81],
+  'XP-GKIT-LSET09-M':[132.00,122.74,112.20],'XP-GKIT-LSET09-MN':[157.41,146.40,133.81],
+  'XP-GKIT-LSET09-P':[157.41,146.40,133.81],'XP-GKIT-LSET09-PB':[157.41,146.40,133.81],
+  'XP-GKIT-LSET09-S':[157.41,146.40,133.81],'XP-GKIT-LSET09-SM':[157.41,146.40,133.81],
+  'XP-GKIT-LSET09-W':[157.41,146.40,133.81],
+  'XP-GKIT-LSET20-B':[157.41,146.40,133.81],'XP-GKIT-LSET20-BS':[157.41,146.40,133.81],
+  'XP-GKIT-LSET20-D':[157.41,146.40,133.81],'XP-GKIT-LSET20-G':[157.41,146.40,133.81],
+  'XP-GKIT-LSET20-M':[132.00,122.74,112.20],'XP-GKIT-LSET20-MN':[157.41,146.40,133.81],
+  'XP-GKIT-LSET20-P':[157.41,146.40,133.81],'XP-GKIT-LSET20-PB':[157.41,146.40,133.81],
+  'XP-GKIT-LSET20-S':[157.41,146.40,133.81],'XP-GKIT-LSET20-SM':[157.41,146.40,133.81],
+  'XP-GKIT-LSET20-W':[157.41,146.40,133.81],
+  // ── Lock box ─────────────────────────────────────────────────────
+  'XP-LBOX-LSET-B':[25.90,24.08,22.00],'XP-LBOX-LSET-BS':[25.90,24.08,22.00],
+  'XP-LBOX-LSET-D':[25.90,24.08,22.00],'XP-LBOX-LSET-G':[25.90,24.08,22.00],
+  'XP-LBOX-LSET-M':[22.00,20.47,18.71],'XP-LBOX-LSET-MN':[25.90,24.08,22.00],
+  'XP-LBOX-LSET-P':[25.90,24.08,22.00],'XP-LBOX-LSET-PB':[25.90,24.08,22.00],
+  'XP-LBOX-LSET-S':[25.90,24.08,22.00],'XP-LBOX-LSET-SM':[25.90,24.08,22.00],
+  'XP-LBOX-LSET-W':[25.90,24.08,22.00],
+  // ── Hardware & fasteners ─────────────────────────────────────────
+  'ML-TL-KF-H-FT':[61.48,null,null],
+  'XP-SCREWSGF-10PK':[3.02,2.83,2.43],
+  'SS-0300DB-ZP':[5.10,4.08,null],
+  // ── Sliding gate rails ───────────────────────────────────────────
+  'XPSG-6100-TR-B':[147.48,140.10,131.26],'XPSG-6100-TR-BS':[147.48,140.10,131.26],
+  'XPSG-6100-TR-D':[147.48,140.10,131.26],'XPSG-6100-TR-G':[147.48,140.10,131.26],
+  'XPSG-6100-TR-M':[134.78,128.04,119.93],'XPSG-6100-TR-MN':[147.48,140.10,131.26],
+  'XPSG-6100-TR-P':[147.48,140.10,131.26],'XPSG-6100-TR-PB':[147.48,140.10,131.26],
+  'XPSG-6100-TR-S':[147.48,140.10,131.26],'XPSG-6100-TR-SM':[147.48,140.10,131.26],
+  'XPSG-6100-TR-W':[147.48,140.10,131.26],
+  'XPSG-6100-BR-B':[147.48,140.10,131.26],'XPSG-6100-BR-BS':[147.48,140.10,131.26],
+  'XPSG-6100-BR-D':[147.48,140.10,131.26],'XPSG-6100-BR-G':[147.48,140.10,131.26],
+  'XPSG-6100-BR-M':[134.78,128.04,119.93],'XPSG-6100-BR-MN':[147.48,140.10,131.26],
+  'XPSG-6100-BR-P':[147.48,140.10,131.26],'XPSG-6100-BR-PB':[147.48,140.10,131.26],
+  'XPSG-6100-BR-S':[147.48,140.10,131.26],'XPSG-6100-BR-SM':[147.48,140.10,131.26],
+  'XPSG-6100-BR-W':[147.48,140.10,131.26],
+  // ── Sliding gate hardware ─────────────────────────────────────────
+  'XPSG-WHEEL':[21.53,19.38,null],'XPSG-WHEEL-CS':[6.00,5.40,null],
+  'XPSG-TOPROLL-2PK':[37.96,34.15,null],'XPSG-GUIDE':[38.69,35.06,null],
+  'XPSG-STOP':[18.20,15.64,null],'XPSG-CATCH-U':[13.88,12.50,null],
+  'XPSG-3000-TRACK-ST':[26.52,24.29,22.53],'XPSG-6000-TRACK-ST':[50.44,46.46,44.52],
+  'XPSG-ANCHOR':[0.72,0.64,0.58],
+  // ── Sliding gate steel posts (B is not in price list — use BS price) ─
+  'XPSG-2700-ST65-B':[54.96,52.22,50.02],'XPSG-2700-ST65-BS':[54.96,52.22,50.02],
+  'XPSG-2700-ST65-D':[54.96,52.22,50.02],'XPSG-2700-ST65-G':[54.96,52.22,50.02],
+  'XPSG-2700-ST65-M':[49.46,46.98,45.01],'XPSG-2700-ST65-MN':[54.96,52.22,50.02],
+  'XPSG-2700-ST65-P':[54.96,52.25,50.02],'XPSG-2700-ST65-PB':[54.96,52.25,50.02],
+  'XPSG-2700-ST65-S':[54.96,52.22,50.02],'XPSG-2700-ST65-SM':[54.96,52.22,50.02],
+  'XPSG-2700-ST65-W':[54.96,52.22,50.02],
 };
 
 const COLOUR_NAMES = {
@@ -526,10 +675,15 @@ Description: "${desc}"
   "rightTerm": "<post|wall>",
   "postMount": "<concreted|baseplate|coredrilled>",
   "corners": <number, default 0>,
+  "gates": [
+    {"type": "<single_swing|double_swing|sliding>", "openingWidth": <mm or null>, "height": <mm or null or "match">, "gap": <5|9|20 or "match">, "colour": "<code or 'match'>", "qty": <1>}
+  ],
   "summary": "<1-2 sentence summary>",
-  "missing": ["things still needed"]
+  "missing": ["list any info still needed to complete the BOM, e.g. 'gate opening width', 'gate height', 'post mounting method'"]
 }
-Colour codes: B=Black Satin, MN=Monument, G=Woodland Grey, SM=Surfmist, W=Pearl White, BS=Basalt, D=Dune, M=Mill, S=Palladium Silver`;
+Colour codes: B=Black Satin, MN=Monument, G=Woodland Grey, SM=Surfmist, W=Pearl White, BS=Basalt, D=Dune, M=Mill, S=Palladium Silver
+Gate types: single_swing=pedestrian hinged single leaf, double_swing=pedestrian hinged double leaf pair, sliding=driveway sliding gate
+If gates are mentioned but opening width or height is missing, add to "missing" array.`;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -551,6 +705,31 @@ Colour codes: B=Black Satin, MN=Monument, G=Woodland Grey, SM=Surfmist, W=Pearl 
     if (p.rightTerm)    set('rightTerm', p.rightTerm);
     if (p.postMount)    set('postMount', p.postMount);
     if (p.corners != null) set('corners', p.corners);
+    // Apply gates
+    if (p.gates && Array.isArray(p.gates)) {
+      const fenceHeight = parseInt(document.getElementById('targetHeight').value) || 2100;
+      const fenceGap    = parseInt(document.getElementById('slatGap').value);
+      const fenceSlatSz = parseInt(document.getElementById('slatSize').value);
+      const fenceCol    = document.getElementById('colour').value;
+      gateList = [];
+      p.gates.forEach(g => {
+        if (!g.type) return;
+        const h = (!g.height || g.height === 'match') ? Math.min(fenceHeight, 2100) : parseInt(g.height);
+        const gap = (!g.gap || g.gap === 'match') ? fenceGap : parseInt(g.gap);
+        const col = (!g.colour || g.colour === 'match') ? fenceCol : g.colour;
+        const sz  = g.type === 'sliding' ? (fenceSlatSz || 65) : 65;
+        gateList.push({ type: g.type, width: parseInt(g.openingWidth)||1000, height: h, col, gap, slatSize: sz, qty: g.qty||1, warnings: [] });
+      });
+      renderGateList();
+    }
+    // Show missing info hint
+    if (p.missing && p.missing.length) {
+      const hint = document.getElementById('gate-ai-hint');
+      hint.style.display = 'block';
+      hint.innerHTML = '<strong>Still needed to complete BOM:</strong> ' + p.missing.join(', ') + '. Please fill in below or describe more above.';
+    } else {
+      document.getElementById('gate-ai-hint').style.display = 'none';
+    }
     onConfigChange();
     status.textContent = '✓ AI parsed';
     status.style.color = '#16a34a';
@@ -759,6 +938,20 @@ function generateBOM() {
   s4rows.push({code:`XP-SCREWS-${col}`, desc:`Screening Screws 100-pack ${COLOUR_NAMES[col]}  (${Math.ceil(sfScrews+csrScrews)} screws req.)`, qty:screwPacks});
   bom.push({section:'4. Accessories & Consumables', rows:s4rows});
 
+  // Add gate BOM sections
+  let gateNum = 0;
+  gateList.forEach(gate => {
+    gateNum++;
+    const sectionBase = `Gate ${gateNum}`;
+    let result;
+    if (gate.type === 'sliding') {
+      result = generateSlidingGateBOM(gate, sectionBase);
+    } else {
+      result = generateSwingGateBOM(gate, sectionBase);
+    }
+    bom.push({ section: result.sectionLabel, rows: result.rows, warnings: result.warnings });
+  });
+
   currentBOM = [];
   bom.forEach(sec => sec.rows.forEach(r => {
     const prices = P[r.code];
@@ -923,11 +1116,216 @@ function clearAll() {
   document.getElementById('parse-status').textContent='';
   document.getElementById('ai-summary-box').style.display='none';
   document.getElementById('bom-output').style.display='none';
+  document.getElementById('gate-ai-hint').style.display='none';
   chosenSlats=null; chosenHeight=null; currentBOM=[];
+  clearGates();
 }
+
+// ─── GATE LIST ────────────────────────────────────────────────────────────────
+let gateList = [];
+
+function onGateTypeChange() {
+  const type = document.getElementById('g-type').value;
+  const note = document.getElementById('g-width-note');
+  const slatNote = document.getElementById('g-slatsize-note');
+  if (type === 'sliding') {
+    note.textContent = 'Opening width only — gate panel will be opening + 200mm overlap';
+    slatNote.textContent = '(65mm or 90mm slats)';
+    document.getElementById('g-slatsize-match').disabled = false;
+  } else {
+    note.textContent = 'Max 1200mm recommended for swing gates';
+    slatNote.textContent = '(swing gates always use 65mm blades)';
+    // Force slat size to match fence for swing gates (always 65mm blades)
+    document.getElementById('g-slatsize-match').checked = true;
+    onGateMatchChange('slatsize');
+  }
+}
+
+function onGateMatchChange(field) {
+  const match = document.getElementById(`g-${field}-match`).checked;
+  document.getElementById(`g-${field}-custom`).style.display = match ? 'none' : 'block';
+}
+
+function gateEffectiveValue(field, fenceValue) {
+  const matchEl = document.getElementById(`g-${field}-match`);
+  if (!matchEl || matchEl.checked) return fenceValue;
+  return document.getElementById(`g-${field}-custom`).value;
+}
+
+function addGate() {
+  const type     = document.getElementById('g-type').value;
+  const width    = parseInt(document.getElementById('g-width').value);
+  const qty      = parseInt(document.getElementById('g-qty').value) || 1;
+  const col      = document.getElementById('colour').value; // fence colour (default)
+
+  if (!width || width < 400) { alert('Please enter a valid opening width (min 400mm).'); return; }
+
+  const fenceHeight = parseInt(document.getElementById('slat-calc-box').dataset.actualHeight) || parseInt(document.getElementById('targetHeight').value) || 2100;
+  const fenceGap    = parseInt(document.getElementById('slatGap').value);
+  const fenceSlatSz = parseInt(document.getElementById('slatSize').value);
+  const fenceCol    = document.getElementById('colour').value;
+
+  const gateHeight  = document.getElementById('g-height-match').checked ? Math.min(fenceHeight, 2100) : parseInt(document.getElementById('g-height-custom').value);
+  const gateCol     = document.getElementById('g-colour-match').checked ? fenceCol : document.getElementById('g-colour-custom').value;
+  const gateGap     = parseInt(document.getElementById('g-gap-match').checked ? fenceGap : document.getElementById('g-gap-custom').value);
+  const gateSlatSz  = type === 'sliding' ? parseInt(document.getElementById('g-slatsize-match').checked ? fenceSlatSz : document.getElementById('g-slatsize-custom').value) : 65;
+
+  const warnings = [];
+  if ((type === 'single_swing' || type === 'double_swing') && width > 1200)
+    warnings.push('Opening width exceeds 1200mm — consider a sliding gate.');
+  if ((type === 'single_swing' || type === 'double_swing') && gateHeight > 2100)
+    warnings.push('Gate height capped at 2100mm (max for standard gate kit).');
+  if (gateGap === 5 && (type === 'single_swing' || type === 'double_swing'))
+    warnings.push('No 5mm gate side frame in catalogue — using 9mm gate kit (closest available).');
+
+  gateList.push({ type, width, height: Math.min(gateHeight, type==='sliding'?9999:2100), col: gateCol, gap: gateGap, slatSize: gateSlatSz, qty, warnings });
+  renderGateList();
+}
+
+function removeGate(i) { gateList.splice(i, 1); renderGateList(); }
+
+function renderGateList() {
+  const el = document.getElementById('gate-list');
+  if (!gateList.length) { el.innerHTML = '<div class="gate-empty">No gates added yet.</div>'; return; }
+  const labels = { single_swing:'Single Swing', double_swing:'Double Swing (pair)', sliding:'Sliding Gate' };
+  el.innerHTML = gateList.map((g, i) => `
+    <div class="gate-list-item">
+      <div class="gate-info">
+        <strong>${g.qty > 1 ? g.qty + '× ' : ''}${labels[g.type]}</strong>
+        &nbsp;—&nbsp; ${g.width}mm wide × ${g.height}mm high &nbsp;|&nbsp; ${g.gap}mm gap &nbsp;|&nbsp; ${COLOUR_NAMES[g.col]}
+        ${g.warnings.map(w => `<div class="gate-warn" style="margin-top:4px">${w}</div>`).join('')}
+      </div>
+      <button class="btn btn-sm" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;flex-shrink:0" onclick="removeGate(${i})">✕ Remove</button>
+    </div>`).join('');
+}
+
+// ─── SWING GATE BOM ───────────────────────────────────────────────────────────
+function generateSwingGateBOM(gate, sectionBase) {
+  const rows = [];
+  const leafCount = gate.type === 'double_swing' ? 2 : 1;
+  const leafWidth = gate.type === 'double_swing' ? Math.round(gate.width / 2) : gate.width;
+  const col = gate.col;
+  const gap = gate.gap;
+  const effGap = gap === 5 ? 9 : gap; // No 5mm gate kit — use 9mm
+  const gkitSuffix = effGap === 20 ? '20' : '09';
+  const gkitCode = `XP-GKIT-LSET${gkitSuffix}-${col}`;
+
+  // Gate kit — includes side frames, inserts, stops, rubber, caps, stop screws
+  rows.push({ code: gkitCode, desc: `Gate Frame Kit ${effGap}mm ${COLOUR_NAMES[col]} (side frames, inserts, stops, caps)${leafCount>1?' — 1 per leaf':''}`, qty: leafCount * gate.qty });
+
+  // Gate blades (XP-6100-GB65) — swing gates always 65mm blade
+  // Infill height ≈ gate_height - 2x HD rail (65mm each) = gate_height - 130mm
+  const infillH = gate.height - 130;
+  const numBlades = slatCount(infillH, 65, gap === 5 ? 9 : gap);
+  const bladeCut = leafWidth - 15;
+  const bladesPerStock = Math.max(1, Math.floor(6100 / bladeCut));
+  const bladeStocksPerLeaf = Math.ceil(numBlades / bladesPerStock);
+  rows.push({ code: `XP-6100-GB65-${col}`, desc: `65mm Gate Blade ${COLOUR_NAMES[col]} 6100mm  (${numBlades} blades × ${bladeCut}mm, ${bladesPerStock} cuts/stock)`, qty: bladeStocksPerLeaf * leafCount * gate.qty });
+
+  // HD rails — 2 per gate leaf (top + bottom), cut to leaf width
+  const hdPerStock = Math.max(1, Math.floor(6100 / leafWidth));
+  const hdStocksPerLeaf = Math.ceil(2 / hdPerStock);
+  rows.push({ code: `XP-6100-HD6545-${col}`, desc: `65×45mm HD Rail ${COLOUR_NAMES[col]} 6100mm  (2 rails × ${leafWidth}mm, top + bottom)`, qty: hdStocksPerLeaf * leafCount * gate.qty });
+
+  // Hardware: Magna Latch + Kwik Fit hinge pair (per leaf)
+  rows.push({ code: 'ML-TL-KF-H-FT', desc: 'D&D Magna Latch Top Pull + Kwik Fit Hinge Pair (fixed tension)', qty: leafCount * gate.qty });
+
+  // Lock box (per gate, not per leaf — latch side only)
+  rows.push({ code: `XP-LBOX-LSET-${col}`, desc: `Lock Box ${COLOUR_NAMES[col]} — for Lever/Knob Lock Set`, qty: gate.qty });
+
+  // Gate frame screws (for blades + HD rails — not included in kit)
+  rows.push({ code: 'XP-SCREWSGF-10PK', desc: 'Gate Frame Screws 12G×65mm 10-pack (blades & HD rails)', qty: 2 * leafCount * gate.qty });
+
+  // Drop bolt for double swing (holds passive leaf)
+  if (gate.type === 'double_swing') {
+    rows.push({ code: 'SS-0300DB-ZP', desc: '300mm Drop Bolt — zinc plated (passive leaf)', qty: gate.qty });
+  }
+
+  // Posts: 65mm HD aluminium — 2 for single, 3 for double (hinge-latch-hinge)
+  const postCount = gate.type === 'double_swing' ? 3 : 2;
+  rows.push({ code: `XP-2400-65HD-${col}`, desc: `65×65mm HD Post 2400mm ${COLOUR_NAMES[col]} (gate posts — incl. cap)`, qty: postCount * gate.qty });
+
+  // Warnings on blade count
+  const actualGateH = slatHeight(numBlades, 65, gap===5?9:gap) + 130;
+  const swingWarns = [];
+  if (Math.abs(actualGateH - gate.height) > 30) swingWarns.push(`Note: actual gate height ≈ ${actualGateH}mm (${numBlades} blades)`);
+  if (gate.width > 1200) swingWarns.push('⚠ Opening >1200mm — verify swing gate suitability');
+  if (gap === 5) swingWarns.push('⚠ No 5mm gate kit in catalogue — supplied as 9mm kit');
+
+  return { sectionLabel: `${sectionBase} — ${gate.type==='double_swing'?'Double':'Single'} Swing Gate (${gate.width}mm × ${gate.height}mm, ${COLOUR_NAMES[col]})`, rows, warnings: swingWarns };
+}
+
+// ─── SLIDING GATE BOM ─────────────────────────────────────────────────────────
+function generateSlidingGateBOM(gate, sectionBase) {
+  const rows = [];
+  const col = gate.col;
+  const gap = gate.gap;
+  const slatSz = gate.slatSize || 65;
+
+  // Gate panel width = opening + 200mm latch-side overlap
+  const gatePanelW = gate.width + 200;
+  const slatPrefix = slatSz === 65 ? 'XP-6100-S65' : 'QS-6100-S90';
+
+  // Slat count (same formula as fence)
+  const numSlats = slatCount(gate.height, slatSz, gap);
+  const actualH  = slatHeight(numSlats, slatSz, gap);
+  const slatCut  = gatePanelW - 15;
+  const slatsPerStock = Math.max(1, Math.floor(6100 / slatCut));
+  const slatStocks = Math.ceil(numSlats / slatsPerStock);
+  rows.push({ code: `${slatPrefix}-${col}`, desc: `${slatSz}mm Slat ${COLOUR_NAMES[col]} 6100mm  (${numSlats} slats × ${slatCut}mm — gate panel ${gatePanelW}mm)`, qty: slatStocks * gate.qty });
+
+  // Top rail (XPSG-6100-TR) — 1 per gate
+  const trPerStock = Math.max(1, Math.floor(6100 / gatePanelW));
+  const trStocks = Math.ceil(1 / trPerStock);
+  rows.push({ code: `XPSG-6100-TR-${col}`, desc: `65×82mm Sliding Gate Top Rail ${COLOUR_NAMES[col]} 6100mm  (cut to ${gatePanelW}mm)`, qty: trStocks * gate.qty });
+
+  // Bottom rail (XPSG-6100-BR) — 1 per gate
+  const brPerStock = Math.max(1, Math.floor(6100 / gatePanelW));
+  const brStocks = Math.ceil(1 / brPerStock);
+  rows.push({ code: `XPSG-6100-BR-${col}`, desc: `120×45mm Sliding Gate Bottom Rail ${COLOUR_NAMES[col]} 6100mm  (cut to ${gatePanelW}mm)`, qty: brStocks * gate.qty });
+
+  // Gate frame screws
+  rows.push({ code: 'XP-SCREWSGF-10PK', desc: 'Gate Frame Screws 12G×65mm 10-pack (slats to rails)', qty: 2 * gate.qty });
+
+  // Sliding hardware (fixed per gate)
+  rows.push({ code: 'XPSG-WHEEL',       desc: 'Sliding Gate Wheel 80mm (2 per gate)', qty: 2 * gate.qty });
+  rows.push({ code: 'XPSG-WHEEL-CS',    desc: 'Wheel Clamping Set 2-pack (1 per wheel)', qty: 2 * gate.qty });
+  rows.push({ code: 'XPSG-TOPROLL-2PK', desc: 'Sliding Gate Top Rollers (L+R pair)', qty: 1 * gate.qty });
+  rows.push({ code: 'XPSG-GUIDE',       desc: 'Self-Adjusting Slide Guide', qty: 1 * gate.qty });
+  rows.push({ code: 'XPSG-STOP',        desc: 'Bolt-Down Gate Stop', qty: 1 * gate.qty });
+  rows.push({ code: 'XPSG-CATCH-U',     desc: 'U-Catch (galv. steel with rubber stop)', qty: 1 * gate.qty });
+
+  // Track: track_needed = gatePanelW × 2 (pocket + opening)
+  const trackNeeded = gatePanelW * 2;
+  let track3m = 0, track6m = 0, anchors = 0;
+  if (trackNeeded <= 3000)      { track3m = 1; anchors = 22; }
+  else if (trackNeeded <= 6000) { track6m = 1; anchors = 42; }
+  else if (trackNeeded <= 9000) { track3m = 1; track6m = 1; anchors = 22 + 42; }
+  else                          { track6m = 2; anchors = 84; }
+  track3m *= gate.qty; track6m *= gate.qty; anchors *= gate.qty;
+  if (track3m) rows.push({ code: 'XPSG-3000-TRACK-ST', desc: `Steel Track 3000mm (${trackNeeded}mm total track needed)`, qty: track3m });
+  if (track6m) rows.push({ code: 'XPSG-6000-TRACK-ST', desc: `Steel Track 6000mm (${trackNeeded}mm total track needed)`, qty: track6m });
+  rows.push({ code: 'XPSG-ANCHOR', desc: `Track Anchor Pins (${anchors/gate.qty} per gate)`, qty: anchors });
+
+  // Steel posts — 2 per gate
+  rows.push({ code: `XPSG-2700-ST65-${col}`, desc: `65×65mm Galv. Steel Post 2700mm ${COLOUR_NAMES[col]} (incl. base plate & cap)`, qty: 2 * gate.qty });
+
+  const sgWarns = [];
+  if (Math.abs(actualH - gate.height) > 10) sgWarns.push(`Actual gate height: ${actualH}mm (${numSlats} slats — target was ${gate.height}mm)`);
+  sgWarns.push(`Gate panel: ${gatePanelW}mm (opening ${gate.width}mm + 200mm overlap). Track: ${trackNeeded}mm needed.`);
+
+  return { sectionLabel: `${sectionBase} — Sliding Gate (${gate.width}mm opening, ${COLOUR_NAMES[col]})`, rows, warnings: sgWarns };
+}
+
+// ─── UPDATE generateBOM to include gates ─────────────────────────────────────
+// (Gate BOM sections are added inside the existing generateBOM function — see modified version below)
+
+// ─── GATE UI HELPERS ─────────────────────────────────────────────────────────
+function clearGates() { gateList = []; renderGateList(); }
 
 // Init
 onConfigChange();
+renderGateList();
 </script>
 </body>
 </html>
