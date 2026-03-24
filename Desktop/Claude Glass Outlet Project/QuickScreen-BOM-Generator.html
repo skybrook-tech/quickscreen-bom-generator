@@ -1540,5 +1540,227 @@ function clearGates() { gateList = []; renderGateList(); }
 onConfigChange();
 renderGateList();
 </script>
+
+<script>
+// ─── SUPABASE AUTH & DATABASE ─────────────────────────────────────────────────
+const SUPABASE_URL = 'https://bpljdbpqlckbhkkjsevw.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwbGpkYnBxbGNrYmhra2pzZXZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNDQ1NDUsImV4cCI6MjA4OTkyMDU0NX0.qAmxEII7h-S4oSGyhNaFfHJc72LSsXCV_Mk9cTa8e2c';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let currentUser = null;
+let authMode    = 'signin';
+
+// ── Check session on load ──────────────────────────────────────────────────
+(async function initAuth() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) onSignedIn(session.user);
+  sb.auth.onAuthStateChange((_e, session) => {
+    if (session) onSignedIn(session.user); else onSignedOut();
+  });
+})();
+
+function onSignedIn(user) {
+  currentUser = user;
+  document.getElementById('auth-overlay').style.display     = 'none';
+  document.getElementById('user-email-display').textContent = user.email;
+  document.getElementById('quotes-panel').style.display     = 'block';
+  document.getElementById('save-quote-btn').style.display   = 'inline-flex';
+  loadSavedQuotes();
+}
+
+function onSignedOut() {
+  currentUser = null;
+  document.getElementById('auth-overlay').style.display     = 'flex';
+  document.getElementById('user-email-display').textContent = '';
+  document.getElementById('quotes-panel').style.display     = 'none';
+  document.getElementById('save-quote-btn').style.display   = 'none';
+}
+
+// ── Auth form ──────────────────────────────────────────────────────────────
+function toggleAuthMode() {
+  authMode = authMode === 'signin' ? 'signup' : 'signin';
+  const signIn = authMode === 'signin';
+  document.getElementById('auth-submit').textContent = signIn ? 'Sign In' : 'Create Account';
+  document.getElementById('auth-switch').innerHTML   = signIn
+    ? "Don't have an account? <a onclick=\"toggleAuthMode()\">Sign up</a>"
+    : "Already have an account? <a onclick=\"toggleAuthMode()\">Sign in</a>";
+  setAuthError('');
+}
+
+async function handleAuth() {
+  const email    = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const btn      = document.getElementById('auth-submit');
+  if (!email || !password) { setAuthError('Please enter your email and password.'); return; }
+  btn.disabled    = true;
+  btn.textContent = authMode === 'signin' ? 'Signing in…' : 'Creating account…';
+  setAuthError('');
+  try {
+    const result = authMode === 'signin'
+      ? await sb.auth.signInWithPassword({ email, password })
+      : await sb.auth.signUp({ email, password });
+    if (result.error) throw result.error;
+    if (authMode === 'signup' && result.data.user && !result.data.session) {
+      setAuthError('✓ Account created! Check your email to confirm, then sign in.', '#16a34a');
+      toggleAuthMode();
+    }
+  } catch (e) {
+    setAuthError(e.message || 'Authentication failed.');
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = authMode === 'signin' ? 'Sign In' : 'Create Account';
+  }
+}
+
+function setAuthError(msg, color) {
+  const el       = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.style.color = color || '#dc2626';
+}
+
+// Allow Enter key on auth form
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('auth-overlay').style.display !== 'none') handleAuth();
+});
+
+async function signOut() {
+  await sb.auth.signOut();
+}
+
+// ── Save Quote ─────────────────────────────────────────────────────────────
+async function saveQuote() {
+  if (!currentUser)    { showToast('⚠ Please sign in first.'); return; }
+  if (!currentBOM.length) { showToast('⚠ Generate a BOM first.'); return; }
+  const btn = document.getElementById('save-quote-btn');
+  btn.disabled    = true;
+  btn.textContent = '💾 Saving…';
+  const customer = (document.getElementById('customer').value || '').trim() || 'Unnamed Job';
+  const total    = parseFloat(document.getElementById('grand-total').textContent) || 0;
+  const formValues = {
+    customer,
+    runLength:    document.getElementById('runLength').value,
+    targetHeight: document.getElementById('targetHeight').value,
+    slatSize:     document.getElementById('slatSize').value,
+    slatGap:      document.getElementById('slatGap').value,
+    colour:       document.getElementById('colour').value,
+    maxPanel:     document.getElementById('maxPanel').value,
+    leftTerm:     document.getElementById('leftTerm').value,
+    rightTerm:    document.getElementById('rightTerm').value,
+    postMount:    document.getElementById('postMount').value,
+    corners:      document.getElementById('corners').value
+  };
+  try {
+    const { error } = await sb.from('quotes').insert({
+      user_id:    currentUser.id,
+      customer,
+      config:     { formValues, gateList, tier: currentTier },
+      bom:        currentBOM,
+      total_cost: total,
+      tier:       currentTier
+    });
+    if (error) throw error;
+    showToast('✓ Quote saved!');
+    // Open the My Quotes panel so they can see it
+    document.getElementById('quotes-body').style.display = 'block';
+    document.getElementById('quotes-toggle').classList.add('open');
+    document.getElementById('quotes-caret').textContent  = '▲';
+    loadSavedQuotes();
+  } catch (e) {
+    showToast('⚠ Save failed: ' + (e.message || 'unknown error'));
+  } finally {
+    btn.disabled  = false;
+    btn.innerHTML = '💾 Save Quote';
+  }
+}
+
+// ── Load saved quotes list ─────────────────────────────────────────────────
+async function loadSavedQuotes() {
+  if (!currentUser) return;
+  const { data, error } = await sb.from('quotes')
+    .select('id, customer, total_cost, tier, created_at')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false })
+    .limit(30);
+  const listEl  = document.getElementById('quotes-list');
+  const countEl = document.getElementById('quotes-count');
+  if (error || !data || !data.length) {
+    countEl.textContent = '';
+    listEl.innerHTML = '<div style="color:#999;font-style:italic;font-size:13px;padding:4px 0">No saved quotes yet. Generate a BOM and click 💾 Save Quote.</div>';
+    return;
+  }
+  countEl.textContent = '(' + data.length + ')';
+  listEl.innerHTML = data.map(q => {
+    const date  = new Date(q.created_at).toLocaleDateString('en-AU', { day:'2-digit', month:'short', year:'numeric' });
+    const total = q.total_cost ? '$' + Number(q.total_cost).toFixed(2) : '—';
+    return '<div class="q-item">'
+      + '<div class="q-item-info"><strong>' + esc(q.customer) + '</strong>'
+      + '<span>' + date + ' &nbsp;|&nbsp; Tier ' + q.tier + ' &nbsp;|&nbsp; ' + total + ' ex-GST</span></div>'
+      + '<div class="q-item-actions">'
+      + '<button class="btn btn-primary btn-sm" onclick="loadQuote(\'' + q.id + '\')">📂 Load</button>'
+      + '<button class="btn btn-sm" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5" onclick="deleteQuote(\'' + q.id + '\')">✕ Delete</button>'
+      + '</div></div>';
+  }).join('');
+}
+
+// ── Load a quote into the form ─────────────────────────────────────────────
+async function loadQuote(id) {
+  const { data, error } = await sb.from('quotes').select('*').eq('id', id).single();
+  if (error || !data) { showToast('⚠ Could not load quote.'); return; }
+  const { formValues, gateList: savedGates, tier } = data.config || {};
+  // Restore form inputs
+  if (formValues) {
+    ['runLength','targetHeight','slatSize','slatGap','colour','maxPanel',
+     'leftTerm','rightTerm','postMount','corners','customer'].forEach(f => {
+      const el = document.getElementById(f);
+      if (el && formValues[f] != null) el.value = formValues[f];
+    });
+  }
+  // Restore gates
+  gateList = savedGates || [];
+  renderGateList();
+  // Restore tier
+  currentTier = tier || 1;
+  document.querySelectorAll('.tier-tab').forEach((el, i) => el.classList.toggle('active', i + 1 === currentTier));
+  // Restore BOM and re-render
+  currentBOM = data.bom || [];
+  onConfigChange();
+  if (currentBOM.length) {
+    rerenderPrices();
+    document.getElementById('bom-output').style.display = 'block';
+    document.getElementById('bom-output').scrollIntoView({ behavior: 'smooth' });
+  }
+  showToast('✓ Loaded: ' + data.customer);
+  // Collapse the panel
+  document.getElementById('quotes-body').style.display = 'none';
+  document.getElementById('quotes-toggle').classList.remove('open');
+  document.getElementById('quotes-caret').textContent   = '▼';
+}
+
+// ── Delete a quote ─────────────────────────────────────────────────────────
+async function deleteQuote(id) {
+  if (!confirm('Delete this saved quote? This cannot be undone.')) return;
+  const { error } = await sb.from('quotes').delete().eq('id', id);
+  if (error) { showToast('⚠ Delete failed.'); return; }
+  showToast('Quote deleted.');
+  loadSavedQuotes();
+}
+
+// ── Toggle My Quotes panel ─────────────────────────────────────────────────
+function toggleQuotesPanel() {
+  const body   = document.getElementById('quotes-body');
+  const toggle = document.getElementById('quotes-toggle');
+  const caret  = document.getElementById('quotes-caret');
+  const open   = body.style.display === 'none' || body.style.display === '';
+  body.style.display = open ? 'block' : 'none';
+  toggle.classList.toggle('open', open);
+  caret.textContent  = open ? '▲' : '▼';
+  if (open) loadSavedQuotes();
+}
+
+// ── Utility ────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
 </body>
 </html>
