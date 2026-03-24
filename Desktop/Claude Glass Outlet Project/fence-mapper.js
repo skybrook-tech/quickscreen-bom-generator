@@ -85,6 +85,36 @@
     bindEvents();
     render();
     updateSummary();
+    loadMapsScript();
+  }
+
+  function loadMapsScript() {
+    if (document.querySelector('script[data-fm-maps]')) {
+      // Script already loaded — just init autocomplete if Places is ready
+      if (window.google?.maps?.places) initAddressAutocomplete();
+      return;
+    }
+    window.fmMapsReady = initAddressAutocomplete;
+    const s = document.createElement('script');
+    s.dataset.fmMaps = '1';
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&callback=fmMapsReady`;
+    s.async = true;
+    document.head.appendChild(s);
+  }
+
+  function initAddressAutocomplete() {
+    const input = document.getElementById('fm-map-address');
+    if (!input || !window.google?.maps?.places) return;
+    if (input._acInit) return;
+    input._acInit = true;
+    const ac = new google.maps.places.Autocomplete(input, {
+      types: ['geocode'],
+      fields: ['formatted_address', 'geometry'],
+    });
+    ac.addListener('place_changed', () => {
+      const place = ac.getPlace();
+      if (place?.formatted_address) input.value = place.formatted_address;
+    });
   }
 
   function resize() {
@@ -240,10 +270,17 @@
           </div>
           <label>Opening Width (mm)</label>
           <input id="fmg-width" type="number" value="900" min="400" max="8000" step="50">
-          <label>Opening Direction (viewed from outside)</label>
+          <label>Hinge Side (viewed from outside)</label>
           <div class="fm-radio-group" id="fmg-dir-group">
-            <div class="fm-radio-opt selected" data-val="left" onclick="fmgSelect(this,'dir')">← Open Left</div>
-            <div class="fm-radio-opt" data-val="right" onclick="fmgSelect(this,'dir')">Open Right →</div>
+            <div class="fm-radio-opt selected" data-val="left" onclick="fmgSelect(this,'dir')">← Hinge Left</div>
+            <div class="fm-radio-opt" data-val="right" onclick="fmgSelect(this,'dir')">Hinge Right →</div>
+          </div>
+          <div id="fmg-swing-row">
+            <label>Swing Direction</label>
+            <div class="fm-radio-group" id="fmg-swing-group">
+              <div class="fm-radio-opt selected" data-val="out" onclick="fmgSelect(this,'swing')">Opens Out ↗</div>
+              <div class="fm-radio-opt" data-val="in" onclick="fmgSelect(this,'swing')">Opens In ↙</div>
+            </div>
           </div>
           <div class="btn-row">
             <button class="btn-ok" onclick="confirmFmGate()"
@@ -335,9 +372,14 @@
   let _pendingGate = null;
 
   window.fmgSelect = function (el, group) {
-    const groupId = group === 'type' ? 'fmg-type-group' : 'fmg-dir-group';
+    const groupId = group === 'type' ? 'fmg-type-group' : group === 'dir' ? 'fmg-dir-group' : 'fmg-swing-group';
     document.getElementById(groupId).querySelectorAll('.fm-radio-opt').forEach(e => e.classList.remove('selected'));
     el.classList.add('selected');
+    if (group === 'type') {
+      const isSliding = el.dataset.val === 'sliding';
+      document.getElementById('fmg-swing-row').style.display = isSliding ? 'none' : '';
+      document.getElementById('fmg-dir-row') && (document.getElementById('fmg-dir-row').style.display = '');
+    }
   };
 
   function openGateModal(runIdx, segIdx, t) {
@@ -346,6 +388,8 @@
     // Reset radio selections
     document.getElementById('fmg-type-group').querySelectorAll('.fm-radio-opt').forEach((el,i) => el.classList.toggle('selected', i===0));
     document.getElementById('fmg-dir-group').querySelectorAll('.fm-radio-opt').forEach((el,i) => el.classList.toggle('selected', i===0));
+    document.getElementById('fmg-swing-group').querySelectorAll('.fm-radio-opt').forEach((el,i) => el.classList.toggle('selected', i===0));
+    document.getElementById('fmg-swing-row').style.display = '';
     document.getElementById('fm-gate-modal-overlay').classList.add('open');
   }
 
@@ -354,6 +398,7 @@
     const { runIdx, segIdx, t } = _pendingGate;
     const gateType  = document.querySelector('#fmg-type-group .fm-radio-opt.selected')?.dataset.val || 'single';
     const direction = document.querySelector('#fmg-dir-group .fm-radio-opt.selected')?.dataset.val  || 'left';
+    const swing     = document.querySelector('#fmg-swing-group .fm-radio-opt.selected')?.dataset.val || 'out';
     const widthMm   = parseInt(document.getElementById('fmg-width').value) || 900;
     const run = S.runs[runIdx];
     const seg = getSegment(run, segIdx);
@@ -361,7 +406,7 @@
       const segMm = pxToMm(distWorld(seg.a, seg.b));
       if (widthMm >= segMm) { alert(`Gate (${widthMm}mm) too wide for segment (${segMm}mm).`); return; }
     }
-    run.gates.push({ segIdx, t, widthMm, gateType, direction });
+    run.gates.push({ segIdx, t, widthMm, gateType, direction, swing });
     document.getElementById('fm-gate-modal-overlay').classList.remove('open');
     _pendingGate = null;
     render(); updateSummary(); updateApplyBtn();
@@ -649,22 +694,31 @@
         ctx.save(); ctx.font='bold 9px sans-serif'; ctx.fillStyle=GATE_COLOUR; ctx.textAlign='center';
         ctx.fillText('SLIDE', mx+Math.cos(perpAngle)*18, my+Math.sin(perpAngle)*18+4); ctx.restore();
       } else {
-        // Swing arc
+        // Swing arc — swing='out' draws arc on perpAngle side, 'in' draws on opposite side
+        const swingSign = (g.swing === 'in') ? -1 : 1;
+        const arcPerpAngle = segAngle + swingSign * (g.direction==='left' ? -Math.PI/2 : Math.PI/2);
         ctx.save(); ctx.strokeStyle=GATE_COLOUR; ctx.lineWidth=1.5; ctx.setLineDash([]);
         if (g.gateType==='double') {
           const ang = Math.atan2(by-ay,bx-ax);
-          ctx.beginPath(); ctx.arc(ax,ay,arcR, ang-Math.PI/3, ang+Math.PI/3); ctx.stroke();
-          ctx.beginPath(); ctx.arc(bx,by,arcR, ang+Math.PI*2/3, ang+Math.PI*4/3); ctx.stroke();
+          const da  = swingSign * Math.PI/2;
+          ctx.beginPath(); ctx.arc(ax,ay,arcR, ang+da-Math.PI/3, ang+da+Math.PI/3); ctx.stroke();
+          ctx.beginPath(); ctx.arc(bx,by,arcR, ang+Math.PI+da-Math.PI/3, ang+Math.PI+da+Math.PI/3); ctx.stroke();
         } else {
           const hx = g.direction==='left' ? ax : bx;
           const hy = g.direction==='left' ? ay : by;
-          const sa2 = Math.atan2(my-hy, mx-hx);
-          ctx.beginPath(); ctx.arc(hx,hy,arcR, sa2-Math.PI/3, sa2+Math.PI/3); ctx.stroke();
+          const ex = hx + Math.cos(arcPerpAngle)*arcR;
+          const ey = hy + Math.sin(arcPerpAngle)*arcR;
+          const sweepStart = Math.atan2(ey-hy, ex-hx) - Math.PI/3;
+          const sweepEnd   = sweepStart + Math.PI*2/3;
+          ctx.beginPath(); ctx.arc(hx,hy,arcR, sweepStart, sweepEnd); ctx.stroke();
         }
         ctx.restore();
-        const lbl = g.gateType==='double' ? 'DBL' : 'GATE';
+        const swingLbl = g.swing === 'in' ? 'IN' : 'OUT';
+        const typePrefix = g.gateType==='double' ? 'DBL' : 'GATE';
+        const arcLabelX = mx + Math.cos(arcPerpAngle)*15;
+        const arcLabelY = my + Math.sin(arcPerpAngle)*15 + 4;
         ctx.save(); ctx.font='bold 9px sans-serif'; ctx.fillStyle=GATE_COLOUR; ctx.textAlign='center';
-        ctx.fillText(lbl, mx+Math.cos(perpAngle)*15, my+Math.sin(perpAngle)*15+4); ctx.restore();
+        ctx.fillText(`${typePrefix} ${swingLbl}`, arcLabelX, arcLabelY); ctx.restore();
       }
 
       // Width indicator arrows
@@ -847,10 +901,6 @@
       S.runs[S.dragging.runIdx].nodes[S.dragging.nodeIdx].x=snapped.x;
       S.runs[S.dragging.runIdx].nodes[S.dragging.nodeIdx].y=snapped.y;
       render(); updateSummary(); return;
-    }
-    if (S.mode==='draw' && S.activeRun>=0) {
-      const snapped=snapWorld(wp.x,wp.y), ss=w2s(snapped.x,snapped.y);
-      renderOverlay(ss.x,ss.y);
     }
     e.preventDefault();
   }
