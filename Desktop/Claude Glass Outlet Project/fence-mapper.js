@@ -89,16 +89,13 @@
   }
 
   function loadMapsScript() {
-    if (document.querySelector('script[data-fm-maps]')) {
-      // Script already loaded — just init autocomplete if Places is ready
-      if (window.google?.maps?.places) initAddressAutocomplete();
-      return;
-    }
-    window.fmMapsReady = initAddressAutocomplete;
+    if (window.google?.maps?.places) { initAddressAutocomplete(); return; }
+    if (document.querySelector('script[data-fm-maps]')) return; // already loading
     const s = document.createElement('script');
     s.dataset.fmMaps = '1';
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&callback=fmMapsReady`;
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&loading=async`;
     s.async = true;
+    s.onload = initAddressAutocomplete;
     document.head.appendChild(s);
   }
 
