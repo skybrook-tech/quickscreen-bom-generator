@@ -4,12 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QuickScreen BOM Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="fence-mapper.css">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f2f5;color:#222;font-size:14px}
-  h1{font-size:20px;font-weight:700;color:#fff}
-  h2{font-size:15px;font-weight:600;color:#2c5a9a;margin-bottom:10px}
+  body{font-family:'Inter','Segoe UI',Arial,sans-serif;background:#f0f2f5;color:#222;font-size:14px;line-height:1.5}
+  h1{font-size:20px;font-weight:700;color:#fff;line-height:1.2}
+  h2{font-size:16px;font-weight:700;color:#2c5a9a;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #edf2f7;display:flex;align-items:center;gap:7px}
+  h3{font-size:14px;font-weight:600;color:#333}
+  p,li{line-height:1.6}
   .header{background:linear-gradient(135deg,#2c5a9a,#4a84cc);padding:12px 24px;display:flex;align-items:center;gap:16px;print-color-adjust:exact;-webkit-print-color-adjust:exact}
   .header-brand{display:flex;align-items:center;gap:9px;flex-shrink:0}
   .header-brand-text{font-size:13px;font-weight:700;color:#fff;letter-spacing:.02em;line-height:1}
@@ -18,7 +23,7 @@
   .header small{color:#c9dff5;font-size:12px;display:block;margin-top:2px}
   .header-go-logo{height:36px;background:#fff;border-radius:6px;padding:4px 8px;display:flex;align-items:center;flex-shrink:0}
   .header-go-logo img{height:28px;width:auto;display:block}
-  .main{max-width:1100px;margin:0 auto;padding:20px 16px}
+  .main{max-width:1100px;margin:0 auto;padding:24px 20px}
   .card{background:#fff;border-radius:10px;border:1px solid #dde3ed;padding:20px 24px;margin-bottom:16px}
   .nl-area{width:100%;min-height:70px;border:2px solid #c9dff5;border-radius:6px;padding:10px;font-size:14px;resize:vertical;line-height:1.5}
   .nl-area:focus{outline:none;border-color:#4a84cc}
@@ -38,15 +43,15 @@
   input[type=number],select,input[type=text],input[type=password]{width:100%;border:1.5px solid #ccd4e0;border-radius:6px;padding:9px 11px;font-size:14px;color:#222;transition:border-color .15s}
   input:focus,select:focus{outline:none;border-color:#4a84cc;box-shadow:0 0 0 3px rgba(74,132,204,.1)}
   .form-note{font-size:11px;color:#888;margin-top:4px;line-height:1.4}
-  .calc-box{background:#f0f6ff;border:1px solid #bfd4f0;border-radius:6px;padding:12px 16px;margin:10px 0;font-size:13px}
-  .calc-row{display:flex;justify-content:space-between;padding:2px 0}
-  .calc-row strong{color:#2c5a9a}
-  .warn{background:#fff7ed;border:1px solid #f59e0b;border-radius:6px;padding:10px 14px;margin:8px 0;font-size:12px;color:#92400e}
-  .warn::before{content:'⚠ ';font-weight:700}
+  .calc-box{background:#f0f6ff;border:1px solid #bfd4f0;border-left:3px solid #4a84cc;border-radius:6px;padding:14px 16px;margin:12px 0;font-size:13px}
+  .calc-row{display:flex;justify-content:space-between;padding:3px 0;line-height:1.5}
+  .calc-row strong{color:#2c5a9a;font-weight:600}
+  .warn{background:#fff7ed;border:1px solid #f59e0b;border-left:3px solid #f59e0b;border-radius:6px;padding:11px 14px;margin:10px 0;font-size:13px;color:#92400e;line-height:1.5}
+  .warn::before{content:'⚠  ';font-weight:700}
   .bom-section{margin-bottom:10px}
   .bom-section h3{font-size:11px;font-weight:700;color:#2c5a9a;background:#f0f6ff;padding:7px 12px 7px 14px;border-radius:4px 4px 0 0;letter-spacing:.5px;text-transform:uppercase;border-left:3px solid #4a84cc}
   table{width:100%;border-collapse:collapse}
-  th{background:#f3f6fc;font-size:11px;font-weight:700;color:#444;text-align:left;padding:7px 10px;border-bottom:2px solid #dde3ed}
+  th{background:#f3f6fc;font-size:11px;font-weight:700;color:#555;text-align:left;padding:9px 10px;border-bottom:2px solid #dde3ed;letter-spacing:.04em;text-transform:uppercase}
   td{padding:8px 10px;border-bottom:1px solid #eee;font-size:13px}
   tr:last-child td{border-bottom:none}
   .td-r{text-align:right}
@@ -158,6 +163,7 @@
     .row-3,.row-4,.row-2{grid-template-columns:1fr}
     .gate-row,.gate-row-3{grid-template-columns:1fr 1fr}
     .main{padding:12px 10px}
+    h2{font-size:14px;margin-bottom:12px;padding-bottom:8px}
     .card{padding:14px 12px}
     .btn{padding:10px 14px;font-size:14px;min-height:44px}
     .actions .btn{flex:1;justify-content:center}
