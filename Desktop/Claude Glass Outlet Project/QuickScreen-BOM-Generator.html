@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QuickScreen BOM Generator</title>
+<title>Quickscreen — Slat Screening BOM Generator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
@@ -214,6 +214,34 @@
   #save-quote-btn{background:#16a34a;color:#fff;border:none;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;display:none;align-items:center;gap:6px}
   #save-quote-btn:hover{background:#15803d}
   #save-quote-btn:disabled{opacity:.5;cursor:not-allowed}
+  /* ── Sub-labels (small section headings inside cards) ──────────── */
+  .sub-label{font-size:12px;font-weight:600;color:#555;margin-bottom:8px;letter-spacing:.03em;text-transform:uppercase}
+  /* ── Row gap ───────────────────────────────────────────────────── */
+  .row{gap:16px}
+  /* ── Gate list hover ───────────────────────────────────────────── */
+  .gate-list-item{transition:border-color .15s,background .15s}
+  .gate-list-item:hover{border-color:#4a84cc;background:#e8f4ff}
+  /* ── AI summary box ────────────────────────────────────────────── */
+  .ai-summary-box{background:#f5f3ff;border:1px solid #c4b5fd;border-left:3px solid #7c3aed;border-radius:6px;padding:12px 16px;margin-top:12px;font-size:13px;color:#4c1d95;display:none;line-height:1.6}
+  /* ── Grand total bar ───────────────────────────────────────────── */
+  .grand-total-bar{padding:16px 20px;background:#f0f6ff;border-top:2px solid #4a84cc;display:flex;justify-content:space-between;align-items:center;border-radius:0 0 10px 10px}
+  .grand-total-bar .total-meta{font-size:13px;color:#666;line-height:1.6}
+  .grand-total-bar .total-amount{font-size:22px;font-weight:700;color:#2c5a9a;letter-spacing:.02em}
+  .grand-total-bar .total-amount span{font-size:26px}
+  /* ── BOM config summary card ───────────────────────────────────── */
+  #bom-config-summary{background:#f8fafc;border-color:#e2e8f0;font-size:13px;line-height:1.7;color:#444}
+  /* ── "Add gate" form border ────────────────────────────────────── */
+  .gate-add-section{border-top:1px solid #eef0f4;padding-top:16px;margin-top:8px}
+  /* ── Match toggle (checkbox + label) ──────────────────────────── */
+  .match-toggle{display:flex;align-items:center;gap:6px;font-size:12px;color:#666;margin-bottom:5px;cursor:pointer}
+  .match-toggle input[type=checkbox]{width:15px;height:15px;margin:0;accent-color:#4a84cc;cursor:pointer}
+  /* ── Print overrides ───────────────────────────────────────────── */
+  @media print{
+    h2{border-bottom:1px solid #dde3ed;padding-bottom:4px;margin-bottom:8px;font-size:13px}
+    .grand-total-bar{border-radius:0;padding:10px 12px}
+    .grand-total-bar .total-amount{font-size:18px}
+    .grand-total-bar .total-amount span{font-size:20px}
+  }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -475,8 +503,8 @@
     <div id="gate-list"></div>
 
     <!-- Add gate form -->
-    <div style="border-top:1px solid #eef0f4;padding-top:12px;margin-top:4px">
-      <div style="font-size:12px;font-weight:600;color:#444;margin-bottom:8px">Add a gate:</div>
+    <div class="gate-add-section">
+      <div class="sub-label">Add a gate</div>
       <div class="gate-row">
         <div>
           <label>Gate Type</label>
@@ -587,8 +615,8 @@
     <div class="card" id="bom-config-summary" style="margin-bottom:10px;padding:12px 16px"></div>
 
     <!-- Price Tier -->
-    <div class="no-print" style="margin-bottom:8px">
-      <div style="font-size:12px;font-weight:600;color:#444;margin-bottom:6px">Pricing Tier:</div>
+    <div class="no-print" style="margin-bottom:12px">
+      <div class="sub-label">Pricing Tier</div>
       <div class="tier-tabs">
         <div class="tier-tab active" onclick="setTier(1,this)">Tier 1 — Standard</div>
         <div class="tier-tab" onclick="setTier(2,this)">Tier 2 — Mid Volume</div>
@@ -601,16 +629,16 @@
 
     <div class="card" style="padding:0;overflow:hidden">
       <div id="bom-tables"></div>
-      <div style="padding:14px 16px;background:#f0f6ff;border-top:2px solid #4a84cc;display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:13px;color:#444">All prices ex-GST &nbsp;|&nbsp; Tier <span id="tier-label">1</span></div>
-        <div style="font-size:20px;font-weight:700;color:#2c5a9a">TOTAL: $<span id="grand-total">0.00</span></div>
+      <div class="grand-total-bar">
+        <div class="total-meta">All prices ex-GST &nbsp;·&nbsp; Tier <span id="tier-label">1</span> pricing</div>
+        <div class="total-amount">TOTAL: $<span id="grand-total">0.00</span></div>
       </div>
     </div>
 
     <!-- ── Extra Items Search ──────────────────────────────────────── -->
     <div id="bom-extra-section" class="no-print" style="display:none;margin-top:8px">
       <div class="card" style="padding:14px 16px">
-        <div style="font-size:13px;font-weight:600;color:#2c5a9a;margin-bottom:10px">+ Add Extra Items to BOM</div>
+        <div class="sub-label" style="color:#2c5a9a;margin-bottom:10px">+ Add Extra Items to BOM</div>
         <div style="position:relative">
           <input type="text" id="bom-search-input" placeholder="Search by product code or description…"
             style="width:100%;box-sizing:border-box;padding:8px 12px;border:1.5px solid #ccd4e0;border-radius:6px;font-size:13px;outline:none">
