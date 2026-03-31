@@ -114,6 +114,7 @@
   #fm-scale{width:80px;border:1.5px solid #ccd4e0;border-radius:5px;padding:4px 7px;font-size:12px}
   #fm-snap-toggle{display:flex;align-items:center;gap:4px;cursor:pointer}
   #fm-canvas-wrap{position:relative;width:100%;min-height:340px;border:1.5px solid #ccd4e0;border-radius:6px;overflow:hidden;background:#fafbfc;cursor:crosshair}
+  #fm-canvas-wrap.expanded{min-height:620px}
   #fm-canvas-wrap.mode-move{cursor:move}
   #fm-canvas-wrap.mode-gate{cursor:cell}
   #fm-canvas,#fm-overlay{position:absolute;top:0;left:0;display:block}
@@ -123,9 +124,8 @@
   #fm-summary table th{background:#f3f6fc;font-size:11px;font-weight:700;color:#444;padding:5px 8px}
   #fm-summary table td{font-size:13px;padding:4px 8px}
   #fm-totals{font-size:13px;color:#555;margin-top:6px}
-  #fm-apply-btn{margin-top:10px;background:#16a34a;color:#fff;border:none;border-radius:6px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer}
-  #fm-apply-btn:hover{background:#15803d}
-  #fm-apply-btn:disabled{opacity:.4;cursor:not-allowed}
+  #fm-apply-btn:hover{background:#15803d!important}
+  #fm-apply-btn:disabled{opacity:.4!important;cursor:not-allowed!important}
   /* Toast */
   #fm-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e293b;color:#f8fafc;font-size:13px;padding:9px 18px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:9999;white-space:nowrap}
   #fm-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -329,11 +329,16 @@
         <button class="fm-btn" id="fm-undo" title="Undo (Ctrl+Z)">↩ Undo</button>
         <button class="fm-btn danger" id="fm-clear">✕ Clear</button>
         <button class="fm-btn" id="fm-reset-view" title="Reset zoom and pan">⊙ Reset view</button>
+        <div class="fm-sep"></div>
+        <button class="fm-btn" id="fm-expand-btn" title="Toggle tall canvas for complex layouts">⤢ Expand Canvas</button>
       </div>
       <div id="fm-scale-row">
-        <label for="fm-scale">Scale:</label>
-        <input type="number" id="fm-scale" value="1000" min="100" step="100">
-        <span>mm / grid sq</span>
+        <span style="color:#888;font-size:11px">⚙ Scale (mm/sq):</span>
+        <span style="display:inline-flex;align-items:center;gap:3px;background:#fff;border:1.5px dashed #ccd4e0;border-radius:5px;padding:1px 4px" title="Grid scale — double-click a segment to recalibrate">
+          <input type="number" id="fm-scale" value="1000" min="100" step="100" style="width:65px;border:none;outline:none;font-size:12px;background:transparent">
+          <span style="font-size:10px;color:#aaa">✏</span>
+        </span>
+        <span style="color:#aaa;font-size:11px">(double-click a segment to recalibrate)</span>
         <label id="fm-snap-toggle"><input type="checkbox" id="fm-snap-cb" checked> Snap</label>
         <span style="color:#aaa">·</span>
         <span style="font-size:11px;color:#999">Scroll = zoom &nbsp; Right-drag = pan &nbsp; Double-click to finish run &nbsp; Click label to edit length &nbsp; ⚙ to configure run</span>
@@ -344,6 +349,11 @@
           style="flex:1;min-width:180px;border:1.5px solid #ccd4e0;border-radius:5px;padding:4px 8px;font-size:12px"
           onkeydown="if(event.key==='Enter')document.getElementById('fm-load-map').click()">
         <button class="fm-btn" id="fm-load-map">Load Map</button>
+        <select id="fm-map-type" style="border:1.5px solid #ccd4e0;border-radius:5px;padding:3px 6px;font-size:12px;background:#fff" title="Map display type">
+          <option value="satellite">Satellite</option>
+          <option value="hybrid">Hybrid (labels)</option>
+          <option value="roadmap">Roadmap</option>
+        </select>
         <label style="display:flex;align-items:center;gap:4px;white-space:nowrap">
           Opacity: <input type="range" id="fm-map-opacity" min="0.1" max="1" step="0.1" value="0.5" style="width:70px">
         </label>
@@ -360,10 +370,13 @@
         <canvas id="fm-canvas"></canvas>
         <canvas id="fm-overlay"></canvas>
       </div>
-      <div id="fm-hint">Click to place nodes. Double-click last node or press Enter to finish. Esc to cancel.</div>
+      <div id="fm-hint">Click to place start point, click again to extend — each segment becomes a new run. Double-click or Enter to stop.</div>
       <div id="fm-summary"></div>
       <div id="fm-totals"></div>
-      <button id="fm-apply-btn" disabled>Use This Layout →</button>
+      <div id="fm-apply-wrapper" style="display:none;margin-top:12px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <span id="fm-apply-summary" style="font-size:13px;font-weight:600;color:#15803d;flex:1"></span>
+        <button id="fm-apply-btn" disabled style="background:#16a34a;color:#fff;border:none;border-radius:6px;padding:9px 20px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap">Use This Layout →</button>
+      </div>
     </div>
   </div>
 

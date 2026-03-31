@@ -11,9 +11,9 @@
   const RUN_PALETTE = ['#2563eb','#16a34a','#7c3aed','#dc2626','#ea580c','#0891b2','#b45309','#0f766e'];
 
   const HINT = {
-    draw : 'Click to place nodes. Double-click to finish a run. Start clicking again for a new run. Esc cancels current run.',
-    gate : 'Click on a fence segment to place a gate.',
-    move : 'Drag nodes to reposition. Right-drag or middle-mouse to pan. Scroll to zoom. Click segment label to edit length.',
+    draw : 'Click to place start point, click again to extend — each segment becomes a new run. Double-click or press Enter to stop.',
+    gate : 'Click on any fence run to place a gate.',
+    move : 'Drag nodes to reposition · Right-drag or middle-mouse = pan · Scroll = zoom · Click label = edit length · ⚙ = configure run',
   };
 
   // ─── State ────────────────────────────────────────────────────────────────
@@ -53,6 +53,7 @@
   let W = 0, H = 0;
   let runLabelCounter  = 0;
   let lastPlaceTime    = 0;   // ms — for dblclick node-removal guard
+  let _hoveredSegRef   = null; // { run, segIdx } or null
 
   // ─── Viewport helpers ─────────────────────────────────────────────────────
   function w2s(wx, wy) { return { x:(wx-S.panX)*S.zoom, y:(wy-S.panY)*S.zoom }; }
@@ -71,6 +72,7 @@
     return Math.sqrt((b.x-a.x)**2 + (b.y-a.y)**2);
   }
   function pxToMm(worldPx) { return Math.round((worldPx/GRID)*S.scale); }
+  function fmtM(mm) { return (mm/1000).toFixed(2) + 'm'; }
 
   // ─── Init ─────────────────────────────────────────────────────────────────
   function init() {
@@ -82,6 +84,10 @@
     octx = overlay.getContext('2d');
     injectPanels();
     resize();
+    // Default zoom: ~150m across canvas width
+    S.zoom = Math.max(0.05, W / ((150000 / S.scale) * GRID));
+    S.panX = -(W/2)/S.zoom;
+    S.panY = -(H/2)/S.zoom;
     bindEvents();
     render();
     updateSummary();
@@ -319,9 +325,9 @@
       .fm-modal .btn-ok{background:#16a34a;color:#fff} .fm-modal .btn-ok:hover{background:#15803d}
       .fm-modal .btn-cancel2{background:#f3f4f6;color:#444} .fm-modal .btn-cancel2:hover{background:#e5e7eb}
       #fm-inline-input{position:absolute;z-index:1000;border:2px solid #2563a8!important;
-        border-radius:4px;padding:2px 6px!important;font-size:12px;font-weight:600;
+        border-radius:4px;padding:2px 6px!important;font-size:20px;font-weight:700!important;
         color:#1a4480;text-align:center;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15);
-        width:84px!important}
+        width:120px!important}
       .fm-run-swatch{display:inline-block;width:10px;height:10px;border-radius:2px;
         margin-right:4px;vertical-align:middle;flex-shrink:0}
     `;
@@ -438,9 +444,10 @@
     const inp = document.createElement('input');
     inp.id = 'fm-inline-input';
     inp.type = 'number';
-    inp.min = '100';
-    inp.max = '99999';
-    inp.style.cssText = 'display:none;position:absolute;z-index:1000;width:84px';
+    inp.min = '0.1';
+    inp.max = '999';
+    inp.step = '0.01';
+    inp.style.cssText = 'display:none;position:absolute;z-index:1000;width:120px';
     wrap.appendChild(inp);
     inp.addEventListener('keydown', e => {
       if (e.key === 'Enter') { e.preventDefault(); commitInlineEdit(); }
@@ -508,6 +515,10 @@
     panel.style.right = 'auto';
   }
 
+  window.openRunConfigByIdx = function(ri) {
+    openRunConfig(ri, Math.min(window.innerWidth - 360, window.innerWidth/2 - 170), 120);
+  };
+
   // ─── Gate modal helpers ───────────────────────────────────────────────────
   let _pendingGate = null;
 
@@ -568,8 +579,8 @@
     if (!seg) { _inlineEdit = null; return; }
     const mm = pxToMm(distWorld(seg.a, seg.b));
     const inp = document.getElementById('fm-inline-input');
-    inp.value = mm;
-    inp.style.left = Math.round(labelRect.x + labelRect.w/2 - 42) + 'px';
+    inp.value = (mm/1000).toFixed(2);
+    inp.style.left = Math.round(labelRect.x + labelRect.w/2 - 60) + 'px';
     inp.style.top  = Math.round(labelRect.y - 20) + 'px';
     inp.style.display = 'block';
     requestAnimationFrame(() => { inp.select(); inp.focus(); });
@@ -579,10 +590,10 @@
     if (!_inlineEdit) return;
     const inp = document.getElementById('fm-inline-input');
     inp.style.display = 'none';
-    const newMm = parseFloat(inp.value);
+    const newMm = parseFloat(inp.value) * 1000;
     const { runIdx, segIdx } = _inlineEdit;
     _inlineEdit = null;
-    if (!newMm || newMm < 10) return;
+    if (!newMm || newMm < 100) return;
     const run = S.runs[runIdx];
     const seg = getSegment(run, segIdx);
     if (!seg) return;
@@ -597,7 +608,7 @@
       run.nodes[i].y += uy * delta;
     }
     render(); updateSummary();
-    showToast(`Segment set to ${newMm.toLocaleString()}mm`);
+    showToast(`Segment set to ${fmtM(newMm)}`);
   }
 
   function cancelInlineEdit() {
@@ -657,12 +668,26 @@
   }
 
   // ─── Render ───────────────────────────────────────────────────────────────
+  function drawHoverHighlight() {
+    if (!_hoveredSegRef) return;
+    const { run, segIdx } = _hoveredSegRef;
+    const seg = getSegment(run, segIdx);
+    if (!seg) return;
+    const sa=w2s(seg.a.x,seg.a.y), sb=w2s(seg.b.x,seg.b.y);
+    ctx.save();
+    ctx.strokeStyle='rgba(37,99,235,0.35)';
+    ctx.lineWidth=10; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(sa.x,sa.y); ctx.lineTo(sb.x,sb.y); ctx.stroke();
+    ctx.restore();
+  }
+
   function render() {
     if (!ctx) return;
     S.labelRects = [];
     ctx.clearRect(0,0,W,H);
     drawMapUnderlay();
     drawGrid();
+    drawHoverHighlight();
     S.runs.forEach((run, ri) => {
       const col = RUN_PALETTE[ri % RUN_PALETTE.length];
       drawRunSegments(run, ri, col);
@@ -691,7 +716,7 @@
     const mm = pxToMm(distWorld(wLast,wEnd));
     if (mm > 0) {
       octx.save(); octx.font='11px sans-serif'; octx.fillStyle='#64748b';
-      octx.fillText(mm.toLocaleString()+' mm', (last.x+sx)/2+6, (last.y+sy)/2-4);
+      octx.fillText(fmtM(mm), (last.x+sx)/2+6, (last.y+sy)/2-4);
       octx.restore();
     }
   }
@@ -712,7 +737,7 @@
     ctx.beginPath(); ctx.moveTo(0,ax.y);   ctx.lineTo(W,ax.y); ctx.stroke();
     ctx.font='10px sans-serif'; ctx.fillStyle='#9ca3af';
     const runCount = S.runs.filter(r=>r.nodes.length>=2).length;
-    ctx.fillText(`1 sq = ${S.scale.toLocaleString()} mm  |  zoom ${S.zoom.toFixed(2)}×  |  ${runCount} run${runCount!==1?'s':''}`, 8, H-8);
+    ctx.fillText(`1 sq = ${(S.scale/1000).toFixed(2)}m  |  zoom ${S.zoom.toFixed(2)}×  |  ${runCount} run${runCount!==1?'s':''}`, 8, H-8);
     ctx.restore();
   }
 
@@ -750,7 +775,7 @@
       const sa=w2s(seg.a.x,seg.a.y), sb=w2s(seg.b.x,seg.b.y);
       const mx=(sa.x+sb.x)/2, my=(sa.y+sb.y)/2;
       const mm = segLenMm(seg);
-      const text = mm.toLocaleString()+' mm';
+      const text = fmtM(mm);
       ctx.save(); ctx.font='11px sans-serif';
       const tw = ctx.measureText(text).width;
       const pw=tw+14, ph=17;
@@ -869,7 +894,7 @@
       const distAMm = Math.max(0, pxToMm(lenPx*g.t) - g.widthMm/2);
       const distBMm = Math.max(0, pxToMm(lenPx*(1-g.t)) - g.widthMm/2);
       ctx.save(); ctx.font='9px sans-serif'; ctx.fillStyle=GATE_COLOUR; ctx.textAlign='center';
-      ctx.fillText(`${distAMm}mm | ←${g.widthMm}mm→ | ${distBMm}mm`, mx, my+22); ctx.restore();
+      ctx.fillText(`${fmtM(distAMm)} | ←${g.widthMm}mm→ | ${fmtM(distBMm)}`, mx, my+22); ctx.restore();
     });
   }
 
@@ -897,15 +922,12 @@
   function drawRunNodes(run, ri, col) {
     run.nodes.forEach((n,ni) => {
       const s=w2s(n.x,n.y);
-      const isEnd = ni===0 || ni===run.nodes.length-1;
       ctx.save();
-      if (isEnd) { ctx.beginPath(); ctx.rect(s.x-NODE_R,s.y-NODE_R,NODE_R*2,NODE_R*2); }
-      else        { ctx.beginPath(); ctx.arc(s.x,s.y,NODE_R,0,Math.PI*2); }
-      ctx.fillStyle='#fff'; ctx.fill();
-      ctx.strokeStyle=col; ctx.lineWidth=2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(s.x,s.y,4,0,Math.PI*2);
+      ctx.fillStyle=col; ctx.fill();
       ctx.restore();
       ctx.save(); ctx.font='bold 10px sans-serif'; ctx.fillStyle=col; ctx.textAlign='center';
-      ctx.fillText(n.label, s.x, s.y-11); ctx.restore();
+      ctx.fillText(n.label, s.x, s.y-8); ctx.restore();
     });
   }
 
@@ -946,6 +968,14 @@
     document.getElementById('fm-snap-cb').addEventListener('change', function(){ S.snap=this.checked; });
     const mapBtn = document.getElementById('fm-load-map');
     if (mapBtn) mapBtn.addEventListener('click', loadGoogleMap);
+    const expandBtn = document.getElementById('fm-expand-btn');
+    if (expandBtn) expandBtn.addEventListener('click', function() {
+      const wrap = document.getElementById('fm-canvas-wrap');
+      const expanded = wrap.classList.toggle('expanded');
+      this.classList.toggle('active', expanded);
+      this.textContent = expanded ? '⊙ Collapse Canvas' : '⤢ Expand Canvas';
+      setTimeout(() => { resize(); render(); }, 50);
+    });
     const opSlider = document.getElementById('fm-map-opacity');
     if (opSlider) opSlider.addEventListener('input', function(){ S.mapOpacity=parseFloat(this.value); render(); });
     overlay.addEventListener('mousedown',   onMouseDown);
@@ -1042,6 +1072,28 @@
       S.runs[S.dragging.runIdx].nodes[S.dragging.nodeIdx].y=snapped.y;
       render(); updateSummary(); return;
     }
+    if (S.mode==='draw' && S.activeRun>=0) {
+      renderOverlay(s.x, s.y);
+    }
+    // Hover detection for segment highlight
+    if (!S.panning && !S.dragging) {
+      let newHover = null;
+      outer: for (let ri=0; ri<S.runs.length; ri++) {
+        const segs = getRunSegments(S.runs[ri]);
+        for (let si=0; si<segs.length; si++) {
+          if (projectOnSegScreen(s.x,s.y,segs[si]).dist < 14) {
+            newHover = { run: S.runs[ri], segIdx: si };
+            break outer;
+          }
+        }
+      }
+      const changed = (!newHover !== !_hoveredSegRef) ||
+        (newHover && _hoveredSegRef && (newHover.run !== _hoveredSegRef.run || newHover.segIdx !== _hoveredSegRef.segIdx));
+      if (changed) {
+        _hoveredSegRef = newHover;
+        render();
+      }
+    }
     e.preventDefault();
   }
 
@@ -1050,20 +1102,21 @@
   function onDblClick(e) {
     e.preventDefault();
     const s=evtScreen(e);
-    // Finish active drawing run
     if (S.mode==='draw' && S.activeRun>=0) {
       const run=S.runs[S.activeRun];
-      // Remove node placed by the 2nd click of this dblclick (within last 400ms)
-      if (run.nodes.length>0 && Date.now()-lastPlaceTime<400) {
-        run.nodes.pop();
-      }
-      if (run.nodes.length>=2) {
-        finishActiveRun();
+      if (run.nodes.length <= 1) {
+        // Stop the chain: cancel pending single-node run
+        S.runs.splice(S.activeRun, 1);
+        if (runLabelCounter>0) runLabelCounter--;
+        S.activeRun = -1;
       } else {
-        S.runs.splice(S.activeRun,1); S.activeRun=-1;
-        octx.clearRect(0,0,W,H); render(); updateSummary(); updateApplyBtn();
-        showToast('Run cancelled (need at least 2 nodes)');
+        if (run.nodes.length>0 && Date.now()-lastPlaceTime<400) run.nodes.pop();
+        if (run.nodes.length>=2) finishActiveRun();
+        else { S.runs.splice(S.activeRun,1); S.activeRun=-1; }
       }
+      octx.clearRect(0,0,W,H);
+      render(); updateSummary(); updateApplyBtn();
+      showToast('Drawing stopped — click to start a new run.');
       return;
     }
     // Double-click on segment → calibrate scale
@@ -1077,17 +1130,19 @@
 
   function calibrateScale(seg) {
     const cur=segLenMm(seg);
-    const raw=prompt(`Real length of this segment in mm?\n(Showing ${cur.toLocaleString()}mm)\nEnter to recalibrate all measurements:`, cur);
+    const curM=(cur/1000).toFixed(2);
+    const raw=prompt(`Real length of this segment in metres?\n(Showing ${curM}m)\nEnter real length in metres to recalibrate:`, curM);
     if (!raw) return;
-    const mm=parseFloat(raw);
-    if (!mm||mm<=0) { alert('Invalid.'); return; }
+    const m=parseFloat(raw);
+    if (!m||m<=0) { alert('Invalid.'); return; }
+    const mm=m*1000;
     const wp=distWorld(seg.a,seg.b);
     if (!wp) { alert('Zero-length segment.'); return; }
     S.scale=Math.round(mm/(wp/GRID));
     const el=document.getElementById('fm-scale');
     if(el) el.value=S.scale;
     render(); updateSummary();
-    showToast(`Scale: 1 sq = ${S.scale.toLocaleString()}mm`);
+    showToast(`Scale: 1 sq = ${(S.scale/1000).toFixed(2)}m`);
   }
 
   // ─── Touch ────────────────────────────────────────────────────────────────
@@ -1140,6 +1195,14 @@
     if (e.key==='Enter' && S.mode==='draw' && S.activeRun>=0) {
       const run=S.runs[S.activeRun];
       if (run.nodes.length>=2) finishActiveRun();
+      else {
+        S.runs.splice(S.activeRun,1);
+        if (runLabelCounter>0) runLabelCounter--;
+        S.activeRun=-1;
+        octx.clearRect(0,0,W,H);
+        render(); updateSummary(); updateApplyBtn();
+        showToast('Drawing stopped — click to start a new run.');
+      }
       e.preventDefault();
     }
     if (e.key==='Escape') {
@@ -1156,29 +1219,44 @@
 
   // ─── Node placement ───────────────────────────────────────────────────────
   function placeNode(wx, wy) {
-    if (S.activeRun>=0) {
-      const run=S.runs[S.activeRun];
-      const last=run.nodes[run.nodes.length-1];
-      if (last&&last.x===wx&&last.y===wy) return;
+    if (S.activeRun >= 0) {
+      const run = S.runs[S.activeRun];
+      const last = run.nodes[run.nodes.length-1];
+      if (last && last.x === wx && last.y === wy) return;
       run.nodes.push({ x:wx, y:wy, label:'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[run.nodes.length%26] });
+      lastPlaceTime = Date.now();
+      // Auto-finish this run and start a new chain run from this point
+      run.finished = true;
+      runLabelCounter++;
+      const nr = newRun('Run '+runLabelCounter);
+      nr.nodes.push({ x:wx, y:wy, label:'A' });
+      S.runs.push(nr);
+      S.activeRun = S.runs.length - 1;
     } else {
       runLabelCounter++;
-      const run=newRun('Run '+runLabelCounter);
-      run.nodes.push({ x:wx, y:wy, label:'A' });
-      S.runs.push(run);
-      S.activeRun=S.runs.length-1;
+      const nr = newRun('Run '+runLabelCounter);
+      nr.nodes.push({ x:wx, y:wy, label:'A' });
+      S.runs.push(nr);
+      S.activeRun = S.runs.length - 1;
     }
-    lastPlaceTime=Date.now();
+    lastPlaceTime = Date.now();
     render(); updateSummary(); updateApplyBtn();
   }
 
   function finishActiveRun() {
     if (S.activeRun<0||S.activeRun>=S.runs.length) return;
-    S.runs[S.activeRun].finished=true;
-    S.activeRun=-1;
+    const run = S.runs[S.activeRun];
+    if (run.nodes.length <= 1) {
+      // Cancel the pending single-node chain run
+      S.runs.splice(S.activeRun, 1);
+      if (runLabelCounter > 0) runLabelCounter--;
+    } else {
+      run.finished = true;
+    }
+    S.activeRun = -1;
     octx.clearRect(0,0,W,H);
-    render(); updateSummary();
-    showToast('Run finished. Click anywhere to start a new run.');
+    render(); updateSummary(); updateApplyBtn();
+    showToast('Drawing stopped — click to start a new run.');
   }
 
   // ─── Gate placement ───────────────────────────────────────────────────────
@@ -1213,8 +1291,6 @@
   }
 
   function doClear() {
-    if (S.applied&&!confirm('This layout was applied to the calculator. Clear anyway?')) return;
-    if (S.runs.length>0&&!confirm('Clear all runs and gates?')) return;
     S.runs=[]; S.activeRun=-1; S.applied=false; runLabelCounter=0;
     S.showPosts=false;
     octx&&octx.clearRect(0,0,W,H);
@@ -1249,7 +1325,8 @@
         ({lat,lng}=geoData.results[0].geometry.location);
       }
       const zoom=20, imgW=800, imgH=600;
-      const mapUrl=`https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=${imgW}x${imgH}&maptype=satellite&key=${apiKey}`;
+      const mapType = document.getElementById('fm-map-type')?.value || 'satellite';
+      const mapUrl=`https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=${imgW}x${imgH}&maptype=${mapType}&key=${apiKey}`;
       const img=new Image();
       img.crossOrigin='anonymous';  // prevent canvas tainting so site-plan export works
       img.onload=()=>{
@@ -1294,7 +1371,11 @@
         if(si<segs.length-1){const d=angleDeg(seg.a,seg.b,segs[si+1].b);if(d>2&&d<175)corners++;}
       });
       const overrides=Object.entries(run.config).filter(([,v])=>v!=null).map(([k,v])=>`${k}=${v}`).join(', ');
-      rows+=`<tr>
+      rows+=`<tr style="cursor:pointer"
+        onmouseenter="this.style.background='#eef3ff'"
+        onmouseleave="this.style.background=''"
+        onclick="openRunConfigByIdx(${ri})"
+        title="Click to configure this run">
         <td><span class="fm-run-swatch" style="background:${col}"></span>${run.label}${run.finished?'':' ✏'}</td>
         <td>${(fence/1000).toFixed(2)}m</td>
         <td>${run.gates.length}</td>
@@ -1317,8 +1398,24 @@
   }
 
   function updateApplyBtn() {
-    const btn=document.getElementById('fm-apply-btn');
-    if(btn) btn.disabled=!S.runs.some(r=>r.nodes.length>=2);
+    const btn = document.getElementById('fm-apply-btn');
+    const wrapper = document.getElementById('fm-apply-wrapper');
+    const valid = S.runs.filter(r=>r.nodes.length>=2);
+    const hasValid = valid.length > 0;
+    if (btn) btn.disabled = !hasValid;
+    if (wrapper) {
+      if (hasValid) {
+        const totalMm = valid.reduce((s,r)=>{
+          return s + getRunSegments(r).reduce((ss,seg)=>ss+pxToMm(distWorld(seg.a,seg.b)),0);
+        }, 0);
+        const gateCount = valid.reduce((s,r)=>s+r.gates.length,0);
+        const sumEl = document.getElementById('fm-apply-summary');
+        if (sumEl) sumEl.textContent = `Ready to apply: ${valid.length} run${valid.length!==1?'s':''} · ${fmtM(totalMm)} total${gateCount ? ` · ${gateCount} gate${gateCount!==1?'s':''}` : ''}`;
+        wrapper.style.display = 'flex';
+      } else {
+        wrapper.style.display = 'none';
+      }
+    }
   }
 
   // ─── Apply to calculator ──────────────────────────────────────────────────
@@ -1400,7 +1497,7 @@
           c2.stroke(); c2.restore();
         });
         c2.save(); c2.font='10px sans-serif'; c2.fillStyle=col; c2.textAlign='center';
-        c2.fillText(segLenMm(seg).toLocaleString()+'mm', (seg.a.x+seg.b.x)/2+ox, (seg.a.y+seg.b.y)/2+oy-5);
+        c2.fillText(fmtM(segLenMm(seg)), (seg.a.x+seg.b.x)/2+ox, (seg.a.y+seg.b.y)/2+oy-5);
         c2.restore();
       });
       run.nodes.forEach(n=>{
