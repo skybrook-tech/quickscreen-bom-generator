@@ -29,6 +29,7 @@
     panning   : false,
     panStart  : { x:0, y:0 }, panOrigin: { x:0, y:0 },
     zoom      : 1, panX: 0, panY: 0,
+    showGrid  : true,
     showPosts : false,
     mapImage  : null,
     mapOpacity: 0.5,
@@ -417,18 +418,7 @@
           </div>
           <label>Opening Width (mm)</label>
           <input id="fmg-width" type="number" value="900" min="400" max="8000" step="50">
-          <label>Hinge Side (viewed from outside)</label>
-          <div class="fm-radio-group" id="fmg-dir-group">
-            <div class="fm-radio-opt selected" data-val="left" onclick="fmgSelect(this,'dir')">← Hinge Left</div>
-            <div class="fm-radio-opt" data-val="right" onclick="fmgSelect(this,'dir')">Hinge Right →</div>
-          </div>
-          <div id="fmg-swing-row">
-            <label>Swing Direction</label>
-            <div class="fm-radio-group" id="fmg-swing-group">
-              <div class="fm-radio-opt selected" data-val="out" onclick="fmgSelect(this,'swing')">Opens Out ↗</div>
-              <div class="fm-radio-opt" data-val="in" onclick="fmgSelect(this,'swing')">Opens In ↙</div>
-            </div>
-          </div>
+          <p style="font-size:11px;color:#888;margin:8px 0 0">Hinge side &amp; swing direction can be set by clicking the gate on the map after placing.</p>
           <div class="btn-row">
             <button class="btn-ok" onclick="confirmFmGate()"
               style="flex:1;padding:8px;border-radius:5px;border:none;cursor:pointer;font-size:13px;font-weight:600;background:#16a34a;color:#fff">
@@ -437,6 +427,39 @@
               style="flex:1;padding:8px;border-radius:5px;border:none;cursor:pointer;font-size:13px;font-weight:600;background:#f3f4f6;color:#444">
               Cancel</button>
           </div>
+        </div>
+      </div>
+    `);
+
+    // ── Gate config panel (click on placed gate) ──
+    document.body.insertAdjacentHTML('beforeend', `
+      <div id="fm-gate-config" class="fm-panel" style="display:none;top:120px;left:20px">
+        <h4>Configure Gate
+          <button onclick="closeFmGateConfig()"
+            style="background:none;border:none;cursor:pointer;font-size:16px;color:#888;padding:0;line-height:1">×</button>
+        </h4>
+        <label>Gate Type</label>
+        <div class="fm-radio-group" id="fmgc-type-group">
+          <div class="fm-radio-opt selected" data-val="single" onclick="fmgcSelect(this,'type')">Single Swing</div>
+          <div class="fm-radio-opt" data-val="double" onclick="fmgcSelect(this,'type')">Double Swing</div>
+          <div class="fm-radio-opt" data-val="sliding" onclick="fmgcSelect(this,'type')">Sliding</div>
+        </div>
+        <div id="fmgc-swing-section">
+          <label>Hinge Side</label>
+          <div class="fm-radio-group" id="fmgc-dir-group">
+            <div class="fm-radio-opt selected" data-val="left" onclick="fmgcSelect(this,'dir')">← Left</div>
+            <div class="fm-radio-opt" data-val="right" onclick="fmgcSelect(this,'dir')">Right →</div>
+          </div>
+          <label>Opens</label>
+          <div class="fm-radio-group" id="fmgc-swing-group">
+            <div class="fm-radio-opt selected" data-val="out" onclick="fmgcSelect(this,'swing')">Out ↗</div>
+            <div class="fm-radio-opt" data-val="in" onclick="fmgcSelect(this,'swing')">In ↙</div>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="fm-btn-save" onclick="saveFmGateConfig()">Save</button>
+          <button class="fm-btn-cancel" onclick="closeFmGateConfig()">Cancel</button>
+          <button class="fm-btn-del" onclick="deleteFmGateFromConfig()">Remove Gate</button>
         </div>
       </div>
     `);
@@ -537,11 +560,7 @@
   function openGateModal(runIdx, segIdx, t) {
     _pendingGate = { runIdx, segIdx, t };
     document.getElementById('fmg-width').value = 900;
-    // Reset radio selections
     document.getElementById('fmg-type-group').querySelectorAll('.fm-radio-opt').forEach((el,i) => el.classList.toggle('selected', i===0));
-    document.getElementById('fmg-dir-group').querySelectorAll('.fm-radio-opt').forEach((el,i) => el.classList.toggle('selected', i===0));
-    document.getElementById('fmg-swing-group').querySelectorAll('.fm-radio-opt').forEach((el,i) => el.classList.toggle('selected', i===0));
-    document.getElementById('fmg-swing-row').style.display = '';
     document.getElementById('fm-gate-modal-overlay').classList.add('open');
   }
 
@@ -549,8 +568,8 @@
     if (!_pendingGate) return;
     const { runIdx, segIdx, t } = _pendingGate;
     const gateType  = document.querySelector('#fmg-type-group .fm-radio-opt.selected')?.dataset.val || 'single';
-    const direction = document.querySelector('#fmg-dir-group .fm-radio-opt.selected')?.dataset.val  || 'left';
-    const swing     = document.querySelector('#fmg-swing-group .fm-radio-opt.selected')?.dataset.val || 'out';
+    const direction = 'left';   // set via gate config popup after placement
+    const swing     = 'out';    // set via gate config popup after placement
     const widthMm   = parseInt(document.getElementById('fmg-width').value) || 900;
     const run = S.runs[runIdx];
     const seg = getSegment(run, segIdx);
@@ -568,6 +587,87 @@
   window.cancelFmGate = function () {
     document.getElementById('fm-gate-modal-overlay').classList.remove('open');
     _pendingGate = null;
+  };
+
+  // ─── Gate config panel (click on placed gate) ─────────────────────────────
+  let _editingGate = null; // { runIdx, gateIdx }
+
+  function hitTestGate(sx, sy) {
+    for (let ri=0; ri<S.runs.length; ri++) {
+      const run = S.runs[ri];
+      for (let gi=0; gi<run.gates.length; gi++) {
+        const g = run.gates[gi];
+        const seg = getSegment(run, g.segIdx);
+        if (!seg) continue;
+        const sa=w2s(seg.a.x,seg.a.y), sb=w2s(seg.b.x,seg.b.y);
+        const mx = sa.x+(sb.x-sa.x)*g.t;
+        const my = sa.y+(sb.y-sa.y)*g.t;
+        if (Math.hypot(sx-mx, sy-my) < 18) return { runIdx:ri, gateIdx:gi };
+      }
+    }
+    return null;
+  }
+
+  function openGateConfig(runIdx, gateIdx, clientX, clientY) {
+    _editingGate = { runIdx, gateIdx };
+    const g = S.runs[runIdx].gates[gateIdx];
+    // Set type
+    document.getElementById('fmgc-type-group').querySelectorAll('.fm-radio-opt').forEach(el =>
+      el.classList.toggle('selected', el.dataset.val === g.gateType));
+    // Set direction
+    document.getElementById('fmgc-dir-group').querySelectorAll('.fm-radio-opt').forEach(el =>
+      el.classList.toggle('selected', el.dataset.val === g.direction));
+    // Set swing
+    document.getElementById('fmgc-swing-group').querySelectorAll('.fm-radio-opt').forEach(el =>
+      el.classList.toggle('selected', el.dataset.val === g.swing));
+    // Show/hide swing section
+    document.getElementById('fmgc-swing-section').style.display = g.gateType === 'sliding' ? 'none' : '';
+    // Position panel
+    const panel = document.getElementById('fm-gate-config');
+    panel.style.display = 'block';
+    const pw=280, ph=260;
+    let left=clientX+12, top=clientY-20;
+    if (left+pw > window.innerWidth-10)  left = clientX-pw-12;
+    if (top+ph  > window.innerHeight-10) top  = window.innerHeight-ph-20;
+    panel.style.left = Math.max(10,left)+'px';
+    panel.style.top  = Math.max(10,top)+'px';
+    panel.style.right = 'auto';
+  }
+
+  window.closeFmGateConfig = function() {
+    document.getElementById('fm-gate-config').style.display = 'none';
+    _editingGate = null;
+  };
+
+  window.fmgcSelect = function(el, group) {
+    const groupId = group==='type' ? 'fmgc-type-group' : group==='dir' ? 'fmgc-dir-group' : 'fmgc-swing-group';
+    document.getElementById(groupId).querySelectorAll('.fm-radio-opt').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    if (group==='type') {
+      const isSliding = el.dataset.val === 'sliding';
+      document.getElementById('fmgc-swing-section').style.display = isSliding ? 'none' : '';
+    }
+  };
+
+  window.saveFmGateConfig = function() {
+    if (!_editingGate) return;
+    const { runIdx, gateIdx } = _editingGate;
+    const g = S.runs[runIdx].gates[gateIdx];
+    g.gateType  = document.querySelector('#fmgc-type-group .fm-radio-opt.selected')?.dataset.val  || g.gateType;
+    g.direction = document.querySelector('#fmgc-dir-group .fm-radio-opt.selected')?.dataset.val   || g.direction;
+    g.swing     = document.querySelector('#fmgc-swing-group .fm-radio-opt.selected')?.dataset.val || g.swing;
+    window.closeFmGateConfig();
+    render(); updateSummary();
+    showToast('Gate updated');
+  };
+
+  window.deleteFmGateFromConfig = function() {
+    if (!_editingGate) return;
+    const { runIdx, gateIdx } = _editingGate;
+    S.runs[runIdx].gates.splice(gateIdx, 1);
+    window.closeFmGateConfig();
+    render(); updateSummary(); updateApplyBtn();
+    showToast('Gate removed');
   };
 
   // ─── Inline segment label editing ────────────────────────────────────────
@@ -706,7 +806,7 @@
     if (S.mode!=='draw' || S.activeRun<0) return;
     const run = S.runs[S.activeRun];
     if (!run || !run.nodes.length || sx==null) return;
-    const col  = RUN_PALETTE[S.activeRun % RUN_PALETTE.length];
+    const col  = RUN_COLOUR;
     const last = w2s(run.nodes[run.nodes.length-1].x, run.nodes[run.nodes.length-1].y);
     octx.save();
     octx.strokeStyle=col; octx.lineWidth=2; octx.setLineDash([6,4]); octx.globalAlpha=.5;
@@ -724,21 +824,23 @@
 
   function drawGrid() {
     ctx.save();
-    ctx.strokeStyle=GRID_COLOUR; ctx.lineWidth=.5;
-    const wl=s2w(0,0).x, wr=s2w(W,0).x, wt=s2w(0,0).y, wb=s2w(0,H).y;
-    for (let wx=Math.floor(wl/GRID)*GRID; wx<=wr; wx+=GRID) {
-      const p=w2s(wx,0); ctx.beginPath(); ctx.moveTo(p.x,0); ctx.lineTo(p.x,H); ctx.stroke();
+    if (S.showGrid) {
+      ctx.strokeStyle=GRID_COLOUR; ctx.lineWidth=.5;
+      const wl=s2w(0,0).x, wr=s2w(W,0).x, wt=s2w(0,0).y, wb=s2w(0,H).y;
+      for (let wx=Math.floor(wl/GRID)*GRID; wx<=wr; wx+=GRID) {
+        const p=w2s(wx,0); ctx.beginPath(); ctx.moveTo(p.x,0); ctx.lineTo(p.x,H); ctx.stroke();
+      }
+      for (let wy=Math.floor(wt/GRID)*GRID; wy<=wb; wy+=GRID) {
+        const p=w2s(0,wy); ctx.beginPath(); ctx.moveTo(0,p.y); ctx.lineTo(W,p.y); ctx.stroke();
+      }
+      ctx.strokeStyle=AXIS_COLOUR; ctx.lineWidth=1;
+      const ax=w2s(0,0);
+      ctx.beginPath(); ctx.moveTo(ax.x,0);   ctx.lineTo(ax.x,H); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,ax.y);   ctx.lineTo(W,ax.y); ctx.stroke();
     }
-    for (let wy=Math.floor(wt/GRID)*GRID; wy<=wb; wy+=GRID) {
-      const p=w2s(0,wy); ctx.beginPath(); ctx.moveTo(0,p.y); ctx.lineTo(W,p.y); ctx.stroke();
-    }
-    ctx.strokeStyle=AXIS_COLOUR; ctx.lineWidth=1;
-    const ax=w2s(0,0);
-    ctx.beginPath(); ctx.moveTo(ax.x,0);   ctx.lineTo(ax.x,H); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0,ax.y);   ctx.lineTo(W,ax.y); ctx.stroke();
     ctx.font='10px sans-serif'; ctx.fillStyle='#9ca3af';
     const runCount = S.runs.filter(r=>r.nodes.length>=2).length;
-    ctx.fillText(`1 sq = ${(S.scale/1000).toFixed(2)}m  |  zoom ${S.zoom.toFixed(2)}×  |  ${runCount} run${runCount!==1?'s':''}`, 8, H-8);
+    ctx.fillText(`zoom ${S.zoom.toFixed(2)}×  |  ${runCount} run${runCount!==1?'s':''}`, 8, H-8);
     ctx.restore();
   }
 
@@ -965,10 +1067,9 @@
     document.getElementById('fm-clear').addEventListener('click', doClear);
     const rb = document.getElementById('fm-reset-view');
     if (rb) rb.addEventListener('click', ()=>{ S.zoom=1; S.panX=0; S.panY=0; render(); });
-    document.getElementById('fm-scale').addEventListener('change', function(){
-      const v=parseInt(this.value); if(v>0){S.scale=v; render(); updateSummary();}
-    });
     document.getElementById('fm-snap-cb').addEventListener('change', function(){ S.snap=this.checked; });
+    const gridCb = document.getElementById('fm-grid-cb');
+    if (gridCb) gridCb.addEventListener('change', function(){ S.showGrid=this.checked; render(); });
     const mapBtn = document.getElementById('fm-load-map');
     if (mapBtn) mapBtn.addEventListener('click', loadGoogleMap);
     const expandBtn = document.getElementById('fm-expand-btn');
@@ -1055,6 +1156,9 @@
   function onCanvasClick(e) {
     if (_suppressClick) { _suppressClick=false; return; }
     const s=evtScreen(e);
+    // Gate click takes priority
+    const gateHit = hitTestGate(s.x, s.y);
+    if (gateHit) { openGateConfig(gateHit.runIdx, gateHit.gateIdx, e.clientX, e.clientY); return; }
     const hit=hitTestLabelRects(s.x,s.y);
     if (hit) {
       if (hit.type==='label') openInlineEdit(hit.runIdx, hit.segIdx, hit.rect);
@@ -1327,7 +1431,7 @@
         }
         ({lat,lng}=geoData.results[0].geometry.location);
       }
-      const zoom=20, imgW=800, imgH=600;
+      const zoom=18, imgW=800, imgH=600;
       const mapType = document.getElementById('fm-map-type')?.value || 'satellite';
       const mapUrl=`https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=${zoom}&size=${imgW}x${imgH}&maptype=${mapType}&key=${apiKey}`;
       const img=new Image();
@@ -1365,7 +1469,7 @@
     let rows='', grandFence=0, grandGates=0, grandCorners=0;
     S.runs.forEach((run,ri)=>{
       if (run.nodes.length<2) return;
-      const segs=getRunSegments(run), col=RUN_PALETTE[ri%RUN_PALETTE.length];
+      const segs=getRunSegments(run), col=RUN_COLOUR;
       let fence=0,gates=0,corners=0;
       segs.forEach((seg,si)=>{
         const mm=segLenMm(seg);
@@ -1458,6 +1562,12 @@
       else nlEl.value=note+nlEl.value.replace(/^\[Layout:[^\]]*\]\n?/,'\n').trimStart();
     }
 
+    // Sync gate list to main form gates section
+    if (typeof window.fmSyncGates === 'function') {
+      const allGates = valid.reduce((arr, run) => arr.concat(run.gates || []), []);
+      window.fmSyncGates(allGates);
+    }
+
     if(typeof onConfigChange==='function') onConfigChange();
     S.applied=true;
     const totalM=(window.fmRuns.reduce((s,r)=>s+r.totalLengthMm,0)/1000).toFixed(2);
@@ -1488,7 +1598,7 @@
     c2.fillStyle='#fff'; c2.fillRect(0,0,oc.width,oc.height);
     const ox=margin-minX, oy=margin-minY;
     S.runs.forEach((run,ri)=>{
-      const col=RUN_PALETTE[ri%RUN_PALETTE.length];
+      const col=RUN_COLOUR;
       const segs=getRunSegments(run);
       segs.forEach((seg,si)=>{
         const gons=run.gates.filter(g=>g.segIdx===si);

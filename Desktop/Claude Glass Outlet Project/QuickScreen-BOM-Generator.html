@@ -333,15 +333,10 @@
         <button class="fm-btn" id="fm-expand-btn" title="Toggle tall canvas for complex layouts">⤢ Expand Canvas</button>
       </div>
       <div id="fm-scale-row">
-        <span style="color:#888;font-size:11px">⚙ Scale (mm/sq):</span>
-        <span style="display:inline-flex;align-items:center;gap:3px;background:#fff;border:1.5px dashed #ccd4e0;border-radius:5px;padding:1px 4px" title="Grid scale — double-click a segment to recalibrate">
-          <input type="number" id="fm-scale" value="1000" min="100" step="100" style="width:65px;border:none;outline:none;font-size:12px;background:transparent">
-          <span style="font-size:10px;color:#aaa">✏</span>
-        </span>
-        <span style="color:#aaa;font-size:11px">(double-click a segment to recalibrate)</span>
         <label id="fm-snap-toggle"><input type="checkbox" id="fm-snap-cb" checked> Snap</label>
+        <label style="display:flex;align-items:center;gap:4px"><input type="checkbox" id="fm-grid-cb" checked> Grid</label>
         <span style="color:#aaa">·</span>
-        <span style="font-size:11px;color:#999">Scroll = zoom &nbsp; Right-drag = pan &nbsp; Double-click to finish run &nbsp; Click label to edit length &nbsp; ⚙ to configure run</span>
+        <span style="font-size:11px;color:#999">Scroll = zoom &nbsp; Right-drag = pan &nbsp; Click label = edit length &nbsp; ⚙ = configure run &nbsp; Click gate = configure</span>
       </div>
       <div id="fm-map-row" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:#666;margin-bottom:6px">
         <span>🗺</span>
@@ -1907,6 +1902,31 @@ function renderGateList() {
       <button class="btn btn-sm" style="background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;flex-shrink:0" onclick="removeGate(${i})">✕ Remove</button>
     </div>`).join('');
 }
+
+// ─── Fence mapper gate sync ───────────────────────────────────────────────────
+window.fmSyncGates = function(mapperGates) {
+  if (!mapperGates || !mapperGates.length) return;
+  const fenceHeight = parseInt(document.getElementById('slat-calc-box')?.dataset.actualHeight)
+    || parseInt(document.getElementById('targetHeight')?.value) || 1800;
+  const fenceCol    = document.getElementById('colour')?.value    || 'B';
+  const fenceGap    = parseInt(document.getElementById('slatGap')?.value)  || 9;
+  const fenceSlatSz = parseInt(document.getElementById('slatSize')?.value) || 65;
+  gateList = mapperGates.map(mg => ({
+    type:     mg.gateType === 'sliding' ? 'sliding' : mg.gateType === 'double' ? 'double_swing' : 'single_swing',
+    width:    mg.widthMm,
+    height:   Math.min(fenceHeight, 2100),
+    col:      fenceCol,
+    gap:      fenceGap,
+    slatSize: fenceSlatSz,
+    qty:      1,
+    postSize: 65,
+    warnings: []
+  }));
+  renderGateList();
+  // Scroll gates section into view
+  const gc = document.getElementById('gates-card');
+  if (gc) gc.scrollIntoView({ behavior:'smooth', block:'nearest' });
+};
 
 // ─── SWING GATE BOM ───────────────────────────────────────────────────────────
 function generateSwingGateBOM(gate, sectionBase) {
