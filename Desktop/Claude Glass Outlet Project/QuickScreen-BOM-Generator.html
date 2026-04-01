@@ -982,11 +982,14 @@ Description: "${desc}"
   "gates": [
     {"type": "<single_swing|double_swing|sliding>", "openingWidth": <mm or null>, "height": <mm or null or "match">, "gap": <5|9|20 or "match">, "colour": "<code or 'match'>", "qty": <1>}
   ],
+  "systemType": "<qshs|vs|xpl|bayg or null>",
   "summary": "<1-2 sentence summary>",
   "missing": ["list any info still needed to complete the BOM, e.g. 'gate opening width', 'gate height', 'post mounting method'"]
 }
 Colour codes: B=Black Satin, MN=Monument, G=Woodland Grey, SM=Surfmist, W=Pearl White, BS=Basalt, D=Dune, M=Mill, S=Palladium Silver
 Gate types: single_swing=pedestrian hinged single leaf, double_swing=pedestrian hinged double leaf pair, sliding=driveway sliding gate
+System types: qshs=horizontal slat screen (standard, default), vs=vertical slat screen (slats run vertically), xpl=XPress Plus Premium (insert system, 65mm only, premium), bayg=Buy As You Go (spacers separate).
+Detect system type from keywords: "vertical" → vs; "xpress plus", "premium", "insert system", "XPL" → xpl; "buy as you go", "BAYG" → bayg; "horizontal" or no mention → qshs.
 If gates are mentioned but opening width or height is missing, add to "missing" array.`;
 
   try {
@@ -1009,6 +1012,10 @@ If gates are mentioned but opening width or height is missing, add to "missing" 
     if (p.rightTerm)    set('rightTerm', p.rightTerm);
     if (p.postMount)    set('postMount', p.postMount);
     if (p.corners != null) set('corners', p.corners);
+    if (p.systemType && ['qshs','vs','xpl','bayg'].includes(p.systemType)) {
+      set('systemType', p.systemType);
+      if (typeof onSystemChange === 'function') onSystemChange();
+    }
     // Apply gates
     if (p.gates && Array.isArray(p.gates)) {
       const fenceHeight = parseInt(document.getElementById('targetHeight').value) || 2100;
@@ -1077,6 +1084,10 @@ function parseNL() {
   else if(/post.to.wall|wall.to.post/.test(txt))  {set('leftTerm','post');set('rightTerm','wall');found.push('post-to-wall');}
   else if(/wall.to.wall/.test(txt))               {set('leftTerm','wall');set('rightTerm','wall');found.push('wall-to-wall');}
   if(/wind|exposed|coastal/.test(txt)){set('maxPanel','2000');found.push('windy 2000mm');}
+  if(/\bvertical\b/.test(txt))                                      { set('systemType','vs');   if(typeof onSystemChange==='function')onSystemChange(); found.push('VS vertical slat'); }
+  else if(/xpress.plus|xpl\b|insert.system|\bpremium\b/.test(txt)) { set('systemType','xpl');  if(typeof onSystemChange==='function')onSystemChange(); found.push('XPL premium'); }
+  else if(/buy.as.you.go|bayg\b/.test(txt))                         { set('systemType','bayg'); if(typeof onSystemChange==='function')onSystemChange(); found.push('BAYG'); }
+  else if(/\bhorizontal\b/.test(txt))                               { set('systemType','qshs'); if(typeof onSystemChange==='function')onSystemChange(); found.push('QSHS horizontal'); }
   const cM=txt.match(/(\d)\s*(?:90.degree|corner|turn|bend)/);
   if(cM){set('corners',parseInt(cM[1]));found.push(`${cM[1]} corner(s)`);}
   status.textContent = found.length ? `✓ Detected: ${found.join(', ')}` : '⚠ Nothing detected — fill manually.';
