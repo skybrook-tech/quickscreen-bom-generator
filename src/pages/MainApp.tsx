@@ -1,24 +1,49 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { AppShell } from '../components/layout/AppShell';
 import { FenceConfigForm } from '../components/fence/FenceConfigForm';
 import { GateConfigPanel } from '../components/gate/GateConfigPanel';
 import { BOMDisplay } from '../components/bom/BOMDisplay';
 import { PricingTierSelect } from '../components/bom/PricingTierSelect';
+import { QuoteActions } from '../components/quote/QuoteActions';
+import { SavedQuotesList } from '../components/quote/SavedQuotesList';
+import { ContactDeliveryForm } from '../components/contact/ContactDeliveryForm';
+import { JobSummary } from '../components/contact/JobSummary';
 import { FenceConfigProvider, useFenceConfig } from '../context/FenceConfigContext';
 import { GateProvider, useGates } from '../context/GateContext';
 import { AccordionSection } from '../components/shared/AccordionSection';
 import { useBOM } from '../hooks/useBOM';
+import { useAuth } from '../hooks/useAuth';
+import { supabase } from '../lib/supabase';
+import { defaultContactInfo } from '../schemas/contact.schema';
 import type { BOMResult, PricingTier } from '../types/bom.types';
+import type { ContactInfo } from '../schemas/contact.schema';
+import type { SavedQuote } from '../types/quote.types';
 
-// Inner component — rendered inside both providers, so hooks can access context
 function AppContent() {
-  const { state: fenceConfig } = useFenceConfig();
-  const { gates } = useGates();
-  const [pricingTier, setPricingTier] = useState<PricingTier>('tier1');
-  const [bomResult, setBomResult] = useState<BOMResult | null>(null);
+  const { state: fenceConfig, dispatch: fenceDispatch } = useFenceConfig();
+  const { gates, dispatch: gateDispatch } = useGates();
+  const { user } = useAuth();
+
+  const [pricingTier,  setPricingTier]  = useState<PricingTier>('tier1');
+  const [bomResult,    setBomResult]    = useState<BOMResult | null>(null);
+  const [contact,      setContact]      = useState<ContactInfo>(defaultContactInfo);
+  const [notes,        setNotes]        = useState('');
+  const [showSaved,    setShowSaved]    = useState(false);
+  const [orgId,        setOrgId]        = useState('');
+
   const bomMutation = useBOM();
 
+  // Fetch org_id once so QuoteActions can include it on insert
+  const ensureOrgId = useCallback(async () => {
+    if (orgId) return orgId;
+    const { data } = await supabase.from('profiles').select('org_id').eq('id', user?.id ?? '').single();
+    const id = data?.org_id ?? '';
+    setOrgId(id);
+    return id;
+  }, [orgId, user?.id]);
+
   const handleGenerate = async () => {
+    await ensureOrgId();
     try {
       const result = await bomMutation.mutateAsync({ fenceConfig, gates, pricingTier });
       setBomResult(result);
@@ -27,15 +52,23 @@ function AppContent() {
     }
   };
 
+  // Load a saved quote back into all form state
+  const handleLoadQuote = (quote: SavedQuote) => {
+    fenceDispatch({ type: 'LOAD_FROM_QUOTE', config: quote.fence_config });
+    gateDispatch({ type: 'SET_GATES', gates: quote.gates });
+    setBomResult(quote.bom);
+    setContact(quote.contact ?? defaultContactInfo);
+    setNotes(quote.notes ?? '');
+    setOrgId(quote.org_id);
+  };
+
   return (
     <div className="space-y-4">
+
       {/* ── Fence Configuration ─────────────────────────────────── */}
       <AccordionSection title="Fence Configuration">
         <div className="pt-4">
-          <FenceConfigForm
-            onGenerate={handleGenerate}
-            generating={bomMutation.isPending}
-          />
+          <FenceConfigForm onGenerate={handleGenerate} generating={bomMutation.isPending} />
         </div>
       </AccordionSection>
 
@@ -43,6 +76,30 @@ function AppContent() {
       <AccordionSection title="Gate Configuration">
         <div className="pt-4">
           <GateConfigPanel />
+        </div>
+      </AccordionSection>
+
+      {/* ── Contact & Delivery ──────────────────────────────────── */}
+      <AccordionSection title="Contact & Delivery">
+        <div className="pt-4 space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <ContactDeliveryForm onChange={setContact} initialValues={contact} />
+            </div>
+            <div>
+              <JobSummary fenceConfig={fenceConfig} gates={gates} />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs text-brand-muted mb-1">Quote Notes</label>
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={2}
+              placeholder="Internal notes for this quote…"
+              className="w-full px-2.5 py-2 bg-brand-bg border border-brand-border rounded text-sm text-brand-text focus:outline-none focus:border-brand-accent resize-none"
+            />
+          </div>
         </div>
       </AccordionSection>
 
@@ -55,21 +112,46 @@ function AppContent() {
             )}
             {bomMutation.isError && (
               <p className="text-sm text-red-400 py-4">
-                {bomMutation.error instanceof Error ? bomMutation.error.message : 'BOM calculation failed. Is Supabase running?'}
+                {bomMutation.error instanceof Error
+                  ? bomMutation.error.message
+                  : 'BOM calculation failed. Is Supabase running?'}
               </p>
             )}
             {bomResult && !bomMutation.isPending && (
-              <>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm text-brand-muted">Pricing tier:</span>
-                  <PricingTierSelect value={pricingTier} onChange={setPricingTier} />
+              <div className="space-y-4">
+                {/* Tier selector + export actions */}
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-brand-muted">Tier:</span>
+                    <PricingTierSelect value={pricingTier} onChange={setPricingTier} />
+                  </div>
+                  <QuoteActions
+                    fenceConfig={fenceConfig}
+                    gates={gates}
+                    bom={bomResult}
+                    contact={contact}
+                    customerRef={fenceConfig.customerRef ?? ''}
+                    notes={notes}
+                    orgId={orgId}
+                    onShowSaved={() => setShowSaved(true)}
+                  />
                 </div>
+
                 <BOMDisplay result={bomResult} />
-              </>
+              </div>
             )}
           </div>
         </AccordionSection>
       )}
+
+      {/* ── Saved quotes panel ──────────────────────────────────── */}
+      {showSaved && (
+        <SavedQuotesList
+          onLoad={handleLoadQuote}
+          onClose={() => setShowSaved(false)}
+        />
+      )}
+
     </div>
   );
 }

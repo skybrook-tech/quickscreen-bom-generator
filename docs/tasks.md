@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-> **Phase 5 — Quotes & Export** (next up)
+> **Phase 6 — Canvas Layout Tool** (next up)
 
 ---
 
@@ -15,7 +15,7 @@
 | 2 | Fence Configuration | ✅ Complete |
 | 3 | Gate Configuration | ✅ Complete |
 | 4 | BOM Engine (Edge Functions) | ✅ Complete |
-| 5 | Quotes & Export | 🔄 In progress |
+| 5 | Quotes & Export | ✅ Complete |
 | 6 | Canvas Layout Tool | ⬜ Not started |
 | 7 | Polish | ⬜ Not started |
 
@@ -128,20 +128,22 @@
 
 > See [phase-5-quotes-and-export.md](./phase-5-quotes-and-export.md)
 
-- [ ] Write `src/schemas/quote.schema.ts` and `src/schemas/contact.schema.ts`
-- [ ] Write `src/types/quote.types.ts`
-- [ ] Build `useQuotes.ts` hook (TanStack Query — list, save, load, delete)
-- [ ] Build `SavedQuotesList.tsx`
-- [ ] Build `QuoteActions.tsx` (Print, CSV, Copy, Save buttons)
-- [ ] Build `QuotePDFTemplate.tsx` (@react-pdf/renderer)
-- [ ] Build `ContactDeliveryForm.tsx`
-- [ ] Build `JobSummary.tsx`
-- [ ] Implement CSV export (Papaparse)
-- [ ] Implement PDF download
-- [ ] Implement clipboard copy (tab-separated for Excel)
-- [ ] Build print stylesheet (`@media print`)
-- [ ] Build `QuoteViewPage.tsx`
-- [ ] Verify quote save → reload correctly repopulates all form state
+- [x] Write `src/schemas/quote.schema.ts` and `src/schemas/contact.schema.ts`
+- [x] Write `src/types/quote.types.ts`
+- [x] Build `useQuotes.ts` hook (TanStack Query — list, save, load, delete, invalidate)
+- [x] Build `SavedQuotesList.tsx` (slide-in panel, load + delete actions)
+- [x] Build `QuoteActions.tsx` (Save, Load, PDF, CSV, Copy, Print buttons)
+- [x] Build `QuotePDFTemplate.tsx` (@react-pdf/renderer — fence spec, gates, BOM table, totals)
+- [x] Build `ContactDeliveryForm.tsx` (name, company, phone, email, fulfilment, delivery address)
+- [x] Build `JobSummary.tsx` (live panel + gate count preview)
+- [x] Implement CSV export (Papaparse — all BOM items + grand total row)
+- [x] Implement PDF download (react-pdf blob → anchor click)
+- [x] Implement clipboard copy (tab-separated for Excel/Sheets paste)
+- [x] Build print stylesheet (`@media print` in index.css)
+- [x] Build `QuoteViewPage.tsx` at `/quote/:id`
+- [x] Add `/quote/:id` route to App.tsx + QueryClientProvider
+- [x] `handleLoadQuote` in MainApp repopulates fence config, gates, BOM, contact, notes
+- [x] App.tsx wraps entire tree in QueryClientProvider
 
 ---
 

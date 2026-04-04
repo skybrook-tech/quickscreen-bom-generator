@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media print {
+  /* Hide everything except the BOM table and summary */
+  body > * { display: none !important; }
+  body > #root { display: block !important; }
+
+  header, nav, aside,
+  [data-print-hide],
+  button,
+  form,
+  .accordion-trigger { display: none !important; }
+
+  [data-testid="bom-table"],
+  [data-testid="bom-grand-total"],
+  .print\:block { display: block !important; }
+
+  body { background: white !important; color: black !important; }
+  table { border-collapse: collapse; width: 100%; font-size: 11pt; }
+  th, td { border: 1px solid #ccc; padding: 4px 8px; }
+  th { background: #f0f0f0; font-weight: bold; }
+}
