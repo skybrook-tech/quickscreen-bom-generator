@@ -4,11 +4,12 @@
  * Verifies all colour-dependent SKU suffixes switch from -SM to -B.
  * Grand total is identical to TC1 — colour does not affect pricing.
  */
-import { fillFenceConfig, generateBom, assertBomLine, assertGrandTotal, assertAllColouredCodesEndWith } from '../../support/helpers';
+import { fillFenceConfig, generateBom, assertBomLine, assertGrandTotal, assertAllColouredCodesEndWith, signin } from '../../support/helpers';
 
 describe('TC2 — QSHS Colour Switch to Black Satin', () => {
   beforeEach(() => {
     cy.visit('/');
+    signin();
   });
 
   it('should switch all colour-dependent codes to -B suffix', () => {

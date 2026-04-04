@@ -7,6 +7,11 @@
  * Both targets must use the same data-testid values.
  */
 export const SEL = {
+  // Sign in inputs
+  signInBtn:        '[data-testid="sign-in-btn"]',
+  emailInput:       '[data-testid="email-input"]',
+  passwordInput:    '[data-testid="password-input"]',
+
   // Fence config inputs
   systemType:       '[data-testid="system-type"]',
   runLength:        '[data-testid="run-length"]',
@@ -49,4 +54,4 @@ export const SEL = {
   bomViewAll:       '[data-testid="bom-view-all"]',
   bomViewFence:     '[data-testid="bom-view-fence"]',
   bomViewGates:     '[data-testid="bom-view-gates"]',
-} as const;
+};

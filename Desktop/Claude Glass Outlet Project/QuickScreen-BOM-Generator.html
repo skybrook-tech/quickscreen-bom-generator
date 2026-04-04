@@ -291,14 +291,14 @@
     <p>Sign in to save and manage your quotes</p>
     <div class="auth-field">
       <label>Email address</label>
-      <input type="email" id="auth-email" placeholder="you@example.com" autocomplete="email">
+      <input data-testid="email-input" type="email" id="auth-email" placeholder="you@example.com" autocomplete="email">
     </div>
     <div class="auth-field">
       <label>Password</label>
-      <input type="password" id="auth-password" placeholder="Enter your password" autocomplete="current-password">
+      <input data-testid="password-input" type="password" id="auth-password" placeholder="Enter your password" autocomplete="current-password">
     </div>
     <div id="auth-error"></div>
-    <button id="auth-submit" onclick="handleAuth()">Sign In</button>
+    <button data-testid="sign-in-btn" id="auth-submit" onclick="handleAuth()">Sign In</button>
     <div id="auth-switch">Don't have an account? <a onclick="toggleAuthMode()">Sign up</a></div>
     <div class="auth-powered">© SkybrookAI · Built for The Glass Outlet</div>
   </div>

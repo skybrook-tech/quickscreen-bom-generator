@@ -8,20 +8,7 @@ import { SEL } from './selectors';
  * The existing HTML app uses metres — if the input has data-unit="m", the value
  * is automatically divided by 1000 before typing.
  */
-export function fillFenceConfig(config: {
-  systemType?: string;
-  runLength?: number;
-  targetHeight?: number;
-  slatSize?: string;
-  slatGap?: string;
-  colour?: string;
-  maxPanelWidth?: string;
-  postMounting?: string;
-  leftTermination?: string;
-  rightTermination?: string;
-  corners?: number;
-  pricingTier?: string;
-}) {
+export function fillFenceConfig(config) {
   if (config.systemType != null) {
     cy.get(SEL.systemType).select(config.systemType);
   }
@@ -29,7 +16,7 @@ export function fillFenceConfig(config: {
     // Support both mm-native inputs and the existing HTML app's metre-based input.
     cy.get(SEL.runLength).then(($el) => {
       const unit = $el.attr('data-unit') || 'mm';
-      const val = unit === 'm' ? config.runLength! / 1000 : config.runLength!;
+      const val = unit === 'm' ? config.runLength / 1000 : config.runLength;
       cy.wrap($el).clear().type(String(val));
     });
   }
@@ -60,25 +47,16 @@ export function fillFenceConfig(config: {
   if (config.corners != null) {
     cy.get(SEL.corners).clear().type(String(config.corners));
   }
-  if (config.pricingTier != null) {
-    cy.get(SEL.pricingTier).select(config.pricingTier);
-  }
+  // if (config.pricingTier != null) {
+  //   cy.get(SEL.pricingTier).select(config.pricingTier);
+  // }
 }
 
 /**
  * Add a gate to the configuration.
  * Clicks the "Add Gate" button, fills the gate form, and saves it.
  */
-export function addGate(gate: {
-  gateType?: string;
-  openingWidth?: number;
-  postSize?: string;
-  height?: string;
-  colour?: string;
-  slatGap?: string;
-  slatSize?: string;
-  matchFence?: boolean;
-}) {
+export function addGate(gate) {
   cy.get(SEL.addGateBtn).click();
 
   // Handle match-fence toggle. Default is checked (match), so only uncheck if explicitly false.
@@ -124,12 +102,8 @@ export function generateBom() {
  * Uses product code as the lookup key.
  */
 export function assertBomLine(
-  code: string,
-  expected: {
-    qty?: number;
-    unitPrice?: number;
-    lineTotal?: number;
-  }
+  code,
+  expected
 ) {
   cy.get(SEL.bomTable)
     .contains(SEL.bomRow, code)
@@ -149,14 +123,14 @@ export function assertBomLine(
 /**
  * Assert a specific product code appears in the BOM (without checking values).
  */
-export function assertBomContainsCode(code: string) {
+export function assertBomContainsCode(code) {
   cy.get(SEL.bomTable).should('contain', code);
 }
 
 /**
  * Assert a product code does NOT appear in the BOM.
  */
-export function assertBomDoesNotContainCode(code: string) {
+export function assertBomDoesNotContainCode(code) {
   cy.get(SEL.bomTable).should('not.contain', code);
 }
 
@@ -164,7 +138,7 @@ export function assertBomDoesNotContainCode(code: string) {
  * Assert the grand total matches the expected value.
  * Tolerance of ±$0.02 for rounding differences.
  */
-export function assertGrandTotal(expected: number) {
+export function assertGrandTotal(expected) {
   cy.get(SEL.bomGrandTotal).invoke('text').then((text) => {
     const actual = parseFloat(text.replace(/[$,]/g, ''));
     expect(actual).to.be.closeTo(expected, 0.02);
@@ -176,7 +150,7 @@ export function assertGrandTotal(expected: number) {
  * Used by colour switch tests. Pass the suffix like '-B' or '-SM'.
  * Excludes colour-agnostic items (e.g. spacer blocks XPL-SB-50PK-09MM, black nylon caps QS-SFC-B).
  */
-export function assertAllColouredCodesEndWith(suffix: string) {
+export function assertAllColouredCodesEndWith(suffix) {
   // Colour-agnostic code patterns that should be skipped
   const agnosticPatterns = ['XPL-SB-', 'QS-SFC-B'];
 
@@ -189,4 +163,13 @@ export function assertAllColouredCodesEndWith(suffix: string) {
       );
     }
   });
+}
+
+
+export function signin() {
+
+  cy.get(SEL.signInBtn).click();
+  cy.get(SEL.emailInput).type('test@cy.com');
+  cy.get(SEL.passwordInput).type('123456');
+  cy.get(SEL.signInBtn).click();
 }

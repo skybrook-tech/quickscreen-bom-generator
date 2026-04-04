@@ -3,12 +3,13 @@
  * TC1 baseline fence + 1 single swing gate (1000mm wide, match fence colour/height).
  * Gate-specific codes must appear. Grand total must exceed TC1's $4,475.29.
  */
-import { fillFenceConfig, addGate, generateBom, assertBomContainsCode } from '../../support/helpers';
+import { fillFenceConfig, addGate, generateBom, assertBomContainsCode, signin } from '../../support/helpers';
 import { SEL } from '../../support/selectors';
 
 describe('TC17 — Single Swing Pedestrian Gate (Match Fence)', () => {
   beforeEach(() => {
     cy.visit('/');
+    signin();
   });
 
   it('should add gate-specific items to BOM separate from fence', () => {

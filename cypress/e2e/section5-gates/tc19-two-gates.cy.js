@@ -3,12 +3,13 @@
  * Adding 2 identical gates should double all gate quantities vs TC17.
  * Grand total = fence total + 2 × single gate total.
  */
-import { fillFenceConfig, addGate, generateBom } from '../../support/helpers';
+import { fillFenceConfig, addGate, generateBom, signin } from '../../support/helpers';
 import { SEL } from '../../support/selectors';
 
 describe('TC19 — Two Gates', () => {
   beforeEach(() => {
     cy.visit('/');
+    signin();
   });
 
   it('should include items for both gates in the BOM', () => {

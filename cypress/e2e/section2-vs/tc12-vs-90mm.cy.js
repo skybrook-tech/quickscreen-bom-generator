@@ -3,11 +3,12 @@
  * Verifies colour code switching works for VS system with 90mm slats.
  * All colour-dependent codes must end in -B.
  */
-import { fillFenceConfig, generateBom, assertAllColouredCodesEndWith } from '../../support/helpers';
+import { fillFenceConfig, generateBom, assertAllColouredCodesEndWith, signin } from '../../support/helpers';
 
 describe('TC12 — VS 90mm Slat in Black Satin', () => {
   beforeEach(() => {
     cy.visit('/');
+    signin();
   });
 
   it('should use 90mm vertical slat code with Black Satin colour codes', () => {

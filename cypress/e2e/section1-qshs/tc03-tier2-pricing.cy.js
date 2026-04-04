@@ -3,11 +3,12 @@
  * Identical config to TC1 but pricing tier changed to Tier 2.
  * Quantities are identical to TC1; unit prices are lower.
  */
-import { fillFenceConfig, generateBom, assertBomLine, assertGrandTotal } from '../../support/helpers';
+import { fillFenceConfig, generateBom, assertBomLine, assertGrandTotal, signin } from '../../support/helpers';
 
 describe('TC3 — QSHS Tier 2 Pricing', () => {
   beforeEach(() => {
     cy.visit('/');
+    signin();
   });
 
   it('should apply Tier 2 unit prices to all items', () => {

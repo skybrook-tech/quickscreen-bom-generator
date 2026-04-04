@@ -24,3 +24,5 @@ Desktop/Claude Glass Outlet Project/archive/*
 !.claude/skills/
 !.claude/skills/quickscreen-bom/
 !.claude/skills/quickscreen-bom/**
+
+node_modules/

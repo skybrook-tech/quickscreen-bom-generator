@@ -2,11 +2,12 @@
  * TC14 — XPL Colour Switch to Black Satin
  * All XPL colour-dependent codes must switch to -B suffix.
  */
-import { fillFenceConfig, generateBom, assertAllColouredCodesEndWith } from '../../support/helpers';
+import { fillFenceConfig, generateBom, assertAllColouredCodesEndWith, signin } from '../../support/helpers';
 
 describe('TC14 — XPL Colour Switch to Black Satin', () => {
   beforeEach(() => {
     cy.visit('/');
+    signin();
   });
 
   it('should switch all XPL colour-dependent codes to -B', () => {

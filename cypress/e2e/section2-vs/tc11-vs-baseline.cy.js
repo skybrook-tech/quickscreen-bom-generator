@@ -5,11 +5,12 @@
  *
  * Note: Exact prices for VS system are pending confirmation — this test is structural.
  */
-import { fillFenceConfig, generateBom, assertBomContainsCode, assertBomDoesNotContainCode } from '../../support/helpers';
+import { fillFenceConfig, generateBom, assertBomContainsCode, assertBomDoesNotContainCode, signin } from '../../support/helpers';
 
 describe('TC11 — VS Vertical Slat Screen Baseline', () => {
   beforeEach(() => {
     cy.visit('/');
+    signin();
   });
 
   it('should produce VS-specific product codes', () => {

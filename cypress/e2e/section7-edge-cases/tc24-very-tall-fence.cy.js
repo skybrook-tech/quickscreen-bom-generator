@@ -3,12 +3,13 @@
  * Maximum height should generate a valid BOM with no negative quantities.
  * ~32 slats per panel at 65mm + 9mm gap for 2400mm target height.
  */
-import { fillFenceConfig, generateBom } from '../../support/helpers';
+import { fillFenceConfig, generateBom, signin } from '../../support/helpers';
 import { SEL } from '../../support/selectors';
 
 describe('TC24 — Very Tall Fence (2400mm)', () => {
   beforeEach(() => {
     cy.visit('/');
+    signin();
   });
 
   it('should generate BOM without errors for maximum height', () => {
