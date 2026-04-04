@@ -1,12 +1,5 @@
 -- 002_create_profiles.sql
 
--- Helper function: get the current user's org_id from their profile.
--- Used by all RLS policies. SECURITY DEFINER so it can read profiles regardless of RLS.
-CREATE OR REPLACE FUNCTION auth.user_org_id()
-RETURNS UUID AS $$
-  SELECT org_id FROM public.profiles WHERE id = auth.uid()
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
-
 CREATE TABLE profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   org_id UUID NOT NULL REFERENCES organisations(id),
@@ -18,6 +11,15 @@ CREATE TABLE profiles (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Helper function: resolve the calling user's org_id.
+-- Defined after the table so PostgreSQL can validate the reference at creation time.
+-- SECURITY DEFINER so it reads profiles regardless of RLS on that table.
+-- Used by all RLS policies below and in subsequent migrations.
+CREATE OR REPLACE FUNCTION public.user_org_id()
+RETURNS UUID AS $$
+  SELECT org_id FROM public.profiles WHERE id = auth.uid()
+$$ LANGUAGE sql SECURITY DEFINER STABLE;
+
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can view own profile" ON profiles
@@ -28,7 +30,7 @@ CREATE POLICY "Users can update own profile" ON profiles
 
 -- Admins/owners can view all profiles in their org
 CREATE POLICY "Org admins can view org profiles" ON profiles
-  FOR SELECT USING (org_id = auth.user_org_id());
+  FOR SELECT USING (org_id = public.user_org_id());
 
 -- Auto-create profile on signup.
 -- Defaults new users to The Glass Outlet org if no org_id is provided in metadata.

@@ -18,12 +18,12 @@ ALTER TABLE quotes ENABLE ROW LEVEL SECURITY;
 
 -- Users see all quotes in their org (staff need to see each other's quotes)
 CREATE POLICY "Users can view org quotes" ON quotes
-  FOR SELECT USING (org_id = auth.user_org_id());
+  FOR SELECT USING (org_id = public.user_org_id());
 
 -- Users can only insert/update/delete their own quotes
 CREATE POLICY "Users can insert own quotes" ON quotes
   FOR INSERT WITH CHECK (
-    org_id = auth.user_org_id() AND user_id = auth.uid()
+    org_id = public.user_org_id() AND user_id = auth.uid()
   );
 
 CREATE POLICY "Users can update own quotes" ON quotes
