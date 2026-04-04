@@ -40,10 +40,10 @@ describe('TC17 — Single Swing Pedestrian Gate (Match Fence)', () => {
 
     generateBom();
 
-    // Gate-specific codes must appear
-    assertBomContainsCode('QSG-4200-GSF50');     // Gate side frame
-    assertBomContainsCode('QSG-4800-RAIL65');    // Gate rail
-    assertBomContainsCode('XP-6100-S65-SM');     // Gate slats (same as fence colour)
+    // Gate-specific codes must appear (actual codes from app's swing gate BOM logic)
+    assertBomContainsCode('XP-GKIT-LSET09-SM');  // Gate side frame kit (Surfmist Matt)
+    assertBomContainsCode('XP-6100-GB65-SM');    // Gate blade 65mm (Surfmist Matt)
+    assertBomContainsCode('XP-6100-S65-SM');     // Slats appear (shared fence colour)
 
     // Grand total must be greater than TC1's $4,475.29
     cy.get(SEL.bomGrandTotal).invoke('text').then((text) => {

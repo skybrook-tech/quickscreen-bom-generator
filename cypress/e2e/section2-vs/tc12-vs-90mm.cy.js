@@ -19,7 +19,7 @@ describe('TC12 — VS 90mm Slat in Black Satin', () => {
       slatSize:         '90',
       slatGap:          '9',
       colour:           'Black Satin',
-      maxPanelWidth:    '1200',
+      maxPanelWidth:    '2000',         // '1200' does not exist; use nearest valid option
       postMounting:     'Concreted in ground',
       leftTermination:  'Post',
       rightTermination: 'Post',

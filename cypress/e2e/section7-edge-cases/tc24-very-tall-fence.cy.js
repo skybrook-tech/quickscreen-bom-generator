@@ -39,10 +39,13 @@ describe('TC24 — Very Tall Fence (2400mm)', () => {
       expect(qty).to.be.greaterThan(0);
     });
 
-    // Slat count should be higher than TC1's 96 (more slats per panel at 2400mm vs 1800mm)
+    // Slat count must reflect the taller height.
+    // TC24 uses 10m (4 panels) vs TC1's 20m (8 panels), so comparing raw totals is invalid.
+    // At 2400mm with 65+9mm gap, ~32 slats/panel × 4 panels = ~128 pieces → ~64 stock lengths.
+    // Assert > 48 (what 4 panels at 1800mm height would give) to confirm taller = more slats.
     cy.get(SEL.bomTable).contains(SEL.bomRow, 'XP-6100-S65-SM')
       .find(SEL.bomRowQty).invoke('text').then((text) => {
-        expect(parseInt(text)).to.be.greaterThan(96);
+        expect(parseInt(text)).to.be.greaterThan(48);
       });
   });
 });

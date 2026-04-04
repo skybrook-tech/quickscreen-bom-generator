@@ -15,7 +15,7 @@ describe('TC14 — XPL Colour Switch to Black Satin', () => {
       systemType:       'XPL',
       runLength:        10000,
       targetHeight:     1800,
-      slatSize:         '65',
+      // slatSize omitted — XPL disables the entire select and forces 65mm automatically
       slatGap:          '9',
       colour:           'Black Satin',
       maxPanelWidth:    '2600',
@@ -23,7 +23,6 @@ describe('TC14 — XPL Colour Switch to Black Satin', () => {
       leftTermination:  'Post',
       rightTermination: 'Post',
       corners:          0,
-      pricingTier:      'Tier 1',
     });
 
     generateBom();

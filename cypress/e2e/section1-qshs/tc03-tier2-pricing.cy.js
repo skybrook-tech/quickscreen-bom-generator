@@ -4,6 +4,7 @@
  * Quantities are identical to TC1; unit prices are lower.
  */
 import { fillFenceConfig, generateBom, assertBomLine, assertGrandTotal, signin } from '../../support/helpers';
+import { SEL } from '../../support/selectors';
 
 describe('TC3 — QSHS Tier 2 Pricing', () => {
   beforeEach(() => {
@@ -24,10 +25,12 @@ describe('TC3 — QSHS Tier 2 Pricing', () => {
       leftTermination:  'Post',
       rightTermination: 'Post',
       corners:          0,
-      pricingTier:      'Tier 2',
     });
 
     generateBom();
+
+    // Switch to Tier 2 AFTER BOM is generated — pricing tier tabs are only active post-generation
+    cy.get(SEL.pricingTier).select('Tier 2');
 
     // Quantities identical to TC1, prices different
     assertBomLine('XP-6100-S65-SM',    { qty: 96, unitPrice: 34.65, lineTotal: 3326.40 });
