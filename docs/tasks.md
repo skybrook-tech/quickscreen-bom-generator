@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-> **Phase 6 — Canvas Layout Tool** (next up)
+> **Phase 7 — Polish** (next up)
 
 ---
 
@@ -16,7 +16,7 @@
 | 3 | Gate Configuration | ✅ Complete |
 | 4 | BOM Engine (Edge Functions) | ✅ Complete |
 | 5 | Quotes & Export | ✅ Complete |
-| 6 | Canvas Layout Tool | ⬜ Not started |
+| 6 | Canvas Layout Tool | ✅ Complete |
 | 7 | Polish | ⬜ Not started |
 
 ---
@@ -151,21 +151,21 @@
 
 > See [phase-6-canvas-layout-tool.md](./phase-6-canvas-layout-tool.md)
 
-- [ ] Extract canvas drawing code from existing `index.html`
-- [ ] Port into `src/components/canvas/canvasEngine.ts` (pure TS, no React)
-- [ ] Implement `initCanvasEngine()` with full public API (`destroy`, `getLayout`, `setTool`, `undo`, `clear`, etc.)
-- [ ] Port grid snap logic
-- [ ] Port pan & zoom (scroll = zoom, right-drag = pan)
-- [ ] Port undo stack
-- [ ] Port segment label editing (click label to edit real-world length)
-- [ ] Port gate marker placement on segments
-- [ ] Port Google Maps tile underlay logic
-- [ ] Build `FenceLayoutCanvas.tsx` React wrapper (`useRef` + `useEffect`)
-- [ ] Build `CanvasToolbar.tsx` (Draw, Gate, Move, Undo, Clear buttons)
-- [ ] Build `MapControls.tsx` (address search, opacity slider, map type)
-- [ ] Wire "Use This Layout →" → dispatch to `FenceConfigContext` and `GateContext`
-- [ ] Verify canvas event listeners are cleaned up on unmount
-- [ ] Hide canvas section on mobile breakpoint
+- [x] Extract canvas drawing code from existing `index.html`
+- [x] Port into `src/components/canvas/canvasEngine.ts` (pure TS, no React)
+- [x] Implement `initCanvasEngine()` with full public API (`destroy`, `getLayout`, `setTool`, `undo`, `clear`, etc.)
+- [x] Port grid snap logic
+- [x] Port pan & zoom (scroll = zoom, right-drag = pan)
+- [x] Port undo stack
+- [x] Port segment label editing (click label to edit real-world length)
+- [x] Port gate marker placement on segments
+- [x] Port Google Maps tile underlay logic
+- [x] Build `FenceLayoutCanvas.tsx` React wrapper (`useRef` + `useEffect`)
+- [x] Build `CanvasToolbar.tsx` (Draw, Gate, Move, Undo, Clear buttons)
+- [x] Build `MapControls.tsx` (address search, opacity slider, map type)
+- [x] Wire "Use This Layout →" → dispatch to `FenceConfigContext` and `GateContext`
+- [x] Verify canvas event listeners are cleaned up on unmount
+- [x] Hide canvas section on mobile breakpoint
 
 ---
 

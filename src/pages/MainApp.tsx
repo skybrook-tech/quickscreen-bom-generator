@@ -8,6 +8,7 @@ import { QuoteActions } from '../components/quote/QuoteActions';
 import { SavedQuotesList } from '../components/quote/SavedQuotesList';
 import { ContactDeliveryForm } from '../components/contact/ContactDeliveryForm';
 import { JobSummary } from '../components/contact/JobSummary';
+import { FenceLayoutCanvas } from '../components/canvas/FenceLayoutCanvas';
 import { FenceConfigProvider, useFenceConfig } from '../context/FenceConfigContext';
 import { GateProvider, useGates } from '../context/GateContext';
 import { AccordionSection } from '../components/shared/AccordionSection';
@@ -64,6 +65,15 @@ function AppContent() {
 
   return (
     <div className="space-y-4">
+
+      {/* ── Canvas Layout Tool ──────────────────────────────────── */}
+      <div className="hidden sm:block">
+        <AccordionSection title="Layout Tool (optional)">
+          <div className="pt-4">
+            <FenceLayoutCanvas />
+          </div>
+        </AccordionSection>
+      </div>
 
       {/* ── Fence Configuration ─────────────────────────────────── */}
       <AccordionSection title="Fence Configuration">
