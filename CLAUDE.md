@@ -179,7 +179,8 @@ quickscreen-bom/
 │   │   ├── 002_create_profiles.sql
 │   │   ├── 003_create_quotes.sql
 │   │   ├── 004_create_pricing.sql
-│   │   └── 005_create_products.sql
+│   │   ├── 005_create_products.sql
+│   │   └── 006_create_product_components.sql
 │   └── functions/
 │       ├── calculate-bom/
 │       │   └── index.ts                   # CORE IP: BOM calculation engine
@@ -505,22 +506,43 @@ REVOKE ALL ON product_pricing FROM anon, authenticated;
 
 ```sql
 -- 005_create_products.sql
--- Product catalog: slat profiles, post types, rails, brackets, hardware
+-- Top-level product catalog: the fence systems and gate products that customers buy.
+-- Each row represents a sellable system (QSHS, XPL, VS, BAYG) or gate type.
+-- Individual hardware components that make up these products live in product_components.
 CREATE TABLE products (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  org_id UUID NOT NULL REFERENCES organisations(id),
+  name TEXT NOT NULL,            -- e.g. 'QSHS Horizontal Slat Fence'
+  system_type TEXT NOT NULL,     -- 'QSHS' | 'VS' | 'XPL' | 'BAYG' | 'GATE'
+  description TEXT,
+  active BOOLEAN DEFAULT TRUE,
+  metadata JSONB DEFAULT '{}'::JSONB,
+  UNIQUE (org_id, system_type)
+);
+
+REVOKE ALL ON products FROM anon, authenticated;
+```
+
+```sql
+-- 006_create_product_components.sql
+-- Component catalog: the individual hardware SKUs (slats, posts, rails, brackets,
+-- screws, hinges, latches, etc.) that are assembled into a product.
+-- SKUs in this table correspond directly to SKUs in product_pricing.
+CREATE TABLE product_components (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   org_id UUID NOT NULL REFERENCES organisations(id),
   sku TEXT NOT NULL,
   name TEXT NOT NULL,
-  category TEXT NOT NULL,
-  system_types TEXT[] DEFAULT ARRAY['QSHS'],
-  colours TEXT[],
-  sizes JSONB,
+  category TEXT NOT NULL,                           -- post, rail, slat, bracket, screw, gate, hardware, accessory
+  system_types TEXT[] DEFAULT ARRAY['QSHS'],        -- which products this component belongs to
+  colours TEXT[],                                   -- available colour variants
+  sizes JSONB,                                      -- size specs (varies by category)
   metadata JSONB DEFAULT '{}'::JSONB,
   active BOOLEAN DEFAULT TRUE,
   UNIQUE (org_id, sku)
 );
 
-REVOKE ALL ON products FROM anon, authenticated;
+REVOKE ALL ON product_components FROM anon, authenticated;
 ```
 
 ---
@@ -1114,7 +1136,7 @@ The existing app is primarily **desktop-focused** but should work on tablets. Th
 - [ ] **Move repo to private** on GitHub
 - [ ] **All BOM calculation logic** in Supabase Edge Functions (never in client bundle)
 - [ ] **All pricing data** in Supabase Postgres, accessed only via service role key in edge functions
-- [ ] **Product pricing table** has no RLS — revoke all access from `anon` and `authenticated` roles
+- [ ] **`product_pricing` and `product_components` tables** have no RLS — revoke all access from `anon` and `authenticated` roles
 - [ ] **Google Maps API key** restricted to your domain(s) in Google Cloud Console
 - [ ] **Supabase anon key** only grants access to auth + quotes table (via RLS)
 - [ ] **No sensitive constants** in client-side code (no margin percentages, no wholesale prices)

@@ -7,7 +7,7 @@ Implement the core BOM calculation and pricing logic in Supabase Edge Functions,
 ## Steps
 
 1. Implement `calculate-bom` edge function with all business logic
-2. Seed `product_pricing` and `products` tables
+2. Seed `product_pricing` and `product_components` tables
 3. Implement `calculate-pricing` edge function
 4. Build `useBOM` hook + Generate BOM button
 5. Build `BOMDisplay`, `BOMLineItem`, `BOMSummary`
@@ -183,7 +183,7 @@ export interface BOMLineItem {
 
 - **Never put pricing numbers, margin percentages, or wholesale costs in client-side code**
 - Development placeholder prices should be obviously fake (e.g. $1.00) with `// TODO: real pricing in edge function`
-- `product_pricing` table has no RLS — accessed only via service role key in edge functions
+- `product_pricing` and `product_components` tables have no RLS — accessed only via service role key in edge functions
 - The client never knows wholesale costs or margin formulas
 
 ## Completion Criteria

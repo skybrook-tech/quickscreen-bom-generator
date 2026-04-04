@@ -11,6 +11,7 @@
 Desktop/*
 !Desktop/Claude Glass Outlet Project/
 Desktop/Claude Glass Outlet Project/*
+!Desktop/Claude Glass Outlet Project/index.html
 !Desktop/Claude Glass Outlet Project/QuickScreen-BOM-Generator.html
 !Desktop/Claude Glass Outlet Project/fence-mapper.js
 !Desktop/Claude Glass Outlet Project/fence-mapper.css
@@ -26,4 +27,6 @@ Desktop/Claude Glass Outlet Project/archive/*
 !.claude/skills/quickscreen-bom/**
 
 node_modules/
+dist/
 screenshots/
+.env.local

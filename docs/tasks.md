@@ -50,7 +50,8 @@
 - [ ] Write migration `002_create_profiles.sql` (profiles table, `auth.user_org_id()` helper, signup trigger)
 - [ ] Write migration `003_create_quotes.sql` (quotes table + RLS policies)
 - [ ] Write migration `004_create_pricing.sql` (product pricing, no RLS)
-- [ ] Write migration `005_create_products.sql` (product catalog, no RLS)
+- [ ] Write migration `005_create_products.sql` (top-level products — fence systems and gate products, no RLS)
+- [ ] Write migration `006_create_product_components.sql` (component catalog — individual SKUs/hardware, no RLS)
 - [ ] Apply all migrations
 - [ ] Set up `src/lib/supabase.ts` and `src/lib/queryClient.ts`
 - [ ] Configure Tailwind theme (brand colours)
@@ -120,7 +121,8 @@
 - [ ] Implement `calculate-bom` edge function — gate BOM
 - [ ] Implement `calculate-pricing` edge function
 - [ ] Seed `product_pricing` table
-- [ ] Seed `products` table
+- [ ] Seed `products` table (fence systems / gate products)
+- [ ] Seed `product_components` table (individual hardware SKUs)
 - [ ] Build `useBOM.ts` hook (TanStack Query mutation)
 - [ ] Build `src/types/bom.types.ts`
 - [ ] Build `BOMDisplay.tsx`

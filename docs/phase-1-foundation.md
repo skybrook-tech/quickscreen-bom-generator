@@ -48,14 +48,15 @@ Create in order:
 | `002_create_profiles.sql` | Profiles table, `auth.user_org_id()` helper, signup trigger |
 | `003_create_quotes.sql` | Quotes table with RLS policies |
 | `004_create_pricing.sql` | Product pricing table (no RLS — service role only) |
-| `005_create_products.sql` | Product catalog table (no RLS — service role only) |
+| `005_create_products.sql` | Top-level product table — fence systems and gate products (no RLS) |
+| `006_create_product_components.sql` | Component catalog — individual SKUs/hardware (no RLS — service role only) |
 
 ### Key Multi-Tenancy Rules
 
 - Every table has an `org_id` column
 - All RLS policies use `auth.user_org_id()` — never inline JOINs
 - `auth.user_org_id()` is `SECURITY DEFINER` and `STABLE`
-- `product_pricing` and `products` tables have **no RLS** — revoke all access from `anon` and `authenticated` roles
+- `product_pricing`, `products`, and `product_components` tables have **no RLS** — revoke all access from `anon` and `authenticated` roles
 - Edge functions access pricing via service role key only
 - For v1, default all new users to the Glass Outlet org
 
@@ -114,9 +115,10 @@ VITE_SUPABASE_ANON_KEY=your-local-anon-key
 
 ## Completion Criteria
 
-- App runs locally with `npm run dev`
-- Supabase local dev stack running (`supabase start`)
-- All 5 migrations applied successfully
-- Login and signup pages functional
+- App runs locally with `npm run dev` (Vite on port 5173)
+- Legacy HTML app served with `npm run serve:html` (port 3000)
+- All 6 migrations written under `supabase/migrations/`
+- Login and signup pages functional (requires Supabase project — see `.env.local.example`)
 - Authenticated users can reach the main app, unauthenticated users are redirected
 - `AppShell` and `Header` render with correct branding (SkybrookAI + Glass Outlet)
+- `tsc -p tsconfig.app.json --noEmit` passes with zero errors

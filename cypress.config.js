@@ -1,6 +1,6 @@
-const { defineConfig } = require('cypress');
+import { defineConfig } from 'cypress';
 
-module.exports = defineConfig({
+export default defineConfig({
   e2e: {
     // Default to the existing HTML app for Phase 0 verification.
     // Override with CYPRESS_BASE_URL env var when testing the React app.
@@ -8,7 +8,6 @@ module.exports = defineConfig({
     specPattern: 'cypress/e2e/**/*.cy.js',
     supportFile: 'cypress/support/e2e.js',
     fixturesFolder: 'cypress/fixtures',
-    // Give BOM generation time to compute
     defaultCommandTimeout: 8000,
     viewportWidth: 1440,
     viewportHeight: 900,

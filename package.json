@@ -2,16 +2,41 @@
   "name": "quickscreen-bom-generator",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "serve": "npx serve . -p 3000",
+    "dev": "vite",
+    "build": "tsc -p tsconfig.app.json && vite build",
+    "preview": "vite preview",
+    "serve:html": "npx serve 'Desktop/Claude Glass Outlet Project' -p 3000",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
     "cy:run:html": "CYPRESS_BASE_URL=http://localhost:3000 cypress run",
+    "cy:run:react": "CYPRESS_BASE_URL=http://localhost:5173 cypress run",
     "test": "npm run cy:run"
   },
   "devDependencies": {
+    "@types/papaparse": "^5.5.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.7.0",
+    "autoprefixer": "^10.4.27",
     "cypress": "^13.17.0",
+    "postcss": "^8.5.8",
     "serve": "^14.2.4",
-    "typescript": "^6.0.2"
+    "tailwindcss": "^3.4.19",
+    "typescript": "^6.0.2",
+    "vite": "^5.4.21"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@supabase/supabase-js": "^2.101.1",
+    "@tanstack/react-query": "^5.96.2",
+    "lucide-react": "^1.7.0",
+    "papaparse": "^5.5.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-hook-form": "^7.72.1",
+    "react-router-dom": "^7.14.0",
+    "zod": "^4.3.6"
   }
 }
