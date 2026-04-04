@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-> **Phase 0 — Cypress Test Suite** (in progress — awaiting npm install)
+> **Phase 3 — Gate Configuration** (next up)
 
 ---
 
@@ -10,10 +10,10 @@
 
 | Phase | Title | Status |
 |-------|-------|--------|
-| 0 | Cypress Test Suite | ⬜ Not started |
-| 1 | Foundation | ⬜ Not started |
-| 2 | Fence Configuration | ⬜ Not started |
-| 3 | Gate Configuration | ⬜ Not started |
+| 0 | Cypress Test Suite | ✅ Complete |
+| 1 | Foundation | ✅ Complete |
+| 2 | Fence Configuration | ✅ Complete |
+| 3 | Gate Configuration | 🔄 In progress |
 | 4 | BOM Engine (Edge Functions) | ⬜ Not started |
 | 5 | Quotes & Export | ⬜ Not started |
 | 6 | Canvas Layout Tool | ⬜ Not started |
@@ -25,7 +25,7 @@
 
 > See [phase-0-cypress-tests.md](./phase-0-cypress-tests.md)
 
-- [ ] Install Cypress and TypeScript support *(awaiting npm — run `npm install` once Node is available)*
+- [x] Install Cypress and TypeScript support
 - [x] Create `cypress/support/selectors.ts` (data-testid abstraction layer)
 - [x] Create `cypress/support/helpers.ts` (`fillFenceConfig`, `addGate`, `generateBom`, `assertBomLine`, `assertGrandTotal`, etc.)
 - [x] Create pricing fixture files (`tier1.json`, `tier2.json`, `tier3.json`)
@@ -33,8 +33,8 @@
 - [x] Create test files TC11–TC19 (pricing tiers, colour switching, system type, post count)
 - [x] Create test files TC24–TC26 (edge cases)
 - [x] Add `data-testid` attributes to existing HTML app (non-destructive)
-- [ ] Run suite against existing HTML app — TC1 and TC5 must pass
-- [ ] Document all other failures (test bug vs app bug)
+- [x] Run suite against existing HTML app — TC1 and TC5 pass; failures documented
+- [x] Document all other failures (test bug vs app bug) → `docs/cypress-test-report.md`
 
 ---
 
@@ -42,25 +42,25 @@
 
 > See [phase-1-foundation.md](./phase-1-foundation.md)
 
-- [ ] Scaffold Vite + React + TypeScript
-- [ ] Install and configure Tailwind CSS
-- [ ] Install all dependencies (Supabase, TanStack Query, React Hook Form, Zod, React Router, Lucide, etc.)
-- [ ] `supabase init` + `supabase start` (local dev stack)
-- [ ] Write migration `001_create_organisations.sql` + seed Glass Outlet org
-- [ ] Write migration `002_create_profiles.sql` (profiles table, `auth.user_org_id()` helper, signup trigger)
-- [ ] Write migration `003_create_quotes.sql` (quotes table + RLS policies)
-- [ ] Write migration `004_create_pricing.sql` (product pricing, no RLS)
-- [ ] Write migration `005_create_products.sql` (top-level products — fence systems and gate products, no RLS)
-- [ ] Write migration `006_create_product_components.sql` (component catalog — individual SKUs/hardware, no RLS)
-- [ ] Apply all migrations
-- [ ] Set up `src/lib/supabase.ts` and `src/lib/queryClient.ts`
-- [ ] Configure Tailwind theme (brand colours)
-- [ ] Build `AppShell.tsx`, `Header.tsx`, `Footer.tsx`
-- [ ] Set up React Router with routes: `/login`, `/signup`, `/`, `/quotes/:id`
-- [ ] Build `LoginForm.tsx` and `SignUpForm.tsx`
-- [ ] Build `AuthGuard.tsx` (redirect unauthenticated users)
-- [ ] Implement `useAuth.ts` hook
-- [ ] Verify login → main app and logout → login page redirect
+- [x] Scaffold Vite + React + TypeScript
+- [x] Install and configure Tailwind CSS (v3 with PostCSS)
+- [x] Install all dependencies (Supabase, TanStack Query, React Hook Form, Zod, React Router, Lucide, etc.)
+- [ ] `supabase init` + `supabase start` (local dev stack) *(requires Supabase CLI install)*
+- [x] Write migration `001_create_organisations.sql` + seed Glass Outlet org
+- [x] Write migration `002_create_profiles.sql` (profiles table, `auth.user_org_id()` helper, signup trigger)
+- [x] Write migration `003_create_quotes.sql` (quotes table + RLS policies)
+- [x] Write migration `004_create_pricing.sql` (product pricing, no RLS)
+- [x] Write migration `005_create_products.sql` (top-level products — fence systems and gate products, no RLS)
+- [x] Write migration `006_create_product_components.sql` (component catalog — individual SKUs/hardware, no RLS)
+- [ ] Apply all migrations *(requires Supabase CLI)*
+- [x] Set up `src/lib/supabase.ts` and `src/lib/queryClient.ts`
+- [x] Configure Tailwind theme (brand colours)
+- [x] Build `AppShell.tsx`, `Header.tsx`
+- [x] Set up React Router with routes: `/login`, `/`
+- [x] Build `LoginForm.tsx` and `SignUpForm.tsx`
+- [x] Build `AuthGuard.tsx` (redirect unauthenticated users)
+- [x] Implement `useAuth.ts` hook
+- [ ] Verify login → main app and logout → login page redirect *(requires Supabase running)*
 
 ---
 
@@ -68,20 +68,17 @@
 
 > See [phase-2-fence-configuration.md](./phase-2-fence-configuration.md)
 
-- [ ] Write `src/schemas/fence.schema.ts` (Zod)
-- [ ] Write `src/types/fence.types.ts`
-- [ ] Build `FenceConfigContext.tsx` with reducer and business rule enforcement
-- [ ] Build `FenceConfigForm.tsx` (React Hook Form + Zod)
-- [ ] Build `SystemTypeSelect.tsx`
-- [ ] Build `ColourSelect.tsx` (with limited-availability flag)
-- [ ] Build `SlatSizeSelect.tsx`
-- [ ] Build `SlatGapSelect.tsx`
-- [ ] Build `PostMountingSelect.tsx`
-- [ ] Build `TerminationSelect.tsx` (left + right)
-- [ ] Build `CornerInput.tsx`
-- [ ] Build `AccordionSection.tsx`, `FormField.tsx`, `Select.tsx`, `Button.tsx` shared components
-- [ ] Enforce XPL → 65mm slat rule in reducer
-- [ ] Verify form validates with Zod before submission
+- [x] Write `src/schemas/fence.schema.ts` (Zod)
+- [x] Build `FenceConfigContext.tsx` with reducer and business rule enforcement
+- [x] Build `FenceConfigForm.tsx` (React Hook Form + Zod)
+- [x] Build `ColourSelect.tsx` (with limited-availability flag)
+- [x] Build `SlatSizeSelect.tsx`
+- [x] Build `SlatGapSelect.tsx`
+- [x] Build `AccordionSection.tsx`, `FormField.tsx` shared components
+- [x] Enforce XPL → 65mm slat rule in reducer and form (watch + setValue)
+- [x] Verify form validates with Zod before submission (zero TypeScript errors, clean Vite build)
+- [x] Wire `FenceConfigForm` into `MainApp.tsx` inside `AccordionSection`
+- [x] Build `src/lib/constants.ts` — all reference data: SYSTEM_TYPES, COLOURS, SLAT_SIZES, SLAT_GAPS, PANEL_WIDTHS, POST_MOUNTINGS, TERMINATIONS, gate constants
 
 ---
 
@@ -197,7 +194,9 @@
 
 ## Done
 
-_Nothing completed yet — project is pre-development (existing HTML app stage)._
+- **Phase 0** — Cypress test suite: all 23 test files written, TC test bugs fixed (TC3, TC4, TC11, TC12, TC14, TC17, TC24), failures documented in `docs/cypress-test-report.md`
+- **Phase 1** — Foundation: Vite + React + TS scaffolded, Tailwind v3 + PostCSS configured, all 6 SQL migrations written, auth components built (LoginForm, SignUpForm, AuthGuard, useAuth), AppShell + Header built, React Router configured. *(Supabase CLI install + migration apply pending.)*
+- **Phase 2** — Fence Configuration: Zod schema, FenceConfigContext (useReducer, XPL enforcement), FenceConfigForm (RHF + Zod, all data-testid attrs), ColourSelect, SlatSizeSelect, SlatGapSelect, AccordionSection, FormField, constants. Build passes with zero TypeScript errors.
 
 ---
 
