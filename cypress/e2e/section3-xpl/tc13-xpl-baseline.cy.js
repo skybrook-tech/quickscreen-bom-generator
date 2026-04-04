@@ -17,7 +17,7 @@ describe('TC13 — XPL XPress Plus Premium Baseline', () => {
       systemType:       'XPL',
       runLength:        10000,
       targetHeight:     1800,
-      slatSize:         '65',           // Only valid option for XPL
+      // slatSize:         '65',           // Only valid option for XPL
       slatGap:          '9',
       colour:           'Surfmist Matt',
       maxPanelWidth:    '2600',
@@ -39,7 +39,6 @@ describe('TC13 — XPL XPress Plus Premium Baseline', () => {
 
     // 90mm option should be disabled or absent in the slat size selector
     cy.get(SEL.slatSize)
-      .find('option[value="90"]')
       .should(($el) => {
         // Either disabled or not present at all
         if ($el.length > 0) {
