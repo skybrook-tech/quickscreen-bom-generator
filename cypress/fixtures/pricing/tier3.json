@@ -1,0 +1,12 @@
+{
+  "XP-6100-S65-SM":   { "unitPrice": 32.95 },
+  "QS-5800-SF-SM":    { "unitPrice": 21.80 },
+  "QS-5800-CFC-SM":   { "unitPrice": 14.92 },
+  "XP-5800-CSR-SM":   { "unitPrice": 34.79 },
+  "XP-2400-FP-SM":    { "unitPrice": 34.32 },
+  "QS-SFC-B":         { "unitPrice": 0.74  },
+  "XP-CSRC-SM":       { "unitPrice": 0.82  },
+  "XP-BTP-SM":        { "unitPrice": 3.71  },
+  "XPL-SB-50PK-09MM": { "unitPrice": 2.41  },
+  "XP-SCREWS-SM":     { "unitPrice": 4.91  }
+}

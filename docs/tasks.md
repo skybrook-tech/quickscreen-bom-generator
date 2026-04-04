@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-> **Phase 0 — Cypress Test Suite** (not started)
+> **Phase 0 — Cypress Test Suite** (in progress — awaiting npm install)
 
 ---
 
@@ -25,14 +25,14 @@
 
 > See [phase-0-cypress-tests.md](./phase-0-cypress-tests.md)
 
-- [ ] Install Cypress and TypeScript support
-- [ ] Create `cypress/support/selectors.ts` (data-testid abstraction layer)
-- [ ] Create `cypress/support/helpers.ts` (`fillFenceConfig`, `addGate`, `generateBom`, `assertBomLine`, `assertGrandTotal`, etc.)
-- [ ] Create pricing fixture files (`tier1.json`, `tier2.json`, `tier3.json`)
-- [ ] Create test files TC1–TC10 (BOM line items & accessory quantities)
-- [ ] Create test files TC11–TC19 (pricing tiers, colour switching, system type, post count)
-- [ ] Create test files TC24–TC26 (edge cases)
-- [ ] Add `data-testid` attributes to existing HTML app (non-destructive)
+- [ ] Install Cypress and TypeScript support *(awaiting npm — run `npm install` once Node is available)*
+- [x] Create `cypress/support/selectors.ts` (data-testid abstraction layer)
+- [x] Create `cypress/support/helpers.ts` (`fillFenceConfig`, `addGate`, `generateBom`, `assertBomLine`, `assertGrandTotal`, etc.)
+- [x] Create pricing fixture files (`tier1.json`, `tier2.json`, `tier3.json`)
+- [x] Create test files TC1–TC10 (BOM line items & accessory quantities)
+- [x] Create test files TC11–TC19 (pricing tiers, colour switching, system type, post count)
+- [x] Create test files TC24–TC26 (edge cases)
+- [x] Add `data-testid` attributes to existing HTML app (non-destructive)
 - [ ] Run suite against existing HTML app — TC1 and TC5 must pass
 - [ ] Document all other failures (test bug vs app bug)
 

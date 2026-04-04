@@ -1,0 +1,16 @@
+{
+  "name": "quickscreen-bom-generator",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "npx serve . -p 3000",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:run:html": "CYPRESS_BASE_URL=http://localhost:3000 cypress run",
+    "test": "npm run cy:run"
+  },
+  "devDependencies": {
+    "cypress": "^13.17.0",
+    "serve": "^14.2.4"
+  }
+}
