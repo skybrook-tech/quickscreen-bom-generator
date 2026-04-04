@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { GateSchema, defaultGateConfig } from '../../schemas/gate.schema';
@@ -27,6 +27,15 @@ interface GateFormProps {
 }
 
 export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormProps) {
+  // When true, height/colour/slat fields are locked to 'match-fence'
+  const initialMatch =
+    initialValues == null ||
+    (initialValues.gateHeight === 'match-fence' &&
+      initialValues.colour      === 'match-fence' &&
+      initialValues.slatGap     === 'match-fence' &&
+      initialValues.slatSize    === 'match-fence');
+  const [matchFence, setMatchFence] = useState(initialMatch);
+
   const {
     register,
     handleSubmit,
@@ -94,7 +103,29 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
         </FormField>
       </div>
 
+      {/* ── Match gate to fence toggle ─────────────────────────────── */}
+      <label className="flex items-center gap-2 mb-4 cursor-pointer select-none">
+        <input
+          type="checkbox"
+          checked={matchFence}
+          data-testid="match-gate-to-fence"
+          onChange={(e) => {
+            const checked = e.target.checked;
+            setMatchFence(checked);
+            if (checked) {
+              setValue('gateHeight', 'match-fence');
+              setValue('colour',     'match-fence');
+              setValue('slatGap',    'match-fence');
+              setValue('slatSize',   'match-fence');
+            }
+          }}
+          className="w-4 h-4 accent-brand-accent"
+        />
+        <span className="text-sm text-brand-text">Match gate to fence (height, colour, slat size &amp; gap)</span>
+      </label>
+
       {/* ── Height / Colour / Slat gap / Slat size ─────────────────── */}
+      {!matchFence && (
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
         <FormField label="Gate Height" error={errors.gateHeight?.message}>
           <Controller
@@ -169,6 +200,7 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
           </select>
         </FormField>
       </div>
+      )}
 
       {/* ── Post size / Hinge type / Latch type ─────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">

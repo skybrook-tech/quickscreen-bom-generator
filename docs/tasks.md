@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-> **Phase 4 — BOM Engine (Edge Functions)** (next up)
+> **Phase 5 — Quotes & Export** (next up)
 
 ---
 
@@ -14,8 +14,8 @@
 | 1 | Foundation | ✅ Complete |
 | 2 | Fence Configuration | ✅ Complete |
 | 3 | Gate Configuration | ✅ Complete |
-| 4 | BOM Engine (Edge Functions) | 🔄 In progress |
-| 5 | Quotes & Export | ⬜ Not started |
+| 4 | BOM Engine (Edge Functions) | ✅ Complete |
+| 5 | Quotes & Export | 🔄 In progress |
 | 6 | Canvas Layout Tool | ⬜ Not started |
 | 7 | Polish | ⬜ Not started |
 
@@ -105,29 +105,22 @@
 
 > See [phase-4-bom-engine.md](./phase-4-bom-engine.md)
 
-- [ ] Create `supabase/functions/_shared/cors.ts`
-- [ ] Create `supabase/functions/_shared/auth.ts`
-- [ ] Create `supabase/functions/_shared/types.ts`
-- [ ] Copy Zod schemas to `supabase/functions/_shared/` for Deno
-- [ ] Implement `calculate-bom` edge function — panel layout algorithm
-- [ ] Implement `calculate-bom` edge function — post count logic
-- [ ] Implement `calculate-bom` edge function — slat calculation
-- [ ] Implement `calculate-bom` edge function — rail calculation
-- [ ] Implement `calculate-bom` edge function — bracket/fixing calculation
-- [ ] Implement `calculate-bom` edge function — system-specific rules (QSHS, VS, XPL, BAYG)
-- [ ] Implement `calculate-bom` edge function — gate BOM
-- [ ] Implement `calculate-pricing` edge function
-- [ ] Seed `product_pricing` table
-- [ ] Seed `products` table (fence systems / gate products)
-- [ ] Seed `product_components` table (individual hardware SKUs)
-- [ ] Build `useBOM.ts` hook (TanStack Query mutation)
-- [ ] Build `src/types/bom.types.ts`
-- [ ] Build `BOMDisplay.tsx`
-- [ ] Build `BOMLineItem.tsx`
-- [ ] Build `BOMSummary.tsx` (totals, GST, tier selector)
-- [ ] Build `ExtraItemsAdder.tsx`
-- [ ] Build `PricingTierSelect.tsx`
-- [ ] Verify TC1 and TC5 pass against the new React app
+- [x] Create `supabase/functions/_shared/cors.ts`
+- [x] Create `supabase/functions/_shared/auth.ts`
+- [x] Create `supabase/functions/_shared/types.ts`
+- [x] Implement `calculate-bom` edge function — full QSHS BOM engine (panel layout, posts, slats, rails, brackets/accessories, gate BOM)
+- [x] Implement `calculate-bom` edge function — system-specific rules (QSHS, VS, XPL, BAYG)
+- [x] Implement `calculate-pricing` edge function (reprice existing BOM by tier)
+- [x] Seed `product_pricing` table (migration 007 — all SKUs × 3 tiers × 11 colours)
+- [x] Build `useBOM.ts` hook (TanStack Query mutation → `calculate-bom` edge function)
+- [x] Build `src/types/bom.types.ts`
+- [x] Build `BOMDisplay.tsx` (table with fence/gate/all filter)
+- [x] Build `BOMLineItem.tsx` (with correct data-testid attributes)
+- [x] Build `BOMSummary.tsx` (subtotal, GST, grand total with data-testid="bom-grand-total")
+- [x] Build `PricingTierSelect.tsx` (data-testid="pricing-tier")
+- [x] Wire BOM accordion into MainApp (conditional on mutation result)
+- [x] Add `data-testid="match-gate-to-fence"` checkbox to GateForm
+- [ ] Run Supabase CLI + apply migrations + verify TC1 and TC5 pass *(requires Supabase running)*
 
 ---
 
