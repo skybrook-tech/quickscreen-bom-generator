@@ -1,6 +1,6 @@
-import { defineConfig } from 'cypress';
+const { defineConfig } = require('cypress');
 
-export default defineConfig({
+module.exports = defineConfig({
   e2e: {
     // Default to the existing HTML app for Phase 0 verification.
     // Override with CYPRESS_BASE_URL env var when testing the React app.
