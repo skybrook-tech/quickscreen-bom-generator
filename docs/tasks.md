@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-> **Phase 3 — Gate Configuration** (next up)
+> **Phase 4 — BOM Engine (Edge Functions)** (next up)
 
 ---
 
@@ -13,8 +13,8 @@
 | 0 | Cypress Test Suite | ✅ Complete |
 | 1 | Foundation | ✅ Complete |
 | 2 | Fence Configuration | ✅ Complete |
-| 3 | Gate Configuration | 🔄 In progress |
-| 4 | BOM Engine (Edge Functions) | ⬜ Not started |
+| 3 | Gate Configuration | ✅ Complete |
+| 4 | BOM Engine (Edge Functions) | 🔄 In progress |
 | 5 | Quotes & Export | ⬜ Not started |
 | 6 | Canvas Layout Tool | ⬜ Not started |
 | 7 | Polish | ⬜ Not started |
@@ -86,18 +86,18 @@
 
 > See [phase-3-gate-configuration.md](./phase-3-gate-configuration.md)
 
-- [ ] Write `src/schemas/gate.schema.ts` (Zod)
-- [ ] Write `src/types/gate.types.ts`
-- [ ] Build `GateContext.tsx` with reducer
-- [ ] Build `GateTypeSelect.tsx`
-- [ ] Build `GateForm.tsx` (individual gate)
-- [ ] Build `GateList.tsx` (summary of all configured gates)
-- [ ] Build `GateConfigPanel.tsx` (section wrapper)
-- [ ] Implement "Match Gate to Fence" toggle (show/hide overridable fields)
-- [ ] Implement add gate flow
-- [ ] Implement edit gate flow
-- [ ] Implement remove gate flow
-- [ ] Add warnings for post sizes that require stock confirmation
+- [x] Write `src/schemas/gate.schema.ts` (Zod)
+- [x] Write `src/types/gate.types.ts`
+- [x] Build `GateContext.tsx` with reducer
+- [x] Build `GateTypeSelect.tsx`
+- [x] Build `GateForm.tsx` (individual gate)
+- [x] Build `GateList.tsx` (summary of all configured gates)
+- [x] Build `GateConfigPanel.tsx` (section wrapper)
+- [x] Implement "Match Gate to Fence" toggle (height/colour/slat fields default to match-fence)
+- [x] Implement add gate flow
+- [x] Implement edit gate flow
+- [x] Implement remove gate flow
+- [x] Add warnings for post sizes that require stock confirmation
 
 ---
 
