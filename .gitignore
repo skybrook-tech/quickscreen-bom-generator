@@ -1,5 +1,4 @@
-# Ignore everything in the home directory by default
-*
+
 
 # Except this file itself
 !.gitignore
