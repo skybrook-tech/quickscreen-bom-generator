@@ -6,9 +6,9 @@ interface PricingTierSelectProps {
 }
 
 const TIERS: { value: PricingTier; label: string }[] = [
-  { value: 'tier1', label: 'Tier 1 (Standard RRP)' },
-  { value: 'tier2', label: 'Tier 2 (Trade)' },
-  { value: 'tier3', label: 'Tier 3 (Volume)' },
+  { value: 'tier1', label: 'Tier 1' },
+  { value: 'tier2', label: 'Tier 2' },
+  { value: 'tier3', label: 'Tier 3' },
 ];
 
 export function PricingTierSelect({ value, onChange }: PricingTierSelectProps) {

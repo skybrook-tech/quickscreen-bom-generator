@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
@@ -57,6 +57,16 @@ function AppContent() {
       toast.error(msg);
     }
   };
+
+  // Re-price existing BOM when tier changes (skip the initial mount)
+  const isMounted = useRef(false);
+  useEffect(() => {
+    if (!isMounted.current) { isMounted.current = true; return; }
+    if (!bomResult) return;
+    bomMutation.mutateAsync({ fenceConfig, gates, pricingTier })
+      .then(setBomResult)
+      .catch(() => {});
+  }, [pricingTier]);
 
   // Load a saved quote back into all form state
   const handleLoadQuote = (quote: SavedQuote) => {

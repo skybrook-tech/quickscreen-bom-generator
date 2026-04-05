@@ -18,17 +18,17 @@ import type {
 // ─── Colour code map ──────────────────────────────────────────────────────────
 
 const COLOUR_CODES: Record<string, string> = {
-  'black-satin':            'BS',
-  'monument-matt':          'MM',
-  'woodland-grey-matt':     'WG',
+  'black-satin':            'B',
+  'monument-matt':          'MN',
+  'woodland-grey-matt':     'G',
   'surfmist-matt':          'SM',
-  'pearl-white-gloss':      'PW',
-  'basalt-satin':           'BA',
-  'dune-satin':             'DU',
-  'mill':                   'ML',
-  'primrose':               'PR',
+  'pearl-white-gloss':      'W',
+  'basalt-satin':           'BS',
+  'dune-satin':             'D',
+  'mill':                   'M',
+  'primrose':               'P',
   'paperbark':              'PB',
-  'palladium-silver-pearl': 'PA',
+  'palladium-silver-pearl': 'S',
 };
 
 // ─── Unpriced line item builder ───────────────────────────────────────────────

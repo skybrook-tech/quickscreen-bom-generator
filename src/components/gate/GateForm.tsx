@@ -125,7 +125,6 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
       </label>
 
       {/* ── Height / Colour / Slat gap / Slat size ─────────────────── */}
-      {!matchFence && (
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
         <FormField label="Gate Height" error={errors.gateHeight?.message}>
           <Controller
@@ -200,7 +199,6 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
           </select>
         </FormField>
       </div>
-      )}
 
       {/* ── Post size / Hinge type / Latch type ─────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
@@ -254,7 +252,7 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
       <div className="flex gap-3">
         <button
           type="submit"
-          data-testid="gate-save-btn"
+          data-testid="save-gate-btn"
           className="flex-1 py-2 px-4 bg-brand-accent hover:bg-brand-accent-hover text-white font-semibold rounded-md transition-colors text-sm"
         >
           Save Gate
