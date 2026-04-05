@@ -12,7 +12,9 @@
     "cy:run": "CYPRESS_BASE_URL=http://localhost:5173 cypress run",
     "cy:run:html": "CYPRESS_IS_HTML_APP=true CYPRESS_BASE_URL=http://localhost:3124 cypress run",
     "cy:run:react": "CYPRESS_BASE_URL=http://localhost:5173 cypress run",
-    "test": "npm run cy:run"
+    "test": "npm run cy:run",
+    "seed:auth": "node supabase/seeds/seed-auth.js",
+    "db:reset": "npx supabase db reset && npm run seed:auth"
   },
   "devDependencies": {
     "@types/papaparse": "^5.5.2",

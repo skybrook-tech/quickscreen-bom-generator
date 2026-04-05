@@ -22,7 +22,7 @@ export default defineConfig({
         'glass-outlet': {
           htmlUser:      'test@cy.com',
           htmlPassword:  '123456',
-          reactUser:     'test@glasshouse.com',
+          reactUser:     'test@glass-outlet.com',
           reactPassword: '123456',
         },
         // Future clients:
