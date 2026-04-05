@@ -100,17 +100,23 @@ function AppContent() {
         </AccordionSection>
       </div>
 
-      {/* ── Fence Configuration ─────────────────────────────────── */}
+      {/* ── Fence & Gate Configuration ──────────────────────────── */}
       <AccordionSection title="Fence Configuration">
-        <div className="pt-4">
-          <FenceConfigForm onGenerate={handleGenerate} generating={bomMutation.isPending} />
-        </div>
-      </AccordionSection>
-
-      {/* ── Gate Configuration ──────────────────────────────────── */}
-      <AccordionSection title="Gate Configuration">
-        <div className="pt-4">
-          <GateConfigPanel />
+        <div className="pt-4 space-y-6">
+          <FenceConfigForm onGenerate={handleGenerate} />
+          <div className="border-t border-brand-border pt-4">
+            <h3 className="text-sm font-semibold text-brand-text mb-3">Gates</h3>
+            <GateConfigPanel />
+          </div>
+          <button
+            type="submit"
+            form="fence-config-form"
+            disabled={bomMutation.isPending}
+            data-testid="generate-bom-btn"
+            className="w-full py-3 px-6 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-50 text-white font-semibold rounded-md transition-colors text-sm"
+          >
+            {bomMutation.isPending ? 'Generating…' : 'Generate BOM'}
+          </button>
         </div>
       </AccordionSection>
 

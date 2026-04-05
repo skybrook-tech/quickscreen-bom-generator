@@ -1,10 +1,10 @@
 // ─── System Types ────────────────────────────────────────────────────────────
 
 export const SYSTEM_TYPES = [
-  { value: 'QSHS', label: 'QSHS — Horizontal Slat Screen' },
-  { value: 'VS',   label: 'VS — Vertical Slat Screen' },
-  { value: 'XPL',  label: 'XPL — XPress Plus Premium' },
-  { value: 'BAYG', label: 'BAYG — Buy As You Go' },
+  { value: 'QSHS', label: 'QSHS — Horizontal Slat Screen', description: 'Horizontal slat, post-mounted' },
+  { value: 'VS',   label: 'VS — Vertical Slat Screen',      description: 'Vertical slat screen' },
+  { value: 'XPL',  label: 'XPL — XPress Plus Premium',       description: 'Premium XPress Plus' },
+  { value: 'BAYG', label: 'BAYG — Buy As You Go',            description: 'Self-assembly kit' },
 ] as const;
 
 // ─── Colours (Colorbond — exact names) ───────────────────────────────────────

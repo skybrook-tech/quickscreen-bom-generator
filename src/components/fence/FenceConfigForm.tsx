@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { SubmitHandler } from 'react-hook-form';
 import { FenceConfigSchema, defaultFenceConfig } from '../../schemas/fence.schema';
@@ -9,6 +9,7 @@ import { FormField } from '../shared/FormField';
 import { ColourSelect } from './ColourSelect';
 import { SlatSizeSelect } from './SlatSizeSelect';
 import { SlatGapSelect } from './SlatGapSelect';
+import { ButtonGroup } from '../shared/ButtonGroup';
 import {
   SYSTEM_TYPES,
   PANEL_WIDTHS,
@@ -22,13 +23,11 @@ const inputCls =
   'focus:outline-none focus:border-brand-accent disabled:opacity-50 disabled:cursor-not-allowed';
 
 interface FenceConfigFormProps {
-  /** Called with validated config when user clicks Generate BOM. */
-  onGenerate?: (config: FenceConfig) => void;
-  /** Whether BOM generation is in progress. */
-  generating?: boolean;
+  /** Called after form validates successfully. MainApp reads config from context. */
+  onGenerate?: () => void;
 }
 
-export function FenceConfigForm({ onGenerate, generating }: FenceConfigFormProps) {
+export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
   const { dispatch } = useFenceConfig();
 
   const {
@@ -36,6 +35,7 @@ export function FenceConfigForm({ onGenerate, generating }: FenceConfigFormProps
     handleSubmit,
     watch,
     setValue,
+    control,
     formState: { errors },
   } = useForm<FenceConfig>({
     resolver: zodResolver(FenceConfigSchema),
@@ -60,24 +60,28 @@ export function FenceConfigForm({ onGenerate, generating }: FenceConfigFormProps
     return () => subscription.unsubscribe();
   }, [watch, dispatch]);
 
-  const onSubmit: SubmitHandler<FenceConfig> = (data) => {
-    onGenerate?.(data);
+  const onSubmit: SubmitHandler<FenceConfig> = (_data) => {
+    onGenerate?.();
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form id="fence-config-form" onSubmit={handleSubmit(onSubmit)} noValidate>
       {/* ── Row 1: System type ────────────────────────────────────── */}
-      <div className="grid grid-cols-1 gap-4 mb-4">
+      <div className="mb-6">
         <FormField label="System Type" error={errors.systemType?.message}>
-          <select
-            {...register('systemType')}
-            data-testid="system-type"
-            className={inputCls}
-          >
-            {SYSTEM_TYPES.map((s) => (
-              <option key={s.value} value={s.value}>{s.label}</option>
-            ))}
-          </select>
+          <Controller
+            name="systemType"
+            control={control}
+            render={({ field }) => (
+              <ButtonGroup
+                options={SYSTEM_TYPES}
+                value={field.value}
+                onChange={field.onChange}
+                variant="system-type"
+                data-testid="system-type"
+              />
+            )}
+          />
         </FormField>
       </div>
 
@@ -226,15 +230,6 @@ export function FenceConfigForm({ onGenerate, generating }: FenceConfigFormProps
         </FormField>
       </div>
 
-      {/* ── Generate BOM ──────────────────────────────────────────── */}
-      <button
-        type="submit"
-        disabled={generating}
-        data-testid="generate-bom-btn"
-        className="w-full py-3 px-6 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-50 text-white font-semibold rounded-md transition-colors text-sm"
-      >
-        {generating ? 'Generating…' : 'Generate BOM'}
-      </button>
     </form>
   );
 }
