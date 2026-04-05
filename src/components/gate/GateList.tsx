@@ -23,7 +23,7 @@ function gateSubLabel(gate: GateConfig): string {
 export function GateList({ gates, onEdit, onRemove }: GateListProps) {
   if (gates.length === 0) {
     return (
-      <p className="text-sm text-brand-muted py-2">No gates configured.</p>
+      <p className="text-sm text-brand-muted py-1">No gates configured.</p>
     );
   }
 
@@ -33,30 +33,35 @@ export function GateList({ gates, onEdit, onRemove }: GateListProps) {
         <li
           key={gate.id}
           data-testid={`gate-item-${idx}`}
-          className="flex items-center justify-between px-3 py-2.5 bg-brand-bg border border-brand-border rounded-md"
+          className="flex items-center justify-between px-3 py-3 bg-brand-bg border border-brand-border rounded-lg hover:border-brand-accent/40 transition-colors group"
         >
-          <div>
-            <p className="text-sm font-medium text-brand-text">{gateLabel(gate)}</p>
-            <p className="text-xs text-brand-muted mt-0.5">{gateSubLabel(gate)}</p>
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-7 h-7 rounded-md bg-brand-accent/10 text-brand-accent text-xs font-bold flex items-center justify-center shrink-0 border border-brand-accent/20">
+              {idx + 1}
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-brand-text truncate">{gateLabel(gate)}</p>
+              <p className="text-xs text-brand-muted mt-0.5 truncate">{gateSubLabel(gate)}</p>
+            </div>
           </div>
-          <div className="flex gap-2 ml-4 shrink-0">
+          <div className="flex gap-1 ml-3 shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
             <button
               type="button"
               onClick={() => onEdit(gate.id)}
               data-testid={`gate-edit-${idx}`}
               aria-label="Edit gate"
-              className="p-1.5 text-brand-muted hover:text-brand-text transition-colors"
+              className="p-1.5 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/60 transition-colors"
             >
-              <Pencil size={15} />
+              <Pencil size={14} />
             </button>
             <button
               type="button"
               onClick={() => onRemove(gate.id)}
               data-testid={`gate-remove-${idx}`}
               aria-label="Remove gate"
-              className="p-1.5 text-brand-muted hover:text-red-400 transition-colors"
+              className="p-1.5 rounded-md text-brand-muted hover:text-red-400 hover:bg-red-400/10 transition-colors"
             >
-              <Trash2 size={15} />
+              <Trash2 size={14} />
             </button>
           </div>
         </li>

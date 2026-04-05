@@ -62,9 +62,9 @@ export function GateConfigPanel() {
           type="button"
           onClick={() => setEditing({ mode: 'adding' })}
           data-testid="add-gate-btn"
-          className="mt-3 flex items-center gap-2 text-sm text-brand-accent hover:text-brand-accent-hover transition-colors"
+          className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-brand-accent border border-dashed border-brand-accent/30 rounded-lg hover:bg-brand-accent/5 hover:border-brand-accent/60 transition-colors"
         >
-          <Plus size={16} />
+          <Plus size={15} />
           Add Gate
         </button>
       ) : (

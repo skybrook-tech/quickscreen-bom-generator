@@ -1,9 +1,11 @@
 import { memo } from 'react';
+import type { ReactNode } from 'react';
 
 export interface ButtonGroupOption<T extends string> {
   value: T;
   label: string;
   description?: string;
+  icon?: ReactNode;
 }
 
 interface ButtonGroupProps<T extends string> {
@@ -54,9 +56,14 @@ function ButtonGroupInner<T extends string>({
           >
             {isSystemType ? (
               <>
-                <div className="text-base font-bold leading-tight">{opt.value}</div>
+                {opt.icon && (
+                  <div className={`mb-1.5 ${isActive ? 'text-brand-accent' : 'text-brand-muted'}`}>
+                    {opt.icon}
+                  </div>
+                )}
+                <div className="text-sm font-bold leading-tight">{opt.value}</div>
                 {opt.description && (
-                  <div className={`text-xs mt-0.5 ${isActive ? 'text-brand-accent' : 'text-brand-muted'}`}>
+                  <div className={`text-xs mt-0.5 leading-tight ${isActive ? 'text-brand-accent/80' : 'text-brand-muted'}`}>
                     {opt.description}
                   </div>
                 )}

@@ -83,29 +83,25 @@ function AppContent() {
     <div className="space-y-4">
 
       {/* ── Describe the Job ────────────────────────────────────── */}
-      <AccordionSection title="Describe the Job (optional)">
-        <div className="pt-4">
-          <JobDescriptionParser />
-        </div>
+      <AccordionSection title="Describe the Job" badge="optional" defaultOpen={false}>
+        <JobDescriptionParser />
       </AccordionSection>
 
       {/* ── Canvas Layout Tool ──────────────────────────────────── */}
       <div className="hidden sm:block">
-        <AccordionSection title="Layout Tool (optional)">
-          <div className="pt-4">
-            <ErrorBoundary label="Layout Tool">
-              <FenceLayoutCanvas />
-            </ErrorBoundary>
-          </div>
+        <AccordionSection title="Layout Tool" badge="optional" defaultOpen={false}>
+          <ErrorBoundary label="Layout Tool">
+            <FenceLayoutCanvas />
+          </ErrorBoundary>
         </AccordionSection>
       </div>
 
       {/* ── Fence & Gate Configuration ──────────────────────────── */}
-      <AccordionSection title="Fence Configuration">
-        <div className="pt-4 space-y-6">
+      <AccordionSection title="Fence Configuration" badge={gates.length > 0 ? `${gates.length} gate${gates.length !== 1 ? 's' : ''}` : undefined}>
+        <div className="space-y-6">
           <FenceConfigForm onGenerate={handleGenerate} />
-          <div className="border-t border-brand-border pt-4">
-            <h3 className="text-sm font-semibold text-brand-text mb-3">Gates</h3>
+          <div className="border-t border-brand-border pt-5">
+            <p className="text-xs font-semibold text-brand-muted uppercase tracking-wider mb-3">Gates</p>
             <GateConfigPanel />
           </div>
           <button
@@ -113,16 +109,16 @@ function AppContent() {
             form="fence-config-form"
             disabled={bomMutation.isPending}
             data-testid="generate-bom-btn"
-            className="w-full py-3 px-6 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-50 text-white font-semibold rounded-md transition-colors text-sm"
+            className="w-full py-3 px-6 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-50 text-white font-bold rounded-lg transition-colors text-sm tracking-wide shadow-sm"
           >
-            {bomMutation.isPending ? 'Generating…' : 'Generate BOM'}
+            {bomMutation.isPending ? 'Generating…' : 'Generate BOM →'}
           </button>
         </div>
       </AccordionSection>
 
       {/* ── Contact & Delivery ──────────────────────────────────── */}
       <AccordionSection title="Contact & Delivery">
-        <div className="pt-4 space-y-4">
+        <div className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <ContactDeliveryForm onChange={setContact} initialValues={contact} />
@@ -132,13 +128,13 @@ function AppContent() {
             </div>
           </div>
           <div>
-            <label className="block text-xs text-brand-muted mb-1">Quote Notes</label>
+            <label className="block text-xs font-semibold text-brand-muted uppercase tracking-wider mb-1.5">Quote Notes</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
               placeholder="Internal notes for this quote…"
-              className="w-full px-2.5 py-2 bg-brand-bg border border-brand-border rounded text-sm text-brand-text focus:outline-none focus:border-brand-accent resize-none"
+              className="w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-accent/30 focus:border-brand-accent transition-colors resize-none"
             />
           </div>
         </div>
@@ -146,10 +142,14 @@ function AppContent() {
 
       {/* ── Bill of Materials ───────────────────────────────────── */}
       {(bomResult || bomMutation.isPending || bomMutation.isError) && (
-        <AccordionSection title="Bill of Materials" defaultOpen>
-          <div className="pt-4">
+        <AccordionSection
+          title="Bill of Materials"
+          badge={bomResult ? `$${bomResult.grandTotal.toFixed(2)} inc. GST` : bomMutation.isPending ? 'Calculating…' : undefined}
+          defaultOpen
+        >
+          <div>
             {bomMutation.isPending && (
-              <div className="flex items-center justify-center gap-2 py-6 text-sm text-brand-muted">
+              <div className="flex items-center justify-center gap-2 py-8 text-sm text-brand-muted">
                 <Loader2 size={16} className="animate-spin" />
                 Calculating BOM…
               </div>
@@ -165,9 +165,9 @@ function AppContent() {
               <ErrorBoundary label="Bill of Materials">
               <div className="space-y-4">
                 {/* Tier selector + export actions */}
-                <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-brand-border">
                   <div className="flex items-center gap-3">
-                    <span className="text-sm text-brand-muted">Tier:</span>
+                    <span className="text-xs font-semibold text-brand-muted uppercase tracking-wider">Pricing tier</span>
                     <PricingTierSelect value={pricingTier} onChange={setPricingTier} />
                   </div>
                   <QuoteActions

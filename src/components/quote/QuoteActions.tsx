@@ -137,39 +137,44 @@ export function QuoteActions({
     }
   };
 
-  const btnCls = 'flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
+  const primaryCls = 'flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-md bg-brand-accent hover:bg-brand-accent-hover text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
+  const btnCls = 'flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-md border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/60 hover:bg-brand-accent/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
 
   return (
     <div className="flex flex-wrap gap-2">
-      <button type="button" onClick={handleSave} disabled={saving} className={btnCls}>
+      {/* Primary action */}
+      <button type="button" onClick={handleSave} disabled={saving} className={primaryCls}>
         {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />}
         {saved ? 'Saved!' : saving ? 'Saving…' : 'Save Quote'}
       </button>
 
       <button type="button" onClick={onShowSaved} className={btnCls}>
         <FolderOpen size={13} />
-        Load Quote
+        Load
       </button>
 
-      <button type="button" onClick={handlePDF} disabled={pdfing} className={btnCls}>
-        {pdfing ? <Loader2 size={13} className="animate-spin" /> : <Download size={13} />}
-        {pdfing ? 'Generating…' : 'PDF'}
-      </button>
+      {/* Export group */}
+      <div className="flex gap-1.5 border-l border-brand-border pl-2 ml-0.5">
+        <button type="button" onClick={handlePDF} disabled={pdfing} className={btnCls} title="Download PDF">
+          {pdfing ? <Loader2 size={13} className="animate-spin" /> : <Download size={13} />}
+          PDF
+        </button>
 
-      <button type="button" onClick={handleCSV} className={btnCls}>
-        <Download size={13} />
-        CSV
-      </button>
+        <button type="button" onClick={handleCSV} className={btnCls} title="Download CSV">
+          <Download size={13} />
+          CSV
+        </button>
 
-      <button type="button" onClick={handleCopy} className={btnCls}>
-        <Copy size={13} />
-        Copy
-      </button>
+        <button type="button" onClick={handleCopy} className={btnCls} title="Copy to clipboard (Excel-compatible)">
+          <Copy size={13} />
+          Copy
+        </button>
 
-      <button type="button" onClick={handlePrint} className={btnCls}>
-        <Printer size={13} />
-        Print
-      </button>
+        <button type="button" onClick={handlePrint} className={btnCls} title="Print">
+          <Printer size={13} />
+          Print
+        </button>
+      </div>
     </div>
   );
 }

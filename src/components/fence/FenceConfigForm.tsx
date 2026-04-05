@@ -1,31 +1,43 @@
-import { useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import type { SubmitHandler } from 'react-hook-form';
-import { FenceConfigSchema, defaultFenceConfig } from '../../schemas/fence.schema';
-import type { FenceConfig } from '../../schemas/fence.schema';
-import { useFenceConfig } from '../../context/FenceConfigContext';
-import { FormField } from '../shared/FormField';
-import { ColourSelect } from './ColourSelect';
-import { SlatSizeSelect } from './SlatSizeSelect';
-import { SlatGapSelect } from './SlatGapSelect';
-import { ButtonGroup } from '../shared/ButtonGroup';
+import { useEffect, useMemo } from "react";
+import { AlignJustify, GalleryVertical, Zap, Package } from "lucide-react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { SubmitHandler } from "react-hook-form";
+import {
+  FenceConfigSchema,
+  defaultFenceConfig,
+} from "../../schemas/fence.schema";
+import type { FenceConfig } from "../../schemas/fence.schema";
+import { useFenceConfig } from "../../context/FenceConfigContext";
+import { FormField } from "../shared/FormField";
+import { ColourSelect } from "./ColourSelect";
+import { SlatSizeSelect } from "./SlatSizeSelect";
+import { SlatGapSelect } from "./SlatGapSelect";
+import { ButtonGroup } from "../shared/ButtonGroup";
 import {
   SYSTEM_TYPES,
   PANEL_WIDTHS,
   POST_MOUNTINGS,
   TERMINATIONS,
-} from '../../lib/constants';
+} from "../../lib/constants";
 
 // Shared class for all form inputs/selects
 const inputCls =
-  'w-full px-2.5 py-2 bg-brand-bg border border-brand-border rounded text-sm text-brand-text ' +
-  'focus:outline-none focus:border-brand-accent disabled:opacity-50 disabled:cursor-not-allowed';
+  "w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text " +
+  "focus:outline-none focus:ring-2 focus:ring-brand-accent/30 focus:border-brand-accent " +
+  "transition-colors disabled:opacity-40 disabled:cursor-not-allowed";
 
 interface FenceConfigFormProps {
   /** Called after form validates successfully. MainApp reads config from context. */
   onGenerate?: () => void;
 }
+
+const SYSTEM_TYPE_ICONS: Record<string, React.ReactNode> = {
+  QSHS: <AlignJustify size={18} />,
+  VS: <GalleryVertical size={18} />,
+  XPL: <Zap size={18} />,
+  BAYG: <Package size={18} />,
+};
 
 export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
   const { dispatch } = useFenceConfig();
@@ -42,20 +54,25 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
     defaultValues: defaultFenceConfig,
   });
 
-  const systemType = watch('systemType');
-  const isXpl = systemType === 'XPL';
+  const systemType = watch("systemType");
+  const isXpl = systemType === "XPL";
+
+  const systemTypeOptions = useMemo(
+    () => SYSTEM_TYPES.map((s) => ({ ...s })),
+    [],
+  );
 
   // Enforce XPL → 65mm in the form as well as context
   useEffect(() => {
     if (isXpl) {
-      setValue('slatSize', '65');
+      setValue("slatSize", "65");
     }
   }, [isXpl, setValue]);
 
   // Sync every change back to the context so downstream components always have the latest values
   useEffect(() => {
     const subscription = watch((values) => {
-      dispatch({ type: 'SET_CONFIG', config: values as Partial<FenceConfig> });
+      dispatch({ type: "SET_CONFIG", config: values as Partial<FenceConfig> });
     });
     return () => subscription.unsubscribe();
   }, [watch, dispatch]);
@@ -74,7 +91,7 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
             control={control}
             render={({ field }) => (
               <ButtonGroup
-                options={SYSTEM_TYPES}
+                options={systemTypeOptions}
                 value={field.value}
                 onChange={field.onChange}
                 variant="system-type"
@@ -89,7 +106,7 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
         <FormField label="Customer / Job Reference">
           <input
-            {...register('customerRef')}
+            {...register("customerRef")}
             type="text"
             placeholder="e.g. Smith Residence – Side Fence"
             className={inputCls}
@@ -101,7 +118,7 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
           error={errors.totalRunLength?.message}
         >
           <input
-            {...register('totalRunLength', { valueAsNumber: true })}
+            {...register("totalRunLength", { valueAsNumber: true })}
             type="number"
             step="0.5"
             min="0.5"
@@ -117,7 +134,7 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
           note="300 – 2400mm"
         >
           <input
-            {...register('targetHeight', { valueAsNumber: true })}
+            {...register("targetHeight", { valueAsNumber: true })}
             type="number"
             step="1"
             min="300"
@@ -132,7 +149,7 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
         <FormField label="Slat Size" error={errors.slatSize?.message}>
           <SlatSizeSelect
-            {...register('slatSize')}
+            {...register("slatSize")}
             data-testid="slat-size"
             disabled={isXpl}
             className={inputCls}
@@ -144,7 +161,7 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
 
         <FormField label="Slat Gap" error={errors.slatGap?.message}>
           <SlatGapSelect
-            {...register('slatGap')}
+            {...register("slatGap")}
             data-testid="slat-gap"
             className={inputCls}
           />
@@ -152,7 +169,7 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
 
         <FormField label="Colour" error={errors.colour?.message}>
           <ColourSelect
-            {...register('colour')}
+            {...register("colour")}
             data-testid="colour"
             className={inputCls}
           />
@@ -164,12 +181,14 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
           error={errors.maxPanelWidth?.message}
         >
           <select
-            {...register('maxPanelWidth')}
+            {...register("maxPanelWidth")}
             data-testid="max-panel-width"
             className={inputCls}
           >
             {PANEL_WIDTHS.map((p) => (
-              <option key={p.value} value={p.value}>{p.label}</option>
+              <option key={p.value} value={p.value}>
+                {p.label}
+              </option>
             ))}
           </select>
         </FormField>
@@ -177,38 +196,50 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
 
       {/* ── Row 4: Terminations / Post mounting / Corners ────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <FormField label="Left Termination" error={errors.leftTermination?.message}>
+        <FormField
+          label="Left Termination"
+          error={errors.leftTermination?.message}
+        >
           <select
-            {...register('leftTermination')}
+            {...register("leftTermination")}
             data-testid="left-termination"
             className={inputCls}
           >
             {TERMINATIONS.map((t) => (
-              <option key={t.value} value={t.value}>{t.label}</option>
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
             ))}
           </select>
         </FormField>
 
-        <FormField label="Right Termination" error={errors.rightTermination?.message}>
+        <FormField
+          label="Right Termination"
+          error={errors.rightTermination?.message}
+        >
           <select
-            {...register('rightTermination')}
+            {...register("rightTermination")}
             data-testid="right-termination"
             className={inputCls}
           >
             {TERMINATIONS.map((t) => (
-              <option key={t.value} value={t.value}>{t.label}</option>
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
             ))}
           </select>
         </FormField>
 
         <FormField label="Post Mounting" error={errors.postMounting?.message}>
           <select
-            {...register('postMounting')}
+            {...register("postMounting")}
             data-testid="post-mounting"
             className={inputCls}
           >
             {POST_MOUNTINGS.map((m) => (
-              <option key={m.value} value={m.value}>{m.label}</option>
+              <option key={m.value} value={m.value}>
+                {m.label}
+              </option>
             ))}
           </select>
         </FormField>
@@ -219,7 +250,7 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
           error={errors.corners?.message}
         >
           <input
-            {...register('corners', { valueAsNumber: true })}
+            {...register("corners", { valueAsNumber: true })}
             type="number"
             min="0"
             max="10"
@@ -229,7 +260,6 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
           />
         </FormField>
       </div>
-
     </form>
   );
 }

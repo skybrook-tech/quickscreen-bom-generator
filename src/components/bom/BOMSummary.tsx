@@ -6,28 +6,34 @@ interface BOMSummaryProps {
 
 export function BOMSummary({ result }: BOMSummaryProps) {
   return (
-    <div className="mt-4 flex flex-col items-end gap-1 text-sm">
-      <div className="flex gap-8 text-brand-muted">
-        <span>Subtotal (ex-GST)</span>
-        <span data-testid="bom-grand-total" className="tabular-nums">${result.total.toFixed(2)}</span>
+    <div className="mt-4 bg-brand-bg rounded-lg border border-brand-border p-4">
+      <div className="space-y-1 mb-3">
+        <div className="flex justify-between items-center text-sm">
+          <span className="text-brand-muted">Subtotal (ex-GST)</span>
+          <span className="tabular-nums text-brand-text">${result.total.toFixed(2)}</span>
+        </div>
+        <div className="flex justify-between items-center text-sm">
+          <span className="text-brand-muted">GST (10%)</span>
+          <span className="tabular-nums text-brand-text">${result.gst.toFixed(2)}</span>
+        </div>
       </div>
-      <div className="flex gap-8 text-brand-muted">
-        <span>GST (10%)</span>
-        <span className="tabular-nums">${result.gst.toFixed(2)}</span>
-      </div>
-      <div className="flex gap-8 text-brand-text font-semibold text-base border-t border-brand-border pt-2 mt-1">
-        <span>Total (inc. GST)</span>
+
+      <div className="flex justify-between items-center border-t border-brand-border pt-3">
+        <div>
+          <p className="text-sm font-semibold text-brand-text">Total (inc. GST)</p>
+          <p className="text-xs text-brand-muted mt-0.5">
+            Generated {new Date(result.generatedAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short' })}
+            {' · '}
+            {result.pricingTier.replace('tier', 'Tier ')}
+          </p>
+        </div>
         <span
-          className="tabular-nums"
+          data-testid="bom-grand-total"
+          className="text-2xl font-bold text-brand-accent tabular-nums"
         >
           ${result.grandTotal.toFixed(2)}
         </span>
       </div>
-      <p className="text-xs text-brand-muted mt-1">
-        Generated {new Date(result.generatedAt).toLocaleString('en-AU')}
-        {' · '}
-        {result.pricingTier.replace('tier', 'Tier ')}
-      </p>
     </div>
   );
 }

@@ -1,98 +1,161 @@
-import { useState } from 'react';
-import type { BOMResult, BOMLineItem as BOMLineItemType } from '../../types/bom.types';
-import { BOMLineItem } from './BOMLineItem';
-import { BOMSummary } from './BOMSummary';
+import { useState } from "react";
+import type {
+  BOMResult,
+  BOMLineItem as BOMLineItemType,
+} from "../../types/bom.types";
+import { BOMLineItem } from "./BOMLineItem";
+import { BOMSummary } from "./BOMSummary";
+import pluralize from "pluralize";
 
-type ViewFilter = 'all' | 'fence' | 'gates';
+type ViewFilter = "all" | "fence" | "gates";
 
 interface BOMDisplayProps {
   result: BOMResult;
 }
 
-const CATEGORY_ORDER = ['post', 'slat', 'rail', 'bracket', 'gate', 'hardware', 'accessory', 'screw'] as const;
+const CATEGORY_ORDER = [
+  "post",
+  "slat",
+  "rail",
+  "bracket",
+  "gate",
+  "hardware",
+  "accessory",
+  "screw",
+] as const;
 
 function sortItems(items: BOMLineItemType[]): BOMLineItemType[] {
   return [...items].sort((a, b) => {
-    const ai = CATEGORY_ORDER.indexOf(a.category as typeof CATEGORY_ORDER[number]);
-    const bi = CATEGORY_ORDER.indexOf(b.category as typeof CATEGORY_ORDER[number]);
+    const ai = CATEGORY_ORDER.indexOf(
+      a.category as (typeof CATEGORY_ORDER)[number],
+    );
+    const bi = CATEGORY_ORDER.indexOf(
+      b.category as (typeof CATEGORY_ORDER)[number],
+    );
     return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
   });
 }
 
+function groupByCategory(
+  items: BOMLineItemType[],
+): [string, BOMLineItemType[]][] {
+  const map = new Map<string, BOMLineItemType[]>();
+  for (const item of items) {
+    if (!map.has(item.category)) map.set(item.category, []);
+    map.get(item.category)!.push(item);
+  }
+  return Array.from(map.entries());
+}
+
 export function BOMDisplay({ result }: BOMDisplayProps) {
-  const [view, setView] = useState<ViewFilter>('all');
+  const [view, setView] = useState<ViewFilter>("all");
 
   const fenceItems = sortItems(result.fenceItems);
-  const gateItems  = sortItems(result.gateItems);
-  const allItems   = view === 'fence' ? fenceItems
-    : view === 'gates' ? gateItems
-    : [...fenceItems, ...gateItems];
+  const gateItems = sortItems(result.gateItems);
+  const allItems =
+    view === "fence"
+      ? fenceItems
+      : view === "gates"
+        ? gateItems
+        : [...fenceItems, ...gateItems];
 
   const hasGates = result.gateItems.length > 0;
+  const groups = groupByCategory(allItems);
+
+  const FILTER_OPTIONS: { value: ViewFilter; label: string; count: number }[] =
+    [
+      {
+        value: "all",
+        label: "All items",
+        count: result.fenceItems.length + result.gateItems.length,
+      },
+      { value: "fence", label: "Fence", count: result.fenceItems.length },
+      { value: "gates", label: "Gates", count: result.gateItems.length },
+    ];
 
   return (
     <div>
-      {/* ── View filter ─────────────────────────────────────────── */}
+      {/* ── View filter tabs ─────────────────────────────────────── */}
       {hasGates && (
-        <div className="flex gap-2 mb-3">
-          <button
-            type="button"
-            data-testid="bom-view-all"
-            onClick={() => setView('all')}
-            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-              view === 'all'
-                ? 'bg-brand-accent text-white'
-                : 'border border-brand-border text-brand-muted hover:text-brand-text'
-            }`}
-          >
-            All
-          </button>
-          <button
-            type="button"
-            data-testid="bom-view-fence"
-            onClick={() => setView('fence')}
-            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-              view === 'fence'
-                ? 'bg-brand-accent text-white'
-                : 'border border-brand-border text-brand-muted hover:text-brand-text'
-            }`}
-          >
-            Fence only
-          </button>
-          <button
-            type="button"
-            data-testid="bom-view-gates"
-            onClick={() => setView('gates')}
-            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-              view === 'gates'
-                ? 'bg-brand-accent text-white'
-                : 'border border-brand-border text-brand-muted hover:text-brand-text'
-            }`}
-          >
-            Gates only
-          </button>
+        <div className="flex border-b border-brand-border mb-4">
+          {FILTER_OPTIONS.map(({ value, label, count }) => (
+            <button
+              key={value}
+              type="button"
+              data-testid={`bom-view-${value}`}
+              onClick={() => setView(value)}
+              className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors flex items-center gap-1.5 ${
+                view === value
+                  ? "border-brand-accent text-brand-accent"
+                  : "border-transparent text-brand-muted hover:text-brand-text hover:border-brand-border"
+              }`}
+            >
+              {label}
+              <span
+                className={`text-xs px-1.5 py-0.5 rounded-full font-medium leading-none ${
+                  view === value
+                    ? "bg-brand-accent/15 text-brand-accent"
+                    : "bg-brand-border/60 text-brand-muted"
+                }`}
+              >
+                {count}
+              </span>
+            </button>
+          ))}
         </div>
       )}
 
       {/* ── BOM table ───────────────────────────────────────────── */}
-      <div className="overflow-x-auto rounded border border-brand-border">
+      <div className="overflow-x-auto rounded-lg border border-brand-border">
         <table
           data-testid="bom-table"
           className="w-full text-left border-collapse"
         >
           <thead>
-            <tr className="bg-brand-bg border-b border-brand-border">
-              <th className="py-2 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wide">Code</th>
-              <th className="py-2 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wide">Description</th>
-              <th className="py-2 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wide text-center">Unit</th>
-              <th className="py-2 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wide text-right">Qty</th>
-              <th className="py-2 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wide text-right">Unit Price</th>
-              <th className="py-2 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wide text-right">Total</th>
+            <tr className="bg-brand-bg/80">
+              <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider whitespace-nowrap">
+                Code
+              </th>
+              <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider">
+                Description
+              </th>
+              <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-center">
+                Unit
+              </th>
+              <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
+                Qty
+              </th>
+              <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right whitespace-nowrap">
+                Unit Price
+              </th>
+              <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
+                Total
+              </th>
             </tr>
           </thead>
-          <tbody className="bg-brand-card divide-y divide-brand-border">
-            {allItems.map((item) => (
-              <BOMLineItem key={`${item.sku}-${item.category}`} item={item} />
+          <tbody className="bg-brand-card">
+            {groups.map(([category, items]) => (
+              <>
+                {/* Category group header */}
+                <tr
+                  key={`cat-${category}`}
+                  className="border-t border-brand-border/50"
+                >
+                  <td
+                    colSpan={6}
+                    className="px-3 py-1.5 bg-slate-50 border-b border-brand-border/50 capitalize text-xs font-semibold text-brand-muted tracking-wider"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                    {pluralize(category)}
+                  </td>
+                </tr>
+                {items.map((item) => (
+                  <BOMLineItem
+                    key={`${item.sku}-${item.category}`}
+                    item={item}
+                  />
+                ))}
+              </>
             ))}
           </tbody>
         </table>

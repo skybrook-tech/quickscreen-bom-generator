@@ -1,3 +1,4 @@
+import { ButtonGroup } from '../shared/ButtonGroup';
 import type { PricingTier } from '../../types/bom.types';
 
 interface PricingTierSelectProps {
@@ -13,15 +14,11 @@ const TIERS: { value: PricingTier; label: string }[] = [
 
 export function PricingTierSelect({ value, onChange }: PricingTierSelectProps) {
   return (
-    <select
+    <ButtonGroup
+      options={TIERS}
       value={value}
-      onChange={(e) => onChange(e.target.value as PricingTier)}
+      onChange={onChange}
       data-testid="pricing-tier"
-      className="px-2.5 py-1.5 bg-brand-bg border border-brand-border rounded text-sm text-brand-text focus:outline-none focus:border-brand-accent"
-    >
-      {TIERS.map((t) => (
-        <option key={t.value} value={t.value}>{t.label}</option>
-      ))}
-    </select>
+    />
   );
 }

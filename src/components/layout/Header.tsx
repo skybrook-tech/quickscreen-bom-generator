@@ -11,35 +11,47 @@ export function Header() {
     await supabase.auth.signOut();
   };
 
+  const initials = user?.email?.[0].toUpperCase() ?? '?';
+
   return (
-    <header className="bg-brand-card border-b border-brand-border px-6 py-3 flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <span className="text-brand-accent font-semibold text-sm tracking-wide uppercase">
+    <header className="bg-brand-card border-b border-brand-border px-4 sm:px-6 py-0 flex items-stretch justify-between">
+      {/* ── Brand ─────────────────────────────────────────────────── */}
+      <div className="flex items-center gap-3 py-3">
+        <span className="text-xs font-bold text-brand-accent tracking-widest uppercase px-2 py-1 rounded border border-brand-accent/40 bg-brand-accent/5 hidden sm:inline">
           SkybrookAI
         </span>
-        <span className="text-brand-border">|</span>
-        <span className="text-brand-text font-medium">
-          The Glass Outlet — QuickScreen BOM Generator
-        </span>
+        <span className="text-brand-border/60 hidden sm:inline">|</span>
+        <div className="leading-tight">
+          <p className="text-sm font-semibold text-brand-text">The Glass Outlet</p>
+          <p className="text-xs text-brand-muted">QuickScreen BOM Generator</p>
+        </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      {/* ── Controls ──────────────────────────────────────────────── */}
+      <div className="flex items-center gap-1">
         <button
           onClick={toggle}
           title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-          className="p-1.5 rounded text-brand-muted hover:text-brand-text transition-colors"
+          className="p-2 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/30 transition-colors"
         >
           {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
         </button>
+
         {user && (
           <>
-            <span className="text-brand-muted text-sm">{user.email}</span>
+            <div
+              title={user.email ?? ''}
+              className="w-7 h-7 rounded-full bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-xs font-semibold flex items-center justify-center select-none"
+            >
+              {initials}
+            </div>
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-1.5 text-brand-muted hover:text-brand-text text-sm transition-colors"
+              title="Sign out"
+              className="flex items-center gap-1.5 text-xs text-brand-muted hover:text-brand-text px-2.5 py-2 rounded-md hover:bg-brand-border/30 transition-colors"
             >
-              <LogOut size={14} />
-              Sign out
+              <LogOut size={13} />
+              <span className="hidden sm:inline">Sign out</span>
             </button>
           </>
         )}
