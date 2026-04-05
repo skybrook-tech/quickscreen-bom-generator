@@ -6,11 +6,18 @@ import { AuthGuard } from './components/auth/AuthGuard';
 import { LoginPage } from './pages/LoginPage';
 import { MainApp } from './pages/MainApp';
 import { QuoteViewPage } from './pages/QuoteViewPage';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
+
+function ThemedToaster() {
+  const { theme } = useTheme();
+  return <Toaster theme={theme} position="bottom-right" richColors />;
+}
 
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Toaster theme="dark" position="bottom-right" richColors />
+      <ThemeProvider>
+      <ThemedToaster />
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
@@ -32,6 +39,7 @@ export default function App() {
           />
         </Routes>
       </BrowserRouter>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

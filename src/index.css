@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Theme variables ─────────────────────────────────────────────────────── */
+
+:root {
+  /* Light theme (default) */
+  --brand-bg:           #f1f5f9;
+  --brand-card:         #ffffff;
+  --brand-border:       #cbd5e1;
+  --brand-accent:       #3b82f6;
+  --brand-accent-hover: #2563eb;
+  --brand-muted:        #64748b;
+  --brand-text:         #0f172a;
+}
+
+[data-theme="dark"] {
+  --brand-bg:           #0f1117;
+  --brand-card:         #1a1d2e;
+  --brand-border:       #2a2d3e;
+  --brand-accent:       #3b82f6;
+  --brand-accent-hover: #2563eb;
+  --brand-muted:        #6b7280;
+  --brand-text:         #e5e7eb;
+}
+
 @media print {
   /* Hide everything except the BOM table and summary */
   body > * { display: none !important; }
