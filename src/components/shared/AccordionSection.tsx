@@ -15,7 +15,7 @@ export function AccordionSection({ title, defaultOpen = true, children }: Accord
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-5 py-3.5 text-left hover:bg-white/5 transition-colors"
+        className="w-full flex items-center justify-between px-5 py-3.5 text-left hover:bg-brand-border/40 transition-colors"
       >
         <span className="text-brand-text font-medium text-sm">{title}</span>
         <ChevronDown

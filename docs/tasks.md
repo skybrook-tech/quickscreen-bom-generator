@@ -17,7 +17,7 @@
 | 4 | BOM Engine (Edge Functions) | ✅ Complete |
 | 5 | Quotes & Export | ✅ Complete |
 | 6 | Canvas Layout Tool | ✅ Complete |
-| 7 | Polish | ⬜ Not started |
+| 7 | Polish | 🔄 In progress |
 
 ---
 
@@ -173,10 +173,10 @@
 
 > See [phase-7-polish.md](./phase-7-polish.md)
 
-- [ ] Audit all components for dark theme consistency (no light-mode leaks)
-- [ ] Add loading spinners/skeletons to all async operations
-- [ ] Add React Error Boundaries to BOM display and canvas sections
-- [ ] Add toast notifications (quote save, clipboard copy, CSV download, auth errors, edge function errors)
+- [x] Audit all components for dark theme consistency — fixed `hover:bg-white/5` → `hover:bg-brand-border/40` in AccordionSection
+- [x] Add loading spinners/skeletons to all async operations — Loader2 spinner on BOM pending state
+- [x] Add React Error Boundaries to BOM display and canvas sections — `ErrorBoundary` wraps both
+- [x] Add toast notifications (quote save, clipboard copy, CSV download, auth errors, edge function errors) — sonner installed, toasts on save/copy/csv/bom-error
 - [ ] Responsive audit: mobile form-only mode, tablet canvas, desktop full layout
 - [ ] Verify canvas has no memory leaks (mount/unmount in dev tools)
 - [ ] Verify BOM re-pricing (tier switch) does not re-trigger edge function

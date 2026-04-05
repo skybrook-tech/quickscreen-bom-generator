@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Save, Download, Copy, Printer, FolderOpen, Loader2 } from 'lucide-react';
 import { pdf } from '@react-pdf/renderer';
 import Papa from 'papaparse';
@@ -46,6 +47,10 @@ export function QuoteActions({
       await saveQuote.mutateAsync(newQuote);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
+      toast.success('Quote saved');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Failed to save quote';
+      toast.error(msg);
     } finally {
       setSaving(false);
     }
@@ -77,6 +82,7 @@ export function QuoteActions({
     a.download = `quote-${customerRef || 'bom'}-${date}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+    toast.success('CSV downloaded');
   };
 
   // ── Clipboard copy (tab-separated for Excel) ─────────────────────────────────
@@ -89,7 +95,12 @@ export function QuoteActions({
     lines.push(`\tSubtotal (ex-GST)\t\t\t\t${bom.total.toFixed(2)}`);
     lines.push(`\tGST (10%)\t\t\t\t${bom.gst.toFixed(2)}`);
     lines.push(`\tTOTAL (inc. GST)\t\t\t\t${bom.grandTotal.toFixed(2)}`);
-    await navigator.clipboard.writeText([header, ...lines].join('\n'));
+    try {
+      await navigator.clipboard.writeText([header, ...lines].join('\n'));
+      toast.success('Copied to clipboard');
+    } catch {
+      toast.error('Clipboard copy failed');
+    }
   };
 
   // ── Print ────────────────────────────────────────────────────────────────────

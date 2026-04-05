@@ -1,4 +1,6 @@
 import { useState, useCallback } from 'react';
+import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 import { AppShell } from '../components/layout/AppShell';
 import { FenceConfigForm } from '../components/fence/FenceConfigForm';
 import { GateConfigPanel } from '../components/gate/GateConfigPanel';
@@ -12,6 +14,7 @@ import { FenceLayoutCanvas } from '../components/canvas/FenceLayoutCanvas';
 import { FenceConfigProvider, useFenceConfig } from '../context/FenceConfigContext';
 import { GateProvider, useGates } from '../context/GateContext';
 import { AccordionSection } from '../components/shared/AccordionSection';
+import { ErrorBoundary } from '../components/shared/ErrorBoundary';
 import { useBOM } from '../hooks/useBOM';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
@@ -48,8 +51,10 @@ function AppContent() {
     try {
       const result = await bomMutation.mutateAsync({ fenceConfig, gates, pricingTier });
       setBomResult(result);
-    } catch {
-      // error shown below
+    } catch (err) {
+      console.error('[BOM] calculation failed:', err);
+      const msg = err instanceof Error ? err.message : 'BOM calculation failed. Is Supabase running?';
+      toast.error(msg);
     }
   };
 
@@ -70,7 +75,9 @@ function AppContent() {
       <div className="hidden sm:block">
         <AccordionSection title="Layout Tool (optional)">
           <div className="pt-4">
-            <FenceLayoutCanvas />
+            <ErrorBoundary label="Layout Tool">
+              <FenceLayoutCanvas />
+            </ErrorBoundary>
           </div>
         </AccordionSection>
       </div>
@@ -118,7 +125,10 @@ function AppContent() {
         <AccordionSection title="Bill of Materials" defaultOpen>
           <div className="pt-4">
             {bomMutation.isPending && (
-              <p className="text-sm text-brand-muted py-4 text-center">Calculating BOM…</p>
+              <div className="flex items-center justify-center gap-2 py-6 text-sm text-brand-muted">
+                <Loader2 size={16} className="animate-spin" />
+                Calculating BOM…
+              </div>
             )}
             {bomMutation.isError && (
               <p className="text-sm text-red-400 py-4">
@@ -128,6 +138,7 @@ function AppContent() {
               </p>
             )}
             {bomResult && !bomMutation.isPending && (
+              <ErrorBoundary label="Bill of Materials">
               <div className="space-y-4">
                 {/* Tier selector + export actions */}
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -149,6 +160,7 @@ function AppContent() {
 
                 <BOMDisplay result={bomResult} />
               </div>
+              </ErrorBoundary>
             )}
           </div>
         </AccordionSection>
