@@ -8,8 +8,8 @@
     "build": "tsc -p tsconfig.app.json && vite build",
     "preview": "vite preview",
     "serve:html": "npx serve 'Desktop/Claude Glass Outlet Project' -p 3000",
-    "cy:open": "cypress open",
-    "cy:run": "cypress run",
+    "cy:open": "CYPRESS_BASE_URL=http://localhost:5173 cypress open",
+    "cy:run": "CYPRESS_BASE_URL=http://localhost:5173 cypress run",
     "cy:run:html": "CYPRESS_BASE_URL=http://localhost:3000 cypress run",
     "cy:run:react": "CYPRESS_BASE_URL=http://localhost:5173 cypress run",
     "test": "npm run cy:run"

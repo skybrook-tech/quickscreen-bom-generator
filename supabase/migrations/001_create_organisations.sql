@@ -12,5 +12,3 @@ CREATE TABLE organisations (
 -- No RLS on organisations — it's read by the helper function below using SECURITY DEFINER.
 -- Direct client access is gated through profiles.
 
--- Seed the first org
-INSERT INTO organisations (name, slug) VALUES ('The Glass Outlet', 'glass-outlet');

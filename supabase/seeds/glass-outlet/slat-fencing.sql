@@ -12,12 +12,32 @@
 DO $$
 DECLARE
   _org UUID;
+  _slug TEXT := 'glass-outlet';
 BEGIN
-  SELECT id INTO _org FROM organisations WHERE slug = 'glass-outlet';
+  SELECT id INTO _org FROM organisations WHERE slug = _slug;
 
   -- ── Helper: insert a colour-variant SKU for all 11 colours ─────────────────
   -- Pattern: base_sku + '-' + colour_code
   -- e.g. base='XP-6100-S65', cat='slat', unit='length', t1=37.29, t2=34.65, t3=32.95
+
+
+  -- Seed the four fence systems and the gate product for the Glass Outlet org
+  INSERT INTO products (org_id, name, system_type, description)
+  SELECT
+    o.id,
+    vals.name,
+    vals.system_type,
+    vals.description
+  FROM organisations o
+  CROSS JOIN (VALUES
+    ('QSHS Horizontal Slat Screen', 'QSHS', 'Standard horizontal slat system. Slats run horizontally, inserted into slotted posts.'),
+    ('VS Vertical Slat Screen',     'VS',   'Vertical slat orientation. Slats insert into top and bottom rails.'),
+    ('XPL XPress Plus Premium',     'XPL',  '65mm slats only (forced). Insert/clip system with different bracket requirements.'),
+    ('BAYG Buy As You Go',          'BAYG', 'Spacers sold separately. Customer assembles themselves.'),
+    ('Gate',                        'GATE', 'Swing and sliding gate products.')
+  ) AS vals(name, system_type, description)
+  WHERE o.slug = _slug;
+
 
   -- 65mm Slat (6100mm stock)
   INSERT INTO product_pricing (org_id, sku, description, category, unit, tier1_price, tier2_price, tier3_price) VALUES

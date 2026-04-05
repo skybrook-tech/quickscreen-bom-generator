@@ -49,6 +49,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           autoComplete="email"
           className="w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-md text-brand-text placeholder-brand-muted focus:outline-none focus:border-brand-accent"
           placeholder="you@example.com"
+          data-testid="email-input"
         />
         {errors.email && (
           <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>
@@ -65,6 +66,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           autoComplete="current-password"
           className="w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-md text-brand-text placeholder-brand-muted focus:outline-none focus:border-brand-accent"
           placeholder="••••••••"
+          data-testid="password-input"
         />
         {errors.password && (
           <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>
@@ -79,6 +81,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         type="submit"
         disabled={isSubmitting}
         className="w-full py-2 px-4 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-50 text-white font-medium rounded-md transition-colors"
+        data-testid="sign-in-button"
       >
         {isSubmitting ? 'Signing in…' : 'Sign in'}
       </button>

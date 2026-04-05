@@ -42,6 +42,7 @@ export function LoginPage() {
                   ? 'bg-brand-accent text-white'
                   : 'text-brand-muted hover:text-brand-text'
               }`}
+              data-testid="sign-in-btn"
             >
               Sign in
             </button>

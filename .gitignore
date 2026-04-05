@@ -30,3 +30,7 @@ node_modules/
 dist/
 screenshots/
 .env.local
+
+.temp
+
+.tmp
