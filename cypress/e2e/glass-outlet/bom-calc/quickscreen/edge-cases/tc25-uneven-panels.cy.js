@@ -4,13 +4,12 @@
  * Posts = 7 + 1 = 8
  * No negative quantities or errors.
  */
-import { fillFenceConfig, generateBom, assertBomLine, signin } from '../../support/helpers';
-import { SEL } from '../../support/selectors';
+import { fillFenceConfig, generateBom, assertBomLine, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
+import { SEL } from '../../../../../support/selectors';
 
 describe('TC25 — 17m Run (Uneven Panel Distribution)', () => {
   beforeEach(() => {
-    cy.visit('/');
-    signin();
+      signInAsGlasshouseTestUser();
   });
 
   it('should handle uneven panel distribution correctly', () => {

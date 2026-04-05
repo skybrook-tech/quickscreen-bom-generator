@@ -15,20 +15,3 @@ CREATE TABLE products (
 
 -- NO RLS — only accessed by edge functions via service role key.
 REVOKE ALL ON products FROM anon, authenticated;
-
--- Seed the four fence systems and the gate product for the Glass Outlet org
-INSERT INTO products (org_id, name, system_type, description)
-SELECT
-  o.id,
-  vals.name,
-  vals.system_type,
-  vals.description
-FROM organisations o
-CROSS JOIN (VALUES
-  ('QSHS Horizontal Slat Screen', 'QSHS', 'Standard horizontal slat system. Slats run horizontally, inserted into slotted posts.'),
-  ('VS Vertical Slat Screen',     'VS',   'Vertical slat orientation. Slats insert into top and bottom rails.'),
-  ('XPL XPress Plus Premium',     'XPL',  '65mm slats only (forced). Insert/clip system with different bracket requirements.'),
-  ('BAYG Buy As You Go',          'BAYG', 'Spacers sold separately. Customer assembles themselves.'),
-  ('Gate',                        'GATE', 'Swing and sliding gate products.')
-) AS vals(name, system_type, description)
-WHERE o.slug = 'glass-outlet';

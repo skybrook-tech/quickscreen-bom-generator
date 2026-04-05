@@ -5,12 +5,11 @@
  * 18 slats per panel (90mm + 9mm gap = 99mm per slat, ~1770mm actual height)
  * 72 stock lengths: 18 slats × 8 panels = 144 pieces; 2 cuts per 6100mm length → 72 lengths
  */
-import { fillFenceConfig, generateBom, assertBomLine, assertGrandTotal, signin } from '../../support/helpers';
+import { fillFenceConfig, generateBom, assertBomLine, assertGrandTotal, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
 
 describe('TC5 — QSHS 90mm Slat', () => {
   beforeEach(() => {
-    cy.visit('/');
-    signin();
+    signInAsGlasshouseTestUser();
   });
 
   it('should switch to 90mm slat codes and recalculate quantities', () => {

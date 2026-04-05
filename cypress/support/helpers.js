@@ -166,10 +166,40 @@ export function assertAllColouredCodesEndWith(suffix) {
 }
 
 
-export function signin() {
+export function signin(user = 'test@cy.com', password = '123456', path = '/') {
+  cy.visit(path);
+  cy.get(SEL.signInBtn).click();
+  cy.get(SEL.emailInput).type(user);
+  cy.get(SEL.passwordInput).type(password);
+  cy.get(SEL.signInBtn).click();
+}
 
-  cy.get(SEL.signInBtn).click();
-  cy.get(SEL.emailInput).type('test@cy.com');
-  cy.get(SEL.passwordInput).type('123456');
-  cy.get(SEL.signInBtn).click();
+/**
+ * Sign in using credentials for the client inferred from the current spec path.
+ * Matches the first key in Cypress.env('clients') found in Cypress.spec.relative.
+ * Falls back to glass-outlet credentials if no match.
+ */
+export function signInForSpec() {
+  const specPath = Cypress.spec.relative;
+  const clients = Cypress.env('clients') || {};
+  const isHtmlApp = Cypress.env('isHtmlApp');
+
+  console.log('specPath', specPath);
+  console.log('clients', clients);
+  console.log('isHtmlApp', isHtmlApp);
+
+  const clientKey = Object.keys(clients).find(key => specPath.includes(key));
+  const client = clients[clientKey] || clients['glass-outlet'] || {};
+
+  const user     = isHtmlApp ? (client.htmlUser     || 'test@cy.com')
+                             : (client.reactUser     || 'test@bar.com');
+  const password = isHtmlApp ? (client.htmlPassword  || '123456')
+                             : (client.reactPassword || '123456');
+
+  signin(user, password, '/');
+}
+
+// Backward-compat alias — existing tests keep working unchanged
+export function signInAsGlasshouseTestUser() {
+  signInForSpec();
 }

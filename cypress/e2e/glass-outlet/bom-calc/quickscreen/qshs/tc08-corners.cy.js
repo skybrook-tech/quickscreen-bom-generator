@@ -3,12 +3,11 @@
  * Each 90° corner adds 1 post.
  * Posts = TC1 posts (9) + 2 corner posts = 11
  */
-import { fillFenceConfig, generateBom, assertBomLine, signin } from '../../support/helpers';
+import { fillFenceConfig, generateBom, assertBomLine, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
 
 describe('TC8 — QSHS with 2 Corners', () => {
   beforeEach(() => {
-    cy.visit('/');
-    signin();
+    signInAsGlasshouseTestUser();
   });
 
   it('should add 1 post per corner', () => {

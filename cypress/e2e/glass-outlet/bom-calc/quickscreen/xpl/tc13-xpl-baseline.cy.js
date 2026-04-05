@@ -3,13 +3,12 @@
  * XPL uses 65mm slats only (forced — 90mm option must be disabled/unavailable).
  * XPL uses different frame codes to QSHS — QS-5800-SF must not appear.
  */
-import { fillFenceConfig, generateBom, assertBomDoesNotContainCode, signin } from '../../support/helpers';
-import { SEL } from '../../support/selectors';
+import { fillFenceConfig, generateBom, assertBomDoesNotContainCode, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
+import { SEL } from '../../../../../support/selectors';
 
 describe('TC13 — XPL XPress Plus Premium Baseline', () => {
   beforeEach(() => {
-    cy.visit('/');
-    signin();
+    signInAsGlasshouseTestUser();
   });
 
   it('should use XPL-specific frame codes', () => {

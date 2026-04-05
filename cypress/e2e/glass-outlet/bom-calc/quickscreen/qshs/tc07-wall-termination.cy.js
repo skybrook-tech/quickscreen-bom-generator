@@ -3,13 +3,12 @@
  * Posts = panels + 1 - 2 (both ends wall-terminated) = 8 + 1 - 2 = 7
  * Grand total must be less than TC1 ($4,475.29) because there are fewer posts.
  */
-import { fillFenceConfig, generateBom, assertBomLine, signin } from '../../support/helpers';
-import { SEL } from '../../support/selectors';
+import { fillFenceConfig, generateBom, assertBomLine, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
+import { SEL } from '../../../../../support/selectors';
 
 describe('TC7 — QSHS Wall Termination Both Ends', () => {
   beforeEach(() => {
-    cy.visit('/');
-    signin();
+    signInAsGlasshouseTestUser();
   });
 
   it('should reduce post count when both ends are wall-terminated', () => {

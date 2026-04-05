@@ -3,13 +3,12 @@
  * Identical config to TC1 but pricing tier changed to Tier 3 (lowest price point).
  * Quantities are identical to TC1; unit prices are the lowest tier.
  */
-import { fillFenceConfig, generateBom, assertBomLine, assertGrandTotal, signin } from '../../support/helpers';
-import { SEL } from '../../support/selectors';
+import { fillFenceConfig, generateBom, assertBomLine, assertGrandTotal, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
+import { SEL } from '../../../../../support/selectors';
 
 describe('TC4 — QSHS Tier 3 Pricing', () => {
   beforeEach(() => {
-    cy.visit('/');
-    signin();
+    signInAsGlasshouseTestUser();
   });
 
   it('should apply Tier 3 unit prices — lowest price point', () => {

@@ -4,12 +4,11 @@
  *
  * Expected layout: 8 panels × 2500mm | Actual height: ~1770mm (24 slats)
  */
-import { fillFenceConfig, generateBom, assertBomLine, assertGrandTotal, signin } from '../../support/helpers';
+import { fillFenceConfig, generateBom, assertBomLine, assertGrandTotal, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
 
 describe('TC1 — QSHS Baseline', () => {
   beforeEach(() => {
-    cy.visit('/');
-    signin();
+    signInAsGlasshouseTestUser();
   });
 
   it('should generate correct BOM for 20m QSHS baseline config', () => {

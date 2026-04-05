@@ -3,12 +3,11 @@
  * 20000mm / 2000mm = 10 panels × 2000mm (evenly distributed)
  * Posts = 10 + 1 = 11
  */
-import { fillFenceConfig, generateBom, assertBomLine, signin } from '../../support/helpers';
+import { fillFenceConfig, generateBom, assertBomLine, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
 
 describe('TC9 — QSHS 2000mm Max Panel Width', () => {
   beforeEach(() => {
-    cy.visit('/');
-    signin();
+    signInAsGlasshouseTestUser();
   });
 
   it('should produce more panels and posts with narrower max width', () => {

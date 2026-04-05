@@ -5,12 +5,11 @@
  *
  * Note: Exact prices for BAYG system are pending confirmation — this test is structural.
  */
-import { fillFenceConfig, generateBom, assertBomDoesNotContainCode, signin } from '../../support/helpers';
+import { fillFenceConfig, generateBom, assertBomDoesNotContainCode, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
 
 describe('TC15 — BAYG Buy As You Go Baseline', () => {
   beforeEach(() => {
-    cy.visit('/');
-    signin();
+    signInAsGlasshouseTestUser();
   });
 
   it('should produce BAYG-specific product codes', () => {

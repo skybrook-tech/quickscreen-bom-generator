@@ -4,13 +4,12 @@
  * Gate: Black Satin (-B codes)
  * Uses BOM view toggle to verify fence and gate sections independently.
  */
-import { fillFenceConfig, addGate, generateBom, signin } from '../../support/helpers';
-import { SEL } from '../../support/selectors';
+import { fillFenceConfig, addGate, generateBom, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
+import { SEL } from '../../../../../support/selectors';
 
 describe('TC18 — Gate Different Colour to Fence', () => {
   beforeEach(() => {
-    cy.visit('/');
-    signin();
+    signInAsGlasshouseTestUser();
   });
 
   it('should use Black Satin codes for gate while fence stays Surfmist Matt', () => {

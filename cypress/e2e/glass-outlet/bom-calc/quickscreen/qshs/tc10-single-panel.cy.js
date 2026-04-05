@@ -6,12 +6,11 @@
  * Spacer blocks: ROUNDUP(2×25×1/50) = 1 pack
  * Screws: ROUNDUP((24×2×1.01 + 24×1/1)/100) = 1 pack
  */
-import { fillFenceConfig, generateBom, assertBomLine, signin } from '../../support/helpers';
+import { fillFenceConfig, generateBom, assertBomLine, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
 
 describe('TC10 — QSHS Short Single-Panel Run', () => {
   beforeEach(() => {
-    cy.visit('/');  
-    signin();
+    signInAsGlasshouseTestUser();
   });
 
   it('should produce minimum quantities for a single panel', () => {

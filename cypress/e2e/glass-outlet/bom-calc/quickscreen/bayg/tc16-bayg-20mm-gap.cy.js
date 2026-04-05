@@ -2,13 +2,12 @@
  * TC16 — BAYG 20mm Slat Gap
  * Wider gap = fewer slats = lower grand total than TC15.
  */
-import { fillFenceConfig, generateBom, signin } from '../../support/helpers';
-import { SEL } from '../../support/selectors';
+import { fillFenceConfig, generateBom, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
+import { SEL } from '../../../../../support/selectors';
 
 describe('TC16 — BAYG 20mm Slat Gap', () => {
   beforeEach(() => {
-    cy.visit('/');
-    signin();
+    signInAsGlasshouseTestUser();
   });
 
   it('should have fewer slats and lower total than TC15 (9mm gap)', () => {

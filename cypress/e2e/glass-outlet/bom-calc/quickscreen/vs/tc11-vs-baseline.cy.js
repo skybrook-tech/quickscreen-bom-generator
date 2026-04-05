@@ -8,13 +8,12 @@
  *
  * Note: Exact prices for VS system are pending confirmation — this test is structural.
  */
-import { fillFenceConfig, generateBom, signin } from '../../support/helpers';
-import { SEL } from '../../support/selectors';
+import { fillFenceConfig, generateBom, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
+import { SEL } from '../../../../../support/selectors';
 
 describe('TC11 — VS Vertical Slat Screen Baseline', () => {
   beforeEach(() => {
-    cy.visit('/');
-    signin();
+    signInAsGlasshouseTestUser();
   });
 
   it('should generate a BOM for VS system', () => {

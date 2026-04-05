@@ -11,3 +11,6 @@ Cypress.on('uncaught:exception', (err) => {
   // Let other unexpected errors still fail tests.
   return true;
 });
+
+
+

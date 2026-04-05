@@ -3,13 +3,12 @@
  * Switching from concreted-in-ground to base-plated changes the post product code.
  * A base plate line item should appear as a separate entry.
  */
-import { fillFenceConfig, generateBom, signin } from '../../support/helpers';
-import { SEL } from '../../support/selectors';
+import { fillFenceConfig, generateBom, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
+import { SEL } from '../../../../../support/selectors';
 
 describe('TC26 — Surface Mount Posts (Base Plate)', () => {
   beforeEach(() => {
-    cy.visit('/');
-    signin();
+    signInAsGlasshouseTestUser();
   });
 
   it('should use base-plate post product code instead of concreted', () => {

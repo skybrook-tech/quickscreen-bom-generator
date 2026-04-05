@@ -3,13 +3,12 @@
  * Switching gap from 9mm to 20mm reduces slat count and switches spacer pack code.
  * ~21 slats per panel at 20mm gap (65+20=85mm, 1800/85≈21 slats, actual ~1785mm)
  */
-import { fillFenceConfig, generateBom, assertBomLine, assertBomContainsCode, signin } from '../../support/helpers';
-import { SEL } from '../../support/selectors';
+import { fillFenceConfig, generateBom, assertBomLine, assertBomContainsCode, signInAsGlasshouseTestUser } from '../../../../../support/helpers';
+import { SEL } from '../../../../../support/selectors';
 
 describe('TC6 — QSHS 20mm Slat Gap', () => {
   beforeEach(() => {
-    cy.visit('/');
-    signin();
+    signInAsGlasshouseTestUser();
   });
 
   it('should switch spacer code to 20mm and reduce slat count', () => {

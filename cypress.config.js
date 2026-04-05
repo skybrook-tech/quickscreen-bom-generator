@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
@@ -11,5 +14,23 @@ export default defineConfig({
     defaultCommandTimeout: 8000,
     viewportWidth: 1440,
     viewportHeight: 900,
+    env: {
+      // Per-client credentials, keyed by directory segment in the spec path.
+      // signInForSpec() matches the first key found in Cypress.spec.relative.
+      isHtmlApp: process.env.CYPRESS_IS_HTML_APP || false,
+      clients: {
+        'glass-outlet': {
+          htmlUser:      'test@cy.com',
+          htmlPassword:  '123456',
+          reactUser:     'test@glasshouse.com',
+          reactPassword: '123456',
+        },
+        // Future clients:
+        // 'acme-fencing': {
+        //   htmlUser: 'test@acme.com', htmlPassword: '123456',
+        //   reactUser: 'test@acme.com', reactPassword: '123456',
+        // },
+      },
+    },
   },
 });
