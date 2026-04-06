@@ -29,6 +29,8 @@ interface BOMStepProps {
   notes: string;
   onNotesChange: (notes: string) => void;
   orgId: string;
+  editingQuoteId?: string;
+  onSaved?: (id: string) => void;
   onShowSaved: () => void;
   onBack: () => void;
 }
@@ -49,6 +51,8 @@ export function BOMStep({
   notes,
   onNotesChange,
   orgId,
+  editingQuoteId,
+  onSaved,
   onShowSaved,
   onBack,
 }: BOMStepProps) {
@@ -134,6 +138,8 @@ export function BOMStep({
               customerRef={fenceConfig.customerRef ?? ""}
               notes={notes}
               orgId={orgId}
+              editingQuoteId={editingQuoteId}
+              onSaved={onSaved}
               onShowSaved={onShowSaved}
             />
           </div>

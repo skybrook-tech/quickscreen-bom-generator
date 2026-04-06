@@ -57,8 +57,11 @@ export function SavedQuotesList({ onLoad, onClose }: SavedQuotesListProps) {
             >
               <div className="flex-1 min-w-0 mr-3">
                 <p className="text-sm font-medium text-brand-text truncate">
-                  {quote.customer_ref || 'Untitled Quote'}
+                  {quote.customer_ref || `Quote #${quote.quote_number}`}
                 </p>
+                {quote.customer_ref && (
+                  <p className="text-xs text-brand-muted/70">#{quote.quote_number}</p>
+                )}
                 <p className="text-xs text-brand-muted mt-0.5">
                   {new Date(quote.created_at).toLocaleDateString('en-AU')}
                   {' · '}

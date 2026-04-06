@@ -1,4 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell } from "../components/layout/AppShell";
 import { SavedQuotesList } from "../components/quote/SavedQuotesList";
@@ -173,6 +175,7 @@ function AppContent({ step, setStep }: AppContentProps) {
 
 export function MainApp() {
   const [step, setStep] = useState<WizardStep>("entry");
+  const navigate = useNavigate();
 
   const handleStepClick = (s: WizardStep) => {
     if (STEP_ORDER.indexOf(s) < STEP_ORDER.indexOf(step)) {
@@ -185,11 +188,21 @@ export function MainApp() {
       <GateProvider>
         <AppShell
           topBar={
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3">
-              <WizardStepIndicator
-                currentStep={step}
-                onStepClick={handleStepClick}
-              />
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-4">
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="flex items-center gap-1 text-xs text-brand-muted hover:text-brand-text transition-colors shrink-0"
+              >
+                <ArrowLeft size={13} />
+                Exit
+              </button>
+              <div className="flex-1">
+                <WizardStepIndicator
+                  currentStep={step}
+                  onStepClick={handleStepClick}
+                />
+              </div>
             </div>
           }
         >

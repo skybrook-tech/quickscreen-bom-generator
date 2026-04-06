@@ -9,6 +9,7 @@ export interface SavedQuote {
   id: string;
   org_id: string;
   user_id: string;
+  quote_number: number;
   customer_ref: string;
   fence_config: FenceConfig;
   gates: GateConfig[];
@@ -20,7 +21,5 @@ export interface SavedQuote {
   updated_at: string;
 }
 
-/** Shape sent to Supabase on insert — server assigns id, org_id, user_id, timestamps */
-export type NewQuote = Omit<SavedQuote, 'id' | 'org_id' | 'user_id' | 'created_at' | 'updated_at'> & {
-  org_id: string;   // client must provide; RLS validates it matches profile
-};
+/** Shape sent to Supabase on insert — server assigns id, quote_number, and timestamps */
+export type NewQuote = Omit<SavedQuote, 'id' | 'quote_number' | 'created_at' | 'updated_at'>;

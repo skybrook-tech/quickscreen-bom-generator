@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { GateForm } from './GateForm';
 import type { GateConfig } from '../../schemas/gate.schema';
@@ -29,7 +30,7 @@ export function GateModal({ mode, gateId, initialValues, onSave, onClose, header
     return () => { document.body.style.overflow = ''; };
   }, []);
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
@@ -72,6 +73,7 @@ export function GateModal({ mode, gateId, initialValues, onSave, onClose, header
           />
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

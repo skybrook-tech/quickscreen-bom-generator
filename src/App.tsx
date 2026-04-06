@@ -4,7 +4,9 @@ import { Toaster } from 'sonner';
 import { queryClient } from './lib/queryClient';
 import { AuthGuard } from './components/auth/AuthGuard';
 import { LoginPage } from './pages/LoginPage';
+import { HomePage } from './pages/HomePage';
 import { MainApp } from './pages/MainApp';
+import { QuotesHistoryPage } from './pages/QuotesHistoryPage';
 import { QuoteViewPage } from './pages/QuoteViewPage';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 
@@ -25,7 +27,23 @@ export default function App() {
             path="/"
             element={
               <AuthGuard>
+                <HomePage />
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/new"
+            element={
+              <AuthGuard>
                 <MainApp />
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/quotes"
+            element={
+              <AuthGuard>
+                <QuotesHistoryPage />
               </AuthGuard>
             }
           />

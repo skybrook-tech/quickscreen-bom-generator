@@ -38,8 +38,13 @@ interface GateContextValue {
 
 const GateContext = createContext<GateContextValue | null>(null);
 
-export function GateProvider({ children }: { children: React.ReactNode }) {
-  const [gates, dispatch] = useReducer(gateReducer, []);
+interface GateProviderProps {
+  children: React.ReactNode;
+  initialGates?: GateConfig[];
+}
+
+export function GateProvider({ children, initialGates }: GateProviderProps) {
+  const [gates, dispatch] = useReducer(gateReducer, initialGates ?? []);
   return (
     <GateContext.Provider value={{ gates, dispatch }}>
       {children}

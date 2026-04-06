@@ -1,13 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import {
-  Save,
-  Download,
-  Copy,
-  Printer,
-  FolderOpen,
-  Loader2,
-} from "lucide-react";
+import { supabase } from "../../lib/supabase";
+import { Save, Download, Loader2, Pencil } from "lucide-react";
 import { pdf } from "@react-pdf/renderer";
 import Papa from "papaparse";
 import { QuotePDFTemplate } from "./QuotePDFTemplate";
@@ -26,7 +21,17 @@ interface QuoteActionsProps {
   customerRef: string;
   notes: string;
   orgId: string;
+  /** When set, save updates this existing draft instead of inserting a new one */
+  editingQuoteId?: string;
+  /** Used in the PDF when viewing a saved quote */
+  quoteNumber?: number;
+  /** Called with the saved quote id after a successful save. If omitted, navigates to /quote/:id */
+  onSaved?: (id: string) => void;
   onShowSaved: () => void;
+  /** When provided, renders an Edit Draft button */
+  onEdit?: () => void;
+  /** Set to false to hide the Save/Update button (e.g. in view-only mode). Defaults to true. */
+  showSave?: boolean;
 }
 
 export function QuoteActions({
@@ -37,35 +42,70 @@ export function QuoteActions({
   customerRef,
   notes,
   orgId,
+  editingQuoteId,
+  quoteNumber,
+  onSaved,
   onShowSaved,
+  onEdit,
+  showSave = true,
 }: QuoteActionsProps) {
-  const { saveQuote } = useQuotes();
+  const { saveQuote, updateQuote } = useQuotes();
+  const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [pdfing, setPdfing] = useState(false);
 
-  // ── Save to Supabase ─────────────────────────────────────────────────────────
+  const isEditing = !!editingQuoteId;
+
+  // ── Save / Update draft ──────────────────────────────────────────────────────
   const handleSave = async () => {
     setSaving(true);
     try {
-      const newQuote: NewQuote = {
-        org_id: orgId,
-        customer_ref: customerRef,
-        fence_config: fenceConfig,
-        gates,
-        bom,
-        contact,
-        notes,
-        status: "draft",
-      };
-      await saveQuote.mutateAsync(newQuote);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-      toast.success("Quote saved");
+      let savedId: string;
+
+      if (isEditing) {
+        const result = await updateQuote.mutateAsync({
+          id: editingQuoteId,
+          updates: {
+            customer_ref: customerRef,
+            fence_config: fenceConfig,
+            gates,
+            bom,
+            contact,
+            notes,
+            status: "draft",
+          },
+        });
+        savedId = result.id;
+      } else {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) throw new Error("Not authenticated");
+
+        const newQuote: NewQuote = {
+          org_id: orgId,
+          user_id: user.id,
+          customer_ref: customerRef,
+          fence_config: fenceConfig,
+          gates,
+          bom,
+          contact,
+          notes,
+          status: "draft",
+        };
+        const result = await saveQuote.mutateAsync(newQuote);
+        savedId = result.id;
+      }
+
+      toast.success(isEditing ? "Draft updated" : "Quote saved as draft");
+      if (onSaved) {
+        onSaved(savedId);
+      } else {
+        navigate(`/quote/${savedId}`);
+      }
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Failed to save quote";
       toast.error(msg);
-    } finally {
       setSaving(false);
     }
   };
@@ -131,36 +171,15 @@ export function QuoteActions({
     toast.success("CSV downloaded");
   };
 
-  // ── Clipboard copy (tab-separated for Excel) ─────────────────────────────────
-  const handleCopy = async () => {
-    const allItems = [...bom.fenceItems, ...bom.gateItems];
-    const header = "SKU\tDescription\tUnit\tQty\tUnit Price\tLine Total";
-    const lines = allItems.map(
-      (i) =>
-        `${i.sku}\t${i.description}\t${i.unit}\t${i.quantity}\t${i.unitPrice.toFixed(2)}\t${i.lineTotal.toFixed(2)}`,
-    );
-    lines.push(`\tSubtotal (ex-GST)\t\t\t\t${bom.total.toFixed(2)}`);
-    lines.push(`\tGST (10%)\t\t\t\t${bom.gst.toFixed(2)}`);
-    lines.push(`\tTOTAL (inc. GST)\t\t\t\t${bom.grandTotal.toFixed(2)}`);
-    try {
-      await navigator.clipboard.writeText([header, ...lines].join("\n"));
-      toast.success("Copied to clipboard");
-    } catch {
-      toast.error("Clipboard copy failed");
-    }
-  };
-
-  // ── Print ────────────────────────────────────────────────────────────────────
-  const handlePrint = () => window.print();
-
   // ── PDF download ─────────────────────────────────────────────────────────────
   const handlePDF = async () => {
     setPdfing(true);
     try {
       const quote: SavedQuote = {
-        id: "",
+        id: editingQuoteId ?? "",
         org_id: orgId,
         user_id: "",
+        quote_number: quoteNumber ?? 0,
         customer_ref: customerRef,
         fence_config: fenceConfig,
         gates,
@@ -191,7 +210,6 @@ export function QuoteActions({
 
   return (
     <div className="flex flex-wrap gap-2 justify-end">
-      {/* Export group */}
       <div className="flex gap-1.5 border-r border-brand-border pr-2 ml-0.5">
         <button
           type="button"
@@ -207,41 +225,40 @@ export function QuoteActions({
           )}
           PDF
         </button>
+      </div>
 
-        {/* <button
-          type="button"
-          onClick={handleCSV}
-          className={btnCls}
-          title="Download CSV"
-        >
-          <Download size={13} />
-          CSV
-        </button>
-
+      {onEdit && (
         <button
           type="button"
-          onClick={handlePrint}
-          className={btnCls}
-          title="Print"
+          onClick={onEdit}
+          className={primaryCls}
         >
-          <Printer size={13} />
-          Print
-        </button> */}
-      </div>
-      {/* Primary action */}
-      <button
-        type="button"
-        onClick={handleSave}
-        disabled={saving}
-        className={primaryCls}
-      >
-        {saving ? (
-          <Loader2 size={13} className="animate-spin" />
-        ) : (
-          <Save size={13} />
-        )}
-        {saved ? "Saved!" : saving ? "Saving…" : "Save Quote"}
-      </button>
+          <Pencil size={13} />
+          Edit Draft
+        </button>
+      )}
+
+      {showSave && (
+        <button
+          type="button"
+          onClick={handleSave}
+          disabled={saving}
+          className={primaryCls}
+        >
+          {saving ? (
+            <Loader2 size={13} className="animate-spin" />
+          ) : (
+            <Save size={13} />
+          )}
+          {saving
+            ? isEditing
+              ? "Updating…"
+              : "Saving…"
+            : isEditing
+              ? "Update Draft"
+              : "Save as Draft"}
+        </button>
+      )}
     </div>
   );
 }

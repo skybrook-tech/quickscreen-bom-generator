@@ -129,11 +129,18 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
           <input
             {...register("totalRunLength", { valueAsNumber: true })}
             type="number"
-            step="0.5"
-            min="0.5"
+            step="0.1"
+            min="0.1"
             data-testid="run-length"
             data-unit="m"
             className={inputCls}
+            onBlur={(e) => {
+              const raw = parseFloat(e.target.value);
+              if (!isNaN(raw)) {
+                const rounded = Math.ceil(raw * 10) / 10;
+                setValue("totalRunLength", rounded, { shouldValidate: true });
+              }
+            }}
           />
         </FormField>
 
