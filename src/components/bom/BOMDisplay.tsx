@@ -144,7 +144,7 @@ export function BOMDisplay({
               </th>
             </tr>
           </thead>
-          <tbody className="bg-brand-card">
+          <tbody className="bg-brand-card" key={`view-${view}`}>
             {groups.map(([category, items]) => (
               <>
                 {/* Category group header */}
