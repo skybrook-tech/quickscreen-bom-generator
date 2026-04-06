@@ -2,12 +2,12 @@ import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useGates } from '../../context/GateContext';
 import type { GateConfig } from '../../schemas/gate.schema';
-import { GateForm } from './GateForm';
+import { GateModal } from './GateModal';
 import { GateList } from './GateList';
 
 type EditingState =
   | { mode: 'idle' }
-  | { mode: 'adding' }
+  | { mode: 'adding'; id: string }
   | { mode: 'editing'; id: string };
 
 export function GateConfigPanel() {
@@ -29,13 +29,12 @@ export function GateConfigPanel() {
 
   const handleRemove = (id: string) => {
     dispatch({ type: 'REMOVE_GATE', id });
-    // If currently editing this gate, close the form
     if (editing.mode === 'editing' && editing.id === id) {
       setEditing({ mode: 'idle' });
     }
   };
 
-  const handleCancel = () => {
+  const handleClose = () => {
     setEditing({ mode: 'idle' });
   };
 
@@ -43,9 +42,6 @@ export function GateConfigPanel() {
     editing.mode === 'editing'
       ? gates.find((g) => g.id === editing.id)
       : undefined;
-
-  const newGateId =
-    editing.mode === 'adding' ? crypto.randomUUID() : '';
 
   return (
     <div>
@@ -56,29 +52,26 @@ export function GateConfigPanel() {
         onRemove={handleRemove}
       />
 
-      {/* Inline form */}
-      {editing.mode === 'idle' ? (
-        <button
-          type="button"
-          onClick={() => setEditing({ mode: 'adding' })}
-          data-testid="add-gate-btn"
-          className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-brand-accent border border-dashed border-brand-accent/30 rounded-lg hover:bg-brand-accent/5 hover:border-brand-accent/60 transition-colors"
-        >
-          <Plus size={15} />
-          Add Gate
-        </button>
-      ) : (
-        <div className="mt-4 p-4 border border-brand-border rounded-md bg-brand-card">
-          <h3 className="text-sm font-semibold text-brand-text mb-4">
-            {editing.mode === 'adding' ? 'Add Gate' : 'Edit Gate'}
-          </h3>
-          <GateForm
-            gateId={editing.mode === 'adding' ? newGateId : editing.id}
-            initialValues={editingGate}
-            onSave={handleSave}
-            onCancel={handleCancel}
-          />
-        </div>
+      {/* Add gate button */}
+      <button
+        type="button"
+        onClick={() => setEditing({ mode: 'adding', id: crypto.randomUUID() })}
+        data-testid="add-gate-btn"
+        className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-brand-accent border border-dashed border-brand-accent/30 rounded-lg hover:bg-brand-accent/5 hover:border-brand-accent/60 transition-colors"
+      >
+        <Plus size={15} />
+        Add Gate
+      </button>
+
+      {/* Modal */}
+      {editing.mode !== 'idle' && (
+        <GateModal
+          mode={editing.mode}
+          gateId={editing.id}
+          initialValues={editingGate}
+          onSave={handleSave}
+          onClose={handleClose}
+        />
       )}
     </div>
   );

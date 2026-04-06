@@ -28,6 +28,8 @@ export interface CanvasEngineConfig {
   gridSize: number; // px
   showGrid: boolean;
   onLayoutChange?: (layout: CanvasLayout) => void;
+  /** Called immediately when the user places a gate marker on a segment */
+  onGatePlaced?: (segIdx: number, gateIdx: number, defaultWidthMM: number) => void;
 }
 
 // ── Internal state types ──────────────────────────────────────────────────────
@@ -612,10 +614,12 @@ export function initCanvasEngine(
         const allSegs = allSegmentsFlat();
         const info = allSegs[flatIdx];
         const proj = closestPointOnSegment(canvasPt, info.seg);
-        undoStack.push({ type: 'ADD_GATE', segIdx: flatIdx, gateIdx: info.seg.gates.length });
+        const gateIdx = info.seg.gates.length;
+        undoStack.push({ type: 'ADD_GATE', segIdx: flatIdx, gateIdx });
         info.seg.gates.push({ t: proj.t, widthMM: DEFAULT_GATE_WIDTH_MM });
         notifyChange();
         scheduleRedraw();
+        config.onGatePlaced?.(flatIdx, gateIdx, DEFAULT_GATE_WIDTH_MM);
       }
       return;
     }
@@ -918,6 +922,15 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  function updateGateWidth(segIdx: number, gateIdx: number, widthMM: number) {
+    const allSegs = allSegmentsFlat();
+    const info = allSegs[segIdx];
+    if (info && info.seg.gates[gateIdx] !== undefined) {
+      info.seg.gates[gateIdx].widthMM = widthMM;
+      scheduleRedraw();
+    }
+  }
+
   function destroy() {
     cancelAnimationFrame(animFrame);
     canvas.removeEventListener('mousedown', onMouseDown);
@@ -959,5 +972,6 @@ export function initCanvasEngine(
     setScale,
     setMapOpacity,
     loadMapTile,
+    updateGateWidth,
   };
 }
