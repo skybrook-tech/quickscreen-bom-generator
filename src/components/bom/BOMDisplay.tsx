@@ -117,7 +117,7 @@ export function BOMDisplay({
       )}
 
       {/* ── BOM table ───────────────────────────────────────────── */}
-      <div className="overflow-x-auto rounded-lg border border-brand-border">
+      <div className="overflow-x-auto">
         <table
           data-testid="bom-table"
           className="w-full text-left border-collapse"

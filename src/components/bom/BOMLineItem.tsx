@@ -42,7 +42,7 @@ export function BOMLineItem({ item, itemKey, overrideQty, onQtyChange }: BOMLine
             min="0"
             value={displayQty}
             onChange={(e) => onQtyChange(itemKey, Math.max(0, Number(e.target.value)))}
-            className="w-16 px-1.5 py-0.5 text-right bg-brand-bg border border-brand-border rounded text-sm text-brand-text focus:outline-none focus:ring-1 focus:ring-brand-accent/50 focus:border-brand-accent tabular-nums"
+            className="w-16 px-1.5 py-0.5 text-right bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text focus:outline-none focus:ring-1 focus:ring-brand-accent/50 focus:border-brand-accent tabular-nums"
           />
         ) : (
           displayQty

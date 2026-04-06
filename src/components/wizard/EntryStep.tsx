@@ -146,7 +146,7 @@ export function EntryStep({
             placeholder={
               'e.g. "20m run of QSHS horizontal slat fence, 1800mm high, surfmist matt, concreted in ground, post-to-post, 2 corners, one single swing gate 900mm wide"'
             }
-            className="w-full px-3 py-2.5 bg-brand-bg border border-brand-border rounded-lg text-sm text-brand-text placeholder:text-brand-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-accent/30 focus:border-brand-accent transition-colors resize-none leading-relaxed"
+            className="w-full px-3 py-2.5 bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text placeholder:text-brand-muted/60 focus:outline-none focus:ring-2 focus:ring-brand-accent/30 focus:border-brand-accent transition-colors resize-none leading-relaxed"
           />
 
           <p className="text-xs text-brand-muted">
@@ -164,7 +164,7 @@ export function EntryStep({
               type="button"
               onClick={handleParse}
               disabled={!descText.trim()}
-              className="flex items-center gap-2 px-4 py-2 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-md transition-colors"
             >
               <Wand2 size={14} />
               Parse Description
@@ -173,7 +173,7 @@ export function EntryStep({
             <button
               type="button"
               onClick={handleContinue}
-              className="ml-auto flex items-center gap-2 px-4 py-2 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+              className="ml-auto flex items-center gap-2 px-4 py-2 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-md transition-colors"
             >
               Skip and continue →
             </button>

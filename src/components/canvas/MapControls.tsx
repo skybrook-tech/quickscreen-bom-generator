@@ -83,13 +83,13 @@ export function MapControls({ engineRef }: MapControlsProps) {
           onChange={(e) => setAddress(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleLoadMap()}
           placeholder="Enter address for satellite underlay…"
-          className="flex-1 px-2 py-1.5 bg-brand-bg border border-brand-border rounded text-brand-text placeholder:text-brand-muted focus:outline-none focus:border-brand-accent text-xs"
+          className="flex-1 px-2 py-1.5 bg-brand-bg border border-brand-border rounded-md text-brand-text placeholder:text-brand-muted focus:outline-none focus:border-brand-accent text-xs"
         />
         <button
           type="button"
           onClick={handleLoadMap}
           disabled={loading || !address.trim()}
-          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-brand-accent/20 border border-brand-accent text-brand-accent rounded hover:bg-brand-accent/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-1.5 px-2.5 py-1.5 bg-brand-accent/20 border border-brand-accent text-brand-accent rounded-md hover:bg-brand-accent/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
             <Loader2 size={12} className="animate-spin" />
@@ -123,7 +123,7 @@ export function MapControls({ engineRef }: MapControlsProps) {
         <select
           value={scalePreset}
           onChange={(e) => handleScaleChange(parseFloat(e.target.value))}
-          className="px-2 py-1.5 bg-brand-bg border border-brand-border rounded text-brand-text focus:outline-none focus:border-brand-accent text-xs"
+          className="px-2 py-1.5 bg-brand-bg border border-brand-border rounded-md text-brand-text focus:outline-none focus:border-brand-accent text-xs"
         >
           {SCALE_PRESETS.map((p) => (
             <option key={p.value} value={p.value}>

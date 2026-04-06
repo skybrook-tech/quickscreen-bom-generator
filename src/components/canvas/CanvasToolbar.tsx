@@ -25,14 +25,14 @@ export function CanvasToolbar({
   };
 
   const btnCls = (active: boolean) =>
-    `flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded border transition-colors ${
+    `flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${
       active
         ? "border-brand-accent bg-brand-accent/20 text-brand-accent"
         : "border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50"
     }`;
 
   const iconBtn =
-    "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50 transition-colors";
+    "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50 transition-colors";
 
   return (
     <div className="flex flex-wrap items-center gap-2 p-2 bg-brand-card border-b border-brand-border">

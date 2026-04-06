@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 interface AccordionSectionProps {
   title: string;
@@ -9,11 +9,18 @@ interface AccordionSectionProps {
   children: React.ReactNode;
 }
 
-export function AccordionSection({ title, badge, defaultOpen = true, children }: AccordionSectionProps) {
+export function AccordionSection({
+  title,
+  badge,
+  defaultOpen = true,
+  children,
+}: AccordionSectionProps) {
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className={`bg-brand-card border rounded-lg overflow-hidden transition-colors ${open ? 'border-brand-border' : 'border-brand-border'}`}>
+    <div
+      className={`bg-brand-card border rounded-lg overflow-hidden transition-colors ${open ? "border-brand-border" : "border-brand-border"}`}
+    >
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -29,15 +36,13 @@ export function AccordionSection({ title, badge, defaultOpen = true, children }:
         </div>
         <ChevronDown
           size={16}
-          className={`text-brand-muted group-hover:text-brand-text transition-all duration-200 ${open ? 'rotate-180' : ''}`}
+          className={`text-brand-muted group-hover:text-brand-text transition-all duration-200 ${open ? "rotate-180" : ""}`}
         />
       </button>
 
       {open && (
         <div className="border-t border-brand-border">
-          <div className="px-5 pb-5 pt-4">
-            {children}
-          </div>
+          <div className=" p-4">{children}</div>
         </div>
       )}
     </div>

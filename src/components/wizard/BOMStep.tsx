@@ -89,8 +89,8 @@ export function BOMStep({
           {/* BOM result */}
           {effectiveBom && (
             <ErrorBoundary label="Bill of Materials">
-              <div className="space-y-4 border border-brand-border rounded-lg p-4 bg-white">
-                <div className="flex items-center justify-between">
+              <div className="space-y-4 border border-brand-border rounded-xl bg-brand-card overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3">
                   <h2 className="text-lg font-semibold text-brand-text">
                     Bill of Materials
                   </h2>
@@ -104,19 +104,6 @@ export function BOMStep({
                     onQtyChange={onQtyChange}
                   />
                 </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-brand-muted uppercase tracking-wider mb-1.5">
-                    Quote Notes
-                  </label>
-                  <textarea
-                    value={notes}
-                    onChange={(e) => onNotesChange(e.target.value)}
-                    rows={2}
-                    placeholder="Internal notes for this quote…"
-                    className="w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-accent/30 focus:border-brand-accent transition-colors resize-none"
-                  />
-                </div>
               </div>
             </ErrorBoundary>
           )}
@@ -124,7 +111,7 @@ export function BOMStep({
 
         {/* ── Right: sticky sidebar ─────────────────────────────── */}
         <div className="lg:col-span-1 sticky top-6 space-y-4">
-          <div className="space-y-4 bg-white rounded-lg border border-brand-border p-4">
+          <div className="space-y-4 bg-brand-card rounded-xl border border-brand-border p-4">
             {/* Tier selector + export actions */}
             <div className="flex flex-col items-start justify-between gap-3 pb-3 border-b border-brand-border">
               <div className="flex flex-col items-start gap-3">
@@ -162,6 +149,16 @@ export function BOMStep({
                 initialValues={contact}
               />
             </div>
+          </AccordionSection>
+
+          <AccordionSection title="Quote Notes (Internal)" defaultOpen={false}>
+            <textarea
+              value={notes}
+              onChange={(e) => onNotesChange(e.target.value)}
+              rows={2}
+              placeholder="Internal notes for this quote…"
+              className="w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-accent/30 focus:border-brand-accent transition-colors"
+            />
           </AccordionSection>
         </div>
       </div>
