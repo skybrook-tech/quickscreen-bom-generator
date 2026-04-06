@@ -3,9 +3,16 @@ import { ArrowRight } from "lucide-react";
 import { initCanvasEngine } from "./canvasEngine";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { MapControls } from "./MapControls";
+import { GateModal } from "../gate/GateModal";
 import { useFenceConfig } from "../../context/FenceConfigContext";
 import { useGates } from "../../context/GateContext";
 import type { GateConfig } from "../../schemas/gate.schema";
+
+interface PendingGate {
+  stub: GateConfig;
+  segIdx: number;
+  gateIdx: number;
+}
 
 interface FenceLayoutCanvasProps {
   onApplied?: () => void;
@@ -23,6 +30,28 @@ export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
   const [snapEnabled, setSnapEnabled] = useState(true);
   const [applied, setApplied] = useState(false);
 
+  // Gate placed on canvas but not yet configured by user
+  const [pendingGate, setPendingGate] = useState<PendingGate | null>(null);
+
+  const handleGatePlaced = useCallback(
+    (segIdx: number, gateIdx: number, defaultWidthMM: number) => {
+      const stub: GateConfig = {
+        id: crypto.randomUUID(),
+        gateType: "single-swing",
+        openingWidth: defaultWidthMM,
+        gateHeight: "match-fence",
+        colour: "match-fence",
+        slatGap: "match-fence",
+        slatSize: "match-fence",
+        gatePostSize: "65x65",
+        hingeType: "dd-kwik-fit-adjustable",
+        latchType: "dd-magna-latch-top-pull",
+      };
+      setPendingGate({ stub, segIdx, gateIdx });
+    },
+    [],
+  );
+
   useEffect(() => {
     if (!canvasRef.current) return;
 
@@ -30,19 +59,40 @@ export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
       snapToGrid: true,
       gridSize: 20,
       showGrid: true,
+      onGatePlaced: handleGatePlaced,
     });
 
     return () => {
       engineRef.current?.destroy();
       engineRef.current = null;
     };
-  }, []);
+  }, [handleGatePlaced]);
+
+  const handleGateSave = useCallback(
+    (gate: GateConfig) => {
+      if (!pendingGate) return;
+      engineRef.current?.updateGateWidth(
+        pendingGate.segIdx,
+        pendingGate.gateIdx,
+        gate.openingWidth,
+      );
+      gateDispatch({ type: "ADD_GATE", gate });
+      setPendingGate(null);
+    },
+    [pendingGate, gateDispatch],
+  );
+
+  const handleGateSkip = useCallback(() => {
+    if (!pendingGate) return;
+    // Add with defaults so the layout gate count stays accurate
+    gateDispatch({ type: "ADD_GATE", gate: pendingGate.stub });
+    setPendingGate(null);
+  }, [pendingGate, gateDispatch]);
 
   const handleUseLayout = useCallback(() => {
     const layout = engineRef.current?.getLayout();
     if (!layout || layout.segments.length === 0) return;
 
-    // Dispatch fence config updates
     fenceDispatch({
       type: "SET_FIELD",
       field: "totalRunLength",
@@ -54,29 +104,12 @@ export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
       value: layout.cornerCount,
     });
 
-    // Create gate entries from canvas markers
-    if (layout.gates.length > 0) {
-      const gateConfigs: GateConfig[] = layout.gates.map((g) => ({
-        id: crypto.randomUUID(),
-        gateType: "single-swing" as const,
-        openingWidth: g.widthMM,
-        gateHeight: "match-fence" as const,
-        colour: "match-fence" as const,
-        slatGap: "match-fence" as const,
-        slatSize: "match-fence" as const,
-        gatePostSize: "65x65" as const,
-        hingeType: "dd-kwik-fit-adjustable" as const,
-        latchType: "dd-magna-latch-top-pull" as const,
-      }));
-      gateDispatch({ type: "SET_GATES", gates: gateConfigs });
-    }
-
     setApplied(true);
     setTimeout(() => {
       setApplied(false);
       onApplied?.();
     }, 300);
-  }, [fenceDispatch, gateDispatch, onApplied]);
+  }, [fenceDispatch, onApplied]);
 
   return (
     <div className="space-y-0">
@@ -118,8 +151,7 @@ export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
         <p className="text-xs text-brand-muted">
           Draw your fence layout above, then click{" "}
           <strong className="text-brand-text">Use This Layout</strong> to
-          populate the run length, corners, and gate positions in the form
-          below.
+          populate the run length and corners in the form below.
         </p>
         <button
           type="button"
@@ -130,6 +162,17 @@ export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
           {!applied && <ArrowRight size={14} />}
         </button>
       </div>
+
+      {/* Gate modal — opens immediately when a gate marker is placed on the canvas */}
+      {pendingGate && (
+        <GateModal
+          mode="adding"
+          gateId={pendingGate.stub.id}
+          initialValues={pendingGate.stub}
+          onSave={handleGateSave}
+          onClose={handleGateSkip}
+        />
+      )}
     </div>
   );
 }
