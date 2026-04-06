@@ -9,6 +9,13 @@ import { SEL } from './selectors';
  * is automatically divided by 1000 before typing.
  */
 export function fillFenceConfig(config) {
+  // If on the wizard entry step, navigate to configure step first
+  cy.get('body').then(($body) => {
+    if ($body.find('[data-testid="configure-manually-btn"]').length > 0) {
+      cy.get('[data-testid="configure-manually-btn"]').click();
+    }
+  });
+
   if (config.systemType != null) {
     cy.get(SEL.systemType).select(config.systemType);
   }

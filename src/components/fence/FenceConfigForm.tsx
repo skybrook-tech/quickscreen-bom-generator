@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { AlignJustify, GalleryVertical, Zap, Package } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,19 +40,28 @@ const SYSTEM_TYPE_ICONS: Record<string, React.ReactNode> = {
 };
 
 export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
-  const { dispatch } = useFenceConfig();
+  const { state: contextState, dispatch } = useFenceConfig();
 
   const {
     register,
     handleSubmit,
     watch,
     setValue,
+    reset,
     control,
     formState: { errors },
   } = useForm<FenceConfig>({
     resolver: zodResolver(FenceConfigSchema),
     defaultValues: defaultFenceConfig,
   });
+
+  // Seed from context once on mount so pre-populated values (e.g. from layout tool) are reflected
+  const seeded = useRef(false);
+  useEffect(() => {
+    if (seeded.current) return;
+    seeded.current = true;
+    reset({ ...defaultFenceConfig, ...contextState });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const systemType = watch("systemType");
   const isXpl = systemType === "XPL";

@@ -1,4 +1,4 @@
-import type { BOMResult } from '../../types/bom.types';
+import type { BOMResult } from "../../types/bom.types";
 
 interface BOMSummaryProps {
   result: BOMResult;
@@ -6,25 +6,35 @@ interface BOMSummaryProps {
 
 export function BOMSummary({ result }: BOMSummaryProps) {
   return (
-    <div className="mt-4 bg-brand-bg rounded-lg border border-brand-border p-4">
+    <div className="">
       <div className="space-y-1 mb-3">
         <div className="flex justify-between items-center text-sm">
           <span className="text-brand-muted">Subtotal (ex-GST)</span>
-          <span className="tabular-nums text-brand-text">${result.total.toFixed(2)}</span>
+          <span className="tabular-nums text-brand-text">
+            ${result.total.toFixed(2)}
+          </span>
         </div>
         <div className="flex justify-between items-center text-sm">
           <span className="text-brand-muted">GST (10%)</span>
-          <span className="tabular-nums text-brand-text">${result.gst.toFixed(2)}</span>
+          <span className="tabular-nums text-brand-text">
+            ${result.gst.toFixed(2)}
+          </span>
         </div>
       </div>
 
       <div className="flex justify-between items-center border-t border-brand-border pt-3">
         <div>
-          <p className="text-sm font-semibold text-brand-text">Total (inc. GST)</p>
+          <p className="text-sm font-semibold text-brand-text">
+            Total (inc. GST)
+          </p>
           <p className="text-xs text-brand-muted mt-0.5">
-            Generated {new Date(result.generatedAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short' })}
-            {' · '}
-            {result.pricingTier.replace('tier', 'Tier ')}
+            Generated{" "}
+            {new Date(result.generatedAt).toLocaleString("en-AU", {
+              dateStyle: "medium",
+              timeStyle: "short",
+            })}
+            {" · "}
+            {result.pricingTier.replace("tier", "Tier ")}
           </p>
         </div>
         <span

@@ -1,19 +1,25 @@
-import { useRef, useEffect, useCallback, useState } from 'react';
-import { ArrowRight } from 'lucide-react';
-import { initCanvasEngine } from './canvasEngine';
-import { CanvasToolbar } from './CanvasToolbar';
-import { MapControls } from './MapControls';
-import { useFenceConfig } from '../../context/FenceConfigContext';
-import { useGates } from '../../context/GateContext';
-import type { GateConfig } from '../../schemas/gate.schema';
+import { useRef, useEffect, useCallback, useState } from "react";
+import { ArrowRight } from "lucide-react";
+import { initCanvasEngine } from "./canvasEngine";
+import { CanvasToolbar } from "./CanvasToolbar";
+import { MapControls } from "./MapControls";
+import { useFenceConfig } from "../../context/FenceConfigContext";
+import { useGates } from "../../context/GateContext";
+import type { GateConfig } from "../../schemas/gate.schema";
 
-export function FenceLayoutCanvas() {
+interface FenceLayoutCanvasProps {
+  onApplied?: () => void;
+}
+
+export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
   const { dispatch: fenceDispatch } = useFenceConfig();
   const { dispatch: gateDispatch } = useGates();
 
-  const [activeTool, setActiveTool] = useState<'draw' | 'gate' | 'move'>('draw');
+  const [activeTool, setActiveTool] = useState<"draw" | "gate" | "move">(
+    "draw",
+  );
   const [snapEnabled, setSnapEnabled] = useState(true);
   const [applied, setApplied] = useState(false);
 
@@ -34,17 +40,17 @@ export function FenceLayoutCanvas() {
 
   const handleUseLayout = useCallback(() => {
     const layout = engineRef.current?.getLayout();
-    if (!layout || (layout.segments.length === 0)) return;
+    if (!layout || layout.segments.length === 0) return;
 
     // Dispatch fence config updates
     fenceDispatch({
-      type: 'SET_FIELD',
-      field: 'totalRunLength',
+      type: "SET_FIELD",
+      field: "totalRunLength",
       value: layout.totalLengthM,
     });
     fenceDispatch({
-      type: 'SET_FIELD',
-      field: 'corners',
+      type: "SET_FIELD",
+      field: "corners",
       value: layout.cornerCount,
     });
 
@@ -52,22 +58,25 @@ export function FenceLayoutCanvas() {
     if (layout.gates.length > 0) {
       const gateConfigs: GateConfig[] = layout.gates.map((g) => ({
         id: crypto.randomUUID(),
-        gateType: 'single-swing' as const,
+        gateType: "single-swing" as const,
         openingWidth: g.widthMM,
-        gateHeight: 'match-fence' as const,
-        colour: 'match-fence' as const,
-        slatGap: 'match-fence' as const,
-        slatSize: 'match-fence' as const,
-        gatePostSize: '65x65' as const,
-        hingeType: 'dd-kwik-fit-adjustable' as const,
-        latchType: 'dd-magna-latch-top-pull' as const,
+        gateHeight: "match-fence" as const,
+        colour: "match-fence" as const,
+        slatGap: "match-fence" as const,
+        slatSize: "match-fence" as const,
+        gatePostSize: "65x65" as const,
+        hingeType: "dd-kwik-fit-adjustable" as const,
+        latchType: "dd-magna-latch-top-pull" as const,
       }));
-      gateDispatch({ type: 'SET_GATES', gates: gateConfigs });
+      gateDispatch({ type: "SET_GATES", gates: gateConfigs });
     }
 
     setApplied(true);
-    setTimeout(() => setApplied(false), 2000);
-  }, [fenceDispatch, gateDispatch]);
+    setTimeout(() => {
+      setApplied(false);
+      onApplied?.();
+    }, 300);
+  }, [fenceDispatch, gateDispatch, onApplied]);
 
   return (
     <div className="space-y-0">
@@ -82,15 +91,18 @@ export function FenceLayoutCanvas() {
       <div className="relative">
         <canvas
           ref={canvasRef}
-          className="w-full border-x border-brand-border bg-brand-bg block"
-          style={{ height: '420px', cursor: 'crosshair' }}
+          className="w-full bg-brand-bg block"
+          style={{ height: "420px", cursor: "crosshair" }}
         />
 
         {/* Hint overlay */}
         <div className="absolute bottom-2 left-2 text-xs text-brand-muted pointer-events-none select-none">
-          {activeTool === 'draw' && 'Click to place points · Double-click or Enter to finish · Esc to cancel'}
-          {activeTool === 'gate' && 'Click on a fence segment to place a gate marker'}
-          {activeTool === 'move' && 'Click a segment label to edit its real-world length'}
+          {activeTool === "draw" &&
+            "Click to place points · Double-click or Enter to finish · Esc to cancel"}
+          {activeTool === "gate" &&
+            "Click on a fence segment to place a gate marker"}
+          {activeTool === "move" &&
+            "Click a segment label to edit its real-world length"}
         </div>
 
         {/* Zoom hint */}
@@ -102,17 +114,19 @@ export function FenceLayoutCanvas() {
       <MapControls engineRef={engineRef} />
 
       {/* Apply button */}
-      <div className="flex items-center justify-between p-3 bg-brand-card border border-t-0 border-brand-border rounded-b">
+      <div className="flex items-center justify-between p-3 bg-brand-card border-t-0 border-brand-border">
         <p className="text-xs text-brand-muted">
-          Draw your fence layout above, then click <strong className="text-brand-text">Use This Layout</strong> to
-          populate the run length, corners, and gate positions in the form below.
+          Draw your fence layout above, then click{" "}
+          <strong className="text-brand-text">Use This Layout</strong> to
+          populate the run length, corners, and gate positions in the form
+          below.
         </p>
         <button
           type="button"
           onClick={handleUseLayout}
           className="flex items-center gap-1.5 px-4 py-2 bg-brand-accent text-white text-sm font-medium rounded hover:bg-brand-accent-hover transition-colors shrink-0 ml-4"
         >
-          {applied ? 'Applied!' : 'Use This Layout'}
+          {applied ? "Applied!" : "Use This Layout"}
           {!applied && <ArrowRight size={14} />}
         </button>
       </div>

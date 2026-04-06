@@ -4,13 +4,16 @@ import type {
   BOMLineItem as BOMLineItemType,
 } from "../../types/bom.types";
 import { BOMLineItem } from "./BOMLineItem";
-import { BOMSummary } from "./BOMSummary";
+import { applyBomOverrides } from "../../utils/applyBomOverrides";
+import type { BOMOverrides } from "../../utils/applyBomOverrides";
 import pluralize from "pluralize";
 
 type ViewFilter = "all" | "fence" | "gates";
 
 interface BOMDisplayProps {
   result: BOMResult;
+  overrides?: BOMOverrides;
+  onQtyChange?: (key: string, qty: number) => void;
 }
 
 const CATEGORY_ORDER = [
@@ -47,11 +50,20 @@ function groupByCategory(
   return Array.from(map.entries());
 }
 
-export function BOMDisplay({ result }: BOMDisplayProps) {
+export function BOMDisplay({
+  result,
+  overrides,
+  onQtyChange,
+}: BOMDisplayProps) {
   const [view, setView] = useState<ViewFilter>("all");
 
-  const fenceItems = sortItems(result.fenceItems);
-  const gateItems = sortItems(result.gateItems);
+  const effectiveResult =
+    overrides && overrides.size > 0
+      ? applyBomOverrides(result, overrides)
+      : result;
+
+  const fenceItems = sortItems(effectiveResult.fenceItems);
+  const gateItems = sortItems(effectiveResult.gateItems);
   const allItems =
     view === "fence"
       ? fenceItems
@@ -59,7 +71,6 @@ export function BOMDisplay({ result }: BOMDisplayProps) {
         ? gateItems
         : [...fenceItems, ...gateItems];
 
-  const hasGates = result.gateItems.length > 0;
   const groups = groupByCategory(allItems);
 
   const FILTER_OPTIONS: { value: ViewFilter; label: string; count: number }[] =
@@ -76,7 +87,7 @@ export function BOMDisplay({ result }: BOMDisplayProps) {
   return (
     <div>
       {/* ── View filter tabs ─────────────────────────────────────── */}
-      {hasGates && (
+      {effectiveResult.gateItems.length > 0 && (
         <div className="flex border-b border-brand-border mb-4">
           {FILTER_OPTIONS.map(({ value, label, count }) => (
             <button
@@ -149,19 +160,23 @@ export function BOMDisplay({ result }: BOMDisplayProps) {
                     {pluralize(category)}
                   </td>
                 </tr>
-                {items.map((item) => (
-                  <BOMLineItem
-                    key={`${item.sku}-${item.category}`}
-                    item={item}
-                  />
-                ))}
+                {items.map((item) => {
+                  const itemKey = `${item.category}::${item.sku}`;
+                  return (
+                    <BOMLineItem
+                      key={`${item.sku}-${item.category}`}
+                      item={item}
+                      itemKey={itemKey}
+                      overrideQty={overrides?.get(itemKey)}
+                      onQtyChange={onQtyChange}
+                    />
+                  );
+                })}
               </>
             ))}
           </tbody>
         </table>
       </div>
-
-      <BOMSummary result={result} />
     </div>
   );
 }
