@@ -116,19 +116,6 @@ export function BOMStep({
         {/* ── Right: sticky sidebar ─────────────────────────────── */}
         <div className="lg:col-span-1 sticky top-6 space-y-4">
           <div className="space-y-4 bg-brand-card rounded-xl border border-brand-border p-4">
-            {/* Tier selector + export actions */}
-            <div className="flex flex-col items-start justify-between gap-3 pb-3 border-b border-brand-border">
-              <div className="flex flex-col items-start gap-3">
-                <span className="text-xs font-semibold text-brand-muted uppercase tracking-wider">
-                  Pricing tier
-                </span>
-                <PricingTierSelect
-                  value={pricingTier}
-                  onChange={onPricingTierChange}
-                />
-              </div>
-            </div>
-
             {effectiveBom && <BOMSummary result={effectiveBom} />}
             <QuoteActions
               fenceConfig={fenceConfig}

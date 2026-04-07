@@ -150,11 +150,11 @@ export function BOMDisplay({
                 {/* Category group header */}
                 <tr
                   key={`cat-${category}`}
-                  className="border-t border-brand-border/50"
+                  className="border-t border-brand-border"
                 >
                   <td
                     colSpan={6}
-                    className="px-3 py-1.5 bg-slate-50 border-b border-brand-border/50 capitalize text-xs font-semibold text-brand-muted tracking-wider"
+                    className="px-3 py-1.5 bg-slate-300/15  border-b border-brand-border capitalize text-xs font-semibold text-brand-muted tracking-wider"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-current" />
                     {pluralize(category)}

@@ -1,14 +1,14 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from 'sonner';
-import { queryClient } from './lib/queryClient';
-import { AuthGuard } from './components/auth/AuthGuard';
-import { LoginPage } from './pages/LoginPage';
-import { HomePage } from './pages/HomePage';
-import { MainApp } from './pages/MainApp';
-import { QuotesHistoryPage } from './pages/QuotesHistoryPage';
-import { QuoteViewPage } from './pages/QuoteViewPage';
-import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "sonner";
+import { queryClient } from "./lib/queryClient";
+import { AuthGuard } from "./components/auth/AuthGuard";
+import { LoginPage } from "./pages/LoginPage";
+import { HomePage } from "./pages/HomePage";
+import { MainApp } from "./pages/MainApp";
+import { QuotesHistoryPage } from "./pages/QuotesHistoryPage";
+import { QuoteViewPage } from "./pages/QuoteViewPage";
+import { ThemeProvider, useTheme } from "./context/ThemeContext";
 
 function ThemedToaster() {
   const { theme } = useTheme();
@@ -19,44 +19,44 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-      <ThemedToaster />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/"
-            element={
-              <AuthGuard>
-                <HomePage />
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/new"
-            element={
-              <AuthGuard>
-                <MainApp />
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/quotes"
-            element={
-              <AuthGuard>
-                <QuotesHistoryPage />
-              </AuthGuard>
-            }
-          />
-          <Route
-            path="/quote/:id"
-            element={
-              <AuthGuard>
-                <QuoteViewPage />
-              </AuthGuard>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
+        <ThemedToaster />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/"
+              element={
+                <AuthGuard>
+                  <HomePage />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/new"
+              element={
+                <AuthGuard>
+                  <MainApp />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/quotes"
+              element={
+                <AuthGuard>
+                  <QuotesHistoryPage />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/quote/:id"
+              element={
+                <AuthGuard>
+                  <QuoteViewPage />
+                </AuthGuard>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
       </ThemeProvider>
     </QueryClientProvider>
   );

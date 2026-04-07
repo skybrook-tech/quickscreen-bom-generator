@@ -53,6 +53,7 @@ export function QuoteActions({
   const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [pdfing, setPdfing] = useState(false);
+  const [csving, setCsving] = useState(false);
 
   const isEditing = !!editingQuoteId;
 
@@ -112,6 +113,7 @@ export function QuoteActions({
 
   // ── CSV export ───────────────────────────────────────────────────────────────
   const handleCSV = () => {
+    setCsving(true);
     const allItems = [...bom.fenceItems, ...bom.gateItems];
     type CSVRow = {
       SKU: string;
@@ -169,6 +171,7 @@ export function QuoteActions({
     a.click();
     URL.revokeObjectURL(url);
     toast.success("CSV downloaded");
+    setCsving(false);
   };
 
   // ── PDF download ─────────────────────────────────────────────────────────────
@@ -213,6 +216,22 @@ export function QuoteActions({
       <div className="flex gap-1.5 border-r border-brand-border pr-2 ml-0.5">
         <button
           type="button"
+          onClick={handleCSV}
+          disabled={csving}
+          className={btnCls}
+          title="Download CSV"
+        >
+          {csving ? (
+            <Loader2 size={13} className="animate-spin" />
+          ) : (
+            <Download size={13} />
+          )}
+          CSV
+        </button>
+      </div>
+      <div className="flex gap-1.5 border-r border-brand-border pr-2 ml-0.5">
+        <button
+          type="button"
           onClick={handlePDF}
           disabled={pdfing}
           className={btnCls}
@@ -228,11 +247,7 @@ export function QuoteActions({
       </div>
 
       {onEdit && (
-        <button
-          type="button"
-          onClick={onEdit}
-          className={primaryCls}
-        >
+        <button type="button" onClick={onEdit} className={primaryCls}>
           <Pencil size={13} />
           Edit Draft
         </button>
