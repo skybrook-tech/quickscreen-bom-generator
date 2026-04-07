@@ -175,7 +175,6 @@ function AppContent({ step, setStep }: AppContentProps) {
 
 export function MainApp() {
   const [step, setStep] = useState<WizardStep>("entry");
-  const navigate = useNavigate();
 
   const handleStepClick = (s: WizardStep) => {
     if (STEP_ORDER.indexOf(s) < STEP_ORDER.indexOf(step)) {
@@ -189,14 +188,6 @@ export function MainApp() {
         <AppShell
           topBar={
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-4">
-              <button
-                type="button"
-                onClick={() => navigate(-1)}
-                className="flex items-center gap-1 text-xs text-brand-muted hover:text-brand-text transition-colors shrink-0"
-              >
-                <ArrowLeft size={13} />
-                Exit
-              </button>
               <div className="flex-1">
                 <WizardStepIndicator
                   currentStep={step}
