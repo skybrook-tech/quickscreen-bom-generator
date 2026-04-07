@@ -1,6 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, handleCors } from '../_shared/cors.ts';
 import { extractJwt, resolveUserProfile } from '../_shared/auth.ts';
+import { create, all } from 'https://esm.sh/mathjs@13/number';
 import type {
   FenceConfig,
   GateConfig,
@@ -8,12 +9,26 @@ import type {
   BOMResult,
   BOMCategory,
   BOMUnit,
-  PricingRow,
+  PricingRule,
   PricingTier,
   Colour,
   SlatSize,
   SlatGap,
 } from '../_shared/types.ts';
+
+const mathjs = create(all);
+
+function resolvePrice(rules: PricingRule[], qty: number): number {
+  for (const r of rules) {
+    if (!r.rule) return r.price;
+    try {
+      if (mathjs.evaluate(r.rule, { qty }) === true) return r.price;
+    } catch {
+      // malformed rule expression — skip
+    }
+  }
+  return 0;
+}
 
 // ─── Colour code map ──────────────────────────────────────────────────────────
 
@@ -297,35 +312,39 @@ function calcGateBom(
 
 // ─── Pricing lookup ───────────────────────────────────────────────────────────
 
-async function loadPricing(orgId: string): Promise<Map<string, PricingRow>> {
+async function loadPricing(orgId: string, tier: PricingTier): Promise<Map<string, PricingRule[]>> {
   const supabaseAdmin = createClient(
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
   );
 
   const { data, error } = await supabaseAdmin
-    .from('product_pricing')
-    .select('sku, tier1_price, tier2_price, tier3_price')
+    .from('pricing_rules_with_sku')
+    .select('sku, price, rule, priority')
     .eq('org_id', orgId)
-    .eq('active', true);
+    .eq('tier_code', tier)
+    .eq('active', true)
+    .order('priority', { ascending: false });
 
   if (error) throw new Error(`Pricing lookup failed: ${error.message}`);
 
-  const map = new Map<string, PricingRow>();
+  const map = new Map<string, PricingRule[]>();
   for (const row of data ?? []) {
-    map.set(row.sku, row as PricingRow);
+    const existing = map.get(row.sku) ?? [];
+    existing.push(row as PricingRule);
+    map.set(row.sku, existing);
   }
   return map;
 }
 
 function applyPricing(
   unpricedItems: Omit<BOMLineItem, 'unitPrice' | 'lineTotal'>[],
-  pricingMap: Map<string, PricingRow>,
-  tier: PricingTier,
+  pricingMap: Map<string, PricingRule[]>,
+  _tier: PricingTier,
 ): BOMLineItem[] {
   return unpricedItems.map((i) => {
-    const row = pricingMap.get(i.sku);
-    const unitPrice = row ? (row[`${tier}_price` as keyof PricingRow] as number) : 0;
+    const rules = pricingMap.get(i.sku) ?? [];
+    const unitPrice = resolvePrice(rules, i.quantity);
     return { ...i, unitPrice, lineTotal: parseFloat((i.quantity * unitPrice).toFixed(2)) };
   });
 }
@@ -359,7 +378,7 @@ Deno.serve(async (req: Request) => {
     const unpricedGates = gates.flatMap((g) => calcGateBom(g, fenceConfig));
 
     // Load pricing and apply
-    const pricingMap = await loadPricing(orgId);
+    const pricingMap = await loadPricing(orgId, tier);
     const fenceItems = applyPricing(unpricedFence, pricingMap, tier);
     const gateItems  = applyPricing(unpricedGates, pricingMap, tier);
 

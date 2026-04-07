@@ -105,15 +105,17 @@ Run `ls src/` or `ls src/components/` for the current file list — the director
 
 Every table includes `org_id`. RLS policies use `auth.user_org_id()` (a `SECURITY DEFINER STABLE` function on profiles) to scope all access. Never trust client-sent `org_id` — always resolve from the authenticated user's JWT.
 
-| Migration | Table                | Key design notes                                                                                                        |
-| --------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| 001       | `organisations`      | Seeds Glass Outlet org (`slug = 'glass-outlet'`). No RLS.                                                               |
-| 002       | `profiles`           | `auth.user_org_id()` helper; signup trigger defaults new users to Glass Outlet org.                                     |
-| 003       | `quotes`             | RLS: users see **all org quotes** (staff visibility), but can only insert/update/delete their own.                      |
-| 004       | `product_pricing`    | **No RLS** — `REVOKE ALL FROM anon, authenticated`. Service role only. Tiered pricing (tier1/2/3). SKUs unique per org. |
-| 005       | `products`           | **No RLS** — system catalog (QSHS, VS, XPL, BAYG, GATE).                                                                |
-| 006       | `product_components` | **No RLS** — individual SKU/hardware catalog.                                                                           |
-| 007       | _(pricing seed)_     | Seed data for product_pricing (all SKUs × 3 tiers × 11 colours).                                                        |
+| Migration | Table / View                | Key design notes                                                                                                                                    |
+| --------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 001       | `organisations`             | Seeds Glass Outlet org (`slug = 'glass-outlet'`). No RLS.                                                                                           |
+| 002       | `profiles`                  | `auth.user_org_id()` helper; signup trigger defaults new users to Glass Outlet org.                                                                  |
+| 003       | `quotes`                    | RLS: users see **all org quotes** (staff visibility), but can only insert/update/delete their own.                                                   |
+| 004       | `product_pricing` _(legacy)_| Renamed to `pricing_rules` in migration 008. Do not reference directly.                                                                             |
+| 005       | `products`                  | **No RLS**. Root products + variants via `parent_id` FK. `UNIQUE(org_id, system_type) WHERE parent_id IS NULL`. `UNIQUE(parent_id, system_type) WHERE parent_id IS NOT NULL`. |
+| 006       | `product_components`        | **No RLS**. Single source of truth per SKU: name, description, category, unit, default_price, system_types[], active. SKU unique per org.            |
+| 007       | _(seed)_                    | Seed now populates `products`, `product_components`, and `pricing_rules` in new format.                                                              |
+| 008       | `pricing_rules`             | **No RLS**. Rule-based pricing: `component_id` FK, `tier_code` (tier1/2/3), `rule` (math.js expression, NULL = always), `price`, `priority`.        |
+| 008       | `pricing_rules_with_sku`    | View joining `pricing_rules` + `product_components`. Used by edge functions for sku-based lookups. No RLS (service role only).                       |
 
 ---
 
@@ -154,7 +156,7 @@ const orgId = profile.org_id;
 
 ### calculate-pricing
 
-`POST /functions/v1/calculate-pricing` — accepts `{ bomItems, pricingTier }`, returns priced items. Reads `product_pricing` via service role key scoped by `org_id`. All prices ex-GST; GST is 10% (Australian).
+`POST /functions/v1/calculate-pricing` — accepts `{ bomItems, pricingTier }`, returns priced items. Reads `pricing_rules_with_sku` view via service role key scoped by `org_id`. Evaluates `rule` expressions (math.js, variable: `qty`) to resolve the applicable price per line item. All prices ex-GST; GST is 10% (Australian).
 
 > Kept separate from calculate-bom so BOM can be generated once and repriced across tiers without re-running the material calculation.
 
