@@ -7,6 +7,7 @@ import { GateModal } from "../gate/GateModal";
 import { useFenceConfig } from "../../context/FenceConfigContext";
 import { useGates } from "../../context/GateContext";
 import type { GateConfig } from "../../schemas/gate.schema";
+import type { CanvasLayout } from "./canvasEngine";
 
 interface PendingGate {
   stub: GateConfig;
@@ -15,7 +16,7 @@ interface PendingGate {
 }
 
 interface FenceLayoutCanvasProps {
-  onApplied?: () => void;
+  onApplied?: (layout: CanvasLayout) => void;
 }
 
 export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
@@ -107,7 +108,7 @@ export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
     setApplied(true);
     setTimeout(() => {
       setApplied(false);
-      onApplied?.();
+      onApplied?.(layout);
     }, 300);
   }, [fenceDispatch, onApplied]);
 

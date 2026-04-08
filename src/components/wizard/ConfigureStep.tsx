@@ -2,6 +2,8 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { FenceConfigForm } from '../fence/FenceConfigForm';
 import { GateConfigPanel } from '../gate/GateConfigPanel';
 import { JobSummary } from '../contact/JobSummary';
+import { LayoutMinimap } from '../canvas/LayoutMinimap';
+import type { CanvasLayout } from '../canvas/canvasEngine';
 import { useFenceConfig } from '../../context/FenceConfigContext';
 import { useGates } from '../../context/GateContext';
 
@@ -9,9 +11,10 @@ interface ConfigureStepProps {
   onBack: () => void;
   onGenerate: () => Promise<void>;
   isGenerating: boolean;
+  layoutData?: CanvasLayout | null;
 }
 
-export function ConfigureStep({ onBack, onGenerate, isGenerating }: ConfigureStepProps) {
+export function ConfigureStep({ onBack, onGenerate, isGenerating, layoutData }: ConfigureStepProps) {
   const { state: fenceConfig } = useFenceConfig();
   const { gates } = useGates();
 
@@ -24,7 +27,7 @@ export function ConfigureStep({ onBack, onGenerate, isGenerating }: ConfigureSte
         className="flex items-center gap-1.5 text-sm text-brand-muted hover:text-brand-text transition-colors"
       >
         <ArrowLeft size={14} />
-        Back to start
+        Back
       </button>
 
       {/* Two-column layout */}
@@ -78,8 +81,9 @@ export function ConfigureStep({ onBack, onGenerate, isGenerating }: ConfigureSte
 
         {/* ── Right: Sticky Job Summary ────────────────────────────── */}
         <div className="hidden lg:block">
-          <div className="sticky top-6">
+          <div className="sticky top-6 space-y-4">
             <JobSummary fenceConfig={fenceConfig} gates={gates} />
+            {layoutData && <LayoutMinimap layout={layoutData} />}
           </div>
         </div>
 

@@ -12,6 +12,8 @@ import type { FenceConfig } from "../../schemas/fence.schema";
 import type { GateConfig } from "../../schemas/gate.schema";
 import type { ContactInfo } from "../../schemas/contact.schema";
 import { BOMSummary } from "../bom/BOMSummary";
+import { LayoutMinimap } from "../canvas/LayoutMinimap";
+import type { CanvasLayout } from "../canvas/canvasEngine";
 
 interface BOMStepProps {
   bomResult: BOMResult | null;
@@ -33,6 +35,7 @@ interface BOMStepProps {
   onSaved?: (id: string) => void;
   onShowSaved: () => void;
   onBack: () => void;
+  layoutData?: CanvasLayout | null;
 }
 
 export function BOMStep({
@@ -55,6 +58,7 @@ export function BOMStep({
   onSaved,
   onShowSaved,
   onBack,
+  layoutData,
 }: BOMStepProps) {
   const effectiveBom = bomResult
     ? applyBomOverrides(bomResult, overrides)
@@ -143,6 +147,8 @@ export function BOMStep({
               />
             </div>
           </AccordionSection>
+
+          {layoutData && <LayoutMinimap layout={layoutData} />}
 
           <AccordionSection title="Quote Notes (Internal)" defaultOpen={false}>
             <textarea

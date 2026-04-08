@@ -1,24 +1,26 @@
 import { Check } from 'lucide-react';
 
-type WizardStep = 'entry' | 'configure' | 'bom';
-
-const STEPS: { id: WizardStep; label: string }[] = [
-  { id: 'entry',     label: 'Start' },
-  { id: 'configure', label: 'Configure' },
-  { id: 'bom',       label: 'Bill of Materials' },
-];
+const STEP_LABELS: Record<string, string> = {
+  entry: 'Start',
+  layout: 'Layout Tool',
+  parse: 'Describe Job',
+  configure: 'Configure',
+  bom: 'Bill of Materials',
+};
 
 interface WizardStepIndicatorProps {
-  currentStep: WizardStep;
-  onStepClick: (step: WizardStep) => void;
+  currentStep: string;
+  steps: string[];
+  onStepClick: (step: string) => void;
 }
 
-export function WizardStepIndicator({ currentStep, onStepClick }: WizardStepIndicatorProps) {
-  const currentIndex = STEPS.findIndex((s) => s.id === currentStep);
+export function WizardStepIndicator({ currentStep, steps, onStepClick }: WizardStepIndicatorProps) {
+  const stepDefs = steps.map(id => ({ id, label: STEP_LABELS[id] ?? id }));
+  const currentIndex = stepDefs.findIndex((s) => s.id === currentStep);
 
   return (
     <nav className="flex items-center justify-center select-none">
-      {STEPS.map((step, idx) => {
+      {stepDefs.map((step, idx) => {
         const isDone    = idx < currentIndex;
         const isActive  = idx === currentIndex;
         const isFuture  = idx > currentIndex;
@@ -52,7 +54,7 @@ export function WizardStepIndicator({ currentStep, onStepClick }: WizardStepIndi
             </button>
 
             {/* Connector line */}
-            {idx < STEPS.length - 1 && (
+            {idx < stepDefs.length - 1 && (
               <div className={`relative w-8 sm:w-14 h-px mx-1 overflow-hidden`}>
                 <div className="absolute inset-0 bg-brand-border" />
                 <div
