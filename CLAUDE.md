@@ -103,12 +103,12 @@ Run `ls src/` or `ls src/components/` for the current file list — the director
 
 ## 5. Database Design
 
-Every table includes `org_id`. RLS policies use `auth.user_org_id()` (a `SECURITY DEFINER STABLE` function on profiles) to scope all access. Never trust client-sent `org_id` — always resolve from the authenticated user's JWT.
+Every table includes `org_id`. RLS policies use `public.user_org_id()` (a `SECURITY DEFINER STABLE` function on profiles) to scope all access. Never trust client-sent `org_id` — always resolve from the authenticated user's JWT.
 
 | Migration | Table / View                | Key design notes                                                                                                                                    |
 | --------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 001       | `organisations`             | Seeds Glass Outlet org (`slug = 'glass-outlet'`). No RLS.                                                                                           |
-| 002       | `profiles`                  | `auth.user_org_id()` helper; signup trigger defaults new users to Glass Outlet org.                                                                  |
+| 002       | `profiles`                  | `public.user_org_id()` helper; signup trigger defaults new users to Glass Outlet org.                                                                  |
 | 003       | `quotes`                    | RLS: users see **all org quotes** (staff visibility), but can only insert/update/delete their own.                                                   |
 | 004       | `product_pricing` _(legacy)_| Renamed to `pricing_rules` in migration 008. Do not reference directly.                                                                             |
 | 005       | `products`                  | **No RLS**. Root products + variants via `parent_id` FK. `UNIQUE(org_id, system_type) WHERE parent_id IS NULL`. `UNIQUE(parent_id, system_type) WHERE parent_id IS NOT NULL`. |
@@ -208,9 +208,9 @@ Responsive: desktop-first. Canvas section hidden on mobile (`md:block`). BOM tab
 - [ ] **No sensitive constants** in client-side code (no margin percentages, no wholesale prices)
 - [ ] **Rate limiting** on edge functions to prevent abuse
 - [ ] **CORS** configured to allow only your deployment domain(s)
-- [ ] **Every RLS policy** scopes by `org_id = auth.user_org_id()` — no cross-org data leakage
+- [ ] **Every RLS policy** scopes by `org_id = public.user_org_id()` — no cross-org data leakage
 - [ ] **Edge functions** resolve `org_id` server-side from the JWT user's profile — never trust client-sent `org_id`
-- [ ] **The `auth.user_org_id()` function** is `SECURITY DEFINER` and `STABLE` — verified working
+- [ ] **The `public.user_org_id()` function** is `SECURITY DEFINER` and `STABLE` — verified working
 - [ ] **Quote inserts** include the correct `org_id` from the user's profile, not from client input
 
 ---
@@ -246,7 +246,7 @@ VITE_SUPABASE_ANON_KEY=your-local-anon-key
 | @react-pdf/renderer over jsPDF                       | JSX-based PDF templates are more maintainable. Matches the React mental model.                                       |
 | All pricing server-side                              | Non-negotiable for IP protection. The client never knows wholesale costs or margin formulas.                         |
 | Multi-tenant schema now                              | Adding `org_id` columns and RLS policies later requires rewriting every migration and query. Cost now: ~30 min.      |
-| `auth.user_org_id()` helper function                 | Centralises the org lookup. Every RLS policy calls this function — if logic changes, update one place.               |
+| `public.user_org_id()` helper function                 | Centralises the org lookup. Every RLS policy calls this function — if logic changes, update one place.               |
 
 ---
 
@@ -270,6 +270,6 @@ See `docs/cypress-test-report.md` for the current test status and known issues. 
 - **The canvas is a vanilla JS port, not a rewrite.** `canvasEngine.ts` is pure TypeScript — no React, no JSX, no hooks. Do not refactor it using react-konva or any React canvas library.
 - **Australian context**: Currency is AUD, GST is 10%, measurements are metric (mm for heights/widths, m for run lengths). Postcodes are 4 digits.
 - **Colour names are Colorbond brand names** — spelled exactly as listed in Section 4.
-- **Multi-tenancy: every table has `org_id`.** Edge functions always scope queries by `org_id` resolved from the user's JWT. RLS policies use `auth.user_org_id()`. The client never sends `org_id`.
+- **Multi-tenancy: every table has `org_id`.** Edge functions always scope queries by `org_id` resolved from the user's JWT. RLS policies use `public.user_org_id()`. The client never sends `org_id`.
 - **Always update `docs/tasks.md` after completing any task or group of tasks.** Tick off `[x]`, update the Phases Overview table, and update the "Current Phase" header. Do this before responding to the user.
 - **Current status**: Phases 0–6 complete. Phase 7 (Polish) is in progress — see `docs/tasks.md` for the remaining checklist items.

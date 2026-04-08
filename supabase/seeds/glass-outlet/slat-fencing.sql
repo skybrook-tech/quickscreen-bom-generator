@@ -11,30 +11,55 @@
 
 DO $$
 DECLARE
-  _org UUID;
+  _org  UUID;
   _slug TEXT := 'glass-outlet';
+  _qs   UUID;
 BEGIN
   SELECT id INTO _org FROM organisations WHERE slug = _slug;
 
   -- ── Products ─────────────────────────────────────────────────────────────────
-  -- Root products (parent_id = NULL). Each represents a fence system or gate family.
+  -- Root products (parent_id = NULL). QuickScreen is the active product line;
+  -- all other product families are seeded as inactive catalog entries.
 
-  INSERT INTO products (org_id, name, system_type, description, sort_order)
-  SELECT
-    o.id,
-    vals.name,
-    vals.system_type,
-    vals.description,
-    vals.sort_order
-  FROM organisations o
-  CROSS JOIN (VALUES
-    ('QSHS Horizontal Slat Screen', 'QSHS', 'Standard horizontal slat system. Slats run horizontally, inserted into slotted posts.',    1),
-    ('VS Vertical Slat Screen',     'VS',   'Vertical slat orientation. Slats insert into top and bottom rails.',                       2),
-    ('XPL XPress Plus Premium',     'XPL',  '65mm slats only (forced). Insert/clip system with different bracket requirements.',         3),
-    ('BAYG Buy As You Go',          'BAYG', 'Spacers sold separately. Customer assembles themselves.',                                   4),
-    ('Gate',                        'GATE', 'Swing and sliding gate products.',                                                          5)
-  ) AS vals(name, system_type, description, sort_order)
-  WHERE o.slug = _slug
+  -- 1. QuickScreen — the active root product (QSHS/VS/XPL/BAYG/GATE are its children)
+  INSERT INTO products (org_id, name, system_type, description, active, sort_order)
+  VALUES (
+    _org,
+    'QuickScreen',
+    'QUICKSCREEN',
+    'Aluminium slat screening system. Available in horizontal (QSHS), vertical (VS), XPL clip system, and Buy As You Go (BAYG) configurations.',
+    true,
+    1
+  )
+  ON CONFLICT (org_id, system_type) WHERE parent_id IS NULL DO NOTHING;
+
+  SELECT id INTO _qs FROM products WHERE org_id = _org AND system_type = 'QUICKSCREEN' AND parent_id IS NULL;
+
+  -- 2. QuickScreen sub-systems — children of the QuickScreen root product
+  INSERT INTO products (org_id, name, system_type, description, active, parent_id, sort_order)
+  VALUES
+    (_org, 'QSHS Horizontal Slat Screen', 'QSHS', 'Standard horizontal slat system. Slats run horizontally, inserted into slotted posts.',  true, _qs, 1),
+    (_org, 'VS Vertical Slat Screen',     'VS',   'Vertical slat orientation. Slats insert into top and bottom rails.',                      true, _qs, 2),
+    (_org, 'XPL XPress Plus Premium',     'XPL',  '65mm slats only (forced). Insert/clip system with different bracket requirements.',        true, _qs, 3),
+    (_org, 'BAYG Buy As You Go',          'BAYG', 'Spacers sold separately. Customer assembles themselves.',                                  true, _qs, 4),
+    (_org, 'Gate',                        'GATE', 'Swing and sliding gate products.',                                                         true, _qs, 5)
+  ON CONFLICT (parent_id, system_type) WHERE parent_id IS NOT NULL DO NOTHING;
+
+  -- 3. Other product families — inactive root products (no components or pricing yet)
+  INSERT INTO products (org_id, name, system_type, description, active, sort_order)
+  VALUES
+    (_org, 'Aluminium Balustrade', 'ALUMINIUM-BALUSTRADE', 'Aluminium balustrade systems for decks, stairs, and balconies.',          false, 10),
+    (_org, 'Colorbond Fencing',    'COLORBOND',            'Colorbond steel fencing panels and accessories.',                         false, 11),
+    (_org, 'DrainLab',             'DRAINLAB',             'Drainage channel and grate systems.',                                     false, 12),
+    (_org, 'Exterior',             'EXTERIOR',             'Exterior cladding and screening products.',                               false, 13),
+    (_org, 'Fencing & Breezewire', 'FENCING-BREEZEWIRE',   'Traditional fencing and breezewire mesh products.',                      false, 14),
+    (_org, 'Glass Balustrade',     'GLASS-BALUSTRADE',     'Frameless and semi-frameless glass balustrade systems.',                  false, 15),
+    (_org, 'Glass',                'GLASS',                'Architectural and decorative glass products.',                            false, 16),
+    (_org, 'Glass Pool Fencing',   'GLASS-POOL',           'Frameless glass pool fencing compliant with Australian standards.',       false, 17),
+    (_org, 'Glass Range',          'GLASS-RANGE',          'Full range of glass products including toughened and laminated glass.',   false, 18),
+    (_org, 'Glass Shower Screen',  'GLASS-SHOWER',         'Frameless and semi-frameless shower screen systems.',                    false, 19),
+    (_org, 'Hamptons',             'HAMPTONS',             'Hamptons-style screening and fencing products.',                          false, 20),
+    (_org, 'Move Shutters',        'MOVE-SHUTTERS',        'Aluminium louvre shutter systems for privacy and light control.',         false, 21)
   ON CONFLICT (org_id, system_type) WHERE parent_id IS NULL DO NOTHING;
 
 
