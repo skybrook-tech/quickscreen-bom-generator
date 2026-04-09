@@ -16,7 +16,7 @@ import type { ContactInfo } from "../../schemas/contact.schema";
 interface QuoteActionsProps {
   fenceConfig: FenceConfig;
   gates: GateConfig[];
-  bom: BOMResult;
+  bom?: BOMResult;
   contact: ContactInfo;
   customerRef: string;
   notes: string;
@@ -27,7 +27,7 @@ interface QuoteActionsProps {
   quoteNumber?: number;
   /** Called with the saved quote id after a successful save. If omitted, navigates to /quote/:id */
   onSaved?: (id: string) => void;
-  onShowSaved: () => void;
+  onShowSaved?: () => void;
   /** When provided, renders an Edit Draft button */
   onEdit?: () => void;
   /** Set to false to hide the Save/Update button (e.g. in view-only mode). Defaults to true. */
@@ -45,7 +45,6 @@ export function QuoteActions({
   editingQuoteId,
   quoteNumber,
   onSaved,
-  onShowSaved,
   onEdit,
   showSave = true,
 }: QuoteActionsProps) {
@@ -59,6 +58,7 @@ export function QuoteActions({
 
   // ── Save / Update draft ──────────────────────────────────────────────────────
   const handleSave = async () => {
+    if (!bom) return;
     setSaving(true);
     try {
       let savedId: string;
@@ -113,6 +113,7 @@ export function QuoteActions({
 
   // ── CSV export ───────────────────────────────────────────────────────────────
   const handleCSV = () => {
+    if (!bom) return;
     setCsving(true);
     const allItems = [...bom.fenceItems, ...bom.gateItems];
     type CSVRow = {
@@ -176,6 +177,7 @@ export function QuoteActions({
 
   // ── PDF download ─────────────────────────────────────────────────────────────
   const handlePDF = async () => {
+    if (!bom) return;
     setPdfing(true);
     try {
       const quote: SavedQuote = {
@@ -217,7 +219,7 @@ export function QuoteActions({
         <button
           type="button"
           onClick={handleCSV}
-          disabled={csving}
+          disabled={csving || !bom}
           className={btnCls}
           title="Download CSV"
         >
@@ -233,7 +235,7 @@ export function QuoteActions({
         <button
           type="button"
           onClick={handlePDF}
-          disabled={pdfing}
+          disabled={pdfing || !bom}
           className={btnCls}
           title="Download PDF"
         >
@@ -257,7 +259,7 @@ export function QuoteActions({
         <button
           type="button"
           onClick={handleSave}
-          disabled={saving}
+          disabled={saving || !bom}
           className={primaryCls}
         >
           {saving ? (

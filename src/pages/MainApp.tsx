@@ -43,7 +43,7 @@ function AppContent({ step, stepOrder, setStep, setStepOrder }: AppContentProps)
   const { gates, dispatch: gateDispatch } = useGates();
   const { user } = useAuth();
 
-  const [pricingTier, setPricingTier] = useState<PricingTier>("tier1");
+  const [pricingTier] = useState<PricingTier>("tier1");
   const [bomResult, setBomResult] = useState<BOMResult | null>(null);
   const [bomOverrides, setBomOverrides] = useState<BOMOverrides>(new Map());
   const [contact, setContact] = useState<ContactInfo>(defaultContactInfo);
@@ -202,8 +202,7 @@ function AppContent({ step, stepOrder, setStep, setStepOrder }: AppContentProps)
             errorMessage={errorMessage}
             overrides={bomOverrides}
             onQtyChange={handleQtyChange}
-            pricingTier={pricingTier}
-            onPricingTierChange={setPricingTier}
+
             fenceConfig={fenceConfig}
             gates={gates}
             contact={contact}

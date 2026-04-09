@@ -66,7 +66,7 @@ function DraftEditorContent({ quote, orgId, step, setStep, onSaved, onCancel }: 
 
   const [bomResult, setBomResult] = useState<BOMResult | null>(quote.bom);
   const [bomOverrides, setBomOverrides] = useState<BOMOverrides>(new Map());
-  const [pricingTier, setPricingTier] = useState<PricingTier>(
+  const [pricingTier] = useState<PricingTier>(
     (quote.bom?.pricingTier as PricingTier) ?? 'tier1'
   );
   const [contact, setContact] = useState<ContactInfo>(quote.contact ?? defaultContactInfo);
@@ -118,8 +118,7 @@ function DraftEditorContent({ quote, orgId, step, setStep, onSaved, onCancel }: 
           onQtyChange={(key, qty) =>
             setBomOverrides((prev) => new Map(prev).set(key, qty))
           }
-          pricingTier={pricingTier}
-          onPricingTierChange={setPricingTier}
+
           fenceConfig={fenceConfig}
           gates={gates}
           contact={contact}
@@ -366,6 +365,7 @@ export function QuoteViewPage() {
           <div className="flex-1">
             <WizardStepIndicator
               currentStep={editStep}
+              steps={['configure', 'bom']}
               onStepClick={(s) => { if (s !== 'bom') setEditStep('configure'); }}
             />
           </div>

@@ -1,15 +1,6 @@
 import { Link } from "react-router-dom";
-import { Eye, Trash2, ArrowRight, FileText } from "lucide-react";
 import { AppShell } from "../components/layout/AppShell";
-import { useQuotes } from "../hooks/useQuotes";
 import { useProducts, type Product } from "../hooks/useProducts";
-
-const STATUS_COLOURS: Record<string, string> = {
-  draft: "text-brand-muted",
-  sent: "text-blue-400",
-  accepted: "text-green-400",
-  expired: "text-red-400",
-};
 
 const PRODUCT_ROUTES: Record<string, string> = {
   QUICKSCREEN: "/new",

@@ -1,12 +1,11 @@
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { BOMDisplay } from "../bom/BOMDisplay";
-import { PricingTierSelect } from "../bom/PricingTierSelect";
 import { QuoteActions } from "../quote/QuoteActions";
 import { ContactDeliveryForm } from "../contact/ContactDeliveryForm";
 import { AccordionSection } from "../shared/AccordionSection";
 import { ErrorBoundary } from "../shared/ErrorBoundary";
 import { applyBomOverrides } from "../../utils/applyBomOverrides";
-import type { BOMResult, PricingTier } from "../../types/bom.types";
+import type { BOMResult } from "../../types/bom.types";
 import type { BOMOverrides } from "../../utils/applyBomOverrides";
 import type { FenceConfig } from "../../schemas/fence.schema";
 import type { GateConfig } from "../../schemas/gate.schema";
@@ -22,8 +21,6 @@ interface BOMStepProps {
   errorMessage?: string;
   overrides: BOMOverrides;
   onQtyChange: (key: string, qty: number) => void;
-  pricingTier: PricingTier;
-  onPricingTierChange: (tier: PricingTier) => void;
   fenceConfig: FenceConfig;
   gates: GateConfig[];
   contact: ContactInfo;
@@ -45,8 +42,6 @@ export function BOMStep({
   errorMessage,
   overrides,
   onQtyChange,
-  pricingTier,
-  onPricingTierChange,
   fenceConfig,
   gates,
   contact,
@@ -124,7 +119,7 @@ export function BOMStep({
             <QuoteActions
               fenceConfig={fenceConfig}
               gates={gates}
-              bom={effectiveBom}
+              bom={effectiveBom ?? undefined}
               contact={contact}
               customerRef={fenceConfig.customerRef ?? ""}
               notes={notes}

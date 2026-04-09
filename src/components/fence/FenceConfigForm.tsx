@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef } from "react";
 import { AlignJustify, GalleryVertical, Zap, Package } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -66,10 +66,10 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
   const systemType = watch("systemType");
   const isXpl = systemType === "XPL";
 
-  const systemTypeOptions = useMemo(
-    () => SYSTEM_TYPES.map((s) => ({ ...s })),
-    [],
-  );
+  const systemTypeOptions = SYSTEM_TYPES.map((s) => ({
+    ...s,
+    icon: SYSTEM_TYPE_ICONS[s.value],
+  }));
 
   // Enforce XPL → 65mm in the form as well as context
   useEffect(() => {
