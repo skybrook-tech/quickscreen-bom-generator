@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { AlignJustify, GalleryVertical, Zap, Package } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,19 +40,28 @@ const SYSTEM_TYPE_ICONS: Record<string, React.ReactNode> = {
 };
 
 export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
-  const { dispatch } = useFenceConfig();
+  const { state: contextState, dispatch } = useFenceConfig();
 
   const {
     register,
     handleSubmit,
     watch,
     setValue,
+    reset,
     control,
     formState: { errors },
   } = useForm<FenceConfig>({
     resolver: zodResolver(FenceConfigSchema),
     defaultValues: defaultFenceConfig,
   });
+
+  // Seed from context once on mount so pre-populated values (e.g. from layout tool) are reflected
+  const seeded = useRef(false);
+  useEffect(() => {
+    if (seeded.current) return;
+    seeded.current = true;
+    reset({ ...defaultFenceConfig, ...contextState });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const systemType = watch("systemType");
   const isXpl = systemType === "XPL";
@@ -77,7 +86,10 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
     return () => subscription.unsubscribe();
   }, [watch, dispatch]);
 
-  const onSubmit: SubmitHandler<FenceConfig> = (_data) => {
+  const onSubmit: SubmitHandler<FenceConfig> = (data) => {
+    // Flush validated form values to context synchronously before generating,
+    // in case the watch() subscription hasn't fired yet (e.g. under Cypress).
+    dispatch({ type: "SET_CONFIG", config: data });
     onGenerate?.();
   };
 
@@ -120,11 +132,18 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
           <input
             {...register("totalRunLength", { valueAsNumber: true })}
             type="number"
-            step="0.5"
-            min="0.5"
+            step="0.1"
+            min="0.1"
             data-testid="run-length"
             data-unit="m"
             className={inputCls}
+            onBlur={(e) => {
+              const raw = parseFloat(e.target.value);
+              if (!isNaN(raw)) {
+                const rounded = Math.ceil(raw * 10) / 10;
+                setValue("totalRunLength", rounded, { shouldValidate: true });
+              }
+            }}
           />
         </FormField>
 

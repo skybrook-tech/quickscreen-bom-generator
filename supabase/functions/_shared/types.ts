@@ -79,9 +79,9 @@ export interface BOMResult {
 
 export type PricingTier = 'tier1' | 'tier2' | 'tier3';
 
-export interface PricingRow {
+export interface PricingRule {
   sku: string;
-  tier1_price: number;
-  tier2_price: number;
-  tier3_price: number;
+  price: number;
+  rule: string | null;  // math.js expression; null = always applies
+  priority: number;
 }

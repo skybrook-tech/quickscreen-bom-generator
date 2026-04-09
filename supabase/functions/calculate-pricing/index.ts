@@ -1,7 +1,27 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders, handleCors } from '../_shared/cors.ts';
 import { extractJwt, resolveUserProfile } from '../_shared/auth.ts';
-import type { BOMLineItem, PricingTier } from '../_shared/types.ts';
+import { create, all } from 'https://esm.sh/mathjs@13/number';
+import type { BOMLineItem, PricingRule, PricingTier } from '../_shared/types.ts';
+
+const mathjs = create(all);
+
+/**
+ * Resolves the unit price for a SKU given its rules (sorted highest priority first)
+ * and the quantity being priced. Evaluates each rule expression using math.js.
+ * The first rule whose expression evaluates to true (or has no expression) wins.
+ */
+function resolvePrice(rules: PricingRule[], qty: number): number {
+  for (const r of rules) {
+    if (!r.rule) return r.price;  // no expression = always applies
+    try {
+      if (mathjs.evaluate(r.rule, { qty }) === true) return r.price;
+    } catch {
+      // malformed rule expression — skip and try next
+    }
+  }
+  return 0;
+}
 
 /**
  * calculate-pricing
@@ -34,22 +54,27 @@ Deno.serve(async (req: Request) => {
     const skus = [...new Set(bomItems.map((i) => i.sku))];
 
     const { data, error } = await supabaseAdmin
-      .from('product_pricing')
-      .select('sku, tier1_price, tier2_price, tier3_price')
+      .from('pricing_rules_with_sku')
+      .select('sku, price, rule, priority')
       .eq('org_id', orgId)
+      .eq('tier_code', tier)
       .eq('active', true)
-      .in('sku', skus);
+      .in('sku', skus)
+      .order('priority', { ascending: false });
 
     if (error) throw new Error(`Pricing lookup failed: ${error.message}`);
 
-    const pricingMap = new Map<string, Record<string, number>>();
+    // Group rules by sku (sorted highest priority first)
+    const pricingMap = new Map<string, PricingRule[]>();
     for (const row of data ?? []) {
-      pricingMap.set(row.sku, row);
+      const existing = pricingMap.get(row.sku) ?? [];
+      existing.push(row as PricingRule);
+      pricingMap.set(row.sku, existing);
     }
 
     const priced = bomItems.map((i) => {
-      const row = pricingMap.get(i.sku);
-      const unitPrice = row ? (row[`${tier}_price`] as number) : 0;
+      const rules = pricingMap.get(i.sku) ?? [];
+      const unitPrice = resolvePrice(rules, i.quantity);
       return {
         ...i,
         unitPrice,

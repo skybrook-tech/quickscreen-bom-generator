@@ -1,48 +1,74 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
-import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
-import { AppShell } from '../components/layout/AppShell';
-import { FenceConfigForm } from '../components/fence/FenceConfigForm';
-import { GateConfigPanel } from '../components/gate/GateConfigPanel';
-import { BOMDisplay } from '../components/bom/BOMDisplay';
-import { PricingTierSelect } from '../components/bom/PricingTierSelect';
-import { QuoteActions } from '../components/quote/QuoteActions';
-import { SavedQuotesList } from '../components/quote/SavedQuotesList';
-import { ContactDeliveryForm } from '../components/contact/ContactDeliveryForm';
-import { JobSummary } from '../components/contact/JobSummary';
-import { FenceLayoutCanvas } from '../components/canvas/FenceLayoutCanvas';
-import { JobDescriptionParser } from '../components/fence/JobDescriptionParser';
-import { FenceConfigProvider, useFenceConfig } from '../context/FenceConfigContext';
-import { GateProvider, useGates } from '../context/GateContext';
-import { AccordionSection } from '../components/shared/AccordionSection';
-import { ErrorBoundary } from '../components/shared/ErrorBoundary';
-import { useBOM } from '../hooks/useBOM';
-import { useAuth } from '../hooks/useAuth';
-import { supabase } from '../lib/supabase';
-import { defaultContactInfo } from '../schemas/contact.schema';
-import type { BOMResult, PricingTier } from '../types/bom.types';
-import type { ContactInfo } from '../schemas/contact.schema';
-import type { SavedQuote } from '../types/quote.types';
+import { useState, useCallback, useEffect, useRef } from "react";
+import { useBlocker } from "react-router-dom";
+import { toast } from "sonner";
+import type { CanvasLayout } from "../components/canvas/canvasEngine";
+import { AppShell } from "../components/layout/AppShell";
+import { SavedQuotesList } from "../components/quote/SavedQuotesList";
+import { WizardStepIndicator } from "../components/wizard/WizardStepIndicator";
+import { EntryStep } from "../components/wizard/EntryStep";
+import { LayoutStep } from "../components/wizard/LayoutStep";
+import { ParseStep } from "../components/wizard/ParseStep";
+import { ConfigureStep } from "../components/wizard/ConfigureStep";
+import { BOMStep } from "../components/wizard/BOMStep";
+import {
+  FenceConfigProvider,
+  useFenceConfig,
+} from "../context/FenceConfigContext";
+import { GateProvider, useGates } from "../context/GateContext";
+import { ErrorBoundary } from "../components/shared/ErrorBoundary";
+import { useBOM } from "../hooks/useBOM";
+import { useAuth } from "../hooks/useAuth";
+import { supabase } from "../lib/supabase";
+import { defaultContactInfo } from "../schemas/contact.schema";
+import type { BOMOverrides } from "../utils/applyBomOverrides";
+import type { BOMResult, PricingTier } from "../types/bom.types";
+import type { ContactInfo } from "../schemas/contact.schema";
+import type { SavedQuote } from "../types/quote.types";
 
-function AppContent() {
+type WizardStep = "entry" | "layout" | "parse" | "configure" | "bom";
+
+const DEFAULT_STEP_ORDER: WizardStep[] = ["entry", "configure", "bom"];
+const LAYOUT_STEP_ORDER: WizardStep[] = ["entry", "layout", "configure", "bom"];
+const PARSE_STEP_ORDER: WizardStep[] = ["entry", "parse", "configure", "bom"];
+
+interface AppContentProps {
+  step: WizardStep;
+  stepOrder: WizardStep[];
+  setStep: (s: WizardStep) => void;
+  setStepOrder: (order: WizardStep[]) => void;
+}
+
+function AppContent({ step, stepOrder, setStep, setStepOrder }: AppContentProps) {
   const { state: fenceConfig, dispatch: fenceDispatch } = useFenceConfig();
   const { gates, dispatch: gateDispatch } = useGates();
   const { user } = useAuth();
 
-  const [pricingTier,  setPricingTier]  = useState<PricingTier>('tier1');
-  const [bomResult,    setBomResult]    = useState<BOMResult | null>(null);
-  const [contact,      setContact]      = useState<ContactInfo>(defaultContactInfo);
-  const [notes,        setNotes]        = useState('');
-  const [showSaved,    setShowSaved]    = useState(false);
-  const [orgId,        setOrgId]        = useState('');
+  const [pricingTier, setPricingTier] = useState<PricingTier>("tier1");
+  const [bomResult, setBomResult] = useState<BOMResult | null>(null);
+  const [bomOverrides, setBomOverrides] = useState<BOMOverrides>(new Map());
+  const [contact, setContact] = useState<ContactInfo>(defaultContactInfo);
+  const [notes, setNotes] = useState("");
+  const [showSaved, setShowSaved] = useState(false);
+  const [orgId, setOrgId] = useState("");
+  const [layoutData, setLayoutData] = useState<CanvasLayout | null>(null);
 
   const bomMutation = useBOM();
 
-  // Fetch org_id once so QuoteActions can include it on insert
+  // Keep refs to always-current config/gates so handleGenerate reads the
+  // latest values regardless of closure capture timing.
+  const fenceConfigRef = useRef(fenceConfig);
+  fenceConfigRef.current = fenceConfig;
+  const gatesRef = useRef(gates);
+  gatesRef.current = gates;
+
   const ensureOrgId = useCallback(async () => {
     if (orgId) return orgId;
-    const { data } = await supabase.from('profiles').select('org_id').eq('id', user?.id ?? '').single();
-    const id = data?.org_id ?? '';
+    const { data } = await supabase
+      .from("profiles")
+      .select("org_id")
+      .eq("id", user?.id ?? "")
+      .single();
+    const id = data?.org_id ?? "";
     setOrgId(id);
     return id;
   }, [orgId, user?.id]);
@@ -50,169 +76,224 @@ function AppContent() {
   const handleGenerate = async () => {
     await ensureOrgId();
     try {
-      const result = await bomMutation.mutateAsync({ fenceConfig, gates, pricingTier });
+      const result = await bomMutation.mutateAsync({
+        fenceConfig: fenceConfigRef.current,
+        gates: gatesRef.current,
+        pricingTier,
+      });
       setBomResult(result);
+      setBomOverrides(new Map());
+      setStep("bom");
     } catch (err) {
-      console.error('[BOM] calculation failed:', err);
-      const msg = err instanceof Error ? err.message : 'BOM calculation failed. Is Supabase running?';
+      console.error("[BOM] calculation failed:", err);
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "BOM calculation failed. Is Supabase running?";
       toast.error(msg);
     }
   };
 
-  // Re-price existing BOM when tier changes (skip the initial mount)
+  // Re-price existing BOM when tier changes (skip initial mount)
   const isMounted = useRef(false);
   useEffect(() => {
-    if (!isMounted.current) { isMounted.current = true; return; }
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
     if (!bomResult) return;
-    bomMutation.mutateAsync({ fenceConfig, gates, pricingTier })
-      .then(setBomResult)
+    bomMutation
+      .mutateAsync({ fenceConfig, gates, pricingTier })
+      .then((result) => {
+        setBomResult(result);
+        setBomOverrides(new Map());
+      })
       .catch(() => {});
-  }, [pricingTier]);
+  }, [pricingTier]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Load a saved quote back into all form state
+  const handleQtyChange = useCallback((key: string, qty: number) => {
+    setBomOverrides((prev) => new Map(prev).set(key, qty));
+  }, []);
+
   const handleLoadQuote = (quote: SavedQuote) => {
-    fenceDispatch({ type: 'LOAD_FROM_QUOTE', config: quote.fence_config });
-    gateDispatch({ type: 'SET_GATES', gates: quote.gates });
+    fenceDispatch({ type: "LOAD_FROM_QUOTE", config: quote.fence_config });
+    gateDispatch({ type: "SET_GATES", gates: quote.gates });
     setBomResult(quote.bom);
+    setBomOverrides(new Map());
     setContact(quote.contact ?? defaultContactInfo);
-    setNotes(quote.notes ?? '');
+    setNotes(quote.notes ?? "");
     setOrgId(quote.org_id);
+    setShowSaved(false);
+    setStep("bom");
+  };
+
+  const errorMessage =
+    bomMutation.error instanceof Error
+      ? bomMutation.error.message
+      : "BOM calculation failed. Is Supabase running?";
+
+  const handleBackToEntry = () => {
+    setStepOrder(DEFAULT_STEP_ORDER);
+    setStep("entry");
   };
 
   return (
-    <div className="space-y-4">
+    <>
+      <ErrorBoundary label="App">
+        {step === "entry" && (
+          <EntryStep
+            onStartManual={() => {
+              setStepOrder(DEFAULT_STEP_ORDER);
+              setStep("configure");
+            }}
+            onStartLayout={() => {
+              setStepOrder(LAYOUT_STEP_ORDER);
+              setStep("layout");
+            }}
+            onStartDescribe={() => {
+              setStepOrder(PARSE_STEP_ORDER);
+              setStep("parse");
+            }}
+          />
+        )}
 
-      {/* ── Describe the Job ────────────────────────────────────── */}
-      <AccordionSection title="Describe the Job" badge="optional" defaultOpen={false}>
-        <JobDescriptionParser />
-      </AccordionSection>
-
-      {/* ── Canvas Layout Tool ──────────────────────────────────── */}
-      <div className="hidden sm:block">
-        <AccordionSection title="Layout Tool" badge="optional" defaultOpen={false}>
-          <ErrorBoundary label="Layout Tool">
-            <FenceLayoutCanvas />
-          </ErrorBoundary>
-        </AccordionSection>
-      </div>
-
-      {/* ── Fence & Gate Configuration ──────────────────────────── */}
-      <AccordionSection title="Fence Configuration" badge={gates.length > 0 ? `${gates.length} gate${gates.length !== 1 ? 's' : ''}` : undefined}>
-        <div className="space-y-6">
-          <FenceConfigForm onGenerate={handleGenerate} />
-          <div className="border-t border-brand-border pt-5">
-            <p className="text-xs font-semibold text-brand-muted uppercase tracking-wider mb-3">Gates</p>
-            <GateConfigPanel />
-          </div>
-          <button
-            type="submit"
-            form="fence-config-form"
-            disabled={bomMutation.isPending}
-            data-testid="generate-bom-btn"
-            className="w-full py-3 px-6 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-50 text-white font-bold rounded-lg transition-colors text-sm tracking-wide shadow-sm"
-          >
-            {bomMutation.isPending ? 'Generating…' : 'Generate BOM →'}
-          </button>
-        </div>
-      </AccordionSection>
-
-      {/* ── Contact & Delivery ──────────────────────────────────── */}
-      <AccordionSection title="Contact & Delivery">
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <ContactDeliveryForm onChange={setContact} initialValues={contact} />
-            </div>
-            <div>
-              <JobSummary fenceConfig={fenceConfig} gates={gates} />
-            </div>
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-brand-muted uppercase tracking-wider mb-1.5">Quote Notes</label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={2}
-              placeholder="Internal notes for this quote…"
-              className="w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text focus:outline-none focus:ring-2 focus:ring-brand-accent/30 focus:border-brand-accent transition-colors resize-none"
+        {/* Keep mounted once chosen so canvas/text state survives going back */}
+        {stepOrder.includes("layout") && (
+          <div className={step === "layout" ? "" : "hidden"}>
+            <LayoutStep
+              onBack={handleBackToEntry}
+              onApplied={(layout) => {
+                setLayoutData(layout);
+                setStep("configure");
+              }}
             />
           </div>
-        </div>
-      </AccordionSection>
+        )}
 
-      {/* ── Bill of Materials ───────────────────────────────────── */}
-      {(bomResult || bomMutation.isPending || bomMutation.isError) && (
-        <AccordionSection
-          title="Bill of Materials"
-          badge={bomResult ? `$${bomResult.grandTotal.toFixed(2)} inc. GST` : bomMutation.isPending ? 'Calculating…' : undefined}
-          defaultOpen
-        >
-          <div>
-            {bomMutation.isPending && (
-              <div className="flex items-center justify-center gap-2 py-8 text-sm text-brand-muted">
-                <Loader2 size={16} className="animate-spin" />
-                Calculating BOM…
-              </div>
-            )}
-            {bomMutation.isError && (
-              <p className="text-sm text-red-400 py-4">
-                {bomMutation.error instanceof Error
-                  ? bomMutation.error.message
-                  : 'BOM calculation failed. Is Supabase running?'}
-              </p>
-            )}
-            {bomResult && !bomMutation.isPending && (
-              <ErrorBoundary label="Bill of Materials">
-              <div className="space-y-4">
-                {/* Tier selector + export actions */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-brand-border">
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-semibold text-brand-muted uppercase tracking-wider">Pricing tier</span>
-                    <PricingTierSelect value={pricingTier} onChange={setPricingTier} />
-                  </div>
-                  <QuoteActions
-                    fenceConfig={fenceConfig}
-                    gates={gates}
-                    bom={bomResult}
-                    contact={contact}
-                    customerRef={fenceConfig.customerRef ?? ''}
-                    notes={notes}
-                    orgId={orgId}
-                    onShowSaved={() => setShowSaved(true)}
-                  />
-                </div>
-
-                <BOMDisplay result={bomResult} />
-              </div>
-              </ErrorBoundary>
-            )}
+        {stepOrder.includes("parse") && (
+          <div className={step === "parse" ? "" : "hidden"}>
+            <ParseStep
+              onBack={handleBackToEntry}
+              onContinue={(desc) => {
+                if (desc.trim()) setNotes(desc);
+                setStep("configure");
+              }}
+            />
           </div>
-        </AccordionSection>
-      )}
+        )}
 
-      {/* ── Saved quotes panel ──────────────────────────────────── */}
+        {step === "configure" && (
+          <ConfigureStep
+            onBack={() => {
+              const idx = stepOrder.indexOf("configure");
+              setStep(stepOrder[idx - 1] ?? "entry");
+            }}
+            onGenerate={handleGenerate}
+            isGenerating={bomMutation.isPending}
+            layoutData={layoutData ?? undefined}
+          />
+        )}
+
+        {step === "bom" && (
+          <BOMStep
+            bomResult={bomResult}
+            isPending={bomMutation.isPending}
+            isError={bomMutation.isError}
+            errorMessage={errorMessage}
+            overrides={bomOverrides}
+            onQtyChange={handleQtyChange}
+            pricingTier={pricingTier}
+            onPricingTierChange={setPricingTier}
+            fenceConfig={fenceConfig}
+            gates={gates}
+            contact={contact}
+            onContactChange={setContact}
+            notes={notes}
+            onNotesChange={setNotes}
+            orgId={orgId}
+            onShowSaved={() => setShowSaved(true)}
+            onBack={() => setStep("configure")}
+            layoutData={layoutData ?? undefined}
+          />
+        )}
+      </ErrorBoundary>
+
       {showSaved && (
         <SavedQuotesList
           onLoad={handleLoadQuote}
           onClose={() => setShowSaved(false)}
         />
       )}
-
-    </div>
+    </>
   );
 }
 
 export function MainApp() {
+  const [step, setStep] = useState<WizardStep>("entry");
+  const [stepOrder, setStepOrder] = useState<WizardStep[]>(DEFAULT_STEP_ORDER);
+
+  const blocker = useBlocker(
+    ({ currentLocation, nextLocation }) =>
+      step !== "entry" && currentLocation.pathname !== nextLocation.pathname
+  );
+
+  const handleStepClick = (s: string) => {
+    if (stepOrder.indexOf(s as WizardStep) < stepOrder.indexOf(step)) {
+      setStep(s as WizardStep);
+    }
+  };
+
   return (
     <FenceConfigProvider>
       <GateProvider>
-        <AppShell>
-          <div className="p-4 sm:p-6">
-            <div className="max-w-5xl mx-auto">
-              <AppContent />
+        <AppShell
+          topBar={
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center gap-4">
+              <div className="flex-1">
+                <WizardStepIndicator
+                  currentStep={step}
+                  steps={stepOrder}
+                  onStepClick={handleStepClick}
+                />
+              </div>
+            </div>
+          }
+        >
+          <div className="p-4 sm:p-6 pb-12">
+            <div className="max-w-7xl mx-auto">
+              <AppContent step={step} stepOrder={stepOrder} setStep={setStep} setStepOrder={setStepOrder} />
             </div>
           </div>
         </AppShell>
+
+        {blocker.state === "blocked" && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
+            <div className="bg-brand-card border border-brand-border rounded-xl shadow-2xl p-6 max-w-sm w-full mx-4 space-y-4">
+              <h2 className="text-base font-semibold text-brand-text">
+                Leave this page?
+              </h2>
+              <p className="text-sm text-brand-muted">
+                Your progress will be lost. Are you sure you want to leave?
+              </p>
+              <div className="flex justify-end gap-3 pt-1">
+                <button
+                  type="button"
+                  onClick={() => blocker.reset()}
+                  className="px-4 py-2 text-sm font-medium text-brand-muted hover:text-brand-text border border-brand-border rounded-lg transition-colors"
+                >
+                  Stay
+                </button>
+                <button
+                  type="button"
+                  onClick={() => blocker.proceed()}
+                  className="px-4 py-2 text-sm font-medium bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                >
+                  Leave
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </GateProvider>
     </FenceConfigProvider>
   );

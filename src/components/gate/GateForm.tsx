@@ -16,8 +16,9 @@ import {
 } from '../../lib/constants';
 
 const inputCls =
-  'w-full px-2.5 py-2 bg-brand-bg border border-brand-border rounded text-sm text-brand-text ' +
-  'focus:outline-none focus:border-brand-accent disabled:opacity-50 disabled:cursor-not-allowed';
+  'w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text ' +
+  'focus:outline-none focus:ring-2 focus:ring-brand-accent/30 focus:border-brand-accent ' +
+  'transition-colors disabled:opacity-40 disabled:cursor-not-allowed';
 
 interface GateFormProps {
   gateId: string;

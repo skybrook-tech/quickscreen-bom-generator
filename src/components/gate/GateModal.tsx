@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
-import { X } from 'lucide-react';
-import { GateForm } from './GateForm';
-import type { GateConfig } from '../../schemas/gate.schema';
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
+import { X } from "lucide-react";
+import { GateForm } from "./GateForm";
+import type { GateConfig } from "../../schemas/gate.schema";
 
 interface GateModalProps {
-  mode: 'adding' | 'editing';
+  mode: "adding" | "editing";
   gateId: string;
   initialValues?: Partial<GateConfig>;
   onSave: (gate: GateConfig) => void;
@@ -13,28 +14,37 @@ interface GateModalProps {
   headerSuffix?: string;
 }
 
-export function GateModal({ mode, gateId, initialValues, onSave, onClose, headerSuffix }: GateModalProps) {
+export function GateModal({
+  mode,
+  gateId,
+  initialValues,
+  onSave,
+  onClose,
+  headerSuffix,
+}: GateModalProps) {
   // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === "Escape") onClose();
     };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
   // Prevent body scroll while open
   useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = ''; };
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, []);
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
-      aria-label={mode === 'adding' ? 'Add Gate' : 'Edit Gate'}
+      aria-label={mode === "adding" ? "Add Gate" : "Edit Gate"}
     >
       {/* Backdrop */}
       <div
@@ -47,9 +57,11 @@ export function GateModal({ mode, gateId, initialValues, onSave, onClose, header
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-brand-border">
           <h2 className="text-base font-semibold text-brand-text flex items-baseline gap-2">
-            {mode === 'adding' ? 'Add Gate' : 'Edit Gate'}
+            {mode === "adding" ? "Add Gate" : "Edit Gate"}
             {headerSuffix && (
-              <span className="text-xs font-normal text-brand-muted">{headerSuffix}</span>
+              <span className="text-xs font-normal text-brand-muted">
+                {headerSuffix}
+              </span>
             )}
           </h2>
           <button
@@ -72,6 +84,7 @@ export function GateModal({ mode, gateId, initialValues, onSave, onClose, header
           />
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -43,8 +43,13 @@ interface FenceConfigContextValue {
 
 const FenceConfigContext = createContext<FenceConfigContextValue | null>(null);
 
-export function FenceConfigProvider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(fenceReducer, defaultFenceConfig);
+interface FenceConfigProviderProps {
+  children: React.ReactNode;
+  initialState?: FenceConfig;
+}
+
+export function FenceConfigProvider({ children, initialState }: FenceConfigProviderProps) {
+  const [state, dispatch] = useReducer(fenceReducer, initialState ?? defaultFenceConfig);
   return (
     <FenceConfigContext.Provider value={{ state, dispatch }}>
       {children}
