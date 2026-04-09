@@ -54,6 +54,13 @@ function AppContent({ step, stepOrder, setStep, setStepOrder }: AppContentProps)
 
   const bomMutation = useBOM();
 
+  // Keep refs to always-current config/gates so handleGenerate reads the
+  // latest values regardless of closure capture timing.
+  const fenceConfigRef = useRef(fenceConfig);
+  fenceConfigRef.current = fenceConfig;
+  const gatesRef = useRef(gates);
+  gatesRef.current = gates;
+
   const ensureOrgId = useCallback(async () => {
     if (orgId) return orgId;
     const { data } = await supabase
@@ -70,8 +77,8 @@ function AppContent({ step, stepOrder, setStep, setStepOrder }: AppContentProps)
     await ensureOrgId();
     try {
       const result = await bomMutation.mutateAsync({
-        fenceConfig,
-        gates,
+        fenceConfig: fenceConfigRef.current,
+        gates: gatesRef.current,
         pricingTier,
       });
       setBomResult(result);

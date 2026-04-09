@@ -9,15 +9,37 @@ import { SEL } from './selectors';
  * is automatically divided by 1000 before typing.
  */
 export function fillFenceConfig(config) {
-  // If on the wizard entry step, navigate to configure step first
-  cy.get('body').then(($body) => {
-    if ($body.find('[data-testid="configure-manually-btn"]').length > 0) {
-      cy.get('[data-testid="configure-manually-btn"]').click();
-    }
+  // If neither the entry step button nor the form is visible yet (e.g. after a
+  // cy.visit('/') that lands on the HomePage), navigate to the wizard first.
+  const isHtmlApp = Cypress.env('isHtmlApp');
+  if (!isHtmlApp) {
+    cy.url().then((url) => {
+      if (!url.includes('/new')) {
+        cy.visit('/new');
+      }
+    });
+  }
+
+  // Wait for either the entry step button OR the fence config form to be present,
+  // then click through the entry step if needed. This handles both the React app
+  // (which starts at /new with an entry step) and the HTML app (form is immediate).
+  cy.get('[data-testid="configure-manually-btn"], [data-testid="system-type"]').then(() => {
+    cy.get('body').then(($body) => {
+      if ($body.find('[data-testid="configure-manually-btn"]').length > 0) {
+        cy.get('[data-testid="configure-manually-btn"]').click();
+      }
+    });
   });
 
   if (config.systemType != null) {
-    cy.get(SEL.systemType).select(config.systemType);
+    cy.get(SEL.systemType).then($el => {
+      if ($el.is('select')) {
+        cy.wrap($el).select(config.systemType);
+      } else {
+        // ButtonGroup — click the matching option button
+        cy.get(`[data-testid="system-type-option-${config.systemType}"]`).click();
+      }
+    });
   }
   if (config.runLength != null) {
     // Support both mm-native inputs and the existing HTML app's metre-based input.
@@ -40,7 +62,9 @@ export function fillFenceConfig(config) {
     cy.get(SEL.colour).select(config.colour);
   }
   if (config.maxPanelWidth != null) {
-    cy.get(SEL.maxPanelWidth).select(config.maxPanelWidth);
+    cy.get(SEL.maxPanelWidth)
+      .select(config.maxPanelWidth)
+      .should('have.value', config.maxPanelWidth);
   }
   if (config.postMounting != null) {
     cy.get(SEL.postMounting).select(config.postMounting);
@@ -116,7 +140,14 @@ export function assertBomLine(
     .contains(SEL.bomRow, code)
     .within(() => {
       if (expected.qty != null) {
-        cy.get(SEL.bomRowQty).should('contain', String(expected.qty));
+        cy.get(SEL.bomRowQty).then(($el) => {
+          const $input = $el.find('input');
+          if ($input.length > 0) {
+            cy.wrap($input).should('have.value', String(expected.qty));
+          } else {
+            cy.wrap($el).should('contain', String(expected.qty));
+          }
+        });
       }
       if (expected.unitPrice != null) {
         cy.get(SEL.bomRowUnitPrice).should('contain', expected.unitPrice.toFixed(2));
@@ -204,6 +235,17 @@ export function signInForSpec() {
                              : (client.reactPassword || '123456');
 
   signin(user, password, '/');
+
+  // For the React app, navigate to the wizard after sign-in.
+  // The HTML app has everything on one page at /; the React wizard lives at /new.
+  if (!isHtmlApp) {
+    // Wait for the login redirect to complete before navigating.
+    // The LoginPage navigates to '/' on success — wait for that before visiting /new,
+    // otherwise cy.visit('/new') may run before the session is written and AuthGuard
+    // redirects back to /login.
+    cy.url().should('not.include', '/login');
+    cy.visit('/new');
+  }
 }
 
 // Backward-compat alias — existing tests keep working unchanged

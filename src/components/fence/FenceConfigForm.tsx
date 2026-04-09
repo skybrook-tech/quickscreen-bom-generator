@@ -86,7 +86,10 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
     return () => subscription.unsubscribe();
   }, [watch, dispatch]);
 
-  const onSubmit: SubmitHandler<FenceConfig> = (_data) => {
+  const onSubmit: SubmitHandler<FenceConfig> = (data) => {
+    // Flush validated form values to context synchronously before generating,
+    // in case the watch() subscription hasn't fired yet (e.g. under Cypress).
+    dispatch({ type: "SET_CONFIG", config: data });
     onGenerate?.();
   };
 

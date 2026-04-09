@@ -7,7 +7,7 @@ export default defineConfig({
   e2e: {
     // Default to the existing HTML app for Phase 0 verification.
     // Override with CYPRESS_BASE_URL env var when testing the React app.
-    baseUrl: process.env.CYPRESS_BASE_URL || 'http://localhost:3000',
+    baseUrl: process.env.CYPRESS_BASE_URL || 'http://localhost:5173',
     specPattern: 'cypress/e2e/**/*.cy.js',
     supportFile: 'cypress/support/e2e.js',
     fixturesFolder: 'cypress/fixtures',

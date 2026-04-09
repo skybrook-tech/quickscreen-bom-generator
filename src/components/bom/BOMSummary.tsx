@@ -10,7 +10,7 @@ export function BOMSummary({ result }: BOMSummaryProps) {
       <div className="space-y-1 mb-3">
         <div className="flex justify-between items-center text-sm">
           <span className="text-brand-muted">Subtotal (ex-GST)</span>
-          <span className="tabular-nums text-brand-text">
+          <span data-testid="bom-grand-total" className="tabular-nums text-brand-text">
             ${result.total.toFixed(2)}
           </span>
         </div>
@@ -38,7 +38,6 @@ export function BOMSummary({ result }: BOMSummaryProps) {
           </p>
         </div>
         <span
-          data-testid="bom-grand-total"
           className="text-2xl font-bold text-brand-accent tabular-nums"
         >
           ${result.grandTotal.toFixed(2)}

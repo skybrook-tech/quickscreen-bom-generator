@@ -48,15 +48,19 @@ export function BOMLineItem({
         className="py-2.5 px-3 text-sm font-medium text-brand-text text-right tabular-nums"
       >
         {onQtyChange && itemKey ? (
-          <input
-            type="number"
-            min="0"
-            value={displayQty}
-            onChange={(e) =>
-              onQtyChange(itemKey, Math.max(0, Number(e.target.value)))
-            }
-            className="w-16 px-1.5 py-0.5 text-right bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text focus:outline-none focus:ring-1 focus:ring-brand-accent/50 focus:border-brand-accent tabular-nums"
-          />
+          <>
+            {/* Hidden text node so cy.invoke('text') / cy.contains() can read the qty */}
+            <span className="sr-only">{displayQty}</span>
+            <input
+              type="number"
+              min="0"
+              value={displayQty}
+              onChange={(e) =>
+                onQtyChange(itemKey, Math.max(0, Number(e.target.value)))
+              }
+              className="w-16 px-1.5 py-0.5 text-right bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text focus:outline-none focus:ring-1 focus:ring-brand-accent/50 focus:border-brand-accent tabular-nums"
+            />
+          </>
         ) : (
           displayQty
         )}
