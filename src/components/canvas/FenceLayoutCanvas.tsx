@@ -21,7 +21,10 @@ interface FenceLayoutCanvasProps {
   postPositions?: PostPosition[] | null;
 }
 
-export function FenceLayoutCanvas({ onApplied, postPositions }: FenceLayoutCanvasProps = {}) {
+export function FenceLayoutCanvas({
+  onApplied,
+  postPositions,
+}: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
   const { dispatch: fenceDispatch } = useFenceConfig();
@@ -79,7 +82,9 @@ export function FenceLayoutCanvas({ onApplied, postPositions }: FenceLayoutCanva
       onLayoutChange: (layout) => setRunSummaries(layout.runs),
       onGateEdit: (flatSegIdx, gateIdx, gateId) => {
         // Find the gate in GateContext by id (set when gate was first saved)
-        const existing = gateId ? gatesRef.current.find((g) => g.id === gateId) : undefined;
+        const existing = gateId
+          ? gatesRef.current.find((g) => g.id === gateId)
+          : undefined;
         if (!existing) return; // gate not yet saved (e.g. modal still open) — ignore
         setEditingCanvasGate({ flatSegIdx, gateIdx, gate: existing });
       },
@@ -100,7 +105,11 @@ export function FenceLayoutCanvas({ onApplied, postPositions }: FenceLayoutCanva
         gate.openingWidth,
       );
       // Link canvas gate marker to GateConfig id so edit-by-click works later
-      engineRef.current?.setGateId(pendingGate.segIdx, pendingGate.gateIdx, gate.id);
+      engineRef.current?.setGateId(
+        pendingGate.segIdx,
+        pendingGate.gateIdx,
+        gate.id,
+      );
       gateDispatch({ type: "ADD_GATE", gate });
       setPendingGate(null);
     },
@@ -110,7 +119,11 @@ export function FenceLayoutCanvas({ onApplied, postPositions }: FenceLayoutCanva
   const handleGateSkip = useCallback(() => {
     if (!pendingGate) return;
     // Add with defaults so the layout gate count stays accurate
-    engineRef.current?.setGateId(pendingGate.segIdx, pendingGate.gateIdx, pendingGate.stub.id);
+    engineRef.current?.setGateId(
+      pendingGate.segIdx,
+      pendingGate.gateIdx,
+      pendingGate.stub.id,
+    );
     gateDispatch({ type: "ADD_GATE", gate: pendingGate.stub });
     setPendingGate(null);
   }, [pendingGate, gateDispatch]);
@@ -138,8 +151,9 @@ export function FenceLayoutCanvas({ onApplied, postPositions }: FenceLayoutCanva
     fenceDispatch({
       type: "SET_FIELD",
       field: "totalRunLength",
-      value: layout.totalLengthM,
+      value: Math.round(layout.totalLengthM * 100) / 100,
     });
+
     fenceDispatch({
       type: "SET_FIELD",
       field: "corners",
@@ -193,7 +207,7 @@ export function FenceLayoutCanvas({ onApplied, postPositions }: FenceLayoutCanva
   // Totals across all runs
   const totalLengthM = runSummaries.reduce((s, r) => s + r.totalLengthM, 0);
   const totalCorners = runSummaries.reduce((s, r) => s + r.cornerCount, 0);
-  const totalGates   = runSummaries.reduce((s, r) => s + r.gates.length, 0);
+  const totalGates = runSummaries.reduce((s, r) => s + r.gates.length, 0);
 
   return (
     <div className="space-y-0">
@@ -248,11 +262,20 @@ export function FenceLayoutCanvas({ onApplied, postPositions }: FenceLayoutCanva
             </thead>
             <tbody>
               {runSummaries.map((run) => (
-                <tr key={run.label} className="border-t border-brand-border/50 text-brand-text">
+                <tr
+                  key={run.label}
+                  className="border-t border-brand-border/50 text-brand-text"
+                >
                   <td className="px-3 py-1.5 text-brand-muted">{run.label}</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">{run.totalLengthM.toFixed(2)}m</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">{run.cornerCount}</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">{run.gates.length}</td>
+                  <td className="px-3 py-1.5 text-right tabular-nums">
+                    {run.totalLengthM.toFixed(2)}m
+                  </td>
+                  <td className="px-3 py-1.5 text-right tabular-nums">
+                    {run.cornerCount}
+                  </td>
+                  <td className="px-3 py-1.5 text-right tabular-nums">
+                    {run.gates.length}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -260,9 +283,15 @@ export function FenceLayoutCanvas({ onApplied, postPositions }: FenceLayoutCanva
               <tfoot>
                 <tr className="border-t border-brand-border font-semibold text-brand-text bg-brand-bg/40">
                   <td className="px-3 py-1.5 text-brand-muted">Total</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">{totalLengthM.toFixed(2)}m</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">{totalCorners}</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">{totalGates}</td>
+                  <td className="px-3 py-1.5 text-right tabular-nums">
+                    {totalLengthM.toFixed(2)}m
+                  </td>
+                  <td className="px-3 py-1.5 text-right tabular-nums">
+                    {totalCorners}
+                  </td>
+                  <td className="px-3 py-1.5 text-right tabular-nums">
+                    {totalGates}
+                  </td>
                 </tr>
               </tfoot>
             )}

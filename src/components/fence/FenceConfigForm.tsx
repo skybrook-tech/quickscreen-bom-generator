@@ -63,6 +63,20 @@ export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {
     reset({ ...defaultFenceConfig, ...contextState });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Re-sync fields that external sources (canvas layout, parser) can change back into the
+  // form. Runs after mount only (seeded guard prevents a loop on the initial reset).
+  const fields: (keyof FenceConfig)[] = [
+    "totalRunLength", "corners", "colour", "targetHeight",
+    "slatSize", "slatGap", "postMounting", "leftTermination",
+    "rightTermination", "maxPanelWidth", "systemType",
+  ];
+  useEffect(() => {
+    if (!seeded.current) return;
+    for (const field of fields) {
+      setValue(field as never, contextState[field] as never, { shouldValidate: false });
+    }
+  }, fields.map((f) => contextState[f])); // eslint-disable-line react-hooks/exhaustive-deps
+
   const systemType = watch("systemType");
   const isXpl = systemType === "XPL";
 
