@@ -34,3 +34,7 @@ screenshots/
 .temp
 
 .tmp
+
+.env*
+
+.claude/worktrees/*

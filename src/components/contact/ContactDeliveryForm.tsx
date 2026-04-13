@@ -24,13 +24,14 @@ export function ContactDeliveryForm({
   const {
     register,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<ContactInfo>({
     resolver: zodResolver(ContactSchema),
     defaultValues: { ...defaultContactInfo, ...initialValues },
   });
 
-  const fulfilment = watch("fulfilment");
+  const watchFulfilment = watch("fulfilment");
 
   useEffect(() => {
     const sub = watch((values) => onChange(values as ContactInfo));
@@ -80,31 +81,53 @@ export function ContactDeliveryForm({
       </div>
 
       {/* Row 3: Fulfilment */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FormField label="Fulfilment">
-          <select {...register("fulfilment")} className={inputCls}>
-            <option value="pickup">Pickup</option>
-            <option value="delivery">Delivery</option>
-          </select>
-        </FormField>
-        {fulfilment === "delivery" && (
+      <FormField label="Fulfilment">
+        <div className="flex gap-2">
+          {(['pickup', 'delivery'] as const).map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => setValue('fulfilment', opt)}
+              className={`flex-1 py-2 px-3 text-sm font-medium rounded-md border transition-colors ${
+                watchFulfilment === opt
+                  ? 'border-brand-accent bg-brand-accent/20 text-brand-accent'
+                  : 'border-brand-border text-brand-muted hover:text-brand-text'
+              }`}
+            >
+              {opt === 'pickup' ? 'Pickup' : 'Delivery'}
+            </button>
+          ))}
+        </div>
+      </FormField>
+
+      {/* Delivery address fields (shown when delivery selected) */}
+      {watchFulfilment === "delivery" && (
+        <div className="space-y-3">
           <FormField label="Delivery Address">
             <input
               {...register("deliveryAddress")}
               type="text"
-              placeholder="Street, suburb, state, postcode"
+              placeholder="Street address"
               className={inputCls}
             />
           </FormField>
-        )}
-      </div>
+          <FormField label="Suburb / State / Postcode">
+            <input
+              {...register("deliverySuburb")}
+              type="text"
+              placeholder="e.g. Thomastown VIC 3074"
+              className={inputCls}
+            />
+          </FormField>
+        </div>
+      )}
 
       {/* Notes */}
       <FormField label="Notes / Special Instructions">
         <textarea
           {...register("notes")}
           rows={3}
-          placeholder="Any special instructions or site notes…"
+          placeholder="Add any job notes, special requirements, site conditions, or instructions here…"
           className={inputCls}
         />
       </FormField>

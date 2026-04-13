@@ -20,9 +20,10 @@ export const LatchType = z.enum([
 
 export const GateSchema = z.object({
   id:           z.string().uuid(),
+  qty:          z.number().int().min(1).max(20),
   gateType:     GateType,
-  openingWidth: z.number().min(200, 'Min opening width 200mm').max(6000, 'Max opening width 6000mm'),
-  gateHeight:   z.union([z.literal('match-fence'), z.number().min(600).max(2400)]),
+  openingWidth: z.number().min(400, 'Min opening width 400mm').max(6000, 'Max opening width 6000mm'),
+  gateHeight:   z.union([z.literal('match-fence'), z.number().min(600).max(2500)]),
   colour:       z.union([z.literal('match-fence'), Colour]),
   slatGap:      z.union([z.literal('match-fence'), SlatGap]),
   slatSize:     z.union([z.literal('match-fence'), SlatSize]),
@@ -34,6 +35,7 @@ export const GateSchema = z.object({
 export type GateConfig = z.infer<typeof GateSchema>;
 
 export const defaultGateConfig: Omit<GateConfig, 'id'> = {
+  qty:          1,
   gateType:     'single-swing',
   openingWidth: 900,
   gateHeight:   'match-fence',

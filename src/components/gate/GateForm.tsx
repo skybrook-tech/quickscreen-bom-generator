@@ -36,6 +36,16 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
       initialValues.slatGap     === 'match-fence' &&
       initialValues.slatSize    === 'match-fence');
   const [matchFence, setMatchFence] = useState(initialMatch);
+  const [customHeightActive, setCustomHeightActive] = useState(
+    initialValues?.gateHeight !== undefined &&
+    initialValues.gateHeight !== 'match-fence' &&
+    ![900, 1050, 1200, 1500, 1800, 1950, 2100].includes(initialValues.gateHeight as number)
+  );
+  const [customHeightValue, setCustomHeightValue] = useState<number>(
+    customHeightActive && typeof initialValues?.gateHeight === 'number'
+      ? (initialValues.gateHeight as number)
+      : 600
+  );
 
   const {
     register,
@@ -78,11 +88,23 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
 
       {/* ── Gate type ──────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
         <FormField label="Gate Type" error={errors.gateType?.message}>
           <GateTypeSelect
             {...register('gateType')}
             data-testid="gate-type"
+            className={inputCls}
+          />
+        </FormField>
+
+        <FormField label="Quantity" error={errors.qty?.message}>
+          <input
+            {...register('qty', { valueAsNumber: true })}
+            type="number"
+            step="1"
+            min="1"
+            max="20"
+            data-testid="gate-qty"
             className={inputCls}
           />
         </FormField>
@@ -95,8 +117,8 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
           <input
             {...register('openingWidth', { valueAsNumber: true })}
             type="number"
-            step="1"
-            min="200"
+            step="50"
+            min="400"
             max="6000"
             data-testid="gate-opening-width"
             className={inputCls + (swingWidthWarning ? ' border-yellow-500' : '')}
@@ -132,21 +154,46 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
             name="gateHeight"
             control={control}
             render={({ field }) => (
-              <select
-                {...field}
-                value={String(field.value)}
-                onChange={(e) => {
-                  const v = e.target.value;
-                  field.onChange(v === 'match-fence' ? 'match-fence' : Number(v));
-                }}
-                data-testid="gate-height"
-                className={inputCls}
-              >
-                <option value="match-fence">Match fence</option>
-                {[900, 1050, 1200, 1500, 1800, 1950, 2100].map((h) => (
-                  <option key={h} value={h}>{h}mm</option>
-                ))}
-              </select>
+              <>
+                <select
+                  value={customHeightActive ? 'custom' : String(field.value)}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (v === 'custom') {
+                      setCustomHeightActive(true);
+                      field.onChange(customHeightValue);
+                    } else {
+                      setCustomHeightActive(false);
+                      field.onChange(v === 'match-fence' ? 'match-fence' : Number(v));
+                    }
+                  }}
+                  data-testid="gate-height"
+                  className={inputCls}
+                >
+                  <option value="match-fence">Match fence</option>
+                  {[900, 1050, 1200, 1500, 1800, 1950, 2100].map((h) => (
+                    <option key={h} value={h}>{h}mm</option>
+                  ))}
+                  <option value="custom">Custom…</option>
+                </select>
+                {customHeightActive && (
+                  <input
+                    type="number"
+                    step="1"
+                    min="600"
+                    max="2500"
+                    value={customHeightValue}
+                    onChange={(e) => {
+                      const n = Number(e.target.value);
+                      setCustomHeightValue(n);
+                      field.onChange(n);
+                    }}
+                    data-testid="gate-height-custom"
+                    className={inputCls + ' mt-1'}
+                    placeholder="Enter height (mm)"
+                  />
+                )}
+              </>
             )}
           />
         </FormField>

@@ -65,6 +65,15 @@ export function QuotePDFTemplate({ quote }: QuotePDFTemplateProps) {
             {contact.company    && <View style={s.row}><Text style={s.label}>Company</Text><Text style={s.value}>{contact.company}</Text></View>}
             {contact.phone      && <View style={s.row}><Text style={s.label}>Phone</Text><Text style={s.value}>{contact.phone}</Text></View>}
             {contact.email      && <View style={s.row}><Text style={s.label}>Email</Text><Text style={s.value}>{contact.email}</Text></View>}
+            {contact.deliveryAddress && (
+              <View style={s.row}>
+                <Text style={s.label}>Delivery</Text>
+                <View style={s.value}>
+                  <Text>{contact.deliveryAddress}</Text>
+                  {contact.deliverySuburb && <Text>{contact.deliverySuburb}</Text>}
+                </View>
+              </View>
+            )}
             <View style={s.row}><Text style={s.label}>Fulfilment</Text><Text style={s.value}>{contact.fulfilment}</Text></View>
           </View>
         )}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "../../lib/supabase";
-import { Save, Download, Loader2, Pencil } from "lucide-react";
+import { Save, Download, Loader2, Pencil, Copy } from "lucide-react";
 import { pdf } from "@react-pdf/renderer";
 import Papa from "papaparse";
 import { QuotePDFTemplate } from "./QuotePDFTemplate";
@@ -53,6 +53,7 @@ export function QuoteActions({
   const [saving, setSaving] = useState(false);
   const [pdfing, setPdfing] = useState(false);
   const [csving, setCsving] = useState(false);
+  const [copying, setCopying] = useState(false);
 
   const isEditing = !!editingQuoteId;
 
@@ -109,6 +110,21 @@ export function QuoteActions({
       toast.error(msg);
       setSaving(false);
     }
+  };
+
+  // ── Copy to clipboard ────────────────────────────────────────────────────────
+  const handleCopy = async () => {
+    if (!bom) return;
+    setCopying(true);
+    const allItems = [...bom.fenceItems, ...bom.gateItems];
+    const lines = allItems.map(i => `${i.sku}\t${i.description}\t×${i.quantity}\t$${i.lineTotal.toFixed(2)}`);
+    lines.push('');
+    lines.push(`Subtotal (ex-GST)\t\t\t$${bom.total.toFixed(2)}`);
+    lines.push(`GST (10%)\t\t\t$${bom.gst.toFixed(2)}`);
+    lines.push(`TOTAL (inc. GST)\t\t\t$${bom.grandTotal.toFixed(2)}`);
+    await navigator.clipboard.writeText(lines.join('\n'));
+    toast.success('BOM copied to clipboard');
+    setCopying(false);
   };
 
   // ── CSV export ───────────────────────────────────────────────────────────────
@@ -215,6 +231,18 @@ export function QuoteActions({
 
   return (
     <div className="flex flex-wrap gap-2 justify-end">
+      <div className="flex gap-1.5 border-r border-brand-border pr-2 ml-0.5">
+        <button
+          type="button"
+          onClick={handleCopy}
+          disabled={copying || !bom}
+          className={btnCls}
+          title="Copy to clipboard"
+        >
+          {copying ? <Loader2 size={13} className="animate-spin" /> : <Copy size={13} />}
+          Copy
+        </button>
+      </div>
       <div className="flex gap-1.5 border-r border-brand-border pr-2 ml-0.5">
         <button
           type="button"

@@ -1,6 +1,30 @@
 import type { FenceConfig } from "../../schemas/fence.schema";
 import type { GateConfig } from "../../schemas/gate.schema";
 
+const GATE_TYPE_LABELS: Record<string, string> = {
+  "single-swing": "Single Swing",
+  "double-swing": "Double Swing",
+  sliding: "Sliding",
+};
+
+function formatColourSlug(slug: string): string {
+  return slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function formatGatePostSize(size: string): string {
+  return size.replace(/x/i, "×") + "mm posts";
+}
+
+function formatGateHeight(height: GateConfig["gateHeight"]): string {
+  return height === "match-fence" ? "Match fence" : `${height}mm`;
+}
+
+function formatGateColour(colour: GateConfig["colour"]): string {
+  return colour === "match-fence" ? "Match fence" : formatColourSlug(colour);
+}
+
+const MAX_GATES_SHOWN = 3;
+
 interface JobSummaryProps {
   fenceConfig: FenceConfig;
   gates: GateConfig[];
@@ -71,7 +95,38 @@ export function JobSummary({ fenceConfig: fc, gates }: JobSummaryProps) {
         {posts > 0 && <SummaryRow label="Posts (est.)" value={posts} />}
         {fc.corners > 0 && <SummaryRow label="Corners" value={fc.corners} />}
         {gates.length > 0 && (
-          <SummaryRow label="Gates" value={`${gates.length} configured`} />
+          <div className="pt-1.5 space-y-2">
+            {gates.slice(0, MAX_GATES_SHOWN).map((gate, idx) => (
+              <div key={gate.id} className="space-y-0.5">
+                <div className="text-xs font-semibold text-brand-muted">
+                  Gate {idx + 1}
+                  {gate.qty > 1 && (
+                    <span className="ml-1 text-brand-accent">×{gate.qty}</span>
+                  )}
+                </div>
+                <div className="pl-2 space-y-0.5">
+                  <div className="text-xs text-brand-text">
+                    {GATE_TYPE_LABELS[gate.gateType] ?? gate.gateType}
+                  </div>
+                  <div className="text-xs text-brand-muted">
+                    {gate.openingWidth}mm wide × {formatGateHeight(gate.gateHeight)}
+                  </div>
+                  <div className="text-xs text-brand-muted">
+                    {formatGateColour(gate.colour)}
+                  </div>
+                  <div className="text-xs text-brand-muted">
+                    {formatGatePostSize(gate.gatePostSize)}
+                  </div>
+                </div>
+              </div>
+            ))}
+            {gates.length > MAX_GATES_SHOWN && (
+              <div className="text-xs text-brand-muted">
+                +{gates.length - MAX_GATES_SHOWN} more gate
+                {gates.length - MAX_GATES_SHOWN > 1 ? "s" : ""}
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>

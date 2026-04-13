@@ -1,4 +1,13 @@
-import { Pencil, GitMerge, Move, Undo2, Trash2, RotateCcw } from "lucide-react";
+import {
+  Pencil,
+  GitMerge,
+  Move,
+  Undo2,
+  Trash2,
+  RotateCcw,
+  Maximize2,
+  Minimize2,
+} from "lucide-react";
 import type { RefObject } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
 
@@ -10,6 +19,10 @@ interface CanvasToolbarProps {
   onToolChange: (t: "draw" | "gate" | "move") => void;
   snapEnabled: boolean;
   onSnapToggle: (v: boolean) => void;
+  showGrid: boolean;
+  onToggleGrid: (v: boolean) => void;
+  expanded: boolean;
+  onToggleExpand: (v: boolean) => void;
 }
 
 export function CanvasToolbar({
@@ -18,6 +31,10 @@ export function CanvasToolbar({
   onToolChange,
   snapEnabled,
   onSnapToggle,
+  showGrid,
+  onToggleGrid,
+  expanded,
+  onToggleExpand,
 }: CanvasToolbarProps) {
   const handleTool = (t: "draw" | "gate" | "move") => {
     engineRef.current?.setTool(t);
@@ -35,10 +52,11 @@ export function CanvasToolbar({
     "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50 transition-colors";
 
   return (
-    <div className="flex flex-wrap items-center gap-2 p-2 bg-brand-card border-b border-brand-border">
+    <div className="flex flex-wrap items-center gap-2 p-2 bg-brand-card">
       {/* Tool selector */}
       <button
         type="button"
+        title="Draw fence run"
         className={btnCls(activeTool === "draw")}
         onClick={() => handleTool("draw")}
       >
@@ -46,6 +64,7 @@ export function CanvasToolbar({
       </button>
       <button
         type="button"
+        title="Place gate on segment"
         className={btnCls(activeTool === "gate")}
         onClick={() => handleTool("gate")}
       >
@@ -53,6 +72,7 @@ export function CanvasToolbar({
       </button>
       <button
         type="button"
+        title="Drag nodes to reposition"
         className={btnCls(activeTool === "move")}
         onClick={() => handleTool("move")}
       >
@@ -64,6 +84,7 @@ export function CanvasToolbar({
       {/* Actions */}
       <button
         type="button"
+        title="Undo (Ctrl+Z)"
         className={iconBtn}
         onClick={() => engineRef.current?.undo()}
       >
@@ -71,6 +92,7 @@ export function CanvasToolbar({
       </button>
       <button
         type="button"
+        title="Clear all"
         className={iconBtn}
         onClick={() => engineRef.current?.clear()}
       >
@@ -78,6 +100,7 @@ export function CanvasToolbar({
       </button>
       <button
         type="button"
+        title="Reset zoom and pan"
         className={iconBtn}
         onClick={() => engineRef.current?.resetView()}
       >
@@ -99,6 +122,32 @@ export function CanvasToolbar({
         />
         Snap to grid
       </label>
+
+      {/* Grid toggle */}
+      <label className="flex items-center gap-1.5 text-xs text-brand-muted cursor-pointer">
+        <input
+          type="checkbox"
+          checked={showGrid}
+          onChange={(e) => onToggleGrid(e.target.checked)}
+          className="accent-brand-accent"
+        />
+        Grid
+      </label>
+
+      <div className="w-px h-4 bg-brand-border" />
+
+      {/* Expand/Collapse */}
+      <button
+        type="button"
+        onClick={() => onToggleExpand(!expanded)}
+        title={
+          expanded ? "Collapse canvas" : "Expand canvas for complex layouts"
+        }
+        className={iconBtn}
+      >
+        {expanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+        {expanded ? "Collapse" : "Expand"}
+      </button>
     </div>
   );
 }

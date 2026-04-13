@@ -19,12 +19,12 @@ export function AccordionSection({
 
   return (
     <div
-      className={`bg-brand-card border rounded-lg overflow-hidden transition-colors ${open ? "border-brand-border" : "border-brand-border"}`}
+      className={`bg-brand-card border rounded-lg transition-colors ${open ? "border-brand-border" : "border-brand-border"}`}
     >
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="accordion-trigger w-full flex items-center justify-between px-5 py-4 text-left hover:bg-brand-border/20 transition-colors group"
+        className="accordion-trigger w-full flex items-center justify-between px-5 py-4 text-left hover:bg-brand-border/20 transition-colors group rounded-t-lg overflow-hidden"
       >
         <div className="flex items-center gap-2.5">
           <span className="font-semibold text-brand-text text-sm">{title}</span>

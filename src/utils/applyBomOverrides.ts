@@ -1,10 +1,26 @@
-import type { BOMResult } from '../types/bom.types';
+import type { BOMResult, BOMLineItem, ExtraItem } from '../types/bom.types';
 
 export type BOMOverrides = Map<string, number>; // key = `${category}::${sku}`
 
-export function applyBomOverrides(result: BOMResult, overrides: BOMOverrides): BOMResult {
-  if (overrides.size === 0) return result;
+/** Convert an ExtraItem into a BOMLineItem so it can appear in the BOM table and totals. */
+export function extraItemToBOMLineItem(item: ExtraItem): BOMLineItem {
+  return {
+    category: 'accessory',
+    sku: item.sku ?? `extra::${item.id}`,
+    description: item.description,
+    quantity: item.quantity,
+    unit: 'each',
+    unitPrice: item.unitPrice,
+    lineTotal: item.quantity * item.unitPrice,
+    notes: 'extra',
+  };
+}
 
+export function applyBomOverrides(
+  result: BOMResult,
+  overrides: BOMOverrides,
+  extraItems?: ExtraItem[],
+): BOMResult {
   const applyToItems = (items: BOMResult['fenceItems']) =>
     items.map((item) => {
       const key = `${item.category}::${item.sku}`;
@@ -15,7 +31,12 @@ export function applyBomOverrides(result: BOMResult, overrides: BOMOverrides): B
 
   const fenceItems = applyToItems(result.fenceItems);
   const gateItems = applyToItems(result.gateItems);
-  const total = [...fenceItems, ...gateItems].reduce((s, i) => s + i.lineTotal, 0);
+  const extraLineItems = (extraItems ?? []).map(extraItemToBOMLineItem);
+
+  const total = [...fenceItems, ...gateItems, ...extraLineItems].reduce(
+    (s, i) => s + i.lineTotal,
+    0,
+  );
   const gst = total * 0.1;
   return { ...result, fenceItems, gateItems, total, gst, grandTotal: total + gst };
 }

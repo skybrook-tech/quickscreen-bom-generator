@@ -6,8 +6,8 @@ export interface CanvasSegment {
   startY: number;
   endX: number;
   endY: number;
-  lengthMM: number;   // real-world length in mm (user-editable)
-  angleDeg: number;   // angle from horizontal
+  lengthMM: number; // real-world length in mm (user-editable)
+  angleDeg: number; // angle from horizontal
 }
 
 export interface CanvasGate {
@@ -16,11 +16,19 @@ export interface CanvasGate {
   widthMM: number;
 }
 
+export interface CanvasRunSummary {
+  label: string;
+  totalLengthM: number;
+  cornerCount: number;
+  gates: CanvasGate[];
+}
+
 export interface CanvasLayout {
   segments: CanvasSegment[];
   gates: CanvasGate[];
   totalLengthM: number;
   cornerCount: number; // count of ~90° angles between adjacent segments
+  runs: CanvasRunSummary[];
 }
 
 export interface CanvasEngineConfig {
@@ -28,8 +36,19 @@ export interface CanvasEngineConfig {
   gridSize: number; // px
   showGrid: boolean;
   onLayoutChange?: (layout: CanvasLayout) => void;
-  /** Called immediately when the user places a gate marker on a segment */
-  onGatePlaced?: (segIdx: number, gateIdx: number, defaultWidthMM: number) => void;
+  /** Called immediately when the user places a NEW gate marker on a segment */
+  onGatePlaced?: (
+    segIdx: number,
+    gateIdx: number,
+    defaultWidthMM: number,
+  ) => void;
+  /** Called when the user clicks (not drags) an existing gate marker — open its editor */
+  onGateEdit?: (
+    flatSegIdx: number,
+    gateIdx: number,
+    gateId: string | undefined,
+    currentWidthMM: number,
+  ) => void;
 }
 
 // ── Internal state types ──────────────────────────────────────────────────────
@@ -47,18 +66,20 @@ interface Segment {
 }
 
 interface GateMarker {
-  t: number;    // 0–1 along segment
+  t: number; // 0–1 along segment
   widthMM: number;
+  gateId?: string; // matches the GateConfig.id in GateContext once the gate is saved
 }
 
-type Tool = 'draw' | 'gate' | 'move';
+type Tool = "draw" | "gate" | "move";
 
 type UndoAction =
-  | { type: 'ADD_POINT'; runIdx: number }
-  | { type: 'FINISH_RUN'; runIdx: number }
-  | { type: 'ADD_RUN' }
-  | { type: 'ADD_GATE'; segIdx: number; gateIdx: number }
-  | { type: 'CLEAR'; runs: Run[]; scale: number };
+  | { type: "ADD_POINT"; runIdx: number }
+  | { type: "FINISH_RUN"; runIdx: number }
+  | { type: "ADD_RUN" }
+  | { type: "ADD_GATE"; segIdx: number; gateIdx: number }
+  | { type: "CLEAR"; runs: Run[]; scale: number }
+  | { type: "CHAIN_POINT"; prevRunIdx: number; newRunIdx: number };
 
 interface Run {
   points: Point[];
@@ -71,26 +92,26 @@ interface Run {
 const DEFAULT_SCALE = 100; // px per metre
 
 // ── Corner detection angle threshold ─────────────────────────────────────────
-const CORNER_THRESHOLD_DEG = 30; // angle change ≥ 30° counts as a corner
+// Legacy threshold (30°) replaced by angleBetween() with 2°–175° range per HTML spec
 
 // ── Gate default width ────────────────────────────────────────────────────────
 const DEFAULT_GATE_WIDTH_MM = 900;
 
 // ── Colours ───────────────────────────────────────────────────────────────────
 const COLOR = {
-  grid: 'rgba(255,255,255,0.06)',
-  gridAxis: 'rgba(255,255,255,0.15)',
-  segment: '#3b82f6',
-  segmentHover: '#60a5fa',
-  point: '#3b82f6',
-  pointFill: '#1a1d2e',
-  activePoint: '#60a5fa',
-  preview: 'rgba(96,165,250,0.5)',
-  gate: '#f59e0b',
-  gateFill: 'rgba(245,158,11,0.2)',
-  label: '#e5e7eb',
-  labelBg: 'rgba(26,29,46,0.85)',
-  snap: 'rgba(96,165,250,0.4)',
+  grid: "rgba(0, 0, 0, 0.1)",
+  gridAxis: "rgba(255,255,255,0.22)",
+  segment: "#3b82f6",
+  segmentHover: "#60a5fa",
+  point: "#3b82f6",
+  pointFill: "#1a1d2e",
+  activePoint: "#60a5fa",
+  preview: "rgba(96,165,250,0.5)",
+  gate: "#f59e0b",
+  gateFill: "rgba(245,158,11,0.2)",
+  label: "#e5e7eb",
+  labelBg: "rgba(26,29,46,0.85)",
+  snap: "rgba(96,165,250,0.4)",
 };
 
 // ── Utility ───────────────────────────────────────────────────────────────────
@@ -114,14 +135,17 @@ function snapToGrid(p: Point, gridSize: number): Point {
   };
 }
 
-function screenToCanvas(
-  screen: Point,
-  pan: Point,
-  zoom: number,
-): Point {
+function screenToCanvas(screen: Point, pan: Point, zoom: number): Point {
   return {
     x: (screen.x - pan.x) / zoom,
     y: (screen.y - pan.y) / zoom,
+  };
+}
+
+function canvasToScreen(canvas: Point, pan: Point, zoom: number): Point {
+  return {
+    x: canvas.x * zoom + pan.x,
+    y: canvas.y * zoom + pan.y,
   };
 }
 
@@ -144,16 +168,27 @@ function buildSegmentsFromPoints(points: Point[], scale: number): Segment[] {
   return segs;
 }
 
+function angleBetween(a: Point, b: Point, c: Point): number {
+  // Returns interior angle at b (in degrees) formed by segments a→b and b→c
+  const dx1 = a.x - b.x,
+    dy1 = a.y - b.y;
+  const dx2 = c.x - b.x,
+    dy2 = c.y - b.y;
+  const dot = dx1 * dx2 + dy1 * dy2;
+  const mag1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+  const mag2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+  if (mag1 === 0 || mag2 === 0) return 180;
+  const cosAngle = Math.max(-1, Math.min(1, dot / (mag1 * mag2)));
+  return (Math.acos(cosAngle) * 180) / Math.PI;
+}
+
 function countCorners(runs: Run[]): number {
   let count = 0;
   for (const run of runs) {
     const pts = run.points;
     for (let i = 1; i < pts.length - 1; i++) {
-      const a = angleDeg(pts[i - 1], pts[i]);
-      const b = angleDeg(pts[i], pts[i + 1]);
-      let diff = Math.abs(b - a);
-      if (diff > 180) diff = 360 - diff;
-      if (diff >= CORNER_THRESHOLD_DEG) count++;
+      const angle = angleBetween(pts[i - 1], pts[i], pts[i + 1]);
+      if (angle > 2 && angle < 175) count++;
     }
   }
   return count;
@@ -177,7 +212,10 @@ function closestPointOnSegment(
   const dy = s.p2.y - s.p1.y;
   const len2 = dx * dx + dy * dy;
   if (len2 === 0) return { point: s.p1, t: 0, d: dist(p, s.p1) };
-  const t = Math.max(0, Math.min(1, ((p.x - s.p1.x) * dx + (p.y - s.p1.y) * dy) / len2));
+  const t = Math.max(
+    0,
+    Math.min(1, ((p.x - s.p1.x) * dx + (p.y - s.p1.y) * dy) / len2),
+  );
   const proj = lerp(s.p1, s.p2, t);
   return { point: proj, t, d: dist(p, proj) };
 }
@@ -191,8 +229,8 @@ function createLabelInput(
   onCommit: (v: string) => void,
   onCancel: () => void,
 ): HTMLInputElement {
-  const inp = document.createElement('input');
-  inp.type = 'text';
+  const inp = document.createElement("input");
+  inp.type = "text";
   inp.value = initialValue;
   inp.style.cssText = `
     position: absolute;
@@ -219,18 +257,26 @@ function createLabelInput(
     cleanup();
   };
   const cleanup = () => {
-    inp.removeEventListener('keydown', onKey);
-    inp.removeEventListener('blur', onBlur);
+    inp.removeEventListener("keydown", onKey);
+    inp.removeEventListener("blur", onBlur);
     if (inp.parentNode) inp.parentNode.removeChild(inp);
   };
   const onKey = (e: KeyboardEvent) => {
-    if (e.key === 'Enter') { commit(); cleanup(); }
-    if (e.key === 'Escape') { cancel(); }
+    if (e.key === "Enter") {
+      commit();
+      cleanup();
+    }
+    if (e.key === "Escape") {
+      cancel();
+    }
   };
-  const onBlur = () => { commit(); cleanup(); };
+  const onBlur = () => {
+    commit();
+    cleanup();
+  };
 
-  inp.addEventListener('keydown', onKey);
-  inp.addEventListener('blur', onBlur);
+  inp.addEventListener("keydown", onKey);
+  inp.addEventListener("blur", onBlur);
   return inp;
 }
 
@@ -240,13 +286,13 @@ export function initCanvasEngine(
   canvas: HTMLCanvasElement,
   config: CanvasEngineConfig,
 ) {
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext("2d")!;
   const container = canvas.parentElement as HTMLElement;
 
   // ── Mutable state ──────────────────────────────────────────────────────────
   let runs: Run[] = [];
   let activeRunIdx = -1; // index of the run currently being drawn
-  let tool: Tool = 'draw';
+  let tool: Tool = "draw";
   let zoom = 1;
   let pan: Point = { x: 0, y: 0 };
   let scale = DEFAULT_SCALE; // px per metre
@@ -260,9 +306,26 @@ export function initCanvasEngine(
   let undoStack: UndoAction[] = [];
   let mapImage: HTMLImageElement | null = null;
   let mapOpacity = 0.5;
+  let mapWorldOriginX = 0; // world px — centre of the tile
+  let mapWorldOriginY = 0; // world px — centre of the tile
+  let mapWorldWidth = 0; // world px
+  let mapWorldHeight = 0; // world px
   let editingLabel = false;
   let hoveredSegIdx = -1; // flat index into all segments across all runs
   let animFrame = 0;
+  let draggingNode: { runIdx: number; ptIdx: number } | null = null;
+  let draggingGate: {
+    runIdx: number;
+    segIdx: number;
+    gateIdx: number;
+    flatSegIdx: number;
+    startScreenPt: Point;
+  } | null = null;
+  // Post positions from BOM result. In canvas world coordinates — the same
+  // coordinate space as the drawn nodes (canvas pixels before pan/zoom transform).
+  // null = nothing to render.
+  let postPositions: Array<{ x: number; y: number; label?: string }> | null =
+    null;
 
   // Resize canvas to fill its CSS size
   function resizeCanvas() {
@@ -275,12 +338,27 @@ export function initCanvasEngine(
 
   // ── Layout helpers ─────────────────────────────────────────────────────────
 
-  function allSegmentsFlat(): Array<{ seg: Segment; runIdx: number; segIdx: number; flatIdx: number }> {
-    const result: Array<{ seg: Segment; runIdx: number; segIdx: number; flatIdx: number }> = [];
+  function allSegmentsFlat(): Array<{
+    seg: Segment;
+    runIdx: number;
+    segIdx: number;
+    flatIdx: number;
+  }> {
+    const result: Array<{
+      seg: Segment;
+      runIdx: number;
+      segIdx: number;
+      flatIdx: number;
+    }> = [];
     let flat = 0;
     for (let r = 0; r < runs.length; r++) {
       for (let s = 0; s < runs[r].segments.length; s++) {
-        result.push({ seg: runs[r].segments[s], runIdx: r, segIdx: s, flatIdx: flat++ });
+        result.push({
+          seg: runs[r].segments[s],
+          runIdx: r,
+          segIdx: s,
+          flatIdx: flat++,
+        });
       }
     }
     return result;
@@ -299,14 +377,48 @@ export function initCanvasEngine(
     const gates: CanvasGate[] = [];
     allSegs.forEach(({ seg, flatIdx }) => {
       seg.gates.forEach((g) => {
-        gates.push({ segmentIndex: flatIdx, positionOnSegment: g.t, widthMM: g.widthMM });
+        gates.push({
+          segmentIndex: flatIdx,
+          positionOnSegment: g.t,
+          widthMM: g.widthMM,
+        });
       });
     });
+
+    // Build per-run summaries
+    const runSummaries: CanvasRunSummary[] = runs.map((run, ri) => {
+      const runLengthM =
+        run.segments.reduce((sum, s) => sum + s.lengthMM, 0) / 1000;
+      const runCorners = countCorners([run]);
+      const runGates: CanvasGate[] = [];
+      // Compute the flat segment index offset for this run's first segment
+      let flatOffset = 0;
+      for (let r = 0; r < ri; r++) {
+        flatOffset += runs[r].segments.length;
+      }
+      run.segments.forEach((seg, si) => {
+        seg.gates.forEach((g) => {
+          runGates.push({
+            segmentIndex: flatOffset + si,
+            positionOnSegment: g.t,
+            widthMM: g.widthMM,
+          });
+        });
+      });
+      return {
+        label: `Run ${ri + 1}`,
+        totalLengthM: runLengthM,
+        cornerCount: runCorners,
+        gates: runGates,
+      };
+    });
+
     return {
       segments,
       gates,
       totalLengthM: totalLengthM(runs),
       cornerCount: countCorners(runs),
+      runs: runSummaries,
     };
   }
 
@@ -323,20 +435,29 @@ export function initCanvasEngine(
 
     ctx.clearRect(0, 0, W, H);
 
-    // Map underlay
-    if (mapImage) {
-      ctx.save();
-      ctx.globalAlpha = mapOpacity;
-      ctx.drawImage(mapImage, pan.x, pan.y, mapImage.width * zoom, mapImage.height * zoom);
-      ctx.restore();
-    }
-
     ctx.save();
     ctx.translate(pan.x, pan.y);
     ctx.scale(zoom, zoom);
 
+    // Map underlay — drawn inside the pan/zoom transform so the image scales
+    // with the canvas coordinate system and stays correctly georeferenced.
+    if (mapImage && mapWorldWidth > 0) {
+      ctx.save();
+      ctx.globalAlpha = mapOpacity;
+      ctx.drawImage(
+        mapImage,
+        mapWorldOriginX - mapWorldWidth / 2,
+        mapWorldOriginY - mapWorldHeight / 2,
+        mapWorldWidth,
+        mapWorldHeight,
+      );
+      ctx.restore();
+    }
+
     // Grid
-    if (showGrid) drawGrid(W, H);
+    if (showGrid) {
+      drawGrid(W, H);
+    }
 
     // All segments
     const allSegs = allSegmentsFlat();
@@ -345,7 +466,7 @@ export function initCanvasEngine(
     }
 
     // Preview line (while drawing)
-    if (tool === 'draw' && activeRunIdx >= 0) {
+    if (tool === "draw" && activeRunIdx >= 0) {
       const run = runs[activeRunIdx];
       if (run && run.points.length > 0 && !run.finished) {
         const lastPt = run.points[run.points.length - 1];
@@ -363,7 +484,7 @@ export function initCanvasEngine(
     }
 
     // Gate preview (while in gate mode, hovering a segment)
-    if (tool === 'gate' && hoveredSegIdx >= 0) {
+    if (tool === "gate" && hoveredSegIdx >= 0) {
       const info = allSegs[hoveredSegIdx];
       if (info) {
         const proj = closestPointOnSegment(mouseCanvas, info.seg);
@@ -372,7 +493,7 @@ export function initCanvasEngine(
     }
 
     // Snap indicator
-    if (snap && (tool === 'draw')) {
+    if (snap && tool === "draw") {
       const snapped = snapToGrid(mouseCanvas, gridSize);
       ctx.save();
       ctx.beginPath();
@@ -382,76 +503,273 @@ export function initCanvasEngine(
       ctx.restore();
     }
 
+    // Node labels (A, B, C…) and corner angle annotations
+    if (zoom > 0.3) {
+      ctx.save();
+      for (const run of runs) {
+        const pts = run.points;
+        if (pts.length < 2) continue;
+        // Node labels
+        for (let i = 0; i < pts.length; i++) {
+          const label = String.fromCharCode(65 + i);
+          const fs = Math.max(8, 10 / zoom);
+          ctx.font = `${fs}px sans-serif`;
+          ctx.fillStyle = "#60a5fa";
+          ctx.textAlign = "left";
+          ctx.textBaseline = "bottom";
+          ctx.fillText(
+            label,
+            pts[i].x - (fs * 0.8) / zoom,
+            pts[i].y - 4 / zoom,
+          );
+        }
+        // Corner angle annotations at intermediate nodes
+        for (let i = 1; i < pts.length - 1; i++) {
+          const angle = angleBetween(pts[i - 1], pts[i], pts[i + 1]);
+          if (angle > 2 && angle < 175) {
+            const angleText = `${Math.round(angle)}°`;
+            const fs2 = Math.max(7, 9 / zoom);
+            ctx.font = `${fs2}px sans-serif`;
+            ctx.fillStyle = "#a78bfa";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "top";
+            ctx.fillText(angleText, pts[i].x + 4 / zoom, pts[i].y + 4 / zoom);
+          }
+        }
+      }
+      ctx.restore();
+    }
+
+    // Post position squares (from BOM result) — rendered on top of fence lines
+    if (postPositions !== null && zoom > 0.2) {
+      drawPostPositions();
+    }
+
     ctx.restore();
   }
 
+  function drawPostPositions() {
+    if (!postPositions) return;
+    const squareSize = 6 / zoom;
+    const half = squareSize / 2;
+    const borderWidth = 1.5 / zoom;
+    for (const pos of postPositions) {
+      ctx.save();
+      // White border
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(
+        pos.x - half - borderWidth,
+        pos.y - half - borderWidth,
+        squareSize + borderWidth * 2,
+        squareSize + borderWidth * 2,
+      );
+      // Amber fill (#f59e0b)
+      ctx.fillStyle = "#f59e0b";
+      ctx.fillRect(pos.x - half, pos.y - half, squareSize, squareSize);
+      // Optional label
+      if (pos.label) {
+        const fs = Math.max(8, 10 / zoom);
+        ctx.font = `${fs}px sans-serif`;
+        ctx.fillStyle = COLOR.label;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "bottom";
+        ctx.fillText(pos.label, pos.x, pos.y - half - borderWidth - 1 / zoom);
+      }
+      ctx.restore();
+    }
+  }
+
   function drawGrid(W: number, H: number) {
+    // Adaptive grid: pick an interval in metres so cells are 40–150px on screen
+    const pxPerMetreOnScreen = zoom * scale;
+    const INTERVALS_M = [0.1, 0.25, 0.5, 1, 2, 5, 10, 25, 50, 100];
+    const intervalM =
+      INTERVALS_M.find((i) => i * pxPerMetreOnScreen >= 40) ?? 100;
+    // Size of one cell in canvas world coordinates
+    const cellSize = intervalM * scale;
+
     const tl = screenToCanvas({ x: 0, y: 0 }, pan, zoom);
     const br = screenToCanvas({ x: W, y: H }, pan, zoom);
 
-    const startX = Math.floor(tl.x / gridSize) * gridSize;
-    const startY = Math.floor(tl.y / gridSize) * gridSize;
+    const startX = Math.floor(tl.x / cellSize) * cellSize;
+    const startY = Math.floor(tl.y / cellSize) * cellSize;
 
     ctx.save();
     ctx.lineWidth = 0.5 / zoom;
 
-    for (let x = startX; x <= br.x; x += gridSize) {
-      ctx.strokeStyle = x === 0 ? COLOR.gridAxis : COLOR.grid;
+    for (let x = startX; x <= br.x; x += cellSize) {
+      ctx.strokeStyle =
+        Math.abs(x) < cellSize * 0.01 ? COLOR.gridAxis : COLOR.grid;
       ctx.beginPath();
       ctx.moveTo(x, tl.y);
       ctx.lineTo(x, br.y);
       ctx.stroke();
     }
-    for (let y = startY; y <= br.y; y += gridSize) {
-      ctx.strokeStyle = y === 0 ? COLOR.gridAxis : COLOR.grid;
+    for (let y = startY; y <= br.y; y += cellSize) {
+      ctx.strokeStyle =
+        Math.abs(y) < cellSize * 0.01 ? COLOR.gridAxis : COLOR.grid;
       ctx.beginPath();
       ctx.moveTo(tl.x, y);
       ctx.lineTo(br.x, y);
       ctx.stroke();
     }
+
     ctx.restore();
   }
 
   function drawSegment(seg: Segment, hovered: boolean) {
     const lw = 3 / zoom;
+    const segColor = hovered ? COLOR.segmentHover : COLOR.segment;
+    const segLw = hovered ? lw * 1.5 : lw;
+
+    // Build sorted list of gate gaps as (tStart, tEnd) pairs
+    type GateGap = { tStart: number; tEnd: number; widthMM: number };
+    const gaps: GateGap[] = seg.gates
+      .map((g) => {
+        const halfT = seg.lengthMM > 0 ? g.widthMM / seg.lengthMM / 2 : 0;
+        return {
+          tStart: Math.max(0, g.t - halfT),
+          tEnd: Math.min(1, g.t + halfT),
+          widthMM: g.widthMM,
+        };
+      })
+      .sort((a, b) => a.tStart - b.tStart);
+
+    // Draw fence line as sections between/around gate gaps
     ctx.save();
-    ctx.strokeStyle = hovered ? COLOR.segmentHover : COLOR.segment;
-    ctx.lineWidth = hovered ? lw * 1.5 : lw;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.moveTo(seg.p1.x, seg.p1.y);
-    ctx.lineTo(seg.p2.x, seg.p2.y);
-    ctx.stroke();
+    ctx.strokeStyle = segColor;
+    ctx.lineWidth = segLw;
+    ctx.lineCap = "round";
+
+    let cursor = 0; // current t position
+    for (const gap of gaps) {
+      // Solid fence section before this gate
+      if (gap.tStart > cursor) {
+        const from = lerp(seg.p1, seg.p2, cursor);
+        const to = lerp(seg.p1, seg.p2, gap.tStart);
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.stroke();
+      }
+      cursor = gap.tEnd;
+    }
+    // Final solid section after last gate (or whole line if no gates)
+    if (cursor < 1) {
+      const from = lerp(seg.p1, seg.p2, cursor);
+      ctx.beginPath();
+      ctx.moveTo(from.x, from.y);
+      ctx.lineTo(seg.p2.x, seg.p2.y);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Draw each gate gap as a dashed amber line + distance annotations
+    for (const gap of gaps) {
+      const pStart = lerp(seg.p1, seg.p2, gap.tStart);
+      const pEnd = lerp(seg.p1, seg.p2, gap.tEnd);
+
+      // Dashed amber gap line
+      ctx.save();
+      ctx.strokeStyle = COLOR.gate;
+      ctx.lineWidth = lw;
+      ctx.lineCap = "round";
+      ctx.setLineDash([5 / zoom, 4 / zoom]);
+      ctx.beginPath();
+      ctx.moveTo(pStart.x, pStart.y);
+      ctx.lineTo(pEnd.x, pEnd.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Small post indicators at gap edges
+      for (const pt of [pStart, pEnd]) {
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 4 / zoom, 0, Math.PI * 2);
+        ctx.fillStyle = COLOR.gate;
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // Distance annotations (only when zoomed in enough)
+      if (zoom > 0.25) {
+        const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
+        const perpX = -Math.sin(ang);
+        const perpY = Math.cos(ang);
+        const offset = 12 / zoom;
+        const fs = Math.max(8, 10 / zoom);
+
+        // Distance before gate (p1 → gap start)
+        const distBeforeM = (gap.tStart * seg.lengthMM) / 1000;
+        // Distance after gate (gap end → p2)
+        const distAfterM = ((1 - gap.tEnd) * seg.lengthMM) / 1000;
+        // Gate opening width
+        const gateWidthM = gap.widthMM / 1000;
+
+        ctx.save();
+        ctx.font = `${fs}px sans-serif`;
+        ctx.fillStyle = COLOR.gate;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        // Mid-before label
+        if (distBeforeM > 0.05) {
+          const midBefore = lerp(seg.p1, pStart, 0.5);
+          ctx.fillText(
+            `${distBeforeM.toFixed(2)}m`,
+            midBefore.x + perpX * offset,
+            midBefore.y + perpY * offset,
+          );
+        }
+        // Gate opening label (centred on the gap)
+        const midGate = lerp(pStart, pEnd, 0.5);
+        ctx.fillStyle = COLOR.gate;
+        ctx.font = `bold ${fs}px sans-serif`;
+        ctx.fillText(
+          `${Math.round(gap.widthMM)}mm`,
+          midGate.x + perpX * offset,
+          midGate.y + perpY * offset,
+        );
+        void gateWidthM;
+        ctx.font = `${fs}px sans-serif`;
+
+        // Mid-after label
+        if (distAfterM > 0.05) {
+          const midAfter = lerp(pEnd, seg.p2, 0.5);
+          ctx.fillStyle = COLOR.gate;
+          ctx.fillText(
+            `${distAfterM.toFixed(2)}m`,
+            midAfter.x + perpX * offset,
+            midAfter.y + perpY * offset,
+          );
+        }
+        ctx.restore();
+      }
+    }
 
     // End-point dots
+    ctx.save();
     for (const pt of [seg.p1, seg.p2]) {
       ctx.beginPath();
       ctx.arc(pt.x, pt.y, 5 / zoom, 0, Math.PI * 2);
       ctx.fillStyle = COLOR.pointFill;
       ctx.fill();
-      ctx.strokeStyle = COLOR.point;
+      ctx.strokeStyle = segColor;
       ctx.lineWidth = 2 / zoom;
       ctx.stroke();
     }
-
-    // Gate markers
-    for (const g of seg.gates) {
-      const gp = lerp(seg.p1, seg.p2, g.t);
-      drawGateMarker(seg, gp);
-    }
+    ctx.restore();
 
     // Length label
     drawLabel(seg);
-
-    ctx.restore();
   }
 
   function drawLabel(seg: Segment) {
     const mid = lerp(seg.p1, seg.p2, 0.5);
     const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
-    const labelText = seg.lengthMM >= 1000
-      ? `${(seg.lengthMM / 1000).toFixed(2)}m`
-      : `${Math.round(seg.lengthMM)}mm`;
+    const labelText =
+      seg.lengthMM >= 1000
+        ? `${(seg.lengthMM / 1000).toFixed(2)}m`
+        : `${Math.round(seg.lengthMM)}mm`;
 
     ctx.save();
     ctx.translate(mid.x, mid.y);
@@ -471,36 +789,11 @@ export function initCanvasEngine(
     ctx.fill();
 
     ctx.fillStyle = COLOR.label;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
     ctx.fillText(labelText, 0, 0);
 
     ctx.restore();
-  }
-
-  function drawGateMarker(seg: Segment, gp: Point) {
-    const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
-    const perp = ang + Math.PI / 2;
-    const size = 8 / zoom;
-
-    ctx.save();
-    ctx.translate(gp.x, gp.y);
-    ctx.rotate(ang);
-
-    // Gate arch symbol
-    ctx.beginPath();
-    ctx.arc(0, 0, size, 0, Math.PI);
-    ctx.strokeStyle = COLOR.gate;
-    ctx.lineWidth = 2 / zoom;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(-size, 0);
-    ctx.lineTo(size, 0);
-    ctx.stroke();
-
-    ctx.restore();
-    void perp; // suppress unused warning
   }
 
   function drawGatePreview(seg: Segment, t: number) {
@@ -572,6 +865,84 @@ export function initCanvasEngine(
     return -1;
   }
 
+  function getAllGateMidpoints(): Array<{
+    screenPt: Point;
+    runIdx: number;
+    segIdx: number;
+    gateIdx: number;
+    flatSegIdx: number;
+  }> {
+    const result: Array<{
+      screenPt: Point;
+      runIdx: number;
+      segIdx: number;
+      gateIdx: number;
+      flatSegIdx: number;
+    }> = [];
+    let flatSeg = 0;
+    for (let ri = 0; ri < runs.length; ri++) {
+      const run = runs[ri];
+      for (let si = 0; si < run.segments.length; si++) {
+        const seg = run.segments[si];
+        for (let gi = 0; gi < seg.gates.length; gi++) {
+          const gate = seg.gates[gi];
+          const midWorld = lerp(seg.p1, seg.p2, gate.t);
+          result.push({
+            screenPt: canvasToScreen(midWorld, pan, zoom),
+            runIdx: ri,
+            segIdx: si,
+            gateIdx: gi,
+            flatSegIdx: flatSeg,
+          });
+        }
+        flatSeg++;
+      }
+    }
+    return result;
+  }
+
+  // ── Chain stop helper ──────────────────────────────────────────────────────
+
+  /**
+   * Stops an in-progress chain draw. If the active run has only one point (i.e.
+   * it is the pending chain stub), discard it. If it has ≥2 points (the very
+   * first run started with the draw tool before any chain occurred), finish it
+   * normally. In either case activeRunIdx is reset to -1.
+   */
+  function stopChain() {
+    if (activeRunIdx < 0 || runs[activeRunIdx]?.finished) return;
+    const run = runs[activeRunIdx];
+
+    if (run.points.length < 2) {
+      // Trailing stub from the last chain click — remove it.
+      // The top of the undo stack is a CHAIN_POINT whose newRunIdx is this run.
+      // Pop it and undo the chain so the previous run is left finished.
+      const topAction = undoStack[undoStack.length - 1];
+      if (
+        topAction?.type === "CHAIN_POINT" &&
+        topAction.newRunIdx === activeRunIdx
+      ) {
+        // Simply discard the stub run (already unfinished prev run gets left finished)
+        runs.splice(activeRunIdx, 1);
+        undoStack.pop();
+        // The previous run remains finished — that's the desired state.
+      } else {
+        // Stub run started with the very first click (ADD_RUN), no segment yet
+        runs.splice(activeRunIdx, 1);
+        if (undoStack[undoStack.length - 1]?.type === "ADD_RUN") {
+          undoStack.pop();
+        }
+      }
+    } else {
+      // Has ≥2 points — finish it properly
+      undoStack.push({ type: "FINISH_RUN", runIdx: activeRunIdx });
+      run.finished = true;
+      notifyChange();
+    }
+
+    activeRunIdx = -1;
+  }
+
   // ── Event handlers ─────────────────────────────────────────────────────────
 
   function onMouseDown(e: MouseEvent) {
@@ -588,34 +959,75 @@ export function initCanvasEngine(
 
     const canvasPt = eventToCanvas(e);
     const worldPt = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
+    const screenPtDown = eventToScreen(e);
 
-    if (tool === 'draw') {
+    // ── Gate hit-test (all modes) ────────────────────────────────────────────
+    // Check for an existing gate click/drag before any tool-specific handling.
+    // A short move (<5px) will be treated as a click → edit; a longer move → drag.
+    {
+      const gateMids = getAllGateMidpoints();
+      for (const gm of gateMids) {
+        const dx = screenPtDown.x - gm.screenPt.x;
+        const dy = screenPtDown.y - gm.screenPt.y;
+        if (Math.sqrt(dx * dx + dy * dy) < 12) {
+          draggingGate = {
+            runIdx: gm.runIdx,
+            segIdx: gm.segIdx,
+            gateIdx: gm.gateIdx,
+            flatSegIdx: gm.flatSegIdx,
+            startScreenPt: screenPtDown,
+          };
+          return;
+        }
+      }
+    }
+
+    if (tool === "draw") {
       if (activeRunIdx === -1 || runs[activeRunIdx]?.finished) {
-        // Start a new run
-        const newRun: Run = { points: [worldPt], finished: false, segments: [] };
-        undoStack.push({ type: 'ADD_RUN' });
+        // Start a new run with this as the first point
+        const newRun: Run = {
+          points: [worldPt],
+          finished: false,
+          segments: [],
+        };
+        undoStack.push({ type: "ADD_RUN" });
         runs.push(newRun);
         activeRunIdx = runs.length - 1;
       } else {
-        // Extend current run
+        // Chain mode: add point, auto-finish the run, then start a new run from the same point
         const run = runs[activeRunIdx];
-        undoStack.push({ type: 'ADD_POINT', runIdx: activeRunIdx });
+        const prevRunIdx = activeRunIdx;
         run.points.push(worldPt);
         run.segments = buildSegmentsFromPoints(run.points, scale);
+        run.finished = true;
         notifyChange();
+
+        // Start new chain run from the same point
+        const chainPoint: Point = { ...worldPt };
+        const newRun: Run = {
+          points: [chainPoint],
+          finished: false,
+          segments: [],
+        };
+        runs.push(newRun);
+        const newRunIdx = runs.length - 1;
+        activeRunIdx = newRunIdx;
+
+        // Single undo action covers the whole chain step
+        undoStack.push({ type: "CHAIN_POINT", prevRunIdx, newRunIdx });
       }
       scheduleRedraw();
       return;
     }
 
-    if (tool === 'gate') {
+    if (tool === "gate") {
       const flatIdx = hitTestSegments(canvasPt, 12);
       if (flatIdx >= 0) {
         const allSegs = allSegmentsFlat();
         const info = allSegs[flatIdx];
         const proj = closestPointOnSegment(canvasPt, info.seg);
         const gateIdx = info.seg.gates.length;
-        undoStack.push({ type: 'ADD_GATE', segIdx: flatIdx, gateIdx });
+        undoStack.push({ type: "ADD_GATE", segIdx: flatIdx, gateIdx });
         info.seg.gates.push({ t: proj.t, widthMM: DEFAULT_GATE_WIDTH_MM });
         notifyChange();
         scheduleRedraw();
@@ -624,7 +1036,21 @@ export function initCanvasEngine(
       return;
     }
 
-    if (tool === 'move') {
+    if (tool === "move") {
+      // Hit test nodes first (screen-space comparison for consistent 8px threshold)
+      for (let ri = 0; ri < runs.length; ri++) {
+        const run = runs[ri];
+        for (let pi = 0; pi < run.points.length; pi++) {
+          const nodePtScreen = canvasToScreen(run.points[pi], pan, zoom);
+          const dx = screenPtDown.x - nodePtScreen.x;
+          const dy = screenPtDown.y - nodePtScreen.y;
+          if (Math.sqrt(dx * dx + dy * dy) < 8) {
+            draggingNode = { runIdx: ri, ptIdx: pi };
+            return;
+          }
+        }
+      }
+
       // Label click-to-edit
       if (!editingLabel) {
         const labelIdx = hitTestLabel(canvasPt);
@@ -650,14 +1076,84 @@ export function initCanvasEngine(
       return;
     }
 
+    // Node dragging
+    if (draggingNode !== null) {
+      const snapped = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
+      const run = runs[draggingNode.runIdx];
+      run.points[draggingNode.ptIdx] = snapped;
+      run.segments = buildSegmentsFromPoints(run.points, scale);
+      scheduleRedraw();
+      return;
+    }
+
+    // Gate dragging
+    if (draggingGate !== null) {
+      const seg = runs[draggingGate.runIdx].segments[draggingGate.segIdx];
+      if (seg) {
+        const dx = seg.p2.x - seg.p1.x;
+        const dy = seg.p2.y - seg.p1.y;
+        const len2 = dx * dx + dy * dy;
+        if (len2 > 0) {
+          const t =
+            ((canvasPt.x - seg.p1.x) * dx + (canvasPt.y - seg.p1.y) * dy) /
+            len2;
+          seg.gates[draggingGate.gateIdx].t = Math.max(0.05, Math.min(0.95, t));
+        }
+        scheduleRedraw();
+      }
+      return;
+    }
+
     // Update hover state
     const prevHover = hoveredSegIdx;
     hoveredSegIdx = hitTestSegments(canvasPt, 10);
 
-    if (hoveredSegIdx !== prevHover) {
-      canvas.style.cursor = hoveredSegIdx >= 0
-        ? (tool === 'gate' ? 'crosshair' : 'pointer')
-        : (tool === 'draw' ? 'crosshair' : 'default');
+    // Gate hover cursor works in all modes
+    const screenPt = eventToScreen(e);
+    let overGate = false;
+    const gateMids = getAllGateMidpoints();
+    for (const gm of gateMids) {
+      const dx = screenPt.x - gm.screenPt.x;
+      const dy = screenPt.y - gm.screenPt.y;
+      if (Math.sqrt(dx * dx + dy * dy) < 12) {
+        overGate = true;
+        break;
+      }
+    }
+
+    if (draggingGate !== null) {
+      canvas.style.cursor = "grabbing";
+    } else if (overGate) {
+      canvas.style.cursor = "grab";
+    } else if (tool === "move") {
+      // Check if hovering a node
+      let overNode = false;
+      for (const run of runs) {
+        for (const pt of run.points) {
+          const nodePtScreen = canvasToScreen(pt, pan, zoom);
+          const dx = screenPt.x - nodePtScreen.x;
+          const dy = screenPt.y - nodePtScreen.y;
+          if (Math.sqrt(dx * dx + dy * dy) < 8) {
+            overNode = true;
+            break;
+          }
+        }
+        if (overNode) break;
+      }
+      canvas.style.cursor = overNode
+        ? "grab"
+        : hoveredSegIdx >= 0
+          ? "pointer"
+          : "default";
+    } else if (hoveredSegIdx !== prevHover) {
+      canvas.style.cursor =
+        hoveredSegIdx >= 0
+          ? tool === "gate"
+            ? "crosshair"
+            : "pointer"
+          : tool === "draw"
+            ? "crosshair"
+            : "default";
     }
 
     scheduleRedraw();
@@ -667,36 +1163,85 @@ export function initCanvasEngine(
     if (e.button === 2) {
       isPanning = false;
     }
+
+    if (draggingNode !== null) {
+      notifyChange();
+      draggingNode = null;
+      canvas.style.cursor = "default";
+      return;
+    }
+
+    if (draggingGate !== null) {
+      const { flatSegIdx, gateIdx, startScreenPt, runIdx, segIdx } =
+        draggingGate;
+      const endScreen = eventToScreen(e);
+      const dx = endScreen.x - startScreenPt.x;
+      const dy = endScreen.y - startScreenPt.y;
+      const wasDrag = Math.sqrt(dx * dx + dy * dy) > 5;
+
+      if (wasDrag) {
+        notifyChange();
+      } else {
+        // Click (not drag) on an existing gate → edit it
+        const gate = runs[runIdx]?.segments[segIdx]?.gates[gateIdx];
+        config.onGateEdit?.(
+          flatSegIdx,
+          gateIdx,
+          gate?.gateId,
+          gate?.widthMM ?? DEFAULT_GATE_WIDTH_MM,
+        );
+      }
+      draggingGate = null;
+      canvas.style.cursor = tool === "draw" ? "crosshair" : "default";
+      return;
+    }
   }
 
   function onDblClick(e: MouseEvent) {
-    if (tool === 'draw' && activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
-      const run = runs[activeRunIdx];
-      // Remove the last point added by the second click of the double-click
-      if (run.points.length > 1) {
-        run.points.pop();
-        run.segments = buildSegmentsFromPoints(run.points, scale);
+    if (tool === "draw" && activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
+      // Stop the chain: discard the pending single-point run started by the first
+      // click of this double-click, and undo the CHAIN_POINT so the previous
+      // finished run is properly un-finished and trimmed.
+      stopChain();
+      scheduleRedraw();
+      return;
+    }
+
+    // Scale calibration: double-click on an existing segment to set its real-world length
+    const canvasPt = eventToCanvas(e);
+    const flatIdx = hitTestSegments(canvasPt, 12);
+    if (flatIdx >= 0) {
+      const allSegs = allSegmentsFlat();
+      const info = allSegs[flatIdx];
+      if (!info) return;
+      const seg = info.seg;
+      const segLengthWorld = Math.sqrt(
+        (seg.p2.x - seg.p1.x) ** 2 + (seg.p2.y - seg.p1.y) ** 2,
+      );
+      if (segLengthWorld === 0) return;
+      const response = prompt(
+        "Enter real-world length for this segment (e.g. 2500 for 2500mm or 2.5 for 2.5m):",
+      );
+      if (response === null) return;
+      const parsed = parseFloat(response.replace(",", "."));
+      if (isNaN(parsed) || parsed <= 0) return;
+      const enteredMM = parsed < 30 ? parsed * 1000 : parsed;
+      // Update scale: mm per world unit
+      scale = enteredMM / segLengthWorld;
+      // Recalculate all segment lengths with new scale
+      for (const r of runs) {
+        r.segments = buildSegmentsFromPoints(r.points, scale);
       }
-      if (run.points.length >= 2) {
-        undoStack.push({ type: 'FINISH_RUN', runIdx: activeRunIdx });
-        run.finished = true;
-        notifyChange();
-      } else {
-        // Not enough points; cancel this run
-        runs.splice(activeRunIdx, 1);
-        undoStack.pop(); // remove ADD_RUN
-      }
-      activeRunIdx = -1;
+      notifyChange();
       scheduleRedraw();
     }
-    void e;
   }
 
   function onWheel(e: WheelEvent) {
     e.preventDefault();
     const screen = eventToScreen(e);
     const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
-    const newZoom = Math.max(0.1, Math.min(20, zoom * zoomFactor));
+    const newZoom = Math.max(0.1, Math.min(10, zoom * zoomFactor));
 
     // Zoom toward cursor
     pan = {
@@ -713,34 +1258,19 @@ export function initCanvasEngine(
 
   function onKeyDown(e: KeyboardEvent) {
     if (editingLabel) return;
-    if (e.key === 'Enter' && tool === 'draw') {
+    if (e.key === "Enter" && tool === "draw") {
       if (activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
-        const run = runs[activeRunIdx];
-        if (run.points.length >= 2) {
-          undoStack.push({ type: 'FINISH_RUN', runIdx: activeRunIdx });
-          run.finished = true;
-          notifyChange();
-        } else {
-          runs.splice(activeRunIdx, 1);
-        }
-        activeRunIdx = -1;
+        stopChain();
         scheduleRedraw();
       }
     }
-    if (e.key === 'Escape' && tool === 'draw') {
+    if (e.key === "Escape" && tool === "draw") {
       if (activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
-        const run = runs[activeRunIdx];
-        if (run.points.length < 2) {
-          runs.splice(activeRunIdx, 1);
-          undoStack.pop();
-        } else {
-          run.finished = true;
-        }
-        activeRunIdx = -1;
+        stopChain();
         scheduleRedraw();
       }
     }
-    if ((e.key === 'z' || e.key === 'Z') && (e.ctrlKey || e.metaKey)) {
+    if ((e.key === "z" || e.key === "Z") && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       undoLast();
     }
@@ -758,9 +1288,10 @@ export function initCanvasEngine(
     if (!info) return;
     editingLabel = true;
 
-    const current = info.seg.lengthMM >= 1000
-      ? `${(info.seg.lengthMM / 1000).toFixed(2)}`
-      : `${Math.round(info.seg.lengthMM)}`;
+    const current =
+      info.seg.lengthMM >= 1000
+        ? `${(info.seg.lengthMM / 1000).toFixed(2)}`
+        : `${Math.round(info.seg.lengthMM)}`;
 
     createLabelInput(
       container,
@@ -768,7 +1299,7 @@ export function initCanvasEngine(
       current,
       (val) => {
         editingLabel = false;
-        const num = parseFloat(val.replace(',', '.'));
+        const num = parseFloat(val.replace(",", "."));
         if (!isNaN(num) && num > 0) {
           // Determine unit: if the number looks like metres (≤ 30), convert to mm
           info.seg.lengthMM = num < 30 ? num * 1000 : num;
@@ -790,12 +1321,12 @@ export function initCanvasEngine(
     const action = undoStack.pop()!;
 
     switch (action.type) {
-      case 'ADD_RUN': {
+      case "ADD_RUN": {
         runs.pop();
         activeRunIdx = -1;
         break;
       }
-      case 'ADD_POINT': {
+      case "ADD_POINT": {
         const run = runs[action.runIdx];
         if (run && run.points.length > 1) {
           run.points.pop();
@@ -807,7 +1338,22 @@ export function initCanvasEngine(
         }
         break;
       }
-      case 'FINISH_RUN': {
+      case "CHAIN_POINT": {
+        // Remove the newly-started chain run
+        runs.splice(action.newRunIdx, 1);
+        // Un-finish the previous run and remove its last (chained) point
+        const prevRun = runs[action.prevRunIdx];
+        if (prevRun) {
+          prevRun.finished = false;
+          if (prevRun.points.length > 1) {
+            prevRun.points.pop();
+            prevRun.segments = buildSegmentsFromPoints(prevRun.points, scale);
+          }
+        }
+        activeRunIdx = action.prevRunIdx;
+        break;
+      }
+      case "FINISH_RUN": {
         const run = runs[action.runIdx];
         if (run) {
           run.finished = false;
@@ -815,7 +1361,7 @@ export function initCanvasEngine(
         }
         break;
       }
-      case 'ADD_GATE': {
+      case "ADD_GATE": {
         const allSegs = allSegmentsFlat();
         const info = allSegs[action.segIdx];
         if (info) {
@@ -823,7 +1369,7 @@ export function initCanvasEngine(
         }
         break;
       }
-      case 'CLEAR': {
+      case "CLEAR": {
         runs = action.runs;
         scale = action.scale;
         activeRunIdx = -1;
@@ -839,16 +1385,16 @@ export function initCanvasEngine(
 
   function setTool(t: Tool) {
     tool = t;
-    if (t === 'draw') {
-      canvas.style.cursor = 'crosshair';
+    if (t === "draw") {
+      canvas.style.cursor = "crosshair";
     } else {
-      canvas.style.cursor = 'default';
+      canvas.style.cursor = "default";
       // Finish any active drawing run
       if (activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
         const run = runs[activeRunIdx];
         if (run.points.length >= 2) {
           run.finished = true;
-          undoStack.push({ type: 'FINISH_RUN', runIdx: activeRunIdx });
+          undoStack.push({ type: "FINISH_RUN", runIdx: activeRunIdx });
           notifyChange();
         } else {
           runs.splice(activeRunIdx, 1);
@@ -864,17 +1410,27 @@ export function initCanvasEngine(
   }
 
   function clear() {
-    undoStack.push({ type: 'CLEAR', runs: JSON.parse(JSON.stringify(runs)), scale });
+    undoStack.push({
+      type: "CLEAR",
+      runs: JSON.parse(JSON.stringify(runs)),
+      scale,
+    });
     runs = [];
     activeRunIdx = -1;
     notifyChange();
     scheduleRedraw();
   }
 
-  function resetView() {
-    zoom = 1;
+  /** Set zoom so that `targetMetres` of real-world width fits the canvas. */
+  function fitToWidth(targetMetres = 50) {
+    const W = canvas.getBoundingClientRect().width || canvas.width || 800;
+    zoom = W / (targetMetres * scale);
     pan = { x: 0, y: 0 };
     scheduleRedraw();
+  }
+
+  function resetView() {
+    fitToWidth(50);
   }
 
   function setSnapToGrid(s: boolean) {
@@ -897,21 +1453,52 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
-  function loadMapTile(imageUrl: string, opacity: number) {
+  /**
+   * Load a Google Static Maps tile and register its geo-scale so the image is
+   * drawn at the correct real-world size inside the canvas coordinate system.
+   *
+   * @param imageUrl  Google Static Maps URL (already built with center/zoom/size)
+   * @param opacity   0–1 overlay opacity
+   * @param lat       Centre latitude of the tile (decimal degrees)
+   * @param mapZoom   Google Maps zoom level used in the URL (e.g. 20)
+   */
+  function loadMapTile(
+    imageUrl: string,
+    opacity: number,
+    lat: number,
+    mapZoom: number,
+  ) {
     mapOpacity = opacity;
     if (!imageUrl) {
       mapImage = null;
+      mapWorldWidth = 0;
       scheduleRedraw();
       return;
     }
+
+    // Ground resolution: metres per image pixel at this latitude and zoom level.
+    // Formula from Google Maps documentation (Mercator projection).
+    const metersPerPixel =
+      (156543.03392 * Math.cos((lat * Math.PI) / 180)) / Math.pow(2, mapZoom);
+
     const img = new Image();
-    img.crossOrigin = 'anonymous';
+    img.crossOrigin = "anonymous";
     img.onload = () => {
       mapImage = img;
+      // Canvas world size of the tile (world pixels = metres × scale)
+      mapWorldWidth = img.width * metersPerPixel * scale;
+      mapWorldHeight = img.height * metersPerPixel * scale;
+      // Anchor the tile centre to the current view centre so the map appears
+      // immediately beneath the visible canvas area when loaded.
+      const cw = canvas.width || canvas.getBoundingClientRect().width || 800;
+      const ch = canvas.height || canvas.getBoundingClientRect().height || 400;
+      mapWorldOriginX = (cw / 2 - pan.x) / zoom;
+      mapWorldOriginY = (ch / 2 - pan.y) / zoom;
       scheduleRedraw();
     };
     img.onerror = () => {
       mapImage = null;
+      mapWorldWidth = 0;
       scheduleRedraw();
     };
     img.src = imageUrl;
@@ -931,16 +1518,38 @@ export function initCanvasEngine(
     }
   }
 
+  /** Associate a GateConfig id with a canvas gate marker so it can be found for editing. */
+  function setGateId(flatSegIdx: number, gateIdx: number, id: string) {
+    const allSegs = allSegmentsFlat();
+    const info = allSegs[flatSegIdx];
+    if (info && info.seg.gates[gateIdx] !== undefined) {
+      info.seg.gates[gateIdx].gateId = id;
+    }
+  }
+
+  /**
+   * Set post positions to overlay on the canvas after BOM generation.
+   * Positions are in canvas world coordinates — the same space as drawn nodes
+   * (i.e. canvas pixels relative to the origin, before the pan/zoom transform).
+   * Pass null to clear.
+   */
+  function setPostPositions(
+    positions: Array<{ x: number; y: number; label?: string }> | null,
+  ) {
+    postPositions = positions;
+    scheduleRedraw();
+  }
+
   function destroy() {
     cancelAnimationFrame(animFrame);
-    canvas.removeEventListener('mousedown', onMouseDown);
-    canvas.removeEventListener('mousemove', onMouseMove);
-    canvas.removeEventListener('mouseup', onMouseUp);
-    canvas.removeEventListener('dblclick', onDblClick);
-    canvas.removeEventListener('wheel', onWheel);
-    canvas.removeEventListener('contextmenu', onContextMenu);
-    window.removeEventListener('keydown', onKeyDown);
-    window.removeEventListener('resize', onResize);
+    canvas.removeEventListener("mousedown", onMouseDown);
+    canvas.removeEventListener("mousemove", onMouseMove);
+    canvas.removeEventListener("mouseup", onMouseUp);
+    canvas.removeEventListener("dblclick", onDblClick);
+    canvas.removeEventListener("wheel", onWheel);
+    canvas.removeEventListener("contextmenu", onContextMenu);
+    window.removeEventListener("keydown", onKeyDown);
+    window.removeEventListener("resize", onResize);
     // Remove any label input that might be open
     const inp = container.querySelector('input[type="text"]');
     if (inp) inp.parentNode?.removeChild(inp);
@@ -948,17 +1557,17 @@ export function initCanvasEngine(
 
   // ── Register events ────────────────────────────────────────────────────────
 
-  canvas.addEventListener('mousedown', onMouseDown);
-  canvas.addEventListener('mousemove', onMouseMove);
-  canvas.addEventListener('mouseup', onMouseUp);
-  canvas.addEventListener('dblclick', onDblClick);
-  canvas.addEventListener('wheel', onWheel, { passive: false });
-  canvas.addEventListener('contextmenu', onContextMenu);
-  window.addEventListener('keydown', onKeyDown);
-  window.addEventListener('resize', onResize);
+  canvas.addEventListener("mousedown", onMouseDown);
+  canvas.addEventListener("mousemove", onMouseMove);
+  canvas.addEventListener("mouseup", onMouseUp);
+  canvas.addEventListener("dblclick", onDblClick);
+  canvas.addEventListener("wheel", onWheel, { passive: false });
+  canvas.addEventListener("contextmenu", onContextMenu);
+  window.addEventListener("keydown", onKeyDown);
+  window.addEventListener("resize", onResize);
 
-  // Initial draw
-  scheduleRedraw();
+  // Initial draw — fit to 50m wide view
+  fitToWidth(50);
 
   return {
     destroy,
@@ -973,5 +1582,8 @@ export function initCanvasEngine(
     setMapOpacity,
     loadMapTile,
     updateGateWidth,
+    setGateId,
+    setPostPositions,
+    fitToWidth,
   };
 }

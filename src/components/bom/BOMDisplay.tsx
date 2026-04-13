@@ -1,9 +1,12 @@
 import { useState } from "react";
+import { X } from "lucide-react";
 import type {
   BOMResult,
   BOMLineItem as BOMLineItemType,
+  ExtraItem,
 } from "../../types/bom.types";
 import { BOMLineItem } from "./BOMLineItem";
+import { ExtraItemsInput } from "./ExtraItemsInput";
 import { applyBomOverrides } from "../../utils/applyBomOverrides";
 import type { BOMOverrides } from "../../utils/applyBomOverrides";
 import pluralize from "pluralize";
@@ -14,6 +17,10 @@ interface BOMDisplayProps {
   result: BOMResult;
   overrides?: BOMOverrides;
   onQtyChange?: (key: string, qty: number) => void;
+  extraItems?: ExtraItem[];
+  onAddExtraItem?: (item: ExtraItem) => void;
+  onRemoveExtraItem?: (id: string) => void;
+  onUpdateExtraItem?: (id: string, updates: Partial<ExtraItem>) => void;
 }
 
 const CATEGORY_ORDER = [
@@ -54,16 +61,22 @@ export function BOMDisplay({
   result,
   overrides,
   onQtyChange,
+  extraItems = [],
+  onAddExtraItem,
+  onRemoveExtraItem,
+  onUpdateExtraItem,
 }: BOMDisplayProps) {
   const [view, setView] = useState<ViewFilter>("all");
 
-  const effectiveResult =
-    overrides && overrides.size > 0
-      ? applyBomOverrides(result, overrides)
-      : result;
+  const effectiveResult = applyBomOverrides(
+    result,
+    overrides ?? new Map(),
+    extraItems,
+  );
 
   const fenceItems = sortItems(effectiveResult.fenceItems);
   const gateItems = sortItems(effectiveResult.gateItems);
+
   const allItems =
     view === "fence"
       ? fenceItems
@@ -137,10 +150,10 @@ export function BOMDisplay({
                 Qty
               </th>
               <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right whitespace-nowrap">
-                Unit Price
+                Unit $
               </th>
               <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
-                Total
+                Line $
               </th>
             </tr>
           </thead>
@@ -174,9 +187,83 @@ export function BOMDisplay({
                 })}
               </>
             ))}
+
+            {/* ── Extras category ──────────────────────────────────── */}
+            {view === "all" && extraItems.length > 0 && (
+              <>
+                <tr className="border-t border-brand-border">
+                  <td
+                    colSpan={6}
+                    className="px-3 py-1.5 bg-slate-300/15 border-b border-brand-border capitalize text-xs font-semibold text-brand-muted tracking-wider"
+                  >
+                    Extras
+                  </td>
+                </tr>
+                {extraItems.map((item) => {
+                  const lineTotal = item.quantity * item.unitPrice;
+                  return (
+                    <tr
+                      key={item.id}
+                      className="border-b border-brand-border last:border-0 hover:bg-brand-accent/5 transition-colors"
+                    >
+                      <td className="py-2.5 px-3 text-xs font-mono text-brand-accent whitespace-nowrap">
+                        {item.sku ?? "—"}
+                      </td>
+                      <td className="py-2.5 px-3 text-sm text-brand-text">
+                        {item.description}{" "}
+                        <span className="text-xs text-amber-500 font-medium">
+                          extra
+                        </span>
+                      </td>
+                      <td className="py-2.5 px-3 text-xs text-brand-muted text-center">
+                        each
+                      </td>
+                      <td className="py-2.5 px-3 text-right">
+                        {onUpdateExtraItem ? (
+                          <input
+                            type="number"
+                            min="1"
+                            value={item.quantity}
+                            onChange={(e) =>
+                              onUpdateExtraItem(item.id, {
+                                quantity: Math.max(1, Number(e.target.value)),
+                              })
+                            }
+                            className="w-16 px-1.5 py-0.5 text-right bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text focus:outline-none focus:ring-1 focus:ring-brand-accent/50 focus:border-brand-accent tabular-nums"
+                          />
+                        ) : (
+                          <span className="text-sm font-medium text-brand-text tabular-nums">
+                            {item.quantity}
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-2.5 px-3 text-right">
+                        <span className="text-sm text-brand-muted tabular-nums">
+                          {item.unitPrice > 0
+                            ? `$${item.unitPrice.toFixed(2)}`
+                            : "—"}
+                        </span>
+                      </td>
+                      <td className="py-2.5 px-3 text-right">
+                        <span className="text-sm font-semibold text-brand-text tabular-nums">
+                          {lineTotal > 0 ? `$${lineTotal.toFixed(2)}` : "—"}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </>
+            )}
           </tbody>
         </table>
       </div>
+
+      {/* ── Add Extra Item ────────────────────────────────────────── */}
+      {view === "all" && onAddExtraItem && (
+        <div className="px-3 pb-3">
+          <ExtraItemsInput onAdd={onAddExtraItem} />
+        </div>
+      )}
     </div>
   );
 }

@@ -12,6 +12,7 @@ export const ContactSchema = z.object({
   email:       z.string().email('Invalid email').optional().or(z.literal('')),
   fulfilment:  FulfilmentType,
   deliveryAddress: z.string().optional(),
+  deliverySuburb:  z.string().optional(),
   notes:       z.string().optional(),
 });
 
@@ -24,5 +25,6 @@ export const defaultContactInfo: ContactInfo = {
   email:           '',
   fulfilment:      'pickup',
   deliveryAddress: '',
+  deliverySuburb:  '',
   notes:           '',
 };

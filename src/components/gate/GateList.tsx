@@ -10,7 +10,8 @@ interface GateListProps {
 
 function gateLabel(gate: GateConfig): string {
   const type = GATE_TYPES.find((t) => t.value === gate.gateType)?.label ?? gate.gateType;
-  return `${type} — ${gate.openingWidth}mm wide`;
+  const qty = gate.qty > 1 ? ` ×${gate.qty}` : '';
+  return `${type}${qty} — ${gate.openingWidth}mm wide`;
 }
 
 function gateSubLabel(gate: GateConfig): string {

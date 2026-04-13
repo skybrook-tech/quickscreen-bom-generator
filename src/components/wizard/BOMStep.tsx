@@ -92,8 +92,8 @@ export function BOMStep({
           {/* BOM result */}
           {effectiveBom && (
             <ErrorBoundary label="Bill of Materials">
-              <div className="space-y-4 border border-brand-border rounded-xl bg-brand-card overflow-hidden">
-                <div className="flex items-center justify-between px-4 py-3">
+              <div className="space-y-4 border border-brand-border rounded-xl bg-brand-card">
+                <div className="flex items-center justify-between px-4 py-3 rounded-t-xl overflow-hidden">
                   <h2 className="text-lg font-semibold text-brand-text">
                     Bill of Materials
                   </h2>

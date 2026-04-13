@@ -7,7 +7,8 @@ import { GateModal } from "../gate/GateModal";
 import { useFenceConfig } from "../../context/FenceConfigContext";
 import { useGates } from "../../context/GateContext";
 import type { GateConfig } from "../../schemas/gate.schema";
-import type { CanvasLayout } from "./canvasEngine";
+import type { CanvasLayout, CanvasRunSummary } from "./canvasEngine";
+import type { PostPosition } from "../../types/bom.types";
 
 interface PendingGate {
   stub: GateConfig;
@@ -17,27 +18,41 @@ interface PendingGate {
 
 interface FenceLayoutCanvasProps {
   onApplied?: (layout: CanvasLayout) => void;
+  postPositions?: PostPosition[] | null;
 }
 
-export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
+export function FenceLayoutCanvas({ onApplied, postPositions }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
   const { dispatch: fenceDispatch } = useFenceConfig();
-  const { dispatch: gateDispatch } = useGates();
+  const { gates, dispatch: gateDispatch } = useGates();
+  const gatesRef = useRef(gates);
+  gatesRef.current = gates;
 
   const [activeTool, setActiveTool] = useState<"draw" | "gate" | "move">(
     "draw",
   );
   const [snapEnabled, setSnapEnabled] = useState(true);
+  const [showGrid, setShowGrid] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const [applied, setApplied] = useState(false);
+  const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
 
   // Gate placed on canvas but not yet configured by user
   const [pendingGate, setPendingGate] = useState<PendingGate | null>(null);
+
+  // Existing gate being edited (click on a placed gate marker)
+  const [editingCanvasGate, setEditingCanvasGate] = useState<{
+    flatSegIdx: number;
+    gateIdx: number;
+    gate: GateConfig;
+  } | null>(null);
 
   const handleGatePlaced = useCallback(
     (segIdx: number, gateIdx: number, defaultWidthMM: number) => {
       const stub: GateConfig = {
         id: crypto.randomUUID(),
+        qty: 1,
         gateType: "single-swing",
         openingWidth: defaultWidthMM,
         gateHeight: "match-fence",
@@ -61,6 +76,13 @@ export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
       gridSize: 20,
       showGrid: true,
       onGatePlaced: handleGatePlaced,
+      onLayoutChange: (layout) => setRunSummaries(layout.runs),
+      onGateEdit: (flatSegIdx, gateIdx, gateId) => {
+        // Find the gate in GateContext by id (set when gate was first saved)
+        const existing = gateId ? gatesRef.current.find((g) => g.id === gateId) : undefined;
+        if (!existing) return; // gate not yet saved (e.g. modal still open) — ignore
+        setEditingCanvasGate({ flatSegIdx, gateIdx, gate: existing });
+      },
     });
 
     return () => {
@@ -77,6 +99,8 @@ export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
         pendingGate.gateIdx,
         gate.openingWidth,
       );
+      // Link canvas gate marker to GateConfig id so edit-by-click works later
+      engineRef.current?.setGateId(pendingGate.segIdx, pendingGate.gateIdx, gate.id);
       gateDispatch({ type: "ADD_GATE", gate });
       setPendingGate(null);
     },
@@ -86,9 +110,26 @@ export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
   const handleGateSkip = useCallback(() => {
     if (!pendingGate) return;
     // Add with defaults so the layout gate count stays accurate
+    engineRef.current?.setGateId(pendingGate.segIdx, pendingGate.gateIdx, pendingGate.stub.id);
     gateDispatch({ type: "ADD_GATE", gate: pendingGate.stub });
     setPendingGate(null);
   }, [pendingGate, gateDispatch]);
+
+  // Sync showGrid state to engine
+  useEffect(() => {
+    engineRef.current?.setShowGrid(showGrid);
+  }, [showGrid]);
+
+  // Sync postPositions prop into the canvas engine
+  useEffect(() => {
+    engineRef.current?.setPostPositions(postPositions ?? null);
+  }, [postPositions]);
+
+  // When expanded changes, trigger a window resize event so the engine's
+  // internal onResize handler picks up the new canvas CSS height.
+  useEffect(() => {
+    window.dispatchEvent(new Event("resize"));
+  }, [expanded]);
 
   const handleUseLayout = useCallback(() => {
     const layout = engineRef.current?.getLayout();
@@ -105,12 +146,54 @@ export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
       value: layout.cornerCount,
     });
 
+    // Sync canvas gates to GateContext
+    if (layout.gates.length > 0) {
+      gateDispatch({ type: "CLEAR_ALL" });
+      for (const gate of layout.gates) {
+        gateDispatch({
+          type: "ADD_GATE",
+          gate: {
+            id: crypto.randomUUID(),
+            gateType: "single-swing" as const,
+            openingWidth: gate.widthMM,
+            gateHeight: "match-fence" as const,
+            colour: "match-fence" as const,
+            slatGap: "match-fence" as const,
+            slatSize: "match-fence" as const,
+            gatePostSize: "65x65" as const,
+            hingeType: "dd-kwik-fit-adjustable" as const,
+            latchType: "dd-magna-latch-top-pull" as const,
+            qty: 1,
+          },
+        });
+      }
+    }
+
     setApplied(true);
     setTimeout(() => {
       setApplied(false);
       onApplied?.(layout);
     }, 300);
-  }, [fenceDispatch, onApplied]);
+  }, [fenceDispatch, gateDispatch, onApplied]);
+
+  const handleEditCanvasGateSave = useCallback(
+    (gate: GateConfig) => {
+      if (!editingCanvasGate) return;
+      engineRef.current?.updateGateWidth(
+        editingCanvasGate.flatSegIdx,
+        editingCanvasGate.gateIdx,
+        gate.openingWidth,
+      );
+      gateDispatch({ type: "UPDATE_GATE", id: gate.id, updates: gate });
+      setEditingCanvasGate(null);
+    },
+    [editingCanvasGate, gateDispatch],
+  );
+
+  // Totals across all runs
+  const totalLengthM = runSummaries.reduce((s, r) => s + r.totalLengthM, 0);
+  const totalCorners = runSummaries.reduce((s, r) => s + r.cornerCount, 0);
+  const totalGates   = runSummaries.reduce((s, r) => s + r.gates.length, 0);
 
   return (
     <div className="space-y-0">
@@ -120,13 +203,17 @@ export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
         onToolChange={setActiveTool}
         snapEnabled={snapEnabled}
         onSnapToggle={setSnapEnabled}
+        showGrid={showGrid}
+        onToggleGrid={setShowGrid}
+        expanded={expanded}
+        onToggleExpand={setExpanded}
       />
 
       <div className="relative">
         <canvas
           ref={canvasRef}
           className="w-full bg-brand-bg block"
-          style={{ height: "420px", cursor: "crosshair" }}
+          style={{ height: expanded ? "700px" : "420px", cursor: "crosshair" }}
         />
 
         {/* Hint overlay */}
@@ -136,7 +223,7 @@ export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
           {activeTool === "gate" &&
             "Click on a fence segment to place a gate marker"}
           {activeTool === "move" &&
-            "Click a segment label to edit its real-world length"}
+            "Drag nodes or gates to reposition · Click a label to edit length"}
         </div>
 
         {/* Zoom hint */}
@@ -147,8 +234,44 @@ export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
 
       <MapControls engineRef={engineRef} />
 
+      {/* Run summary table */}
+      {runSummaries.length > 0 && (
+        <div className="border-t border-brand-border">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="bg-brand-bg/60 text-brand-muted uppercase tracking-wider">
+                <th className="text-left px-3 py-2 font-semibold">Run</th>
+                <th className="text-right px-3 py-2 font-semibold">Length</th>
+                <th className="text-right px-3 py-2 font-semibold">Corners</th>
+                <th className="text-right px-3 py-2 font-semibold">Gates</th>
+              </tr>
+            </thead>
+            <tbody>
+              {runSummaries.map((run) => (
+                <tr key={run.label} className="border-t border-brand-border/50 text-brand-text">
+                  <td className="px-3 py-1.5 text-brand-muted">{run.label}</td>
+                  <td className="px-3 py-1.5 text-right tabular-nums">{run.totalLengthM.toFixed(2)}m</td>
+                  <td className="px-3 py-1.5 text-right tabular-nums">{run.cornerCount}</td>
+                  <td className="px-3 py-1.5 text-right tabular-nums">{run.gates.length}</td>
+                </tr>
+              ))}
+            </tbody>
+            {runSummaries.length > 1 && (
+              <tfoot>
+                <tr className="border-t border-brand-border font-semibold text-brand-text bg-brand-bg/40">
+                  <td className="px-3 py-1.5 text-brand-muted">Total</td>
+                  <td className="px-3 py-1.5 text-right tabular-nums">{totalLengthM.toFixed(2)}m</td>
+                  <td className="px-3 py-1.5 text-right tabular-nums">{totalCorners}</td>
+                  <td className="px-3 py-1.5 text-right tabular-nums">{totalGates}</td>
+                </tr>
+              </tfoot>
+            )}
+          </table>
+        </div>
+      )}
+
       {/* Apply button */}
-      <div className="flex items-center justify-between p-3 bg-brand-card border-t-0 border-brand-border">
+      <div className="flex items-center justify-between p-3 bg-brand-card border-t border-brand-border">
         <p className="text-xs text-brand-muted">
           Draw your fence layout above, then click{" "}
           <strong className="text-brand-text">Use This Layout</strong> to
@@ -172,6 +295,17 @@ export function FenceLayoutCanvas({ onApplied }: FenceLayoutCanvasProps = {}) {
           initialValues={pendingGate.stub}
           onSave={handleGateSave}
           onClose={handleGateSkip}
+        />
+      )}
+
+      {/* Gate edit modal — opened by clicking an existing gate marker */}
+      {editingCanvasGate && (
+        <GateModal
+          mode="editing"
+          gateId={editingCanvasGate.gate.id}
+          initialValues={editingCanvasGate.gate}
+          onSave={handleEditCanvasGateSave}
+          onClose={() => setEditingCanvasGate(null)}
         />
       )}
     </div>

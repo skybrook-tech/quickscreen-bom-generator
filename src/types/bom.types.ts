@@ -12,6 +12,12 @@ export interface BOMLineItem {
   notes?: string;
 }
 
+export interface PostPosition {
+  x: number;
+  y: number;
+  label?: string;
+}
+
 export interface BOMResult {
   fenceItems: BOMLineItem[];
   gateItems: BOMLineItem[];
@@ -20,6 +26,18 @@ export interface BOMResult {
   grandTotal: number;
   pricingTier: 'tier1' | 'tier2' | 'tier3';
   generatedAt: string;
+  /** Optional post positions in canvas world coordinates (same space as drawn nodes).
+   *  Populated by the edge function once post-position calculation is implemented. */
+  postPositions?: PostPosition[];
 }
 
 export type PricingTier = 'tier1' | 'tier2' | 'tier3';
+
+/** Ad-hoc line item added manually by staff — not from the BOM calculation */
+export interface ExtraItem {
+  id: string;           // generated UUID / nanoid
+  description: string;
+  quantity: number;
+  unitPrice: number;    // ex-GST
+  sku?: string;         // set when selected from autocomplete; undefined for free-text entries
+}
