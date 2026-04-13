@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { X } from "lucide-react";
 import type {
   BOMResult,
   BOMLineItem as BOMLineItemType,
@@ -63,7 +62,6 @@ export function BOMDisplay({
   onQtyChange,
   extraItems = [],
   onAddExtraItem,
-  onRemoveExtraItem,
   onUpdateExtraItem,
 }: BOMDisplayProps) {
   const [view, setView] = useState<ViewFilter>("all");

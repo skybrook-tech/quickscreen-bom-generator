@@ -15,7 +15,6 @@ import { FenceConfigForm } from "../components/fence/FenceConfigForm";
 import { GateConfigPanel } from "../components/gate/GateConfigPanel";
 import { BOMDisplay } from "../components/bom/BOMDisplay";
 import { BOMSummary } from "../components/bom/BOMSummary";
-import { PricingTierSelect } from "../components/bom/PricingTierSelect";
 import { QuoteActions } from "../components/quote/QuoteActions";
 import { ContactDeliveryForm } from "../components/contact/ContactDeliveryForm";
 import { AccordionSection } from "../components/shared/AccordionSection";
@@ -53,7 +52,7 @@ function AppContent() {
   const { gates, dispatch: gateDispatch } = useGates();
   const { user } = useAuth();
 
-  const [pricingTier, setPricingTier] = useState<PricingTier>("tier1");
+  const [pricingTier] = useState<PricingTier>("tier1");
   const [bomResult, setBomResult] = useState<BOMResult | null>(null);
   const [bomOverrides, setBomOverrides] = useState<BOMOverrides>(new Map());
   const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
@@ -218,7 +217,12 @@ function AppContent() {
                     setDescText((prev) => {
                       // Replace an existing layout note if present, otherwise prepend
                       if (prev.startsWith("[Layout:")) {
-                        return note + prev.replace(/^\[Layout:[^\]]*\]\n?/, "\n").trimStart();
+                        return (
+                          note +
+                          prev
+                            .replace(/^\[Layout:[^\]]*\]\n?/, "\n")
+                            .trimStart()
+                        );
                       }
                       return note + (prev ? "\n" + prev : "");
                     });
