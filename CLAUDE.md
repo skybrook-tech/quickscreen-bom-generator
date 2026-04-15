@@ -273,3 +273,56 @@ See `docs/cypress-test-report.md` for the current test status and known issues. 
 - **Multi-tenancy: every table has `org_id`.** Edge functions always scope queries by `org_id` resolved from the user's JWT. RLS policies use `public.user_org_id()`. The client never sends `org_id`.
 - **Always update `docs/tasks.md` after completing any task or group of tasks.** Tick off `[x]`, update the Phases Overview table, and update the "Current Phase" header. Do this before responding to the user.
 - **Current status**: Phases 0–6 complete. Phase 7 (Polish) is in progress — see `docs/tasks.md` for the remaining checklist items.
+
+---
+
+## 16. Local Setup (new developers)
+
+### Prerequisites
+
+- [Node.js 20+](https://nodejs.org/)
+- [Supabase CLI](https://supabase.com/docs/guides/cli/getting-started) — `brew install supabase/tap/supabase` (Mac) or `npx supabase` (cross-platform)
+- Git
+
+### First-time setup
+
+```bash
+npm install
+cp .env.local.example .env.local
+# Fill in .env.local — run `supabase start` then `supabase status` to get the keys
+npm run setup       # starts local Supabase + resets DB + seeds data
+npm run dev         # → http://localhost:5173
+```
+
+Login with the seeded test account: `test@glass-outlet.com` / `123456`
+
+### Day-to-day commands
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Start the app (http://localhost:5173) |
+| `npm run build` | TypeScript check + bundle — run before committing |
+| `npm run db:reset` | Reset DB to a clean seeded state |
+| `supabase start` | Start the local Supabase backend |
+| `supabase stop` | Stop the local Supabase backend |
+| `npm run cy:open` | Open Cypress interactive test runner |
+
+### Git workflow
+
+**Never push directly to `master`.** Always work on a branch and open a Pull Request:
+
+```bash
+git checkout -b my-feature-branch
+# ... make changes ...
+git add <files>
+git commit -m "describe what you changed"
+git push origin my-feature-branch
+# → open a PR on GitHub; wait for CI to pass and get a review before merging
+```
+
+### Troubleshooting
+
+- **`supabase start` fails / port 54321 in use** — run `supabase stop` first, then retry
+- **Port 5173 in use** — kill the existing `npm run dev` process and restart
+- **`npm run setup` errors on seed step** — ensure `supabase start` completed successfully first; check `supabase status`
+- **Login not working** — run `npm run db:reset` to re-seed the test user
