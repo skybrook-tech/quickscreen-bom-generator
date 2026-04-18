@@ -273,6 +273,7 @@ See `docs/cypress-test-report.md` for the current test status and known issues. 
 - **Multi-tenancy: every table has `org_id`.** Edge functions always scope queries by `org_id` resolved from the user's JWT. RLS policies use `public.user_org_id()`. The client never sends `org_id`.
 - **Always update `docs/tasks.md` after completing any task or group of tasks.** Tick off `[x]`, update the Phases Overview table, and update the "Current Phase" header. Do this before responding to the user.
 - **Current status**: Phases 0–6 complete. Phase 7 (Polish) is in progress — see `docs/tasks.md` for the remaining checklist items.
+- **Seed data (products, pricing, components) goes in `supabase/seeds/`, never in new migration files.** Use `ON CONFLICT ... DO UPDATE SET ...` (not `DO NOTHING`) so that `npm run db:reset` propagates data changes to existing rows.
 
 ---
 

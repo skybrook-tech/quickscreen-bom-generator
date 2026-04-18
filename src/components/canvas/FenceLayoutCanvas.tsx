@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useRef, useEffect, useCallback, useState, useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { initCanvasEngine } from "./canvasEngine";
 import { CanvasToolbar } from "./CanvasToolbar";
@@ -6,6 +6,7 @@ import { MapControls } from "./MapControls";
 import { GateModal } from "../gate/GateModal";
 import { useFenceConfig } from "../../context/FenceConfigContext";
 import { useGates } from "../../context/GateContext";
+import { useProducts } from "../../hooks/useProducts";
 import type { GateConfig } from "../../schemas/gate.schema";
 import type { CanvasLayout, CanvasRunSummary } from "./canvasEngine";
 import type { PostPosition } from "../../types/bom.types";
@@ -27,8 +28,19 @@ export function FenceLayoutCanvas({
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
-  const { dispatch: fenceDispatch } = useFenceConfig();
+  const { state: fenceState, dispatch: fenceDispatch } = useFenceConfig();
+  const { data: products } = useProducts();
   const { gates, dispatch: gateDispatch } = useGates();
+
+  const allowedAngles = useMemo(() => {
+    const product = products?.find(
+      (p) => p.system_type === fenceState.systemType,
+    );
+    return product?.metadata?.allowedAngles ?? [];
+  }, [products, fenceState.systemType]);
+
+  console.log("allowedAngles", allowedAngles);
+  console.log("products", products);
   const gatesRef = useRef(gates);
   gatesRef.current = gates;
 
@@ -78,6 +90,7 @@ export function FenceLayoutCanvas({
       snapToGrid: true,
       gridSize: 20,
       showGrid: true,
+      allowedAngles,
       onGatePlaced: handleGatePlaced,
       onLayoutChange: (layout) => setRunSummaries(layout.runs),
       onGateEdit: (flatSegIdx, gateIdx, gateId) => {
@@ -95,6 +108,10 @@ export function FenceLayoutCanvas({
       engineRef.current = null;
     };
   }, [handleGatePlaced]);
+
+  useEffect(() => {
+    engineRef.current?.setAllowedAngles(allowedAngles);
+  }, [allowedAngles]);
 
   const handleGateSave = useCallback(
     (gate: GateConfig) => {

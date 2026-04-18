@@ -35,6 +35,8 @@ export interface CanvasEngineConfig {
   snapToGrid: boolean;
   gridSize: number; // px
   showGrid: boolean;
+  /** Interior corner angles (degrees) permitted at post junctions. Empty = no constraint. */
+  allowedAngles?: number[];
   onLayoutChange?: (layout: CanvasLayout) => void;
   /** Called immediately when the user places a NEW gate marker on a segment */
   onGatePlaced?: (
@@ -132,6 +134,60 @@ function snapToGrid(p: Point, gridSize: number): Point {
   return {
     x: Math.round(p.x / gridSize) * gridSize,
     y: Math.round(p.y / gridSize) * gridSize,
+  };
+}
+
+/**
+ * Snap `candidate` so the interior corner angle at `junctionPoint`
+ * (between the incoming segment prevPoint→junctionPoint and the outgoing
+ * segment junctionPoint→candidate) equals the nearest value in `angles`.
+ * Returns `candidate` unchanged if `angles` is empty or distance is zero.
+ */
+function snapToAllowedAngle(
+  prevPoint: Point,
+  junctionPoint: Point,
+  candidate: Point,
+  angles: number[],
+): Point {
+  if (angles.length === 0) return candidate;
+  const d = dist(junctionPoint, candidate);
+  if (d === 0) return candidate;
+
+  const current = angleBetween(prevPoint, junctionPoint, candidate);
+
+  const nearest = angles.reduce((best, a) =>
+    Math.abs(a - current) < Math.abs(best - current) ? a : best,
+  );
+
+  // Direction from junction toward prev point (B→A)
+  const phi_BA = Math.atan2(
+    prevPoint.y - junctionPoint.y,
+    prevPoint.x - junctionPoint.x,
+  );
+  const nearestRad = (nearest * Math.PI) / 180;
+
+  // Two candidate directions: rotate phi_BA by ±nearest degrees
+  const phi1 = phi_BA + nearestRad;
+  const phi2 = phi_BA - nearestRad;
+
+  // Actual direction from junction toward candidate (B→M)
+  const phi_BM = Math.atan2(
+    candidate.y - junctionPoint.y,
+    candidate.x - junctionPoint.x,
+  );
+
+  // Angular distance normalised to [0, π]
+  function angDiff(a: number, b: number): number {
+    const diff = Math.abs(a - b) % (2 * Math.PI);
+    return diff > Math.PI ? 2 * Math.PI - diff : diff;
+  }
+
+  const chosen =
+    angDiff(phi1, phi_BM) <= angDiff(phi2, phi_BM) ? phi1 : phi2;
+
+  return {
+    x: junctionPoint.x + d * Math.cos(chosen),
+    y: junctionPoint.y + d * Math.sin(chosen),
   };
 }
 
@@ -299,6 +355,7 @@ export function initCanvasEngine(
   let snap = config.snapToGrid;
   let showGrid = config.showGrid;
   let gridSize = config.gridSize;
+  let allowedAngles: number[] = config.allowedAngles ?? [];
   let mouseCanvas: Point = { x: 0, y: 0 };
   let isPanning = false;
   let panStart: Point = { x: 0, y: 0 };
@@ -470,7 +527,11 @@ export function initCanvasEngine(
       const run = runs[activeRunIdx];
       if (run && run.points.length > 0 && !run.finished) {
         const lastPt = run.points[run.points.length - 1];
-        const target = snap ? snapToGrid(mouseCanvas, gridSize) : mouseCanvas;
+        let target = snap ? snapToGrid(mouseCanvas, gridSize) : mouseCanvas;
+        if (allowedAngles.length > 0 && run.points.length >= 2) {
+          const prev = run.points[run.points.length - 2];
+          target = snapToAllowedAngle(prev, lastPt, target, allowedAngles);
+        }
         ctx.save();
         ctx.setLineDash([6, 4]);
         ctx.strokeStyle = COLOR.preview;
@@ -480,6 +541,39 @@ export function initCanvasEngine(
         ctx.lineTo(target.x, target.y);
         ctx.stroke();
         ctx.restore();
+
+        // Distance label on active preview line
+        const segDist = dist(lastPt, target);
+        if (segDist > 0) {
+          const mm = pixelsToMM(segDist, scale);
+          const label =
+            mm >= 1000
+              ? `${(mm / 1000).toFixed(2)}m`
+              : `${Math.round(mm)}mm`;
+          const mid: Point = {
+            x: (lastPt.x + target.x) / 2,
+            y: (lastPt.y + target.y) / 2,
+          };
+          ctx.save();
+          ctx.font = `${12 / zoom}px sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          const textW = ctx.measureText(label).width;
+          const pad = 4 / zoom;
+          ctx.fillStyle = COLOR.labelBg;
+          ctx.beginPath();
+          ctx.roundRect(
+            mid.x - textW / 2 - pad,
+            mid.y - 8 / zoom,
+            textW + pad * 2,
+            16 / zoom,
+            4 / zoom,
+          );
+          ctx.fill();
+          ctx.fillStyle = COLOR.label;
+          ctx.fillText(label, mid.x, mid.y);
+          ctx.restore();
+        }
       }
     }
 
@@ -493,14 +587,28 @@ export function initCanvasEngine(
     }
 
     // Snap indicator
-    if (snap && tool === "draw") {
-      const snapped = snapToGrid(mouseCanvas, gridSize);
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(snapped.x, snapped.y, 4 / zoom, 0, Math.PI * 2);
-      ctx.fillStyle = COLOR.snap;
-      ctx.fill();
-      ctx.restore();
+    if (tool === "draw") {
+      let snapped = snap ? snapToGrid(mouseCanvas, gridSize) : mouseCanvas;
+      if (
+        allowedAngles.length > 0 &&
+        activeRunIdx >= 0 &&
+        runs[activeRunIdx] &&
+        runs[activeRunIdx].points.length >= 2 &&
+        !runs[activeRunIdx].finished
+      ) {
+        const run = runs[activeRunIdx];
+        const junction = run.points[run.points.length - 1];
+        const prev = run.points[run.points.length - 2];
+        snapped = snapToAllowedAngle(prev, junction, snapped, allowedAngles);
+      }
+      if (snap || allowedAngles.length > 0) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(snapped.x, snapped.y, 4 / zoom, 0, Math.PI * 2);
+        ctx.fillStyle = COLOR.snap;
+        ctx.fill();
+        ctx.restore();
+      }
     }
 
     // Node labels (A, B, C…) and corner angle annotations
@@ -958,7 +1066,19 @@ export function initCanvasEngine(
     if (e.button !== 0) return;
 
     const canvasPt = eventToCanvas(e);
-    const worldPt = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
+    let worldPt = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
+    if (
+      allowedAngles.length > 0 &&
+      activeRunIdx >= 0 &&
+      runs[activeRunIdx] &&
+      !runs[activeRunIdx].finished &&
+      runs[activeRunIdx].points.length >= 2
+    ) {
+      const run = runs[activeRunIdx];
+      const junction = run.points[run.points.length - 1];
+      const prev = run.points[run.points.length - 2];
+      worldPt = snapToAllowedAngle(prev, junction, worldPt, allowedAngles);
+    }
     const screenPtDown = eventToScreen(e);
 
     // ── Gate hit-test (all modes) ────────────────────────────────────────────
@@ -1438,6 +1558,11 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  function setAllowedAngles(angles: number[]) {
+    allowedAngles = angles;
+    scheduleRedraw();
+  }
+
   function setShowGrid(s: boolean) {
     showGrid = s;
     scheduleRedraw();
@@ -1577,6 +1702,7 @@ export function initCanvasEngine(
     clear,
     resetView,
     setSnapToGrid,
+    setAllowedAngles,
     setShowGrid,
     setScale,
     setMapOpacity,

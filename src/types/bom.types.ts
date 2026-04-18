@@ -33,6 +33,17 @@ export interface BOMResult {
 
 export type PricingTier = 'tier1' | 'tier2' | 'tier3';
 
+export interface CalculatorBOMResult {
+  runResults: Array<{ runId: string; items: BOMLineItem[] }>;
+  gateItems: BOMLineItem[];
+  allItems: BOMLineItem[];
+  total: number;
+  gst: number;
+  grandTotal: number;
+  pricingTier: PricingTier;
+  generatedAt: string;
+}
+
 /** Ad-hoc line item added manually by staff — not from the BOM calculation */
 export interface ExtraItem {
   id: string;           // generated UUID / nanoid
