@@ -6,6 +6,12 @@ import type {
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "../shared/Button";
 
+const calcTotalLength = (run: CanonicalRun) => {
+  return run.segments.reduce((acc, seg) => {
+    return acc + (seg.panelWidthMm ?? 0);
+  }, 0);
+};
+
 export function RunListV3() {
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
@@ -52,6 +58,9 @@ export function RunListV3() {
           <div className="flex gap-3 mb-3 text-xs text-brand-muted">
             <span>Left: {run.leftBoundary.type.replace(/_/g, " ")}</span>
             <span>Right: {run.rightBoundary.type.replace(/_/g, " ")}</span>
+            <span>Corners: {run.corners.length}</span>
+            <span>Segments: {run.segments.length}</span>
+            <span>Total length: {calcTotalLength(run)}mm</span>
           </div>
 
           {run.segments.length === 0 && (
