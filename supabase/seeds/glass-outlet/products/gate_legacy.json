@@ -1,0 +1,2917 @@
+{
+  "org_slug": "glass-outlet",
+  "products": [
+    {
+      "system_type": "GATE",
+      "product_type": "gate",
+      "compatible_with_system_types": [],
+      "name": "Gate",
+      "description": "Swing and sliding gate products.",
+      "active": true,
+      "sort_order": 5,
+      "metadata": {}
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "DD-DROP-BOLT",
+      "name": "Drop Bolt",
+      "description": "Drop Bolt",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 18,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "DD-HINGE-HD",
+      "name": "Heavy Duty Hinge (weld-on)",
+      "description": "Heavy Duty Hinge (weld-on)",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 35,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "DD-KWIKFIT-ADJ",
+      "name": "D&D Kwik Fit Hinge — Adjustable",
+      "description": "D&D Kwik Fit Hinge — Adjustable",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 28.5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "DD-KWIKFIT-FXD",
+      "name": "D&D Kwik Fit Hinge — Fixed",
+      "description": "D&D Kwik Fit Hinge — Fixed",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 24.5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "DD-ML-LB",
+      "name": "D&D Magna Latch + Lock Box",
+      "description": "D&D Magna Latch + Lock Box",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 95,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "DD-ML-TP",
+      "name": "D&D Magna Latch — Top Pull",
+      "description": "D&D Magna Latch — Top Pull",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 65,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-B",
+      "name": "Gate Blade 65mm 6100mm — Black Satin",
+      "description": "Gate Blade 65mm 6100mm — Black Satin",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 38.5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-BS",
+      "name": "Gate Blade 65mm 6100mm — Basalt Satin",
+      "description": "Gate Blade 65mm 6100mm — Basalt Satin",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 38.5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-D",
+      "name": "Gate Blade 65mm 6100mm — Dune Satin",
+      "description": "Gate Blade 65mm 6100mm — Dune Satin",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 38.5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-G",
+      "name": "Gate Blade 65mm 6100mm — Woodland Grey Matt",
+      "description": "Gate Blade 65mm 6100mm — Woodland Grey Matt",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 38.5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-M",
+      "name": "Gate Blade 65mm 6100mm — Mill",
+      "description": "Gate Blade 65mm 6100mm — Mill",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 38.5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-MN",
+      "name": "Gate Blade 65mm 6100mm — Monument Matt",
+      "description": "Gate Blade 65mm 6100mm — Monument Matt",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 38.5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-P",
+      "name": "Gate Blade 65mm 6100mm — Primrose",
+      "description": "Gate Blade 65mm 6100mm — Primrose",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 38.5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-PB",
+      "name": "Gate Blade 65mm 6100mm — Paperbark",
+      "description": "Gate Blade 65mm 6100mm — Paperbark",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 38.5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-S",
+      "name": "Gate Blade 65mm 6100mm — Palladium Silver Pearl",
+      "description": "Gate Blade 65mm 6100mm — Palladium Silver Pearl",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 38.5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-SM",
+      "name": "Gate Blade 65mm 6100mm — Surfmist Matt",
+      "description": "Gate Blade 65mm 6100mm — Surfmist Matt",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 38.5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-W",
+      "name": "Gate Blade 65mm 6100mm — Pearl White Gloss",
+      "description": "Gate Blade 65mm 6100mm — Pearl White Gloss",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 38.5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-B",
+      "name": "Gate Blade 90mm 6100mm — Black Satin",
+      "description": "Gate Blade 90mm 6100mm — Black Satin",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 52,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-BS",
+      "name": "Gate Blade 90mm 6100mm — Basalt Satin",
+      "description": "Gate Blade 90mm 6100mm — Basalt Satin",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 52,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-D",
+      "name": "Gate Blade 90mm 6100mm — Dune Satin",
+      "description": "Gate Blade 90mm 6100mm — Dune Satin",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 52,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-G",
+      "name": "Gate Blade 90mm 6100mm — Woodland Grey Matt",
+      "description": "Gate Blade 90mm 6100mm — Woodland Grey Matt",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 52,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-M",
+      "name": "Gate Blade 90mm 6100mm — Mill",
+      "description": "Gate Blade 90mm 6100mm — Mill",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 52,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-MN",
+      "name": "Gate Blade 90mm 6100mm — Monument Matt",
+      "description": "Gate Blade 90mm 6100mm — Monument Matt",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 52,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-P",
+      "name": "Gate Blade 90mm 6100mm — Primrose",
+      "description": "Gate Blade 90mm 6100mm — Primrose",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 52,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-PB",
+      "name": "Gate Blade 90mm 6100mm — Paperbark",
+      "description": "Gate Blade 90mm 6100mm — Paperbark",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 52,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-S",
+      "name": "Gate Blade 90mm 6100mm — Palladium Silver Pearl",
+      "description": "Gate Blade 90mm 6100mm — Palladium Silver Pearl",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 52,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-SM",
+      "name": "Gate Blade 90mm 6100mm — Surfmist Matt",
+      "description": "Gate Blade 90mm 6100mm — Surfmist Matt",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 52,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-W",
+      "name": "Gate Blade 90mm 6100mm — Pearl White Gloss",
+      "description": "Gate Blade 90mm 6100mm — Pearl White Gloss",
+      "category": "gate",
+      "unit": "length",
+      "default_price": 52,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-B",
+      "name": "Gate Frame Kit 9mm — Black Satin",
+      "description": "Gate Frame Kit 9mm — Black Satin",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-BS",
+      "name": "Gate Frame Kit 9mm — Basalt Satin",
+      "description": "Gate Frame Kit 9mm — Basalt Satin",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-D",
+      "name": "Gate Frame Kit 9mm — Dune Satin",
+      "description": "Gate Frame Kit 9mm — Dune Satin",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-G",
+      "name": "Gate Frame Kit 9mm — Woodland Grey Matt",
+      "description": "Gate Frame Kit 9mm — Woodland Grey Matt",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-M",
+      "name": "Gate Frame Kit 9mm — Mill",
+      "description": "Gate Frame Kit 9mm — Mill",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-MN",
+      "name": "Gate Frame Kit 9mm — Monument Matt",
+      "description": "Gate Frame Kit 9mm — Monument Matt",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-P",
+      "name": "Gate Frame Kit 9mm — Primrose",
+      "description": "Gate Frame Kit 9mm — Primrose",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-PB",
+      "name": "Gate Frame Kit 9mm — Paperbark",
+      "description": "Gate Frame Kit 9mm — Paperbark",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-S",
+      "name": "Gate Frame Kit 9mm — Palladium Silver Pearl",
+      "description": "Gate Frame Kit 9mm — Palladium Silver Pearl",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-SM",
+      "name": "Gate Frame Kit 9mm — Surfmist Matt",
+      "description": "Gate Frame Kit 9mm — Surfmist Matt",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-W",
+      "name": "Gate Frame Kit 9mm — Pearl White Gloss",
+      "description": "Gate Frame Kit 9mm — Pearl White Gloss",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-B",
+      "name": "Gate Frame Kit 20mm — Black Satin",
+      "description": "Gate Frame Kit 20mm — Black Satin",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-BS",
+      "name": "Gate Frame Kit 20mm — Basalt Satin",
+      "description": "Gate Frame Kit 20mm — Basalt Satin",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-D",
+      "name": "Gate Frame Kit 20mm — Dune Satin",
+      "description": "Gate Frame Kit 20mm — Dune Satin",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-G",
+      "name": "Gate Frame Kit 20mm — Woodland Grey Matt",
+      "description": "Gate Frame Kit 20mm — Woodland Grey Matt",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-M",
+      "name": "Gate Frame Kit 20mm — Mill",
+      "description": "Gate Frame Kit 20mm — Mill",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-MN",
+      "name": "Gate Frame Kit 20mm — Monument Matt",
+      "description": "Gate Frame Kit 20mm — Monument Matt",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-P",
+      "name": "Gate Frame Kit 20mm — Primrose",
+      "description": "Gate Frame Kit 20mm — Primrose",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-PB",
+      "name": "Gate Frame Kit 20mm — Paperbark",
+      "description": "Gate Frame Kit 20mm — Paperbark",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-S",
+      "name": "Gate Frame Kit 20mm — Palladium Silver Pearl",
+      "description": "Gate Frame Kit 20mm — Palladium Silver Pearl",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-SM",
+      "name": "Gate Frame Kit 20mm — Surfmist Matt",
+      "description": "Gate Frame Kit 20mm — Surfmist Matt",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-W",
+      "name": "Gate Frame Kit 20mm — Pearl White Gloss",
+      "description": "Gate Frame Kit 20mm — Pearl White Gloss",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 85,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-B",
+      "name": "Gate Post 65x65 — Black Satin",
+      "description": "Gate Post 65x65 — Black Satin",
+      "category": "post",
+      "unit": "each",
+      "default_price": 65,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-BS",
+      "name": "Gate Post 65x65 — Basalt Satin",
+      "description": "Gate Post 65x65 — Basalt Satin",
+      "category": "post",
+      "unit": "each",
+      "default_price": 65,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-D",
+      "name": "Gate Post 65x65 — Dune Satin",
+      "description": "Gate Post 65x65 — Dune Satin",
+      "category": "post",
+      "unit": "each",
+      "default_price": 65,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-G",
+      "name": "Gate Post 65x65 — Woodland Grey Matt",
+      "description": "Gate Post 65x65 — Woodland Grey Matt",
+      "category": "post",
+      "unit": "each",
+      "default_price": 65,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-M",
+      "name": "Gate Post 65x65 — Mill",
+      "description": "Gate Post 65x65 — Mill",
+      "category": "post",
+      "unit": "each",
+      "default_price": 65,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-MN",
+      "name": "Gate Post 65x65 — Monument Matt",
+      "description": "Gate Post 65x65 — Monument Matt",
+      "category": "post",
+      "unit": "each",
+      "default_price": 65,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-P",
+      "name": "Gate Post 65x65 — Primrose",
+      "description": "Gate Post 65x65 — Primrose",
+      "category": "post",
+      "unit": "each",
+      "default_price": 65,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-PB",
+      "name": "Gate Post 65x65 — Paperbark",
+      "description": "Gate Post 65x65 — Paperbark",
+      "category": "post",
+      "unit": "each",
+      "default_price": 65,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-S",
+      "name": "Gate Post 65x65 — Palladium Silver Pearl",
+      "description": "Gate Post 65x65 — Palladium Silver Pearl",
+      "category": "post",
+      "unit": "each",
+      "default_price": 65,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-SM",
+      "name": "Gate Post 65x65 — Surfmist Matt",
+      "description": "Gate Post 65x65 — Surfmist Matt",
+      "category": "post",
+      "unit": "each",
+      "default_price": 65,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-W",
+      "name": "Gate Post 65x65 — Pearl White Gloss",
+      "description": "Gate Post 65x65 — Pearl White Gloss",
+      "category": "post",
+      "unit": "each",
+      "default_price": 65,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-GUIDE-ROLLER",
+      "name": "Guide Roller",
+      "description": "Guide Roller",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 22,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SLIDE-TRACK",
+      "name": "Sliding Gate Track",
+      "description": "Sliding Gate Track",
+      "category": "hardware",
+      "unit": "length",
+      "default_price": 95,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    }
+  ],
+  "pricing_rules": [
+    {
+      "sku": "XP-GKIT-LSET09-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET09-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GKIT-LSET20-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 35.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 35.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 35.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 35.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 35.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 35.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 35.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 35.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 35.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 35.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 35.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 52,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 52,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 52,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 52,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 52,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 52,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 52,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 52,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 52,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 52,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 52,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB90-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 60,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 60,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 60,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 60,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 60,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 60,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 60,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 60,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 60,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 60,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 60,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GP-6565-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-KWIKFIT-ADJ",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 28.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-KWIKFIT-ADJ",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 26.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-KWIKFIT-ADJ",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 24.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-KWIKFIT-FXD",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-KWIKFIT-FXD",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 22.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-KWIKFIT-FXD",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 20.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-HINGE-HD",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 35,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-HINGE-HD",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-HINGE-HD",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-ML-TP",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-ML-TP",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 60,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-ML-TP",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-ML-LB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-ML-LB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 88,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-ML-LB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 81,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-DROP-BOLT",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 18,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-DROP-BOLT",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 16.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-DROP-BOLT",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 15,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SLIDE-TRACK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SLIDE-TRACK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 88,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SLIDE-TRACK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 81,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GUIDE-ROLLER",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 22,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GUIDE-ROLLER",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 20,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-GUIDE-ROLLER",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 18,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    }
+  ]
+}

@@ -35,4 +35,4 @@ enable_confirmations = false
 
 [db.seed]
 enabled = true
-sql_paths = ['./seeds/organizations.sql', './seeds/**/*.sql']
+sql_paths = ['./seeds/organizations.sql']

@@ -26,7 +26,6 @@ export function useProducts() {
       const { data, error } = await supabase
         .from('products')
         .select('id, name, system_type, description, image_url, active, sort_order, metadata')
-        .is('parent_id', null)
         .order('active', { ascending: false })
         .order('sort_order', { ascending: true });
       if (error) throw error;

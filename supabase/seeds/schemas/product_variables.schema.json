@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "product_variables.schema.json",
+  "title": "product_variables",
+  "description": "Declares the input fields the engine needs and their legal values. The engine reads defaults from here before applying user-provided values. Scope determines where the variable lives in the canonical payload: 'job' (top-level variables), 'run' (per-run variables), 'segment' (per-segment variables).",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "product_system_type",
+      "name",
+      "label",
+      "data_type",
+      "required",
+      "scope",
+      "active"
+    ],
+    "properties": {
+      "product_system_type": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string",
+        "description": "Canonical key used by rules/selectors/companions. snake_case. Example: 'colour_code', 'slat_size_mm', 'hinge_type'."
+      },
+      "label": {
+        "type": "string"
+      },
+      "data_type": {
+        "type": "string",
+        "enum": [
+          "enum",
+          "number",
+          "integer",
+          "string",
+          "boolean"
+        ]
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "examples": [
+          "mm",
+          "m",
+          "count",
+          null
+        ]
+      },
+      "required": {
+        "type": "boolean"
+      },
+      "default_value_json": {
+        "description": "Default value, stored as JSONB. Can be any JSON type. null means 'no default'.",
+        "type": [
+          "string",
+          "number",
+          "boolean",
+          "array",
+          "object",
+          "null"
+        ]
+      },
+      "options_json": {
+        "type": "array",
+        "description": "Allowed values for enum fields. Empty array [] for non-enum fields. Array items can be strings, numbers, or objects.",
+        "default": []
+      },
+      "scope": {
+        "type": "string",
+        "enum": [
+          "job",
+          "run",
+          "segment"
+        ],
+        "description": "Where this variable lives in the canonical payload."
+      },
+      "sort_order": {
+        "type": "integer",
+        "default": 0
+      },
+      "active": {
+        "type": "boolean"
+      }
+    }
+  }
+}

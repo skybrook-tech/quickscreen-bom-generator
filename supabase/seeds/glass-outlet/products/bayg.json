@@ -1,0 +1,142 @@
+{
+  "org_slug": "glass-outlet",
+  "products": [
+    {
+      "system_type": "BAYG",
+      "product_type": "fence",
+      "compatible_with_system_types": [],
+      "name": "BAYG Buy As You Go",
+      "description": "Spacers sold separately. Customer assembles themselves.",
+      "active": true,
+      "sort_order": 4,
+      "metadata": {
+        "options": {
+          "colour": [
+            "black-satin",
+            "monument-matt",
+            "woodland-grey-matt",
+            "surfmist-matt",
+            "pearl-white-gloss",
+            "basalt-satin",
+            "dune-satin",
+            "mill",
+            "primrose",
+            "paperbark",
+            "palladium-silver-pearl"
+          ],
+          "slatGap": [
+            "0",
+            "5",
+            "9",
+            "20"
+          ],
+          "slatSize": [
+            "65",
+            "90"
+          ]
+        },
+        "allowedAngles": [
+          90,
+          135,
+          180
+        ]
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "XPL-SB-50PK-09MM",
+      "name": "Spacer Block 9mm (50-pack)",
+      "description": "Spacer Block 9mm (50-pack)",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 3.01,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPL-SB-50PK-20MM",
+      "name": "Spacer Block 20mm (50-pack)",
+      "description": "Spacer Block 20mm (50-pack)",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 3.56,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {},
+      "active": true
+    }
+  ],
+  "pricing_rules": [
+    {
+      "sku": "XPL-SB-50PK-09MM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 3.01,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XPL-SB-50PK-09MM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XPL-SB-50PK-09MM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.41,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XPL-SB-50PK-20MM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 3.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XPL-SB-50PK-20MM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 3.3,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XPL-SB-50PK-20MM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    }
+  ]
+}

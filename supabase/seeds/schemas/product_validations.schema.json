@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "product_validations.schema.json",
+  "title": "product_validations",
+  "description": "Multi-variable validation checks expressed as math.js expressions. The expression should return truthy when the input is valid. severity='error' blocks BOM generation; severity='warning' surfaces a note but generates the BOM anyway.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "product_system_type",
+      "name",
+      "expression",
+      "severity",
+      "message",
+      "active"
+    ],
+    "properties": {
+      "product_system_type": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string"
+      },
+      "expression": {
+        "type": "string",
+        "description": "math.js expression returning boolean. Variables available: all product_variables in current context. Example: 'target_height_mm >= 300 && target_height_mm <= 2700'."
+      },
+      "severity": {
+        "type": "string",
+        "enum": [
+          "error",
+          "warning",
+          "info"
+        ]
+      },
+      "message": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      }
+    }
+  }
+}

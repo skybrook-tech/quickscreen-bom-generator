@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "product_warnings.schema.json",
+  "title": "product_warnings",
+  "description": "Non-blocking reviewer notes + blocking engine errors surfaced per-product. condition_json is matched against the current context; when it evaluates true, the message is attached to the BOM response. severity='error' adds to errors[]; 'warning' adds to warnings[]; 'info' adds to assumptions[].",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "product_system_type",
+      "warning_key",
+      "severity",
+      "message",
+      "active"
+    ],
+    "properties": {
+      "product_system_type": {
+        "type": "string"
+      },
+      "warning_key": {
+        "type": "string"
+      },
+      "severity": {
+        "type": "string",
+        "enum": [
+          "error",
+          "warning",
+          "info"
+        ]
+      },
+      "condition_json": {
+        "type": "object",
+        "description": "Predicate matched against the current context. Supports the comparison operator shorthand from the engine: {\"key\":{\"gt\":N,\"gte\":N,\"lt\":N,\"lte\":N,\"eq\":V,\"neq\":V}}. A bare value {\"key\":V} means equality. Example: {\"panel_width_mm\":{\"gt\":2600}}.",
+        "default": {}
+      },
+      "message": {
+        "type": "string"
+      },
+      "active": {
+        "type": "boolean"
+      }
+    }
+  }
+}

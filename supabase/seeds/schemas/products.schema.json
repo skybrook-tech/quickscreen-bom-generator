@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "products.schema.json",
+  "title": "products",
+  "description": "Catalog entries. Every product is top-level (parent_system_type is deprecated and ignored). `product_type` distinguishes fences from gates from other catalog items. Gate products list which fence system_types they pair with via `compatible_with_system_types`.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "system_type",
+      "product_type",
+      "name",
+      "active"
+    ],
+    "properties": {
+      "system_type": {
+        "type": "string",
+        "description": "Unique (within org) key for this product. Uppercase, underscore-separated. Examples: 'QSHS', 'QS_GATE', 'VS', 'XPL', 'BAYG', 'GATE'."
+      },
+      "product_type": {
+        "type": "string",
+        "enum": ["fence", "gate", "other"],
+        "description": "'fence' for sellable fencing systems; 'gate' for gate products; 'other' for inactive/future catalog families (balustrade, colorbond, glass, etc.)."
+      },
+      "compatible_with_system_types": {
+        "type": "array",
+        "description": "For gate products, list of fence system_types this gate pairs with. Ignored for non-gate products. Example: ['QSHS', 'VS', 'XPL', 'BAYG'].",
+        "items": { "type": "string" },
+        "default": []
+      },
+      "parent_system_type": {
+        "type": ["string", "null"],
+        "description": "DEPRECATED. Pre-flatten variant parent. Always null for new rows; kept optional to tolerate legacy dumps."
+      },
+      "name": { "type": "string" },
+      "description": { "type": ["string", "null"] },
+      "active": { "type": "boolean" },
+      "sort_order": { "type": "integer", "default": 0 },
+      "metadata": {
+        "type": "object",
+        "description": "Free-form product metadata (product_family, layout hints, options list, etc). Keys are not enforced."
+      }
+    }
+  }
+}

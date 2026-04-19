@@ -1,0 +1,1294 @@
+{
+  "org_slug": "glass-outlet",
+  "products": [
+    {
+      "system_type": "QS_GATE",
+      "product_type": "gate",
+      "compatible_with_system_types": [
+        "QSHS",
+        "VS",
+        "XPL",
+        "BAYG"
+      ],
+      "name": "QuickScreen Pedestrian Gate",
+      "description": "Single-leaf swing gate compatible with any QuickScreen slat fence system (QSHS, VS, XPL, BAYG).",
+      "active": true,
+      "sort_order": 6,
+      "metadata": {
+        "mvp": true,
+        "supports_runs": false,
+        "product_family": "gate",
+        "supports_segments": true,
+        "default_layout_type": "single_gate",
+        "supports_layout_canvas": true,
+        "supports_generated_form": true
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "DD-HD-WELD-ON",
+      "name": "Heavy Duty Weld-On Hinge",
+      "description": "Industrial weld-on gate hinge",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 55,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "DD-KWIK-FIT-ADJ",
+      "name": "D&D Kwik Fit Hinge — Adjustable",
+      "description": "3-way adjustable gate hinge",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 45,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "DD-KWIK-FIT-FIXED",
+      "name": "D&D Kwik Fit Hinge — Fixed",
+      "description": "Fixed-position gate hinge",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 45,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "DD-MAGNALATCH-LB",
+      "name": "D&D MagnaLatch + Lock Box",
+      "description": "Magnetic safety latch with lock box",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 65,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "DD-MAGNALATCH-TP",
+      "name": "D&D MagnaLatch — Top Pull",
+      "description": "Magnetic safety latch, top pull",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 65,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "DROP-BOLT-STD",
+      "name": "Drop Bolt — Standard",
+      "description": "Manual drop bolt for gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QSG-FTC-50",
+      "name": "Gate Frame Top Cap 50mm",
+      "description": "Frame top cap for 50mm gate frame",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QSG-FTC-65",
+      "name": "Gate Frame Top Cap 65mm",
+      "description": "Frame top cap for 65mm gate frame",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QSG-FTC-75",
+      "name": "Gate Frame Top Cap 75mm",
+      "description": "Frame top cap for 75mm gate frame",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-05MM-B",
+      "name": "QSHS Gate Side Frame 5mm Gap — Black Satin",
+      "description": "Gate side frame for 5mm gap",
+      "category": "gate_side_frame",
+      "unit": "each",
+      "default_price": 45,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-09MM-B",
+      "name": "QSHS Gate Side Frame 9mm Gap — Black Satin",
+      "description": "Gate side frame for 9mm gap",
+      "category": "gate_side_frame",
+      "unit": "each",
+      "default_price": 45,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-20MM-B",
+      "name": "QSHS Gate Side Frame 20mm Gap — Black Satin",
+      "description": "Gate side frame for 20mm gap",
+      "category": "gate_side_frame",
+      "unit": "each",
+      "default_price": 45,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QSG-JBLOCK-65-4PK",
+      "name": "Gate Joiner Block 65mm — 4 Pack",
+      "description": "Joiner blocks for 65mm gate slats",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 12,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QSG-JBLOCK-90-4PK",
+      "name": "Gate Joiner Block 90mm — 4 Pack",
+      "description": "Joiner blocks for 90mm gate slats",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 12,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QSG-RS-10PK",
+      "name": "Gate Rail Screw — 10 Pack",
+      "description": "Rail fixing screws for gate frame",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 8,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QSG-SC-10PK",
+      "name": "Gate Screw Cover — 10 Pack",
+      "description": "Screw cover caps for gate side frame",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 8,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    }
+  ],
+  "pricing_rules": [
+    {
+      "sku": "QSG-GATESF-05MM-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-05MM-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 38,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-05MM-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-09MM-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-09MM-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 38,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-09MM-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-20MM-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-20MM-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 38,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-20MM-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-JBLOCK-65-4PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 12,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-JBLOCK-65-4PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 10,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-JBLOCK-65-4PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-JBLOCK-90-4PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 12,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-JBLOCK-90-4PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 10,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-JBLOCK-90-4PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-SC-10PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-SC-10PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-SC-10PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 6,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-RS-10PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-RS-10PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-RS-10PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 6,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-FTC-50",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-FTC-50",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-FTC-50",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-FTC-65",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-FTC-65",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-FTC-65",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-FTC-75",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-FTC-75",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QSG-FTC-75",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-KWIK-FIT-FIXED",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-KWIK-FIT-FIXED",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 38,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-KWIK-FIT-FIXED",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-KWIK-FIT-ADJ",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-KWIK-FIT-ADJ",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 38,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-KWIK-FIT-ADJ",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-HD-WELD-ON",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-HD-WELD-ON",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 47,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-HD-WELD-ON",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 40,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-MAGNALATCH-TP",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-MAGNALATCH-TP",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-MAGNALATCH-TP",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-MAGNALATCH-LB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-MAGNALATCH-LB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DROP-BOLT-STD",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DD-MAGNALATCH-LB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DROP-BOLT-STD",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 21,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "DROP-BOLT-STD",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 18,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    }
+  ],
+  "rule_sets": [
+    {
+      "product_system_type": "QS_GATE",
+      "name": "QS Gate Rules",
+      "description": "Data-driven QS_GATE pedestrian gate BOM rules v3",
+      "active": true
+    }
+  ],
+  "rule_versions": [
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "is_current": true,
+      "effective_from": "2026-04-19",
+      "notes": "Initial QS_GATE pedestrian gate v3 rules"
+    }
+  ],
+  "product_constraints": [
+    {
+      "product_system_type": "QS_GATE",
+      "name": "max_gate_height_mm",
+      "constraint_type": "max",
+      "value_text": "2400",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Gate height must be 2400mm or less",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "max_gate_width_err",
+      "constraint_type": "max",
+      "value_text": "1400",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Gate width cannot exceed 1400mm",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "max_gate_width_warn",
+      "constraint_type": "max",
+      "value_text": "1200",
+      "unit": "mm",
+      "severity": "warning",
+      "applies_when_json": {},
+      "message": "Gate width exceeds recommended maximum; consider sliding gate",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "min_gate_height_mm",
+      "constraint_type": "min",
+      "value_text": "600",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Gate height must be at least 600mm",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "min_gate_width_mm",
+      "constraint_type": "min",
+      "value_text": "500",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Gate width must be at least 500mm",
+      "active": true
+    }
+  ],
+  "product_variables": [
+    {
+      "product_system_type": "QS_GATE",
+      "name": "colour_code",
+      "label": "Colour",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "B",
+      "options_json": [
+        "B",
+        "MN",
+        "G",
+        "SM",
+        "W",
+        "BS",
+        "D",
+        "M",
+        "P",
+        "PB",
+        "S"
+      ],
+      "scope": "job",
+      "sort_order": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "frame_cap_size",
+      "label": "Frame Cap Size",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": false,
+      "default_value_json": "50",
+      "options_json": [
+        "50",
+        "65",
+        "75"
+      ],
+      "scope": "segment",
+      "sort_order": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_height_mm",
+      "label": "Gate Height",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 1800,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_qty",
+      "label": "Gate Quantity",
+      "data_type": "integer",
+      "unit": null,
+      "required": false,
+      "default_value_json": 1,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_width_mm",
+      "label": "Gate Width",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 900,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "hinge_side",
+      "label": "Hinge Side",
+      "data_type": "enum",
+      "unit": null,
+      "required": false,
+      "default_value_json": "left",
+      "options_json": [
+        "left",
+        "right"
+      ],
+      "scope": "segment",
+      "sort_order": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "hinge_type",
+      "label": "Hinge Type",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "dd-kwik-fit-fixed",
+      "options_json": [
+        "dd-kwik-fit-fixed",
+        "dd-kwik-fit-adjustable",
+        "heavy-duty-weld-on"
+      ],
+      "scope": "run",
+      "sort_order": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "latch_type",
+      "label": "Latch Type",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "dd-magna-latch-top-pull",
+      "options_json": [
+        "dd-magna-latch-top-pull",
+        "dd-magna-latch-lock-box",
+        "drop-bolt",
+        "none"
+      ],
+      "scope": "run",
+      "sort_order": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "opening_direction",
+      "label": "Opening Direction",
+      "data_type": "enum",
+      "unit": null,
+      "required": false,
+      "default_value_json": "left",
+      "options_json": [
+        "left",
+        "right"
+      ],
+      "scope": "segment",
+      "sort_order": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "slat_gap_mm",
+      "label": "Slat Gap",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 5,
+      "options_json": [
+        0,
+        5,
+        9,
+        20
+      ],
+      "scope": "job",
+      "sort_order": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "slat_size_mm",
+      "label": "Slat Size",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 65,
+      "options_json": [
+        65,
+        90
+      ],
+      "scope": "job",
+      "sort_order": 20,
+      "active": true
+    }
+  ],
+  "product_validations": [
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_height_in_range",
+      "expression": "gate_height_mm >= 600 && gate_height_mm <= 2400",
+      "severity": "error",
+      "message": "Gate height must be between 600mm and 2400mm",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_width_in_range",
+      "expression": "gate_width_mm >= 500 && gate_width_mm <= 1400",
+      "severity": "error",
+      "message": "Gate width must be between 500mm and 1400mm",
+      "active": true
+    }
+  ],
+  "product_rules": [
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "gate_slat_count",
+      "expression": "floor((gate_height_mm - 133 + slat_gap_mm - 3) / (slat_size_mm + slat_gap_mm))",
+      "output_key": "gate_slat_count",
+      "priority": 10,
+      "active": true,
+      "notes": "Gate slat count (deducts 133mm for frame top/bottom + clearances)"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "gate_slat_cut_length_mm",
+      "expression": "gate_width_mm - 86",
+      "output_key": "gate_slat_cut_length_mm",
+      "priority": 20,
+      "active": true,
+      "notes": "Gate slat cut: gate width minus 86mm for side frame deduction"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "gate_hd_rail_cut_length_mm",
+      "expression": "gate_width_mm - 80",
+      "output_key": "gate_hd_rail_cut_length_mm",
+      "priority": 30,
+      "active": true,
+      "notes": "Gate HD rail cut: gate width minus 80mm"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "gate_side_frame_cut_length_mm",
+      "expression": "gate_height_mm - 3",
+      "output_key": "gate_side_frame_cut_length_mm",
+      "priority": 40,
+      "active": true,
+      "notes": "Gate side frame cut (3mm clearance)"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "num_gate_hinges",
+      "expression": "gate_qty * 2",
+      "output_key": "num_gate_hinges",
+      "priority": 50,
+      "active": true,
+      "notes": "2 hinges per gate leaf"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "num_gate_latches",
+      "expression": "gate_qty",
+      "output_key": "num_gate_latches",
+      "priority": 60,
+      "active": true,
+      "notes": "1 latch per gate leaf"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "num_gate_frame_caps",
+      "expression": "gate_qty * 4",
+      "output_key": "num_gate_frame_caps",
+      "priority": 70,
+      "active": true,
+      "notes": "4 frame caps per gate (top + bottom on each side frame)"
+    }
+  ],
+  "product_component_selectors": [
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "qshs_gate_frame_20_gap",
+      "component_category": "gate_side_frame",
+      "selector_type": "exact",
+      "match_json": {
+        "gate_family": "QS_GATE",
+        "slat_gap_mm": 20
+      },
+      "sku_pattern": "QSG-GATESF-20MM-{colour}",
+      "priority": 100,
+      "notes": "QSHS gate side frame 20mm gap",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "qshs_gate_frame_5_gap",
+      "component_category": "gate_side_frame",
+      "selector_type": "exact",
+      "match_json": {
+        "gate_family": "QS_GATE",
+        "slat_gap_mm": 5
+      },
+      "sku_pattern": "QSG-GATESF-05MM-{colour}",
+      "priority": 100,
+      "notes": "QSHS gate side frame 5mm gap",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "qshs_gate_frame_9_gap",
+      "component_category": "gate_side_frame",
+      "selector_type": "exact",
+      "match_json": {
+        "gate_family": "QS_GATE",
+        "slat_gap_mm": 9
+      },
+      "sku_pattern": "QSG-GATESF-09MM-{colour}",
+      "priority": 100,
+      "notes": "QSHS gate side frame 9mm gap",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "qshs_gate_joiner_65",
+      "component_category": "joiner_block",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_size_mm": 65
+      },
+      "sku_pattern": "QSG-JBLOCK-65-4PK",
+      "priority": 100,
+      "notes": "Joiner block 65mm gate",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "qshs_gate_joiner_90",
+      "component_category": "joiner_block",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_size_mm": 90
+      },
+      "sku_pattern": "QSG-JBLOCK-90-4PK",
+      "priority": 100,
+      "notes": "Joiner block 90mm gate",
+      "active": true
+    }
+  ],
+  "product_companion_rules": [
+    {
+      "product_system_type": "QS_GATE",
+      "rule_key": "ped_gate_hinges",
+      "trigger_category": "gate",
+      "trigger_match_json": {},
+      "add_category": "hinge_set",
+      "add_sku_pattern": "{selected_hinge_sku}",
+      "qty_formula": "gate_qty",
+      "is_pack": false,
+      "priority": 10,
+      "notes": "User-selected hinge kit — 1 set per gate",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_key": "ped_gate_latch",
+      "trigger_category": "gate",
+      "trigger_match_json": {},
+      "add_category": "latch_set",
+      "add_sku_pattern": "{selected_latch_sku}",
+      "qty_formula": "gate_qty",
+      "is_pack": false,
+      "priority": 20,
+      "notes": "User-selected latch — 1 per gate",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_key": "qshs_gate_caps",
+      "trigger_category": "gate_side_frame",
+      "trigger_match_json": {},
+      "add_category": "frame_cap",
+      "add_sku_pattern": "QSG-FTC-{frame_cap_size}",
+      "qty_formula": "gate_qty * 4",
+      "is_pack": false,
+      "priority": 50,
+      "notes": "4 frame caps per gate (top + bottom × 2 side frames)",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_key": "qshs_gate_rs",
+      "trigger_category": "rail",
+      "trigger_match_json": {},
+      "add_category": "rail_screw_pack",
+      "add_sku_pattern": "QSG-RS-10PK",
+      "qty_formula": "ceil(gate_qty/10)",
+      "is_pack": true,
+      "priority": 40,
+      "notes": "QSG rail screws — 1 pack per 10 gates",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_key": "qshs_gate_sc",
+      "trigger_category": "gate_side_frame",
+      "trigger_match_json": {},
+      "add_category": "screw_cover_pack",
+      "add_sku_pattern": "QSG-SC-10PK",
+      "qty_formula": "ceil(gate_qty/10)",
+      "is_pack": true,
+      "priority": 30,
+      "notes": "QSG screw covers — 1 pack per 10 gates",
+      "active": true
+    }
+  ],
+  "product_warnings": [
+    {
+      "product_system_type": "QS_GATE",
+      "warning_key": "ped_gate_height_warn",
+      "severity": "warning",
+      "condition_json": {
+        "gate_height_mm": {
+          "gt": 2100
+        }
+      },
+      "message": "Pedestrian gate height exceeds standard recommended maximum.",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "warning_key": "ped_gate_width_warn",
+      "severity": "warning",
+      "condition_json": {
+        "gate_width_mm": {
+          "gt": 1200
+        }
+      },
+      "message": "Pedestrian gate width exceeds recommended maximum; consider a sliding gate.",
+      "active": true
+    }
+  ]
+}

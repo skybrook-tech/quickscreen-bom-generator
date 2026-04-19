@@ -1,0 +1,45 @@
+{
+  "org_slug": "glass-outlet",
+  "products": [
+    {
+      "system_type": "VS",
+      "product_type": "fence",
+      "compatible_with_system_types": [],
+      "name": "VS Vertical Slat Screen",
+      "description": "Vertical slat orientation. Slats insert into top and bottom rails.",
+      "active": true,
+      "sort_order": 2,
+      "metadata": {
+        "options": {
+          "colour": [
+            "black-satin",
+            "monument-matt",
+            "woodland-grey-matt",
+            "surfmist-matt",
+            "pearl-white-gloss",
+            "basalt-satin",
+            "dune-satin",
+            "mill",
+            "primrose",
+            "paperbark",
+            "palladium-silver-pearl"
+          ],
+          "slatGap": [
+            "5",
+            "9",
+            "20"
+          ],
+          "slatSize": [
+            "65",
+            "90"
+          ]
+        },
+        "allowedAngles": [
+          90,
+          135,
+          180
+        ]
+      }
+    }
+  ]
+}

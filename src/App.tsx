@@ -1,14 +1,13 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
 import { queryClient } from "./lib/queryClient";
 import { AuthGuard } from "./components/auth/AuthGuard";
 import { LoginPage } from "./pages/LoginPage";
-// import { HomePage } from "./pages/HomePage";
 import { MainApp } from "./pages/MainApp";
 import { QuotesHistoryPage } from "./pages/QuotesHistoryPage";
 import { QuoteViewPage } from "./pages/QuoteViewPage";
-import { CalculatorPage } from "./pages/CalculatorPage";
+import { CalculatorV3Page } from "./pages/CalculatorV3Page";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 
 function ThemedToaster() {
@@ -18,14 +17,7 @@ function ThemedToaster() {
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
-  // {
-  //   path: "/",
-  //   element: (
-  //     <AuthGuard>
-  //       <HomePage />
-  //     </AuthGuard>
-  //   ),
-  // },
+  { path: "/", element: <Navigate to="/calculator" replace /> },
   {
     path: "/new",
     element: (
@@ -35,10 +27,10 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/",
+    path: "/calculator",
     element: (
       <AuthGuard>
-        <CalculatorPage />
+        <CalculatorV3Page />
       </AuthGuard>
     ),
   },

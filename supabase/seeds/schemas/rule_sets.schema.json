@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rule_sets.schema.json",
+  "title": "rule_sets",
+  "description": "Named container of BOM calculation rules for one product. Each rule set has one or more rule_versions; only one version is current at a time. Engine reads rules, constraints, validations, etc. via the current version.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "product_system_type",
+      "name",
+      "active"
+    ],
+    "properties": {
+      "product_system_type": {
+        "type": "string",
+        "description": "system_type of the variant product this rule set belongs to (e.g. 'QSHS', 'QSHS_GATE')."
+      },
+      "name": {
+        "type": "string",
+        "description": "Human-readable rule set name, unique per product. Examples: 'QSHS Fence Rules', 'QSHS Gate Rules'."
+      },
+      "description": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "active": {
+        "type": "boolean"
+      }
+    }
+  }
+}

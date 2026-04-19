@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "product_companion_rules.schema.json",
+  "title": "product_companion_rules",
+  "description": "Auto-add rules: 'when we add X, also add Y'. Triggered by the presence of a line in trigger_category (optionally filtered by trigger_match_json). Emits another line in add_category with SKU from add_sku_pattern and quantity from qty_formula. Example: every side_frame triggers one cfc_cover of the same colour; every slat triggers one spacer per 50 slats.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "product_system_type",
+      "rule_key",
+      "trigger_category",
+      "add_category",
+      "add_sku_pattern",
+      "qty_formula",
+      "active"
+    ],
+    "properties": {
+      "product_system_type": {
+        "type": "string"
+      },
+      "rule_key": {
+        "type": "string",
+        "description": "Short stable identifier."
+      },
+      "trigger_category": {
+        "type": "string",
+        "description": "Fires when a line in this component_category is present. Examples: 'slat', 'side_frame', 'csr', 'gate', 'gate_side_frame'."
+      },
+      "trigger_match_json": {
+        "type": "object",
+        "description": "Additional filter on the triggering context. Empty {} = fire on any row in trigger_category. Example: {\"slat_gap_mm\":5}.",
+        "default": {}
+      },
+      "add_category": {
+        "type": "string",
+        "description": "Category of the companion line being added. Examples: 'cfc_cover', 'spacer_pack', 'sf_cap', 'hinge_set', 'latch_set'."
+      },
+      "add_sku_pattern": {
+        "type": "string",
+        "description": "SKU of the companion line. Supports {colour}/{finish}/{frame_cap_size} placeholders and the special placeholders {selected_hinge_sku} / {selected_latch_sku} which resolve via user-chosen hardware variables."
+      },
+      "qty_formula": {
+        "type": "string",
+        "description": "math.js expression evaluated in the run/segment context. Examples: 'gate_qty', 'gate_qty * 2', 'ceil(slat_qty/50)', 'same_as(side_frame_qty)'."
+      },
+      "is_pack": {
+        "type": "boolean",
+        "description": "True if the companion SKU is sold as a pack (e.g. 50-pack of screws). Affects rounding behaviour in qty_formula.",
+        "default": false
+      },
+      "priority": {
+        "type": "integer",
+        "default": 100
+      },
+      "notes": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "active": {
+        "type": "boolean"
+      }
+    }
+  }
+}

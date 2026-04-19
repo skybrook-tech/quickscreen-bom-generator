@@ -1,0 +1,2633 @@
+{
+  "org_slug": "glass-outlet",
+  "products": [
+    {
+      "system_type": "XPL",
+      "product_type": "fence",
+      "compatible_with_system_types": [],
+      "name": "XPL XPress Plus Premium",
+      "description": "65mm slats only (forced). Insert/clip system with different bracket requirements.",
+      "active": true,
+      "sort_order": 3,
+      "metadata": {
+        "options": {
+          "colour": [
+            "black-satin",
+            "monument-matt",
+            "woodland-grey-matt",
+            "surfmist-matt",
+            "pearl-white-gloss",
+            "basalt-satin",
+            "dune-satin",
+            "mill",
+            "primrose",
+            "paperbark",
+            "palladium-silver-pearl"
+          ],
+          "slatGap": [
+            "5",
+            "9",
+            "20"
+          ],
+          "slatSize": [
+            "65"
+          ]
+        },
+        "allowedAngles": [
+          90,
+          135,
+          180
+        ]
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "XP-2400-FP-B",
+      "name": "Full Post 2400mm — Black Satin",
+      "description": "Full Post 2400mm — Black Satin",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-BS",
+      "name": "Full Post 2400mm — Basalt Satin",
+      "description": "Full Post 2400mm — Basalt Satin",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-D",
+      "name": "Full Post 2400mm — Dune Satin",
+      "description": "Full Post 2400mm — Dune Satin",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-G",
+      "name": "Full Post 2400mm — Woodland Grey Matt",
+      "description": "Full Post 2400mm — Woodland Grey Matt",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-M",
+      "name": "Full Post 2400mm — Mill",
+      "description": "Full Post 2400mm — Mill",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-MN",
+      "name": "Full Post 2400mm — Monument Matt",
+      "description": "Full Post 2400mm — Monument Matt",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-P",
+      "name": "Full Post 2400mm — Primrose",
+      "description": "Full Post 2400mm — Primrose",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-PB",
+      "name": "Full Post 2400mm — Paperbark",
+      "description": "Full Post 2400mm — Paperbark",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-S",
+      "name": "Full Post 2400mm — Palladium Silver Pearl",
+      "description": "Full Post 2400mm — Palladium Silver Pearl",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-SM",
+      "name": "Full Post 2400mm — Surfmist Matt",
+      "description": "Full Post 2400mm — Surfmist Matt",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-W",
+      "name": "Full Post 2400mm — Pearl White Gloss",
+      "description": "Full Post 2400mm — Pearl White Gloss",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-B",
+      "name": "65mm Slat 6100mm — Black Satin",
+      "description": "65mm Slat 6100mm — Black Satin",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-BS",
+      "name": "65mm Slat 6100mm — Basalt Satin",
+      "description": "65mm Slat 6100mm — Basalt Satin",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-D",
+      "name": "65mm Slat 6100mm — Dune Satin",
+      "description": "65mm Slat 6100mm — Dune Satin",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-G",
+      "name": "65mm Slat 6100mm — Woodland Grey Matt",
+      "description": "65mm Slat 6100mm — Woodland Grey Matt",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-M",
+      "name": "65mm Slat 6100mm — Mill",
+      "description": "65mm Slat 6100mm — Mill",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-MN",
+      "name": "65mm Slat 6100mm — Monument Matt",
+      "description": "65mm Slat 6100mm — Monument Matt",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-P",
+      "name": "65mm Slat 6100mm — Primrose",
+      "description": "65mm Slat 6100mm — Primrose",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-PB",
+      "name": "65mm Slat 6100mm — Paperbark",
+      "description": "65mm Slat 6100mm — Paperbark",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-S",
+      "name": "65mm Slat 6100mm — Palladium Silver Pearl",
+      "description": "65mm Slat 6100mm — Palladium Silver Pearl",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-SM",
+      "name": "65mm Slat 6100mm — Surfmist Matt",
+      "description": "65mm Slat 6100mm — Surfmist Matt",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-W",
+      "name": "65mm Slat 6100mm — Pearl White Gloss",
+      "description": "65mm Slat 6100mm — Pearl White Gloss",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-B",
+      "name": "Base/Top Plate — Black Satin",
+      "description": "Base/Top Plate — Black Satin",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-BS",
+      "name": "Base/Top Plate — Basalt Satin",
+      "description": "Base/Top Plate — Basalt Satin",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-D",
+      "name": "Base/Top Plate — Dune Satin",
+      "description": "Base/Top Plate — Dune Satin",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-G",
+      "name": "Base/Top Plate — Woodland Grey Matt",
+      "description": "Base/Top Plate — Woodland Grey Matt",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-M",
+      "name": "Base/Top Plate — Mill",
+      "description": "Base/Top Plate — Mill",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-MN",
+      "name": "Base/Top Plate — Monument Matt",
+      "description": "Base/Top Plate — Monument Matt",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-P",
+      "name": "Base/Top Plate — Primrose",
+      "description": "Base/Top Plate — Primrose",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-PB",
+      "name": "Base/Top Plate — Paperbark",
+      "description": "Base/Top Plate — Paperbark",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-S",
+      "name": "Base/Top Plate — Palladium Silver Pearl",
+      "description": "Base/Top Plate — Palladium Silver Pearl",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-SM",
+      "name": "Base/Top Plate — Surfmist Matt",
+      "description": "Base/Top Plate — Surfmist Matt",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-W",
+      "name": "Base/Top Plate — Pearl White Gloss",
+      "description": "Base/Top Plate — Pearl White Gloss",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-B",
+      "name": "CSR End Cap — Black Satin",
+      "description": "CSR End Cap — Black Satin",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-BS",
+      "name": "CSR End Cap — Basalt Satin",
+      "description": "CSR End Cap — Basalt Satin",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-D",
+      "name": "CSR End Cap — Dune Satin",
+      "description": "CSR End Cap — Dune Satin",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-G",
+      "name": "CSR End Cap — Woodland Grey Matt",
+      "description": "CSR End Cap — Woodland Grey Matt",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-M",
+      "name": "CSR End Cap — Mill",
+      "description": "CSR End Cap — Mill",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-MN",
+      "name": "CSR End Cap — Monument Matt",
+      "description": "CSR End Cap — Monument Matt",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-P",
+      "name": "CSR End Cap — Primrose",
+      "description": "CSR End Cap — Primrose",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-PB",
+      "name": "CSR End Cap — Paperbark",
+      "description": "CSR End Cap — Paperbark",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-S",
+      "name": "CSR End Cap — Palladium Silver Pearl",
+      "description": "CSR End Cap — Palladium Silver Pearl",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-SM",
+      "name": "CSR End Cap — Surfmist Matt",
+      "description": "CSR End Cap — Surfmist Matt",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-W",
+      "name": "CSR End Cap — Pearl White Gloss",
+      "description": "CSR End Cap — Pearl White Gloss",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-B",
+      "name": "Screw Pack 100 — Black Satin",
+      "description": "Screw Pack 100 — Black Satin",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-BS",
+      "name": "Screw Pack 100 — Basalt Satin",
+      "description": "Screw Pack 100 — Basalt Satin",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-D",
+      "name": "Screw Pack 100 — Dune Satin",
+      "description": "Screw Pack 100 — Dune Satin",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-G",
+      "name": "Screw Pack 100 — Woodland Grey Matt",
+      "description": "Screw Pack 100 — Woodland Grey Matt",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-M",
+      "name": "Screw Pack 100 — Mill",
+      "description": "Screw Pack 100 — Mill",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-MN",
+      "name": "Screw Pack 100 — Monument Matt",
+      "description": "Screw Pack 100 — Monument Matt",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-P",
+      "name": "Screw Pack 100 — Primrose",
+      "description": "Screw Pack 100 — Primrose",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-PB",
+      "name": "Screw Pack 100 — Paperbark",
+      "description": "Screw Pack 100 — Paperbark",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-S",
+      "name": "Screw Pack 100 — Palladium Silver Pearl",
+      "description": "Screw Pack 100 — Palladium Silver Pearl",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-SM",
+      "name": "Screw Pack 100 — Surfmist Matt",
+      "description": "Screw Pack 100 — Surfmist Matt",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-W",
+      "name": "Screw Pack 100 — Pearl White Gloss",
+      "description": "Screw Pack 100 — Pearl White Gloss",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    }
+  ],
+  "pricing_rules": [
+    {
+      "sku": "XP-6100-S65-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    }
+  ]
+}

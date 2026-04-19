@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "product_component_selectors.schema.json",
+  "title": "product_component_selectors",
+  "description": "Maps a component category + match conditions to a SKU (or SKU pattern). When the engine needs to emit a line of component_category X, it scans selectors for that category ordered by priority (lower first) and picks the first whose match_json matches the current context. sku_pattern supports placeholders: {colour}, {finish}, {frame_cap_size}, {selected_hinge_sku}, {selected_latch_sku} — resolved at BOM-run time.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "product_system_type",
+      "selector_key",
+      "component_category",
+      "selector_type",
+      "sku_pattern",
+      "active"
+    ],
+    "properties": {
+      "product_system_type": {
+        "type": "string"
+      },
+      "selector_key": {
+        "type": "string",
+        "description": "Short stable identifier unique within the product."
+      },
+      "component_category": {
+        "type": "string",
+        "description": "Must match a category value used in product_components and referenced by engine rules. Examples: 'slat', 'side_frame', 'cfc_cover', 'centre_support_rail', 'f_section', 'gate_side_frame', 'joiner_block'."
+      },
+      "selector_type": {
+        "type": "string",
+        "enum": [
+          "exact",
+          "fallback"
+        ],
+        "description": "Currently only 'exact' is widely used. Reserved for future strategies."
+      },
+      "match_json": {
+        "type": "object",
+        "description": "Key/value predicates matched against the current context (job + run + segment + derived variables). Empty {} matches always.",
+        "default": {}
+      },
+      "sku_pattern": {
+        "type": "string",
+        "description": "Resolved SKU. Placeholders are substituted at BOM-run time. Example: 'XP-6100-S65-{colour}' → 'XP-6100-S65-B' when colour_code is 'B'."
+      },
+      "priority": {
+        "type": "integer",
+        "description": "Lower number = higher priority (tried first).",
+        "default": 100
+      },
+      "notes": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "active": {
+        "type": "boolean"
+      }
+    }
+  }
+}

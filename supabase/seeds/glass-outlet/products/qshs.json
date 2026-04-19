@@ -1,0 +1,5946 @@
+{
+  "org_slug": "glass-outlet",
+  "products": [
+    {
+      "system_type": "QSHS",
+      "product_type": "fence",
+      "compatible_with_system_types": [],
+      "name": "QSHS Horizontal Slat Screen",
+      "description": "Standard horizontal slat system. Slats run horizontally, inserted into slotted posts.",
+      "active": true,
+      "sort_order": 1,
+      "metadata": {
+        "options": {
+          "colour": [
+            "black-satin",
+            "monument-matt",
+            "woodland-grey-matt",
+            "surfmist-matt",
+            "pearl-white-gloss",
+            "basalt-satin",
+            "dune-satin",
+            "mill",
+            "primrose",
+            "paperbark",
+            "palladium-silver-pearl"
+          ],
+          "slatGap": [
+            "0",
+            "5",
+            "9",
+            "20"
+          ],
+          "slatSize": [
+            "65",
+            "90"
+          ]
+        },
+        "allowedAngles": [
+          90,
+          135,
+          180
+        ]
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "QS-5800-CFC-B",
+      "name": "CFC 5800mm — Black Satin",
+      "description": "CFC 5800mm — Black Satin",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 16.92,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-BS",
+      "name": "CFC 5800mm — Basalt Satin",
+      "description": "CFC 5800mm — Basalt Satin",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 16.92,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-D",
+      "name": "CFC 5800mm — Dune Satin",
+      "description": "CFC 5800mm — Dune Satin",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 16.92,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-G",
+      "name": "CFC 5800mm — Woodland Grey Matt",
+      "description": "CFC 5800mm — Woodland Grey Matt",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 16.92,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-M",
+      "name": "CFC 5800mm — Mill",
+      "description": "CFC 5800mm — Mill",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 16.92,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-MN",
+      "name": "CFC 5800mm — Monument Matt",
+      "description": "CFC 5800mm — Monument Matt",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 16.92,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-P",
+      "name": "CFC 5800mm — Primrose",
+      "description": "CFC 5800mm — Primrose",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 16.92,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-PB",
+      "name": "CFC 5800mm — Paperbark",
+      "description": "CFC 5800mm — Paperbark",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 16.92,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-S",
+      "name": "CFC 5800mm — Palladium Silver Pearl",
+      "description": "CFC 5800mm — Palladium Silver Pearl",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 16.92,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-SM",
+      "name": "CFC 5800mm — Surfmist Matt",
+      "description": "CFC 5800mm — Surfmist Matt",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 16.92,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-W",
+      "name": "CFC 5800mm — Pearl White Gloss",
+      "description": "CFC 5800mm — Pearl White Gloss",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 16.92,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-F-B",
+      "name": "F-Section 5800mm — Black Satin",
+      "description": "Wall-termination F-section",
+      "category": "f_section",
+      "unit": "length",
+      "default_price": 13.75,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-B",
+      "name": "Side Frame 5800mm — Black Satin",
+      "description": "Side Frame 5800mm — Black Satin",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 24.35,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-BS",
+      "name": "Side Frame 5800mm — Basalt Satin",
+      "description": "Side Frame 5800mm — Basalt Satin",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 24.35,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-D",
+      "name": "Side Frame 5800mm — Dune Satin",
+      "description": "Side Frame 5800mm — Dune Satin",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 24.35,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-G",
+      "name": "Side Frame 5800mm — Woodland Grey Matt",
+      "description": "Side Frame 5800mm — Woodland Grey Matt",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 24.35,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-M",
+      "name": "Side Frame 5800mm — Mill",
+      "description": "Side Frame 5800mm — Mill",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 24.35,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-MN",
+      "name": "Side Frame 5800mm — Monument Matt",
+      "description": "Side Frame 5800mm — Monument Matt",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 24.35,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-P",
+      "name": "Side Frame 5800mm — Primrose",
+      "description": "Side Frame 5800mm — Primrose",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 24.35,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-PB",
+      "name": "Side Frame 5800mm — Paperbark",
+      "description": "Side Frame 5800mm — Paperbark",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 24.35,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-S",
+      "name": "Side Frame 5800mm — Palladium Silver Pearl",
+      "description": "Side Frame 5800mm — Palladium Silver Pearl",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 24.35,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-SM",
+      "name": "Side Frame 5800mm — Surfmist Matt",
+      "description": "Side Frame 5800mm — Surfmist Matt",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 24.35,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-W",
+      "name": "Side Frame 5800mm — Pearl White Gloss",
+      "description": "Side Frame 5800mm — Pearl White Gloss",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 24.35,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-B",
+      "name": "90mm Slat 6100mm — Black Satin",
+      "description": "90mm Slat 6100mm — Black Satin",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 50.49,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-BS",
+      "name": "90mm Slat 6100mm — Basalt Satin",
+      "description": "90mm Slat 6100mm — Basalt Satin",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 50.49,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-D",
+      "name": "90mm Slat 6100mm — Dune Satin",
+      "description": "90mm Slat 6100mm — Dune Satin",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 50.49,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-G",
+      "name": "90mm Slat 6100mm — Woodland Grey Matt",
+      "description": "90mm Slat 6100mm — Woodland Grey Matt",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 50.49,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-M",
+      "name": "90mm Slat 6100mm — Mill",
+      "description": "90mm Slat 6100mm — Mill",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 50.49,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-MN",
+      "name": "90mm Slat 6100mm — Monument Matt",
+      "description": "90mm Slat 6100mm — Monument Matt",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 50.49,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-P",
+      "name": "90mm Slat 6100mm — Primrose",
+      "description": "90mm Slat 6100mm — Primrose",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 50.49,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-PB",
+      "name": "90mm Slat 6100mm — Paperbark",
+      "description": "90mm Slat 6100mm — Paperbark",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 50.49,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-S",
+      "name": "90mm Slat 6100mm — Palladium Silver Pearl",
+      "description": "90mm Slat 6100mm — Palladium Silver Pearl",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 50.49,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-SM",
+      "name": "90mm Slat 6100mm — Surfmist Matt",
+      "description": "90mm Slat 6100mm — Surfmist Matt",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 50.49,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-W",
+      "name": "90mm Slat 6100mm — Pearl White Gloss",
+      "description": "90mm Slat 6100mm — Pearl White Gloss",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 50.49,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-SCREWS-50PK",
+      "name": "Screening Screws — 50 Pack",
+      "description": "Self-drilling screen fixing screws",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 18,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-SFC-B",
+      "name": "Side Frame Cap (Black)",
+      "description": "Side Frame Cap (Black)",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 0.86,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-SFCAP-ACC-2PK",
+      "name": "Side Frame Cap — 2 Pack",
+      "description": "Side frame caps (pair)",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 6,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-05MM-50PK",
+      "name": "5mm Spacer Block — 50 Pack",
+      "description": "5mm slat gap spacers",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 12,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-09MM-50PK",
+      "name": "9mm Spacer Block — 50 Pack",
+      "description": "9mm slat gap spacers",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 12,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-20MM-50PK",
+      "name": "20mm Spacer Block — 50 Pack",
+      "description": "20mm slat gap spacers",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 12,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "S-120ROD-4PK",
+      "name": "Concrete Fixing Rod Kit — 4 Pack",
+      "description": "Base plate concrete anchoring rods",
+      "category": "mounting",
+      "unit": "pack",
+      "default_price": 16,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-B",
+      "name": "Full Post 2400mm — Black Satin",
+      "description": "Full Post 2400mm — Black Satin",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-BS",
+      "name": "Full Post 2400mm — Basalt Satin",
+      "description": "Full Post 2400mm — Basalt Satin",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-D",
+      "name": "Full Post 2400mm — Dune Satin",
+      "description": "Full Post 2400mm — Dune Satin",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-G",
+      "name": "Full Post 2400mm — Woodland Grey Matt",
+      "description": "Full Post 2400mm — Woodland Grey Matt",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-M",
+      "name": "Full Post 2400mm — Mill",
+      "description": "Full Post 2400mm — Mill",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-MN",
+      "name": "Full Post 2400mm — Monument Matt",
+      "description": "Full Post 2400mm — Monument Matt",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-P",
+      "name": "Full Post 2400mm — Primrose",
+      "description": "Full Post 2400mm — Primrose",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-PB",
+      "name": "Full Post 2400mm — Paperbark",
+      "description": "Full Post 2400mm — Paperbark",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-S",
+      "name": "Full Post 2400mm — Palladium Silver Pearl",
+      "description": "Full Post 2400mm — Palladium Silver Pearl",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-SM",
+      "name": "Full Post 2400mm — Surfmist Matt",
+      "description": "Full Post 2400mm — Surfmist Matt",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-W",
+      "name": "Full Post 2400mm — Pearl White Gloss",
+      "description": "Full Post 2400mm — Pearl White Gloss",
+      "category": "post",
+      "unit": "each",
+      "default_price": 38.55,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-B",
+      "name": "CSR 5800mm — Black Satin",
+      "description": "CSR 5800mm — Black Satin",
+      "category": "bracket",
+      "unit": "length",
+      "default_price": 43.48,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-BS",
+      "name": "CSR 5800mm — Basalt Satin",
+      "description": "CSR 5800mm — Basalt Satin",
+      "category": "bracket",
+      "unit": "length",
+      "default_price": 43.48,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-D",
+      "name": "CSR 5800mm — Dune Satin",
+      "description": "CSR 5800mm — Dune Satin",
+      "category": "bracket",
+      "unit": "length",
+      "default_price": 43.48,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-G",
+      "name": "CSR 5800mm — Woodland Grey Matt",
+      "description": "CSR 5800mm — Woodland Grey Matt",
+      "category": "bracket",
+      "unit": "length",
+      "default_price": 43.48,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-M",
+      "name": "CSR 5800mm — Mill",
+      "description": "CSR 5800mm — Mill",
+      "category": "bracket",
+      "unit": "length",
+      "default_price": 43.48,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-MN",
+      "name": "CSR 5800mm — Monument Matt",
+      "description": "CSR 5800mm — Monument Matt",
+      "category": "bracket",
+      "unit": "length",
+      "default_price": 43.48,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-P",
+      "name": "CSR 5800mm — Primrose",
+      "description": "CSR 5800mm — Primrose",
+      "category": "bracket",
+      "unit": "length",
+      "default_price": 43.48,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-PB",
+      "name": "CSR 5800mm — Paperbark",
+      "description": "CSR 5800mm — Paperbark",
+      "category": "bracket",
+      "unit": "length",
+      "default_price": 43.48,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-S",
+      "name": "CSR 5800mm — Palladium Silver Pearl",
+      "description": "CSR 5800mm — Palladium Silver Pearl",
+      "category": "bracket",
+      "unit": "length",
+      "default_price": 43.48,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-SM",
+      "name": "CSR 5800mm — Surfmist Matt",
+      "description": "CSR 5800mm — Surfmist Matt",
+      "category": "bracket",
+      "unit": "length",
+      "default_price": 43.48,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-W",
+      "name": "CSR 5800mm — Pearl White Gloss",
+      "description": "CSR 5800mm — Pearl White Gloss",
+      "category": "bracket",
+      "unit": "length",
+      "default_price": 43.48,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-B",
+      "name": "65mm Slat 6100mm — Black Satin",
+      "description": "65mm Slat 6100mm — Black Satin",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-BS",
+      "name": "65mm Slat 6100mm — Basalt Satin",
+      "description": "65mm Slat 6100mm — Basalt Satin",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-D",
+      "name": "65mm Slat 6100mm — Dune Satin",
+      "description": "65mm Slat 6100mm — Dune Satin",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-G",
+      "name": "65mm Slat 6100mm — Woodland Grey Matt",
+      "description": "65mm Slat 6100mm — Woodland Grey Matt",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-M",
+      "name": "65mm Slat 6100mm — Mill",
+      "description": "65mm Slat 6100mm — Mill",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-MN",
+      "name": "65mm Slat 6100mm — Monument Matt",
+      "description": "65mm Slat 6100mm — Monument Matt",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-P",
+      "name": "65mm Slat 6100mm — Primrose",
+      "description": "65mm Slat 6100mm — Primrose",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-PB",
+      "name": "65mm Slat 6100mm — Paperbark",
+      "description": "65mm Slat 6100mm — Paperbark",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-S",
+      "name": "65mm Slat 6100mm — Palladium Silver Pearl",
+      "description": "65mm Slat 6100mm — Palladium Silver Pearl",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-SM",
+      "name": "65mm Slat 6100mm — Surfmist Matt",
+      "description": "65mm Slat 6100mm — Surfmist Matt",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-W",
+      "name": "65mm Slat 6100mm — Pearl White Gloss",
+      "description": "65mm Slat 6100mm — Pearl White Gloss",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 37.29,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-B",
+      "name": "Base/Top Plate — Black Satin",
+      "description": "Base/Top Plate — Black Satin",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-BS",
+      "name": "Base/Top Plate — Basalt Satin",
+      "description": "Base/Top Plate — Basalt Satin",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-D",
+      "name": "Base/Top Plate — Dune Satin",
+      "description": "Base/Top Plate — Dune Satin",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-G",
+      "name": "Base/Top Plate — Woodland Grey Matt",
+      "description": "Base/Top Plate — Woodland Grey Matt",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-M",
+      "name": "Base/Top Plate — Mill",
+      "description": "Base/Top Plate — Mill",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-MN",
+      "name": "Base/Top Plate — Monument Matt",
+      "description": "Base/Top Plate — Monument Matt",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-P",
+      "name": "Base/Top Plate — Primrose",
+      "description": "Base/Top Plate — Primrose",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-PB",
+      "name": "Base/Top Plate — Paperbark",
+      "description": "Base/Top Plate — Paperbark",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-S",
+      "name": "Base/Top Plate — Palladium Silver Pearl",
+      "description": "Base/Top Plate — Palladium Silver Pearl",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-SM",
+      "name": "Base/Top Plate — Surfmist Matt",
+      "description": "Base/Top Plate — Surfmist Matt",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-W",
+      "name": "Base/Top Plate — Pearl White Gloss",
+      "description": "Base/Top Plate — Pearl White Gloss",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.64,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-ACC",
+      "name": "CSR End Cap (Accessory)",
+      "description": "Centre support rail end cap",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 2.5,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-B",
+      "name": "CSR End Cap — Black Satin",
+      "description": "CSR End Cap — Black Satin",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-BS",
+      "name": "CSR End Cap — Basalt Satin",
+      "description": "CSR End Cap — Basalt Satin",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-D",
+      "name": "CSR End Cap — Dune Satin",
+      "description": "CSR End Cap — Dune Satin",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-G",
+      "name": "CSR End Cap — Woodland Grey Matt",
+      "description": "CSR End Cap — Woodland Grey Matt",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-M",
+      "name": "CSR End Cap — Mill",
+      "description": "CSR End Cap — Mill",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-MN",
+      "name": "CSR End Cap — Monument Matt",
+      "description": "CSR End Cap — Monument Matt",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-P",
+      "name": "CSR End Cap — Primrose",
+      "description": "CSR End Cap — Primrose",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-PB",
+      "name": "CSR End Cap — Paperbark",
+      "description": "CSR End Cap — Paperbark",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-S",
+      "name": "CSR End Cap — Palladium Silver Pearl",
+      "description": "CSR End Cap — Palladium Silver Pearl",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-SM",
+      "name": "CSR End Cap — Surfmist Matt",
+      "description": "CSR End Cap — Surfmist Matt",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-W",
+      "name": "CSR End Cap — Pearl White Gloss",
+      "description": "CSR End Cap — Pearl White Gloss",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 1.03,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-B",
+      "name": "Screw Pack 100 — Black Satin",
+      "description": "Screw Pack 100 — Black Satin",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-BS",
+      "name": "Screw Pack 100 — Basalt Satin",
+      "description": "Screw Pack 100 — Basalt Satin",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-D",
+      "name": "Screw Pack 100 — Dune Satin",
+      "description": "Screw Pack 100 — Dune Satin",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-G",
+      "name": "Screw Pack 100 — Woodland Grey Matt",
+      "description": "Screw Pack 100 — Woodland Grey Matt",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-M",
+      "name": "Screw Pack 100 — Mill",
+      "description": "Screw Pack 100 — Mill",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-MN",
+      "name": "Screw Pack 100 — Monument Matt",
+      "description": "Screw Pack 100 — Monument Matt",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-P",
+      "name": "Screw Pack 100 — Primrose",
+      "description": "Screw Pack 100 — Primrose",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-PB",
+      "name": "Screw Pack 100 — Paperbark",
+      "description": "Screw Pack 100 — Paperbark",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-S",
+      "name": "Screw Pack 100 — Palladium Silver Pearl",
+      "description": "Screw Pack 100 — Palladium Silver Pearl",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-SINGLES-ACC",
+      "name": "F-Section Fixing Screws (each)",
+      "description": "Individual F-section screws",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 0.4,
+      "system_types": [
+        "QSHS"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-SM",
+      "name": "Screw Pack 100 — Surfmist Matt",
+      "description": "Screw Pack 100 — Surfmist Matt",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-W",
+      "name": "Screw Pack 100 — Pearl White Gloss",
+      "description": "Screw Pack 100 — Pearl White Gloss",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": 6.06,
+      "system_types": [
+        "QSHS",
+        "XPL"
+      ],
+      "metadata": {},
+      "active": true
+    }
+  ],
+  "pricing_rules": [
+    {
+      "sku": "XP-6100-S65-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 37.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-S65-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 50.49,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 46.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 44.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 50.49,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 46.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 44.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 50.49,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 46.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 44.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 50.49,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 46.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 44.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 50.49,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 46.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 44.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 50.49,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 46.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 44.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 50.49,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 46.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 44.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 50.49,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 46.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 44.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 50.49,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 46.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 44.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 50.49,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 46.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 44.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 50.49,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 46.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-6100-S90-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 44.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.35,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 23.16,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 21.8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.35,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 23.16,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 21.8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.35,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 23.16,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 21.8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.35,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 23.16,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 21.8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.35,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 23.16,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 21.8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.35,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 23.16,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 21.8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.35,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 23.16,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 21.8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.35,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 23.16,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 21.8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.35,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 23.16,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 21.8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.35,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 23.16,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 21.8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.35,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 23.16,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-SF-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 21.8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 16.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.94,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 14.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 16.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.94,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 14.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 16.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.94,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 14.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 16.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.94,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 14.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 16.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.94,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 14.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 16.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.94,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 14.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 16.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.94,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 14.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 16.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.94,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 14.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 16.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.94,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 14.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 16.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.94,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 14.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 16.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.94,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-CFC-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 14.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 43.48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 43.48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 43.48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 43.48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 43.48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 43.48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 43.48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 43.48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 43.48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 43.48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 43.48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-5800-CSR-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 38.55,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 36.25,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-2400-FP-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 34.32,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-BTP-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.06,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SFC-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 0.86,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SFC-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.81,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SFC-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.74,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-09MM-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SCREWS-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-05MM-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 12,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-ACC",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 1.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-05MM-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 10.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-05MM-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SFCAP-ACC-2PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-09MM-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 10.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SCREWS-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 18,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-SINGLES-ACC",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.3,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-20MM-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 12,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "S-120ROD-4PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 12,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-SINGLES-ACC",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 0.4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SCREWS-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-F-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 13.75,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-F-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 12.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-ACC",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SFCAP-ACC-2PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "S-120ROD-4PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 16,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-20MM-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 10.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5800-F-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 11,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SFCAP-ACC-2PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-SCREWS-SINGLES-ACC",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-09MM-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 12,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-20MM-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-CSRC-ACC",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.2,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "S-120ROD-4PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 14,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    }
+  ],
+  "rule_sets": [
+    {
+      "product_system_type": "QSHS",
+      "name": "QSHS Fence Rules",
+      "description": "Data-driven QSHS fence BOM rules v3",
+      "active": true
+    }
+  ],
+  "rule_versions": [
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "is_current": true,
+      "effective_from": "2026-04-19",
+      "notes": "Initial QSHS fence v3 rules"
+    }
+  ],
+  "product_constraints": [
+    {
+      "product_system_type": "QSHS",
+      "name": "allowed_gap_mm",
+      "constraint_type": "enum",
+      "value_text": "[0,5,9,20]",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Gap must be one of 0, 5, 9, 20",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "allowed_slat_size_mm",
+      "constraint_type": "enum",
+      "value_text": "[65,90]",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Slat size must be 65 or 90",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "csr_threshold_width_mm",
+      "constraint_type": "threshold",
+      "value_text": "2000",
+      "unit": "mm",
+      "severity": "warning",
+      "applies_when_json": {},
+      "message": "Panels 2000mm and above require centre support rail",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "max_height_mm",
+      "constraint_type": "max",
+      "value_text": "2700",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Height must be 2700mm or less",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "max_panel_width_mm",
+      "constraint_type": "max",
+      "value_text": "2600",
+      "unit": "mm",
+      "severity": "warning",
+      "applies_when_json": {},
+      "message": "Panel width above 2600mm is not supported",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "min_height_mm",
+      "constraint_type": "min",
+      "value_text": "300",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Height must be at least 300mm",
+      "active": true
+    }
+  ],
+  "product_variables": [
+    {
+      "product_system_type": "QSHS",
+      "name": "bay_count",
+      "label": "Bay Count",
+      "data_type": "integer",
+      "unit": "count",
+      "required": false,
+      "default_value_json": 1,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 100,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "colour_code",
+      "label": "Colour",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "B",
+      "options_json": [
+        "B",
+        "MN",
+        "G",
+        "SM",
+        "W",
+        "BS",
+        "D",
+        "M",
+        "P",
+        "PB",
+        "S"
+      ],
+      "scope": "job",
+      "sort_order": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "finish",
+      "label": "Finish",
+      "data_type": "enum",
+      "unit": null,
+      "required": false,
+      "default_value_json": null,
+      "options_json": [
+        "WRC",
+        "IG"
+      ],
+      "scope": "job",
+      "sort_order": 36,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "finish_family",
+      "label": "Finish Family",
+      "data_type": "enum",
+      "unit": null,
+      "required": false,
+      "default_value_json": "standard",
+      "options_json": [
+        "standard",
+        "alumawood"
+      ],
+      "scope": "job",
+      "sort_order": 35,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "left_boundary_type",
+      "label": "Left Boundary",
+      "data_type": "enum",
+      "unit": null,
+      "required": false,
+      "default_value_json": "product_post",
+      "options_json": [
+        "product_post",
+        "brick_post",
+        "existing_post",
+        "wall",
+        "corner_90"
+      ],
+      "scope": "run",
+      "sort_order": 70,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "mounting_type",
+      "label": "Mounting Type",
+      "data_type": "enum",
+      "unit": null,
+      "required": false,
+      "default_value_json": "in_ground",
+      "options_json": [
+        "in_ground",
+        "base_plate",
+        "existing_post"
+      ],
+      "scope": "run",
+      "sort_order": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "panel_width_mm",
+      "label": "Panel Width",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 1000,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "right_boundary_type",
+      "label": "Right Boundary",
+      "data_type": "enum",
+      "unit": null,
+      "required": false,
+      "default_value_json": "product_post",
+      "options_json": [
+        "product_post",
+        "brick_post",
+        "existing_post",
+        "wall",
+        "corner_90"
+      ],
+      "scope": "run",
+      "sort_order": 80,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "segment_kind",
+      "label": "Segment Kind",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "panel",
+      "options_json": [
+        "panel",
+        "bay_group",
+        "gate_opening"
+      ],
+      "scope": "segment",
+      "sort_order": 90,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "slat_gap_mm",
+      "label": "Slat Gap",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 5,
+      "options_json": [
+        0,
+        5,
+        9,
+        20
+      ],
+      "scope": "job",
+      "sort_order": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "slat_size_mm",
+      "label": "Slat Size",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 65,
+      "options_json": [
+        65,
+        90
+      ],
+      "scope": "job",
+      "sort_order": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "target_height_mm",
+      "label": "Target Height",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 1800,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 50,
+      "active": true
+    }
+  ],
+  "product_validations": [
+    {
+      "product_system_type": "QSHS",
+      "name": "gap_allowed",
+      "expression": "[0,5,9,20].includes(slat_gap_mm)",
+      "severity": "error",
+      "message": "Gap must be 0, 5, 9, or 20mm",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "height_in_range",
+      "expression": "target_height_mm >= 300 && target_height_mm <= 2700",
+      "severity": "error",
+      "message": "Height is outside QSHS range (300–2700mm)",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "panel_width_supported",
+      "expression": "panel_width_mm > 0 && panel_width_mm <= 2600",
+      "severity": "error",
+      "message": "Panel width must be between 1 and 2600mm",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "run_has_segments",
+      "expression": "runs && runs.length > 0",
+      "severity": "error",
+      "message": "At least one run is required",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "slat_size_allowed",
+      "expression": "[65,90].includes(slat_size_mm)",
+      "severity": "error",
+      "message": "Slat size must be 65 or 90mm",
+      "active": true
+    }
+  ],
+  "product_rules": [
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_slats",
+      "expression": "floor((target_height_mm + slat_gap_mm - 3) / (slat_size_mm + slat_gap_mm))",
+      "output_key": "num_slats",
+      "priority": 10,
+      "active": true,
+      "notes": "Derived from QSHS height lookup approximation"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "actual_height_mm",
+      "expression": "round((num_slats * (slat_size_mm + slat_gap_mm)) - slat_gap_mm + 3)",
+      "output_key": "actual_height_mm",
+      "priority": 20,
+      "active": true,
+      "notes": "Actual achieved screen height"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "side_frame_cut_length_mm",
+      "expression": "target_height_mm - 3",
+      "output_key": "side_frame_cut_length_mm",
+      "priority": 30,
+      "active": true,
+      "notes": "QSHS side frame cut (3mm clearance)"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "centre_support_cut_length_mm",
+      "expression": "target_height_mm - 6",
+      "output_key": "centre_support_cut_length_mm",
+      "priority": 40,
+      "active": true,
+      "notes": "QSHS CSR cut (6mm clearance)"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "slat_cut_length_mm",
+      "expression": "panel_width_mm - width_deduction_mm",
+      "output_key": "slat_cut_length_mm",
+      "priority": 50,
+      "active": true,
+      "notes": "Width deduction depends on boundary termination context"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "requires_csr",
+      "expression": "panel_width_mm >= 2000",
+      "output_key": "requires_csr",
+      "priority": 60,
+      "active": true,
+      "notes": "CSR required for panels 2000mm and wider"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "slats_per_stock",
+      "expression": "floor(slat_stock_length_mm / slat_cut_length_mm)",
+      "output_key": "slats_per_stock",
+      "priority": 70,
+      "active": true,
+      "notes": "How many cut slats fit in one stock length"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "side_frames_per_stock",
+      "expression": "floor(side_frame_stock_length_mm / side_frame_cut_length_mm)",
+      "output_key": "side_frames_per_stock",
+      "priority": 80,
+      "active": true,
+      "notes": "How many cut side frames fit in one stock length"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "spacers_per_panel",
+      "expression": "(2 * num_slats) - 1",
+      "output_key": "spacers_per_panel",
+      "priority": 90,
+      "active": true,
+      "notes": "Spacer count per panel from calc sheet"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "screen_screws_per_panel",
+      "expression": "ceil((num_slats * 2) * 1.01)",
+      "output_key": "screen_screws_per_panel",
+      "priority": 100,
+      "active": true,
+      "notes": "Screen screws with 1% spare allowance"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "f_section_screws_per_panel",
+      "expression": "max(3, ceil(target_height_mm / 900) + 1)",
+      "output_key": "f_section_screws_per_panel",
+      "priority": 110,
+      "active": true,
+      "notes": "F-section screw count — minimum 3, +1 per 900mm"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "num_side_frames",
+      "expression": "2",
+      "output_key": "num_side_frames",
+      "priority": 120,
+      "active": true,
+      "notes": "Each panel has exactly two side frames"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "num_cfc_covers",
+      "expression": "num_side_frames",
+      "output_key": "num_cfc_covers",
+      "priority": 130,
+      "active": true,
+      "notes": "1:1 CFC cover per side frame"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "num_csr",
+      "expression": "requires_csr ? 1 : 0",
+      "output_key": "num_csr",
+      "priority": 140,
+      "active": true,
+      "notes": "CSR count per panel — 0 or 1"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "num_posts_from_boundaries",
+      "expression": "product_post_boundary_count + corner_post_count",
+      "output_key": "num_posts_from_boundaries",
+      "priority": 150,
+      "active": true,
+      "notes": "Posts only for product-managed boundaries (not wall/existing)"
+    }
+  ],
+  "product_component_selectors": [
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_cfc",
+      "component_category": "cfc_cover",
+      "selector_type": "exact",
+      "match_json": {},
+      "sku_pattern": "QS-5800-CFC-{colour}",
+      "priority": 90,
+      "notes": "QSHS CFC cover by colour",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_csr",
+      "component_category": "centre_support_rail",
+      "selector_type": "exact",
+      "match_json": {},
+      "sku_pattern": "XP-5800-CSR-{colour}",
+      "priority": 90,
+      "notes": "QSHS centre support rail by colour",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_f_section",
+      "component_category": "f_section",
+      "selector_type": "exact",
+      "match_json": {},
+      "sku_pattern": "QS-5800-F-{colour}",
+      "priority": 90,
+      "notes": "QSHS F-section wall termination by colour",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_fence_slat_65_aw",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_size_mm": 65,
+        "finish_family": "alumawood"
+      },
+      "sku_pattern": "AW-5800-S65-{finish}",
+      "priority": 100,
+      "notes": "Alumawood 65mm slat — finish resolved at runtime",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_fence_slat_65_std",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_size_mm": 65,
+        "finish_family": "standard"
+      },
+      "sku_pattern": "XP-6100-S65-{colour}",
+      "priority": 100,
+      "notes": "Standard 65mm fence slat — colour resolved at runtime",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_fence_slat_90_aw",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "finish": "WRC",
+        "slat_size_mm": 90,
+        "finish_family": "alumawood"
+      },
+      "sku_pattern": "AWQS-5800-S90-WRC",
+      "priority": 100,
+      "notes": "Alumawood 90mm slat — WRC only",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_fence_slat_90_std",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_size_mm": 90,
+        "finish_family": "standard"
+      },
+      "sku_pattern": "QS-6100-S90-{colour}",
+      "priority": 100,
+      "notes": "Standard 90mm fence slat — colour resolved at runtime",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_screen_screws",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "accessory_kind": "screen_screws"
+      },
+      "sku_pattern": "QS-SCREWS-50PK",
+      "priority": 80,
+      "notes": "Screen screw pack",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_side_frame",
+      "component_category": "side_frame",
+      "selector_type": "exact",
+      "match_json": {},
+      "sku_pattern": "QS-5800-SF-{colour}",
+      "priority": 90,
+      "notes": "QSHS side frame by colour",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_spacer_20",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_gap_mm": 20,
+        "accessory_kind": "spacer"
+      },
+      "sku_pattern": "QS-SPACER-20MM-50PK",
+      "priority": 80,
+      "notes": "20mm spacer pack",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_spacer_5",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_gap_mm": 5,
+        "accessory_kind": "spacer"
+      },
+      "sku_pattern": "QS-SPACER-05MM-50PK",
+      "priority": 80,
+      "notes": "5mm spacer pack",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_spacer_9",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_gap_mm": 9,
+        "accessory_kind": "spacer"
+      },
+      "sku_pattern": "QS-SPACER-09MM-50PK",
+      "priority": 80,
+      "notes": "9mm spacer pack",
+      "active": true
+    }
+  ],
+  "product_companion_rules": [
+    {
+      "product_system_type": "QSHS",
+      "rule_key": "qshs_csr_caps",
+      "trigger_category": "csr",
+      "trigger_match_json": {},
+      "add_category": "csr_cap",
+      "add_sku_pattern": "XP-CSRC-ACC",
+      "qty_formula": "csr_qty * 2",
+      "is_pack": false,
+      "priority": 30,
+      "notes": "Top and bottom CSR cap per CSR length",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_key": "qshs_csr_plates",
+      "trigger_category": "csr",
+      "trigger_match_json": {},
+      "add_category": "csr_plate",
+      "add_sku_pattern": "XP-BTP-{colour}",
+      "qty_formula": "csr_qty * 2",
+      "is_pack": false,
+      "priority": 40,
+      "notes": "Top and bottom base/top plate per CSR",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_key": "qshs_sf_add_caps",
+      "trigger_category": "side_frame",
+      "trigger_match_json": {},
+      "add_category": "sf_cap",
+      "add_sku_pattern": "QS-SFCAP-ACC-2PK",
+      "qty_formula": "ceil(side_frame_qty/2)",
+      "is_pack": true,
+      "priority": 20,
+      "notes": "1 cap pack per 2 side frames",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_key": "qshs_sf_add_cfc",
+      "trigger_category": "side_frame",
+      "trigger_match_json": {},
+      "add_category": "cfc_cover",
+      "add_sku_pattern": "QS-5800-CFC-{colour}",
+      "qty_formula": "same_as(side_frame_qty)",
+      "is_pack": false,
+      "priority": 10,
+      "notes": "Every side frame gets matching CFC cover",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_key": "qshs_slat_screws",
+      "trigger_category": "slat",
+      "trigger_match_json": {},
+      "add_category": "screw_pack",
+      "add_sku_pattern": "QS-SCREWS-50PK",
+      "qty_formula": "ceil((slat_qty*2*1.01)/50)",
+      "is_pack": true,
+      "priority": 80,
+      "notes": "Screen screws — 1 pack per 50 screws (with 1% spare)",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_key": "qshs_slat_spacers_20",
+      "trigger_category": "slat",
+      "trigger_match_json": {
+        "slat_gap_mm": 20
+      },
+      "add_category": "spacer_pack",
+      "add_sku_pattern": "QS-SPACER-20MM-50PK",
+      "qty_formula": "ceil(slat_qty/50)",
+      "is_pack": true,
+      "priority": 70,
+      "notes": "20mm spacers — 1 pack per 50 slats",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_key": "qshs_slat_spacers_5",
+      "trigger_category": "slat",
+      "trigger_match_json": {
+        "slat_gap_mm": 5
+      },
+      "add_category": "spacer_pack",
+      "add_sku_pattern": "QS-SPACER-05MM-50PK",
+      "qty_formula": "ceil(slat_qty/50)",
+      "is_pack": true,
+      "priority": 50,
+      "notes": "5mm spacers — 1 pack per 50 slats",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_key": "qshs_slat_spacers_9",
+      "trigger_category": "slat",
+      "trigger_match_json": {
+        "slat_gap_mm": 9
+      },
+      "add_category": "spacer_pack",
+      "add_sku_pattern": "QS-SPACER-09MM-50PK",
+      "qty_formula": "ceil(slat_qty/50)",
+      "is_pack": true,
+      "priority": 60,
+      "notes": "9mm spacers — 1 pack per 50 slats",
+      "active": true
+    }
+  ],
+  "product_warnings": [
+    {
+      "product_system_type": "QSHS",
+      "warning_key": "alumawood_90_only_wrc",
+      "severity": "error",
+      "condition_json": {
+        "finish": {
+          "neq": "WRC"
+        },
+        "slat_size_mm": 90,
+        "finish_family": "alumawood"
+      },
+      "message": "90mm Alumawood slat is only available in WRC finish.",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "warning_key": "qshs_csr_required",
+      "severity": "warning",
+      "condition_json": {
+        "csr_qty": {
+          "eq": 0
+        },
+        "panel_width_mm": {
+          "gte": 2000
+        }
+      },
+      "message": "Panels 2000mm and over require a centre support rail.",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "warning_key": "qshs_panel_width_warn",
+      "severity": "warning",
+      "condition_json": {
+        "panel_width_mm": {
+          "gt": 2600
+        }
+      },
+      "message": "Panel exceeds recommended max width; split into additional panels.",
+      "active": true
+    }
+  ]
+}
