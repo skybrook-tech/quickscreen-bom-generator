@@ -8,7 +8,7 @@ import { Button } from "../shared/Button";
 
 export function RunListV3() {
   const { state, dispatch } = useCalculator();
-  const payload = state.canonicalPayload;
+  const payload = state.payload;
   if (!payload) return null;
 
   function addSegment(runId: string) {
@@ -145,7 +145,7 @@ export function RunListV3() {
             </Button>
             <Button
               onClick={() => {
-                dispatch({ type: "REMOVE_RUN", id: run.runId });
+                dispatch({ type: "REMOVE_RUN", runId: run.runId });
               }}
               icon={Trash2}
               variant="ghost-danger"

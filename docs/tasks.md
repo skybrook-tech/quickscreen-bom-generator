@@ -241,7 +241,7 @@
 - [x] Build `src/components/calculator-v3/` (ProductSelectV3, SchemaDrivenForm as generic renderer, RunListV3, LayoutCanvasV3)
 - [x] Build `src/pages/CalculatorV3Page.tsx` (hand-coded `FALLBACK_FIELDS` drive SchemaDrivenForm — shared fence config form)
 - [x] Build `src/hooks/useBomCalculator.ts`
-- [x] Extend `src/context/CalculatorContext.tsx` (canonical payload actions: SET_CANONICAL_PAYLOAD, UPSERT_RUN, UPSERT_SEGMENT, REMOVE_SEGMENT, SET_V3_BOM_RESULT)
+- [x] Extend `src/context/CalculatorContext.tsx` (payload: `SET_PAYLOAD`, `UPSERT_RUN`, `UPSERT_SEGMENT`, `REMOVE_SEGMENT`, `REMOVE_RUN`, `SET_BOM_RESULT`)
 - [x] Wire `/calculator` route in `src/App.tsx`
 - [x] SchemaDrivenForm emits `data-testid={field_key}` for Cypress compatibility
 - [x] Scope reduction: `useProductSchema` hook deleted, `LayoutCanvasV3 actions` prop removed — form/canvas toolbar are shared across fencing systems, not per-product schema-driven

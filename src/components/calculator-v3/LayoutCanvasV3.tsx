@@ -5,7 +5,7 @@ import type { CanvasLayout } from '../canvas/canvasEngine';
 
 export function LayoutCanvasV3() {
   const { state, dispatch } = useCalculator();
-  const payload = state.canonicalPayload;
+  const payload = state.payload;
 
   function handleApplied(layout: CanvasLayout) {
     if (!payload) return;
@@ -15,7 +15,7 @@ export function LayoutCanvasV3() {
         payload.productCode,
         payload.variables,
       );
-      dispatch({ type: 'SET_CANONICAL_PAYLOAD', payload: canonical });
+      dispatch({ type: 'SET_PAYLOAD', payload: canonical });
     } catch {
       // canvas layout not yet valid — ignore
     }

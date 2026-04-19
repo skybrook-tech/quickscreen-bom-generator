@@ -24,7 +24,7 @@ function gateSubLabel(run: CanonicalRun): string {
 
 export function GateListV3() {
   const { state, dispatch } = useCalculator();
-  const payload = state.canonicalPayload;
+  const payload = state.payload;
   const [editingRunId, setEditingRunId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -44,11 +44,7 @@ export function GateListV3() {
   }
 
   function handleRemove(runId: string) {
-    if (!payload) return;
-    dispatch({
-      type: 'SET_CANONICAL_PAYLOAD',
-      payload: { ...payload, runs: payload.runs.filter((r) => r.runId !== runId) },
-    });
+    dispatch({ type: 'REMOVE_RUN', runId });
   }
 
   function handleSaveNew(run: CanonicalRun) {

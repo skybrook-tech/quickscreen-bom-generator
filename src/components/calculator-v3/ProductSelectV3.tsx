@@ -33,7 +33,7 @@ export function ProductSelectV3() {
     },
   });
 
-  const currentCode = state.canonicalPayload?.productCode ?? null;
+  const currentCode = state.payload?.productCode ?? null;
   const currentProduct = useMemo(
     () => products?.find((p) => p.system_type === currentCode),
     [products, currentCode],
@@ -83,7 +83,7 @@ export function ProductSelectV3() {
         },
       ],
     };
-    dispatch({ type: 'SET_CANONICAL_PAYLOAD', payload: initialPayload });
+    dispatch({ type: 'SET_PAYLOAD', payload: initialPayload });
     setOpen(false);
     setQuery('');
     setActiveIndex(-1);

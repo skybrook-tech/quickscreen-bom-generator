@@ -25,7 +25,7 @@ import type {
 
 function CalculatorV3Content() {
   const { state, dispatch } = useCalculator();
-  const payload = state.canonicalPayload;
+  const payload = state.payload;
   const bomMutation = useBomCalculator();
   const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
 
@@ -37,7 +37,7 @@ function CalculatorV3Content() {
   function handleFieldChange(key: string, value: string | number | boolean) {
     if (!payload) return;
     dispatch({
-      type: "SET_CANONICAL_PAYLOAD",
+      type: "SET_PAYLOAD",
       payload: {
         ...payload,
         variables: { ...payload.variables, [key]: value },
@@ -50,7 +50,7 @@ function CalculatorV3Content() {
     setExtraItems([]); // reset extras on new BOM
     try {
       const result = await bomMutation.mutateAsync({ payload });
-      dispatch({ type: "SET_V3_BOM_RESULT", result });
+      dispatch({ type: "SET_BOM_RESULT", result });
     } catch {
       // Error is available via bomMutation.error
     }
@@ -58,13 +58,13 @@ function CalculatorV3Content() {
 
   // Convert v3 result into the shape BOMResultTabs expects.
   // Extra items merge into allItems and contribute to totals.
-  const v3Result = state.v3BomResult;
+  const lastBom = state.bomResult;
 
-  const bomResultForTabs: CalculatorBOMResult | null = v3Result
+  const bomResultForTabs: CalculatorBOMResult | null = lastBom
     ? (() => {
-        const baseAllItems = (v3Result.lines as BOMLineItem[]) ?? [];
+        const baseAllItems = (lastBom.lines as BOMLineItem[]) ?? [];
         const baseTotal =
-          (v3Result.totals as { subtotal?: number })?.subtotal ?? 0;
+          (lastBom.totals as { subtotal?: number })?.subtotal ?? 0;
         const extraLineItems: BOMLineItem[] = extraItems.map((e) => ({
           category: "accessory",
           sku: e.sku ?? e.id,
@@ -83,27 +83,27 @@ function CalculatorV3Content() {
         const gst = total * 0.1;
         return {
           runResults: (
-            (v3Result.runResults as Array<{
+            (lastBom.runResults as Array<{
               runId: string;
               items: BOMLineItem[];
             }>) ?? []
           ).map((r) => ({ runId: r.runId, items: r.items })),
-          gateItems: (v3Result.gateItems as BOMLineItem[]) ?? [],
+          gateItems: (lastBom.gateItems as BOMLineItem[]) ?? [],
           allItems: [...baseAllItems, ...extraLineItems],
           total,
           gst,
           grandTotal: total + gst,
           pricingTier:
-            (v3Result.pricingTier as CalculatorBOMResult["pricingTier"]) ??
+            (lastBom.pricingTier as CalculatorBOMResult["pricingTier"]) ??
             "tier1",
           generatedAt:
-            (v3Result.generatedAt as string) ?? new Date().toISOString(),
+            (lastBom.generatedAt as string) ?? new Date().toISOString(),
         };
       })()
     : null;
 
-  const warnings = (v3Result?.warnings as string[]) ?? [];
-  const errors = (v3Result?.errors as string[]) ?? [];
+  const warnings = (lastBom?.warnings as string[]) ?? [];
+  const errors = (lastBom?.errors as string[]) ?? [];
   const hasErrors = errors.length > 0;
   const noSegments =
     !payload || payload.runs.every((r) => r.segments.length === 0);
