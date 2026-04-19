@@ -4,10 +4,11 @@ import { Toaster } from "sonner";
 import { queryClient } from "./lib/queryClient";
 import { AuthGuard } from "./components/auth/AuthGuard";
 import { LoginPage } from "./pages/LoginPage";
-import { HomePage } from "./pages/HomePage";
+// import { HomePage } from "./pages/HomePage";
 import { MainApp } from "./pages/MainApp";
 import { QuotesHistoryPage } from "./pages/QuotesHistoryPage";
 import { QuoteViewPage } from "./pages/QuoteViewPage";
+import { CalculatorPage } from "./pages/CalculatorPage";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 
 function ThemedToaster() {
@@ -17,19 +18,27 @@ function ThemedToaster() {
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
-  {
-    path: "/",
-    element: (
-      <AuthGuard>
-        <HomePage />
-      </AuthGuard>
-    ),
-  },
+  // {
+  //   path: "/",
+  //   element: (
+  //     <AuthGuard>
+  //       <HomePage />
+  //     </AuthGuard>
+  //   ),
+  // },
   {
     path: "/new",
     element: (
       <AuthGuard>
         <MainApp />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: "/",
+    element: (
+      <AuthGuard>
+        <CalculatorPage />
       </AuthGuard>
     ),
   },
