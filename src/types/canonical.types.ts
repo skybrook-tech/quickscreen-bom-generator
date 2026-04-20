@@ -41,6 +41,10 @@ export interface CanonicalSegment {
   targetHeightMm?: number;
   bayCount?: number;
   gateProductCode?: string;
+  /**
+   * Per-segment overrides. Termination keys: see `src/lib/segmentTermination.ts`
+   * (`left_termination_kind`, `right_termination_kind`, corner degrees, non-system subtype).
+   */
   variables?: Record<string, string | number | boolean>;
 }
 

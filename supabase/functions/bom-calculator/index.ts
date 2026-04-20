@@ -25,6 +25,11 @@ import type {
   CanonicalRun,
   CanonicalSegment,
 } from '../_shared/canonical.types.ts';
+import {
+  cornerDegreesFromVars,
+  effectiveLegacyBoundaryType,
+  type LegacyBoundaryType,
+} from '../_shared/segmentTermination.ts';
 import type { BOMUnit, PricingRule, PricingTier } from '../_shared/types.ts';
 
 const mathjs = create(all);
@@ -469,6 +474,14 @@ Deno.serve(async (req: Request) => {
           ? normaliseVariables(segment.variables, engineData)
           : {};
 
+        const runLeftT = run.leftBoundary.type as LegacyBoundaryType;
+        const runRightT = run.rightBoundary.type as LegacyBoundaryType;
+        const segV = segment.variables;
+        const leftEff = effectiveLegacyBoundaryType(runLeftT, segV, 'left');
+        const rightEff = effectiveLegacyBoundaryType(runRightT, segV, 'right');
+        const leftCornerDeg = cornerDegreesFromVars(segV, 'left');
+        const rightCornerDeg = cornerDegreesFromVars(segV, 'right');
+
         const segCtx: Record<string, unknown> = {
           ...runCtx,
           ...segVarsNorm,
@@ -479,15 +492,21 @@ Deno.serve(async (req: Request) => {
           segment_kind: segment.segmentKind,
           // Gate product (when segmentKind === 'gate_opening')
           gate_product_code: segment.gateProductCode ?? null,
-          // Boundary-derived helpers
-          left_boundary_type: run.leftBoundary.type,
-          right_boundary_type: run.rightBoundary.type,
+          // Boundary-derived helpers — per-segment overrides via segment.variables
+          left_boundary_type: leftEff,
+          right_boundary_type: rightEff,
+          ...(leftCornerDeg !== undefined && {
+            left_corner_degrees: leftCornerDeg,
+          }),
+          ...(rightCornerDeg !== undefined && {
+            right_corner_degrees: rightCornerDeg,
+          }),
           product_post_boundary_count:
-            (run.leftBoundary.type === 'product_post' ? 1 : 0) +
-            (run.rightBoundary.type === 'product_post' ? 1 : 0),
+            (leftEff === 'product_post' ? 1 : 0) +
+            (rightEff === 'product_post' ? 1 : 0),
           wall_boundary_count:
-            (run.leftBoundary.type === 'wall' ? 1 : 0) +
-            (run.rightBoundary.type === 'wall' ? 1 : 0),
+            (leftEff === 'wall' ? 1 : 0) +
+            (rightEff === 'wall' ? 1 : 0),
           corner_count: run.corners.length,
           corner_post_count: run.corners.length,  // alias used by some rules
           // Stock lengths (constants referenced by rules)

@@ -1,6 +1,9 @@
 import { FenceLayoutCanvas } from '../canvas/FenceLayoutCanvas';
 import { useCalculator } from '../../context/CalculatorContext';
-import { canvasLayoutToCanonical } from '../canvas/canonicalAdapter';
+import {
+  canvasLayoutToCanonical,
+  mergeCanonicalPreservingSegmentMeta,
+} from '../canvas/canonicalAdapter';
 import type { CanvasLayout } from '../canvas/canvasEngine';
 
 export function LayoutCanvasV3() {
@@ -10,11 +13,12 @@ export function LayoutCanvasV3() {
   function handleApplied(layout: CanvasLayout) {
     if (!payload) return;
     try {
-      const canonical = canvasLayoutToCanonical(
+      const generated = canvasLayoutToCanonical(
         layout,
         payload.productCode,
         payload.variables,
       );
+      const canonical = mergeCanonicalPreservingSegmentMeta(payload, generated);
       dispatch({ type: 'SET_PAYLOAD', payload: canonical });
     } catch {
       // canvas layout not yet valid — ignore

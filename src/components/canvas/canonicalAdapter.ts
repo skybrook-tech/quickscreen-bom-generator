@@ -358,6 +358,42 @@ export function canvasLayoutToCanonical(
   };
 }
 
+/**
+ * After `canvasLayoutToCanonical`, re-attach manual per-segment `variables`,
+ * run-level boundaries, and run `variables` for matching `runId` / `segmentId`
+ * so layout redraw does not erase Run list segment edits.
+ */
+export function mergeCanonicalPreservingSegmentMeta(
+  previous: CanonicalPayload,
+  generated: CanonicalPayload,
+): CanonicalPayload {
+  const prevRuns = new Map(previous.runs.map((r) => [r.runId, r]));
+  return {
+    ...generated,
+    runs: generated.runs.map((genRun) => {
+      const prevRun = prevRuns.get(genRun.runId);
+      if (!prevRun) return genRun;
+      const prevSegMap = new Map(prevRun.segments.map((s) => [s.segmentId, s]));
+      return {
+        ...genRun,
+        variables: { ...(prevRun.variables ?? {}), ...(genRun.variables ?? {}) },
+        leftBoundary: prevRun.leftBoundary,
+        rightBoundary: prevRun.rightBoundary,
+        segments: genRun.segments.map((gs) => {
+          const ps = prevSegMap.get(gs.segmentId);
+          if (!ps) return gs;
+          return {
+            ...gs,
+            variables: { ...(ps.variables ?? {}), ...(gs.variables ?? {}) },
+            targetHeightMm: gs.targetHeightMm ?? ps.targetHeightMm,
+            gateProductCode: gs.gateProductCode ?? ps.gateProductCode,
+          };
+        }),
+      };
+    }),
+  };
+}
+
 // ---------------------------------------------------------------------------
 // canonicalToCanvasLayout
 //

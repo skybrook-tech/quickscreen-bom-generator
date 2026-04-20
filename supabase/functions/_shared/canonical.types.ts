@@ -41,6 +41,7 @@ export interface CanonicalSegment {
   targetHeightMm?: number;
   bayCount?: number;
   gateProductCode?: string;
+  /** Per-segment overrides (terminations, bay/post fields, job overrides). */
   variables?: Record<string, string | number | boolean>;
 }
 

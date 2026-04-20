@@ -9,7 +9,6 @@ import { GateProvider } from "../context/GateContext";
 import { ProductSelectV3 } from "../components/calculator-v3/ProductSelectV3";
 import { SchemaDrivenForm } from "../components/calculator-v3/SchemaDrivenForm";
 import { RunListV3 } from "../components/calculator-v3/RunListV3";
-import { GateListV3 } from "../components/calculator-v3/GateListV3";
 import { LayoutCanvasV3 } from "../components/calculator-v3/LayoutCanvasV3";
 import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
@@ -144,14 +143,9 @@ function CalculatorV3Content() {
               </AccordionSection>
             </div>
 
-            {/* Runs & Segments */}
+            {/* Runs & Segments (includes gates via Add gate) */}
             <AccordionSection title="Runs & Segments" defaultOpen>
               <RunListV3 />
-            </AccordionSection>
-
-            {/* Gates */}
-            <AccordionSection title="Gates" defaultOpen>
-              <GateListV3 />
             </AccordionSection>
 
             {/* Validation messages from last BOM run */}
