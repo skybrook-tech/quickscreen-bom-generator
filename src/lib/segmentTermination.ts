@@ -32,7 +32,6 @@ export const SEGMENT_TERMINATION_KEYS = {
 
 /** Optional segment variables for fence geometry / posts (expand panel). */
 export const SEGMENT_OPTION_KEYS = {
-  bayWidthMm: "bay_width_mm",
   postType: "post_type",
   postWidthMm: "post_width_mm",
 } as const;

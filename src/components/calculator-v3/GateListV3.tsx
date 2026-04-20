@@ -9,7 +9,7 @@ const GATE_PRODUCT_CODE = 'QS_GATE';
 
 function gateLabel(run: CanonicalRun): string {
   const seg = run.segments[0];
-  const width = seg?.panelWidthMm ?? (seg?.variables?.gate_width_mm as number | undefined) ?? 0;
+  const width = seg?.segmentWidthMm ?? (seg?.variables?.gate_width_mm as number | undefined) ?? 0;
   const height = seg?.targetHeightMm ?? (seg?.variables?.gate_height_mm as number | undefined) ?? 0;
   const qty = (seg?.variables?.gate_qty as number | undefined) ?? 1;
   const qtyLabel = qty > 1 ? ` ×${qty}` : '';

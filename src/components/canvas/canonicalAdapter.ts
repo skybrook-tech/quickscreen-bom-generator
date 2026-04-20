@@ -22,7 +22,7 @@
 // GATE SEGMENTS
 // -------------
 // Each gate marker on a segment produces a `gate_opening` segment with a
-// `panelWidthMm` equal to the gate's widthMM. Gate segments are inserted in
+// `segmentWidthMm` equal to the gate's widthMM. Gate segments are inserted in
 // order of `positionOnSegment` after the preceding fence `panel` segment. The
 // remaining fence length on the original segment is split into one or two
 // additional `panel` segments (before and after the gate opening).
@@ -183,7 +183,7 @@ function expandSegmentWithGates(
         segmentId,
         sortOrder: sortOrder++,
         segmentKind: 'panel',
-        panelWidthMm: Math.round(panelBeforeMm),
+        segmentWidthMm: Math.round(panelBeforeMm),
       });
     }
 
@@ -198,7 +198,7 @@ function expandSegmentWithGates(
       segmentId: gateSegmentId,
       sortOrder: sortOrder++,
       segmentKind: 'gate_opening',
-      panelWidthMm: Math.round(gate.widthMM),
+      segmentWidthMm: Math.round(gate.widthMM),
     });
 
     cursorFraction = clampedEnd;
@@ -217,7 +217,7 @@ function expandSegmentWithGates(
       segmentId,
       sortOrder: sortOrder++,
       segmentKind: 'panel',
-      panelWidthMm: Math.round(trailingMm),
+      segmentWidthMm: Math.round(trailingMm),
     });
   }
 
@@ -303,7 +303,7 @@ export function canvasLayoutToCanonical(
           segmentId,
           sortOrder: sortOrder++,
           segmentKind: 'panel',
-          panelWidthMm: Math.round(seg.lengthMM),
+          segmentWidthMm: Math.round(seg.lengthMM),
         });
       }
 
@@ -459,12 +459,12 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
           allFlatGates.push({
             segmentIndex: precedingFlatIdx,
             positionOnSegment: 0.9,
-            widthMM: canonSeg.panelWidthMm ?? 900,
+            widthMM: canonSeg.segmentWidthMm ?? 900,
           });
           runGates.push({
             segmentIndex: precedingFlatIdx,
             positionOnSegment: 0.9,
-            widthMM: canonSeg.panelWidthMm ?? 900,
+            widthMM: canonSeg.segmentWidthMm ?? 900,
           });
         } else {
           // No preceding segment — create a 1mm stub segment to hold the gate
@@ -481,18 +481,18 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
           allFlatGates.push({
             segmentIndex: gateIdx,
             positionOnSegment: 0.5,
-            widthMM: canonSeg.panelWidthMm ?? 900,
+            widthMM: canonSeg.segmentWidthMm ?? 900,
           });
           runGates.push({
             segmentIndex: gateIdx,
             positionOnSegment: 0.5,
-            widthMM: canonSeg.panelWidthMm ?? 900,
+            widthMM: canonSeg.segmentWidthMm ?? 900,
           });
           xCursor = stubEndX;
         }
       } else {
         // Panel, bay_group, or corner — create a canvas segment
-        const widthMm = canonSeg.panelWidthMm ?? 1000;
+        const widthMm = canonSeg.segmentWidthMm ?? 1000;
         // Convert mm to canvas pixels: default scale is 100px/m
         const widthPx = widthMm / 10; // 100px/m = 10px/mm
         const endX = xCursor + widthPx;

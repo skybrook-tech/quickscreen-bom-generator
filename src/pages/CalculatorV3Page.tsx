@@ -21,6 +21,7 @@ import type {
   BOMLineItem,
   ExtraItem,
 } from "../types/bom.types";
+import NumberInput from "../components/shared/NumberInput";
 
 function CalculatorV3Content() {
   const { state, dispatch } = useCalculator();
@@ -117,19 +118,52 @@ function CalculatorV3Content() {
 
         {payload && (
           <>
-            {/* Job Settings — data-driven from product_variables */}
-            <AccordionSection title="Job Settings" defaultOpen>
-              {jobFields.length > 0 ? (
-                <SchemaDrivenForm
-                  fields={jobFields}
-                  variables={payload.variables}
-                  onChange={handleFieldChange}
-                />
-              ) : (
-                <p className="text-sm text-brand-muted">
-                  Loading job settings for {payload.productCode}…
-                </p>
-              )}
+            {/* Job Settings — data-driven from product_variables + hardcoded universal fields */}
+            <AccordionSection
+              title="Default Settings"
+              badge="Defaults applied to each new segment"
+              defaultOpen
+            >
+              <div className="space-y-4">
+                {/* Universal field — applies to all fence products */}
+                <label className="flex flex-col gap-1.5 max-w-xs">
+                  <span className="text-sm font-medium text-brand-text">
+                    Max panel width
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <NumberInput
+                      min={300}
+                      max={2600}
+                      step={50}
+                      value={Number(
+                        payload.variables.max_panel_width_mm ?? 2600,
+                      )}
+                      onChange={(v) =>
+                        handleFieldChange("max_panel_width_mm", v)
+                      }
+                      onBlur={(e) =>
+                        handleFieldChange(
+                          "max_panel_width_mm",
+                          Math.min(2600, Math.max(300, Number(e.target.value))),
+                        )
+                      }
+                      className="w-28 bg-brand-card border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
+                    />
+                    <span className="text-sm text-brand-muted">mm</span>
+                  </div>
+                  <span className="text-xs text-brand-muted">
+                    300–2600mm · panels within each segment are split evenly to
+                    stay at or below this width
+                  </span>
+                </label>
+                {jobFields.length > 0 && (
+                  <SchemaDrivenForm
+                    fields={jobFields}
+                    variables={payload.variables}
+                    onChange={handleFieldChange}
+                  />
+                )}
+              </div>
             </AccordionSection>
 
             {/* Canvas — hidden on mobile */}

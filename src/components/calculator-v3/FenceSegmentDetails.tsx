@@ -8,7 +8,7 @@ import {
 } from "../../lib/segmentTermination";
 import { SchemaDrivenForm } from "./SchemaDrivenForm";
 import { TerminationControl } from "./TerminationControl";
-
+import NumberInput from "../shared/NumberInput";
 interface Props {
   runId: string;
   seg: CanonicalSegment;
@@ -41,6 +41,13 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     );
   }
 
+  const jobMax = Number(state.payload?.variables.max_panel_width_mm ?? 2600);
+  const effectiveMax = Number(v.max_panel_width_mm ?? jobMax);
+
+  function updateMaxPanelWidth(value: number) {
+    upsertSegment(patchSegmentVariables(seg, { max_panel_width_mm: value }));
+  }
+
   const mergedJobDisplay: Record<string, string | number | boolean> = {
     ...(state.payload?.variables ?? {}),
     ...v,
@@ -48,21 +55,16 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <label className="flex flex-col gap-1">
-          <span className="text-brand-muted">Bay width (mm)</span>
-          <input
-            type="number"
-            value={(v[SEGMENT_OPTION_KEYS.bayWidthMm] as number) ?? ""}
-            onChange={(e) =>
-              setScalar(
-                SEGMENT_OPTION_KEYS.bayWidthMm,
-                e.target.value === "" ? null : Number(e.target.value),
-              )
-            }
-            className="bg-brand-bg border border-brand-border rounded px-2 py-1 text-brand-text"
-          />
-        </label>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <NumberInput
+          value={effectiveMax}
+          onChange={updateMaxPanelWidth}
+          min={300}
+          max={2600}
+          step={50}
+          className="w-full"
+          label="Max panel width (mm)"
+        />
         <label className="flex flex-col gap-1">
           <span className="text-brand-muted">Post type</span>
           <input
@@ -106,9 +108,11 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         </div>
       )}
 
-      {(["left", "right"] as const).map((side) => (
-        <TerminationControl key={side} runId={runId} seg={seg} side={side} />
-      ))}
+      <div className="grid grid-cols-2 gap-3">
+        {(["left", "right"] as const).map((side) => (
+          <TerminationControl key={side} runId={runId} seg={seg} side={side} />
+        ))}
+      </div>
     </div>
   );
 }

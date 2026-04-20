@@ -9,7 +9,7 @@ export const canonicalSegmentSchema = z.object({
   segmentId: z.string().uuid(),
   sortOrder: z.number().int().nonnegative(),
   segmentKind: z.enum(['panel', 'bay_group', 'gate_opening', 'corner']),
-  panelWidthMm: z.number().positive().optional(),
+  segmentWidthMm: z.number().positive().optional(),
   targetHeightMm: z.number().positive().optional(),
   bayCount: z.number().int().positive().optional(),
   gateProductCode: z.string().optional(),

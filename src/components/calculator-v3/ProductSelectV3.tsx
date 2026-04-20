@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronDown, Search } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
-import { useCalculator } from '../../context/CalculatorContext';
-import type { CanonicalPayload } from '../../types/canonical.types';
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ChevronDown, Search } from "lucide-react";
+import { supabase } from "../../lib/supabase";
+import { useCalculator } from "../../context/CalculatorContext";
+import type { CanonicalPayload } from "../../types/canonical.types";
 
 interface FenceProduct {
   id: string;
@@ -14,20 +14,20 @@ interface FenceProduct {
 
 export function ProductSelectV3() {
   const { state, dispatch } = useCalculator();
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const { data: products } = useQuery<FenceProduct[]>({
-    queryKey: ['v3FenceProducts'],
+    queryKey: ["v3FenceProducts"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('products')
-        .select('id, name, system_type, description')
-        .eq('product_type', 'fence')
-        .eq('active', true)
-        .order('sort_order', { ascending: true });
+        .from("products")
+        .select("id, name, system_type, description")
+        .eq("product_type", "fence")
+        .eq("active", true)
+        .order("sort_order", { ascending: true });
       if (error) throw error;
       return (data ?? []) as FenceProduct[];
     },
@@ -47,80 +47,90 @@ export function ProductSelectV3() {
       (p) =>
         p.system_type.toLowerCase().includes(q) ||
         p.name.toLowerCase().includes(q) ||
-        (p.description ?? '').toLowerCase().includes(q),
+        (p.description ?? "").toLowerCase().includes(q),
     );
   }, [products, query]);
 
   // Close on outside click
   useEffect(() => {
     function onClick(e: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     }
-    document.addEventListener('mousedown', onClick);
-    return () => document.removeEventListener('mousedown', onClick);
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
   }, []);
 
   function selectProduct(p: FenceProduct) {
     const initialPayload: CanonicalPayload = {
       productCode: p.system_type,
-      schemaVersion: 'v1',
+      schemaVersion: "v1",
       variables: {
-        colour_code: 'B',
+        colour_code: "B",
         slat_size_mm: 65,
         slat_gap_mm: 5,
-        finish_family: 'standard',
+        finish_family: "standard",
+        max_panel_width_mm: 2600,
       },
       runs: [
         {
           runId: crypto.randomUUID(),
           productCode: p.system_type,
-          leftBoundary: { type: 'product_post' },
-          rightBoundary: { type: 'product_post' },
+          leftBoundary: { type: "product_post" },
+          rightBoundary: { type: "product_post" },
           segments: [],
           corners: [],
         },
       ],
     };
-    dispatch({ type: 'SET_PAYLOAD', payload: initialPayload });
+    dispatch({ type: "SET_PAYLOAD", payload: initialPayload });
     setOpen(false);
-    setQuery('');
+    setQuery("");
     setActiveIndex(-1);
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (!open) return;
-    if (e.key === 'ArrowDown') {
+    if (e.key === "ArrowDown") {
       e.preventDefault();
       setActiveIndex((i) => Math.min(i + 1, filtered.length - 1));
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setActiveIndex((i) => Math.max(i - 1, 0));
-    } else if (e.key === 'Enter') {
+    } else if (e.key === "Enter") {
       if (activeIndex >= 0 && filtered[activeIndex]) {
         e.preventDefault();
         selectProduct(filtered[activeIndex]);
       }
-    } else if (e.key === 'Escape') {
+    } else if (e.key === "Escape") {
       setOpen(false);
     }
   }
 
   const buttonLabel = currentProduct
     ? `${currentProduct.name} (${currentProduct.system_type})`
-    : 'Select a fencing system…';
+    : "Select a fencing system…";
 
   return (
     <div ref={wrapperRef} className="relative" data-testid="product-select">
-      <label className="block text-sm font-medium text-brand-text mb-2">Product</label>
+      <label className="block text-sm font-medium text-brand-text mb-2">
+        Product
+      </label>
 
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between gap-2 px-3 py-2 bg-brand-bg border border-brand-border rounded-lg text-sm text-brand-text hover:border-brand-accent/50 transition-colors"
+        className="w-full flex items-center justify-between gap-2 px-3 py-2 bg-white border border-brand-border rounded-lg text-sm text-brand-text hover:border-brand-accent/50 transition-colors"
       >
-        <span className={currentProduct ? 'text-brand-text' : 'text-brand-muted'}>{buttonLabel}</span>
+        <span
+          className={currentProduct ? "text-brand-text" : "text-brand-muted"}
+        >
+          {buttonLabel}
+        </span>
         <ChevronDown size={16} className="text-brand-muted shrink-0" />
       </button>
 
@@ -144,7 +154,9 @@ export function ProductSelectV3() {
           </div>
           <ul role="listbox" className="max-h-72 overflow-auto">
             {filtered.length === 0 ? (
-              <li className="px-3 py-2 text-sm text-brand-muted">No fences match "{query}".</li>
+              <li className="px-3 py-2 text-sm text-brand-muted">
+                No fences match "{query}".
+              </li>
             ) : (
               filtered.map((p, idx) => {
                 const active = idx === activeIndex;
@@ -162,12 +174,14 @@ export function ProductSelectV3() {
                       onMouseEnter={() => setActiveIndex(idx)}
                       className={`w-full text-left px-3 py-2 text-sm transition-colors ${
                         active
-                          ? 'bg-brand-accent/15 text-brand-accent'
-                          : 'text-brand-text hover:bg-brand-border/50'
-                      } ${selected ? 'font-medium' : ''}`}
+                          ? "bg-brand-accent/15 text-brand-accent"
+                          : "text-brand-text hover:bg-brand-border/50"
+                      } ${selected ? "font-medium" : ""}`}
                       data-testid={`product-option-${p.system_type}`}
                     >
-                      <div className="font-mono text-xs text-brand-muted">{p.system_type}</div>
+                      <div className="font-mono text-xs text-brand-muted">
+                        {p.system_type}
+                      </div>
                       <div className="truncate">{p.name}</div>
                       {p.description && (
                         <div className="text-xs text-brand-muted truncate mt-0.5">

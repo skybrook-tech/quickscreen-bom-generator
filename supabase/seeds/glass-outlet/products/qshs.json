@@ -2945,8 +2945,8 @@
     },
     {
       "product_system_type": "QSHS",
-      "name": "panel_width_mm",
-      "label": "Panel Width",
+      "name": "segment_width_mm",
+      "label": "Segment Width",
       "data_type": "number",
       "unit": "mm",
       "required": true,
@@ -2981,15 +2981,15 @@
       "scope": "run",
       "sort_order": 45,
       "active": true
-    }
+    },
   ],
   "product_validations": [
     {
       "product_system_type": "QSHS",
-      "name": "panel_width_in_range",
-      "expression": "panel_width_mm >= 300 && panel_width_mm <= 2600",
+      "name": "segment_width_in_range",
+      "expression": "segment_width_mm >= 300 && segment_width_mm <= 20000",
       "severity": "error",
-      "message": "Panel width must be between 300mm and 2600mm.",
+      "message": "Segment width must be between 300mm and 20000mm.",
       "active": true
     },
     {
@@ -3037,6 +3037,30 @@
       "priority": 30,
       "active": true,
       "notes": "Side frame cut = actual height - 3mm lip"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_panels",
+      "expression": "ceil(segment_width_mm / max_panel_width_mm)",
+      "output_key": "num_panels",
+      "priority": 32,
+      "active": true,
+      "notes": "Number of evenly-split panels within the segment. panel_width_mm = segment_width_mm / num_panels."
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "panel_width_mm",
+      "expression": "segment_width_mm / num_panels",
+      "output_key": "panel_width_mm",
+      "priority": 35,
+      "active": true,
+      "notes": "Actual panel width derived from segment width divided evenly by num_panels."
     },
     {
       "product_system_type": "QSHS",

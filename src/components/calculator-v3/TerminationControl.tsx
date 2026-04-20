@@ -64,11 +64,10 @@ export function TerminationControl({ runId, seg, side }: Props) {
         <select
           value={kind}
           onChange={(e) => setKind(e.target.value as TerminationKindUi | "")}
-          className="bg-brand-bg border border-brand-border rounded px-2 py-1 text-brand-text"
+          className="bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
         >
-          <option value="">Inherit run default</option>
-          <option value="corner">Corner</option>
           <option value="system_post">System post</option>
+          <option value="corner">Corner</option>
           <option value="non_system_termination">Non-system termination</option>
         </select>
       </label>
@@ -79,7 +78,7 @@ export function TerminationControl({ runId, seg, side }: Props) {
           <select
             value={Number(v[degKey] ?? 90)}
             onChange={(e) => setScalar(degKey, Number(e.target.value))}
-            className="bg-brand-bg border border-brand-border rounded px-2 py-1 text-brand-text"
+            className="bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
           >
             {CORNER_DEGREE_OPTIONS.map((d) => (
               <option key={d} value={d}>
@@ -98,7 +97,7 @@ export function TerminationControl({ runId, seg, side }: Props) {
             onChange={(e) =>
               setScalar(subKey, e.target.value as NonSystemSubtypeUi)
             }
-            className="bg-brand-bg border border-brand-border rounded px-2 py-1 text-brand-text"
+            className="bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
           >
             <option value="wall">Wall</option>
             <option value="non_system_post">Non-system post</option>

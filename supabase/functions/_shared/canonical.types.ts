@@ -37,7 +37,7 @@ export interface CanonicalSegment {
   segmentId: string;
   sortOrder: number;
   segmentKind: SegmentKind;
-  panelWidthMm?: number;
+  segmentWidthMm?: number;
   targetHeightMm?: number;
   bayCount?: number;
   gateProductCode?: string;

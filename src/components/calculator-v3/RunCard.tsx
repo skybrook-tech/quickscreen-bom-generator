@@ -14,11 +14,20 @@ interface Props {
 }
 
 const calcTotalLength = (run: CanonicalRun) =>
-  run.segments.reduce((acc, seg) => acc + (seg.panelWidthMm ?? 0), 0);
+  run.segments.reduce((acc, seg) => acc + (seg.segmentWidthMm ?? 0), 0);
 
 export function RunCard({ run, runIdx }: Props) {
-  const { dispatch } = useCalculator();
+  const { state, dispatch } = useCalculator();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const jobMax = Number(state.payload?.variables.max_panel_width_mm ?? 2600);
+
+  const totalPanels = run.segments
+    .filter((s) => s.segmentKind !== "gate_opening")
+    .reduce((acc, s) => {
+      const segMax = Number(s.variables?.max_panel_width_mm ?? jobMax);
+      return acc + Math.ceil((s.segmentWidthMm ?? 0) / segMax);
+    }, 0);
 
   function upsertSegment(segment: CanonicalSegment) {
     dispatch({ type: "UPSERT_SEGMENT", runId: run.runId, segment });
@@ -29,7 +38,7 @@ export function RunCard({ run, runIdx }: Props) {
       segmentId: crypto.randomUUID(),
       sortOrder: run.segments.length + 1,
       segmentKind: "panel",
-      panelWidthMm: 2500,
+      segmentWidthMm: jobMax,
       targetHeightMm: 1800,
     });
   }
@@ -39,7 +48,7 @@ export function RunCard({ run, runIdx }: Props) {
       segmentId: crypto.randomUUID(),
       sortOrder: run.segments.length + 1,
       segmentKind: "gate_opening",
-      panelWidthMm: 1000,
+      segmentWidthMm: 1000,
       targetHeightMm: 1800,
       gateProductCode: GATE_PRODUCT_CODE,
       variables: {
@@ -63,6 +72,7 @@ export function RunCard({ run, runIdx }: Props) {
         <span>Corners: {run.corners.length}</span>
         <span>Segments: {run.segments.length}</span>
         <span>Total length: {calcTotalLength(run)}mm</span>
+        {totalPanels > 0 && <span>Total panels: {totalPanels}</span>}
       </div>
 
       {run.segments.length === 0 && (

@@ -43,8 +43,8 @@ export function GateFormV3({ initialRun, runFields, segmentFields, onCancel, onS
       for (const [k, v] of Object.entries(initialSegment.variables)) base[k] = v;
     }
     // Seed gate_width/height from any top-level segment shape if present
-    if (initialSegment?.panelWidthMm != null && base.gate_width_mm == null) {
-      base.gate_width_mm = initialSegment.panelWidthMm;
+    if (initialSegment?.segmentWidthMm != null && base.gate_width_mm == null) {
+      base.gate_width_mm = initialSegment.segmentWidthMm;
     }
     if (initialSegment?.targetHeightMm != null && base.gate_height_mm == null) {
       base.gate_height_mm = initialSegment.targetHeightMm;
@@ -75,7 +75,7 @@ export function GateFormV3({ initialRun, runFields, segmentFields, onCancel, onS
       segmentId: initialSegment?.segmentId ?? crypto.randomUUID(),
       sortOrder: initialSegment?.sortOrder ?? 1,
       segmentKind: 'gate_opening',
-      panelWidthMm: typeof segVars.gate_width_mm === 'number' ? segVars.gate_width_mm : Number(segVars.gate_width_mm ?? 0) || undefined,
+      segmentWidthMm: typeof segVars.gate_width_mm === 'number' ? segVars.gate_width_mm : Number(segVars.gate_width_mm ?? 0) || undefined,
       targetHeightMm: typeof segVars.gate_height_mm === 'number' ? segVars.gate_height_mm : Number(segVars.gate_height_mm ?? 0) || undefined,
       gateProductCode: GATE_PRODUCT_CODE,
       variables: segVars,

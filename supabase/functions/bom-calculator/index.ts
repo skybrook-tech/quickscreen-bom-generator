@@ -16,38 +16,38 @@
 //   10. Evaluate product_warnings (non-blocking; populates warnings/errors/assumptions)
 //   11. Aggregate lines by SKU+runId → price → return
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { corsHeaders, handleCors } from '../_shared/cors.ts';
-import { extractJwt, resolveUserProfile } from '../_shared/auth.ts';
-import { create, all } from 'https://esm.sh/mathjs@13/number';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { corsHeaders, handleCors } from "../_shared/cors.ts";
+import { extractJwt, resolveUserProfile } from "../_shared/auth.ts";
+import { create, all } from "https://esm.sh/mathjs@13/number";
 import type {
   CanonicalPayload,
   CanonicalRun,
   CanonicalSegment,
-} from '../_shared/canonical.types.ts';
+} from "../_shared/canonical.types.ts";
 import {
   cornerDegreesFromVars,
   effectiveLegacyBoundaryType,
   type LegacyBoundaryType,
-} from '../_shared/segmentTermination.ts';
-import type { BOMUnit, PricingRule, PricingTier } from '../_shared/types.ts';
+} from "../_shared/segmentTermination.ts";
+import type { BOMUnit, PricingRule, PricingTier } from "../_shared/types.ts";
 
 const mathjs = create(all);
 
 // ─── Colour codes (canonical short codes used in SKU patterns) ────────────────
 
 const COLOUR_CODES: Record<string, string> = {
-  'black-satin':            'B',
-  'monument-matt':          'MN',
-  'woodland-grey-matt':     'G',
-  'surfmist-matt':          'SM',
-  'pearl-white-gloss':      'W',
-  'basalt-satin':           'BS',
-  'dune-satin':             'D',
-  'mill':                   'M',
-  'primrose':               'P',
-  'paperbark':              'PB',
-  'palladium-silver-pearl': 'S',
+  "black-satin": "B",
+  "monument-matt": "MN",
+  "woodland-grey-matt": "G",
+  "surfmist-matt": "SM",
+  "pearl-white-gloss": "W",
+  "basalt-satin": "BS",
+  "dune-satin": "D",
+  mill: "M",
+  primrose: "P",
+  paperbark: "PB",
+  "palladium-silver-pearl": "S",
 };
 
 // ─── Pricing (verbatim from calculate-bom-v2) ─────────────────────────────────
@@ -57,24 +57,29 @@ function resolvePrice(rules: PricingRule[], qty: number): number {
     if (!r.rule) return r.price;
     try {
       if (mathjs.evaluate(r.rule, { qty }) === true) return r.price;
-    } catch { /* malformed rule — skip */ }
+    } catch {
+      /* malformed rule — skip */
+    }
   }
   return 0;
 }
 
-async function loadPricing(orgId: string, tier: PricingTier): Promise<Map<string, PricingRule[]>> {
+async function loadPricing(
+  orgId: string,
+  tier: PricingTier,
+): Promise<Map<string, PricingRule[]>> {
   const supabaseAdmin = createClient(
-    Deno.env.get('SUPABASE_URL')!,
-    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
 
   const { data, error } = await supabaseAdmin
-    .from('pricing_rules_with_sku')
-    .select('sku, price, rule, priority')
-    .eq('org_id', orgId)
-    .eq('tier_code', tier)
-    .eq('active', true)
-    .order('priority', { ascending: false });
+    .from("pricing_rules_with_sku")
+    .select("sku, price, rule, priority")
+    .eq("org_id", orgId)
+    .eq("tier_code", tier)
+    .eq("active", true)
+    .order("priority", { ascending: false });
 
   if (error) throw new Error(`Pricing lookup failed: ${error.message}`);
 
@@ -121,8 +126,8 @@ interface TraceEntry {
 }
 
 interface EngineData {
-  product: { id: string; system_type: string; };
-  ruleVersion: { id: string; };
+  product: { id: string; system_type: string };
+  ruleVersion: { id: string };
   rules: Array<{
     id: string;
     name: string;
@@ -198,18 +203,20 @@ function matchesJSON(
   for (const [key, expected] of Object.entries(matchJson)) {
     const actual = ctx[key];
     if (
-      typeof expected === 'object' &&
+      typeof expected === "object" &&
       expected !== null &&
       !Array.isArray(expected)
     ) {
       // Range predicate
       const range = expected as Record<string, unknown>;
-      if ('gt'  in range && !(Number(actual) >  Number(range.gt)))  return false;
-      if ('gte' in range && !(Number(actual) >= Number(range.gte))) return false;
-      if ('lt'  in range && !(Number(actual) <  Number(range.lt)))  return false;
-      if ('lte' in range && !(Number(actual) <= Number(range.lte))) return false;
-      if ('eq'  in range && actual !== range.eq)                    return false;
-      if ('neq' in range && actual === range.neq)                   return false;
+      if ("gt" in range && !(Number(actual) > Number(range.gt))) return false;
+      if ("gte" in range && !(Number(actual) >= Number(range.gte)))
+        return false;
+      if ("lt" in range && !(Number(actual) < Number(range.lt))) return false;
+      if ("lte" in range && !(Number(actual) <= Number(range.lte)))
+        return false;
+      if ("eq" in range && actual !== range.eq) return false;
+      if ("neq" in range && actual === range.neq) return false;
     } else if (Array.isArray(expected)) {
       if (!expected.includes(actual)) return false;
     } else {
@@ -248,146 +255,156 @@ Deno.serve(async (req: Request) => {
     // Step 2 — resolve role for admin trace gating
     // resolveUserProfile doesn't return role, so we query separately.
     const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
     // We need the user id — get it from the JWT
-    const { data: { user } } = await supabaseAdmin.auth.getUser(jwt);
+    const {
+      data: { user },
+    } = await supabaseAdmin.auth.getUser(jwt);
     const { data: profileWithRole } = user
       ? await supabaseAdmin
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
+          .from("profiles")
+          .select("role")
+          .eq("id", user.id)
           .single()
       : { data: null };
 
-    const role: string = profileWithRole?.role ?? 'user';
-    const isAdmin = role === 'admin';
+    const role: string = profileWithRole?.role ?? "user";
+    const isAdmin = role === "admin";
 
     // Step 3 — parse + minimally validate payload
-    const body = await req.json() as {
+    const body = (await req.json()) as {
       payload: CanonicalPayload;
       pricingTier?: PricingTier;
       debug?: boolean;
     };
 
     const { payload, pricingTier: reqTier, debug } = body;
-    const pricingTier: PricingTier = reqTier ?? defaultTier ?? 'tier1';
+    const pricingTier: PricingTier = reqTier ?? defaultTier ?? "tier1";
     const wantTrace = isAdmin && debug === true;
 
-    if (!payload?.productCode || !Array.isArray(payload?.runs) || payload.runs.length === 0) {
+    if (
+      !payload?.productCode ||
+      !Array.isArray(payload?.runs) ||
+      payload.runs.length === 0
+    ) {
       return Response.json(
-        { error: 'Invalid payload: productCode and runs[] are required' },
+        { error: "Invalid payload: productCode and runs[] are required" },
         { status: 400, headers: corsHeaders },
       );
     }
 
     // Step 4 — load engine data per unique productCode (parallelised)
-    const productCodes = [...new Set(payload.runs.map((r: CanonicalRun) => r.productCode))];
+    const productCodes = [
+      ...new Set(payload.runs.map((r: CanonicalRun) => r.productCode)),
+    ];
     const engineDataMap = new Map<string, EngineData>();
 
-    await Promise.all(productCodes.map(async (code) => {
-      // Flat products model (post migration 022): one row per (org, system_type).
-      const { data: actualProduct } = await supabaseAdmin
-        .from('products')
-        .select('id, system_type')
-        .eq('org_id', orgId)
-        .eq('system_type', code)
-        .maybeSingle();
+    await Promise.all(
+      productCodes.map(async (code) => {
+        // Flat products model (post migration 022): one row per (org, system_type).
+        const { data: actualProduct } = await supabaseAdmin
+          .from("products")
+          .select("id, system_type")
+          .eq("org_id", orgId)
+          .eq("system_type", code)
+          .maybeSingle();
 
-      if (!actualProduct) {
-        throw new Error(`Unknown productCode: ${code}`);
-      }
+        if (!actualProduct) {
+          throw new Error(`Unknown productCode: ${code}`);
+        }
 
-      // Load current rule version via rule_set
-      const { data: ruleSet } = await supabaseAdmin
-        .from('rule_sets')
-        .select('id')
-        .eq('org_id', orgId)
-        .eq('product_id', actualProduct.id)
-        .maybeSingle();
+        // Load current rule version via rule_set
+        const { data: ruleSet } = await supabaseAdmin
+          .from("rule_sets")
+          .select("id")
+          .eq("org_id", orgId)
+          .eq("product_id", actualProduct.id)
+          .maybeSingle();
 
-      if (!ruleSet) {
-        throw new Error(`No rule set found for product: ${code}`);
-      }
+        if (!ruleSet) {
+          throw new Error(`No rule set found for product: ${code}`);
+        }
 
-      const { data: ruleVersion } = await supabaseAdmin
-        .from('rule_versions')
-        .select('id')
-        .eq('org_id', orgId)
-        .eq('rule_set_id', ruleSet.id)
-        .eq('is_current', true)
-        .maybeSingle();
+        const { data: ruleVersion } = await supabaseAdmin
+          .from("rule_versions")
+          .select("id")
+          .eq("org_id", orgId)
+          .eq("rule_set_id", ruleSet.id)
+          .eq("is_current", true)
+          .maybeSingle();
 
-      if (!ruleVersion) {
-        throw new Error(`No current rule version for product: ${code}`);
-      }
+        if (!ruleVersion) {
+          throw new Error(`No current rule version for product: ${code}`);
+        }
 
-      // Parallel fetch of all engine tables
-      const [
-        { data: rules },
-        { data: constraints },
-        { data: variables },
-        { data: validations },
-        { data: selectors },
-        { data: companions },
-        { data: warnings },
-      ] = await Promise.all([
-        supabaseAdmin
-          .from('product_rules')
-          .select('id, name, stage, expression, output_key, priority')
-          .eq('version_id', ruleVersion.id)
-          .eq('active', true)
-          .order('stage')
-          .order('priority'),
-        supabaseAdmin
-          .from('product_constraints')
-          .select('*')
-          .eq('product_id', actualProduct.id)
-          .eq('active', true),
-        supabaseAdmin
-          .from('product_variables')
-          .select('*')
-          .eq('product_id', actualProduct.id)
-          .eq('active', true)
-          .order('sort_order'),
-        supabaseAdmin
-          .from('product_validations')
-          .select('*')
-          .eq('product_id', actualProduct.id)
-          .eq('active', true),
-        supabaseAdmin
-          .from('product_component_selectors')
-          .select('*')
-          .eq('product_id', actualProduct.id)
-          .eq('active', true)
-          .order('priority'),
-        supabaseAdmin
-          .from('product_companion_rules')
-          .select('*')
-          .eq('product_id', actualProduct.id)
-          .eq('active', true)
-          .order('priority'),
-        supabaseAdmin
-          .from('product_warnings')
-          .select('*')
-          .eq('product_id', actualProduct.id)
-          .eq('active', true),
-      ]);
+        // Parallel fetch of all engine tables
+        const [
+          { data: rules },
+          { data: constraints },
+          { data: variables },
+          { data: validations },
+          { data: selectors },
+          { data: companions },
+          { data: warnings },
+        ] = await Promise.all([
+          supabaseAdmin
+            .from("product_rules")
+            .select("id, name, stage, expression, output_key, priority")
+            .eq("version_id", ruleVersion.id)
+            .eq("active", true)
+            .order("stage")
+            .order("priority"),
+          supabaseAdmin
+            .from("product_constraints")
+            .select("*")
+            .eq("product_id", actualProduct.id)
+            .eq("active", true),
+          supabaseAdmin
+            .from("product_variables")
+            .select("*")
+            .eq("product_id", actualProduct.id)
+            .eq("active", true)
+            .order("sort_order"),
+          supabaseAdmin
+            .from("product_validations")
+            .select("*")
+            .eq("product_id", actualProduct.id)
+            .eq("active", true),
+          supabaseAdmin
+            .from("product_component_selectors")
+            .select("*")
+            .eq("product_id", actualProduct.id)
+            .eq("active", true)
+            .order("priority"),
+          supabaseAdmin
+            .from("product_companion_rules")
+            .select("*")
+            .eq("product_id", actualProduct.id)
+            .eq("active", true)
+            .order("priority"),
+          supabaseAdmin
+            .from("product_warnings")
+            .select("*")
+            .eq("product_id", actualProduct.id)
+            .eq("active", true),
+        ]);
 
-      engineDataMap.set(code, {
-        product: actualProduct,
-        ruleVersion,
-        rules: rules ?? [],
-        constraints: constraints ?? [],
-        variables: variables ?? [],
-        validations: validations ?? [],
-        selectors: selectors ?? [],
-        companions: companions ?? [],
-        warnings: warnings ?? [],
-      });
-    }));
+        engineDataMap.set(code, {
+          product: actualProduct,
+          ruleVersion,
+          rules: rules ?? [],
+          constraints: constraints ?? [],
+          variables: variables ?? [],
+          validations: validations ?? [],
+          selectors: selectors ?? [],
+          companions: companions ?? [],
+          warnings: warnings ?? [],
+        });
+      }),
+    );
 
     // Step 5 helper — normalise variables: apply defaults, map colour codes
     function normaliseVariables(
@@ -398,7 +415,10 @@ Deno.serve(async (req: Request) => {
 
       // 1. Apply variable defaults from engine schema
       for (const v of engineData.variables) {
-        if (v.default_value_json !== null && v.default_value_json !== undefined) {
+        if (
+          v.default_value_json !== null &&
+          v.default_value_json !== undefined
+        ) {
           ctx[v.name] = v.default_value_json;
         }
       }
@@ -409,9 +429,9 @@ Deno.serve(async (req: Request) => {
       }
 
       // 3. Normalise colour: long name → short code
-      const rawColour = ctx['colour_code'] ?? ctx['colour'];
-      if (typeof rawColour === 'string') {
-        ctx['colour'] = COLOUR_CODES[rawColour] ?? rawColour;
+      const rawColour = ctx["colour_code"] ?? ctx["colour"];
+      if (typeof rawColour === "string") {
+        ctx["colour"] = COLOUR_CODES[rawColour] ?? rawColour;
       }
 
       return ctx;
@@ -426,7 +446,10 @@ Deno.serve(async (req: Request) => {
     const allAssumptions: string[] = [];
     const allTrace: TraceEntry[] = [];
     // computed[runId][segmentId] = { actual_height_mm, ... }
-    const computed: Record<string, Record<string, Record<string, unknown>>> = {};
+    const computed: Record<
+      string,
+      Record<string, Record<string, unknown>>
+    > = {};
 
     for (const run of payload.runs as CanonicalRun[]) {
       const engineData = engineDataMap.get(run.productCode);
@@ -447,7 +470,7 @@ Deno.serve(async (req: Request) => {
         try {
           const result = mathjs.evaluate(validation.expression, { ...runCtx });
           if (result === false) {
-            if (validation.severity === 'error') {
+            if (validation.severity === "error") {
               allErrors.push(validation.message);
               runHasError = true;
             } else {
@@ -456,7 +479,7 @@ Deno.serve(async (req: Request) => {
           }
         } catch (err) {
           runTrace.push({
-            stage: 'validation',
+            stage: "validation",
             rule_id: validation.id,
             rule_name: validation.name,
             expression: validation.expression,
@@ -477,17 +500,22 @@ Deno.serve(async (req: Request) => {
         const runLeftT = run.leftBoundary.type as LegacyBoundaryType;
         const runRightT = run.rightBoundary.type as LegacyBoundaryType;
         const segV = segment.variables;
-        const leftEff = effectiveLegacyBoundaryType(runLeftT, segV, 'left');
-        const rightEff = effectiveLegacyBoundaryType(runRightT, segV, 'right');
-        const leftCornerDeg = cornerDegreesFromVars(segV, 'left');
-        const rightCornerDeg = cornerDegreesFromVars(segV, 'right');
+        const leftEff = effectiveLegacyBoundaryType(runLeftT, segV, "left");
+        const rightEff = effectiveLegacyBoundaryType(runRightT, segV, "right");
+        const leftCornerDeg = cornerDegreesFromVars(segV, "left");
+        const rightCornerDeg = cornerDegreesFromVars(segV, "right");
 
         const segCtx: Record<string, unknown> = {
           ...runCtx,
           ...segVarsNorm,
-          // Segment geometry — prefer segment values, fall back to run ctx
-          panel_width_mm: segment.panelWidthMm ?? runCtx['panel_width_mm'],
-          target_height_mm: segment.targetHeightMm ?? runCtx['target_height_mm'],
+          // Segment geometry — segment_width_mm is the user input; panel_width_mm
+          // is derived by the num_panels + panel_width_mm derive rules below.
+          // max_panel_width_mm fallback: hardcoded 2600 (structural max for QSHS);
+          // overridden by payload.variables or seg.variables from the UI.
+          max_panel_width_mm: 2600,
+          segment_width_mm: segment.segmentWidthMm,
+          target_height_mm:
+            segment.targetHeightMm ?? runCtx["target_height_mm"],
           bay_count: segment.bayCount ?? 1,
           segment_kind: segment.segmentKind,
           // Gate product (when segmentKind === 'gate_opening')
@@ -502,13 +530,12 @@ Deno.serve(async (req: Request) => {
             right_corner_degrees: rightCornerDeg,
           }),
           product_post_boundary_count:
-            (leftEff === 'product_post' ? 1 : 0) +
-            (rightEff === 'product_post' ? 1 : 0),
+            (leftEff === "product_post" ? 1 : 0) +
+            (rightEff === "product_post" ? 1 : 0),
           wall_boundary_count:
-            (leftEff === 'wall' ? 1 : 0) +
-            (rightEff === 'wall' ? 1 : 0),
+            (leftEff === "wall" ? 1 : 0) + (rightEff === "wall" ? 1 : 0),
           corner_count: run.corners.length,
-          corner_post_count: run.corners.length,  // alias used by some rules
+          corner_post_count: run.corners.length, // alias used by some rules
           // Stock lengths (constants referenced by rules)
           slat_stock_length_mm: 6100,
           side_frame_stock_length_mm: 5800,
@@ -546,9 +573,10 @@ Deno.serve(async (req: Request) => {
         // Stash computed values for this segment
         computed[run.runId] = computed[run.runId] ?? {};
         computed[run.runId][segment.segmentId] = {
-          actual_height_mm: segCtx['actual_height_mm'],
-          num_slats:        segCtx['num_slats'],
-          panel_width_mm:   segCtx['panel_width_mm'],
+          actual_height_mm: segCtx["actual_height_mm"],
+          num_slats: segCtx["num_slats"],
+          panel_width_mm: segCtx["panel_width_mm"],
+          num_panels: segCtx["num_panels"],
         };
 
         // Step 9 — selector resolution.
@@ -563,27 +591,29 @@ Deno.serve(async (req: Request) => {
         function getCategoryQty(category: string): number {
           // Explicit overrides for categories whose quantity key differs from name conventions
           const explicit: Record<string, string[]> = {
-            'centre_support_rail': ['num_csr', 'num_centre_support_rail'],
-            'post':                ['num_posts_from_boundaries', 'num_post'],
-            'f_section':           ['wall_boundary_count', 'num_f_section'],
+            centre_support_rail: ["num_csr", "num_centre_support_rail"],
+            post: ["num_posts_from_boundaries", "num_post"],
+            f_section: ["wall_boundary_count", "num_f_section"],
           };
           const candidates = [
             ...(explicit[category] ?? []),
-            `num_${category}`,      // num_slat
-            `num_${category}s`,     // num_slats
+            `num_${category}`, // num_slat
+            `num_${category}s`, // num_slats
             `${category}_qty`,
             `${category}_count`,
           ];
           for (const key of candidates) {
             const val = segCtx[key];
-            if (typeof val === 'number' && val > 0) return val;
-            if (typeof val === 'boolean' && val) return 1;
+            if (typeof val === "number" && val > 0) return val;
+            if (typeof val === "boolean" && val) return 1;
           }
           return 0;
         }
 
         // Collect unique categories across all active selectors for this product
-        const selectorCategories = [...new Set(engineData.selectors.map((s) => s.component_category))];
+        const selectorCategories = [
+          ...new Set(engineData.selectors.map((s) => s.component_category)),
+        ];
 
         for (const category of selectorCategories) {
           const qty = getCategoryQty(category);
@@ -602,7 +632,7 @@ Deno.serve(async (req: Request) => {
                 sku,
                 description: `${category} — ${sku}`,
                 quantity: qty,
-                unit: 'each' as BOMUnit,
+                unit: "each" as BOMUnit,
                 category,
                 unitPrice: 0,
                 lineTotal: 0,
@@ -638,15 +668,20 @@ Deno.serve(async (req: Request) => {
                 trigger_qty: line.quantity,
                 [`${companion.trigger_category}_qty`]: line.quantity,
               };
-              const qty = Number(mathjs.evaluate(companion.qty_formula, companionCtx));
+              const qty = Number(
+                mathjs.evaluate(companion.qty_formula, companionCtx),
+              );
               if (!Number.isFinite(qty) || qty <= 0) continue;
 
-              const sku = resolvePlaceholders(companion.add_sku_pattern, segCtx);
+              const sku = resolvePlaceholders(
+                companion.add_sku_pattern,
+                segCtx,
+              );
               runLines.push({
                 sku,
                 description: `${companion.add_category} — ${sku}`,
                 quantity: qty,
-                unit: companion.is_pack ? 'pack' : ('each' as BOMUnit),
+                unit: companion.is_pack ? "pack" : ("each" as BOMUnit),
                 category: companion.add_category,
                 unitPrice: 0,
                 lineTotal: 0,
@@ -656,7 +691,7 @@ Deno.serve(async (req: Request) => {
               });
             } catch (err) {
               allTrace.push({
-                stage: 'companion',
+                stage: "companion",
                 rule_id: companion.id,
                 rule_name: companion.rule_key,
                 expression: companion.qty_formula,
@@ -671,15 +706,17 @@ Deno.serve(async (req: Request) => {
       for (const warning of engineData.warnings) {
         try {
           if (matchesJSON(warning.condition_json, runCtx)) {
-            if (warning.severity === 'error') {
+            if (warning.severity === "error") {
               allErrors.push(warning.message);
-            } else if (warning.severity === 'warning') {
+            } else if (warning.severity === "warning") {
               allWarnings.push(warning.message);
             } else {
               allAssumptions.push(warning.message); // severity === 'info'
             }
           }
-        } catch { /* ignore malformed condition_json */ }
+        } catch {
+          /* ignore malformed condition_json */
+        }
       }
 
       allLines.push(...runLines);
@@ -717,7 +754,7 @@ Deno.serve(async (req: Request) => {
     // Step 10 (aggregate) — merge lines by SKU + runId
     const aggregated = new Map<string, BomLineItemV3>();
     for (const line of allLines) {
-      const key = `${line.sku}__${line.runId ?? ''}`;
+      const key = `${line.sku}__${line.runId ?? ""}`;
       const existing = aggregated.get(key);
       if (existing) {
         existing.quantity += line.quantity;
@@ -728,9 +765,9 @@ Deno.serve(async (req: Request) => {
     const aggregatedLines = [...aggregated.values()];
 
     // Separate gate items for the response envelope
-    const gateProductCodes = new Set(['QS_GATE', 'QSVS', 'QSGH', 'HSSG']);
-    const gateItems = aggregatedLines.filter(
-      (l) => gateProductCodes.has(l.productCode ?? ''),
+    const gateProductCodes = new Set(["QS_GATE", "QSVS", "QSGH", "HSSG"]);
+    const gateItems = aggregatedLines.filter((l) =>
+      gateProductCodes.has(l.productCode ?? ""),
     );
 
     // Step 11 — pricing
@@ -744,7 +781,9 @@ Deno.serve(async (req: Request) => {
         allWarnings.push(`No pricing rule found for SKU: ${line.sku}`);
       } else {
         line.unitPrice = resolvePrice(rules, line.quantity);
-        line.lineTotal = parseFloat((line.quantity * line.unitPrice).toFixed(2));
+        line.lineTotal = parseFloat(
+          (line.quantity * line.unitPrice).toFixed(2),
+        );
       }
     }
 
@@ -753,7 +792,9 @@ Deno.serve(async (req: Request) => {
       for (const item of rr.items) {
         const rules = pricingMap.get(item.sku) ?? [];
         item.unitPrice = resolvePrice(rules, item.quantity);
-        item.lineTotal = parseFloat((item.quantity * item.unitPrice).toFixed(2));
+        item.lineTotal = parseFloat(
+          (item.quantity * item.unitPrice).toFixed(2),
+        );
       }
     }
 
@@ -765,13 +806,19 @@ Deno.serve(async (req: Request) => {
     const grandTotal = parseFloat((subtotal + gst).toFixed(2));
 
     // Strip computed for non-admins (keep actual_height_mm only per segment)
-    const strippedComputed: Record<string, Record<string, Record<string, unknown>>> = {};
+    const strippedComputed: Record<
+      string,
+      Record<string, Record<string, unknown>>
+    > = {};
     for (const [runId, segments] of Object.entries(computed)) {
       strippedComputed[runId] = {};
       for (const [segId, vals] of Object.entries(segments)) {
         strippedComputed[runId][segId] = isAdmin
           ? vals
-          : { actual_height_mm: vals['actual_height_mm'] };
+          : {
+              actual_height_mm: vals["actual_height_mm"],
+              num_panels: vals["num_panels"],
+            };
       }
     }
 
@@ -793,13 +840,12 @@ Deno.serve(async (req: Request) => {
       { headers: corsHeaders },
     );
   } catch (err) {
-    console.error('bom-calculator error:', err);
+    console.error("bom-calculator error:", err);
     const message = err instanceof Error ? err.message : String(err);
     const status =
-      message.includes('Authorization') || message.includes('Invalid JWT') ? 401 : 500;
-    return Response.json(
-      { error: message },
-      { status, headers: corsHeaders },
-    );
+      message.includes("Authorization") || message.includes("Invalid JWT")
+        ? 401
+        : 500;
+    return Response.json({ error: message }, { status, headers: corsHeaders });
   }
 });
