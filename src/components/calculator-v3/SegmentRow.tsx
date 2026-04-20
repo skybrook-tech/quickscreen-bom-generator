@@ -49,10 +49,12 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
         </span>
         <label className="text-brand-muted shrink-0">W:</label>
         <NumberInput
-          value={seg.segmentWidthMm ?? 0}
-          onChange={(v) => updateGeometry("segmentWidthMm", Number(v))}
+          value={parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
+          step={0.01}
+          min={0.3}
+          onChange={(v) => updateGeometry("segmentWidthMm", Math.round(Number(v) * 1000))}
         />
-        <span className="text-brand-muted">mm</span>
+        <span className="text-brand-muted">m</span>
         <label className="text-brand-muted shrink-0">H:</label>
         <NumberInput
           value={seg.targetHeightMm ?? 1800}

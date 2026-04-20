@@ -570,17 +570,27 @@ Deno.serve(async (req: Request) => {
           // Numeric post size (rules can compare post_size_num == 50 instead of post_size == '50')
           post_size_num: (() => {
             const ps = segVarsNorm["post_size"] ?? runCtx["post_size"];
-            return typeof ps === "string" ? Number(ps) : typeof ps === "number" ? ps : 50;
+            return typeof ps === "string"
+              ? Number(ps)
+              : typeof ps === "number"
+                ? ps
+                : 50;
           })(),
           // Numeric mounting flags
           mounting_type_is_base_plate:
-            (segVarsNorm["mounting_type"] ?? runCtx["mounting_type"]) === "base_plate" ||
-            (segVarsNorm["mounting_method"] ?? runCtx["mounting_method"]) === "base_plate"
-              ? 1 : 0,
+            (segVarsNorm["mounting_type"] ?? runCtx["mounting_type"]) ===
+              "base_plate" ||
+            (segVarsNorm["mounting_method"] ?? runCtx["mounting_method"]) ===
+              "base_plate"
+              ? 1
+              : 0,
           mounting_type_is_core_drill:
-            (segVarsNorm["mounting_type"] ?? runCtx["mounting_type"]) === "core_drill" ||
-            (segVarsNorm["mounting_method"] ?? runCtx["mounting_method"]) === "core_drill"
-              ? 1 : 0,
+            (segVarsNorm["mounting_type"] ?? runCtx["mounting_type"]) ===
+              "core_drill" ||
+            (segVarsNorm["mounting_method"] ?? runCtx["mounting_method"]) ===
+              "core_drill"
+              ? 1
+              : 0,
           // Numeric post_system flags (XPL system)
           post_system_is_xpl: (() => {
             const ps = segVarsNorm["post_system"] ?? runCtx["post_system"];
@@ -608,7 +618,8 @@ Deno.serve(async (req: Request) => {
                   ...(segment.variables ?? {}),
                   gate_width_mm: segment.segmentWidthMm,
                   gate_height_mm:
-                    segment.targetHeightMm ?? (runCtx["target_height_mm"] as number),
+                    segment.targetHeightMm ??
+                    (runCtx["target_height_mm"] as number),
                 },
                 activeEngineData,
               ),

@@ -71,7 +71,7 @@ export function RunCard({ run, runIdx }: Props) {
         <span>Run right: {run.rightBoundary.type.replace(/_/g, " ")}</span>
         <span>Corners: {run.corners.length}</span>
         <span>Segments: {run.segments.length}</span>
-        <span>Total length: {calcTotalLength(run)}mm</span>
+        <span>Total length: {(calcTotalLength(run) / 1000).toFixed(2)}m</span>
         {totalPanels > 0 && <span>Total panels: {totalPanels}</span>}
       </div>
 
