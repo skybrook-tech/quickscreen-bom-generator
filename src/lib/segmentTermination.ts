@@ -2,6 +2,9 @@
  * Per-segment junction terminations live in `segment.variables` with stable keys.
  * Maps UI buckets to legacy `CanonicalBoundary.type` values consumed by QSHS rules.
  */
+import type { CanonicalSegment } from "../types/canonical.types";
+
+export const CORNER_DEGREE_OPTIONS = [90, 135] as const;
 
 export type TerminationKindUi =
   | "corner"
@@ -86,6 +89,20 @@ export function effectiveLegacyBoundaryType(
   const sub = parseNonSystemSubtype(vars?.[subKey]);
   if (sub === "wall") return "wall";
   return "brick_post";
+}
+
+export function patchSegmentVariables(
+  seg: CanonicalSegment,
+  patch: Record<string, string | number | boolean | null | undefined>,
+): CanonicalSegment {
+  const next: Record<string, string | number | boolean> = {
+    ...(seg.variables ?? {}),
+  };
+  for (const [k, v] of Object.entries(patch)) {
+    if (v === null || v === undefined || v === "") delete next[k];
+    else next[k] = v;
+  }
+  return { ...seg, variables: Object.keys(next).length ? next : undefined };
 }
 
 export function cornerDegreesFromVars(

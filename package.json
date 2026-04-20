@@ -17,8 +17,8 @@
     "seed:glass-outlet": "node supabase/seeds/glass-outlet/seed-images.js",
     "seed:products": "node supabase/seeds/tools/seed-products.js",
     "seed:dump": "node supabase/seeds/tools/dump-to-json.js",
-    "db:reset": "npx supabase db reset && npm run seed:products && npm run seed:auth",
-    "setup": "npx supabase start && npm run db:reset"
+    "db:reset": "npx supabase@latest db reset && npm run seed:products && npm run seed:auth",
+    "setup": "npx supabase@latest start && npm run db:reset"
   },
   "devDependencies": {
     "@types/papaparse": "^5.5.2",
