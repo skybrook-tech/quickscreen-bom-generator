@@ -30,18 +30,12 @@
         "description": "Exactly one version per rule_set must be true."
       },
       "effective_from": {
-        "type": [
-          "string",
-          "null"
-        ],
+        "type": ["string", "null"],
         "format": "date",
         "description": "ISO date when this version became effective (YYYY-MM-DD)."
       },
       "notes": {
-        "type": [
-          "string",
-          "null"
-        ]
+        "type": ["string", "null"]
       }
     }
   }

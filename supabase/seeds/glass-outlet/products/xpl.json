@@ -4,821 +4,1667 @@
     {
       "system_type": "XPL",
       "product_type": "fence",
-      "compatible_with_system_types": [],
-      "name": "XPL XPress Plus Premium",
-      "description": "65mm slats only (forced). Insert/clip system with different bracket requirements.",
+      "name": "XPress Plus Premium Post Fence",
+      "description": "Friction-fit post system \u2014 slats insert directly into patented XPL posts (no side frames, no CFC). End posts are 1W, inline posts are 2W, corner posts are 90\u00b0.",
       "active": true,
       "sort_order": 3,
       "metadata": {
         "options": {
-          "colour": [
-            "black-satin",
-            "monument-matt",
-            "woodland-grey-matt",
-            "surfmist-matt",
-            "pearl-white-gloss",
-            "basalt-satin",
-            "dune-satin",
-            "mill",
-            "primrose",
-            "paperbark",
-            "palladium-silver-pearl"
-          ],
-          "slatGap": [
-            "5",
-            "9",
-            "20"
-          ],
-          "slatSize": [
-            "65"
-          ]
+          "slatSize": ["65", "90"],
+          "slatGap": ["5", "9", "20"],
+          "colour": ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]
         },
-        "allowedAngles": [
-          90,
-          135,
-          180
-        ]
+        "post_types": ["1W", "2W", "90"],
+        "slat_insertion_depth_1W_2W_mm": 24,
+        "slat_insertion_depth_90_mm": 15
       }
     }
   ],
   "product_components": [
     {
-      "sku": "XP-2400-FP-B",
-      "name": "Full Post 2400mm — Black Satin",
-      "description": "Full Post 2400mm — Black Satin",
-      "category": "post",
-      "unit": "each",
-      "default_price": 38.55,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-2400-FP-BS",
-      "name": "Full Post 2400mm — Basalt Satin",
-      "description": "Full Post 2400mm — Basalt Satin",
-      "category": "post",
-      "unit": "each",
-      "default_price": 38.55,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-2400-FP-D",
-      "name": "Full Post 2400mm — Dune Satin",
-      "description": "Full Post 2400mm — Dune Satin",
-      "category": "post",
-      "unit": "each",
-      "default_price": 38.55,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-2400-FP-G",
-      "name": "Full Post 2400mm — Woodland Grey Matt",
-      "description": "Full Post 2400mm — Woodland Grey Matt",
-      "category": "post",
-      "unit": "each",
-      "default_price": 38.55,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-2400-FP-M",
-      "name": "Full Post 2400mm — Mill",
-      "description": "Full Post 2400mm — Mill",
-      "category": "post",
-      "unit": "each",
-      "default_price": 38.55,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-2400-FP-MN",
-      "name": "Full Post 2400mm — Monument Matt",
-      "description": "Full Post 2400mm — Monument Matt",
-      "category": "post",
-      "unit": "each",
-      "default_price": 38.55,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-2400-FP-P",
-      "name": "Full Post 2400mm — Primrose",
-      "description": "Full Post 2400mm — Primrose",
-      "category": "post",
-      "unit": "each",
-      "default_price": 38.55,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-2400-FP-PB",
-      "name": "Full Post 2400mm — Paperbark",
-      "description": "Full Post 2400mm — Paperbark",
-      "category": "post",
-      "unit": "each",
-      "default_price": 38.55,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-2400-FP-S",
-      "name": "Full Post 2400mm — Palladium Silver Pearl",
-      "description": "Full Post 2400mm — Palladium Silver Pearl",
-      "category": "post",
-      "unit": "each",
-      "default_price": 38.55,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-2400-FP-SM",
-      "name": "Full Post 2400mm — Surfmist Matt",
-      "description": "Full Post 2400mm — Surfmist Matt",
-      "category": "post",
-      "unit": "each",
-      "default_price": 38.55,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-2400-FP-W",
-      "name": "Full Post 2400mm — Pearl White Gloss",
-      "description": "Full Post 2400mm — Pearl White Gloss",
-      "category": "post",
-      "unit": "each",
-      "default_price": 38.55,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-6100-S65-B",
-      "name": "65mm Slat 6100mm — Black Satin",
-      "description": "65mm Slat 6100mm — Black Satin",
-      "category": "slat",
+      "sku": "XPL-6000-1W-B",
+      "name": "XPL End Post 6000mm \u2014 Black Satin",
+      "description": "50x50mm one-way friction-fit post, 6000mm stock",
+      "category": "mounting",
       "unit": "length",
-      "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
+      "default_price": 110.69,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "1W"
+      },
       "active": true
     },
     {
-      "sku": "XP-6100-S65-BS",
-      "name": "65mm Slat 6100mm — Basalt Satin",
-      "description": "65mm Slat 6100mm — Basalt Satin",
-      "category": "slat",
+      "sku": "XPL-6000-1W-MN",
+      "name": "XPL End Post 6000mm \u2014 Monument Matt",
+      "description": "50x50mm one-way friction-fit post, 6000mm stock",
+      "category": "mounting",
       "unit": "length",
-      "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
+      "default_price": 110.69,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "1W"
+      },
       "active": true
     },
     {
-      "sku": "XP-6100-S65-D",
-      "name": "65mm Slat 6100mm — Dune Satin",
-      "description": "65mm Slat 6100mm — Dune Satin",
-      "category": "slat",
+      "sku": "XPL-6000-1W-G",
+      "name": "XPL End Post 6000mm \u2014 Woodland Grey",
+      "description": "50x50mm one-way friction-fit post, 6000mm stock",
+      "category": "mounting",
       "unit": "length",
-      "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
+      "default_price": 110.69,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "1W"
+      },
       "active": true
     },
     {
-      "sku": "XP-6100-S65-G",
-      "name": "65mm Slat 6100mm — Woodland Grey Matt",
-      "description": "65mm Slat 6100mm — Woodland Grey Matt",
-      "category": "slat",
+      "sku": "XPL-6000-1W-SM",
+      "name": "XPL End Post 6000mm \u2014 Surfmist Matt",
+      "description": "50x50mm one-way friction-fit post, 6000mm stock",
+      "category": "mounting",
       "unit": "length",
-      "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
+      "default_price": 110.69,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "1W"
+      },
       "active": true
     },
     {
-      "sku": "XP-6100-S65-M",
-      "name": "65mm Slat 6100mm — Mill",
-      "description": "65mm Slat 6100mm — Mill",
-      "category": "slat",
+      "sku": "XPL-6000-1W-W",
+      "name": "XPL End Post 6000mm \u2014 Pearl White",
+      "description": "50x50mm one-way friction-fit post, 6000mm stock",
+      "category": "mounting",
       "unit": "length",
-      "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
+      "default_price": 110.69,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "1W"
+      },
       "active": true
     },
     {
-      "sku": "XP-6100-S65-MN",
-      "name": "65mm Slat 6100mm — Monument Matt",
-      "description": "65mm Slat 6100mm — Monument Matt",
-      "category": "slat",
+      "sku": "XPL-6000-1W-BS",
+      "name": "XPL End Post 6000mm \u2014 Basalt Satin",
+      "description": "50x50mm one-way friction-fit post, 6000mm stock",
+      "category": "mounting",
       "unit": "length",
-      "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
+      "default_price": 110.69,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "1W"
+      },
       "active": true
     },
     {
-      "sku": "XP-6100-S65-P",
-      "name": "65mm Slat 6100mm — Primrose",
-      "description": "65mm Slat 6100mm — Primrose",
-      "category": "slat",
+      "sku": "XPL-6000-1W-D",
+      "name": "XPL End Post 6000mm \u2014 Dune Satin",
+      "description": "50x50mm one-way friction-fit post, 6000mm stock",
+      "category": "mounting",
       "unit": "length",
-      "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
+      "default_price": 110.69,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "1W"
+      },
       "active": true
     },
     {
-      "sku": "XP-6100-S65-PB",
-      "name": "65mm Slat 6100mm — Paperbark",
-      "description": "65mm Slat 6100mm — Paperbark",
-      "category": "slat",
+      "sku": "XPL-6000-1W-M",
+      "name": "XPL End Post 6000mm \u2014 Mill",
+      "description": "50x50mm one-way friction-fit post, 6000mm stock",
+      "category": "mounting",
       "unit": "length",
-      "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
+      "default_price": 94.97,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "1W"
+      },
       "active": true
     },
     {
-      "sku": "XP-6100-S65-S",
-      "name": "65mm Slat 6100mm — Palladium Silver Pearl",
-      "description": "65mm Slat 6100mm — Palladium Silver Pearl",
-      "category": "slat",
+      "sku": "XPL-6000-1W-P",
+      "name": "XPL End Post 6000mm \u2014 Primrose",
+      "description": "50x50mm one-way friction-fit post, 6000mm stock",
+      "category": "mounting",
       "unit": "length",
-      "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
+      "default_price": 110.69,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "1W"
+      },
       "active": true
     },
     {
-      "sku": "XP-6100-S65-SM",
-      "name": "65mm Slat 6100mm — Surfmist Matt",
-      "description": "65mm Slat 6100mm — Surfmist Matt",
-      "category": "slat",
+      "sku": "XPL-6000-1W-PB",
+      "name": "XPL End Post 6000mm \u2014 Paperbark",
+      "description": "50x50mm one-way friction-fit post, 6000mm stock",
+      "category": "mounting",
       "unit": "length",
-      "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
+      "default_price": 110.69,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "1W"
+      },
       "active": true
     },
     {
-      "sku": "XP-6100-S65-W",
-      "name": "65mm Slat 6100mm — Pearl White Gloss",
-      "description": "65mm Slat 6100mm — Pearl White Gloss",
-      "category": "slat",
+      "sku": "XPL-6000-1W-S",
+      "name": "XPL End Post 6000mm \u2014 Palladium Silver",
+      "description": "50x50mm one-way friction-fit post, 6000mm stock",
+      "category": "mounting",
       "unit": "length",
-      "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
+      "default_price": 110.69,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "1W"
+      },
       "active": true
     },
     {
-      "sku": "XP-BTP-B",
-      "name": "Base/Top Plate — Black Satin",
-      "description": "Base/Top Plate — Black Satin",
+      "sku": "XPL-6000-2W-B",
+      "name": "XPL Inline Post 6000mm \u2014 Black Satin",
+      "description": "50x50mm two-way friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 100.63,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "2W"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-2W-MN",
+      "name": "XPL Inline Post 6000mm \u2014 Monument Matt",
+      "description": "50x50mm two-way friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 100.63,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "2W"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-2W-G",
+      "name": "XPL Inline Post 6000mm \u2014 Woodland Grey",
+      "description": "50x50mm two-way friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 100.63,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "2W"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-2W-SM",
+      "name": "XPL Inline Post 6000mm \u2014 Surfmist Matt",
+      "description": "50x50mm two-way friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 100.63,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "2W"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-2W-W",
+      "name": "XPL Inline Post 6000mm \u2014 Pearl White",
+      "description": "50x50mm two-way friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 100.63,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "2W"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-2W-BS",
+      "name": "XPL Inline Post 6000mm \u2014 Basalt Satin",
+      "description": "50x50mm two-way friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 100.63,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "2W"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-2W-D",
+      "name": "XPL Inline Post 6000mm \u2014 Dune Satin",
+      "description": "50x50mm two-way friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 100.63,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "2W"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-2W-M",
+      "name": "XPL Inline Post 6000mm \u2014 Mill",
+      "description": "50x50mm two-way friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 86.34,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "2W"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-2W-S",
+      "name": "XPL Inline Post 6000mm \u2014 Palladium Silver",
+      "description": "50x50mm two-way friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 100.63,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "2W"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-90-B",
+      "name": "XPL Corner Post 6000mm \u2014 Black Satin",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 106.59,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "90"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-90-MN",
+      "name": "XPL Corner Post 6000mm \u2014 Monument Matt",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 106.59,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "90"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-90-G",
+      "name": "XPL Corner Post 6000mm \u2014 Woodland Grey",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 106.59,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "90"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-90-SM",
+      "name": "XPL Corner Post 6000mm \u2014 Surfmist Matt",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 106.59,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "90"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-90-W",
+      "name": "XPL Corner Post 6000mm \u2014 Pearl White",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 106.59,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "90"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-90-BS",
+      "name": "XPL Corner Post 6000mm \u2014 Basalt Satin",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 106.59,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "90"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-90-D",
+      "name": "XPL Corner Post 6000mm \u2014 Dune Satin",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 106.59,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "90"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-90-M",
+      "name": "XPL Corner Post 6000mm \u2014 Mill",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 95.21,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "90"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-90-S",
+      "name": "XPL Corner Post 6000mm \u2014 Palladium Silver",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
+      "category": "mounting",
+      "unit": "length",
+      "default_price": 106.59,
+      "system_types": ["XPL"],
+      "metadata": {
+        "post_way": "90"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-SB-50PK-05MM",
+      "name": "XPL Spacer Block 5mm \u2014 50 Pack",
+      "description": "UV stabilised ASA black 5mm spacer block, 50-pack",
       "category": "accessory",
-      "unit": "each",
-      "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-BTP-BS",
-      "name": "Base/Top Plate — Basalt Satin",
-      "description": "Base/Top Plate — Basalt Satin",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-BTP-D",
-      "name": "Base/Top Plate — Dune Satin",
-      "description": "Base/Top Plate — Dune Satin",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-BTP-G",
-      "name": "Base/Top Plate — Woodland Grey Matt",
-      "description": "Base/Top Plate — Woodland Grey Matt",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-BTP-M",
-      "name": "Base/Top Plate — Mill",
-      "description": "Base/Top Plate — Mill",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-BTP-MN",
-      "name": "Base/Top Plate — Monument Matt",
-      "description": "Base/Top Plate — Monument Matt",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-BTP-P",
-      "name": "Base/Top Plate — Primrose",
-      "description": "Base/Top Plate — Primrose",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-BTP-PB",
-      "name": "Base/Top Plate — Paperbark",
-      "description": "Base/Top Plate — Paperbark",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-BTP-S",
-      "name": "Base/Top Plate — Palladium Silver Pearl",
-      "description": "Base/Top Plate — Palladium Silver Pearl",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-BTP-SM",
-      "name": "Base/Top Plate — Surfmist Matt",
-      "description": "Base/Top Plate — Surfmist Matt",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-BTP-W",
-      "name": "Base/Top Plate — Pearl White Gloss",
-      "description": "Base/Top Plate — Pearl White Gloss",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-CSRC-B",
-      "name": "CSR End Cap — Black Satin",
-      "description": "CSR End Cap — Black Satin",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-CSRC-BS",
-      "name": "CSR End Cap — Basalt Satin",
-      "description": "CSR End Cap — Basalt Satin",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-CSRC-D",
-      "name": "CSR End Cap — Dune Satin",
-      "description": "CSR End Cap — Dune Satin",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-CSRC-G",
-      "name": "CSR End Cap — Woodland Grey Matt",
-      "description": "CSR End Cap — Woodland Grey Matt",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-CSRC-M",
-      "name": "CSR End Cap — Mill",
-      "description": "CSR End Cap — Mill",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-CSRC-MN",
-      "name": "CSR End Cap — Monument Matt",
-      "description": "CSR End Cap — Monument Matt",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-CSRC-P",
-      "name": "CSR End Cap — Primrose",
-      "description": "CSR End Cap — Primrose",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-CSRC-PB",
-      "name": "CSR End Cap — Paperbark",
-      "description": "CSR End Cap — Paperbark",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-CSRC-S",
-      "name": "CSR End Cap — Palladium Silver Pearl",
-      "description": "CSR End Cap — Palladium Silver Pearl",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-CSRC-SM",
-      "name": "CSR End Cap — Surfmist Matt",
-      "description": "CSR End Cap — Surfmist Matt",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-CSRC-W",
-      "name": "CSR End Cap — Pearl White Gloss",
-      "description": "CSR End Cap — Pearl White Gloss",
-      "category": "accessory",
-      "unit": "each",
-      "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
-      "metadata": {},
-      "active": true
-    },
-    {
-      "sku": "XP-SCREWS-B",
-      "name": "Screw Pack 100 — Black Satin",
-      "description": "Screw Pack 100 — Black Satin",
-      "category": "screw",
       "unit": "pack",
-      "default_price": 6.06,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "default_price": 3.01,
+      "system_types": ["XPL"],
+      "metadata": {
+        "gap_mm": 5
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-SB-50PK-09MM",
+      "name": "XPL Spacer Block 9mm \u2014 50 Pack",
+      "description": "UV stabilised ASA black 9mm spacer block, 50-pack",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 3.01,
+      "system_types": ["XPL"],
+      "metadata": {
+        "gap_mm": 9
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-SB-50PK-20MM",
+      "name": "XPL Spacer Block 20mm \u2014 50 Pack",
+      "description": "UV stabilised ASA black 20mm spacer block, 50-pack (actual spacer 21mm)",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 3.56,
+      "system_types": ["XPL"],
+      "metadata": {
+        "gap_mm": 20
+      },
+      "active": true
+    },
+    {
+      "sku": "XPL-SLATCLIP-10PK",
+      "name": "XPL Slat Locking Clip \u2014 10 Pack",
+      "description": "Powder coated aluminium slat locking clip, 10-pack incl. SS304 screws. Fixes top slat only.",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 3.69,
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
     {
-      "sku": "XP-SCREWS-BS",
-      "name": "Screw Pack 100 — Basalt Satin",
-      "description": "Screw Pack 100 — Basalt Satin",
-      "category": "screw",
+      "sku": "XPL-BLOCK-5PK",
+      "name": "XPL Block \u2014 5 Pack",
+      "description": "100mm long UV stabilised ASA block, 5-pack. Starting height spacer \u2014 can be cut to size.",
+      "category": "accessory",
       "unit": "pack",
-      "default_price": 6.06,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "default_price": 3.13,
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
     {
-      "sku": "XP-SCREWS-D",
-      "name": "Screw Pack 100 — Dune Satin",
-      "description": "Screw Pack 100 — Dune Satin",
-      "category": "screw",
+      "sku": "XPL-EP-B-2PK",
+      "name": "XPL End Plate 2-Pack \u2014 Black Satin",
+      "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
+      "category": "accessory",
       "unit": "pack",
-      "default_price": 6.06,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "default_price": 3.35,
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
     {
-      "sku": "XP-SCREWS-G",
-      "name": "Screw Pack 100 — Woodland Grey Matt",
-      "description": "Screw Pack 100 — Woodland Grey Matt",
-      "category": "screw",
+      "sku": "XPL-EP-MN-2PK",
+      "name": "XPL End Plate 2-Pack \u2014 Monument Matt",
+      "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
+      "category": "accessory",
       "unit": "pack",
-      "default_price": 6.06,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "default_price": 3.35,
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
     {
-      "sku": "XP-SCREWS-M",
-      "name": "Screw Pack 100 — Mill",
-      "description": "Screw Pack 100 — Mill",
-      "category": "screw",
+      "sku": "XPL-EP-G-2PK",
+      "name": "XPL End Plate 2-Pack \u2014 Woodland Grey",
+      "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
+      "category": "accessory",
       "unit": "pack",
-      "default_price": 6.06,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "default_price": 3.35,
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
     {
-      "sku": "XP-SCREWS-MN",
-      "name": "Screw Pack 100 — Monument Matt",
-      "description": "Screw Pack 100 — Monument Matt",
-      "category": "screw",
+      "sku": "XPL-EP-SM-2PK",
+      "name": "XPL End Plate 2-Pack \u2014 Surfmist Matt",
+      "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
+      "category": "accessory",
       "unit": "pack",
-      "default_price": 6.06,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "default_price": 3.35,
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
     {
-      "sku": "XP-SCREWS-P",
-      "name": "Screw Pack 100 — Primrose",
-      "description": "Screw Pack 100 — Primrose",
-      "category": "screw",
+      "sku": "XPL-EP-W-2PK",
+      "name": "XPL End Plate 2-Pack \u2014 Pearl White",
+      "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
+      "category": "accessory",
       "unit": "pack",
-      "default_price": 6.06,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "default_price": 3.35,
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
     {
-      "sku": "XP-SCREWS-PB",
-      "name": "Screw Pack 100 — Paperbark",
-      "description": "Screw Pack 100 — Paperbark",
-      "category": "screw",
+      "sku": "XPL-EP-BS-2PK",
+      "name": "XPL End Plate 2-Pack \u2014 Basalt Satin",
+      "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
+      "category": "accessory",
       "unit": "pack",
-      "default_price": 6.06,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "default_price": 3.35,
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
     {
-      "sku": "XP-SCREWS-S",
-      "name": "Screw Pack 100 — Palladium Silver Pearl",
-      "description": "Screw Pack 100 — Palladium Silver Pearl",
-      "category": "screw",
+      "sku": "XPL-EP-D-2PK",
+      "name": "XPL End Plate 2-Pack \u2014 Dune Satin",
+      "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
+      "category": "accessory",
       "unit": "pack",
-      "default_price": 6.06,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "default_price": 3.35,
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
     {
-      "sku": "XP-SCREWS-SM",
-      "name": "Screw Pack 100 — Surfmist Matt",
-      "description": "Screw Pack 100 — Surfmist Matt",
-      "category": "screw",
+      "sku": "XPL-EP-M-2PK",
+      "name": "XPL End Plate 2-Pack \u2014 Mill",
+      "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
+      "category": "accessory",
       "unit": "pack",
-      "default_price": 6.06,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "default_price": 2.85,
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
     {
-      "sku": "XP-SCREWS-W",
-      "name": "Screw Pack 100 — Pearl White Gloss",
-      "description": "Screw Pack 100 — Pearl White Gloss",
-      "category": "screw",
+      "sku": "XPL-EP-P-2PK",
+      "name": "XPL End Plate 2-Pack \u2014 Primrose",
+      "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
+      "category": "accessory",
       "unit": "pack",
-      "default_price": 6.06,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "default_price": 3.35,
+      "system_types": ["XPL"],
       "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPL-EP-PB-2PK",
+      "name": "XPL End Plate 2-Pack \u2014 Paperbark",
+      "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 3.35,
+      "system_types": ["XPL"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPL-EP-S-2PK",
+      "name": "XPL End Plate 2-Pack \u2014 Palladium Silver",
+      "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 3.35,
+      "system_types": ["XPL"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-SF-B",
+      "name": "XPL Side Frame 6000mm \u2014 Black Satin",
+      "description": "XPL friction-fit side frame, 6000mm stock (used in BAYG side frame variant)",
+      "category": "side_frame",
+      "unit": "length",
+      "default_price": 43.91,
+      "system_types": ["XPL", "BAYG"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-SF-MN",
+      "name": "XPL Side Frame 6000mm \u2014 Monument Matt",
+      "description": "XPL friction-fit side frame, 6000mm stock",
+      "category": "side_frame",
+      "unit": "length",
+      "default_price": 43.91,
+      "system_types": ["XPL", "BAYG"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-SF-G",
+      "name": "XPL Side Frame 6000mm \u2014 Woodland Grey",
+      "description": "XPL friction-fit side frame, 6000mm stock",
+      "category": "side_frame",
+      "unit": "length",
+      "default_price": 43.91,
+      "system_types": ["XPL", "BAYG"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-SF-SM",
+      "name": "XPL Side Frame 6000mm \u2014 Surfmist Matt",
+      "description": "XPL friction-fit side frame, 6000mm stock",
+      "category": "side_frame",
+      "unit": "length",
+      "default_price": 43.91,
+      "system_types": ["XPL", "BAYG"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-SF-W",
+      "name": "XPL Side Frame 6000mm \u2014 Pearl White",
+      "description": "XPL friction-fit side frame, 6000mm stock",
+      "category": "side_frame",
+      "unit": "length",
+      "default_price": 43.91,
+      "system_types": ["XPL", "BAYG"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-SF-BS",
+      "name": "XPL Side Frame 6000mm \u2014 Basalt Satin",
+      "description": "XPL friction-fit side frame, 6000mm stock",
+      "category": "side_frame",
+      "unit": "length",
+      "default_price": 43.91,
+      "system_types": ["XPL", "BAYG"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-SF-D",
+      "name": "XPL Side Frame 6000mm \u2014 Dune Satin",
+      "description": "XPL friction-fit side frame, 6000mm stock",
+      "category": "side_frame",
+      "unit": "length",
+      "default_price": 43.91,
+      "system_types": ["XPL", "BAYG"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-SF-M",
+      "name": "XPL Side Frame 6000mm \u2014 Mill",
+      "description": "XPL friction-fit side frame, 6000mm stock",
+      "category": "side_frame",
+      "unit": "length",
+      "default_price": 34.18,
+      "system_types": ["XPL", "BAYG"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-SF-P",
+      "name": "XPL Side Frame 6000mm \u2014 Primrose",
+      "description": "XPL friction-fit side frame, 6000mm stock",
+      "category": "side_frame",
+      "unit": "length",
+      "default_price": 39.92,
+      "system_types": ["XPL", "BAYG"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-SF-PB",
+      "name": "XPL Side Frame 6000mm \u2014 Paperbark",
+      "description": "XPL friction-fit side frame, 6000mm stock",
+      "category": "side_frame",
+      "unit": "length",
+      "default_price": 39.92,
+      "system_types": ["XPL", "BAYG"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-SF-S",
+      "name": "XPL Side Frame 6000mm \u2014 Palladium Silver",
+      "description": "XPL friction-fit side frame, 6000mm stock",
+      "category": "side_frame",
+      "unit": "length",
+      "default_price": 43.91,
+      "system_types": ["XPL", "BAYG"],
+      "metadata": {},
+      "active": true
+    }
+  ],
+  "rule_sets": [
+    {
+      "product_system_type": "XPL",
+      "name": "XPL Fence Rules",
+      "description": "Data-driven XPL premium post fence BOM rules v4.1",
+      "active": true
+    }
+  ],
+  "rule_versions": [
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "is_current": true,
+      "effective_from": "2026-04-19",
+      "notes": "Initial XPL rules based on CTS V4.1 formulas"
+    }
+  ],
+  "product_constraints": [
+    {
+      "product_system_type": "XPL",
+      "name": "max_panel_width_mm",
+      "constraint_type": "max",
+      "value_text": "2600",
+      "unit": "mm",
+      "severity": "warning",
+      "applies_when_json": {},
+      "message": "Panel width above 2600mm not supported; split into additional panels.",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "name": "slat_size_options",
+      "constraint_type": "enum",
+      "value_text": "[65,90]",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Slat size must be 65mm or 90mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "name": "slat_gap_options",
+      "constraint_type": "enum",
+      "value_text": "[5,9,20]",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Slat gap must be 5mm, 9mm, or 20mm.",
+      "active": true
+    }
+  ],
+  "product_variables": [
+    {
+      "product_system_type": "XPL",
+      "name": "colour_code",
+      "label": "Colour",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "B",
+      "options_json": [
+        "B",
+        "MN",
+        "G",
+        "SM",
+        "W",
+        "BS",
+        "D",
+        "M",
+        "P",
+        "PB",
+        "S"
+      ],
+      "scope": "job",
+      "sort_order": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "name": "slat_size_mm",
+      "label": "Slat Size",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 65,
+      "options_json": [65, 90],
+      "scope": "job",
+      "sort_order": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "name": "slat_gap_mm",
+      "label": "Slat Gap",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 5,
+      "options_json": [5, 9, 20],
+      "scope": "job",
+      "sort_order": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "name": "mounting_type",
+      "label": "Mounting Type",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "in_ground",
+      "options_json": ["in_ground", "base_plate", "core_drill"],
+      "scope": "run",
+      "sort_order": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "name": "panel_width_mm",
+      "label": "Panel Width",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": null,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "name": "target_height_mm",
+      "label": "Target Height",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": null,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "name": "post_system",
+      "label": "Post System",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "xpl",
+      "options_json": ["xpl", "standard_50", "standard_65"],
+      "scope": "run",
+      "sort_order": 55,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "name": "mounting_method",
+      "label": "Post Mounting Method",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "in_ground",
+      "options_json": ["in_ground", "base_plate", "core_drill"],
+      "scope": "run",
+      "sort_order": 65,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "name": "xpl_end_post_count",
+      "label": "End Post Count",
+      "data_type": "number",
+      "unit": "posts",
+      "required": false,
+      "default_value_json": 2,
+      "options_json": [],
+      "scope": "run",
+      "sort_order": 70,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "name": "xpl_inline_post_count",
+      "label": "Inline Post Count",
+      "data_type": "number",
+      "unit": "posts",
+      "required": false,
+      "default_value_json": 0,
+      "options_json": [],
+      "scope": "run",
+      "sort_order": 75,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "name": "xpl_corner_post_count",
+      "label": "Corner Post Count",
+      "data_type": "number",
+      "unit": "posts",
+      "required": false,
+      "default_value_json": 0,
+      "options_json": [],
+      "scope": "run",
+      "sort_order": 80,
+      "active": true
+    }
+  ],
+  "product_validations": [
+    {
+      "product_system_type": "XPL",
+      "name": "panel_width_in_range",
+      "expression": "panel_width_mm >= 300 && panel_width_mm <= 2600",
+      "severity": "error",
+      "message": "Panel width must be between 300mm and 2600mm.",
+      "active": true
+    }
+  ],
+  "product_rules": [
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "insertion_depth_mm",
+      "expression": "24",
+      "output_key": "insertion_depth_mm",
+      "priority": 10,
+      "active": true,
+      "notes": "Slat insertion depth into 1W/2W posts is 24mm. For 90\u00b0 corner post it is 15mm \u2014 handled per span."
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "slat_cut_mm",
+      "expression": "panel_width_mm - 2 * insertion_depth_mm",
+      "output_key": "slat_cut_mm",
+      "priority": 20,
+      "active": true,
+      "notes": "Standard span: slat cut = post centre-to-centre - 2x24mm insertion depth"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "slat_cut_mm_deduction",
+      "expression": "panel_width_mm - 15",
+      "output_key": "slat_cut_mm_fence",
+      "priority": 25,
+      "active": true,
+      "notes": "Fence panel slat cut deduction (standard fence panel, -15mm)"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_slats",
+      "expression": "floor((target_height_mm - slat_gap_mm + 3) / (slat_size_mm + slat_gap_mm))",
+      "output_key": "num_slats",
+      "priority": 30,
+      "active": true,
+      "notes": "Same slat count formula as QSHS"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "actual_height_mm",
+      "expression": "num_slats * (slat_size_mm + slat_gap_mm) - slat_gap_mm + 3",
+      "output_key": "actual_height_mm",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "slat_cuts_per_stock",
+      "expression": "floor(6100 / slat_cut_mm_fence)",
+      "output_key": "slat_cuts_per_stock",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "slat_stocks",
+      "expression": "ceil(num_slats / slat_cuts_per_stock)",
+      "output_key": "slat_stocks",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "spacer_packs",
+      "expression": "ceil((num_slats - 1) / 50)",
+      "output_key": "spacer_packs",
+      "priority": 10,
+      "active": true,
+      "notes": "XPL uses pre-packed 50-pack spacers. Spacers go between slats = num_slats - 1 gaps."
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "slatclip_packs",
+      "expression": "1",
+      "output_key": "slatclip_packs",
+      "priority": 20,
+      "active": true,
+      "notes": "1 pack XPL-SLATCLIP-10PK per panel \u2014 locks the top slat only"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_slat_65",
+      "expression": "slat_size_mm == 65 ? slat_stocks : 0",
+      "output_key": "qty_slat_65",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_slat_90",
+      "expression": "slat_size_mm == 90 ? slat_stocks : 0",
+      "output_key": "qty_slat_90",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_spacers_5mm",
+      "expression": "slat_gap_mm == 5 ? spacer_packs : 0",
+      "output_key": "qty_spacer_5mm",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_spacers_9mm",
+      "expression": "slat_gap_mm == 9 ? spacer_packs : 0",
+      "output_key": "qty_spacer_9mm",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_spacers_20mm",
+      "expression": "slat_gap_mm == 20 ? spacer_packs : 0",
+      "output_key": "qty_spacer_20mm",
+      "priority": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_slatclips",
+      "expression": "slatclip_packs",
+      "output_key": "qty_slatclip",
+      "priority": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_posts",
+      "expression": "xpl_end_post_count + xpl_inline_post_count + xpl_corner_post_count",
+      "output_key": "num_posts",
+      "priority": 90,
+      "active": true,
+      "notes": "XPL: posts are user-placed (end/inline/corner), not boundary-derived"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "std_post_count",
+      "expression": "post_system != 'xpl' ? product_post_boundary_count : 0",
+      "output_key": "std_post_count",
+      "priority": 91,
+      "active": true,
+      "notes": "Standard FP/HD post count when not using XPL post system"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_xpl_end_post",
+      "expression": "post_system == 'xpl' ? xpl_end_post_count : 0",
+      "output_key": "qty_xpl_end_post",
+      "priority": 70,
+      "active": true,
+      "notes": "XPL 1-way end post; priced TBD \u2014 see XPL catalogue"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_xpl_inline_post",
+      "expression": "post_system == 'xpl' ? xpl_inline_post_count : 0",
+      "output_key": "qty_xpl_inline_post",
+      "priority": 75,
+      "active": true,
+      "notes": "XPL 2-way inline post; priced TBD"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_xpl_corner_post",
+      "expression": "post_system == 'xpl' ? xpl_corner_post_count : 0",
+      "output_key": "qty_xpl_corner_post",
+      "priority": 76,
+      "active": true,
+      "notes": "XPL 90\u00b0 corner post; priced TBD"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_post_50_2400",
+      "expression": "post_system == 'standard_50' && target_height_mm <= 2100 ? std_post_count : 0",
+      "output_key": "qty_post_50_2400",
+      "priority": 80,
+      "active": true,
+      "notes": "50mm FP 2400mm when using standard posts with XPL fence"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_post_50_6000",
+      "expression": "post_system == 'standard_50' && target_height_mm > 2100 ? std_post_count : 0",
+      "output_key": "qty_post_50_6000",
+      "priority": 81,
+      "active": true,
+      "notes": "50mm FP 6000mm when using standard posts with XPL fence"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_post_65_2400",
+      "expression": "post_system == 'standard_65' && target_height_mm <= 2100 ? std_post_count : 0",
+      "output_key": "qty_post_65_2400",
+      "priority": 82,
+      "active": true,
+      "notes": "65mm HD 2400mm when using standard posts with XPL fence"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_post_65_6000",
+      "expression": "post_system == 'standard_65' && target_height_mm > 2100 ? std_post_count : 0",
+      "output_key": "qty_post_65_6000",
+      "priority": 83,
+      "active": true,
+      "notes": "65mm HD 6000mm when using standard posts with XPL fence"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_top_plate_50",
+      "expression": "post_system == 'standard_50' && target_height_mm > 2100 ? std_post_count : 0",
+      "output_key": "qty_top_plate_50",
+      "priority": 84,
+      "active": true,
+      "notes": "Top plate for 6000mm FP post"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_base_plate_50",
+      "expression": "post_system == 'standard_50' && mounting_method == 'base_plate' ? std_post_count : 0",
+      "output_key": "qty_base_plate_50",
+      "priority": 85,
+      "active": true,
+      "notes": "Base plate set for surface-mount FP post"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_domical_cover_50",
+      "expression": "post_system == 'standard_50' && mounting_method == 'base_plate' ? std_post_count : 0",
+      "output_key": "qty_domical_cover_50",
+      "priority": 86,
+      "active": true,
+      "notes": "Domical cover for FP base plate"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_dress_ring_50",
+      "expression": "post_system == 'standard_50' && mounting_method == 'core_drill' ? std_post_count : 0",
+      "output_key": "qty_dress_ring_50",
+      "priority": 87,
+      "active": true,
+      "notes": "Dress ring for FP core-drill install"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_top_plate_65",
+      "expression": "post_system == 'standard_65' && target_height_mm > 2100 ? std_post_count : 0",
+      "output_key": "qty_top_plate_65",
+      "priority": 88,
+      "active": true,
+      "notes": "Top plate for 6000mm HD post"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_base_plate_65",
+      "expression": "post_system == 'standard_65' && mounting_method == 'base_plate' ? std_post_count : 0",
+      "output_key": "qty_base_plate_65",
+      "priority": 89,
+      "active": true,
+      "notes": "Base plate set for surface-mount HD post"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_domical_cover_65",
+      "expression": "post_system == 'standard_65' && mounting_method == 'base_plate' ? std_post_count : 0",
+      "output_key": "qty_domical_cover_65",
+      "priority": 90,
+      "active": true,
+      "notes": "Domical cover for HD base plate"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_dress_ring_65",
+      "expression": "post_system == 'standard_65' && mounting_method == 'core_drill' ? std_post_count : 0",
+      "output_key": "qty_dress_ring_65",
+      "priority": 91,
+      "active": true,
+      "notes": "Dress ring for HD core-drill install"
+    }
+  ],
+  "product_component_selectors": [
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_slat_65",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_size_mm": 65
+      },
+      "sku_pattern": "XP-6100-S65-{colour}",
+      "priority": 100,
+      "notes": "65mm slat shared with QSHS; colour resolved at runtime",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_slat_90",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_size_mm": 90
+      },
+      "sku_pattern": "QS-6100-S90-{colour}",
+      "priority": 100,
+      "notes": "90mm slat shared with QSHS",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_spacer_5mm",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_gap_mm": 5,
+        "accessory_type": "spacer"
+      },
+      "sku_pattern": "XPL-SB-50PK-05MM",
+      "priority": 100,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_spacer_9mm",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_gap_mm": 9,
+        "accessory_type": "spacer"
+      },
+      "sku_pattern": "XPL-SB-50PK-09MM",
+      "priority": 100,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_spacer_20mm",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_gap_mm": 20,
+        "accessory_type": "spacer"
+      },
+      "sku_pattern": "XPL-SB-50PK-20MM",
+      "priority": 100,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_slatclip",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "accessory_type": "slatclip"
+      },
+      "sku_pattern": "XPL-SLATCLIP-10PK",
+      "priority": 100,
+      "notes": "Locks the top slat; 1 pack per panel",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_end_post",
+      "component_category": "mounting",
+      "selector_type": "exact",
+      "match_json": {
+        "post_way": "1W"
+      },
+      "sku_pattern": "XPL-6000-1W-{colour}",
+      "priority": 100,
+      "notes": "End/boundary post \u2014 1-way",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_inline_post",
+      "component_category": "mounting",
+      "selector_type": "exact",
+      "match_json": {
+        "post_way": "2W"
+      },
+      "sku_pattern": "XPL-6000-2W-{colour}",
+      "priority": 100,
+      "notes": "Inline post between two spans \u2014 2-way",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_corner_post",
+      "component_category": "mounting",
+      "selector_type": "exact",
+      "match_json": {
+        "post_way": "90"
+      },
+      "sku_pattern": "XPL-6000-90-{colour}",
+      "priority": 100,
+      "notes": "90\u00b0 corner post",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_post_50_2400",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "post_size": "50",
+        "post_length_mm": 2400
+      },
+      "sku_pattern": "XP-2400-FP-{colour}",
+      "priority": 100,
+      "notes": "50mm FP post 2400mm \u2014 shared component in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_post_50_6000",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "post_size": "50",
+        "post_length_mm": 6000
+      },
+      "sku_pattern": "XP-6000-FP-{colour}",
+      "priority": 100,
+      "notes": "50mm FP post 6000mm \u2014 shared component in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_post_65_2400",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "post_size": "65",
+        "post_length_mm": 2400
+      },
+      "sku_pattern": "XP-2400-65HD-{colour}",
+      "priority": 100,
+      "notes": "65mm HD post 2400mm \u2014 shared component in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_post_65_6000",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "post_size": "65",
+        "post_length_mm": 6000
+      },
+      "sku_pattern": "XP-6000-65HD-{colour}",
+      "priority": 100,
+      "notes": "65mm HD post 6000mm \u2014 shared component in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_top_plate_50",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "post_size": "50",
+        "accessory_type": "top_plate"
+      },
+      "sku_pattern": "XP-TP-{colour}",
+      "priority": 100,
+      "notes": "50mm post top plate \u2014 shared in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_base_plate_50",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "post_size": "50",
+        "accessory_type": "base_plate"
+      },
+      "sku_pattern": "XP-BP-SET-{colour}",
+      "priority": 100,
+      "notes": "50mm post base plate set \u2014 shared in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_domical_cover_50",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "post_size": "50",
+        "accessory_type": "domical_cover"
+      },
+      "sku_pattern": "XP-DC-2P-{colour}",
+      "priority": 100,
+      "notes": "50mm post domical cover \u2014 shared in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_dress_ring_50",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "post_size": "50",
+        "accessory_type": "dress_ring"
+      },
+      "sku_pattern": "XP-DR-{colour}",
+      "priority": 100,
+      "notes": "50mm post dress ring \u2014 shared in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_top_plate_65",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "post_size": "65",
+        "accessory_type": "top_plate"
+      },
+      "sku_pattern": "XP-65TP-{colour}",
+      "priority": 100,
+      "notes": "65mm HD post top plate \u2014 shared in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_base_plate_65",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "post_size": "65",
+        "accessory_type": "base_plate"
+      },
+      "sku_pattern": "XP-65BP-SET-{colour}",
+      "priority": 100,
+      "notes": "65mm HD post base plate set \u2014 shared in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_domical_cover_65",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "post_size": "65",
+        "accessory_type": "domical_cover"
+      },
+      "sku_pattern": "XP-65DC-2P-{colour}",
+      "priority": 100,
+      "notes": "65mm HD post domical cover \u2014 shared in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_dress_ring_65",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "post_size": "65",
+        "accessory_type": "dress_ring"
+      },
+      "sku_pattern": "XP-65DR-{colour}",
+      "priority": 100,
+      "notes": "65mm HD post dress ring \u2014 shared in qshs.json",
+      "active": true
+    }
+  ],
+  "product_warnings": [
+    {
+      "product_system_type": "XPL",
+      "warning_key": "xpl_no_sf_cfc_reminder",
+      "severity": "info",
+      "condition_json": {},
+      "message": "XPL system does not use side frames or CFC covers \u2014 slats insert directly into friction-fit posts.",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "warning_key": "xpl_top_slat_lock",
+      "severity": "info",
+      "condition_json": {},
+      "message": "Top slat must be locked with XPL-SLATCLIP-10PK (1 pack per panel).",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "warning_key": "xpl_hd_post_colour_restriction",
+      "severity": "warning",
+      "condition_json": {
+        "post_size": "65",
+        "colour_code": {
+          "in": ["P", "PB"]
+        }
+      },
+      "message": "65mm HD posts are not available in Primrose (P) or Paperbark (PB). Please select a different colour for HD posts, or switch to 50mm FP posts.",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "warning_key": "xpl_in_ground_no_accessories",
+      "severity": "info",
+      "condition_json": {
+        "mounting_method": "in_ground"
+      },
+      "message": "In-ground mounting: no post accessories required. Ensure min 450mm embedment depth (increase for soft soil).",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "warning_key": "xpl_post_6000_top_plate_required",
+      "severity": "info",
+      "condition_json": {
+        "target_height_mm": {
+          "gt": 2100
+        }
+      },
+      "message": "Heights above 2100mm require 6000mm posts. A top plate cap has been automatically included.",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "warning_key": "xpl_post_system_pricing_tbd",
+      "severity": "warning",
+      "condition_json": {
+        "post_system": "xpl"
+      },
+      "message": "XPL patented post pricing is not yet in the price list. Confirm pricing with supplier before quoting.",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "warning_key": "xpl_mounting_method_applies_standard_only",
+      "severity": "info",
+      "condition_json": {
+        "post_system": "xpl"
+      },
+      "message": "Mounting method (in-ground / base plate / core drill) only applies when using standard 50mm or 65mm posts, not XPL patented posts.",
       "active": true
     }
   ],
   "pricing_rules": [
     {
-      "sku": "XP-6100-S65-B",
+      "sku": "XPL-6000-1W-B",
       "tier_code": "tier1",
       "rule": null,
-      "price": 37.29,
+      "price": 110.69,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -826,10 +1672,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-B",
+      "sku": "XPL-6000-1W-B",
       "tier_code": "tier2",
       "rule": null,
-      "price": 34.65,
+      "price": 101.48,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -837,10 +1683,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-B",
+      "sku": "XPL-6000-1W-B",
       "tier_code": "tier3",
       "rule": null,
-      "price": 32.95,
+      "price": 91.33,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -848,10 +1694,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-MN",
+      "sku": "XPL-6000-1W-MN",
       "tier_code": "tier1",
       "rule": null,
-      "price": 37.29,
+      "price": 110.69,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -859,10 +1705,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-MN",
+      "sku": "XPL-6000-1W-MN",
       "tier_code": "tier2",
       "rule": null,
-      "price": 34.65,
+      "price": 101.48,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -870,10 +1716,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-MN",
+      "sku": "XPL-6000-1W-MN",
       "tier_code": "tier3",
       "rule": null,
-      "price": 32.95,
+      "price": 91.33,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -881,10 +1727,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-G",
+      "sku": "XPL-6000-1W-G",
       "tier_code": "tier1",
       "rule": null,
-      "price": 37.29,
+      "price": 110.69,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -892,10 +1738,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-G",
+      "sku": "XPL-6000-1W-G",
       "tier_code": "tier2",
       "rule": null,
-      "price": 34.65,
+      "price": 101.48,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -903,10 +1749,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-G",
+      "sku": "XPL-6000-1W-G",
       "tier_code": "tier3",
       "rule": null,
-      "price": 32.95,
+      "price": 91.33,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -914,10 +1760,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-SM",
+      "sku": "XPL-6000-1W-SM",
       "tier_code": "tier1",
       "rule": null,
-      "price": 37.29,
+      "price": 110.69,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -925,10 +1771,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-SM",
+      "sku": "XPL-6000-1W-SM",
       "tier_code": "tier2",
       "rule": null,
-      "price": 34.65,
+      "price": 101.48,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -936,10 +1782,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-SM",
+      "sku": "XPL-6000-1W-SM",
       "tier_code": "tier3",
       "rule": null,
-      "price": 32.95,
+      "price": 91.33,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -947,10 +1793,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-W",
+      "sku": "XPL-6000-1W-W",
       "tier_code": "tier1",
       "rule": null,
-      "price": 37.29,
+      "price": 110.69,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -958,10 +1804,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-W",
+      "sku": "XPL-6000-1W-W",
       "tier_code": "tier2",
       "rule": null,
-      "price": 34.65,
+      "price": 101.48,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -969,10 +1815,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-W",
+      "sku": "XPL-6000-1W-W",
       "tier_code": "tier3",
       "rule": null,
-      "price": 32.95,
+      "price": 91.33,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -980,10 +1826,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-BS",
+      "sku": "XPL-6000-1W-BS",
       "tier_code": "tier1",
       "rule": null,
-      "price": 37.29,
+      "price": 110.69,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -991,10 +1837,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-BS",
+      "sku": "XPL-6000-1W-BS",
       "tier_code": "tier2",
       "rule": null,
-      "price": 34.65,
+      "price": 101.48,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1002,10 +1848,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-BS",
+      "sku": "XPL-6000-1W-BS",
       "tier_code": "tier3",
       "rule": null,
-      "price": 32.95,
+      "price": 91.33,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1013,10 +1859,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-D",
+      "sku": "XPL-6000-1W-D",
       "tier_code": "tier1",
       "rule": null,
-      "price": 37.29,
+      "price": 110.69,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1024,10 +1870,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-D",
+      "sku": "XPL-6000-1W-D",
       "tier_code": "tier2",
       "rule": null,
-      "price": 34.65,
+      "price": 101.48,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1035,10 +1881,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-D",
+      "sku": "XPL-6000-1W-D",
       "tier_code": "tier3",
       "rule": null,
-      "price": 32.95,
+      "price": 91.33,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1046,21 +1892,21 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-M",
+      "sku": "XPL-6000-1W-M",
       "tier_code": "tier1",
       "rule": null,
-      "price": 37.29,
+      "price": 94.97,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Mill finish",
       "active": true
     },
     {
-      "sku": "XP-6100-S65-M",
+      "sku": "XPL-6000-1W-M",
       "tier_code": "tier2",
       "rule": null,
-      "price": 34.65,
+      "price": 87.09,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1068,10 +1914,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-M",
+      "sku": "XPL-6000-1W-M",
       "tier_code": "tier3",
       "rule": null,
-      "price": 32.95,
+      "price": 78.36,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1079,76 +1925,76 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-P",
+      "sku": "XPL-6000-1W-P",
       "tier_code": "tier1",
       "rule": null,
-      "price": 37.29,
+      "price": 110.69,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Tier2/3 not available",
       "active": true
     },
     {
-      "sku": "XP-6100-S65-P",
+      "sku": "XPL-6000-1W-P",
       "tier_code": "tier2",
       "rule": null,
-      "price": 34.65,
+      "price": 0,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
-      "active": true
+      "notes": "Not available",
+      "active": false
     },
     {
-      "sku": "XP-6100-S65-P",
+      "sku": "XPL-6000-1W-P",
       "tier_code": "tier3",
       "rule": null,
-      "price": 32.95,
+      "price": 0,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
-      "active": true
+      "notes": "Not available",
+      "active": false
     },
     {
-      "sku": "XP-6100-S65-PB",
+      "sku": "XPL-6000-1W-PB",
       "tier_code": "tier1",
       "rule": null,
-      "price": 37.29,
+      "price": 110.69,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Tier2/3 not available",
       "active": true
     },
     {
-      "sku": "XP-6100-S65-PB",
+      "sku": "XPL-6000-1W-PB",
       "tier_code": "tier2",
       "rule": null,
-      "price": 34.65,
+      "price": 0,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
-      "active": true
+      "notes": "Not available",
+      "active": false
     },
     {
-      "sku": "XP-6100-S65-PB",
+      "sku": "XPL-6000-1W-PB",
       "tier_code": "tier3",
       "rule": null,
-      "price": 32.95,
+      "price": 0,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
-      "active": true
+      "notes": "Not available",
+      "active": false
     },
     {
-      "sku": "XP-6100-S65-S",
+      "sku": "XPL-6000-1W-S",
       "tier_code": "tier1",
       "rule": null,
-      "price": 37.29,
+      "price": 110.69,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1156,10 +2002,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-S",
+      "sku": "XPL-6000-1W-S",
       "tier_code": "tier2",
       "rule": null,
-      "price": 34.65,
+      "price": 101.48,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1167,10 +2013,10 @@
       "active": true
     },
     {
-      "sku": "XP-6100-S65-S",
+      "sku": "XPL-6000-1W-S",
       "tier_code": "tier3",
       "rule": null,
-      "price": 32.95,
+      "price": 91.33,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1178,10 +2024,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-B",
+      "sku": "XPL-6000-2W-B",
       "tier_code": "tier1",
       "rule": null,
-      "price": 38.55,
+      "price": 100.63,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1189,10 +2035,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-B",
+      "sku": "XPL-6000-2W-B",
       "tier_code": "tier2",
       "rule": null,
-      "price": 36.25,
+      "price": 92.25,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1200,10 +2046,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-B",
+      "sku": "XPL-6000-2W-B",
       "tier_code": "tier3",
       "rule": null,
-      "price": 34.32,
+      "price": 83.03,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1211,10 +2057,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-MN",
+      "sku": "XPL-6000-2W-MN",
       "tier_code": "tier1",
       "rule": null,
-      "price": 38.55,
+      "price": 100.63,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1222,10 +2068,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-MN",
+      "sku": "XPL-6000-2W-MN",
       "tier_code": "tier2",
       "rule": null,
-      "price": 36.25,
+      "price": 92.25,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1233,10 +2079,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-MN",
+      "sku": "XPL-6000-2W-MN",
       "tier_code": "tier3",
       "rule": null,
-      "price": 34.32,
+      "price": 83.03,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1244,10 +2090,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-G",
+      "sku": "XPL-6000-2W-G",
       "tier_code": "tier1",
       "rule": null,
-      "price": 38.55,
+      "price": 100.63,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1255,10 +2101,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-G",
+      "sku": "XPL-6000-2W-G",
       "tier_code": "tier2",
       "rule": null,
-      "price": 36.25,
+      "price": 92.25,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1266,10 +2112,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-G",
+      "sku": "XPL-6000-2W-G",
       "tier_code": "tier3",
       "rule": null,
-      "price": 34.32,
+      "price": 83.03,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1277,10 +2123,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-SM",
+      "sku": "XPL-6000-2W-SM",
       "tier_code": "tier1",
       "rule": null,
-      "price": 38.55,
+      "price": 100.63,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1288,10 +2134,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-SM",
+      "sku": "XPL-6000-2W-SM",
       "tier_code": "tier2",
       "rule": null,
-      "price": 36.25,
+      "price": 92.25,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1299,10 +2145,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-SM",
+      "sku": "XPL-6000-2W-SM",
       "tier_code": "tier3",
       "rule": null,
-      "price": 34.32,
+      "price": 83.03,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1310,10 +2156,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-W",
+      "sku": "XPL-6000-2W-W",
       "tier_code": "tier1",
       "rule": null,
-      "price": 38.55,
+      "price": 100.63,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1321,10 +2167,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-W",
+      "sku": "XPL-6000-2W-W",
       "tier_code": "tier2",
       "rule": null,
-      "price": 36.25,
+      "price": 92.25,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1332,10 +2178,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-W",
+      "sku": "XPL-6000-2W-W",
       "tier_code": "tier3",
       "rule": null,
-      "price": 34.32,
+      "price": 83.03,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1343,10 +2189,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-BS",
+      "sku": "XPL-6000-2W-BS",
       "tier_code": "tier1",
       "rule": null,
-      "price": 38.55,
+      "price": 100.63,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1354,10 +2200,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-BS",
+      "sku": "XPL-6000-2W-BS",
       "tier_code": "tier2",
       "rule": null,
-      "price": 36.25,
+      "price": 92.25,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1365,10 +2211,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-BS",
+      "sku": "XPL-6000-2W-BS",
       "tier_code": "tier3",
       "rule": null,
-      "price": 34.32,
+      "price": 83.03,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1376,10 +2222,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-D",
+      "sku": "XPL-6000-2W-D",
       "tier_code": "tier1",
       "rule": null,
-      "price": 38.55,
+      "price": 100.63,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1387,10 +2233,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-D",
+      "sku": "XPL-6000-2W-D",
       "tier_code": "tier2",
       "rule": null,
-      "price": 36.25,
+      "price": 92.25,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1398,10 +2244,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-D",
+      "sku": "XPL-6000-2W-D",
       "tier_code": "tier3",
       "rule": null,
-      "price": 34.32,
+      "price": 83.03,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1409,21 +2255,21 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-M",
+      "sku": "XPL-6000-2W-M",
       "tier_code": "tier1",
       "rule": null,
-      "price": 38.55,
+      "price": 86.34,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Mill finish",
       "active": true
     },
     {
-      "sku": "XP-2400-FP-M",
+      "sku": "XPL-6000-2W-M",
       "tier_code": "tier2",
       "rule": null,
-      "price": 36.25,
+      "price": 79.17,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1431,10 +2277,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-M",
+      "sku": "XPL-6000-2W-M",
       "tier_code": "tier3",
       "rule": null,
-      "price": 34.32,
+      "price": 71.24,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1442,10 +2288,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-P",
+      "sku": "XPL-6000-2W-S",
       "tier_code": "tier1",
       "rule": null,
-      "price": 38.55,
+      "price": 100.63,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1453,10 +2299,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-P",
+      "sku": "XPL-6000-2W-S",
       "tier_code": "tier2",
       "rule": null,
-      "price": 36.25,
+      "price": 92.25,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1464,10 +2310,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-P",
+      "sku": "XPL-6000-2W-S",
       "tier_code": "tier3",
       "rule": null,
-      "price": 34.32,
+      "price": 83.03,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1475,10 +2321,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-PB",
+      "sku": "XPL-6000-90-B",
       "tier_code": "tier1",
       "rule": null,
-      "price": 38.55,
+      "price": 106.59,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1486,10 +2332,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-PB",
+      "sku": "XPL-6000-90-B",
       "tier_code": "tier2",
       "rule": null,
-      "price": 36.25,
+      "price": 97.71,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1497,10 +2343,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-PB",
+      "sku": "XPL-6000-90-B",
       "tier_code": "tier3",
       "rule": null,
-      "price": 34.32,
+      "price": 87.95,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1508,10 +2354,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-S",
+      "sku": "XPL-6000-90-MN",
       "tier_code": "tier1",
       "rule": null,
-      "price": 38.55,
+      "price": 106.59,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1519,10 +2365,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-S",
+      "sku": "XPL-6000-90-MN",
       "tier_code": "tier2",
       "rule": null,
-      "price": 36.25,
+      "price": 97.71,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1530,10 +2376,10 @@
       "active": true
     },
     {
-      "sku": "XP-2400-FP-S",
+      "sku": "XPL-6000-90-MN",
       "tier_code": "tier3",
       "rule": null,
-      "price": 34.32,
+      "price": 87.95,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1541,10 +2387,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-B",
+      "sku": "XPL-6000-90-G",
       "tier_code": "tier1",
       "rule": null,
-      "price": 1.03,
+      "price": 106.59,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1552,10 +2398,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-B",
+      "sku": "XPL-6000-90-G",
       "tier_code": "tier2",
       "rule": null,
-      "price": 0.92,
+      "price": 97.71,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1563,10 +2409,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-B",
+      "sku": "XPL-6000-90-G",
       "tier_code": "tier3",
       "rule": null,
-      "price": 0.82,
+      "price": 87.95,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1574,10 +2420,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-MN",
+      "sku": "XPL-6000-90-SM",
       "tier_code": "tier1",
       "rule": null,
-      "price": 1.03,
+      "price": 106.59,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1585,10 +2431,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-MN",
+      "sku": "XPL-6000-90-SM",
       "tier_code": "tier2",
       "rule": null,
-      "price": 0.92,
+      "price": 97.71,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1596,10 +2442,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-MN",
+      "sku": "XPL-6000-90-SM",
       "tier_code": "tier3",
       "rule": null,
-      "price": 0.82,
+      "price": 87.95,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1607,10 +2453,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-G",
+      "sku": "XPL-6000-90-W",
       "tier_code": "tier1",
       "rule": null,
-      "price": 1.03,
+      "price": 106.59,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1618,10 +2464,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-G",
+      "sku": "XPL-6000-90-W",
       "tier_code": "tier2",
       "rule": null,
-      "price": 0.92,
+      "price": 97.71,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1629,10 +2475,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-G",
+      "sku": "XPL-6000-90-W",
       "tier_code": "tier3",
       "rule": null,
-      "price": 0.82,
+      "price": 87.95,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1640,10 +2486,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-SM",
+      "sku": "XPL-6000-90-BS",
       "tier_code": "tier1",
       "rule": null,
-      "price": 1.03,
+      "price": 106.59,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1651,10 +2497,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-SM",
+      "sku": "XPL-6000-90-BS",
       "tier_code": "tier2",
       "rule": null,
-      "price": 0.92,
+      "price": 97.71,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1662,10 +2508,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-SM",
+      "sku": "XPL-6000-90-BS",
       "tier_code": "tier3",
       "rule": null,
-      "price": 0.82,
+      "price": 87.95,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1673,10 +2519,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-W",
+      "sku": "XPL-6000-90-D",
       "tier_code": "tier1",
       "rule": null,
-      "price": 1.03,
+      "price": 106.59,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1684,10 +2530,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-W",
+      "sku": "XPL-6000-90-D",
       "tier_code": "tier2",
       "rule": null,
-      "price": 0.92,
+      "price": 97.71,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1695,10 +2541,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-W",
+      "sku": "XPL-6000-90-D",
       "tier_code": "tier3",
       "rule": null,
-      "price": 0.82,
+      "price": 87.95,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1706,21 +2552,21 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-BS",
+      "sku": "XPL-6000-90-M",
       "tier_code": "tier1",
       "rule": null,
-      "price": 1.03,
+      "price": 95.21,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Mill finish",
       "active": true
     },
     {
-      "sku": "XP-CSRC-BS",
+      "sku": "XPL-6000-90-M",
       "tier_code": "tier2",
       "rule": null,
-      "price": 0.92,
+      "price": 87.29,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1728,10 +2574,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-BS",
+      "sku": "XPL-6000-90-M",
       "tier_code": "tier3",
       "rule": null,
-      "price": 0.82,
+      "price": 78.57,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1739,10 +2585,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-D",
+      "sku": "XPL-6000-90-S",
       "tier_code": "tier1",
       "rule": null,
-      "price": 1.03,
+      "price": 106.59,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1750,10 +2596,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-D",
+      "sku": "XPL-6000-90-S",
       "tier_code": "tier2",
       "rule": null,
-      "price": 0.92,
+      "price": 97.71,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1761,10 +2607,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-D",
+      "sku": "XPL-6000-90-S",
       "tier_code": "tier3",
       "rule": null,
-      "price": 0.82,
+      "price": 87.95,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1772,10 +2618,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-M",
+      "sku": "XPL-SB-50PK-05MM",
       "tier_code": "tier1",
       "rule": null,
-      "price": 1.03,
+      "price": 3.01,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1783,10 +2629,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-M",
+      "sku": "XPL-SB-50PK-05MM",
       "tier_code": "tier2",
       "rule": null,
-      "price": 0.92,
+      "price": 2.9,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1794,10 +2640,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-M",
+      "sku": "XPL-SB-50PK-05MM",
       "tier_code": "tier3",
       "rule": null,
-      "price": 0.82,
+      "price": 2.41,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1805,10 +2651,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-P",
+      "sku": "XPL-SB-50PK-09MM",
       "tier_code": "tier1",
       "rule": null,
-      "price": 1.03,
+      "price": 3.01,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1816,10 +2662,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-P",
+      "sku": "XPL-SB-50PK-09MM",
       "tier_code": "tier2",
       "rule": null,
-      "price": 0.92,
+      "price": 2.9,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1827,10 +2673,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-P",
+      "sku": "XPL-SB-50PK-09MM",
       "tier_code": "tier3",
       "rule": null,
-      "price": 0.82,
+      "price": 2.41,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1838,10 +2684,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-PB",
+      "sku": "XPL-SB-50PK-20MM",
       "tier_code": "tier1",
       "rule": null,
-      "price": 1.03,
+      "price": 3.56,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1849,10 +2695,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-PB",
+      "sku": "XPL-SB-50PK-20MM",
       "tier_code": "tier2",
       "rule": null,
-      "price": 0.92,
+      "price": 3.43,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1860,10 +2706,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-PB",
+      "sku": "XPL-SB-50PK-20MM",
       "tier_code": "tier3",
       "rule": null,
-      "price": 0.82,
+      "price": 2.85,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1871,10 +2717,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-S",
+      "sku": "XPL-SLATCLIP-10PK",
       "tier_code": "tier1",
       "rule": null,
-      "price": 1.03,
+      "price": 3.69,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1882,10 +2728,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-S",
+      "sku": "XPL-SLATCLIP-10PK",
       "tier_code": "tier2",
       "rule": null,
-      "price": 0.92,
+      "price": 3.5,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1893,10 +2739,10 @@
       "active": true
     },
     {
-      "sku": "XP-CSRC-S",
+      "sku": "XPL-SLATCLIP-10PK",
       "tier_code": "tier3",
       "rule": null,
-      "price": 0.82,
+      "price": 3.13,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1904,10 +2750,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-B",
+      "sku": "XPL-BLOCK-5PK",
       "tier_code": "tier1",
       "rule": null,
-      "price": 4.64,
+      "price": 3.13,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1915,10 +2761,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-B",
+      "sku": "XPL-BLOCK-5PK",
       "tier_code": "tier2",
       "rule": null,
-      "price": 4.13,
+      "price": 2.9,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1926,10 +2772,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-B",
+      "sku": "XPL-BLOCK-5PK",
       "tier_code": "tier3",
       "rule": null,
-      "price": 3.71,
+      "price": 2.65,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1937,10 +2783,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-MN",
+      "sku": "XPL-EP-B-2PK",
       "tier_code": "tier1",
       "rule": null,
-      "price": 4.64,
+      "price": 3.35,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1948,10 +2794,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-MN",
+      "sku": "XPL-EP-B-2PK",
       "tier_code": "tier2",
       "rule": null,
-      "price": 4.13,
+      "price": 3.12,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1959,10 +2805,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-MN",
+      "sku": "XPL-EP-B-2PK",
       "tier_code": "tier3",
       "rule": null,
-      "price": 3.71,
+      "price": 2.68,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1970,10 +2816,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-G",
+      "sku": "XPL-EP-MN-2PK",
       "tier_code": "tier1",
       "rule": null,
-      "price": 4.64,
+      "price": 3.35,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1981,10 +2827,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-G",
+      "sku": "XPL-EP-MN-2PK",
       "tier_code": "tier2",
       "rule": null,
-      "price": 4.13,
+      "price": 3.12,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -1992,10 +2838,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-G",
+      "sku": "XPL-EP-MN-2PK",
       "tier_code": "tier3",
       "rule": null,
-      "price": 3.71,
+      "price": 2.68,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2003,10 +2849,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-SM",
+      "sku": "XPL-EP-G-2PK",
       "tier_code": "tier1",
       "rule": null,
-      "price": 4.64,
+      "price": 3.35,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2014,10 +2860,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-SM",
+      "sku": "XPL-EP-G-2PK",
       "tier_code": "tier2",
       "rule": null,
-      "price": 4.13,
+      "price": 3.12,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2025,10 +2871,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-SM",
+      "sku": "XPL-EP-G-2PK",
       "tier_code": "tier3",
       "rule": null,
-      "price": 3.71,
+      "price": 2.68,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2036,10 +2882,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-W",
+      "sku": "XPL-EP-SM-2PK",
       "tier_code": "tier1",
       "rule": null,
-      "price": 4.64,
+      "price": 3.35,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2047,10 +2893,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-W",
+      "sku": "XPL-EP-SM-2PK",
       "tier_code": "tier2",
       "rule": null,
-      "price": 4.13,
+      "price": 3.12,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2058,10 +2904,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-W",
+      "sku": "XPL-EP-SM-2PK",
       "tier_code": "tier3",
       "rule": null,
-      "price": 3.71,
+      "price": 2.68,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2069,10 +2915,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-BS",
+      "sku": "XPL-EP-W-2PK",
       "tier_code": "tier1",
       "rule": null,
-      "price": 4.64,
+      "price": 3.35,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2080,10 +2926,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-BS",
+      "sku": "XPL-EP-W-2PK",
       "tier_code": "tier2",
       "rule": null,
-      "price": 4.13,
+      "price": 3.12,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2091,10 +2937,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-BS",
+      "sku": "XPL-EP-W-2PK",
       "tier_code": "tier3",
       "rule": null,
-      "price": 3.71,
+      "price": 2.68,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2102,10 +2948,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-D",
+      "sku": "XPL-EP-BS-2PK",
       "tier_code": "tier1",
       "rule": null,
-      "price": 4.64,
+      "price": 3.35,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2113,10 +2959,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-D",
+      "sku": "XPL-EP-BS-2PK",
       "tier_code": "tier2",
       "rule": null,
-      "price": 4.13,
+      "price": 3.12,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2124,10 +2970,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-D",
+      "sku": "XPL-EP-BS-2PK",
       "tier_code": "tier3",
       "rule": null,
-      "price": 3.71,
+      "price": 2.68,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2135,10 +2981,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-M",
+      "sku": "XPL-EP-D-2PK",
       "tier_code": "tier1",
       "rule": null,
-      "price": 4.64,
+      "price": 3.35,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2146,10 +2992,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-M",
+      "sku": "XPL-EP-D-2PK",
       "tier_code": "tier2",
       "rule": null,
-      "price": 4.13,
+      "price": 3.12,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2157,10 +3003,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-M",
+      "sku": "XPL-EP-D-2PK",
       "tier_code": "tier3",
       "rule": null,
-      "price": 3.71,
+      "price": 2.68,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2168,21 +3014,21 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-P",
+      "sku": "XPL-EP-M-2PK",
       "tier_code": "tier1",
       "rule": null,
-      "price": 4.64,
+      "price": 2.85,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Mill finish",
       "active": true
     },
     {
-      "sku": "XP-BTP-P",
+      "sku": "XPL-EP-M-2PK",
       "tier_code": "tier2",
       "rule": null,
-      "price": 4.13,
+      "price": 2.65,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2190,10 +3036,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-P",
+      "sku": "XPL-EP-M-2PK",
       "tier_code": "tier3",
       "rule": null,
-      "price": 3.71,
+      "price": 2.27,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2201,10 +3047,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-PB",
+      "sku": "XPL-EP-P-2PK",
       "tier_code": "tier1",
       "rule": null,
-      "price": 4.64,
+      "price": 3.35,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2212,10 +3058,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-PB",
+      "sku": "XPL-EP-P-2PK",
       "tier_code": "tier2",
       "rule": null,
-      "price": 4.13,
+      "price": 3.12,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2223,10 +3069,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-PB",
+      "sku": "XPL-EP-P-2PK",
       "tier_code": "tier3",
       "rule": null,
-      "price": 3.71,
+      "price": 2.68,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2234,10 +3080,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-S",
+      "sku": "XPL-EP-PB-2PK",
       "tier_code": "tier1",
       "rule": null,
-      "price": 4.64,
+      "price": 3.35,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2245,10 +3091,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-S",
+      "sku": "XPL-EP-PB-2PK",
       "tier_code": "tier2",
       "rule": null,
-      "price": 4.13,
+      "price": 3.12,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2256,10 +3102,10 @@
       "active": true
     },
     {
-      "sku": "XP-BTP-S",
+      "sku": "XPL-EP-PB-2PK",
       "tier_code": "tier3",
       "rule": null,
-      "price": 3.71,
+      "price": 2.68,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2267,10 +3113,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-B",
+      "sku": "XPL-EP-S-2PK",
       "tier_code": "tier1",
       "rule": null,
-      "price": 6.06,
+      "price": 3.35,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2278,10 +3124,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-B",
+      "sku": "XPL-EP-S-2PK",
       "tier_code": "tier2",
       "rule": null,
-      "price": 5.7,
+      "price": 3.12,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2289,10 +3135,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-B",
+      "sku": "XPL-EP-S-2PK",
       "tier_code": "tier3",
       "rule": null,
-      "price": 4.91,
+      "price": 2.68,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2300,10 +3146,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-MN",
+      "sku": "XPL-6000-SF-B",
       "tier_code": "tier1",
       "rule": null,
-      "price": 6.06,
+      "price": 43.91,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2311,10 +3157,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-MN",
+      "sku": "XPL-6000-SF-B",
       "tier_code": "tier2",
       "rule": null,
-      "price": 5.7,
+      "price": 39.82,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2322,10 +3168,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-MN",
+      "sku": "XPL-6000-SF-B",
       "tier_code": "tier3",
       "rule": null,
-      "price": 4.91,
+      "price": 36.7,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2333,10 +3179,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-G",
+      "sku": "XPL-6000-SF-MN",
       "tier_code": "tier1",
       "rule": null,
-      "price": 6.06,
+      "price": 43.91,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2344,10 +3190,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-G",
+      "sku": "XPL-6000-SF-MN",
       "tier_code": "tier2",
       "rule": null,
-      "price": 5.7,
+      "price": 39.82,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2355,10 +3201,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-G",
+      "sku": "XPL-6000-SF-MN",
       "tier_code": "tier3",
       "rule": null,
-      "price": 4.91,
+      "price": 36.7,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2366,10 +3212,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-SM",
+      "sku": "XPL-6000-SF-G",
       "tier_code": "tier1",
       "rule": null,
-      "price": 6.06,
+      "price": 43.91,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2377,10 +3223,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-SM",
+      "sku": "XPL-6000-SF-G",
       "tier_code": "tier2",
       "rule": null,
-      "price": 5.7,
+      "price": 39.82,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2388,10 +3234,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-SM",
+      "sku": "XPL-6000-SF-G",
       "tier_code": "tier3",
       "rule": null,
-      "price": 4.91,
+      "price": 36.7,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2399,10 +3245,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-W",
+      "sku": "XPL-6000-SF-SM",
       "tier_code": "tier1",
       "rule": null,
-      "price": 6.06,
+      "price": 43.91,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2410,10 +3256,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-W",
+      "sku": "XPL-6000-SF-SM",
       "tier_code": "tier2",
       "rule": null,
-      "price": 5.7,
+      "price": 39.82,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2421,10 +3267,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-W",
+      "sku": "XPL-6000-SF-SM",
       "tier_code": "tier3",
       "rule": null,
-      "price": 4.91,
+      "price": 36.7,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2432,10 +3278,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-BS",
+      "sku": "XPL-6000-SF-W",
       "tier_code": "tier1",
       "rule": null,
-      "price": 6.06,
+      "price": 43.91,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2443,10 +3289,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-BS",
+      "sku": "XPL-6000-SF-W",
       "tier_code": "tier2",
       "rule": null,
-      "price": 5.7,
+      "price": 39.82,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2454,10 +3300,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-BS",
+      "sku": "XPL-6000-SF-W",
       "tier_code": "tier3",
       "rule": null,
-      "price": 4.91,
+      "price": 36.7,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2465,10 +3311,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-D",
+      "sku": "XPL-6000-SF-BS",
       "tier_code": "tier1",
       "rule": null,
-      "price": 6.06,
+      "price": 43.91,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2476,10 +3322,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-D",
+      "sku": "XPL-6000-SF-BS",
       "tier_code": "tier2",
       "rule": null,
-      "price": 5.7,
+      "price": 39.82,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2487,10 +3333,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-D",
+      "sku": "XPL-6000-SF-BS",
       "tier_code": "tier3",
       "rule": null,
-      "price": 4.91,
+      "price": 36.7,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2498,10 +3344,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-M",
+      "sku": "XPL-6000-SF-D",
       "tier_code": "tier1",
       "rule": null,
-      "price": 6.06,
+      "price": 43.91,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2509,10 +3355,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-M",
+      "sku": "XPL-6000-SF-D",
       "tier_code": "tier2",
       "rule": null,
-      "price": 5.7,
+      "price": 39.82,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2520,10 +3366,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-M",
+      "sku": "XPL-6000-SF-D",
       "tier_code": "tier3",
       "rule": null,
-      "price": 4.91,
+      "price": 36.7,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2531,21 +3377,21 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-P",
+      "sku": "XPL-6000-SF-M",
       "tier_code": "tier1",
       "rule": null,
-      "price": 6.06,
+      "price": 34.18,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Mill finish",
       "active": true
     },
     {
-      "sku": "XP-SCREWS-P",
+      "sku": "XPL-6000-SF-M",
       "tier_code": "tier2",
       "rule": null,
-      "price": 5.7,
+      "price": 30.99,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2553,10 +3399,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-P",
+      "sku": "XPL-6000-SF-M",
       "tier_code": "tier3",
       "rule": null,
-      "price": 4.91,
+      "price": 28.56,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2564,10 +3410,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-PB",
+      "sku": "XPL-6000-SF-P",
       "tier_code": "tier1",
       "rule": null,
-      "price": 6.06,
+      "price": 39.92,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2575,10 +3421,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-PB",
+      "sku": "XPL-6000-SF-P",
       "tier_code": "tier2",
       "rule": null,
-      "price": 5.7,
+      "price": 36.2,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2586,10 +3432,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-PB",
+      "sku": "XPL-6000-SF-P",
       "tier_code": "tier3",
       "rule": null,
-      "price": 4.91,
+      "price": 33.36,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2597,10 +3443,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-S",
+      "sku": "XPL-6000-SF-PB",
       "tier_code": "tier1",
       "rule": null,
-      "price": 6.06,
+      "price": 39.92,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2608,10 +3454,10 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-S",
+      "sku": "XPL-6000-SF-PB",
       "tier_code": "tier2",
       "rule": null,
-      "price": 5.7,
+      "price": 36.2,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -2619,14 +3465,96 @@
       "active": true
     },
     {
-      "sku": "XP-SCREWS-S",
+      "sku": "XPL-6000-SF-PB",
       "tier_code": "tier3",
       "rule": null,
-      "price": 4.91,
+      "price": 33.36,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
       "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-SF-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 43.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-SF-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XPL-6000-SF-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 36.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    }
+  ],
+  "product_companion_rules": [
+    {
+      "product_system_type": "XPL",
+      "rule_key": "xpl_post_50_6000_needs_top_plate",
+      "trigger_category": "post",
+      "trigger_match_json": {
+        "post_size": "50",
+        "post_length_mm": 6000
+      },
+      "add_category": "post_accessory",
+      "add_sku_pattern": "XP-TP-{colour}",
+      "qty_formula": "same_as(post_qty)",
+      "is_pack": false,
+      "priority": 10,
+      "notes": "6000mm FP post always needs top plate cap; 1 per post",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_key": "xpl_post_65_6000_needs_top_plate",
+      "trigger_category": "post",
+      "trigger_match_json": {
+        "post_size": "65",
+        "post_length_mm": 6000
+      },
+      "add_category": "post_accessory",
+      "add_sku_pattern": "XP-65TP-{colour}",
+      "qty_formula": "same_as(post_qty)",
+      "is_pack": false,
+      "priority": 20,
+      "notes": "6000mm HD post always needs top plate cap; 1 per post",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_key": "xpl_base_plate_needs_domical_cover",
+      "trigger_category": "post_accessory",
+      "trigger_match_json": {
+        "accessory_type": "base_plate"
+      },
+      "add_category": "post_accessory",
+      "add_sku_pattern": "",
+      "qty_formula": "same_as(base_plate_qty)",
+      "is_pack": false,
+      "priority": 30,
+      "notes": "Domical cover is already emitted by rule; companion enforces pairing if base plate is manually added",
       "active": true
     }
   ]

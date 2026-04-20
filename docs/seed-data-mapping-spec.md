@@ -50,7 +50,28 @@ supabase/seeds/schemas/
 }
 ```
 
+Only these top-level keys are allowed (`additionalProperties: false` on the file). Do not add `id`, `org_id`, extra sections, or stray metadata keys at the root.
+
 Every section is **optional** — include only the tables your product actually needs rows in. (A catalog-only addition with new SKUs and pricing may have only `product_components` and `pricing_rules`.)
+
+**Strict row objects:** each array item is validated with `additionalProperties: false`. Extra keys on a row (e.g. copying `id`, `product_id`, `rule_set_id` from a CSV) **fail validation**.
+
+### 1a. Common validation failures (read this before generating)
+
+| Mistake | Why it fails |
+|--------|----------------|
+| Missing `product_type` on a `products` row | Required: `"fence"` \| `"gate"` \| `"other"`. |
+| Using `QS_GATE` (or any product code) inside `product_components.system_types` | Each array element must be exactly one of **`QSHS`**, **`VS`**, **`XPL`**, **`BAYG`**, **`GATE`** — this matches Postgres `chk_system_types_values`. Gate SKUs for the `QS_GATE` **product** still use **`"GATE"`** here, not `QS_GATE`. Fence SKUs list the fence code(s) they apply to. |
+| Wrong `pricing_rules.tier_code` | Must be literally `tier1`, `tier2`, or `tier3` (not `Tier1` / `retail`). |
+| Missing `pricing_rules.active` | Required boolean on each pricing row. |
+| Empty string `""` for date fields | `effective_from`, `valid_from`, `valid_to` allow **`null`** or a **`date`** string (`YYYY-MM-DD`). `""` fails `format: date`. Omit the property or use `null`. |
+| Invented `product_variables.data_type` | Must be one of: `enum`, `number`, `integer`, `string`, `boolean`. |
+| Omitting `selector_type` on selectors | Required: `"exact"` or `"fallback"`. |
+| Omitting `trigger_match_json` / `match_json` | Optional — omitting passes Ajv (the fields are not `required`). The upserter applies `match_json ?? {}` and `trigger_match_json ?? {}`. Do **not** emit **`null`** (schema type is `object`, not `null`). JSON Schema `default` in the file is **not** applied by this repo’s Ajv config — rely on omission or `{}`. |
+| **`active`** on **`rule_versions`** rows | **`rule_versions` has no `active` column** in Postgres; the item schema does not define `active` — `additionalProperties: false` **rejects** it. Omit entirely. |
+| `options_json: null` on `product_variables` | Must be an **array** (use **`[]`** for number/boolean fields with no enum). `null` is not valid. |
+| `price: null` on `pricing_rules` | Must be a **number**; use **`0`** for inactive / N.A. rows if you must keep the line. |
+| `add_sku_pattern: null` on `product_companion_rules` | Must be a **string**; use **`""`** if you have no pattern (prefer deactivating the row or fixing the SKU). |
 
 A Node script (`supabase/seeds/tools/seed-products.js`) validates every file against `product-file.schema.json`, resolves business-key FKs by looking up Postgres, then upserts each section in dependency order via `@supabase/supabase-js`. Run with `npm run seed:products`. Your job is only to produce a correct JSON file; validation + upsert is automated.
 
@@ -83,7 +104,7 @@ When staff adds a new fencing system (say, "VS vertical slat"), no engine code c
 
 When producing or applying seed data, respect this order — each table depends on earlier ones:
 
-1. `products`                       (catalog; parent/variant structure)
+1. `products`                       (catalog; flat rows — `product_type` + `system_type`; no variants)
 2. `product_components`             (SKU catalog referenced by pricing & selectors)
 3. `rule_sets`                      (container per product)
 4. `rule_versions`                  (frozen rule snapshot; `is_current=true`)
@@ -107,16 +128,16 @@ Every foreign key in the JSON is expressed by a **business key**, not a UUID. Th
 | FK in DB | JSON business key | Resolves via |
 |---|---|---|
 | `org_id` | file-level `org_slug` | `organisations WHERE slug = ...` |
-| `product_id` (root) | `{ system_type }` + `parent_system_type: null` | `products WHERE system_type = ... AND parent_id IS NULL` |
-| `product_id` (variant) | `product_system_type` | `products WHERE system_type = ... AND parent_id IS NOT NULL` |
-| `parent_id` (on product rows) | `parent_system_type` | `products WHERE system_type = ... AND parent_id IS NULL` |
+| `product_id` | `product_system_type` (same as the product’s `system_type`) | `products WHERE system_type = ...` (flat table — one row per product) |
 | `rule_set_id` | `rule_set_name` (scoped by the row's `product_system_type`) | `rule_sets WHERE name = ... AND product_id = ...` |
 | `version_id` | `version_label` (scoped by the rule set) | `rule_versions WHERE version_label = ... AND rule_set_id = ...` |
 | `component_id` (in `pricing_rules`) | `sku` | `product_components WHERE sku = ... AND org_id = ...` |
 
+`parent_system_type` on `products` is **deprecated** — do not set it on new rows (use `null` or omit). There is no parent/variant hierarchy anymore.
+
 Never produce a `{ "product_id": "<uuid>" }`, `{ "org_id": "..." }`, or per-row `org_slug` field. Use the business key; `org_slug` stays at the file root.
 
-**Duplicate handling across files**: the same SKU (e.g. a shared accessory) can be declared in multiple per-variant files. The upserter uses Postgres `ON CONFLICT` upsert semantics — whichever file processes second simply UPDATEs the row. No errors. File processing order is alphabetical.
+**Duplicate handling across files**: the same SKU (e.g. a shared accessory) can be declared in multiple product files. The upserter uses Postgres `ON CONFLICT` upsert semantics — whichever file processes second simply UPDATEs the row. No errors. File processing order is alphabetical.
 
 ---
 
@@ -174,7 +195,7 @@ Variables available to an expression come from (in merging order):
 4. Derived variables set by previous `stage`s: `derive` → `stock` → `accessory` → `component`.
 5. Layout helpers injected by the engine: `product_post_boundary_count`, `corner_post_count`, stock lengths (`slat_stock_length_mm`, `side_frame_stock_length_mm`), boundary-derived `width_deduction_mm`, per-category quantities like `num_slats`, `num_side_frames`, `num_csr`.
 
-When in doubt, read existing rows in `product_rules.json` to see what variables rules reference.
+When in doubt, read existing `product_rules` rows in `supabase/seeds/glass-outlet/products/qshs.json` (or your target product file) to see what variables rules reference.
 
 ### 5.4 JSONB field shapes
 
@@ -252,7 +273,9 @@ One row per purchasable SKU. SKU convention: uppercase, dash-separated, ends wit
 
 **Source signals:** any list of SKUs with a name, category, unit, and a default price. Supplier price sheets, internal catalog, build-pack CSVs.
 
-**Category values used in this codebase:** `slat`, `side_frame`, `cfc_cover`, `centre_support_rail`, `f_section`, `accessory`, `mounting`, `gate_side_frame`, `joiner_block`, `hardware`. Pick the closest match; consistency with existing categories matters because selectors and companions filter by category.
+**Category values used in this codebase:** `slat`, `rail` (top/bottom rails — common for vertical systems), `side_frame`, `cfc_cover`, `centre_support_rail`, `f_section`, `accessory`, `mounting`, `gate_side_frame`, `joiner_block`, `hardware`. The JSON Schema allows any string; match existing seeds so selectors and companions resolve.
+
+**`system_types` on each component:** must be a non-empty array whose elements are **only** `QSHS`, `VS`, `XPL`, `BAYG`, or `GATE`. Gate-catalog SKUs (even when the gate **product** is `QS_GATE`) use **`["GATE"]`** here — **not** `QS_GATE`.
 
 **Typical row:**
 ```json
@@ -265,7 +288,7 @@ One row per purchasable SKU. SKU convention: uppercase, dash-separated, ends wit
 
 ### 6.3 `rule_sets`
 
-One per product variant. Always one, named e.g. "VS Fence Rules" or "VS Gate Rules".
+One per product (flat catalog). Typically one rule set per product, named e.g. "VS Fence Rules" or "QS Gate Rules".
 
 ```json
 { "product_system_type": "VS",
@@ -424,7 +447,7 @@ You have a CSV with a header row and field values per row. Approach:
 2. **Drop UUID columns.** CSVs in `qshs_mvp_build_pack/` and `qshs_gates_build_pack/` include hard-coded UUIDs for `id`, `org_id`, `product_id`, `rule_set_id`, `version_id`. **Do not carry them forward.** Use business keys.
 3. **Normalise types.** CSV `"True"` → boolean `true`; `"null"` → JSON `null`; quoted numerics → numbers.
 4. **Reshape columns where needed.** Older CSV shapes sometimes differ from the current DB. For example the old `product_companion_rules.csv` combined `trigger_json` and `action_json`; the current schema splits these into `trigger_category` + `trigger_match_json` + `add_category` + `add_sku_pattern` + `qty_formula`. Map accordingly by inspecting the old JSON cells.
-5. **Validate.** Each resulting object must conform to the table's JSON Schema. Run `node supabase/seeds/tools/json-to-sql.js` — it validates first and reports mismatches.
+5. **Validate.** Each resulting object must conform to the table's JSON Schema. In this repo run `npm run seed:products` (or `node supabase/seeds/tools/seed-products.js`) — it validates against `product-file.schema.json` then upserts; Ajv prints JSON pointer paths on failure.
 
 ### 7.2 Natural-language brief
 
@@ -445,7 +468,7 @@ Interview checklist to extract:
 10. **Pricing** (three tiers, optional quantity breaks) → `pricing_rules` rows.
 
 When the source doesn't say:
-- **Stock lengths** default to 5800mm for slats/rails/side-frames, 3000mm for posts (QSHS convention). Check against existing rules in `qshs-v3-engine.sql` before assuming.
+- **Stock lengths** default to 5800mm for slats/rails/side-frames, 3000mm for posts (QSHS convention). Check existing `derive`/`stock`-stage rules in `supabase/seeds/glass-outlet/products/qshs.json` before assuming.
 - **Default colour_code** is `"B"` (black-satin) unless stated otherwise.
 - **Sort order** of variables: colour → slat size → slat gap → mounting → boundaries → per-segment (width/height) in steps of 10.
 - **Tier margins**: if not provided, ask. Don't invent numbers.
@@ -473,7 +496,8 @@ Given the natural-language brief in §7.2, the output is **one file**: `supabase
 {
   "org_slug": "glass-outlet",
   "products": [
-    { "parent_system_type": "QUICKSCREEN", "system_type": "VS",
+    { "system_type": "VS",
+      "product_type": "fence",
       "name": "VS Vertical Slat Screen",
       "description": "Vertical slat orientation; slats insert into top/bottom rails.",
       "active": true, "sort_order": 2,
@@ -539,8 +563,10 @@ Pattern-match against the committed `supabase/seeds/glass-outlet/products/qshs.j
 Before emitting, self-check:
 
 - [ ] File has a top-level `org_slug` (usually `"glass-outlet"`); individual rows do NOT.
+- [ ] Every `products[]` row has **`product_type`** (`fence` / `gate` / `other`) and **`system_type`**.
+- [ ] Every `product_components[]` row: **`system_types`** uses only `QSHS`, `VS`, `XPL`, `BAYG`, `GATE` (gate SKUs → `GATE`).
 - [ ] `product_system_type` values are consistent across sections — the same product is named the same way everywhere.
-- [ ] For each product, there is exactly one `rule_sets` row and exactly one `rule_versions` row with `is_current: true`.
+- [ ] When the file ships an engine bundle: typically one `rule_sets` row for that product and exactly one `rule_versions` row with `is_current: true` per rule set (catalog-only snippets may omit those sections).
 - [ ] Every `product_rules` row references a `rule_set_name` + `version_label` that exist in `rule_versions`.
 - [ ] Stages of `product_rules`: `derive` rules don't reference `stock`/`accessory`/`component` output keys. `stock` may reference `derive`. Etc.
 - [ ] Every SKU in `product_component_selectors.sku_pattern` either literally exists in `product_components` or, when the pattern has placeholders like `{colour}`, **every** substituted colour-variant exists in `product_components` (possibly in a different file — the upserter handles cross-file SKU references).
@@ -549,7 +575,7 @@ Before emitting, self-check:
 - [ ] `product_variables.options_json` values match what your `product_rules` and `product_component_selectors` reference (e.g. if `slat_size_mm` allows `[65, 90]`, no rule should assume 50 is valid).
 - [ ] `product_variables.scope` is correct — `job` for colour/slat_size/slat_gap; `run` for boundary/mounting/hinge/latch; `segment` for panel_width_mm / target_height_mm / gate_width_mm / etc.
 - [ ] `product_constraints.applies_when_json` keys are variable names that exist in `product_variables`.
-- [ ] math.js expressions parse (balanced parentheses, no typos). When in doubt, check against existing rules in `products/qshs.json`.
+- [ ] math.js expressions parse (balanced parentheses, no typos). When in doubt, check against existing rules in `supabase/seeds/glass-outlet/products/qshs.json`.
 - [ ] All `active: true` unless you explicitly want a row disabled.
 
 To validate in this repo: `npm run seed:products` (validates every file against `product-file.schema.json`, then upserts). If validation fails, ajv prints the exact JSON pointer and error.

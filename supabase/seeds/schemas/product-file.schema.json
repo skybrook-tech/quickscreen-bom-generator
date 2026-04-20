@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "product-file.schema.json",
   "title": "product-file",
-  "description": "One JSON file per fencing product variant (e.g. qshs.json, vs.json). Groups all table rows the variant owns under table-name keys. Gates live inside their parent fencing variant's file. The Node upserter at supabase/seeds/tools/seed-products.js reads files matching this schema and upserts each section in dependency order (products → product_components → rule_sets → rule_versions → engine rows → pricing_rules).",
+  "description": "One JSON file per product (e.g. qshs.json, vs.json, qs_gate.json). Groups all table rows under table-name keys. Gates are authored in their own file (e.g. qs_gate.json), not nested under a fence file. The Node upserter at supabase/seeds/tools/seed-products.js reads files matching this schema and upserts each section in dependency order (products → product_components → rule_sets → rule_versions → engine rows → pricing_rules).",
   "type": "object",
   "additionalProperties": false,
   "required": ["org_slug"],
