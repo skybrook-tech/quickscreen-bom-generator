@@ -24,6 +24,8 @@ interface FenceLayoutCanvasProps {
   postPositions?: PostPosition[] | null;
   /** Per-segment max panel widths (flat array matching non-boundary segment order). Used for live post preview. */
   segmentPanelWidths?: number[];
+  /** Job-level default panel width (mm). Used for the in-progress draw preview. */
+  jobPanelWidth?: number;
   allowedAngles?: number[];
 }
 
@@ -33,6 +35,7 @@ export function FenceLayoutCanvas({
   onEngineReady,
   postPositions,
   segmentPanelWidths,
+  jobPanelWidth,
   allowedAngles: allowedAnglesProp,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -174,6 +177,11 @@ export function FenceLayoutCanvas({
   useEffect(() => {
     engineRef.current?.setSegmentPanelWidths(segmentPanelWidths ?? []);
   }, [segmentPanelWidths]);
+
+  // Sync jobPanelWidth prop into the canvas engine for in-progress segment post preview
+  useEffect(() => {
+    engineRef.current?.setJobPanelWidth(jobPanelWidth ?? null);
+  }, [jobPanelWidth]);
 
   // When expanded changes, trigger a window resize event so the engine's
   // internal onResize handler picks up the new canvas CSS height.

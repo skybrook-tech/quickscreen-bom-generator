@@ -80,6 +80,7 @@ type Tool = "draw" | "gate" | "move" | "boundary";
 type UndoAction =
   | { type: "ADD_POINT"; runIdx: number }
   | { type: "FINISH_RUN"; runIdx: number }
+  | { type: "RESUME_RUN"; runIdx: number }
   | { type: "ADD_RUN" }
   | { type: "ADD_GATE"; segIdx: number; gateIdx: number }
   | { type: "CLEAR"; runs: Run[]; scale: number }
@@ -418,6 +419,8 @@ export function initCanvasEngine(
   // Per-segment max panel widths (flat array, index = flat segment index from allSegmentsFlat).
   // Used by drawComputedPosts to show live post-position preview.
   let segmentPanelWidths: number[] = [];
+  // Job-level default panel width — used to draw post previews on the in-progress segment.
+  let jobPanelWidthMm: number | null = null;
 
   // Resize canvas to fill its CSS size
   function resizeCanvas() {
@@ -645,8 +648,28 @@ export function initCanvasEngine(
         ctx.stroke();
         ctx.restore();
 
-        // Distance label on active preview line
+        // Post position preview along the in-progress segment
         const segDist = dist(lastPt, target);
+        if (jobPanelWidthMm && jobPanelWidthMm > 0 && segDist > 0) {
+          const previewLengthMm = pixelsToMM(segDist, scale);
+          const numPanels = Math.ceil(previewLengthMm / jobPanelWidthMm);
+          const sq = 5 / zoom;
+          const half = sq / 2;
+          const bw = 1.5 / zoom;
+          ctx.save();
+          for (let i = 0; i <= numPanels; i++) {
+            const t = i / numPanels;
+            const px = lastPt.x + t * (target.x - lastPt.x);
+            const py = lastPt.y + t * (target.y - lastPt.y);
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(px - half - bw, py - half - bw, sq + bw * 2, sq + bw * 2);
+            ctx.fillStyle = "#f59e0b";
+            ctx.fillRect(px - half, py - half, sq, sq);
+          }
+          ctx.restore();
+        }
+
+        // Distance label on active preview line
         if (segDist > 0) {
           const mm = pixelsToMM(segDist, scale);
           const label =
@@ -765,6 +788,68 @@ export function initCanvasEngine(
       drawComputedPosts();
     }
 
+    ctx.restore();
+
+    // Stats overlay — drawn in screen space, independent of pan/zoom
+    drawStatsOverlay();
+  }
+
+  function drawStatsOverlay() {
+    const allSegs = allSegmentsFlat();
+    const nbRuns = runs.filter((r) => !r.isBoundary && r.finished);
+    if (nbRuns.length === 0 && allSegs.length === 0) return;
+
+    let line: string;
+
+    if (hoveredSegIdx >= 0 && hoveredSegIdx < allSegs.length) {
+      // Hover mode — identify the run containing the hovered segment
+      const { runIdx } = allSegs[hoveredSegIdx];
+      const run = runs[runIdx];
+      let nbIdx = 0;
+      let flatStart = 0;
+      for (let ri = 0; ri < runs.length; ri++) {
+        if (runs[ri].isBoundary) continue;
+        if (ri === runIdx) break;
+        flatStart += runs[ri].segments.length;
+        nbIdx++;
+      }
+      const segs = run.segments.length;
+      const corners = countCorners([run]);
+      let panels = 0;
+      for (let si = 0; si < segs; si++) {
+        const maxW = segmentPanelWidths[flatStart + si] ?? 0;
+        if (maxW > 0) panels += Math.ceil(run.segments[si].lengthMM / maxW);
+      }
+      line = `Run ${nbIdx + 1}  ·  ${segs} ${segs === 1 ? "seg" : "segs"}  ·  ${panels} ${panels === 1 ? "panel" : "panels"}  ·  ${corners} ${corners === 1 ? "corner" : "corners"}`;
+    } else {
+      // No hover — global totals
+      const totalSegs = allSegs.length;
+      const totalCorners = countCorners(nbRuns);
+      let totalPanels = 0;
+      for (let i = 0; i < allSegs.length; i++) {
+        const maxW = segmentPanelWidths[i] ?? 0;
+        if (maxW > 0)
+          totalPanels += Math.ceil(allSegs[i].seg.lengthMM / maxW);
+      }
+      line = `${nbRuns.length} ${nbRuns.length === 1 ? "run" : "runs"}  ·  ${totalSegs} ${totalSegs === 1 ? "seg" : "segs"}  ·  ${totalPanels} ${totalPanels === 1 ? "panel" : "panels"}  ·  ${totalCorners} ${totalCorners === 1 ? "corner" : "corners"}`;
+    }
+
+    const pad = 8;
+    const fs = 12;
+    const x = 10;
+    const y = 10;
+    ctx.save();
+    ctx.font = `${fs}px sans-serif`;
+    const w = ctx.measureText(line).width + pad * 2;
+    const h = fs + pad * 2;
+    ctx.fillStyle = "rgba(26,29,46,0.85)";
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, 4);
+    ctx.fill();
+    ctx.fillStyle = "#e5e7eb";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(line, x + pad, y + h / 2);
     ctx.restore();
   }
 
@@ -1163,38 +1248,36 @@ export function initCanvasEngine(
    * first run started with the draw tool before any chain occurred), finish it
    * normally. In either case activeRunIdx is reset to -1.
    */
-  function stopChain() {
+  function stopChain(popExtra = true) {
     if (activeRunIdx < 0 || runs[activeRunIdx]?.finished) return;
     const run = runs[activeRunIdx];
 
-    if (run.points.length < 2) {
-      // Trailing stub from the last chain click — remove it.
-      // The top of the undo stack is a CHAIN_POINT whose newRunIdx is this run.
-      // Pop it and undo the chain so the previous run is left finished.
-      const topAction = undoStack[undoStack.length - 1];
-      if (
-        topAction?.type === "CHAIN_POINT" &&
-        topAction.newRunIdx === activeRunIdx
-      ) {
-        // Simply discard the stub run (already unfinished prev run gets left finished)
-        runs.splice(activeRunIdx, 1);
+    // The dblclick's first mousedown already added the dblclick point — pop it.
+    // Skip the pop when called from keyboard (Enter/Escape) since no extra point was added.
+    if (popExtra && run.points.length > 1) {
+      run.points.pop();
+      run.segments = buildSegmentsFromPoints(run.points, scale);
+      // The matching ADD_POINT was just pushed; remove it from the undo stack.
+      if (undoStack[undoStack.length - 1]?.type === "ADD_POINT") {
         undoStack.pop();
-        // The previous run remains finished — that's the desired state.
-      } else {
-        // Stub run started with the very first click (ADD_RUN), no segment yet
-        runs.splice(activeRunIdx, 1);
-        if (undoStack[undoStack.length - 1]?.type === "ADD_RUN") {
-          undoStack.pop();
-        }
+      }
+    }
+
+    if (run.points.length < 2) {
+      // Only the start point remains — discard the run entirely
+      runs.splice(activeRunIdx, 1);
+      if (undoStack[undoStack.length - 1]?.type === "ADD_RUN") {
+        undoStack.pop();
       }
     } else {
-      // Has ≥2 points — finish it properly
-      undoStack.push({ type: "FINISH_RUN", runIdx: activeRunIdx });
+      // Finish the run with its accumulated points
       run.finished = true;
+      undoStack.push({ type: "FINISH_RUN", runIdx: activeRunIdx });
       notifyChange();
     }
 
     activeRunIdx = -1;
+    scheduleRedraw();
   }
 
   // ── Event handlers ─────────────────────────────────────────────────────────
@@ -1250,37 +1333,47 @@ export function initCanvasEngine(
 
     if (tool === "draw") {
       if (activeRunIdx === -1 || runs[activeRunIdx]?.finished) {
-        // Start a new run with this as the first point
-        const newRun: Run = {
-          points: [worldPt],
-          finished: false,
-          segments: [],
-        };
-        undoStack.push({ type: "ADD_RUN" });
-        runs.push(newRun);
-        activeRunIdx = runs.length - 1;
+        // Check if click is on the end-point of a finished run — resume it
+        let resumedIdx = -1;
+        for (let ri = 0; ri < runs.length; ri++) {
+          const run = runs[ri];
+          if (!run.finished || run.isBoundary || run.points.length === 0) continue;
+          const endPtScreen = canvasToScreen(
+            run.points[run.points.length - 1],
+            pan,
+            zoom,
+          );
+          const dx = screenPtDown.x - endPtScreen.x;
+          const dy = screenPtDown.y - endPtScreen.y;
+          if (Math.sqrt(dx * dx + dy * dy) < 10) {
+            resumedIdx = ri;
+            break;
+          }
+        }
+
+        if (resumedIdx >= 0) {
+          // Resume the existing run — un-finish it so new points can be appended
+          runs[resumedIdx].finished = false;
+          activeRunIdx = resumedIdx;
+          undoStack.push({ type: "RESUME_RUN", runIdx: resumedIdx }); // undo will re-finish it
+        } else {
+          // Start a new run with this as the first point
+          const newRun: Run = {
+            points: [worldPt],
+            finished: false,
+            segments: [],
+          };
+          undoStack.push({ type: "ADD_RUN" });
+          runs.push(newRun);
+          activeRunIdx = runs.length - 1;
+        }
       } else {
-        // Chain mode: add point, auto-finish the run, then start a new run from the same point
+        // Append point to the current run (multi-point polyline)
         const run = runs[activeRunIdx];
-        const prevRunIdx = activeRunIdx;
         run.points.push(worldPt);
         run.segments = buildSegmentsFromPoints(run.points, scale);
-        run.finished = true;
         notifyChange();
-
-        // Start new chain run from the same point
-        const chainPoint: Point = { ...worldPt };
-        const newRun: Run = {
-          points: [chainPoint],
-          finished: false,
-          segments: [],
-        };
-        runs.push(newRun);
-        const newRunIdx = runs.length - 1;
-        activeRunIdx = newRunIdx;
-
-        // Single undo action covers the whole chain step
-        undoStack.push({ type: "CHAIN_POINT", prevRunIdx, newRunIdx });
+        undoStack.push({ type: "ADD_POINT", runIdx: activeRunIdx });
       }
       scheduleRedraw();
       return;
@@ -1559,13 +1652,13 @@ export function initCanvasEngine(
     if (editingLabel) return;
     if (e.key === "Enter" && tool === "draw") {
       if (activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
-        stopChain();
+        stopChain(false); // keyboard — no extra mousedown point to pop
         scheduleRedraw();
       }
     }
     if (e.key === "Escape" && tool === "draw") {
       if (activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
-        stopChain();
+        stopChain(false); // keyboard — no extra mousedown point to pop
         scheduleRedraw();
       }
     }
@@ -1657,6 +1750,15 @@ export function initCanvasEngine(
         if (run) {
           run.finished = false;
           activeRunIdx = action.runIdx;
+        }
+        break;
+      }
+      case "RESUME_RUN": {
+        // Undo a resume — re-finish the run and clear active draw state
+        const run = runs[action.runIdx];
+        if (run) {
+          run.finished = true;
+          activeRunIdx = -1;
         }
         break;
       }
@@ -1877,6 +1979,12 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  /** Set the job-level default panel width for the in-progress preview segment. */
+  function setJobPanelWidth(mm: number | null) {
+    jobPanelWidthMm = mm;
+    scheduleRedraw();
+  }
+
   /**
    * Replace the current canvas state with the runs described by `layout`.
    * Used for form-driven geometry changes (bidirectional sync).
@@ -1998,6 +2106,7 @@ export function initCanvasEngine(
     setGateId,
     setPostPositions,
     setSegmentPanelWidths,
+    setJobPanelWidth,
     loadLayout,
     fitToWidth,
     fitToContent,

@@ -40,6 +40,13 @@
         "description": "Key/value predicates matched against the current context (job + run + segment + derived variables). Empty {} matches always.",
         "default": {}
       },
+      "qty_key": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Name of the segCtx variable that holds the quantity for this selector group. The engine groups selectors by (component_category, qty_key) and emits one line per group. Selectors without qty_key are skipped with an assumption log entry."
+      },
       "sku_pattern": {
         "type": "string",
         "description": "Resolved SKU. Placeholders are substituted at BOM-run time. Example: 'XP-6100-S65-{colour}' → 'XP-6100-S65-B' when colour_code is 'B'."

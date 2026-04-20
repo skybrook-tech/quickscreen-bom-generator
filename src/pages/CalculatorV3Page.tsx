@@ -209,7 +209,7 @@ function CalculatorV3Content() {
               <button
                 onClick={handleGenerateBOM}
                 disabled={bomMutation.isPending || hasErrors || noSegments}
-                className="px-8 py-3 bg-brand-accent text-white rounded-lg font-medium hover:bg-brand-accent/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="w-full flex items-center justify-center px-8 py-3 bg-brand-accent text-white rounded-lg font-medium hover:bg-brand-accent/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {bomMutation.isPending && (
                   <Loader2 className="w-4 h-4 animate-spin" />

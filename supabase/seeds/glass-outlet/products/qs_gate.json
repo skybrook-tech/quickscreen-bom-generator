@@ -1490,7 +1490,7 @@
     {
       "product_system_type": "QS_GATE",
       "name": "gate_width_in_range",
-      "expression": "gate_width_mm >= 400 && gate_width_mm <= 1200",
+      "expression": "gate_width_mm >= 400 and gate_width_mm <= 1200",
       "severity": "error",
       "message": "Gate width must be between 400mm and 1200mm",
       "active": true
@@ -1498,7 +1498,7 @@
     {
       "product_system_type": "QS_GATE",
       "name": "gate_height_in_range",
-      "expression": "gate_height_mm >= 600 && gate_height_mm <= 2100",
+      "expression": "gate_height_mm >= 600 and gate_height_mm <= 2100",
       "severity": "error",
       "message": "Gate height must be between 600mm and 2100mm",
       "active": true
@@ -1506,7 +1506,7 @@
     {
       "product_system_type": "QS_GATE",
       "name": "lock_box_type_required_if_enabled",
-      "expression": "!include_lock_box || (include_lock_box && lock_box_type != null)",
+      "expression": "!include_lock_box or (include_lock_box and lock_box_type != null)",
       "severity": "error",
       "message": "A lock box type must be selected when lock box is enabled",
       "active": true
@@ -1763,6 +1763,7 @@
       "match_json": {
         "slat_size_mm": 65
       },
+      "qty_key": "qty_gate_blade",
       "sku_pattern": "XP-6100-GB65-{colour}",
       "priority": 100,
       "notes": "Gate blade 65mm \u2014 colour resolved at runtime",
@@ -1774,6 +1775,7 @@
       "component_category": "rail",
       "selector_type": "exact",
       "match_json": {},
+      "qty_key": "qty_hd_rail",
       "sku_pattern": "XP-6100-HD6545-{colour}",
       "priority": 100,
       "notes": "HD top/bottom rail \u2014 colour resolved at runtime",
@@ -1781,41 +1783,42 @@
     },
     {
       "product_system_type": "QS_GATE",
-      "selector_key": "gate_stop_standard",
-      "component_category": "accessory",
-      "selector_type": "exact",
-      "match_json": {
-        "colour_code_family": "standard"
-      },
-      "sku_pattern": "XP-4200-GSTOP-{colour}",
-      "priority": 90,
-      "notes": "Gate stop \u2014 standard colours (not Primrose/Paperbark)",
-      "active": true
-    },
-    {
-      "product_system_type": "QS_GATE",
       "selector_key": "gate_stop_primrose",
-      "component_category": "accessory",
+      "component_category": "gate_stop",
       "selector_type": "exact",
       "match_json": {
         "colour_code": "P"
       },
+      "qty_key": "qty_gate_stop",
       "sku_pattern": "XP-4200-GSTOP-P",
-      "priority": 100,
+      "priority": 10,
       "notes": "Gate stop \u2014 Primrose (exception pricing)",
       "active": true
     },
     {
       "product_system_type": "QS_GATE",
       "selector_key": "gate_stop_paperbark",
-      "component_category": "accessory",
+      "component_category": "gate_stop",
       "selector_type": "exact",
       "match_json": {
         "colour_code": "PB"
       },
+      "qty_key": "qty_gate_stop",
       "sku_pattern": "XP-4200-GSTOP-PB",
-      "priority": 100,
+      "priority": 10,
       "notes": "Gate stop \u2014 Paperbark (exception pricing)",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "gate_stop_standard",
+      "component_category": "gate_stop",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_gate_stop",
+      "sku_pattern": "XP-4200-GSTOP-{colour}",
+      "priority": 100,
+      "notes": "Gate stop \u2014 standard colours fallback (checked after P/PB at priority 10)",
       "active": true
     },
     {
@@ -1824,6 +1827,7 @@
       "component_category": "hardware",
       "selector_type": "exact",
       "match_json": {},
+      "qty_key": "qty_hinge_latch",
       "sku_pattern": "{selected_hinge_sku}",
       "priority": 100,
       "notes": "Hinge/latch unit \u2014 resolved via hinge_type variable map",
@@ -1832,11 +1836,12 @@
     {
       "product_system_type": "QS_GATE",
       "selector_key": "lock_box_dl",
-      "component_category": "hardware",
+      "component_category": "lock_box",
       "selector_type": "exact",
       "match_json": {
         "lock_box_type": "XP-LBOX-DL"
       },
+      "qty_key": "qty_lock_box",
       "sku_pattern": "XP-LBOX-DL-{colour}",
       "priority": 100,
       "notes": "Lockwood Deadlatch lock box \u2014 colour resolved at runtime",
@@ -1845,11 +1850,12 @@
     {
       "product_system_type": "QS_GATE",
       "selector_key": "lock_box_lset",
-      "component_category": "hardware",
+      "component_category": "lock_box",
       "selector_type": "exact",
       "match_json": {
         "lock_box_type": "XP-LBOX-LSET"
       },
+      "qty_key": "qty_lock_box",
       "sku_pattern": "XP-LBOX-LSET-{colour}",
       "priority": 100,
       "notes": "Lever/Knob Lock Set lock box \u2014 colour resolved at runtime",
@@ -1863,6 +1869,7 @@
       "match_json": {
         "slat_size_mm": 65
       },
+      "qty_key": "qty_gsf",
       "sku_pattern": "QSG-GATESF-65-{colour}",
       "priority": 100,
       "notes": "Gate side frame 65mm \u2014 colour resolved at runtime. Pricing TBD.",
@@ -1876,6 +1883,7 @@
       "match_json": {
         "slat_size_mm": 65
       },
+      "qty_key": "qty_jblock_pack",
       "sku_pattern": "QSG-JBLOCK-65-4PK",
       "priority": 100,
       "notes": "Joiner block 65mm 4-pack \u2014 1 per gate. Pricing TBD.",
@@ -1886,11 +1894,10 @@
       "selector_key": "screw_covers",
       "component_category": "hardware",
       "selector_type": "exact",
-      "match_json": {
-        "sku": "QSG-SC-10PK"
-      },
+      "match_json": {},
+      "qty_key": "qty_sc_pack",
       "sku_pattern": "QSG-SC-10PK",
-      "priority": 100,
+      "priority": 200,
       "notes": "Screw covers 10-pack \u2014 1 per gate. Pricing TBD.",
       "active": true
     },
@@ -1899,22 +1906,22 @@
       "selector_key": "rail_screws",
       "component_category": "hardware",
       "selector_type": "exact",
-      "match_json": {
-        "sku": "QSG-RS-10PK"
-      },
+      "match_json": {},
+      "qty_key": "rail_screw_packs_needed",
       "sku_pattern": "QSG-RS-10PK",
-      "priority": 100,
+      "priority": 300,
       "notes": "Rail screws 10-pack \u2014 qty_rail_screw_packs per gate. Pricing TBD.",
       "active": true
     },
     {
       "product_system_type": "QS_GATE",
       "selector_key": "frame_top_cap_65",
-      "component_category": "accessory",
+      "component_category": "frame_top_cap",
       "selector_type": "exact",
       "match_json": {
-        "frame_cap_size": "65"
+        "slat_size_mm": 65
       },
+      "qty_key": "qty_ftc",
       "sku_pattern": "QSG-FTC-65",
       "priority": 90,
       "notes": "Gate frame top cap 65mm \u2014 4 per gate. Pricing TBD.",
@@ -1923,11 +1930,12 @@
     {
       "product_system_type": "QS_GATE",
       "selector_key": "frame_top_cap_50",
-      "component_category": "accessory",
+      "component_category": "frame_top_cap",
       "selector_type": "exact",
       "match_json": {
-        "frame_cap_size": "50"
+        "slat_size_mm": 50
       },
+      "qty_key": "qty_ftc",
       "sku_pattern": "QSG-FTC-50",
       "priority": 90,
       "notes": "Gate frame top cap 50mm \u2014 4 per gate. Pricing TBD.",

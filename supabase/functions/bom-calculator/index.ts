@@ -7,11 +7,12 @@
 //   2.  Resolve user role (admin check) from profiles
 //   3.  Parse + minimally validate payload
 //   4.  Load engine data (product, rule_version, rules/selectors/companions/etc.)
-//       per unique productCode — parallelised via Promise.all
+//       per unique productCode — includes gate productCodes from segment.gateProductCode
 //   5.  Normalise variables (defaults + colour codes)
 //   6.  Run product_validations — error severity short-circuits the run
 //   7.  Execute product_rules in stage order (derive → stock → accessory → component)
-//   8.  Resolve SKUs via product_component_selectors (first match wins)
+//       For gate_opening segments: use gate product engine data and gate variables
+//   8.  Resolve SKUs via product_component_selectors (qty_key groups; first match wins)
 //   9.  Expand product_companion_rules (auto-add accessories)
 //   10. Evaluate product_warnings (non-blocking; populates warnings/errors/assumptions)
 //   11. Aggregate lines by SKU+runId → price → return
@@ -19,7 +20,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { extractJwt, resolveUserProfile } from "../_shared/auth.ts";
-import { create, all } from "https://esm.sh/mathjs@13/number";
+import { create, all } from "https://esm.sh/mathjs@13";
 import type {
   CanonicalPayload,
   CanonicalRun,
@@ -50,7 +51,7 @@ const COLOUR_CODES: Record<string, string> = {
   "palladium-silver-pearl": "S",
 };
 
-// ─── Pricing (verbatim from calculate-bom-v2) ─────────────────────────────────
+// ─── Pricing ──────────────────────────────────────────────────────────────────
 
 function resolvePrice(rules: PricingRule[], qty: number): number {
   for (const r of rules) {
@@ -126,7 +127,7 @@ interface TraceEntry {
 }
 
 interface EngineData {
-  product: { id: string; system_type: string };
+  product: { id: string; system_type: string; product_type: string };
   ruleVersion: { id: string };
   rules: Array<{
     id: string;
@@ -168,6 +169,7 @@ interface EngineData {
     match_json: Record<string, unknown>;
     sku_pattern: string;
     priority: number;
+    qty_key?: string;
   }>;
   companions: Array<{
     id: string;
@@ -253,13 +255,11 @@ Deno.serve(async (req: Request) => {
     const { orgId, pricingTier: defaultTier } = await resolveUserProfile(jwt);
 
     // Step 2 — resolve role for admin trace gating
-    // resolveUserProfile doesn't return role, so we query separately.
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    // We need the user id — get it from the JWT
     const {
       data: { user },
     } = await supabaseAdmin.auth.getUser(jwt);
@@ -296,18 +296,31 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Step 4 — load engine data per unique productCode (parallelised)
-    const productCodes = [
+    // Step 4 — load engine data per unique productCode (parallelised).
+    // Also collect gateProductCode values from gate_opening segments so gate
+    // engine data is loaded alongside fence engine data.
+    const fenceCodes = [
       ...new Set(payload.runs.map((r: CanonicalRun) => r.productCode)),
     ];
+    const gateCodes = [
+      ...new Set(
+        (payload.runs as CanonicalRun[]).flatMap((r) =>
+          r.segments
+            .filter((s: CanonicalSegment) => s.gateProductCode)
+            .map((s: CanonicalSegment) => s.gateProductCode!),
+        ),
+      ),
+    ];
+    const allProductCodes = [...new Set([...fenceCodes, ...gateCodes])];
+
     const engineDataMap = new Map<string, EngineData>();
 
     await Promise.all(
-      productCodes.map(async (code) => {
+      allProductCodes.map(async (code) => {
         // Flat products model (post migration 022): one row per (org, system_type).
         const { data: actualProduct } = await supabaseAdmin
           .from("products")
-          .select("id, system_type")
+          .select("id, system_type, product_type")
           .eq("org_id", orgId)
           .eq("system_type", code)
           .maybeSingle();
@@ -464,7 +477,7 @@ Deno.serve(async (req: Request) => {
       const runTrace: TraceEntry[] = [];
       const runLines: BomLineItemV3[] = [];
 
-      // Step 7 — validation pass
+      // Step 6 — validation pass (fence product only; gate validations run per segment)
       let runHasError = false;
       for (const validation of engineData.validations) {
         try {
@@ -489,9 +502,26 @@ Deno.serve(async (req: Request) => {
       }
       if (runHasError) continue; // short-circuit this run only
 
-      // ─── Process segments ─────────────────────────────────────────────────
+      // ─── Process segments ────────────────────────────────────────────────────
 
       for (const segment of run.segments as CanonicalSegment[]) {
+        // Determine if this is a gate_opening segment that should use gate engine data
+        const isGate =
+          segment.segmentKind === "gate_opening" && !!segment.gateProductCode;
+        const activeEngineData = isGate
+          ? engineDataMap.get(segment.gateProductCode!)
+          : engineData;
+        const activeProductCode = isGate
+          ? segment.gateProductCode!
+          : run.productCode;
+
+        if (!activeEngineData) {
+          allAssumptions.push(
+            `No engine data loaded for gate product: ${segment.gateProductCode} — segment skipped`,
+          );
+          continue;
+        }
+
         // Build segment context: run ctx + segment overrides + boundary/layout helpers
         const segVarsNorm = segment.variables
           ? normaliseVariables(segment.variables, engineData)
@@ -508,11 +538,7 @@ Deno.serve(async (req: Request) => {
         const segCtx: Record<string, unknown> = {
           ...runCtx,
           ...segVarsNorm,
-          // Segment geometry — segment_width_mm is the user input; panel_width_mm
-          // is derived by the num_panels + panel_width_mm derive rules below.
-          // max_panel_width_mm fallback: hardcoded 2600 (structural max for QSHS);
-          // overridden by payload.variables or seg.variables from the UI.
-          max_panel_width_mm: 2600,
+          // Segment geometry
           segment_width_mm: segment.segmentWidthMm,
           target_height_mm:
             segment.targetHeightMm ?? runCtx["target_height_mm"],
@@ -520,7 +546,7 @@ Deno.serve(async (req: Request) => {
           segment_kind: segment.segmentKind,
           // Gate product (when segmentKind === 'gate_opening')
           gate_product_code: segment.gateProductCode ?? null,
-          // Boundary-derived helpers — per-segment overrides via segment.variables
+          // Boundary-derived helpers
           left_boundary_type: leftEff,
           right_boundary_type: rightEff,
           ...(leftCornerDeg !== undefined && {
@@ -535,19 +561,70 @@ Deno.serve(async (req: Request) => {
           wall_boundary_count:
             (leftEff === "wall" ? 1 : 0) + (rightEff === "wall" ? 1 : 0),
           corner_count: run.corners.length,
-          corner_post_count: run.corners.length, // alias used by some rules
-          // Stock lengths (constants referenced by rules)
-          slat_stock_length_mm: 6100,
-          side_frame_stock_length_mm: 5800,
+          corner_post_count: run.corners.length,
+          // Numeric boolean boundary flags (avoid string comparison in mathjs)
+          left_is_product_post: leftEff === "product_post" ? 1 : 0,
+          right_is_product_post: rightEff === "product_post" ? 1 : 0,
+          left_is_wall: leftEff === "wall" ? 1 : 0,
+          right_is_wall: rightEff === "wall" ? 1 : 0,
+          // Numeric post size (rules can compare post_size_num == 50 instead of post_size == '50')
+          post_size_num: (() => {
+            const ps = segVarsNorm["post_size"] ?? runCtx["post_size"];
+            return typeof ps === "string" ? Number(ps) : typeof ps === "number" ? ps : 50;
+          })(),
+          // Numeric mounting flags
+          mounting_type_is_base_plate:
+            (segVarsNorm["mounting_type"] ?? runCtx["mounting_type"]) === "base_plate" ||
+            (segVarsNorm["mounting_method"] ?? runCtx["mounting_method"]) === "base_plate"
+              ? 1 : 0,
+          mounting_type_is_core_drill:
+            (segVarsNorm["mounting_type"] ?? runCtx["mounting_type"]) === "core_drill" ||
+            (segVarsNorm["mounting_method"] ?? runCtx["mounting_method"]) === "core_drill"
+              ? 1 : 0,
+          // Numeric post_system flags (XPL system)
+          post_system_is_xpl: (() => {
+            const ps = segVarsNorm["post_system"] ?? runCtx["post_system"];
+            return ps === "xpl" ? 1 : 0;
+          })(),
+          post_system_is_standard_50: (() => {
+            const ps = segVarsNorm["post_system"] ?? runCtx["post_system"];
+            return ps === "standard_50" ? 1 : 0;
+          })(),
+          post_system_is_standard_65: (() => {
+            const ps = segVarsNorm["post_system"] ?? runCtx["post_system"];
+            return ps === "standard_65" ? 1 : 0;
+          })(),
           // Cut deduction defaults — rules or variables can override
           width_deduction_mm: 0,
         };
 
-        // Step 8 — execute product_rules (derive → stock → accessory → component)
-        for (const rule of engineData.rules) {
+        // For gate_opening segments: build a gate-specific context from gate engine defaults
+        // overlaid with shared run variables (colour, slat_size) and the segment's gate variables.
+        const activeSegCtx: Record<string, unknown> = isGate
+          ? {
+              ...normaliseVariables(
+                {
+                  ...mergedRunVars,
+                  ...(segment.variables ?? {}),
+                  gate_width_mm: segment.segmentWidthMm,
+                  gate_height_mm:
+                    segment.targetHeightMm ?? (runCtx["target_height_mm"] as number),
+                },
+                activeEngineData,
+              ),
+              // Carry through boundary and layout helpers
+              left_boundary_type: leftEff,
+              right_boundary_type: rightEff,
+              corner_count: run.corners.length,
+              segment_kind: segment.segmentKind,
+            }
+          : segCtx;
+
+        // Step 7 — execute product_rules (derive → stock → accessory → component)
+        for (const rule of activeEngineData.rules) {
           try {
-            const output = mathjs.evaluate(rule.expression, segCtx);
-            segCtx[rule.output_key] = output;
+            const output = mathjs.evaluate(rule.expression, activeSegCtx);
+            activeSegCtx[rule.output_key] = output;
             if (wantTrace) {
               runTrace.push({
                 stage: rule.stage,
@@ -573,61 +650,57 @@ Deno.serve(async (req: Request) => {
         // Stash computed values for this segment
         computed[run.runId] = computed[run.runId] ?? {};
         computed[run.runId][segment.segmentId] = {
-          actual_height_mm: segCtx["actual_height_mm"],
-          num_slats: segCtx["num_slats"],
-          panel_width_mm: segCtx["panel_width_mm"],
-          num_panels: segCtx["num_panels"],
+          actual_height_mm: activeSegCtx["actual_height_mm"],
+          num_slats: activeSegCtx["num_slats"],
+          panel_width_mm: activeSegCtx["panel_width_mm"],
+          num_panels: activeSegCtx["num_panels"],
         };
 
-        // Step 9 — selector resolution.
+        // Step 8 — selector resolution.
         //
-        // Strategy: iterate over selector categories (the authoritative list of what
-        // components the engine can produce), and for each category look up its quantity
-        // from the context using a flexible naming search.
+        // Selectors are grouped by (component_category, qty_key). Each unique group
+        // is an independent line item. Within a group, the first selector whose
+        // match_json satisfies the context wins (priority ASC = checked first).
         //
-        // This avoids brittle output_key → category name derivation (pluralisation,
-        // abbreviations like csr vs centre_support_rail, etc.).
+        // Selectors without a qty_key are skipped with an assumption entry.
 
-        function getCategoryQty(category: string): number {
-          // Explicit overrides for categories whose quantity key differs from name conventions
-          const explicit: Record<string, string[]> = {
-            centre_support_rail: ["num_csr", "num_centre_support_rail"],
-            post: ["num_posts_from_boundaries", "num_post"],
-            f_section: ["wall_boundary_count", "num_f_section"],
-          };
-          const candidates = [
-            ...(explicit[category] ?? []),
-            `num_${category}`, // num_slat
-            `num_${category}s`, // num_slats
-            `${category}_qty`,
-            `${category}_count`,
-          ];
-          for (const key of candidates) {
-            const val = segCtx[key];
-            if (typeof val === "number" && val > 0) return val;
-            if (typeof val === "boolean" && val) return 1;
+        const selectorGroups = new Map<
+          string,
+          typeof activeEngineData.selectors
+        >();
+        for (const s of activeEngineData.selectors) {
+          if (!s.qty_key) {
+            allAssumptions.push(
+              `Selector '${s.selector_key}' has no qty_key — skipped`,
+            );
+            continue;
           }
-          return 0;
+          const groupKey = `${s.component_category}::${s.qty_key}`;
+          const existing = selectorGroups.get(groupKey) ?? [];
+          existing.push(s);
+          selectorGroups.set(groupKey, existing);
         }
 
-        // Collect unique categories across all active selectors for this product
-        const selectorCategories = [
-          ...new Set(engineData.selectors.map((s) => s.component_category)),
-        ];
+        for (const [groupKey, groupSelectors] of selectorGroups) {
+          const colonIdx = groupKey.indexOf("::");
+          const category = groupKey.slice(0, colonIdx);
+          const qty_key = groupKey.slice(colonIdx + 2);
 
-        for (const category of selectorCategories) {
-          const qty = getCategoryQty(category);
-          if (qty <= 0) continue;
+          const qty = Number(activeSegCtx[qty_key]);
+          if (!Number.isFinite(qty) || qty <= 0) continue;
 
-          // Find matching selectors for this category (priority ASC = highest priority first)
-          const categorySelectors = engineData.selectors
-            .filter((s) => s.component_category === category)
-            .sort((a, b) => a.priority - b.priority);
+          // Priority ASC — lower number = checked first
+          const sorted = [...groupSelectors].sort(
+            (a, b) => a.priority - b.priority,
+          );
 
           let matched = false;
-          for (const selector of categorySelectors) {
-            if (matchesJSON(selector.match_json, segCtx)) {
-              const sku = resolvePlaceholders(selector.sku_pattern, segCtx);
+          for (const selector of sorted) {
+            if (matchesJSON(selector.match_json, activeSegCtx)) {
+              const sku = resolvePlaceholders(
+                selector.sku_pattern,
+                activeSegCtx,
+              );
               runLines.push({
                 sku,
                 description: `${category} — ${sku}`,
@@ -638,7 +711,7 @@ Deno.serve(async (req: Request) => {
                 lineTotal: 0,
                 runId: run.runId,
                 segmentId: segment.segmentId,
-                productCode: run.productCode,
+                productCode: activeProductCode,
               });
               matched = true;
               break;
@@ -647,24 +720,26 @@ Deno.serve(async (req: Request) => {
 
           if (!matched) {
             allAssumptions.push(
-              `No SKU selector matched for category '${category}' (qty: ${qty}) in ${run.productCode}`,
+              `No SKU selector matched for category '${category}' qty_key '${qty_key}' (qty: ${qty}) in ${activeProductCode}`,
             );
           }
         }
 
-        // Step 10 — companion expansion
-        // Iterate over a snapshot so new companions don't trigger further companions
+        // Step 9 — companion expansion
+        // Iterate over a snapshot of lines for this segment so new companion lines
+        // don't trigger further companions.
         const linesSnapshot = [...runLines];
         for (const line of linesSnapshot) {
           if (!line.segmentId || line.segmentId !== segment.segmentId) continue;
 
-          for (const companion of engineData.companions) {
+          for (const companion of activeEngineData.companions) {
             if (line.category !== companion.trigger_category) continue;
-            if (!matchesJSON(companion.trigger_match_json, segCtx)) continue;
+            if (!matchesJSON(companion.trigger_match_json, activeSegCtx))
+              continue;
 
             try {
               const companionCtx = {
-                ...segCtx,
+                ...activeSegCtx,
                 trigger_qty: line.quantity,
                 [`${companion.trigger_category}_qty`]: line.quantity,
               };
@@ -675,7 +750,7 @@ Deno.serve(async (req: Request) => {
 
               const sku = resolvePlaceholders(
                 companion.add_sku_pattern,
-                segCtx,
+                activeSegCtx,
               );
               runLines.push({
                 sku,
@@ -687,7 +762,7 @@ Deno.serve(async (req: Request) => {
                 lineTotal: 0,
                 runId: run.runId,
                 segmentId: segment.segmentId,
-                productCode: run.productCode,
+                productCode: activeProductCode,
               });
             } catch (err) {
               allTrace.push({
@@ -702,7 +777,7 @@ Deno.serve(async (req: Request) => {
         }
       } // end segment loop
 
-      // Step 11 — warnings pass (run-level, uses merged run context)
+      // Step 10 — warnings pass (run-level, uses merged run context)
       for (const warning of engineData.warnings) {
         try {
           if (matchesJSON(warning.condition_json, runCtx)) {
@@ -751,7 +826,7 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    // Step 10 (aggregate) — merge lines by SKU + runId
+    // Step 11 (aggregate) — merge lines by SKU + runId
     const aggregated = new Map<string, BomLineItemV3>();
     for (const line of allLines) {
       const key = `${line.sku}__${line.runId ?? ""}`;
@@ -764,13 +839,18 @@ Deno.serve(async (req: Request) => {
     }
     const aggregatedLines = [...aggregated.values()];
 
-    // Separate gate items for the response envelope
-    const gateProductCodes = new Set(["QS_GATE", "QSVS", "QSGH", "HSSG"]);
+    // Separate gate items for the response envelope — driven by product_type from DB,
+    // not a hardcoded list of product codes.
+    const gateProductCodeSet = new Set(
+      [...engineDataMap.entries()]
+        .filter(([, ed]) => ed.product.product_type === "gate")
+        .map(([code]) => code),
+    );
     const gateItems = aggregatedLines.filter((l) =>
-      gateProductCodes.has(l.productCode ?? ""),
+      gateProductCodeSet.has(l.productCode ?? ""),
     );
 
-    // Step 11 — pricing
+    // Step 12 — pricing
     const pricingMap = await loadPricing(orgId, pricingTier);
 
     for (const line of aggregatedLines) {
@@ -798,14 +878,14 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // Step 12 — totals + response
+    // Step 13 — totals + response
     const subtotal = parseFloat(
       aggregatedLines.reduce((s, l) => s + l.lineTotal, 0).toFixed(2),
     );
     const gst = parseFloat((subtotal * 0.1).toFixed(2));
     const grandTotal = parseFloat((subtotal + gst).toFixed(2));
 
-    // Strip computed for non-admins (keep actual_height_mm only per segment)
+    // Strip computed for non-admins (keep actual_height_mm + num_panels only)
     const strippedComputed: Record<
       string,
       Record<string, Record<string, unknown>>

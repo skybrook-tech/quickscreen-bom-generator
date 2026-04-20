@@ -21,6 +21,12 @@ export function LayoutCanvasV3() {
   // Source tracking to break the canvas ↔ context update loop
   const sourceRef = useRef<'canvas' | 'form'>('form');
 
+  // Tracks the last run/segment structure pushed to the canvas engine.
+  // Only structural changes (runs/segments added, removed, reordered) trigger
+  // a loadLayout call. Variable-only changes (max_panel_width_mm, colour, etc.)
+  // are intentionally ignored so the user's drawn layout is never destroyed.
+  const prevGeomKeyRef = useRef('');
+
   // Allowed corner angles from the selected product's metadata
   const allowedAngles = useMemo(() => {
     if (!payload?.productCode || !products) return [];
@@ -57,7 +63,8 @@ export function LayoutCanvasV3() {
     }
   }
 
-  // Form → canvas: when payload changes from a form action, reload canvas geometry
+  // Form → canvas: when payload changes from a form action, reload canvas geometry.
+  // Only fires when the run/segment STRUCTURE changes, not on variable edits.
   useEffect(() => {
     if (!engineRef.current || !payload) return;
     if (sourceRef.current === 'canvas') {
@@ -65,6 +72,14 @@ export function LayoutCanvasV3() {
       sourceRef.current = 'form';
       return;
     }
+    // Compute a fingerprint of just the segment IDs. If only variables changed
+    // (max_panel_width_mm, colour, post_size, etc.) the fingerprint is the same
+    // and we skip the loadLayout call, preserving the user's drawn layout.
+    const key = payload.runs
+      .map((r) => r.segments.map((s) => s.segmentId).join(','))
+      .join('|');
+    if (key === prevGeomKeyRef.current) return;
+    prevGeomKeyRef.current = key;
     try {
       const layout = canonicalToCanvasLayout(payload);
       engineRef.current.loadLayout(layout);
@@ -81,6 +96,7 @@ export function LayoutCanvasV3() {
         onEngineReady={(engine) => { engineRef.current = engine; }}
         allowedAngles={allowedAngles}
         segmentPanelWidths={segmentPanelWidths}
+        jobPanelWidth={Number(payload?.variables.max_panel_width_mm) || 2600}
       />
     </div>
   );

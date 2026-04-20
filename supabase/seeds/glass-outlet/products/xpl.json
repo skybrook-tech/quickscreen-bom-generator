@@ -917,7 +917,7 @@
     {
       "product_system_type": "XPL",
       "name": "panel_width_in_range",
-      "expression": "panel_width_mm >= 300 && panel_width_mm <= 2600",
+      "expression": "panel_width_mm >= 300 and panel_width_mm <= 2600",
       "severity": "error",
       "message": "Panel width must be between 300mm and 2600mm.",
       "active": true
@@ -1113,7 +1113,7 @@
       "version_label": "v1.0.0",
       "stage": "derive",
       "name": "std_post_count",
-      "expression": "post_system != 'xpl' ? product_post_boundary_count : 0",
+      "expression": "post_system_is_xpl == 0 ? product_post_boundary_count : 0",
       "output_key": "std_post_count",
       "priority": 91,
       "active": true,
@@ -1125,7 +1125,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_xpl_end_post",
-      "expression": "post_system == 'xpl' ? xpl_end_post_count : 0",
+      "expression": "post_system_is_xpl ? xpl_end_post_count : 0",
       "output_key": "qty_xpl_end_post",
       "priority": 70,
       "active": true,
@@ -1137,7 +1137,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_xpl_inline_post",
-      "expression": "post_system == 'xpl' ? xpl_inline_post_count : 0",
+      "expression": "post_system_is_xpl ? xpl_inline_post_count : 0",
       "output_key": "qty_xpl_inline_post",
       "priority": 75,
       "active": true,
@@ -1149,7 +1149,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_xpl_corner_post",
-      "expression": "post_system == 'xpl' ? xpl_corner_post_count : 0",
+      "expression": "post_system_is_xpl ? xpl_corner_post_count : 0",
       "output_key": "qty_xpl_corner_post",
       "priority": 76,
       "active": true,
@@ -1161,7 +1161,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_50_2400",
-      "expression": "post_system == 'standard_50' && target_height_mm <= 2100 ? std_post_count : 0",
+      "expression": "post_system_is_standard_50 and target_height_mm <= 2100 ? std_post_count : 0",
       "output_key": "qty_post_50_2400",
       "priority": 80,
       "active": true,
@@ -1173,7 +1173,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_50_6000",
-      "expression": "post_system == 'standard_50' && target_height_mm > 2100 ? std_post_count : 0",
+      "expression": "post_system_is_standard_50 and target_height_mm > 2100 ? std_post_count : 0",
       "output_key": "qty_post_50_6000",
       "priority": 81,
       "active": true,
@@ -1185,7 +1185,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_65_2400",
-      "expression": "post_system == 'standard_65' && target_height_mm <= 2100 ? std_post_count : 0",
+      "expression": "post_system_is_standard_65 and target_height_mm <= 2100 ? std_post_count : 0",
       "output_key": "qty_post_65_2400",
       "priority": 82,
       "active": true,
@@ -1197,7 +1197,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_65_6000",
-      "expression": "post_system == 'standard_65' && target_height_mm > 2100 ? std_post_count : 0",
+      "expression": "post_system_is_standard_65 and target_height_mm > 2100 ? std_post_count : 0",
       "output_key": "qty_post_65_6000",
       "priority": 83,
       "active": true,
@@ -1209,7 +1209,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_top_plate_50",
-      "expression": "post_system == 'standard_50' && target_height_mm > 2100 ? std_post_count : 0",
+      "expression": "post_system_is_standard_50 and target_height_mm > 2100 ? std_post_count : 0",
       "output_key": "qty_top_plate_50",
       "priority": 84,
       "active": true,
@@ -1221,7 +1221,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_base_plate_50",
-      "expression": "post_system == 'standard_50' && mounting_method == 'base_plate' ? std_post_count : 0",
+      "expression": "post_system_is_standard_50 and mounting_type_is_base_plate ? std_post_count : 0",
       "output_key": "qty_base_plate_50",
       "priority": 85,
       "active": true,
@@ -1233,7 +1233,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_domical_cover_50",
-      "expression": "post_system == 'standard_50' && mounting_method == 'base_plate' ? std_post_count : 0",
+      "expression": "post_system_is_standard_50 and mounting_type_is_base_plate ? std_post_count : 0",
       "output_key": "qty_domical_cover_50",
       "priority": 86,
       "active": true,
@@ -1245,7 +1245,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_dress_ring_50",
-      "expression": "post_system == 'standard_50' && mounting_method == 'core_drill' ? std_post_count : 0",
+      "expression": "post_system_is_standard_50 and mounting_type_is_core_drill ? std_post_count : 0",
       "output_key": "qty_dress_ring_50",
       "priority": 87,
       "active": true,
@@ -1257,7 +1257,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_top_plate_65",
-      "expression": "post_system == 'standard_65' && target_height_mm > 2100 ? std_post_count : 0",
+      "expression": "post_system_is_standard_65 and target_height_mm > 2100 ? std_post_count : 0",
       "output_key": "qty_top_plate_65",
       "priority": 88,
       "active": true,
@@ -1269,7 +1269,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_base_plate_65",
-      "expression": "post_system == 'standard_65' && mounting_method == 'base_plate' ? std_post_count : 0",
+      "expression": "post_system_is_standard_65 and mounting_type_is_base_plate ? std_post_count : 0",
       "output_key": "qty_base_plate_65",
       "priority": 89,
       "active": true,
@@ -1281,7 +1281,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_domical_cover_65",
-      "expression": "post_system == 'standard_65' && mounting_method == 'base_plate' ? std_post_count : 0",
+      "expression": "post_system_is_standard_65 and mounting_type_is_base_plate ? std_post_count : 0",
       "output_key": "qty_domical_cover_65",
       "priority": 90,
       "active": true,
@@ -1293,7 +1293,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_dress_ring_65",
-      "expression": "post_system == 'standard_65' && mounting_method == 'core_drill' ? std_post_count : 0",
+      "expression": "post_system_is_standard_65 and mounting_type_is_core_drill ? std_post_count : 0",
       "output_key": "qty_dress_ring_65",
       "priority": 91,
       "active": true,
@@ -1306,9 +1306,8 @@
       "selector_key": "xpl_slat_65",
       "component_category": "slat",
       "selector_type": "exact",
-      "match_json": {
-        "slat_size_mm": 65
-      },
+      "match_json": { "slat_size_mm": 65 },
+      "qty_key": "qty_slat_65",
       "sku_pattern": "XP-6100-S65-{colour}",
       "priority": 100,
       "notes": "65mm slat shared with QSHS; colour resolved at runtime",
@@ -1319,9 +1318,8 @@
       "selector_key": "xpl_slat_90",
       "component_category": "slat",
       "selector_type": "exact",
-      "match_json": {
-        "slat_size_mm": 90
-      },
+      "match_json": { "slat_size_mm": 90 },
+      "qty_key": "qty_slat_90",
       "sku_pattern": "QS-6100-S90-{colour}",
       "priority": 100,
       "notes": "90mm slat shared with QSHS",
@@ -1330,12 +1328,10 @@
     {
       "product_system_type": "XPL",
       "selector_key": "xpl_spacer_5mm",
-      "component_category": "accessory",
+      "component_category": "spacer",
       "selector_type": "exact",
-      "match_json": {
-        "slat_gap_mm": 5,
-        "accessory_type": "spacer"
-      },
+      "match_json": { "slat_gap_mm": 5 },
+      "qty_key": "qty_spacer_5mm",
       "sku_pattern": "XPL-SB-50PK-05MM",
       "priority": 100,
       "active": true
@@ -1343,12 +1339,10 @@
     {
       "product_system_type": "XPL",
       "selector_key": "xpl_spacer_9mm",
-      "component_category": "accessory",
+      "component_category": "spacer",
       "selector_type": "exact",
-      "match_json": {
-        "slat_gap_mm": 9,
-        "accessory_type": "spacer"
-      },
+      "match_json": { "slat_gap_mm": 9 },
+      "qty_key": "qty_spacer_9mm",
       "sku_pattern": "XPL-SB-50PK-09MM",
       "priority": 100,
       "active": true
@@ -1356,12 +1350,10 @@
     {
       "product_system_type": "XPL",
       "selector_key": "xpl_spacer_20mm",
-      "component_category": "accessory",
+      "component_category": "spacer",
       "selector_type": "exact",
-      "match_json": {
-        "slat_gap_mm": 20,
-        "accessory_type": "spacer"
-      },
+      "match_json": { "slat_gap_mm": 20 },
+      "qty_key": "qty_spacer_20mm",
       "sku_pattern": "XPL-SB-50PK-20MM",
       "priority": 100,
       "active": true
@@ -1369,11 +1361,10 @@
     {
       "product_system_type": "XPL",
       "selector_key": "xpl_slatclip",
-      "component_category": "accessory",
+      "component_category": "slatclip",
       "selector_type": "exact",
-      "match_json": {
-        "accessory_type": "slatclip"
-      },
+      "match_json": {},
+      "qty_key": "qty_slatclip",
       "sku_pattern": "XPL-SLATCLIP-10PK",
       "priority": 100,
       "notes": "Locks the top slat; 1 pack per panel",
@@ -1384,9 +1375,8 @@
       "selector_key": "xpl_end_post",
       "component_category": "mounting",
       "selector_type": "exact",
-      "match_json": {
-        "post_way": "1W"
-      },
+      "match_json": {},
+      "qty_key": "qty_xpl_end_post",
       "sku_pattern": "XPL-6000-1W-{colour}",
       "priority": 100,
       "notes": "End/boundary post \u2014 1-way",
@@ -1395,11 +1385,10 @@
     {
       "product_system_type": "XPL",
       "selector_key": "xpl_inline_post",
-      "component_category": "mounting",
+      "component_category": "mounting_inline",
       "selector_type": "exact",
-      "match_json": {
-        "post_way": "2W"
-      },
+      "match_json": {},
+      "qty_key": "qty_xpl_inline_post",
       "sku_pattern": "XPL-6000-2W-{colour}",
       "priority": 100,
       "notes": "Inline post between two spans \u2014 2-way",
@@ -1408,11 +1397,10 @@
     {
       "product_system_type": "XPL",
       "selector_key": "xpl_corner_post",
-      "component_category": "mounting",
+      "component_category": "mounting_corner",
       "selector_type": "exact",
-      "match_json": {
-        "post_way": "90"
-      },
+      "match_json": {},
+      "qty_key": "qty_xpl_corner_post",
       "sku_pattern": "XPL-6000-90-{colour}",
       "priority": 100,
       "notes": "90\u00b0 corner post",
@@ -1423,10 +1411,8 @@
       "selector_key": "xpl_post_50_2400",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {
-        "post_size": "50",
-        "post_length_mm": 2400
-      },
+      "match_json": {},
+      "qty_key": "qty_post_50_2400",
       "sku_pattern": "XP-2400-FP-{colour}",
       "priority": 100,
       "notes": "50mm FP post 2400mm \u2014 shared component in qshs.json",
@@ -1437,10 +1423,8 @@
       "selector_key": "xpl_post_50_6000",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {
-        "post_size": "50",
-        "post_length_mm": 6000
-      },
+      "match_json": {},
+      "qty_key": "qty_post_50_6000",
       "sku_pattern": "XP-6000-FP-{colour}",
       "priority": 100,
       "notes": "50mm FP post 6000mm \u2014 shared component in qshs.json",
@@ -1451,10 +1435,8 @@
       "selector_key": "xpl_post_65_2400",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {
-        "post_size": "65",
-        "post_length_mm": 2400
-      },
+      "match_json": {},
+      "qty_key": "qty_post_65_2400",
       "sku_pattern": "XP-2400-65HD-{colour}",
       "priority": 100,
       "notes": "65mm HD post 2400mm \u2014 shared component in qshs.json",
@@ -1465,10 +1447,8 @@
       "selector_key": "xpl_post_65_6000",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {
-        "post_size": "65",
-        "post_length_mm": 6000
-      },
+      "match_json": {},
+      "qty_key": "qty_post_65_6000",
       "sku_pattern": "XP-6000-65HD-{colour}",
       "priority": 100,
       "notes": "65mm HD post 6000mm \u2014 shared component in qshs.json",
@@ -1479,10 +1459,8 @@
       "selector_key": "xpl_top_plate_50",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {
-        "post_size": "50",
-        "accessory_type": "top_plate"
-      },
+      "match_json": {},
+      "qty_key": "qty_top_plate_50",
       "sku_pattern": "XP-TP-{colour}",
       "priority": 100,
       "notes": "50mm post top plate \u2014 shared in qshs.json",
@@ -1493,10 +1471,8 @@
       "selector_key": "xpl_base_plate_50",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {
-        "post_size": "50",
-        "accessory_type": "base_plate"
-      },
+      "match_json": {},
+      "qty_key": "qty_base_plate_50",
       "sku_pattern": "XP-BP-SET-{colour}",
       "priority": 100,
       "notes": "50mm post base plate set \u2014 shared in qshs.json",
@@ -1507,10 +1483,8 @@
       "selector_key": "xpl_domical_cover_50",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {
-        "post_size": "50",
-        "accessory_type": "domical_cover"
-      },
+      "match_json": {},
+      "qty_key": "qty_domical_cover_50",
       "sku_pattern": "XP-DC-2P-{colour}",
       "priority": 100,
       "notes": "50mm post domical cover \u2014 shared in qshs.json",
@@ -1521,10 +1495,8 @@
       "selector_key": "xpl_dress_ring_50",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {
-        "post_size": "50",
-        "accessory_type": "dress_ring"
-      },
+      "match_json": {},
+      "qty_key": "qty_dress_ring_50",
       "sku_pattern": "XP-DR-{colour}",
       "priority": 100,
       "notes": "50mm post dress ring \u2014 shared in qshs.json",
@@ -1535,10 +1507,8 @@
       "selector_key": "xpl_top_plate_65",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {
-        "post_size": "65",
-        "accessory_type": "top_plate"
-      },
+      "match_json": {},
+      "qty_key": "qty_top_plate_65",
       "sku_pattern": "XP-65TP-{colour}",
       "priority": 100,
       "notes": "65mm HD post top plate \u2014 shared in qshs.json",
@@ -1549,10 +1519,8 @@
       "selector_key": "xpl_base_plate_65",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {
-        "post_size": "65",
-        "accessory_type": "base_plate"
-      },
+      "match_json": {},
+      "qty_key": "qty_base_plate_65",
       "sku_pattern": "XP-65BP-SET-{colour}",
       "priority": 100,
       "notes": "65mm HD post base plate set \u2014 shared in qshs.json",
@@ -1563,10 +1531,8 @@
       "selector_key": "xpl_domical_cover_65",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {
-        "post_size": "65",
-        "accessory_type": "domical_cover"
-      },
+      "match_json": {},
+      "qty_key": "qty_domical_cover_65",
       "sku_pattern": "XP-65DC-2P-{colour}",
       "priority": 100,
       "notes": "65mm HD post domical cover \u2014 shared in qshs.json",
@@ -1577,10 +1543,8 @@
       "selector_key": "xpl_dress_ring_65",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {
-        "post_size": "65",
-        "accessory_type": "dress_ring"
-      },
+      "match_json": {},
+      "qty_key": "qty_dress_ring_65",
       "sku_pattern": "XP-65DR-{colour}",
       "priority": 100,
       "notes": "65mm HD post dress ring \u2014 shared in qshs.json",

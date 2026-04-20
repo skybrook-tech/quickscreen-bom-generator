@@ -427,6 +427,7 @@ async function loadFile(path) {
       component_category: r.component_category,
       selector_type: r.selector_type,
       match_json: r.match_json ?? {},
+      qty_key: r.qty_key ?? null,
       sku_pattern: r.sku_pattern,
       priority: r.priority ?? 100,
       notes: r.notes ?? null,
