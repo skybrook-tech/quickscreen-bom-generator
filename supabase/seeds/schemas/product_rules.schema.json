@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "product_rules.schema.json",
+  "title": "product_rules",
+  "description": "Stage-ordered math.js expressions that compute derived values and line-item quantities. Stages execute in order: 'derive' (secondary values from inputs) → 'stock' (stock-length requirements) → 'accessory' (bracket/cap/screw counts) → 'component' (final emitted components). Variables from earlier stages are available to later stages; not vice versa.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "product_system_type",
+      "rule_set_name",
+      "version_label",
+      "stage",
+      "name",
+      "expression",
+      "output_key",
+      "priority",
+      "active"
+    ],
+    "properties": {
+      "product_system_type": {
+        "type": "string"
+      },
+      "rule_set_name": {
+        "type": "string"
+      },
+      "version_label": {
+        "type": "string"
+      },
+      "stage": {
+        "type": "string",
+        "enum": [
+          "derive",
+          "stock",
+          "accessory",
+          "component"
+        ]
+      },
+      "name": {
+        "type": "string",
+        "description": "Short identifier for traces and logs."
+      },
+      "expression": {
+        "type": "string",
+        "description": "math.js expression. Example: 'floor((target_height_mm + slat_gap_mm - 3) / (slat_size_mm + slat_gap_mm))'. Available functions include floor/ceil/round/max/min. Cross-stage variables must be defined earlier in pipeline."
+      },
+      "output_key": {
+        "type": "string",
+        "description": "Variable name to bind the result to. Usually identical to 'name'. Downstream rules can reference this key."
+      },
+      "priority": {
+        "type": "integer",
+        "description": "Ordering within a stage — lower runs first. Use 10-spaced values (10,20,30,…) so new rules can slot between without renumbering."
+      },
+      "active": {
+        "type": "boolean"
+      },
+      "notes": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    }
+  }
+}

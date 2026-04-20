@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useRef, useEffect, useCallback, useState, useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { initCanvasEngine } from "./canvasEngine";
 import { CanvasToolbar } from "./CanvasToolbar";
@@ -6,6 +6,7 @@ import { MapControls } from "./MapControls";
 import { GateModal } from "../gate/GateModal";
 import { useFenceConfig } from "../../context/FenceConfigContext";
 import { useGates } from "../../context/GateContext";
+import { useProducts } from "../../hooks/useProducts";
 import type { GateConfig } from "../../schemas/gate.schema";
 import type { CanvasLayout, CanvasRunSummary } from "./canvasEngine";
 import type { PostPosition } from "../../types/bom.types";
@@ -18,21 +19,53 @@ interface PendingGate {
 
 interface FenceLayoutCanvasProps {
   onApplied?: (layout: CanvasLayout) => void;
+  onLayoutChange?: (layout: CanvasLayout) => void;
+  onEngineReady?: (engine: ReturnType<typeof initCanvasEngine>) => void;
   postPositions?: PostPosition[] | null;
+  /** Per-segment max panel widths (flat array matching non-boundary segment order). Used for live post preview. */
+  segmentPanelWidths?: number[];
+  /** Job-level default panel width (mm). Used for the in-progress draw preview. */
+  jobPanelWidth?: number;
+  allowedAngles?: number[];
+  /** Pre-computed stats text from calcRunStats — keeps canvas overlay in sync with form. */
+  runStatsTexts?: { global: string; perRun: string[] };
 }
 
 export function FenceLayoutCanvas({
   onApplied,
+  onLayoutChange,
+  onEngineReady,
   postPositions,
+  segmentPanelWidths,
+  jobPanelWidth,
+  allowedAngles: allowedAnglesProp,
+  runStatsTexts,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
-  const { dispatch: fenceDispatch } = useFenceConfig();
+  const { state: fenceState, dispatch: fenceDispatch } = useFenceConfig();
+  const { data: products } = useProducts();
   const { gates, dispatch: gateDispatch } = useGates();
+
+  // Ref-wrap onLayoutChange so the engine (initialised once) always calls the current prop.
+  // Without this, the closure captured at initCanvasEngine time goes stale when the parent
+  // re-renders with a new handleLiveSync that closes over updated payload variables.
+  const onLayoutChangeRef = useRef(onLayoutChange);
+  useEffect(() => { onLayoutChangeRef.current = onLayoutChange; });
+
+  // allowedAngles prop takes priority; fallback to product metadata lookup (v1 path)
+  const allowedAngles = useMemo(() => {
+    if (allowedAnglesProp !== undefined) return allowedAnglesProp;
+    const product = products?.find(
+      (p) => p.system_type === fenceState.systemType,
+    );
+    return product?.metadata?.allowedAngles ?? [];
+  }, [allowedAnglesProp, products, fenceState.systemType]);
+
   const gatesRef = useRef(gates);
   gatesRef.current = gates;
 
-  const [activeTool, setActiveTool] = useState<"draw" | "gate" | "move">(
+  const [activeTool, setActiveTool] = useState<"draw" | "gate" | "move" | "boundary">(
     "draw",
   );
   const [snapEnabled, setSnapEnabled] = useState(true);
@@ -74,12 +107,16 @@ export function FenceLayoutCanvas({
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    engineRef.current = initCanvasEngine(canvasRef.current, {
+    const engine = initCanvasEngine(canvasRef.current, {
       snapToGrid: true,
       gridSize: 20,
       showGrid: true,
+      allowedAngles,
       onGatePlaced: handleGatePlaced,
-      onLayoutChange: (layout) => setRunSummaries(layout.runs),
+      onLayoutChange: (layout) => {
+        setRunSummaries(layout.runs);
+        onLayoutChangeRef.current?.(layout);
+      },
       onGateEdit: (flatSegIdx, gateIdx, gateId) => {
         // Find the gate in GateContext by id (set when gate was first saved)
         const existing = gateId
@@ -89,12 +126,19 @@ export function FenceLayoutCanvas({
         setEditingCanvasGate({ flatSegIdx, gateIdx, gate: existing });
       },
     });
+    engineRef.current = engine;
+    onEngineReady?.(engine);
 
     return () => {
       engineRef.current?.destroy();
       engineRef.current = null;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleGatePlaced]);
+
+  useEffect(() => {
+    engineRef.current?.setAllowedAngles(allowedAngles);
+  }, [allowedAngles]);
 
   const handleGateSave = useCallback(
     (gate: GateConfig) => {
@@ -137,6 +181,22 @@ export function FenceLayoutCanvas({
   useEffect(() => {
     engineRef.current?.setPostPositions(postPositions ?? null);
   }, [postPositions]);
+
+  // Sync segmentPanelWidths prop into the canvas engine for live post preview
+  useEffect(() => {
+    engineRef.current?.setSegmentPanelWidths(segmentPanelWidths ?? []);
+  }, [segmentPanelWidths]);
+
+  // Sync jobPanelWidth prop into the canvas engine for in-progress segment post preview
+  useEffect(() => {
+    engineRef.current?.setJobPanelWidth(jobPanelWidth ?? null);
+  }, [jobPanelWidth]);
+
+  // Sync pre-computed run stats text into the engine overlay (shared with RunCard)
+  useEffect(() => {
+    if (!runStatsTexts) return;
+    engineRef.current?.setRunStatsTexts(runStatsTexts.global, runStatsTexts.perRun);
+  }, [runStatsTexts]);
 
   // When expanded changes, trigger a window resize event so the engine's
   // internal onResize handler picks up the new canvas CSS height.
@@ -238,6 +298,8 @@ export function FenceLayoutCanvas({
             "Click on a fence segment to place a gate marker"}
           {activeTool === "move" &&
             "Drag nodes or gates to reposition · Click a label to edit length"}
+          {activeTool === "boundary" &&
+            "Draw non-product context lines (existing fences, walls, property lines) — not included in BOM"}
         </div>
 
         {/* Zoom hint */}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "product-file.schema.json",
+  "title": "product-file",
+  "description": "One JSON file per product (e.g. qshs.json, vs.json, qs_gate.json). Groups all table rows under table-name keys. Gates are authored in their own file (e.g. qs_gate.json), not nested under a fence file. The Node upserter at supabase/seeds/tools/seed-products.js reads files matching this schema and upserts each section in dependency order (products → product_components → rule_sets → rule_versions → engine rows → pricing_rules).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["org_slug"],
+  "properties": {
+    "org_slug": {
+      "type": "string",
+      "description": "Business key for the owning organisation. Applied to every row in this file — do NOT repeat org_slug on individual rows."
+    },
+    "products":                     { "$ref": "products.schema.json" },
+    "product_components":           { "$ref": "product_components.schema.json" },
+    "rule_sets":                    { "$ref": "rule_sets.schema.json" },
+    "rule_versions":                { "$ref": "rule_versions.schema.json" },
+    "product_constraints":          { "$ref": "product_constraints.schema.json" },
+    "product_variables":            { "$ref": "product_variables.schema.json" },
+    "product_validations":          { "$ref": "product_validations.schema.json" },
+    "product_rules":                { "$ref": "product_rules.schema.json" },
+    "product_component_selectors":  { "$ref": "product_component_selectors.schema.json" },
+    "product_companion_rules":      { "$ref": "product_companion_rules.schema.json" },
+    "product_warnings":             { "$ref": "product_warnings.schema.json" },
+    "pricing_rules":                { "$ref": "pricing_rules.schema.json" }
+  }
+}

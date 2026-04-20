@@ -29,12 +29,16 @@ export interface CanvasLayout {
   totalLengthM: number;
   cornerCount: number; // count of ~90° angles between adjacent segments
   runs: CanvasRunSummary[];
+  /** Non-product boundary lines (neighbouring fences, property lines, etc.). Ignored by canonicalAdapter. */
+  boundaries: CanvasSegment[];
 }
 
 export interface CanvasEngineConfig {
   snapToGrid: boolean;
   gridSize: number; // px
   showGrid: boolean;
+  /** Interior corner angles (degrees) permitted at post junctions. Empty = no constraint. */
+  allowedAngles?: number[];
   onLayoutChange?: (layout: CanvasLayout) => void;
   /** Called immediately when the user places a NEW gate marker on a segment */
   onGatePlaced?: (
@@ -71,11 +75,12 @@ interface GateMarker {
   gateId?: string; // matches the GateConfig.id in GateContext once the gate is saved
 }
 
-type Tool = "draw" | "gate" | "move";
+type Tool = "draw" | "gate" | "move" | "boundary";
 
 type UndoAction =
   | { type: "ADD_POINT"; runIdx: number }
   | { type: "FINISH_RUN"; runIdx: number }
+  | { type: "RESUME_RUN"; runIdx: number }
   | { type: "ADD_RUN" }
   | { type: "ADD_GATE"; segIdx: number; gateIdx: number }
   | { type: "CLEAR"; runs: Run[]; scale: number }
@@ -85,6 +90,7 @@ interface Run {
   points: Point[];
   finished: boolean;
   segments: Segment[];
+  isBoundary?: boolean;
 }
 
 // ── Scale constant: pixels per metre ──────────────────────────────────────────
@@ -114,6 +120,35 @@ const COLOR = {
   snap: "rgba(96,165,250,0.4)",
 };
 
+// Distinct run colors (dark-theme palette, cycling for >8 runs)
+const RUN_COLORS = [
+  "#3b82f6", // blue
+  "#10b981", // emerald
+  "#f43f5e", // rose
+  "#a855f7", // purple
+  "#f97316", // orange
+  "#06b6d4", // cyan
+  "#eab308", // yellow
+  "#84cc16", // lime
+];
+const RUN_COLORS_HOVER = [
+  "#60a5fa",
+  "#34d399",
+  "#fb7185",
+  "#c084fc",
+  "#fb923c",
+  "#22d3ee",
+  "#fde047",
+  "#a3e635",
+];
+
+function getRunColor(nonBoundaryRunIdx: number) {
+  return RUN_COLORS[nonBoundaryRunIdx % RUN_COLORS.length];
+}
+function getRunColorHover(nonBoundaryRunIdx: number) {
+  return RUN_COLORS_HOVER[nonBoundaryRunIdx % RUN_COLORS_HOVER.length];
+}
+
 // ── Utility ───────────────────────────────────────────────────────────────────
 
 function dist(a: Point, b: Point): number {
@@ -132,6 +167,60 @@ function snapToGrid(p: Point, gridSize: number): Point {
   return {
     x: Math.round(p.x / gridSize) * gridSize,
     y: Math.round(p.y / gridSize) * gridSize,
+  };
+}
+
+/**
+ * Snap `candidate` so the interior corner angle at `junctionPoint`
+ * (between the incoming segment prevPoint→junctionPoint and the outgoing
+ * segment junctionPoint→candidate) equals the nearest value in `angles`.
+ * Returns `candidate` unchanged if `angles` is empty or distance is zero.
+ */
+function snapToAllowedAngle(
+  prevPoint: Point,
+  junctionPoint: Point,
+  candidate: Point,
+  angles: number[],
+): Point {
+  if (angles.length === 0) return candidate;
+  const d = dist(junctionPoint, candidate);
+  if (d === 0) return candidate;
+
+  const current = angleBetween(prevPoint, junctionPoint, candidate);
+
+  const nearest = angles.reduce((best, a) =>
+    Math.abs(a - current) < Math.abs(best - current) ? a : best,
+  );
+
+  // Direction from junction toward prev point (B→A)
+  const phi_BA = Math.atan2(
+    prevPoint.y - junctionPoint.y,
+    prevPoint.x - junctionPoint.x,
+  );
+  const nearestRad = (nearest * Math.PI) / 180;
+
+  // Two candidate directions: rotate phi_BA by ±nearest degrees
+  const phi1 = phi_BA + nearestRad;
+  const phi2 = phi_BA - nearestRad;
+
+  // Actual direction from junction toward candidate (B→M)
+  const phi_BM = Math.atan2(
+    candidate.y - junctionPoint.y,
+    candidate.x - junctionPoint.x,
+  );
+
+  // Angular distance normalised to [0, π]
+  function angDiff(a: number, b: number): number {
+    const diff = Math.abs(a - b) % (2 * Math.PI);
+    return diff > Math.PI ? 2 * Math.PI - diff : diff;
+  }
+
+  const chosen =
+    angDiff(phi1, phi_BM) <= angDiff(phi2, phi_BM) ? phi1 : phi2;
+
+  return {
+    x: junctionPoint.x + d * Math.cos(chosen),
+    y: junctionPoint.y + d * Math.sin(chosen),
   };
 }
 
@@ -299,6 +388,20 @@ export function initCanvasEngine(
   let snap = config.snapToGrid;
   let showGrid = config.showGrid;
   let gridSize = config.gridSize;
+  let allowedAngles: number[] = config.allowedAngles ?? [];
+  let shiftDown = false;
+
+  /**
+   * Compute the effective snap angle set for the current context.
+   * - Shift held: only 180° (straight continuation) — locks to straight line
+   * - No constraints: empty (free drawing)
+   * - Constraints active: declared angles + 180° (straight always valid)
+   */
+  function effectiveSnapAngles(shiftHeld: boolean): number[] {
+    if (shiftHeld) return [180];
+    if (allowedAngles.length === 0) return [];
+    return Array.from(new Set([...allowedAngles, 180]));
+  }
   let mouseCanvas: Point = { x: 0, y: 0 };
   let isPanning = false;
   let panStart: Point = { x: 0, y: 0 };
@@ -326,6 +429,15 @@ export function initCanvasEngine(
   // null = nothing to render.
   let postPositions: Array<{ x: number; y: number; label?: string }> | null =
     null;
+  // Per-segment max panel widths (flat array, index = flat segment index from allSegmentsFlat).
+  // Used by drawComputedPosts to show live post-position preview.
+  let segmentPanelWidths: number[] = [];
+  // Job-level default panel width — used to draw post previews on the in-progress segment.
+  let jobPanelWidthMm: number | null = null;
+  // Pre-computed stats text pushed from the canonical payload (via LayoutCanvasV3 → FenceLayoutCanvas).
+  // Using the canonical data ensures the overlay always matches the form's calcRunStats output.
+  let pushedStatsGlobal = '';
+  let pushedStatsPerRun: string[] = [];
 
   // Resize canvas to fill its CSS size
   function resizeCanvas() {
@@ -352,6 +464,7 @@ export function initCanvasEngine(
     }> = [];
     let flat = 0;
     for (let r = 0; r < runs.length; r++) {
+      if (runs[r].isBoundary) continue; // boundary runs excluded from flat index (no gates/hover)
       for (let s = 0; s < runs[r].segments.length; s++) {
         result.push({
           seg: runs[r].segments[s],
@@ -365,7 +478,7 @@ export function initCanvasEngine(
   }
 
   function getLayout(): CanvasLayout {
-    const allSegs = allSegmentsFlat();
+    const allSegs = allSegmentsFlat(); // excludes boundary runs
     const segments: CanvasSegment[] = allSegs.map(({ seg }) => ({
       startX: seg.p1.x,
       startY: seg.p1.y,
@@ -385,8 +498,25 @@ export function initCanvasEngine(
       });
     });
 
-    // Build per-run summaries
-    const runSummaries: CanvasRunSummary[] = runs.map((run, ri) => {
+    // Boundary segments (non-product context lines)
+    const boundaries: CanvasSegment[] = [];
+    for (const run of runs) {
+      if (!run.isBoundary) continue;
+      for (const seg of run.segments) {
+        boundaries.push({
+          startX: seg.p1.x,
+          startY: seg.p1.y,
+          endX: seg.p2.x,
+          endY: seg.p2.y,
+          lengthMM: seg.lengthMM,
+          angleDeg: angleDeg(seg.p1, seg.p2),
+        });
+      }
+    }
+
+    // Build per-run summaries (non-boundary runs only)
+    const nonBoundaryRuns = runs.filter((r) => !r.isBoundary);
+    const runSummaries: CanvasRunSummary[] = nonBoundaryRuns.map((run, ri) => {
       const runLengthM =
         run.segments.reduce((sum, s) => sum + s.lengthMM, 0) / 1000;
       const runCorners = countCorners([run]);
@@ -394,7 +524,7 @@ export function initCanvasEngine(
       // Compute the flat segment index offset for this run's first segment
       let flatOffset = 0;
       for (let r = 0; r < ri; r++) {
-        flatOffset += runs[r].segments.length;
+        flatOffset += nonBoundaryRuns[r].segments.length;
       }
       run.segments.forEach((seg, si) => {
         seg.gates.forEach((g) => {
@@ -416,9 +546,10 @@ export function initCanvasEngine(
     return {
       segments,
       gates,
-      totalLengthM: totalLengthM(runs),
-      cornerCount: countCorners(runs),
+      totalLengthM: totalLengthM(nonBoundaryRuns),
+      cornerCount: countCorners(nonBoundaryRuns),
       runs: runSummaries,
+      boundaries,
     };
   }
 
@@ -459,10 +590,59 @@ export function initCanvasEngine(
       drawGrid(W, H);
     }
 
-    // All segments
+    // All segments — coloured by run
     const allSegs = allSegmentsFlat();
-    for (const { seg, flatIdx } of allSegs) {
-      drawSegment(seg, flatIdx === hoveredSegIdx);
+    // Build runIdx → non-boundary run index (for color lookup)
+    const runColorIdx = new Map<number, number>();
+    {
+      let nbIdx = 0;
+      for (let ri = 0; ri < runs.length; ri++) {
+        if (!runs[ri].isBoundary) runColorIdx.set(ri, nbIdx++);
+      }
+    }
+    for (const { seg, flatIdx, runIdx } of allSegs) {
+      const colorIdx = runColorIdx.get(runIdx) ?? 0;
+      drawSegment(seg, flatIdx === hoveredSegIdx, getRunColor(colorIdx), getRunColorHover(colorIdx));
+    }
+
+    // Boundary runs — dashed gray lines (non-product context lines)
+    {
+      const hasActiveBoundary =
+        tool === "boundary" &&
+        activeRunIdx >= 0 &&
+        runs[activeRunIdx]?.isBoundary &&
+        !runs[activeRunIdx].finished;
+      for (const run of runs) {
+        if (!run.isBoundary) continue;
+        if (run.segments.length === 0) continue;
+        ctx.save();
+        ctx.setLineDash([8 / zoom, 4 / zoom]);
+        ctx.strokeStyle = "#6b7280";
+        ctx.lineWidth = 2 / zoom;
+        for (const seg of run.segments) {
+          ctx.beginPath();
+          ctx.moveTo(seg.p1.x, seg.p1.y);
+          ctx.lineTo(seg.p2.x, seg.p2.y);
+          ctx.stroke();
+        }
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+      // Preview line for active boundary run
+      if (hasActiveBoundary) {
+        const run = runs[activeRunIdx];
+        const lastPt = run.points[run.points.length - 1];
+        ctx.save();
+        ctx.setLineDash([6 / zoom, 4 / zoom]);
+        ctx.strokeStyle = "rgba(107,114,128,0.5)";
+        ctx.lineWidth = 2 / zoom;
+        ctx.beginPath();
+        ctx.moveTo(lastPt.x, lastPt.y);
+        ctx.lineTo(mouseCanvas.x, mouseCanvas.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
     }
 
     // Preview line (while drawing)
@@ -470,7 +650,14 @@ export function initCanvasEngine(
       const run = runs[activeRunIdx];
       if (run && run.points.length > 0 && !run.finished) {
         const lastPt = run.points[run.points.length - 1];
-        const target = snap ? snapToGrid(mouseCanvas, gridSize) : mouseCanvas;
+        let target = snap ? snapToGrid(mouseCanvas, gridSize) : mouseCanvas;
+        if (run.points.length >= 2) {
+          const prev = run.points[run.points.length - 2];
+          const angles = effectiveSnapAngles(shiftDown);
+          if (angles.length > 0) {
+            target = snapToAllowedAngle(prev, lastPt, target, angles);
+          }
+        }
         ctx.save();
         ctx.setLineDash([6, 4]);
         ctx.strokeStyle = COLOR.preview;
@@ -480,6 +667,59 @@ export function initCanvasEngine(
         ctx.lineTo(target.x, target.y);
         ctx.stroke();
         ctx.restore();
+
+        // Post position preview along the in-progress segment
+        const segDist = dist(lastPt, target);
+        if (jobPanelWidthMm && jobPanelWidthMm > 0 && segDist > 0) {
+          const previewLengthMm = pixelsToMM(segDist, scale);
+          const numPanels = Math.ceil(previewLengthMm / jobPanelWidthMm);
+          const sq = 5 / zoom;
+          const half = sq / 2;
+          const bw = 1.5 / zoom;
+          ctx.save();
+          for (let i = 0; i <= numPanels; i++) {
+            const t = i / numPanels;
+            const px = lastPt.x + t * (target.x - lastPt.x);
+            const py = lastPt.y + t * (target.y - lastPt.y);
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(px - half - bw, py - half - bw, sq + bw * 2, sq + bw * 2);
+            ctx.fillStyle = "#f59e0b";
+            ctx.fillRect(px - half, py - half, sq, sq);
+          }
+          ctx.restore();
+        }
+
+        // Distance label on active preview line
+        if (segDist > 0) {
+          const mm = pixelsToMM(segDist, scale);
+          const label =
+            mm >= 1000
+              ? `${(mm / 1000).toFixed(2)}m`
+              : `${Math.round(mm)}mm`;
+          const mid: Point = {
+            x: (lastPt.x + target.x) / 2,
+            y: (lastPt.y + target.y) / 2,
+          };
+          ctx.save();
+          ctx.font = `${12 / zoom}px sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          const textW = ctx.measureText(label).width;
+          const pad = 4 / zoom;
+          ctx.fillStyle = COLOR.labelBg;
+          ctx.beginPath();
+          ctx.roundRect(
+            mid.x - textW / 2 - pad,
+            mid.y - 8 / zoom,
+            textW + pad * 2,
+            16 / zoom,
+            4 / zoom,
+          );
+          ctx.fill();
+          ctx.fillStyle = COLOR.label;
+          ctx.fillText(label, mid.x, mid.y);
+          ctx.restore();
+        }
       }
     }
 
@@ -493,28 +733,47 @@ export function initCanvasEngine(
     }
 
     // Snap indicator
-    if (snap && tool === "draw") {
-      const snapped = snapToGrid(mouseCanvas, gridSize);
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(snapped.x, snapped.y, 4 / zoom, 0, Math.PI * 2);
-      ctx.fillStyle = COLOR.snap;
-      ctx.fill();
-      ctx.restore();
+    if (tool === "draw") {
+      let snapped = snap ? snapToGrid(mouseCanvas, gridSize) : mouseCanvas;
+      const snapAngles = effectiveSnapAngles(shiftDown);
+      if (
+        snapAngles.length > 0 &&
+        activeRunIdx >= 0 &&
+        runs[activeRunIdx] &&
+        runs[activeRunIdx].points.length >= 2 &&
+        !runs[activeRunIdx].finished
+      ) {
+        const run = runs[activeRunIdx];
+        const junction = run.points[run.points.length - 1];
+        const prev = run.points[run.points.length - 2];
+        snapped = snapToAllowedAngle(prev, junction, snapped, snapAngles);
+      }
+      if (snap || snapAngles.length > 0) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(snapped.x, snapped.y, 4 / zoom, 0, Math.PI * 2);
+        ctx.fillStyle = COLOR.snap;
+        ctx.fill();
+        ctx.restore();
+      }
     }
 
     // Node labels (A, B, C…) and corner angle annotations
     if (zoom > 0.3) {
       ctx.save();
+      let nbLabelIdx = 0;
       for (const run of runs) {
+        if (run.isBoundary) continue;
+        const colorIdx = nbLabelIdx++;
         const pts = run.points;
         if (pts.length < 2) continue;
+        const runCol = getRunColor(colorIdx);
         // Node labels
         for (let i = 0; i < pts.length; i++) {
           const label = String.fromCharCode(65 + i);
           const fs = Math.max(8, 10 / zoom);
           ctx.font = `${fs}px sans-serif`;
-          ctx.fillStyle = "#60a5fa";
+          ctx.fillStyle = runCol;
           ctx.textAlign = "left";
           ctx.textBaseline = "bottom";
           ctx.fillText(
@@ -545,6 +804,87 @@ export function initCanvasEngine(
       drawPostPositions();
     }
 
+    // Computed post positions from per-segment panel widths — live preview
+    if (segmentPanelWidths.length > 0) {
+      drawComputedPosts();
+    }
+
+    ctx.restore();
+
+    // Stats overlay — drawn in screen space, independent of pan/zoom
+    drawStatsOverlay();
+  }
+
+  function drawStatsOverlay() {
+    const allSegs = allSegmentsFlat();
+    const nbRuns = runs.filter((r) => !r.isBoundary && r.finished);
+    if (nbRuns.length === 0 && allSegs.length === 0) return;
+
+    let line: string;
+
+    // Use pre-computed canonical stats if available (pushed from LayoutCanvasV3 via calcRunStats).
+    // Falls back to self-computed values when the overlay hasn't been populated yet.
+    if (hoveredSegIdx >= 0 && hoveredSegIdx < allSegs.length && pushedStatsPerRun.length > 0) {
+      // Hover mode — identify the non-boundary run index containing the hovered segment
+      const { runIdx } = allSegs[hoveredSegIdx];
+      let nbIdx = 0;
+      for (let ri = 0; ri < runs.length; ri++) {
+        if (runs[ri].isBoundary) continue;
+        if (ri === runIdx) break;
+        nbIdx++;
+      }
+      line = pushedStatsPerRun[nbIdx] ?? pushedStatsGlobal;
+    } else if (hoveredSegIdx < 0 && pushedStatsGlobal) {
+      line = pushedStatsGlobal;
+    } else if (hoveredSegIdx >= 0 && hoveredSegIdx < allSegs.length) {
+      // Fallback: self-compute (no pushed stats yet)
+      const { runIdx } = allSegs[hoveredSegIdx];
+      const run = runs[runIdx];
+      let nbIdx = 0;
+      let flatStart = 0;
+      for (let ri = 0; ri < runs.length; ri++) {
+        if (runs[ri].isBoundary) continue;
+        if (ri === runIdx) break;
+        flatStart += runs[ri].segments.length;
+        nbIdx++;
+      }
+      const segs = run.segments.length;
+      const corners = countCorners([run]);
+      let panels = 0;
+      for (let si = 0; si < segs; si++) {
+        const maxW = segmentPanelWidths[flatStart + si] ?? 0;
+        if (maxW > 0) panels += Math.ceil(Math.round(run.segments[si].lengthMM) / maxW);
+      }
+      line = `Run ${nbIdx + 1}  ·  ${segs} ${segs === 1 ? "seg" : "segs"}  ·  ${panels} ${panels === 1 ? "panel" : "panels"}  ·  ${corners} ${corners === 1 ? "corner" : "corners"}`;
+    } else {
+      // Fallback: self-compute global totals (no pushed stats yet)
+      const totalSegs = allSegs.length;
+      const totalCorners = countCorners(nbRuns);
+      let totalPanels = 0;
+      for (let i = 0; i < allSegs.length; i++) {
+        const maxW = segmentPanelWidths[i] ?? 0;
+        if (maxW > 0)
+          totalPanels += Math.ceil(Math.round(allSegs[i].seg.lengthMM) / maxW);
+      }
+      line = `${nbRuns.length} ${nbRuns.length === 1 ? "run" : "runs"}  ·  ${totalSegs} ${totalSegs === 1 ? "seg" : "segs"}  ·  ${totalPanels} ${totalPanels === 1 ? "panel" : "panels"}  ·  ${totalCorners} ${totalCorners === 1 ? "corner" : "corners"}`;
+    }
+
+    const pad = 8;
+    const fs = 12;
+    const x = 10;
+    const y = 10;
+    ctx.save();
+    ctx.font = `${fs}px sans-serif`;
+    const w = ctx.measureText(line).width + pad * 2;
+    const h = fs + pad * 2;
+    ctx.fillStyle = "rgba(26,29,46,0.85)";
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, 4);
+    ctx.fill();
+    ctx.fillStyle = "#e5e7eb";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(line, x + pad, y + h / 2);
     ctx.restore();
   }
 
@@ -577,6 +917,40 @@ export function initCanvasEngine(
       }
       ctx.restore();
     }
+  }
+
+  function drawComputedPosts() {
+    if (segmentPanelWidths.length === 0) return;
+    const squareSize = 6 / zoom;
+    const half = squareSize / 2;
+    const borderWidth = 1.5 / zoom;
+    ctx.save();
+    let flatIdx = 0;
+    for (const run of runs) {
+      if (run.isBoundary || !run.finished) continue;
+      for (const seg of run.segments) {
+        const maxW = segmentPanelWidths[flatIdx] ?? 0;
+        flatIdx++;
+        if (maxW <= 0 || seg.lengthMM <= 0) continue;
+        const numPanels = Math.ceil(seg.lengthMM / maxW);
+        const panelWidthMm = seg.lengthMM / numPanels;
+        for (let i = 0; i <= numPanels; i++) {
+          const t = (i * panelWidthMm) / seg.lengthMM;
+          const px = seg.p1.x + t * (seg.p2.x - seg.p1.x);
+          const py = seg.p1.y + t * (seg.p2.y - seg.p1.y);
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(
+            px - half - borderWidth,
+            py - half - borderWidth,
+            squareSize + borderWidth * 2,
+            squareSize + borderWidth * 2,
+          );
+          ctx.fillStyle = "#f59e0b";
+          ctx.fillRect(px - half, py - half, squareSize, squareSize);
+        }
+      }
+    }
+    ctx.restore();
   }
 
   function drawGrid(W: number, H: number) {
@@ -617,9 +991,9 @@ export function initCanvasEngine(
     ctx.restore();
   }
 
-  function drawSegment(seg: Segment, hovered: boolean) {
+  function drawSegment(seg: Segment, hovered: boolean, runColor = COLOR.segment, runColorHover = COLOR.segmentHover) {
     const lw = 3 / zoom;
-    const segColor = hovered ? COLOR.segmentHover : COLOR.segment;
+    const segColor = hovered ? runColorHover : runColor;
     const segLw = hovered ? lw * 1.5 : lw;
 
     // Build sorted list of gate gaps as (tStart, tEnd) pairs
@@ -909,38 +1283,36 @@ export function initCanvasEngine(
    * first run started with the draw tool before any chain occurred), finish it
    * normally. In either case activeRunIdx is reset to -1.
    */
-  function stopChain() {
+  function stopChain(popExtra = true) {
     if (activeRunIdx < 0 || runs[activeRunIdx]?.finished) return;
     const run = runs[activeRunIdx];
 
-    if (run.points.length < 2) {
-      // Trailing stub from the last chain click — remove it.
-      // The top of the undo stack is a CHAIN_POINT whose newRunIdx is this run.
-      // Pop it and undo the chain so the previous run is left finished.
-      const topAction = undoStack[undoStack.length - 1];
-      if (
-        topAction?.type === "CHAIN_POINT" &&
-        topAction.newRunIdx === activeRunIdx
-      ) {
-        // Simply discard the stub run (already unfinished prev run gets left finished)
-        runs.splice(activeRunIdx, 1);
+    // The dblclick's first mousedown already added the dblclick point — pop it.
+    // Skip the pop when called from keyboard (Enter/Escape) since no extra point was added.
+    if (popExtra && run.points.length > 1) {
+      run.points.pop();
+      run.segments = buildSegmentsFromPoints(run.points, scale);
+      // The matching ADD_POINT was just pushed; remove it from the undo stack.
+      if (undoStack[undoStack.length - 1]?.type === "ADD_POINT") {
         undoStack.pop();
-        // The previous run remains finished — that's the desired state.
-      } else {
-        // Stub run started with the very first click (ADD_RUN), no segment yet
-        runs.splice(activeRunIdx, 1);
-        if (undoStack[undoStack.length - 1]?.type === "ADD_RUN") {
-          undoStack.pop();
-        }
+      }
+    }
+
+    if (run.points.length < 2) {
+      // Only the start point remains — discard the run entirely
+      runs.splice(activeRunIdx, 1);
+      if (undoStack[undoStack.length - 1]?.type === "ADD_RUN") {
+        undoStack.pop();
       }
     } else {
-      // Has ≥2 points — finish it properly
-      undoStack.push({ type: "FINISH_RUN", runIdx: activeRunIdx });
+      // Finish the run with its accumulated points
       run.finished = true;
+      undoStack.push({ type: "FINISH_RUN", runIdx: activeRunIdx });
       notifyChange();
     }
 
     activeRunIdx = -1;
+    scheduleRedraw();
   }
 
   // ── Event handlers ─────────────────────────────────────────────────────────
@@ -958,7 +1330,20 @@ export function initCanvasEngine(
     if (e.button !== 0) return;
 
     const canvasPt = eventToCanvas(e);
-    const worldPt = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
+    let worldPt = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
+    const mouseSnapAngles = effectiveSnapAngles(shiftDown);
+    if (
+      (mouseSnapAngles.length > 0) &&
+      activeRunIdx >= 0 &&
+      runs[activeRunIdx] &&
+      !runs[activeRunIdx].finished &&
+      runs[activeRunIdx].points.length >= 2
+    ) {
+      const run = runs[activeRunIdx];
+      const junction = run.points[run.points.length - 1];
+      const prev = run.points[run.points.length - 2];
+      worldPt = snapToAllowedAngle(prev, junction, worldPt, mouseSnapAngles);
+    }
     const screenPtDown = eventToScreen(e);
 
     // ── Gate hit-test (all modes) ────────────────────────────────────────────
@@ -984,36 +1369,79 @@ export function initCanvasEngine(
 
     if (tool === "draw") {
       if (activeRunIdx === -1 || runs[activeRunIdx]?.finished) {
-        // Start a new run with this as the first point
+        // Check if click is on the end-point of a finished run — resume it
+        let resumedIdx = -1;
+        for (let ri = 0; ri < runs.length; ri++) {
+          const run = runs[ri];
+          if (!run.finished || run.isBoundary || run.points.length === 0) continue;
+          const endPtScreen = canvasToScreen(
+            run.points[run.points.length - 1],
+            pan,
+            zoom,
+          );
+          const dx = screenPtDown.x - endPtScreen.x;
+          const dy = screenPtDown.y - endPtScreen.y;
+          if (Math.sqrt(dx * dx + dy * dy) < 10) {
+            resumedIdx = ri;
+            break;
+          }
+        }
+
+        if (resumedIdx >= 0) {
+          // Resume the existing run — un-finish it so new points can be appended
+          runs[resumedIdx].finished = false;
+          activeRunIdx = resumedIdx;
+          undoStack.push({ type: "RESUME_RUN", runIdx: resumedIdx }); // undo will re-finish it
+        } else {
+          // Start a new run with this as the first point
+          const newRun: Run = {
+            points: [worldPt],
+            finished: false,
+            segments: [],
+          };
+          undoStack.push({ type: "ADD_RUN" });
+          runs.push(newRun);
+          activeRunIdx = runs.length - 1;
+        }
+      } else {
+        // Append point to the current run (multi-point polyline)
+        const run = runs[activeRunIdx];
+        run.points.push(worldPt);
+        run.segments = buildSegmentsFromPoints(run.points, scale);
+        notifyChange();
+        undoStack.push({ type: "ADD_POINT", runIdx: activeRunIdx });
+      }
+      scheduleRedraw();
+      return;
+    }
+
+    if (tool === "boundary") {
+      if (activeRunIdx === -1 || runs[activeRunIdx]?.finished) {
         const newRun: Run = {
           points: [worldPt],
           finished: false,
           segments: [],
+          isBoundary: true,
         };
         undoStack.push({ type: "ADD_RUN" });
         runs.push(newRun);
         activeRunIdx = runs.length - 1;
       } else {
-        // Chain mode: add point, auto-finish the run, then start a new run from the same point
         const run = runs[activeRunIdx];
         const prevRunIdx = activeRunIdx;
         run.points.push(worldPt);
         run.segments = buildSegmentsFromPoints(run.points, scale);
         run.finished = true;
         notifyChange();
-
-        // Start new chain run from the same point
-        const chainPoint: Point = { ...worldPt };
         const newRun: Run = {
-          points: [chainPoint],
+          points: [{ ...worldPt }],
           finished: false,
           segments: [],
+          isBoundary: true,
         };
         runs.push(newRun);
         const newRunIdx = runs.length - 1;
         activeRunIdx = newRunIdx;
-
-        // Single undo action covers the whole chain step
         undoStack.push({ type: "CHAIN_POINT", prevRunIdx, newRunIdx });
       }
       scheduleRedraw();
@@ -1258,15 +1686,16 @@ export function initCanvasEngine(
 
   function onKeyDown(e: KeyboardEvent) {
     if (editingLabel) return;
+    if (e.key === 'Shift') { shiftDown = true; scheduleRedraw(); }
     if (e.key === "Enter" && tool === "draw") {
       if (activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
-        stopChain();
+        stopChain(false); // keyboard — no extra mousedown point to pop
         scheduleRedraw();
       }
     }
     if (e.key === "Escape" && tool === "draw") {
       if (activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
-        stopChain();
+        stopChain(false); // keyboard — no extra mousedown point to pop
         scheduleRedraw();
       }
     }
@@ -1274,6 +1703,10 @@ export function initCanvasEngine(
       e.preventDefault();
       undoLast();
     }
+  }
+
+  function onKeyUp(e: KeyboardEvent) {
+    if (e.key === 'Shift') { shiftDown = false; scheduleRedraw(); }
   }
 
   function onResize() {
@@ -1361,6 +1794,15 @@ export function initCanvasEngine(
         }
         break;
       }
+      case "RESUME_RUN": {
+        // Undo a resume — re-finish the run and clear active draw state
+        const run = runs[action.runIdx];
+        if (run) {
+          run.finished = true;
+          activeRunIdx = -1;
+        }
+        break;
+      }
       case "ADD_GATE": {
         const allSegs = allSegmentsFlat();
         const info = allSegs[action.segIdx];
@@ -1385,7 +1827,7 @@ export function initCanvasEngine(
 
   function setTool(t: Tool) {
     tool = t;
-    if (t === "draw") {
+    if (t === "draw" || t === "boundary") {
       canvas.style.cursor = "crosshair";
     } else {
       canvas.style.cursor = "default";
@@ -1429,12 +1871,44 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  /** Zoom and pan so all drawn runs fill the canvas with padding. */
+  function fitToContent() {
+    const allPts = runs.flatMap((r) => r.points);
+    if (allPts.length === 0) {
+      fitToWidth(50);
+      return;
+    }
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const p of allPts) {
+      if (p.x < minX) minX = p.x;
+      if (p.y < minY) minY = p.y;
+      if (p.x > maxX) maxX = p.x;
+      if (p.y > maxY) maxY = p.y;
+    }
+    const W = canvas.getBoundingClientRect().width || canvas.width || 800;
+    const H = canvas.getBoundingClientRect().height || canvas.height || 420;
+    const pad = 80; // px
+    const contentW = maxX - minX || 1;
+    const contentH = maxY - minY || 1;
+    zoom = Math.min((W - pad * 2) / contentW, (H - pad * 2) / contentH, 8);
+    pan = {
+      x: W / 2 - zoom * (minX + contentW / 2),
+      y: H / 2 - zoom * (minY + contentH / 2),
+    };
+    scheduleRedraw();
+  }
+
   function resetView() {
     fitToWidth(50);
   }
 
   function setSnapToGrid(s: boolean) {
     snap = s;
+    scheduleRedraw();
+  }
+
+  function setAllowedAngles(angles: number[]) {
+    allowedAngles = angles;
     scheduleRedraw();
   }
 
@@ -1540,6 +2014,104 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  /** Set per-segment max panel widths (flat array, index matches allSegmentsFlat order). */
+  function setSegmentPanelWidths(widths: number[]) {
+    segmentPanelWidths = widths;
+    scheduleRedraw();
+  }
+
+  /** Set the job-level default panel width for the in-progress preview segment. */
+  function setJobPanelWidth(mm: number | null) {
+    jobPanelWidthMm = mm;
+    scheduleRedraw();
+  }
+
+  /**
+   * Push pre-computed stats text from the canonical payload.
+   * `global` is shown when no segment is hovered. `perRun[i]` is shown when the
+   * user hovers over a segment in run i (non-boundary run index).
+   */
+  function setRunStatsTexts(global: string, perRun: string[]) {
+    pushedStatsGlobal = global;
+    pushedStatsPerRun = perRun;
+    scheduleRedraw();
+  }
+
+  /**
+   * Replace the current canvas state with the runs described by `layout`.
+   * Used for form-driven geometry changes (bidirectional sync).
+   * Boundary runs in `layout.boundaries` are also restored.
+   */
+  function loadLayout(layout: CanvasLayout) {
+    const newRuns: Run[] = [];
+
+    // Group flat segments into runs using totalLengthM as slice boundaries
+    let segIdx = 0;
+    for (const runSummary of layout.runs) {
+      const targetLengthMm = runSummary.totalLengthM * 1000;
+      let cumLength = 0;
+      const runSegs: CanvasSegment[] = [];
+      while (segIdx < layout.segments.length) {
+        const cseg = layout.segments[segIdx];
+        runSegs.push(cseg);
+        cumLength += cseg.lengthMM;
+        segIdx++;
+        if (Math.abs(cumLength - targetLengthMm) < 1) break;
+      }
+      if (runSegs.length === 0) continue;
+
+      const points: Point[] = [
+        { x: runSegs[0].startX, y: runSegs[0].startY },
+      ];
+      const segments: Segment[] = runSegs.map((cseg) => {
+        const p1 = { x: cseg.startX, y: cseg.startY };
+        const p2 = { x: cseg.endX, y: cseg.endY };
+        points.push({ ...p2 });
+        return { p1, p2, lengthMM: cseg.lengthMM, gates: [] };
+      });
+      // Remove duplicated intermediate points (each segment pushed its p2)
+      // points is [run start, seg0.end, seg1.end, ...] which is correct as-is
+      newRuns.push({ points, segments, finished: true });
+    }
+
+    // Restore boundary runs
+    for (const cseg of layout.boundaries ?? []) {
+      const p1 = { x: cseg.startX, y: cseg.startY };
+      const p2 = { x: cseg.endX, y: cseg.endY };
+      newRuns.push({
+        points: [p1, p2],
+        segments: [{ p1, p2, lengthMM: cseg.lengthMM, gates: [] }],
+        finished: true,
+        isBoundary: true,
+      });
+    }
+
+    // Re-attach gates by flat segment index (non-boundary runs only)
+    let flatIdx = 0;
+    for (const run of newRuns) {
+      if (run.isBoundary) continue;
+      for (const seg of run.segments) {
+        const segsGates = layout.gates.filter(
+          (g) => g.segmentIndex === flatIdx,
+        );
+        seg.gates = segsGates.map((g) => ({
+          t: g.positionOnSegment,
+          widthMM: g.widthMM,
+        }));
+        flatIdx++;
+      }
+    }
+
+    runs = newRuns;
+    activeRunIdx = -1;
+    undoStack = [];
+    // Do NOT call notifyChange() here — this is a form→canvas push.
+    // The caller already has the latest data in context; firing onLayoutChange
+    // would trigger handleLiveSync which dispatches SET_PAYLOAD with fresh IDs,
+    // causing all RunCard components to remount and lose their expanded state.
+    scheduleRedraw();
+  }
+
   function destroy() {
     cancelAnimationFrame(animFrame);
     canvas.removeEventListener("mousedown", onMouseDown);
@@ -1549,6 +2121,7 @@ export function initCanvasEngine(
     canvas.removeEventListener("wheel", onWheel);
     canvas.removeEventListener("contextmenu", onContextMenu);
     window.removeEventListener("keydown", onKeyDown);
+    window.removeEventListener("keyup", onKeyUp);
     window.removeEventListener("resize", onResize);
     // Remove any label input that might be open
     const inp = container.querySelector('input[type="text"]');
@@ -1564,6 +2137,7 @@ export function initCanvasEngine(
   canvas.addEventListener("wheel", onWheel, { passive: false });
   canvas.addEventListener("contextmenu", onContextMenu);
   window.addEventListener("keydown", onKeyDown);
+  window.addEventListener("keyup", onKeyUp);
   window.addEventListener("resize", onResize);
 
   // Initial draw — fit to 50m wide view
@@ -1577,6 +2151,7 @@ export function initCanvasEngine(
     clear,
     resetView,
     setSnapToGrid,
+    setAllowedAngles,
     setShowGrid,
     setScale,
     setMapOpacity,
@@ -1584,6 +2159,11 @@ export function initCanvasEngine(
     updateGateWidth,
     setGateId,
     setPostPositions,
+    setSegmentPanelWidths,
+    setJobPanelWidth,
+    setRunStatsTexts,
+    loadLayout,
     fitToWidth,
+    fitToContent,
   };
 }

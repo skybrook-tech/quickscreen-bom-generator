@@ -1,0 +1,966 @@
+{
+  "org_slug": "glass-outlet",
+  "products": [
+    {
+      "system_type": "BAYG",
+      "product_type": "fence",
+      "name": "Buy As You Go Fence",
+      "description": "Same extrusions as QSHS \u2014 spacers sold individually per-run rather than in pre-packs. Uses dedicated BAYG height lookup table. F-Channel (not F-Section) for void fixing.",
+      "active": true,
+      "sort_order": 4,
+      "metadata": {
+        "allowedAngles": [90],
+        "options": {
+          "slatSize": ["65", "90"],
+          "slatGap": ["5", "9", "20"],
+          "colour": ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]
+        },
+        "notes": "BAYG uses BAYG_ScrHts height table (not XPL_Ht) to determine slat count. Spacers sold individually per run, not in 50-packs."
+      }
+    }
+  ],
+  "product_components": [],
+  "rule_sets": [
+    {
+      "product_system_type": "BAYG",
+      "name": "BAYG Fence Rules",
+      "description": "Data-driven BAYG buy-as-you-go fence BOM rules v4.1",
+      "active": true
+    }
+  ],
+  "rule_versions": [
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "is_current": true,
+      "effective_from": "2026-04-19"
+    }
+  ],
+  "product_constraints": [
+    {
+      "product_system_type": "BAYG",
+      "name": "max_panel_width_mm",
+      "constraint_type": "max",
+      "value_text": "2600",
+      "unit": "mm",
+      "severity": "warning",
+      "applies_when_json": {},
+      "message": "Panel width above 2600mm not supported; split into additional panels.",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "name": "slat_size_options",
+      "constraint_type": "enum",
+      "value_text": "[65,90]",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Slat size must be 65mm or 90mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "name": "slat_gap_options",
+      "constraint_type": "enum",
+      "value_text": "[5,9,20]",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Slat gap must be 5mm, 9mm, or 20mm.",
+      "active": true
+    }
+  ],
+  "product_variables": [
+    {
+      "product_system_type": "BAYG",
+      "name": "colour_code",
+      "label": "Colour",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "B",
+      "options_json": [
+        "B",
+        "MN",
+        "G",
+        "SM",
+        "W",
+        "BS",
+        "D",
+        "M",
+        "P",
+        "PB",
+        "S"
+      ],
+      "scope": "job",
+      "sort_order": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "name": "slat_size_mm",
+      "label": "Slat Size",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 65,
+      "options_json": [65, 90],
+      "scope": "job",
+      "sort_order": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "name": "slat_gap_mm",
+      "label": "Slat Gap",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 5,
+      "options_json": [5, 9, 20],
+      "scope": "job",
+      "sort_order": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "name": "mounting_type",
+      "label": "Mounting Type",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "in_ground",
+      "options_json": ["in_ground", "base_plate", "core_drill"],
+      "scope": "run",
+      "sort_order": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "name": "left_boundary_type",
+      "label": "Left Boundary",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "post",
+      "options_json": ["post", "wall"],
+      "scope": "run",
+      "sort_order": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "name": "right_boundary_type",
+      "label": "Right Boundary",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "post",
+      "options_json": ["post", "wall"],
+      "scope": "run",
+      "sort_order": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "name": "panel_width_mm",
+      "label": "Panel Width",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": null,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 70,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "name": "target_height_mm",
+      "label": "Target Height",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 1800,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 80,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "name": "post_size",
+      "label": "Post Size",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": "50",
+      "options_json": ["50", "65"],
+      "scope": "run",
+      "sort_order": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "name": "mounting_method",
+      "label": "Post Mounting Method",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "in_ground",
+      "options_json": ["in_ground", "base_plate", "core_drill"],
+      "scope": "run",
+      "sort_order": 70,
+      "active": true
+    }
+  ],
+  "product_validations": [
+    {
+      "product_system_type": "BAYG",
+      "name": "panel_width_in_range",
+      "expression": "panel_width_mm >= 300 and panel_width_mm <= 2600",
+      "severity": "error",
+      "message": "Panel width must be between 300mm and 2600mm.",
+      "active": true
+    }
+  ],
+  "product_rules": [
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_slats",
+      "expression": "floor((target_height_mm - slat_gap_mm + 3) / (slat_size_mm + slat_gap_mm))",
+      "output_key": "num_slats",
+      "priority": 10,
+      "active": true,
+      "notes": "BAYG uses BAYG_ScrHts VLOOKUP in the CTS spreadsheet. Approximated here with same QSHS formula; engine should override via lookup table when BAYG_ScrHts is seeded."
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "actual_height_mm",
+      "expression": "num_slats * (slat_size_mm + slat_gap_mm) - slat_gap_mm + 3",
+      "output_key": "actual_height_mm",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "sf_cut_mm",
+      "expression": "actual_height_mm - 3",
+      "output_key": "sf_cut_mm",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "slat_cut_mm",
+      "expression": "panel_width_mm - 15",
+      "output_key": "slat_cut_mm",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_csr",
+      "expression": "panel_width_mm < 2000 ? 0 : panel_width_mm < 4000 ? 1 : panel_width_mm < 6000 ? 2 : 3",
+      "output_key": "num_csr",
+      "priority": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_sf_left",
+      "expression": "left_is_product_post",
+      "output_key": "num_sf_left",
+      "priority": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_sf_right",
+      "expression": "right_is_product_post",
+      "output_key": "num_sf_right",
+      "priority": 70,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_sf_total",
+      "expression": "num_sf_left + num_sf_right",
+      "output_key": "num_sf_total",
+      "priority": 80,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_fsec_total",
+      "expression": "left_is_wall + right_is_wall",
+      "output_key": "num_fsec_total",
+      "priority": 90,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "slat_cuts_per_stock",
+      "expression": "floor(6100 / slat_cut_mm)",
+      "output_key": "slat_cuts_per_stock",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "slat_stocks",
+      "expression": "ceil(num_slats / slat_cuts_per_stock)",
+      "output_key": "slat_stocks",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "sf_stocks",
+      "expression": "num_sf_total > 0 ? ceil(num_sf_total / floor(5800 / sf_cut_mm)) : 0",
+      "output_key": "sf_stocks",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "csr_stocks",
+      "expression": "num_csr > 0 ? ceil(num_csr / floor(5800 / (actual_height_mm - 6))) : 0",
+      "output_key": "csr_stocks",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "fsec_stocks",
+      "expression": "num_fsec_total > 0 ? ceil(num_fsec_total / floor(5800 / sf_cut_mm)) : 0",
+      "output_key": "fsec_stocks",
+      "priority": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "spacer_qty",
+      "expression": "2 * (num_slats + 1)",
+      "output_key": "spacer_qty",
+      "priority": 10,
+      "active": true,
+      "notes": "BAYG spacers are snap-in, sold individually per-run (not in 50-packs like QSHS). 2*(slats+1) per panel."
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_slat_65",
+      "expression": "slat_size_mm == 65 ? slat_stocks : 0",
+      "output_key": "qty_slat_65",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_slat_90",
+      "expression": "slat_size_mm == 90 ? slat_stocks : 0",
+      "output_key": "qty_slat_90",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_sf",
+      "expression": "sf_stocks",
+      "output_key": "qty_sf",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_csr",
+      "expression": "csr_stocks",
+      "output_key": "qty_csr",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_fsec",
+      "expression": "fsec_stocks",
+      "output_key": "qty_fsec",
+      "priority": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_posts",
+      "expression": "product_post_boundary_count",
+      "output_key": "num_posts",
+      "priority": 100,
+      "active": true,
+      "notes": "Engine-supplied count of post boundary positions for this run"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "post_length_mm",
+      "expression": "num_posts > 0 ? 6000 : 0",
+      "output_key": "post_length_mm",
+      "priority": 105,
+      "active": true,
+      "notes": "Posts supplied in 6000mm lengths; cut to required height in field"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_post_50_2400",
+      "expression": "post_size_num == 50 and target_height_mm <= 2100 ? num_posts : 0",
+      "output_key": "qty_post_50_2400",
+      "priority": 110,
+      "active": true,
+      "notes": "2400mm FP post suits heights \u22642100mm (min 300mm in-ground)"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_post_50_6000",
+      "expression": "post_size_num == 50 and target_height_mm > 2100 ? num_posts : 0",
+      "output_key": "qty_post_50_6000",
+      "priority": 120,
+      "active": true,
+      "notes": "6000mm FP post for taller fences; requires top plate"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_post_65_2400",
+      "expression": "post_size_num == 65 and target_height_mm <= 2100 ? num_posts : 0",
+      "output_key": "qty_post_65_2400",
+      "priority": 130,
+      "active": true,
+      "notes": "2400mm HD post; not available in primrose or paperbark"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_post_65_6000",
+      "expression": "post_size_num == 65 and target_height_mm > 2100 ? num_posts : 0",
+      "output_key": "qty_post_65_6000",
+      "priority": 140,
+      "active": true,
+      "notes": "6000mm HD post; requires top plate"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_top_plate_50",
+      "expression": "post_size_num == 50 and target_height_mm > 2100 ? num_posts : 0",
+      "output_key": "qty_top_plate_50",
+      "priority": 150,
+      "active": true,
+      "notes": "Top plate caps 6000mm FP post; 1 per post"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_base_plate_50",
+      "expression": "post_size_num == 50 and mounting_type_is_base_plate ? num_posts : 0",
+      "output_key": "qty_base_plate_50",
+      "priority": 160,
+      "active": true,
+      "notes": "Base plate set for surface-mount 50mm FP post"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_domical_cover_50",
+      "expression": "post_size_num == 50 and mounting_type_is_base_plate ? num_posts : 0",
+      "output_key": "qty_domical_cover_50",
+      "priority": 170,
+      "active": true,
+      "notes": "Domical cover over base plate bolt heads; 1 per post"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_dress_ring_50",
+      "expression": "post_size_num == 50 and mounting_type_is_core_drill ? num_posts : 0",
+      "output_key": "qty_dress_ring_50",
+      "priority": 180,
+      "active": true,
+      "notes": "Dress ring covers core-drill penetration; 1 per post"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_top_plate_65",
+      "expression": "post_size_num == 65 and target_height_mm > 2100 ? num_posts : 0",
+      "output_key": "qty_top_plate_65",
+      "priority": 190,
+      "active": true,
+      "notes": "Top plate for 6000mm HD post; 1 per post"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_base_plate_65",
+      "expression": "post_size_num == 65 and mounting_type_is_base_plate ? num_posts : 0",
+      "output_key": "qty_base_plate_65",
+      "priority": 200,
+      "active": true,
+      "notes": "Base plate set for surface-mount 65mm HD post"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_domical_cover_65",
+      "expression": "post_size_num == 65 and mounting_type_is_base_plate ? num_posts : 0",
+      "output_key": "qty_domical_cover_65",
+      "priority": 210,
+      "active": true,
+      "notes": "Domical cover for HD base plate; 1 per post"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_dress_ring_65",
+      "expression": "post_size_num == 65 and mounting_type_is_core_drill ? num_posts : 0",
+      "output_key": "qty_dress_ring_65",
+      "priority": 220,
+      "active": true,
+      "notes": "Dress ring for 65mm HD core-drill install; 1 per post"
+    }
+  ],
+  "product_component_selectors": [
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_slat_65",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": { "slat_size_mm": 65 },
+      "qty_key": "qty_slat_65",
+      "sku_pattern": "XP-6100-S65-{colour}",
+      "priority": 100,
+      "notes": "Shared with QSHS/XPL",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_slat_90",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": { "slat_size_mm": 90 },
+      "qty_key": "qty_slat_90",
+      "sku_pattern": "QS-6100-S90-{colour}",
+      "priority": 100,
+      "notes": "Shared with QSHS",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_side_frame",
+      "component_category": "side_frame",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_sf",
+      "sku_pattern": "QS-5800-SF-{colour}",
+      "priority": 100,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_csr",
+      "component_category": "centre_support_rail",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_csr",
+      "sku_pattern": "XP-5800-CSR-{colour}",
+      "priority": 100,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_fsec",
+      "component_category": "f_section",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_fsec",
+      "sku_pattern": "QS-5800-F-{colour}",
+      "priority": 100,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_post_50_2400",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_post_50_2400",
+      "sku_pattern": "XP-2400-FP-{colour}",
+      "priority": 100,
+      "notes": "50mm FP post 2400mm \u2014 shared component in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_post_50_6000",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_post_50_6000",
+      "sku_pattern": "XP-6000-FP-{colour}",
+      "priority": 100,
+      "notes": "50mm FP post 6000mm \u2014 shared component in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_post_65_2400",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_post_65_2400",
+      "sku_pattern": "XP-2400-65HD-{colour}",
+      "priority": 100,
+      "notes": "65mm HD post 2400mm \u2014 shared component in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_post_65_6000",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_post_65_6000",
+      "sku_pattern": "XP-6000-65HD-{colour}",
+      "priority": 100,
+      "notes": "65mm HD post 6000mm \u2014 shared component in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_top_plate_50",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_top_plate_50",
+      "sku_pattern": "XP-TP-{colour}",
+      "priority": 100,
+      "notes": "50mm post top plate \u2014 shared in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_base_plate_50",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_base_plate_50",
+      "sku_pattern": "XP-BP-SET-{colour}",
+      "priority": 100,
+      "notes": "50mm post base plate set \u2014 shared in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_domical_cover_50",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_domical_cover_50",
+      "sku_pattern": "XP-DC-2P-{colour}",
+      "priority": 100,
+      "notes": "50mm post domical cover \u2014 shared in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_dress_ring_50",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_dress_ring_50",
+      "sku_pattern": "XP-DR-{colour}",
+      "priority": 100,
+      "notes": "50mm post dress ring \u2014 shared in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_top_plate_65",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_top_plate_65",
+      "sku_pattern": "XP-65TP-{colour}",
+      "priority": 100,
+      "notes": "65mm HD post top plate \u2014 shared in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_base_plate_65",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_base_plate_65",
+      "sku_pattern": "XP-65BP-SET-{colour}",
+      "priority": 100,
+      "notes": "65mm HD post base plate set \u2014 shared in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_domical_cover_65",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_domical_cover_65",
+      "sku_pattern": "XP-65DC-2P-{colour}",
+      "priority": 100,
+      "notes": "65mm HD post domical cover \u2014 shared in qshs.json",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_dress_ring_65",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_dress_ring_65",
+      "sku_pattern": "XP-65DR-{colour}",
+      "priority": 100,
+      "notes": "65mm HD post dress ring \u2014 shared in qshs.json",
+      "active": true
+    }
+  ],
+  "product_companion_rules": [
+    {
+      "product_system_type": "BAYG",
+      "rule_key": "bayg_sf_add_cfc",
+      "trigger_category": "side_frame",
+      "trigger_match_json": {},
+      "add_category": "cfc_cover",
+      "add_sku_pattern": "QS-5800-CFC-{colour}",
+      "qty_formula": "qty_sf",
+      "is_pack": false,
+      "priority": 10,
+      "notes": "1 CFC per side frame",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_key": "bayg_csr_add_cap",
+      "trigger_category": "centre_support_rail",
+      "trigger_match_json": {},
+      "add_category": "accessory",
+      "add_sku_pattern": "XP-CSRC-{colour}",
+      "qty_formula": "csr_cap_qty",
+      "is_pack": false,
+      "priority": 10,
+      "notes": "1 CSR cap per CSR",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_key": "bayg_csr_add_plate",
+      "trigger_category": "centre_support_rail",
+      "trigger_match_json": {},
+      "add_category": "accessory",
+      "add_sku_pattern": "XP-BTP-{colour}",
+      "qty_formula": "num_csr * 2",
+      "is_pack": false,
+      "priority": 20,
+      "notes": "2 XP-BTP per CSR",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_key": "bayg_post_50_6000_needs_top_plate",
+      "trigger_category": "post",
+      "trigger_match_json": {
+        "post_size": "50",
+        "post_length_mm": 6000
+      },
+      "add_category": "post_accessory",
+      "add_sku_pattern": "XP-TP-{colour}",
+      "qty_formula": "same_as(post_qty)",
+      "is_pack": false,
+      "priority": 10,
+      "notes": "6000mm FP post always needs top plate cap; 1 per post",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_key": "bayg_post_65_6000_needs_top_plate",
+      "trigger_category": "post",
+      "trigger_match_json": {
+        "post_size": "65",
+        "post_length_mm": 6000
+      },
+      "add_category": "post_accessory",
+      "add_sku_pattern": "XP-65TP-{colour}",
+      "qty_formula": "same_as(post_qty)",
+      "is_pack": false,
+      "priority": 20,
+      "notes": "6000mm HD post always needs top plate cap; 1 per post",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_key": "bayg_base_plate_needs_domical_cover",
+      "trigger_category": "post_accessory",
+      "trigger_match_json": {
+        "accessory_type": "base_plate"
+      },
+      "add_category": "post_accessory",
+      "add_sku_pattern": "",
+      "qty_formula": "same_as(base_plate_qty)",
+      "is_pack": false,
+      "priority": 30,
+      "notes": "Domical cover is already emitted by rule; companion enforces pairing if base plate is manually added",
+      "active": true
+    }
+  ],
+  "product_warnings": [
+    {
+      "product_system_type": "BAYG",
+      "warning_key": "bayg_spacer_individual",
+      "severity": "info",
+      "condition_json": {},
+      "message": "BAYG spacers are snap-in type, sold individually per-run \u2014 not in pre-packs like QSHS.",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "warning_key": "bayg_height_table",
+      "severity": "info",
+      "condition_json": {},
+      "message": "BAYG uses the BAYG_ScrHts lookup table for slat count. Verify against official height chart.",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "warning_key": "bayg_hd_post_colour_restriction",
+      "severity": "warning",
+      "condition_json": {
+        "post_size": "65",
+        "colour_code": {
+          "in": ["P", "PB"]
+        }
+      },
+      "message": "65mm HD posts are not available in Primrose (P) or Paperbark (PB). Please select a different colour for HD posts, or switch to 50mm FP posts.",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "warning_key": "bayg_in_ground_no_accessories",
+      "severity": "info",
+      "condition_json": {
+        "mounting_method": "in_ground"
+      },
+      "message": "In-ground mounting: no post accessories required. Ensure min 450mm embedment depth (increase for soft soil).",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "warning_key": "bayg_post_6000_top_plate_required",
+      "severity": "info",
+      "condition_json": {
+        "target_height_mm": {
+          "gt": 2100
+        }
+      },
+      "message": "Heights above 2100mm require 6000mm posts. A top plate cap has been automatically included.",
+      "active": true
+    }
+  ],
+  "pricing_rules": []
+}

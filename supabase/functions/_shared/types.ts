@@ -3,7 +3,7 @@
 
 export type SystemType = 'QSHS' | 'VS' | 'XPL' | 'BAYG';
 export type SlatSize = '65' | '90';
-export type SlatGap = '5' | '9' | '20';
+export type SlatGap = '0' | '5' | '9' | '20';
 export type MaxPanelWidth = '2600' | '2000';
 export type PostMounting = 'concreted-in-ground' | 'base-plated-to-slab' | 'core-drilled-into-concrete';
 export type Termination = 'post' | 'wall';
@@ -78,6 +78,42 @@ export interface BOMResult {
 }
 
 export type PricingTier = 'tier1' | 'tier2' | 'tier3';
+
+// ─── Calculator v2 types ─────────────────────────────────────────────────────
+
+export interface RunInput {
+  id: string;
+  length: number;            // metres
+  targetHeight: number;      // mm
+  maxPanelWidth: string;     // "2600" | "2000"
+  slatSize?: string | null;  // override; null = use defaults
+  slatGap?: string | null;
+  colour?: string | null;
+  leftTermination: string;
+  rightTermination: string;
+  postMounting: string;
+  corners: number;
+}
+
+export interface CalculatorRequest {
+  productId: string;
+  systemType: SystemType;
+  defaults: { slatSize: string; slatGap: string; colour: string };
+  runs: RunInput[];
+  gates: GateConfig[];
+  pricingTier?: PricingTier;
+}
+
+export interface CalculatorBOMResult {
+  runResults: Array<{ runId: string; items: BOMLineItem[] }>;
+  gateItems: BOMLineItem[];
+  allItems: BOMLineItem[];
+  total: number;
+  gst: number;
+  grandTotal: number;
+  pricingTier: PricingTier;
+  generatedAt: string;
+}
 
 export interface PricingRule {
   sku: string;

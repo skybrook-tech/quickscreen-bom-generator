@@ -22,10 +22,20 @@ Staff and trade customers can:
 
 ### Current State
 
-**Phases 0–6 are complete. Phase 7 (Polish) is in progress.** The React app is the primary codebase.
+**Phases 0–6 are complete. Phase 7 (v1 Polish) is in progress. A parallel v3 data-driven engine is being adapted from `qshs_mvp_build_pack/` + `qshs_gates_build_pack/` — see `docs/phase-v3-*.md` and `docs/how_it_works.md`.** The React app is the primary codebase.
 
-- The original monolithic HTML file (`index.html`) still exists as the **functional specification** — every form field, dropdown, and validation rule must exist in the React version
-- See `docs/tasks.md` for the full current task status
+- The original monolithic HTML file (`index.html`) still exists as the **functional specification** for v1 — every form field, dropdown, and validation rule must exist in the v1 React version
+- See `docs/tasks.md` for the full current task status across v1 Polish and v3 Engine
+
+### Two routes, two generations of the calculator
+
+v2 has been retired (deleted in an earlier cleanup). v3 is the flagship surface at `/` and `/calculator`. v1 still lives at `/new` for historical quote compatibility; it will be removed in a later pass.
+
+| Path | Gen | Page | Edge function | Purpose |
+|---|---|---|---|---|
+| `/` | v3 | — | — | Redirects to `/calculator`. |
+| `/calculator` | **v3** | `CalculatorV3Page` | `bom-calculator` | Data-driven BOM engine. Rules, selectors, constraints, companions, validations, warnings live in seeded Postgres tables. Form is data-driven from `product_variables` (no hardcoded fields). Searchable fence-only product picker + gate list modal + typeahead extra-items panel. MVP scope: **QSHS fence + QS_GATE pedestrian gate** (shared across QuickScreen fences). Adding VS/XPL/BAYG/QSVS/QSGH/HSSG/patios = new seed rows. |
+| `/new` | v1 | `MainApp` | `calculate-bom` | Legacy single-system form. Hand-coded QSHS/VS/XPL/BAYG logic. Kept only for historical quotes; scheduled for removal. |
 
 ### Current Architecture
 
@@ -34,6 +44,7 @@ Staff and trade customers can:
 - **TanStack Query** for server state management
 - **React Context + useReducer** for client state (fence config, gate list, UI state)
 - **All pricing and BOM calculation logic in Supabase Edge Functions** (IP protection)
+- **v3 engine is fencing-agnostic** — no per-product branches in the BOM engine code. All QSHS + QSHS_GATE calculation behaviour lives in `supabase/seeds/glass-outlet/v3-qshs-engine.sql`. The form and canvas toolbar are shared hand-coded UI for all fencing systems.
 
 ---
 
@@ -61,12 +72,28 @@ Staff and trade customers can:
 
 ## 3. Project Structure
 
-Source lives in `src/` with these top-level directories: `components/` (auth, bom, canvas, contact, fence, gate, layout, quote, shared, wizard), `context/`, `hooks/`, `lib/`, `pages/`, `schemas/`, `types/`, `utils/`.
+Source lives in `src/` with these top-level directories: `components/` (auth, bom, calculator, calculator-v3, canvas, contact, fence, gate, layout, quote, shared, wizard), `context/`, `hooks/`, `lib/`, `pages/`, `schemas/`, `types/`, `utils/`.
 
-Edge functions are in `supabase/functions/` (calculate-bom, calculate-pricing, \_shared).
-Database migrations are in `supabase/migrations/` (001–007).
+Edge functions are in `supabase/functions/` — `calculate-bom` (v1), `calculate-bom-v2` (v2), `bom-calculator` (v3), `calculate-pricing`, `search-products`, `_shared`.
 
-Run `ls src/` or `ls src/components/` for the current file list — the directory has evolved from the original plan with additional files (wizard components, ThemeContext, QuotesHistoryPage, GateModal, etc.).
+Database migrations are in `supabase/migrations/` (001–010 for v1/v2; 011–014, 018–022 for the v3 engine — migration 022 flattens products and adds `product_type` + `compatible_with_system_types`).
+
+**Seeds are JSON-authoritative.** The only SQL seed loaded by `supabase db reset` is `supabase/seeds/organizations.sql` (one row — the org). Everything else — fences, gates, legacy catalog, pricing, v3 engine rules — lives as **per-product JSON files** under `supabase/seeds/glass-outlet/products/`. Current files: `qshs.json`, `vs.json`, `xpl.json`, `bayg.json`, `qs_gate.json` (shared gate across all fences), `gate_legacy.json` (v1/v2 GATE family), `other.json` (inactive non-fence families).
+
+JSON Schemas at `supabase/seeds/schemas/*.schema.json`, wrapped by `product-file.schema.json`. The Node upserter at `supabase/seeds/tools/seed-products.js` (run via `npm run seed:products`, and automatically by `npm run db:reset`) validates each file, resolves business-key FKs, and upserts every section directly via supabase-js. No SQL is generated. See `docs/seed-data-mapping-spec.md` and the `seed-mapper` skill for the authoring contract.
+
+`slat-fencing.sql.disabled` is the historical pre-flatten SQL seed, kept on disk for reference only (the `.disabled` extension means supabase skips it).
+
+`seed-auth.js` and `seed-images.js` handle auth users and image uploads respectively.
+
+v3-specific additions:
+- `src/pages/CalculatorV3Page.tsx` — `/calculator` route
+- `src/components/calculator-v3/` — shared fence config form, multi-run UI, warnings/trace/achieved-height panels
+- `src/hooks/useBomCalculator.ts`
+- `src/types/canonical.types.ts`, `src/schemas/canonical.schema.ts`
+- `src/components/canvas/canonicalAdapter.ts`
+
+Run `ls src/` or `ls src/components/` for the current file list — the directory has evolved beyond the original plan.
 
 ---
 
@@ -116,6 +143,38 @@ Every table includes `org_id`. RLS policies use `public.user_org_id()` (a `SECUR
 | 007       | _(seed)_                    | Seed now populates `products`, `product_components`, and `pricing_rules` in new format.                                                              |
 | 008       | `pricing_rules`             | **No RLS**. Rule-based pricing: `component_id` FK, `tier_code` (tier1/2/3), `rule` (math.js expression, NULL = always), `price`, `priority`.        |
 | 008       | `pricing_rules_with_sku`    | View joining `pricing_rules` + `product_components`. Used by edge functions for sku-based lookups. No RLS (service role only).                       |
+| 009       | `products` + image_url      | Adds `image_url` to products. Populated via `seed-images.js`.                                                                                        |
+| 010       | `products` RLS              | `authenticated` SELECT on products (metadata only, no pricing).                                                                                      |
+| 011       | `rule_sets`, `rule_versions`| **v3 engine.** Versioned rule containers per product. Exactly one `is_current=true` per set.                                                        |
+| 012       | `product_rules`, `_constraints`, `_validations`, `_variables` | Stage-ordered math.js rules, bounds, validations, field definitions.                    |
+| 013       | `product_component_selectors`| match-JSON → SKU pattern (supports `{colour}`/`{finish}` placeholders).                                                                            |
+| 014       | `product_companion_rules`, `product_warnings` | Auto-add rules, non-blocking warnings.                                                                             |
+| 018       | `quote_runs`, `quote_run_segments` | Persistent canonical payload for v3 quotes. FK → `quotes.id`. RLS matches `quotes` pattern.                                                   |
+| 019       | `user_role` enum            | Adds `admin` value for trace/debug panel access.                                                                                                     |
+
+---
+
+## 5a. v3 Engine Tables
+
+The v3 BOM engine is driven by data in migrations 011–014 and 018. All engine tables are multi-tenant via `org_id`. Most are service-role-only; the two the client reads to render UI hints and field lists (`product_variables`, `product_component_selectors`) have `authenticated` SELECT policies.
+
+| Table | Purpose |
+|---|---|
+| `rule_sets` / `rule_versions` | Versioned rule bundles per product. Engine reads `is_current=true` |
+| `product_rules` | Stage-ordered math.js expressions: `derive` → `stock` → `accessory` → `component` |
+| `product_constraints` | min/max/threshold/enum bounds with `applies_when_json` conditions |
+| `product_variables` | Field definitions, defaults, options, scope (`job`/`run`/`segment`) |
+| `product_validations` | Blocking (`severity=error`) / non-blocking (`severity=warning`) math.js expressions |
+| `product_component_selectors` | `match_json` → `sku_pattern`. Placeholders like `{colour}` resolved from context |
+| `product_companion_rules` | "X triggers Y" auto-adds (CFC per side frame, spacers by gap, hinges per gate) |
+| `product_warnings` | Non-blocking reviewer warnings & blocking engine errors |
+| `quote_runs` / `quote_run_segments` | Persistent storage of the canonical payload |
+
+**Seed convention:** `supabase/seeds/glass-outlet/v3-qshs-engine.sql` populates all of the above for QSHS + QSHS_GATE. UUIDs are generated at runtime; the key mapping lives in a comment block at the top of the file.
+
+**To change QSHS calculation behaviour:** edit seed rows and `npm run db:reset`. Do not edit `supabase/functions/bom-calculator/index.ts` unless you're changing engine-framework behaviour.
+
+See `docs/phase-v3-1-engine-migrations.md` for column shapes and `docs/how_it_works.md` for a plain-English overview.
 
 ---
 
@@ -160,6 +219,31 @@ const orgId = profile.org_id;
 
 > Kept separate from calculate-bom so BOM can be generated once and repriced across tiers without re-running the material calculation.
 
+### bom-calculator (v3 — product-agnostic)
+
+`POST /functions/v1/bom-calculator` — accepts `{ payload: CanonicalPayload, pricingTier? }`, returns `{ lines, runResults, gateItems, totals, warnings, errors, assumptions, computed, trace?, pricingTier, generatedAt }`.
+
+**Pipeline (all data-driven; no per-product branches):**
+
+1. CORS + JWT → `resolveUserProfile` → `{ orgId, role, pricingTier }`
+2. Validate payload via `canonicalPayloadSchema` (Zod)
+3. Per unique `productCode`, load product + current rule_version + rules/constraints/selectors/companions/warnings/variables — parallelised via `Promise.all`; cached per-request
+4. Normalise variables — apply `product_variables` defaults and map long colour names to short codes (e.g. `black-satin` → `B`) via a constant lookup
+5. Run `product_validations` — if any `severity=error` fails, short-circuit with `{ errors, warnings, lines: [], totals: 0 }`
+6. Evaluate `product_rules` in stage order (`derive` → `stock` → `accessory` → `component`) with `mathjs.evaluate(expression, ctx)`. Failed rules are logged to trace and skipped; engine never aborts
+7. Resolve SKUs via `product_component_selectors` — first match by priority wins. Substitute `{colour}`/`{finish}`/`{frame_cap_size}` placeholders
+8. Apply `product_companion_rules` — auto-add CFCs, spacers, screws, hinges, etc.
+9. Evaluate `product_warnings` conditions → populate `warnings[]` (severity=warning), `errors[]` (severity=error), `assumptions[]` (severity=info)
+10. Aggregate lines by SKU; tag each with originating `runId`, `segmentId`, `productCode`; split into `runResults[]` for UI
+11. **Pricing stage (last, non-fatal)** — missing `pricing_rules` row produces `unitPrice=0` + warning; engine still returns the BOM
+12. Strip trace + most of computed for non-admin; return
+
+**Trace gating:** `role === 'admin'` → full `trace[]` + `computed{}`. Non-admin → `trace: []` and only `actual_height_mm` retained in `computed` (needed by `AchievedHeightBadge`).
+
+**Graceful math.js failures:** every `mathjs.evaluate` wrapped in try/catch. Failed rule ID + error logged to trace. Pipeline continues.
+
+See `docs/phase-v3-4-bom-calculator.md` for the full spec.
+
 ---
 
 ## 7. Deferred Features (v2)
@@ -181,7 +265,9 @@ The canvas tool is **a vanilla JS port, not a rewrite**. All drawing logic lives
 
 **Canvas engine controls**: all drawing, mouse/touch events, internal state. Never imports React, never causes re-renders.
 
-**Data flow — "Use This Layout →"**: `getLayout()` returns segments + gates + total length + corner count → dispatches `SET_CONFIG` to `FenceConfigContext` and `SET_GATES` to `GateContext`.
+**Data flow — v1/v2 "Use This Layout →"**: `getLayout()` returns segments + gates + total length + corner count → dispatches `SET_CONFIG` to `FenceConfigContext` and `SET_GATES` to `GateContext`.
+
+**v3 data flow**: `LayoutCanvasV3.tsx` wraps `FenceLayoutCanvas.tsx` unchanged. The toolbar is hand-coded — identical across all fencing systems. On layout change, `canvasLayoutToCanonical(layout, productCode, variables)` produces a `CanonicalPayload`. The reverse adapter `canonicalToCanvasLayout(payload)` handles quote reload. `runId` and `segmentId` are stable across round-trips — canvas, form, engine, and `quote_run_segments` all key on them.
 
 Google Maps JS API loaded via `<script>` tag; the engine handles geocoding, tile fetching, and canvas underlay rendering.
 
@@ -217,7 +303,19 @@ Responsive: desktop-first. Canvas section hidden on mobile (`md:block`). BOM tab
 
 ## 11. Development Phases
 
-Phases 0–6 complete. Phase 7 (Polish) in progress. See `docs/tasks.md` for current status and `docs/phase-*.md` for detailed phase specs.
+**v1 Phases:** 0–6 complete. Phase 7 (Polish) in progress. See `docs/tasks.md` and `docs/_deprecated/phase-*.md`.
+
+**v3 Engine Phases** (tracked in `docs/tasks.md`, specs at `docs/phase-v3-*.md`):
+
+- **V3-1** Engine migrations (011–019)
+- **V3-2** QSHS + QSHS_GATE seeds
+- **V3-3** Canonical payload contract
+- **V3-4** `bom-calculator` edge function
+- **V3-5** Schema-driven multi-run UI at `/calculator`
+- **V3-6** BOM output (per-run tabs + trace panel)
+- **V3-7** Docs (this file, tasks.md, how_it_works.md)
+
+See `docs/how_it_works.md` for a one-page plain-English overview of the v3 architecture.
 
 ---
 
@@ -252,7 +350,7 @@ VITE_SUPABASE_ANON_KEY=your-local-anon-key
 
 ## 14. Testing
 
-Primary quality gate: **Cypress E2E** — 23 test cases (TC1–TC19, TC24–TC26) that verify exact BOM line items, accessory quantity formulas, and grand totals across all 3 pricing tiers. Tests run against the React app using `data-testid` attributes.
+**v1/v2 primary quality gate: Cypress E2E** — 23 test cases (TC1–TC19, TC24–TC26) that verify exact BOM line items, accessory quantity formulas, and grand totals across all 3 pricing tiers. Tests run against the React app using `data-testid` attributes.
 
 See `docs/cypress-test-report.md` for the current test status and known issues. Outstanding app behaviour gaps that need investigation before Phase 7 closes:
 
@@ -261,18 +359,29 @@ See `docs/cypress-test-report.md` for the current test status and known issues. 
 - **TC15**: BAYG product codes — currently using QSHS codes; BAYG should include spacers as separate line items
 - **VS system codes**: Need confirmation against the master price file
 
+**v3 Testing:** Deno unit tests at `supabase/functions/bom-calculator/index_test.ts` — 8 fixtures (TC-V3-1 through TC-V3-8) covering rule firings, selector resolution, companion expansion, validation errors, warnings, missing pricing, and malformed rules. See `docs/phase-v3-4-bom-calculator.md`.
+
+v3 Cypress coverage is a follow-up phase. `SchemaDrivenForm` emits `data-testid={field_key}` matching existing conventions so future selectors reuse the same pattern.
+
 ---
 
 ## 15. Notes for Claude Code
 
 - **Never put pricing numbers, margin percentages, or wholesale costs in client-side code.** Use obviously fake values (e.g. $1.00) with a `// TODO: real pricing in edge function` comment if needed during development.
-- **The existing `index.html` is the functional specification.** Every dropdown option, validation rule, and form field in that file must exist in the React version (except the two AI features deferred to v2).
+- **The existing `index.html` is the functional specification for v1.** Every dropdown option, validation rule, and form field in that file must exist in the React version (except the two AI features deferred).
 - **The canvas is a vanilla JS port, not a rewrite.** `canvasEngine.ts` is pure TypeScript — no React, no JSX, no hooks. Do not refactor it using react-konva or any React canvas library.
 - **Australian context**: Currency is AUD, GST is 10%, measurements are metric (mm for heights/widths, m for run lengths). Postcodes are 4 digits.
-- **Colour names are Colorbond brand names** — spelled exactly as listed in Section 4.
+- **Colour names are Colorbond brand names** — spelled exactly as listed in Section 4. v3 `bom-calculator` normalises long names to short codes (`black-satin` → `B`) before selector resolution.
 - **Multi-tenancy: every table has `org_id`.** Edge functions always scope queries by `org_id` resolved from the user's JWT. RLS policies use `public.user_org_id()`. The client never sends `org_id`.
 - **Always update `docs/tasks.md` after completing any task or group of tasks.** Tick off `[x]`, update the Phases Overview table, and update the "Current Phase" header. Do this before responding to the user.
-- **Current status**: Phases 0–6 complete. Phase 7 (Polish) is in progress — see `docs/tasks.md` for the remaining checklist items.
+- **Current status**: v1 Phases 0–6 complete, Phase 7 (Polish) in progress. v3 Engine phases V3-1 through V3-7 not yet started — see `docs/tasks.md`.
+- **Seed data (products, pricing, components, v3 engine rules) goes in `supabase/seeds/glass-outlet/products/*.json`, never in new migration files, never as new SQL seeds.** Edit the per-product JSON files and run `npm run seed:products` (or a full `npm run db:reset`).
+- **v3 rules live in seed data (JSON), not code.** To change QSHS calculation behaviour, edit `supabase/seeds/glass-outlet/products/qshs.json`. To change the shared QS_GATE, edit `qs_gate.json`. Do **not** edit `supabase/functions/bom-calculator/index.ts` unless you're changing engine framework behaviour (pipeline order, math.js safety, placeholder resolution, etc.).
+- **Adding a new product = one new JSON file.** New fence → create `<system>.json` with `product_type: "fence"`. New gate → create `<gate>.json` with `product_type: "gate"` and a `compatible_with_system_types: [...]` array listing which fence system_types it pairs with. Gates do **not** live inside fence files — a shared gate can pair with multiple fences. Authoring contract: `docs/seed-data-mapping-spec.md`. Use the `seed-mapper` skill when doing this in Claude Code.
+- **Products table is flat** (post migration 022). No parent/variant hierarchy — every product has `parent_id = NULL`. The `product_type` column distinguishes fences from gates from other catalog items. Older code that filtered `WHERE parent_id IS NULL` has been updated; don't reintroduce that pattern.
+- **Admin trace access in v3** requires `profiles.role = 'admin'`. The seeded `admin@glass-outlet.com` / `123456` user has it. New admins: `UPDATE profiles SET role = 'admin' WHERE email = ...`.
+- **Legacy routes are untouched during v3 rollout.** `/` (v2 `CalculatorPage`) and `/new` (v1 `MainApp`) continue to work with their own edge functions. Do not remove them — they may carry production quotes.
+- **Canonical payload** is the single JSON shape shared by v3 canvas, form, engine, and `quote_runs`/`quote_run_segments`. `runId` and `segmentId` are stable across round-trips. Do not regenerate them in adapter code — that breaks load/save. See `docs/phase-v3-3-canonical-payload.md`.
 
 ---
 
@@ -294,7 +403,9 @@ npm run setup       # starts local Supabase + resets DB + seeds data
 npm run dev         # → http://localhost:5173
 ```
 
-Login with the seeded test account: `test@glass-outlet.com` / `123456`
+Login with a seeded test account:
+- `test@glass-outlet.com` / `123456` — regular user
+- `admin@glass-outlet.com` / `123456` — admin (needed to see the v3 trace panel at `/calculator`)
 
 ### Day-to-day commands
 

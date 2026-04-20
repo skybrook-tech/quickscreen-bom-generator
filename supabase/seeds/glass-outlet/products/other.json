@@ -1,0 +1,125 @@
+{
+  "org_slug": "glass-outlet",
+  "products": [
+    {
+      "system_type": "ALUMINIUM-BALUSTRADE",
+      "product_type": "other",
+      "compatible_with_system_types": [],
+      "name": "Aluminium Balustrade",
+      "description": "Aluminium balustrade systems for decks, stairs, and balconies.",
+      "active": false,
+      "sort_order": 10,
+      "metadata": {}
+    },
+    {
+      "system_type": "COLORBOND",
+      "product_type": "other",
+      "compatible_with_system_types": [],
+      "name": "Colorbond Fencing",
+      "description": "Colorbond steel fencing panels and accessories.",
+      "active": false,
+      "sort_order": 11,
+      "metadata": {}
+    },
+    {
+      "system_type": "DRAINLAB",
+      "product_type": "other",
+      "compatible_with_system_types": [],
+      "name": "DrainLab",
+      "description": "Drainage channel and grate systems.",
+      "active": false,
+      "sort_order": 12,
+      "metadata": {}
+    },
+    {
+      "system_type": "EXTERIOR",
+      "product_type": "other",
+      "compatible_with_system_types": [],
+      "name": "Exterior",
+      "description": "Exterior cladding and screening products.",
+      "active": false,
+      "sort_order": 13,
+      "metadata": {}
+    },
+    {
+      "system_type": "FENCING-BREEZEWIRE",
+      "product_type": "other",
+      "compatible_with_system_types": [],
+      "name": "Fencing & Breezewire",
+      "description": "Traditional fencing and breezewire mesh products.",
+      "active": false,
+      "sort_order": 14,
+      "metadata": {}
+    },
+    {
+      "system_type": "GLASS-BALUSTRADE",
+      "product_type": "other",
+      "compatible_with_system_types": [],
+      "name": "Glass Balustrade",
+      "description": "Frameless and semi-frameless glass balustrade systems.",
+      "active": false,
+      "sort_order": 15,
+      "metadata": {}
+    },
+    {
+      "system_type": "GLASS",
+      "product_type": "other",
+      "compatible_with_system_types": [],
+      "name": "Glass",
+      "description": "Architectural and decorative glass products.",
+      "active": false,
+      "sort_order": 16,
+      "metadata": {}
+    },
+    {
+      "system_type": "GLASS-POOL",
+      "product_type": "other",
+      "compatible_with_system_types": [],
+      "name": "Glass Pool Fencing",
+      "description": "Frameless glass pool fencing compliant with Australian standards.",
+      "active": false,
+      "sort_order": 17,
+      "metadata": {}
+    },
+    {
+      "system_type": "GLASS-RANGE",
+      "product_type": "other",
+      "compatible_with_system_types": [],
+      "name": "Glass Range",
+      "description": "Full range of glass products including toughened and laminated glass.",
+      "active": false,
+      "sort_order": 18,
+      "metadata": {}
+    },
+    {
+      "system_type": "GLASS-SHOWER",
+      "product_type": "other",
+      "compatible_with_system_types": [],
+      "name": "Glass Shower Screen",
+      "description": "Frameless and semi-frameless shower screen systems.",
+      "active": false,
+      "sort_order": 19,
+      "metadata": {}
+    },
+    {
+      "system_type": "HAMPTONS",
+      "product_type": "other",
+      "compatible_with_system_types": [],
+      "name": "Hamptons",
+      "description": "Hamptons-style screening and fencing products.",
+      "active": false,
+      "sort_order": 20,
+      "metadata": {}
+    },
+    {
+      "system_type": "MOVE-SHUTTERS",
+      "product_type": "other",
+      "compatible_with_system_types": [],
+      "name": "Move Shutters",
+      "description": "Aluminium louvre shutter systems for privacy and light control.",
+      "active": false,
+      "sort_order": 21,
+      "metadata": {}
+    }
+  ]
+}

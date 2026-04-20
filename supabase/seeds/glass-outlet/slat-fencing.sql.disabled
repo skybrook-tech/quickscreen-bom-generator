@@ -36,14 +36,17 @@ BEGIN
   SELECT id INTO _qs FROM products WHERE org_id = _org AND system_type = 'QUICKSCREEN' AND parent_id IS NULL;
 
   -- 2. QuickScreen sub-systems — children of the QuickScreen root product
-  INSERT INTO products (org_id, name, system_type, description, active, parent_id, sort_order)
+  -- allowedAngles: interior corner angles (degrees) supported at post junctions.
+  -- 90 = right-angle turn, 135 = gentle turn, 180 = straight through.
+  INSERT INTO products (org_id, name, system_type, description, active, parent_id, sort_order, metadata)
   VALUES
-    (_org, 'QSHS Horizontal Slat Screen', 'QSHS', 'Standard horizontal slat system. Slats run horizontally, inserted into slotted posts.',  true, _qs, 1),
-    (_org, 'VS Vertical Slat Screen',     'VS',   'Vertical slat orientation. Slats insert into top and bottom rails.',                      true, _qs, 2),
-    (_org, 'XPL XPress Plus Premium',     'XPL',  '65mm slats only (forced). Insert/clip system with different bracket requirements.',        true, _qs, 3),
-    (_org, 'BAYG Buy As You Go',          'BAYG', 'Spacers sold separately. Customer assembles themselves.',                                  true, _qs, 4),
-    (_org, 'Gate',                        'GATE', 'Swing and sliding gate products.',                                                         true, _qs, 5)
-  ON CONFLICT (parent_id, system_type) WHERE parent_id IS NOT NULL DO NOTHING;
+    (_org, 'QSHS Horizontal Slat Screen', 'QSHS', 'Standard horizontal slat system. Slats run horizontally, inserted into slotted posts.',  true, _qs, 1, '{"allowedAngles":[90,135,180],"options":{"slatSize":["65","90"],"slatGap":["0","5","9","20"],"colour":["black-satin","monument-matt","woodland-grey-matt","surfmist-matt","pearl-white-gloss","basalt-satin","dune-satin","mill","primrose","paperbark","palladium-silver-pearl"]}}'::jsonb),
+    (_org, 'VS Vertical Slat Screen',     'VS',   'Vertical slat orientation. Slats insert into top and bottom rails.',                      true, _qs, 2, '{"allowedAngles":[90,135,180],"options":{"slatSize":["65","90"],"slatGap":["5","9","20"],"colour":["black-satin","monument-matt","woodland-grey-matt","surfmist-matt","pearl-white-gloss","basalt-satin","dune-satin","mill","primrose","paperbark","palladium-silver-pearl"]}}'::jsonb),
+    (_org, 'XPL XPress Plus Premium',     'XPL',  '65mm slats only (forced). Insert/clip system with different bracket requirements.',        true, _qs, 3, '{"allowedAngles":[90,135,180],"options":{"slatSize":["65"],"slatGap":["5","9","20"],"colour":["black-satin","monument-matt","woodland-grey-matt","surfmist-matt","pearl-white-gloss","basalt-satin","dune-satin","mill","primrose","paperbark","palladium-silver-pearl"]}}'::jsonb),
+    (_org, 'BAYG Buy As You Go',          'BAYG', 'Spacers sold separately. Customer assembles themselves.',                                  true, _qs, 4, '{"allowedAngles":[90,135,180],"options":{"slatSize":["65","90"],"slatGap":["0","5","9","20"],"colour":["black-satin","monument-matt","woodland-grey-matt","surfmist-matt","pearl-white-gloss","basalt-satin","dune-satin","mill","primrose","paperbark","palladium-silver-pearl"]}}'::jsonb),
+    (_org, 'Gate',                        'GATE', 'Swing and sliding gate products.',                                                         true, _qs, 5, '{}'::jsonb)
+  ON CONFLICT (parent_id, system_type) WHERE parent_id IS NOT NULL
+  DO UPDATE SET metadata = EXCLUDED.metadata;
 
   -- 3. Other product families — inactive root products (no components or pricing yet)
   INSERT INTO products (org_id, name, system_type, description, active, sort_order)

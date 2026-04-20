@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "rule_versions.schema.json",
+  "title": "rule_versions",
+  "description": "Frozen snapshot of a rule_set. Exactly one version per rule_set has is_current=true. Historical quotes reference a specific version so they reproduce identically even after rules change. Bump the version rather than editing an existing 'current' version's rules in-place if you want to preserve old quote reproducibility.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "product_system_type",
+      "rule_set_name",
+      "version_label",
+      "is_current"
+    ],
+    "properties": {
+      "product_system_type": {
+        "type": "string"
+      },
+      "rule_set_name": {
+        "type": "string",
+        "description": "Name of the rule_set this version belongs to."
+      },
+      "version_label": {
+        "type": "string",
+        "description": "Version identifier (semver-like or date-based). Examples: 'v1.0.0', '2026-Q1'."
+      },
+      "is_current": {
+        "type": "boolean",
+        "description": "Exactly one version per rule_set must be true."
+      },
+      "effective_from": {
+        "type": ["string", "null"],
+        "format": "date",
+        "description": "ISO date when this version became effective (YYYY-MM-DD)."
+      },
+      "notes": {
+        "type": ["string", "null"]
+      }
+    }
+  }
+}

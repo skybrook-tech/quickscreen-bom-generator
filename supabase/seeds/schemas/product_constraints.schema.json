@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "product_constraints.schema.json",
+  "title": "product_constraints",
+  "description": "Hard bounds on variables (min/max/threshold/enum). Used for input validation and BOM engine safety checks. 'applies_when_json' can conditionally scope a constraint (e.g. only when system_type='XPL').",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "product_system_type",
+      "name",
+      "constraint_type",
+      "value_text",
+      "severity",
+      "message",
+      "active"
+    ],
+    "properties": {
+      "product_system_type": {
+        "type": "string"
+      },
+      "name": {
+        "type": "string",
+        "description": "Short stable identifier. Examples: 'min_height_mm', 'max_panel_width_mm', 'allowed_gap_mm'."
+      },
+      "constraint_type": {
+        "type": "string",
+        "enum": [
+          "min",
+          "max",
+          "enum",
+          "threshold"
+        ],
+        "description": "min/max = numeric bound; enum = allowed value list (as JSON array string); threshold = trigger value."
+      },
+      "value_text": {
+        "type": "string",
+        "description": "Constraint value as text. For numeric: '300'. For enum: '[65,90]' or '[\"in_ground\",\"base_plate\"]'."
+      },
+      "unit": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "examples": [
+          "mm",
+          "m",
+          "count",
+          null
+        ]
+      },
+      "severity": {
+        "type": "string",
+        "enum": [
+          "error",
+          "warning",
+          "info"
+        ],
+        "description": "error = blocks BOM generation; warning = surfaces to user; info = advisory only."
+      },
+      "applies_when_json": {
+        "type": "object",
+        "description": "Conditional predicate. Empty object = always applies. Example: {\"system_type\":\"XPL\"}.",
+        "default": {}
+      },
+      "message": {
+        "type": "string",
+        "description": "Message shown when this constraint fails. Should be staff/customer-readable."
+      },
+      "active": {
+        "type": "boolean"
+      }
+    }
+  }
+}

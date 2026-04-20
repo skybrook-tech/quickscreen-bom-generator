@@ -1,0 +1,4004 @@
+{
+  "org_slug": "glass-outlet",
+  "products": [
+    {
+      "system_type": "QS_GATE",
+      "product_type": "gate",
+      "name": "QS Pedestrian Gate",
+      "description": "Single-leaf aluminium pedestrian gate compatible with QSHS, VS, XPL and BAYG fence systems. Screw-fixed 65mm horizontal slat blades with HD top/bottom rails and QSG gate side frames.",
+      "active": true,
+      "sort_order": 10,
+      "compatible_with_system_types": [
+        "QSHS",
+        "VS",
+        "XPL",
+        "BAYG"
+      ],
+      "metadata": {
+        "product_family": "gate",
+        "default_layout_type": "single_gate",
+        "options": {
+          "slat_size": [
+            "65"
+          ],
+          "colour": [
+            "black-satin",
+            "monument-matt",
+            "woodland-grey-matt",
+            "surfmist-matt",
+            "pearl-white-gloss",
+            "basalt-satin",
+            "dune-satin",
+            "mill",
+            "primrose",
+            "paperbark",
+            "palladium-silver-pearl"
+          ]
+        }
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "XP-6100-GB65-B",
+      "name": "Gate Blade 65mm 6100mm \u2014 Black Satin",
+      "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 55.36,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "black-satin",
+        "colour_code": "B",
+        "slat_size_mm": 65
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-MN",
+      "name": "Gate Blade 65mm 6100mm \u2014 Monument Matt",
+      "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 55.36,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "monument-matt",
+        "colour_code": "MN",
+        "slat_size_mm": 65
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-G",
+      "name": "Gate Blade 65mm 6100mm \u2014 Woodland Grey Matt",
+      "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 55.36,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "woodland-grey-matt",
+        "colour_code": "G",
+        "slat_size_mm": 65
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-SM",
+      "name": "Gate Blade 65mm 6100mm \u2014 Surfmist Matt",
+      "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 55.36,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "surfmist-matt",
+        "colour_code": "SM",
+        "slat_size_mm": 65
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-W",
+      "name": "Gate Blade 65mm 6100mm \u2014 Pearl White Gloss",
+      "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 55.36,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "pearl-white-gloss",
+        "colour_code": "W",
+        "slat_size_mm": 65
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-BS",
+      "name": "Gate Blade 65mm 6100mm \u2014 Basalt Satin",
+      "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 55.36,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "basalt-satin",
+        "colour_code": "BS",
+        "slat_size_mm": 65
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-D",
+      "name": "Gate Blade 65mm 6100mm \u2014 Dune Satin",
+      "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 55.36,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "dune-satin",
+        "colour_code": "D",
+        "slat_size_mm": 65
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-M",
+      "name": "Gate Blade 65mm 6100mm \u2014 Mill",
+      "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 47.05,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "mill",
+        "colour_code": "M",
+        "slat_size_mm": 65
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-P",
+      "name": "Gate Blade 65mm 6100mm \u2014 Primrose",
+      "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 55.36,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "primrose",
+        "colour_code": "P",
+        "slat_size_mm": 65
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-PB",
+      "name": "Gate Blade 65mm 6100mm \u2014 Paperbark",
+      "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 55.36,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "paperbark",
+        "colour_code": "PB",
+        "slat_size_mm": 65
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-S",
+      "name": "Gate Blade 65mm 6100mm \u2014 Palladium Silver Pearl",
+      "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 55.36,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "palladium-silver-pearl",
+        "colour_code": "S",
+        "slat_size_mm": 65
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-B",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Black Satin",
+      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 124.56,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "black-satin",
+        "colour_code": "B"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-MN",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Monument Matt",
+      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 124.56,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "monument-matt",
+        "colour_code": "MN"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-G",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Woodland Grey Matt",
+      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 124.56,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "woodland-grey-matt",
+        "colour_code": "G"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-SM",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Surfmist Matt",
+      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 124.56,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "surfmist-matt",
+        "colour_code": "SM"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-W",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Pearl White Gloss",
+      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 124.56,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "pearl-white-gloss",
+        "colour_code": "W"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-BS",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Basalt Satin",
+      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 124.56,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "basalt-satin",
+        "colour_code": "BS"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-D",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Dune Satin",
+      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 124.56,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "dune-satin",
+        "colour_code": "D"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-M",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Mill",
+      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 113.62,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "mill",
+        "colour_code": "M"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-P",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Primrose",
+      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 124.56,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "primrose",
+        "colour_code": "P"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-PB",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Paperbark",
+      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 124.56,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "paperbark",
+        "colour_code": "PB"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-S",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Palladium Silver Pearl",
+      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 124.56,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "palladium-silver-pearl",
+        "colour_code": "S"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-B",
+      "name": "Gate Stop 4200mm \u2014 Black Satin",
+      "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
+      "category": "accessory",
+      "unit": "length",
+      "default_price": 24.11,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "black-satin",
+        "colour_code": "B"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-MN",
+      "name": "Gate Stop 4200mm \u2014 Monument Matt",
+      "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
+      "category": "accessory",
+      "unit": "length",
+      "default_price": 24.11,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "monument-matt",
+        "colour_code": "MN"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-G",
+      "name": "Gate Stop 4200mm \u2014 Woodland Grey Matt",
+      "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
+      "category": "accessory",
+      "unit": "length",
+      "default_price": 24.11,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "woodland-grey-matt",
+        "colour_code": "G"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-SM",
+      "name": "Gate Stop 4200mm \u2014 Surfmist Matt",
+      "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
+      "category": "accessory",
+      "unit": "length",
+      "default_price": 24.11,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "surfmist-matt",
+        "colour_code": "SM"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-W",
+      "name": "Gate Stop 4200mm \u2014 Pearl White Gloss",
+      "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
+      "category": "accessory",
+      "unit": "length",
+      "default_price": 24.11,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "pearl-white-gloss",
+        "colour_code": "W"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-BS",
+      "name": "Gate Stop 4200mm \u2014 Basalt Satin",
+      "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
+      "category": "accessory",
+      "unit": "length",
+      "default_price": 24.11,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "basalt-satin",
+        "colour_code": "BS"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-D",
+      "name": "Gate Stop 4200mm \u2014 Dune Satin",
+      "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
+      "category": "accessory",
+      "unit": "length",
+      "default_price": 24.11,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "dune-satin",
+        "colour_code": "D"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-M",
+      "name": "Gate Stop 4200mm \u2014 Mill",
+      "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
+      "category": "accessory",
+      "unit": "length",
+      "default_price": 17.38,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "mill",
+        "colour_code": "M"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-P",
+      "name": "Gate Stop 4200mm \u2014 Primrose",
+      "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side). Primrose exception pricing.",
+      "category": "accessory",
+      "unit": "length",
+      "default_price": 21.92,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "primrose",
+        "colour_code": "P"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-PB",
+      "name": "Gate Stop 4200mm \u2014 Paperbark",
+      "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side). Paperbark exception pricing.",
+      "category": "accessory",
+      "unit": "length",
+      "default_price": 21.92,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "paperbark",
+        "colour_code": "PB"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-S",
+      "name": "Gate Stop 4200mm \u2014 Palladium Silver Pearl",
+      "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
+      "category": "accessory",
+      "unit": "length",
+      "default_price": 24.11,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "palladium-silver-pearl",
+        "colour_code": "S"
+      },
+      "active": true
+    },
+    {
+      "sku": "ML-TL",
+      "name": "Magna Latch \u2014 Latch Only",
+      "description": "Magna Latch top-latch, latch only (no hinge included)",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 57.26,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "ML-TL-KF-H-FT",
+      "name": "Magna Latch + Kwik-Fit Hinge Combo",
+      "description": "Magna Latch top-latch with Kwik-Fit hinge combo pack",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 61.48,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "ML-TL-TC-H-AT",
+      "name": "Magna Latch + TruClose Hinge Combo",
+      "description": "Magna Latch top-latch with TruClose hinge combo pack",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 75.5,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "ML-TL-W",
+      "name": "Magna Latch White",
+      "description": "Magna Latch top-latch in white finish",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 110.19,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-B",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Black Satin",
+      "description": "Lockwood 001 Deadlatch lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "black-satin",
+        "colour_code": "B"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-MN",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Monument Matt",
+      "description": "Lockwood 001 Deadlatch lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "monument-matt",
+        "colour_code": "MN"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-G",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Woodland Grey Matt",
+      "description": "Lockwood 001 Deadlatch lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "woodland-grey-matt",
+        "colour_code": "G"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-SM",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Surfmist Matt",
+      "description": "Lockwood 001 Deadlatch lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "surfmist-matt",
+        "colour_code": "SM"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-W",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Pearl White Gloss",
+      "description": "Lockwood 001 Deadlatch lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "pearl-white-gloss",
+        "colour_code": "W"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-BS",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Basalt Satin",
+      "description": "Lockwood 001 Deadlatch lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "basalt-satin",
+        "colour_code": "BS"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-D",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Dune Satin",
+      "description": "Lockwood 001 Deadlatch lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "dune-satin",
+        "colour_code": "D"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-M",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Mill",
+      "description": "Lockwood 001 Deadlatch lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 22.0,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "mill",
+        "colour_code": "M"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-P",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Primrose",
+      "description": "Lockwood 001 Deadlatch lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "primrose",
+        "colour_code": "P"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-PB",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Paperbark",
+      "description": "Lockwood 001 Deadlatch lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "paperbark",
+        "colour_code": "PB"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-S",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Palladium Silver Pearl",
+      "description": "Lockwood 001 Deadlatch lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "palladium-silver-pearl",
+        "colour_code": "S"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-B",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Black Satin",
+      "description": "Lever/Knob Lock Set lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "black-satin",
+        "colour_code": "B"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-MN",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Monument Matt",
+      "description": "Lever/Knob Lock Set lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "monument-matt",
+        "colour_code": "MN"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-G",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Woodland Grey Matt",
+      "description": "Lever/Knob Lock Set lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "woodland-grey-matt",
+        "colour_code": "G"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-SM",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Surfmist Matt",
+      "description": "Lever/Knob Lock Set lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "surfmist-matt",
+        "colour_code": "SM"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-W",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Pearl White Gloss",
+      "description": "Lever/Knob Lock Set lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "pearl-white-gloss",
+        "colour_code": "W"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-BS",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Basalt Satin",
+      "description": "Lever/Knob Lock Set lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "basalt-satin",
+        "colour_code": "BS"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-D",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Dune Satin",
+      "description": "Lever/Knob Lock Set lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "dune-satin",
+        "colour_code": "D"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-M",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Mill",
+      "description": "Lever/Knob Lock Set lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 22.0,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "mill",
+        "colour_code": "M"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-P",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Primrose",
+      "description": "Lever/Knob Lock Set lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "primrose",
+        "colour_code": "P"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-PB",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Paperbark",
+      "description": "Lever/Knob Lock Set lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "paperbark",
+        "colour_code": "PB"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-S",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Palladium Silver Pearl",
+      "description": "Lever/Knob Lock Set lock box for QS gate",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 25.9,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "palladium-silver-pearl",
+        "colour_code": "S"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-65-B",
+      "name": "Gate Side Frame 65mm \u2014 Black Satin",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "category": "gate_side_frame",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "black-satin",
+        "colour_code": "B",
+        "slat_size_mm": 65,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-65-MN",
+      "name": "Gate Side Frame 65mm \u2014 Monument Matt",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "category": "gate_side_frame",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "monument-matt",
+        "colour_code": "MN",
+        "slat_size_mm": 65,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-65-G",
+      "name": "Gate Side Frame 65mm \u2014 Woodland Grey Matt",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "category": "gate_side_frame",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "woodland-grey-matt",
+        "colour_code": "G",
+        "slat_size_mm": 65,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-65-SM",
+      "name": "Gate Side Frame 65mm \u2014 Surfmist Matt",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "category": "gate_side_frame",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "surfmist-matt",
+        "colour_code": "SM",
+        "slat_size_mm": 65,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-65-W",
+      "name": "Gate Side Frame 65mm \u2014 Pearl White Gloss",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "category": "gate_side_frame",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "pearl-white-gloss",
+        "colour_code": "W",
+        "slat_size_mm": 65,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-65-BS",
+      "name": "Gate Side Frame 65mm \u2014 Basalt Satin",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "category": "gate_side_frame",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "basalt-satin",
+        "colour_code": "BS",
+        "slat_size_mm": 65,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-65-D",
+      "name": "Gate Side Frame 65mm \u2014 Dune Satin",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "category": "gate_side_frame",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "dune-satin",
+        "colour_code": "D",
+        "slat_size_mm": 65,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-65-M",
+      "name": "Gate Side Frame 65mm \u2014 Mill",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "category": "gate_side_frame",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "mill",
+        "colour_code": "M",
+        "slat_size_mm": 65,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-65-P",
+      "name": "Gate Side Frame 65mm \u2014 Primrose",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "category": "gate_side_frame",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "primrose",
+        "colour_code": "P",
+        "slat_size_mm": 65,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-65-PB",
+      "name": "Gate Side Frame 65mm \u2014 Paperbark",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "category": "gate_side_frame",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "paperbark",
+        "colour_code": "PB",
+        "slat_size_mm": 65,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GATESF-65-S",
+      "name": "Gate Side Frame 65mm \u2014 Palladium Silver Pearl",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "category": "gate_side_frame",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "palladium-silver-pearl",
+        "colour_code": "S",
+        "slat_size_mm": 65,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-JBLOCK-65-4PK",
+      "name": "Joiner Block 65mm \u2014 4 Pack",
+      "description": "Gate joiner blocks for 65mm slat gates, pack of 4. No pricing in CSV \u2014 price TBD.",
+      "category": "joiner_block",
+      "unit": "pack",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "slat_size_mm": 65,
+        "pack_qty": 4,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-JBLOCK-90-4PK",
+      "name": "Joiner Block 90mm \u2014 4 Pack",
+      "description": "Gate joiner blocks for 90mm slat gates, pack of 4. No pricing in CSV \u2014 price TBD.",
+      "category": "joiner_block",
+      "unit": "pack",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "slat_size_mm": 90,
+        "pack_qty": 4,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-SC-10PK",
+      "name": "Gate Screw Covers \u2014 10 Pack",
+      "description": "Screw covers for QS gate, pack of 10. No pricing in CSV \u2014 price TBD.",
+      "category": "hardware",
+      "unit": "pack",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "pack_qty": 10,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-RS-10PK",
+      "name": "Gate Rail Screws \u2014 10 Pack",
+      "description": "Rail screws for QS gate HD top/bottom rails, pack of 10. No pricing in CSV \u2014 price TBD.",
+      "category": "hardware",
+      "unit": "pack",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "pack_qty": 10,
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-FTC-50",
+      "name": "Gate Frame Top Cap 50mm",
+      "description": "Gate side frame top cap, 50mm. 4 caps per gate. No pricing in CSV \u2014 price TBD.",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "frame_cap_size": "50",
+        "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-FTC-65",
+      "name": "Gate Frame Top Cap 65mm",
+      "description": "Gate side frame top cap, 65mm. 4 caps per gate. No pricing in CSV \u2014 price TBD.",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "frame_cap_size": "65",
+        "pricing_status": "TBD"
+      },
+      "active": true
+    }
+  ],
+  "rule_sets": [
+    {
+      "product_system_type": "QS_GATE",
+      "name": "QS Gate Rules",
+      "description": "Data-driven QS pedestrian gate BOM rules v1",
+      "active": true
+    }
+  ],
+  "rule_versions": [
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "is_current": true,
+      "effective_from": "2026-04-19",
+      "notes": "Initial QS gate rules \u2014 screw-fixed 65mm blades, HD rail, QSG side frames"
+    }
+  ],
+  "product_constraints": [
+    {
+      "product_system_type": "QS_GATE",
+      "name": "max_gate_width_mm",
+      "constraint_type": "max",
+      "value_text": "1200",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Single-leaf gate maximum width is 1200mm",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "max_gate_height_mm",
+      "constraint_type": "max",
+      "value_text": "2100",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Gate maximum height is 2100mm",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "min_gate_width_mm",
+      "constraint_type": "min",
+      "value_text": "400",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Gate minimum width is 400mm",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "min_gate_height_mm",
+      "constraint_type": "min",
+      "value_text": "600",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Gate minimum height is 600mm",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "slat_size_enum",
+      "constraint_type": "enum",
+      "value_text": "[\"65\"]",
+      "unit": null,
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "QS gate supports 65mm slat size only",
+      "active": true
+    }
+  ],
+  "product_variables": [
+    {
+      "product_system_type": "QS_GATE",
+      "name": "colour_code",
+      "label": "Colour",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "B",
+      "options_json": [
+        "B",
+        "MN",
+        "G",
+        "SM",
+        "W",
+        "BS",
+        "D",
+        "M",
+        "P",
+        "PB",
+        "S"
+      ],
+      "scope": "job",
+      "sort_order": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "slat_size_mm",
+      "label": "Slat Size",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 65,
+      "options_json": [
+        65
+      ],
+      "scope": "job",
+      "sort_order": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "slat_gap_mm",
+      "label": "Slat Gap",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 5,
+      "options_json": [
+        5,
+        9,
+        20
+      ],
+      "scope": "job",
+      "sort_order": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "hinge_type",
+      "label": "Hinge & Latch Type",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "ML-TL-KF-H-FT",
+      "options_json": [
+        "ML-TL",
+        "ML-TL-KF-H-FT",
+        "ML-TL-TC-H-AT",
+        "ML-TL-W"
+      ],
+      "scope": "run",
+      "sort_order": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "include_lock_box",
+      "label": "Include Lock Box",
+      "data_type": "boolean",
+      "unit": null,
+      "required": false,
+      "default_value_json": false,
+      "options_json": [],
+      "scope": "run",
+      "sort_order": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "lock_box_type",
+      "label": "Lock Box Type",
+      "data_type": "enum",
+      "unit": null,
+      "required": false,
+      "default_value_json": "XP-LBOX-DL",
+      "options_json": [
+        "XP-LBOX-DL",
+        "XP-LBOX-LSET"
+      ],
+      "scope": "run",
+      "sort_order": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_width_mm",
+      "label": "Gate Width",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 900,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 70,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_height_mm",
+      "label": "Gate Height",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 1800,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 80,
+      "active": true
+    }
+  ],
+  "product_validations": [
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_width_in_range",
+      "expression": "gate_width_mm >= 400 and gate_width_mm <= 1200",
+      "severity": "error",
+      "message": "Gate width must be between 400mm and 1200mm",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_height_in_range",
+      "expression": "gate_height_mm >= 600 and gate_height_mm <= 2100",
+      "severity": "error",
+      "message": "Gate height must be between 600mm and 2100mm",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "lock_box_type_required_if_enabled",
+      "expression": "!include_lock_box or (include_lock_box and lock_box_type != null)",
+      "severity": "error",
+      "message": "A lock box type must be selected when lock box is enabled",
+      "active": true
+    }
+  ],
+  "product_rules": [
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "gate_blade_cut_mm",
+      "expression": "gate_width_mm - 86",
+      "output_key": "gate_blade_cut_mm",
+      "priority": 10,
+      "active": true,
+      "notes": "Gate blade cut = gate_width - 86mm"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "hd_rail_cut_mm",
+      "expression": "gate_width_mm - 80",
+      "output_key": "hd_rail_cut_mm",
+      "priority": 20,
+      "active": true,
+      "notes": "HD top/bottom rail cut = gate_width - 80mm"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "gsf_cut_mm",
+      "expression": "gate_height_mm - 3",
+      "output_key": "gsf_cut_mm",
+      "priority": 30,
+      "active": true,
+      "notes": "Gate side frame (GSF) cut = gate_height - 3mm"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_gate_blades",
+      "expression": "floor((gate_height_mm - 133 + slat_gap_mm) / (slat_size_mm + slat_gap_mm))",
+      "output_key": "num_gate_blades",
+      "priority": 40,
+      "active": true,
+      "notes": "Gate blade count: 133mm top+bottom rail allowance (vs 3mm lip in fence). Reverse formula from fence with 133mm deduction instead of 3mm."
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "blades_per_stock_length",
+      "expression": "floor(6100 / gate_blade_cut_mm)",
+      "output_key": "blades_per_stock_length",
+      "priority": 100,
+      "active": true,
+      "notes": "How many blade cuts from one 6100mm stock length"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "blade_stock_lengths_needed",
+      "expression": "ceil(num_gate_blades / blades_per_stock_length)",
+      "output_key": "blade_stock_lengths_needed",
+      "priority": 110,
+      "active": true,
+      "notes": "Stock lengths of gate blade needed"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "rails_per_stock_length",
+      "expression": "floor(6100 / hd_rail_cut_mm)",
+      "output_key": "rails_per_stock_length",
+      "priority": 120,
+      "active": true,
+      "notes": "How many HD rail cuts from one 6100mm stock length"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "rail_stock_lengths_needed",
+      "expression": "ceil(2 / rails_per_stock_length)",
+      "output_key": "rail_stock_lengths_needed",
+      "priority": 130,
+      "active": true,
+      "notes": "2 HD rails needed per gate (top + bottom)"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "rail_screw_packs_needed",
+      "expression": "ceil(roundup((hd_rail_cut_mm * 2) * 1.01, -1) / 10)",
+      "output_key": "rail_screw_packs_needed",
+      "priority": 200,
+      "active": true,
+      "notes": "Rail screws for HD top + bottom rail: ROUNDUP((hd_rail_cut x2) x1.01, -1) total screws, then /10 for packs"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "gsf_screw_count_per_frame",
+      "expression": "max(3, ceil((gsf_cut_mm - 40) / 600) + 1)",
+      "output_key": "gsf_screw_count_per_frame",
+      "priority": 210,
+      "active": true,
+      "notes": "F-section screws per GSF: MAX(3, ROUNDUP((gsf_cut - 40)/600, 0) + 1)"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "gsf_total_screws",
+      "expression": "gsf_screw_count_per_frame * 2 * 2",
+      "output_key": "gsf_total_screws",
+      "priority": 220,
+      "active": true,
+      "notes": "2 GSF per gate \u00d7 2 sides each = total GSF screws"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_gate_blades",
+      "expression": "blade_stock_lengths_needed",
+      "output_key": "qty_gate_blade",
+      "priority": 300,
+      "active": true,
+      "notes": "Emit gate blade stock lengths (resolved via gate_blade_65_selector)"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_hd_rails",
+      "expression": "rail_stock_lengths_needed",
+      "output_key": "qty_hd_rail",
+      "priority": 310,
+      "active": true,
+      "notes": "Emit HD rail stock lengths \u2014 1 per gate typically (2 cuts per 6100mm stock)"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_gate_stop",
+      "expression": "3",
+      "output_key": "qty_gate_stop",
+      "priority": 320,
+      "active": true,
+      "notes": "3 gate stops per gate: 2 latch side + 1 hinge side (4200mm stock each)"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_hinge_latch_combo",
+      "expression": "1",
+      "output_key": "qty_hinge_latch",
+      "priority": 330,
+      "active": true,
+      "notes": "1 hinge/latch unit per gate \u2014 SKU resolved via hinge_type variable"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_lock_box",
+      "expression": "include_lock_box ? 1 : 0",
+      "output_key": "qty_lock_box",
+      "priority": 340,
+      "active": true,
+      "notes": "1 lock box if include_lock_box is true \u2014 SKU resolved via lock_box_selector"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_gate_side_frames",
+      "expression": "2",
+      "output_key": "qty_gsf",
+      "priority": 350,
+      "active": true,
+      "notes": "2 QSG gate side frames per gate \u2014 GSF pricing TBD"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_joiner_blocks",
+      "expression": "1",
+      "output_key": "qty_jblock_pack",
+      "priority": 360,
+      "active": true,
+      "notes": "1 pack of joiner blocks per gate \u2014 size matches slat_size_mm (only 65 currently)"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_screw_covers",
+      "expression": "1",
+      "output_key": "qty_sc_pack",
+      "priority": 370,
+      "active": true,
+      "notes": "1 pack of screw covers per gate (QSG-SC-10PK)"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_frame_top_caps",
+      "expression": "4",
+      "output_key": "qty_ftc",
+      "priority": 380,
+      "active": true,
+      "notes": "4 gate frame top caps per gate (2 per GSF \u00d7 2 GSF)"
+    }
+  ],
+  "product_component_selectors": [
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "gate_blade_65",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_size_mm": 65
+      },
+      "qty_key": "qty_gate_blade",
+      "sku_pattern": "XP-6100-GB65-{colour}",
+      "priority": 100,
+      "notes": "Gate blade 65mm \u2014 colour resolved at runtime",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "hd_rail",
+      "component_category": "rail",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_hd_rail",
+      "sku_pattern": "XP-6100-HD6545-{colour}",
+      "priority": 100,
+      "notes": "HD top/bottom rail \u2014 colour resolved at runtime",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "gate_stop_primrose",
+      "component_category": "gate_stop",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "P"
+      },
+      "qty_key": "qty_gate_stop",
+      "sku_pattern": "XP-4200-GSTOP-P",
+      "priority": 10,
+      "notes": "Gate stop \u2014 Primrose (exception pricing)",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "gate_stop_paperbark",
+      "component_category": "gate_stop",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "PB"
+      },
+      "qty_key": "qty_gate_stop",
+      "sku_pattern": "XP-4200-GSTOP-PB",
+      "priority": 10,
+      "notes": "Gate stop \u2014 Paperbark (exception pricing)",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "gate_stop_standard",
+      "component_category": "gate_stop",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_gate_stop",
+      "sku_pattern": "XP-4200-GSTOP-{colour}",
+      "priority": 100,
+      "notes": "Gate stop \u2014 standard colours fallback (checked after P/PB at priority 10)",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "hinge_latch_combo",
+      "component_category": "hardware",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_hinge_latch",
+      "sku_pattern": "{selected_hinge_sku}",
+      "priority": 100,
+      "notes": "Hinge/latch unit \u2014 resolved via hinge_type variable map",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "lock_box_dl",
+      "component_category": "lock_box",
+      "selector_type": "exact",
+      "match_json": {
+        "lock_box_type": "XP-LBOX-DL"
+      },
+      "qty_key": "qty_lock_box",
+      "sku_pattern": "XP-LBOX-DL-{colour}",
+      "priority": 100,
+      "notes": "Lockwood Deadlatch lock box \u2014 colour resolved at runtime",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "lock_box_lset",
+      "component_category": "lock_box",
+      "selector_type": "exact",
+      "match_json": {
+        "lock_box_type": "XP-LBOX-LSET"
+      },
+      "qty_key": "qty_lock_box",
+      "sku_pattern": "XP-LBOX-LSET-{colour}",
+      "priority": 100,
+      "notes": "Lever/Knob Lock Set lock box \u2014 colour resolved at runtime",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "gate_side_frame_65",
+      "component_category": "gate_side_frame",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_size_mm": 65
+      },
+      "qty_key": "qty_gsf",
+      "sku_pattern": "QSG-GATESF-65-{colour}",
+      "priority": 100,
+      "notes": "Gate side frame 65mm \u2014 colour resolved at runtime. Pricing TBD.",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "joiner_block_65",
+      "component_category": "joiner_block",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_size_mm": 65
+      },
+      "qty_key": "qty_jblock_pack",
+      "sku_pattern": "QSG-JBLOCK-65-4PK",
+      "priority": 100,
+      "notes": "Joiner block 65mm 4-pack \u2014 1 per gate. Pricing TBD.",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "screw_covers",
+      "component_category": "hardware",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_sc_pack",
+      "sku_pattern": "QSG-SC-10PK",
+      "priority": 200,
+      "notes": "Screw covers 10-pack \u2014 1 per gate. Pricing TBD.",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "rail_screws",
+      "component_category": "hardware",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "rail_screw_packs_needed",
+      "sku_pattern": "QSG-RS-10PK",
+      "priority": 300,
+      "notes": "Rail screws 10-pack \u2014 qty_rail_screw_packs per gate. Pricing TBD.",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "frame_top_cap_65",
+      "component_category": "frame_top_cap",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_size_mm": 65
+      },
+      "qty_key": "qty_ftc",
+      "sku_pattern": "QSG-FTC-65",
+      "priority": 90,
+      "notes": "Gate frame top cap 65mm \u2014 4 per gate. Pricing TBD.",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "frame_top_cap_50",
+      "component_category": "frame_top_cap",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_size_mm": 50
+      },
+      "qty_key": "qty_ftc",
+      "sku_pattern": "QSG-FTC-50",
+      "priority": 90,
+      "notes": "Gate frame top cap 50mm \u2014 4 per gate. Pricing TBD.",
+      "active": true
+    }
+  ],
+  "product_companion_rules": [
+    {
+      "product_system_type": "QS_GATE",
+      "rule_key": "gate_add_hinge_latch",
+      "trigger_category": "slat",
+      "trigger_match_json": {},
+      "add_category": "hardware",
+      "add_sku_pattern": "{selected_hinge_sku}",
+      "qty_formula": "1",
+      "is_pack": false,
+      "priority": 10,
+      "notes": "Any gate \u2192 add 1x hinge/latch combo (user-selected type)",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_key": "gate_add_gsf",
+      "trigger_category": "slat",
+      "trigger_match_json": {},
+      "add_category": "gate_side_frame",
+      "add_sku_pattern": "QSG-GATESF-{spacing}-{colour}",
+      "qty_formula": "2",
+      "is_pack": false,
+      "priority": 20,
+      "notes": "QS gate \u2192 add 2x QSG gate side frames (replaces discontinued XP-4200-GSF)",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_key": "gate_add_jblock",
+      "trigger_category": "slat",
+      "trigger_match_json": {},
+      "add_category": "joiner_block",
+      "add_sku_pattern": "QSG-JBLOCK-65-4PK",
+      "qty_formula": "1",
+      "is_pack": true,
+      "priority": 30,
+      "notes": "QS gate \u2192 add 1x joiner block 4-pack (65mm \u2014 matching slat_size_mm)",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_key": "gate_add_screw_covers",
+      "trigger_category": "slat",
+      "trigger_match_json": {},
+      "add_category": "hardware",
+      "add_sku_pattern": "QSG-SC-10PK",
+      "qty_formula": "1",
+      "is_pack": true,
+      "priority": 40,
+      "notes": "QS gate \u2192 add 1x screw cover 10-pack",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_key": "gate_add_rail_screws",
+      "trigger_category": "rail",
+      "trigger_match_json": {},
+      "add_category": "hardware",
+      "add_sku_pattern": "QSG-RS-10PK",
+      "qty_formula": "rail_screw_packs_needed",
+      "is_pack": true,
+      "priority": 50,
+      "notes": "QS gate \u2192 add rail screw packs = ROUNDUP((hd_rail_cut x2) x1.01, -1) / 10",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_key": "gate_add_frame_top_caps",
+      "trigger_category": "gate_side_frame",
+      "trigger_match_json": {},
+      "add_category": "accessory",
+      "add_sku_pattern": "QSG-FTC-{frame_cap_size}",
+      "qty_formula": "4",
+      "is_pack": false,
+      "priority": 60,
+      "notes": "QS gate \u2192 add 4x gate frame top caps (2 per GSF \u00d7 2 GSF per gate)",
+      "active": true
+    }
+  ],
+  "product_warnings": [
+    {
+      "product_system_type": "QS_GATE",
+      "warning_key": "gate_width_near_max",
+      "severity": "warning",
+      "condition_json": {
+        "gate_width_mm": {
+          "gt": 1100
+        }
+      },
+      "message": "Gate width is close to the 1200mm maximum. Verify structural adequacy.",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "warning_key": "gsf_pricing_tbd",
+      "severity": "info",
+      "condition_json": {},
+      "message": "Gate side frame (QSG-GATESF), joiner blocks, screw covers, rail screws and frame top caps do not yet have confirmed pricing. Quote will be incomplete until pricing is loaded.",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "warning_key": "discontinued_gsf_replaced",
+      "severity": "info",
+      "condition_json": {},
+      "message": "XP-4200-GSF09 and XP-4200-GSF20 are discontinued. This gate uses QSG-GATESF side frames as replacement.",
+      "active": true
+    }
+  ],
+  "pricing_rules": [
+    {
+      "sku": "XP-6100-GB65-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 55.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 50.93,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 48.72,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 55.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 50.93,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 48.72,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 55.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 50.93,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 48.72,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 55.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 50.93,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 48.72,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 55.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 50.93,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 48.72,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 55.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 50.93,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 48.72,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 55.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 50.93,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 48.72,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 47.05,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 43.27,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 41.4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 55.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 50.93,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 48.72,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 55.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 50.93,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 48.72,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 55.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 50.93,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-GB65-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 48.72,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 124.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 118.33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 112.1,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 124.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 118.33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 112.1,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 124.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 118.33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 112.1,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 124.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 118.33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 112.1,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 124.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 118.33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 112.1,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 124.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 118.33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 112.1,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 124.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 118.33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 112.1,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 113.62,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 107.93,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 102.27,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 124.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 118.33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 112.1,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 124.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 118.33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 112.1,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 124.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 118.33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-6100-HD6545-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 112.1,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.11,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 22.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 20.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.11,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 22.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 20.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.11,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 22.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 20.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.11,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 22.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 20.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.11,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 22.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 20.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.11,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 22.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 20.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.11,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 22.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 20.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 17.38,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 16.16,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 14.77,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 21.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Primrose exception pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 20.38,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Primrose exception pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 18.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Primrose exception pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 21.92,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Paperbark exception pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 20.38,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Paperbark exception pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 18.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Paperbark exception pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.11,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 22.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-4200-GSTOP-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 20.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "ML-TL",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 57.26,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Single tier \u2014 no bulk pricing",
+      "active": true
+    },
+    {
+      "sku": "ML-TL",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Not available",
+      "active": false
+    },
+    {
+      "sku": "ML-TL",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Not available",
+      "active": false
+    },
+    {
+      "sku": "ML-TL-KF-H-FT",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 61.48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Single tier \u2014 no bulk pricing",
+      "active": true
+    },
+    {
+      "sku": "ML-TL-KF-H-FT",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Not available",
+      "active": false
+    },
+    {
+      "sku": "ML-TL-KF-H-FT",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Not available",
+      "active": false
+    },
+    {
+      "sku": "ML-TL-TC-H-AT",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 75.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Single tier \u2014 no bulk pricing",
+      "active": true
+    },
+    {
+      "sku": "ML-TL-TC-H-AT",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Not available",
+      "active": false
+    },
+    {
+      "sku": "ML-TL-TC-H-AT",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Not available",
+      "active": false
+    },
+    {
+      "sku": "ML-TL-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 110.19,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Single tier \u2014 no bulk pricing",
+      "active": true
+    },
+    {
+      "sku": "ML-TL-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Not available",
+      "active": false
+    },
+    {
+      "sku": "ML-TL-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Not available",
+      "active": false
+    },
+    {
+      "sku": "XP-LBOX-DL-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 20.47,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 18.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-DL-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 20.47,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 18.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill pricing",
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 25.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 24.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-LBOX-LSET-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 22.0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    }
+  ]
+}

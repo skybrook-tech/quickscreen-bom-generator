@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "product_components.schema.json",
+  "title": "product_components",
+  "description": "Individual SKU catalog — one row per purchasable hardware item (slat, post, rail, bracket, hinge, spacer pack, etc.). SKUs embed colour/size when relevant (e.g. XP-6100-S65-B = 6100mm slat, 65mm wide, Black). Pricing lives in pricing_rules.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "sku",
+      "name",
+      "category",
+      "unit",
+      "active"
+    ],
+    "properties": {
+      "sku": {
+        "type": "string",
+        "description": "Unique SKU within an organisation. Convention: colour-bearing SKUs end in the short colour code (e.g. -B, -MN, -WG)."
+      },
+      "name": {
+        "type": "string"
+      },
+      "description": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "category": {
+        "type": "string",
+        "description": "Broad category the selector/companion system matches on. Examples: 'slat', 'side_frame', 'cfc_cover', 'centre_support_rail', 'f_section', 'accessory', 'mounting', 'gate_side_frame', 'joiner_block', 'hardware'."
+      },
+      "unit": {
+        "type": "string",
+        "description": "Unit of issue. Common values: 'each', 'length', 'pack'.",
+        "examples": [
+          "each",
+          "length",
+          "pack"
+        ]
+      },
+      "default_price": {
+        "type": [
+          "number",
+          "null"
+        ],
+        "description": "Fallback per-unit price in AUD, used when no pricing_rules row matches. Usually mirrors the tier1 price."
+      },
+      "system_types": {
+        "type": "array",
+        "description": "Which fencing systems this SKU applies to. Must be a subset of ['QSHS','VS','XPL','BAYG','GATE'] per the DB CHECK constraint.",
+        "items": {
+          "type": "string",
+          "enum": [
+            "QSHS",
+            "VS",
+            "XPL",
+            "BAYG",
+            "GATE"
+          ]
+        }
+      },
+      "metadata": {
+        "type": "object"
+      },
+      "active": {
+        "type": "boolean"
+      }
+    }
+  }
+}

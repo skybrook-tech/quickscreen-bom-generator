@@ -1,0 +1,1247 @@
+{
+  "org_slug": "glass-outlet",
+  "products": [
+    {
+      "system_type": "VS",
+      "product_type": "fence",
+      "name": "VS Vertical Slat Fence",
+      "description": "Vertical slat orientation using the same Quickscreen extrusions as QSHS. Vertical slats (XP-6100-S65 / QS-6100-S90) are held by horizontal QS-5000-HORIZ U-channel rails (top and bottom). QS-5800-SF is used as the outer horizontal frame enclosing the U-channel. QS-5800-F is installed vertically at each side of the panel as an edge frame. Same slat SKUs as QSHS \u2014 just oriented vertically (cut to height).",
+      "active": true,
+      "sort_order": 2,
+      "metadata": {
+        "allowedAngles": [90],
+        "options": {
+          "slatSize": ["65", "90"],
+          "slatGap": ["5", "9", "20"],
+          "colour": ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]
+        },
+        "notes": "VS slats (XP-6100-S65, QS-6100-S90), side frames (QS-5800-SF), CFC covers (QS-5800-CFC), F-sections (QS-5800-F), QS-SFC-B caps, and all post components are seeded in qshs.json with system_types including 'VS'. vs.json seeds only QS-5000-HORIZ (VS-unique U-channel)."
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "QS-5000-HORIZ-B",
+      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Black Satin",
+      "description": "32x32mm horizontal U-channel rail for vertical slat screening, 5000mm stock",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 40.87,
+      "system_types": ["VS"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-MN",
+      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Monument Matt",
+      "description": "32x32mm horizontal U-channel rail, 5000mm stock",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 40.87,
+      "system_types": ["VS"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-G",
+      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Woodland Grey",
+      "description": "32x32mm horizontal U-channel rail, 5000mm stock",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 40.87,
+      "system_types": ["VS"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-SM",
+      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Surfmist Matt",
+      "description": "32x32mm horizontal U-channel rail, 5000mm stock",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 40.87,
+      "system_types": ["VS"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-W",
+      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Pearl White",
+      "description": "32x32mm horizontal U-channel rail, 5000mm stock",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 40.87,
+      "system_types": ["VS"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-BS",
+      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Basalt Satin",
+      "description": "32x32mm horizontal U-channel rail, 5000mm stock",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 40.87,
+      "system_types": ["VS"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-D",
+      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Dune Satin",
+      "description": "32x32mm horizontal U-channel rail, 5000mm stock",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 40.87,
+      "system_types": ["VS"],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-M",
+      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Mill",
+      "description": "32x32mm horizontal U-channel rail, 5000mm stock",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 32.4,
+      "system_types": ["VS"],
+      "metadata": {},
+      "active": true
+    }
+  ],
+  "rule_sets": [
+    {
+      "product_system_type": "VS",
+      "name": "VS Fence Rules",
+      "description": "Data-driven VS vertical slat fence BOM rules v4.1",
+      "active": true
+    }
+  ],
+  "rule_versions": [
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "is_current": true,
+      "effective_from": "2026-04-19",
+      "notes": "Initial VS rules based on CTS V4.1 formulas"
+    }
+  ],
+  "product_constraints": [
+    {
+      "product_system_type": "VS",
+      "name": "max_panel_width_mm",
+      "constraint_type": "max",
+      "value_text": "2600",
+      "unit": "mm",
+      "severity": "warning",
+      "applies_when_json": {},
+      "message": "Panel width above 2600mm is not supported; split into additional panels.",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "name": "min_panel_width_mm",
+      "constraint_type": "min",
+      "value_text": "300",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Panel width must be at least 300mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "name": "max_target_height_mm",
+      "constraint_type": "max",
+      "value_text": "2400",
+      "unit": "mm",
+      "severity": "warning",
+      "applies_when_json": {},
+      "message": "Height above 2400mm; verify post specification for wind load.",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "name": "slat_size_options",
+      "constraint_type": "enum",
+      "value_text": "[65,90]",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Slat size must be 65mm or 90mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "name": "post_size_enum",
+      "constraint_type": "enum",
+      "value_text": "[\"50\",\"65\"]",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Post size must be 50mm or 65mm HD",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "name": "post_65hd_no_p_pb",
+      "constraint_type": "enum",
+      "value_text": "[]",
+      "unit": null,
+      "severity": "warning",
+      "applies_when_json": {
+        "post_size": "65"
+      },
+      "message": "65mm HD posts are not available in Primrose or Paperbark. Use 50mm post for these colours.",
+      "active": true
+    }
+  ],
+  "product_variables": [
+    {
+      "product_system_type": "VS",
+      "name": "colour_code",
+      "label": "Colour",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "B",
+      "options_json": [
+        "B",
+        "MN",
+        "G",
+        "SM",
+        "W",
+        "BS",
+        "D",
+        "M",
+        "P",
+        "PB",
+        "S"
+      ],
+      "scope": "job",
+      "sort_order": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "name": "slat_size_mm",
+      "label": "Slat Size",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 65,
+      "options_json": [65, 90],
+      "scope": "job",
+      "sort_order": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "name": "slat_gap_mm",
+      "label": "Slat Gap",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 5,
+      "options_json": [5, 9, 20],
+      "scope": "job",
+      "sort_order": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "name": "mounting_type",
+      "label": "Mounting Type",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "in_ground",
+      "options_json": ["in_ground", "base_plate", "core_drill"],
+      "scope": "run",
+      "sort_order": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "name": "left_boundary_type",
+      "label": "Left Boundary",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "post",
+      "options_json": ["post", "wall"],
+      "scope": "run",
+      "sort_order": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "name": "right_boundary_type",
+      "label": "Right Boundary",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "post",
+      "options_json": ["post", "wall"],
+      "scope": "run",
+      "sort_order": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "name": "panel_width_mm",
+      "label": "Panel Width",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": null,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 70,
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "name": "target_height_mm",
+      "label": "Target Height",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 1800,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 80,
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "name": "post_size",
+      "label": "Post Size",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": "50",
+      "options_json": ["50", "65"],
+      "scope": "run",
+      "sort_order": 45,
+      "active": true
+    }
+  ],
+  "product_validations": [
+    {
+      "product_system_type": "VS",
+      "name": "panel_width_in_range",
+      "expression": "panel_width_mm >= 300 and panel_width_mm <= 2600",
+      "severity": "error",
+      "message": "Panel width must be between 300mm and 2600mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "name": "height_in_range",
+      "expression": "target_height_mm >= 300 and target_height_mm <= 2400",
+      "severity": "warning",
+      "message": "Height outside standard VS range (300\u20132400mm).",
+      "active": true
+    }
+  ],
+  "product_rules": [
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_vertical_slats",
+      "expression": "floor((panel_width_mm - 8 + slat_gap_mm) / (slat_gap_mm + slat_size_mm))",
+      "output_key": "num_vertical_slats",
+      "priority": 10,
+      "active": true,
+      "notes": "VS vertical slat count formula: floor((width - 8 + gap) / (gap + size)). 8mm = channel deduction."
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "slat_cut_mm",
+      "expression": "target_height_mm",
+      "output_key": "slat_cut_mm",
+      "priority": 20,
+      "active": true,
+      "notes": "Vertical slat cut = panel height (full height, slat is XP-6100-S65 / QS-6100-S90 oriented vertically)"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "rail_cut_mm",
+      "expression": "panel_width_mm",
+      "output_key": "rail_cut_mm",
+      "priority": 30,
+      "active": true,
+      "notes": "Top/bottom rail cut = panel width"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_sf_left",
+      "expression": "left_is_product_post",
+      "output_key": "num_sf_left",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_sf_right",
+      "expression": "right_is_product_post",
+      "output_key": "num_sf_right",
+      "priority": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_sf_total",
+      "expression": "num_sf_left + num_sf_right",
+      "output_key": "num_sf_total",
+      "priority": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_fsec_total",
+      "expression": "2",
+      "output_key": "num_fsec_total",
+      "priority": 65,
+      "active": true,
+      "notes": "VS: always 2 QS-5800-F edge frames per panel (one each side, vertical installation)"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "slat_cuts_per_stock",
+      "expression": "floor(5800 / slat_cut_mm)",
+      "output_key": "slat_cuts_per_stock",
+      "priority": 10,
+      "active": true,
+      "notes": "VS vertical slats are QS-5800-F (F-section) cut to height"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "slat_stocks",
+      "expression": "ceil(num_vertical_slats / slat_cuts_per_stock)",
+      "output_key": "slat_stocks",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "rail_cuts_per_stock",
+      "expression": "floor(5000 / rail_cut_mm)",
+      "output_key": "rail_cuts_per_stock",
+      "priority": 30,
+      "active": true,
+      "notes": "Horizontal rails are QS-5000-HORIZ, 5000mm stock"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "rail_stocks",
+      "expression": "ceil(2 / rail_cuts_per_stock)",
+      "output_key": "rail_stocks",
+      "priority": 40,
+      "active": true,
+      "notes": "2 rails per panel: top + bottom"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "sf_stocks",
+      "expression": "num_sf_total > 0 ? ceil(num_sf_total / floor(5800 / target_height_mm)) : 0",
+      "output_key": "sf_stocks",
+      "priority": 50,
+      "active": true,
+      "notes": "QS-5800-SF used as outer horizontal frame (top+bottom) enclosing U-channel; 2 per panel"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "sfc_qty",
+      "expression": "num_sf_total * 2",
+      "output_key": "sfc_qty",
+      "priority": 10,
+      "active": true,
+      "notes": "2 QS-SFC-B caps per side frame"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "screw_packs",
+      "expression": "ceil(ceil(num_vertical_slats * 1.01 / 10) * 10 / 50)",
+      "output_key": "screw_packs",
+      "priority": 20,
+      "active": true,
+      "notes": "VS: ROUNDUP(ROUNDUP(slats*1.01, -1) / 50, 0) \u2014 nearest 10 then 50-packs"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_vertical_slats",
+      "expression": "slat_stocks",
+      "output_key": "qty_slat",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_rails",
+      "expression": "rail_stocks",
+      "output_key": "qty_rail",
+      "priority": 20,
+      "active": true,
+      "notes": "Top + bottom U-channel rails (QS-5000-HORIZ)"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_sf",
+      "expression": "sf_stocks",
+      "output_key": "qty_sf",
+      "priority": 30,
+      "active": true,
+      "notes": "QS-5800-SF side frames for post boundaries"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "fsec_stocks",
+      "expression": "ceil(num_fsec_total / floor(5800 / target_height_mm))",
+      "output_key": "fsec_stocks",
+      "priority": 55,
+      "active": true,
+      "notes": "QS-5800-F cut to height; 5800mm stock"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_fsec",
+      "expression": "fsec_stocks",
+      "output_key": "qty_fsec",
+      "priority": 40,
+      "active": true,
+      "notes": "2x QS-5800-F vertical edge frames per panel (selector: vs_edge_frame)"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_slat_65",
+      "expression": "slat_size_mm == 65 ? slat_stocks : 0",
+      "output_key": "qty_slat_65",
+      "priority": 50,
+      "active": true,
+      "notes": "XP-6100-S65 slat, oriented vertically (same SKU as QSHS, cut to height)"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_slat_90",
+      "expression": "slat_size_mm == 90 ? slat_stocks : 0",
+      "output_key": "qty_slat_90",
+      "priority": 51,
+      "active": true,
+      "notes": "QS-6100-S90 slat, oriented vertically (same SKU as QSHS, cut to height)"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_posts",
+      "expression": "product_post_boundary_count",
+      "output_key": "num_posts",
+      "priority": 5,
+      "active": true,
+      "notes": "Engine provides product_post_boundary_count = number_of_panels + 1 for straight runs; corner posts already counted"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_post_50_2400",
+      "expression": "post_size_num == 50 and target_height_mm <= 2400 ? num_posts : 0",
+      "output_key": "qty_post_50_2400",
+      "priority": 5,
+      "active": true,
+      "notes": "50mm full post 2400mm for screens up to 2400mm tall"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_post_50_6000",
+      "expression": "post_size_num == 50 and target_height_mm > 2400 ? num_posts : 0",
+      "output_key": "qty_post_50_6000",
+      "priority": 5,
+      "active": true,
+      "notes": "50mm full post 6000mm (cut to size) for screens over 2400mm"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_post_65_2400",
+      "expression": "post_size_num == 65 and target_height_mm <= 2400 ? num_posts : 0",
+      "output_key": "qty_post_65_2400",
+      "priority": 5,
+      "active": true,
+      "notes": "65mm HD post 2400mm for screens up to 2400mm \u2014 not available in P/PB"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_post_65_6000",
+      "expression": "post_size_num == 65 and target_height_mm > 2400 ? num_posts : 0",
+      "output_key": "qty_post_65_6000",
+      "priority": 5,
+      "active": true,
+      "notes": "65mm HD post 6000mm (cut to size) for screens over 2400mm \u2014 not available in P/PB"
+    }
+  ],
+  "product_component_selectors": [
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_slat_65",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_size_mm": 65
+      },
+      "qty_key": "qty_slat_65",
+      "sku_pattern": "XP-6100-S65-{colour}",
+      "priority": 100,
+      "notes": "VS 65mm vertical slat \u2014 same XP-6100-S65 extrusion as QSHS, cut to height",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_slat_90",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_size_mm": 90
+      },
+      "qty_key": "qty_slat_90",
+      "sku_pattern": "QS-6100-S90-{colour}",
+      "priority": 100,
+      "notes": "VS 90mm vertical slat \u2014 same QS-6100-S90 extrusion as QSHS, cut to height",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_horiz_rail",
+      "component_category": "rail",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_rail",
+      "sku_pattern": "QS-5000-HORIZ-{colour}",
+      "priority": 100,
+      "notes": "Top/bottom horizontal U-channel rail",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_side_frame",
+      "component_category": "side_frame",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_sf",
+      "sku_pattern": "QS-5800-SF-{colour}",
+      "priority": 100,
+      "notes": "Side frame for post-mounted panel ends",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_edge_frame",
+      "component_category": "f_section",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_fsec",
+      "sku_pattern": "QS-5800-F-{colour}",
+      "priority": 100,
+      "notes": "VS vertical edge frame \u2014 QS-5800-F installed vertically each side; slats/U-channels slot in",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "post_50mm_2400",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_post_50_2400",
+      "sku_pattern": "XP-2400-FP-{colour}",
+      "priority": 100,
+      "notes": "50mm full post 2400mm \u2014 colour resolved at runtime",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "post_50mm_6000",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_post_50_6000",
+      "sku_pattern": "XP-6000-FP-{colour}",
+      "priority": 100,
+      "notes": "50mm full post 6000mm \u2014 colour resolved at runtime. Not available in P/PB.",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "post_65mm_2400",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_post_65_2400",
+      "sku_pattern": "XP-2400-65HD-{colour}",
+      "priority": 100,
+      "notes": "65mm HD post 2400mm \u2014 colour resolved at runtime. Not available in P/PB.",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "post_65mm_6000",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_post_65_6000",
+      "sku_pattern": "XP-6000-65HD-{colour}",
+      "priority": 100,
+      "notes": "65mm HD post 6000mm \u2014 colour resolved at runtime. Not available in P/PB.",
+      "active": true
+    }
+  ],
+  "product_companion_rules": [
+    {
+      "product_system_type": "VS",
+      "rule_key": "vs_sf_add_cfc",
+      "trigger_category": "side_frame",
+      "trigger_match_json": {},
+      "add_category": "cfc_cover",
+      "add_sku_pattern": "QS-5800-CFC-{colour}",
+      "qty_formula": "qty_sf",
+      "is_pack": false,
+      "priority": 10,
+      "notes": "1 CFC per side frame",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_key": "vs_sf_add_sfc",
+      "trigger_category": "side_frame",
+      "trigger_match_json": {},
+      "add_category": "accessory",
+      "add_sku_pattern": "QS-SFC-B",
+      "qty_formula": "sfc_qty",
+      "is_pack": false,
+      "priority": 20,
+      "notes": "2 SF caps per side frame",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_key": "vs_fsec_add_xp_screws",
+      "trigger_category": "f_section",
+      "trigger_match_json": {},
+      "add_category": "hardware",
+      "add_sku_pattern": "XP-SCREWS-{colour}",
+      "qty_formula": "ceil(num_fsec_total * max(3, ceil((target_height_mm - 30) / 900) + 1) / 100)",
+      "is_pack": false,
+      "priority": 30,
+      "notes": "XP-SCREWS 100-pack for fixing F-section to wall/post: MAX(3, ROUNDUP((height-30)/900+1)) screws per F-section",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_key": "vs_post_6000_add_tp_50",
+      "trigger_category": "post",
+      "trigger_match_json": {
+        "post_size": "50",
+        "stock_length_mm": 6000
+      },
+      "add_category": "post_accessory",
+      "add_sku_pattern": "XP-TP-{colour}",
+      "qty_formula": "qty_post_50_6000",
+      "is_pack": false,
+      "priority": 10,
+      "notes": "1x top plate per 6000mm 50mm post (not included in 6000mm post price)",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_key": "vs_post_6000_add_tp_65",
+      "trigger_category": "post",
+      "trigger_match_json": {
+        "post_size": "65",
+        "stock_length_mm": 6000
+      },
+      "add_category": "post_accessory",
+      "add_sku_pattern": "XP-65TP-{colour}",
+      "qty_formula": "qty_post_65_6000",
+      "is_pack": false,
+      "priority": 10,
+      "notes": "1x top plate per 6000mm 65mm HD post",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_key": "vs_base_plate_50_bp",
+      "trigger_category": "post",
+      "trigger_match_json": {
+        "post_size": "50"
+      },
+      "add_category": "post_accessory",
+      "add_sku_pattern": "XP-BP-SET-{colour}",
+      "qty_formula": "mounting_type_is_base_plate ? num_posts : 0",
+      "is_pack": false,
+      "priority": 20,
+      "notes": "1x base plate set per 50mm post when base-plated",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_key": "vs_base_plate_50_dc",
+      "trigger_category": "post",
+      "trigger_match_json": {
+        "post_size": "50"
+      },
+      "add_category": "post_accessory",
+      "add_sku_pattern": "XP-DC-2P-{colour}",
+      "qty_formula": "mounting_type_is_base_plate ? num_posts : 0",
+      "is_pack": false,
+      "priority": 21,
+      "notes": "1x domical cover per 50mm post when base-plated",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_key": "vs_base_plate_65_bp",
+      "trigger_category": "post",
+      "trigger_match_json": {
+        "post_size": "65"
+      },
+      "add_category": "post_accessory",
+      "add_sku_pattern": "XP-65BP-SET-{colour}",
+      "qty_formula": "mounting_type_is_base_plate ? num_posts : 0",
+      "is_pack": false,
+      "priority": 22,
+      "notes": "1x base plate set per 65mm HD post when base-plated",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_key": "vs_base_plate_65_dc",
+      "trigger_category": "post",
+      "trigger_match_json": {
+        "post_size": "65"
+      },
+      "add_category": "post_accessory",
+      "add_sku_pattern": "XP-65DC-2P-{colour}",
+      "qty_formula": "mounting_type_is_base_plate ? num_posts : 0",
+      "is_pack": false,
+      "priority": 23,
+      "notes": "1x domical cover per 65mm HD post when base-plated",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_key": "vs_core_drill_50_dr",
+      "trigger_category": "post",
+      "trigger_match_json": {
+        "post_size": "50"
+      },
+      "add_category": "post_accessory",
+      "add_sku_pattern": "XP-DR-{colour}",
+      "qty_formula": "mounting_type_is_core_drill ? num_posts : 0",
+      "is_pack": false,
+      "priority": 30,
+      "notes": "1x dress ring per 50mm post when core-drilled",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "rule_key": "vs_core_drill_65_dr",
+      "trigger_category": "post",
+      "trigger_match_json": {
+        "post_size": "65"
+      },
+      "add_category": "post_accessory",
+      "add_sku_pattern": "XP-65DR-{colour}",
+      "qty_formula": "mounting_type_is_core_drill ? num_posts : 0",
+      "is_pack": false,
+      "priority": 31,
+      "notes": "1x dress ring per 65mm HD post when core-drilled",
+      "active": true
+    }
+  ],
+  "product_warnings": [
+    {
+      "product_system_type": "VS",
+      "warning_key": "vs_wide_panel_warn",
+      "severity": "warning",
+      "condition_json": {
+        "panel_width_mm": {
+          "gt": 2600
+        }
+      },
+      "message": "Panel exceeds 2600mm recommended maximum; consider splitting into two panels.",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "warning_key": "vs_post_65_no_p_pb",
+      "severity": "warning",
+      "condition_json": {
+        "post_size": "65"
+      },
+      "message": "65mm HD posts are not available in Primrose (P) or Paperbark (PB). Select 50mm post for these colour choices.",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "warning_key": "vs_post_in_ground_no_accessories",
+      "severity": "info",
+      "condition_json": {
+        "mounting_type": "in_ground"
+      },
+      "message": "In-ground (concreted) posts: no base plate, domical cover or dress ring required. Ensure post is set minimum 450mm into concrete footing.",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "warning_key": "vs_post_6000_top_plate",
+      "severity": "info",
+      "condition_json": {
+        "target_height_mm": {
+          "gt": 2400
+        }
+      },
+      "message": "Screens over 2400mm use 6000mm posts (cut to size). Top plate must be purchased separately for 6000mm posts.",
+      "active": true
+    }
+  ],
+  "pricing_rules": [
+    {
+      "sku": "QS-5000-HORIZ-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 40.87,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 38.4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 35.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 40.87,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 38.4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 35.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 40.87,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 38.4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 35.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 40.87,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 38.4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 35.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 40.87,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 38.4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 35.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 40.87,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 38.4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 35.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 40.87,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 38.4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 35.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 32.4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Mill finish",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 30.45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 28.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    }
+  ]
+}

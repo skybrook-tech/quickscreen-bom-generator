@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pricing_rules.schema.json",
+  "title": "pricing_rules",
+  "description": "Per-SKU, per-tier pricing. Each row is a single price point (not a multi-tier row). Non-null 'rule' is an optional math.js expression that must evaluate truthy for this price to apply (e.g. quantity-break: 'qty <= 50'). Null rule = always applies. For each SKU we expect one row per tier (tier1/tier2/tier3) at priority 0; additional priorities can layer quantity breaks.",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "sku",
+      "tier_code",
+      "price",
+      "active"
+    ],
+    "properties": {
+      "sku": {
+        "type": "string",
+        "description": "SKU this price applies to. Must match a product_components.sku in the same org."
+      },
+      "tier_code": {
+        "type": "string",
+        "enum": [
+          "tier1",
+          "tier2",
+          "tier3"
+        ]
+      },
+      "rule": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Optional math.js expression. Null = always applies. Variable 'qty' is available. Example: 'qty <= 50' for a quantity-break row."
+      },
+      "price": {
+        "type": "number",
+        "description": "Per-unit price ex-GST in AUD."
+      },
+      "priority": {
+        "type": "integer",
+        "description": "Lower = tried first. Quantity-break rows usually have higher priority than the always-applies row.",
+        "default": 0
+      },
+      "valid_from": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "format": "date"
+      },
+      "valid_to": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "format": "date"
+      },
+      "notes": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "active": {
+        "type": "boolean"
+      }
+    }
+  }
+}
