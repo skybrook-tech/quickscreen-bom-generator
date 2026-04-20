@@ -20,8 +20,6 @@ export function RunListV3() {
     dispatch({ type: "UPSERT_RUN", run: newRun });
   }
 
-  console.log(payload.runs);
-
   return (
     <div className="space-y-4">
       {payload.runs.map((run, runIdx) => (

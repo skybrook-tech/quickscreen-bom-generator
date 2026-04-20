@@ -32,7 +32,7 @@ export const SEGMENT_TERMINATION_KEYS = {
 
 /** Optional segment variables for fence geometry / posts (expand panel). */
 export const SEGMENT_OPTION_KEYS = {
-  postType: "post_type",
+  postSize: "post_size",
   postWidthMm: "post_width_mm",
 } as const;
 

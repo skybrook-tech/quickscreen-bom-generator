@@ -537,5 +537,6 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
     totalLengthM,
     cornerCount: totalCornerCount,
     runs: runSummaries,
+    boundaries: [], // canonical payload has no boundary context lines
   };
 }

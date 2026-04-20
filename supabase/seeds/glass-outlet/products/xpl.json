@@ -14,6 +14,7 @@
           "slatGap": ["5", "9", "20"],
           "colour": ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]
         },
+        "allowedAngles": [90],
         "post_types": ["1W", "2W", "90"],
         "slat_insertion_depth_1W_2W_mm": 24,
         "slat_insertion_depth_90_mm": 15

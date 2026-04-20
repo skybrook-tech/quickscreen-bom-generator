@@ -19,12 +19,21 @@ interface PendingGate {
 
 interface FenceLayoutCanvasProps {
   onApplied?: (layout: CanvasLayout) => void;
+  onLayoutChange?: (layout: CanvasLayout) => void;
+  onEngineReady?: (engine: ReturnType<typeof initCanvasEngine>) => void;
   postPositions?: PostPosition[] | null;
+  /** Per-segment max panel widths (flat array matching non-boundary segment order). Used for live post preview. */
+  segmentPanelWidths?: number[];
+  allowedAngles?: number[];
 }
 
 export function FenceLayoutCanvas({
   onApplied,
+  onLayoutChange,
+  onEngineReady,
   postPositions,
+  segmentPanelWidths,
+  allowedAngles: allowedAnglesProp,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
@@ -32,19 +41,19 @@ export function FenceLayoutCanvas({
   const { data: products } = useProducts();
   const { gates, dispatch: gateDispatch } = useGates();
 
+  // allowedAngles prop takes priority; fallback to product metadata lookup (v1 path)
   const allowedAngles = useMemo(() => {
+    if (allowedAnglesProp !== undefined) return allowedAnglesProp;
     const product = products?.find(
       (p) => p.system_type === fenceState.systemType,
     );
     return product?.metadata?.allowedAngles ?? [];
-  }, [products, fenceState.systemType]);
+  }, [allowedAnglesProp, products, fenceState.systemType]);
 
-  console.log("allowedAngles", allowedAngles);
-  console.log("products", products);
   const gatesRef = useRef(gates);
   gatesRef.current = gates;
 
-  const [activeTool, setActiveTool] = useState<"draw" | "gate" | "move">(
+  const [activeTool, setActiveTool] = useState<"draw" | "gate" | "move" | "boundary">(
     "draw",
   );
   const [snapEnabled, setSnapEnabled] = useState(true);
@@ -86,13 +95,16 @@ export function FenceLayoutCanvas({
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    engineRef.current = initCanvasEngine(canvasRef.current, {
+    const engine = initCanvasEngine(canvasRef.current, {
       snapToGrid: true,
       gridSize: 20,
       showGrid: true,
       allowedAngles,
       onGatePlaced: handleGatePlaced,
-      onLayoutChange: (layout) => setRunSummaries(layout.runs),
+      onLayoutChange: (layout) => {
+        setRunSummaries(layout.runs);
+        onLayoutChange?.(layout);
+      },
       onGateEdit: (flatSegIdx, gateIdx, gateId) => {
         // Find the gate in GateContext by id (set when gate was first saved)
         const existing = gateId
@@ -102,11 +114,14 @@ export function FenceLayoutCanvas({
         setEditingCanvasGate({ flatSegIdx, gateIdx, gate: existing });
       },
     });
+    engineRef.current = engine;
+    onEngineReady?.(engine);
 
     return () => {
       engineRef.current?.destroy();
       engineRef.current = null;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleGatePlaced]);
 
   useEffect(() => {
@@ -154,6 +169,11 @@ export function FenceLayoutCanvas({
   useEffect(() => {
     engineRef.current?.setPostPositions(postPositions ?? null);
   }, [postPositions]);
+
+  // Sync segmentPanelWidths prop into the canvas engine for live post preview
+  useEffect(() => {
+    engineRef.current?.setSegmentPanelWidths(segmentPanelWidths ?? []);
+  }, [segmentPanelWidths]);
 
   // When expanded changes, trigger a window resize event so the engine's
   // internal onResize handler picks up the new canvas CSS height.
@@ -255,6 +275,8 @@ export function FenceLayoutCanvas({
             "Click on a fence segment to place a gate marker"}
           {activeTool === "move" &&
             "Drag nodes or gates to reposition · Click a label to edit length"}
+          {activeTool === "boundary" &&
+            "Draw non-product context lines (existing fences, walls, property lines) — not included in BOM"}
         </div>
 
         {/* Zoom hint */}

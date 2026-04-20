@@ -9,6 +9,7 @@
       "active": true,
       "sort_order": 2,
       "metadata": {
+        "allowedAngles": [90],
         "options": {
           "slatSize": ["65", "90"],
           "slatGap": ["5", "9", "20"],

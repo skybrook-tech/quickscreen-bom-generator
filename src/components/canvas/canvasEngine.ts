@@ -29,6 +29,8 @@ export interface CanvasLayout {
   totalLengthM: number;
   cornerCount: number; // count of ~90° angles between adjacent segments
   runs: CanvasRunSummary[];
+  /** Non-product boundary lines (neighbouring fences, property lines, etc.). Ignored by canonicalAdapter. */
+  boundaries: CanvasSegment[];
 }
 
 export interface CanvasEngineConfig {
@@ -73,7 +75,7 @@ interface GateMarker {
   gateId?: string; // matches the GateConfig.id in GateContext once the gate is saved
 }
 
-type Tool = "draw" | "gate" | "move";
+type Tool = "draw" | "gate" | "move" | "boundary";
 
 type UndoAction =
   | { type: "ADD_POINT"; runIdx: number }
@@ -87,6 +89,7 @@ interface Run {
   points: Point[];
   finished: boolean;
   segments: Segment[];
+  isBoundary?: boolean;
 }
 
 // ── Scale constant: pixels per metre ──────────────────────────────────────────
@@ -115,6 +118,35 @@ const COLOR = {
   labelBg: "rgba(26,29,46,0.85)",
   snap: "rgba(96,165,250,0.4)",
 };
+
+// Distinct run colors (dark-theme palette, cycling for >8 runs)
+const RUN_COLORS = [
+  "#3b82f6", // blue
+  "#10b981", // emerald
+  "#f43f5e", // rose
+  "#a855f7", // purple
+  "#f97316", // orange
+  "#06b6d4", // cyan
+  "#eab308", // yellow
+  "#84cc16", // lime
+];
+const RUN_COLORS_HOVER = [
+  "#60a5fa",
+  "#34d399",
+  "#fb7185",
+  "#c084fc",
+  "#fb923c",
+  "#22d3ee",
+  "#fde047",
+  "#a3e635",
+];
+
+function getRunColor(nonBoundaryRunIdx: number) {
+  return RUN_COLORS[nonBoundaryRunIdx % RUN_COLORS.length];
+}
+function getRunColorHover(nonBoundaryRunIdx: number) {
+  return RUN_COLORS_HOVER[nonBoundaryRunIdx % RUN_COLORS_HOVER.length];
+}
 
 // ── Utility ───────────────────────────────────────────────────────────────────
 
@@ -383,6 +415,9 @@ export function initCanvasEngine(
   // null = nothing to render.
   let postPositions: Array<{ x: number; y: number; label?: string }> | null =
     null;
+  // Per-segment max panel widths (flat array, index = flat segment index from allSegmentsFlat).
+  // Used by drawComputedPosts to show live post-position preview.
+  let segmentPanelWidths: number[] = [];
 
   // Resize canvas to fill its CSS size
   function resizeCanvas() {
@@ -409,6 +444,7 @@ export function initCanvasEngine(
     }> = [];
     let flat = 0;
     for (let r = 0; r < runs.length; r++) {
+      if (runs[r].isBoundary) continue; // boundary runs excluded from flat index (no gates/hover)
       for (let s = 0; s < runs[r].segments.length; s++) {
         result.push({
           seg: runs[r].segments[s],
@@ -422,7 +458,7 @@ export function initCanvasEngine(
   }
 
   function getLayout(): CanvasLayout {
-    const allSegs = allSegmentsFlat();
+    const allSegs = allSegmentsFlat(); // excludes boundary runs
     const segments: CanvasSegment[] = allSegs.map(({ seg }) => ({
       startX: seg.p1.x,
       startY: seg.p1.y,
@@ -442,8 +478,25 @@ export function initCanvasEngine(
       });
     });
 
-    // Build per-run summaries
-    const runSummaries: CanvasRunSummary[] = runs.map((run, ri) => {
+    // Boundary segments (non-product context lines)
+    const boundaries: CanvasSegment[] = [];
+    for (const run of runs) {
+      if (!run.isBoundary) continue;
+      for (const seg of run.segments) {
+        boundaries.push({
+          startX: seg.p1.x,
+          startY: seg.p1.y,
+          endX: seg.p2.x,
+          endY: seg.p2.y,
+          lengthMM: seg.lengthMM,
+          angleDeg: angleDeg(seg.p1, seg.p2),
+        });
+      }
+    }
+
+    // Build per-run summaries (non-boundary runs only)
+    const nonBoundaryRuns = runs.filter((r) => !r.isBoundary);
+    const runSummaries: CanvasRunSummary[] = nonBoundaryRuns.map((run, ri) => {
       const runLengthM =
         run.segments.reduce((sum, s) => sum + s.lengthMM, 0) / 1000;
       const runCorners = countCorners([run]);
@@ -451,7 +504,7 @@ export function initCanvasEngine(
       // Compute the flat segment index offset for this run's first segment
       let flatOffset = 0;
       for (let r = 0; r < ri; r++) {
-        flatOffset += runs[r].segments.length;
+        flatOffset += nonBoundaryRuns[r].segments.length;
       }
       run.segments.forEach((seg, si) => {
         seg.gates.forEach((g) => {
@@ -473,9 +526,10 @@ export function initCanvasEngine(
     return {
       segments,
       gates,
-      totalLengthM: totalLengthM(runs),
-      cornerCount: countCorners(runs),
+      totalLengthM: totalLengthM(nonBoundaryRuns),
+      cornerCount: countCorners(nonBoundaryRuns),
       runs: runSummaries,
+      boundaries,
     };
   }
 
@@ -516,10 +570,59 @@ export function initCanvasEngine(
       drawGrid(W, H);
     }
 
-    // All segments
+    // All segments — coloured by run
     const allSegs = allSegmentsFlat();
-    for (const { seg, flatIdx } of allSegs) {
-      drawSegment(seg, flatIdx === hoveredSegIdx);
+    // Build runIdx → non-boundary run index (for color lookup)
+    const runColorIdx = new Map<number, number>();
+    {
+      let nbIdx = 0;
+      for (let ri = 0; ri < runs.length; ri++) {
+        if (!runs[ri].isBoundary) runColorIdx.set(ri, nbIdx++);
+      }
+    }
+    for (const { seg, flatIdx, runIdx } of allSegs) {
+      const colorIdx = runColorIdx.get(runIdx) ?? 0;
+      drawSegment(seg, flatIdx === hoveredSegIdx, getRunColor(colorIdx), getRunColorHover(colorIdx));
+    }
+
+    // Boundary runs — dashed gray lines (non-product context lines)
+    {
+      const hasActiveBoundary =
+        tool === "boundary" &&
+        activeRunIdx >= 0 &&
+        runs[activeRunIdx]?.isBoundary &&
+        !runs[activeRunIdx].finished;
+      for (const run of runs) {
+        if (!run.isBoundary) continue;
+        if (run.segments.length === 0) continue;
+        ctx.save();
+        ctx.setLineDash([8 / zoom, 4 / zoom]);
+        ctx.strokeStyle = "#6b7280";
+        ctx.lineWidth = 2 / zoom;
+        for (const seg of run.segments) {
+          ctx.beginPath();
+          ctx.moveTo(seg.p1.x, seg.p1.y);
+          ctx.lineTo(seg.p2.x, seg.p2.y);
+          ctx.stroke();
+        }
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+      // Preview line for active boundary run
+      if (hasActiveBoundary) {
+        const run = runs[activeRunIdx];
+        const lastPt = run.points[run.points.length - 1];
+        ctx.save();
+        ctx.setLineDash([6 / zoom, 4 / zoom]);
+        ctx.strokeStyle = "rgba(107,114,128,0.5)";
+        ctx.lineWidth = 2 / zoom;
+        ctx.beginPath();
+        ctx.moveTo(lastPt.x, lastPt.y);
+        ctx.lineTo(mouseCanvas.x, mouseCanvas.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
     }
 
     // Preview line (while drawing)
@@ -614,15 +717,19 @@ export function initCanvasEngine(
     // Node labels (A, B, C…) and corner angle annotations
     if (zoom > 0.3) {
       ctx.save();
+      let nbLabelIdx = 0;
       for (const run of runs) {
+        if (run.isBoundary) continue;
+        const colorIdx = nbLabelIdx++;
         const pts = run.points;
         if (pts.length < 2) continue;
+        const runCol = getRunColor(colorIdx);
         // Node labels
         for (let i = 0; i < pts.length; i++) {
           const label = String.fromCharCode(65 + i);
           const fs = Math.max(8, 10 / zoom);
           ctx.font = `${fs}px sans-serif`;
-          ctx.fillStyle = "#60a5fa";
+          ctx.fillStyle = runCol;
           ctx.textAlign = "left";
           ctx.textBaseline = "bottom";
           ctx.fillText(
@@ -651,6 +758,11 @@ export function initCanvasEngine(
     // Post position squares (from BOM result) — rendered on top of fence lines
     if (postPositions !== null && zoom > 0.2) {
       drawPostPositions();
+    }
+
+    // Computed post positions from per-segment panel widths — live preview
+    if (segmentPanelWidths.length > 0 && zoom > 0.2) {
+      drawComputedPosts();
     }
 
     ctx.restore();
@@ -685,6 +797,40 @@ export function initCanvasEngine(
       }
       ctx.restore();
     }
+  }
+
+  function drawComputedPosts() {
+    if (segmentPanelWidths.length === 0) return;
+    const squareSize = 6 / zoom;
+    const half = squareSize / 2;
+    const borderWidth = 1.5 / zoom;
+    ctx.save();
+    let flatIdx = 0;
+    for (const run of runs) {
+      if (run.isBoundary || !run.finished) continue;
+      for (const seg of run.segments) {
+        const maxW = segmentPanelWidths[flatIdx] ?? 0;
+        flatIdx++;
+        if (maxW <= 0 || seg.lengthMM <= 0) continue;
+        const numPanels = Math.ceil(seg.lengthMM / maxW);
+        const panelWidthMm = seg.lengthMM / numPanels;
+        for (let i = 0; i <= numPanels; i++) {
+          const t = (i * panelWidthMm) / seg.lengthMM;
+          const px = seg.p1.x + t * (seg.p2.x - seg.p1.x);
+          const py = seg.p1.y + t * (seg.p2.y - seg.p1.y);
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(
+            px - half - borderWidth,
+            py - half - borderWidth,
+            squareSize + borderWidth * 2,
+            squareSize + borderWidth * 2,
+          );
+          ctx.fillStyle = "#f59e0b";
+          ctx.fillRect(px - half, py - half, squareSize, squareSize);
+        }
+      }
+    }
+    ctx.restore();
   }
 
   function drawGrid(W: number, H: number) {
@@ -725,9 +871,9 @@ export function initCanvasEngine(
     ctx.restore();
   }
 
-  function drawSegment(seg: Segment, hovered: boolean) {
+  function drawSegment(seg: Segment, hovered: boolean, runColor = COLOR.segment, runColorHover = COLOR.segmentHover) {
     const lw = 3 / zoom;
-    const segColor = hovered ? COLOR.segmentHover : COLOR.segment;
+    const segColor = hovered ? runColorHover : runColor;
     const segLw = hovered ? lw * 1.5 : lw;
 
     // Build sorted list of gate gaps as (tStart, tEnd) pairs
@@ -1140,6 +1286,39 @@ export function initCanvasEngine(
       return;
     }
 
+    if (tool === "boundary") {
+      if (activeRunIdx === -1 || runs[activeRunIdx]?.finished) {
+        const newRun: Run = {
+          points: [worldPt],
+          finished: false,
+          segments: [],
+          isBoundary: true,
+        };
+        undoStack.push({ type: "ADD_RUN" });
+        runs.push(newRun);
+        activeRunIdx = runs.length - 1;
+      } else {
+        const run = runs[activeRunIdx];
+        const prevRunIdx = activeRunIdx;
+        run.points.push(worldPt);
+        run.segments = buildSegmentsFromPoints(run.points, scale);
+        run.finished = true;
+        notifyChange();
+        const newRun: Run = {
+          points: [{ ...worldPt }],
+          finished: false,
+          segments: [],
+          isBoundary: true,
+        };
+        runs.push(newRun);
+        const newRunIdx = runs.length - 1;
+        activeRunIdx = newRunIdx;
+        undoStack.push({ type: "CHAIN_POINT", prevRunIdx, newRunIdx });
+      }
+      scheduleRedraw();
+      return;
+    }
+
     if (tool === "gate") {
       const flatIdx = hitTestSegments(canvasPt, 12);
       if (flatIdx >= 0) {
@@ -1505,7 +1684,7 @@ export function initCanvasEngine(
 
   function setTool(t: Tool) {
     tool = t;
-    if (t === "draw") {
+    if (t === "draw" || t === "boundary") {
       canvas.style.cursor = "crosshair";
     } else {
       canvas.style.cursor = "default";
@@ -1546,6 +1725,33 @@ export function initCanvasEngine(
     const W = canvas.getBoundingClientRect().width || canvas.width || 800;
     zoom = W / (targetMetres * scale);
     pan = { x: 0, y: 0 };
+    scheduleRedraw();
+  }
+
+  /** Zoom and pan so all drawn runs fill the canvas with padding. */
+  function fitToContent() {
+    const allPts = runs.flatMap((r) => r.points);
+    if (allPts.length === 0) {
+      fitToWidth(50);
+      return;
+    }
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    for (const p of allPts) {
+      if (p.x < minX) minX = p.x;
+      if (p.y < minY) minY = p.y;
+      if (p.x > maxX) maxX = p.x;
+      if (p.y > maxY) maxY = p.y;
+    }
+    const W = canvas.getBoundingClientRect().width || canvas.width || 800;
+    const H = canvas.getBoundingClientRect().height || canvas.height || 420;
+    const pad = 80; // px
+    const contentW = maxX - minX || 1;
+    const contentH = maxY - minY || 1;
+    zoom = Math.min((W - pad * 2) / contentW, (H - pad * 2) / contentH, 8);
+    pan = {
+      x: W / 2 - zoom * (minX + contentW / 2),
+      y: H / 2 - zoom * (minY + contentH / 2),
+    };
     scheduleRedraw();
   }
 
@@ -1665,6 +1871,87 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  /** Set per-segment max panel widths (flat array, index matches allSegmentsFlat order). */
+  function setSegmentPanelWidths(widths: number[]) {
+    segmentPanelWidths = widths;
+    scheduleRedraw();
+  }
+
+  /**
+   * Replace the current canvas state with the runs described by `layout`.
+   * Used for form-driven geometry changes (bidirectional sync).
+   * Boundary runs in `layout.boundaries` are also restored.
+   */
+  function loadLayout(layout: CanvasLayout) {
+    const newRuns: Run[] = [];
+
+    // Group flat segments into runs using totalLengthM as slice boundaries
+    let segIdx = 0;
+    for (const runSummary of layout.runs) {
+      const targetLengthMm = runSummary.totalLengthM * 1000;
+      let cumLength = 0;
+      const runSegs: CanvasSegment[] = [];
+      while (segIdx < layout.segments.length) {
+        const cseg = layout.segments[segIdx];
+        runSegs.push(cseg);
+        cumLength += cseg.lengthMM;
+        segIdx++;
+        if (Math.abs(cumLength - targetLengthMm) < 1) break;
+      }
+      if (runSegs.length === 0) continue;
+
+      const points: Point[] = [
+        { x: runSegs[0].startX, y: runSegs[0].startY },
+      ];
+      const segments: Segment[] = runSegs.map((cseg) => {
+        const p1 = { x: cseg.startX, y: cseg.startY };
+        const p2 = { x: cseg.endX, y: cseg.endY };
+        points.push({ ...p2 });
+        return { p1, p2, lengthMM: cseg.lengthMM, gates: [] };
+      });
+      // Remove duplicated intermediate points (each segment pushed its p2)
+      // points is [run start, seg0.end, seg1.end, ...] which is correct as-is
+      newRuns.push({ points, segments, finished: true });
+    }
+
+    // Restore boundary runs
+    for (const cseg of layout.boundaries ?? []) {
+      const p1 = { x: cseg.startX, y: cseg.startY };
+      const p2 = { x: cseg.endX, y: cseg.endY };
+      newRuns.push({
+        points: [p1, p2],
+        segments: [{ p1, p2, lengthMM: cseg.lengthMM, gates: [] }],
+        finished: true,
+        isBoundary: true,
+      });
+    }
+
+    // Re-attach gates by flat segment index (non-boundary runs only)
+    let flatIdx = 0;
+    for (const run of newRuns) {
+      if (run.isBoundary) continue;
+      for (const seg of run.segments) {
+        const segsGates = layout.gates.filter(
+          (g) => g.segmentIndex === flatIdx,
+        );
+        seg.gates = segsGates.map((g) => ({
+          t: g.positionOnSegment,
+          widthMM: g.widthMM,
+        }));
+        flatIdx++;
+      }
+    }
+
+    runs = newRuns;
+    activeRunIdx = -1;
+    undoStack = [];
+    // Do NOT call notifyChange() here — this is a form→canvas push.
+    // The caller already has the latest data in context; firing onLayoutChange
+    // would trigger handleLiveSync which dispatches SET_PAYLOAD with fresh IDs,
+    // causing all RunCard components to remount and lose their expanded state.
+    scheduleRedraw();
+  }
+
   function destroy() {
     cancelAnimationFrame(animFrame);
     canvas.removeEventListener("mousedown", onMouseDown);
@@ -1710,6 +1997,9 @@ export function initCanvasEngine(
     updateGateWidth,
     setGateId,
     setPostPositions,
+    setSegmentPanelWidths,
+    loadLayout,
     fitToWidth,
+    fitToContent,
   };
 }

@@ -7,6 +7,8 @@ import {
   RotateCcw,
   Maximize2,
   Minimize2,
+  Minus,
+  Crosshair,
 } from "lucide-react";
 import type { RefObject } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
@@ -15,8 +17,8 @@ type Engine = ReturnType<typeof initCanvasEngine>;
 
 interface CanvasToolbarProps {
   engineRef: RefObject<Engine | null>;
-  activeTool: "draw" | "gate" | "move";
-  onToolChange: (t: "draw" | "gate" | "move") => void;
+  activeTool: "draw" | "gate" | "move" | "boundary";
+  onToolChange: (t: "draw" | "gate" | "move" | "boundary") => void;
   snapEnabled: boolean;
   onSnapToggle: (v: boolean) => void;
   showGrid: boolean;
@@ -36,7 +38,7 @@ export function CanvasToolbar({
   expanded,
   onToggleExpand,
 }: CanvasToolbarProps) {
-  const handleTool = (t: "draw" | "gate" | "move") => {
+  const handleTool = (t: "draw" | "gate" | "move" | "boundary") => {
     engineRef.current?.setTool(t);
     onToolChange(t);
   };
@@ -78,6 +80,14 @@ export function CanvasToolbar({
       >
         <Move size={13} /> Edit
       </button>
+      <button
+        type="button"
+        title="Draw a non-product boundary line (existing fence, wall, property line)"
+        className={btnCls(activeTool === "boundary")}
+        onClick={() => handleTool("boundary")}
+      >
+        <Minus size={13} /> Boundary
+      </button>
 
       <div className="w-px h-4 bg-brand-border" />
 
@@ -97,6 +107,14 @@ export function CanvasToolbar({
         onClick={() => engineRef.current?.clear()}
       >
         <Trash2 size={13} /> Clear
+      </button>
+      <button
+        type="button"
+        title="Centre view on drawn fence"
+        className={iconBtn}
+        onClick={() => engineRef.current?.fitToContent()}
+      >
+        <Crosshair size={13} /> Centre
       </button>
       <button
         type="button"
