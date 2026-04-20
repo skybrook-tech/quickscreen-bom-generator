@@ -7,6 +7,7 @@ import {
   canonicalToCanvasLayout,
   mergeCanonicalPreservingSegmentMeta,
 } from '../canvas/canonicalAdapter';
+import { calcRunStats } from '../../lib/runStats';
 import type { CanvasLayout } from '../canvas/canvasEngine';
 import type { initCanvasEngine } from '../canvas/canvasEngine';
 
@@ -44,6 +45,26 @@ export function LayoutCanvasV3() {
         .filter((s) => s.segmentKind !== "gate_opening")
         .map((s) => Number(s.variables?.max_panel_width_mm ?? jobMax)),
     );
+  }, [payload]);
+
+  // Pre-computed stats text using the shared calcRunStats utility.
+  // Pushed to the canvas engine overlay so it always matches the form's RunCard display.
+  const runStatsTexts = useMemo(() => {
+    if (!payload) return { global: '', perRun: [] as string[] };
+    const jobMax = Number(payload.variables.max_panel_width_mm ?? 2600);
+    const perRun = payload.runs.map((run, i) => {
+      const s = calcRunStats(run, jobMax);
+      return `Run ${i + 1}  ·  ${s.fenceSegments} ${s.fenceSegments === 1 ? 'seg' : 'segs'}  ·  ${s.panels} ${s.panels === 1 ? 'panel' : 'panels'}  ·  ${s.posts} ${s.posts === 1 ? 'post' : 'posts'}  ·  ${s.corners} ${s.corners === 1 ? 'corner' : 'corners'}`;
+    });
+    const totals = payload.runs.reduce(
+      (acc, run) => {
+        const s = calcRunStats(run, jobMax);
+        return { panels: acc.panels + s.panels, posts: acc.posts + s.posts, corners: acc.corners + s.corners, segs: acc.segs + s.fenceSegments };
+      },
+      { panels: 0, posts: 0, corners: 0, segs: 0 },
+    );
+    const global = `${payload.runs.length} ${payload.runs.length === 1 ? 'run' : 'runs'}  ·  ${totals.segs} ${totals.segs === 1 ? 'seg' : 'segs'}  ·  ${totals.panels} ${totals.panels === 1 ? 'panel' : 'panels'}  ·  ${totals.posts} ${totals.posts === 1 ? 'post' : 'posts'}  ·  ${totals.corners} ${totals.corners === 1 ? 'corner' : 'corners'}`;
+    return { global, perRun };
   }, [payload]);
 
   // Canvas → form (live): convert canvas layout to canonical and dispatch
@@ -102,6 +123,7 @@ export function LayoutCanvasV3() {
         allowedAngles={allowedAngles}
         segmentPanelWidths={segmentPanelWidths}
         jobPanelWidth={Number(payload?.variables.max_panel_width_mm) || 2600}
+        runStatsTexts={runStatsTexts}
       />
     </div>
   );

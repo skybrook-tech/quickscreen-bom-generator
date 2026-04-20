@@ -3,6 +3,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
 import { GATE_SEGMENT_STUB_KEYS } from "../../lib/segmentTermination";
+import { calcRunStats } from "../../lib/runStats";
 import { Button } from "../shared/Button";
 import { SegmentRow } from "./SegmentRow";
 
@@ -22,12 +23,7 @@ export function RunCard({ run, runIdx }: Props) {
 
   const jobMax = Number(state.payload?.variables.max_panel_width_mm ?? 2600);
 
-  const totalPanels = run.segments
-    .filter((s) => s.segmentKind !== "gate_opening")
-    .reduce((acc, s) => {
-      const segMax = Number(s.variables?.max_panel_width_mm ?? jobMax);
-      return acc + Math.ceil((s.segmentWidthMm ?? 0) / segMax);
-    }, 0);
+  const stats = calcRunStats(run, jobMax);
 
   function upsertSegment(segment: CanonicalSegment) {
     dispatch({ type: "UPSERT_SEGMENT", runId: run.runId, segment });
@@ -39,7 +35,7 @@ export function RunCard({ run, runIdx }: Props) {
       sortOrder: run.segments.length + 1,
       segmentKind: "panel",
       segmentWidthMm: jobMax,
-      targetHeightMm: 1800,
+      targetHeightMm: Number(state.payload?.variables.target_height_mm ?? 1800),
     });
   }
 
@@ -72,7 +68,8 @@ export function RunCard({ run, runIdx }: Props) {
         <span>Corners: {run.corners.length}</span>
         <span>Segments: {run.segments.length}</span>
         <span>Total length: {(calcTotalLength(run) / 1000).toFixed(2)}m</span>
-        {totalPanels > 0 && <span>Total panels: {totalPanels}</span>}
+        {stats.panels > 0 && <span>Panels: {stats.panels}</span>}
+        {stats.posts > 0 && <span>Posts: {stats.posts}</span>}
       </div>
 
       {run.segments.length === 0 && (

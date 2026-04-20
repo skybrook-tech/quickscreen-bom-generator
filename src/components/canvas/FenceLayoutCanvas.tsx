@@ -27,6 +27,8 @@ interface FenceLayoutCanvasProps {
   /** Job-level default panel width (mm). Used for the in-progress draw preview. */
   jobPanelWidth?: number;
   allowedAngles?: number[];
+  /** Pre-computed stats text from calcRunStats — keeps canvas overlay in sync with form. */
+  runStatsTexts?: { global: string; perRun: string[] };
 }
 
 export function FenceLayoutCanvas({
@@ -37,12 +39,19 @@ export function FenceLayoutCanvas({
   segmentPanelWidths,
   jobPanelWidth,
   allowedAngles: allowedAnglesProp,
+  runStatsTexts,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
   const { state: fenceState, dispatch: fenceDispatch } = useFenceConfig();
   const { data: products } = useProducts();
   const { gates, dispatch: gateDispatch } = useGates();
+
+  // Ref-wrap onLayoutChange so the engine (initialised once) always calls the current prop.
+  // Without this, the closure captured at initCanvasEngine time goes stale when the parent
+  // re-renders with a new handleLiveSync that closes over updated payload variables.
+  const onLayoutChangeRef = useRef(onLayoutChange);
+  useEffect(() => { onLayoutChangeRef.current = onLayoutChange; });
 
   // allowedAngles prop takes priority; fallback to product metadata lookup (v1 path)
   const allowedAngles = useMemo(() => {
@@ -106,7 +115,7 @@ export function FenceLayoutCanvas({
       onGatePlaced: handleGatePlaced,
       onLayoutChange: (layout) => {
         setRunSummaries(layout.runs);
-        onLayoutChange?.(layout);
+        onLayoutChangeRef.current?.(layout);
       },
       onGateEdit: (flatSegIdx, gateIdx, gateId) => {
         // Find the gate in GateContext by id (set when gate was first saved)
@@ -182,6 +191,12 @@ export function FenceLayoutCanvas({
   useEffect(() => {
     engineRef.current?.setJobPanelWidth(jobPanelWidth ?? null);
   }, [jobPanelWidth]);
+
+  // Sync pre-computed run stats text into the engine overlay (shared with RunCard)
+  useEffect(() => {
+    if (!runStatsTexts) return;
+    engineRef.current?.setRunStatsTexts(runStatsTexts.global, runStatsTexts.perRun);
+  }, [runStatsTexts]);
 
   // When expanded changes, trigger a window resize event so the engine's
   // internal onResize handler picks up the new canvas CSS height.

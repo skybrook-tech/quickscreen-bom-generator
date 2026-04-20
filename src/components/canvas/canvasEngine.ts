@@ -434,6 +434,10 @@ export function initCanvasEngine(
   let segmentPanelWidths: number[] = [];
   // Job-level default panel width — used to draw post previews on the in-progress segment.
   let jobPanelWidthMm: number | null = null;
+  // Pre-computed stats text pushed from the canonical payload (via LayoutCanvasV3 → FenceLayoutCanvas).
+  // Using the canonical data ensures the overlay always matches the form's calcRunStats output.
+  let pushedStatsGlobal = '';
+  let pushedStatsPerRun: string[] = [];
 
   // Resize canvas to fill its CSS size
   function resizeCanvas() {
@@ -818,8 +822,22 @@ export function initCanvasEngine(
 
     let line: string;
 
-    if (hoveredSegIdx >= 0 && hoveredSegIdx < allSegs.length) {
-      // Hover mode — identify the run containing the hovered segment
+    // Use pre-computed canonical stats if available (pushed from LayoutCanvasV3 via calcRunStats).
+    // Falls back to self-computed values when the overlay hasn't been populated yet.
+    if (hoveredSegIdx >= 0 && hoveredSegIdx < allSegs.length && pushedStatsPerRun.length > 0) {
+      // Hover mode — identify the non-boundary run index containing the hovered segment
+      const { runIdx } = allSegs[hoveredSegIdx];
+      let nbIdx = 0;
+      for (let ri = 0; ri < runs.length; ri++) {
+        if (runs[ri].isBoundary) continue;
+        if (ri === runIdx) break;
+        nbIdx++;
+      }
+      line = pushedStatsPerRun[nbIdx] ?? pushedStatsGlobal;
+    } else if (hoveredSegIdx < 0 && pushedStatsGlobal) {
+      line = pushedStatsGlobal;
+    } else if (hoveredSegIdx >= 0 && hoveredSegIdx < allSegs.length) {
+      // Fallback: self-compute (no pushed stats yet)
       const { runIdx } = allSegs[hoveredSegIdx];
       const run = runs[runIdx];
       let nbIdx = 0;
@@ -835,18 +853,18 @@ export function initCanvasEngine(
       let panels = 0;
       for (let si = 0; si < segs; si++) {
         const maxW = segmentPanelWidths[flatStart + si] ?? 0;
-        if (maxW > 0) panels += Math.ceil(run.segments[si].lengthMM / maxW);
+        if (maxW > 0) panels += Math.ceil(Math.round(run.segments[si].lengthMM) / maxW);
       }
       line = `Run ${nbIdx + 1}  ·  ${segs} ${segs === 1 ? "seg" : "segs"}  ·  ${panels} ${panels === 1 ? "panel" : "panels"}  ·  ${corners} ${corners === 1 ? "corner" : "corners"}`;
     } else {
-      // No hover — global totals
+      // Fallback: self-compute global totals (no pushed stats yet)
       const totalSegs = allSegs.length;
       const totalCorners = countCorners(nbRuns);
       let totalPanels = 0;
       for (let i = 0; i < allSegs.length; i++) {
         const maxW = segmentPanelWidths[i] ?? 0;
         if (maxW > 0)
-          totalPanels += Math.ceil(allSegs[i].seg.lengthMM / maxW);
+          totalPanels += Math.ceil(Math.round(allSegs[i].seg.lengthMM) / maxW);
       }
       line = `${nbRuns.length} ${nbRuns.length === 1 ? "run" : "runs"}  ·  ${totalSegs} ${totalSegs === 1 ? "seg" : "segs"}  ·  ${totalPanels} ${totalPanels === 1 ? "panel" : "panels"}  ·  ${totalCorners} ${totalCorners === 1 ? "corner" : "corners"}`;
     }
@@ -2009,6 +2027,17 @@ export function initCanvasEngine(
   }
 
   /**
+   * Push pre-computed stats text from the canonical payload.
+   * `global` is shown when no segment is hovered. `perRun[i]` is shown when the
+   * user hovers over a segment in run i (non-boundary run index).
+   */
+  function setRunStatsTexts(global: string, perRun: string[]) {
+    pushedStatsGlobal = global;
+    pushedStatsPerRun = perRun;
+    scheduleRedraw();
+  }
+
+  /**
    * Replace the current canvas state with the runs described by `layout`.
    * Used for form-driven geometry changes (bidirectional sync).
    * Boundary runs in `layout.boundaries` are also restored.
@@ -2132,6 +2161,7 @@ export function initCanvasEngine(
     setPostPositions,
     setSegmentPanelWidths,
     setJobPanelWidth,
+    setRunStatsTexts,
     loadLayout,
     fitToWidth,
     fitToContent,
