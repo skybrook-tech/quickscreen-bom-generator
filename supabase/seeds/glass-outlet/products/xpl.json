@@ -841,7 +841,7 @@
       "data_type": "number",
       "unit": "mm",
       "required": true,
-      "default_value_json": null,
+      "default_value_json": 1800,
       "options_json": [],
       "scope": "segment",
       "sort_order": 60,

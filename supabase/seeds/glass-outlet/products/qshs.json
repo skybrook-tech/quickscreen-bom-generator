@@ -2964,7 +2964,7 @@
       "data_type": "number",
       "unit": "mm",
       "required": true,
-      "default_value_json": null,
+      "default_value_json": 1800,
       "options_json": [],
       "scope": "segment",
       "sort_order": 80,
@@ -3014,9 +3014,9 @@
     {
       "product_system_type": "QSHS",
       "name": "segment_width_in_range",
-      "expression": "segment_width_mm >= 300 and segment_width_mm <= 20000",
+      "expression": "segment_width_mm >= 300 and segment_width_mm <= 100000",
       "severity": "error",
-      "message": "Segment width must be between 300mm and 20000mm.",
+      "message": "Segment width must be between 300mm and 100000mm.",
       "active": true
     },
     {

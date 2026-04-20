@@ -15,7 +15,7 @@ import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { useProductVariables } from "../hooks/useProductVariables";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type {
   CalculatorBOMResult,
   BOMLineItem,
@@ -33,6 +33,30 @@ function CalculatorV3Content() {
     payload?.productCode ?? null,
     "job",
   );
+
+  // Seed payload.variables with product_variables defaults for any key not yet set.
+  // Runs once per product selection (dep on productCode) so user edits are never overwritten.
+  useEffect(() => {
+    if (!payload || jobFields.length === 0) return;
+    const missing: Record<string, string | number | boolean> = {};
+    for (const f of jobFields) {
+      if (!(f.field_key in payload.variables) && f.default_value_json != null) {
+        missing[f.field_key] = f.default_value_json as
+          | string
+          | number
+          | boolean;
+      }
+    }
+    if (Object.keys(missing).length === 0) return;
+    dispatch({
+      type: "SET_PAYLOAD",
+      payload: {
+        ...payload,
+        variables: { ...missing, ...payload.variables },
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobFields, payload?.productCode]);
 
   function handleFieldChange(key: string, value: string | number | boolean) {
     if (!payload) return;
@@ -110,7 +134,7 @@ function CalculatorV3Content() {
 
   return (
     <AppShell>
-      <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
         {/* Product Selection */}
         <AccordionSection title="Product" defaultOpen>
           <ProductSelectV3 />
