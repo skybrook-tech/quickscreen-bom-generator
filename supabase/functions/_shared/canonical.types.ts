@@ -24,6 +24,14 @@ export interface CanonicalRun {
   rightBoundary: CanonicalBoundary;
   segments: CanonicalSegment[];
   corners: CanonicalCorner[];
+  /**
+   * Canvas pixel coordinates of the run's endpoint chain: [start, seg0_end, seg1_end, …].
+   * Stored by the canvas adapter so the drawn angles and positions are preserved
+   * when the layout is reconstructed. Not used by the BOM engine.
+   */
+  geometry?: {
+    points: Array<{ x: number; y: number }>;
+  };
 }
 
 export interface CanonicalBoundary {

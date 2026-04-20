@@ -68,8 +68,13 @@ export function LayoutCanvasV3() {
   useEffect(() => {
     if (!engineRef.current || !payload) return;
     if (sourceRef.current === 'canvas') {
-      // This change was triggered by the canvas — don't push back
+      // This change was triggered by the canvas — don't push back.
+      // Update prevGeomKeyRef so the next variable-only form change doesn't
+      // falsely see a key mismatch and call loadLayout.
       sourceRef.current = 'form';
+      prevGeomKeyRef.current = payload.runs
+        .map((r) => r.segments.map((s) => s.segmentId).join(','))
+        .join('|');
       return;
     }
     // Compute a fingerprint of just the segment IDs. If only variables changed

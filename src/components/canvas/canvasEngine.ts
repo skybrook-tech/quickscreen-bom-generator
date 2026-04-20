@@ -389,6 +389,19 @@ export function initCanvasEngine(
   let showGrid = config.showGrid;
   let gridSize = config.gridSize;
   let allowedAngles: number[] = config.allowedAngles ?? [];
+  let shiftDown = false;
+
+  /**
+   * Compute the effective snap angle set for the current context.
+   * - Shift held: only 180° (straight continuation) — locks to straight line
+   * - No constraints: empty (free drawing)
+   * - Constraints active: declared angles + 180° (straight always valid)
+   */
+  function effectiveSnapAngles(shiftHeld: boolean): number[] {
+    if (shiftHeld) return [180];
+    if (allowedAngles.length === 0) return [];
+    return Array.from(new Set([...allowedAngles, 180]));
+  }
   let mouseCanvas: Point = { x: 0, y: 0 };
   let isPanning = false;
   let panStart: Point = { x: 0, y: 0 };
@@ -634,9 +647,12 @@ export function initCanvasEngine(
       if (run && run.points.length > 0 && !run.finished) {
         const lastPt = run.points[run.points.length - 1];
         let target = snap ? snapToGrid(mouseCanvas, gridSize) : mouseCanvas;
-        if (allowedAngles.length > 0 && run.points.length >= 2) {
+        if (run.points.length >= 2) {
           const prev = run.points[run.points.length - 2];
-          target = snapToAllowedAngle(prev, lastPt, target, allowedAngles);
+          const angles = effectiveSnapAngles(shiftDown);
+          if (angles.length > 0) {
+            target = snapToAllowedAngle(prev, lastPt, target, angles);
+          }
         }
         ctx.save();
         ctx.setLineDash([6, 4]);
@@ -715,8 +731,9 @@ export function initCanvasEngine(
     // Snap indicator
     if (tool === "draw") {
       let snapped = snap ? snapToGrid(mouseCanvas, gridSize) : mouseCanvas;
+      const snapAngles = effectiveSnapAngles(shiftDown);
       if (
-        allowedAngles.length > 0 &&
+        snapAngles.length > 0 &&
         activeRunIdx >= 0 &&
         runs[activeRunIdx] &&
         runs[activeRunIdx].points.length >= 2 &&
@@ -725,9 +742,9 @@ export function initCanvasEngine(
         const run = runs[activeRunIdx];
         const junction = run.points[run.points.length - 1];
         const prev = run.points[run.points.length - 2];
-        snapped = snapToAllowedAngle(prev, junction, snapped, allowedAngles);
+        snapped = snapToAllowedAngle(prev, junction, snapped, snapAngles);
       }
-      if (snap || allowedAngles.length > 0) {
+      if (snap || snapAngles.length > 0) {
         ctx.save();
         ctx.beginPath();
         ctx.arc(snapped.x, snapped.y, 4 / zoom, 0, Math.PI * 2);
@@ -784,7 +801,7 @@ export function initCanvasEngine(
     }
 
     // Computed post positions from per-segment panel widths — live preview
-    if (segmentPanelWidths.length > 0 && zoom > 0.2) {
+    if (segmentPanelWidths.length > 0) {
       drawComputedPosts();
     }
 
@@ -1296,8 +1313,9 @@ export function initCanvasEngine(
 
     const canvasPt = eventToCanvas(e);
     let worldPt = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
+    const mouseSnapAngles = effectiveSnapAngles(shiftDown);
     if (
-      allowedAngles.length > 0 &&
+      (mouseSnapAngles.length > 0) &&
       activeRunIdx >= 0 &&
       runs[activeRunIdx] &&
       !runs[activeRunIdx].finished &&
@@ -1306,7 +1324,7 @@ export function initCanvasEngine(
       const run = runs[activeRunIdx];
       const junction = run.points[run.points.length - 1];
       const prev = run.points[run.points.length - 2];
-      worldPt = snapToAllowedAngle(prev, junction, worldPt, allowedAngles);
+      worldPt = snapToAllowedAngle(prev, junction, worldPt, mouseSnapAngles);
     }
     const screenPtDown = eventToScreen(e);
 
@@ -1650,6 +1668,7 @@ export function initCanvasEngine(
 
   function onKeyDown(e: KeyboardEvent) {
     if (editingLabel) return;
+    if (e.key === 'Shift') { shiftDown = true; scheduleRedraw(); }
     if (e.key === "Enter" && tool === "draw") {
       if (activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
         stopChain(false); // keyboard — no extra mousedown point to pop
@@ -1666,6 +1685,10 @@ export function initCanvasEngine(
       e.preventDefault();
       undoLast();
     }
+  }
+
+  function onKeyUp(e: KeyboardEvent) {
+    if (e.key === 'Shift') { shiftDown = false; scheduleRedraw(); }
   }
 
   function onResize() {
@@ -2069,6 +2092,7 @@ export function initCanvasEngine(
     canvas.removeEventListener("wheel", onWheel);
     canvas.removeEventListener("contextmenu", onContextMenu);
     window.removeEventListener("keydown", onKeyDown);
+    window.removeEventListener("keyup", onKeyUp);
     window.removeEventListener("resize", onResize);
     // Remove any label input that might be open
     const inp = container.querySelector('input[type="text"]');
@@ -2084,6 +2108,7 @@ export function initCanvasEngine(
   canvas.addEventListener("wheel", onWheel, { passive: false });
   canvas.addEventListener("contextmenu", onContextMenu);
   window.addEventListener("keydown", onKeyDown);
+  window.addEventListener("keyup", onKeyUp);
   window.addEventListener("resize", onResize);
 
   // Initial draw — fit to 50m wide view

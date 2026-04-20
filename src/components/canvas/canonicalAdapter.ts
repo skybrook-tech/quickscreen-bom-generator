@@ -329,6 +329,17 @@ export function canvasLayoutToCanonical(
     const leftBoundary: CanonicalBoundary = { type: 'product_post' };
     const rightBoundary: CanonicalBoundary = { type: 'product_post' };
 
+    // Store the actual canvas pixel coordinates so the layout (angles, positions)
+    // can be faithfully reconstructed when the payload is pushed back to the canvas.
+    const geometry = slice.segments.length > 0
+      ? {
+          points: [
+            { x: slice.segments[0].startX, y: slice.segments[0].startY },
+            ...slice.segments.map((s) => ({ x: s.endX, y: s.endY })),
+          ],
+        }
+      : undefined;
+
     return {
       runId,
       productCode,
@@ -336,6 +347,7 @@ export function canvasLayoutToCanonical(
       rightBoundary,
       segments: canonSegments,
       corners: canonCorners,
+      geometry,
     };
   });
 
@@ -400,22 +412,12 @@ export function mergeCanonicalPreservingSegmentMeta(
 // Converts a saved CanonicalPayload back into a CanvasLayout so the canvas
 // engine can be restored (e.g. when loading a saved quote).
 //
-// Limitations:
-//   - Pixel coordinates (startX/Y, endX/Y) cannot be recovered from a
-//     canonical payload — they were never stored. We lay segments out in a
-//     straight horizontal line starting at the origin. The canvas engine only
-//     uses lengthMM for BOM calculations; pixel positions are only used for
-//     rendering, so a straight-line layout is correct for reload purposes.
-//   - angleDeg is set to 0 (horizontal) for all segments. Corners are not
-//     re-drawn as actual angle bends — they remain as flat markers in the data.
-//   - Gate openings are converted back to CanvasGate entries with their
-//     positionOnSegment reconstructed from the flat segment layout.
+// If a run has stored `geometry.points`, those pixel coordinates are used
+// directly, preserving the actual drawn angles and positions. Otherwise it
+// falls back to a flat horizontal reconstruction.
 // ---------------------------------------------------------------------------
 
 export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout {
-  // We lay out each run as a horizontal line of segments, accumulating x.
-  // Each run starts at x=0, y = runIndex * 200 (200px gap between runs).
-
   const allFlatSegments: CanvasSegment[] = [];
   const allFlatGates: Array<{ segmentIndex: number; positionOnSegment: number; widthMM: number }> = [];
   const runSummaries: CanvasRunSummary[] = [];
@@ -424,30 +426,22 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
 
   for (let ri = 0; ri < payload.runs.length; ri++) {
     const run = payload.runs[ri];
-    const yOrigin = ri * 200; // px — runs are stacked vertically for visual clarity
+    const yOrigin = ri * 200; // fallback: runs stacked vertically
 
     let runTotalMm = 0;
     let runCornerCount = 0;
     const runGates: Array<{ segmentIndex: number; positionOnSegment: number; widthMM: number }> = [];
 
-    // Merge consecutive `panel` canonical segments back into canvas segments.
-    // Each canonical panel → one canvas segment.
-    // Each canonical gate_opening → one CanvasGate on the preceding panel segment
-    // (or creates a synthetic 0-length segment if there is no preceding panel).
-    //
-    // For simplicity: each canonical segment (panel or gate_opening) maps 1:1 to a
-    // canvas segment. Gate openings become 0-width canvas segments whose gate marker
-    // sits at t=0.5. This preserves all data for re-editing.
-    //
-    // CanonicalCorners increment the corner count but don't change segment geometry
-    // in this 2D reconstruction.
-
     const fenceSegments = run.segments.filter(s => s.segmentKind !== 'gate_opening');
-    const gateSegments = run.segments.filter(s => s.segmentKind === 'gate_opening');
 
-    // Build canvas segments only from fence panels (not gate openings).
-    // Gate openings are attached as CanvasGate markers on the preceding fence segment.
-    let xCursor = 0;
+    // Determine whether stored geometry is usable:
+    // geometry.points must have exactly fenceSegments.length + 1 entries
+    // (run start + one endpoint per fence segment).
+    const geomPts = run.geometry?.points;
+    const useGeometry = !!(geomPts && geomPts.length === fenceSegments.length + 1);
+
+    let xCursor = 0;       // used only in flat-horizontal fallback
+    let fenceSegIdx = 0;   // index into fenceSegments for geometry path
     const localFlatSegments: CanvasSegment[] = [];
 
     for (const canonSeg of run.segments) {
@@ -455,7 +449,6 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
         // Attach this gate to the most recent canvas segment
         const precedingFlatIdx = globalFlatOffset + localFlatSegments.length - 1;
         if (localFlatSegments.length > 0) {
-          // Place gate at the right edge of the preceding segment (t=0.9 by convention)
           allFlatGates.push({
             segmentIndex: precedingFlatIdx,
             positionOnSegment: 0.9,
@@ -467,45 +460,43 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
             widthMM: canonSeg.segmentWidthMm ?? 900,
           });
         } else {
-          // No preceding segment — create a 1mm stub segment to hold the gate
-          const stubEndX = xCursor + 1;
+          // No preceding segment — stub to hold the gate
+          const startX = useGeometry ? (geomPts![0]?.x ?? 0) : xCursor;
+          const startY = useGeometry ? (geomPts![0]?.y ?? yOrigin) : yOrigin;
           localFlatSegments.push({
-            startX: xCursor,
-            startY: yOrigin,
-            endX: stubEndX,
-            endY: yOrigin,
-            lengthMM: 1,
-            angleDeg: 0,
+            startX, startY,
+            endX: startX + 1, endY: startY,
+            lengthMM: 1, angleDeg: 0,
           });
           const gateIdx = globalFlatOffset + localFlatSegments.length - 1;
-          allFlatGates.push({
-            segmentIndex: gateIdx,
-            positionOnSegment: 0.5,
-            widthMM: canonSeg.segmentWidthMm ?? 900,
-          });
-          runGates.push({
-            segmentIndex: gateIdx,
-            positionOnSegment: 0.5,
-            widthMM: canonSeg.segmentWidthMm ?? 900,
-          });
-          xCursor = stubEndX;
+          allFlatGates.push({ segmentIndex: gateIdx, positionOnSegment: 0.5, widthMM: canonSeg.segmentWidthMm ?? 900 });
+          runGates.push({ segmentIndex: gateIdx, positionOnSegment: 0.5, widthMM: canonSeg.segmentWidthMm ?? 900 });
+          if (!useGeometry) xCursor += 1;
         }
       } else {
-        // Panel, bay_group, or corner — create a canvas segment
+        // Panel, bay_group, or corner
         const widthMm = canonSeg.segmentWidthMm ?? 1000;
-        // Convert mm to canvas pixels: default scale is 100px/m
-        const widthPx = widthMm / 10; // 100px/m = 10px/mm
-        const endX = xCursor + widthPx;
-        localFlatSegments.push({
-          startX: xCursor,
-          startY: yOrigin,
-          endX,
-          endY: yOrigin,
-          lengthMM: widthMm,
-          angleDeg: 0,
-        });
+        if (useGeometry) {
+          const p0 = geomPts![fenceSegIdx];
+          const p1 = geomPts![fenceSegIdx + 1];
+          localFlatSegments.push({
+            startX: p0.x, startY: p0.y,
+            endX: p1.x, endY: p1.y,
+            lengthMM: widthMm,
+            angleDeg: Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / Math.PI,
+          });
+        } else {
+          const widthPx = widthMm / 10; // 100px/m = 10px/mm
+          const endX = xCursor + widthPx;
+          localFlatSegments.push({
+            startX: xCursor, startY: yOrigin,
+            endX, endY: yOrigin,
+            lengthMM: widthMm, angleDeg: 0,
+          });
+          xCursor = endX;
+        }
         runTotalMm += widthMm;
-        xCursor = endX;
+        fenceSegIdx++;
       }
     }
 
@@ -514,10 +505,6 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
 
     allFlatSegments.push(...localFlatSegments);
     globalFlatOffset += localFlatSegments.length;
-
-    // Suppress unused variable warning
-    void fenceSegments;
-    void gateSegments;
 
     runSummaries.push({
       label: `Run ${ri + 1}`,
