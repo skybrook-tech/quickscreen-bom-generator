@@ -4,6 +4,7 @@ import {
   GATE_SEGMENT_STUB_KEYS,
   patchSegmentVariables,
 } from "../../lib/segmentTermination";
+import { Input } from "../ui/Input";
 
 interface Props {
   runId: string;
@@ -29,24 +30,24 @@ export function GateSegmentDetails({ runId, seg }: Props) {
       </p>
       <label className="flex flex-col gap-1">
         <span className="text-brand-muted">Hinge type</span>
-        <input
+        <Input
           type="text"
           value={(v[GATE_SEGMENT_STUB_KEYS.hingeType] as string) ?? ""}
           onChange={(e) =>
             setScalar(GATE_SEGMENT_STUB_KEYS.hingeType, e.target.value || null)
           }
-          className="bg-brand-bg border border-brand-border rounded px-2 py-1 text-brand-text"
+          className="bg-brand-bg"
         />
       </label>
       <label className="flex flex-col gap-1">
         <span className="text-brand-muted">Latch type</span>
-        <input
+        <Input
           type="text"
           value={(v[GATE_SEGMENT_STUB_KEYS.latchType] as string) ?? ""}
           onChange={(e) =>
             setScalar(GATE_SEGMENT_STUB_KEYS.latchType, e.target.value || null)
           }
-          className="bg-brand-bg border border-brand-border rounded px-2 py-1 text-brand-text"
+          className="bg-brand-bg"
         />
       </label>
     </div>

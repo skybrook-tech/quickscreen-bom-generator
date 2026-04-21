@@ -8,7 +8,8 @@ import {
 } from "../../lib/segmentTermination";
 import { SchemaDrivenForm } from "./SchemaDrivenForm";
 import { TerminationControl } from "./TerminationControl";
-import NumberInput from "../shared/NumberInput";
+import NumberInput from "../ui/NumberInput";
+import { Select } from "../ui/Select";
 
 const POST_SIZE_LABELS: Record<string, string> = {
   "50": "50×50 System Post",
@@ -87,15 +88,12 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         {/* Post type — data-driven from run-scoped post_size variable */}
         <label className="flex flex-col gap-1">
           <span className="text-brand-muted text-xs">Post type</span>
-          <select
+          <Select
             value={postSize}
             onChange={(e) =>
-              setScalar(
-                SEGMENT_OPTION_KEYS.postSize,
-                e.target.value || null,
-              )
+              setScalar(SEGMENT_OPTION_KEYS.postSize, e.target.value || null)
             }
-            className="bg-brand-bg border border-brand-border rounded px-2 py-1.5 text-sm text-brand-text"
+            className="bg-brand-bg"
           >
             <option value="">— Job default —</option>
             {postSizeOptions.map((opt) => (
@@ -104,7 +102,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
               </option>
             ))}
             <option value="custom">(Non-system post)</option>
-          </select>
+          </Select>
         </label>
 
         {/* Post width — only unlocked for non-system posts */}
@@ -112,7 +110,9 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
           <label className="flex flex-col gap-1">
             <span className="text-brand-muted text-xs">Post width (mm)</span>
             <NumberInput
-              value={(v[SEGMENT_OPTION_KEYS.postWidthMm] as number | null) ?? null}
+              value={
+                (v[SEGMENT_OPTION_KEYS.postWidthMm] as number | null) ?? null
+              }
               onChange={(val) =>
                 setScalar(SEGMENT_OPTION_KEYS.postWidthMm, val)
               }

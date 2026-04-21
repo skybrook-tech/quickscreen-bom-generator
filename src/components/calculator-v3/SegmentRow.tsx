@@ -3,7 +3,8 @@ import type { CanonicalSegment } from "../../types/canonical.types";
 import { Settings2 } from "lucide-react";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
-import NumberInput from "../shared/NumberInput";
+import NumberInput from "../ui/NumberInput";
+import { Badge } from "../ui/Badge";
 
 interface Props {
   runId: string;
@@ -38,21 +39,20 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
     <div className="rounded border border-brand-border/50 bg-brand-bg text-xs overflow-hidden">
       <div className="flex gap-2 items-center p-2">
         <span className="text-brand-muted w-8 shrink-0">#{segIdx + 1}</span>
-        <span
-          className={`text-[10px] w-[65px] flex items-center justify-center uppercase tracking-wide px-1.5 py-0.5 rounded shrink-0 ${
-            gate
-              ? "bg-amber-500/15 text-amber-600 border border-amber-500/30"
-              : "bg-brand-accent/10 text-brand-accent border border-brand-accent/25"
-          }`}
+        <Badge
+          variant={gate ? "warning" : "info"}
+          className="w-[65px] justify-center rounded uppercase tracking-wide text-[10px] shrink-0"
         >
           {gate ? "Gate" : "Segment"}
-        </span>
+        </Badge>
         <label className="text-brand-muted shrink-0">W:</label>
         <NumberInput
           value={parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
           step={0.01}
           min={0.3}
-          onChange={(v) => updateGeometry("segmentWidthMm", Math.round(Number(v) * 1000))}
+          onChange={(v) =>
+            updateGeometry("segmentWidthMm", Math.round(Number(v) * 1000))
+          }
         />
         <span className="text-brand-muted">m</span>
         <label className="text-brand-muted shrink-0">H:</label>

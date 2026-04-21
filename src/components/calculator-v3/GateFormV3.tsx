@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 import { SchemaDrivenForm } from './SchemaDrivenForm';
 import type { SchemaField } from './SchemaDrivenForm';
 import type { CanonicalRun, CanonicalSegment } from '../../types/canonical.types';
+import { Button } from '../ui/Button';
 
 const GATE_PRODUCT_CODE = 'QS_GATE';
 
@@ -110,14 +111,7 @@ export function GateFormV3({ initialRun, runFields, segmentFields, onCancel, onS
           <h3 className="text-sm font-semibold text-brand-text">
             {initialRun ? 'Edit Gate' : 'Add Gate'}
           </h3>
-          <button
-            type="button"
-            onClick={onCancel}
-            aria-label="Close"
-            className="p-1 rounded text-brand-muted hover:text-brand-text hover:bg-brand-border/60 transition-colors"
-          >
-            <X size={16} />
-          </button>
+          <Button icon={X} variant="secondary" size="small" onClick={onCancel} />
         </div>
 
         <div className="p-5">
@@ -133,21 +127,14 @@ export function GateFormV3({ initialRun, runFields, segmentFields, onCancel, onS
         </div>
 
         <div className="flex justify-end gap-2 px-5 py-3 border-t border-brand-border">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-3 py-1.5 text-sm text-brand-muted hover:text-brand-text transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
+          <Button variant="link" onClick={onCancel}>Cancel</Button>
+          <Button
+            variant="primary"
             onClick={handleSave}
             data-testid="gate-form-save"
-            className="px-3 py-1.5 text-sm bg-brand-accent text-white rounded-md hover:bg-brand-accent/90 transition-colors"
           >
             {initialRun ? 'Save changes' : 'Add gate'}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

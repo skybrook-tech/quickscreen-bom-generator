@@ -21,7 +21,7 @@ import type {
   BOMLineItem,
   ExtraItem,
 } from "../types/bom.types";
-import NumberInput from "../components/shared/NumberInput";
+import NumberInput from "../components/ui/NumberInput";
 
 function CalculatorV3Content() {
   const { state, dispatch } = useCalculator();

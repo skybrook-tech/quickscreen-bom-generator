@@ -2,15 +2,18 @@ import { cn } from "../../lib";
 import { type LucideIcon } from "lucide-react";
 
 interface ButtonProps {
-  children: React.ReactNode;
-  onClick: () => void;
+  children?: React.ReactNode;
+  onClick?: () => void;
   className?: string;
   variant?: keyof typeof variants;
-  icon: LucideIcon;
+  icon?: LucideIcon;
   size?: keyof typeof sizes;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
 }
 
-const sharedStyles = "rounded-md flex items-center gap-2 hover:opacity-70";
+const sharedStyles =
+  "rounded-md flex items-center gap-2 hover:opacity-70 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed";
 
 const variants = {
   secondary:
@@ -38,9 +41,13 @@ export function Button({
   className,
   icon: IconNode,
   size = "medium",
+  type = "button",
+  disabled,
 }: ButtonProps) {
   return (
     <button
+      type={type}
+      disabled={disabled}
       className={cn(sharedStyles, variants[variant], sizes[size], className)}
       onClick={onClick}
     >

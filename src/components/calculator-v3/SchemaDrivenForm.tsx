@@ -2,6 +2,8 @@ import { ColourSelect } from "../fence/ColourSelect";
 import { SlatSizeSelect } from "../fence/SlatSizeSelect";
 import { SlatGapSelect } from "../fence/SlatGapSelect";
 import { FormField } from "../shared/FormField";
+import { Select } from "../ui/Select";
+import { Input } from "../ui/Input";
 
 export interface SchemaField {
   id: string;
@@ -130,17 +132,17 @@ export function SchemaDrivenForm({
                 label={field.label}
                 note={field.unit ? `Units: ${field.unit}` : undefined}
               >
-                <select
+                <Select
                   value={String(variables[field.field_key] ?? "")}
                   onChange={(e) => onChange(field.field_key, e.target.value)}
-                  className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
+                  className="w-full"
                 >
                   {field.options_json.map((opt) => (
                     <option key={String(opt)} value={String(opt)}>
                       {String(opt)}
                     </option>
                   ))}
-                </select>
+                </Select>
               </FormField>
             </div>
           );
@@ -157,7 +159,7 @@ export function SchemaDrivenForm({
                 label={field.label}
                 note={field.unit ? `Units: ${field.unit}` : undefined}
               >
-                <input
+                <Input
                   type="number"
                   value={Number(
                     variables[field.field_key] ?? field.default_value_json ?? 0,
@@ -170,7 +172,7 @@ export function SchemaDrivenForm({
                         : parseFloat(e.target.value),
                     )
                   }
-                  className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
+                  className="w-full"
                 />
               </FormField>
             </div>
@@ -207,11 +209,11 @@ export function SchemaDrivenForm({
               label={field.label}
               note={field.unit ? `Units: ${field.unit}` : undefined}
             >
-              <input
+              <Input
                 type="text"
                 value={String(variables[field.field_key] ?? "")}
                 onChange={(e) => onChange(field.field_key, e.target.value)}
-                className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
+                className="w-full"
               />
             </FormField>
           </div>

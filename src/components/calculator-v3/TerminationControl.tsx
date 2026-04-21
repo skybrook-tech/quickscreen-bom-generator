@@ -7,6 +7,7 @@ import {
   type NonSystemSubtypeUi,
   type TerminationKindUi,
 } from "../../lib/segmentTermination";
+import { Select } from "../ui/Select";
 
 interface Props {
   runId: string;
@@ -61,47 +62,44 @@ export function TerminationControl({ runId, seg, side }: Props) {
       </p>
       <label className="flex flex-col gap-1 max-w-xs">
         <span className="text-brand-muted">Type</span>
-        <select
+        <Select
           value={kind}
           onChange={(e) => setKind(e.target.value as TerminationKindUi | "")}
-          className="bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
         >
           <option value="system_post">System post</option>
           <option value="corner">Corner</option>
           <option value="non_system_termination">Non-system termination</option>
-        </select>
+        </Select>
       </label>
 
       {kind === "corner" && (
         <label className="flex flex-col gap-1 max-w-xs">
           <span className="text-brand-muted">Corner angle (°)</span>
-          <select
+          <Select
             value={Number(v[degKey] ?? 90)}
             onChange={(e) => setScalar(degKey, Number(e.target.value))}
-            className="bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
           >
             {CORNER_DEGREE_OPTIONS.map((d) => (
               <option key={d} value={d}>
                 {d}°
               </option>
             ))}
-          </select>
+          </Select>
         </label>
       )}
 
       {kind === "non_system_termination" && (
         <label className="flex flex-col gap-1 max-w-xs">
           <span className="text-brand-muted">Non-system type</span>
-          <select
+          <Select
             value={sub}
             onChange={(e) =>
               setScalar(subKey, e.target.value as NonSystemSubtypeUi)
             }
-            className="bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
           >
             <option value="wall">Wall</option>
             <option value="non_system_post">Non-system post</option>
-          </select>
+          </Select>
         </label>
       )}
     </div>

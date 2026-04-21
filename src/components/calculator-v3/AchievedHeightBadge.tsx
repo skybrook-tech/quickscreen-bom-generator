@@ -1,3 +1,5 @@
+import { Badge } from "../ui/Badge";
+
 interface AchievedHeightBadgeProps {
   computed: Record<string, Record<string, unknown>>;
   runId: string;
@@ -15,14 +17,8 @@ export function AchievedHeightBadge({ computed, runId, segmentId, targetHeightMm
   const isClose = diff !== null && diff <= 5;
 
   return (
-    <span
-      className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${
-        isClose
-          ? 'bg-green-500/10 border-green-500/30 text-green-400'
-          : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
-      }`}
-    >
+    <Badge variant={isClose ? "success" : "warning"} className="gap-1">
       Achieved {Math.round(actualHeight)}mm
-    </span>
+    </Badge>
   );
 }

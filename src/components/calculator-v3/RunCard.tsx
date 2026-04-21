@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
-import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
+import type {
+  CanonicalRun,
+  CanonicalSegment,
+} from "../../types/canonical.types";
 import { GATE_SEGMENT_STUB_KEYS } from "../../lib/segmentTermination";
 import { calcRunStats } from "../../lib/runStats";
-import { Button } from "../shared/Button";
+import { Button } from "../ui/Button";
 import { SegmentRow } from "./SegmentRow";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
@@ -87,17 +90,29 @@ export function RunCard({ run, runIdx }: Props) {
             segIdx={segIdx}
             open={expandedId === seg.segmentId}
             onToggle={() =>
-              setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
+              setExpandedId((id) =>
+                id === seg.segmentId ? null : seg.segmentId,
+              )
             }
           />
         ))}
       </div>
 
       <div className="flex flex-wrap justify-end gap-2 mt-3">
-        <Button onClick={addFenceSegment} icon={Plus} variant="ghost" size="small">
+        <Button
+          onClick={addFenceSegment}
+          icon={Plus}
+          variant="ghost"
+          size="small"
+        >
           Add segment
         </Button>
-        <Button onClick={addGateSegment} icon={Plus} variant="ghost" size="small">
+        <Button
+          onClick={addGateSegment}
+          icon={Plus}
+          variant="ghost"
+          size="small"
+        >
           Add gate
         </Button>
         <Button

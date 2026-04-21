@@ -4,6 +4,8 @@ import { useCalculator } from '../../context/CalculatorContext';
 import { useProductVariables } from '../../hooks/useProductVariables';
 import { GateFormV3 } from './GateFormV3';
 import type { CanonicalRun } from '../../types/canonical.types';
+import { Button } from '../ui/Button';
+import { Badge } from '../ui/Badge';
 
 const GATE_PRODUCT_CODE = 'QS_GATE';
 
@@ -72,48 +74,43 @@ export function GateListV3() {
               className="flex items-center justify-between px-3 py-3 bg-brand-bg border border-brand-border rounded-lg hover:border-brand-accent/40 transition-colors group"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-7 h-7 rounded-md bg-brand-accent/10 text-brand-accent text-xs font-bold flex items-center justify-center shrink-0 border border-brand-accent/20">
+                <Badge variant="info" className="w-7 h-7 rounded-md justify-center shrink-0 text-xs font-bold">
                   {idx + 1}
-                </div>
+                </Badge>
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-brand-text truncate">{gateLabel(run)}</p>
                   <p className="text-xs text-brand-muted mt-0.5 truncate">{gateSubLabel(run)}</p>
                 </div>
               </div>
               <div className="flex gap-1 ml-3 shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
-                <button
-                  type="button"
+                <Button
+                  icon={Pencil}
+                  variant="secondary"
+                  size="small"
                   onClick={() => setEditingRunId(run.runId)}
                   data-testid={`gate-edit-${idx}`}
-                  aria-label="Edit gate"
-                  className="p-1.5 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/60 transition-colors"
-                >
-                  <Pencil size={14} />
-                </button>
-                <button
-                  type="button"
+                />
+                <Button
+                  icon={Trash2}
+                  variant="ghost-danger"
+                  size="small"
                   onClick={() => handleRemove(run.runId)}
                   data-testid={`gate-remove-${idx}`}
-                  aria-label="Remove gate"
-                  className="p-1.5 rounded-md text-brand-muted hover:text-red-400 hover:bg-red-400/10 transition-colors"
-                >
-                  <Trash2 size={14} />
-                </button>
+                />
               </div>
             </li>
           ))}
         </ul>
       )}
 
-      <button
-        type="button"
+      <Button
+        icon={PlusCircle}
+        variant="ghost"
         onClick={handleAdd}
         data-testid="gate-add"
-        className="flex items-center gap-2 px-3 py-1.5 text-sm text-brand-accent hover:bg-brand-accent/10 rounded-md transition-colors"
       >
-        <PlusCircle size={14} />
         Add gate
-      </button>
+      </Button>
 
       {modalOpen && (
         <GateFormV3
