@@ -20,7 +20,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { extractJwt, resolveUserProfile } from "../_shared/auth.ts";
-import { create, all } from "https://esm.sh/mathjs@13";
 import type {
   CanonicalPayload,
   CanonicalRun,
@@ -32,38 +31,14 @@ import {
   type LegacyBoundaryType,
 } from "../_shared/segmentTermination.ts";
 import type { BOMUnit, PricingRule, PricingTier } from "../_shared/types.ts";
-
-const mathjs = create(all);
-
-// ─── Colour codes (canonical short codes used in SKU patterns) ────────────────
-
-const COLOUR_CODES: Record<string, string> = {
-  "black-satin": "B",
-  "monument-matt": "MN",
-  "woodland-grey-matt": "G",
-  "surfmist-matt": "SM",
-  "pearl-white-gloss": "W",
-  "basalt-satin": "BS",
-  "dune-satin": "D",
-  mill: "M",
-  primrose: "P",
-  paperbark: "PB",
-  "palladium-silver-pearl": "S",
-};
-
-// ─── Pricing ──────────────────────────────────────────────────────────────────
-
-function resolvePrice(rules: PricingRule[], qty: number): number {
-  for (const r of rules) {
-    if (!r.rule) return r.price;
-    try {
-      if (mathjs.evaluate(r.rule, { qty }) === true) return r.price;
-    } catch {
-      /* malformed rule — skip */
-    }
-  }
-  return 0;
-}
+import {
+  type EngineData,
+  matchesJSON,
+  mathjs,
+  normaliseVariables,
+  resolvePlaceholders,
+  resolvePrice,
+} from "./lib.ts";
 
 async function loadPricing(
   orgId: string,
@@ -124,122 +99,6 @@ interface TraceEntry {
   output_key?: string;
   output?: unknown;
   error?: string;
-}
-
-interface EngineData {
-  product: { id: string; system_type: string; product_type: string };
-  ruleVersion: { id: string };
-  rules: Array<{
-    id: string;
-    name: string;
-    stage: string;
-    expression: string;
-    output_key: string;
-    priority: number;
-  }>;
-  constraints: Array<{
-    id: string;
-    name: string;
-    constraint_type: string;
-    value_text: string;
-    unit: string;
-    severity: string;
-    applies_when_json: Record<string, unknown>;
-    message: string;
-  }>;
-  variables: Array<{
-    id: string;
-    name: string;
-    data_type: string;
-    default_value_json: unknown;
-    scope: string;
-  }>;
-  validations: Array<{
-    id: string;
-    name: string;
-    expression: string;
-    severity: string;
-    message: string;
-  }>;
-  selectors: Array<{
-    id: string;
-    selector_key: string;
-    component_category: string;
-    selector_type: string;
-    match_json: Record<string, unknown>;
-    sku_pattern: string;
-    priority: number;
-    qty_key?: string;
-  }>;
-  companions: Array<{
-    id: string;
-    rule_key: string;
-    trigger_category: string;
-    trigger_match_json: Record<string, unknown>;
-    add_category: string;
-    add_sku_pattern: string;
-    qty_formula: string;
-    is_pack: boolean;
-    priority: number;
-  }>;
-  warnings: Array<{
-    id: string;
-    warning_key: string;
-    severity: string;
-    condition_json: Record<string, unknown>;
-    message: string;
-  }>;
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/**
- * Test whether a context object satisfies a match_json predicate.
- * Supports: exact equality, array membership, and range operators
- * { gt, gte, lt, lte, eq, neq }.
- */
-function matchesJSON(
-  matchJson: Record<string, unknown>,
-  ctx: Record<string, unknown>,
-): boolean {
-  for (const [key, expected] of Object.entries(matchJson)) {
-    const actual = ctx[key];
-    if (
-      typeof expected === "object" &&
-      expected !== null &&
-      !Array.isArray(expected)
-    ) {
-      // Range predicate
-      const range = expected as Record<string, unknown>;
-      if ("gt" in range && !(Number(actual) > Number(range.gt))) return false;
-      if ("gte" in range && !(Number(actual) >= Number(range.gte)))
-        return false;
-      if ("lt" in range && !(Number(actual) < Number(range.lt))) return false;
-      if ("lte" in range && !(Number(actual) <= Number(range.lte)))
-        return false;
-      if ("eq" in range && actual !== range.eq) return false;
-      if ("neq" in range && actual === range.neq) return false;
-    } else if (Array.isArray(expected)) {
-      if (!expected.includes(actual)) return false;
-    } else {
-      if (actual !== expected) return false;
-    }
-  }
-  return true;
-}
-
-/**
- * Replace `{key}` placeholders in a SKU pattern with values from context.
- * Unresolved placeholders are left as-is so the caller can detect them.
- */
-function resolvePlaceholders(
-  pattern: string,
-  ctx: Record<string, unknown>,
-): string {
-  return pattern.replace(/\{(\w+)\}/g, (_, key) => {
-    const val = ctx[key];
-    return val !== undefined ? String(val) : `{${key}}`;
-  });
 }
 
 // ─── Main handler ─────────────────────────────────────────────────────────────
@@ -418,37 +277,6 @@ Deno.serve(async (req: Request) => {
         });
       }),
     );
-
-    // Step 5 helper — normalise variables: apply defaults, map colour codes
-    function normaliseVariables(
-      vars: Record<string, string | number | boolean>,
-      engineData: EngineData,
-    ): Record<string, unknown> {
-      const ctx: Record<string, unknown> = {};
-
-      // 1. Apply variable defaults from engine schema
-      for (const v of engineData.variables) {
-        if (
-          v.default_value_json !== null &&
-          v.default_value_json !== undefined
-        ) {
-          ctx[v.name] = v.default_value_json;
-        }
-      }
-
-      // 2. Overlay provided variables
-      for (const [k, v] of Object.entries(vars)) {
-        ctx[k] = v;
-      }
-
-      // 3. Normalise colour: long name → short code
-      const rawColour = ctx["colour_code"] ?? ctx["colour"];
-      if (typeof rawColour === "string") {
-        ctx["colour"] = COLOUR_CODES[rawColour] ?? rawColour;
-      }
-
-      return ctx;
-    }
 
     // ─── Process runs ─────────────────────────────────────────────────────────
 
@@ -665,6 +493,7 @@ Deno.serve(async (req: Request) => {
           num_slats: activeSegCtx["num_slats"],
           panel_width_mm: activeSegCtx["panel_width_mm"],
           num_panels: activeSegCtx["num_panels"],
+          num_posts: activeSegCtx["num_posts"],
         };
 
         // Step 8 — selector resolution.
@@ -909,6 +738,9 @@ Deno.serve(async (req: Request) => {
           : {
               actual_height_mm: vals["actual_height_mm"],
               num_panels: vals["num_panels"],
+              num_posts: vals["num_posts"],
+              num_slats: vals["num_slats"],
+              panel_width_mm: vals["panel_width_mm"],
             };
       }
     }

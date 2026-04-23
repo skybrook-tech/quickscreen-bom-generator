@@ -25,7 +25,7 @@ interface SchemaDrivenFormProps {
   variables: Record<string, string | number | boolean>;
 }
 
-function isVisible(
+export function isVisible(
   visibleWhen: Record<string, unknown>,
   variables: Record<string, unknown>,
 ): boolean {

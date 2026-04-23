@@ -1,0 +1,48 @@
+{
+  "id": "TC-V3-1",
+  "description": "QSHS 10m straight run, 1800mm, black-satin, post both ends",
+  "input": {
+    "pricingTier": "tier1",
+    "payload": {
+      "productCode": "QSHS",
+      "schemaVersion": "1.0",
+      "variables": {
+        "colour_code": "black-satin",
+        "slat_size_mm": 65,
+        "slat_gap_mm": 5,
+        "mounting_type": "in_ground",
+        "max_panel_width_mm": 2600
+      },
+      "runs": [
+        {
+          "runId": "run-001",
+          "productCode": "QSHS",
+          "leftBoundary": { "type": "product_post" },
+          "rightBoundary": { "type": "product_post" },
+          "corners": [],
+          "segments": [
+            {
+              "segmentId": "seg-001",
+              "sortOrder": 0,
+              "segmentKind": "panel",
+              "segmentWidthMm": 10000,
+              "targetHeightMm": 1800
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "expect": {
+    "errors": [],
+    "lines": [
+      { "sku": "XP-6100-S65-B", "name": "65mm Slat 6100mm — Black Satin",              "category": "slat",        "qty": 13 },
+      { "sku": "XP-2400-FP-B",  "name": "50x50mm Full Post 2400mm — Black Satin",       "category": "post",        "qty": 4  },
+      { "sku": "QS-5800-SF-B",  "name": "Side Frame 5800mm — Black Satin",              "category": "side_frame",  "qty": 2  },
+      { "sku": "QS-5800-CFC-B", "name": "Concealed Fixing Cover 5800mm — Black Satin",  "category": "cfc_cover",   "qty": 2  }
+    ],
+    "totals": {
+      "grandTotal": { "gte": 100 }
+    }
+  }
+}

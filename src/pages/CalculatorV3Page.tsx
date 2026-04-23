@@ -7,67 +7,25 @@ import {
 import { FenceConfigProvider } from "../context/FenceConfigContext";
 import { GateProvider } from "../context/GateContext";
 import { ProductSelectV3 } from "../components/calculator-v3/ProductSelectV3";
-import { SchemaDrivenForm } from "../components/calculator-v3/SchemaDrivenForm";
+import { DefaultSettings } from "../components/calculator-v3/DefaultSettings";
 import { RunListV3 } from "../components/calculator-v3/RunListV3";
 import { LayoutCanvasV3 } from "../components/calculator-v3/LayoutCanvasV3";
 import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { useBomCalculator } from "../hooks/useBomCalculator";
-import { useProductVariables } from "../hooks/useProductVariables";
 import { Loader2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type {
   CalculatorBOMResult,
   BOMLineItem,
   ExtraItem,
 } from "../types/bom.types";
-import NumberInput from "../components/ui/NumberInput";
 
 function CalculatorV3Content() {
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
   const bomMutation = useBomCalculator();
   const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
-
-  const { data: jobFields = [] } = useProductVariables(
-    payload?.productCode ?? null,
-    "job",
-  );
-
-  // Seed payload.variables with product_variables defaults for any key not yet set.
-  // Runs once per product selection (dep on productCode) so user edits are never overwritten.
-  useEffect(() => {
-    if (!payload || jobFields.length === 0) return;
-    const missing: Record<string, string | number | boolean> = {};
-    for (const f of jobFields) {
-      if (!(f.field_key in payload.variables) && f.default_value_json != null) {
-        missing[f.field_key] = f.default_value_json as
-          | string
-          | number
-          | boolean;
-      }
-    }
-    if (Object.keys(missing).length === 0) return;
-    dispatch({
-      type: "SET_PAYLOAD",
-      payload: {
-        ...payload,
-        variables: { ...missing, ...payload.variables },
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [jobFields, payload?.productCode]);
-
-  function handleFieldChange(key: string, value: string | number | boolean) {
-    if (!payload) return;
-    dispatch({
-      type: "SET_PAYLOAD",
-      payload: {
-        ...payload,
-        variables: { ...payload.variables, [key]: value },
-      },
-    });
-  }
 
   async function handleGenerateBOM() {
     if (!payload) return;
@@ -148,46 +106,7 @@ function CalculatorV3Content() {
               badge="Defaults applied to each new segment"
               defaultOpen
             >
-              <div className="space-y-4">
-                {/* Universal field — applies to all fence products */}
-                <label className="flex flex-col gap-1.5 max-w-xs">
-                  <span className="text-sm font-medium text-brand-text">
-                    Max panel width
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <NumberInput
-                      min={300}
-                      max={2600}
-                      step={50}
-                      value={Number(
-                        payload.variables.max_panel_width_mm ?? 2600,
-                      )}
-                      onChange={(v) =>
-                        handleFieldChange("max_panel_width_mm", v)
-                      }
-                      onBlur={(e) =>
-                        handleFieldChange(
-                          "max_panel_width_mm",
-                          Math.min(2600, Math.max(300, Number(e.target.value))),
-                        )
-                      }
-                      className="w-28 bg-brand-card border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
-                    />
-                    <span className="text-sm text-brand-muted">mm</span>
-                  </div>
-                  <span className="text-xs text-brand-muted">
-                    300–2600mm · panels within each segment are split evenly to
-                    stay at or below this width
-                  </span>
-                </label>
-                {jobFields.length > 0 && (
-                  <SchemaDrivenForm
-                    fields={jobFields}
-                    variables={payload.variables}
-                    onChange={handleFieldChange}
-                  />
-                )}
-              </div>
+              <DefaultSettings />
             </AccordionSection>
 
             {/* Canvas — hidden on mobile */}
