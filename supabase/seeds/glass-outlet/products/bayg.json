@@ -9,17 +9,731 @@
       "active": true,
       "sort_order": 4,
       "metadata": {
-        "allowedAngles": [90],
+        "product_family": "alumawood_screening",
+        "finish_type": "timber_look",
+        "notes": "Alumawood is a timber-look powder coat finish variant of the QSHS system. Uses AW-/AWQS- prefix SKUs. Same calculation rules as QSHS. Not a separate system \u2014 select via finish option within QSHS.",
         "options": {
-          "slatSize": ["65", "90"],
-          "slatGap": ["5", "9", "20"],
-          "colour": ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]
-        },
-        "notes": "BAYG uses BAYG_ScrHts height table (not XPL_Ht) to determine slat count. Spacers sold individually per run, not in 50-packs."
+          "slat_size": [
+            65,
+            90
+          ],
+          "slat_size_notes": "90mm only available in WRC",
+          "colour": [
+            "kwila",
+            "western-red-cedar"
+          ],
+          "colour_codes": {
+            "kwila": "KWI",
+            "western-red-cedar": "WRC"
+          },
+          "accessory_colour": "TR",
+          "accessory_colour_note": "All post accessories (base plates, dress rings, top plates, domical covers) are Terrain (TR) only"
+        }
       }
     }
   ],
-  "product_components": [],
+  "product_components": [
+    {
+      "sku": "AW-5800-S65-KWI",
+      "name": "Alumawood 65\u00d716mm Slat 5800mm \u2014 Kwila",
+      "description": "65mm Alumawood timber-look slat, Kwila finish, 5800mm stock length",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 53.01,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "kwila",
+        "colour_code": "KWI",
+        "slat_size_mm": 65,
+        "stock_length_mm": 5800
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-5800-S65-WRC",
+      "name": "Alumawood 65\u00d716mm Slat 5800mm \u2014 Western Red Cedar",
+      "description": "65mm Alumawood timber-look slat, WRC finish, 5800mm stock length",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 53.01,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "western-red-cedar",
+        "colour_code": "WRC",
+        "slat_size_mm": 65,
+        "stock_length_mm": 5800
+      },
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-S90-WRC",
+      "name": "Alumawood 90\u00d716.5mm Slat 5800mm \u2014 Western Red Cedar",
+      "description": "90mm Alumawood timber-look slat, WRC finish, 5800mm stock length",
+      "category": "slat",
+      "unit": "length",
+      "default_price": 67.96,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "western-red-cedar",
+        "colour_code": "WRC",
+        "slat_size_mm": 90,
+        "stock_length_mm": 5800
+      },
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-SF-KWI",
+      "name": "Alumawood QS Side Frame 5800mm \u2014 Kwila",
+      "description": "Alumawood QS side frame extrusion, Kwila, 5800mm",
+      "category": "side_frame",
+      "unit": "length",
+      "default_price": 36.97,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "kwila",
+        "colour_code": "KWI",
+        "stock_length_mm": 5800
+      },
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-SF-WRC",
+      "name": "Alumawood QS Side Frame 5800mm \u2014 Western Red Cedar",
+      "description": "Alumawood QS side frame extrusion, WRC, 5800mm",
+      "category": "side_frame",
+      "unit": "length",
+      "default_price": 36.97,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "western-red-cedar",
+        "colour_code": "WRC",
+        "stock_length_mm": 5800
+      },
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-CFC-KWI",
+      "name": "Alumawood QS Fixing Cover 5800mm \u2014 Kwila",
+      "description": "Concealed fixing cover for Alumawood QS, Kwila, 5800mm",
+      "category": "cfc_cover",
+      "unit": "length",
+      "default_price": 20.81,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "kwila",
+        "colour_code": "KWI"
+      },
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-CFC-WRC",
+      "name": "Alumawood QS Fixing Cover 5800mm \u2014 Western Red Cedar",
+      "description": "Concealed fixing cover for Alumawood QS, WRC, 5800mm",
+      "category": "cfc_cover",
+      "unit": "length",
+      "default_price": 20.81,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "western-red-cedar",
+        "colour_code": "WRC"
+      },
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-F-KWI",
+      "name": "Alumawood QS F-Section 5800mm \u2014 Kwila",
+      "description": "F-section channel for Alumawood QS wall-fix, Kwila, 5800mm",
+      "category": "f_section",
+      "unit": "length",
+      "default_price": 44.22,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "kwila",
+        "colour_code": "KWI"
+      },
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-F-WRC",
+      "name": "Alumawood QS F-Section 5800mm \u2014 Western Red Cedar",
+      "description": "F-section channel for Alumawood QS wall-fix, WRC, 5800mm",
+      "category": "f_section",
+      "unit": "length",
+      "default_price": 44.22,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "western-red-cedar",
+        "colour_code": "WRC"
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-5800-CSR-KWI",
+      "name": "Alumawood Centre Support Rail 5800mm \u2014 Kwila",
+      "description": "Centre support rail, Alumawood Kwila, 5800mm",
+      "category": "centre_support_rail",
+      "unit": "length",
+      "default_price": 54.17,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "kwila",
+        "colour_code": "KWI",
+        "stock_length_mm": 5800
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-5800-CSR-WRC",
+      "name": "Alumawood Centre Support Rail 5800mm \u2014 Western Red Cedar",
+      "description": "Centre support rail, Alumawood WRC, 5800mm",
+      "category": "centre_support_rail",
+      "unit": "length",
+      "default_price": 54.17,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "western-red-cedar",
+        "colour_code": "WRC",
+        "stock_length_mm": 5800
+      },
+      "active": true
+    },
+    {
+      "sku": "AWQS-5000-HORIZ-KWI",
+      "name": "Alumawood QS Horizontal Rail 5000mm \u2014 Kwila",
+      "description": "U-channel horizontal rail for vertical slat variant, Kwila, 5000mm",
+      "category": "horizontal_rail",
+      "unit": "length",
+      "default_price": 60.62,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "kwila",
+        "colour_code": "KWI",
+        "stock_length_mm": 5000
+      },
+      "active": true
+    },
+    {
+      "sku": "AWQS-5000-HORIZ-WRC",
+      "name": "Alumawood QS Horizontal Rail 5000mm \u2014 Western Red Cedar",
+      "description": "U-channel horizontal rail for vertical slat variant, WRC, 5000mm",
+      "category": "horizontal_rail",
+      "unit": "length",
+      "default_price": 60.62,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "western-red-cedar",
+        "colour_code": "WRC",
+        "stock_length_mm": 5000
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-2400-FP-KWI",
+      "name": "Alumawood 50mm Post 2400mm \u2014 Kwila",
+      "description": "50\u00d750mm Alumawood post, 2400mm, Kwila finish",
+      "category": "post",
+      "unit": "each",
+      "default_price": 53.46,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "kwila",
+        "colour_code": "KWI",
+        "post_size": "50",
+        "stock_length_mm": 2400
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-2400-FP-WRC",
+      "name": "Alumawood 50mm Post 2400mm \u2014 Western Red Cedar",
+      "description": "50\u00d750mm Alumawood post, 2400mm, WRC finish",
+      "category": "post",
+      "unit": "each",
+      "default_price": 53.46,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "western-red-cedar",
+        "colour_code": "WRC",
+        "post_size": "50",
+        "stock_length_mm": 2400
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-5800-FP-KWI",
+      "name": "Alumawood 50mm Post 5800mm \u2014 Kwila",
+      "description": "50\u00d750mm Alumawood post, 5800mm, Kwila finish",
+      "category": "post",
+      "unit": "each",
+      "default_price": 115.15,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "kwila",
+        "colour_code": "KWI",
+        "post_size": "50",
+        "stock_length_mm": 5800
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-5800-FP-WRC",
+      "name": "Alumawood 50mm Post 5800mm \u2014 Western Red Cedar",
+      "description": "50\u00d750mm Alumawood post, 5800mm, WRC finish",
+      "category": "post",
+      "unit": "each",
+      "default_price": 115.15,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "western-red-cedar",
+        "colour_code": "WRC",
+        "post_size": "50",
+        "stock_length_mm": 5800
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-2400-65HD-KWI",
+      "name": "Alumawood 65mm HD Post 2400mm \u2014 Kwila",
+      "description": "65\u00d765mm HD Alumawood post, 2400mm, Kwila finish",
+      "category": "post",
+      "unit": "each",
+      "default_price": 88.45,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "kwila",
+        "colour_code": "KWI",
+        "post_size": "65",
+        "stock_length_mm": 2400
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-2400-65HD-WRC",
+      "name": "Alumawood 65mm HD Post 2400mm \u2014 Western Red Cedar",
+      "description": "65\u00d765mm HD Alumawood post, 2400mm, WRC finish",
+      "category": "post",
+      "unit": "each",
+      "default_price": 88.45,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "western-red-cedar",
+        "colour_code": "WRC",
+        "post_size": "65",
+        "stock_length_mm": 2400
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-5800-65HD-KWI",
+      "name": "Alumawood 65mm HD Post 5800mm \u2014 Kwila",
+      "description": "65\u00d765mm HD Alumawood post, 5800mm, Kwila finish",
+      "category": "post",
+      "unit": "each",
+      "default_price": 196.5,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "kwila",
+        "colour_code": "KWI",
+        "post_size": "65",
+        "stock_length_mm": 5800
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-5800-65HD-WRC",
+      "name": "Alumawood 65mm HD Post 5800mm \u2014 Western Red Cedar",
+      "description": "65\u00d765mm HD Alumawood post, 5800mm, WRC finish",
+      "category": "post",
+      "unit": "each",
+      "default_price": 196.5,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "western-red-cedar",
+        "colour_code": "WRC",
+        "post_size": "65",
+        "stock_length_mm": 5800
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-BP-SET-TR",
+      "name": "Alumawood Base Plate Set 50mm \u2014 Terrain",
+      "description": "Base plate + domical cover set for 50mm Alumawood post, Terrain",
+      "category": "post_accessory",
+      "unit": "set",
+      "default_price": 12.61,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "terrain",
+        "colour_code": "TR",
+        "post_size": "50"
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-65BP-SET-TR",
+      "name": "Alumawood Base Plate Set 65mm \u2014 Terrain",
+      "description": "Base plate + domical cover set for 65mm HD Alumawood post, Terrain",
+      "category": "post_accessory",
+      "unit": "set",
+      "default_price": 10.82,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "terrain",
+        "colour_code": "TR",
+        "post_size": "65"
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-DR-TR",
+      "name": "Alumawood Dress Ring 50mm \u2014 Terrain",
+      "description": "Core drill dress ring for 50mm Alumawood post, Terrain",
+      "category": "post_accessory",
+      "unit": "each",
+      "default_price": 3.7,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "terrain",
+        "colour_code": "TR",
+        "post_size": "50"
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-65DR-TR",
+      "name": "Alumawood Dress Ring 65mm \u2014 Terrain",
+      "description": "Core drill dress ring for 65mm HD Alumawood post, Terrain",
+      "category": "post_accessory",
+      "unit": "each",
+      "default_price": 4.97,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "terrain",
+        "colour_code": "TR",
+        "post_size": "65"
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-TP-TR",
+      "name": "Alumawood Top Plate 50mm \u2014 Terrain",
+      "description": "Top plate cap for 50mm Alumawood 5800mm post, Terrain",
+      "category": "post_accessory",
+      "unit": "each",
+      "default_price": 1.91,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "terrain",
+        "colour_code": "TR",
+        "post_size": "50"
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-65TP-TR",
+      "name": "Alumawood Top Plate 65mm \u2014 Terrain",
+      "description": "Top plate cap for 65mm HD Alumawood 5800mm post, Terrain",
+      "category": "post_accessory",
+      "unit": "each",
+      "default_price": 3.7,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "terrain",
+        "colour_code": "TR",
+        "post_size": "65"
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-DC-2P-TR",
+      "name": "Alumawood Domical Cover 2pc 50mm \u2014 Terrain",
+      "description": "2-piece domical cover for 50mm Alumawood base plate, Terrain",
+      "category": "post_accessory",
+      "unit": "set",
+      "default_price": 5.51,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "terrain",
+        "colour_code": "TR",
+        "post_size": "50"
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-65DC-2P-TR",
+      "name": "Alumawood Domical Cover 2pc 65mm \u2014 Terrain",
+      "description": "2-piece domical cover for 65mm HD Alumawood base plate, Terrain",
+      "category": "post_accessory",
+      "unit": "set",
+      "default_price": 5.79,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "terrain",
+        "colour_code": "TR",
+        "post_size": "65"
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-BTP-TR",
+      "name": "Alumawood CSR Base/Top Plate \u2014 Terrain",
+      "description": "Base/top plate bracket for Alumawood CSR, Terrain",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 6.24,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "terrain",
+        "colour_code": "TR"
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-LB-TR",
+      "name": "Alumawood Louvre Brackets \u2014 Terrain",
+      "description": "Louvre mounting brackets for Alumawood system, Terrain",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 4.71,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "terrain",
+        "colour_code": "TR"
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-EC65-TR-4PK",
+      "name": "Alumawood 65mm End Cap 4pk \u2014 Terrain",
+      "description": "End caps for 65mm Alumawood slat, Terrain, 4-pack",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 6.49,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "terrain",
+        "colour_code": "TR",
+        "slat_size_mm": 65
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-EC90-TR-4PK",
+      "name": "Alumawood 90mm End Cap 4pk \u2014 Terrain",
+      "description": "End caps for 90mm Alumawood slat, Terrain, 4-pack",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 7.41,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "terrain",
+        "colour_code": "TR",
+        "slat_size_mm": 90
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-5800-135-KWI",
+      "name": "Alumawood 135\u00b0 Screen Adapter 5800mm \u2014 Kwila",
+      "description": "135-degree corner screen adapter, Kwila, 5800mm",
+      "category": "accessory",
+      "unit": "length",
+      "default_price": 69.02,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "kwila",
+        "colour_code": "KWI"
+      },
+      "active": true
+    },
+    {
+      "sku": "AW-5800-135-WRC",
+      "name": "Alumawood 135\u00b0 Screen Adapter 5800mm \u2014 Western Red Cedar",
+      "description": "135-degree corner screen adapter, WRC, 5800mm",
+      "category": "accessory",
+      "unit": "length",
+      "default_price": 69.02,
+      "system_types": [
+        "BAYG"
+      ],
+      "metadata": {
+        "colour": "western-red-cedar",
+        "colour_code": "WRC"
+      },
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-05MM-50PK",
+      "name": "QuickScreen 5mm Spacer 50pk",
+      "description": "5mm slat gap spacer, 50-pack",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 1.42,
+      "system_types": [
+        "BAYG",
+        "QSHS"
+      ],
+      "metadata": {
+        "gap_mm": 5,
+        "gap_code": "05MM"
+      },
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-09MM-50PK",
+      "name": "QuickScreen 9mm Spacer 50pk",
+      "description": "9mm slat gap spacer, 50-pack",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 2.63,
+      "system_types": [
+        "BAYG",
+        "QSHS"
+      ],
+      "metadata": {
+        "gap_mm": 9,
+        "gap_code": "09MM"
+      },
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-12MM-50PK",
+      "name": "QuickScreen 12mm Spacer 50pk",
+      "description": "12mm slat gap spacer, 50-pack",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 3.47,
+      "system_types": [
+        "BAYG",
+        "QSHS"
+      ],
+      "metadata": {
+        "gap_mm": 12,
+        "gap_code": "12MM"
+      },
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-15MM-50PK",
+      "name": "QuickScreen 15mm Spacer 50pk",
+      "description": "15mm slat gap spacer, 50-pack",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 4.1,
+      "system_types": [
+        "BAYG",
+        "QSHS"
+      ],
+      "metadata": {
+        "gap_mm": 15,
+        "gap_code": "15MM"
+      },
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-20MM-50PK",
+      "name": "QuickScreen 20mm Spacer 50pk",
+      "description": "20mm slat gap spacer, 50-pack",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 5.2,
+      "system_types": [
+        "BAYG",
+        "QSHS"
+      ],
+      "metadata": {
+        "gap_mm": 20,
+        "gap_code": "20MM"
+      },
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-30MM-50PK",
+      "name": "QuickScreen 30mm Spacer 50pk",
+      "description": "30mm slat gap spacer, 50-pack",
+      "category": "accessory",
+      "unit": "pack",
+      "default_price": 7.3,
+      "system_types": [
+        "BAYG",
+        "QSHS"
+      ],
+      "metadata": {
+        "gap_mm": 30,
+        "gap_code": "30MM"
+      },
+      "active": true
+    }
+  ],
   "rule_sets": [
     {
       "product_system_type": "BAYG",
@@ -34,7 +748,9 @@
       "rule_set_name": "BAYG Fence Rules",
       "version_label": "v1.0.0",
       "is_current": true,
-      "effective_from": "2026-04-19"
+      "effective_from": "2026-04-19",
+      "notes": "Initial BAYG rules based on CTS V4.1. Slat count from VLOOKUP against BAYG_ScrHts table \u2014 seed the lookup table separately.",
+      "active": true
     }
   ],
   "product_constraints": [
@@ -106,7 +822,10 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 65,
-      "options_json": [65, 90],
+      "options_json": [
+        65,
+        90
+      ],
       "scope": "job",
       "sort_order": 20,
       "active": true
@@ -115,14 +834,15 @@
       "product_system_type": "BAYG",
       "name": "slat_gap_mm",
       "label": "Slat Gap",
-      "data_type": "enum",
+      "data_type": "integer",
       "unit": "mm",
       "required": true,
-      "default_value_json": 5,
-      "options_json": [5, 9, 20],
+      "default_value_json": 9,
+      "options_json": [],
       "scope": "job",
       "sort_order": 30,
-      "active": true
+      "active": true,
+      "notes": "BAYG: fully variable gap \u2014 any integer >= 0mm. Custom spacing supported."
     },
     {
       "product_system_type": "BAYG",
@@ -132,7 +852,11 @@
       "unit": null,
       "required": true,
       "default_value_json": "in_ground",
-      "options_json": ["in_ground", "base_plate", "core_drill"],
+      "options_json": [
+        "in_ground",
+        "base_plate",
+        "core_drill"
+      ],
       "scope": "run",
       "sort_order": 40,
       "active": true
@@ -145,7 +869,10 @@
       "unit": null,
       "required": true,
       "default_value_json": "post",
-      "options_json": ["post", "wall"],
+      "options_json": [
+        "post",
+        "wall"
+      ],
       "scope": "run",
       "sort_order": 50,
       "active": true
@@ -158,7 +885,10 @@
       "unit": null,
       "required": true,
       "default_value_json": "post",
-      "options_json": ["post", "wall"],
+      "options_json": [
+        "post",
+        "wall"
+      ],
       "scope": "run",
       "sort_order": 60,
       "active": true
@@ -171,7 +901,7 @@
       "unit": "mm",
       "required": true,
       "default_value_json": null,
-      "options_json": [],
+      "options_json": null,
       "scope": "segment",
       "sort_order": 70,
       "active": true
@@ -183,8 +913,8 @@
       "data_type": "number",
       "unit": "mm",
       "required": true,
-      "default_value_json": 1800,
-      "options_json": [],
+      "default_value_json": null,
+      "options_json": null,
       "scope": "segment",
       "sort_order": 80,
       "active": true
@@ -197,10 +927,14 @@
       "unit": "mm",
       "required": true,
       "default_value_json": "50",
-      "options_json": ["50", "65"],
+      "options_json": [
+        "50",
+        "65"
+      ],
       "scope": "run",
       "sort_order": 60,
-      "active": true
+      "active": true,
+      "notes": "50=standard FP post; 65=heavy-duty HD post"
     },
     {
       "product_system_type": "BAYG",
@@ -210,17 +944,22 @@
       "unit": null,
       "required": true,
       "default_value_json": "in_ground",
-      "options_json": ["in_ground", "base_plate", "core_drill"],
+      "options_json": [
+        "in_ground",
+        "base_plate",
+        "core_drill"
+      ],
       "scope": "run",
       "sort_order": 70,
-      "active": true
+      "active": true,
+      "notes": "Drives accessory selection: base_plate\u2192BP+DC; core_drill\u2192DR; in_ground\u2192no accessories"
     }
   ],
   "product_validations": [
     {
       "product_system_type": "BAYG",
       "name": "panel_width_in_range",
-      "expression": "panel_width_mm >= 300 and panel_width_mm <= 2600",
+      "expression": "panel_width_mm >= 300 && panel_width_mm <= 2600",
       "severity": "error",
       "message": "Panel width must be between 300mm and 2600mm.",
       "active": true
@@ -289,7 +1028,7 @@
       "version_label": "v1.0.0",
       "stage": "derive",
       "name": "num_sf_left",
-      "expression": "left_is_product_post",
+      "expression": "left_boundary_type == 'post' ? 1 : 0",
       "output_key": "num_sf_left",
       "priority": 60,
       "active": true
@@ -300,7 +1039,7 @@
       "version_label": "v1.0.0",
       "stage": "derive",
       "name": "num_sf_right",
-      "expression": "right_is_product_post",
+      "expression": "right_boundary_type == 'post' ? 1 : 0",
       "output_key": "num_sf_right",
       "priority": 70,
       "active": true
@@ -322,7 +1061,7 @@
       "version_label": "v1.0.0",
       "stage": "derive",
       "name": "num_fsec_total",
-      "expression": "left_is_wall + right_is_wall",
+      "expression": "(left_boundary_type == 'wall' ? 1 : 0) + (right_boundary_type == 'wall' ? 1 : 0)",
       "output_key": "num_fsec_total",
       "priority": 90,
       "active": true
@@ -479,7 +1218,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_50_2400",
-      "expression": "post_size_num == 50 and target_height_mm <= 2100 ? num_posts : 0",
+      "expression": "post_size == '50' && target_height_mm <= 2100 ? num_posts : 0",
       "output_key": "qty_post_50_2400",
       "priority": 110,
       "active": true,
@@ -491,7 +1230,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_50_6000",
-      "expression": "post_size_num == 50 and target_height_mm > 2100 ? num_posts : 0",
+      "expression": "post_size == '50' && target_height_mm > 2100 ? num_posts : 0",
       "output_key": "qty_post_50_6000",
       "priority": 120,
       "active": true,
@@ -503,7 +1242,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_65_2400",
-      "expression": "post_size_num == 65 and target_height_mm <= 2100 ? num_posts : 0",
+      "expression": "post_size == '65' && target_height_mm <= 2100 ? num_posts : 0",
       "output_key": "qty_post_65_2400",
       "priority": 130,
       "active": true,
@@ -515,7 +1254,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_65_6000",
-      "expression": "post_size_num == 65 and target_height_mm > 2100 ? num_posts : 0",
+      "expression": "post_size == '65' && target_height_mm > 2100 ? num_posts : 0",
       "output_key": "qty_post_65_6000",
       "priority": 140,
       "active": true,
@@ -527,7 +1266,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_top_plate_50",
-      "expression": "post_size_num == 50 and target_height_mm > 2100 ? num_posts : 0",
+      "expression": "post_size == '50' && target_height_mm > 2100 ? num_posts : 0",
       "output_key": "qty_top_plate_50",
       "priority": 150,
       "active": true,
@@ -539,7 +1278,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_base_plate_50",
-      "expression": "post_size_num == 50 and mounting_type_is_base_plate ? num_posts : 0",
+      "expression": "post_size == '50' && mounting_method == 'base_plate' ? num_posts : 0",
       "output_key": "qty_base_plate_50",
       "priority": 160,
       "active": true,
@@ -551,7 +1290,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_domical_cover_50",
-      "expression": "post_size_num == 50 and mounting_type_is_base_plate ? num_posts : 0",
+      "expression": "post_size == '50' && mounting_method == 'base_plate' ? num_posts : 0",
       "output_key": "qty_domical_cover_50",
       "priority": 170,
       "active": true,
@@ -563,7 +1302,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_dress_ring_50",
-      "expression": "post_size_num == 50 and mounting_type_is_core_drill ? num_posts : 0",
+      "expression": "post_size == '50' && mounting_method == 'core_drill' ? num_posts : 0",
       "output_key": "qty_dress_ring_50",
       "priority": 180,
       "active": true,
@@ -575,7 +1314,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_top_plate_65",
-      "expression": "post_size_num == 65 and target_height_mm > 2100 ? num_posts : 0",
+      "expression": "post_size == '65' && target_height_mm > 2100 ? num_posts : 0",
       "output_key": "qty_top_plate_65",
       "priority": 190,
       "active": true,
@@ -587,7 +1326,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_base_plate_65",
-      "expression": "post_size_num == 65 and mounting_type_is_base_plate ? num_posts : 0",
+      "expression": "post_size == '65' && mounting_method == 'base_plate' ? num_posts : 0",
       "output_key": "qty_base_plate_65",
       "priority": 200,
       "active": true,
@@ -599,7 +1338,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_domical_cover_65",
-      "expression": "post_size_num == 65 and mounting_type_is_base_plate ? num_posts : 0",
+      "expression": "post_size == '65' && mounting_method == 'base_plate' ? num_posts : 0",
       "output_key": "qty_domical_cover_65",
       "priority": 210,
       "active": true,
@@ -611,7 +1350,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_dress_ring_65",
-      "expression": "post_size_num == 65 and mounting_type_is_core_drill ? num_posts : 0",
+      "expression": "post_size == '65' && mounting_method == 'core_drill' ? num_posts : 0",
       "output_key": "qty_dress_ring_65",
       "priority": 220,
       "active": true,
@@ -624,8 +1363,9 @@
       "selector_key": "bayg_slat_65",
       "component_category": "slat",
       "selector_type": "exact",
-      "match_json": { "slat_size_mm": 65 },
-      "qty_key": "qty_slat_65",
+      "match_json": {
+        "slat_size_mm": 65
+      },
       "sku_pattern": "XP-6100-S65-{colour}",
       "priority": 100,
       "notes": "Shared with QSHS/XPL",
@@ -636,8 +1376,9 @@
       "selector_key": "bayg_slat_90",
       "component_category": "slat",
       "selector_type": "exact",
-      "match_json": { "slat_size_mm": 90 },
-      "qty_key": "qty_slat_90",
+      "match_json": {
+        "slat_size_mm": 90
+      },
       "sku_pattern": "QS-6100-S90-{colour}",
       "priority": 100,
       "notes": "Shared with QSHS",
@@ -649,7 +1390,6 @@
       "component_category": "side_frame",
       "selector_type": "exact",
       "match_json": {},
-      "qty_key": "qty_sf",
       "sku_pattern": "QS-5800-SF-{colour}",
       "priority": 100,
       "active": true
@@ -660,7 +1400,6 @@
       "component_category": "centre_support_rail",
       "selector_type": "exact",
       "match_json": {},
-      "qty_key": "qty_csr",
       "sku_pattern": "XP-5800-CSR-{colour}",
       "priority": 100,
       "active": true
@@ -671,7 +1410,6 @@
       "component_category": "f_section",
       "selector_type": "exact",
       "match_json": {},
-      "qty_key": "qty_fsec",
       "sku_pattern": "QS-5800-F-{colour}",
       "priority": 100,
       "active": true
@@ -681,8 +1419,10 @@
       "selector_key": "bayg_post_50_2400",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_post_50_2400",
+      "match_json": {
+        "post_size": "50",
+        "post_length_mm": 2400
+      },
       "sku_pattern": "XP-2400-FP-{colour}",
       "priority": 100,
       "notes": "50mm FP post 2400mm \u2014 shared component in qshs.json",
@@ -693,8 +1433,10 @@
       "selector_key": "bayg_post_50_6000",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_post_50_6000",
+      "match_json": {
+        "post_size": "50",
+        "post_length_mm": 6000
+      },
       "sku_pattern": "XP-6000-FP-{colour}",
       "priority": 100,
       "notes": "50mm FP post 6000mm \u2014 shared component in qshs.json",
@@ -705,8 +1447,10 @@
       "selector_key": "bayg_post_65_2400",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_post_65_2400",
+      "match_json": {
+        "post_size": "65",
+        "post_length_mm": 2400
+      },
       "sku_pattern": "XP-2400-65HD-{colour}",
       "priority": 100,
       "notes": "65mm HD post 2400mm \u2014 shared component in qshs.json",
@@ -717,8 +1461,10 @@
       "selector_key": "bayg_post_65_6000",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_post_65_6000",
+      "match_json": {
+        "post_size": "65",
+        "post_length_mm": 6000
+      },
       "sku_pattern": "XP-6000-65HD-{colour}",
       "priority": 100,
       "notes": "65mm HD post 6000mm \u2014 shared component in qshs.json",
@@ -729,8 +1475,10 @@
       "selector_key": "bayg_top_plate_50",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_top_plate_50",
+      "match_json": {
+        "post_size": "50",
+        "accessory_type": "top_plate"
+      },
       "sku_pattern": "XP-TP-{colour}",
       "priority": 100,
       "notes": "50mm post top plate \u2014 shared in qshs.json",
@@ -741,8 +1489,10 @@
       "selector_key": "bayg_base_plate_50",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_base_plate_50",
+      "match_json": {
+        "post_size": "50",
+        "accessory_type": "base_plate"
+      },
       "sku_pattern": "XP-BP-SET-{colour}",
       "priority": 100,
       "notes": "50mm post base plate set \u2014 shared in qshs.json",
@@ -753,8 +1503,10 @@
       "selector_key": "bayg_domical_cover_50",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_domical_cover_50",
+      "match_json": {
+        "post_size": "50",
+        "accessory_type": "domical_cover"
+      },
       "sku_pattern": "XP-DC-2P-{colour}",
       "priority": 100,
       "notes": "50mm post domical cover \u2014 shared in qshs.json",
@@ -765,8 +1517,10 @@
       "selector_key": "bayg_dress_ring_50",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_dress_ring_50",
+      "match_json": {
+        "post_size": "50",
+        "accessory_type": "dress_ring"
+      },
       "sku_pattern": "XP-DR-{colour}",
       "priority": 100,
       "notes": "50mm post dress ring \u2014 shared in qshs.json",
@@ -777,8 +1531,10 @@
       "selector_key": "bayg_top_plate_65",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_top_plate_65",
+      "match_json": {
+        "post_size": "65",
+        "accessory_type": "top_plate"
+      },
       "sku_pattern": "XP-65TP-{colour}",
       "priority": 100,
       "notes": "65mm HD post top plate \u2014 shared in qshs.json",
@@ -789,8 +1545,10 @@
       "selector_key": "bayg_base_plate_65",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_base_plate_65",
+      "match_json": {
+        "post_size": "65",
+        "accessory_type": "base_plate"
+      },
       "sku_pattern": "XP-65BP-SET-{colour}",
       "priority": 100,
       "notes": "65mm HD post base plate set \u2014 shared in qshs.json",
@@ -801,8 +1559,10 @@
       "selector_key": "bayg_domical_cover_65",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_domical_cover_65",
+      "match_json": {
+        "post_size": "65",
+        "accessory_type": "domical_cover"
+      },
       "sku_pattern": "XP-65DC-2P-{colour}",
       "priority": 100,
       "notes": "65mm HD post domical cover \u2014 shared in qshs.json",
@@ -813,8 +1573,10 @@
       "selector_key": "bayg_dress_ring_65",
       "component_category": "post_accessory",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_dress_ring_65",
+      "match_json": {
+        "post_size": "65",
+        "accessory_type": "dress_ring"
+      },
       "sku_pattern": "XP-65DR-{colour}",
       "priority": 100,
       "notes": "65mm HD post dress ring \u2014 shared in qshs.json",
@@ -901,7 +1663,7 @@
         "accessory_type": "base_plate"
       },
       "add_category": "post_accessory",
-      "add_sku_pattern": "",
+      "add_sku_pattern": null,
       "qty_formula": "same_as(base_plate_qty)",
       "is_pack": false,
       "priority": 30,
@@ -933,7 +1695,10 @@
       "condition_json": {
         "post_size": "65",
         "colour_code": {
-          "in": ["P", "PB"]
+          "in": [
+            "P",
+            "PB"
+          ]
         }
       },
       "message": "65mm HD posts are not available in Primrose (P) or Paperbark (PB). Please select a different colour for HD posts, or switch to 50mm FP posts.",
@@ -962,5 +1727,1359 @@
       "active": true
     }
   ],
-  "pricing_rules": []
+  "pricing_rules": [
+    {
+      "sku": "AW-5800-S65-KWI",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 53.01,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-5800-S65-KWI",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 45.59,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-S65-KWI",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 39.23,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-S65-WRC",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 53.01,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-5800-S65-WRC",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 45.59,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-S65-WRC",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 39.23,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-S90-WRC",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 67.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-S90-WRC",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 58.45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-S90-WRC",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 50.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-SF-KWI",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 36.97,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-SF-KWI",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 31.79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-SF-KWI",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 27.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-SF-WRC",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 36.97,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-SF-WRC",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 31.79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-SF-WRC",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 27.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-CFC-KWI",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 20.81,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-CFC-KWI",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 17.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-CFC-KWI",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 15.4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-CFC-WRC",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 20.81,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-CFC-WRC",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 17.9,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-CFC-WRC",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 15.4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-F-KWI",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 44.22,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-F-KWI",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 38.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-F-KWI",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.72,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-F-WRC",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 44.22,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-F-WRC",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 38.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5800-F-WRC",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 32.72,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-CSR-KWI",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 54.17,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-5800-CSR-KWI",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 46.59,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-CSR-KWI",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 40.09,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-CSR-WRC",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 54.17,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-5800-CSR-WRC",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 46.59,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-CSR-WRC",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 40.09,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5000-HORIZ-KWI",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 60.62,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AWQS-5000-HORIZ-KWI",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 52.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5000-HORIZ-KWI",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 44.86,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5000-HORIZ-WRC",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 60.62,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AWQS-5000-HORIZ-WRC",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 52.13,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AWQS-5000-HORIZ-WRC",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 44.86,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-2400-FP-KWI",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 53.46,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-2400-FP-KWI",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 45.98,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-2400-FP-KWI",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 39.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-2400-FP-WRC",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 53.46,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-2400-FP-WRC",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 45.98,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-2400-FP-WRC",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 39.56,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-FP-KWI",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 115.15,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-5800-FP-KWI",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 99.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-FP-KWI",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 85.21,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-FP-WRC",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 115.15,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-5800-FP-WRC",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 99.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-FP-WRC",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 85.21,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-2400-65HD-KWI",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 88.45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-2400-65HD-KWI",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 76.07,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-2400-65HD-KWI",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 65.45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-2400-65HD-WRC",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 88.45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-2400-65HD-WRC",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 76.07,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-2400-65HD-WRC",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 65.45,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-65HD-KWI",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 196.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-5800-65HD-KWI",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 168.99,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-65HD-KWI",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 145.41,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-65HD-WRC",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 196.5,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-5800-65HD-WRC",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 168.99,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-65HD-WRC",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 145.41,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-BP-SET-TR",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 12.61,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-BP-SET-TR",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 10.84,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-BP-SET-TR",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 9.33,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-65BP-SET-TR",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 10.82,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-65BP-SET-TR",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 9.31,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-65BP-SET-TR",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8.01,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-DR-TR",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 3.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-DR-TR",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 3.18,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-DR-TR",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.74,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-65DR-TR",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.97,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-65DR-TR",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.27,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-65DR-TR",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.68,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-TP-TR",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.91,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-TP-TR",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 1.64,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-TP-TR",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 1.41,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-65TP-TR",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 3.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-65TP-TR",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 3.18,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-65TP-TR",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.74,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-DC-2P-TR",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 5.51,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-DC-2P-TR",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.74,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-DC-2P-TR",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.08,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-65DC-2P-TR",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 5.79,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-65DC-2P-TR",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.98,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-65DC-2P-TR",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.28,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-BTP-TR",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.24,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-BTP-TR",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.37,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-BTP-TR",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.62,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-LB-TR",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.71,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-LB-TR",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.05,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-LB-TR",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.49,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-EC65-TR-4PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 6.49,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-EC65-TR-4PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.58,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-EC65-TR-4PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.8,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-EC90-TR-4PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 7.41,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-EC90-TR-4PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 6.37,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-EC90-TR-4PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 5.48,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-135-KWI",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 69.02,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-5800-135-KWI",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 59.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-135-KWI",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 51.07,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-135-WRC",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 69.02,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "AW-5800-135-WRC",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 59.36,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "AW-5800-135-WRC",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 51.07,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-05MM-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-05MM-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 1.22,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-05MM-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 1.05,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-09MM-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.63,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-09MM-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.26,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-09MM-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 1.95,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-12MM-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 3.47,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-12MM-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.98,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-12MM-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.57,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-15MM-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.1,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-15MM-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 3.53,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-15MM-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-20MM-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 5.2,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-20MM-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.47,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-20MM-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 3.85,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-30MM-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 7.3,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Live site April 2026",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-30MM-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 6.28,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-30MM-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 5.4,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": null,
+      "active": true
+    }
+  ]
 }

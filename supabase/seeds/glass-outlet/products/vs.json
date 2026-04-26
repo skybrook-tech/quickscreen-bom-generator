@@ -9,11 +9,29 @@
       "active": true,
       "sort_order": 2,
       "metadata": {
-        "allowedAngles": [90],
         "options": {
-          "slatSize": ["65", "90"],
-          "slatGap": ["5", "9", "20"],
-          "colour": ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]
+          "slatSize": [
+            "65",
+            "90"
+          ],
+          "slatGap": [
+            "5",
+            "9",
+            "20"
+          ],
+          "colour": [
+            "B",
+            "MN",
+            "G",
+            "SM",
+            "W",
+            "BS",
+            "D",
+            "M",
+            "P",
+            "PB",
+            "S"
+          ]
         },
         "notes": "VS slats (XP-6100-S65, QS-6100-S90), side frames (QS-5800-SF), CFC covers (QS-5800-CFC), F-sections (QS-5800-F), QS-SFC-B caps, and all post components are seeded in qshs.json with system_types including 'VS'. vs.json seeds only QS-5000-HORIZ (VS-unique U-channel)."
       }
@@ -27,7 +45,9 @@
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": ["VS"],
+      "system_types": [
+        "VS"
+      ],
       "metadata": {},
       "active": true
     },
@@ -38,7 +58,9 @@
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": ["VS"],
+      "system_types": [
+        "VS"
+      ],
       "metadata": {},
       "active": true
     },
@@ -49,7 +71,9 @@
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": ["VS"],
+      "system_types": [
+        "VS"
+      ],
       "metadata": {},
       "active": true
     },
@@ -60,7 +84,9 @@
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": ["VS"],
+      "system_types": [
+        "VS"
+      ],
       "metadata": {},
       "active": true
     },
@@ -71,7 +97,9 @@
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": ["VS"],
+      "system_types": [
+        "VS"
+      ],
       "metadata": {},
       "active": true
     },
@@ -82,7 +110,9 @@
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": ["VS"],
+      "system_types": [
+        "VS"
+      ],
       "metadata": {},
       "active": true
     },
@@ -93,7 +123,9 @@
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": ["VS"],
+      "system_types": [
+        "VS"
+      ],
       "metadata": {},
       "active": true
     },
@@ -104,7 +136,9 @@
       "category": "rail",
       "unit": "length",
       "default_price": 32.4,
-      "system_types": ["VS"],
+      "system_types": [
+        "VS"
+      ],
       "metadata": {},
       "active": true
     }
@@ -124,7 +158,8 @@
       "version_label": "v1.0.0",
       "is_current": true,
       "effective_from": "2026-04-19",
-      "notes": "Initial VS rules based on CTS V4.1 formulas"
+      "notes": "Initial VS rules based on CTS V4.1 formulas",
+      "active": true
     }
   ],
   "product_constraints": [
@@ -231,7 +266,10 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 65,
-      "options_json": [65, 90],
+      "options_json": [
+        65,
+        90
+      ],
       "scope": "job",
       "sort_order": 20,
       "active": true
@@ -240,14 +278,15 @@
       "product_system_type": "VS",
       "name": "slat_gap_mm",
       "label": "Slat Gap",
-      "data_type": "enum",
+      "data_type": "integer",
       "unit": "mm",
       "required": true,
-      "default_value_json": 5,
-      "options_json": [5, 9, 20],
+      "default_value_json": 9,
+      "options_json": [],
       "scope": "job",
       "sort_order": 30,
-      "active": true
+      "active": true,
+      "notes": "VS: fully variable gap \u2014 any integer >= 0mm. No fixed options."
     },
     {
       "product_system_type": "VS",
@@ -257,7 +296,11 @@
       "unit": null,
       "required": true,
       "default_value_json": "in_ground",
-      "options_json": ["in_ground", "base_plate", "core_drill"],
+      "options_json": [
+        "in_ground",
+        "base_plate",
+        "core_drill"
+      ],
       "scope": "run",
       "sort_order": 40,
       "active": true
@@ -270,7 +313,10 @@
       "unit": null,
       "required": true,
       "default_value_json": "post",
-      "options_json": ["post", "wall"],
+      "options_json": [
+        "post",
+        "wall"
+      ],
       "scope": "run",
       "sort_order": 50,
       "active": true
@@ -283,7 +329,10 @@
       "unit": null,
       "required": true,
       "default_value_json": "post",
-      "options_json": ["post", "wall"],
+      "options_json": [
+        "post",
+        "wall"
+      ],
       "scope": "run",
       "sort_order": 60,
       "active": true
@@ -296,7 +345,7 @@
       "unit": "mm",
       "required": true,
       "default_value_json": null,
-      "options_json": [],
+      "options_json": null,
       "scope": "segment",
       "sort_order": 70,
       "active": true
@@ -308,8 +357,8 @@
       "data_type": "number",
       "unit": "mm",
       "required": true,
-      "default_value_json": 1800,
-      "options_json": [],
+      "default_value_json": null,
+      "options_json": null,
       "scope": "segment",
       "sort_order": 80,
       "active": true
@@ -322,7 +371,10 @@
       "unit": "mm",
       "required": true,
       "default_value_json": "50",
-      "options_json": ["50", "65"],
+      "options_json": [
+        "50",
+        "65"
+      ],
       "scope": "run",
       "sort_order": 45,
       "active": true
@@ -332,7 +384,7 @@
     {
       "product_system_type": "VS",
       "name": "panel_width_in_range",
-      "expression": "panel_width_mm >= 300 and panel_width_mm <= 2600",
+      "expression": "panel_width_mm >= 300 && panel_width_mm <= 2600",
       "severity": "error",
       "message": "Panel width must be between 300mm and 2600mm.",
       "active": true
@@ -340,7 +392,7 @@
     {
       "product_system_type": "VS",
       "name": "height_in_range",
-      "expression": "target_height_mm >= 300 and target_height_mm <= 2400",
+      "expression": "target_height_mm >= 300 && target_height_mm <= 2400",
       "severity": "warning",
       "message": "Height outside standard VS range (300\u20132400mm).",
       "active": true
@@ -389,7 +441,7 @@
       "version_label": "v1.0.0",
       "stage": "derive",
       "name": "num_sf_left",
-      "expression": "left_is_product_post",
+      "expression": "left_boundary_type == 'post' ? 1 : 0",
       "output_key": "num_sf_left",
       "priority": 40,
       "active": true
@@ -400,7 +452,7 @@
       "version_label": "v1.0.0",
       "stage": "derive",
       "name": "num_sf_right",
-      "expression": "right_is_product_post",
+      "expression": "right_boundary_type == 'post' ? 1 : 0",
       "output_key": "num_sf_right",
       "priority": 50,
       "active": true
@@ -612,7 +664,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_50_2400",
-      "expression": "post_size_num == 50 and target_height_mm <= 2400 ? num_posts : 0",
+      "expression": "post_size == '50' && target_height_mm <= 2400 ? num_posts : 0",
       "output_key": "qty_post_50_2400",
       "priority": 5,
       "active": true,
@@ -624,7 +676,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_50_6000",
-      "expression": "post_size_num == 50 and target_height_mm > 2400 ? num_posts : 0",
+      "expression": "post_size == '50' && target_height_mm > 2400 ? num_posts : 0",
       "output_key": "qty_post_50_6000",
       "priority": 5,
       "active": true,
@@ -636,7 +688,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_65_2400",
-      "expression": "post_size_num == 65 and target_height_mm <= 2400 ? num_posts : 0",
+      "expression": "post_size == '65' && target_height_mm <= 2400 ? num_posts : 0",
       "output_key": "qty_post_65_2400",
       "priority": 5,
       "active": true,
@@ -648,7 +700,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_65_6000",
-      "expression": "post_size_num == 65 and target_height_mm > 2400 ? num_posts : 0",
+      "expression": "post_size == '65' && target_height_mm > 2400 ? num_posts : 0",
       "output_key": "qty_post_65_6000",
       "priority": 5,
       "active": true,
@@ -664,7 +716,6 @@
       "match_json": {
         "slat_size_mm": 65
       },
-      "qty_key": "qty_slat_65",
       "sku_pattern": "XP-6100-S65-{colour}",
       "priority": 100,
       "notes": "VS 65mm vertical slat \u2014 same XP-6100-S65 extrusion as QSHS, cut to height",
@@ -678,7 +729,6 @@
       "match_json": {
         "slat_size_mm": 90
       },
-      "qty_key": "qty_slat_90",
       "sku_pattern": "QS-6100-S90-{colour}",
       "priority": 100,
       "notes": "VS 90mm vertical slat \u2014 same QS-6100-S90 extrusion as QSHS, cut to height",
@@ -690,7 +740,6 @@
       "component_category": "rail",
       "selector_type": "exact",
       "match_json": {},
-      "qty_key": "qty_rail",
       "sku_pattern": "QS-5000-HORIZ-{colour}",
       "priority": 100,
       "notes": "Top/bottom horizontal U-channel rail",
@@ -702,7 +751,6 @@
       "component_category": "side_frame",
       "selector_type": "exact",
       "match_json": {},
-      "qty_key": "qty_sf",
       "sku_pattern": "QS-5800-SF-{colour}",
       "priority": 100,
       "notes": "Side frame for post-mounted panel ends",
@@ -714,7 +762,6 @@
       "component_category": "f_section",
       "selector_type": "exact",
       "match_json": {},
-      "qty_key": "qty_fsec",
       "sku_pattern": "QS-5800-F-{colour}",
       "priority": 100,
       "notes": "VS vertical edge frame \u2014 QS-5800-F installed vertically each side; slats/U-channels slot in",
@@ -725,8 +772,10 @@
       "selector_key": "post_50mm_2400",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_post_50_2400",
+      "match_json": {
+        "post_size": "50",
+        "stock_length_mm": 2400
+      },
       "sku_pattern": "XP-2400-FP-{colour}",
       "priority": 100,
       "notes": "50mm full post 2400mm \u2014 colour resolved at runtime",
@@ -737,8 +786,10 @@
       "selector_key": "post_50mm_6000",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_post_50_6000",
+      "match_json": {
+        "post_size": "50",
+        "stock_length_mm": 6000
+      },
       "sku_pattern": "XP-6000-FP-{colour}",
       "priority": 100,
       "notes": "50mm full post 6000mm \u2014 colour resolved at runtime. Not available in P/PB.",
@@ -749,8 +800,10 @@
       "selector_key": "post_65mm_2400",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_post_65_2400",
+      "match_json": {
+        "post_size": "65",
+        "stock_length_mm": 2400
+      },
       "sku_pattern": "XP-2400-65HD-{colour}",
       "priority": 100,
       "notes": "65mm HD post 2400mm \u2014 colour resolved at runtime. Not available in P/PB.",
@@ -761,8 +814,10 @@
       "selector_key": "post_65mm_6000",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_post_65_6000",
+      "match_json": {
+        "post_size": "65",
+        "stock_length_mm": 6000
+      },
       "sku_pattern": "XP-6000-65HD-{colour}",
       "priority": 100,
       "notes": "65mm HD post 6000mm \u2014 colour resolved at runtime. Not available in P/PB.",
@@ -850,7 +905,7 @@
       },
       "add_category": "post_accessory",
       "add_sku_pattern": "XP-BP-SET-{colour}",
-      "qty_formula": "mounting_type_is_base_plate ? num_posts : 0",
+      "qty_formula": "mounting_type == 'base_plate' ? num_posts : 0",
       "is_pack": false,
       "priority": 20,
       "notes": "1x base plate set per 50mm post when base-plated",
@@ -865,7 +920,7 @@
       },
       "add_category": "post_accessory",
       "add_sku_pattern": "XP-DC-2P-{colour}",
-      "qty_formula": "mounting_type_is_base_plate ? num_posts : 0",
+      "qty_formula": "mounting_type == 'base_plate' ? num_posts : 0",
       "is_pack": false,
       "priority": 21,
       "notes": "1x domical cover per 50mm post when base-plated",
@@ -880,7 +935,7 @@
       },
       "add_category": "post_accessory",
       "add_sku_pattern": "XP-65BP-SET-{colour}",
-      "qty_formula": "mounting_type_is_base_plate ? num_posts : 0",
+      "qty_formula": "mounting_type == 'base_plate' ? num_posts : 0",
       "is_pack": false,
       "priority": 22,
       "notes": "1x base plate set per 65mm HD post when base-plated",
@@ -895,7 +950,7 @@
       },
       "add_category": "post_accessory",
       "add_sku_pattern": "XP-65DC-2P-{colour}",
-      "qty_formula": "mounting_type_is_base_plate ? num_posts : 0",
+      "qty_formula": "mounting_type == 'base_plate' ? num_posts : 0",
       "is_pack": false,
       "priority": 23,
       "notes": "1x domical cover per 65mm HD post when base-plated",
@@ -910,7 +965,7 @@
       },
       "add_category": "post_accessory",
       "add_sku_pattern": "XP-DR-{colour}",
-      "qty_formula": "mounting_type_is_core_drill ? num_posts : 0",
+      "qty_formula": "mounting_type == 'core_drill' ? num_posts : 0",
       "is_pack": false,
       "priority": 30,
       "notes": "1x dress ring per 50mm post when core-drilled",
@@ -925,7 +980,7 @@
       },
       "add_category": "post_accessory",
       "add_sku_pattern": "XP-65DR-{colour}",
-      "qty_formula": "mounting_type_is_core_drill ? num_posts : 0",
+      "qty_formula": "mounting_type == 'core_drill' ? num_posts : 0",
       "is_pack": false,
       "priority": 31,
       "notes": "1x dress ring per 65mm HD post when core-drilled",
