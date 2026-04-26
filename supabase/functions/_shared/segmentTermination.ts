@@ -1,67 +1,75 @@
 // Mirrors src/lib/segmentTermination.ts — keep in sync manually (Deno bundle).
+import type { CanonicalRun, CanonicalSegment } from "./canonical.types.ts";
 
-export type LegacyBoundaryType =
-  | "product_post"
-  | "brick_post"
-  | "existing_post"
-  | "wall"
-  | "corner_90";
+export const CORNER_DEGREE_OPTIONS = [90, 135] as const;
 
-export type TerminationKindUi =
-  | "corner"
-  | "system_post"
-  | "non_system_termination";
-
-export type NonSystemSubtypeUi = "wall" | "non_system_post";
-
-const LEFT_KIND = "left_termination_kind";
-const RIGHT_KIND = "right_termination_kind";
-const LEFT_SUB = "left_non_system_subtype";
-const RIGHT_SUB = "right_non_system_subtype";
-const LEFT_DEG = "left_corner_degrees";
-const RIGHT_DEG = "right_corner_degrees";
-
-function parseKind(raw: unknown): TerminationKindUi | undefined {
-  if (
-    raw === "corner" ||
-    raw === "system_post" ||
-    raw === "non_system_termination"
-  )
-    return raw;
-  return undefined;
+export function patchSegmentVariables(
+  seg: CanonicalSegment,
+  patch: Record<string, string | number | boolean | null | undefined>,
+): CanonicalSegment {
+  const next: Record<string, string | number | boolean> = {
+    ...(seg.variables ?? {}),
+  };
+  for (const [k, v] of Object.entries(patch)) {
+    if (v === null || v === undefined || v === "") delete next[k];
+    else next[k] = v;
+  }
+  return { ...seg, variables: Object.keys(next).length ? next : undefined };
 }
 
-function parseSub(raw: unknown): NonSystemSubtypeUi | undefined {
-  if (raw === "wall" || raw === "non_system_post") return raw;
-  return undefined;
-}
+/**
+ * Walk a run and return the number of system (fence) posts attributed to each
+ * fence segment, keyed by segmentId.
+ *
+ * Rules:
+ *  - `system` end   → this segment owns the end post (+1)
+ *  - `non_system`   → no BOM post on that side (wall or external post)
+ *  - `segment_join` on the RIGHT → this segment owns the junction post, UNLESS
+ *    the next segment is a gate (gate has its own posts)
+ *  - `segment_join` on the LEFT  → the post at the junction was already counted
+ *    by the previous segment (or belongs to a gate) → 0
+ *
+ * Gate segments are skipped; they manage their own post counts via product rules.
+ */
+export function walkRunForPosts(
+  run: CanonicalRun,
+  numPanelsBySegmentId: Map<string, number>,
+): Map<string, number> {
+  const result = new Map<string, number>();
+  const segs = [...run.segments].sort((a, b) => a.sortOrder - b.sortOrder);
 
-export function effectiveLegacyBoundaryType(
-  runBoundaryType: LegacyBoundaryType,
-  vars: Record<string, string | number | boolean> | undefined,
-  side: "left" | "right",
-): LegacyBoundaryType {
-  const kindKey = side === "left" ? LEFT_KIND : RIGHT_KIND;
-  const kind = parseKind(vars?.[kindKey]);
+  for (let i = 0; i < segs.length; i++) {
+    const seg = segs[i];
+    if (seg.kind !== "fence") continue;
 
-  if (!kind) return runBoundaryType;
+    const numPanels = numPanelsBySegmentId.get(seg.segmentId) ?? 1;
+    const prev = segs[i - 1];
+    const next = segs[i + 1];
 
-  if (kind === "system_post") return "product_post";
-  if (kind === "corner") return "corner_90";
+    let posts = numPanels - 1;
 
-  const subKey = side === "left" ? LEFT_SUB : RIGHT_SUB;
-  const sub = parseSub(vars?.[subKey]);
-  if (sub === "wall") return "wall";
-  return "brick_post";
-}
+    // ── Left end ──────────────────────────────────────────────────────────
+    const lt = seg.leftTermination;
+    if (lt.kind === "system") {
+      posts += 1;
+    } else if (lt.kind === "segment_join") {
+      posts += 0;
+    }
 
-export function cornerDegreesFromVars(
-  vars: Record<string, string | number | boolean> | undefined,
-  side: "left" | "right",
-): number | undefined {
-  const key = side === "left" ? LEFT_DEG : RIGHT_DEG;
-  const raw = vars?.[key];
-  if (raw === undefined || raw === null) return undefined;
-  const n = typeof raw === "number" ? raw : Number(raw);
-  return Number.isFinite(n) ? n : undefined;
+    // ── Right end ─────────────────────────────────────────────────────────
+    const rt = seg.rightTermination;
+    if (rt.kind === "system") {
+      posts += 1;
+    } else if (rt.kind === "segment_join") {
+      if (next && next.kind === "gate") {
+        posts += 0;
+      } else {
+        posts += 1;
+      }
+    }
+
+    result.set(seg.segmentId, Math.max(0, posts));
+  }
+
+  return result;
 }

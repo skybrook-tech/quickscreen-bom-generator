@@ -2,10 +2,10 @@ import { useMemo } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import {
-  SEGMENT_OPTION_KEYS,
-  patchSegmentVariables,
-} from "../../lib/segmentTermination";
+import { patchSegmentVariables } from "../../lib/segmentTermination";
+
+const POST_SIZE_KEY = "post_size";
+const POST_WIDTH_MM_KEY = "post_width_mm";
 import { SchemaDrivenForm } from "./SchemaDrivenForm";
 import { TerminationControl } from "./TerminationControl";
 import NumberInput from "../ui/NumberInput";
@@ -40,7 +40,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   }, [runFields]);
 
   const v = seg.variables ?? {};
-  const postSize = (v[SEGMENT_OPTION_KEYS.postSize] as string) ?? "";
+  const postSize = (v[POST_SIZE_KEY] as string) ?? "";
   const isCustomPost = postSize === "custom";
 
   function upsertSegment(s: CanonicalSegment) {
@@ -91,7 +91,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
           <Select
             value={postSize}
             onChange={(e) =>
-              setScalar(SEGMENT_OPTION_KEYS.postSize, e.target.value || null)
+              setScalar(POST_SIZE_KEY, e.target.value || null)
             }
             className="bg-brand-bg"
           >
@@ -111,10 +111,10 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
             <span className="text-brand-muted text-xs">Post width (mm)</span>
             <NumberInput
               value={
-                (v[SEGMENT_OPTION_KEYS.postWidthMm] as number | null) ?? null
+                (v[POST_WIDTH_MM_KEY] as number | null) ?? null
               }
               onChange={(val) =>
-                setScalar(SEGMENT_OPTION_KEYS.postWidthMm, val)
+                setScalar(POST_WIDTH_MM_KEY, val)
               }
               min={1}
             />

@@ -186,6 +186,10 @@ The engine evaluates strings in `expression` (product_rules / product_validation
 - Array helpers: `[1,2,3].includes(x)`
 - Logic: `&&`, `||`, `!`, `==`, `!=`, `<`, `>`, `<=`, `>=`
 - Ternary: `cond ? a : b`
+- Custom helper: **`stocks(cutsNeeded, stockLen, cutLen)`** — returns the number of
+  stock lengths needed. Handles zero and NaN gracefully. Replaces the
+  `X_cuts_per_stock + X_stocks` rule pair pattern. Example:
+  `stocks(num_slats, 6100, slat_cut_length_mm)` → integer stock count.
 
 Variables available to an expression come from (in merging order):
 
@@ -193,7 +197,17 @@ Variables available to an expression come from (in merging order):
 2. Run-level variables (payload's `runs[i].variables`).
 3. Segment-level variables (payload's `runs[i].segments[j].variables`).
 4. Derived variables set by previous `stage`s: `derive` → `stock` → `accessory` → `component`.
-5. Layout helpers injected by the engine: `product_post_boundary_count`, `corner_post_count`, stock lengths (`slat_stock_length_mm`, `side_frame_stock_length_mm`), boundary-derived `width_deduction_mm`, per-category quantities like `num_slats`, `num_side_frames`, `num_csr`.
+5. Layout helpers injected by the engine: geometry primitives computed from
+   segment terminations — `num_panels`, `panel_width_mm`, `num_posts`,
+   `system_termination_count`, `non_system_termination_count`,
+   `non_system_wall_count`, `corner_count`; universal boolean flags
+   `left_is_system`, `right_is_system`, `left_is_wall`, `right_is_wall`,
+   `left_is_non_system`, `right_is_non_system`, `left_is_join`, `right_is_join`,
+   `left_is_corner`, `right_is_corner`; angle values `left_angle_deg`,
+   `right_angle_deg`; stock lengths `slat_stock_length_mm`,
+   `side_frame_stock_length_mm`; and segment dimensions `segment_width_mm`,
+   `target_height_mm`. **Do not write product_rules for any of these.**
+   Also available: `stocks(cutsNeeded, stockLen, cutLen)` math.js helper (see §6.8).
 
 When in doubt, read existing `product_rules` rows in `supabase/seeds/glass-outlet/products/qshs.json` (or your target product file) to see what variables rules reference.
 
@@ -218,7 +232,7 @@ Six places you'll emit JSON objects or arrays as JSONB cells:
 `product_variables.scope` must be one of:
 
 - `job` — set once at the top level, applies to every run and segment (e.g. `colour_code`, `slat_size_mm`)
-- `run` — set per run (e.g. `mounting_type`, `left_boundary_type`)
+- `run` — set per run (e.g. `mounting_type`, `hinge_type`, `latch_type`)
 - `segment` — set per segment (e.g. `panel_width_mm`, `target_height_mm`, `gate_width_mm`)
 
 Incorrect scope doesn't prevent the engine from running, but it breaks the expected canonical-payload shape that the UI sends.
@@ -361,9 +375,10 @@ The heart of the calculation. Stage-ordered math.js expressions.
 
 Follow the four stages:
 - `derive` — secondary values (num_slats, actual_height_mm, cut lengths)
-- `stock` — how many of each cut fit into one stock length (e.g. slats per 5800mm stock)
+- `stock` — number of stock lengths needed for each cut; use `stocks()` helper
 - `accessory` — screw/spacer/cap counts derived from above
-- `component` — final emitted components (num_side_frames, num_posts, etc.)
+- `component` — final emitted components (num_side_frames, etc.)
+  Note: `num_posts` is **engine-provided** — do not write a component rule for it.
 
 ```json
 { "product_system_type": "VS",
@@ -372,6 +387,12 @@ Follow the four stages:
   "expression": "floor((target_height_mm + slat_gap_mm - 10) / (slat_size_mm + slat_gap_mm))",
   "output_key": "num_slats", "priority": 10, "active": true,
   "notes": "VS: top/bottom rails consume 10mm in the height budget" }
+
+{ "product_system_type": "VS",
+  "rule_set_name": "VS Fence Rules", "version_label": "v1.0.0",
+  "stage": "stock", "name": "slat_stocks",
+  "expression": "stocks(num_slats * num_panels, slat_stock_length_mm, slat_cut_length_mm)",
+  "output_key": "slat_stocks", "priority": 60, "active": true }
 ```
 
 ### 6.9 `product_component_selectors`
@@ -536,7 +557,7 @@ Given the natural-language brief in §7.2, the output is **one file**: `supabase
   ],
   "product_variables": [ /* colour_code, slat_size_mm, slat_gap_mm, panel_width_mm, target_height_mm, … */ ],
   "product_validations": [ /* height_in_range, gap_allowed, slat_size_allowed, … */ ],
-  "product_rules": [ /* num_slats, slat_cut_length_mm, rail_cut_length_mm, num_side_frames, num_rails, num_cfc_covers, num_csr, num_posts_from_boundaries, … */ ],
+  "product_rules": [ /* num_slats, slat_cut_length_mm, rail_cut_length_mm, num_side_frames, num_rails, num_cfc_covers, num_csr — note: num_posts is engine-provided, do not include */ ],
   "product_component_selectors": [ /* slat_65, slat_90, side_frame, rail, cfc, post, spacers, screws */ ],
   "product_companion_rules": [ /* sf_add_cfc, slat_spacers, f_section_screws */ ],
   "product_warnings": [ /* panel_width_warn, csr_required */ ],

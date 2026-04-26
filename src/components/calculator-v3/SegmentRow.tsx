@@ -16,7 +16,7 @@ interface Props {
 
 export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
   const { state, dispatch } = useCalculator();
-  const gate = seg.segmentKind === "gate_opening";
+  const gate = seg.kind === "gate";
 
   const jobMax = Number(state.payload?.variables.max_panel_width_mm ?? 2600);
   const effectiveMax = Number(seg.variables?.max_panel_width_mm ?? jobMax);

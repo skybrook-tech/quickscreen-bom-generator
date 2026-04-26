@@ -162,9 +162,39 @@ export function resolvePlaceholders(
 }
 
 /**
- * Build a segment/run context by applying engine variable defaults, overlaying
- * provided variables, and normalising the colour field to its short code.
+ * stocks(cutsNeeded, stockLen, cutLen) → integer
+ *
+ * Returns the number of stock-length pieces required to produce `cutsNeeded`
+ * cuts of length `cutLen` from stock of length `stockLen`.
+ *
+ * Handles zero and NaN gracefully (returns 0).
+ *
+ * Example: stocks(52, 6100, 2438) → 26  (2 cuts per 6100mm stock → 26 stocks)
  */
+export function stocks(
+  cutsNeeded: number,
+  stockLen: number,
+  cutLen: number,
+): number {
+  if (
+    !Number.isFinite(cutsNeeded) ||
+    !Number.isFinite(stockLen) ||
+    !Number.isFinite(cutLen) ||
+    cutsNeeded <= 0 ||
+    stockLen <= 0 ||
+    cutLen <= 0
+  ) {
+    return 0;
+  }
+  const cutsPerStock = Math.floor(stockLen / cutLen);
+  if (cutsPerStock === 0) return cutsNeeded; // each stock yields < 1 cut
+  return Math.ceil(cutsNeeded / cutsPerStock);
+}
+
+// Register stocks() as a math.js function so seed rules can call it.
+mathjs.import({ stocks }, { override: false });
+
+
 export function normaliseVariables(
   vars: Record<string, string | number | boolean>,
   engineData: Pick<EngineData, "variables">,

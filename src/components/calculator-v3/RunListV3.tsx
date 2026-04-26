@@ -12,11 +12,7 @@ export function RunListV3() {
   function addRun() {
     const newRun: CanonicalRun = {
       runId: crypto.randomUUID(),
-      productCode: payload!.productCode,
-      leftBoundary: { type: "product_post" },
-      rightBoundary: { type: "product_post" },
       segments: [],
-      corners: [],
     };
     dispatch({ type: "UPSERT_RUN", run: newRun });
   }

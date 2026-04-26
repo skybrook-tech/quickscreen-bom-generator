@@ -1,9 +1,6 @@
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import {
-  GATE_SEGMENT_STUB_KEYS,
-  patchSegmentVariables,
-} from "../../lib/segmentTermination";
+import { patchSegmentVariables } from "../../lib/segmentTermination";
 import { Input } from "../ui/Input";
 
 interface Props {
@@ -32,10 +29,8 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         <span className="text-brand-muted">Hinge type</span>
         <Input
           type="text"
-          value={(v[GATE_SEGMENT_STUB_KEYS.hingeType] as string) ?? ""}
-          onChange={(e) =>
-            setScalar(GATE_SEGMENT_STUB_KEYS.hingeType, e.target.value || null)
-          }
+          value={(v["hinge_type"] as string) ?? ""}
+          onChange={(e) => setScalar("hinge_type", e.target.value || null)}
           className="bg-brand-bg"
         />
       </label>
@@ -43,10 +38,8 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         <span className="text-brand-muted">Latch type</span>
         <Input
           type="text"
-          value={(v[GATE_SEGMENT_STUB_KEYS.latchType] as string) ?? ""}
-          onChange={(e) =>
-            setScalar(GATE_SEGMENT_STUB_KEYS.latchType, e.target.value || null)
-          }
+          value={(v["latch_type"] as string) ?? ""}
+          onChange={(e) => setScalar("latch_type", e.target.value || null)}
           className="bg-brand-bg"
         />
       </label>

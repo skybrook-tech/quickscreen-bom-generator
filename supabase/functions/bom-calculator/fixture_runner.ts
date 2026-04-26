@@ -25,9 +25,16 @@ export interface QtyAssertion {
   lte?: number;
 }
 
+export interface LineItem {
+  sku: string;
+  name?: string;
+  category?: string;
+  qty: number | QtyAssertion;
+}
+
 export interface FixtureExpect {
   errors?: string[];
-  lines?: Array<{ sku: string; name?: string; category?: string; qty: number | QtyAssertion }>;
+  lines?: Array<LineItem>;
   totals?: {
     grandTotal?: number | QtyAssertion;
   };
@@ -164,8 +171,13 @@ export async function runFixtures(): Promise<void> {
 
       if (snapshotMode) {
         const lines = (
-          body.lines as Array<{ sku: string; quantity: number }>
-        ).map((l) => ({ sku: l.sku, qty: l.quantity }));
+          body.lines as Array<LineItem & { quantity: number }>
+        ).map((l) => ({
+          sku: l.sku,
+          qty: l.quantity,
+          name: l.name,
+          category: l.category,
+        }));
         const totals = body.totals as { grandTotal: number };
         const updated: Fixture = {
           ...fixture,

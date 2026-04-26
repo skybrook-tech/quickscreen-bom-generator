@@ -22,9 +22,11 @@ import {
   normaliseVariables,
   resolvePlaceholders,
   resolvePrice,
+  stocks,
   type EngineData,
 } from "./lib.ts";
 import type { PricingRule } from "../_shared/types.ts";
+import { walkRunForPosts } from "../_shared/segmentTermination.ts";
 import { runFixtures } from "./fixture_runner.ts";
 
 // ─── resolvePrice ─────────────────────────────────────────────────────────────
@@ -230,6 +232,204 @@ Deno.test("normaliseVariables: null default_value_json not applied", () => {
 });
 
 // ─── Fixture-driven integration tests ────────────────────────────────────────
+
+// ─── stocks() ────────────────────────────────────────────────────────────────
+
+Deno.test("stocks: basic calculation (2 cuts per 6100mm stock)", () => {
+  // 52 cuts of ~2500mm from 6100mm stock: floor(6100/2500)=2, ceil(52/2)=26
+  assertEquals(stocks(52, 6100, 2500), 26);
+});
+
+Deno.test("stocks: exact fit", () => {
+  // floor(6000/2000)=3 cuts per stock, ceil(6/3)=2 stocks
+  assertEquals(stocks(6, 6000, 2000), 2);
+});
+
+Deno.test("stocks: remainder produces an extra stock", () => {
+  // floor(6000/2000)=3 cuts per stock, ceil(5/3)=2 stocks
+  assertEquals(stocks(5, 6000, 2000), 2);
+});
+
+Deno.test("stocks: zero cuts returns 0", () => {
+  assertEquals(stocks(0, 6100, 2500), 0);
+});
+
+Deno.test("stocks: NaN cutsNeeded returns 0", () => {
+  assertEquals(stocks(NaN, 6100, 2500), 0);
+});
+
+Deno.test("stocks: zero cutLen returns 0", () => {
+  assertEquals(stocks(10, 6100, 0), 0);
+});
+
+Deno.test("stocks: cut longer than stock returns cutsNeeded", () => {
+  assertEquals(stocks(3, 1000, 2000), 3);
+});
+
+// ─── walkRunForPosts() ────────────────────────────────────────────────────────
+
+Deno.test("walkRunForPosts: single fence segment, both system ends", () => {
+  const run = {
+    runId: "r1",
+    segments: [
+      {
+        segmentId: "s1",
+        sortOrder: 0,
+        kind: "fence" as const,
+        productCode: "QSHS",
+        segmentWidthMm: 10000,
+        leftTermination: { kind: "system" as const },
+        rightTermination: { kind: "system" as const },
+      },
+    ],
+  };
+  const panels = new Map([["s1", 4]]);
+  const result = walkRunForPosts(run, panels);
+  assertEquals(result.get("s1"), 5); // 4 panels → 3 intermediate + 2 end posts
+});
+
+Deno.test("walkRunForPosts: single fence segment, left=system right=wall", () => {
+  const run = {
+    runId: "r1",
+    segments: [
+      {
+        segmentId: "s1",
+        sortOrder: 0,
+        kind: "fence" as const,
+        productCode: "QSHS",
+        segmentWidthMm: 10000,
+        leftTermination: { kind: "system" as const },
+        rightTermination: {
+          kind: "non_system" as const,
+          subtype: "wall" as const,
+        },
+      },
+    ],
+  };
+  const panels = new Map([["s1", 4]]);
+  const result = walkRunForPosts(run, panels);
+  assertEquals(result.get("s1"), 4); // no post on wall side
+});
+
+Deno.test("walkRunForPosts: fence-gate-fence, gates do not double-count junction post", () => {
+  const run = {
+    runId: "r1",
+    segments: [
+      {
+        segmentId: "fence-a",
+        sortOrder: 0,
+        kind: "fence" as const,
+        productCode: "QSHS",
+        segmentWidthMm: 3500,
+        leftTermination: { kind: "system" as const },
+        rightTermination: { kind: "segment_join" as const, angleDeg: 0 },
+      },
+      {
+        segmentId: "gate",
+        sortOrder: 1,
+        kind: "gate" as const,
+        productCode: "QS_GATE",
+        segmentWidthMm: 1000,
+        leftTermination: { kind: "segment_join" as const, angleDeg: 0 },
+        rightTermination: { kind: "segment_join" as const, angleDeg: 0 },
+      },
+      {
+        segmentId: "fence-b",
+        sortOrder: 2,
+        kind: "fence" as const,
+        productCode: "QSHS",
+        segmentWidthMm: 3500,
+        leftTermination: { kind: "segment_join" as const, angleDeg: 0 },
+        rightTermination: { kind: "system" as const },
+      },
+    ],
+  };
+  const panels = new Map([
+    ["fence-a", 2],
+    ["fence-b", 2],
+  ]);
+  const result = walkRunForPosts(run, panels);
+  // fence-a: 2-1=1 internal + 1(left system) + 0(right→gate) = 2
+  assertEquals(result.get("fence-a"), 2);
+  // fence-b: 2-1=1 internal + 0(left→gate) + 1(right system) = 2
+  assertEquals(result.get("fence-b"), 2);
+  // gate is skipped
+  assertEquals(result.get("gate"), undefined);
+});
+
+Deno.test("walkRunForPosts: fence-fence corner, left segment owns junction post", () => {
+  const run = {
+    runId: "r1",
+    segments: [
+      {
+        segmentId: "seg-a",
+        sortOrder: 0,
+        kind: "fence" as const,
+        productCode: "QSHS",
+        segmentWidthMm: 3000,
+        leftTermination: { kind: "system" as const },
+        rightTermination: { kind: "segment_join" as const, angleDeg: 90 },
+      },
+      {
+        segmentId: "seg-b",
+        sortOrder: 1,
+        kind: "fence" as const,
+        productCode: "QSHS",
+        segmentWidthMm: 3000,
+        leftTermination: { kind: "segment_join" as const, angleDeg: 90 },
+        rightTermination: { kind: "system" as const },
+      },
+    ],
+  };
+  const panels = new Map([
+    ["seg-a", 2],
+    ["seg-b", 2],
+  ]);
+  const result = walkRunForPosts(run, panels);
+  // seg-a: 2-1=1 + 1(left sys) + 1(right join→next is fence) = 3
+  assertEquals(result.get("seg-a"), 3);
+  // seg-b: 2-1=1 + 0(left join, prev fence owns it) + 1(right sys) = 2
+  assertEquals(result.get("seg-b"), 2);
+});
+
+Deno.test("walkRunForPosts: straight inter-fence join (seg A owns junction post)", () => {
+  const run = {
+    runId: "r1",
+    segments: [
+      {
+        segmentId: "seg-a",
+        sortOrder: 0,
+        kind: "fence" as const,
+        productCode: "QSHS",
+        segmentWidthMm: 5000,
+        leftTermination: { kind: "system" as const },
+        rightTermination: { kind: "segment_join" as const, angleDeg: 0 },
+      },
+      {
+        segmentId: "seg-b",
+        sortOrder: 1,
+        kind: "fence" as const,
+        productCode: "QSHS",
+        segmentWidthMm: 5000,
+        leftTermination: { kind: "segment_join" as const, angleDeg: 0 },
+        rightTermination: { kind: "system" as const },
+      },
+    ],
+  };
+  const panels = new Map([
+    ["seg-a", 2],
+    ["seg-b", 2],
+  ]);
+  const result = walkRunForPosts(run, panels);
+  // Combined would be 4 panels → 5 posts total
+  // seg-a owns junction: 2-1 + 1 + 1 = 3
+  assertEquals(result.get("seg-a"), 3);
+  // seg-b doesn't own junction: 2-1 + 0 + 1 = 2
+  assertEquals(result.get("seg-b"), 2);
+  assertEquals((result.get("seg-a") ?? 0) + (result.get("seg-b") ?? 0), 5);
+});
+
+
 
 console.log("Checking for SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY...");
 console.log(Deno.env.get("SUPABASE_URL"));

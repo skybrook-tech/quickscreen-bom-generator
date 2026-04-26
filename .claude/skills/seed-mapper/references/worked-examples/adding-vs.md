@@ -210,9 +210,9 @@ From the brief, extract:
 { "product_system_type": "VS",
   "rule_set_name": "VS Fence Rules", "version_label": "v1.0.0",
   "stage": "derive", "name": "rail_cut_length_mm",
-  "expression": "panel_width_mm - width_deduction_mm",
+  "expression": "panel_width_mm - (left_is_wall ? 30 : 5) - (right_is_wall ? 30 : 5)",
   "output_key": "rail_cut_length_mm", "priority": 30, "active": true,
-  "notes": "Width deduction comes from boundary context" }
+  "notes": "Deduct 30mm each wall side, 5mm each system-post side" }
 
 { "product_system_type": "VS",
   "rule_set_name": "VS Fence Rules", "version_label": "v1.0.0",
@@ -220,17 +220,31 @@ From the brief, extract:
   "expression": "panel_width_mm >= 2000",
   "output_key": "requires_csr", "priority": 40, "active": true }
 
+// stock — use stocks() helper; no need for a separate X_cuts_per_stock rule
+{ "product_system_type": "VS",
+  "rule_set_name": "VS Fence Rules", "version_label": "v1.0.0",
+  "stage": "stock", "name": "slat_stocks",
+  "expression": "stocks(num_slats * num_panels, slat_stock_length_mm, slat_cut_length_mm)",
+  "output_key": "slat_stocks", "priority": 60, "active": true,
+  "notes": "Total slat stock lengths; stocks() handles floor+ceil in one call" }
+
+{ "product_system_type": "VS",
+  "rule_set_name": "VS Fence Rules", "version_label": "v1.0.0",
+  "stage": "stock", "name": "sf_stocks",
+  "expression": "stocks(num_side_frames, side_frame_stock_length_mm, slat_cut_length_mm)",
+  "output_key": "sf_stocks", "priority": 70, "active": true }
+
 // component
 { "product_system_type": "VS",
   "rule_set_name": "VS Fence Rules", "version_label": "v1.0.0",
   "stage": "component", "name": "num_side_frames",
-  "expression": "2", "output_key": "num_side_frames", "priority": 120,
+  "expression": "2 * num_panels", "output_key": "num_side_frames", "priority": 120,
   "active": true }
 
 { "product_system_type": "VS",
   "rule_set_name": "VS Fence Rules", "version_label": "v1.0.0",
   "stage": "component", "name": "num_rails",
-  "expression": "2", "output_key": "num_rails", "priority": 130,
+  "expression": "2 * num_panels", "output_key": "num_rails", "priority": 130,
   "active": true, "notes": "Top + bottom rail per panel" }
 
 { "product_system_type": "VS",
@@ -245,11 +259,8 @@ From the brief, extract:
   "expression": "requires_csr ? 1 : 0",
   "output_key": "num_csr", "priority": 150, "active": true }
 
-{ "product_system_type": "VS",
-  "rule_set_name": "VS Fence Rules", "version_label": "v1.0.0",
-  "stage": "component", "name": "num_posts_from_boundaries",
-  "expression": "product_post_boundary_count + corner_post_count",
-  "output_key": "num_posts_from_boundaries", "priority": 160, "active": true }
+// num_posts is engine-provided (system_termination_count + corner_count + interior panels).
+// Do NOT write a product_rule for num_posts.
 ```
 
 ### `product_component_selectors.json` (append — one per category, using placeholders)

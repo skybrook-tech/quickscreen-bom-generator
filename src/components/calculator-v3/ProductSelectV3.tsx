@@ -69,7 +69,7 @@ export function ProductSelectV3() {
   function selectProduct(p: FenceProduct) {
     const initialPayload: CanonicalPayload = {
       productCode: p.system_type,
-      schemaVersion: "v1",
+      schemaVersion: "v2",
       variables: {
         colour_code: "B",
         slat_size_mm: 65,
@@ -80,11 +80,7 @@ export function ProductSelectV3() {
       runs: [
         {
           runId: crypto.randomUUID(),
-          productCode: p.system_type,
-          leftBoundary: { type: "product_post" },
-          rightBoundary: { type: "product_post" },
           segments: [],
-          corners: [],
         },
       ],
     };
