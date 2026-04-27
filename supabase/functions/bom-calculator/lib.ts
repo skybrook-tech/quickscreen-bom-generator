@@ -8,10 +8,9 @@ const mathjs = create(all);
 export { mathjs };
 
 // ─── Colour codes ─────────────────────────────────────────────────────────────
-// TODO: make data-driven — move colour short-code mappings into a DB table
-// (e.g. a colour_codes lookup seeded per org) so adding new colours doesn't
-// require a code deploy.
-const COLOUR_CODES: Record<string, string> = {
+// Kept as a fallback — if the DB lookup in index.ts fails, normaliseVariables
+// still resolves long colour names to short codes using this hardcoded map.
+const COLOUR_CODES_FALLBACK: Record<string, string> = {
   "black-satin": "B",
   "monument-matt": "MN",
   "woodland-grey-matt": "G",
@@ -23,6 +22,9 @@ const COLOUR_CODES: Record<string, string> = {
   primrose: "P",
   paperbark: "PB",
   "palladium-silver-pearl": "S",
+  kwila: "KWI",
+  "western-red-cedar": "WRC",
+  "island-grey": "IG",
 };
 
 // ─── EngineData (duplicated here to avoid importing index.ts in tests) ────────
@@ -198,6 +200,7 @@ mathjs.import({ stocks }, { override: false });
 export function normaliseVariables(
   vars: Record<string, string | number | boolean>,
   engineData: Pick<EngineData, "variables">,
+  colourCodes?: Record<string, string>,
 ): Record<string, unknown> {
   const ctx: Record<string, unknown> = {};
 
@@ -211,9 +214,12 @@ export function normaliseVariables(
     ctx[k] = v;
   }
 
+  const COLOUR_CODES_MAP = colourCodes ?? COLOUR_CODES_FALLBACK;
   const rawColour = ctx["colour_code"] ?? ctx["colour"];
   if (typeof rawColour === "string") {
-    ctx["colour"] = COLOUR_CODES[rawColour] ?? rawColour;
+    const shortCode = COLOUR_CODES_MAP[rawColour] ?? rawColour;
+    ctx["colour"] = shortCode;
+    ctx["colour_code"] = shortCode;
   }
 
   return ctx;

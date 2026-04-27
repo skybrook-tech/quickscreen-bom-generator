@@ -1794,28 +1794,33 @@
   "product_variables": [
     {
       "product_system_type": "XPL",
+      "name": "finish_type",
+      "label": "Finish",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "standard",
+      "options_json": [
+        "standard",
+        "alumawood"
+      ],
+      "scope": "job",
+      "sort_order": 5,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
       "name": "colour_code",
       "label": "Colour",
       "data_type": "enum",
       "unit": null,
       "required": true,
-      "default_value_json": "B",
-      "options_json": [
-        "B",
-        "MN",
-        "G",
-        "SM",
-        "W",
-        "BS",
-        "D",
-        "M",
-        "P",
-        "PB",
-        "S"
-      ],
+      "default_value_json": "black-satin",
+      "options_json": [],
       "scope": "job",
       "sort_order": 10,
-      "active": true
+      "active": true,
+      "options_group": "colours"
     },
     {
       "product_system_type": "XPL",
@@ -1826,8 +1831,7 @@
       "required": true,
       "default_value_json": 65,
       "options_json": [
-        65,
-        90
+        65
       ],
       "scope": "job",
       "sort_order": 20,
@@ -1973,6 +1977,14 @@
     }
   ],
   "product_validations": [
+    {
+      "product_system_type": "XPL",
+      "name": "xpl_65mm_only",
+      "expression": "slat_size_mm == 65",
+      "severity": "error",
+      "message": "XPL only supports 65mm slats. 90mm is not available for Xpress Plus.",
+      "active": true
+    },
     {
       "product_system_type": "XPL",
       "name": "panel_width_in_range",
@@ -2652,6 +2664,552 @@
       "notes": "65mm HD post dress ring — shared in qshs.json",
       "active": true,
       "qty_key": "qty_dress_ring_65"
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_slat_65_kwi",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-S65-KWI",
+      "priority": 10,
+      "notes": "AW slat override for KWI",
+      "qty_key": "qty_slat_65",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_slat_65_wrc",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-S65-WRC",
+      "priority": 10,
+      "notes": "AW slat override for WRC",
+      "qty_key": "qty_slat_65",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_slat_65_ig",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "AW-5800-S65-IG",
+      "priority": 10,
+      "notes": "AW slat override for IG",
+      "qty_key": "qty_slat_65",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_post_50_2400_kwi",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-FP-KWI",
+      "priority": 10,
+      "notes": "AW post override for KWI — 50_2400",
+      "qty_key": "qty_post_50_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_post_50_2400_wrc",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-FP-WRC",
+      "priority": 10,
+      "notes": "AW post override for WRC — 50_2400",
+      "qty_key": "qty_post_50_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_post_50_2400_ig",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-2400-FP-MN",
+      "priority": 10,
+      "notes": "AW post override for IG — 50_2400",
+      "qty_key": "qty_post_50_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_post_50_6000_kwi",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-FP-KWI",
+      "priority": 10,
+      "notes": "AW post override for KWI — 50_6000",
+      "qty_key": "qty_post_50_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_post_50_6000_wrc",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-FP-WRC",
+      "priority": 10,
+      "notes": "AW post override for WRC — 50_6000",
+      "qty_key": "qty_post_50_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_post_50_6000_ig",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-6000-FP-MN",
+      "priority": 10,
+      "notes": "AW post override for IG — 50_6000",
+      "qty_key": "qty_post_50_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_post_65_2400_kwi",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-65HD-KWI",
+      "priority": 10,
+      "notes": "AW post override for KWI — 65_2400",
+      "qty_key": "qty_post_65_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_post_65_2400_wrc",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-65HD-WRC",
+      "priority": 10,
+      "notes": "AW post override for WRC — 65_2400",
+      "qty_key": "qty_post_65_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_post_65_2400_ig",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-2400-65HD-MN",
+      "priority": 10,
+      "notes": "AW post override for IG — 65_2400",
+      "qty_key": "qty_post_65_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_post_65_6000_kwi",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-65HD-KWI",
+      "priority": 10,
+      "notes": "AW post override for KWI — 65_6000",
+      "qty_key": "qty_post_65_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_post_65_6000_wrc",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-65HD-WRC",
+      "priority": 10,
+      "notes": "AW post override for WRC — 65_6000",
+      "qty_key": "qty_post_65_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_post_65_6000_ig",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-6000-65HD-MN",
+      "priority": 10,
+      "notes": "AW post override for IG — 65_6000",
+      "qty_key": "qty_post_65_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_tp_50_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-TP-MN",
+      "qty_key": "qty_top_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_tp_50_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-TP-MN",
+      "qty_key": "qty_top_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_tp_50_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-TP-MN",
+      "qty_key": "qty_top_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_bp_50_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-BP-SET-MN",
+      "qty_key": "qty_base_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_bp_50_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-BP-SET-MN",
+      "qty_key": "qty_base_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_bp_50_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-BP-SET-MN",
+      "qty_key": "qty_base_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_dc_50_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-DC-2P-MN",
+      "qty_key": "qty_domical_cover_50",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_dc_50_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-DC-2P-MN",
+      "qty_key": "qty_domical_cover_50",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_dc_50_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-DC-2P-MN",
+      "qty_key": "qty_domical_cover_50",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_dr_50_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-DR-MN",
+      "qty_key": "qty_dress_ring_50",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_dr_50_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-DR-MN",
+      "qty_key": "qty_dress_ring_50",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_dr_50_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-DR-MN",
+      "qty_key": "qty_dress_ring_50",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_tp_65_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-65TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-65TP-MN",
+      "qty_key": "qty_top_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_tp_65_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-65TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-65TP-MN",
+      "qty_key": "qty_top_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_tp_65_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-65TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-65TP-MN",
+      "qty_key": "qty_top_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_bp_65_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-65BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-65BP-SET-MN",
+      "qty_key": "qty_base_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_bp_65_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-65BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-65BP-SET-MN",
+      "qty_key": "qty_base_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_bp_65_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-65BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-65BP-SET-MN",
+      "qty_key": "qty_base_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_dc_65_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-65DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-65DC-2P-MN",
+      "qty_key": "qty_domical_cover_65",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_dc_65_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-65DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-65DC-2P-MN",
+      "qty_key": "qty_domical_cover_65",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_dc_65_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-65DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-65DC-2P-MN",
+      "qty_key": "qty_domical_cover_65",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_dr_65_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-65DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-65DR-MN",
+      "qty_key": "qty_dress_ring_65",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_dr_65_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-65DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-65DR-MN",
+      "qty_key": "qty_dress_ring_65",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_aw_dr_65_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-65DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-65DR-MN",
+      "qty_key": "qty_dress_ring_65",
+      "active": true
     }
   ],
   "product_warnings": [
@@ -2727,6 +3285,16 @@
         "post_system": "xpl"
       },
       "message": "Mounting method (in-ground / base plate / core drill) only applies when using standard 50mm or 65mm posts, not XPL patented posts.",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "warning_key": "xpl_aw_post_no_variant",
+      "severity": "warning",
+      "condition_json": {
+        "finish_type": "alumawood"
+      },
+      "message": "Alumawood finish: the patented XPL track-and-clip posts (XPL-6000-1W, XPL-6000-2W, XPL-6000-90) are not available in KWI/WRC/IG. Standard posts (XP-FP, XP-65HD) will be supplied in Monument Matt for Alumawood colours.",
       "active": true
     }
   ],

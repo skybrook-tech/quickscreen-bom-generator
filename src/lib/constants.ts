@@ -41,6 +41,9 @@ export const COLOURS = [
     label: "Palladium Silver Pearl",
     limited: false,
   },
+  { value: "kwila", label: "Kwila (Alumawood)", limited: false },
+  { value: "western-red-cedar", label: "Western Red Cedar (Alumawood)", limited: false },
+  { value: "island-grey", label: "Island Grey (Alumawood)", limited: false },
 ] as const;
 
 // ─── Slat Sizes ───────────────────────────────────────────────────────────────

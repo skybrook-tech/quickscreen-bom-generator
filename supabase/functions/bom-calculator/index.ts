@@ -64,6 +64,21 @@ async function loadPricing(
   return map;
 }
 
+async function loadColourCodes(
+  orgId: string,
+): Promise<Record<string, string>> {
+  const supabaseAdmin = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+  const { data } = await supabaseAdmin
+    .from("colour_options")
+    .select("value, short_code")
+    .eq("org_id", orgId)
+    .eq("active", true);
+  return Object.fromEntries((data ?? []).map((r) => [r.value, r.short_code]));
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface BomLineItemV3 {
@@ -283,6 +298,14 @@ Deno.serve(async (req: Request) => {
       Record<string, Record<string, unknown>>
     > = {};
 
+    // Load DB-driven colour codes once per request; falls back to hardcoded map inside normaliseVariables if this fails
+    let colourCodes: Record<string, string> | undefined;
+    try {
+      colourCodes = await loadColourCodes(orgId);
+    } catch {
+      // non-fatal — normaliseVariables will use its hardcoded fallback
+    }
+
     for (const run of payload.runs as CanonicalRun[]) {
       // Determine the "primary" fence product for this run (from payload top-level)
       const fenceEngineData = engineDataMap.get(payload.productCode);
@@ -290,7 +313,7 @@ Deno.serve(async (req: Request) => {
 
       // Merge job-level variables for the run context
       const mergedRunVars = { ...payload.variables };
-      const runCtx = normaliseVariables(mergedRunVars, fenceEngineData);
+      const runCtx = normaliseVariables(mergedRunVars, fenceEngineData, colourCodes);
       const runTrace: TraceEntry[] = [];
       const runLines: BomLineItemV3[] = [];
 
@@ -382,7 +405,7 @@ Deno.serve(async (req: Request) => {
 
         // Build segment context: job ctx + segment overrides + geometry helpers
         const segVarsNorm = segment.variables
-          ? normaliseVariables(segment.variables, activeEngineData)
+          ? normaliseVariables(segment.variables, activeEngineData, colourCodes)
           : {};
 
         // Termination flags from structured SegmentTermination objects
@@ -445,6 +468,7 @@ Deno.serve(async (req: Request) => {
                       (runCtx["target_height_mm"] as number),
                   },
                   activeEngineData,
+                  colourCodes,
                 ),
                 // Geometry for gate
                 left_is_system: leftIsSystem,

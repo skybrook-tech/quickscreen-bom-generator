@@ -5410,28 +5410,33 @@
   "product_variables": [
     {
       "product_system_type": "QSHS",
+      "name": "finish_type",
+      "label": "Finish",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "standard",
+      "options_json": [
+        "standard",
+        "alumawood"
+      ],
+      "scope": "job",
+      "sort_order": 5,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
       "name": "colour_code",
       "label": "Colour",
       "data_type": "enum",
       "unit": null,
       "required": true,
-      "default_value_json": "B",
-      "options_json": [
-        "B",
-        "MN",
-        "G",
-        "SM",
-        "W",
-        "BS",
-        "D",
-        "M",
-        "P",
-        "PB",
-        "S"
-      ],
+      "default_value_json": "black-satin",
+      "options_json": [],
       "scope": "job",
       "sort_order": 10,
-      "active": true
+      "active": true,
+      "options_group": "colours"
     },
     {
       "product_system_type": "QSHS",
@@ -6215,6 +6220,678 @@
       "match_json": {},
       "sku_pattern": "QS-SCREWS-50PK",
       "priority": 100,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_slat_65_kwi",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-S65-KWI",
+      "priority": 10,
+      "notes": "AW slat override for KWI",
+      "qty_key": "qty_slat_65",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_slat_65_wrc",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-S65-WRC",
+      "priority": 10,
+      "notes": "AW slat override for WRC",
+      "qty_key": "qty_slat_65",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_slat_65_ig",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "AW-5800-S65-IG",
+      "priority": 10,
+      "notes": "AW slat override for IG",
+      "qty_key": "qty_slat_65",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_csr_kwi",
+      "component_category": "centre_support_rail",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-CSR-KWI",
+      "priority": 10,
+      "notes": "AW CSR override for KWI",
+      "qty_key": "qty_csr",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_csr_wrc",
+      "component_category": "centre_support_rail",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-CSR-WRC",
+      "priority": 10,
+      "notes": "AW CSR override for WRC",
+      "qty_key": "qty_csr",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_csr_ig",
+      "component_category": "centre_support_rail",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-5800-CSR-MN",
+      "priority": 10,
+      "notes": "AW CSR override for IG",
+      "qty_key": "qty_csr",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_side_frame_kwi",
+      "component_category": "side_frame",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "QS-5800-SF-MN",
+      "priority": 10,
+      "notes": "AW side_frame override for KWI → MN",
+      "qty_key": "qty_sf",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_side_frame_wrc",
+      "component_category": "side_frame",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "QS-5800-SF-MN",
+      "priority": 10,
+      "notes": "AW side_frame override for WRC → MN",
+      "qty_key": "qty_sf",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_side_frame_ig",
+      "component_category": "side_frame",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "QS-5800-SF-MN",
+      "priority": 10,
+      "notes": "AW side_frame override for IG → MN",
+      "qty_key": "qty_sf",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_fsec_kwi",
+      "component_category": "f_section",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "QS-5800-F-MN",
+      "priority": 10,
+      "notes": "AW f_section override for KWI → MN",
+      "qty_key": "qty_fsec",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_fsec_wrc",
+      "component_category": "f_section",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "QS-5800-F-MN",
+      "priority": 10,
+      "notes": "AW f_section override for WRC → MN",
+      "qty_key": "qty_fsec",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_fsec_ig",
+      "component_category": "f_section",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "QS-5800-F-MN",
+      "priority": 10,
+      "notes": "AW f_section override for IG → MN",
+      "qty_key": "qty_fsec",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_post_50_2400_kwi",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-FP-KWI",
+      "priority": 10,
+      "notes": "AW post override for KWI — 50_2400",
+      "qty_key": "qty_post_50_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_post_50_2400_wrc",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-FP-WRC",
+      "priority": 10,
+      "notes": "AW post override for WRC — 50_2400",
+      "qty_key": "qty_post_50_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_post_50_2400_ig",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-2400-FP-MN",
+      "priority": 10,
+      "notes": "AW post override for IG — 50_2400",
+      "qty_key": "qty_post_50_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_post_50_6000_kwi",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-FP-KWI",
+      "priority": 10,
+      "notes": "AW post override for KWI — 50_6000",
+      "qty_key": "qty_post_50_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_post_50_6000_wrc",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-FP-WRC",
+      "priority": 10,
+      "notes": "AW post override for WRC — 50_6000",
+      "qty_key": "qty_post_50_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_post_50_6000_ig",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-6000-FP-MN",
+      "priority": 10,
+      "notes": "AW post override for IG — 50_6000",
+      "qty_key": "qty_post_50_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_post_65_2400_kwi",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-65HD-KWI",
+      "priority": 10,
+      "notes": "AW post override for KWI — 65_2400",
+      "qty_key": "qty_post_65_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_post_65_2400_wrc",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-65HD-WRC",
+      "priority": 10,
+      "notes": "AW post override for WRC — 65_2400",
+      "qty_key": "qty_post_65_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_post_65_2400_ig",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-2400-65HD-MN",
+      "priority": 10,
+      "notes": "AW post override for IG — 65_2400",
+      "qty_key": "qty_post_65_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_post_65_6000_kwi",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-65HD-KWI",
+      "priority": 10,
+      "notes": "AW post override for KWI — 65_6000",
+      "qty_key": "qty_post_65_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_post_65_6000_wrc",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-65HD-WRC",
+      "priority": 10,
+      "notes": "AW post override for WRC — 65_6000",
+      "qty_key": "qty_post_65_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_post_65_6000_ig",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-6000-65HD-MN",
+      "priority": 10,
+      "notes": "AW post override for IG — 65_6000",
+      "qty_key": "qty_post_65_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_tp_50_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-TP-MN",
+      "qty_key": "qty_top_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_tp_50_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-TP-MN",
+      "qty_key": "qty_top_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_tp_50_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-TP-MN",
+      "qty_key": "qty_top_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_bp_50_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-BP-SET-MN",
+      "qty_key": "qty_base_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_bp_50_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-BP-SET-MN",
+      "qty_key": "qty_base_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_bp_50_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-BP-SET-MN",
+      "qty_key": "qty_base_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_dc_50_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-DC-2P-MN",
+      "qty_key": "qty_domical_cover_50",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_dc_50_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-DC-2P-MN",
+      "qty_key": "qty_domical_cover_50",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_dc_50_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-DC-2P-MN",
+      "qty_key": "qty_domical_cover_50",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_dr_50_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-DR-MN",
+      "qty_key": "qty_dress_ring_50",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_dr_50_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-DR-MN",
+      "qty_key": "qty_dress_ring_50",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_dr_50_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-DR-MN",
+      "qty_key": "qty_dress_ring_50",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_tp_65_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-65TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-65TP-MN",
+      "qty_key": "qty_top_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_tp_65_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-65TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-65TP-MN",
+      "qty_key": "qty_top_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_tp_65_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-65TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-65TP-MN",
+      "qty_key": "qty_top_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_bp_65_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-65BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-65BP-SET-MN",
+      "qty_key": "qty_base_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_bp_65_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-65BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-65BP-SET-MN",
+      "qty_key": "qty_base_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_bp_65_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-65BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-65BP-SET-MN",
+      "qty_key": "qty_base_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_dc_65_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-65DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-65DC-2P-MN",
+      "qty_key": "qty_domical_cover_65",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_dc_65_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-65DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-65DC-2P-MN",
+      "qty_key": "qty_domical_cover_65",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_dc_65_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-65DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-65DC-2P-MN",
+      "qty_key": "qty_domical_cover_65",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_dr_65_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-65DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-65DR-MN",
+      "qty_key": "qty_dress_ring_65",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_dr_65_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-65DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-65DR-MN",
+      "qty_key": "qty_dress_ring_65",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_dr_65_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-65DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-65DR-MN",
+      "qty_key": "qty_dress_ring_65",
       "active": true
     }
   ],

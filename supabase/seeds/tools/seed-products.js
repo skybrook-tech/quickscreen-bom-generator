@@ -35,6 +35,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 const PRODUCTS_DIR = resolve(ROOT, 'glass-outlet', 'products');
 const SCHEMA_DIR = resolve(ROOT, 'schemas');
+const COLOUR_OPTIONS_FILE = resolve(ROOT, 'glass-outlet', 'colour-options.json');
 
 // ── Load + compile schemas ──────────────────────────────────────────────────
 
@@ -339,6 +340,26 @@ async function upsertPricingRules(orgId, rows) {
   console.log(`  pricing_rules: ${inserted} inserted, ${updated} updated`);
 }
 
+// ── Colour options ──────────────────────────────────────────────────────────
+
+async function upsertColourOptions() {
+  let raw;
+  try {
+    raw = JSON.parse(readFileSync(COLOUR_OPTIONS_FILE, 'utf8'));
+  } catch {
+    console.log('colour-options.json not found — skipping');
+    return;
+  }
+  const orgId = await resolveOrgId(raw.org_slug);
+  const rows = (raw.colour_options ?? []).map(r => ({ org_id: orgId, ...r }));
+  if (rows.length === 0) return;
+  const { error } = await supabase
+    .from('colour_options')
+    .upsert(rows, { onConflict: 'org_id,value' });
+  if (error) throw new Error(`colour_options upsert: ${error.message}`);
+  console.log(`colour-options.json: ${rows.length} upserted`);
+}
+
 // ── Main per-file loader ────────────────────────────────────────────────────
 
 async function loadFile(path) {
@@ -372,6 +393,7 @@ async function loadFile(path) {
       required: r.required,
       default_value_json: r.default_value_json ?? null,
       options_json: r.options_json ?? [],
+      options_group: r.options_group ?? null,
       scope: r.scope,
       sort_order: r.sort_order ?? 0,
       active: r.active,
@@ -482,6 +504,7 @@ async function loadFile(path) {
 // rule_sets + rule_versions have no `active` column on rule_versions;
 // for consistency we count all rows on those. Others count only active=true.
 const ROW_COUNT_FLOORS = [
+  ['colour_options', 14, true],
   ['rule_sets', 2, true],
   ['rule_versions', 2, false],
   ['product_constraints', 8, true],
@@ -530,6 +553,8 @@ async function main() {
   }
 
   console.log(`Found ${files.length} product file(s): ${files.map((p) => basename(p)).join(', ')}`);
+
+  await upsertColourOptions();
 
   for (const path of files) {
     await loadFile(path);

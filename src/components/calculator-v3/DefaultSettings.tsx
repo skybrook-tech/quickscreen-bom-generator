@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
+import { useColourOptions } from "../../hooks/useColourOptions";
 import { ColourSelect } from "../fence/ColourSelect";
-import { SlatSizeSelect } from "../fence/SlatSizeSelect";
-import { SlatGapSelect } from "../fence/SlatGapSelect";
 import { FormField } from "../shared/FormField";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
@@ -28,6 +27,7 @@ function renderField(
   field: SchemaField,
   variables: Record<string, string | number | boolean>,
   onChange: (key: string, value: string | number | boolean) => void,
+  colourOptions: { value: string; label: string; limited: boolean }[],
 ) {
   if (field.field_key === "colour_code") {
     return (
@@ -35,40 +35,7 @@ function renderField(
         <ColourSelect
           value={String(variables[field.field_key] ?? "")}
           onChange={(e) => onChange(field.field_key, e.target.value)}
-          className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
-          data-testid={field.field_key}
-        />
-      </FormField>
-    );
-  }
-
-  if (field.field_key === "slat_size_mm") {
-    return (
-      <FormField
-        key={field.id}
-        label={field.label}
-        note={field.unit ? `Units: ${field.unit}` : undefined}
-      >
-        <SlatSizeSelect
-          value={String(variables[field.field_key] ?? "65")}
-          onChange={(e) => onChange(field.field_key, Number(e.target.value))}
-          className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
-          data-testid={field.field_key}
-        />
-      </FormField>
-    );
-  }
-
-  if (field.field_key === "slat_gap_mm") {
-    return (
-      <FormField
-        key={field.id}
-        label={field.label}
-        note={field.unit ? `Units: ${field.unit}` : undefined}
-      >
-        <SlatGapSelect
-          value={String(variables[field.field_key] ?? "5")}
-          onChange={(e) => onChange(field.field_key, Number(e.target.value))}
+          options={colourOptions}
           className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
           data-testid={field.field_key}
         />
@@ -81,6 +48,8 @@ function renderField(
     Array.isArray(field.options_json) &&
     field.options_json.length > 0
   ) {
+    // Skip single-option selects (e.g. gates with finish_type=["standard"])
+    if (field.options_json.length === 1) return null;
     return (
       <FormField
         key={field.id}
@@ -170,19 +139,40 @@ function renderField(
 export function DefaultSettings() {
   const { state, dispatch } = useCalculator();
   const payload = state.payload!;
+  const variables = payload.variables;
 
   const { data: jobFields = [] } = useProductVariables(
     payload.productCode,
     "job",
   );
+  const { data: allColours = [] } = useColourOptions();
+
+  const finishType = variables["finish_type"] as string | undefined;
+  const allowedColours = allColours.filter((c) =>
+    !finishType || finishType === "standard"
+      ? c.finish_group === "standard"
+      : c.finish_group === finishType,
+  );
 
   // Seed payload.variables with product_variables defaults for any key not yet set.
-  // Runs once per product selection so user edits are never overwritten.
+  // Also resets keys whose current value is no longer valid for the new product.
   useEffect(() => {
     if (jobFields.length === 0) return;
     const missing: Record<string, string | number | boolean> = {};
     for (const f of jobFields) {
-      if (!(f.field_key in payload.variables) && f.default_value_json != null) {
+      if (!(f.field_key in variables) && f.default_value_json != null) {
+        missing[f.field_key] = f.default_value_json as string | number | boolean;
+      }
+      const opts = Array.isArray(f.options_json)
+        ? f.options_json.map(String)
+        : [];
+      const current = variables[f.field_key];
+      if (
+        opts.length > 0 &&
+        current != null &&
+        !opts.includes(String(current)) &&
+        f.default_value_json != null
+      ) {
         missing[f.field_key] = f.default_value_json as string | number | boolean;
       }
     }
@@ -191,18 +181,38 @@ export function DefaultSettings() {
       type: "SET_PAYLOAD",
       payload: {
         ...payload,
-        variables: { ...missing, ...payload.variables },
+        variables: { ...variables, ...missing },
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobFields, payload.productCode]);
+
+  // Reset stale colour_code if it's not in the allowed set for the current finish_type.
+  // Runs whenever finish_type changes or colours load.
+  useEffect(() => {
+    if (allColours.length === 0) return;
+    const cc = variables["colour_code"] as string | undefined;
+    if (!cc) return;
+    const allowed = allowedColours.map((c) => c.value);
+    if (!allowed.includes(cc)) {
+      const fallback = allowed[0] ?? "black-satin";
+      dispatch({
+        type: "SET_PAYLOAD",
+        payload: {
+          ...payload,
+          variables: { ...variables, colour_code: fallback },
+        },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finishType, allColours.length]);
 
   function handleFieldChange(key: string, value: string | number | boolean) {
     dispatch({
       type: "SET_PAYLOAD",
       payload: {
         ...payload,
-        variables: { ...payload.variables, [key]: value },
+        variables: { ...variables, [key]: value },
       },
     });
   }
@@ -211,7 +221,7 @@ export function DefaultSettings() {
   const visibleJobFields = jobFields.filter(
     (f) =>
       f.field_key !== "max_panel_width_mm" &&
-      isVisible(f.visible_when_json ?? {}, payload.variables),
+      isVisible(f.visible_when_json ?? {}, variables),
   );
 
   const visibleCount = 1 + visibleJobFields.length;
@@ -231,7 +241,7 @@ export function DefaultSettings() {
             min={300}
             max={2600}
             step={50}
-            value={Number(payload.variables.max_panel_width_mm ?? 2600)}
+            value={Number(variables.max_panel_width_mm ?? 2600)}
             onChange={(e) =>
               handleFieldChange("max_panel_width_mm", Number(e.target.value))
             }
@@ -250,7 +260,7 @@ export function DefaultSettings() {
 
       {/* Schema-driven job fields */}
       {visibleJobFields.map((field) =>
-        renderField(field, payload.variables, handleFieldChange),
+        renderField(field, variables, handleFieldChange, allowedColours),
       )}
     </div>
   );

@@ -8,12 +8,20 @@
       "description": "Sliding aluminium gate system compatible with QSHS, XPL, VS and BAYG fence systems. Steel or aluminium track, 80mm wheels, guide rollers, and optional NiceHome FILO automation.",
       "active": true,
       "sort_order": 20,
-      "compatible_with_system_types": ["QSHS", "XPL", "VS", "BAYG"],
+      "compatible_with_system_types": [
+        "QSHS",
+        "XPL",
+        "VS",
+        "BAYG"
+      ],
       "metadata": {
         "product_family": "gate",
         "default_layout_type": "sliding_gate",
         "options": {
-          "slat_size": ["65", "90"],
+          "slat_size": [
+            "65",
+            "90"
+          ],
           "colour": [
             "black-satin",
             "monument-matt",
@@ -37,8 +45,13 @@
       "category": "gate_rail",
       "unit": "length",
       "default_price": null,
-      "system_types": ["GATE"],
-      "metadata": { "slat_size_mm": 65, "rail_length_mm": 6100 },
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "slat_size_mm": 65,
+        "rail_length_mm": 6100
+      },
       "active": true
     },
     {
@@ -48,8 +61,13 @@
       "category": "gate_rail",
       "unit": "length",
       "default_price": null,
-      "system_types": ["GATE"],
-      "metadata": { "slat_size_mm": 90, "rail_length_mm": 6100 },
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "slat_size_mm": 90,
+        "rail_length_mm": 6100
+      },
       "active": true
     },
     {
@@ -59,8 +77,12 @@
       "category": "gate_rail",
       "unit": "length",
       "default_price": null,
-      "system_types": ["GATE"],
-      "metadata": { "rail_length_mm": 6100 },
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "rail_length_mm": 6100
+      },
       "active": true
     },
     {
@@ -70,8 +92,14 @@
       "category": "post",
       "unit": "each",
       "default_price": null,
-      "system_types": ["GATE"],
-      "metadata": { "colour": "B", "post_width_mm": 65, "post_height_mm": 2700 },
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "B",
+        "post_width_mm": 65,
+        "post_height_mm": 2700
+      },
       "active": true
     },
     {
@@ -81,7 +109,9 @@
       "category": "accessory",
       "unit": "kit",
       "default_price": null,
-      "system_types": ["GATE"],
+      "system_types": [
+        "GATE"
+      ],
       "metadata": {},
       "active": true
     },
@@ -92,8 +122,12 @@
       "category": "accessory",
       "unit": "kit",
       "default_price": null,
-      "system_types": ["GATE"],
-      "metadata": { "finish": "TR" },
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "finish": "TR"
+      },
       "active": true
     },
     {
@@ -103,8 +137,13 @@
       "category": "track",
       "unit": "length",
       "default_price": null,
-      "system_types": ["GATE"],
-      "metadata": { "track_length_mm": 3000, "material": "steel" },
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "track_length_mm": 3000,
+        "material": "steel"
+      },
       "active": true
     },
     {
@@ -114,8 +153,13 @@
       "category": "track",
       "unit": "length",
       "default_price": null,
-      "system_types": ["GATE"],
-      "metadata": { "track_length_mm": 6000, "material": "steel" },
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "track_length_mm": 6000,
+        "material": "steel"
+      },
       "active": true
     },
     {
@@ -125,8 +169,13 @@
       "category": "track",
       "unit": "length",
       "default_price": null,
-      "system_types": ["GATE"],
-      "metadata": { "track_length_mm": 6000, "material": "aluminium" },
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "track_length_mm": 6000,
+        "material": "aluminium"
+      },
       "active": true
     },
     {
@@ -136,7 +185,9 @@
       "category": "hardware",
       "unit": "each",
       "default_price": null,
-      "system_types": ["GATE"],
+      "system_types": [
+        "GATE"
+      ],
       "metadata": {},
       "active": true
     },
@@ -147,8 +198,13 @@
       "category": "hardware",
       "unit": "each",
       "default_price": null,
-      "system_types": ["GATE"],
-      "metadata": { "wheel_diameter_mm": 80, "load_rating_kg": 180 },
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "wheel_diameter_mm": 80,
+        "load_rating_kg": 180
+      },
       "active": true
     },
     {
@@ -158,7 +214,9 @@
       "category": "hardware",
       "unit": "pack",
       "default_price": null,
-      "system_types": ["GATE"],
+      "system_types": [
+        "GATE"
+      ],
       "metadata": {},
       "active": true
     },
@@ -169,7 +227,9 @@
       "category": "hardware",
       "unit": "each",
       "default_price": null,
-      "system_types": ["GATE"],
+      "system_types": [
+        "GATE"
+      ],
       "metadata": {},
       "active": true
     },
@@ -180,7 +240,9 @@
       "category": "hardware",
       "unit": "pack",
       "default_price": null,
-      "system_types": ["GATE"],
+      "system_types": [
+        "GATE"
+      ],
       "metadata": {},
       "active": true
     },
@@ -191,7 +253,9 @@
       "category": "catch",
       "unit": "each",
       "default_price": null,
-      "system_types": ["GATE"],
+      "system_types": [
+        "GATE"
+      ],
       "metadata": {},
       "active": true
     },
@@ -202,7 +266,9 @@
       "category": "catch",
       "unit": "each",
       "default_price": null,
-      "system_types": ["GATE"],
+      "system_types": [
+        "GATE"
+      ],
       "metadata": {},
       "active": true
     },
@@ -213,7 +279,9 @@
       "category": "catch",
       "unit": "each",
       "default_price": null,
-      "system_types": ["GATE"],
+      "system_types": [
+        "GATE"
+      ],
       "metadata": {},
       "active": true
     },
@@ -224,8 +292,13 @@
       "category": "automation",
       "unit": "kit",
       "default_price": null,
-      "system_types": ["GATE"],
-      "metadata": { "max_gate_width_mm": 6000, "max_gate_kg": 400 },
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "max_gate_width_mm": 6000,
+        "max_gate_kg": 400
+      },
       "active": true
     },
     {
@@ -235,7 +308,9 @@
       "category": "automation",
       "unit": "kit",
       "default_price": null,
-      "system_types": ["GATE"],
+      "system_types": [
+        "GATE"
+      ],
       "metadata": {},
       "active": true
     },
@@ -246,7 +321,9 @@
       "category": "automation",
       "unit": "each",
       "default_price": null,
-      "system_types": ["GATE"],
+      "system_types": [
+        "GATE"
+      ],
       "metadata": {},
       "active": true
     },
@@ -257,7 +334,9 @@
       "category": "automation",
       "unit": "each",
       "default_price": null,
-      "system_types": ["GATE"],
+      "system_types": [
+        "GATE"
+      ],
       "metadata": {},
       "active": true
     },
@@ -268,7 +347,9 @@
       "category": "automation",
       "unit": "kit",
       "default_price": null,
-      "system_types": ["GATE"],
+      "system_types": [
+        "GATE"
+      ],
       "metadata": {},
       "active": true
     },
@@ -279,7 +360,9 @@
       "category": "automation",
       "unit": "each",
       "default_price": null,
-      "system_types": ["GATE"],
+      "system_types": [
+        "GATE"
+      ],
       "metadata": {},
       "active": true
     },
@@ -290,8 +373,12 @@
       "category": "automation",
       "unit": "each",
       "default_price": null,
-      "system_types": ["GATE"],
-      "metadata": { "length_mm": 1000 },
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "length_mm": 1000
+      },
       "active": true
     }
   ],
@@ -317,6 +404,21 @@
   "product_variables": [
     {
       "product_system_type": "XPSG",
+      "name": "finish_type",
+      "label": "Finish",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "standard",
+      "options_json": [
+        "standard"
+      ],
+      "scope": "job",
+      "sort_order": 5,
+      "active": true
+    },
+    {
+      "product_system_type": "XPSG",
       "name": "gate_opening_width_mm",
       "label": "Gate Opening Width (mm)",
       "data_type": "number",
@@ -336,12 +438,13 @@
       "data_type": "enum",
       "unit": null,
       "required": true,
-      "default_value_json": "B",
-      "options_json": ["B", "MN", "G", "SM", "W", "BS", "D", "M", "S"],
+      "default_value_json": "black-satin",
+      "options_json": [],
       "scope": "job",
       "sort_order": 20,
       "active": true,
-      "notes": "Powder coat colour. P (Primrose) and PB (Paperbark) not available for sliding gate components."
+      "notes": "Powder coat colour. Primrose and Paperbark not available for sliding gate components.",
+      "options_group": "colours"
     },
     {
       "product_system_type": "XPSG",
@@ -351,7 +454,10 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 65,
-      "options_json": [65, 90],
+      "options_json": [
+        65,
+        90
+      ],
       "scope": "job",
       "sort_order": 30,
       "active": true,
@@ -365,7 +471,11 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 5,
-      "options_json": [5, 9, 20],
+      "options_json": [
+        5,
+        9,
+        20
+      ],
       "scope": "job",
       "sort_order": 40,
       "active": true,
@@ -379,7 +489,11 @@
       "unit": null,
       "required": true,
       "default_value_json": "steel_3m",
-      "options_json": ["steel_3m", "steel_6m", "aluminium_6m"],
+      "options_json": [
+        "steel_3m",
+        "steel_6m",
+        "aluminium_6m"
+      ],
       "scope": "job",
       "sort_order": 50,
       "active": true,
@@ -393,7 +507,11 @@
       "unit": null,
       "required": false,
       "default_value_json": "none",
-      "options_json": ["none", "filo_400", "filo_400_sp"],
+      "options_json": [
+        "none",
+        "filo_400",
+        "filo_400_sp"
+      ],
       "scope": "job",
       "sort_order": 60,
       "active": true,

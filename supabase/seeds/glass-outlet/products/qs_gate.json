@@ -2340,28 +2340,32 @@
   "product_variables": [
     {
       "product_system_type": "QS_GATE",
+      "name": "finish_type",
+      "label": "Finish",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "standard",
+      "options_json": [
+        "standard"
+      ],
+      "scope": "job",
+      "sort_order": 5,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
       "name": "colour_code",
       "label": "Colour",
       "data_type": "enum",
       "unit": null,
       "required": true,
-      "default_value_json": "B",
-      "options_json": [
-        "B",
-        "MN",
-        "G",
-        "SM",
-        "W",
-        "BS",
-        "D",
-        "M",
-        "P",
-        "PB",
-        "S"
-      ],
+      "default_value_json": "black-satin",
+      "options_json": [],
       "scope": "job",
       "sort_order": 10,
-      "active": true
+      "active": true,
+      "options_group": "colours"
     },
     {
       "product_system_type": "QS_GATE",

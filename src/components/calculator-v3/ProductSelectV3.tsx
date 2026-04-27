@@ -71,9 +71,10 @@ export function ProductSelectV3() {
       productCode: p.system_type,
       schemaVersion: "v2",
       variables: {
-        colour_code: "B",
+        colour_code: "black-satin",
         slat_size_mm: 65,
         slat_gap_mm: 5,
+        finish_type: "standard",
         finish_family: "standard",
         max_panel_width_mm: 2600,
       },

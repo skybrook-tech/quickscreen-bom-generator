@@ -24,7 +24,7 @@ export function useProductVariables(systemType: string | null, scope: Scope) {
 
       const { data, error } = await supabase
         .from('product_variables')
-        .select('id, name, label, data_type, unit, required, default_value_json, options_json, sort_order')
+        .select('id, name, label, data_type, unit, required, default_value_json, options_json, options_group, sort_order')
         .eq('product_id', product.id)
         .eq('scope', scope)
         .eq('active', true)
@@ -35,8 +35,6 @@ export function useProductVariables(systemType: string | null, scope: Scope) {
         id: v.id as string,
         field_key: v.name as string,
         label: v.label as string,
-        // Pick a sensible control_type. Enums render as <select>, numbers as number input,
-        // booleans as toggle, everything else as text.
         control_type:
           v.data_type === 'enum'
             ? 'select'
@@ -50,6 +48,7 @@ export function useProductVariables(systemType: string | null, scope: Scope) {
         required: Boolean(v.required),
         default_value_json: v.default_value_json,
         options_json: Array.isArray(v.options_json) ? (v.options_json as unknown[]) : [],
+        options_group: (v.options_group as string | null) ?? undefined,
         visible_when_json: {},
         sort_order: Number(v.sort_order ?? 0),
       }));
