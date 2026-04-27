@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { searchLocalProducts } from '../lib/localSeedData';
 
 export interface ProductSearchItem {
   sku: string;
@@ -22,6 +23,8 @@ export function useProductSearch(query: string) {
   return useQuery<ProductSearchItem[]>({
     queryKey: ['product-search', trimmed],
     queryFn: async () => {
+      if (!isSupabaseConfigured) return searchLocalProducts(trimmed, 10);
+
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return [];
 

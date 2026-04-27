@@ -9,11 +9,16 @@ export function RunListV3() {
   if (!payload) return null;
 
   function addRun() {
+    const firstRun = payload!.runs[0];
     const newRun: CanonicalRun = {
       runId: crypto.randomUUID(),
-      productCode: payload!.productCode,
-      leftBoundary: { type: "product_post" },
-      rightBoundary: { type: "product_post" },
+      productCode: firstRun?.productCode ?? payload!.productCode,
+      variables: {
+        ...(payload!.variables ?? {}),
+        ...(firstRun?.variables ?? {}),
+      },
+      leftBoundary: firstRun?.leftBoundary ?? { type: "product_post" },
+      rightBoundary: firstRun?.rightBoundary ?? { type: "product_post" },
       segments: [],
       corners: [],
     };

@@ -1,4 +1,17 @@
-export type BOMCategory = 'post' | 'rail' | 'slat' | 'bracket' | 'screw' | 'gate' | 'hardware' | 'accessory';
+export type BOMCategory =
+  | 'post'
+  | 'post_accessory'
+  | 'rail'
+  | 'slat'
+  | 'side_frame'
+  | 'cfc_cover'
+  | 'centre_support_rail'
+  | 'f_section'
+  | 'bracket'
+  | 'screw'
+  | 'gate'
+  | 'hardware'
+  | 'accessory';
 export type BOMUnit = 'each' | 'length' | 'pack' | 'box';
 
 export interface BOMLineItem {

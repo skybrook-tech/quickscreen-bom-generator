@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { isSupabaseConfigured } from '../../lib/supabase';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -7,6 +8,10 @@ interface AuthGuardProps {
 
 export function AuthGuard({ children }: AuthGuardProps) {
   const { user, loading } = useAuth();
+
+  if (!isSupabaseConfigured) {
+    return <>{children}</>;
+  }
 
   if (loading) {
     return (

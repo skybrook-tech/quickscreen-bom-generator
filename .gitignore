@@ -37,4 +37,6 @@ screenshots/
 
 .env*
 
+vite-dev*.log
+
 .claude/worktrees/*

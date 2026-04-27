@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { localProducts } from '../lib/localSeedData';
 
 export interface Product {
   id: string;
@@ -23,6 +24,8 @@ export function useProducts() {
   return useQuery({
     queryKey: ['products'],
     queryFn: async () => {
+      if (!isSupabaseConfigured) return localProducts;
+
       const { data, error } = await supabase
         .from('products')
         .select('id, name, system_type, description, image_url, active, sort_order, metadata')

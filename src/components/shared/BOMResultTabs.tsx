@@ -4,11 +4,19 @@ import type { CalculatorBOMResult, BOMLineItem } from "../../types/bom.types";
 
 interface BOMResultTabsProps {
   result: CalculatorBOMResult;
+  editable?: boolean;
+  onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
+  onRemoveLine?: (item: BOMLineItem) => void;
 }
 
 const CATEGORY_ORDER = [
   "post",
+  "post_accessory",
   "slat",
+  "side_frame",
+  "cfc_cover",
+  "centre_support_rail",
+  "f_section",
   "rail",
   "bracket",
   "gate",
@@ -38,7 +46,17 @@ function groupByCategory(items: BOMLineItem[]): [string, BOMLineItem[]][] {
   return Array.from(map.entries());
 }
 
-function BOMTable({ items }: { items: BOMLineItem[] }) {
+function BOMTable({
+  items,
+  editable,
+  onQuantityChange,
+  onRemoveLine,
+}: {
+  items: BOMLineItem[];
+  editable?: boolean;
+  onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
+  onRemoveLine?: (item: BOMLineItem) => void;
+}) {
   const sorted = sortItems(items);
   const groups = groupByCategory(sorted);
 
@@ -73,6 +91,11 @@ function BOMTable({ items }: { items: BOMLineItem[] }) {
             <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
               Line $
             </th>
+            {editable && (
+              <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
+                Edit
+              </th>
+            )}
           </tr>
         </thead>
         <tbody className="bg-brand-card">
@@ -81,6 +104,9 @@ function BOMTable({ items }: { items: BOMLineItem[] }) {
               key={category}
               category={category}
               items={categoryItems}
+              editable={editable}
+              onQuantityChange={onQuantityChange}
+              onRemoveLine={onRemoveLine}
             />
           ))}
         </tbody>
@@ -92,15 +118,21 @@ function BOMTable({ items }: { items: BOMLineItem[] }) {
 function ItemGroup({
   category,
   items,
+  editable,
+  onQuantityChange,
+  onRemoveLine,
 }: {
   category: string;
   items: BOMLineItem[];
+  editable?: boolean;
+  onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
+  onRemoveLine?: (item: BOMLineItem) => void;
 }) {
   return (
     <>
       <tr className="border-t border-brand-border">
         <td
-          colSpan={6}
+          colSpan={editable ? 7 : 6}
           className="px-3 py-1.5 bg-slate-300/15 border-b border-brand-border capitalize text-xs font-semibold text-brand-muted tracking-wider"
         >
           {pluralize(category)}
@@ -126,7 +158,21 @@ function ItemGroup({
             {item.unit}
           </td>
           <td className="py-2.5 px-3 text-sm text-brand-text text-right tabular-nums">
-            {item.quantity}
+            {editable ? (
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={item.quantity}
+                onChange={(event) =>
+                  onQuantityChange?.(item, Number(event.target.value))
+                }
+                className="w-20 rounded border border-brand-border bg-white px-2 py-1 text-right text-sm text-brand-text"
+                aria-label={`Quantity for ${item.sku}`}
+              />
+            ) : (
+              item.quantity
+            )}
           </td>
           <td className="py-2.5 px-3 text-sm text-brand-muted text-right tabular-nums">
             ${item.unitPrice.toFixed(2)}
@@ -134,13 +180,29 @@ function ItemGroup({
           <td className="py-2.5 px-3 text-sm text-brand-text font-medium text-right tabular-nums">
             ${item.lineTotal.toFixed(2)}
           </td>
+          {editable && (
+            <td className="py-2.5 px-3 text-right">
+              <button
+                type="button"
+                onClick={() => onRemoveLine?.(item)}
+                className="rounded px-2 py-1 text-xs font-medium text-red-500 transition-colors hover:bg-red-500/10"
+              >
+                Remove
+              </button>
+            </td>
+          )}
         </tr>
       ))}
     </>
   );
 }
 
-export function BOMResultTabs({ result }: BOMResultTabsProps) {
+export function BOMResultTabs({
+  result,
+  editable,
+  onQuantityChange,
+  onRemoveLine,
+}: BOMResultTabsProps) {
   const [activeTab, setActiveTab] = useState("all");
 
   const tabs = [
@@ -196,7 +258,12 @@ export function BOMResultTabs({ result }: BOMResultTabsProps) {
       </div>
 
       {/* Table */}
-      <BOMTable items={activeItems} />
+      <BOMTable
+        items={activeItems}
+        editable={editable}
+        onQuantityChange={onQuantityChange}
+        onRemoveLine={onRemoveLine}
+      />
 
       {/* Summary */}
       <div className="mt-6 pt-4 border-t border-brand-border">

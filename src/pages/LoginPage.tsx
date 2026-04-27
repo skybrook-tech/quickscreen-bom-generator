@@ -3,10 +3,15 @@ import { Navigate } from 'react-router-dom';
 import { LoginForm } from '../components/auth/LoginForm';
 import { SignUpForm } from '../components/auth/SignUpForm';
 import { useAuth } from '../hooks/useAuth';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 export function LoginPage() {
   const { user, loading } = useAuth();
   const [mode, setMode] = useState<'login' | 'signup'>('login');
+
+  if (!isSupabaseConfigured) {
+    return <Navigate to="/calculator" replace />;
+  }
 
   if (loading) {
     return (

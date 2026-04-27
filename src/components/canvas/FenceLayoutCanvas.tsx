@@ -293,7 +293,7 @@ export function FenceLayoutCanvas({
         {/* Hint overlay */}
         <div className="absolute bottom-2 left-2 text-xs text-brand-muted pointer-events-none select-none">
           {activeTool === "draw" &&
-            "Click to place points · Double-click or Enter to finish · Esc to cancel"}
+            "Click to place points · Double-click the blue marker to finish · Click a length label to edit"}
           {activeTool === "gate" &&
             "Click on a fence segment to place a gate marker"}
           {activeTool === "move" &&

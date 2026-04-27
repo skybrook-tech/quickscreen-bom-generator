@@ -21,6 +21,7 @@ export function LayoutCanvasV3() {
 
   // Source tracking to break the canvas ↔ context update loop
   const sourceRef = useRef<'canvas' | 'form'>('form');
+  const stableIdsRef = useRef<Record<string, string>>({});
 
   // Tracks the last run/segment structure pushed to the canvas engine.
   // Only structural changes (runs/segments added, removed, reordered) trigger
@@ -72,10 +73,34 @@ export function LayoutCanvasV3() {
     if (!payload) return;
     try {
       sourceRef.current = 'canvas';
+      payload.runs.forEach((run, idx) => {
+        stableIdsRef.current[`run:${idx}`] = run.runId;
+      });
       const generated = canvasLayoutToCanonical(
         layout,
         payload.productCode,
         payload.variables,
+        stableIdsRef.current,
+      );
+      const canonical = mergeCanonicalPreservingSegmentMeta(payload, generated);
+      dispatch({ type: 'SET_PAYLOAD', payload: canonical });
+    } catch {
+      // Canvas layout not yet valid — ignore
+    }
+  }
+
+  function handleApplyLayout(layout: CanvasLayout) {
+    if (!payload) return;
+    try {
+      sourceRef.current = 'canvas';
+      payload.runs.forEach((run, idx) => {
+        stableIdsRef.current[`run:${idx}`] = run.runId;
+      });
+      const generated = canvasLayoutToCanonical(
+        layout,
+        payload.productCode,
+        payload.variables,
+        stableIdsRef.current,
       );
       const canonical = mergeCanonicalPreservingSegmentMeta(payload, generated);
       dispatch({ type: 'SET_PAYLOAD', payload: canonical });
@@ -94,15 +119,23 @@ export function LayoutCanvasV3() {
       // falsely see a key mismatch and call loadLayout.
       sourceRef.current = 'form';
       prevGeomKeyRef.current = payload.runs
-        .map((r) => r.segments.map((s) => s.segmentId).join(','))
+        .map((r) =>
+          r.segments
+            .map((s) => `${s.segmentId}:${s.segmentWidthMm ?? 0}`)
+            .join(','),
+        )
         .join('|');
       return;
     }
-    // Compute a fingerprint of just the segment IDs. If only variables changed
-    // (max_panel_width_mm, colour, post_size, etc.) the fingerprint is the same
-    // and we skip the loadLayout call, preserving the user's drawn layout.
+    // Compute a fingerprint of geometry-affecting segment fields. If only variables
+    // changed (colour, post_size, etc.) the fingerprint is the same and we skip
+    // loadLayout, preserving the user's drawn layout.
     const key = payload.runs
-      .map((r) => r.segments.map((s) => s.segmentId).join(','))
+      .map((r) =>
+        r.segments
+          .map((s) => `${s.segmentId}:${s.segmentWidthMm ?? 0}`)
+          .join(','),
+      )
       .join('|');
     if (key === prevGeomKeyRef.current) return;
     prevGeomKeyRef.current = key;
@@ -118,6 +151,7 @@ export function LayoutCanvasV3() {
   return (
     <div className="space-y-3">
       <FenceLayoutCanvas
+        onApplied={handleApplyLayout}
         onLayoutChange={handleLiveSync}
         onEngineReady={(engine) => { engineRef.current = engine; }}
         allowedAngles={allowedAngles}

@@ -477,8 +477,25 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
         // Panel, bay_group, or corner
         const widthMm = canonSeg.segmentWidthMm ?? 1000;
         if (useGeometry) {
-          const p0 = geomPts![fenceSegIdx];
-          const p1 = geomPts![fenceSegIdx + 1];
+          const sourceP0 = geomPts![fenceSegIdx];
+          const sourceP1 = geomPts![fenceSegIdx + 1];
+          const p0 =
+            localFlatSegments.length > 0
+              ? {
+                  x: localFlatSegments[localFlatSegments.length - 1].endX,
+                  y: localFlatSegments[localFlatSegments.length - 1].endY,
+                }
+              : sourceP0;
+          const dx = sourceP1.x - sourceP0.x;
+          const dy = sourceP1.y - sourceP0.y;
+          const currentPx = Math.hypot(dx, dy);
+          const targetPx = widthMm / 10; // 100px/m = 10mm per px
+          const unitX = currentPx > 0 ? dx / currentPx : 1;
+          const unitY = currentPx > 0 ? dy / currentPx : 0;
+          const p1 = {
+            x: p0.x + unitX * targetPx,
+            y: p0.y + unitY * targetPx,
+          };
           localFlatSegments.push({
             startX: p0.x, startY: p0.y,
             endX: p1.x, endY: p1.y,

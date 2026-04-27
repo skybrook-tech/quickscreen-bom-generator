@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { getLocalVariables } from '../lib/localSeedData';
 import type { SchemaField } from '../components/calculator-v3/SchemaDrivenForm';
 
 type Scope = 'job' | 'run' | 'segment';
@@ -14,6 +15,8 @@ export function useProductVariables(systemType: string | null, scope: Scope) {
     staleTime: 5 * 60_000,
     queryFn: async () => {
       if (!systemType) return [];
+      if (!isSupabaseConfigured) return getLocalVariables(systemType, scope);
+
       const { data: product, error: prodErr } = await supabase
         .from('products')
         .select('id')

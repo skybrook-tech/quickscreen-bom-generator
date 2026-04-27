@@ -17,7 +17,12 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
   const { state, dispatch } = useCalculator();
   const gate = seg.segmentKind === "gate_opening";
 
-  const jobMax = Number(state.payload?.variables.max_panel_width_mm ?? 2600);
+  const run = state.payload?.runs.find((r) => r.runId === runId);
+  const jobMax = Number(
+    run?.variables?.max_panel_width_mm ??
+      state.payload?.variables.max_panel_width_mm ??
+      2600,
+  );
   const effectiveMax = Number(seg.variables?.max_panel_width_mm ?? jobMax);
   const panelsLive = seg.segmentWidthMm
     ? Math.ceil(seg.segmentWidthMm / effectiveMax)
@@ -31,6 +36,20 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
       type: "UPSERT_SEGMENT",
       runId,
       segment: { ...seg, [key]: value },
+    });
+  }
+
+  function updateMaxPanelWidth(value: number) {
+    dispatch({
+      type: "UPSERT_SEGMENT",
+      runId,
+      segment: {
+        ...seg,
+        variables: {
+          ...(seg.variables ?? {}),
+          max_panel_width_mm: value,
+        },
+      },
     });
   }
 
@@ -67,6 +86,18 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
             × {panelsLive} {panelsLive === 1 ? "panel" : "panels"}
           </span>
         ) : null}
+        {!gate && seg.segmentWidthMm ? (
+          <>
+            <label className="text-brand-muted shrink-0">Post spacing:</label>
+            <NumberInput
+              value={effectiveMax}
+              min={300}
+              step={50}
+              onChange={(v) => updateMaxPanelWidth(Number(v))}
+            />
+            <span className="text-brand-muted">mm max</span>
+          </>
+        ) : null}
         <div className="flex items-center gap-1 ml-auto">
           <button
             type="button"
@@ -90,6 +121,7 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
               })
             }
             className="ml-auto text-red-400 hover:text-red-300 text-xs p-1"
+            aria-label="Remove segment"
           >
             &#x2715;
           </button>
