@@ -1846,6 +1846,7 @@
       "required": true,
       "default_value_json": 9,
       "options_json": [
+        0,
         9,
         20
       ],
@@ -2082,11 +2083,11 @@
       "version_label": "v1.0.0",
       "stage": "accessory",
       "name": "spacer_packs",
-      "expression": "ceil((num_slats - 1) / 50)",
+      "expression": "slat_gap_mm > 0 ? ceil((num_slats - 1) / 50) : 0",
       "output_key": "spacer_packs",
       "priority": 10,
       "active": true,
-      "notes": "XPL uses pre-packed 50-pack spacers. Spacers go between slats = num_slats - 1 gaps."
+      "notes": "XPL pre-packed 50-pack spacers. 0 if no gap."
     },
     {
       "product_system_type": "XPL",

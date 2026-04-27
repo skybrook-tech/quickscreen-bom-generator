@@ -5463,6 +5463,7 @@
       "required": true,
       "default_value_json": 9,
       "options_json": [
+        0,
         5,
         9,
         12,
@@ -5734,11 +5735,11 @@
       "version_label": "v1.0.0",
       "stage": "derive",
       "name": "gap_code",
-      "expression": "slat_gap_mm == 5 ? \"05MM\" : slat_gap_mm == 9 ? \"09MM\" : slat_gap_mm == 12 ? \"12MM\" : slat_gap_mm == 15 ? \"15MM\" : slat_gap_mm == 20 ? \"20MM\" : \"30MM\"",
+      "expression": "slat_gap_mm == 0 ? \"00MM\" : slat_gap_mm == 5 ? \"05MM\" : slat_gap_mm == 9 ? \"09MM\" : slat_gap_mm == 12 ? \"12MM\" : slat_gap_mm == 15 ? \"15MM\" : slat_gap_mm == 20 ? \"20MM\" : \"30MM\"",
       "output_key": "gap_code",
       "priority": 130,
       "active": true,
-      "notes": "Maps slat_gap_mm to spacer SKU suffix"
+      "notes": "Maps slat_gap_mm to spacer SKU suffix. 0mm = no spacers (qty will be 0)."
     },
     {
       "product_system_type": "QSHS",
@@ -5863,11 +5864,11 @@
       "version_label": "v1.0.0",
       "stage": "accessory",
       "name": "spacer_packs",
-      "expression": "ceil((2 * (num_slats + 1) * num_panels) / 50)",
+      "expression": "slat_gap_mm > 0 ? ceil((2 * (num_slats + 1) * num_panels) / 50) : 0",
       "output_key": "spacer_packs",
       "priority": 40,
       "active": true,
-      "notes": "2*(slats+1) spacers per panel across all panels; 50-pack"
+      "notes": "2*(slats+1) spacers per panel; 50-pack. 0 if no gap (slat_gap_mm=0)."
     },
     {
       "product_system_type": "QSHS",

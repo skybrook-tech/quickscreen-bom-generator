@@ -1236,11 +1236,11 @@
       "version_label": "v1.0.0",
       "stage": "accessory",
       "name": "spacer_qty",
-      "expression": "2 * (num_slats + 1)",
+      "expression": "slat_gap_mm > 0 ? 2 * (num_slats + 1) : 0",
       "output_key": "spacer_qty",
       "priority": 10,
       "active": true,
-      "notes": "BAYG spacers are snap-in, sold individually per-run (not in 50-packs like QSHS). 2*(slats+1) per panel."
+      "notes": "BAYG snap-in spacers, 2 per slat position. 0 if no gap (touching slats)."
     },
     {
       "product_system_type": "BAYG",
