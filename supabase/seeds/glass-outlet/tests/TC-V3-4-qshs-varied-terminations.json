@@ -1,0 +1,137 @@
+{
+  "id": "TC-V3-4-qshs-varied-terminations",
+  "description": "QSHS Run 1: 3 fence panels + gate + enclosed bay panel. Mixed terminations including 90° corner and non-system pillars. Stepped heights (1800mm and 1400mm). Black-satin, 65mm horizontal slats, 5mm gap.",
+  "input": {
+    "pricingTier": "tier1",
+    "payload": {
+      "productCode": "QSHS",
+      "schemaVersion": "v2",
+      "variables": {
+        "colour_code": "black-satin",
+        "slat_size_mm": 65,
+        "slat_gap_mm": 5,
+        "mounting_type": "in_ground",
+        "max_panel_width_mm": 2600
+      },
+      "runs": [
+        {
+          "runId": "run-001",
+          "segments": [
+            {
+              "segmentId": "seg-001",
+              "sortOrder": 0,
+              "kind": "fence",
+              "productCode": "QSHS",
+              "segmentWidthMm": 6000,
+              "panelWidthMm": 2000,
+              "targetHeightMm": 1800,
+              "leftTermination": {
+                "kind": "system_post",
+                "postSizeMm": 50
+              },
+              "rightTermination": {
+                "kind": "system_90deg",
+                "postSizeMm": 50
+              }
+            },
+            {
+              "segmentId": "seg-002",
+              "sortOrder": 1,
+              "kind": "fence",
+              "productCode": "QSHS",
+              "segmentWidthMm": 6000,
+              "panelWidthMm": 2000,
+              "targetHeightMm": 1800,
+              "leftTermination": {
+                "kind": "system_90deg",
+                "postSizeMm": 50
+              },
+              "rightTermination": {
+                "kind": "non_system",
+                "pillarSizeMm": 100
+              }
+            },
+            {
+              "segmentId": "seg-003",
+              "sortOrder": 2,
+              "kind": "fence",
+              "productCode": "QSHS",
+              "segmentWidthMm": 6000,
+              "panelWidthMm": 2000,
+              "targetHeightMm": 1400,
+              "leftTermination": {
+                "kind": "non_system",
+                "pillarSizeMm": 100
+              },
+              "rightTermination": {
+                "kind": "non_system",
+                "pillarSizeMm": 100
+              }
+            },
+            {
+              "segmentId": "seg-004",
+              "sortOrder": 3,
+              "kind": "pedestrian_gate",
+              "productCode": "QSG-PED-H",
+              "segmentWidthMm": 1000,
+              "targetHeightMm": 1800,
+              "leftTermination": {
+                "kind": "non_system",
+                "pillarSizeMm": 100
+              },
+              "rightTermination": {
+                "kind": "non_system",
+                "pillarSizeMm": 100
+              }
+            },
+            {
+              "segmentId": "seg-005",
+              "sortOrder": 4,
+              "kind": "void_infill",
+              "productCode": "QSHS",
+              "segmentWidthMm": 6000,
+              "panelWidthMm": 2000,
+              "targetHeightMm": 1400,
+              "leftTermination": {
+                "kind": "non_system",
+                "pillarSizeMm": 100
+              },
+              "rightTermination": {
+                "kind": "non_system",
+                "pillarSizeMm": 100
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "expect": {
+    "errors": [],
+    "lines": [
+      { "sku": "XP-2400-FP-B", "qty": 4, "category": "post" },
+      { "sku": "XP-TP-B", "qty": 4, "category": "post_cap" },
+      { "sku": "QS-5800-SF-B", "qty": 18, "category": "side_frame" },
+      { "sku": "QS-5800-CFC-B", "qty": 18, "category": "cfc_cover" },
+      { "sku": "QS-SFCAP-B-2PK", "qty": 9, "category": "accessory" },
+      { "sku": "QS-5800-F-B", "qty": 6, "category": "f_section" },
+      { "sku": "XP-6100-S65-B", "qty": 84, "category": "slat" },
+      { "sku": "QSG-4200-GSF50-B", "qty": 2, "category": "gate_side_frame" },
+      { "sku": "QSG-4800-RAIL65-B", "qty": 2, "category": "gate_rail" },
+      { "sku": "QSG-JOINER65-4PK", "qty": 1, "category": "gate_accessory" },
+      { "sku": "QSG-4200-COVER-B", "qty": 2, "category": "gate_cover" },
+      { "sku": "QSG-GFC-50X50-B", "qty": 1, "category": "gate_cap" },
+      { "sku": "TC-H-AT-HD-B", "qty": 1, "category": "gate_hinge" },
+      { "sku": "LL-DL", "qty": 1, "category": "gate_latch" },
+      { "sku": "QS-SPACER-05MM-50PK", "qty": 12, "category": "accessory" },
+      { "sku": "QS-SCREWS-50PK", "qty": 18, "category": "fixing" },
+      { "sku": "AR-SCR-BR-50PK", "qty": 1, "category": "fixing" },
+      { "sku": "XP-SCREWS", "qty": 1, "category": "fixing" }
+    ],
+    "totals": {
+      "grandTotal": {
+        "gte": 5500
+      }
+    }
+  }
+}

@@ -3,9 +3,6 @@
 // Loaded by index_test.ts when SUPABASE_URL is set. Not intended to be run
 // directly — always run via index_test.ts so unit tests run first.
 //
-// Snapshot mode: FIXTURE_UPDATE=1 writes actual BOM output back into each
-// fixture file (same pattern as Jest --updateSnapshot). Use this to bootstrap
-// new fixtures after confirming the output is correct, then commit the results.
 
 import {
   assertEquals,
@@ -125,7 +122,6 @@ export async function runFixtures(): Promise<void> {
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const email = Deno.env.get("TEST_USER_EMAIL") ?? "test@glass-outlet.com";
   const password = Deno.env.get("TEST_USER_PASSWORD") ?? "123456";
-  const snapshotMode = Deno.env.get("FIXTURE_UPDATE") === "1";
 
   const supabase = createClient(supabaseUrl, serviceRoleKey);
   const { data: authData, error: authError } =
@@ -168,41 +164,6 @@ export async function runFixtures(): Promise<void> {
         200,
         `HTTP ${res.status}: ${JSON.stringify(body)}`,
       );
-
-      if (snapshotMode) {
-        const lines = (
-          body.lines as Array<LineItem & { quantity: number }>
-        ).map((l) => ({
-          sku: l.sku,
-          qty: l.quantity,
-          name: l.name,
-          category: l.category,
-        }));
-        const totals = body.totals as { grandTotal: number };
-        const updated: Fixture = {
-          ...fixture,
-          expect: {
-            errors: (body.errors as string[]) ?? [],
-            lines,
-            totals: {
-              grandTotal: { gte: Math.floor(totals.grandTotal * 0.8) },
-            },
-          },
-        };
-        for (const entry of Deno.readDirSync(fixtureDir)) {
-          if (!entry.name.endsWith(".fixture.json")) continue;
-          const raw = Deno.readTextFileSync(join(fixtureDir, entry.name));
-          if ((JSON.parse(raw) as Fixture).id === fixture.id) {
-            Deno.writeTextFileSync(
-              join(fixtureDir, entry.name),
-              JSON.stringify(updated, null, 2) + "\n",
-            );
-            break;
-          }
-        }
-        console.log(`[FIXTURE_UPDATE] ${fixture.id} — written`);
-        return;
-      }
 
       assertFixture(body, fixture.expect);
     });
