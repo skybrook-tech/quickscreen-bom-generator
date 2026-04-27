@@ -32,7 +32,6 @@
 
 ## Phase 0 — Cypress Test Suite
 
-> See [phase-0-cypress-tests.md](./phase-0-cypress-tests.md)
 
 - [x] Install Cypress and TypeScript support
 - [x] Create `cypress/support/selectors.ts` (data-testid abstraction layer)
@@ -49,7 +48,6 @@
 
 ## Phase 1 — Foundation
 
-> See [phase-1-foundation.md](./phase-1-foundation.md)
 
 - [x] Scaffold Vite + React + TypeScript
 - [x] Install and configure Tailwind CSS (v3 with PostCSS)
@@ -75,7 +73,6 @@
 
 ## Phase 2 — Fence Configuration
 
-> See [phase-2-fence-configuration.md](./phase-2-fence-configuration.md)
 
 - [x] Write `src/schemas/fence.schema.ts` (Zod)
 - [x] Build `FenceConfigContext.tsx` with reducer and business rule enforcement
@@ -93,7 +90,6 @@
 
 ## Phase 3 — Gate Configuration
 
-> See [phase-3-gate-configuration.md](./phase-3-gate-configuration.md)
 
 - [x] Write `src/schemas/gate.schema.ts` (Zod)
 - [x] Write `src/types/gate.types.ts`
@@ -112,7 +108,6 @@
 
 ## Phase 4 — BOM Engine (Edge Functions)
 
-> See [phase-4-bom-engine.md](./phase-4-bom-engine.md)
 
 - [x] Create `supabase/functions/_shared/cors.ts`
 - [x] Create `supabase/functions/_shared/auth.ts`
@@ -135,7 +130,6 @@
 
 ## Phase 5 — Quotes & Export
 
-> See [phase-5-quotes-and-export.md](./phase-5-quotes-and-export.md)
 
 - [x] Write `src/schemas/quote.schema.ts` and `src/schemas/contact.schema.ts`
 - [x] Write `src/types/quote.types.ts`
@@ -158,7 +152,6 @@
 
 ## Phase 6 — Canvas Layout Tool
 
-> See [phase-6-canvas-layout-tool.md](./phase-6-canvas-layout-tool.md)
 
 - [x] Extract canvas drawing code from existing `index.html`
 - [x] Port into `src/components/canvas/canvasEngine.ts` (pure TS, no React)
@@ -180,7 +173,6 @@
 
 ## Phase 7 — Polish
 
-> See [phase-7-polish.md](./phase-7-polish.md)
 
 - [x] Audit all components for dark theme consistency — fixed `hover:bg-white/5` → `hover:bg-brand-border/40` in AccordionSection
 - [x] Add loading spinners/skeletons to all async operations — Loader2 spinner on BOM pending state
@@ -202,7 +194,6 @@
 > Scope: QSHS fence + QSHS_GATE pedestrian gate.
 
 ### V3-1 — Engine migrations
-> See [phase-v3-1-engine-migrations.md](./phase-v3-1-engine-migrations.md)
 - [x] Write migrations 011–014, 018, 019 (rule_sets, rule_versions, product_rules, constraints, variables, validations, selectors, companion rules, warnings, quote_runs/segments, admin role)
 - [x] Scope reduction: migrations 015 (form schema), 016 (layout schema), 017 (input_aliases) dropped — fencing-only product surface means form + canvas are hand-coded and shared across systems
 - [ ] Apply migrations locally (`npm run db:reset`) *(requires Supabase running)*
@@ -210,7 +201,6 @@
 - [ ] RLS smoke-tested *(requires Supabase running)*
 
 ### V3-2 — QSHS + QSHS_GATE seeds
-> See [phase-v3-2-seeds.md](./phase-v3-2-seeds.md)
 - [x] Write `supabase/seeds/glass-outlet/v3-qshs-engine.sql` with ordered inserts (products → components → rule_sets → rule_versions → constraints → variables → validations → rules → selectors → companion rules → warnings → pricing_rules)
 - [x] Extend `supabase/seeds/seed-auth.js` to create `admin@glass-outlet.com` / `123456` with `role = 'admin'`
 - [x] Write `supabase/seeds/glass-outlet/v3-verify-seeds.sql` row-count assertions
@@ -219,7 +209,6 @@
 - [ ] `npm run db:reset` passes `v3-verify-seeds.sql` *(requires Supabase running)*
 
 ### V3-3 — Canonical payload contract
-> See [phase-v3-3-canonical-payload.md](./phase-v3-3-canonical-payload.md)
 - [x] Write `supabase/functions/_shared/canonical.types.ts` (CanonicalPayload, Run, Segment, Boundary, Corner)
 - [x] Mirror at `src/types/canonical.types.ts`
 - [x] Write `src/schemas/canonical.schema.ts` Zod validators
@@ -227,7 +216,6 @@
 - [ ] Round-trip test: canvas layout → canonical → canvas layout deep-equal *(manual test pending)*
 
 ### V3-4 — `bom-calculator` edge function
-> See [phase-v3-4-bom-calculator.md](./phase-v3-4-bom-calculator.md)
 - [x] Create `supabase/functions/bom-calculator/index.ts` (12-step pipeline)
 - [x] Reuse `_shared/auth.ts`, `_shared/cors.ts`
 - [x] Port `resolvePrice`, `loadPricing`, `COLOUR_CODES` from `calculate-bom-v2`
@@ -237,7 +225,6 @@
 - [ ] Manual curl test with QSHS 5m payload *(requires Supabase running)*
 
 ### V3-5 — Multi-run UI at `/calculator`
-> See [phase-v3-5-calculator-ui.md](./phase-v3-5-calculator-ui.md)
 - [x] Build `src/components/calculator-v3/` (ProductSelectV3, SchemaDrivenForm as generic renderer, RunListV3, LayoutCanvasV3)
 - [x] Build `src/pages/CalculatorV3Page.tsx` (hand-coded `FALLBACK_FIELDS` drive SchemaDrivenForm — shared fence config form)
 - [x] Build `src/hooks/useBomCalculator.ts`
@@ -248,7 +235,6 @@
 - [ ] Canvas ↔ form round-trip verified *(manual test pending — requires Supabase running)*
 
 ### V3-6 — BOM output
-> See [phase-v3-6-bom-output.md](./phase-v3-6-bom-output.md)
 - [x] Move `src/components/calculator/BOMResultTabs.tsx` → `src/components/shared/BOMResultTabs.tsx`
 - [x] Update v2 import path (`src/pages/CalculatorPage.tsx`) to new location
 - [x] Build `src/components/calculator-v3/BOMWarningsPanel.tsx` (errors red, warnings amber, assumptions grey)
@@ -258,7 +244,6 @@
 - [ ] Admin-vs-non-admin trace gating confirmed *(manual test pending)*
 
 ### V3-7 — Docs
-> See [phase-v3-7-docs.md](./phase-v3-7-docs.md)
 - [x] Write `docs/how_it_works.md` (1-page plain-English overview)
 - [x] Update `CLAUDE.md` sections 1, 3, 5, 5a (new), 6, 8, 11, 14, 15, 16
 - [x] Write this v3 Engine section in `docs/tasks.md`

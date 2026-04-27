@@ -172,7 +172,7 @@ The v3 BOM engine is driven by data in migrations 011–014 and 018. All engine 
 
 **To change QSHS calculation behaviour:** edit seed rows and `npm run db:reset`. Do not edit `supabase/functions/bom-calculator/index.ts` unless you're changing engine-framework behaviour.
 
-See `docs/phase-v3-1-engine-migrations.md` for column shapes and `docs/how_it_works.md` for a plain-English overview.
+See `docs/engine-schema.md` for column shapes and `docs/how_it_works.md` for a plain-English overview.
 
 ---
 
@@ -220,7 +220,7 @@ const orgId = profile.org_id;
 
 **Graceful math.js failures:** every `mathjs.evaluate` wrapped in try/catch. Failed rule ID + error logged to trace. Pipeline continues.
 
-See `docs/phase-v3-4-bom-calculator.md` for the full spec.
+See `docs/bom-calculator-pipeline.md` for the full spec.
 
 ---
 
@@ -313,7 +313,7 @@ VITE_SUPABASE_ANON_KEY=your-local-anon-key
 
 ## 14. Testing
 
-**v3 Testing:** Deno unit tests at `supabase/functions/bom-calculator/index_test.ts` — fixtures (TC-V3-1 through TC-V3-8) covering rule firings, selector resolution, companion expansion, validation errors, warnings, missing pricing, and malformed rules. See `docs/phase-v3-4-bom-calculator.md`.
+**v3 Testing:** Deno unit tests at `supabase/functions/bom-calculator/index_test.ts` — fixtures (TC-V3-1 through TC-V3-8) covering rule firings, selector resolution, companion expansion, validation errors, warnings, missing pricing, and malformed rules. See `docs/bom-calculator-pipeline.md`.
 
 v3 Cypress E2E coverage is a follow-up phase. `SchemaDrivenForm` emits `data-testid={field_key}` matching existing conventions so future selectors can be written against the `/fence-calculator` route.
 
@@ -334,7 +334,7 @@ v3 Cypress E2E coverage is a follow-up phase. `SchemaDrivenForm` emits `data-tes
 - **Products table is flat** (post migration 022). No parent/variant hierarchy — every product has `parent_id = NULL`. The `product_type` column distinguishes fences from gates from other catalog items. Older code that filtered `WHERE parent_id IS NULL` has been updated; don't reintroduce that pattern.
 - **Admin trace access in v3** requires `profiles.role = 'admin'`. The seeded `admin@glass-outlet.com` / `123456` user has it. New admins: `UPDATE profiles SET role = 'admin' WHERE email = ...`.
 - **Legacy routes are gone.** `/new` (v1 `MainApp`) and its edge function `calculate-bom` have been deleted. The only calculator route is `/fence-calculator` (`CalculatorV3Page` + `bom-calculator`).
-- **Canonical payload** is the single JSON shape shared by v3 canvas, form, engine, and `quote_runs`/`quote_run_segments`. `runId` and `segmentId` are stable across round-trips. Do not regenerate them in adapter code — that breaks load/save. See `docs/phase-v3-3-canonical-payload.md`.
+- **Canonical payload** is the single JSON shape shared by v3 canvas, form, engine, and `quote_runs`/`quote_run_segments`. `runId` and `segmentId` are stable across round-trips. Do not regenerate them in adapter code — that breaks load/save. See `docs/canonical-payload.md`.
 
 ---
 
