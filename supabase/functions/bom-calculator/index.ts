@@ -78,14 +78,15 @@ async function loadComponentNames(
     .eq("active", true);
   const map = new Map<string, { name: string; description: string }>();
   for (const row of data ?? []) {
-    map.set(row.sku, { name: row.name ?? "", description: row.description ?? "" });
+    map.set(row.sku, {
+      name: row.name ?? "",
+      description: row.description ?? "",
+    });
   }
   return map;
 }
 
-async function loadColourCodes(
-  orgId: string,
-): Promise<Record<string, string>> {
+async function loadColourCodes(orgId: string): Promise<Record<string, string>> {
   const supabaseAdmin = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
@@ -333,7 +334,11 @@ Deno.serve(async (req: Request) => {
 
       // Merge job-level variables for the run context
       const mergedRunVars = { ...payload.variables };
-      const runCtx = normaliseVariables(mergedRunVars, fenceEngineData, colourCodes);
+      const runCtx = normaliseVariables(
+        mergedRunVars,
+        fenceEngineData,
+        colourCodes,
+      );
       const runTrace: TraceEntry[] = [];
       const runLines: BomLineItemV3[] = [];
 
@@ -374,25 +379,33 @@ Deno.serve(async (req: Request) => {
         const maxW = Number(
           seg.variables?.max_panel_width_mm ?? maxPanelWidthMm,
         );
+
         const w = seg.segmentWidthMm ?? 0;
         const panels = maxW > 0 && w > 0 ? Math.ceil(w / maxW) : 1;
         numPanelsBySegmentId.set(seg.segmentId, panels);
       }
 
+      // Walk the run to assign posts per fence segment
+      const numPostsBySegmentId = walkRunForPosts(run, numPanelsBySegmentId);
+
       // Compute panel_width_mm per segment (even distribution)
       const panelWidthBySegmentId = new Map<string, number>();
+
       for (const [segId, nPanels] of numPanelsBySegmentId.entries()) {
         const seg = run.segments.find((s) => s.segmentId === segId);
         if (!seg) continue;
-        const w = seg.segmentWidthMm ?? 0;
+        let w = seg.segmentWidthMm ?? 0;
+
+        if (seg.variables?.post_size === "custom") {
+          const numPosts = numPostsBySegmentId.get(seg.segmentId) ?? 0;
+          w = w - numPosts * (seg.variables?.post_width_mm ?? 0);
+          // w = segment.variables?.post_width_mm ?? 0;
+        }
         panelWidthBySegmentId.set(
           segId,
           nPanels > 0 ? Math.round(w / nPanels) : 0,
         );
       }
-
-      // Walk the run to assign posts per fence segment
-      const numPostsBySegmentId = walkRunForPosts(run, numPanelsBySegmentId);
 
       // Count corners: fence segment joins with angleDeg > 5°
       const sortedSegs = [...run.segments].sort(

@@ -10,28 +10,9 @@
       "sort_order": 1,
       "metadata": {
         "options": {
-          "slatSize": [
-            "65",
-            "90"
-          ],
-          "slatGap": [
-            "5",
-            "9",
-            "20"
-          ],
-          "colour": [
-            "B",
-            "MN",
-            "G",
-            "SM",
-            "W",
-            "BS",
-            "D",
-            "M",
-            "P",
-            "PB",
-            "S"
-          ]
+          "slatSize": ["65", "90"],
+          "slatGap": ["5", "9", "20"],
+          "colour": ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]
         }
       }
     }
@@ -44,12 +25,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -60,12 +36,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -76,12 +47,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -92,12 +58,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -108,12 +69,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -124,12 +80,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -140,12 +91,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -156,12 +102,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 29.59,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -172,12 +113,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -188,12 +124,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -204,12 +135,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 37.29,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -220,11 +146,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 50.49,
-      "system_types": [
-        "QSHS",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -235,11 +157,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 50.49,
-      "system_types": [
-        "QSHS",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -250,11 +168,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 50.49,
-      "system_types": [
-        "QSHS",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -265,11 +179,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 50.49,
-      "system_types": [
-        "QSHS",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -280,11 +190,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 50.49,
-      "system_types": [
-        "QSHS",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -295,11 +201,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 50.49,
-      "system_types": [
-        "QSHS",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -310,11 +212,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 50.49,
-      "system_types": [
-        "QSHS",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -325,11 +223,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 41.69,
-      "system_types": [
-        "QSHS",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -340,11 +234,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 50.49,
-      "system_types": [
-        "QSHS",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -355,11 +245,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 50.49,
-      "system_types": [
-        "QSHS",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -370,11 +256,7 @@
       "category": "slat",
       "unit": "length",
       "default_price": 50.49,
-      "system_types": [
-        "QSHS",
-        "BAYG",
-        "VS"
-      ],
+      "system_types": ["QSHS", "BAYG", "VS"],
       "metadata": {},
       "active": true
     },
@@ -385,11 +267,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 24.35,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -400,11 +278,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 24.35,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -415,11 +289,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 24.35,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -430,11 +300,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 24.35,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -445,11 +311,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 24.35,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -460,11 +322,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 24.35,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -475,11 +333,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 24.35,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -490,11 +344,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 19.78,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -505,11 +355,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 24.35,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -520,11 +366,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 24.35,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -535,11 +377,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 24.35,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -550,11 +388,7 @@
       "category": "cfc_cover",
       "unit": "length",
       "default_price": 16.92,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -565,11 +399,7 @@
       "category": "cfc_cover",
       "unit": "length",
       "default_price": 16.92,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -580,11 +410,7 @@
       "category": "cfc_cover",
       "unit": "length",
       "default_price": 16.92,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -595,11 +421,7 @@
       "category": "cfc_cover",
       "unit": "length",
       "default_price": 16.92,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -610,11 +432,7 @@
       "category": "cfc_cover",
       "unit": "length",
       "default_price": 16.92,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -625,11 +443,7 @@
       "category": "cfc_cover",
       "unit": "length",
       "default_price": 16.92,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -640,11 +454,7 @@
       "category": "cfc_cover",
       "unit": "length",
       "default_price": 16.92,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -655,11 +465,7 @@
       "category": "cfc_cover",
       "unit": "length",
       "default_price": 12.54,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -670,11 +476,7 @@
       "category": "cfc_cover",
       "unit": "length",
       "default_price": 16.92,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -685,11 +487,7 @@
       "category": "cfc_cover",
       "unit": "length",
       "default_price": 16.92,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -700,11 +498,7 @@
       "category": "cfc_cover",
       "unit": "length",
       "default_price": 16.92,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -715,10 +509,7 @@
       "category": "centre_support_rail",
       "unit": "length",
       "default_price": 45.65,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -729,10 +520,7 @@
       "category": "centre_support_rail",
       "unit": "length",
       "default_price": 45.65,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -743,10 +531,7 @@
       "category": "centre_support_rail",
       "unit": "length",
       "default_price": 45.65,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -757,10 +542,7 @@
       "category": "centre_support_rail",
       "unit": "length",
       "default_price": 45.65,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -771,10 +553,7 @@
       "category": "centre_support_rail",
       "unit": "length",
       "default_price": 45.65,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -785,10 +564,7 @@
       "category": "centre_support_rail",
       "unit": "length",
       "default_price": 45.65,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -799,10 +575,7 @@
       "category": "centre_support_rail",
       "unit": "length",
       "default_price": 45.65,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -813,10 +586,7 @@
       "category": "centre_support_rail",
       "unit": "length",
       "default_price": 34.74,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -827,10 +597,7 @@
       "category": "centre_support_rail",
       "unit": "length",
       "default_price": 43.48,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -841,10 +608,7 @@
       "category": "centre_support_rail",
       "unit": "length",
       "default_price": 43.48,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -855,10 +619,7 @@
       "category": "centre_support_rail",
       "unit": "length",
       "default_price": 43.48,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -869,11 +630,7 @@
       "category": "f_section",
       "unit": "length",
       "default_price": 36.89,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -884,11 +641,7 @@
       "category": "f_section",
       "unit": "length",
       "default_price": 36.89,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -899,11 +652,7 @@
       "category": "f_section",
       "unit": "length",
       "default_price": 36.89,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -914,11 +663,7 @@
       "category": "f_section",
       "unit": "length",
       "default_price": 36.89,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -929,11 +674,7 @@
       "category": "f_section",
       "unit": "length",
       "default_price": 36.89,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -944,11 +685,7 @@
       "category": "f_section",
       "unit": "length",
       "default_price": 36.89,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -959,11 +696,7 @@
       "category": "f_section",
       "unit": "length",
       "default_price": 36.89,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -974,11 +707,7 @@
       "category": "f_section",
       "unit": "length",
       "default_price": 25.5,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -989,11 +718,7 @@
       "category": "f_section",
       "unit": "length",
       "default_price": 36.89,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1004,11 +729,7 @@
       "category": "f_section",
       "unit": "length",
       "default_price": 36.89,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1019,11 +740,7 @@
       "category": "f_section",
       "unit": "length",
       "default_price": 36.89,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1034,11 +751,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 0.86,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1049,10 +762,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1063,10 +773,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1077,10 +784,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1091,10 +795,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1105,10 +806,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1119,10 +817,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 1.03,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1133,10 +828,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1147,10 +839,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1161,10 +850,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1175,10 +861,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1189,10 +872,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 4.46,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1203,10 +883,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1217,10 +894,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1231,10 +905,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 4.06,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1245,10 +916,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 4.64,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -1259,12 +927,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 40.48,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "black-satin",
         "colour_code": "B",
@@ -1280,12 +943,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 40.48,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "monument-matt",
         "colour_code": "MN",
@@ -1301,12 +959,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 40.48,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "woodland-grey-matt",
         "colour_code": "G",
@@ -1322,12 +975,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 40.48,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "surfmist-matt",
         "colour_code": "SM",
@@ -1343,12 +991,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 40.48,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "pearl-white-gloss",
         "colour_code": "W",
@@ -1364,12 +1007,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 40.48,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "basalt-satin",
         "colour_code": "BS",
@@ -1385,12 +1023,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 40.48,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "dune-satin",
         "colour_code": "D",
@@ -1406,12 +1039,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 32.07,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "mill",
         "colour_code": "M",
@@ -1427,12 +1055,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 37.07,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "primrose",
         "colour_code": "P",
@@ -1448,12 +1071,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 37.07,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "paperbark",
         "colour_code": "PB",
@@ -1469,12 +1087,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 38.55,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "palladium-silver-pearl",
         "colour_code": "S",
@@ -1490,12 +1103,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 85.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "black-satin",
         "colour_code": "B",
@@ -1511,12 +1119,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 85.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "monument-matt",
         "colour_code": "MN",
@@ -1532,12 +1135,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 85.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "woodland-grey-matt",
         "colour_code": "G",
@@ -1553,12 +1151,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 85.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "surfmist-matt",
         "colour_code": "SM",
@@ -1574,12 +1167,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 85.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "pearl-white-gloss",
         "colour_code": "W",
@@ -1595,12 +1183,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 85.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "basalt-satin",
         "colour_code": "BS",
@@ -1616,12 +1199,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 85.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "dune-satin",
         "colour_code": "D",
@@ -1637,12 +1215,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 71.25,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "mill",
         "colour_code": "M",
@@ -1658,12 +1231,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 81.44,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "palladium-silver-pearl",
         "colour_code": "S",
@@ -1679,12 +1247,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 59.55,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "black-satin",
         "colour_code": "B",
@@ -1700,12 +1263,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 59.55,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "monument-matt",
         "colour_code": "MN",
@@ -1721,12 +1279,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 59.55,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "woodland-grey-matt",
         "colour_code": "G",
@@ -1742,12 +1295,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 59.55,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "surfmist-matt",
         "colour_code": "SM",
@@ -1763,12 +1311,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 59.55,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "pearl-white-gloss",
         "colour_code": "W",
@@ -1784,12 +1327,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 59.55,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "basalt-satin",
         "colour_code": "BS",
@@ -1805,12 +1343,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 59.55,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "dune-satin",
         "colour_code": "D",
@@ -1826,12 +1359,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 48.65,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "mill",
         "colour_code": "M",
@@ -1847,12 +1375,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 56.71,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "palladium-silver-pearl",
         "colour_code": "S",
@@ -1868,12 +1391,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 130.21,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "black-satin",
         "colour_code": "B",
@@ -1889,12 +1407,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 130.21,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "monument-matt",
         "colour_code": "MN",
@@ -1910,12 +1423,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 130.21,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "woodland-grey-matt",
         "colour_code": "G",
@@ -1931,12 +1439,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 130.21,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "surfmist-matt",
         "colour_code": "SM",
@@ -1952,12 +1455,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 130.21,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "pearl-white-gloss",
         "colour_code": "W",
@@ -1973,12 +1471,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 130.21,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "basalt-satin",
         "colour_code": "BS",
@@ -1994,12 +1487,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 130.21,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "dune-satin",
         "colour_code": "D",
@@ -2015,12 +1503,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 116.22,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "mill",
         "colour_code": "M",
@@ -2036,12 +1519,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 124.01,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "palladium-silver-pearl",
         "colour_code": "S",
@@ -2057,12 +1535,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.02,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "black-satin",
         "colour_code": "B",
@@ -2077,12 +1550,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.02,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "monument-matt",
         "colour_code": "MN",
@@ -2097,12 +1565,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.02,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "woodland-grey-matt",
         "colour_code": "G",
@@ -2117,12 +1580,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.02,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "surfmist-matt",
         "colour_code": "SM",
@@ -2137,12 +1595,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.02,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "pearl-white-gloss",
         "colour_code": "W",
@@ -2157,12 +1610,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.02,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "basalt-satin",
         "colour_code": "BS",
@@ -2177,12 +1625,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.02,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "dune-satin",
         "colour_code": "D",
@@ -2197,12 +1640,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 1.58,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "mill",
         "colour_code": "M",
@@ -2217,12 +1655,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 1.94,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "paperbark",
         "colour_code": "PB",
@@ -2237,12 +1670,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.02,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "palladium-silver-pearl",
         "colour_code": "S",
@@ -2257,12 +1685,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.41,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "black-satin",
         "colour_code": "B",
@@ -2277,12 +1700,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.41,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "monument-matt",
         "colour_code": "MN",
@@ -2297,12 +1715,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.41,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "woodland-grey-matt",
         "colour_code": "G",
@@ -2317,12 +1730,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.41,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "surfmist-matt",
         "colour_code": "SM",
@@ -2337,12 +1745,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.41,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "pearl-white-gloss",
         "colour_code": "W",
@@ -2357,12 +1760,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.41,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "basalt-satin",
         "colour_code": "BS",
@@ -2377,12 +1775,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.41,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "dune-satin",
         "colour_code": "D",
@@ -2397,12 +1790,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.95,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "mill",
         "colour_code": "M",
@@ -2417,12 +1805,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.41,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "palladium-silver-pearl",
         "colour_code": "S",
@@ -2437,12 +1820,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.28,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "black-satin",
         "colour_code": "B",
@@ -2458,12 +1836,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.28,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "monument-matt",
         "colour_code": "MN",
@@ -2479,12 +1852,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.28,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "woodland-grey-matt",
         "colour_code": "G",
@@ -2500,12 +1868,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.28,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "surfmist-matt",
         "colour_code": "SM",
@@ -2521,12 +1884,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.28,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "pearl-white-gloss",
         "colour_code": "W",
@@ -2542,12 +1900,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.28,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "basalt-satin",
         "colour_code": "BS",
@@ -2563,12 +1916,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.28,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "dune-satin",
         "colour_code": "D",
@@ -2584,12 +1932,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 8.98,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "mill",
         "colour_code": "M",
@@ -2605,12 +1948,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 9.41,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "primrose",
         "colour_code": "P",
@@ -2626,12 +1964,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 9.41,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "paperbark",
         "colour_code": "PB",
@@ -2647,12 +1980,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 9.79,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "palladium-silver-pearl",
         "colour_code": "S",
@@ -2668,12 +1996,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.82,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "black-satin",
         "colour_code": "B",
@@ -2689,12 +2012,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.82,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "monument-matt",
         "colour_code": "MN",
@@ -2710,12 +2028,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.82,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "woodland-grey-matt",
         "colour_code": "G",
@@ -2731,12 +2044,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.82,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "surfmist-matt",
         "colour_code": "SM",
@@ -2752,12 +2060,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.82,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "pearl-white-gloss",
         "colour_code": "W",
@@ -2773,12 +2076,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.82,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "basalt-satin",
         "colour_code": "BS",
@@ -2794,12 +2092,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.82,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "dune-satin",
         "colour_code": "D",
@@ -2815,12 +2108,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 9.72,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "mill",
         "colour_code": "M",
@@ -2836,12 +2124,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 10.3,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "palladium-silver-pearl",
         "colour_code": "S",
@@ -2857,12 +2140,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.11,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "black-satin",
         "colour_code": "B",
@@ -2878,12 +2156,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.11,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "monument-matt",
         "colour_code": "MN",
@@ -2899,12 +2172,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.11,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "woodland-grey-matt",
         "colour_code": "G",
@@ -2920,12 +2188,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.11,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "surfmist-matt",
         "colour_code": "SM",
@@ -2941,12 +2204,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.11,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "pearl-white-gloss",
         "colour_code": "W",
@@ -2962,12 +2220,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.11,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "basalt-satin",
         "colour_code": "BS",
@@ -2983,12 +2236,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.11,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "dune-satin",
         "colour_code": "D",
@@ -3004,12 +2252,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 4.42,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "mill",
         "colour_code": "M",
@@ -3025,12 +2268,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.11,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "palladium-silver-pearl",
         "colour_code": "S",
@@ -3046,12 +2284,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "black-satin",
         "colour_code": "B",
@@ -3067,12 +2300,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "monument-matt",
         "colour_code": "MN",
@@ -3088,12 +2316,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "woodland-grey-matt",
         "colour_code": "G",
@@ -3109,12 +2332,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "surfmist-matt",
         "colour_code": "SM",
@@ -3130,12 +2348,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "pearl-white-gloss",
         "colour_code": "W",
@@ -3151,12 +2364,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "basalt-satin",
         "colour_code": "BS",
@@ -3172,12 +2380,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "dune-satin",
         "colour_code": "D",
@@ -3193,12 +2396,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.01,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "mill",
         "colour_code": "M",
@@ -3214,12 +2412,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 5.51,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "palladium-silver-pearl",
         "colour_code": "S",
@@ -3235,12 +2428,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.47,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "black-satin",
         "colour_code": "B",
@@ -3256,12 +2444,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.47,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "monument-matt",
         "colour_code": "MN",
@@ -3277,12 +2460,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.47,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "woodland-grey-matt",
         "colour_code": "G",
@@ -3298,12 +2476,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.47,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "surfmist-matt",
         "colour_code": "SM",
@@ -3319,12 +2492,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.47,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "pearl-white-gloss",
         "colour_code": "W",
@@ -3340,12 +2508,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.47,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "basalt-satin",
         "colour_code": "BS",
@@ -3361,12 +2524,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.47,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "dune-satin",
         "colour_code": "D",
@@ -3382,12 +2540,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.08,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "mill",
         "colour_code": "M",
@@ -3403,12 +2556,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.35,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "primrose",
         "colour_code": "P",
@@ -3424,12 +2572,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.26,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "paperbark",
         "colour_code": "PB",
@@ -3445,12 +2588,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.35,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "palladium-silver-pearl",
         "colour_code": "S",
@@ -3466,12 +2604,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.58,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "black-satin",
         "colour_code": "B",
@@ -3487,12 +2620,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.58,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "monument-matt",
         "colour_code": "MN",
@@ -3508,12 +2636,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.58,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "woodland-grey-matt",
         "colour_code": "G",
@@ -3529,12 +2652,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.58,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "surfmist-matt",
         "colour_code": "SM",
@@ -3550,12 +2668,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.58,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "pearl-white-gloss",
         "colour_code": "W",
@@ -3571,12 +2684,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.58,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "basalt-satin",
         "colour_code": "BS",
@@ -3592,12 +2700,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.58,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "dune-satin",
         "colour_code": "D",
@@ -3613,12 +2716,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 2.72,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "mill",
         "colour_code": "M",
@@ -3634,12 +2732,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 3.41,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "palladium-silver-pearl",
         "colour_code": "S",
@@ -3655,11 +2748,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 0.86,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -3670,11 +2759,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 1.42,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {
         "gap_mm": 5
       },
@@ -3687,11 +2772,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 2.63,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {
         "gap_mm": 9
       },
@@ -3704,11 +2785,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.47,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {
         "gap_mm": 12
       },
@@ -3721,11 +2798,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 4.1,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {
         "gap_mm": 15
       },
@@ -3738,11 +2811,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 5.2,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {
         "gap_mm": 20
       },
@@ -3755,11 +2824,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 7.3,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {
         "gap_mm": 30
       },
@@ -3772,12 +2837,7 @@
       "category": "fixing",
       "unit": "pack",
       "default_price": 1,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "XPL",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "XPL", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -3788,10 +2848,7 @@
       "category": "accessory",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "B"
       },
@@ -3804,10 +2861,7 @@
       "category": "accessory",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "MN"
       },
@@ -3820,10 +2874,7 @@
       "category": "accessory",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "G"
       },
@@ -3836,10 +2887,7 @@
       "category": "accessory",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "SM"
       },
@@ -3852,10 +2900,7 @@
       "category": "accessory",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "W"
       },
@@ -3868,10 +2913,7 @@
       "category": "accessory",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "BS"
       },
@@ -3884,10 +2926,7 @@
       "category": "accessory",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "D"
       },
@@ -3900,10 +2939,7 @@
       "category": "accessory",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "M"
       },
@@ -3916,10 +2952,7 @@
       "category": "accessory",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "S"
       },
@@ -3932,11 +2965,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {
         "colour": "B",
         "cap_count": 2
@@ -3950,11 +2979,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {
         "colour": "MN",
         "cap_count": 2
@@ -3968,11 +2993,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {
         "colour": "G",
         "cap_count": 2
@@ -3986,11 +3007,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {
         "colour": "SM",
         "cap_count": 2
@@ -4004,11 +3021,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {
         "colour": "W",
         "cap_count": 2
@@ -4022,11 +3035,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {
         "colour": "BS",
         "cap_count": 2
@@ -4040,11 +3049,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG"],
       "metadata": {
         "colour": "D",
         "cap_count": 2
@@ -4058,11 +3063,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "XPL"],
       "metadata": {
         "colour": "B"
       },
@@ -4075,11 +3076,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "XPL"],
       "metadata": {
         "colour": "MN"
       },
@@ -4092,11 +3089,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "XPL"],
       "metadata": {
         "colour": "G"
       },
@@ -4109,11 +3102,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "XPL"],
       "metadata": {
         "colour": "SM"
       },
@@ -4126,11 +3115,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "XPL"],
       "metadata": {
         "colour": "W"
       },
@@ -4143,11 +3128,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "XPL"],
       "metadata": {
         "colour": "BS"
       },
@@ -4160,11 +3141,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "XPL"],
       "metadata": {
         "colour": "D"
       },
@@ -4177,11 +3154,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "XPL"],
       "metadata": {
         "colour": "M"
       },
@@ -4194,11 +3167,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "XPL"],
       "metadata": {
         "colour": "S"
       },
@@ -4211,11 +3180,7 @@
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "B"
       },
@@ -4228,11 +3193,7 @@
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "MN"
       },
@@ -4245,11 +3206,7 @@
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "G"
       },
@@ -4262,11 +3219,7 @@
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "SM"
       },
@@ -4279,11 +3232,7 @@
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "M"
       },
@@ -4296,11 +3245,7 @@
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "S"
       },
@@ -4313,10 +3258,7 @@
       "category": "slat",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "XPL"],
       "metadata": {
         "colour": "B",
         "slat_size_mm": 65,
@@ -4331,10 +3273,7 @@
       "category": "slat",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "XPL"],
       "metadata": {
         "colour": "MN",
         "slat_size_mm": 65,
@@ -4349,10 +3288,7 @@
       "category": "slat",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "XPL"],
       "metadata": {
         "colour": "G",
         "slat_size_mm": 65,
@@ -4367,10 +3303,7 @@
       "category": "slat",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "XPL"],
       "metadata": {
         "colour": "SM",
         "slat_size_mm": 65,
@@ -4385,10 +3318,7 @@
       "category": "slat",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "XPL"],
       "metadata": {
         "colour": "W",
         "slat_size_mm": 65,
@@ -4403,10 +3333,7 @@
       "category": "slat",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "XPL"],
       "metadata": {
         "colour": "BS",
         "slat_size_mm": 65,
@@ -4421,10 +3348,7 @@
       "category": "slat",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "XPL"],
       "metadata": {
         "colour": "D",
         "slat_size_mm": 65,
@@ -4439,10 +3363,7 @@
       "category": "slat",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "XPL"],
       "metadata": {
         "colour": "M",
         "slat_size_mm": 65,
@@ -4457,10 +3378,7 @@
       "category": "slat",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "XPL"],
       "metadata": {
         "colour": "P",
         "slat_size_mm": 65,
@@ -4475,10 +3393,7 @@
       "category": "slat",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "XPL"],
       "metadata": {
         "colour": "PB",
         "slat_size_mm": 65,
@@ -4493,10 +3408,7 @@
       "category": "slat",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "XPL"],
       "metadata": {
         "colour": "S",
         "slat_size_mm": 65,
@@ -4511,11 +3423,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "B",
         "slat_size_mm": 65,
@@ -4530,11 +3438,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "MN",
         "slat_size_mm": 65,
@@ -4549,11 +3453,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "G",
         "slat_size_mm": 65,
@@ -4568,11 +3468,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "SM",
         "slat_size_mm": 65,
@@ -4587,11 +3483,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "W",
         "slat_size_mm": 65,
@@ -4606,11 +3498,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "BS",
         "slat_size_mm": 65,
@@ -4625,11 +3513,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "D",
         "slat_size_mm": 65,
@@ -4644,11 +3528,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "M",
         "slat_size_mm": 65,
@@ -4663,11 +3543,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "P",
         "slat_size_mm": 65,
@@ -4682,11 +3558,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "PB",
         "slat_size_mm": 65,
@@ -4701,11 +3573,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "S",
         "slat_size_mm": 65,
@@ -4720,10 +3588,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "B",
         "slat_size_mm": 90,
@@ -4738,10 +3603,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "MN",
         "slat_size_mm": 90,
@@ -4756,10 +3618,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "G",
         "slat_size_mm": 90,
@@ -4774,10 +3633,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "SM",
         "slat_size_mm": 90,
@@ -4792,10 +3648,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "W",
         "slat_size_mm": 90,
@@ -4810,10 +3663,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "BS",
         "slat_size_mm": 90,
@@ -4828,10 +3678,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "D",
         "slat_size_mm": 90,
@@ -4846,10 +3693,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "M",
         "slat_size_mm": 90,
@@ -4864,10 +3708,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "VS"
-      ],
+      "system_types": ["QSHS", "VS"],
       "metadata": {
         "colour": "S",
         "slat_size_mm": 90,
@@ -4882,11 +3723,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "W",
         "slat_size_mm": 65,
@@ -4901,11 +3738,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "QSHS",
-        "XPL",
-        "VS"
-      ],
+      "system_types": ["QSHS", "XPL", "VS"],
       "metadata": {
         "colour": "M",
         "slat_size_mm": 65,
@@ -4920,10 +3753,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {
         "colour": "BS"
       },
@@ -4936,10 +3766,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {
         "colour": "D"
       },
@@ -4952,10 +3779,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {
         "colour": "M"
       },
@@ -4968,10 +3792,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {
         "colour": "P"
       },
@@ -4984,10 +3805,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {
         "colour": "PB"
       },
@@ -5000,10 +3818,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {
         "colour": "P"
       },
@@ -5016,10 +3831,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "BAYG"
-      ],
+      "system_types": ["QSHS", "BAYG"],
       "metadata": {
         "colour": "PB"
       },
@@ -5032,12 +3844,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "P",
         "colour_code": "B",
@@ -5053,12 +3860,7 @@
       "category": "post",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "PB",
         "colour_code": "B",
@@ -5074,12 +3876,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "P",
         "colour_code": "B",
@@ -5094,12 +3891,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "P",
         "colour_code": "B",
@@ -5115,12 +3907,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "PB",
         "colour_code": "B",
@@ -5136,12 +3923,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "P",
         "colour_code": "B",
@@ -5156,12 +3938,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "PB",
         "colour_code": "B",
@@ -5176,12 +3953,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "P",
         "colour_code": "B",
@@ -5197,12 +3969,7 @@
       "category": "post_accessory",
       "unit": "set",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "PB",
         "colour_code": "B",
@@ -5218,12 +3985,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "P",
         "colour_code": "B",
@@ -5239,12 +4001,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "PB",
         "colour_code": "B",
@@ -5260,12 +4017,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "P",
         "colour_code": "B",
@@ -5281,12 +4033,7 @@
       "category": "post_accessory",
       "unit": "each",
       "default_price": 0,
-      "system_types": [
-        "QSHS",
-        "VS",
-        "BAYG",
-        "XPL"
-      ],
+      "system_types": ["QSHS", "VS", "BAYG", "XPL"],
       "metadata": {
         "colour": "PB",
         "colour_code": "B",
@@ -5416,10 +4163,7 @@
       "unit": null,
       "required": true,
       "default_value_json": "standard",
-      "options_json": [
-        "standard",
-        "alumawood"
-      ],
+      "options_json": ["standard", "alumawood"],
       "scope": "job",
       "sort_order": 5,
       "active": true
@@ -5446,10 +4190,7 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 65,
-      "options_json": [
-        65,
-        90
-      ],
+      "options_json": [65, 90],
       "scope": "job",
       "sort_order": 20,
       "active": true
@@ -5462,15 +4203,7 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 9,
-      "options_json": [
-        0,
-        5,
-        9,
-        12,
-        15,
-        20,
-        30
-      ],
+      "options_json": [0, 5, 9, 12, 15, 20, 30],
       "scope": "job",
       "sort_order": 30,
       "active": true,
@@ -5484,11 +4217,7 @@
       "unit": null,
       "required": true,
       "default_value_json": "in_ground",
-      "options_json": [
-        "in_ground",
-        "base_plate",
-        "core_drill"
-      ],
+      "options_json": ["in_ground", "base_plate", "core_drill"],
       "scope": "run",
       "sort_order": 40,
       "active": true
@@ -5501,10 +4230,7 @@
       "unit": null,
       "required": true,
       "default_value_json": "post",
-      "options_json": [
-        "post",
-        "wall"
-      ],
+      "options_json": ["post", "wall"],
       "scope": "run",
       "sort_order": 50,
       "active": false
@@ -5517,10 +4243,7 @@
       "unit": null,
       "required": true,
       "default_value_json": "post",
-      "options_json": [
-        "post",
-        "wall"
-      ],
+      "options_json": ["post", "wall"],
       "scope": "run",
       "sort_order": 60,
       "active": false
@@ -5559,12 +4282,35 @@
       "unit": "mm",
       "required": true,
       "default_value_json": "50",
-      "options_json": [
-        "50",
-        "65"
-      ],
+      "options_json": ["50", "65"],
       "scope": "run",
       "sort_order": 45,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "post_width_mm",
+      "label": "Non-System Post Width",
+      "data_type": "number",
+      "unit": "mm",
+      "required": false,
+      "default_value_json": null,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 46,
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "non_system_post_run",
+      "label": "All Posts Non-System (Pillar Run)",
+      "data_type": "boolean",
+      "unit": null,
+      "required": false,
+      "default_value_json": false,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 47,
       "active": true
     }
   ],
@@ -5628,12 +4374,24 @@
       "rule_set_name": "QSHS Fence Rules",
       "version_label": "v1.0.0",
       "stage": "derive",
+      "name": "panel_width_mm",
+      "expression": "(segment_width_mm - num_posts * post_size_num - non_system_end_post_material_mm - non_system_intermediate_post_material_mm) / num_panels",
+      "output_key": "panel_width_mm",
+      "priority": 35,
+      "active": true,
+      "notes": "QSHS slats face-mount onto posts — panel width is the clear face-to-face span. System post material: num_posts * post_size_num. End and intermediate non-system post material injected by engine."
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
       "name": "slat_cut_mm",
-      "expression": "panel_width_mm - 15",
+      "expression": "panel_width_mm",
       "output_key": "slat_cut_mm",
       "priority": 40,
       "active": true,
-      "notes": "Width deduction for fence panel (no louvres): -15mm"
+      "notes": "For QSHS face-mount: slat cut length equals the panel width (no slot insertion deduction needed)"
     },
     {
       "product_system_type": "QSHS",
@@ -7145,7 +5903,9 @@
       "product_system_type": "QSHS",
       "warning_key": "hd_post_no_ppb",
       "severity": "warning",
-      "condition_json": {},
+      "condition_json": {
+        "post_size": { "eq": 65 }
+      },
       "message": "65×65mm HD posts (XP-2400-65HD, XP-6000-65HD) are not available in Primrose or Paperbark. Change colour or switch to 50×50mm posts.",
       "active": true
     }
