@@ -1,9 +1,15 @@
 import { useState } from "react";
+import { Trash2 } from "lucide-react";
 import pluralize from "pluralize";
 import type { CalculatorBOMResult, BOMLineItem } from "../../types/bom.types";
 
 interface BOMResultTabsProps {
   result: CalculatorBOMResult;
+  removedSkus?: Set<string>;
+  onRemove?: (sku: string) => void;
+  onRestoreAll?: () => void;
+  qtyOverrides?: Map<string, number>;
+  onQtyChange?: (sku: string, qty: number) => void;
 }
 
 const CATEGORY_ORDER = [
@@ -38,11 +44,26 @@ function groupByCategory(items: BOMLineItem[]): [string, BOMLineItem[]][] {
   return Array.from(map.entries());
 }
 
-function BOMTable({ items }: { items: BOMLineItem[] }) {
-  const sorted = sortItems(items);
+interface BOMTableProps {
+  items: BOMLineItem[];
+  removedSkus?: Set<string>;
+  onRemove?: (sku: string) => void;
+  qtyOverrides?: Map<string, number>;
+  onQtyChange?: (sku: string, qty: number) => void;
+}
+
+function BOMTable({
+  items,
+  removedSkus,
+  onRemove,
+  qtyOverrides,
+  onQtyChange,
+}: BOMTableProps) {
+  const visible = removedSkus ? items.filter((i) => !removedSkus.has(i.sku)) : items;
+  const sorted = sortItems(visible);
   const groups = groupByCategory(sorted);
 
-  if (items.length === 0) {
+  if (sorted.length === 0) {
     return (
       <p className="text-sm text-brand-muted py-6 text-center">
         No items in this section.
@@ -59,7 +80,7 @@ function BOMTable({ items }: { items: BOMLineItem[] }) {
               Code
             </th>
             <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider">
-              Description
+              Name / Description
             </th>
             <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-center">
               Unit
@@ -73,6 +94,9 @@ function BOMTable({ items }: { items: BOMLineItem[] }) {
             <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
               Line $
             </th>
+            {onRemove && (
+              <th className="py-2.5 px-2 w-8" />
+            )}
           </tr>
         </thead>
         <tbody className="bg-brand-card">
@@ -81,6 +105,10 @@ function BOMTable({ items }: { items: BOMLineItem[] }) {
               key={category}
               category={category}
               items={categoryItems}
+              removedSkus={removedSkus}
+              onRemove={onRemove}
+              qtyOverrides={qtyOverrides}
+              onQtyChange={onQtyChange}
             />
           ))}
         </tbody>
@@ -89,68 +117,153 @@ function BOMTable({ items }: { items: BOMLineItem[] }) {
   );
 }
 
+interface ItemGroupProps {
+  category: string;
+  items: BOMLineItem[];
+  removedSkus?: Set<string>;
+  onRemove?: (sku: string) => void;
+  qtyOverrides?: Map<string, number>;
+  onQtyChange?: (sku: string, qty: number) => void;
+}
+
 function ItemGroup({
   category,
   items,
-}: {
-  category: string;
-  items: BOMLineItem[];
-}) {
+  removedSkus,
+  onRemove,
+  qtyOverrides,
+  onQtyChange,
+}: ItemGroupProps) {
   return (
     <>
       <tr className="border-t border-brand-border">
         <td
-          colSpan={6}
+          colSpan={onRemove ? 7 : 6}
           className="px-3 py-1.5 bg-slate-300/15 border-b border-brand-border capitalize text-xs font-semibold text-brand-muted tracking-wider"
         >
           {pluralize(category)}
         </td>
       </tr>
-      {items.map((item) => (
-        <tr
-          key={`${item.sku}-${item.category}`}
-          className="border-b border-brand-border last:border-0 hover:bg-brand-accent/5 transition-colors"
-        >
-          <td className="py-2.5 px-3 text-xs font-mono text-brand-accent whitespace-nowrap">
-            {item.sku}
-          </td>
-          <td className="py-2.5 px-3 text-sm text-brand-text">
-            {item.description}
-            {item.notes && (
-              <span className="ml-1.5 text-xs text-amber-400">
-                {item.notes}
-              </span>
+      {items.map((item) => {
+        const overrideQty = qtyOverrides?.get(item.sku);
+        const displayQty = overrideQty !== undefined ? overrideQty : item.quantity;
+        const lineTotal = displayQty * item.unitPrice;
+
+        return (
+          <tr
+            key={`${item.sku}-${item.category}`}
+            className="border-b border-brand-border last:border-0 hover:bg-brand-accent/5 transition-colors group"
+          >
+            <td className="py-2.5 px-3 text-xs font-mono text-brand-accent whitespace-nowrap align-top">
+              {item.sku}
+            </td>
+            <td className="py-2.5 px-3 align-top">
+              <div className="text-sm text-brand-text font-medium leading-tight">
+                {item.name || item.description}
+              </div>
+              {item.name && item.description && item.name !== item.description && (
+                <div className="text-xs text-brand-muted mt-0.5 leading-snug">
+                  {item.description}
+                </div>
+              )}
+              {item.notes && (
+                <span className="text-xs text-amber-400 font-medium">
+                  {item.notes}
+                </span>
+              )}
+            </td>
+            <td className="py-2.5 px-3 text-sm text-brand-muted text-center align-top">
+              {item.unit}
+            </td>
+            <td className="py-2.5 px-3 text-right align-top">
+              {onQtyChange ? (
+                <>
+                  <span className="sr-only">{displayQty}</span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={displayQty}
+                    onChange={(e) =>
+                      onQtyChange(item.sku, Math.max(0, Number(e.target.value)))
+                    }
+                    className="w-16 px-1.5 py-0.5 text-right bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text focus:outline-none focus:ring-1 focus:ring-brand-accent/50 focus:border-brand-accent tabular-nums"
+                  />
+                </>
+              ) : (
+                <span className="text-sm font-medium text-brand-text tabular-nums">
+                  {displayQty}
+                </span>
+              )}
+            </td>
+            <td className="py-2.5 px-3 text-sm text-brand-muted text-right tabular-nums align-top">
+              {item.unitPrice > 0 ? `$${item.unitPrice.toFixed(2)}` : "—"}
+            </td>
+            <td className="py-2.5 px-3 text-sm text-brand-text font-medium text-right tabular-nums align-top">
+              {lineTotal > 0 ? `$${lineTotal.toFixed(2)}` : "—"}
+            </td>
+            {onRemove && (
+              <td className="py-2.5 px-2 align-top">
+                <button
+                  type="button"
+                  onClick={() => onRemove(item.sku)}
+                  title="Remove line item"
+                  className="opacity-0 group-hover:opacity-100 p-1 rounded text-brand-muted hover:text-red-400 hover:bg-red-500/10 transition-all"
+                >
+                  <Trash2 size={13} />
+                </button>
+              </td>
             )}
-          </td>
-          <td className="py-2.5 px-3 text-sm text-brand-muted text-center">
-            {item.unit}
-          </td>
-          <td className="py-2.5 px-3 text-sm text-brand-text text-right tabular-nums">
-            {item.quantity}
-          </td>
-          <td className="py-2.5 px-3 text-sm text-brand-muted text-right tabular-nums">
-            ${item.unitPrice.toFixed(2)}
-          </td>
-          <td className="py-2.5 px-3 text-sm text-brand-text font-medium text-right tabular-nums">
-            ${item.lineTotal.toFixed(2)}
-          </td>
-        </tr>
-      ))}
+          </tr>
+        );
+      })}
     </>
   );
 }
 
-export function BOMResultTabs({ result }: BOMResultTabsProps) {
+function calcEffectiveTotal(
+  items: BOMLineItem[],
+  removedSkus?: Set<string>,
+  qtyOverrides?: Map<string, number>,
+): number {
+  return items
+    .filter((i) => !removedSkus?.has(i.sku))
+    .reduce((sum, i) => {
+      const qty = qtyOverrides?.get(i.sku) ?? i.quantity;
+      return sum + qty * i.unitPrice;
+    }, 0);
+}
+
+export function BOMResultTabs({
+  result,
+  removedSkus,
+  onRemove,
+  onRestoreAll,
+  qtyOverrides,
+  onQtyChange,
+}: BOMResultTabsProps) {
   const [activeTab, setActiveTab] = useState("all");
 
+  const removedCount = removedSkus?.size ?? 0;
+
+  const visibleAllItems = removedSkus
+    ? result.allItems.filter((i) => !removedSkus.has(i.sku))
+    : result.allItems;
+
   const tabs = [
-    { id: "all", label: "All Items", count: result.allItems.length },
-    ...result.runResults.map((r, i) => ({
-      id: r.runId,
-      label: `Run ${i + 1}`,
-      count: r.items.length,
-    })),
-    { id: "gates", label: "Gates", count: result.gateItems.length },
+    { id: "all", label: "All Items", count: visibleAllItems.length },
+    ...result.runResults.map((r, i) => {
+      const visible = removedSkus
+        ? r.items.filter((item) => !removedSkus.has(item.sku))
+        : r.items;
+      return { id: r.runId, label: `Run ${i + 1}`, count: visible.length };
+    }),
+    {
+      id: "gates",
+      label: "Gates",
+      count: removedSkus
+        ? result.gateItems.filter((i) => !removedSkus.has(i.sku)).length
+        : result.gateItems.length,
+    },
   ];
 
   const activeItems =
@@ -161,13 +274,29 @@ export function BOMResultTabs({ result }: BOMResultTabsProps) {
         : result.runResults.find((r) => r.runId === activeTab)?.items ?? [];
 
   const activeTotal = parseFloat(
-    activeItems.reduce((s, i) => s + i.lineTotal, 0).toFixed(2),
+    calcEffectiveTotal(activeItems, removedSkus, qtyOverrides).toFixed(2),
   );
   const activeGst = parseFloat((activeTotal * 0.1).toFixed(2));
   const activeGrandTotal = parseFloat((activeTotal + activeGst).toFixed(2));
 
   return (
     <div>
+      {/* Removed items banner */}
+      {removedCount > 0 && onRestoreAll && (
+        <div className="flex items-center justify-between bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2 mb-3 text-xs">
+          <span className="text-amber-400 font-medium">
+            {removedCount} line {removedCount === 1 ? "item" : "items"} removed
+          </span>
+          <button
+            type="button"
+            onClick={onRestoreAll}
+            className="text-amber-400 underline hover:text-amber-300"
+          >
+            Restore all
+          </button>
+        </div>
+      )}
+
       {/* Tab bar */}
       <div className="flex border-b border-brand-border mb-4 overflow-x-auto">
         {tabs.map((tab) => (
@@ -196,7 +325,13 @@ export function BOMResultTabs({ result }: BOMResultTabsProps) {
       </div>
 
       {/* Table */}
-      <BOMTable items={activeItems} />
+      <BOMTable
+        items={activeItems}
+        removedSkus={removedSkus}
+        onRemove={onRemove}
+        qtyOverrides={qtyOverrides}
+        onQtyChange={onQtyChange}
+      />
 
       {/* Summary */}
       <div className="mt-6 pt-4 border-t border-brand-border">

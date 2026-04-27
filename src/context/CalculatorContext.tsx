@@ -61,10 +61,61 @@ function calculatorReducer(
         const idx = segs.findIndex(
           (s) => s.segmentId === action.segment.segmentId,
         );
-        const newSegs =
+
+        let newSegs =
           idx >= 0
             ? segs.map((s, i) => (i === idx ? action.segment : s))
             : [...segs, action.segment];
+
+        // Mirror termination changes to adjacent segments so shared
+        // boundaries stay consistent. Only mirrors non-segment_join
+        // terminations (canvas-drawn joins are owned by the canvas adapter).
+        if (idx >= 0) {
+          const prev = segs[idx];
+          const updated = action.segment;
+          const sorted = [...newSegs].sort((a, b) => a.sortOrder - b.sortOrder);
+          const sortedIdx = sorted.findIndex(
+            (s) => s.segmentId === updated.segmentId,
+          );
+
+          const rightChanged =
+            JSON.stringify(updated.rightTermination) !==
+            JSON.stringify(prev.rightTermination);
+          const leftChanged =
+            JSON.stringify(updated.leftTermination) !==
+            JSON.stringify(prev.leftTermination);
+
+          if (
+            rightChanged &&
+            updated.rightTermination.kind !== "segment_join" &&
+            sortedIdx < sorted.length - 1
+          ) {
+            const nextSeg = sorted[sortedIdx + 1];
+            const mirroredNext = {
+              ...nextSeg,
+              leftTermination: updated.rightTermination,
+            };
+            newSegs = newSegs.map((s) =>
+              s.segmentId === nextSeg.segmentId ? mirroredNext : s,
+            );
+          }
+
+          if (
+            leftChanged &&
+            updated.leftTermination.kind !== "segment_join" &&
+            sortedIdx > 0
+          ) {
+            const prevSeg = sorted[sortedIdx - 1];
+            const mirroredPrev = {
+              ...prevSeg,
+              rightTermination: updated.leftTermination,
+            };
+            newSegs = newSegs.map((s) =>
+              s.segmentId === prevSeg.segmentId ? mirroredPrev : s,
+            );
+          }
+        }
+
         return { ...r, segments: newSegs };
       });
       return {

@@ -12,9 +12,10 @@ import { RunListV3 } from "../components/calculator-v3/RunListV3";
 import { LayoutCanvasV3 } from "../components/calculator-v3/LayoutCanvasV3";
 import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
+import { BOMExportActions } from "../components/quote/BOMExportActions";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type {
   CalculatorBOMResult,
   BOMLineItem,
@@ -26,10 +27,30 @@ function CalculatorV3Content() {
   const payload = state.payload;
   const bomMutation = useBomCalculator();
   const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
+  const [removedSkus, setRemovedSkus] = useState<Set<string>>(new Set());
+  const [qtyOverrides, setQtyOverrides] = useState<Map<string, number>>(new Map());
+
+  const handleRemoveSku = useCallback((sku: string) => {
+    setRemovedSkus((prev) => new Set([...prev, sku]));
+  }, []);
+
+  const handleRestoreAll = useCallback(() => {
+    setRemovedSkus(new Set());
+  }, []);
+
+  const handleQtyChange = useCallback((sku: string, qty: number) => {
+    setQtyOverrides((prev) => {
+      const next = new Map(prev);
+      next.set(sku, qty);
+      return next;
+    });
+  }, []);
 
   async function handleGenerateBOM() {
     if (!payload) return;
-    setExtraItems([]); // reset extras on new BOM
+    setExtraItems([]);
+    setRemovedSkus(new Set());
+    setQtyOverrides(new Map());
     try {
       const result = await bomMutation.mutateAsync({ payload });
       dispatch({ type: "SET_BOM_RESULT", result });
@@ -50,6 +71,7 @@ function CalculatorV3Content() {
         const extraLineItems: BOMLineItem[] = extraItems.map((e) => ({
           category: "accessory",
           sku: e.sku ?? e.id,
+          name: e.description,
           description: e.description,
           quantity: e.quantity,
           unit: "each",
@@ -174,7 +196,21 @@ function CalculatorV3Content() {
             {/* BOM results + extra items panel */}
             {bomResultForTabs && !hasErrors && (
               <AccordionSection title="Bill of Materials" defaultOpen>
-                <BOMResultTabs result={bomResultForTabs} />
+                <BOMResultTabs
+                  result={bomResultForTabs}
+                  removedSkus={removedSkus}
+                  onRemove={handleRemoveSku}
+                  onRestoreAll={handleRestoreAll}
+                  qtyOverrides={qtyOverrides}
+                  onQtyChange={handleQtyChange}
+                />
+                <div className="mt-4 border-t border-brand-border pt-4">
+                  <BOMExportActions
+                    result={bomResultForTabs}
+                    removedSkus={removedSkus}
+                    qtyOverrides={qtyOverrides}
+                  />
+                </div>
                 <ExtraItemsPanel
                   items={extraItems}
                   onAdd={(item) => setExtraItems((prev) => [...prev, item])}

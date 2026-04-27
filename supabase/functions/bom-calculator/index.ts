@@ -64,6 +64,25 @@ async function loadPricing(
   return map;
 }
 
+async function loadComponentNames(
+  orgId: string,
+): Promise<Map<string, { name: string; description: string }>> {
+  const supabaseAdmin = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+  const { data } = await supabaseAdmin
+    .from("product_components")
+    .select("sku, name, description")
+    .eq("org_id", orgId)
+    .eq("active", true);
+  const map = new Map<string, { name: string; description: string }>();
+  for (const row of data ?? []) {
+    map.set(row.sku, { name: row.name ?? "", description: row.description ?? "" });
+  }
+  return map;
+}
+
 async function loadColourCodes(
   orgId: string,
 ): Promise<Record<string, string>> {
@@ -83,6 +102,7 @@ async function loadColourCodes(
 
 interface BomLineItemV3 {
   sku: string;
+  name: string;
   description: string;
   quantity: number;
   unit: BOMUnit;
@@ -632,6 +652,7 @@ Deno.serve(async (req: Request) => {
               );
               runLines.push({
                 sku,
+                name: "",
                 description: `${category} — ${sku}`,
                 quantity: qty,
                 unit: "each" as BOMUnit,
@@ -683,6 +704,7 @@ Deno.serve(async (req: Request) => {
               );
               runLines.push({
                 sku,
+                name: "",
                 description: `${companion.add_category} — ${sku}`,
                 quantity: qty,
                 unit: companion.is_pack ? "pack" : ("each" as BOMUnit),
@@ -779,8 +801,22 @@ Deno.serve(async (req: Request) => {
       gateProductCodeSet.has(l.productCode ?? ""),
     );
 
-    // Step 12 — pricing
-    const pricingMap = await loadPricing(orgId, pricingTier);
+    // Step 12 — pricing + component name lookup (parallel)
+    const [pricingMap, componentNames] = await Promise.all([
+      loadPricing(orgId, pricingTier),
+      loadComponentNames(orgId),
+    ]);
+
+    // Backfill name/description on all lines from product_components
+    for (const line of [...aggregatedLines, ...allLines]) {
+      const comp = componentNames.get(line.sku);
+      if (comp) {
+        line.name = comp.name;
+        line.description = comp.description || comp.name;
+      } else if (!line.name) {
+        line.name = line.description; // preserve fallback
+      }
+    }
 
     for (const line of aggregatedLines) {
       const rules = pricingMap.get(line.sku) ?? [];

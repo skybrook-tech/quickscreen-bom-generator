@@ -59,6 +59,7 @@ export type BOMUnit = 'each' | 'length' | 'pack' | 'box';
 export interface BOMLineItem {
   category: BOMCategory;
   sku: string;
+  name: string;
   description: string;
   quantity: number;
   unit: BOMUnit;

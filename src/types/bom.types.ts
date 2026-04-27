@@ -4,6 +4,9 @@ export type BOMUnit = 'each' | 'length' | 'pack' | 'box';
 export interface BOMLineItem {
   category: BOMCategory;
   sku: string;
+  /** Short component name from product_components.name */
+  name: string;
+  /** Longer description from product_components.description */
   description: string;
   quantity: number;
   unit: BOMUnit;
