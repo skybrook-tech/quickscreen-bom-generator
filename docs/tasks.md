@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-> **Phase 7 (v1 polish)** in progress — see v1 checklist below.
+> **Phase 7 (v1 polish)** complete — v1 code removed.
 > **v3 Engine** — V3-1 through V3-6 complete. V3-7 (docs cross-linking) is the only remaining item.
 > Start here for an overview: [`docs/how_it_works.md`](./how_it_works.md).
 
@@ -19,7 +19,7 @@
 | 4 | BOM Engine (Edge Functions) | ✅ Complete |
 | 5 | Quotes & Export | ✅ Complete |
 | 6 | Canvas Layout Tool | ✅ Complete |
-| 7 | Polish (v1) | 🔄 In progress |
+| 7 | Polish + v1 removal | ✅ Complete |
 | V3-1 | Engine migrations | ✅ Complete |
 | V3-2 | QSHS + QSHS_GATE seeds | ✅ Complete |
 | V3-3 | Canonical payload contract | ✅ Complete |
@@ -296,7 +296,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Gate management UI — `GateListV3` + `GateFormV3` modal, backed by canonical payload QS_GATE runs
 - [x] Extra items panel — typeahead against existing SKUs (via `search-products`) + create-on-the-fly for one-off lines
 - [x] v2 retired — `CalculatorPage`, `src/components/calculator/*`, `useCalculatorBOM`, `useFenceProducts`, `calculate-bom-v2` edge function all deleted. `/` redirects to `/calculator`.
-- [ ] v1 (`/new`, `MainApp`, `calculate-bom`) removal — deferred to a future pass.
+- [x] v1 (`/new`, `MainApp`, `calculate-bom`) removal — complete.
 - [x] `dump-to-json.js` emits per-variant wrapped files
 - [x] `seed-products.js` Node upserter — validates each file, resolves FKs by business keys, upserts all sections via supabase-js, runs post-check row-count floors
 - [x] Migration 020 — unique indexes on engine tables (upsert conflict targets)

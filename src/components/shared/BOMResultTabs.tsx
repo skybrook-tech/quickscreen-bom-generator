@@ -129,7 +129,7 @@ interface ItemGroupProps {
 function ItemGroup({
   category,
   items,
-  removedSkus,
+  removedSkus: _removedSkus,
   onRemove,
   qtyOverrides,
   onQtyChange,

@@ -22,20 +22,19 @@ Staff and trade customers can:
 
 ### Current State
 
-**Phases 0–6 are complete. Phase 7 (v1 Polish) is in progress. A parallel v3 data-driven engine is being adapted from `qshs_mvp_build_pack/` + `qshs_gates_build_pack/` — see `docs/phase-v3-*.md` and `docs/how_it_works.md`.** The React app is the primary codebase.
+**Phases 0–7 are complete (Phase 7 included V1 removal). A parallel v3 data-driven engine is being adapted from `qshs_mvp_build_pack/` + `qshs_gates_build_pack/` — see `docs/phase-v3-*.md` and `docs/how_it_works.md`.** The React app is the primary codebase.
 
 - The original monolithic HTML file (`index.html`) still exists as the **functional specification** for v1 — every form field, dropdown, and validation rule must exist in the v1 React version
 - See `docs/tasks.md` for the full current task status across v1 Polish and v3 Engine
 
-### Two routes, two generations of the calculator
+### Two routes — V3 only (v1 removed)
 
-v2 has been retired (deleted in an earlier cleanup). v3 is the flagship surface at `/` and `/calculator`. v1 still lives at `/new` for historical quote compatibility; it will be removed in a later pass.
+v2 was retired (deleted in an earlier cleanup). v1 was removed — the `/new` route, `MainApp`, `calculate-bom` edge function, and all V1 UI components have been deleted. V3 is the sole calculator surface.
 
 | Path | Gen | Page | Edge function | Purpose |
 |---|---|---|---|---|
-| `/` | v3 | — | — | Redirects to `/calculator`. |
-| `/calculator` | **v3** | `CalculatorV3Page` | `bom-calculator` | Data-driven BOM engine. Rules, selectors, constraints, companions, validations, warnings live in seeded Postgres tables. Form is data-driven from `product_variables` (no hardcoded fields). Searchable fence-only product picker + gate list modal + typeahead extra-items panel. MVP scope: **QSHS fence + QS_GATE pedestrian gate** (shared across QuickScreen fences). Adding VS/XPL/BAYG/QSVS/QSGH/HSSG/patios = new seed rows. |
-| `/new` | v1 | `MainApp` | `calculate-bom` | Legacy single-system form. Hand-coded QSHS/VS/XPL/BAYG logic. Kept only for historical quotes; scheduled for removal. |
+| `/` | v3 | — | — | Redirects to `/fence-calculator`. |
+| `/fence-calculator` | **v3** | `CalculatorV3Page` | `bom-calculator` | Data-driven BOM engine. Rules, selectors, constraints, companions, validations, warnings live in seeded Postgres tables. Form is data-driven from `product_variables` (no hardcoded fields). Searchable fence-only product picker + gate list modal + typeahead extra-items panel. MVP scope: **QSHS fence + QS_GATE pedestrian gate** (shared across QuickScreen fences). Adding VS/XPL/BAYG/QSVS/QSGH/HSSG/patios = new seed rows. |
 
 ### Current Architecture
 
@@ -303,19 +302,7 @@ Responsive: desktop-first. Canvas section hidden on mobile (`md:block`). BOM tab
 
 ## 11. Development Phases
 
-**v1 Phases:** 0–6 complete. Phase 7 (Polish) in progress. See `docs/tasks.md` and `docs/_deprecated/phase-*.md`.
-
-**v3 Engine Phases** (tracked in `docs/tasks.md`, specs at `docs/phase-v3-*.md`):
-
-- **V3-1** Engine migrations (011–019)
-- **V3-2** QSHS + QSHS_GATE seeds
-- **V3-3** Canonical payload contract
-- **V3-4** `bom-calculator` edge function
-- **V3-5** Schema-driven multi-run UI at `/calculator`
-- **V3-6** BOM output (per-run tabs + trace panel)
-- **V3-7** Docs (this file, tasks.md, how_it_works.md)
-
-See `docs/how_it_works.md` for a one-page plain-English overview of the v3 architecture.
+**v1 Phases 0–7 complete** (Phase 7 included V1 code removal). **v3 Engine phases V3-1 through V3-6 complete — V3-7 (docs cross-linking) in progress.** See `docs/tasks.md`.
 
 ---
 
@@ -380,7 +367,7 @@ v3 Cypress coverage is a follow-up phase. `SchemaDrivenForm` emits `data-testid=
 - **Adding a new product = one new JSON file.** New fence → create `<system>.json` with `product_type: "fence"`. New gate → create `<gate>.json` with `product_type: "gate"` and a `compatible_with_system_types: [...]` array listing which fence system_types it pairs with. Gates do **not** live inside fence files — a shared gate can pair with multiple fences. Authoring contract: `docs/seed-data-mapping-spec.md`. Use the `seed-mapper` skill when doing this in Claude Code.
 - **Products table is flat** (post migration 022). No parent/variant hierarchy — every product has `parent_id = NULL`. The `product_type` column distinguishes fences from gates from other catalog items. Older code that filtered `WHERE parent_id IS NULL` has been updated; don't reintroduce that pattern.
 - **Admin trace access in v3** requires `profiles.role = 'admin'`. The seeded `admin@glass-outlet.com` / `123456` user has it. New admins: `UPDATE profiles SET role = 'admin' WHERE email = ...`.
-- **Legacy routes are untouched during v3 rollout.** `/` (v2 `CalculatorPage`) and `/new` (v1 `MainApp`) continue to work with their own edge functions. Do not remove them — they may carry production quotes.
+- **Legacy routes are gone.** `/new` (v1 `MainApp`) and its edge function `calculate-bom` have been deleted. The only calculator route is `/fence-calculator` (`CalculatorV3Page` + `bom-calculator`).
 - **Canonical payload** is the single JSON shape shared by v3 canvas, form, engine, and `quote_runs`/`quote_run_segments`. `runId` and `segmentId` are stable across round-trips. Do not regenerate them in adapter code — that breaks load/save. See `docs/phase-v3-3-canonical-payload.md`.
 
 ---

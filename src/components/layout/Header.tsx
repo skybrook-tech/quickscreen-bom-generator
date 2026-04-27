@@ -1,4 +1,4 @@
-import { LogOut, Sun, Moon, Plus, Settings } from "lucide-react";
+import { LogOut, Sun, Moon, Settings } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 import { supabase } from "../../lib/supabase";
@@ -22,13 +22,6 @@ export function Header() {
       isActive
         ? "text-brand-text bg-brand-border/40"
         : "text-brand-muted hover:text-brand-text hover:bg-brand-border/20"
-    }`;
-
-  const newQuoteLinkCls = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-md transition-colors ml-1 ${
-      isActive
-        ? "text-brand-accent bg-brand-accent/15"
-        : "text-brand-accent hover:bg-brand-accent/10"
     }`;
 
   return (

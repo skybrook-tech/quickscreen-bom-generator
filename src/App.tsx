@@ -9,9 +9,7 @@ import { queryClient } from "./lib/queryClient";
 import { AuthGuard } from "./components/auth/AuthGuard";
 import { AdminGuard } from "./components/auth/AdminGuard";
 import { LoginPage } from "./pages/LoginPage";
-import { MainApp } from "./pages/MainApp";
 import { QuotesHistoryPage } from "./pages/QuotesHistoryPage";
-import { QuoteViewPage } from "./pages/QuoteViewPage";
 import { CalculatorV3Page } from "./pages/CalculatorV3Page";
 import { ProductsIndexPage } from "./pages/admin/ProductsIndexPage";
 import { ProductDetailPage } from "./pages/admin/ProductDetailPage";
@@ -29,14 +27,6 @@ const router = createBrowserRouter([
   { path: "/login", element: <LoginPage /> },
   { path: "/", element: <Navigate to="/fence-calculator" replace /> },
   {
-    path: "/new",
-    element: (
-      <AuthGuard>
-        <MainApp />
-      </AuthGuard>
-    ),
-  },
-  {
     path: "/fence-calculator",
     element: (
       <AuthGuard>
@@ -49,14 +39,6 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <QuotesHistoryPage />
-      </AuthGuard>
-    ),
-  },
-  {
-    path: "/quote/:id",
-    element: (
-      <AuthGuard>
-        <QuoteViewPage />
       </AuthGuard>
     ),
   },

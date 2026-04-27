@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Eye, Trash2, Plus, FileText, Search } from "lucide-react";
+import { Trash2, Plus, FileText, Search } from "lucide-react";
 import { AppShell } from "../components/layout/AppShell";
 import { useQuotes } from "../hooks/useQuotes";
 
@@ -38,7 +38,7 @@ export function QuotesHistoryPage() {
             </p>
           </div>
           <Link
-            to="/new"
+            to="/fence-calculator"
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-accent hover:bg-brand-accent-hover text-white text-sm font-semibold rounded-lg transition-colors shrink-0"
           >
             <Plus size={15} />
@@ -82,7 +82,7 @@ export function QuotesHistoryPage() {
               <FileText size={32} className="mx-auto text-brand-border" />
               <p className="text-sm text-brand-muted">No quotes saved yet.</p>
               <Link
-                to="/new"
+                to="/fence-calculator"
                 className="inline-flex items-center gap-1.5 text-sm text-brand-accent hover:underline"
               >
                 <Plus size={13} /> Create your first quote
@@ -170,13 +170,6 @@ export function QuotesHistoryPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
-                        <Link
-                          to={`/quote/${quote.id}`}
-                          title="View quote"
-                          className="p-1.5 text-brand-muted hover:text-brand-accent transition-colors"
-                        >
-                          <Eye size={14} />
-                        </Link>
                         <button
                           type="button"
                           onClick={() => deleteQuote.mutate(quote.id)}

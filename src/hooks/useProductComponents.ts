@@ -24,12 +24,12 @@ export interface ComponentWithPricing extends Omit<AdminComponent, 'pricing_rule
 }
 
 function normalise(raw: AdminComponent): ComponentWithPricing {
-  const pricingCount = raw.pricing_rules?.[0]?.count ?? 0;
+  const { pricing_rules, ...rest } = raw;
+  const pricingCount = pricing_rules?.[0]?.count ?? 0;
   return {
-    ...raw,
-    pricing_rules: undefined as never,
+    ...rest,
     pricingCount,
-    sharedByCount: raw.system_types?.length ?? 0,
+    sharedByCount: rest.system_types?.length ?? 0,
     hasPricing: pricingCount > 0,
   };
 }
