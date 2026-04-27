@@ -199,7 +199,7 @@
 ## v3 Engine (Schema-Driven BOM)
 
 > See spec docs in `docs/phase-v3-*.md`. One-page overview at [`docs/how_it_works.md`](./how_it_works.md).
-> Scope: QSHS fence + QSHS_GATE pedestrian gate. v1/v2 routes (`/new`, `/`) remain untouched.
+> Scope: QSHS fence + QSHS_GATE pedestrian gate.
 
 ### V3-1 — Engine migrations
 > See [phase-v3-1-engine-migrations.md](./phase-v3-1-engine-migrations.md)
@@ -321,7 +321,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 
 ## Notes
 
-- The existing `index.html` is the **functional specification for v1** — every form field, dropdown, and validation rule must be reproduced in the v1 React app (except the two AI features deferred)
+- The existing `index.html` is the **historical reference** for fence field/validation coverage — no longer the active specification
 - **Deferred features** (do NOT build): AI job description parsing, AI BOM review
 - All prices and BOM logic must live in Supabase Edge Functions — never in the client bundle
 - Currency: AUD, GST: 10%, measurements: metric (mm / m)

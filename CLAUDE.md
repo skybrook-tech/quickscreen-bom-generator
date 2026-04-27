@@ -18,14 +18,13 @@ Staff and trade customers can:
 4. **Generate a priced BOM** — every post, rail, slat, bracket, screw, and accessory with quantities and pricing
 5. **Export quotes** — CSV, pdf, saved quotes per user
 
-> **Deferred to v2**: AI job description parsing (natural language → form fill) and AI BOM review (Claude sanity check on generated BOM). Do NOT build these in v1.
+> **Deferred to v2**: AI job description parsing (natural language → form fill) and AI BOM review (Claude sanity check on generated BOM). Do NOT build these.
 
 ### Current State
 
 **Phases 0–7 are complete (Phase 7 included V1 removal). A parallel v3 data-driven engine is being adapted from `qshs_mvp_build_pack/` + `qshs_gates_build_pack/` — see `docs/phase-v3-*.md` and `docs/how_it_works.md`.** The React app is the primary codebase.
 
-- The original monolithic HTML file (`index.html`) still exists as the **functional specification** for v1 — every form field, dropdown, and validation rule must exist in the v1 React version
-- See `docs/tasks.md` for the full current task status across v1 Polish and v3 Engine
+- See `docs/tasks.md` for the full current task status.
 
 ### Two routes — V3 only (v1 removed)
 
@@ -73,11 +72,11 @@ v2 was retired (deleted in an earlier cleanup). v1 was removed — the `/new` ro
 
 Source lives in `src/` with these top-level directories: `components/` (auth, bom, calculator, calculator-v3, canvas, contact, fence, gate, layout, quote, shared, wizard), `context/`, `hooks/`, `lib/`, `pages/`, `schemas/`, `types/`, `utils/`.
 
-Edge functions are in `supabase/functions/` — `calculate-bom` (v1), `calculate-bom-v2` (v2), `bom-calculator` (v3), `calculate-pricing`, `search-products`, `_shared`.
+Edge functions are in `supabase/functions/` — `bom-calculator` (v3), `calculate-pricing`, `search-products`, `_shared`.
 
-Database migrations are in `supabase/migrations/` (001–010 for v1/v2; 011–014, 018–022 for the v3 engine — migration 022 flattens products and adds `product_type` + `compatible_with_system_types`).
+Database migrations are in `supabase/migrations/` (001–010 are shared catalog + pricing infrastructure; 011–014, 018–022 are the v3 engine — migration 022 flattens products and adds `product_type` + `compatible_with_system_types`).
 
-**Seeds are JSON-authoritative.** The only SQL seed loaded by `supabase db reset` is `supabase/seeds/organizations.sql` (one row — the org). Everything else — fences, gates, legacy catalog, pricing, v3 engine rules — lives as **per-product JSON files** under `supabase/seeds/glass-outlet/products/`. Current files: `qshs.json`, `vs.json`, `xpl.json`, `bayg.json`, `qs_gate.json` (shared gate across all fences), `gate_legacy.json` (v1/v2 GATE family), `other.json` (inactive non-fence families).
+**Seeds are JSON-authoritative.** The only SQL seed loaded by `supabase db reset` is `supabase/seeds/organizations.sql` (one row — the org). Everything else — fences, gates, pricing, v3 engine rules — lives as **per-product JSON files** under `supabase/seeds/glass-outlet/products/`. Current files: `qshs.json`, `vs.json`, `xpl.json`, `bayg.json`, `qs_gate.json` (shared gate across all fences), `other.json` (inactive non-fence families).
 
 JSON Schemas at `supabase/seeds/schemas/*.schema.json`, wrapped by `product-file.schema.json`. The Node upserter at `supabase/seeds/tools/seed-products.js` (run via `npm run seed:products`, and automatically by `npm run db:reset`) validates each file, resolves business-key FKs, and upserts every section directly via supabase-js. No SQL is generated. See `docs/seed-data-mapping-spec.md` and the `seed-mapper` skill for the authoring contract.
 
@@ -86,7 +85,7 @@ JSON Schemas at `supabase/seeds/schemas/*.schema.json`, wrapped by `product-file
 `seed-auth.js` and `seed-images.js` handle auth users and image uploads respectively.
 
 v3-specific additions:
-- `src/pages/CalculatorV3Page.tsx` — `/calculator` route
+- `src/pages/CalculatorV3Page.tsx` — `/fence-calculator` route
 - `src/components/calculator-v3/` — shared fence config form, multi-run UI, warnings/trace/achieved-height panels
 - `src/hooks/useBomCalculator.ts`
 - `src/types/canonical.types.ts`, `src/schemas/canonical.schema.ts`
@@ -194,29 +193,9 @@ const orgId = profile.org_id;
 // Then scope all queries: .eq('org_id', orgId)
 ```
 
-### calculate-bom — Core IP
-
-`POST /functions/v1/calculate-bom` — accepts `{ fenceConfig, gates, layoutSegments? }`, returns `{ fenceItems, gateItems, total, gst, grandTotal, pricingTier, generatedAt }`.
-
-**BOM algorithm (business rules)**:
-
-1. **Panel layout**: Distribute total run evenly into panels ≤ maxPanelWidth. Example: 10m with 2600mm max → 4 panels of 2500mm. NOT max panels + one short remainder.
-2. **Post count**: `panels + 1` for a straight run with two post terminations. Subtract 1 per wall-terminated end (F-section used instead). Add 1 per 90° corner. Gate posts are additional to fence posts.
-3. **Slat count**: `floor((targetHeight - topGap - bottomGap) / (slatHeight + slatGap))` slats per panel. Total = slats_per_panel × panels. Calculate lengths from 5800mm stock, accounting for offcuts/waste.
-4. **Rail count**: 2 per panel (top + bottom), cut to panel width, from 5800mm stock.
-5. **Brackets/fixings**: 2 post brackets per post (top + bottom). End caps, screws, rivets per system type.
-6. **System-specific rules**:
-   - **QSHS**: Horizontal slats, inserted into slotted posts.
-   - **VS**: Vertical slats, inserted into top and bottom rails.
-   - **XPL**: 65mm only (forced). Slats clip into rails. Different bracket/fixing requirements.
-   - **BAYG**: Spacers are separate line items. Customer assembles themselves.
-7. **Gate BOM** (separate from fence items): frame, slats (65mm for swing, 65/90 for sliding), gate posts, hinges (2 for single-swing, 4 for double-swing), latches, drop bolts (double-swing), guide rollers + track (sliding).
-
 ### calculate-pricing
 
 `POST /functions/v1/calculate-pricing` — accepts `{ bomItems, pricingTier }`, returns priced items. Reads `pricing_rules_with_sku` view via service role key scoped by `org_id`. Evaluates `rule` expressions (math.js, variable: `qty`) to resolve the applicable price per line item. All prices ex-GST; GST is 10% (Australian).
-
-> Kept separate from calculate-bom so BOM can be generated once and repriced across tiers without re-running the material calculation.
 
 ### bom-calculator (v3 — product-agnostic)
 
@@ -247,7 +226,7 @@ See `docs/phase-v3-4-bom-calculator.md` for the full spec.
 
 ## 7. Deferred Features (v2)
 
-**Do NOT build these in v1:**
+**Do NOT build these:**
 
 1. **AI Job Description Parsing** — natural language → fence config via Claude API. Requires `parse-job-description` edge function with `ANTHROPIC_API_KEY`, `useAIParse` hook, `JobDescriptionParser` component.
 2. **AI BOM Review** — BOM sanity check via Claude API. Requires `review-bom` edge function, `useAIReview` hook, `BOMReviewer` component.
@@ -264,9 +243,7 @@ The canvas tool is **a vanilla JS port, not a rewrite**. All drawing logic lives
 
 **Canvas engine controls**: all drawing, mouse/touch events, internal state. Never imports React, never causes re-renders.
 
-**Data flow — v1/v2 "Use This Layout →"**: `getLayout()` returns segments + gates + total length + corner count → dispatches `SET_CONFIG` to `FenceConfigContext` and `SET_GATES` to `GateContext`.
-
-**v3 data flow**: `LayoutCanvasV3.tsx` wraps `FenceLayoutCanvas.tsx` unchanged. The toolbar is hand-coded — identical across all fencing systems. On layout change, `canvasLayoutToCanonical(layout, productCode, variables)` produces a `CanonicalPayload`. The reverse adapter `canonicalToCanvasLayout(payload)` handles quote reload. `runId` and `segmentId` are stable across round-trips — canvas, form, engine, and `quote_run_segments` all key on them.
+**Data flow**: `LayoutCanvasV3.tsx` wraps `FenceLayoutCanvas.tsx` unchanged. The toolbar is hand-coded — identical across all fencing systems. On layout change, `canvasLayoutToCanonical(layout, productCode, variables)` produces a `CanonicalPayload`. The reverse adapter `canonicalToCanvasLayout(payload)` handles quote reload. `runId` and `segmentId` are stable across round-trips — canvas, form, engine, and `quote_run_segments` all key on them.
 
 Google Maps JS API loaded via `<script>` tag; the engine handles geocoding, tile fetching, and canvas underlay rendering.
 
@@ -325,7 +302,6 @@ VITE_SUPABASE_ANON_KEY=your-local-anon-key
 | Decision                                             | Rationale                                                                                                            |
 | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | Context+useReducer over Zustand                      | Simpler dependency footprint. Upgrade to Zustand later if canvas re-renders become a problem.                        |
-| Separate `calculate-bom` and `calculate-pricing`     | Allows re-pricing without recalculating materials. Tier switching is instant on the client if BOM is cached.         |
 | Vanilla JS canvas port over react-konva              | The existing canvas tool works. A useRef+useEffect wrapper avoids rewriting ~500 lines and removes a dependency.     |
 | Zod schemas shared between client and edge functions | Single source of truth for validation. Schemas are copied into `supabase/functions/_shared/` for Deno compatibility. |
 | @react-pdf/renderer over jsPDF                       | JSX-based PDF templates are more maintainable. Matches the React mental model.                                       |
@@ -337,31 +313,21 @@ VITE_SUPABASE_ANON_KEY=your-local-anon-key
 
 ## 14. Testing
 
-**v1/v2 primary quality gate: Cypress E2E** — 23 test cases (TC1–TC19, TC24–TC26) that verify exact BOM line items, accessory quantity formulas, and grand totals across all 3 pricing tiers. Tests run against the React app using `data-testid` attributes.
+**v3 Testing:** Deno unit tests at `supabase/functions/bom-calculator/index_test.ts` — fixtures (TC-V3-1 through TC-V3-8) covering rule firings, selector resolution, companion expansion, validation errors, warnings, missing pricing, and malformed rules. See `docs/phase-v3-4-bom-calculator.md`.
 
-See `docs/cypress-test-report.md` for the current test status and known issues. Outstanding app behaviour gaps that need investigation before Phase 7 closes:
-
-- **TC7**: Wall termination post count may be incorrect
-- **TC13**: XPL product codes — currently using QSHS codes; XPL should have its own SKUs
-- **TC15**: BAYG product codes — currently using QSHS codes; BAYG should include spacers as separate line items
-- **VS system codes**: Need confirmation against the master price file
-
-**v3 Testing:** Deno unit tests at `supabase/functions/bom-calculator/index_test.ts` — 8 fixtures (TC-V3-1 through TC-V3-8) covering rule firings, selector resolution, companion expansion, validation errors, warnings, missing pricing, and malformed rules. See `docs/phase-v3-4-bom-calculator.md`.
-
-v3 Cypress coverage is a follow-up phase. `SchemaDrivenForm` emits `data-testid={field_key}` matching existing conventions so future selectors reuse the same pattern.
+v3 Cypress E2E coverage is a follow-up phase. `SchemaDrivenForm` emits `data-testid={field_key}` matching existing conventions so future selectors can be written against the `/fence-calculator` route.
 
 ---
 
 ## 15. Notes for Claude Code
 
 - **Never put pricing numbers, margin percentages, or wholesale costs in client-side code.** Use obviously fake values (e.g. $1.00) with a `// TODO: real pricing in edge function` comment if needed during development.
-- **The existing `index.html` is the functional specification for v1.** Every dropdown option, validation rule, and form field in that file must exist in the React version (except the two AI features deferred).
 - **The canvas is a vanilla JS port, not a rewrite.** `canvasEngine.ts` is pure TypeScript — no React, no JSX, no hooks. Do not refactor it using react-konva or any React canvas library.
 - **Australian context**: Currency is AUD, GST is 10%, measurements are metric (mm for heights/widths, m for run lengths). Postcodes are 4 digits.
 - **Colour names are Colorbond brand names** — spelled exactly as listed in Section 4. v3 `bom-calculator` normalises long names to short codes (`black-satin` → `B`) before selector resolution.
 - **Multi-tenancy: every table has `org_id`.** Edge functions always scope queries by `org_id` resolved from the user's JWT. RLS policies use `public.user_org_id()`. The client never sends `org_id`.
 - **Always update `docs/tasks.md` after completing any task or group of tasks.** Tick off `[x]`, update the Phases Overview table, and update the "Current Phase" header. Do this before responding to the user.
-- **Current status**: v1 Phases 0–6 complete, Phase 7 (Polish) in progress. v3 Engine phases V3-1 through V3-7 not yet started — see `docs/tasks.md`.
+- **Current status**: All phases complete. v3 Engine phases V3-1 through V3-6 complete — V3-7 (docs cross-linking) in progress. See `docs/tasks.md`.
 - **Seed data (products, pricing, components, v3 engine rules) goes in `supabase/seeds/glass-outlet/products/*.json`, never in new migration files, never as new SQL seeds.** Edit the per-product JSON files and run `npm run seed:products` (or a full `npm run db:reset`).
 - **v3 rules live in seed data (JSON), not code.** To change QSHS calculation behaviour, edit `supabase/seeds/glass-outlet/products/qshs.json`. To change the shared QS_GATE, edit `qs_gate.json`. Do **not** edit `supabase/functions/bom-calculator/index.ts` unless you're changing engine framework behaviour (pipeline order, math.js safety, placeholder resolution, etc.).
 - **Adding a new product = one new JSON file.** New fence → create `<system>.json` with `product_type: "fence"`. New gate → create `<gate>.json` with `product_type: "gate"` and a `compatible_with_system_types: [...]` array listing which fence system_types it pairs with. Gates do **not** live inside fence files — a shared gate can pair with multiple fences. Authoring contract: `docs/seed-data-mapping-spec.md`. Use the `seed-mapper` skill when doing this in Claude Code.
@@ -392,7 +358,7 @@ npm run dev         # → http://localhost:5173
 
 Login with a seeded test account:
 - `test@glass-outlet.com` / `123456` — regular user
-- `admin@glass-outlet.com` / `123456` — admin (needed to see the v3 trace panel at `/calculator`)
+- `admin@glass-outlet.com` / `123456` — admin (needed to see the v3 trace panel at `/fence-calculator`)
 
 ### Day-to-day commands
 

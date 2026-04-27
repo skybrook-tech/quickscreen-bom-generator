@@ -22,7 +22,6 @@ supabase/seeds/glass-outlet/products/
   bayg.json        # BAYG fence + SKUs/pricing
   qs_gate.json     # QS_GATE shared gate — engine data + QSG/DD SKUs +
                    # compatible_with_system_types: ['QSHS','VS','XPL','BAYG']
-  gate_legacy.json # v1/v2 GATE family (hinges/latches/posts, no engine)
   other.json       # Inactive non-fence families (balustrade, colorbond, …)
 
 supabase/seeds/schemas/

@@ -8,7 +8,7 @@
 
 A product-agnostic, data-driven BOM engine. Given a canonical payload, walk the pipeline entirely off seeded rows — no per-product branches in code.
 
-**Does NOT replace** `calculate-bom` or `calculate-bom-v2`. New route `/functions/v1/bom-calculator`. Legacy routes remain for `/` and `/new`.
+Route: `/functions/v1/bom-calculator`.
 
 ## Location
 

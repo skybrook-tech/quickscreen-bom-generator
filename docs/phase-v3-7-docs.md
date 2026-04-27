@@ -14,12 +14,12 @@ Three documentation deliverables:
 
 ## 1. CLAUDE.md updates
 
-### Section 1 (Overview) — add
+### Section 1 (Overview) — updated
 
-> The app now has **three routes serving three generations** of the calculator:
-> - `/new` — legacy v1 single-system form (`MainApp`). QSHS/VS/XPL/BAYG with hand-coded edge function `calculate-bom`. Used for legacy quotes.
-> - `/` — v2 multi-run `CalculatorPage` with `calculate-bom-v2` edge function.
-> - `/calculator` — **v3** schema-driven calculator backed by the `bom-calculator` edge function. Rules, constraints, SKUs, companion items, form layout, and canvas actions all live in seeded tables. MVP scope: QSHS fence + QSHS_GATE pedestrian gate. Additional products (VS, XPL, BAYG, QSVS, QSGH, HSSG, patios) slot in via new seed rows without code changes.
+> The app has one active calculator route:
+> - `/fence-calculator` — **v3** schema-driven calculator backed by the `bom-calculator` edge function. Rules, constraints, SKUs, companion items, form layout, and canvas actions all live in seeded tables. MVP scope: QSHS fence + QSHS_GATE pedestrian gate. Additional products (VS, XPL, BAYG, QSVS, QSGH, HSSG, patios) slot in via new seed rows without code changes.
+>
+> v1 (`/new`, `MainApp`, `calculate-bom`) and v2 (`CalculatorPage`, `calculate-bom-v2`) have been retired.
 
 ### Section 3 (Project Structure) — add paths
 
@@ -92,7 +92,7 @@ Three documentation deliverables:
 > - **Adding a new product** = add seed rows. Minimum set: one `products` row, one `rule_sets` + `rule_versions`, the needed `product_variables`/`constraints`/`validations`/`rules`/`selectors`/`companion_rules`, and one `product_input_schemas` + `_groups` + `_fields` + `product_layout_schemas` + `_entity_types` + `_actions`. See `docs/how_it_works.md` §4.
 > - **Admin trace access** requires `profiles.role = 'admin'`. The seeded `admin@glass-outlet.com / 123456` user has it. New users need a manual `UPDATE profiles SET role = 'admin' WHERE email = ...`.
 > - **Never put pricing numbers, margin percentages, or wholesale costs in client-side code** — this rule applies to v3 identically. All pricing lives in `pricing_rules`.
-> - **Legacy routes are untouched.** `/` (v2) and `/new` (v1) continue to work. Do not remove them until explicitly instructed — they may still be carrying production data.
+> - **Legacy routes are gone.** `/new` (v1) and `/` (v2) have been retired. The only active calculator route is `/fence-calculator`.
 
 ## 2. tasks.md updates
 

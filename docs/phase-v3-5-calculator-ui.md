@@ -6,9 +6,7 @@
 
 ## Goal
 
-Build a new page at `/calculator` where users pick a product (QSHS / QSHS_GATE), see a form generated from `product_input_schemas` + `_groups` + `_fields`, draw layouts on the existing canvas, and call `bom-calculator` — **all synchronised through the canonical payload**.
-
-Legacy `/` (v2 `CalculatorPage`) and `/new` (v1 `MainApp`) remain untouched.
+Build a new page at `/fence-calculator` where users pick a product (QSHS / QSHS_GATE), see a form generated from `product_input_schemas` + `_groups` + `_fields`, draw layouts on the existing canvas, and call `bom-calculator` — **all synchronised through the canonical payload**.
 
 ## Route
 
@@ -219,7 +217,6 @@ A single canonical payload can mix `productCode = 'QSHS'` and `productCode = 'QS
 5. Draw a run on canvas → form updates in sync (canonical payload round-trips)
 6. Edit a field in form → canvas updates (reverse direction)
 7. Click Generate BOM → BOM section appears below
-8. Visit `/` (v2) and `/new` (v1) — both still work, no regression
 
 ## Out of scope
 
