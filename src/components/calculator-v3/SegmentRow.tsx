@@ -6,6 +6,7 @@ import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
 import NumberInput from "../ui/NumberInput";
 import { Badge } from "../ui/Badge";
+import { AchievedHeightBadge } from "./AchievedHeightBadge";
 
 interface Props {
   runId: string;
@@ -20,11 +21,13 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
   const gate = seg.kind === "gate";
 
   const segDiagnostics = (
-    (state.bomResult?.segmentDiagnostics as SegmentDiagnostic[] | undefined) ?? []
+    (state.bomResult?.segmentDiagnostics as SegmentDiagnostic[] | undefined) ??
+    []
   ).filter((d) => d.segmentId === seg.segmentId);
 
   const hasError = segDiagnostics.some((d) => d.severity === "error");
-  const hasWarning = !hasError && segDiagnostics.some((d) => d.severity === "warning");
+  const hasWarning =
+    !hasError && segDiagnostics.some((d) => d.severity === "warning");
 
   const jobMax = Number(state.payload?.variables.max_panel_width_mm ?? 2600);
   const effectiveMax = Number(seg.variables?.max_panel_width_mm ?? jobMax);
@@ -53,34 +56,58 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
         >
           {gate ? "Gate" : "Segment"}
         </Badge>
-        <label className="text-brand-muted shrink-0">W:</label>
-        <NumberInput
-          value={parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
-          step={0.01}
-          min={0.3}
-          onChange={(v) =>
-            updateGeometry("segmentWidthMm", Math.round(Number(v) * 1000))
-          }
-        />
-        <span className="text-brand-muted">m</span>
-        <label className="text-brand-muted shrink-0">H:</label>
-        <NumberInput
-          value={seg.targetHeightMm ?? 1800}
-          onChange={(v) => updateGeometry("targetHeightMm", Number(v))}
-        />
-        <span className="text-brand-muted">mm</span>
+        <div>
+          <div className="flex items-center gap-1">
+            <label className="text-brand-muted shrink-0">Segment width:</label>
+            <NumberInput
+              value={parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
+              step={0.01}
+              min={0.3}
+              onChange={(v) =>
+                updateGeometry("segmentWidthMm", Math.round(Number(v) * 1000))
+              }
+            />
+            <span className="text-brand-muted">m</span>
+          </div>
+        </div>
+        <div>
+          <div className="flex items-center gap-1">
+            <label className="text-brand-muted shrink-0">Target height:</label>
+            <NumberInput
+              value={seg.targetHeightMm ?? 1800}
+              onChange={(v) => updateGeometry("targetHeightMm", Number(v))}
+            />
+            <span className="text-brand-muted">mm</span>
+          </div>
+        </div>
 
         {!gate && seg.segmentWidthMm ? (
           <span className="text-[10px] text-brand-muted">
             × {panelsLive} {panelsLive === 1 ? "panel" : "panels"}
           </span>
         ) : null}
+        {!gate && !!state.bomResult?.computed && (
+          <AchievedHeightBadge
+            computed={
+              state.bomResult.computed as Record<
+                string,
+                Record<string, unknown>
+              >
+            }
+            runId={runId}
+            segmentId={seg.segmentId}
+            targetHeightMm={seg.targetHeightMm}
+          />
+        )}
         <div className="flex items-center gap-1 ml-auto">
           {hasError && (
             <button
               type="button"
               onClick={onToggle}
-              title={segDiagnostics.filter((d) => d.severity === "error").map((d) => d.message).join(" | ")}
+              title={segDiagnostics
+                .filter((d) => d.severity === "error")
+                .map((d) => d.message)
+                .join(" | ")}
               className="text-red-400 hover:text-red-300"
               aria-label="Segment has errors"
             >
@@ -91,7 +118,10 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
             <button
               type="button"
               onClick={onToggle}
-              title={segDiagnostics.filter((d) => d.severity === "warning").map((d) => d.message).join(" | ")}
+              title={segDiagnostics
+                .filter((d) => d.severity === "warning")
+                .map((d) => d.message)
+                .join(" | ")}
               className="text-amber-400 hover:text-amber-300"
               aria-label="Segment has warnings"
             >
@@ -129,9 +159,17 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
       {open && (
         <div className="border-t border-brand-border/50 p-3 space-y-4 bg-brand-card/40">
           {gate ? (
-            <GateSegmentDetails runId={runId} seg={seg} diagnostics={segDiagnostics} />
+            <GateSegmentDetails
+              runId={runId}
+              seg={seg}
+              diagnostics={segDiagnostics}
+            />
           ) : (
-            <FenceSegmentDetails runId={runId} seg={seg} diagnostics={segDiagnostics} />
+            <FenceSegmentDetails
+              runId={runId}
+              seg={seg}
+              diagnostics={segDiagnostics}
+            />
           )}
         </div>
       )}
