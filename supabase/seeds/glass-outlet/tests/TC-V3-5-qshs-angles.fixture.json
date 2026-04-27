@@ -1,6 +1,6 @@
 {
   "id": "TC-V3-5-qshs-angles",
-  "description": "QSHS Run 2: 3 fence panel groups with 90° and 135° corner transitions. All system posts 50x50mm. 1800mm target height. Black-satin, 65mm horizontal slats, 5mm gap.",
+  "description": "QSHS: 3 x 6m fence segments in one run with a 90° and a 135° corner transition. All system posts on outer ends. 1800mm target height. Black-satin, 65mm horizontal slats, 5mm gap.",
   "input": {
     "pricingTier": "tier1",
     "payload": {
@@ -11,11 +11,11 @@
         "slat_size_mm": 65,
         "slat_gap_mm": 5,
         "mounting_type": "in_ground",
-        "max_panel_width_mm": 2600
+        "max_panel_width_mm": 2000
       },
       "runs": [
         {
-          "runId": "run-002",
+          "runId": "run-001",
           "segments": [
             {
               "segmentId": "seg-001",
@@ -23,16 +23,9 @@
               "kind": "fence",
               "productCode": "QSHS",
               "segmentWidthMm": 6000,
-              "panelWidthMm": 2000,
               "targetHeightMm": 1800,
-              "leftTermination": {
-                "kind": "system_post",
-                "postSizeMm": 50
-              },
-              "rightTermination": {
-                "kind": "system_90deg",
-                "postSizeMm": 50
-              }
+              "leftTermination": { "kind": "system" },
+              "rightTermination": { "kind": "segment_join", "angleDeg": 90 }
             },
             {
               "segmentId": "seg-002",
@@ -40,16 +33,9 @@
               "kind": "fence",
               "productCode": "QSHS",
               "segmentWidthMm": 6000,
-              "panelWidthMm": 2000,
               "targetHeightMm": 1800,
-              "leftTermination": {
-                "kind": "system_90deg",
-                "postSizeMm": 50
-              },
-              "rightTermination": {
-                "kind": "system_135deg",
-                "postSizeMm": 50
-              }
+              "leftTermination": { "kind": "segment_join", "angleDeg": 90 },
+              "rightTermination": { "kind": "segment_join", "angleDeg": 135 }
             },
             {
               "segmentId": "seg-003",
@@ -57,16 +43,9 @@
               "kind": "fence",
               "productCode": "QSHS",
               "segmentWidthMm": 6000,
-              "panelWidthMm": 2000,
               "targetHeightMm": 1800,
-              "leftTermination": {
-                "kind": "system_135deg",
-                "postSizeMm": 50
-              },
-              "rightTermination": {
-                "kind": "system_post",
-                "postSizeMm": 50
-              }
+              "leftTermination": { "kind": "segment_join", "angleDeg": 135 },
+              "rightTermination": { "kind": "system" }
             }
           ]
         }
