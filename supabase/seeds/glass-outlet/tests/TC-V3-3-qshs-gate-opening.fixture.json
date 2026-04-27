@@ -1,11 +1,11 @@
 {
   "id": "TC-V3-3",
-  "description": "QSHS 8m run with 1m QS_GATE gate opening segment",
+  "description": "QSHS 8m run with 1m QS_GATE gate: fence(3.5m) + gate(1m) + fence(3.5m). Adjacent segments use segment_join terminations.",
   "input": {
     "pricingTier": "tier1",
     "payload": {
       "productCode": "QSHS",
-      "schemaVersion": "1.0",
+      "schemaVersion": "v2",
       "variables": {
         "colour_code": "black-satin",
         "slat_size_mm": 65,
@@ -16,28 +16,55 @@
       "runs": [
         {
           "runId": "run-001",
-          "productCode": "QSHS",
-          "leftBoundary": { "type": "product_post" },
-          "rightBoundary": { "type": "product_post" },
-          "corners": [],
           "segments": [
             {
               "segmentId": "seg-001",
               "sortOrder": 0,
-              "segmentKind": "panel",
-              "segmentWidthMm": 7000,
-              "targetHeightMm": 1800
+              "kind": "fence",
+              "productCode": "QSHS",
+              "segmentWidthMm": 3500,
+              "targetHeightMm": 1800,
+              "leftTermination": {
+                "kind": "system"
+              },
+              "rightTermination": {
+                "kind": "segment_join",
+                "angleDeg": 0
+              }
             },
             {
               "segmentId": "seg-002",
               "sortOrder": 1,
-              "segmentKind": "gate_opening",
+              "kind": "gate",
+              "productCode": "QS_GATE",
               "segmentWidthMm": 1000,
               "targetHeightMm": 1800,
-              "gateProductCode": "QS_GATE",
+              "leftTermination": {
+                "kind": "segment_join",
+                "angleDeg": 0
+              },
+              "rightTermination": {
+                "kind": "segment_join",
+                "angleDeg": 0
+              },
               "variables": {
-                "hinge_type": "ML-TL-KF-H-FT",
-                "include_lock_box": false
+                "hinge_type": "dd-kwik-fit-fixed",
+                "latch_type": "dd-magna-latch-top-pull"
+              }
+            },
+            {
+              "segmentId": "seg-003",
+              "sortOrder": 2,
+              "kind": "fence",
+              "productCode": "QSHS",
+              "segmentWidthMm": 3500,
+              "targetHeightMm": 1800,
+              "leftTermination": {
+                "kind": "segment_join",
+                "angleDeg": 0
+              },
+              "rightTermination": {
+                "kind": "system"
               }
             }
           ]
@@ -48,12 +75,86 @@
   "expect": {
     "errors": [],
     "lines": [
-      { "sku": "XP-6100-S65-B",  "name": "65mm Slat 6100mm — Black Satin",         "category": "slat", "qty": { "gte": 1 } },
-      { "sku": "XP-2400-FP-B",   "name": "50x50mm Full Post 2400mm — Black Satin",  "category": "post", "qty": { "gte": 1 } },
-      { "sku": "XP-6100-GB65-B", "name": "Gate Blade 65mm 6100mm — Black Satin",    "category": "slat", "qty": { "gte": 1 } }
+      {
+        "sku": "QS-SFC-B",
+        "qty": 4,
+        "category": "accessory"
+      },
+      {
+        "sku": "QS-SPACER-05MM-50PK",
+        "qty": 6,
+        "category": "accessory"
+      },
+      {
+        "sku": "QS-SCREWS-50PK",
+        "qty": 6,
+        "category": "fixing"
+      },
+      {
+        "sku": "XP-2400-FP-B",
+        "qty": 4,
+        "category": "post"
+      },
+      {
+        "sku": "QS-5800-SF-B",
+        "qty": 2,
+        "category": "side_frame"
+      },
+      {
+        "sku": "XP-6100-S65-B",
+        "qty": 36,
+        "category": "slat"
+      },
+      {
+        "sku": "QS-5800-CFC-B",
+        "qty": 2,
+        "category": "cfc_cover"
+      },
+      {
+        "sku": "QSG-GATESF-65-B",
+        "qty": 2,
+        "category": "gate_side_frame"
+      },
+      {
+        "sku": "{selected_hinge_sku}",
+        "qty": 2,
+        "category": "hardware"
+      },
+      {
+        "sku": "QSG-JBLOCK-65-4PK",
+        "qty": 2,
+        "category": "joiner_block"
+      },
+      {
+        "sku": "XP-6100-HD6545-B",
+        "qty": 1,
+        "category": "rail"
+      },
+      {
+        "sku": "XP-6100-GB65-B",
+        "qty": 4,
+        "category": "slat"
+      },
+      {
+        "sku": "QSG-FTC-{frame_cap_size}",
+        "qty": 4,
+        "category": "accessory"
+      },
+      {
+        "sku": "QSG-GATESF-{spacing}-B",
+        "qty": 2,
+        "category": "gate_side_frame"
+      },
+      {
+        "sku": "QSG-SC-10PK",
+        "qty": 1,
+        "category": "hardware"
+      }
     ],
     "totals": {
-      "grandTotal": { "gte": 100 }
+      "grandTotal": {
+        "gte": 1716
+      }
     }
   }
 }

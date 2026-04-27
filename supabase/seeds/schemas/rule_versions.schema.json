@@ -36,6 +36,9 @@
       },
       "notes": {
         "type": ["string", "null"]
+      },
+      "active": {
+        "type": "boolean"
       }
     }
   }

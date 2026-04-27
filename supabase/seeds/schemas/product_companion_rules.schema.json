@@ -38,8 +38,8 @@
         "description": "Category of the companion line being added. Examples: 'cfc_cover', 'spacer_pack', 'sf_cap', 'hinge_set', 'latch_set'."
       },
       "add_sku_pattern": {
-        "type": "string",
-        "description": "SKU of the companion line. Supports {colour}/{finish}/{frame_cap_size} placeholders and the special placeholders {selected_hinge_sku} / {selected_latch_sku} which resolve via user-chosen hardware variables."
+        "type": ["string", "null"],
+        "description": "SKU of the companion line. Supports {colour}/{finish}/{frame_cap_size} placeholders and the special placeholders {selected_hinge_sku} / {selected_latch_sku} which resolve via user-chosen hardware variables. null = companion rule is a placeholder (engine will skip)."
       },
       "qty_formula": {
         "type": "string",

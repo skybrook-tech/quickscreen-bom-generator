@@ -1,11 +1,11 @@
 {
   "id": "TC-V3-2",
-  "description": "QSHS 10m wall-on-right termination uses f-section not side-frame",
+  "description": "QSHS 10m wall-on-right termination: left=system post, right=wall. Engine should produce f-section on wall side, fewer posts, no SF on right.",
   "input": {
     "pricingTier": "tier1",
     "payload": {
       "productCode": "QSHS",
-      "schemaVersion": "1.0",
+      "schemaVersion": "v2",
       "variables": {
         "colour_code": "black-satin",
         "slat_size_mm": 65,
@@ -16,17 +16,21 @@
       "runs": [
         {
           "runId": "run-001",
-          "productCode": "QSHS",
-          "leftBoundary": { "type": "product_post" },
-          "rightBoundary": { "type": "wall" },
-          "corners": [],
           "segments": [
             {
               "segmentId": "seg-001",
               "sortOrder": 0,
-              "segmentKind": "panel",
+              "kind": "fence",
+              "productCode": "QSHS",
               "segmentWidthMm": 10000,
-              "targetHeightMm": 1800
+              "targetHeightMm": 1800,
+              "leftTermination": {
+                "kind": "system"
+              },
+              "rightTermination": {
+                "kind": "non_system",
+                "subtype": "wall"
+              }
             }
           ]
         }
@@ -36,13 +40,66 @@
   "expect": {
     "errors": [],
     "lines": [
-      { "sku": "XP-6100-S65-B", "name": "65mm Slat 6100mm — Black Satin",              "category": "slat",        "qty": 13 },
-      { "sku": "XP-2400-FP-B",  "name": "50x50mm Full Post 2400mm — Black Satin",       "category": "post",        "qty": 1  },
-      { "sku": "QS-5800-SF-B",  "name": "Side Frame 5800mm — Black Satin",              "category": "side_frame",  "qty": 1  },
-      { "sku": "QS-5800-F-B",   "name": "F-Section 5800mm — Black Satin",               "category": "f_section",   "qty": 1  }
+      {
+        "sku": "QS-SFC-B",
+        "qty": 2,
+        "category": "accessory"
+      },
+      {
+        "sku": "XP-CSRC-B",
+        "qty": 4,
+        "category": "accessory"
+      },
+      {
+        "sku": "XP-BTP-B",
+        "qty": 8,
+        "category": "accessory"
+      },
+      {
+        "sku": "QS-SPACER-05MM-50PK",
+        "qty": 5,
+        "category": "accessory"
+      },
+      {
+        "sku": "XP-5800-CSR-B",
+        "qty": 2,
+        "category": "centre_support_rail"
+      },
+      {
+        "sku": "QS-5800-F-B",
+        "qty": 1,
+        "category": "f_section"
+      },
+      {
+        "sku": "QS-SCREWS-50PK",
+        "qty": 5,
+        "category": "fixing"
+      },
+      {
+        "sku": "XP-2400-FP-B",
+        "qty": 4,
+        "category": "post"
+      },
+      {
+        "sku": "QS-5800-SF-B",
+        "qty": 1,
+        "category": "side_frame"
+      },
+      {
+        "sku": "XP-6100-S65-B",
+        "qty": 52,
+        "category": "slat"
+      },
+      {
+        "sku": "QS-5800-CFC-B",
+        "qty": 1,
+        "category": "cfc_cover"
+      }
     ],
     "totals": {
-      "grandTotal": { "gte": 100 }
+      "grandTotal": {
+        "gte": 2046
+      }
     }
   }
 }
