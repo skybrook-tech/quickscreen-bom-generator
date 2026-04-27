@@ -312,6 +312,12 @@ Deno.serve(async (req: Request) => {
     const allErrors: string[] = [];
     const allWarnings: string[] = [];
     const allAssumptions: string[] = [];
+    const allSegmentDiagnostics: Array<{
+      segmentId: string;
+      runId: string;
+      severity: "error" | "warning" | "info";
+      message: string;
+    }> = [];
     const allTrace: TraceEntry[] = [];
     // computed[runId][segmentId] = { actual_height_mm, ... }
     const computed: Record<
@@ -618,6 +624,35 @@ Deno.serve(async (req: Request) => {
           system_termination_count: activeSegCtx["system_termination_count"],
         };
 
+        // Step 7a — segment-level warnings (evaluated against full post-rules segCtx)
+        for (const warning of activeEngineData.warnings) {
+          try {
+            console.log("warning", warning, activeSegCtx);
+            const debug = warning.warning_key === "hd_post_no_ppb";
+
+            if (matchesJSON(warning.condition_json, activeSegCtx, debug)) {
+              if (debug) {
+                console.log("warning matched", warning, activeSegCtx);
+              }
+              allSegmentDiagnostics.push({
+                segmentId: segment.segmentId,
+                runId: run.runId,
+                severity:
+                  warning.severity === "error"
+                    ? "error"
+                    : warning.severity === "warning"
+                      ? "warning"
+                      : "info",
+                message: warning.message,
+              });
+            }
+          } catch {
+            /* ignore malformed condition_json */
+          }
+        }
+
+        console.log("allSegmentDiagnostics", allSegmentDiagnostics);
+
         // Step 8 — selector resolution.
         //
         // Selectors are grouped by (component_category, qty_key). Each unique group
@@ -781,6 +816,7 @@ Deno.serve(async (req: Request) => {
           errors: allErrors,
           warnings: allWarnings,
           assumptions: allAssumptions,
+          segmentDiagnostics: allSegmentDiagnostics,
           computed: {},
           trace: wantTrace ? allTrace : [],
           pricingTier,
@@ -893,6 +929,7 @@ Deno.serve(async (req: Request) => {
         warnings: allWarnings,
         errors: allErrors,
         assumptions: allAssumptions,
+        segmentDiagnostics: allSegmentDiagnostics,
         computed: strippedComputed,
         trace: wantTrace ? allTrace : [],
         pricingTier,

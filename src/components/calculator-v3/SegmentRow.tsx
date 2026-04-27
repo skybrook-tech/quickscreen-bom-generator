@@ -1,6 +1,7 @@
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import { Settings2 } from "lucide-react";
+import type { SegmentDiagnostic } from "../../types/bom.types";
+import { Settings2, AlertCircle, AlertTriangle } from "lucide-react";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
 import NumberInput from "../ui/NumberInput";
@@ -17,6 +18,13 @@ interface Props {
 export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
   const { state, dispatch } = useCalculator();
   const gate = seg.kind === "gate";
+
+  const segDiagnostics = (
+    (state.bomResult?.segmentDiagnostics as SegmentDiagnostic[] | undefined) ?? []
+  ).filter((d) => d.segmentId === seg.segmentId);
+
+  const hasError = segDiagnostics.some((d) => d.severity === "error");
+  const hasWarning = !hasError && segDiagnostics.some((d) => d.severity === "warning");
 
   const jobMax = Number(state.payload?.variables.max_panel_width_mm ?? 2600);
   const effectiveMax = Number(seg.variables?.max_panel_width_mm ?? jobMax);
@@ -68,6 +76,28 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
           </span>
         ) : null}
         <div className="flex items-center gap-1 ml-auto">
+          {hasError && (
+            <button
+              type="button"
+              onClick={onToggle}
+              title={segDiagnostics.filter((d) => d.severity === "error").map((d) => d.message).join(" | ")}
+              className="text-red-400 hover:text-red-300"
+              aria-label="Segment has errors"
+            >
+              <AlertCircle size={15} />
+            </button>
+          )}
+          {hasWarning && (
+            <button
+              type="button"
+              onClick={onToggle}
+              title={segDiagnostics.filter((d) => d.severity === "warning").map((d) => d.message).join(" | ")}
+              className="text-amber-400 hover:text-amber-300"
+              aria-label="Segment has warnings"
+            >
+              <AlertTriangle size={15} />
+            </button>
+          )}
           <button
             type="button"
             onClick={onToggle}
@@ -99,9 +129,9 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
       {open && (
         <div className="border-t border-brand-border/50 p-3 space-y-4 bg-brand-card/40">
           {gate ? (
-            <GateSegmentDetails runId={runId} seg={seg} />
+            <GateSegmentDetails runId={runId} seg={seg} diagnostics={segDiagnostics} />
           ) : (
-            <FenceSegmentDetails runId={runId} seg={seg} />
+            <FenceSegmentDetails runId={runId} seg={seg} diagnostics={segDiagnostics} />
           )}
         </div>
       )}

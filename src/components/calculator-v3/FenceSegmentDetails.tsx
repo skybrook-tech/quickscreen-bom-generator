@@ -2,7 +2,9 @@ import { useMemo } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../types/canonical.types";
+import type { SegmentDiagnostic } from "../../types/bom.types";
 import { patchSegmentVariables } from "../../lib/segmentTermination";
+import { BOMWarningsPanel } from "./BOMWarningsPanel";
 
 const POST_SIZE_KEY = "post_size";
 const POST_WIDTH_MM_KEY = "post_width_mm";
@@ -19,9 +21,10 @@ const POST_SIZE_LABELS: Record<string, string> = {
 interface Props {
   runId: string;
   seg: CanonicalSegment;
+  diagnostics?: SegmentDiagnostic[];
 }
 
-export function FenceSegmentDetails({ runId, seg }: Props) {
+export function FenceSegmentDetails({ runId, seg, diagnostics = [] }: Props) {
   const { state, dispatch } = useCalculator();
   const productCode = state.payload?.productCode ?? null;
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
@@ -72,6 +75,13 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
   return (
     <div className="space-y-4">
+      {diagnostics.length > 0 && (
+        <BOMWarningsPanel
+          errors={diagnostics.filter((d) => d.severity === "error").map((d) => d.message)}
+          warnings={diagnostics.filter((d) => d.severity === "warning").map((d) => d.message)}
+          assumptions={diagnostics.filter((d) => d.severity === "info").map((d) => d.message)}
+        />
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Max panel width override */}
         <label className="flex flex-col gap-1">

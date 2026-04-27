@@ -36,6 +36,13 @@ export interface BOMResult {
 
 export type PricingTier = 'tier1' | 'tier2' | 'tier3';
 
+export interface SegmentDiagnostic {
+  segmentId: string;
+  runId: string;
+  severity: 'error' | 'warning' | 'info';
+  message: string;
+}
+
 export interface CalculatorBOMResult {
   runResults: Array<{ runId: string; items: BOMLineItem[] }>;
   gateItems: BOMLineItem[];
@@ -45,6 +52,7 @@ export interface CalculatorBOMResult {
   grandTotal: number;
   pricingTier: PricingTier;
   generatedAt: string;
+  segmentDiagnostics: SegmentDiagnostic[];
 }
 
 /** Ad-hoc line item added manually by staff — not from the BOM calculation */

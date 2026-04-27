@@ -4148,7 +4148,8 @@
       "unit": null,
       "severity": "warning",
       "applies_when_json": {
-        "post_size": "65"
+        "post_size": { "eq": 65 },
+        "colour_code": { "in": ["P", "PB"] }
       },
       "message": "65mm HD posts are not available in Primrose or Paperbark. Use 50mm post for these colours.",
       "active": true
@@ -5867,16 +5868,7 @@
       "message": "Panel ≥2000mm — CSR(s) will be automatically added.",
       "active": true
     },
-    {
-      "product_system_type": "QSHS",
-      "warning_key": "qshs_post_65_no_p_pb",
-      "severity": "warning",
-      "condition_json": {
-        "post_size": "65"
-      },
-      "message": "65mm HD posts are not available in Primrose (P) or Paperbark (PB). Select 50mm post for these colour choices.",
-      "active": true
-    },
+
     {
       "product_system_type": "QSHS",
       "warning_key": "qshs_post_in_ground_no_accessories",
@@ -5904,7 +5896,8 @@
       "warning_key": "hd_post_no_ppb",
       "severity": "warning",
       "condition_json": {
-        "post_size": { "eq": 65 }
+        "post_size": { "eq": 65 },
+        "colour_code": { "in": ["P", "PB"] }
       },
       "message": "65×65mm HD posts (XP-2400-65HD, XP-6000-65HD) are not available in Primrose or Paperbark. Change colour or switch to 50×50mm posts.",
       "active": true

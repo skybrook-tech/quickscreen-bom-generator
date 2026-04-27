@@ -1,14 +1,17 @@
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
+import type { SegmentDiagnostic } from "../../types/bom.types";
 import { patchSegmentVariables } from "../../lib/segmentTermination";
 import { Input } from "../ui/Input";
+import { BOMWarningsPanel } from "./BOMWarningsPanel";
 
 interface Props {
   runId: string;
   seg: CanonicalSegment;
+  diagnostics?: SegmentDiagnostic[];
 }
 
-export function GateSegmentDetails({ runId, seg }: Props) {
+export function GateSegmentDetails({ runId, seg, diagnostics = [] }: Props) {
   const { dispatch } = useCalculator();
   const v = seg.variables ?? {};
 
@@ -21,6 +24,14 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   }
 
   return (
+    <div className="space-y-3">
+      {diagnostics.length > 0 && (
+        <BOMWarningsPanel
+          errors={diagnostics.filter((d) => d.severity === "error").map((d) => d.message)}
+          warnings={diagnostics.filter((d) => d.severity === "warning").map((d) => d.message)}
+          assumptions={diagnostics.filter((d) => d.severity === "info").map((d) => d.message)}
+        />
+      )}
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <p className="sm:col-span-2 text-brand-muted text-[11px]">
         Gate hardware (full QS_GATE form will be data-driven here later).
@@ -43,6 +54,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
           className="bg-brand-bg"
         />
       </label>
+    </div>
     </div>
   );
 }

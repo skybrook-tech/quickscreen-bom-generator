@@ -123,8 +123,9 @@ export function resolvePrice(rules: PricingRule[], qty: number): number {
 export function matchesJSON(
   matchJson: Record<string, unknown>,
   ctx: Record<string, unknown>,
+  debug: boolean = false,
 ): boolean {
-  for (const [key, expected] of Object.entries(matchJson)) {
+  const matches = Object.entries(matchJson).map(([key, expected]) => {
     const actual = ctx[key];
     if (
       typeof expected === "object" &&
@@ -140,13 +141,19 @@ export function matchesJSON(
         return false;
       if ("eq" in range && actual !== range.eq) return false;
       if ("neq" in range && actual === range.neq) return false;
+      if ("in" in range && !range.in.includes(actual)) return false;
     } else if (Array.isArray(expected)) {
       if (!expected.includes(actual)) return false;
     } else {
       if (actual !== expected) return false;
     }
+    return true;
+  });
+
+  if (debug) {
+    console.log("matchesJSON", matchJson, ctx, matches, matches.every(Boolean));
   }
-  return true;
+  return matches.every(Boolean);
 }
 
 /**
@@ -195,7 +202,6 @@ export function stocks(
 
 // Register stocks() as a math.js function so seed rules can call it.
 mathjs.import({ stocks }, { override: false });
-
 
 export function normaliseVariables(
   vars: Record<string, string | number | boolean>,

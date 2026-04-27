@@ -20,6 +20,7 @@ import type {
   CalculatorBOMResult,
   BOMLineItem,
   ExtraItem,
+  SegmentDiagnostic,
 } from "../types/bom.types";
 
 function CalculatorV3Content() {
@@ -102,6 +103,8 @@ function CalculatorV3Content() {
             "tier1",
           generatedAt:
             (lastBom.generatedAt as string) ?? new Date().toISOString(),
+          segmentDiagnostics:
+            (lastBom.segmentDiagnostics as SegmentDiagnostic[]) ?? [],
         };
       })()
     : null;
