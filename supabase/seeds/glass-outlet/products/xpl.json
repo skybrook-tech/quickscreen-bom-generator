@@ -9,35 +9,13 @@
       "active": true,
       "sort_order": 3,
       "metadata": {
+        "allowedAngles": [45, 90],
         "options": {
-          "slatSize": [
-            "65",
-            "90"
-          ],
-          "slatGap": [
-            "5",
-            "9",
-            "20"
-          ],
-          "colour": [
-            "B",
-            "MN",
-            "G",
-            "SM",
-            "W",
-            "BS",
-            "D",
-            "M",
-            "P",
-            "PB",
-            "S"
-          ]
+          "slatSize": ["65", "90"],
+          "slatGap": ["5", "9", "20"],
+          "colour": ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]
         },
-        "post_types": [
-          "1W",
-          "2W",
-          "90"
-        ],
+        "post_types": ["1W", "2W", "90"],
         "slat_insertion_depth_1W_2W_mm": 24,
         "slat_insertion_depth_90_mm": 15
       }
@@ -51,9 +29,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "1W"
       },
@@ -66,9 +42,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "1W"
       },
@@ -81,9 +55,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "1W"
       },
@@ -96,9 +68,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "1W"
       },
@@ -111,9 +81,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "1W"
       },
@@ -126,9 +94,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "1W"
       },
@@ -141,9 +107,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "1W"
       },
@@ -156,9 +120,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 94.97,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "1W"
       },
@@ -171,9 +133,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "1W"
       },
@@ -186,9 +146,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "1W"
       },
@@ -201,9 +159,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "1W"
       },
@@ -216,9 +172,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "2W"
       },
@@ -231,9 +185,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "2W"
       },
@@ -246,9 +198,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "2W"
       },
@@ -261,9 +211,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "2W"
       },
@@ -276,9 +224,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "2W"
       },
@@ -291,9 +237,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "2W"
       },
@@ -306,9 +250,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "2W"
       },
@@ -321,9 +263,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 86.34,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "2W"
       },
@@ -336,9 +276,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "2W"
       },
@@ -351,9 +289,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "90"
       },
@@ -366,9 +302,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "90"
       },
@@ -381,9 +315,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "90"
       },
@@ -396,9 +328,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "90"
       },
@@ -411,9 +341,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "90"
       },
@@ -426,9 +354,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "90"
       },
@@ -441,9 +367,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "90"
       },
@@ -456,9 +380,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 95.21,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "90"
       },
@@ -471,9 +393,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "90"
       },
@@ -486,9 +406,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.01,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "gap_mm": 5
       },
@@ -501,9 +419,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.01,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "gap_mm": 9
       },
@@ -516,9 +432,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.56,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "gap_mm": 20
       },
@@ -531,9 +445,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.69,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
@@ -544,9 +456,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.13,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
@@ -557,9 +467,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
@@ -570,9 +478,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
@@ -583,9 +489,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
@@ -596,9 +500,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
@@ -609,9 +511,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
@@ -622,9 +522,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
@@ -635,9 +533,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
@@ -648,9 +544,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 2.85,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
@@ -661,9 +555,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
@@ -674,9 +566,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
@@ -687,9 +577,7 @@
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {},
       "active": true
     },
@@ -700,10 +588,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": [
-        "XPL",
-        "BAYG"
-      ],
+      "system_types": ["XPL", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -714,10 +599,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": [
-        "XPL",
-        "BAYG"
-      ],
+      "system_types": ["XPL", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -728,10 +610,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": [
-        "XPL",
-        "BAYG"
-      ],
+      "system_types": ["XPL", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -742,10 +621,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": [
-        "XPL",
-        "BAYG"
-      ],
+      "system_types": ["XPL", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -756,10 +632,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": [
-        "XPL",
-        "BAYG"
-      ],
+      "system_types": ["XPL", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -770,10 +643,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": [
-        "XPL",
-        "BAYG"
-      ],
+      "system_types": ["XPL", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -784,10 +654,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": [
-        "XPL",
-        "BAYG"
-      ],
+      "system_types": ["XPL", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -798,10 +665,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 34.18,
-      "system_types": [
-        "XPL",
-        "BAYG"
-      ],
+      "system_types": ["XPL", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -812,10 +676,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 39.92,
-      "system_types": [
-        "XPL",
-        "BAYG"
-      ],
+      "system_types": ["XPL", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -826,10 +687,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 39.92,
-      "system_types": [
-        "XPL",
-        "BAYG"
-      ],
+      "system_types": ["XPL", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -840,10 +698,7 @@
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": [
-        "XPL",
-        "BAYG"
-      ],
+      "system_types": ["XPL", "BAYG"],
       "metadata": {},
       "active": true
     },
@@ -854,9 +709,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "B"
       },
@@ -869,9 +722,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "MN"
       },
@@ -884,9 +735,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "G"
       },
@@ -899,9 +748,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "SM"
       },
@@ -914,9 +761,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "W"
       },
@@ -929,9 +774,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "BS"
       },
@@ -944,9 +787,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "D"
       },
@@ -959,9 +800,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "M"
       },
@@ -974,9 +813,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "S"
       },
@@ -989,9 +826,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "B"
       },
@@ -1004,9 +839,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "MN"
       },
@@ -1019,9 +852,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "G"
       },
@@ -1034,9 +865,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "SM"
       },
@@ -1049,9 +878,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "W"
       },
@@ -1064,9 +891,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "BS"
       },
@@ -1079,9 +904,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "D"
       },
@@ -1094,9 +917,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "M"
       },
@@ -1109,9 +930,7 @@
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "S"
       },
@@ -1124,9 +943,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "B",
         "gap_mm": 9,
@@ -1141,9 +958,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "MN",
         "gap_mm": 9,
@@ -1158,9 +973,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "G",
         "gap_mm": 9,
@@ -1175,9 +988,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "SM",
         "gap_mm": 9,
@@ -1192,9 +1003,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "W",
         "gap_mm": 9,
@@ -1209,9 +1018,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "BS",
         "gap_mm": 9,
@@ -1226,9 +1033,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "D",
         "gap_mm": 9,
@@ -1243,9 +1048,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "M",
         "gap_mm": 9,
@@ -1260,9 +1063,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "S",
         "gap_mm": 9,
@@ -1277,9 +1078,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "B",
         "gap_mm": 20,
@@ -1294,9 +1093,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "MN",
         "gap_mm": 20,
@@ -1311,9 +1108,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "G",
         "gap_mm": 20,
@@ -1328,9 +1123,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "SM",
         "gap_mm": 20,
@@ -1345,9 +1138,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "W",
         "gap_mm": 20,
@@ -1362,9 +1153,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "BS",
         "gap_mm": 20,
@@ -1379,9 +1168,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "D",
         "gap_mm": 20,
@@ -1396,9 +1183,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "M",
         "gap_mm": 20,
@@ -1413,9 +1198,7 @@
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "S",
         "gap_mm": 20,
@@ -1430,9 +1213,7 @@
       "category": "accessory",
       "unit": "each",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "block_length_mm": 1000
       },
@@ -1445,9 +1226,7 @@
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "B",
         "screw_count": 12
@@ -1461,9 +1240,7 @@
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "MN",
         "screw_count": 12
@@ -1477,9 +1254,7 @@
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "G",
         "screw_count": 12
@@ -1493,9 +1268,7 @@
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "SM",
         "screw_count": 12
@@ -1509,9 +1282,7 @@
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "W",
         "screw_count": 12
@@ -1525,9 +1296,7 @@
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "BS",
         "screw_count": 12
@@ -1541,9 +1310,7 @@
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "D",
         "screw_count": 12
@@ -1557,9 +1324,7 @@
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "M",
         "screw_count": 12
@@ -1573,9 +1338,7 @@
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "S",
         "screw_count": 12
@@ -1589,9 +1352,7 @@
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "B"
       },
@@ -1604,9 +1365,7 @@
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "MN"
       },
@@ -1619,9 +1378,7 @@
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "G"
       },
@@ -1634,9 +1391,7 @@
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "SM"
       },
@@ -1649,9 +1404,7 @@
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "W"
       },
@@ -1664,9 +1417,7 @@
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "colour": "M"
       },
@@ -1679,9 +1430,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 0,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "2W",
         "colour": "P"
@@ -1695,9 +1444,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 0,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "2W",
         "colour": "PB"
@@ -1711,9 +1458,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 0,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "90",
         "colour": "P"
@@ -1727,9 +1472,7 @@
       "category": "mounting",
       "unit": "length",
       "default_price": 0,
-      "system_types": [
-        "XPL"
-      ],
+      "system_types": ["XPL"],
       "metadata": {
         "post_way": "90",
         "colour": "PB"
@@ -1800,10 +1543,7 @@
       "unit": null,
       "required": true,
       "default_value_json": "standard",
-      "options_json": [
-        "standard",
-        "alumawood"
-      ],
+      "options_json": ["standard", "alumawood"],
       "scope": "job",
       "sort_order": 5,
       "active": true
@@ -1830,9 +1570,7 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 65,
-      "options_json": [
-        65
-      ],
+      "options_json": [65],
       "scope": "job",
       "sort_order": 20,
       "active": true
@@ -1845,11 +1583,7 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 9,
-      "options_json": [
-        0,
-        9,
-        20
-      ],
+      "options_json": [0, 9, 20],
       "scope": "job",
       "sort_order": 30,
       "active": true,
@@ -1863,11 +1597,7 @@
       "unit": null,
       "required": true,
       "default_value_json": "in_ground",
-      "options_json": [
-        "in_ground",
-        "base_plate",
-        "core_drill"
-      ],
+      "options_json": ["in_ground", "base_plate", "core_drill"],
       "scope": "run",
       "sort_order": 40,
       "active": true
@@ -1906,11 +1636,7 @@
       "unit": null,
       "required": true,
       "default_value_json": "xpl",
-      "options_json": [
-        "xpl",
-        "standard_50",
-        "standard_65"
-      ],
+      "options_json": ["xpl", "standard_50", "standard_65"],
       "scope": "run",
       "sort_order": 55,
       "active": true,
@@ -1924,11 +1650,7 @@
       "unit": null,
       "required": true,
       "default_value_json": "in_ground",
-      "options_json": [
-        "in_ground",
-        "base_plate",
-        "core_drill"
-      ],
+      "options_json": ["in_ground", "base_plate", "core_drill"],
       "scope": "run",
       "sort_order": 65,
       "active": true,
@@ -3237,10 +2959,7 @@
       "condition_json": {
         "post_size": "65",
         "colour_code": {
-          "in": [
-            "P",
-            "PB"
-          ]
+          "in": ["P", "PB"]
         }
       },
       "message": "65mm HD posts are not available in Primrose (P) or Paperbark (PB). Please select a different colour for HD posts, or switch to 50mm FP posts.",

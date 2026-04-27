@@ -9,29 +9,11 @@
       "active": true,
       "sort_order": 2,
       "metadata": {
+        "allowedAngles": [45, 90, 135],
         "options": {
-          "slatSize": [
-            "65",
-            "90"
-          ],
-          "slatGap": [
-            "5",
-            "9",
-            "20"
-          ],
-          "colour": [
-            "B",
-            "MN",
-            "G",
-            "SM",
-            "W",
-            "BS",
-            "D",
-            "M",
-            "P",
-            "PB",
-            "S"
-          ]
+          "slatSize": ["65", "90"],
+          "slatGap": ["5", "9", "20"],
+          "colour": ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]
         },
         "notes": "VS slats (XP-6100-S65, QS-6100-S90), side frames (QS-5800-SF), CFC covers (QS-5800-CFC), F-sections (QS-5800-F), QS-SFC-B caps, and all post components are seeded in qshs.json with system_types including 'VS'. vs.json seeds only QS-5000-HORIZ (VS-unique U-channel)."
       }
@@ -45,9 +27,7 @@
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": [
-        "VS"
-      ],
+      "system_types": ["VS"],
       "metadata": {},
       "active": true
     },
@@ -58,9 +38,7 @@
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": [
-        "VS"
-      ],
+      "system_types": ["VS"],
       "metadata": {},
       "active": true
     },
@@ -71,9 +49,7 @@
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": [
-        "VS"
-      ],
+      "system_types": ["VS"],
       "metadata": {},
       "active": true
     },
@@ -84,9 +60,7 @@
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": [
-        "VS"
-      ],
+      "system_types": ["VS"],
       "metadata": {},
       "active": true
     },
@@ -97,9 +71,7 @@
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": [
-        "VS"
-      ],
+      "system_types": ["VS"],
       "metadata": {},
       "active": true
     },
@@ -110,9 +82,7 @@
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": [
-        "VS"
-      ],
+      "system_types": ["VS"],
       "metadata": {},
       "active": true
     },
@@ -123,9 +93,7 @@
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": [
-        "VS"
-      ],
+      "system_types": ["VS"],
       "metadata": {},
       "active": true
     },
@@ -136,9 +104,7 @@
       "category": "rail",
       "unit": "length",
       "default_price": 32.4,
-      "system_types": [
-        "VS"
-      ],
+      "system_types": ["VS"],
       "metadata": {},
       "active": true
     },
@@ -149,9 +115,7 @@
       "category": "rail",
       "unit": "length",
       "default_price": 0,
-      "system_types": [
-        "VS"
-      ],
+      "system_types": ["VS"],
       "metadata": {
         "colour": "P"
       },
@@ -164,9 +128,7 @@
       "category": "rail",
       "unit": "length",
       "default_price": 0,
-      "system_types": [
-        "VS"
-      ],
+      "system_types": ["VS"],
       "metadata": {
         "colour": "PB"
       },
@@ -179,9 +141,7 @@
       "category": "rail",
       "unit": "length",
       "default_price": 0,
-      "system_types": [
-        "VS"
-      ],
+      "system_types": ["VS"],
       "metadata": {
         "colour": "S"
       },
@@ -286,10 +246,7 @@
       "unit": null,
       "required": true,
       "default_value_json": "standard",
-      "options_json": [
-        "standard",
-        "alumawood"
-      ],
+      "options_json": ["standard", "alumawood"],
       "scope": "job",
       "sort_order": 5,
       "active": true
@@ -316,10 +273,7 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 65,
-      "options_json": [
-        65,
-        90
-      ],
+      "options_json": [65, 90],
       "scope": "job",
       "sort_order": 20,
       "active": true
@@ -346,11 +300,7 @@
       "unit": null,
       "required": true,
       "default_value_json": "in_ground",
-      "options_json": [
-        "in_ground",
-        "base_plate",
-        "core_drill"
-      ],
+      "options_json": ["in_ground", "base_plate", "core_drill"],
       "scope": "run",
       "sort_order": 40,
       "active": true
@@ -363,10 +313,7 @@
       "unit": null,
       "required": true,
       "default_value_json": "post",
-      "options_json": [
-        "post",
-        "wall"
-      ],
+      "options_json": ["post", "wall"],
       "scope": "run",
       "sort_order": 50,
       "active": true
@@ -379,10 +326,7 @@
       "unit": null,
       "required": true,
       "default_value_json": "post",
-      "options_json": [
-        "post",
-        "wall"
-      ],
+      "options_json": ["post", "wall"],
       "scope": "run",
       "sort_order": 60,
       "active": true
@@ -421,10 +365,7 @@
       "unit": "mm",
       "required": true,
       "default_value_json": "50",
-      "options_json": [
-        "50",
-        "65"
-      ],
+      "options_json": ["50", "65"],
       "scope": "run",
       "sort_order": 45,
       "active": true
