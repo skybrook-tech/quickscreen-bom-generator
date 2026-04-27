@@ -1,32 +1,34 @@
-import { LogOut, Sun, Moon, Plus } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import { LogOut, Sun, Moon, Plus, Settings } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
-import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../hooks/useAuth';
-import { useTheme } from '../../context/ThemeContext';
+import { supabase } from "../../lib/supabase";
+import { useAuth } from "../../hooks/useAuth";
+import { useProfile } from "../../context/ProfileContext";
+import { useTheme } from "../../context/ThemeContext";
 
 export function Header() {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
+  const { isAdmin } = useProfile();
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
   };
 
-  const initials = user?.email?.[0].toUpperCase() ?? '?';
+  const initials = user?.email?.[0].toUpperCase() ?? "?";
 
   const navLinkCls = ({ isActive }: { isActive: boolean }) =>
     `text-xs font-medium px-3 py-1.5 rounded-md transition-colors ${
       isActive
-        ? 'text-brand-text bg-brand-border/40'
-        : 'text-brand-muted hover:text-brand-text hover:bg-brand-border/20'
+        ? "text-brand-text bg-brand-border/40"
+        : "text-brand-muted hover:text-brand-text hover:bg-brand-border/20"
     }`;
 
   const newQuoteLinkCls = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-md transition-colors ml-1 ${
       isActive
-        ? 'text-brand-accent bg-brand-accent/15'
-        : 'text-brand-accent hover:bg-brand-accent/10'
+        ? "text-brand-accent bg-brand-accent/15"
+        : "text-brand-accent hover:bg-brand-accent/10"
     }`;
 
   return (
@@ -39,23 +41,42 @@ export function Header() {
           </span>
           <span className="text-brand-border/60 hidden sm:inline">|</span>
           <div className="leading-tight">
-            <p className="text-sm font-semibold text-brand-text">The Glass Outlet</p>
-            <p className="text-xs text-brand-muted">QuickScreen BOM Generator</p>
+            <p className="text-sm font-semibold text-brand-text">
+              The Glass Outlet
+            </p>
+            <p className="text-xs text-brand-muted">
+              QuickScreen BOM Generator
+            </p>
           </div>
         </div>
 
         {user && (
           <nav className="hidden sm:flex items-center gap-0.5 ml-2">
-            <NavLink to="/" end className={navLinkCls}>
-              Home
+            <NavLink to="/fence-calculator" end className={navLinkCls}>
+              Fence Calculator
             </NavLink>
-            <NavLink to="/quotes" className={navLinkCls}>
+            {/* <NavLink to="/quotes" className={navLinkCls}>
               Quotes
             </NavLink>
             <NavLink to="/new" className={newQuoteLinkCls}>
               <Plus size={12} />
               New Quote
-            </NavLink>
+            </NavLink> */}
+            {isAdmin && (
+              <NavLink
+                to="/admin/products"
+                className={({ isActive }) =>
+                  `flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-md transition-colors ml-1 ${
+                    isActive
+                      ? "text-amber-400 bg-amber-500/10"
+                      : "text-brand-muted hover:text-amber-400 hover:bg-amber-500/5"
+                  }`
+                }
+              >
+                <Settings size={12} />
+                Admin
+              </NavLink>
+            )}
           </nav>
         )}
       </div>
@@ -64,16 +85,18 @@ export function Header() {
       <div className="flex items-center gap-1">
         <button
           onClick={toggle}
-          title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+          title={
+            theme === "light" ? "Switch to dark mode" : "Switch to light mode"
+          }
           className="p-2 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/30 transition-colors"
         >
-          {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+          {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
         </button>
 
         {user && (
           <>
             <div
-              title={user.email ?? ''}
+              title={user.email ?? ""}
               className="w-7 h-7 rounded-full bg-brand-accent/15 border border-brand-accent/30 text-brand-accent text-xs font-semibold flex items-center justify-center select-none"
             >
               {initials}
