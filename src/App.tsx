@@ -28,11 +28,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/calculator",
-    element: (
-      <AuthGuard>
-        <CalculatorV3Page />
-      </AuthGuard>
-    ),
+    element: <CalculatorV3Page />,
   },
   {
     path: "/quotes",
