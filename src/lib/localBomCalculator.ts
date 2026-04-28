@@ -35,7 +35,7 @@ type QtyLine = {
   segmentId: string;
 };
 
-const SUPPORTED_PRODUCTS = new Set(["QSHS", "BAYG"]);
+const SUPPORTED_PRODUCTS = new Set(["QSHS", "BAYG", "VS"]);
 const STANDARD_COLOURS = new Set(["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]);
 const ALUMAWOOD_CORE_COLOURS = new Set(["KWI", "WRC"]);
 const CSR_CAP_COLOURS = new Set(["B", "G", "MN", "S", "SM", "W"]);
@@ -101,6 +101,10 @@ function slatSkuFor(finishFamily: string, economySlats: boolean, slatSize: numbe
 function quickscreenSkuFor(finishFamily: string, family: "SF" | "CFC" | "F", colour: string): string {
   const prefix = finishFamily === "alumawood" ? "AWQS" : "QS";
   return `${prefix}-5800-${family}-${colour}`;
+}
+
+function verticalRailSkuFor(colour: string): string {
+  return `QS-5000-HORIZ-${colour}`;
 }
 
 function csrSkuFor(finishFamily: string, colour: string): string {
@@ -207,6 +211,257 @@ function runPostBoundaryCount(run: CanonicalRun): number {
   );
 }
 
+function emitPostLines(
+  lines: QtyLine[],
+  run: CanonicalRun,
+  segmentId: string,
+  postCount: number,
+  finishFamily: string,
+  postSize: number,
+  postHeight: number,
+  postColour: string,
+  mountingType: string,
+): void {
+  if (postCount <= 0) return;
+
+  const postSku = postSkuFor(finishFamily, postSize, postHeight, postColour);
+  emit(lines, {
+    runId: run.runId,
+    segmentId,
+    sku: postSku,
+    category: "post",
+    quantity: postCount,
+    unit: "each",
+    notes: `${postSize}mm posts from run boundaries/corners and internal panel joins`,
+  });
+  if (postHeight > 2400) {
+    emit(lines, {
+      runId: run.runId,
+      segmentId,
+      sku: postAccessorySkuFor(finishFamily, "top_plate", postSize, postColour),
+      category: "post_accessory",
+      quantity: postCount,
+      unit: "each",
+      notes: "Top plates for long posts",
+    });
+  }
+  if (mountingType === "base_plate") {
+    emit(lines, {
+      runId: run.runId,
+      segmentId,
+      sku: postAccessorySkuFor(finishFamily, "base_plate", postSize, postColour),
+      category: "post_accessory",
+      quantity: postCount,
+      unit: "each",
+      notes: "Base plate sets",
+    });
+    emit(lines, {
+      runId: run.runId,
+      segmentId,
+      sku: postAccessorySkuFor(finishFamily, "domical_cover", postSize, postColour),
+      category: "post_accessory",
+      quantity: postCount,
+      unit: "each",
+      notes: "Domical covers",
+    });
+  }
+  if (mountingType === "core_drill") {
+    emit(lines, {
+      runId: run.runId,
+      segmentId,
+      sku: postAccessorySkuFor(finishFamily, "dress_ring", postSize, postColour),
+      category: "post_accessory",
+      quantity: postCount,
+      unit: "each",
+      notes: "Dress rings",
+    });
+  }
+}
+
+function calculateVerticalSlatRun(
+  payload: CanonicalPayload,
+  run: CanonicalRun,
+  warnings: string[],
+  computed: LocalBomResult["computed"],
+): QtyLine[] {
+  const lines: QtyLine[] = [];
+  const mergedRunVars = { ...payload.variables, ...(run.variables ?? {}) };
+  const colour = String(
+    mergedRunVars.colour_code ?? mergedRunVars.colour ?? "B",
+  );
+  const postColour = String(mergedRunVars.post_colour_code ?? colour);
+  const slatSize = toNumber(mergedRunVars.slat_size_mm, 65);
+  const slatGap = toNumber(mergedRunVars.slat_gap_mm, 5);
+  const finishFamily = String(mergedRunVars.finish_family ?? "standard");
+  const economySlats = finishFamily === "economy";
+  const slatStockLengthMm = economySlats ? 6500 : finishFamily === "alumawood" ? 5800 : 6100;
+  const maxPanelWidth = Math.min(
+    maxPanelWidthForSystem(run.productCode),
+    Math.max(
+      300,
+      toNumber(
+        mergedRunVars.max_panel_width_mm,
+        maxPanelWidthForSystem(run.productCode),
+      ),
+    ),
+  );
+  const mountingType = String(
+    mergedRunVars.mounting_type ?? mergedRunVars.mounting_method ?? "in_ground",
+  );
+  const postSize = toNumber(mergedRunVars.post_size, 50);
+  let internalPanelPosts = 0;
+
+  for (const segment of run.segments) {
+    if (segment.segmentKind === "gate_opening") {
+      warnings.push(
+        "Gate openings are carried through the mapper, but QS_GATE BOM generation still needs the next implementation pass.",
+      );
+      continue;
+    }
+
+    const vars = { ...mergedRunVars, ...(segment.variables ?? {}) };
+    const segmentWidthMm = toNumber(segment.segmentWidthMm, 0);
+    const targetHeightMm = toNumber(
+      segment.targetHeightMm ?? vars.target_height_mm,
+      1800,
+    );
+    if (segmentWidthMm <= 0) continue;
+
+    const segmentMaxPanelWidth = Math.min(
+      maxPanelWidthForSystem(run.productCode),
+      Math.max(300, toNumber(vars.max_panel_width_mm, maxPanelWidth)),
+    );
+    const numPanels = Math.max(1, Math.ceil(segmentWidthMm / segmentMaxPanelWidth));
+    const panelWidthMm = segmentWidthMm / numPanels;
+    internalPanelPosts += Math.max(0, numPanels - 1);
+
+    const numVerticalSlats = Math.max(
+      1,
+      Math.floor((panelWidthMm - 8 + slatGap) / (slatGap + slatSize)),
+    );
+    const slatCutMm = Math.max(1, targetHeightMm);
+    const railCutMm = Math.max(1, panelWidthMm);
+    const slatsPerStock = Math.max(1, Math.floor(slatStockLengthMm / slatCutMm));
+    const railsPerStock = Math.max(1, Math.floor(5000 / railCutMm));
+    const edgeFramesPerStock = Math.max(1, Math.floor(5800 / slatCutMm));
+    const slatStocks = Math.ceil((numVerticalSlats * numPanels) / slatsPerStock);
+    const railStocks = Math.ceil((2 * numPanels) / railsPerStock);
+    const edgeFramePieces = 2 * numPanels;
+    const edgeFrameStocks = Math.ceil(edgeFramePieces / edgeFramesPerStock);
+
+    const runLeftT = run.leftBoundary.type as LegacyBoundaryType;
+    const runRightT = run.rightBoundary.type as LegacyBoundaryType;
+    const leftEff = effectiveLegacyBoundaryType(runLeftT, segment.variables, "left");
+    const rightEff = effectiveLegacyBoundaryType(runRightT, segment.variables, "right");
+    const leftCornerDeg = cornerDegreesFromVars(segment.variables, "left");
+    const rightCornerDeg = cornerDegreesFromVars(segment.variables, "right");
+    const sideFramePieces =
+      (leftEff === "product_post" ? 1 : 0) +
+      (rightEff === "product_post" ? 1 : 0);
+    const sideFramesPerStock = Math.max(1, Math.floor(5800 / slatCutMm));
+    const sideFrameStocks = Math.ceil(sideFramePieces / sideFramesPerStock);
+    const screwPacks = Math.ceil(
+      (Math.ceil((numVerticalSlats * numPanels * 1.01) / 10) * 10) / 50,
+    );
+
+    computed[run.runId] = computed[run.runId] ?? {};
+    computed[run.runId][segment.segmentId] = {
+      num_vertical_slats: numVerticalSlats,
+      num_panels: numPanels,
+      panel_width_mm: Math.round(panelWidthMm),
+      slat_cut_mm: Math.round(slatCutMm),
+      rail_cut_mm: Math.round(railCutMm),
+      left_corner_degrees: leftCornerDeg,
+      right_corner_degrees: rightCornerDeg,
+    };
+
+    const base = { runId: run.runId, segmentId: segment.segmentId };
+    emit(lines, {
+      ...base,
+      sku: slatSkuFor(finishFamily, economySlats, slatSize, colour),
+      category: "slat",
+      quantity: slatStocks,
+      unit: "length",
+      notes: `${numVerticalSlats} vertical slats/panel, ${Math.round(slatCutMm)}mm cuts from ${slatStockLengthMm}mm stock`,
+    });
+    emit(lines, {
+      ...base,
+      sku: verticalRailSkuFor(colour),
+      category: "rail",
+      quantity: railStocks,
+      unit: "length",
+      notes: `Top/bottom U-channel rails, ${Math.round(railCutMm)}mm cuts from 5000mm stock`,
+    });
+    emit(lines, {
+      ...base,
+      sku: quickscreenSkuFor(finishFamily, "F", colour),
+      category: "f_section",
+      quantity: edgeFrameStocks,
+      unit: "length",
+      notes: `${edgeFramePieces} vertical edge frames at ${Math.round(slatCutMm)}mm`,
+    });
+    emit(lines, {
+      ...base,
+      sku: quickscreenSkuFor(finishFamily, "SF", colour),
+      category: "side_frame",
+      quantity: sideFrameStocks,
+      unit: "length",
+      notes: `${sideFramePieces} side frame pieces for product-post panel ends`,
+    });
+    emit(lines, {
+      ...base,
+      sku: quickscreenSkuFor(finishFamily, "CFC", colour),
+      category: "cfc_cover",
+      quantity: sideFrameStocks,
+      unit: "length",
+      notes: "Auto-added 1:1 with side frame stock",
+    });
+    emit(lines, {
+      ...base,
+      sku: "QS-SFC-B",
+      category: "accessory",
+      quantity: sideFramePieces * 2,
+      unit: "each",
+      notes: "Side frame caps",
+    });
+    emit(lines, {
+      ...base,
+      sku: "QS-SCREWS-50PK",
+      category: "screw",
+      quantity: screwPacks,
+      unit: "pack",
+      notes: "Vertical slat fixing screws",
+    });
+
+    if (panelWidthMm > 2600) {
+      warnings.push(
+        `VS panel width ${Math.round(panelWidthMm)}mm exceeds recommended 2600mm; split into more panels.`,
+      );
+    }
+  }
+
+  const postCount = runPostBoundaryCount(run) + internalPanelPosts;
+  const firstFenceSegment = run.segments.find((s) => s.segmentKind !== "gate_opening");
+  const postHeight = toNumber(
+    firstFenceSegment?.targetHeightMm ?? mergedRunVars.target_height_mm,
+    1800,
+  );
+
+  emitPostLines(
+    lines,
+    run,
+    firstFenceSegment?.segmentId ?? run.runId,
+    postCount,
+    finishFamily,
+    postSize,
+    postHeight,
+    postColour,
+    mountingType,
+  );
+
+  return lines;
+}
+
 function calculateScreenRun(
   payload: CanonicalPayload,
   run: CanonicalRun,
@@ -241,9 +496,13 @@ function calculateScreenRun(
   const isBayg = run.productCode === "BAYG";
   let internalPanelPosts = 0;
 
+  if (run.productCode === "VS") {
+    return calculateVerticalSlatRun(payload, run, warnings, computed);
+  }
+
   if (!SUPPORTED_PRODUCTS.has(run.productCode)) {
     warnings.push(
-      `${run.productCode} is available in product search but the local fallback BOM engine currently calculates QSHS and BAYG only.`,
+      `${run.productCode} is available in product search but the local fallback BOM engine currently calculates QSHS, BAYG, and VS only.`,
     );
     return lines;
   }
@@ -448,62 +707,18 @@ function calculateScreenRun(
     firstFenceSegment?.targetHeightMm ?? mergedRunVars.target_height_mm,
     1800,
   );
-  const postSku = postSkuFor(finishFamily, postSize, postHeight, postColour);
 
-  if (postCount > 0) {
-    const segmentId = firstFenceSegment?.segmentId ?? run.runId;
-    emit(lines, {
-      runId: run.runId,
-      segmentId,
-      sku: postSku,
-      category: "post",
-      quantity: postCount,
-      unit: "each",
-      notes: `${postSize}mm posts from run boundaries/corners and internal panel joins`,
-    });
-    if (postHeight > 2400) {
-      emit(lines, {
-        runId: run.runId,
-        segmentId,
-        sku: postAccessorySkuFor(finishFamily, "top_plate", postSize, postColour),
-        category: "post_accessory",
-        quantity: postCount,
-        unit: "each",
-        notes: "Top plates for long posts",
-      });
-    }
-    if (mountingType === "base_plate") {
-      emit(lines, {
-        runId: run.runId,
-        segmentId,
-        sku: postAccessorySkuFor(finishFamily, "base_plate", postSize, postColour),
-        category: "post_accessory",
-        quantity: postCount,
-        unit: "each",
-        notes: "Base plate sets",
-      });
-      emit(lines, {
-        runId: run.runId,
-        segmentId,
-        sku: postAccessorySkuFor(finishFamily, "domical_cover", postSize, postColour),
-        category: "post_accessory",
-        quantity: postCount,
-        unit: "each",
-        notes: "Domical covers",
-      });
-    }
-    if (mountingType === "core_drill") {
-      emit(lines, {
-        runId: run.runId,
-        segmentId,
-        sku: postAccessorySkuFor(finishFamily, "dress_ring", postSize, postColour),
-        category: "post_accessory",
-        quantity: postCount,
-        unit: "each",
-        notes: "Dress rings",
-      });
-    }
-  }
+  emitPostLines(
+    lines,
+    run,
+    firstFenceSegment?.segmentId ?? run.runId,
+    postCount,
+    finishFamily,
+    postSize,
+    postHeight,
+    postColour,
+    mountingType,
+  );
 
   return lines;
 }
