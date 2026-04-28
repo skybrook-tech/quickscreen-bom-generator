@@ -24,6 +24,7 @@
               "productCode": "QSHS",
               "segmentWidthMm": 10000,
               "targetHeightMm": 1800,
+              "postSize": "50",
               "leftTermination": {
                 "kind": "system"
               },
@@ -39,61 +40,26 @@
   "expect": {
     "errors": [],
     "lines": [
-      {
-        "sku": "QS-SFC-B",
-        "qty": 4,
-        "category": "accessory"
-      },
-      {
-        "sku": "XP-CSRC-B",
-        "qty": 4,
-        "category": "accessory"
-      },
-      {
-        "sku": "XP-BTP-B",
-        "qty": 8,
-        "category": "accessory"
-      },
-      {
-        "sku": "QS-SPACER-05MM-50PK",
-        "qty": 5,
-        "category": "accessory"
-      },
-      {
-        "sku": "XP-5800-CSR-B",
-        "qty": 2,
-        "category": "centre_support_rail"
-      },
-      {
-        "sku": "QS-SCREWS-50PK",
-        "qty": 5,
-        "category": "fixing"
-      },
-      {
-        "sku": "XP-2400-FP-B",
-        "qty": 5,
-        "category": "post"
-      },
-      {
-        "sku": "QS-5800-SF-B",
-        "qty": 2,
-        "category": "side_frame"
-      },
-      {
-        "sku": "XP-6100-S65-B",
-        "qty": 52,
-        "category": "slat"
-      },
-      {
-        "sku": "QS-5800-CFC-B",
-        "qty": 2,
-        "category": "cfc_cover"
-      }
+      { "sku": "QS-5800-CFC-B", "qty": 3, "category": "cfc_cover" },
+      { "sku": "QS-5800-SF-B", "qty": 3, "category": "side_frame" },
+      { "sku": "QS-SPACER-05MM-50PK", "qty": 4, "category": "accessory" },
+      { "sku": "QS-SCREWS-50PK", "qty": 5, "category": "fixing" },
+      { "sku": "QS-SFCAP-B-2PK", "qty": 4, "category": "accessory" },
+      { "sku": "XP-6100-S65-B", "qty": 52, "category": "slat" },
+      { "sku": "QS-5800-F-B", "qty": 3, "category": "side_frame" },
+
+      { "sku": "XP-2400-FP-B", "qty": 5, "category": "post" },
+      { "sku": "XP-TP-B", "qty": 4, "category": "accessory" },
+
+      { "sku": "XP-CSRC-B", "qty": 4, "category": "accessory" },
+      { "sku": "XP-BTP-B", "qty": 8, "category": "accessory" },
+      { "sku": "XP-5800-CSR-B", "qty": 2, "category": "centre_support_rail" }
     ],
     "totals": {
       "grandTotal": {
         "gte": 2087
-      }
+      },
+      "slats_per_panel": 26
     }
   }
 }

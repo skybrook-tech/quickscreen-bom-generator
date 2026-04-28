@@ -1,0 +1,69 @@
+{
+  "id": "TC-V3-1",
+  "description": "QSHS 10m straight run, 1800mm target, black-satin, post both ends, base-plate. 4 panels @ 2500mm, 5 posts.",
+  "input": {
+    "pricingTier": "tier1",
+    "payload": {
+      "productCode": "QSHS",
+      "schemaVersion": "v2",
+      "variables": {
+        "colour_code": "black-satin",
+        "slat_size_mm": 65,
+        "slat_gap_mm": 5,
+        "mounting_type": "base_plate",
+        "max_panel_width_mm": 2600
+      },
+      "runs": [
+        {
+          "runId": "run-001",
+          "segments": [
+            {
+              "segmentId": "seg-001",
+              "sortOrder": 0,
+              "kind": "fence",
+              "productCode": "QSHS",
+              "segmentWidthMm": 10000,
+              "targetHeightMm": 1800,
+              "postSize": "50",
+              "leftTermination": {
+                "kind": "system"
+              },
+              "rightTermination": {
+                "kind": "system"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "expect": {
+    "errors": [],
+    "lines": [
+      { "sku": "QS-5800-CFC-B", "qty": 3, "category": "cfc_cover" },
+      { "sku": "QS-5800-SF-B", "qty": 3, "category": "side_frame" },
+      { "sku": "QS-SPACER-05MM-50PK", "qty": 4, "category": "accessory" },
+      { "sku": "QS-SCREWS-50PK", "qty": 5, "category": "fixing" },
+      { "sku": "QS-SFCAP-B-2PK", "qty": 4, "category": "accessory" },
+      { "sku": "XP-6100-S65-B", "qty": 52, "category": "slat" },
+      { "sku": "QS-5800-F-B", "qty": 3, "category": "side_frame" },
+
+      { "sku": "XP-2400-FP-B", "qty": 5, "category": "post" },
+      { "sku": "XP-TP-B", "qty": 4, "category": "accessory" },
+
+      { "sku": "XP-CSRC-B", "qty": 4, "category": "accessory" },
+      { "sku": "XP-BTP-B", "qty": 8, "category": "accessory" },
+      { "sku": "XP-5800-CSR-B", "qty": 2, "category": "centre_support_rail" },
+
+      { "sku": "XP-BP-SET-B", "qty": 5, "category": "post_accessory" },
+      { "sku": "XP-DC-2P-B", "qty": 5, "category": "post_accessory" },
+      { "sku": "XP-DR-B", "qty": 5, "category": "post_accessory" }
+    ],
+    "totals": {
+      "grandTotal": {
+        "gte": 2087
+      },
+      "slats_per_panel": 26
+    }
+  }
+}

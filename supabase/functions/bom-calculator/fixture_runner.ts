@@ -138,7 +138,10 @@ export async function runFixtures(): Promise<void> {
     dirname(fromFileUrl(import.meta.url)),
     "../../../supabase/seeds/glass-outlet/tests",
   );
-  const fixtures = loadFixtures(fixtureDir);
+
+  const simpleFixtures = loadFixtures(join(fixtureDir, "simple"));
+
+  const fixtures = [...simpleFixtures];
 
   if (fixtures.length === 0) {
     console.warn("No *.fixture.json files found in", fixtureDir);
@@ -146,6 +149,7 @@ export async function runFixtures(): Promise<void> {
   }
 
   console.log("Running fixtures...");
+
   for (const fixture of fixtures) {
     Deno.test(`${fixture.id}: ${fixture.description}`, async () => {
       const res = await fetch(`${supabaseUrl}/functions/v1/bom-calculator`, {

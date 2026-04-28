@@ -18,8 +18,11 @@
     "seed:auth": "node supabase/seeds/seed-auth.js",
     "seed:glass-outlet": "node supabase/seeds/glass-outlet/seed-images.js",
     "seed:products": "node supabase/seeds/tools/seed-products.js",
+    "seed:products:remote": "NODE_ENV=production node supabase/seeds/tools/seed-products.js",
     "seed:dump": "node supabase/seeds/tools/dump-to-json.js",
     "db:reset": "npx supabase@latest db reset && npm run seed:products && npm run seed:auth",
+    "db:push-remote": "npx supabase@latest db push",
+    "db:seed-remote": "npm run db:push-remote && npm run seed:products:remote",
     "setup": "npx supabase@latest start && npm run db:reset"
   },
   "devDependencies": {
