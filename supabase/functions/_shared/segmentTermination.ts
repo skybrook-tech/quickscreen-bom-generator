@@ -22,12 +22,13 @@ export function patchSegmentVariables(
  * fence segment, keyed by segmentId.
  *
  * Rules:
- *  - `system` end   → this segment owns the end post (+1)
- *  - `non_system`   → no BOM post on that side (wall or external post)
+ *  - `system` end       → this segment owns the end post (+1)
+ *  - `non_system`       → no BOM post on that side (wall or external post)
  *  - `segment_join` on the RIGHT → this segment owns the junction post, UNLESS
  *    the next segment is a gate (gate has its own posts)
  *  - `segment_join` on the LEFT  → the post at the junction was already counted
  *    by the previous segment (or belongs to a gate) → 0
+ *  - `system_corner`    → same ownership rules as segment_join
  *
  * Gate segments are skipped; they manage their own post counts via product rules.
  */
@@ -43,7 +44,6 @@ export function walkRunForPosts(
     if (seg.kind !== "fence") continue;
 
     const numPanels = numPanelsBySegmentId.get(seg.segmentId) ?? 1;
-    const prev = segs[i - 1];
     const next = segs[i + 1];
 
     let posts = numPanels - 1;
@@ -52,15 +52,15 @@ export function walkRunForPosts(
     const lt = seg.leftTermination;
     if (lt.kind === "system") {
       posts += 1;
-    } else if (lt.kind === "segment_join") {
-      posts += 0;
+    } else if (lt.kind === "segment_join" || lt.kind === "system_corner") {
+      posts += 0; // post ownership is on the right segment at any junction
     }
 
     // ── Right end ─────────────────────────────────────────────────────────
     const rt = seg.rightTermination;
     if (rt.kind === "system") {
       posts += 1;
-    } else if (rt.kind === "segment_join") {
+    } else if (rt.kind === "segment_join" || rt.kind === "system_corner") {
       if (next && next.kind === "gate") {
         posts += 0;
       } else {

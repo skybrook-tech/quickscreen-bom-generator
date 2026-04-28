@@ -25,7 +25,7 @@
               "segmentWidthMm": 6000,
               "targetHeightMm": 1800,
               "leftTermination": { "kind": "system" },
-              "rightTermination": { "kind": "segment_join", "angleDeg": 90 }
+              "rightTermination": { "kind": "system_corner", "angleDeg": 90 }
             },
             {
               "segmentId": "seg-002",
@@ -34,7 +34,7 @@
               "productCode": "QSHS",
               "segmentWidthMm": 6000,
               "targetHeightMm": 1800,
-              "leftTermination": { "kind": "segment_join", "angleDeg": 90 },
+              "leftTermination": { "kind": "system_corner", "angleDeg": 90 },
               "rightTermination": { "kind": "non_system", "subtype": "other" }
             }
           ]
@@ -99,7 +99,11 @@
       { "sku": "QS-5800-CFC-B", "qty": { "gte": 1 }, "category": "cfc_cover" },
       { "sku": "QS-5800-F-B", "qty": { "gte": 1 }, "category": "f_section" },
       { "sku": "XP-6100-S65-B", "qty": { "gte": 1 }, "category": "slat" },
-      { "sku": "QS-SPACER-05MM-50PK", "qty": { "gte": 1 }, "category": "accessory" },
+      {
+        "sku": "QS-SPACER-05MM-50PK",
+        "qty": { "gte": 1 },
+        "category": "accessory"
+      },
       { "sku": "QS-SCREWS-50PK", "qty": { "gte": 1 }, "category": "fixing" }
     ],
     "totals": {

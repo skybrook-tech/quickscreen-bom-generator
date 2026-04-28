@@ -4793,9 +4793,33 @@
       "priority": 91,
       "active": true,
       "notes": "Screw packs (50 per pack); single SKU, no colour variant"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_corner_adapter_135",
+      "expression": "abs(left_angle_deg - 135) < 10 ? 1 : 0",
+      "output_key": "qty_corner_adapter_135",
+      "priority": 95,
+      "active": true,
+      "notes": "One 135° adapter (XP-6000-135) per segment with a 135° system_corner left termination"
     }
   ],
   "product_component_selectors": [
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_corner_adapter_135",
+      "component_category": "corner_adapter",
+      "selector_type": "exact",
+      "match_json": {},
+      "sku_pattern": "XP-6000-135-{colour}",
+      "priority": 100,
+      "notes": "135° corner adapter; one per segment with a 135° system_corner left termination",
+      "active": true,
+      "qty_key": "qty_corner_adapter_135"
+    },
     {
       "product_system_type": "QSHS",
       "selector_key": "qshs_slat_65",

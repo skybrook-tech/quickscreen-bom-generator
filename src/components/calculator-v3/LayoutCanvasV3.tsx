@@ -10,6 +10,7 @@ import {
 import { calcRunStats } from "../../lib/runStats";
 import type { CanvasLayout } from "../canvas/canvasEngine";
 import type { initCanvasEngine } from "../canvas/canvasEngine";
+import type { SegmentTermination } from "../../types/canonical.types";
 
 export function LayoutCanvasV3() {
   const { state, dispatch } = useCalculator();
@@ -90,25 +91,37 @@ export function LayoutCanvasV3() {
   }
 
   // Form → canvas: when payload changes from a form action, reload canvas geometry.
-  // Only fires when the run/segment STRUCTURE changes, not on variable edits.
+  // Only fires when run/segment structure, widths, or corner angles change —
+  // variable-only changes (colour, post size, etc.) are intentionally ignored.
   useEffect(() => {
     if (!engineRef.current || !payload) return;
+
+    const buildKey = () =>
+      payload.runs
+        .map((r) =>
+          r.segments
+            .map((s) => {
+              const lt = s.leftTermination.kind === "system_corner"
+                ? String(s.leftTermination.angleDeg)
+                : s.leftTermination.kind;
+              const rt = s.rightTermination.kind === "system_corner"
+                ? String(s.rightTermination.angleDeg)
+                : s.rightTermination.kind;
+              return `${s.segmentId}:${s.segmentWidthMm ?? 0}:${lt}:${rt}`;
+            })
+            .join(","),
+        )
+        .join("|");
+
     if (sourceRef.current === "canvas") {
       // This change was triggered by the canvas — don't push back.
-      // Update prevGeomKeyRef so the next variable-only form change doesn't
-      // falsely see a key mismatch and call loadLayout.
+      // Sync prevGeomKeyRef so the next form change doesn't falsely trigger loadLayout.
       sourceRef.current = "form";
-      prevGeomKeyRef.current = payload.runs
-        .map((r) => r.segments.map((s) => s.segmentId).join(","))
-        .join("|");
+      prevGeomKeyRef.current = buildKey();
       return;
     }
-    // Compute a fingerprint of just the segment IDs. If only variables changed
-    // (max_panel_width_mm, colour, post_size, etc.) the fingerprint is the same
-    // and we skip the loadLayout call, preserving the user's drawn layout.
-    const key = payload.runs
-      .map((r) => r.segments.map((s) => s.segmentId).join(","))
-      .join("|");
+
+    const key = buildKey();
     if (key === prevGeomKeyRef.current) return;
     prevGeomKeyRef.current = key;
     try {

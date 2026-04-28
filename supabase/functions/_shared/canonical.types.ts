@@ -19,7 +19,8 @@ export interface CanonicalRun {
 export type SegmentTermination =
   | { kind: "system" }
   | { kind: "non_system"; subtype: "wall" | "post" | "other" }
-  | { kind: "segment_join"; angleDeg: number };
+  | { kind: "segment_join" }
+  | { kind: "system_corner"; angleDeg: number };
 
 export type SegmentKind = "fence" | "gate";
 

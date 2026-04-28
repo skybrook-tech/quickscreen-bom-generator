@@ -24,6 +24,7 @@ import type {
   CanonicalPayload,
   CanonicalRun,
   CanonicalSegment,
+  SegmentTermination,
 } from "../_shared/canonical.types.ts";
 import { walkRunForPosts } from "../_shared/segmentTermination.ts";
 import type { BOMUnit, PricingRule, PricingTier } from "../_shared/types.ts";
@@ -334,6 +335,19 @@ Deno.serve(async (req: Request) => {
     }
 
     for (const run of payload.runs as CanonicalRun[]) {
+      // Backward-compat shim: upgrade old segment_join{angleDeg>5} to system_corner.
+      // Old saved quotes stored the turn angle in segment_join; we convert to a positive
+      // (right-turn) interior angle. Remove once all production quotes have been re-saved.
+      for (const seg of run.segments) {
+        const lt = seg.leftTermination as SegmentTermination & { angleDeg?: number };
+        if (lt.kind === "segment_join" && typeof lt.angleDeg === "number" && lt.angleDeg > 5) {
+          seg.leftTermination = { kind: "system_corner", angleDeg: 180 - lt.angleDeg };
+        }
+        const rt = seg.rightTermination as SegmentTermination & { angleDeg?: number };
+        if (rt.kind === "segment_join" && typeof rt.angleDeg === "number" && rt.angleDeg > 5) {
+          seg.rightTermination = { kind: "system_corner", angleDeg: 180 - rt.angleDeg };
+        }
+      }
       // Determine the "primary" fence product for this run (from payload top-level)
       const fenceEngineData = engineDataMap.get(payload.productCode);
       if (!fenceEngineData) continue;
@@ -413,7 +427,7 @@ Deno.serve(async (req: Request) => {
         );
       }
 
-      // Count corners: fence segment joins with angleDeg > 5°
+      // Count corners: fence segments with system_corner left termination
       const sortedSegs = [...run.segments].sort(
         (a, b) => a.sortOrder - b.sortOrder,
       );
@@ -421,8 +435,7 @@ Deno.serve(async (req: Request) => {
       for (const seg of sortedSegs) {
         if (
           seg.kind === "fence" &&
-          seg.leftTermination.kind === "segment_join" &&
-          seg.leftTermination.angleDeg > 5
+          seg.leftTermination.kind === "system_corner"
         ) {
           runCornerCount++;
         }
@@ -461,12 +474,13 @@ Deno.serve(async (req: Request) => {
         const rightIsNonSystem = rt.kind === "non_system" ? 1 : 0;
         const leftIsJoin = lt.kind === "segment_join" ? 1 : 0;
         const rightIsJoin = rt.kind === "segment_join" ? 1 : 0;
-        const leftAngleDeg = lt.kind === "segment_join" ? lt.angleDeg : 0;
-        const rightAngleDeg = rt.kind === "segment_join" ? rt.angleDeg : 0;
-        const leftIsCorner =
-          lt.kind === "segment_join" && lt.angleDeg > 5 ? 1 : 0;
-        const rightIsCorner =
-          rt.kind === "segment_join" && rt.angleDeg > 5 ? 1 : 0;
+        // Unsigned magnitude for rule evaluation; signed values available for future inside/outside rules
+        const leftAngleDeg = lt.kind === "system_corner" ? Math.abs(lt.angleDeg) : 0;
+        const rightAngleDeg = rt.kind === "system_corner" ? Math.abs(rt.angleDeg) : 0;
+        const leftIsCorner = lt.kind === "system_corner" ? 1 : 0;
+        const rightIsCorner = rt.kind === "system_corner" ? 1 : 0;
+        const leftAngleDegSigned = lt.kind === "system_corner" ? lt.angleDeg : 0;
+        const rightAngleDegSigned = rt.kind === "system_corner" ? rt.angleDeg : 0;
         const systemTerminationCount = leftIsSystem + rightIsSystem;
         const nonSystemTerminationCount = leftIsNonSystem + rightIsNonSystem;
         const nonSystemWallCount = leftIsWall + rightIsWall;
@@ -543,6 +557,8 @@ Deno.serve(async (req: Request) => {
                 right_is_corner: rightIsCorner,
                 left_angle_deg: leftAngleDeg,
                 right_angle_deg: rightAngleDeg,
+                left_angle_deg_signed: leftAngleDegSigned,
+                right_angle_deg_signed: rightAngleDegSigned,
                 system_termination_count: systemTerminationCount,
                 non_system_termination_count: nonSystemTerminationCount,
                 non_system_wall_count: nonSystemWallCount,

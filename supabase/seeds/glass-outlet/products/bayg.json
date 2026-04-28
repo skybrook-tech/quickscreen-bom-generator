@@ -1334,9 +1334,33 @@
       "priority": 220,
       "active": true,
       "notes": "Dress ring for 65mm HD core-drill install; 1 per post"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_corner_adapter_135",
+      "expression": "abs(left_angle_deg - 135) < 10 ? 1 : 0",
+      "output_key": "qty_corner_adapter_135",
+      "priority": 95,
+      "active": true,
+      "notes": "One 135° screen adapter per segment with a 135° system_corner left termination"
     }
   ],
   "product_component_selectors": [
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_corner_adapter_135",
+      "component_category": "corner_adapter",
+      "selector_type": "exact",
+      "match_json": {},
+      "sku_pattern": "AW-5800-135-{finish}",
+      "priority": 100,
+      "notes": "135° Alumawood corner adapter; finish resolved at runtime (KWI or WRC)",
+      "active": true,
+      "qty_key": "qty_corner_adapter_135"
+    },
     {
       "product_system_type": "BAYG",
       "selector_key": "bayg_slat_65",

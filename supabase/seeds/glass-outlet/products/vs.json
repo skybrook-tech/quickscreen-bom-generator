@@ -696,6 +696,18 @@
       "priority": 5,
       "active": true,
       "notes": "65mm HD post 6000mm (cut to size) for screens over 2400mm — not available in P/PB"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_corner_adapter_135",
+      "expression": "abs(left_angle_deg - 135) < 10 ? 1 : 0",
+      "output_key": "qty_corner_adapter_135",
+      "priority": 95,
+      "active": true,
+      "notes": "One 135° adapter per segment with a 135° system_corner left termination (no SKU yet — selector pending stock confirmation)"
     }
   ],
   "product_component_selectors": [

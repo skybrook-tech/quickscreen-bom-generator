@@ -31,13 +31,10 @@ export function calcRunStats(
     totalPanels += p;
   }
 
-  // Corners: fence segment left joins with angleDeg > 5° threshold
+  // Corners: fence segments with system_corner left termination
   let corners = 0;
   for (const seg of fenceSegs) {
-    if (
-      seg.leftTermination.kind === "segment_join" &&
-      seg.leftTermination.angleDeg > 5
-    ) {
+    if (seg.leftTermination.kind === "system_corner") {
       corners++;
     }
   }
@@ -55,13 +52,13 @@ export function calcRunStats(
 
     const lt = seg.leftTermination;
     if (lt.kind === "system") posts += 1;
-    // segment_join left → previous segment already counted the junction post
+    // segment_join / system_corner left → previous segment already counted the junction post
     // non_system → no post
 
     const rt = seg.rightTermination;
     if (rt.kind === "system") {
       posts += 1;
-    } else if (rt.kind === "segment_join") {
+    } else if (rt.kind === "segment_join" || rt.kind === "system_corner") {
       // This segment owns the junction post unless next is a gate
       if (!(next && next.kind === "gate")) posts += 1;
     }

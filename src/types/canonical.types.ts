@@ -35,16 +35,19 @@ export interface CanonicalRun {
 /**
  * A segment termination describes what is on one end of a fence/gate segment.
  *
- * - `system`       — a product post (matching the fencing system, e.g. a QSHS post)
- * - `non_system`   — something outside the BOM scope: a brick wall, an existing post, etc.
- * - `segment_join` — the boundary between this segment and the adjacent one in the same run.
- *                    `angleDeg` is the interior angle in degrees (0 = straight continuation).
- *                    Adjacent segments MUST carry matching angleDeg on their shared boundary.
+ * - `system`        — a product post (matching the fencing system, e.g. a QSHS post)
+ * - `non_system`    — something outside the BOM scope: a brick wall, an existing post, etc.
+ * - `segment_join`  — straight-through boundary between adjacent segments; no corner fitting.
+ * - `system_corner` — structural corner fitting required. `angleDeg` is the SIGNED interior
+ *                     angle in degrees: positive = CW (right turn), negative = CCW (left turn).
+ *                     Magnitude must be in [1, 179]. Examples: +90, -90, +135, -135.
+ *                     Adjacent segments MUST carry matching angleDeg on their shared boundary.
  */
 export type SegmentTermination =
   | { kind: "system" }
   | { kind: "non_system"; subtype: "wall" | "post" | "other" }
-  | { kind: "segment_join"; angleDeg: number };
+  | { kind: "segment_join" }
+  | { kind: "system_corner"; angleDeg: number };
 
 // ─── Segment ────────────────────────────────────────────────────────────────
 

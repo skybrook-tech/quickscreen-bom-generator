@@ -13,8 +13,10 @@
 //
 // TERMINATION MODEL
 // -----------------
-// Adjacent canonical segments share a `segment_join` termination. The angleDeg
-// reflects the turn angle between consecutive canvas segments (0 = straight).
+// Adjacent canonical segments share either a `segment_join` (straight-through) or
+// a `system_corner` (structural corner fitting) termination. The `system_corner`
+// carries a SIGNED interior angle: positive = CW/right turn, negative = CCW/left turn
+// in Y-down canvas coordinates. Magnitude is in [1, 179].
 // The run's external ends default to `{ kind: "system" }` (product post) which
 // the user can override in the Run list form.
 //
@@ -59,10 +61,24 @@ function normaliseAngle(deg: number): number {
   return ((deg % 360) + 360) % 360;
 }
 
-/** Unsigned angle difference between two bearing angles, clamped to [0, 180]. */
-function angleDelta(a: number, b: number): number {
-  const diff = Math.abs(normaliseAngle(a) - normaliseAngle(b));
-  return diff > 180 ? 360 - diff : diff;
+/**
+ * Signed bearing change from bearing `a` to bearing `b`.
+ * Positive = CW (right turn), negative = CCW (left turn). Range (-180, 180].
+ */
+function signedAngleDelta(a: number, b: number): number {
+  let diff = normaliseAngle(b) - normaliseAngle(a);
+  if (diff > 180) diff -= 360;
+  if (diff <= -180) diff += 360;
+  return diff;
+}
+
+/**
+ * Convert a signed bearing-change (turn angle) to a signed interior angle.
+ * Positive turn → positive interior; negative turn → negative interior.
+ * e.g. signedTurn=+90 → +90 interior, signedTurn=-45 → -135 interior.
+ */
+function turnToInterior(signedTurn: number): number {
+  return Math.sign(signedTurn) * (180 - Math.abs(signedTurn));
 }
 
 // ---------------------------------------------------------------------------
@@ -219,7 +235,7 @@ export function canvasLayoutToCanonical(
     }
 
     // Build "spans": each canvas segment becomes a span of 1+ proto-segments.
-    // We also record the angleDelta to the NEXT canvas segment.
+    // We also record the signed angleDelta to the NEXT canvas segment.
     const spans: { protos: ProtoSegment[]; angleToNext?: number }[] = [];
     let sortOrder = 0;
 
@@ -227,7 +243,7 @@ export function canvasLayoutToCanonical(
       const canvasSeg = slice.segments[si];
       const nextCanvasSeg = slice.segments[si + 1];
       const angleToNext = nextCanvasSeg
-        ? angleDelta(canvasSeg.angleDeg, nextCanvasSeg.angleDeg)
+        ? signedAngleDelta(canvasSeg.angleDeg, nextCanvasSeg.angleDeg)
         : undefined;
 
       const flatIdx = slice.flatStart + si;
@@ -266,12 +282,20 @@ export function canvasLayoutToCanonical(
     // Rules:
     //   • First segment of run: leftTermination = system
     //   • Last segment of run: rightTermination = system
-    //   • First segment of span N>0: leftTermination = segment_join(angleDelta from prev span)
-    //   • Last segment of span 0..N-1: rightTermination = segment_join(angleDelta to next span)
-    //   • All other junctions (within a span): segment_join(0)
+    //   • First segment of span N>0: if |signedTurn| > threshold → system_corner(signed interior)
+    //                                else → segment_join
+    //   • Last segment of span 0..N-1: same logic for next span's turn angle
+    //   • All other junctions (within a span, e.g. gate splits): segment_join
     const canonSegments: CanonicalSegment[] = [];
     const totalProtos = spans.reduce((s, sp) => s + sp.protos.length, 0);
     let globalIdx = 0;
+
+    function turnToTermination(signedTurn: number | undefined): SegmentTermination {
+      if (signedTurn !== undefined && Math.abs(signedTurn) > CORNER_ANGLE_THRESHOLD_DEG) {
+        return { kind: "system_corner", angleDeg: Math.round(turnToInterior(signedTurn)) };
+      }
+      return { kind: "segment_join" };
+    }
 
     for (let si = 0; si < spans.length; si++) {
       const { protos, angleToNext } = spans[si];
@@ -286,14 +310,14 @@ export function canvasLayoutToCanonical(
         const leftTermination: SegmentTermination = isFirstOfRun
           ? { kind: "system" }
           : isFirstOfSpan
-            ? { kind: "segment_join", angleDeg: prevAngle ?? 0 }
-            : { kind: "segment_join", angleDeg: 0 };
+            ? turnToTermination(prevAngle)
+            : { kind: "segment_join" };
 
         const rightTermination: SegmentTermination = isLastOfRun
           ? { kind: "system" }
           : isLastOfSpan
-            ? { kind: "segment_join", angleDeg: angleToNext ?? 0 }
-            : { kind: "segment_join", angleDeg: 0 };
+            ? turnToTermination(angleToNext)
+            : { kind: "segment_join" };
 
         canonSegments.push({ ...protos[ji], leftTermination, rightTermination });
         globalIdx++;
@@ -364,17 +388,25 @@ export function mergeCanonicalPreservingSegmentMeta(
             variables: { ...(ps.variables ?? {}), ...(gs.variables ?? {}) },
             targetHeightMm: gs.targetHeightMm ?? ps.targetHeightMm,
             // Preserve termination overrides from the form ONLY if the user has
-            // explicitly set them (i.e. prev had a non-system termination).
+            // explicitly set them. Rules:
+            // - non_system: always preserve (user explicitly set wall/post).
+            // - system_corner: preserve if canvas also produces a system_corner at
+            //   that boundary (user may have adjusted angle/direction in the form).
+            // - segment_join / system: use canvas value (canvas geometry wins).
             leftTermination:
-              ps.leftTermination.kind !== "system" &&
-              ps.leftTermination.kind !== "segment_join"
+              ps.leftTermination.kind === "non_system"
                 ? ps.leftTermination
-                : gs.leftTermination,
+                : ps.leftTermination.kind === "system_corner" &&
+                    gs.leftTermination.kind === "system_corner"
+                  ? ps.leftTermination
+                  : gs.leftTermination,
             rightTermination:
-              ps.rightTermination.kind !== "system" &&
-              ps.rightTermination.kind !== "segment_join"
+              ps.rightTermination.kind === "non_system"
                 ? ps.rightTermination
-                : gs.rightTermination,
+                : ps.rightTermination.kind === "system_corner" &&
+                    gs.rightTermination.kind === "system_corner"
+                  ? ps.rightTermination
+                  : gs.rightTermination,
           };
         }),
       };
@@ -385,6 +417,15 @@ export function mergeCanonicalPreservingSegmentMeta(
 // ---------------------------------------------------------------------------
 // canonicalToCanvasLayout
 // ---------------------------------------------------------------------------
+
+/** Euclidean distance between two points. */
+function ptDist(
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+): number {
+  return Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2);
+}
+
 export function canonicalToCanvasLayout(
   payload: CanonicalPayload,
 ): CanvasLayout {
@@ -417,8 +458,29 @@ export function canonicalToCanvasLayout(
       geomPts && geomPts.length === fenceSegments.length + 1
     );
 
-    let xCursor = 0;
-    let fenceSegIdx = 0;
+    // When stored geometry is available, derive anchor + scale from the first
+    // segment and recompute all subsequent pixel positions from payload widths
+    // and system_corner angles. This ensures the canvas stays in sync with form
+    // edits to segment lengths and corner angles while preserving the drawn
+    // starting position and direction.
+    let curX = 0;
+    let curY = useGeometry ? (geomPts![0]?.y ?? 0) : 0;
+    let bearingRad = 0;
+    let scale = 0.1; // px per mm fallback (1px = 10mm)
+
+    if (useGeometry && geomPts!.length >= 2) {
+      curX = geomPts![0].x;
+      curY = geomPts![0].y;
+      bearingRad = Math.atan2(
+        geomPts![1].y - geomPts![0].y,
+        geomPts![1].x - geomPts![0].x,
+      );
+      const firstMm = fenceSegments[0]?.segmentWidthMm ?? 1000;
+      const firstPx = ptDist(geomPts![0], geomPts![1]);
+      scale = firstMm > 0 ? firstPx / firstMm : 0.1;
+    }
+
+    let xCursor = 0; // used only in no-geometry fallback
     const localFlatSegments: CanvasSegment[] = [];
 
     for (let ci = 0; ci < run.segments.length; ci++) {
@@ -459,27 +521,36 @@ export function canonicalToCanvasLayout(
           if (!useGeometry) xCursor += 1;
         }
       } else {
-        // Fence segment — count corners from segment_join angleDeg
+        // Fence segment — count corners from system_corner terminations
         const leftT = canonSeg.leftTermination;
-        if (
-          leftT.kind === "segment_join" &&
-          leftT.angleDeg > CORNER_ANGLE_THRESHOLD_DEG
-        ) {
+        if (leftT.kind === "system_corner") {
           runCornerCount++;
         }
 
         const widthMm = canonSeg.segmentWidthMm ?? 1000;
         if (useGeometry) {
-          const p0 = geomPts![fenceSegIdx];
-          const p1 = geomPts![fenceSegIdx + 1];
+          // Anchor + bearing reconstruction: preserve start position and scale
+          // from the first drawn segment; recompute subsequent points from
+          // payload widths and system_corner angles.
+          const pixLen = widthMm * scale;
+          const endX = curX + Math.cos(bearingRad) * pixLen;
+          const endY = curY + Math.sin(bearingRad) * pixLen;
           localFlatSegments.push({
-            startX: p0.x,
-            startY: p0.y,
-            endX: p1.x,
-            endY: p1.y,
+            startX: curX,
+            startY: curY,
+            endX,
+            endY,
             lengthMM: widthMm,
-            angleDeg: (Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180) / Math.PI,
+            angleDeg: (bearingRad * 180) / Math.PI,
           });
+          curX = endX;
+          curY = endY;
+          // Advance bearing for the next segment from this segment's right termination
+          const rt = canonSeg.rightTermination;
+          if (rt.kind === "system_corner") {
+            const signedTurn = Math.sign(rt.angleDeg) * (180 - Math.abs(rt.angleDeg));
+            bearingRad += (signedTurn * Math.PI) / 180;
+          }
         } else {
           const widthPx = widthMm / 10;
           const endX = xCursor + widthPx;
@@ -494,7 +565,6 @@ export function canonicalToCanvasLayout(
           xCursor = endX;
         }
         runTotalMm += widthMm;
-        fenceSegIdx++;
       }
     }
 

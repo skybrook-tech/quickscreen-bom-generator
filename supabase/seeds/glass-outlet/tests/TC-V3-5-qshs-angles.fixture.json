@@ -25,7 +25,7 @@
               "segmentWidthMm": 6000,
               "targetHeightMm": 1800,
               "leftTermination": { "kind": "system" },
-              "rightTermination": { "kind": "segment_join", "angleDeg": 90 }
+              "rightTermination": { "kind": "system_corner", "angleDeg": 90 }
             },
             {
               "segmentId": "seg-002",
@@ -34,8 +34,8 @@
               "productCode": "QSHS",
               "segmentWidthMm": 6000,
               "targetHeightMm": 1800,
-              "leftTermination": { "kind": "segment_join", "angleDeg": 90 },
-              "rightTermination": { "kind": "segment_join", "angleDeg": 135 }
+              "leftTermination": { "kind": "system_corner", "angleDeg": 90 },
+              "rightTermination": { "kind": "system_corner", "angleDeg": 135 }
             },
             {
               "segmentId": "seg-003",
@@ -44,7 +44,7 @@
               "productCode": "QSHS",
               "segmentWidthMm": 6000,
               "targetHeightMm": 1800,
-              "leftTermination": { "kind": "segment_join", "angleDeg": 135 },
+              "leftTermination": { "kind": "system_corner", "angleDeg": 135 },
               "rightTermination": { "kind": "system" }
             }
           ]

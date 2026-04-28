@@ -271,6 +271,18 @@ function angleBetween(a: Point, b: Point, c: Point): number {
   return (Math.acos(cosAngle) * 180) / Math.PI;
 }
 
+/**
+ * Signed interior angle at b: positive = CW (right turn) in Y-down canvas coords,
+ * negative = CCW (left turn). Uses cross product of vectors A→B and B→C.
+ */
+function signedAngleBetween(a: Point, b: Point, c: Point): number {
+  const dx1 = b.x - a.x, dy1 = b.y - a.y; // A→B
+  const dx2 = c.x - b.x, dy2 = c.y - b.y; // B→C
+  const cross = dx1 * dy2 - dy1 * dx2;
+  const unsigned = angleBetween(a, b, c);
+  return cross >= 0 ? unsigned : -unsigned;
+}
+
 function countCorners(runs: Run[]): number {
   let count = 0;
   for (const run of runs) {
@@ -782,17 +794,17 @@ export function initCanvasEngine(
             pts[i].y - 4 / zoom,
           );
         }
-        // Corner angle annotations at intermediate nodes
+        // Corner angle annotations at intermediate nodes — signed (amber)
         for (let i = 1; i < pts.length - 1; i++) {
-          const angle = angleBetween(pts[i - 1], pts[i], pts[i + 1]);
-          if (angle > 2 && angle < 175) {
-            const angleText = `${Math.round(angle)}°`;
+          const signed = signedAngleBetween(pts[i - 1], pts[i], pts[i + 1]);
+          if (Math.abs(signed) > 2 && Math.abs(signed) < 175) {
+            const label = signed > 0 ? `+${Math.round(signed)}°` : `${Math.round(signed)}°`;
             const fs2 = Math.max(7, 9 / zoom);
             ctx.font = `${fs2}px sans-serif`;
-            ctx.fillStyle = "#a78bfa";
+            ctx.fillStyle = "#f59e0b"; // amber — distinguishes from geometry labels
             ctx.textAlign = "left";
             ctx.textBaseline = "top";
-            ctx.fillText(angleText, pts[i].x + 4 / zoom, pts[i].y + 4 / zoom);
+            ctx.fillText(label, pts[i].x + 4 / zoom, pts[i].y + 4 / zoom);
           }
         }
       }
