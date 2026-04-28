@@ -34,9 +34,7 @@ function isVisible(
   return true;
 }
 
-// Every field wraps in a 1/3-width flex item on desktop, full-width on mobile.
-// Extendable later with per-field `width` hints; intentionally simple for now.
-const FIELD_WRAPPER = "w-full md:w-[calc(33.333%-0.6667rem)]";
+const FIELD_WRAPPER = "w-full";
 
 const COLOUR_LABELS: Record<string, string> = {
   B: "Black Satin",
@@ -119,7 +117,7 @@ export function SchemaDrivenForm({
   variables,
 }: SchemaDrivenFormProps) {
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex flex-wrap gap-3">
       {fields.map((field) => {
         if (!isVisible(field.visible_when_json ?? {}, variables)) return null;
 
@@ -150,7 +148,7 @@ export function SchemaDrivenForm({
                         onClick={() =>
                           onChange(field.field_key, coerceValue(field, value))
                         }
-                        className={`inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm font-medium transition-colors ${
+                        className={`inline-flex min-h-9 items-center gap-2 rounded-full border px-3 py-2 text-xs font-medium transition-colors sm:text-sm ${
                           selected
                             ? "border-blue-800 bg-blue-800 text-white shadow-sm"
                             : "border-brand-border bg-slate-50 text-brand-text hover:border-blue-800 hover:text-blue-800"

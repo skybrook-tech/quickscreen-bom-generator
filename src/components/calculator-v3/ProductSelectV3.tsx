@@ -79,6 +79,11 @@ export function ProductSelectV3() {
 
   return (
     <div data-testid="product-select">
+      {!currentCode && (
+        <p className="mb-2 text-sm font-semibold text-red-600">
+          Select fence style
+        </p>
+      )}
       <div className="flex flex-wrap gap-2">
         {products.map((product) => {
           const selected = product.system_type === currentCode;

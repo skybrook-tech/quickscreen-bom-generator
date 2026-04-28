@@ -103,7 +103,7 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
           >
             {gate ? "Gate" : "Segment"}
           </span>
-          <label className="text-brand-muted shrink-0">Width</label>
+          <label className="text-brand-muted shrink-0">Length</label>
           <NumberInput
             value={parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
             step={0.01}

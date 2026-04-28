@@ -25,6 +25,12 @@ const CATEGORY_ORDER = [
   "screw",
 ] as const;
 
+const formatMoney = (value: number) =>
+  new Intl.NumberFormat("en-AU", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+
 function sortItems(items: BOMLineItem[]): BOMLineItem[] {
   return [...items].sort((a, b) => {
     const ai = CATEGORY_ORDER.indexOf(
@@ -175,10 +181,10 @@ function ItemGroup({
             )}
           </td>
           <td className="py-2.5 px-3 text-sm text-brand-muted text-right tabular-nums">
-            ${item.unitPrice.toFixed(2)}
+            ${formatMoney(item.unitPrice)}
           </td>
           <td className="py-2.5 px-3 text-sm text-brand-text font-medium text-right tabular-nums">
-            ${item.lineTotal.toFixed(2)}
+            ${formatMoney(item.lineTotal)}
           </td>
           {editable && (
             <td className="py-2.5 px-3 text-right">
@@ -271,13 +277,13 @@ export function BOMResultTabs({
           <div className="flex justify-between items-center text-sm">
             <span className="text-brand-muted">Subtotal (ex-GST)</span>
             <span className="tabular-nums text-brand-text">
-              ${activeTotal.toFixed(2)}
+              ${formatMoney(activeTotal)}
             </span>
           </div>
           <div className="flex justify-between items-center text-sm">
             <span className="text-brand-muted">GST (10%)</span>
             <span className="tabular-nums text-brand-text">
-              ${activeGst.toFixed(2)}
+              ${formatMoney(activeGst)}
             </span>
           </div>
         </div>
@@ -297,7 +303,7 @@ export function BOMResultTabs({
             </p>
           </div>
           <span className="text-2xl font-bold text-brand-accent tabular-nums">
-            ${activeGrandTotal.toFixed(2)}
+            ${formatMoney(activeGrandTotal)}
           </span>
         </div>
       </div>

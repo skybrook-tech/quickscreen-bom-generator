@@ -126,6 +126,7 @@ export function RunCard({ run, runIdx }: Props) {
   const stats = calcRunStats(run, jobMax);
   const panelLengths = panelLengthSummary(run, jobMax);
   const actualHeight = actualFenceHeightMm(run.productCode, runVariables);
+  const matchesRunOne = run.variables?.settings_mode === "match_run_1";
   const optionFields = useMemo(
     () =>
       applyProductOptionRules(
@@ -223,6 +224,7 @@ export function RunCard({ run, runIdx }: Props) {
         productCode,
         variables: normaliseVariablesForSystem(productCode, {
           ...initialVariablesForSystem(productCode),
+          settings_mode: "default",
           colour_code: run.variables?.colour_code ?? "B",
           post_colour_code:
             run.variables?.post_colour_code ?? run.variables?.colour_code ?? "B",
@@ -233,15 +235,31 @@ export function RunCard({ run, runIdx }: Props) {
     });
   }
 
-  function matchRunOneSettings() {
+  function toggleRunOneSettings() {
     const runOne = state.payload?.runs[0];
     if (!runOne || runOne.runId === run.runId) return;
+    if (matchesRunOne) {
+      dispatch({
+        type: "UPSERT_RUN",
+        run: {
+          ...run,
+          variables: normaliseVariablesForSystem(run.productCode, {
+            ...initialVariablesForSystem(run.productCode),
+            settings_mode: "default",
+          }),
+        },
+      });
+      return;
+    }
     dispatch({
       type: "UPSERT_RUN",
       run: {
         ...run,
         productCode: runOne.productCode,
-        variables: { ...(runOne.variables ?? {}) },
+        variables: normaliseVariablesForSystem(runOne.productCode, {
+          ...(runOne.variables ?? {}),
+          settings_mode: "match_run_1",
+        }),
         leftBoundary: runOne.leftBoundary,
         rightBoundary: runOne.rightBoundary,
       },
@@ -286,12 +304,12 @@ export function RunCard({ run, runIdx }: Props) {
         <div className="flex flex-wrap items-center justify-end gap-2">
           {runIdx > 0 && (
             <Button
-              onClick={matchRunOneSettings}
+              onClick={toggleRunOneSettings}
               icon={Copy}
-              variant="ghost"
+              variant={matchesRunOne ? "primary" : "ghost"}
               size="small"
             >
-              Match run 1
+              {matchesRunOne ? "Default settings" : "Match run 1"}
             </Button>
           )}
           <Button

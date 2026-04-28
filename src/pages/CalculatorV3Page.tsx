@@ -28,7 +28,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Papa from "papaparse";
@@ -41,8 +41,19 @@ import type {
 const roundMoney = (value: number) =>
   Math.round((value + Number.EPSILON) * 100) / 100;
 
+const formatMoney = (value: number) =>
+  new Intl.NumberFormat("en-AU", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+
 const lineKey = (line: BOMLineItem) =>
   `${line.sku}|${line.category}|${line.description}`;
+
+function initialRunPaneWidth() {
+  if (typeof window === "undefined") return 480;
+  return Math.round(Math.min(680, Math.max(390, window.innerWidth / 3)));
+}
 
 function CalculatorV3Content() {
   const { state, dispatch } = useCalculator();
@@ -54,13 +65,23 @@ function CalculatorV3Content() {
   const [lineEdits, setLineEdits] = useState<Record<string, number | null>>({});
   const [saving, setSaving] = useState(false);
   const [jobName, setJobName] = useState("");
-  const [runPaneWidth, setRunPaneWidth] = useState(560);
+  const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
+  const [mobileLayout, setMobileLayout] = useState(false);
   const [layoutOpen, setLayoutOpen] = useState(false);
   const [layoutFullscreen, setLayoutFullscreen] = useState(false);
 
+  useEffect(() => {
+    const updateLayout = () => setMobileLayout(window.innerWidth < 768);
+    updateLayout();
+    window.addEventListener("resize", updateLayout);
+    return () => window.removeEventListener("resize", updateLayout);
+  }, []);
+
   function handleResizeStart() {
     const onMove = (event: MouseEvent) => {
-      setRunPaneWidth(Math.min(820, Math.max(360, event.clientX)));
+      const maxWidth = Math.min(760, window.innerWidth * 0.58);
+      const minWidth = Math.min(390, Math.max(320, window.innerWidth - 360));
+      setRunPaneWidth(Math.round(Math.min(maxWidth, Math.max(minWidth, event.clientX))));
     };
     const onUp = () => {
       window.removeEventListener("mousemove", onMove);
@@ -393,30 +414,28 @@ function CalculatorV3Content() {
   const summaryHeight = Number(
     firstSegment?.targetHeightMm ?? payload?.variables.target_height_mm ?? 1800,
   );
-  const summaryWidth = Number(firstSegment?.segmentWidthMm ?? 0);
+  const summaryLength = Number(firstSegment?.segmentWidthMm ?? 0);
   const firstRunVariables = {
     ...(payload?.variables ?? {}),
     ...(payload?.runs[0]?.variables ?? {}),
   };
+  const cleanJobName = jobName.trim();
   const summaryText = payload
-    ? `${payload.runs[0]?.productCode ?? payload.productCode} - ${summaryHeight}H${summaryWidth ? ` x ${summaryWidth}W` : ""} - ${firstRunVariables.colour_code ?? "B"} - ${firstRunVariables.slat_size_mm ?? 65}mm / ${firstRunVariables.slat_gap_mm ?? 5}mm`
-    : "Select a system to begin";
+    ? `${payload.runs[0]?.productCode ?? payload.productCode} - ${summaryHeight}H${summaryLength ? ` x ${summaryLength}L` : ""} - ${firstRunVariables.colour_code ?? "B"} - ${firstRunVariables.slat_size_mm ?? 65}mm / ${firstRunVariables.slat_gap_mm ?? 5}mm`
+    : cleanJobName;
   const saveJobLabel = jobName.trim() ? `Save ${jobName.trim()}` : "Save Job";
 
   return (
     <AppShell>
       <div
-        className="relative flex h-full min-h-0 overflow-hidden bg-slate-100"
-        style={{
-          gridTemplateColumns: `${runPaneWidth}px 1fr`,
-        }}
+        className="relative flex h-full min-h-0 flex-col overflow-hidden bg-slate-100 md:flex-row"
       >
         <aside
-          className="relative flex min-h-0 shrink-0 overflow-hidden border-r border-brand-border bg-white"
-          style={{ width: runPaneWidth }}
+          className="relative flex min-h-[46vh] w-full overflow-hidden border-b border-brand-border bg-white md:min-h-0 md:shrink-0 md:border-b-0 md:border-r"
+          style={mobileLayout ? undefined : { width: runPaneWidth }}
         >
           <div className="flex min-h-0 flex-1 flex-col">
-            <div className="flex-1 space-y-5 overflow-y-auto p-5">
+            <div className="flex-1 space-y-4 overflow-y-auto p-3 sm:p-5">
             <section>
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.08em] text-brand-muted">
                 Job Name
@@ -487,7 +506,7 @@ function CalculatorV3Content() {
               </>
             )}
             </div>
-            <div className="border-t border-brand-border bg-white p-5">
+            <div className="border-t border-brand-border bg-white p-3 sm:p-5">
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
@@ -521,21 +540,21 @@ function CalculatorV3Content() {
           type="button"
           aria-label="Resize panels"
           onMouseDown={handleResizeStart}
-          className="w-1.5 shrink-0 cursor-col-resize bg-slate-200 transition-colors hover:bg-blue-800/40"
+          className="hidden w-1.5 shrink-0 cursor-col-resize bg-slate-200 transition-colors hover:bg-blue-800/40 md:block"
         />
 
-        <main className="min-h-0 min-w-0 flex-1 overflow-y-auto p-5 lg:p-8">
-          <div className="mx-auto max-w-6xl space-y-5">
-            <section className="rounded-xl bg-white p-5 shadow-sm">
-              <div className="mb-4 flex flex-wrap items-start justify-between gap-4 rounded-lg bg-blue-800 p-5 text-white">
+        <main className="min-h-0 min-w-0 flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8">
+          <div className="mx-auto max-w-6xl space-y-4 sm:space-y-5">
+            <section className="rounded-xl bg-white p-3 shadow-sm sm:p-5">
+              <div className="mb-4 flex flex-wrap items-start justify-between gap-4 rounded-lg bg-blue-800 p-4 text-white sm:p-5">
                 <div>
                   <h2 className="text-lg font-bold">Bill of Materials</h2>
-                  <p className="mt-1 text-sm opacity-80">{summaryText}</p>
+                  {summaryText && <p className="mt-1 text-sm opacity-80">{summaryText}</p>}
                 </div>
-                <div className="text-right">
+                <div className="text-left sm:text-right">
                   <p className="text-xs opacity-70">Auto quantity breaks</p>
                   <p className="text-2xl font-bold">
-                    ${bomResultForTabs?.grandTotal.toFixed(2) ?? "0.00"}
+                    ${formatMoney(bomResultForTabs?.grandTotal ?? 0)}
                   </p>
                 </div>
               </div>
@@ -629,7 +648,7 @@ function CalculatorV3Content() {
         {layoutOpen && payload && (
           <div
             className={`absolute bottom-0 top-0 z-20 border-l border-brand-border bg-white shadow-2xl ${
-              layoutFullscreen ? "left-0 right-0" : "left-[min(560px,45vw)] right-0"
+              layoutFullscreen || mobileLayout ? "left-0 right-0" : "left-[min(560px,45vw)] right-0"
             }`}
           >
             <div className="flex h-full min-h-0 flex-col">
