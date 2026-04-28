@@ -10,7 +10,6 @@ import {
 import { calcRunStats } from "../../lib/runStats";
 import type { CanvasLayout } from "../canvas/canvasEngine";
 import type { initCanvasEngine } from "../canvas/canvasEngine";
-import type { SegmentTermination } from "../../types/canonical.types";
 
 export function LayoutCanvasV3() {
   const { state, dispatch } = useCalculator();
@@ -101,12 +100,14 @@ export function LayoutCanvasV3() {
         .map((r) =>
           r.segments
             .map((s) => {
-              const lt = s.leftTermination.kind === "system_corner"
-                ? String(s.leftTermination.angleDeg)
-                : s.leftTermination.kind;
-              const rt = s.rightTermination.kind === "system_corner"
-                ? String(s.rightTermination.angleDeg)
-                : s.rightTermination.kind;
+              const lt =
+                s.leftTermination.kind === "system_corner"
+                  ? String(s.leftTermination.angleDeg)
+                  : s.leftTermination.kind;
+              const rt =
+                s.rightTermination.kind === "system_corner"
+                  ? String(s.rightTermination.angleDeg)
+                  : s.rightTermination.kind;
               return `${s.segmentId}:${s.segmentWidthMm ?? 0}:${lt}:${rt}`;
             })
             .join(","),
