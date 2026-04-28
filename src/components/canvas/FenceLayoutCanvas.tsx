@@ -17,6 +17,8 @@ interface PendingGate {
   gateIdx: number;
 }
 
+const DEFAULT_GATE_WIDTH_FALLBACK = 900;
+
 interface FenceLayoutCanvasProps {
   onApplied?: (layout: CanvasLayout) => void;
   onLayoutChange?: (layout: CanvasLayout) => void;
@@ -83,6 +85,8 @@ export function FenceLayoutCanvas({
     gateIdx: number;
     gate: GateConfig;
   } | null>(null);
+  const [pendingGateWidth, setPendingGateWidth] = useState(DEFAULT_GATE_WIDTH_FALLBACK);
+  const [useGatePostsAsTermination, setUseGatePostsAsTermination] = useState(true);
 
   const handleGatePlaced = useCallback(
     (segIdx: number, gateIdx: number, defaultWidthMM: number) => {
@@ -99,6 +103,8 @@ export function FenceLayoutCanvas({
         hingeType: "dd-kwik-fit-adjustable",
         latchType: "dd-magna-latch-top-pull",
       };
+      setPendingGateWidth(defaultWidthMM);
+      setUseGatePostsAsTermination(true);
       setPendingGate({ stub, segIdx, gateIdx });
     },
     [],
@@ -141,7 +147,7 @@ export function FenceLayoutCanvas({
   }, [allowedAngles]);
 
   const handleGateSave = useCallback(
-    (gate: GateConfig) => {
+    (gate: GateConfig, useTerminationPosts = true) => {
       if (!pendingGate) return;
       engineRef.current?.updateGateWidth(
         pendingGate.segIdx,
@@ -154,7 +160,15 @@ export function FenceLayoutCanvas({
         pendingGate.gateIdx,
         gate.id,
       );
-      gateDispatch({ type: "ADD_GATE", gate });
+      engineRef.current?.setGateTerminationPosts(
+        pendingGate.segIdx,
+        pendingGate.gateIdx,
+        useTerminationPosts,
+      );
+      gateDispatch({
+        type: "ADD_GATE",
+        gate: { ...gate, useGatePostsAsFenceTermination: useTerminationPosts } as GateConfig,
+      });
       setPendingGate(null);
     },
     [pendingGate, gateDispatch],
@@ -168,7 +182,13 @@ export function FenceLayoutCanvas({
       pendingGate.gateIdx,
       pendingGate.stub.id,
     );
-    gateDispatch({ type: "ADD_GATE", gate: pendingGate.stub });
+    gateDispatch({
+      type: "ADD_GATE",
+      gate: {
+        ...pendingGate.stub,
+        useGatePostsAsFenceTermination: true,
+      } as GateConfig,
+    });
     setPendingGate(null);
   }, [pendingGate, gateDispatch]);
 
@@ -378,15 +398,69 @@ export function FenceLayoutCanvas({
         </button>
       </div>
 
-      {/* Gate modal — opens immediately when a gate marker is placed on the canvas */}
+      {/* Gate placement modal: detailed gate options live in the run settings. */}
       {pendingGate && (
-        <GateModal
-          mode="adding"
-          gateId={pendingGate.stub.id}
-          initialValues={pendingGate.stub}
-          onSave={handleGateSave}
-          onClose={handleGateSkip}
-        />
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Place gate"
+        >
+          <div className="w-full max-w-sm rounded-lg border border-brand-border bg-brand-card p-5 shadow-2xl">
+            <h2 className="text-base font-semibold text-brand-text">
+              Place gate
+            </h2>
+            <div className="mt-4 space-y-4">
+              <label className="block text-sm text-brand-text">
+                Gate opening
+                <input
+                  type="number"
+                  min={400}
+                  max={6000}
+                  step={50}
+                  value={pendingGateWidth}
+                  onChange={(event) =>
+                    setPendingGateWidth(Number(event.target.value))
+                  }
+                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+                />
+                <span className="mt-1 block text-xs text-brand-muted">mm</span>
+              </label>
+              <label className="flex items-start gap-2 text-sm text-brand-text">
+                <input
+                  type="checkbox"
+                  checked={useGatePostsAsTermination}
+                  onChange={(event) =>
+                    setUseGatePostsAsTermination(event.target.checked)
+                  }
+                  className="mt-0.5 accent-brand-accent"
+                />
+                <span>Use gate posts as fence termination post</span>
+              </label>
+            </div>
+            <div className="mt-5 flex gap-2">
+              <button
+                type="button"
+                onClick={() =>
+                  handleGateSave(
+                    { ...pendingGate.stub, openingWidth: pendingGateWidth },
+                    useGatePostsAsTermination,
+                  )
+                }
+                className="flex-1 rounded-md bg-brand-accent px-4 py-2 text-sm font-semibold text-white hover:bg-brand-accent-hover"
+              >
+                Add gate
+              </button>
+              <button
+                type="button"
+                onClick={handleGateSkip}
+                className="rounded-md border border-brand-border px-4 py-2 text-sm font-medium text-brand-muted hover:text-brand-text"
+              >
+                Keep default
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Gate edit modal — opened by clicking an existing gate marker */}

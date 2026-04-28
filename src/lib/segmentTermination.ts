@@ -36,10 +36,28 @@ export const SEGMENT_OPTION_KEYS = {
   postWidthMm: "post_width_mm",
 } as const;
 
-/** Gate stub keys until QS_GATE SchemaDrivenForm is wired in expand. */
+/** Gate segment variables used by the v3 run-embedded gate workflow. */
 export const GATE_SEGMENT_STUB_KEYS = {
+  gateMovement: "gate_movement",
+  gateBuild: "gate_build",
+  leafCount: "leaf_count",
+  matchRunHeight: "match_run_height",
+  gateHeightMm: "gate_height_mm",
+  colourCode: "colour_code",
+  slatSizeMm: "slat_size_mm",
+  slatGapMm: "slat_gap_mm",
   hingeType: "hinge_type",
   latchType: "latch_type",
+  dropBoltType: "drop_bolt_type",
+  gateStopType: "gate_stop_type",
+  includeLockBox: "include_lock_box",
+  lockBoxType: "lock_box_type",
+  useGatePostsAsFenceTermination: "use_gate_posts_as_fence_termination",
+  openingDirection: "opening_direction",
+  hingeSide: "hinge_side",
+  slidingTrackType: "sliding_track_type",
+  slidingCatchType: "sliding_catch_type",
+  slidingMotorType: "sliding_motor_type",
 } as const;
 
 export function parseTerminationKind(

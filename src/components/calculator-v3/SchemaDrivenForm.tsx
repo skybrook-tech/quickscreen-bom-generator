@@ -81,9 +81,9 @@ const ENUM_LABELS: Record<string, string> = {
   in_ground: "Concreted in ground",
   base_plate: "Base-plated to slab",
   core_drill: "Core-drilled into concrete",
-  xpl: "XPress Plus posts",
-  standard_50: "Standard 50mm posts",
-  standard_65: "Standard 65mm HD posts",
+  xpl: "XPress Plus post",
+  standard_50: "Standard Post 50mm",
+  standard_65: "Standard Post 65mm HD",
   "50": "50x50mm",
   "65": "65x65mm HD",
 };

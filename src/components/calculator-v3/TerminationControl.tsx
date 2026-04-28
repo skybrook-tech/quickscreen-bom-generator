@@ -66,7 +66,7 @@ export function TerminationControl({ runId, seg, side }: Props) {
           onChange={(e) => setKind(e.target.value as TerminationKindUi | "")}
           className="bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
         >
-          <option value="system_post">System post</option>
+          <option value="system_post">Standard post</option>
           <option value="corner">Corner</option>
           <option value="non_system_termination">Non-system termination</option>
         </select>
@@ -100,7 +100,7 @@ export function TerminationControl({ runId, seg, side }: Props) {
             className="bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
           >
             <option value="wall">Wall</option>
-            <option value="non_system_post">Non-system post</option>
+            <option value="non_system_post">Non-standard post</option>
           </select>
         </label>
       )}

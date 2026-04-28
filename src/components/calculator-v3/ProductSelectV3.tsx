@@ -1,7 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 import { localFenceProducts } from "../../lib/localSeedData";
-import { initialVariablesForSystem } from "../../lib/productOptionRules";
+import {
+  initialVariablesForSystem,
+  maxPanelWidthForSystem,
+} from "../../lib/productOptionRules";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalPayload } from "../../types/canonical.types";
 
@@ -42,18 +45,31 @@ export function ProductSelectV3() {
   const selectedProduct = products.find((p) => p.system_type === currentCode);
 
   function selectProduct(p: FenceProduct) {
+    const initialVariables = initialVariablesForSystem(p.system_type);
+    const initialWidth = Number(
+      initialVariables.max_panel_width_mm ?? maxPanelWidthForSystem(p.system_type),
+    );
+    const initialHeight = Number(initialVariables.target_height_mm ?? 1800);
     const initialPayload: CanonicalPayload = {
       productCode: p.system_type,
       schemaVersion: "v1",
-      variables: initialVariablesForSystem(p.system_type),
+      variables: initialVariables,
       runs: [
         {
           runId: crypto.randomUUID(),
           productCode: p.system_type,
-          variables: initialVariablesForSystem(p.system_type),
+          variables: initialVariables,
           leftBoundary: { type: "product_post" },
           rightBoundary: { type: "product_post" },
-          segments: [],
+          segments: [
+            {
+              segmentId: crypto.randomUUID(),
+              sortOrder: 1,
+              segmentKind: "panel",
+              segmentWidthMm: initialWidth,
+              targetHeightMm: initialHeight,
+            },
+          ],
           corners: [],
         },
       ],

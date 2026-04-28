@@ -1,5 +1,4 @@
 import { AppShell } from "../components/layout/AppShell";
-import { AccordionSection } from "../components/shared/AccordionSection";
 import {
   CalculatorProvider,
   useCalculator,
@@ -11,13 +10,24 @@ import { RunListV3 } from "../components/calculator-v3/RunListV3";
 import { LayoutCanvasV3 } from "../components/calculator-v3/LayoutCanvasV3";
 import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
-import { PricingTierSelect } from "../components/bom/PricingTierSelect";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { suggestAccessories } from "../lib/suggestedAccessories";
+import { priceForSku } from "../lib/localBomCalculator";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
-import { Download, FileX2, Loader2, Save, Trash2 } from "lucide-react";
+import {
+  Download,
+  FileX2,
+  Loader2,
+  Map as MapIcon,
+  Maximize2,
+  Minimize2,
+  Printer,
+  Save,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -26,7 +36,6 @@ import type {
   CalculatorBOMResult,
   BOMLineItem,
   ExtraItem,
-  PricingTier,
 } from "../types/bom.types";
 
 const roundMoney = (value: number) =>
@@ -43,15 +52,30 @@ function CalculatorV3Content() {
   const { user } = useAuth();
   const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
   const [lineEdits, setLineEdits] = useState<Record<string, number | null>>({});
-  const [pricingTier, setPricingTier] = useState<PricingTier>("tier1");
   const [saving, setSaving] = useState(false);
+  const [jobName, setJobName] = useState("");
+  const [runPaneWidth, setRunPaneWidth] = useState(560);
+  const [layoutOpen, setLayoutOpen] = useState(false);
+  const [layoutFullscreen, setLayoutFullscreen] = useState(false);
+
+  function handleResizeStart() {
+    const onMove = (event: MouseEvent) => {
+      setRunPaneWidth(Math.min(820, Math.max(360, event.clientX)));
+    };
+    const onUp = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
+  }
 
   async function handleGenerateBOM() {
     if (!payload) return;
     setExtraItems([]);
     setLineEdits({});
     try {
-      const result = await bomMutation.mutateAsync({ payload, pricingTier });
+      const result = await bomMutation.mutateAsync({ payload });
       dispatch({ type: "SET_BOM_RESULT", result });
     } catch {
       // Error is available via bomMutation.error.
@@ -70,10 +94,12 @@ function CalculatorV3Content() {
         const edit = lineEdits[lineKey(line)];
         if (edit === null) return null;
         if (typeof edit === "number") {
+          const unitPrice = priceForSku(line.sku, edit);
           return {
             ...line,
             quantity: edit,
-            lineTotal: roundMoney(line.unitPrice * edit),
+            unitPrice,
+            lineTotal: roundMoney(unitPrice * edit),
             notes: line.notes ? `${line.notes}; edited` : "edited",
           };
         }
@@ -127,20 +153,61 @@ function CalculatorV3Content() {
       })()
     : null;
 
-  async function handleSaveQuote() {
-    if (!payload || !bomResultForTabs) return;
+  async function handleSaveJob() {
+    if (!payload) return;
+    const cleanJobName = jobName.trim();
+    const customerRef =
+      cleanJobName || `Glass Outlet Job ${new Date().toLocaleDateString("en-AU")}`;
+    const emptyBom = {
+      fenceItems: [],
+      gateItems: [],
+      total: 0,
+      gst: 0,
+      grandTotal: 0,
+      pricingTier: "tier1" as const,
+      generatedAt: null,
+    };
+    const quoteBom = bomResultForTabs
+      ? {
+          fenceItems: bomResultForTabs.allItems,
+          gateItems: bomResultForTabs.gateItems,
+          total: bomResultForTabs.total,
+          gst: bomResultForTabs.gst,
+          grandTotal: bomResultForTabs.grandTotal,
+          pricingTier: bomResultForTabs.pricingTier,
+          generatedAt: bomResultForTabs.generatedAt,
+        }
+      : emptyBom;
+
     if (!isSupabaseConfigured) {
       localStorage.setItem(
-        `glass-calc-draft-${Date.now()}`,
-        JSON.stringify({ payload, bom: bomResultForTabs }),
+        `glass-calc-job-${Date.now()}`,
+        JSON.stringify({
+          jobName: customerRef,
+          payload,
+          bom: quoteBom,
+          savedAt: new Date().toISOString(),
+        }),
       );
-      toast.success("Quote saved locally for this browser");
+      toast.success("Job saved locally for this browser");
       return;
     }
 
     setSaving(true);
     try {
-      if (!user) throw new Error("You need to be signed in to save quotes.");
+      if (!user) {
+        localStorage.setItem(
+          `glass-calc-job-${Date.now()}`,
+          JSON.stringify({
+            jobName: customerRef,
+            payload,
+            bom: quoteBom,
+            savedAt: new Date().toISOString(),
+          }),
+        );
+        toast.success("Job saved locally for this browser");
+        return;
+      }
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("org_id")
@@ -150,27 +217,31 @@ function CalculatorV3Content() {
       const orgId = profile?.org_id;
       if (!orgId) throw new Error("No organisation found for this user.");
 
-      const quoteBom = {
-        fenceItems: bomResultForTabs.allItems,
-        gateItems: bomResultForTabs.gateItems,
-        total: bomResultForTabs.total,
-        gst: bomResultForTabs.gst,
-        grandTotal: bomResultForTabs.grandTotal,
-        pricingTier: bomResultForTabs.pricingTier,
-        generatedAt: bomResultForTabs.generatedAt,
-      };
-
       const { data: quote, error: quoteError } = await supabase
         .from("quotes")
         .insert({
           org_id: orgId,
           user_id: user.id,
-          customer_ref: `Calculator ${new Date().toLocaleDateString("en-AU")}`,
-          fence_config: { calculator: "v3", payload },
+          customer_ref: customerRef,
+          fence_config: {
+            calculator: "v3",
+            jobName: customerRef,
+            payload,
+            layoutGeometry: payload.runs.map((run) => ({
+              runId: run.runId,
+              geometry: run.geometry,
+              segments: run.segments.map((segment) => ({
+                segmentId: segment.segmentId,
+                widthMm: segment.segmentWidthMm,
+                targetHeightMm: segment.targetHeightMm,
+                variables: segment.variables ?? {},
+              })),
+            })),
+          },
           gates: [],
           bom: quoteBom,
           contact: {},
-          notes: "Saved from v3 calculator",
+          notes: "Saved from v3 job calculator",
           status: "draft",
         })
         .select("id")
@@ -183,7 +254,7 @@ function CalculatorV3Content() {
         .select("id, system_type")
         .in("system_type", systems);
       if (productsError) throw productsError;
-      const productIdByCode = new Map(
+      const productIdByCode = new globalThis.Map(
         (products ?? []).map((product) => [product.system_type, product.id]),
       );
 
@@ -237,13 +308,17 @@ function CalculatorV3Content() {
         }
       }
 
-      toast.success("Quote saved");
+      toast.success("Job saved");
       navigate(`/quote/${quote.id}`);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to save quote");
+      toast.error(error instanceof Error ? error.message : "Failed to save job");
     } finally {
       setSaving(false);
     }
+  }
+
+  function handlePrintBom() {
+    window.print();
   }
 
   function handleExportCsv() {
@@ -326,31 +401,44 @@ function CalculatorV3Content() {
   const summaryText = payload
     ? `${payload.runs[0]?.productCode ?? payload.productCode} - ${summaryHeight}H${summaryWidth ? ` x ${summaryWidth}W` : ""} - ${firstRunVariables.colour_code ?? "B"} - ${firstRunVariables.slat_size_mm ?? 65}mm / ${firstRunVariables.slat_gap_mm ?? 5}mm`
     : "Select a system to begin";
+  const saveJobLabel = jobName.trim() ? `Save ${jobName.trim()}` : "Save Job";
 
   return (
     <AppShell>
-      <div className="grid min-h-full grid-cols-1 overflow-hidden bg-slate-100 lg:grid-cols-[420px_1fr]">
-        <aside className="border-r border-brand-border bg-white">
-          <div className="flex h-full flex-col gap-5 overflow-y-auto p-5">
+      <div
+        className="relative flex h-full min-h-0 overflow-hidden bg-slate-100"
+        style={{
+          gridTemplateColumns: `${runPaneWidth}px 1fr`,
+        }}
+      >
+        <aside
+          className="relative flex min-h-0 shrink-0 overflow-hidden border-r border-brand-border bg-white"
+          style={{ width: runPaneWidth }}
+        >
+          <div className="flex min-h-0 flex-1 flex-col">
+            <div className="flex-1 space-y-5 overflow-y-auto p-5">
             <section>
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.08em] text-brand-muted">
-                Start quote
+                Job Name
               </p>
+              <input
+                type="text"
+                value={jobName}
+                onChange={(event) => setJobName(event.target.value)}
+                placeholder="Enter job name"
+                className="mb-4 w-full rounded-md border border-brand-border bg-white px-3 py-2 text-sm text-brand-text"
+              />
               {!payload ? (
                 <ProductSelectV3 />
               ) : (
                 <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    onClick={() => {
-                      dispatch({ type: "CLEAR_QUOTE" });
-                      setExtraItems([]);
-                      setLineEdits({});
-                    }}
-                    className="inline-flex items-center gap-2 rounded-md border border-red-500/30 px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-500/10"
+                    onClick={() => setLayoutOpen(true)}
+                    className="inline-flex items-center gap-2 rounded-md border border-blue-800/30 px-3 py-2 text-sm font-medium text-blue-800 transition-colors hover:bg-blue-800/10"
                   >
-                    <Trash2 size={15} />
-                    Clear Quote
+                    <MapIcon size={15} />
+                    Open layout map
                   </button>
                 </div>
               )}
@@ -364,14 +452,6 @@ function CalculatorV3Content() {
                     Runs
                   </p>
                   <RunListV3 />
-                </section>
-
-                <hr className="border-brand-border/60" />
-                <section>
-                  <p className="mb-3 text-xs font-semibold uppercase tracking-[0.08em] text-brand-muted">
-                    Pricing
-                  </p>
-                  <PricingTierSelect value={pricingTier} onChange={setPricingTier} />
                 </section>
 
                 {(errors.length > 0 || warnings.length > 0) && (
@@ -406,37 +486,46 @@ function CalculatorV3Content() {
 
               </>
             )}
+            </div>
+            <div className="border-t border-brand-border bg-white p-5">
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={handleSaveJob}
+                  disabled={!payload || saving}
+                  className="inline-flex items-center gap-2 rounded-md bg-blue-800 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
+                  {saveJobLabel}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    dispatch({ type: "CLEAR_QUOTE" });
+                    setExtraItems([]);
+                    setLineEdits({});
+                    setJobName("");
+                  }}
+                  disabled={!payload && !jobName}
+                  className="inline-flex items-center gap-2 rounded-md border border-red-500/30 px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <Trash2 size={15} />
+                  Clear Job
+                </button>
+              </div>
+            </div>
           </div>
         </aside>
 
-        <main className="overflow-y-auto p-5 lg:p-8">
-          <div className="mx-auto max-w-5xl space-y-5">
-            <section className="rounded-xl bg-white shadow-sm">
-              <div className="flex items-center justify-between border-b border-brand-border bg-slate-50 px-5 py-3">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.08em] text-brand-muted">
-                  Panel Preview
-                </h2>
-                <span className="text-xs text-brand-muted">{summaryText}</span>
-              </div>
-              <div className="p-6">
-                <div className="flex min-h-36 items-center justify-center rounded-lg bg-slate-100 px-5 text-center text-sm text-brand-muted">
-                  {payload
-                    ? "Preview is ready for the next visual pass. Use the run controls on the left to define lengths and heights."
-                    : "Select a system on the left to start configuring."}
-                </div>
-              </div>
-            </section>
+        <button
+          type="button"
+          aria-label="Resize panels"
+          onMouseDown={handleResizeStart}
+          className="w-1.5 shrink-0 cursor-col-resize bg-slate-200 transition-colors hover:bg-blue-800/40"
+        />
 
-            {payload && (
-              <AccordionSection
-                title="Layout"
-                badge="Draw runs, gates, and map underlay"
-                defaultOpen={false}
-              >
-                <LayoutCanvasV3 />
-              </AccordionSection>
-            )}
-
+        <main className="min-h-0 min-w-0 flex-1 overflow-y-auto p-5 lg:p-8">
+          <div className="mx-auto max-w-6xl space-y-5">
             <section className="rounded-xl bg-white p-5 shadow-sm">
               <div className="mb-4 flex flex-wrap items-start justify-between gap-4 rounded-lg bg-blue-800 p-5 text-white">
                 <div>
@@ -444,9 +533,7 @@ function CalculatorV3Content() {
                   <p className="mt-1 text-sm opacity-80">{summaryText}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs opacity-70">
-                    {pricingTier.replace("tier", "Tier ")}
-                  </p>
+                  <p className="text-xs opacity-70">Auto quantity breaks</p>
                   <p className="text-2xl font-bold">
                     ${bomResultForTabs?.grandTotal.toFixed(2) ?? "0.00"}
                   </p>
@@ -475,12 +562,12 @@ function CalculatorV3Content() {
                 </button>
                 <button
                   type="button"
-                  onClick={handleSaveQuote}
-                  disabled={!bomResultForTabs || saving}
-                  className="inline-flex items-center gap-2 rounded-md bg-blue-800 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-40"
+                  onClick={handlePrintBom}
+                  disabled={!bomResultForTabs}
+                  className="inline-flex items-center gap-2 rounded-md border border-brand-border px-3 py-2 text-sm font-medium text-brand-muted transition-colors hover:border-blue-800 hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
-                  Save Quote
+                  <Printer size={15} />
+                  Print BOM
                 </button>
                 <button
                   type="button"
@@ -538,6 +625,54 @@ function CalculatorV3Content() {
             </section>
           </div>
         </main>
+
+        {layoutOpen && payload && (
+          <div
+            className={`absolute bottom-0 top-0 z-20 border-l border-brand-border bg-white shadow-2xl ${
+              layoutFullscreen ? "left-0 right-0" : "left-[min(560px,45vw)] right-0"
+            }`}
+          >
+            <div className="flex h-full min-h-0 flex-col">
+              <div className="flex items-center justify-between border-b border-brand-border px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-brand-text">Layout map</p>
+                  <p className="text-xs text-brand-muted">
+                    Draw runs, gates, and map underlay
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setLayoutOpen(false)}
+                    className="rounded-md border border-brand-border px-3 py-2 text-sm font-medium text-brand-muted hover:border-blue-800 hover:text-blue-800"
+                    title="Minimize map"
+                  >
+                    Minimize
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLayoutFullscreen((value) => !value)}
+                    className="rounded-md border border-brand-border p-2 text-brand-muted hover:border-blue-800 hover:text-blue-800"
+                    title={layoutFullscreen ? "Restore map" : "Expand map"}
+                  >
+                    {layoutFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLayoutOpen(false)}
+                    className="rounded-md border border-brand-border p-2 text-brand-muted hover:border-red-500 hover:text-red-600"
+                    title="Close map"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              </div>
+              <div className="min-h-0 flex-1 overflow-y-auto p-4">
+                <LayoutCanvasV3 />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </AppShell>
   );

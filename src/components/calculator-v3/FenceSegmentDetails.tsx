@@ -11,8 +11,8 @@ import { TerminationControl } from "./TerminationControl";
 import NumberInput from "../shared/NumberInput";
 
 const POST_SIZE_LABELS: Record<string, string> = {
-  "50": "50×50 System Post",
-  "65": "65×65 HD Post",
+  "50": "Standard Post 50mm",
+  "65": "Standard Post 65mm HD",
 };
 
 interface Props {
@@ -84,7 +84,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
           />
         </label>
 
-        {/* Post type — data-driven from run-scoped post_size variable */}
+        {/* Post type - data-driven from run-scoped post_size variable */}
         <label className="flex flex-col gap-1">
           <span className="text-brand-muted text-xs">Post type</span>
           <select
@@ -97,17 +97,17 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
             }
             className="bg-brand-bg border border-brand-border rounded px-2 py-1.5 text-sm text-brand-text"
           >
-            <option value="">— Job default —</option>
+            <option value="">Job default</option>
             {postSizeOptions.map((opt) => (
               <option key={opt} value={opt}>
                 {POST_SIZE_LABELS[opt] ?? `${opt}mm Post`}
               </option>
             ))}
-            <option value="custom">(Non-system post)</option>
+            <option value="custom">Non-standard post</option>
           </select>
         </label>
 
-        {/* Post width — only unlocked for non-system posts */}
+        {/* Post width - only unlocked for non-standard posts */}
         {isCustomPost && (
           <label className="flex flex-col gap-1">
             <span className="text-brand-muted text-xs">Post width (mm)</span>

@@ -293,7 +293,7 @@ export function BOMResultTabs({
                 timeStyle: "short",
               })}
               {" · "}
-              {result.pricingTier.replace("tier", "Tier ")}
+              Auto quantity-break pricing
             </p>
           </div>
           <span className="text-2xl font-bold text-brand-accent tabular-nums">

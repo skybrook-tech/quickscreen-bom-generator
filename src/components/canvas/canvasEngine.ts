@@ -14,6 +14,7 @@ export interface CanvasGate {
   segmentIndex: number;
   positionOnSegment: number; // 0–1 fraction along segment
   widthMM: number;
+  useGatePostsAsFenceTermination?: boolean;
 }
 
 export interface CanvasRunSummary {
@@ -73,6 +74,7 @@ interface GateMarker {
   t: number; // 0–1 along segment
   widthMM: number;
   gateId?: string; // matches the GateConfig.id in GateContext once the gate is saved
+  useGatePostsAsFenceTermination?: boolean;
 }
 
 type Tool = "draw" | "gate" | "move" | "boundary";
@@ -582,6 +584,8 @@ export function initCanvasEngine(
           segmentIndex: flatIdx,
           positionOnSegment: g.t,
           widthMM: g.widthMM,
+          useGatePostsAsFenceTermination:
+            g.useGatePostsAsFenceTermination ?? true,
         });
       });
     });
@@ -620,6 +624,8 @@ export function initCanvasEngine(
             segmentIndex: flatOffset + si,
             positionOnSegment: g.t,
             widthMM: g.widthMM,
+            useGatePostsAsFenceTermination:
+              g.useGatePostsAsFenceTermination ?? true,
           });
         });
       });
@@ -895,10 +901,10 @@ export function initCanvasEngine(
     const detailLines: string[] = [];
     const spacingText = (seg: Segment, flatIdx: number, label: string) => {
       const maxW = segmentPanelWidths[flatIdx] ?? jobPanelWidthMm ?? 0;
-      if (maxW <= 0 || seg.lengthMM <= 0) return `${label}: post spacing not set`;
+      if (maxW <= 0 || seg.lengthMM <= 0) return `${label} segment length: post spacing not set`;
       const panels = Math.max(1, Math.ceil(Math.round(seg.lengthMM) / maxW));
       const actualSpacing = Math.round(seg.lengthMM / panels);
-      return `${label}: ${panels} panel${panels === 1 ? "" : "s"} @ ${actualSpacing}mm posts (max ${Math.round(maxW)}mm)`;
+      return `${label} segment length ${(seg.lengthMM / 1000).toFixed(2)}m: ${panels} panel${panels === 1 ? "" : "s"} @ ${actualSpacing}mm spacing`;
     };
 
     // Use pre-computed canonical stats if available (pushed from LayoutCanvasV3 via calcRunStats).
@@ -1590,7 +1596,11 @@ export function initCanvasEngine(
         const proj = closestPointOnSegment(canvasPt, info.seg);
         const gateIdx = info.seg.gates.length;
         undoStack.push({ type: "ADD_GATE", segIdx: flatIdx, gateIdx });
-        info.seg.gates.push({ t: proj.t, widthMM: DEFAULT_GATE_WIDTH_MM });
+        info.seg.gates.push({
+          t: proj.t,
+          widthMM: DEFAULT_GATE_WIDTH_MM,
+          useGatePostsAsFenceTermination: true,
+        });
         notifyChange();
         scheduleRedraw();
         config.onGatePlaced?.(flatIdx, gateIdx, DEFAULT_GATE_WIDTH_MM);
@@ -1618,8 +1628,13 @@ export function initCanvasEngine(
         const labelIdx = hitTestLabel(canvasPt);
         if (labelIdx >= 0) {
           startLabelEdit(labelIdx, eventToScreen(e));
+          return;
         }
       }
+      isPanning = true;
+      panStart = screenPtDown;
+      panOrigin = { ...pan };
+      canvas.style.cursor = "grabbing";
       return;
     }
   }
@@ -1706,7 +1721,7 @@ export function initCanvasEngine(
         ? "grab"
         : hoveredSegIdx >= 0
           ? "pointer"
-          : "default";
+          : "grab";
     } else if (hoveredSegIdx !== prevHover) {
       canvas.style.cursor =
         hoveredSegIdx >= 0
@@ -1722,8 +1737,9 @@ export function initCanvasEngine(
   }
 
   function onMouseUp(e: MouseEvent) {
-    if (e.button === 2) {
+    if (e.button === 2 || (e.button === 0 && isPanning)) {
       isPanning = false;
+      canvas.style.cursor = tool === "move" ? "grab" : "default";
     }
 
     if (draggingNode !== null) {
@@ -1972,8 +1988,12 @@ export function initCanvasEngine(
     tool = t;
     if (t === "draw" || t === "boundary") {
       canvas.style.cursor = "crosshair";
+    } else if (t === "move") {
+      canvas.style.cursor = "grab";
     } else {
       canvas.style.cursor = "default";
+    }
+    if (t !== "draw" && t !== "boundary") {
       // Finish any active drawing run
       if (activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
         const run = runs[activeRunIdx];
@@ -2144,6 +2164,21 @@ export function initCanvasEngine(
     }
   }
 
+  function setGateTerminationPosts(
+    flatSegIdx: number,
+    gateIdx: number,
+    useTerminationPosts: boolean,
+  ) {
+    const allSegs = allSegmentsFlat();
+    const info = allSegs[flatSegIdx];
+    if (info && info.seg.gates[gateIdx] !== undefined) {
+      info.seg.gates[gateIdx].useGatePostsAsFenceTermination =
+        useTerminationPosts;
+      notifyChange();
+      scheduleRedraw();
+    }
+  }
+
   /**
    * Set post positions to overlay on the canvas after BOM generation.
    * Positions are in canvas world coordinates — the same space as drawn nodes
@@ -2240,6 +2275,8 @@ export function initCanvasEngine(
         seg.gates = segsGates.map((g) => ({
           t: g.positionOnSegment,
           widthMM: g.widthMM,
+          useGatePostsAsFenceTermination:
+            g.useGatePostsAsFenceTermination ?? true,
         }));
         flatIdx++;
       }
@@ -2301,6 +2338,7 @@ export function initCanvasEngine(
     loadMapTile,
     updateGateWidth,
     setGateId,
+    setGateTerminationPosts,
     setPostPositions,
     setSegmentPanelWidths,
     setJobPanelWidth,

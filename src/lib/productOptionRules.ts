@@ -58,8 +58,9 @@ export function slatOptionsForSystem(productCode: string, variables: Variables) 
 }
 
 export function gapOptionsForSystem(productCode: string) {
-  if (productCode === "XPL") return [9, 20];
+  if (productCode === "XPL") return [5, 9, 20];
   if (productCode === "QSHS") return [5, 9, 12, 15, 20, 30];
+  if (productCode === "VS") return [5, 9, 20];
   return [];
 }
 
@@ -87,7 +88,11 @@ export function initialVariablesForSystem(productCode: string): Variables {
     colour_code: "B",
     post_colour_code: "B",
     slat_size_mm: 65,
-    slat_gap_mm: productCode === "XPL" ? 9 : 5,
+    slat_gap_mm: 5,
+    post_size: 50,
+    post_system: productCode === "XPL" ? "xpl" : "standard_50",
+    mounting_type: "in_ground",
+    mounting_method: "in_ground",
     max_panel_width_mm: maxPanelWidth,
   });
 }
@@ -104,6 +109,35 @@ export function normaliseVariablesForSystem(
   let next: Variables = {
     ...variables,
     finish_family: finish,
+  };
+
+  const postSystem = String(
+    next.post_system ?? (productCode === "XPL" ? "xpl" : "standard_50"),
+  );
+  const validPostSystem = ["xpl", "standard_50", "standard_65"].includes(postSystem)
+    ? postSystem
+    : productCode === "XPL"
+      ? "xpl"
+      : "standard_50";
+  next = {
+    ...next,
+    post_system: validPostSystem,
+    post_size: validPostSystem === "standard_65" ? 65 : Number(next.post_size ?? 50),
+  };
+  if (validPostSystem === "standard_50" || productCode !== "XPL") {
+    next = { ...next, post_size: Number(next.post_size) === 65 ? 65 : 50 };
+  }
+
+  const mounting = String(
+    next.mounting_method ?? next.mounting_type ?? "in_ground",
+  );
+  const validMounting = ["in_ground", "base_plate", "core_drill"].includes(mounting)
+    ? mounting
+    : "in_ground";
+  next = {
+    ...next,
+    mounting_type: validMounting,
+    mounting_method: validMounting,
   };
 
   const slatOptions = slatOptionsForSystem(productCode, next);
@@ -215,6 +249,37 @@ export function applyProductOptionRules(
           options_json: gapOptions,
           label: productCode === "VS" ? "Slat gap" : field.label,
           unit: "mm",
+        }),
+      );
+      continue;
+    }
+
+    if (field.field_key === "mounting_type" || field.field_key === "mounting_method") {
+      result.push(
+        cloneField(field, {
+          label: "Post mounting type",
+          default_value_json: "in_ground",
+          options_json: ["in_ground", "base_plate", "core_drill"],
+        }),
+      );
+      continue;
+    }
+
+    if (field.field_key === "post_system") {
+      result.push(
+        cloneField(field, {
+          label: "Post type",
+          default_value_json: productCode === "XPL" ? "xpl" : "standard_50",
+        }),
+      );
+      continue;
+    }
+
+    if (field.field_key === "post_size") {
+      result.push(
+        cloneField(field, {
+          label: "Standard post size",
+          default_value_json: "50",
         }),
       );
       continue;

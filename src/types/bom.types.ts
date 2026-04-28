@@ -2,6 +2,7 @@ export type BOMCategory =
   | 'post'
   | 'post_accessory'
   | 'rail'
+  | 'rail_insert'
   | 'slat'
   | 'side_frame'
   | 'cfc_cover'

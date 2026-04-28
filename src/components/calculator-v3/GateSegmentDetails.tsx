@@ -4,51 +4,239 @@ import {
   GATE_SEGMENT_STUB_KEYS,
   patchSegmentVariables,
 } from "../../lib/segmentTermination";
+import {
+  DROP_BOLT_OPTIONS,
+  GATE_MOVEMENTS,
+  GATE_STOP_OPTIONS,
+  HINGE_OPTIONS,
+  LATCH_OPTIONS,
+  SLIDING_CATCH_OPTIONS,
+  SLIDING_MOTOR_OPTIONS,
+  SLIDING_TRACK_OPTIONS,
+  defaultGateBuildForMovement,
+  gateBuildsForMovement,
+  gateMovementOrDefault,
+  isSwingGateMovement,
+  type GateOption,
+} from "../../lib/gateOptionRules";
+import NumberInput from "../shared/NumberInput";
 
 interface Props {
   runId: string;
   seg: CanonicalSegment;
 }
 
-export function GateSegmentDetails({ runId, seg }: Props) {
-  const { dispatch } = useCalculator();
-  const v = seg.variables ?? {};
+function optionClasses(active: boolean) {
+  return `rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+    active
+      ? "border-blue-800 bg-blue-800 text-white shadow-sm"
+      : "border-brand-border bg-white text-brand-text hover:border-blue-800 hover:text-blue-800"
+  }`;
+}
 
-  function setScalar(key: string, value: string | null) {
+function OptionPills({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: GateOption[];
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="space-y-1">
+      <p className="text-[11px] font-medium text-brand-muted">{label}</p>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => onChange(option.value)}
+            className={optionClasses(value === option.value)}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function GateSegmentDetails({ runId, seg }: Props) {
+  const { state, dispatch } = useCalculator();
+  const v = seg.variables ?? {};
+  const run = state.payload?.runs.find((item) => item.runId === runId);
+  const runVars = { ...(state.payload?.variables ?? {}), ...(run?.variables ?? {}) };
+  const movement = gateMovementOrDefault(v[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+  const buildOptions = gateBuildsForMovement(movement);
+  const build = buildOptions.some((option) => option.value === v[GATE_SEGMENT_STUB_KEYS.gateBuild])
+    ? String(v[GATE_SEGMENT_STUB_KEYS.gateBuild])
+    : defaultGateBuildForMovement(movement);
+  const matchRunHeight = v[GATE_SEGMENT_STUB_KEYS.matchRunHeight] !== false;
+  const isSwing = isSwingGateMovement(movement);
+
+  function upsertVariables(patch: Record<string, string | number | boolean | null | undefined>) {
     dispatch({
       type: "UPSERT_SEGMENT",
       runId,
-      segment: patchSegmentVariables(seg, { [key]: value }),
+      segment: patchSegmentVariables(seg, patch),
+    });
+  }
+
+  function setMovement(value: string) {
+    const nextMovement = gateMovementOrDefault(value);
+    const nextBuild = defaultGateBuildForMovement(nextMovement);
+    upsertVariables({
+      [GATE_SEGMENT_STUB_KEYS.gateMovement]: nextMovement,
+      [GATE_SEGMENT_STUB_KEYS.gateBuild]: nextBuild,
+      [GATE_SEGMENT_STUB_KEYS.leafCount]: nextMovement === "double_swing" ? 2 : 1,
+      [GATE_SEGMENT_STUB_KEYS.dropBoltType]:
+        nextMovement === "double_swing" ? "QB124" : "none",
+      [GATE_SEGMENT_STUB_KEYS.hingeType]:
+        nextMovement === "sliding" ? "none" : v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "ML-TL-KF-H-FT",
+      [GATE_SEGMENT_STUB_KEYS.latchType]:
+        nextMovement === "sliding" ? "none" : v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "none",
+    });
+  }
+
+  function updateHeight(value: number) {
+    dispatch({
+      type: "UPSERT_SEGMENT",
+      runId,
+      segment: {
+        ...patchSegmentVariables(seg, {
+          [GATE_SEGMENT_STUB_KEYS.matchRunHeight]: false,
+          [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: value,
+        }),
+        targetHeightMm: value,
+      },
+    });
+  }
+
+  function setMatchRunHeight(value: boolean) {
+    const targetHeight = Number(runVars.target_height_mm ?? 1800);
+    dispatch({
+      type: "UPSERT_SEGMENT",
+      runId,
+      segment: {
+        ...patchSegmentVariables(seg, {
+          [GATE_SEGMENT_STUB_KEYS.matchRunHeight]: value,
+          [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: value ? targetHeight : seg.targetHeightMm,
+        }),
+        targetHeightMm: value ? targetHeight : seg.targetHeightMm,
+      },
     });
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-      <p className="sm:col-span-2 text-brand-muted text-[11px]">
-        Gate hardware (full QS_GATE form will be data-driven here later).
-      </p>
-      <label className="flex flex-col gap-1">
-        <span className="text-brand-muted">Hinge type</span>
-        <input
-          type="text"
-          value={(v[GATE_SEGMENT_STUB_KEYS.hingeType] as string) ?? ""}
-          onChange={(e) =>
-            setScalar(GATE_SEGMENT_STUB_KEYS.hingeType, e.target.value || null)
-          }
-          className="bg-brand-bg border border-brand-border rounded px-2 py-1 text-brand-text"
+    <div className="space-y-4 text-xs">
+      <div className="space-y-3 rounded-md border border-brand-border/50 bg-white/70 p-3">
+        <OptionPills
+          label="Gate type"
+          value={movement}
+          options={GATE_MOVEMENTS}
+          onChange={setMovement}
         />
-      </label>
-      <label className="flex flex-col gap-1">
-        <span className="text-brand-muted">Latch type</span>
-        <input
-          type="text"
-          value={(v[GATE_SEGMENT_STUB_KEYS.latchType] as string) ?? ""}
-          onChange={(e) =>
-            setScalar(GATE_SEGMENT_STUB_KEYS.latchType, e.target.value || null)
-          }
-          className="bg-brand-bg border border-brand-border rounded px-2 py-1 text-brand-text"
+        <OptionPills
+          label="QSG gate system"
+          value={build}
+          options={buildOptions}
+          onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gateBuild]: value })}
         />
-      </label>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto]">
+          <label className="flex flex-col gap-1">
+            <span className="text-[11px] font-medium text-brand-muted">Gate height</span>
+            <div className="flex items-center gap-2">
+              <NumberInput
+                value={Number(seg.targetHeightMm ?? v[GATE_SEGMENT_STUB_KEYS.gateHeightMm] ?? runVars.target_height_mm ?? 1800)}
+                min={600}
+                max={2500}
+                step={50}
+                onChange={(value) => updateHeight(Number(value))}
+              />
+              <span className="text-brand-muted">mm</span>
+            </div>
+          </label>
+          <label className="flex items-center gap-2 pt-5">
+            <input
+              type="checkbox"
+              checked={matchRunHeight}
+              onChange={(e) => setMatchRunHeight(e.target.checked)}
+            />
+            <span className="text-brand-muted">Match run height</span>
+          </label>
+        </div>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={v[GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination] !== false}
+            onChange={(e) =>
+              upsertVariables({
+                [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]: e.target.checked,
+              })
+            }
+          />
+          <span className="text-brand-muted">Use gate posts as fence termination posts</span>
+        </label>
+      </div>
+
+      {isSwing ? (
+        <div className="space-y-3 rounded-md border border-brand-border/50 bg-white/70 p-3">
+          <OptionPills
+            label="Hinge / closer"
+            value={String(v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "ML-TL-KF-H-FT")}
+            options={HINGE_OPTIONS}
+            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.hingeType]: value })}
+          />
+          <OptionPills
+            label="Latch / lock"
+            value={String(v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "none")}
+            options={LATCH_OPTIONS}
+            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.latchType]: value })}
+          />
+          <OptionPills
+            label="Drop bolt"
+            value={String(v[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? (movement === "double_swing" ? "QB124" : "none"))}
+            options={DROP_BOLT_OPTIONS}
+            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.dropBoltType]: value })}
+          />
+          <OptionPills
+            label="Gate stop"
+            value={String(v[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "auto")}
+            options={GATE_STOP_OPTIONS}
+            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gateStopType]: value })}
+          />
+        </div>
+      ) : (
+        <div className="space-y-3 rounded-md border border-brand-border/50 bg-white/70 p-3">
+          <OptionPills
+            label="Track"
+            value={String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")}
+            options={SLIDING_TRACK_OPTIONS}
+            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingTrackType]: value })}
+          />
+          <OptionPills
+            label="Catch"
+            value={String(v[GATE_SEGMENT_STUB_KEYS.slidingCatchType] ?? "XPSG-CATCH-U")}
+            options={SLIDING_CATCH_OPTIONS}
+            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingCatchType]: value })}
+          />
+          <OptionPills
+            label="Motor kit"
+            value={String(v[GATE_SEGMENT_STUB_KEYS.slidingMotorType] ?? "none")}
+            options={SLIDING_MOTOR_OPTIONS}
+            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingMotorType]: value })}
+          />
+        </div>
+      )}
+
+      {movement !== "single_swing" && (
+        <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900">
+          Frame and infill formulas for this gate type are being matched to the QSG workbooks before hardcoding. Selected hardware is still priced.
+        </p>
+      )}
     </div>
   );
 }

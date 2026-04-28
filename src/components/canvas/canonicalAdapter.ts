@@ -66,6 +66,17 @@ function angleDelta(a: number, b: number): number {
   return diff > 180 ? 360 - diff : diff;
 }
 
+function nearestCornerDegrees(prev: CanvasSegment, next: CanvasSegment): 90 | 135 {
+  const turn = angleDelta(prev.angleDeg, next.angleDeg);
+  const interior = 180 - turn;
+  return Math.abs(interior - 135) < Math.min(
+    Math.abs(interior - 90),
+    Math.abs(interior - 180),
+  )
+    ? 135
+    : 90;
+}
+
 // ---------------------------------------------------------------------------
 // Reconstruct per-run segment ranges from the flat segment array.
 //
@@ -147,6 +158,7 @@ interface GateInSegment {
   positionOnSegment: number; // 0–1 fraction
   widthMM: number;
   gateIndex: number; // index within this segment's gates
+  useGatePostsAsFenceTermination?: boolean;
 }
 
 function expandSegmentWithGates(
@@ -199,6 +211,10 @@ function expandSegmentWithGates(
       sortOrder: sortOrder++,
       segmentKind: 'gate_opening',
       segmentWidthMm: Math.round(gate.widthMM),
+      variables: {
+        use_gate_posts_as_fence_termination:
+          gate.useGatePostsAsFenceTermination ?? true,
+      },
     });
 
     cursorFraction = clampedEnd;
@@ -267,6 +283,8 @@ export function canvasLayoutToCanonical(
         positionOnSegment: gate.positionOnSegment,
         widthMM: gate.widthMM,
         gateIndex: gi,
+        useGatePostsAsFenceTermination:
+          gate.useGatePostsAsFenceTermination ?? true,
       });
     }
 
@@ -310,6 +328,16 @@ export function canvasLayoutToCanonical(
       // If there is a corner after this segment, record it
       if (cornerIndices.has(si) && canonSegments.length > 0) {
         const prevSegmentId = canonSegments[canonSegments.length - 1].segmentId;
+        const cornerDegrees = nearestCornerDegrees(
+          slice.segments[si],
+          slice.segments[si + 1],
+        );
+        const prevSegment = canonSegments[canonSegments.length - 1];
+        prevSegment.variables = {
+          ...(prevSegment.variables ?? {}),
+          right_termination_kind: 'corner',
+          right_corner_degrees: cornerDegrees,
+        };
         const cornerDesc = `corner:${slice.runIdx}:after:${si}`;
         const cornerId = stableIds[cornerDesc] ?? (() => {
           const id = newId();
@@ -419,7 +447,12 @@ export function mergeCanonicalPreservingSegmentMeta(
 
 export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout {
   const allFlatSegments: CanvasSegment[] = [];
-  const allFlatGates: Array<{ segmentIndex: number; positionOnSegment: number; widthMM: number }> = [];
+  const allFlatGates: Array<{
+    segmentIndex: number;
+    positionOnSegment: number;
+    widthMM: number;
+    useGatePostsAsFenceTermination?: boolean;
+  }> = [];
   const runSummaries: CanvasRunSummary[] = [];
 
   let globalFlatOffset = 0;
@@ -430,7 +463,12 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
 
     let runTotalMm = 0;
     let runCornerCount = 0;
-    const runGates: Array<{ segmentIndex: number; positionOnSegment: number; widthMM: number }> = [];
+    const runGates: Array<{
+      segmentIndex: number;
+      positionOnSegment: number;
+      widthMM: number;
+      useGatePostsAsFenceTermination?: boolean;
+    }> = [];
 
     const fenceSegments = run.segments.filter(s => s.segmentKind !== 'gate_opening');
 
@@ -453,11 +491,15 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
             segmentIndex: precedingFlatIdx,
             positionOnSegment: 0.9,
             widthMM: canonSeg.segmentWidthMm ?? 900,
+            useGatePostsAsFenceTermination:
+              canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
           });
           runGates.push({
             segmentIndex: precedingFlatIdx,
             positionOnSegment: 0.9,
             widthMM: canonSeg.segmentWidthMm ?? 900,
+            useGatePostsAsFenceTermination:
+              canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
           });
         } else {
           // No preceding segment — stub to hold the gate

@@ -1,5 +1,6 @@
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun } from "../../types/canonical.types";
+import { maxPanelWidthForSystem } from "../../lib/productOptionRules";
 import { RunCard } from "./RunCard";
 
 export function RunListV3() {
@@ -10,16 +11,30 @@ export function RunListV3() {
 
   function addRun() {
     const firstRun = payload!.runs[0];
+    const productCode = firstRun?.productCode ?? payload!.productCode;
+    const variables = {
+      ...(payload!.variables ?? {}),
+      ...(firstRun?.variables ?? {}),
+    };
+    const initialWidth = Number(
+      variables.max_panel_width_mm ?? maxPanelWidthForSystem(productCode),
+    );
+    const initialHeight = Number(variables.target_height_mm ?? 1800);
     const newRun: CanonicalRun = {
       runId: crypto.randomUUID(),
-      productCode: firstRun?.productCode ?? payload!.productCode,
-      variables: {
-        ...(payload!.variables ?? {}),
-        ...(firstRun?.variables ?? {}),
-      },
+      productCode,
+      variables,
       leftBoundary: firstRun?.leftBoundary ?? { type: "product_post" },
       rightBoundary: firstRun?.rightBoundary ?? { type: "product_post" },
-      segments: [],
+      segments: [
+        {
+          segmentId: crypto.randomUUID(),
+          sortOrder: 1,
+          segmentKind: "panel",
+          segmentWidthMm: initialWidth,
+          targetHeightMm: initialHeight,
+        },
+      ],
       corners: [],
     };
     dispatch({ type: "UPSERT_RUN", run: newRun });

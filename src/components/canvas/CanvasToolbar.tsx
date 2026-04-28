@@ -74,11 +74,11 @@ export function CanvasToolbar({
       </button>
       <button
         type="button"
-        title="Drag nodes to reposition"
+        title="Move the drawing, drag nodes, or edit segment lengths"
         className={btnCls(activeTool === "move")}
         onClick={() => handleTool("move")}
       >
-        <Move size={13} /> Edit
+        <Move size={13} /> Move / Edit
       </button>
       <button
         type="button"

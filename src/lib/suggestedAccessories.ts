@@ -25,6 +25,9 @@ const POST_COLOURS = new Set([
   "S",
 ]);
 
+const ALUMAWOOD_CORE_COLOURS = new Set(["KWI", "WRC"]);
+const CSR_PLATE_COLOURS = new Set(["B", "BS", "D", "G", "M", "MN", "S", "SM", "W"]);
+
 const roundQty = (value: number) => Math.max(1, Math.ceil(value));
 
 function postCountForRun(run: CanonicalRun) {
@@ -108,6 +111,42 @@ function postColourFromVars(vars: Variables) {
   return POST_COLOURS.has(fenceColour) ? fenceColour : "MN";
 }
 
+function csrPlateColour(colour: string) {
+  return CSR_PLATE_COLOURS.has(colour) ? colour : "MN";
+}
+
+function csrPlateSku(vars: Variables) {
+  const finishFamily = String(vars.finish_family ?? "standard");
+  const fenceColour = String(vars.colour_code ?? vars.colour ?? "B");
+  const postColour = postColourFromVars(vars);
+  if (finishFamily === "alumawood" && ALUMAWOOD_CORE_COLOURS.has(fenceColour)) {
+    return "AW-BTP-TR";
+  }
+  return `XP-BTP-${csrPlateColour(postColour)}`;
+}
+
+function fencePanelCounts(run: CanonicalRun, vars: Variables) {
+  const baseMaxPanelWidth = Math.min(
+    maxPanelWidthForSystem(run.productCode),
+    Math.max(300, Number(vars.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode))),
+  );
+
+  return run.segments
+    .filter((segment) => segment.segmentKind !== "gate_opening")
+    .map((segment) => {
+      const maxPanelWidth = Math.min(
+        maxPanelWidthForSystem(run.productCode),
+        Math.max(300, Number(segment.variables?.max_panel_width_mm ?? baseMaxPanelWidth)),
+      );
+      const width = Number(segment.segmentWidthMm ?? 0);
+      const panels = width > 0 ? Math.max(1, Math.ceil(width / maxPanelWidth)) : 0;
+      return {
+        panels,
+        panelWidthMm: panels > 0 ? width / panels : 0,
+      };
+    });
+}
+
 function hasBomSku(bomSkus: Set<string>, sku: string) {
   return bomSkus.has(sku);
 }
@@ -129,6 +168,9 @@ export function suggestAccessories(
     );
     const postSize = Number(vars.post_size ?? 50);
     const postColour = postColourFromVars(vars);
+    const finishFamily = String(vars.finish_family ?? "standard");
+    const firstFenceSegment = run.segments.find((segment) => segment.segmentKind !== "gate_opening");
+    const postHeight = Number(firstFenceSegment?.targetHeightMm ?? vars.target_height_mm ?? 1800);
 
     if (mountingType === "in_ground") {
       suggestions.push(
@@ -208,6 +250,55 @@ export function suggestAccessories(
           "Select fixing type to suit concrete, masonry, steel, or timber substrate.",
         ),
       );
+    }
+
+    if (finishFamily !== "alumawood") {
+      const longPostSku =
+        postSize === 65 ? `XP-6000-65HD-${postColour}` : `XP-6000-FP-${postColour}`;
+      const cutLengthMm =
+        mountingType === "in_ground" && postHeight <= 1200
+          ? 1800
+          : Math.min(6000, Math.max(1, postHeight));
+      suggestions.push(
+        componentSuggestion(
+          longPostSku,
+          Math.ceil((postCount * cutLengthMm) / 6000),
+          "catalogue_gap",
+          "Optional: full-length post stock if the installer wants to cut posts on site.",
+          "Full-length post stock",
+        ),
+      );
+    }
+
+    const panelCounts = fencePanelCounts(run, vars);
+    if (run.productCode === "VS") {
+      const verticalPanelCount = panelCounts.reduce((sum, item) => sum + item.panels, 0);
+      suggestions.push(
+        componentSuggestion(
+          "XP-FOOT-ADJ",
+          verticalPanelCount,
+          "post_accessory",
+          "Suggested for vertical slat panels as a 100mm adjustable support foot.",
+          "100mm adjustable support foot",
+        ),
+      );
+    } else {
+      const csrPlateCount = panelCounts.reduce((sum, item) => {
+        const csrPerPanel =
+          item.panelWidthMm < 2000 ? 0 : item.panelWidthMm < 4000 ? 1 : item.panelWidthMm < 6000 ? 2 : 3;
+        return sum + csrPerPanel * item.panels * 2;
+      }, 0);
+      if (csrPlateCount > 0) {
+        suggestions.push(
+          componentSuggestion(
+            csrPlateSku(vars),
+            csrPlateCount,
+            "post_accessory",
+            "Optional: centre support rail top/base plates are suggested, not added to the standard BOM.",
+            "Centre support rail top/base plate",
+          ),
+        );
+      }
     }
   }
 

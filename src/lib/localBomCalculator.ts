@@ -5,7 +5,9 @@ import {
   localPricingRules,
   type LocalPricingRule,
 } from "./localSeedData";
+import { tierForSkuQuantity } from "./localPriceBreaks";
 import {
+  GATE_SEGMENT_STUB_KEYS,
   cornerDegreesFromVars,
   effectiveLegacyBoundaryType,
   type LegacyBoundaryType,
@@ -39,7 +41,6 @@ const SUPPORTED_PRODUCTS = new Set(["QSHS", "BAYG", "VS"]);
 const STANDARD_COLOURS = new Set(["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]);
 const ALUMAWOOD_CORE_COLOURS = new Set(["KWI", "WRC"]);
 const CSR_CAP_COLOURS = new Set(["B", "G", "MN", "S", "SM", "W"]);
-const CSR_PLATE_COLOURS = new Set(["B", "BS", "D", "G", "M", "MN", "S", "SM", "W"]);
 const COLOUR_NAMES: Record<string, string> = {
   B: "Black Satin",
   MN: "Monument Matt",
@@ -86,10 +87,6 @@ function csrCapColour(colour: string): string {
   return CSR_CAP_COLOURS.has(colour) ? colour : "MN";
 }
 
-function csrPlateColour(colour: string): string {
-  return CSR_PLATE_COLOURS.has(colour) ? colour : "MN";
-}
-
 function slatSkuFor(finishFamily: string, economySlats: boolean, slatSize: number, colour: string): string {
   if (economySlats) return `XP-6500-E65-${colour}`;
   if (finishFamily === "alumawood") {
@@ -111,10 +108,34 @@ function csrSkuFor(finishFamily: string, colour: string): string {
   return finishFamily === "alumawood" ? `AW-5800-CSR-${colour}` : `XP-5800-CSR-${colour}`;
 }
 
-function postSkuFor(finishFamily: string, postSize: number, postHeight: number, postColour: string): string {
+function angleAdapterSkuFor(finishFamily: string, colour: string): string {
+  if (finishFamily === "alumawood" && ALUMAWOOD_CORE_COLOURS.has(colour)) {
+    return `AW-5800-135-${colour}`;
+  }
+  return `XP-6000-135-${colour}`;
+}
+
+function nearestNamedCorner(degrees: number | undefined): 90 | 135 | undefined {
+  if (!degrees) return undefined;
+  return Math.abs(degrees - 135) < Math.min(Math.abs(degrees - 90), Math.abs(degrees - 180))
+    ? 135
+    : 90;
+}
+
+function postSkuFor(
+  finishFamily: string,
+  postSize: number,
+  postHeight: number,
+  postColour: string,
+  mountingType: string,
+): string {
   if (finishFamily === "alumawood" && ALUMAWOOD_CORE_COLOURS.has(postColour)) {
     if (postSize === 65) return postHeight > 2400 ? `AW-5800-65HD-${postColour}` : `AW-2400-65HD-${postColour}`;
     return postHeight > 2400 ? `AW-5800-FP-${postColour}` : `AW-2400-FP-${postColour}`;
+  }
+  if (mountingType === "in_ground" && postSize === 50 && postHeight <= 1200) {
+    const shortPostSku = `XP-1800-FP-${postColour}`;
+    if (getComponent(shortPostSku)) return shortPostSku;
   }
   if (postSize === 65) return postHeight > 2400 ? `XP-6000-65HD-${postColour}` : `XP-2400-65HD-${postColour}`;
   return postHeight > 2400 ? `XP-6000-FP-${postColour}` : `XP-2400-FP-${postColour}`;
@@ -163,9 +184,16 @@ function matchesPriceRule(rule: string | null | undefined, qty: number): boolean
   }
 }
 
-function priceForSku(sku: string, qty: number, tier: PricingTier): number {
+export function priceForSku(sku: string, qty: number): number {
+  const explicitRules = localPricingRules
+    .filter((rule) => rule.sku === sku && Boolean(rule.rule))
+    .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+  const explicitMatch = explicitRules.find((rule) => matchesPriceRule(rule.rule, qty));
+  if (explicitMatch) return explicitMatch.price;
+
+  const tier = tierForSkuQuantity(sku, qty);
   const rules = localPricingRules
-    .filter((rule) => rule.sku === sku && rule.tier_code === tier)
+    .filter((rule) => rule.sku === sku && rule.tier_code === tier && !rule.rule)
     .sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
   const matched = rules.find((rule) => matchesPriceRule(rule.rule, qty));
   if (matched) return matched.price;
@@ -224,7 +252,7 @@ function emitPostLines(
 ): void {
   if (postCount <= 0) return;
 
-  const postSku = postSkuFor(finishFamily, postSize, postHeight, postColour);
+  const postSku = postSkuFor(finishFamily, postSize, postHeight, postColour, mountingType);
   emit(lines, {
     runId: run.runId,
     segmentId,
@@ -278,6 +306,182 @@ function emitPostLines(
   }
 }
 
+function colourSkuSuffix(colour: string): string {
+  return STANDARD_COLOURS.has(colour) || colour === "P" ? colour : "MN";
+}
+
+function gateBladeSkuFor(colour: string): string {
+  return `XP-6100-GB65-${colourSkuSuffix(colour)}`;
+}
+
+function gateHdRailSkuFor(colour: string): string {
+  return `XP-6100-HD6545-${colourSkuSuffix(colour)}`;
+}
+
+function gateStopSkuFor(colour: string): string {
+  return `XP-4200-GSTOP-${colourSkuSuffix(colour)}`;
+}
+
+function stockLengthForSlidingTrack(sku: string): number {
+  return sku.includes("3000") ? 3000 : 6000;
+}
+
+function knownSelectedSku(value: unknown): string | undefined {
+  const sku = String(value ?? "");
+  if (!sku || sku === "none" || sku === "auto") return undefined;
+  return sku;
+}
+
+function calculateGateSegment(
+  run: CanonicalRun,
+  segment: CanonicalRun["segments"][number],
+  mergedRunVars: Record<string, unknown>,
+  warnings: string[],
+  computed: LocalBomResult["computed"],
+): QtyLine[] {
+  const lines: QtyLine[] = [];
+  const vars = { ...mergedRunVars, ...(segment.variables ?? {}) };
+  const movement = String(vars[GATE_SEGMENT_STUB_KEYS.gateMovement] ?? "single_swing");
+  const build = String(vars[GATE_SEGMENT_STUB_KEYS.gateBuild] ?? "qsg_hinged_horizontal");
+  const colour = String(vars[GATE_SEGMENT_STUB_KEYS.colourCode] ?? vars.colour_code ?? "B");
+  const slatGap = toNumber(vars[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? vars.slat_gap_mm, 9);
+  const slatSize = toNumber(vars[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? vars.slat_size_mm, 65);
+  const openingWidthMm = toNumber(segment.segmentWidthMm, 900);
+  const gateHeightMm = toNumber(
+    segment.targetHeightMm ?? vars[GATE_SEGMENT_STUB_KEYS.gateHeightMm],
+    toNumber(mergedRunVars.target_height_mm, 1800),
+  );
+  const leafCount = movement === "double_swing" ? 2 : 1;
+  const leafWidthMm = Math.max(1, openingWidthMm / leafCount);
+  const base = { runId: run.runId, segmentId: segment.segmentId };
+
+  computed[run.runId] = computed[run.runId] ?? {};
+  computed[run.runId][segment.segmentId] = {
+    ...(computed[run.runId][segment.segmentId] ?? {}),
+    gate_movement: movement,
+    gate_build: build,
+    gate_leaf_count: leafCount,
+    gate_leaf_width_mm: Math.round(leafWidthMm),
+    gate_height_mm: Math.round(gateHeightMm),
+  };
+
+  if (movement === "sliding") {
+    warnings.push(
+      "Sliding gate frame/infill quantities are not fully hardcoded yet; selected sliding hardware is priced from confirmed CSV SKUs.",
+    );
+    const trackSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.slidingTrackType]) ?? "XPSG-6000-TRACK-ST";
+    const trackQty = Math.ceil((openingWidthMm * 2) / stockLengthForSlidingTrack(trackSku));
+    emit(lines, {
+      ...base,
+      sku: trackSku,
+      category: "hardware",
+      quantity: trackQty,
+      unit: "length",
+      notes: `Sliding track for approx. ${Math.round(openingWidthMm * 2)}mm travel length`,
+    });
+    if (trackSku.includes("TRACK-ST")) {
+      emit(lines, {
+        ...base,
+        sku: "XPSG-ANCHOR",
+        category: "hardware",
+        quantity: trackSku.includes("3000") ? trackQty * 22 : trackQty * 42,
+        unit: "each",
+        notes: "Track anchor pins for steel track",
+      });
+    }
+    emit(lines, { ...base, sku: "XPSG-WHEEL", category: "hardware", quantity: 2, unit: "each", notes: "Sliding gate wheels" });
+    emit(lines, { ...base, sku: "XPSG-WHEEL-CS", category: "hardware", quantity: 2, unit: "each", notes: "Wheel clamping sets" });
+    emit(lines, { ...base, sku: "XPSG-GUIDE", category: "hardware", quantity: 1, unit: "each", notes: "Self-adjusting slide guide" });
+    emit(lines, { ...base, sku: "XPSG-STOP", category: "hardware", quantity: 1, unit: "each", notes: "Bolt down sliding gate stop" });
+    emit(lines, {
+      ...base,
+      sku: knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.slidingCatchType]) ?? "XPSG-CATCH-U",
+      category: "hardware",
+      quantity: 1,
+      unit: "each",
+      notes: "Sliding gate catch",
+    });
+    const motorSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.slidingMotorType]);
+    if (motorSku) {
+      emit(lines, { ...base, sku: motorSku, category: "hardware", quantity: 1, unit: "each", notes: "Selected sliding motor kit" });
+      emit(lines, {
+        ...base,
+        sku: "XPSG-FILO-RACK",
+        category: "hardware",
+        quantity: Math.ceil(openingWidthMm / 1000),
+        unit: "each",
+        notes: "Motor rack, 1m sections",
+      });
+    }
+    return lines;
+  }
+
+  if (movement !== "single_swing") {
+    warnings.push(
+      "Double swing gates are currently priced as selected hardware plus per-leaf QuickScreen gate materials; verify driveway frame rules before hardcoding.",
+    );
+  }
+  if (!build.startsWith("qsg_hinged_")) {
+    warnings.push(
+      `${build} gate build is selectable for workflow testing, but full frame kit rules still need QSG workbook verification.`,
+    );
+  }
+  if (slatSize !== 65) {
+    warnings.push("Gate blade stock is currently priced against confirmed 65mm gate blade SKUs; 90mm gate blade rules still need confirmation.");
+  }
+
+  const bladeCutMm = Math.max(1, leafWidthMm - 86);
+  const railCutMm = Math.max(1, leafWidthMm - 80);
+  const numGateBlades = Math.max(1, Math.floor((gateHeightMm - 133 + slatGap) / (65 + slatGap)));
+  const bladesPerStock = Math.max(1, Math.floor(6100 / bladeCutMm));
+  const railsPerStock = Math.max(1, Math.floor(6100 / railCutMm));
+
+  emit(lines, {
+    ...base,
+    sku: gateBladeSkuFor(colour),
+    category: "gate",
+    quantity: Math.ceil((numGateBlades * leafCount) / bladesPerStock),
+    unit: "length",
+    notes: `${numGateBlades} gate blades/leaf, ${Math.round(bladeCutMm)}mm cuts from 6100mm stock`,
+  });
+  emit(lines, {
+    ...base,
+    sku: gateHdRailSkuFor(colour),
+    category: "gate",
+    quantity: Math.ceil((2 * leafCount) / railsPerStock),
+    unit: "length",
+    notes: `Top/bottom HD rails, ${Math.round(railCutMm)}mm cuts from 6100mm stock`,
+  });
+
+  if (String(vars[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "auto") === "auto") {
+    emit(lines, {
+      ...base,
+      sku: gateStopSkuFor(colour),
+      category: "gate",
+      quantity: 3 * leafCount,
+      unit: "length",
+      notes: "Catalogue default gate stops: 2 latch side + 1 hinge side per leaf",
+    });
+  } else {
+    const stopSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.gateStopType]);
+    if (stopSku) emit(lines, { ...base, sku: stopSku, category: "hardware", quantity: leafCount, unit: "each", notes: "Selected gate stop" });
+  }
+
+  const hingeSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.hingeType]);
+  if (hingeSku) emit(lines, { ...base, sku: hingeSku, category: "hardware", quantity: leafCount, unit: "each", notes: "Selected hinge / latch hardware" });
+  const latchSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.latchType]);
+  if (latchSku) emit(lines, { ...base, sku: latchSku, category: "hardware", quantity: 1, unit: "each", notes: "Selected latch / lock hardware" });
+  const dropBoltSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.dropBoltType]);
+  if (dropBoltSku) emit(lines, { ...base, sku: dropBoltSku, category: "hardware", quantity: 1, unit: "each", notes: "Selected drop bolt" });
+  if (vars[GATE_SEGMENT_STUB_KEYS.includeLockBox] === true) {
+    warnings.push(
+      "A legacy lock-box option was present on this gate, but XPress gate-frame lock-box systems are excluded from the QSG-only gate pass.",
+    );
+  }
+
+  return lines;
+}
+
 function calculateVerticalSlatRun(
   payload: CanonicalPayload,
   run: CanonicalRun,
@@ -313,9 +517,7 @@ function calculateVerticalSlatRun(
 
   for (const segment of run.segments) {
     if (segment.segmentKind === "gate_opening") {
-      warnings.push(
-        "Gate openings are carried through the mapper, but QS_GATE BOM generation still needs the next implementation pass.",
-      );
+      lines.push(...calculateGateSegment(run, segment, mergedRunVars, warnings, computed));
       continue;
     }
 
@@ -343,23 +545,12 @@ function calculateVerticalSlatRun(
     const railCutMm = Math.max(1, panelWidthMm);
     const slatsPerStock = Math.max(1, Math.floor(slatStockLengthMm / slatCutMm));
     const railsPerStock = Math.max(1, Math.floor(5000 / railCutMm));
-    const edgeFramesPerStock = Math.max(1, Math.floor(5800 / slatCutMm));
+    const railInsertsPerStock = Math.max(1, Math.floor(5800 / railCutMm));
     const slatStocks = Math.ceil((numVerticalSlats * numPanels) / slatsPerStock);
     const railStocks = Math.ceil((2 * numPanels) / railsPerStock);
-    const edgeFramePieces = 2 * numPanels;
-    const edgeFrameStocks = Math.ceil(edgeFramePieces / edgeFramesPerStock);
-
-    const runLeftT = run.leftBoundary.type as LegacyBoundaryType;
-    const runRightT = run.rightBoundary.type as LegacyBoundaryType;
-    const leftEff = effectiveLegacyBoundaryType(runLeftT, segment.variables, "left");
-    const rightEff = effectiveLegacyBoundaryType(runRightT, segment.variables, "right");
+    const railInsertStocks = Math.ceil((2 * numPanels) / railInsertsPerStock);
     const leftCornerDeg = cornerDegreesFromVars(segment.variables, "left");
     const rightCornerDeg = cornerDegreesFromVars(segment.variables, "right");
-    const sideFramePieces =
-      (leftEff === "product_post" ? 1 : 0) +
-      (rightEff === "product_post" ? 1 : 0);
-    const sideFramesPerStock = Math.max(1, Math.floor(5800 / slatCutMm));
-    const sideFrameStocks = Math.ceil(sideFramePieces / sideFramesPerStock);
     const screwPacks = Math.ceil(
       (Math.ceil((numVerticalSlats * numPanels * 1.01) / 10) * 10) / 50,
     );
@@ -394,35 +585,11 @@ function calculateVerticalSlatRun(
     });
     emit(lines, {
       ...base,
-      sku: quickscreenSkuFor(finishFamily, "F", colour),
-      category: "f_section",
-      quantity: edgeFrameStocks,
-      unit: "length",
-      notes: `${edgeFramePieces} vertical edge frames at ${Math.round(slatCutMm)}mm`,
-    });
-    emit(lines, {
-      ...base,
       sku: quickscreenSkuFor(finishFamily, "SF", colour),
-      category: "side_frame",
-      quantity: sideFrameStocks,
+      category: "rail_insert",
+      quantity: railInsertStocks,
       unit: "length",
-      notes: `${sideFramePieces} side frame pieces for product-post panel ends`,
-    });
-    emit(lines, {
-      ...base,
-      sku: quickscreenSkuFor(finishFamily, "CFC", colour),
-      category: "cfc_cover",
-      quantity: sideFrameStocks,
-      unit: "length",
-      notes: "Auto-added 1:1 with side frame stock",
-    });
-    emit(lines, {
-      ...base,
-      sku: "QS-SFC-B",
-      category: "accessory",
-      quantity: sideFramePieces * 2,
-      unit: "each",
-      notes: "Side frame caps",
+      notes: `QS-5800-SF inserts inside top/bottom rails, ${Math.round(railCutMm)}mm cuts from 5800mm stock`,
     });
     emit(lines, {
       ...base,
@@ -431,6 +598,17 @@ function calculateVerticalSlatRun(
       quantity: screwPacks,
       unit: "pack",
       notes: "Vertical slat fixing screws",
+    });
+    const angleAdapterCount =
+      (nearestNamedCorner(leftCornerDeg) === 135 ? 1 : 0) +
+      (nearestNamedCorner(rightCornerDeg) === 135 ? 1 : 0);
+    emit(lines, {
+      ...base,
+      sku: angleAdapterSkuFor(finishFamily, colour),
+      category: "accessory",
+      quantity: angleAdapterCount,
+      unit: "length",
+      notes: "135 degree angle adapter for drawn corner",
     });
 
     if (panelWidthMm > 2600) {
@@ -509,9 +687,7 @@ function calculateScreenRun(
 
   for (const segment of run.segments) {
     if (segment.segmentKind === "gate_opening") {
-      warnings.push(
-        "Gate openings are carried through the mapper, but QS_GATE BOM generation still needs the next implementation pass.",
-      );
+      lines.push(...calculateGateSegment(run, segment, mergedRunVars, warnings, computed));
       continue;
     }
 
@@ -619,9 +795,9 @@ function calculateScreenRun(
       ...base,
       sku: "QS-SFC-B",
       category: "accessory",
-      quantity: sideFramePieces * 2,
+      quantity: sideFramePieces,
       unit: "each",
-      notes: "Side frame caps",
+      notes: "Side frame caps, one per cut side-frame piece",
     });
     emit(lines, {
       ...base,
@@ -641,17 +817,6 @@ function calculateScreenRun(
       quantity: numCsrPerPanel * numPanels,
       unit: "each",
       notes: "CSR caps",
-    });
-    emit(lines, {
-      ...base,
-      sku:
-        finishFamily === "alumawood" && ALUMAWOOD_CORE_COLOURS.has(colour)
-          ? "AW-BTP-TR"
-          : `XP-BTP-${csrPlateColour(postColour)}`,
-      category: "accessory",
-      quantity: numCsrPerPanel * numPanels * 2,
-      unit: "each",
-      notes: "CSR top/base plates",
     });
     emit(lines, {
       ...base,
@@ -692,6 +857,17 @@ function calculateScreenRun(
       quantity: screwPacks,
       unit: "pack",
       notes: "Screening screws",
+    });
+    const angleAdapterCount =
+      (nearestNamedCorner(leftCornerDeg) === 135 ? 1 : 0) +
+      (nearestNamedCorner(rightCornerDeg) === 135 ? 1 : 0);
+    emit(lines, {
+      ...base,
+      sku: angleAdapterSkuFor(finishFamily, colour),
+      category: "accessory",
+      quantity: angleAdapterCount,
+      unit: "length",
+      notes: "135 degree angle adapter for drawn corner",
     });
 
     if (panelWidthMm > 2600) {
@@ -754,7 +930,7 @@ export function calculateLocalBom(
   }
 
   const lines: BOMLineItem[] = [...aggregated.values()].map((line) => {
-    const unitPrice = priceForSku(line.sku, line.quantity, pricingTier);
+    const unitPrice = priceForSku(line.sku, line.quantity);
     if (unitPrice === 0) {
       assumptions.push(`No local price found for SKU ${line.sku}.`);
     }
@@ -773,7 +949,7 @@ export function calculateLocalBom(
   const pricedRunResults = runResults.map((run) => ({
     runId: run.runId,
     items: run.items.map((line) => {
-      const unitPrice = priceForSku(line.sku, line.quantity, pricingTier);
+      const unitPrice = priceForSku(line.sku, line.quantity);
       return {
         category: line.category as BOMLineItem["category"],
         sku: line.sku,
@@ -790,11 +966,14 @@ export function calculateLocalBom(
   const subtotal = roundMoney(lines.reduce((sum, line) => sum + line.lineTotal, 0));
   const gst = roundMoney(subtotal * 0.1);
   const grandTotal = roundMoney(subtotal + gst);
+  const gateItems = lines.filter(
+    (line) => line.category === "gate" || line.category === "hardware",
+  );
 
   return {
     lines,
     runResults: pricedRunResults,
-    gateItems: [],
+    gateItems,
     totals: { subtotal, gst, grandTotal },
     warnings,
     errors,
