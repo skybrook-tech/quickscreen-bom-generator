@@ -90,11 +90,12 @@ export function assertFixture(
 
   for (const expectedLine of expect.lines ?? []) {
     const actual = lines.find((l) => l.sku === expectedLine.sku);
+    const IDENTIFIER = `${expectedLine.sku} - ${expectedLine.name}`;
     assertExists(
       actual,
-      `Expected SKU '${expectedLine.sku}' in BOM but it was not found`,
+      `Expected SKU '${IDENTIFIER}' in BOM but it was not found`,
     );
-    assertQty(`SKU ${expectedLine.sku}`, actual.quantity, expectedLine.qty);
+    assertQty(`SKU ${IDENTIFIER}`, actual.quantity, expectedLine.qty);
   }
 
   const totals = body.totals as { grandTotal: number } | undefined;
