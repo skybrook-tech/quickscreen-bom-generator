@@ -1,5 +1,5 @@
 {
-  "id": "TC-V3-1",
+  "id": "XPL-10m-straight_base-plate",
   "description": "XPL 10m straight run, 1800mm target, black-satin, post both ends, base-plate. 4 panels @ 2500mm, 5 posts.",
   "input": {
     "pricingTier": "tier1",
@@ -39,24 +39,80 @@
   },
   "expect": {
     "errors": [],
+    "suggestions": [
+      {
+        "sku": "XP-BTP-B",
+        "qty": 8,
+        "category": "accessory",
+        "name": "BTP plate"
+      }
+    ],
     "lines": [
-      { "sku": "XPL-6000-F-B", "qty": 3, "category": "side_frame", "name": "F-section" },
-      { "sku": "XPL-EP-B-2PK", "qty": 8, "category": "accessory", "name": "Side frame end plate" },
-      { "sku": "XPL-6000-SF-B", "qty": 3, "category": "side_frame", "name": "Side frame" },
-      { "sku": "XPL-2100-INS09-B", "qty": 8, "category": "accessory", "name": "Premium insert" },
+      {
+        "sku": "XPL-6000-F-B",
+        "qty": 3,
+        "category": "side_frame",
+        "name": "F-section"
+      },
+      {
+        "sku": "XPL-EP-B-2PK",
+        "qty": 8,
+        "category": "accessory",
+        "name": "Side frame end plate"
+      },
+      {
+        "sku": "XPL-6000-SF-B",
+        "qty": 3,
+        "category": "side_frame",
+        "name": "Side frame"
+      },
+      {
+        "sku": "XPL-2100-INS09-B",
+        "qty": 8,
+        "category": "accessory",
+        "name": "Premium insert"
+      },
       { "sku": "XP-6100-S65-B", "qty": 48, "category": "slat", "name": "Slat" },
-      { "sku": "QS-SCREWS-50PK", "qty": 1, "category": "fixing", "name": "Screws" },
+      {
+        "sku": "QS-SCREWS-50PK",
+        "qty": 1,
+        "category": "fixing",
+        "name": "Screws"
+      },
 
-      { "sku": "XP-2400-FP-B", "qty": 5, "category": "post" },
-      { "sku": "XP-TP-B", "qty": 4, "category": "accessory" },
+      {
+        "sku": "XP-2400-FP-B",
+        "qty": 5,
+        "category": "post",
+        "name": "FP post"
+      },
+      { "sku": "XP-TP-B", "qty": 4, "category": "accessory", "name": "TP cap" },
 
-      { "sku": "XP-CSRC-B", "qty": 4, "category": "accessory" },
-      { "sku": "XP-BTP-B", "qty": 8, "category": "accessory" },
-      { "sku": "XP-5800-CSR-B", "qty": 2, "category": "centre_support_rail" },
+      {
+        "sku": "XP-CSRC-B",
+        "qty": 4,
+        "category": "accessory",
+        "name": "CSR cap"
+      },
+      {
+        "sku": "XP-5800-CSR-B",
+        "qty": 2,
+        "category": "centre_support_rail",
+        "name": "CSR cap"
+      },
 
-      { "sku": "XP-BP-SET-B", "qty": 5, "category": "post_accessory" },
-      { "sku": "XP-DC-2P-B", "qty": 5, "category": "post_accessory" },
-      { "sku": "XP-DR-B", "qty": 5, "category": "post_accessory" }
+      {
+        "sku": "XP-BP-SET-B",
+        "qty": 5,
+        "category": "post_accessory",
+        "name": "BP set"
+      },
+      {
+        "sku": "XP-DC-2P-B",
+        "qty": 5,
+        "category": "post_accessory",
+        "name": "DC cover"
+      }
     ],
     "totals": {
       "grandTotal": {

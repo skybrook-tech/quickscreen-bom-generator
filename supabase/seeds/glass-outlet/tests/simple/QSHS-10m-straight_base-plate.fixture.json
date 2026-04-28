@@ -1,5 +1,5 @@
 {
-  "id": "TC-V3-1",
+  "id": "QSHS-10m-straight_base-plate",
   "description": "QSHS 10m straight run, 1800mm target, black-satin, post both ends, base-plate. 4 panels @ 2500mm, 5 posts.",
   "input": {
     "pricingTier": "tier1",
@@ -39,25 +39,81 @@
   },
   "expect": {
     "errors": [],
+    "suggestions": [
+      {
+        "sku": "XP-BTP-B",
+        "qty": 8,
+        "category": "accessory",
+        "name": "BTP plate"
+      }
+    ],
     "lines": [
-      { "sku": "QS-5800-CFC-B", "qty": 3, "category": "cfc_cover" },
-      { "sku": "QS-5800-SF-B", "qty": 3, "category": "side_frame" },
-      { "sku": "QS-SPACER-05MM-50PK", "qty": 4, "category": "accessory" },
-      { "sku": "QS-SCREWS-50PK", "qty": 5, "category": "fixing" },
-      { "sku": "QS-SFCAP-B-2PK", "qty": 4, "category": "accessory" },
-      { "sku": "XP-6100-S65-B", "qty": 52, "category": "slat" },
-      { "sku": "QS-5800-F-B", "qty": 3, "category": "side_frame" },
+      { "sku": "QS-5800-CFC-B", "qty": 3, "name": "CFC cover" },
+      {
+        "sku": "QS-5800-SF-B",
+        "qty": 3,
+        "category": "side_frame",
+        "name": "SF cap"
+      },
+      {
+        "sku": "QS-SPACER-05MM-50PK",
+        "qty": 4,
+        "category": "accessory",
+        "name": "Spacer"
+      },
+      {
+        "sku": "QS-SCREWS-50PK",
+        "qty": 5,
+        "category": "fixing",
+        "name": "Screws"
+      },
+      {
+        "sku": "QS-SFCAP-B-2PK",
+        "qty": 4,
+        "category": "accessory",
+        "name": "SFCAP"
+      },
+      { "sku": "XP-6100-S65-B", "qty": 52, "category": "slat", "name": "Slat" },
+      {
+        "sku": "QS-5800-F-B",
+        "qty": 3,
+        "category": "side_frame",
+        "name": "F-section"
+      },
 
-      { "sku": "XP-2400-FP-B", "qty": 5, "category": "post" },
-      { "sku": "XP-TP-B", "qty": 4, "category": "accessory" },
+      {
+        "sku": "XP-2400-FP-B",
+        "qty": 5,
+        "category": "post",
+        "name": "FP post"
+      },
+      { "sku": "XP-TP-B", "qty": 4, "category": "accessory", "name": "TP cap" },
 
-      { "sku": "XP-CSRC-B", "qty": 4, "category": "accessory" },
-      { "sku": "XP-BTP-B", "qty": 8, "category": "accessory" },
-      { "sku": "XP-5800-CSR-B", "qty": 2, "category": "centre_support_rail" },
+      {
+        "sku": "XP-CSRC-B",
+        "qty": 4,
+        "category": "accessory",
+        "name": "CSR cap"
+      },
+      {
+        "sku": "XP-5800-CSR-B",
+        "qty": 2,
+        "category": "centre_support_rail",
+        "name": "CSR cap"
+      },
 
-      { "sku": "XP-BP-SET-B", "qty": 5, "category": "post_accessory" },
-      { "sku": "XP-DC-2P-B", "qty": 5, "category": "post_accessory" },
-      { "sku": "XP-DR-B", "qty": 5, "category": "post_accessory" }
+      {
+        "sku": "XP-BP-SET-B",
+        "qty": 5,
+        "category": "post_accessory",
+        "name": "BP set"
+      },
+      {
+        "sku": "XP-DC-2P-B",
+        "qty": 5,
+        "category": "post_accessory",
+        "name": "DC cover"
+      }
     ],
     "totals": {
       "grandTotal": {

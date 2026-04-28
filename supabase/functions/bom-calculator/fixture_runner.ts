@@ -87,6 +87,19 @@ export function assertFixture(
   }
 
   const lines = body.lines as Array<{ sku: string; quantity: number }>;
+  const suggestions = body.suggestions as Array<{
+    sku: string;
+    quantity: number;
+  }>;
+
+  for (const expectedSuggestion of expect.suggestions ?? []) {
+    const actual = suggestions.find((s) => s.sku === expectedSuggestion.sku);
+    const IDENTIFIER = `${expectedSuggestion.sku} - ${expectedSuggestion.name}`;
+    assertExists(
+      actual,
+      `Expected SKU '${IDENTIFIER}' in BOM but it was not found`,
+    );
+  }
 
   for (const expectedLine of expect.lines ?? []) {
     const actual = lines.find((l) => l.sku === expectedLine.sku);
