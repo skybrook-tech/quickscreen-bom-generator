@@ -1,12 +1,11 @@
 import { useCalculator } from "../../context/CalculatorContext";
-import type { CanonicalSegment } from "../../types/canonical.types";
-import {
-  CORNER_DEGREE_OPTIONS,
-  SEGMENT_TERMINATION_KEYS,
-  patchSegmentVariables,
-  type NonSystemSubtypeUi,
-  type TerminationKindUi,
-} from "../../lib/segmentTermination";
+import type {
+  CanonicalSegment,
+  SegmentTermination,
+} from "../../types/canonical.types";
+import { CORNER_DEGREE_OPTIONS } from "../../lib/segmentTermination";
+import { useProducts } from "../../hooks/useProducts";
+import { Select } from "../ui/Select";
 
 interface Props {
   runId: string;
@@ -14,95 +13,144 @@ interface Props {
   side: "left" | "right";
 }
 
+enum KINDS {
+  SYSTEM = "system",
+  SYSTEM_CORNER = "system_corner",
+  NON_SYSTEM = "non_system",
+  SEGMENT_JOIN = "segment_join",
+}
+
+enum KIND_SUBTYPES {
+  WALL = "wall",
+  POST = "post",
+  OTHER = "other",
+}
+
 export function TerminationControl({ runId, seg, side }: Props) {
   const { dispatch } = useCalculator();
-  const v = seg.variables ?? {};
+  const { data: products } = useProducts();
 
-  const kindKey =
-    side === "left"
-      ? SEGMENT_TERMINATION_KEYS.leftKind
-      : SEGMENT_TERMINATION_KEYS.rightKind;
-  const degKey =
-    side === "left"
-      ? SEGMENT_TERMINATION_KEYS.leftCornerDegrees
-      : SEGMENT_TERMINATION_KEYS.rightCornerDegrees;
-  const subKey =
-    side === "left"
-      ? SEGMENT_TERMINATION_KEYS.leftNonSystemSubtype
-      : SEGMENT_TERMINATION_KEYS.rightNonSystemSubtype;
+  const termination: SegmentTermination =
+    side === "left" ? seg.leftTermination : seg.rightTermination;
 
-  const kind = (v[kindKey] as TerminationKindUi) ?? "";
-  const sub = (v[subKey] as NonSystemSubtypeUi) ?? "wall";
+  console.log(termination);
+  console.log(side);
+  console.log(seg);
 
-  function upsertSegment(s: CanonicalSegment) {
-    dispatch({ type: "UPSERT_SEGMENT", runId, segment: s });
+  // Resolve allowedAngles for this segment's product
+  const allowedAngles: number[] = (() => {
+    const product = products?.find((p) => p.system_type === seg.productCode);
+    return product?.metadata?.allowedAngles ?? [...CORNER_DEGREE_OPTIONS];
+  })();
+
+  function patch(t: SegmentTermination) {
+    const updated: CanonicalSegment =
+      side === "left"
+        ? { ...seg, leftTermination: t }
+        : { ...seg, rightTermination: t };
+    dispatch({ type: "UPSERT_SEGMENT", runId, segment: updated });
   }
 
-  function setKind(next: TerminationKindUi | "") {
-    const patch: Record<string, string | number | boolean | null> = {
-      [kindKey]: next || null,
-    };
-    if (next !== "corner") patch[degKey] = null;
-    if (next !== "non_system_termination") patch[subKey] = null;
-    if (next === "corner" && v[degKey] == null) patch[degKey] = 90;
-    if (next === "non_system_termination" && v[subKey] == null)
-      patch[subKey] = "wall";
-    upsertSegment(patchSegmentVariables(seg, patch));
+  // segment_join = straight-through join, canvas-driven, read-only
+  if (termination.kind === KINDS.SEGMENT_JOIN) {
+    return (
+      <div className="border border-brand-border/40 rounded-md p-3 space-y-1">
+        <p className="text-brand-text font-medium capitalize">
+          {side} termination
+        </p>
+        <p className="text-xs text-brand-muted">Straight join</p>
+      </div>
+    );
   }
 
-  function setScalar(key: string, value: string | number | boolean | null) {
-    upsertSegment(patchSegmentVariables(seg, { [key]: value }));
+  const kindValue =
+    termination.kind === KINDS.NON_SYSTEM
+      ? `${KINDS.NON_SYSTEM}:${termination.subtype}`
+      : termination.kind;
+
+  function handleKindChange(val: string) {
+    if (val === KINDS.SYSTEM) {
+      patch({ kind: KINDS.SYSTEM });
+    } else if (val === KINDS.SYSTEM_CORNER) {
+      patch({ kind: KINDS.SYSTEM_CORNER, angleDeg: 90 });
+    } else if (val.startsWith(KINDS.NON_SYSTEM + ":")) {
+      const subtype = val.slice((KINDS.NON_SYSTEM + ":").length) as
+        | KIND_SUBTYPES.WALL
+        | KIND_SUBTYPES.POST
+        | KIND_SUBTYPES.OTHER;
+      patch({ kind: KINDS.NON_SYSTEM, subtype });
+    }
   }
+
+  const angleDeg =
+    termination.kind === KINDS.SYSTEM_CORNER ? termination.angleDeg : 0;
+  const mag = Math.abs(angleDeg);
+  const sign = Math.sign(angleDeg) || 1;
 
   return (
     <div className="border border-brand-border/40 rounded-md p-3 space-y-2">
-      <p className="text-brand-text font-medium capitalize">
-        {side} termination
-      </p>
-      <label className="flex flex-col gap-1 max-w-xs">
-        <span className="text-brand-muted">Type</span>
-        <select
-          value={kind}
-          onChange={(e) => setKind(e.target.value as TerminationKindUi | "")}
-          className="bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
-        >
-          <option value="system_post">System post</option>
-          <option value="corner">Corner</option>
-          <option value="non_system_termination">Non-system termination</option>
-        </select>
-      </label>
-
-      {kind === "corner" && (
+      <div>
+        <p className="text-brand-text font-medium capitalize">
+          {side} termination
+        </p>
         <label className="flex flex-col gap-1 max-w-xs">
-          <span className="text-brand-muted">Corner angle (°)</span>
-          <select
-            value={Number(v[degKey] ?? 90)}
-            onChange={(e) => setScalar(degKey, Number(e.target.value))}
-            className="bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
+          <span className="text-brand-muted">Type</span>
+          <Select
+            value={kindValue}
+            onChange={(e) => handleKindChange(e.target.value)}
           >
-            {CORNER_DEGREE_OPTIONS.map((d) => (
-              <option key={d} value={d}>
-                {d}°
-              </option>
-            ))}
-          </select>
+            <option value={KINDS.SYSTEM}>System post</option>
+            <option value={KINDS.SYSTEM_CORNER}>System corner</option>
+            <option value={KINDS.NON_SYSTEM + ":" + KIND_SUBTYPES.WALL}>
+              Wall
+            </option>
+            <option value={KINDS.NON_SYSTEM + ":" + KIND_SUBTYPES.POST}>
+              Non-system post
+            </option>
+            <option value={KINDS.NON_SYSTEM + ":" + KIND_SUBTYPES.OTHER}>
+              Other (no post)
+            </option>
+          </Select>
         </label>
-      )}
-
-      {kind === "non_system_termination" && (
-        <label className="flex flex-col gap-1 max-w-xs">
-          <span className="text-brand-muted">Non-system type</span>
-          <select
-            value={sub}
-            onChange={(e) =>
-              setScalar(subKey, e.target.value as NonSystemSubtypeUi)
-            }
-            className="bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
-          >
-            <option value="wall">Wall</option>
-            <option value="non_system_post">Non-system post</option>
-          </select>
-        </label>
+      </div>
+      {kindValue === KINDS.SYSTEM_CORNER && (
+        <div className="">
+          <div className="flex gap-3 items-end flex-wrap">
+            <label className="flex flex-col gap-1">
+              <span className="text-brand-muted text-xs">Angle</span>
+              <Select
+                value={String(mag)}
+                onChange={(e) =>
+                  patch({
+                    kind: KINDS.SYSTEM_CORNER,
+                    angleDeg: sign * Number(e.target.value),
+                  })
+                }
+              >
+                {allowedAngles.map((a) => (
+                  <option key={a} value={a}>
+                    {a}°
+                  </option>
+                ))}
+              </Select>
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="text-brand-muted text-xs">Direction</span>
+              <Select
+                value={sign > 0 ? "right" : "left"}
+                onChange={(e) =>
+                  patch({
+                    kind: KINDS.SYSTEM_CORNER,
+                    angleDeg: (e.target.value === "right" ? 1 : -1) * mag,
+                  })
+                }
+              >
+                <option value="right">Right turn</option>
+                <option value="left">Left turn</option>
+              </Select>
+            </label>
+          </div>
+        </div>
       )}
     </div>
   );

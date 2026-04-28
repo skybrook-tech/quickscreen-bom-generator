@@ -4,6 +4,7 @@ import { ChevronDown, Search } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalPayload } from "../../types/canonical.types";
+import { Input } from "../ui/Input";
 
 interface FenceProduct {
   id: string;
@@ -68,22 +69,20 @@ export function ProductSelectV3() {
   function selectProduct(p: FenceProduct) {
     const initialPayload: CanonicalPayload = {
       productCode: p.system_type,
-      schemaVersion: "v1",
+      schemaVersion: "v2",
       variables: {
-        colour_code: "B",
+        colour_code: "black-satin",
         slat_size_mm: 65,
         slat_gap_mm: 5,
+        finish_type: "standard",
         finish_family: "standard",
         max_panel_width_mm: 2600,
+        target_height_mm: 1800,
       },
       runs: [
         {
           runId: crypto.randomUUID(),
-          productCode: p.system_type,
-          leftBoundary: { type: "product_post" },
-          rightBoundary: { type: "product_post" },
           segments: [],
-          corners: [],
         },
       ],
     };
@@ -138,7 +137,7 @@ export function ProductSelectV3() {
         <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-brand-card border border-brand-border rounded-lg shadow-lg overflow-hidden">
           <div className="flex items-center gap-2 px-3 py-2 border-b border-brand-border">
             <Search size={14} className="text-brand-muted shrink-0" />
-            <input
+            <Input
               autoFocus
               type="text"
               placeholder="Search fences…"
@@ -148,7 +147,7 @@ export function ProductSelectV3() {
                 setActiveIndex(0);
               }}
               onKeyDown={handleKeyDown}
-              className="flex-1 bg-transparent outline-none text-sm text-brand-text placeholder:text-brand-muted/60"
+              className="flex-1 bg-transparent border-0 ring-0 focus:ring-0 focus:border-0 text-sm text-brand-text placeholder:text-brand-muted/60 p-0"
               data-testid="product-select-search"
             />
           </div>

@@ -1,6 +1,7 @@
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun } from "../../types/canonical.types";
 import { RunCard } from "./RunCard";
+import { Button } from "../ui/Button";
 
 export function RunListV3() {
   const { state, dispatch } = useCalculator();
@@ -11,11 +12,7 @@ export function RunListV3() {
   function addRun() {
     const newRun: CanonicalRun = {
       runId: crypto.randomUUID(),
-      productCode: payload!.productCode,
-      leftBoundary: { type: "product_post" },
-      rightBoundary: { type: "product_post" },
       segments: [],
-      corners: [],
     };
     dispatch({ type: "UPSERT_RUN", run: newRun });
   }
@@ -25,13 +22,13 @@ export function RunListV3() {
       {payload.runs.map((run, runIdx) => (
         <RunCard key={run.runId} run={run} runIdx={runIdx} />
       ))}
-      <button
-        type="button"
+      <Button
+        variant="secondary"
         onClick={addRun}
-        className="w-full text-sm text-brand-muted border border-dashed border-brand-border rounded-lg py-3 hover:border-brand-accent/50 hover:text-brand-accent transition-colors"
+        className="w-full justify-center border-dashed rounded-lg py-3 text-brand-muted hover:border-brand-accent/50 hover:text-brand-accent hover:bg-transparent"
       >
         + Add run
-      </button>
+      </Button>
     </div>
   );
 }

@@ -11,19 +11,14 @@
 
 export interface CanonicalPayload {
   productCode: string;
-  schemaVersion: string;
+  schemaVersion: "v2";
   variables: Record<string, string | number | boolean>;
   runs: CanonicalRun[];
 }
 
 export interface CanonicalRun {
   runId: string;
-  productCode: string;
-  variables?: Record<string, string | number | boolean>;
-  leftBoundary: CanonicalBoundary;
-  rightBoundary: CanonicalBoundary;
   segments: CanonicalSegment[];
-  corners: CanonicalCorner[];
   /**
    * Canvas pixel coordinates of the run's endpoint chain: [start, seg0_end, seg1_end, …].
    * Stored by the canvas adapter so the drawn angles and positions are preserved
@@ -35,30 +30,44 @@ export interface CanonicalRun {
   };
 }
 
-export interface CanonicalBoundary {
-  type: 'product_post' | 'brick_post' | 'existing_post' | 'wall' | 'corner_90';
-  meta?: Record<string, unknown>;
-}
+// ─── Terminations ───────────────────────────────────────────────────────────
 
-export type SegmentKind = 'panel' | 'bay_group' | 'gate_opening' | 'corner';
+/**
+ * A segment termination describes what is on one end of a fence/gate segment.
+ *
+ * - `system`        — a product post (matching the fencing system, e.g. a QSHS post)
+ * - `non_system`    — something outside the BOM scope: a brick wall, an existing post, etc.
+ * - `segment_join`  — straight-through boundary between adjacent segments; no corner fitting.
+ * - `system_corner` — structural corner fitting required. `angleDeg` is the SIGNED interior
+ *                     angle in degrees: positive = CW (right turn), negative = CCW (left turn).
+ *                     Magnitude must be in [1, 179]. Examples: +90, -90, +135, -135.
+ *                     Adjacent segments MUST carry matching angleDeg on their shared boundary.
+ */
+export type SegmentTermination =
+  | { kind: "system" }
+  | { kind: "non_system"; subtype: "wall" | "post" | "other" }
+  | { kind: "segment_join" }
+  | { kind: "system_corner"; angleDeg: number };
+
+// ─── Segment ────────────────────────────────────────────────────────────────
+
+export type SegmentKind = "fence" | "gate";
 
 export interface CanonicalSegment {
   segmentId: string;
   sortOrder: number;
-  segmentKind: SegmentKind;
+  /** 'fence' for a fencing panel run; 'gate' for a gate opening within a run */
+  kind: SegmentKind;
+  /** Product code for this segment (e.g. 'QSHS', 'QS_GATE'). */
+  productCode: string;
+  /** Total run length of this segment in mm. */
   segmentWidthMm?: number;
   targetHeightMm?: number;
-  bayCount?: number;
-  gateProductCode?: string;
+  leftTermination: SegmentTermination;
+  rightTermination: SegmentTermination;
   /**
-   * Per-segment overrides. Termination keys: see `src/lib/segmentTermination.ts`
-   * (`left_termination_kind`, `right_termination_kind`, corner degrees, non-system subtype).
+   * Per-segment variable overrides (colour, slat_size, gate dimensions, etc.)
+   * merged on top of run-level variables by the engine.
    */
   variables?: Record<string, string | number | boolean>;
-}
-
-export interface CanonicalCorner {
-  cornerId: string;
-  afterSegmentId: string;
-  type: '90';
 }

@@ -24,7 +24,7 @@ about X — where does it go in the per-variant product file?"
 | "Formula for slat count / cut length / post count" | `product_rules` (pick stage per §5.3) |
 | "Rule about stock-length efficiency" (slats per 5800mm) | `product_rules` stage `stock` |
 | "Screw/spacer count per slat/panel" | `product_rules` stage `accessory` |
-| "Final emitted component quantities" (num_side_frames, num_posts) | `product_rules` stage `component` |
+| "Final emitted component quantities" (num_side_frames, num_rails) | `product_rules` stage `component` — note: `num_posts` is **engine-provided**, do not write a rule for it |
 | "Which SKU to use for category X with attributes Y" | `product_component_selectors` |
 | "When we add X, also add Y" | `product_companion_rules` |
 | "Warn the user about situation Z" | `product_warnings` (`severity: warning`) |
@@ -36,8 +36,14 @@ about X — where does it go in the per-variant product file?"
 | Typical variables → | `scope` |
 |---|---|
 | colour_code, slat_size_mm, slat_gap_mm, finish_family | `job` |
-| mounting_type, left_boundary_type, right_boundary_type, hinge_type, latch_type | `run` |
-| panel_width_mm, target_height_mm, segment_kind, bay_count, gate_width_mm, gate_height_mm | `segment` |
+| mounting_type, hinge_type, latch_type | `run` |
+| panel_width_mm, target_height_mm, gate_width_mm, gate_height_mm | `segment` |
+
+Note: `left_boundary_type`, `right_boundary_type`, and `segment_kind` are **no
+longer variables** — they are structural properties on the segment
+(`leftTermination`, `rightTermination`, `kind`). Do not declare them in
+`product_variables`. The engine injects `left_is_system`, `right_is_wall`,
+etc. automatically.
 
 ## Component category values currently in use
 

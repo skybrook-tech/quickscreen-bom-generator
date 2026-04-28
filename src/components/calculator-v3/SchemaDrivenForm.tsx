@@ -1,7 +1,8 @@
 import { ColourSelect } from "../fence/ColourSelect";
-import { SlatSizeSelect } from "../fence/SlatSizeSelect";
-import { SlatGapSelect } from "../fence/SlatGapSelect";
 import { FormField } from "../shared/FormField";
+import { Select } from "../ui/Select";
+import { Input } from "../ui/Input";
+import { useColourOptions } from "../../hooks/useColourOptions";
 
 export interface SchemaField {
   id: string;
@@ -13,6 +14,7 @@ export interface SchemaField {
   required: boolean;
   default_value_json?: unknown;
   options_json: unknown[];
+  options_group?: string | null;
   visible_when_json: Record<string, unknown>;
   sort_order: number;
 }
@@ -23,7 +25,7 @@ interface SchemaDrivenFormProps {
   variables: Record<string, string | number | boolean>;
 }
 
-function isVisible(
+export function isVisible(
   visibleWhen: Record<string, unknown>,
   variables: Record<string, unknown>,
 ): boolean {
@@ -46,12 +48,30 @@ export function SchemaDrivenForm({
   onChange,
   variables,
 }: SchemaDrivenFormProps) {
+  const { data: allColours = [] } = useColourOptions();
+
+  const finishType = variables["finish_type"] as string | undefined;
+  const allowedColours = allColours
+    .filter((c) =>
+      !finishType || finishType === "standard"
+        ? c.finish_group === "standard"
+        : c.finish_group === finishType,
+    );
+
   return (
     <div className="flex flex-wrap gap-4">
       {fields.map((field) => {
         if (!isVisible(field.visible_when_json ?? {}, variables)) return null;
 
         if (field.field_key === "colour_code") {
+          const opts = field.options_group === "colours"
+            ? allowedColours
+            : Array.isArray(field.options_json) && field.options_json.length > 0
+              ? (field.options_json as string[]).map((v) => {
+                  const found = allColours.find((c) => c.value === v);
+                  return found ?? { value: v, label: v, limited: false };
+                })
+              : allowedColours;
           return (
             <div
               key={field.id}
@@ -62,52 +82,7 @@ export function SchemaDrivenForm({
                 <ColourSelect
                   value={String(variables[field.field_key] ?? "")}
                   onChange={(e) => onChange(field.field_key, e.target.value)}
-                  className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
-                />
-              </FormField>
-            </div>
-          );
-        }
-
-        if (field.field_key === "slat_size_mm") {
-          return (
-            <div
-              key={field.id}
-              data-testid={field.field_key}
-              className={FIELD_WRAPPER}
-            >
-              <FormField
-                label={field.label}
-                note={field.unit ? `Units: ${field.unit}` : undefined}
-              >
-                <SlatSizeSelect
-                  value={String(variables[field.field_key] ?? "65")}
-                  onChange={(e) =>
-                    onChange(field.field_key, Number(e.target.value))
-                  }
-                  className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
-                />
-              </FormField>
-            </div>
-          );
-        }
-
-        if (field.field_key === "slat_gap_mm") {
-          return (
-            <div
-              key={field.id}
-              data-testid={field.field_key}
-              className={FIELD_WRAPPER}
-            >
-              <FormField
-                label={field.label}
-                note={field.unit ? `Units: ${field.unit}` : undefined}
-              >
-                <SlatGapSelect
-                  value={String(variables[field.field_key] ?? "5")}
-                  onChange={(e) =>
-                    onChange(field.field_key, Number(e.target.value))
-                  }
+                  options={opts}
                   className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
                 />
               </FormField>
@@ -120,6 +95,8 @@ export function SchemaDrivenForm({
           Array.isArray(field.options_json) &&
           field.options_json.length > 0
         ) {
+          // Skip single-option selects (e.g. gates with finish_type=["standard"])
+          if (field.options_json.length === 1) return null;
           return (
             <div
               key={field.id}
@@ -130,17 +107,17 @@ export function SchemaDrivenForm({
                 label={field.label}
                 note={field.unit ? `Units: ${field.unit}` : undefined}
               >
-                <select
+                <Select
                   value={String(variables[field.field_key] ?? "")}
                   onChange={(e) => onChange(field.field_key, e.target.value)}
-                  className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
+                  className="w-full"
                 >
                   {field.options_json.map((opt) => (
                     <option key={String(opt)} value={String(opt)}>
                       {String(opt)}
                     </option>
                   ))}
-                </select>
+                </Select>
               </FormField>
             </div>
           );
@@ -157,7 +134,7 @@ export function SchemaDrivenForm({
                 label={field.label}
                 note={field.unit ? `Units: ${field.unit}` : undefined}
               >
-                <input
+                <Input
                   type="number"
                   value={Number(
                     variables[field.field_key] ?? field.default_value_json ?? 0,
@@ -170,7 +147,7 @@ export function SchemaDrivenForm({
                         : parseFloat(e.target.value),
                     )
                   }
-                  className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
+                  className="w-full"
                 />
               </FormField>
             </div>
@@ -207,11 +184,11 @@ export function SchemaDrivenForm({
               label={field.label}
               note={field.unit ? `Units: ${field.unit}` : undefined}
             >
-              <input
+              <Input
                 type="text"
                 value={String(variables[field.field_key] ?? "")}
                 onChange={(e) => onChange(field.field_key, e.target.value)}
-                className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
+                className="w-full"
               />
             </FormField>
           </div>

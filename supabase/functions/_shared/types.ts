@@ -59,6 +59,7 @@ export type BOMUnit = 'each' | 'length' | 'pack' | 'box';
 export interface BOMLineItem {
   category: BOMCategory;
   sku: string;
+  name: string;
   description: string;
   quantity: number;
   unit: BOMUnit;
@@ -104,6 +105,13 @@ export interface CalculatorRequest {
   pricingTier?: PricingTier;
 }
 
+export interface SegmentDiagnostic {
+  segmentId: string;
+  runId: string;
+  severity: 'error' | 'warning' | 'info';
+  message: string;
+}
+
 export interface CalculatorBOMResult {
   runResults: Array<{ runId: string; items: BOMLineItem[] }>;
   gateItems: BOMLineItem[];
@@ -113,6 +121,7 @@ export interface CalculatorBOMResult {
   grandTotal: number;
   pricingTier: PricingTier;
   generatedAt: string;
+  segmentDiagnostics: SegmentDiagnostic[];
 }
 
 export interface PricingRule {

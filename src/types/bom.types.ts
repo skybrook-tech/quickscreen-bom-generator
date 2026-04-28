@@ -4,6 +4,9 @@ export type BOMUnit = 'each' | 'length' | 'pack' | 'box';
 export interface BOMLineItem {
   category: BOMCategory;
   sku: string;
+  /** Short component name from product_components.name */
+  name: string;
+  /** Longer description from product_components.description */
   description: string;
   quantity: number;
   unit: BOMUnit;
@@ -33,6 +36,13 @@ export interface BOMResult {
 
 export type PricingTier = 'tier1' | 'tier2' | 'tier3';
 
+export interface SegmentDiagnostic {
+  segmentId: string;
+  runId: string;
+  severity: 'error' | 'warning' | 'info';
+  message: string;
+}
+
 export interface CalculatorBOMResult {
   runResults: Array<{ runId: string; items: BOMLineItem[] }>;
   gateItems: BOMLineItem[];
@@ -42,6 +52,7 @@ export interface CalculatorBOMResult {
   grandTotal: number;
   pricingTier: PricingTier;
   generatedAt: string;
+  segmentDiagnostics: SegmentDiagnostic[];
 }
 
 /** Ad-hoc line item added manually by staff — not from the BOM calculation */

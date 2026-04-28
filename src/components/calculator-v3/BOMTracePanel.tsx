@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronRight, Copy } from 'lucide-react';
 import { toast } from 'sonner';
+import { Button } from '../ui/Button';
 
 interface TraceEntry {
   stage?: string;
@@ -45,13 +46,9 @@ export function BOMTracePanel({ trace, computed, isAdmin }: BOMTracePanelProps) 
       {open && (
         <div className="bg-brand-bg p-4 space-y-4">
           <div className="flex justify-end">
-            <button
-              type="button"
-              onClick={copyTrace}
-              className="flex items-center gap-1.5 text-xs text-brand-muted hover:text-brand-text border border-brand-border rounded px-3 py-1.5 transition-colors"
-            >
-              <Copy className="w-3 h-3" /> Copy trace
-            </button>
+            <Button icon={Copy} variant="secondary" size="small" onClick={copyTrace}>
+              Copy trace
+            </Button>
           </div>
 
           {/* Rule firings */}

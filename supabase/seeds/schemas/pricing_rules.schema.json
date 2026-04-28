@@ -35,7 +35,7 @@
       },
       "price": {
         "type": "number",
-        "description": "Per-unit price ex-GST in AUD."
+        "description": "Per-unit price ex-GST in AUD. Use 0 for SKUs where pricing is TBC — engine will emit unitPrice=0 with a warning."
       },
       "priority": {
         "type": "integer",

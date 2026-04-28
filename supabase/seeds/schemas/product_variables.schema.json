@@ -83,6 +83,13 @@
       },
       "active": {
         "type": "boolean"
+      },
+      "options_group": {
+        "type": ["string", "null"],
+        "description": "Name of a shared option set (e.g. 'colours'). When present, the form fetches options from the corresponding lookup table instead of options_json."
+      },
+      "notes": {
+        "type": ["string", "null"]
       }
     }
   }

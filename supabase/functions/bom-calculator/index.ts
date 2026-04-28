@@ -20,50 +20,22 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { extractJwt, resolveUserProfile } from "../_shared/auth.ts";
-import { create, all } from "https://esm.sh/mathjs@13";
 import type {
   CanonicalPayload,
   CanonicalRun,
   CanonicalSegment,
+  SegmentTermination,
 } from "../_shared/canonical.types.ts";
-import {
-  cornerDegreesFromVars,
-  effectiveLegacyBoundaryType,
-  type LegacyBoundaryType,
-} from "../_shared/segmentTermination.ts";
+import { walkRunForPosts } from "../_shared/segmentTermination.ts";
 import type { BOMUnit, PricingRule, PricingTier } from "../_shared/types.ts";
-
-const mathjs = create(all);
-
-// ─── Colour codes (canonical short codes used in SKU patterns) ────────────────
-
-const COLOUR_CODES: Record<string, string> = {
-  "black-satin": "B",
-  "monument-matt": "MN",
-  "woodland-grey-matt": "G",
-  "surfmist-matt": "SM",
-  "pearl-white-gloss": "W",
-  "basalt-satin": "BS",
-  "dune-satin": "D",
-  mill: "M",
-  primrose: "P",
-  paperbark: "PB",
-  "palladium-silver-pearl": "S",
-};
-
-// ─── Pricing ──────────────────────────────────────────────────────────────────
-
-function resolvePrice(rules: PricingRule[], qty: number): number {
-  for (const r of rules) {
-    if (!r.rule) return r.price;
-    try {
-      if (mathjs.evaluate(r.rule, { qty }) === true) return r.price;
-    } catch {
-      /* malformed rule — skip */
-    }
-  }
-  return 0;
-}
+import {
+  type EngineData,
+  matchesJSON,
+  mathjs,
+  normaliseVariables,
+  resolvePlaceholders,
+  resolvePrice,
+} from "./lib.ts";
 
 async function loadPricing(
   orgId: string,
@@ -93,10 +65,46 @@ async function loadPricing(
   return map;
 }
 
+async function loadComponentNames(
+  orgId: string,
+): Promise<Map<string, { name: string; description: string }>> {
+  const supabaseAdmin = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+  const { data } = await supabaseAdmin
+    .from("product_components")
+    .select("sku, name, description")
+    .eq("org_id", orgId)
+    .eq("active", true);
+  const map = new Map<string, { name: string; description: string }>();
+  for (const row of data ?? []) {
+    map.set(row.sku, {
+      name: row.name ?? "",
+      description: row.description ?? "",
+    });
+  }
+  return map;
+}
+
+async function loadColourCodes(orgId: string): Promise<Record<string, string>> {
+  const supabaseAdmin = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+  const { data } = await supabaseAdmin
+    .from("colour_options")
+    .select("value, short_code")
+    .eq("org_id", orgId)
+    .eq("active", true);
+  return Object.fromEntries((data ?? []).map((r) => [r.value, r.short_code]));
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface BomLineItemV3 {
   sku: string;
+  name: string;
   description: string;
   quantity: number;
   unit: BOMUnit;
@@ -124,122 +132,6 @@ interface TraceEntry {
   output_key?: string;
   output?: unknown;
   error?: string;
-}
-
-interface EngineData {
-  product: { id: string; system_type: string; product_type: string };
-  ruleVersion: { id: string };
-  rules: Array<{
-    id: string;
-    name: string;
-    stage: string;
-    expression: string;
-    output_key: string;
-    priority: number;
-  }>;
-  constraints: Array<{
-    id: string;
-    name: string;
-    constraint_type: string;
-    value_text: string;
-    unit: string;
-    severity: string;
-    applies_when_json: Record<string, unknown>;
-    message: string;
-  }>;
-  variables: Array<{
-    id: string;
-    name: string;
-    data_type: string;
-    default_value_json: unknown;
-    scope: string;
-  }>;
-  validations: Array<{
-    id: string;
-    name: string;
-    expression: string;
-    severity: string;
-    message: string;
-  }>;
-  selectors: Array<{
-    id: string;
-    selector_key: string;
-    component_category: string;
-    selector_type: string;
-    match_json: Record<string, unknown>;
-    sku_pattern: string;
-    priority: number;
-    qty_key?: string;
-  }>;
-  companions: Array<{
-    id: string;
-    rule_key: string;
-    trigger_category: string;
-    trigger_match_json: Record<string, unknown>;
-    add_category: string;
-    add_sku_pattern: string;
-    qty_formula: string;
-    is_pack: boolean;
-    priority: number;
-  }>;
-  warnings: Array<{
-    id: string;
-    warning_key: string;
-    severity: string;
-    condition_json: Record<string, unknown>;
-    message: string;
-  }>;
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/**
- * Test whether a context object satisfies a match_json predicate.
- * Supports: exact equality, array membership, and range operators
- * { gt, gte, lt, lte, eq, neq }.
- */
-function matchesJSON(
-  matchJson: Record<string, unknown>,
-  ctx: Record<string, unknown>,
-): boolean {
-  for (const [key, expected] of Object.entries(matchJson)) {
-    const actual = ctx[key];
-    if (
-      typeof expected === "object" &&
-      expected !== null &&
-      !Array.isArray(expected)
-    ) {
-      // Range predicate
-      const range = expected as Record<string, unknown>;
-      if ("gt" in range && !(Number(actual) > Number(range.gt))) return false;
-      if ("gte" in range && !(Number(actual) >= Number(range.gte)))
-        return false;
-      if ("lt" in range && !(Number(actual) < Number(range.lt))) return false;
-      if ("lte" in range && !(Number(actual) <= Number(range.lte)))
-        return false;
-      if ("eq" in range && actual !== range.eq) return false;
-      if ("neq" in range && actual === range.neq) return false;
-    } else if (Array.isArray(expected)) {
-      if (!expected.includes(actual)) return false;
-    } else {
-      if (actual !== expected) return false;
-    }
-  }
-  return true;
-}
-
-/**
- * Replace `{key}` placeholders in a SKU pattern with values from context.
- * Unresolved placeholders are left as-is so the caller can detect them.
- */
-function resolvePlaceholders(
-  pattern: string,
-  ctx: Record<string, unknown>,
-): string {
-  return pattern.replace(/\{(\w+)\}/g, (_, key) => {
-    const val = ctx[key];
-    return val !== undefined ? String(val) : `{${key}}`;
-  });
 }
 
 // ─── Main handler ─────────────────────────────────────────────────────────────
@@ -297,26 +189,21 @@ Deno.serve(async (req: Request) => {
     }
 
     // Step 4 — load engine data per unique productCode (parallelised).
-    // Also collect gateProductCode values from gate_opening segments so gate
-    // engine data is loaded alongside fence engine data.
-    const fenceCodes = [
-      ...new Set(payload.runs.map((r: CanonicalRun) => r.productCode)),
-    ];
-    const gateCodes = [
+    // Collect all unique productCodes from every segment across all runs.
+    const allProductCodes = [
+      payload.productCode, // top-level fence product (for validation context)
       ...new Set(
         (payload.runs as CanonicalRun[]).flatMap((r) =>
-          r.segments
-            .filter((s: CanonicalSegment) => s.gateProductCode)
-            .map((s: CanonicalSegment) => s.gateProductCode!),
+          r.segments.map((s: CanonicalSegment) => s.productCode),
         ),
       ),
-    ];
-    const allProductCodes = [...new Set([...fenceCodes, ...gateCodes])];
+    ].filter((c) => c && typeof c === "string") as string[];
+    const uniqueProductCodes = [...new Set(allProductCodes)];
 
     const engineDataMap = new Map<string, EngineData>();
 
     await Promise.all(
-      allProductCodes.map(async (code) => {
+      uniqueProductCodes.map(async (code) => {
         // Flat products model (post migration 022): one row per (org, system_type).
         const { data: actualProduct } = await supabaseAdmin
           .from("products")
@@ -419,37 +306,6 @@ Deno.serve(async (req: Request) => {
       }),
     );
 
-    // Step 5 helper — normalise variables: apply defaults, map colour codes
-    function normaliseVariables(
-      vars: Record<string, string | number | boolean>,
-      engineData: EngineData,
-    ): Record<string, unknown> {
-      const ctx: Record<string, unknown> = {};
-
-      // 1. Apply variable defaults from engine schema
-      for (const v of engineData.variables) {
-        if (
-          v.default_value_json !== null &&
-          v.default_value_json !== undefined
-        ) {
-          ctx[v.name] = v.default_value_json;
-        }
-      }
-
-      // 2. Overlay provided variables
-      for (const [k, v] of Object.entries(vars)) {
-        ctx[k] = v;
-      }
-
-      // 3. Normalise colour: long name → short code
-      const rawColour = ctx["colour_code"] ?? ctx["colour"];
-      if (typeof rawColour === "string") {
-        ctx["colour"] = COLOUR_CODES[rawColour] ?? rawColour;
-      }
-
-      return ctx;
-    }
-
     // ─── Process runs ─────────────────────────────────────────────────────────
 
     const allLines: BomLineItemV3[] = [];
@@ -457,6 +313,12 @@ Deno.serve(async (req: Request) => {
     const allErrors: string[] = [];
     const allWarnings: string[] = [];
     const allAssumptions: string[] = [];
+    const allSegmentDiagnostics: Array<{
+      segmentId: string;
+      runId: string;
+      severity: "error" | "warning" | "info";
+      message: string;
+    }> = [];
     const allTrace: TraceEntry[] = [];
     // computed[runId][segmentId] = { actual_height_mm, ... }
     const computed: Record<
@@ -464,22 +326,45 @@ Deno.serve(async (req: Request) => {
       Record<string, Record<string, unknown>>
     > = {};
 
-    for (const run of payload.runs as CanonicalRun[]) {
-      const engineData = engineDataMap.get(run.productCode);
-      if (!engineData) continue;
+    // Load DB-driven colour codes once per request; falls back to hardcoded map inside normaliseVariables if this fails
+    let colourCodes: Record<string, string> | undefined;
+    try {
+      colourCodes = await loadColourCodes(orgId);
+    } catch {
+      // non-fatal — normaliseVariables will use its hardcoded fallback
+    }
 
-      // Merge job-level + run-level variables
-      const mergedRunVars = {
-        ...payload.variables,
-        ...(run.variables ?? {}),
-      };
-      const runCtx = normaliseVariables(mergedRunVars, engineData);
+    for (const run of payload.runs as CanonicalRun[]) {
+      // Backward-compat shim: upgrade old segment_join{angleDeg>5} to system_corner.
+      // Old saved quotes stored the turn angle in segment_join; we convert to a positive
+      // (right-turn) interior angle. Remove once all production quotes have been re-saved.
+      for (const seg of run.segments) {
+        const lt = seg.leftTermination as SegmentTermination & { angleDeg?: number };
+        if (lt.kind === "segment_join" && typeof lt.angleDeg === "number" && lt.angleDeg > 5) {
+          seg.leftTermination = { kind: "system_corner", angleDeg: 180 - lt.angleDeg };
+        }
+        const rt = seg.rightTermination as SegmentTermination & { angleDeg?: number };
+        if (rt.kind === "segment_join" && typeof rt.angleDeg === "number" && rt.angleDeg > 5) {
+          seg.rightTermination = { kind: "system_corner", angleDeg: 180 - rt.angleDeg };
+        }
+      }
+      // Determine the "primary" fence product for this run (from payload top-level)
+      const fenceEngineData = engineDataMap.get(payload.productCode);
+      if (!fenceEngineData) continue;
+
+      // Merge job-level variables for the run context
+      const mergedRunVars = { ...payload.variables };
+      const runCtx = normaliseVariables(
+        mergedRunVars,
+        fenceEngineData,
+        colourCodes,
+      );
       const runTrace: TraceEntry[] = [];
       const runLines: BomLineItemV3[] = [];
 
-      // Step 6 — validation pass (fence product only; gate validations run per segment)
+      // Step 6 — validation pass (fence product)
       let runHasError = false;
-      for (const validation of engineData.validations) {
+      for (const validation of fenceEngineData.validations) {
         try {
           const result = mathjs.evaluate(validation.expression, { ...runCtx });
           if (result === false) {
@@ -500,136 +385,217 @@ Deno.serve(async (req: Request) => {
           });
         }
       }
-      if (runHasError) continue; // short-circuit this run only
+      if (runHasError) continue;
+
+      // ─── Run-level pre-pass: num_panels and num_posts per segment ────────────
+
+      // Compute numPanels per fence segment
+      const maxPanelWidthMm = Number(
+        mergedRunVars["max_panel_width_mm"] ?? 2600,
+      );
+      const numPanelsBySegmentId = new Map<string, number>();
+      for (const seg of run.segments) {
+        if (seg.kind !== "fence") continue;
+        const maxW = Number(
+          seg.variables?.max_panel_width_mm ?? maxPanelWidthMm,
+        );
+
+        const w = seg.segmentWidthMm ?? 0;
+        const panels = maxW > 0 && w > 0 ? Math.ceil(w / maxW) : 1;
+        numPanelsBySegmentId.set(seg.segmentId, panels);
+      }
+
+      // Walk the run to assign posts per fence segment
+      const numPostsBySegmentId = walkRunForPosts(run, numPanelsBySegmentId);
+
+      // Compute panel_width_mm per segment (even distribution)
+      const panelWidthBySegmentId = new Map<string, number>();
+
+      for (const [segId, nPanels] of numPanelsBySegmentId.entries()) {
+        const seg = run.segments.find((s) => s.segmentId === segId);
+        if (!seg) continue;
+        let w = seg.segmentWidthMm ?? 0;
+
+        if (seg.variables?.post_size === "custom") {
+          const numPosts = numPostsBySegmentId.get(seg.segmentId) ?? 0;
+          w = w - numPosts * (seg.variables?.post_width_mm ?? 0);
+          // w = segment.variables?.post_width_mm ?? 0;
+        }
+        panelWidthBySegmentId.set(
+          segId,
+          nPanels > 0 ? Math.round(w / nPanels) : 0,
+        );
+      }
+
+      // Count corners: fence segments with system_corner left termination
+      const sortedSegs = [...run.segments].sort(
+        (a, b) => a.sortOrder - b.sortOrder,
+      );
+      let runCornerCount = 0;
+      for (const seg of sortedSegs) {
+        if (
+          seg.kind === "fence" &&
+          seg.leftTermination.kind === "system_corner"
+        ) {
+          runCornerCount++;
+        }
+      }
 
       // ─── Process segments ────────────────────────────────────────────────────
 
       for (const segment of run.segments as CanonicalSegment[]) {
-        // Determine if this is a gate_opening segment that should use gate engine data
-        const isGate =
-          segment.segmentKind === "gate_opening" && !!segment.gateProductCode;
-        const activeEngineData = isGate
-          ? engineDataMap.get(segment.gateProductCode!)
-          : engineData;
-        const activeProductCode = isGate
-          ? segment.gateProductCode!
-          : run.productCode;
+        const activeEngineData = engineDataMap.get(segment.productCode);
 
         if (!activeEngineData) {
           allAssumptions.push(
-            `No engine data loaded for gate product: ${segment.gateProductCode} — segment skipped`,
+            `No engine data loaded for product: ${segment.productCode} — segment skipped`,
           );
           continue;
         }
 
-        // Build segment context: run ctx + segment overrides + boundary/layout helpers
+        const activeProductCode = segment.productCode;
+
+        // Build segment context: job ctx + segment overrides + geometry helpers
         const segVarsNorm = segment.variables
-          ? normaliseVariables(segment.variables, engineData)
+          ? normaliseVariables(segment.variables, activeEngineData, colourCodes)
           : {};
 
-        const runLeftT = run.leftBoundary.type as LegacyBoundaryType;
-        const runRightT = run.rightBoundary.type as LegacyBoundaryType;
-        const segV = segment.variables;
-        const leftEff = effectiveLegacyBoundaryType(runLeftT, segV, "left");
-        const rightEff = effectiveLegacyBoundaryType(runRightT, segV, "right");
-        const leftCornerDeg = cornerDegreesFromVars(segV, "left");
-        const rightCornerDeg = cornerDegreesFromVars(segV, "right");
+        // Termination flags from structured SegmentTermination objects
+        const lt = segment.leftTermination;
+        const rt = segment.rightTermination;
 
-        const segCtx: Record<string, unknown> = {
-          ...runCtx,
-          ...segVarsNorm,
-          // Segment geometry
-          segment_width_mm: segment.segmentWidthMm,
-          target_height_mm:
-            segment.targetHeightMm ?? runCtx["target_height_mm"],
-          bay_count: segment.bayCount ?? 1,
-          segment_kind: segment.segmentKind,
-          // Gate product (when segmentKind === 'gate_opening')
-          gate_product_code: segment.gateProductCode ?? null,
-          // Boundary-derived helpers
-          left_boundary_type: leftEff,
-          right_boundary_type: rightEff,
-          ...(leftCornerDeg !== undefined && {
-            left_corner_degrees: leftCornerDeg,
-          }),
-          ...(rightCornerDeg !== undefined && {
-            right_corner_degrees: rightCornerDeg,
-          }),
-          product_post_boundary_count:
-            (leftEff === "product_post" ? 1 : 0) +
-            (rightEff === "product_post" ? 1 : 0),
-          wall_boundary_count:
-            (leftEff === "wall" ? 1 : 0) + (rightEff === "wall" ? 1 : 0),
-          corner_count: run.corners.length,
-          corner_post_count: run.corners.length,
-          // Numeric boolean boundary flags (avoid string comparison in mathjs)
-          left_is_product_post: leftEff === "product_post" ? 1 : 0,
-          right_is_product_post: rightEff === "product_post" ? 1 : 0,
-          left_is_wall: leftEff === "wall" ? 1 : 0,
-          right_is_wall: rightEff === "wall" ? 1 : 0,
-          // Numeric post size (rules can compare post_size_num == 50 instead of post_size == '50')
-          post_size_num: (() => {
-            const ps = segVarsNorm["post_size"] ?? runCtx["post_size"];
-            return typeof ps === "string"
-              ? Number(ps)
-              : typeof ps === "number"
-                ? ps
-                : 50;
-          })(),
-          // Numeric mounting flags
-          mounting_type_is_base_plate:
-            (segVarsNorm["mounting_type"] ?? runCtx["mounting_type"]) ===
-              "base_plate" ||
-            (segVarsNorm["mounting_method"] ?? runCtx["mounting_method"]) ===
-              "base_plate"
-              ? 1
-              : 0,
-          mounting_type_is_core_drill:
-            (segVarsNorm["mounting_type"] ?? runCtx["mounting_type"]) ===
-              "core_drill" ||
-            (segVarsNorm["mounting_method"] ?? runCtx["mounting_method"]) ===
-              "core_drill"
-              ? 1
-              : 0,
-          // Numeric post_system flags (XPL system)
-          post_system_is_xpl: (() => {
-            const ps = segVarsNorm["post_system"] ?? runCtx["post_system"];
-            return ps === "xpl" ? 1 : 0;
-          })(),
-          post_system_is_standard_50: (() => {
-            const ps = segVarsNorm["post_system"] ?? runCtx["post_system"];
-            return ps === "standard_50" ? 1 : 0;
-          })(),
-          post_system_is_standard_65: (() => {
-            const ps = segVarsNorm["post_system"] ?? runCtx["post_system"];
-            return ps === "standard_65" ? 1 : 0;
-          })(),
-          // Cut deduction defaults — rules or variables can override
-          width_deduction_mm: 0,
-        };
+        const leftIsSystem = lt.kind === "system" ? 1 : 0;
+        const rightIsSystem = rt.kind === "system" ? 1 : 0;
+        const leftIsWall =
+          lt.kind === "non_system" && lt.subtype === "wall" ? 1 : 0;
+        const rightIsWall =
+          rt.kind === "non_system" && rt.subtype === "wall" ? 1 : 0;
+        const leftIsNonSystem = lt.kind === "non_system" ? 1 : 0;
+        const rightIsNonSystem = rt.kind === "non_system" ? 1 : 0;
+        const leftIsJoin = lt.kind === "segment_join" ? 1 : 0;
+        const rightIsJoin = rt.kind === "segment_join" ? 1 : 0;
+        // Unsigned magnitude for rule evaluation; signed values available for future inside/outside rules
+        const leftAngleDeg = lt.kind === "system_corner" ? Math.abs(lt.angleDeg) : 0;
+        const rightAngleDeg = rt.kind === "system_corner" ? Math.abs(rt.angleDeg) : 0;
+        const leftIsCorner = lt.kind === "system_corner" ? 1 : 0;
+        const rightIsCorner = rt.kind === "system_corner" ? 1 : 0;
+        const leftAngleDegSigned = lt.kind === "system_corner" ? lt.angleDeg : 0;
+        const rightAngleDegSigned = rt.kind === "system_corner" ? rt.angleDeg : 0;
+        const systemTerminationCount = leftIsSystem + rightIsSystem;
+        const nonSystemTerminationCount = leftIsNonSystem + rightIsNonSystem;
+        const nonSystemWallCount = leftIsWall + rightIsWall;
 
-        // For gate_opening segments: build a gate-specific context from gate engine defaults
-        // overlaid with shared run variables (colour, slat_size) and the segment's gate variables.
-        const activeSegCtx: Record<string, unknown> = isGate
-          ? {
-              ...normaliseVariables(
-                {
-                  ...mergedRunVars,
-                  ...(segment.variables ?? {}),
-                  gate_width_mm: segment.segmentWidthMm,
-                  gate_height_mm:
-                    segment.targetHeightMm ??
-                    (runCtx["target_height_mm"] as number),
-                },
-                activeEngineData,
-              ),
-              // Carry through boundary and layout helpers
-              left_boundary_type: leftEff,
-              right_boundary_type: rightEff,
-              corner_count: run.corners.length,
-              segment_kind: segment.segmentKind,
-            }
-          : segCtx;
+        // Per-segment geometry from pre-pass
+        const numPanels =
+          segment.kind === "fence"
+            ? (numPanelsBySegmentId.get(segment.segmentId) ?? 1)
+            : 0;
+        const panelWidthMm =
+          segment.kind === "fence"
+            ? (panelWidthBySegmentId.get(segment.segmentId) ?? 0)
+            : 0;
+        const numPosts =
+          segment.kind === "fence"
+            ? (numPostsBySegmentId.get(segment.segmentId) ?? 0)
+            : 0;
+
+        const postSizeNum = (() => {
+          const ps = segVarsNorm["post_size"] ?? runCtx["post_size"];
+          return typeof ps === "string"
+            ? Number(ps)
+            : typeof ps === "number"
+              ? ps
+              : 50;
+        })();
+
+        const segCtx: Record<string, unknown> =
+          segment.kind === "gate"
+            ? {
+                ...normaliseVariables(
+                  {
+                    ...mergedRunVars,
+                    ...(segment.variables ?? {}),
+                    gate_width_mm: segment.segmentWidthMm,
+                    gate_height_mm:
+                      segment.targetHeightMm ??
+                      (runCtx["target_height_mm"] as number),
+                  },
+                  activeEngineData,
+                  colourCodes,
+                ),
+                // Geometry for gate
+                left_is_system: leftIsSystem,
+                right_is_system: rightIsSystem,
+                left_is_wall: leftIsWall,
+                right_is_wall: rightIsWall,
+                left_is_join: leftIsJoin,
+                right_is_join: rightIsJoin,
+                corner_count: runCornerCount,
+              }
+            : {
+                ...runCtx,
+                ...segVarsNorm,
+                // Segment geometry
+                segment_width_mm: segment.segmentWidthMm,
+                target_height_mm:
+                  segment.targetHeightMm ?? runCtx["target_height_mm"],
+                // Engine-provided geometry (not in seed rules)
+                num_panels: numPanels,
+                panel_width_mm: panelWidthMm,
+                num_posts: numPosts,
+                corner_count: runCornerCount,
+                // Termination flags (1/0 booleans for mathjs)
+                left_is_system: leftIsSystem,
+                right_is_system: rightIsSystem,
+                left_is_wall: leftIsWall,
+                right_is_wall: rightIsWall,
+                left_is_non_system: leftIsNonSystem,
+                right_is_non_system: rightIsNonSystem,
+                left_is_join: leftIsJoin,
+                right_is_join: rightIsJoin,
+                left_is_corner: leftIsCorner,
+                right_is_corner: rightIsCorner,
+                left_angle_deg: leftAngleDeg,
+                right_angle_deg: rightAngleDeg,
+                left_angle_deg_signed: leftAngleDegSigned,
+                right_angle_deg_signed: rightAngleDegSigned,
+                system_termination_count: systemTerminationCount,
+                non_system_termination_count: nonSystemTerminationCount,
+                non_system_wall_count: nonSystemWallCount,
+                // Numeric helpers
+                post_size_num: postSizeNum,
+                mounting_type_is_base_plate:
+                  (segVarsNorm["mounting_type"] ?? runCtx["mounting_type"]) ===
+                    "base_plate" ||
+                  (segVarsNorm["mounting_method"] ??
+                    runCtx["mounting_method"]) === "base_plate"
+                    ? 1
+                    : 0,
+                mounting_type_is_core_drill:
+                  (segVarsNorm["mounting_type"] ?? runCtx["mounting_type"]) ===
+                    "core_drill" ||
+                  (segVarsNorm["mounting_method"] ??
+                    runCtx["mounting_method"]) === "core_drill"
+                    ? 1
+                    : 0,
+                post_system_is_xpl: (() => {
+                  const ps =
+                    segVarsNorm["post_system"] ?? runCtx["post_system"];
+                  return ps === "xpl" ? 1 : 0;
+                })(),
+                post_system_is_standard_50: (() => {
+                  const ps =
+                    segVarsNorm["post_system"] ?? runCtx["post_system"];
+                  return ps === "standard_50" ? 1 : 0;
+                })(),
+                post_system_is_standard_65: (() => {
+                  const ps =
+                    segVarsNorm["post_system"] ?? runCtx["post_system"];
+                  return ps === "standard_65" ? 1 : 0;
+                })(),
+                width_deduction_mm: 0,
+              };
+        const activeSegCtx = segCtx;
 
         // Step 7 — execute product_rules (derive → stock → accessory → component)
         for (const rule of activeEngineData.rules) {
@@ -663,9 +629,45 @@ Deno.serve(async (req: Request) => {
         computed[run.runId][segment.segmentId] = {
           actual_height_mm: activeSegCtx["actual_height_mm"],
           num_slats: activeSegCtx["num_slats"],
-          panel_width_mm: activeSegCtx["panel_width_mm"],
-          num_panels: activeSegCtx["num_panels"],
+          panel_width_mm: panelWidthMm,
+          num_panels: numPanels,
+          num_posts: numPosts,
+          corner_count: runCornerCount,
+          left_is_system: activeSegCtx["left_is_system"],
+          right_is_system: activeSegCtx["right_is_system"],
+          left_is_wall: activeSegCtx["left_is_wall"],
+          right_is_wall: activeSegCtx["right_is_wall"],
+          system_termination_count: activeSegCtx["system_termination_count"],
         };
+
+        // Step 7a — segment-level warnings (evaluated against full post-rules segCtx)
+        for (const warning of activeEngineData.warnings) {
+          try {
+            console.log("warning", warning, activeSegCtx);
+            const debug = warning.warning_key === "hd_post_no_ppb";
+
+            if (matchesJSON(warning.condition_json, activeSegCtx, debug)) {
+              if (debug) {
+                console.log("warning matched", warning, activeSegCtx);
+              }
+              allSegmentDiagnostics.push({
+                segmentId: segment.segmentId,
+                runId: run.runId,
+                severity:
+                  warning.severity === "error"
+                    ? "error"
+                    : warning.severity === "warning"
+                      ? "warning"
+                      : "info",
+                message: warning.message,
+              });
+            }
+          } catch {
+            /* ignore malformed condition_json */
+          }
+        }
+
+        console.log("allSegmentDiagnostics", allSegmentDiagnostics);
 
         // Step 8 — selector resolution.
         //
@@ -714,6 +716,7 @@ Deno.serve(async (req: Request) => {
               );
               runLines.push({
                 sku,
+                name: "",
                 description: `${category} — ${sku}`,
                 quantity: qty,
                 unit: "each" as BOMUnit,
@@ -765,6 +768,7 @@ Deno.serve(async (req: Request) => {
               );
               runLines.push({
                 sku,
+                name: "",
                 description: `${companion.add_category} — ${sku}`,
                 quantity: qty,
                 unit: companion.is_pack ? "pack" : ("each" as BOMUnit),
@@ -789,7 +793,7 @@ Deno.serve(async (req: Request) => {
       } // end segment loop
 
       // Step 10 — warnings pass (run-level, uses merged run context)
-      for (const warning of engineData.warnings) {
+      for (const warning of fenceEngineData.warnings) {
         try {
           if (matchesJSON(warning.condition_json, runCtx)) {
             if (warning.severity === "error") {
@@ -808,8 +812,8 @@ Deno.serve(async (req: Request) => {
       allLines.push(...runLines);
       runResults.push({
         runId: run.runId,
-        label: `Run ${runResults.length + 1} — ${run.productCode}`,
-        productCode: run.productCode,
+        label: `Run ${runResults.length + 1} — ${payload.productCode}`,
+        productCode: payload.productCode,
         items: runLines,
       });
 
@@ -828,6 +832,7 @@ Deno.serve(async (req: Request) => {
           errors: allErrors,
           warnings: allWarnings,
           assumptions: allAssumptions,
+          segmentDiagnostics: allSegmentDiagnostics,
           computed: {},
           trace: wantTrace ? allTrace : [],
           pricingTier,
@@ -861,8 +866,22 @@ Deno.serve(async (req: Request) => {
       gateProductCodeSet.has(l.productCode ?? ""),
     );
 
-    // Step 12 — pricing
-    const pricingMap = await loadPricing(orgId, pricingTier);
+    // Step 12 — pricing + component name lookup (parallel)
+    const [pricingMap, componentNames] = await Promise.all([
+      loadPricing(orgId, pricingTier),
+      loadComponentNames(orgId),
+    ]);
+
+    // Backfill name/description on all lines from product_components
+    for (const line of [...aggregatedLines, ...allLines]) {
+      const comp = componentNames.get(line.sku);
+      if (comp) {
+        line.name = comp.name;
+        line.description = comp.description || comp.name;
+      } else if (!line.name) {
+        line.name = line.description; // preserve fallback
+      }
+    }
 
     for (const line of aggregatedLines) {
       const rules = pricingMap.get(line.sku) ?? [];
@@ -909,6 +928,9 @@ Deno.serve(async (req: Request) => {
           : {
               actual_height_mm: vals["actual_height_mm"],
               num_panels: vals["num_panels"],
+              num_posts: vals["num_posts"],
+              num_slats: vals["num_slats"],
+              panel_width_mm: vals["panel_width_mm"],
             };
       }
     }
@@ -923,6 +945,7 @@ Deno.serve(async (req: Request) => {
         warnings: allWarnings,
         errors: allErrors,
         assumptions: allAssumptions,
+        segmentDiagnostics: allSegmentDiagnostics,
         computed: strippedComputed,
         trace: wantTrace ? allTrace : [],
         pricingTier,

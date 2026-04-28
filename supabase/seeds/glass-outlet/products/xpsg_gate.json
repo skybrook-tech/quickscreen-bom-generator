@@ -1,0 +1,527 @@
+{
+  "org_slug": "glass-outlet",
+  "products": [
+    {
+      "system_type": "XPSG",
+      "product_type": "gate",
+      "name": "XP Sliding Gate",
+      "description": "Sliding aluminium gate system compatible with QSHS, XPL, VS and BAYG fence systems. Steel or aluminium track, 80mm wheels, guide rollers, and optional NiceHome FILO automation.",
+      "active": true,
+      "sort_order": 20,
+      "compatible_with_system_types": [
+        "QSHS",
+        "XPL",
+        "VS",
+        "BAYG"
+      ],
+      "metadata": {
+        "product_family": "gate",
+        "default_layout_type": "sliding_gate",
+        "options": {
+          "slat_size": [
+            "65",
+            "90"
+          ],
+          "colour": [
+            "black-satin",
+            "monument-matt",
+            "woodland-grey-matt",
+            "surfmist-matt",
+            "pearl-white-gloss",
+            "basalt-satin",
+            "dune-satin",
+            "mill",
+            "palladium-silver-pearl"
+          ]
+        }
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "QSG-S-6100-TR65",
+      "name": "QSG Sliding Gate Top Rail 65mm 6100mm",
+      "description": "6100mm top rail for 65mm horizontal slat sliding gate. Colour-coded powder coat.",
+      "category": "gate_rail",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "slat_size_mm": 65,
+        "rail_length_mm": 6100
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-S-6100-TR90",
+      "name": "QSG Sliding Gate Top Rail 90mm 6100mm",
+      "description": "6100mm top rail for 90mm horizontal slat sliding gate. Colour-coded powder coat.",
+      "category": "gate_rail",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "slat_size_mm": 90,
+        "rail_length_mm": 6100
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-S-6100-BR",
+      "name": "QSG Sliding Gate Bottom Rail 6100mm",
+      "description": "6100mm bottom rail for sliding gate. Houses gate wheels. Colour-coded powder coat.",
+      "category": "gate_rail",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "rail_length_mm": 6100
+      },
+      "active": true
+    },
+    {
+      "sku": "XPSG-2700-ST65-B",
+      "name": "Sliding Gate Galvanised Steel Post 65×65mm 2700mm Black",
+      "description": "65×65mm galvanised steel post 2700mm. 2.5mm wall. Welded 8mm base plate with 2× Ø12.8mm fixing holes. For guide roller or front catch. Black press-in cap incl.",
+      "category": "post",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour": "B",
+        "post_width_mm": 65,
+        "post_height_mm": 2700
+      },
+      "active": true
+    },
+    {
+      "sku": "XPSG-MXTN-KIT",
+      "name": "Sliding Gate Bottom Rail Extension Kit 400mm",
+      "description": "400mm bottom rail extension kit. Optional — for extra motor rack length. Fixing bolts and terrain powder coat end plate included.",
+      "category": "accessory",
+      "unit": "kit",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "AWSG-MXTN-KIT",
+      "name": "Alumawood Sliding Gate Bottom Rail Extension Kit 400mm",
+      "description": "400mm bottom rail extension kit for Alumawood sliding gate. Terrain powder coat end plate. For motor rack extra length.",
+      "category": "accessory",
+      "unit": "kit",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "finish": "TR"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPSG-3000-TRACK-ST",
+      "name": "Sliding Gate Steel Track 3000mm",
+      "description": "3000mm galvanised steel bolt-down track. 3mm thick. Ø20mm running surface. 22 pre-drilled fixing holes.",
+      "category": "track",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "track_length_mm": 3000,
+        "material": "steel"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPSG-6000-TRACK-ST",
+      "name": "Sliding Gate Steel Track 6000mm",
+      "description": "6000mm galvanised steel bolt-down track. 3mm thick. Ø20mm running surface. 42 pre-drilled fixing holes.",
+      "category": "track",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "track_length_mm": 6000,
+        "material": "steel"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPSG-6000-TRACK-AL",
+      "name": "Sliding Gate Aluminium Track 6000mm",
+      "description": "6000mm mill finish aluminium 6063-T5 bolt-down track. Ø20mm running surface. No pre-drilled holes — drill as needed.",
+      "category": "track",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "track_length_mm": 6000,
+        "material": "aluminium"
+      },
+      "active": true
+    },
+    {
+      "sku": "XPSG-ANCHOR",
+      "name": "Sliding Gate Track Anchor Pins",
+      "description": "Mushroom-head galvanised steel track anchor pins. 6.5×38mm. Pre-expanded expansion anchor — kinked shaft provides spring action for vibration-proof anchoring into concrete.",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPSG-WHEEL",
+      "name": "Sliding Gate Wheel",
+      "description": "80mm diameter zinc plated steel gate wheel with 20mm diameter groove. 180kg load rating. Made in Italy.",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "wheel_diameter_mm": 80,
+        "load_rating_kg": 180
+      },
+      "active": true
+    },
+    {
+      "sku": "XPSG-WHEEL-CS",
+      "name": "Sliding Gate Wheel Clamping Set",
+      "description": "Aluminium M8 threaded block + 2× zinc plated screws. Clamps gate wheel to bottom rail. Suits 1× wheel.",
+      "category": "hardware",
+      "unit": "pack",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPSG-GUIDE",
+      "name": "Sliding Gate Self-Adjusting Slide Guide",
+      "description": "Self-adjusting slide guide for gate top rail. Keeps gate vertical while travelling. Up to 280mm vertical auto-adjustment. Anodised black channel with nylon block.",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPSG-TOPROLL-2PK",
+      "name": "Sliding Gate Top Guide Rollers — 2 Pack",
+      "description": "White nylon rollers guide top rail while gate travels. For gates with ≤15mm vertical deviation. Left + right zinc plated steel brackets. Made in Italy. 2-pack.",
+      "category": "hardware",
+      "unit": "pack",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPSG-CATCH-U",
+      "name": "Sliding Gate U-Catch",
+      "description": "Steel zinc plated U-catch. Suits up to 50mm gate frames. 5 pre-drilled holes. Rubber stop for noise reduction.",
+      "category": "catch",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPSG-CATCH-F",
+      "name": "Sliding Gate F-Catch",
+      "description": "Steel zinc plated F-catch. F-leg attaches to wall/post. U-catch attaches to F-section. Horizontally adjustable. Rubber stop included.",
+      "category": "catch",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPSG-STOP",
+      "name": "Sliding Gate Stop",
+      "description": "Forged steel zinc plated gate stop with nylon bumper. Bolts to concrete at end of gate track. 4× Ø11mm fixing holes. Made in Italy.",
+      "category": "catch",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPSG-FILO-400",
+      "name": "NiceHome Filo 400 Pro Gate Motor Kit",
+      "description": "Sliding gate motor kit. Gates up to 6000mm wide, up to 400kg. Includes motor, 2× remotes, photocells. Standard 10A 3-pin plug. Pinion included.",
+      "category": "automation",
+      "unit": "kit",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "max_gate_width_mm": 6000,
+        "max_gate_kg": 400
+      },
+      "active": true
+    },
+    {
+      "sku": "XPSG-FILO-400PRO-SP",
+      "name": "NiceHome Filo 400 Pro Kit — Split Pack",
+      "description": "Filo 400 Pro with separate external 24V transformer. Run low-voltage cable up to 50m from transformer to motor. Ideal where 240V mains is hard to route.",
+      "category": "automation",
+      "unit": "kit",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPSG-FILO-REMOTE",
+      "name": "NiceHome Filo Gate Motor Remote Control",
+      "description": "Extra 5-channel remote for NiceHome gate motor. Supplements the 2 remotes in the FILO-400 kit.",
+      "category": "automation",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPSG-FILO-WKP",
+      "name": "NiceHome Filo Wireless Keypad",
+      "description": "PIN number wireless keypad for gate motor. Easy wall/post mount. 2× CR2430 lithium batteries.",
+      "category": "automation",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPSG-FILO-SOLAR",
+      "name": "NiceHome Filo Solar Power Kit",
+      "description": "Solar power system for NiceHome gate motors. Photovoltaic panel + electric battery. No mains power required. Operates day and night.",
+      "category": "automation",
+      "unit": "kit",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPSG-FILO-BATTERY",
+      "name": "NiceHome Filo Backup Battery",
+      "description": "Optional backup battery for NiceHome gate motor. Provides multiple gate cycles during mains power failure. Rechargeable.",
+      "category": "automation",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "XPSG-FILO-RACK",
+      "name": "NiceHome Filo Motor Rack (1m)",
+      "description": "Tough nylon rack with steel core. 1m sections, 6 fixing points. Affixed to gate bottom rail. Quieter than steel racks. Made in Italy.",
+      "category": "automation",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "length_mm": 1000
+      },
+      "active": true
+    }
+  ],
+  "rule_sets": [
+    {
+      "product_system_type": "XPSG",
+      "name": "XPSG Sliding Gate Rules v1",
+      "description": "Components-only catalogue. No auto-calculation rules yet — sliding gate BOM is quoted manually.",
+      "active": true
+    }
+  ],
+  "rule_versions": [
+    {
+      "product_system_type": "XPSG",
+      "rule_set_name": "XPSG Sliding Gate Rules v1",
+      "version_label": "v1.0",
+      "is_current": true,
+      "notes": "Initial component catalogue. Calculation rules TBD.",
+      "active": true
+    }
+  ],
+  "product_constraints": [],
+  "product_variables": [
+    {
+      "product_system_type": "XPSG",
+      "name": "finish_type",
+      "label": "Finish",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "standard",
+      "options_json": [
+        "standard"
+      ],
+      "scope": "job",
+      "sort_order": 5,
+      "active": true
+    },
+    {
+      "product_system_type": "XPSG",
+      "name": "gate_opening_width_mm",
+      "label": "Gate Opening Width (mm)",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 2000,
+      "options_json": [],
+      "scope": "job",
+      "sort_order": 10,
+      "active": true,
+      "notes": "Width of the sliding gate opening in mm. Maximum recommended: 6000mm."
+    },
+    {
+      "product_system_type": "XPSG",
+      "name": "colour_code",
+      "label": "Colour",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "black-satin",
+      "options_json": [],
+      "scope": "job",
+      "sort_order": 20,
+      "active": true,
+      "notes": "Powder coat colour. Primrose and Paperbark not available for sliding gate components.",
+      "options_group": "colours"
+    },
+    {
+      "product_system_type": "XPSG",
+      "name": "slat_size_mm",
+      "label": "Slat Size (mm)",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 65,
+      "options_json": [
+        65,
+        90
+      ],
+      "scope": "job",
+      "sort_order": 30,
+      "active": true,
+      "notes": "65mm or 90mm horizontal slats."
+    },
+    {
+      "product_system_type": "XPSG",
+      "name": "slat_gap_mm",
+      "label": "Slat Gap (mm)",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 5,
+      "options_json": [
+        5,
+        9,
+        20
+      ],
+      "scope": "job",
+      "sort_order": 40,
+      "active": true,
+      "notes": "Spacing between slats."
+    },
+    {
+      "product_system_type": "XPSG",
+      "name": "track_type",
+      "label": "Track Type",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "steel_3m",
+      "options_json": [
+        "steel_3m",
+        "steel_6m",
+        "aluminium_6m"
+      ],
+      "scope": "job",
+      "sort_order": 50,
+      "active": true,
+      "notes": "steel_3m = XPSG-3000-TRACK-ST, steel_6m = XPSG-6000-TRACK-ST, aluminium_6m = XPSG-6000-TRACK-AL."
+    },
+    {
+      "product_system_type": "XPSG",
+      "name": "automation",
+      "label": "Gate Automation",
+      "data_type": "enum",
+      "unit": null,
+      "required": false,
+      "default_value_json": "none",
+      "options_json": [
+        "none",
+        "filo_400",
+        "filo_400_sp"
+      ],
+      "scope": "job",
+      "sort_order": 60,
+      "active": true,
+      "notes": "none = manual gate. filo_400 = XPSG-FILO-400. filo_400_sp = XPSG-FILO-400PRO-SP."
+    }
+  ],
+  "product_validations": [],
+  "product_rules": [],
+  "product_component_selectors": [],
+  "product_companion_rules": [],
+  "product_warnings": [],
+  "pricing_rules": []
+}

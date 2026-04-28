@@ -5,11 +5,11 @@
       "system_type": "VS",
       "product_type": "fence",
       "name": "VS Vertical Slat Fence",
-      "description": "Vertical slat orientation using the same Quickscreen extrusions as QSHS. Vertical slats (XP-6100-S65 / QS-6100-S90) are held by horizontal QS-5000-HORIZ U-channel rails (top and bottom). QS-5800-SF is used as the outer horizontal frame enclosing the U-channel. QS-5800-F is installed vertically at each side of the panel as an edge frame. Same slat SKUs as QSHS \u2014 just oriented vertically (cut to height).",
+      "description": "Vertical slat orientation using the same Quickscreen extrusions as QSHS. Vertical slats (XP-6100-S65 / QS-6100-S90) are held by horizontal QS-5000-HORIZ U-channel rails (top and bottom). QS-5800-SF is used as the outer horizontal frame enclosing the U-channel. QS-5800-F is installed vertically at each side of the panel as an edge frame. Same slat SKUs as QSHS — just oriented vertically (cut to height).",
       "active": true,
       "sort_order": 2,
       "metadata": {
-        "allowedAngles": [90],
+        "allowedAngles": [45, 90, 135],
         "options": {
           "slatSize": ["65", "90"],
           "slatGap": ["5", "9", "20"],
@@ -22,7 +22,7 @@
   "product_components": [
     {
       "sku": "QS-5000-HORIZ-B",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Black Satin",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Black Satin",
       "description": "32x32mm horizontal U-channel rail for vertical slat screening, 5000mm stock",
       "category": "rail",
       "unit": "length",
@@ -33,7 +33,7 @@
     },
     {
       "sku": "QS-5000-HORIZ-MN",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Monument Matt",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Monument Matt",
       "description": "32x32mm horizontal U-channel rail, 5000mm stock",
       "category": "rail",
       "unit": "length",
@@ -44,7 +44,7 @@
     },
     {
       "sku": "QS-5000-HORIZ-G",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Woodland Grey",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Woodland Grey",
       "description": "32x32mm horizontal U-channel rail, 5000mm stock",
       "category": "rail",
       "unit": "length",
@@ -55,7 +55,7 @@
     },
     {
       "sku": "QS-5000-HORIZ-SM",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Surfmist Matt",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Surfmist Matt",
       "description": "32x32mm horizontal U-channel rail, 5000mm stock",
       "category": "rail",
       "unit": "length",
@@ -66,7 +66,7 @@
     },
     {
       "sku": "QS-5000-HORIZ-W",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Pearl White",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Pearl White",
       "description": "32x32mm horizontal U-channel rail, 5000mm stock",
       "category": "rail",
       "unit": "length",
@@ -77,7 +77,7 @@
     },
     {
       "sku": "QS-5000-HORIZ-BS",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Basalt Satin",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Basalt Satin",
       "description": "32x32mm horizontal U-channel rail, 5000mm stock",
       "category": "rail",
       "unit": "length",
@@ -88,7 +88,7 @@
     },
     {
       "sku": "QS-5000-HORIZ-D",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Dune Satin",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Dune Satin",
       "description": "32x32mm horizontal U-channel rail, 5000mm stock",
       "category": "rail",
       "unit": "length",
@@ -99,13 +99,52 @@
     },
     {
       "sku": "QS-5000-HORIZ-M",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Mill",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Mill",
       "description": "32x32mm horizontal U-channel rail, 5000mm stock",
       "category": "rail",
       "unit": "length",
       "default_price": 32.4,
       "system_types": ["VS"],
       "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-P",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Primrose",
+      "description": "32x32mm horizontal U-channel rail for vertical slat screening, 5000mm stock",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": ["VS"],
+      "metadata": {
+        "colour": "P"
+      },
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-PB",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Paperbark",
+      "description": "32x32mm horizontal U-channel rail for vertical slat screening, 5000mm stock",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": ["VS"],
+      "metadata": {
+        "colour": "PB"
+      },
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-S",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Palladium Silver Pearl",
+      "description": "32x32mm horizontal U-channel rail for vertical slat screening, 5000mm stock",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": ["VS"],
+      "metadata": {
+        "colour": "S"
+      },
       "active": true
     }
   ],
@@ -124,7 +163,8 @@
       "version_label": "v1.0.0",
       "is_current": true,
       "effective_from": "2026-04-19",
-      "notes": "Initial VS rules based on CTS V4.1 formulas"
+      "notes": "Initial VS rules based on CTS V4.1 formulas",
+      "active": true
     }
   ],
   "product_constraints": [
@@ -200,28 +240,30 @@
   "product_variables": [
     {
       "product_system_type": "VS",
+      "name": "finish_type",
+      "label": "Finish",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "standard",
+      "options_json": ["standard", "alumawood"],
+      "scope": "job",
+      "sort_order": 5,
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
       "name": "colour_code",
       "label": "Colour",
       "data_type": "enum",
       "unit": null,
       "required": true,
-      "default_value_json": "B",
-      "options_json": [
-        "B",
-        "MN",
-        "G",
-        "SM",
-        "W",
-        "BS",
-        "D",
-        "M",
-        "P",
-        "PB",
-        "S"
-      ],
+      "default_value_json": "black-satin",
+      "options_json": [],
       "scope": "job",
       "sort_order": 10,
-      "active": true
+      "active": true,
+      "options_group": "colours"
     },
     {
       "product_system_type": "VS",
@@ -240,14 +282,15 @@
       "product_system_type": "VS",
       "name": "slat_gap_mm",
       "label": "Slat Gap",
-      "data_type": "enum",
+      "data_type": "integer",
       "unit": "mm",
       "required": true,
-      "default_value_json": 5,
-      "options_json": [5, 9, 20],
+      "default_value_json": 9,
+      "options_json": [],
       "scope": "job",
       "sort_order": 30,
-      "active": true
+      "active": true,
+      "notes": "VS: fully variable gap — any integer >= 0mm. No fixed options."
     },
     {
       "product_system_type": "VS",
@@ -308,7 +351,7 @@
       "data_type": "number",
       "unit": "mm",
       "required": true,
-      "default_value_json": 1800,
+      "default_value_json": null,
       "options_json": [],
       "scope": "segment",
       "sort_order": 80,
@@ -342,7 +385,7 @@
       "name": "height_in_range",
       "expression": "target_height_mm >= 300 and target_height_mm <= 2400",
       "severity": "warning",
-      "message": "Height outside standard VS range (300\u20132400mm).",
+      "message": "Height outside standard VS range (300–2400mm).",
       "active": true
     }
   ],
@@ -389,7 +432,7 @@
       "version_label": "v1.0.0",
       "stage": "derive",
       "name": "num_sf_left",
-      "expression": "left_is_product_post",
+      "expression": "left_boundary_type == 'post' ? 1 : 0",
       "output_key": "num_sf_left",
       "priority": 40,
       "active": true
@@ -400,7 +443,7 @@
       "version_label": "v1.0.0",
       "stage": "derive",
       "name": "num_sf_right",
-      "expression": "right_is_product_post",
+      "expression": "right_boundary_type == 'post' ? 1 : 0",
       "output_key": "num_sf_right",
       "priority": 50,
       "active": true
@@ -509,7 +552,7 @@
       "output_key": "screw_packs",
       "priority": 20,
       "active": true,
-      "notes": "VS: ROUNDUP(ROUNDUP(slats*1.01, -1) / 50, 0) \u2014 nearest 10 then 50-packs"
+      "notes": "VS: ROUNDUP(ROUNDUP(slats*1.01, -1) / 50, 0) — nearest 10 then 50-packs"
     },
     {
       "product_system_type": "VS",
@@ -612,7 +655,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_50_2400",
-      "expression": "post_size_num == 50 and target_height_mm <= 2400 ? num_posts : 0",
+      "expression": "post_size == '50' and target_height_mm <= 2400 ? num_posts : 0",
       "output_key": "qty_post_50_2400",
       "priority": 5,
       "active": true,
@@ -624,7 +667,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_50_6000",
-      "expression": "post_size_num == 50 and target_height_mm > 2400 ? num_posts : 0",
+      "expression": "post_size == '50' and target_height_mm > 2400 ? num_posts : 0",
       "output_key": "qty_post_50_6000",
       "priority": 5,
       "active": true,
@@ -636,11 +679,11 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_65_2400",
-      "expression": "post_size_num == 65 and target_height_mm <= 2400 ? num_posts : 0",
+      "expression": "post_size == '65' and target_height_mm <= 2400 ? num_posts : 0",
       "output_key": "qty_post_65_2400",
       "priority": 5,
       "active": true,
-      "notes": "65mm HD post 2400mm for screens up to 2400mm \u2014 not available in P/PB"
+      "notes": "65mm HD post 2400mm for screens up to 2400mm — not available in P/PB"
     },
     {
       "product_system_type": "VS",
@@ -648,11 +691,23 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_65_6000",
-      "expression": "post_size_num == 65 and target_height_mm > 2400 ? num_posts : 0",
+      "expression": "post_size == '65' and target_height_mm > 2400 ? num_posts : 0",
       "output_key": "qty_post_65_6000",
       "priority": 5,
       "active": true,
-      "notes": "65mm HD post 6000mm (cut to size) for screens over 2400mm \u2014 not available in P/PB"
+      "notes": "65mm HD post 6000mm (cut to size) for screens over 2400mm — not available in P/PB"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_corner_adapter_135",
+      "expression": "abs(left_angle_deg - 135) < 10 ? 1 : 0",
+      "output_key": "qty_corner_adapter_135",
+      "priority": 95,
+      "active": true,
+      "notes": "One 135° adapter per segment with a 135° system_corner left termination (no SKU yet — selector pending stock confirmation)"
     }
   ],
   "product_component_selectors": [
@@ -664,11 +719,11 @@
       "match_json": {
         "slat_size_mm": 65
       },
-      "qty_key": "qty_slat_65",
       "sku_pattern": "XP-6100-S65-{colour}",
       "priority": 100,
-      "notes": "VS 65mm vertical slat \u2014 same XP-6100-S65 extrusion as QSHS, cut to height",
-      "active": true
+      "notes": "VS 65mm vertical slat — same XP-6100-S65 extrusion as QSHS, cut to height",
+      "active": true,
+      "qty_key": "qty_slat_65"
     },
     {
       "product_system_type": "VS",
@@ -678,11 +733,11 @@
       "match_json": {
         "slat_size_mm": 90
       },
-      "qty_key": "qty_slat_90",
       "sku_pattern": "QS-6100-S90-{colour}",
       "priority": 100,
-      "notes": "VS 90mm vertical slat \u2014 same QS-6100-S90 extrusion as QSHS, cut to height",
-      "active": true
+      "notes": "VS 90mm vertical slat — same QS-6100-S90 extrusion as QSHS, cut to height",
+      "active": true,
+      "qty_key": "qty_slat_90"
     },
     {
       "product_system_type": "VS",
@@ -690,11 +745,11 @@
       "component_category": "rail",
       "selector_type": "exact",
       "match_json": {},
-      "qty_key": "qty_rail",
       "sku_pattern": "QS-5000-HORIZ-{colour}",
       "priority": 100,
       "notes": "Top/bottom horizontal U-channel rail",
-      "active": true
+      "active": true,
+      "qty_key": "qty_rail"
     },
     {
       "product_system_type": "VS",
@@ -702,11 +757,11 @@
       "component_category": "side_frame",
       "selector_type": "exact",
       "match_json": {},
-      "qty_key": "qty_sf",
       "sku_pattern": "QS-5800-SF-{colour}",
       "priority": 100,
       "notes": "Side frame for post-mounted panel ends",
-      "active": true
+      "active": true,
+      "qty_key": "qty_sf"
     },
     {
       "product_system_type": "VS",
@@ -714,58 +769,738 @@
       "component_category": "f_section",
       "selector_type": "exact",
       "match_json": {},
-      "qty_key": "qty_fsec",
       "sku_pattern": "QS-5800-F-{colour}",
       "priority": 100,
-      "notes": "VS vertical edge frame \u2014 QS-5800-F installed vertically each side; slats/U-channels slot in",
-      "active": true
+      "notes": "VS vertical edge frame — QS-5800-F installed vertically each side; slats/U-channels slot in",
+      "active": true,
+      "qty_key": "qty_fsec"
     },
     {
       "product_system_type": "VS",
       "selector_key": "post_50mm_2400",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_post_50_2400",
+      "match_json": {
+        "post_size": "50"
+      },
       "sku_pattern": "XP-2400-FP-{colour}",
       "priority": 100,
-      "notes": "50mm full post 2400mm \u2014 colour resolved at runtime",
-      "active": true
+      "notes": "50mm full post 2400mm — colour resolved at runtime",
+      "active": true,
+      "qty_key": "qty_post_50_2400"
     },
     {
       "product_system_type": "VS",
       "selector_key": "post_50mm_6000",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_post_50_6000",
+      "match_json": {
+        "post_size": "50"
+      },
       "sku_pattern": "XP-6000-FP-{colour}",
       "priority": 100,
-      "notes": "50mm full post 6000mm \u2014 colour resolved at runtime. Not available in P/PB.",
-      "active": true
+      "notes": "50mm full post 6000mm — colour resolved at runtime. Not available in P/PB.",
+      "active": true,
+      "qty_key": "qty_post_50_6000"
     },
     {
       "product_system_type": "VS",
       "selector_key": "post_65mm_2400",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_post_65_2400",
+      "match_json": {
+        "post_size": "65"
+      },
       "sku_pattern": "XP-2400-65HD-{colour}",
       "priority": 100,
-      "notes": "65mm HD post 2400mm \u2014 colour resolved at runtime. Not available in P/PB.",
-      "active": true
+      "notes": "65mm HD post 2400mm — colour resolved at runtime. Not available in P/PB.",
+      "active": true,
+      "qty_key": "qty_post_65_2400"
     },
     {
       "product_system_type": "VS",
       "selector_key": "post_65mm_6000",
       "component_category": "post",
       "selector_type": "exact",
-      "match_json": {},
-      "qty_key": "qty_post_65_6000",
+      "match_json": {
+        "post_size": "65"
+      },
       "sku_pattern": "XP-6000-65HD-{colour}",
       "priority": 100,
-      "notes": "65mm HD post 6000mm \u2014 colour resolved at runtime. Not available in P/PB.",
+      "notes": "65mm HD post 6000mm — colour resolved at runtime. Not available in P/PB.",
+      "active": true,
+      "qty_key": "qty_post_65_6000"
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_slat_65_kwi",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-S65-KWI",
+      "priority": 10,
+      "notes": "AW slat override for KWI",
+      "qty_key": "qty_slat_65",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_slat_65_wrc",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-S65-WRC",
+      "priority": 10,
+      "notes": "AW slat override for WRC",
+      "qty_key": "qty_slat_65",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_slat_65_ig",
+      "component_category": "slat",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "AW-5800-S65-IG",
+      "priority": 10,
+      "notes": "AW slat override for IG",
+      "qty_key": "qty_slat_65",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_rail_kwi",
+      "component_category": "rail",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AWQS-5000-HORIZ-KWI",
+      "priority": 10,
+      "notes": "AW rail override for KWI",
+      "qty_key": "qty_rail",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_rail_wrc",
+      "component_category": "rail",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AWQS-5000-HORIZ-WRC",
+      "priority": 10,
+      "notes": "AW rail override for WRC",
+      "qty_key": "qty_rail",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_rail_ig",
+      "component_category": "rail",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "QS-5000-HORIZ-MN",
+      "priority": 10,
+      "notes": "AW rail override for IG",
+      "qty_key": "qty_rail",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_side_frame_kwi",
+      "component_category": "side_frame",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "QS-5800-SF-MN",
+      "priority": 10,
+      "notes": "AW side_frame override for KWI → MN",
+      "qty_key": "qty_sf",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_side_frame_wrc",
+      "component_category": "side_frame",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "QS-5800-SF-MN",
+      "priority": 10,
+      "notes": "AW side_frame override for WRC → MN",
+      "qty_key": "qty_sf",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_side_frame_ig",
+      "component_category": "side_frame",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "QS-5800-SF-MN",
+      "priority": 10,
+      "notes": "AW side_frame override for IG → MN",
+      "qty_key": "qty_sf",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_fsec_kwi",
+      "component_category": "f_section",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "QS-5800-F-MN",
+      "priority": 10,
+      "notes": "AW f_section override for KWI → MN",
+      "qty_key": "qty_fsec",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_fsec_wrc",
+      "component_category": "f_section",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "QS-5800-F-MN",
+      "priority": 10,
+      "notes": "AW f_section override for WRC → MN",
+      "qty_key": "qty_fsec",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_fsec_ig",
+      "component_category": "f_section",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "QS-5800-F-MN",
+      "priority": 10,
+      "notes": "AW f_section override for IG → MN",
+      "qty_key": "qty_fsec",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_post_50_2400_kwi",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-FP-KWI",
+      "priority": 10,
+      "notes": "AW post override for KWI — 50_2400",
+      "qty_key": "qty_post_50_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_post_50_2400_wrc",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-FP-WRC",
+      "priority": 10,
+      "notes": "AW post override for WRC — 50_2400",
+      "qty_key": "qty_post_50_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_post_50_2400_ig",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-2400-FP-MN",
+      "priority": 10,
+      "notes": "AW post override for IG — 50_2400",
+      "qty_key": "qty_post_50_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_post_50_6000_kwi",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-FP-KWI",
+      "priority": 10,
+      "notes": "AW post override for KWI — 50_6000",
+      "qty_key": "qty_post_50_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_post_50_6000_wrc",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-FP-WRC",
+      "priority": 10,
+      "notes": "AW post override for WRC — 50_6000",
+      "qty_key": "qty_post_50_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_post_50_6000_ig",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-6000-FP-MN",
+      "priority": 10,
+      "notes": "AW post override for IG — 50_6000",
+      "qty_key": "qty_post_50_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_post_65_2400_kwi",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-65HD-KWI",
+      "priority": 10,
+      "notes": "AW post override for KWI — 65_2400",
+      "qty_key": "qty_post_65_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_post_65_2400_wrc",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-65HD-WRC",
+      "priority": 10,
+      "notes": "AW post override for WRC — 65_2400",
+      "qty_key": "qty_post_65_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_post_65_2400_ig",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-2400-65HD-MN",
+      "priority": 10,
+      "notes": "AW post override for IG — 65_2400",
+      "qty_key": "qty_post_65_2400",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_post_65_6000_kwi",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-65HD-KWI",
+      "priority": 10,
+      "notes": "AW post override for KWI — 65_6000",
+      "qty_key": "qty_post_65_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_post_65_6000_wrc",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-65HD-WRC",
+      "priority": 10,
+      "notes": "AW post override for WRC — 65_6000",
+      "qty_key": "qty_post_65_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_post_65_6000_ig",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-6000-65HD-MN",
+      "priority": 10,
+      "notes": "AW post override for IG — 65_6000",
+      "qty_key": "qty_post_65_6000",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_tp_50_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-TP-MN",
+      "qty_key": "qty_top_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_tp_50_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-TP-MN",
+      "qty_key": "qty_top_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_tp_50_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-TP-MN",
+      "qty_key": "qty_top_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_bp_50_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-BP-SET-MN",
+      "qty_key": "qty_base_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_bp_50_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-BP-SET-MN",
+      "qty_key": "qty_base_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_bp_50_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-BP-SET-MN",
+      "qty_key": "qty_base_plate_50",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_dc_50_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-DC-2P-MN",
+      "qty_key": "qty_domical_cover_50",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_dc_50_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-DC-2P-MN",
+      "qty_key": "qty_domical_cover_50",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_dc_50_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-DC-2P-MN",
+      "qty_key": "qty_domical_cover_50",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_dr_50_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-DR-MN",
+      "qty_key": "qty_dress_ring_50",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_dr_50_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-DR-MN",
+      "qty_key": "qty_dress_ring_50",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_dr_50_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-DR-MN",
+      "qty_key": "qty_dress_ring_50",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_tp_65_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-65TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-65TP-MN",
+      "qty_key": "qty_top_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_tp_65_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-65TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-65TP-MN",
+      "qty_key": "qty_top_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_tp_65_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-65TP-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-65TP-MN",
+      "qty_key": "qty_top_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_bp_65_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-65BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-65BP-SET-MN",
+      "qty_key": "qty_base_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_bp_65_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-65BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-65BP-SET-MN",
+      "qty_key": "qty_base_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_bp_65_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-65BP-SET-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-65BP-SET-MN",
+      "qty_key": "qty_base_plate_65",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_dc_65_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-65DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-65DC-2P-MN",
+      "qty_key": "qty_domical_cover_65",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_dc_65_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-65DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-65DC-2P-MN",
+      "qty_key": "qty_domical_cover_65",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_dc_65_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-65DC-2P-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-65DC-2P-MN",
+      "qty_key": "qty_domical_cover_65",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_dr_65_kwi",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "XP-65DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for KWI → XP-65DR-MN",
+      "qty_key": "qty_dress_ring_65",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_dr_65_wrc",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "XP-65DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for WRC → XP-65DR-MN",
+      "qty_key": "qty_dress_ring_65",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_dr_65_ig",
+      "component_category": "post_accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-65DR-MN",
+      "priority": 10,
+      "notes": "AW post_accessory override for IG → XP-65DR-MN",
+      "qty_key": "qty_dress_ring_65",
       "active": true
     }
   ],
@@ -850,7 +1585,7 @@
       },
       "add_category": "post_accessory",
       "add_sku_pattern": "XP-BP-SET-{colour}",
-      "qty_formula": "mounting_type_is_base_plate ? num_posts : 0",
+      "qty_formula": "mounting_type == 'base_plate' ? num_posts : 0",
       "is_pack": false,
       "priority": 20,
       "notes": "1x base plate set per 50mm post when base-plated",
@@ -865,7 +1600,7 @@
       },
       "add_category": "post_accessory",
       "add_sku_pattern": "XP-DC-2P-{colour}",
-      "qty_formula": "mounting_type_is_base_plate ? num_posts : 0",
+      "qty_formula": "mounting_type == 'base_plate' ? num_posts : 0",
       "is_pack": false,
       "priority": 21,
       "notes": "1x domical cover per 50mm post when base-plated",
@@ -880,7 +1615,7 @@
       },
       "add_category": "post_accessory",
       "add_sku_pattern": "XP-65BP-SET-{colour}",
-      "qty_formula": "mounting_type_is_base_plate ? num_posts : 0",
+      "qty_formula": "mounting_type == 'base_plate' ? num_posts : 0",
       "is_pack": false,
       "priority": 22,
       "notes": "1x base plate set per 65mm HD post when base-plated",
@@ -895,7 +1630,7 @@
       },
       "add_category": "post_accessory",
       "add_sku_pattern": "XP-65DC-2P-{colour}",
-      "qty_formula": "mounting_type_is_base_plate ? num_posts : 0",
+      "qty_formula": "mounting_type == 'base_plate' ? num_posts : 0",
       "is_pack": false,
       "priority": 23,
       "notes": "1x domical cover per 65mm HD post when base-plated",
@@ -910,7 +1645,7 @@
       },
       "add_category": "post_accessory",
       "add_sku_pattern": "XP-DR-{colour}",
-      "qty_formula": "mounting_type_is_core_drill ? num_posts : 0",
+      "qty_formula": "mounting_type == 'core_drill' ? num_posts : 0",
       "is_pack": false,
       "priority": 30,
       "notes": "1x dress ring per 50mm post when core-drilled",
@@ -925,7 +1660,7 @@
       },
       "add_category": "post_accessory",
       "add_sku_pattern": "XP-65DR-{colour}",
-      "qty_formula": "mounting_type_is_core_drill ? num_posts : 0",
+      "qty_formula": "mounting_type == 'core_drill' ? num_posts : 0",
       "is_pack": false,
       "priority": 31,
       "notes": "1x dress ring per 65mm HD post when core-drilled",
@@ -1241,6 +1976,105 @@
       "valid_from": null,
       "valid_to": null,
       "notes": null,
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Price TBC — not yet in supplier price list.",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Price TBC — not yet in supplier price list.",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Price TBC — not yet in supplier price list.",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Price TBC — not yet in supplier price list.",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Price TBC — not yet in supplier price list.",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Price TBC — not yet in supplier price list.",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Price TBC — not yet in supplier price list.",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Price TBC — not yet in supplier price list.",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Price TBC — not yet in supplier price list.",
       "active": true
     }
   ]

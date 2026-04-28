@@ -55,16 +55,80 @@ function calculatorReducer(
     }
     case "UPSERT_SEGMENT": {
       if (!state.payload) return state;
+      const vars = state.payload.variables;
+
+      // Auto-fill top-level geometry fields from job-level variables so
+      // canvas-drawn and form-created segments produce identical BOM inputs.
+      // The spread puts the default first; action.segment wins if it has an
+      // explicit value, preserving per-segment overrides set in SegmentRow.
+      const segment: CanonicalSegment = {
+        targetHeightMm:
+          vars.target_height_mm != null
+            ? Number(vars.target_height_mm)
+            : 1800,
+        ...action.segment,
+      };
+
       const runs = state.payload.runs.map((r) => {
         if (r.runId !== action.runId) return r;
         const segs = r.segments;
         const idx = segs.findIndex(
-          (s) => s.segmentId === action.segment.segmentId,
+          (s) => s.segmentId === segment.segmentId,
         );
-        const newSegs =
+
+        let newSegs =
           idx >= 0
-            ? segs.map((s, i) => (i === idx ? action.segment : s))
-            : [...segs, action.segment];
+            ? segs.map((s, i) => (i === idx ? segment : s))
+            : [...segs, segment];
+
+        // Mirror termination changes to adjacent segments so shared
+        // boundaries stay consistent. Only mirrors non-segment_join
+        // terminations (canvas-drawn joins are owned by the canvas adapter).
+        if (idx >= 0) {
+          const prev = segs[idx];
+          const sorted = [...newSegs].sort((a, b) => a.sortOrder - b.sortOrder);
+          const sortedIdx = sorted.findIndex(
+            (s) => s.segmentId === segment.segmentId,
+          );
+
+          const rightChanged =
+            JSON.stringify(segment.rightTermination) !==
+            JSON.stringify(prev.rightTermination);
+          const leftChanged =
+            JSON.stringify(segment.leftTermination) !==
+            JSON.stringify(prev.leftTermination);
+
+          if (
+            rightChanged &&
+            segment.rightTermination.kind !== "segment_join" &&
+            sortedIdx < sorted.length - 1
+          ) {
+            const nextSeg = sorted[sortedIdx + 1];
+            const mirroredNext = {
+              ...nextSeg,
+              leftTermination: segment.rightTermination,
+            };
+            newSegs = newSegs.map((s) =>
+              s.segmentId === nextSeg.segmentId ? mirroredNext : s,
+            );
+          }
+
+          if (
+            leftChanged &&
+            segment.leftTermination.kind !== "segment_join" &&
+            sortedIdx > 0
+          ) {
+            const prevSeg = sorted[sortedIdx - 1];
+            const mirroredPrev = {
+              ...prevSeg,
+              rightTermination: segment.leftTermination,
+            };
+            newSegs = newSegs.map((s) =>
+              s.segmentId === prevSeg.segmentId ? mirroredPrev : s,
+            );
+          }
+        }
+
         return { ...r, segments: newSegs };
       });
       return {

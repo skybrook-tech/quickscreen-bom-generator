@@ -2,13 +2,16 @@ import { useMemo } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import {
-  SEGMENT_OPTION_KEYS,
-  patchSegmentVariables,
-} from "../../lib/segmentTermination";
+import type { SegmentDiagnostic } from "../../types/bom.types";
+import { patchSegmentVariables } from "../../lib/segmentTermination";
+import { BOMWarningsPanel } from "./BOMWarningsPanel";
+
+const POST_SIZE_KEY = "post_size";
+const POST_WIDTH_MM_KEY = "post_width_mm";
 import { SchemaDrivenForm } from "./SchemaDrivenForm";
 import { TerminationControl } from "./TerminationControl";
-import NumberInput from "../shared/NumberInput";
+import NumberInput from "../ui/NumberInput";
+import { Select } from "../ui/Select";
 
 const POST_SIZE_LABELS: Record<string, string> = {
   "50": "50×50 System Post",
@@ -18,9 +21,10 @@ const POST_SIZE_LABELS: Record<string, string> = {
 interface Props {
   runId: string;
   seg: CanonicalSegment;
+  diagnostics?: SegmentDiagnostic[];
 }
 
-export function FenceSegmentDetails({ runId, seg }: Props) {
+export function FenceSegmentDetails({ runId, seg, diagnostics = [] }: Props) {
   const { state, dispatch } = useCalculator();
   const productCode = state.payload?.productCode ?? null;
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
@@ -39,7 +43,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   }, [runFields]);
 
   const v = seg.variables ?? {};
-  const postSize = (v[SEGMENT_OPTION_KEYS.postSize] as string) ?? "";
+  const postSize = (v[POST_SIZE_KEY] as string) ?? "";
   const isCustomPost = postSize === "custom";
 
   function upsertSegment(s: CanonicalSegment) {
@@ -71,6 +75,13 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
   return (
     <div className="space-y-4">
+      {diagnostics.length > 0 && (
+        <BOMWarningsPanel
+          errors={diagnostics.filter((d) => d.severity === "error").map((d) => d.message)}
+          warnings={diagnostics.filter((d) => d.severity === "warning").map((d) => d.message)}
+          assumptions={diagnostics.filter((d) => d.severity === "info").map((d) => d.message)}
+        />
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Max panel width override */}
         <label className="flex flex-col gap-1">
@@ -87,15 +98,12 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         {/* Post type — data-driven from run-scoped post_size variable */}
         <label className="flex flex-col gap-1">
           <span className="text-brand-muted text-xs">Post type</span>
-          <select
+          <Select
             value={postSize}
             onChange={(e) =>
-              setScalar(
-                SEGMENT_OPTION_KEYS.postSize,
-                e.target.value || null,
-              )
+              setScalar(POST_SIZE_KEY, e.target.value || null)
             }
-            className="bg-brand-bg border border-brand-border rounded px-2 py-1.5 text-sm text-brand-text"
+            className="bg-brand-bg"
           >
             <option value="">— Job default —</option>
             {postSizeOptions.map((opt) => (
@@ -104,7 +112,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
               </option>
             ))}
             <option value="custom">(Non-system post)</option>
-          </select>
+          </Select>
         </label>
 
         {/* Post width — only unlocked for non-system posts */}
@@ -112,9 +120,11 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
           <label className="flex flex-col gap-1">
             <span className="text-brand-muted text-xs">Post width (mm)</span>
             <NumberInput
-              value={(v[SEGMENT_OPTION_KEYS.postWidthMm] as number | null) ?? null}
+              value={
+                (v[POST_WIDTH_MM_KEY] as number | null) ?? null
+              }
               onChange={(val) =>
-                setScalar(SEGMENT_OPTION_KEYS.postWidthMm, val)
+                setScalar(POST_WIDTH_MM_KEY, val)
               }
               min={1}
             />

@@ -107,9 +107,8 @@ The form and canvas toolbar are shared across every fencing system, so no UI cha
 
 | Path | Generation | Purpose |
 |---|---|---|
-| `/new` | v1 | Legacy single-system fence form (`MainApp`). Hand-coded engine (`calculate-bom`). |
-| `/` | v2 | Multi-run `CalculatorPage`. Partially data-driven (`calculate-bom-v2`). |
-| `/calculator` | **v3** | Schema-driven engine (`bom-calculator`). MVP scope: QSHS + QSHS_GATE. |
+| `/` | — | Redirects to `/fence-calculator`. |
+| `/fence-calculator` | **v3** | Schema-driven engine (`bom-calculator`). MVP scope: QSHS + QSHS_GATE. |
 
 ## Glossary
 
