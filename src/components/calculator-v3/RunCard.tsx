@@ -39,7 +39,9 @@ export function RunCard({ run, runIdx }: Props) {
       kind: "fence",
       productCode,
       segmentWidthMm: jobMax,
-      targetHeightMm: Number(state.payload?.variables.target_height_mm ?? 1800),
+      // targetHeightMm intentionally omitted — the UPSERT_SEGMENT reducer fills
+      // it from payload.variables.target_height_mm so canvas-drawn and
+      // form-created segments always get the same job-level default.
       leftTermination: { kind: "system" },
       rightTermination: { kind: "system" },
     });

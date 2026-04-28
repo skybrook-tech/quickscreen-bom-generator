@@ -77,6 +77,7 @@ export function ProductSelectV3() {
         finish_type: "standard",
         finish_family: "standard",
         max_panel_width_mm: 2600,
+        target_height_mm: 1800,
       },
       runs: [
         {
