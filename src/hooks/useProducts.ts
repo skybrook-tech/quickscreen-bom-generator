@@ -31,8 +31,8 @@ export function useProducts() {
         .select('id, name, system_type, description, image_url, active, sort_order, metadata')
         .order('active', { ascending: false })
         .order('sort_order', { ascending: true });
-      if (error) throw error;
-      return data as Product[];
+      if (error) return localProducts;
+      return data && data.length > 0 ? (data as Product[]) : localProducts;
     },
   });
 }

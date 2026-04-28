@@ -33,8 +33,8 @@ export function ProductSelectV3() {
         .eq("product_type", "fence")
         .eq("active", true)
         .order("sort_order", { ascending: true });
-      if (error) throw error;
-      return (data ?? []) as FenceProduct[];
+      if (error) return localFenceProducts;
+      return data && data.length > 0 ? (data as FenceProduct[]) : localFenceProducts;
     },
   });
 
