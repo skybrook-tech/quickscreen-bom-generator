@@ -222,6 +222,31 @@ const orgId = profile.org_id;
 
 See `docs/bom-calculator-pipeline.md` for the full spec.
 
+### bom-calculator (v3 — product-agnostic)
+
+`POST /functions/v1/bom-calculator` — accepts `{ payload: CanonicalPayload, pricingTier? }`, returns `{ lines, runResults, gateItems, totals, warnings, errors, assumptions, computed, trace?, pricingTier, generatedAt }`.
+
+**Pipeline (all data-driven; no per-product branches):**
+
+1. CORS + JWT → `resolveUserProfile` → `{ orgId, role, pricingTier }`
+2. Validate payload via `canonicalPayloadSchema` (Zod)
+3. Per unique `productCode`, load product + current rule_version + rules/constraints/selectors/companions/warnings/variables — parallelised via `Promise.all`; cached per-request
+4. Normalise variables — apply `product_variables` defaults and map long colour names to short codes (e.g. `black-satin` → `B`) via a constant lookup
+5. Run `product_validations` — if any `severity=error` fails, short-circuit with `{ errors, warnings, lines: [], totals: 0 }`
+6. Evaluate `product_rules` in stage order (`derive` → `stock` → `accessory` → `component`) with `mathjs.evaluate(expression, ctx)`. Failed rules are logged to trace and skipped; engine never aborts
+7. Resolve SKUs via `product_component_selectors` — first match by priority wins. Substitute `{colour}`/`{finish}`/`{frame_cap_size}` placeholders
+8. Apply `product_companion_rules` — auto-add CFCs, spacers, screws, hinges, etc.
+9. Evaluate `product_warnings` conditions → populate `warnings[]` (severity=warning), `errors[]` (severity=error), `assumptions[]` (severity=info)
+10. Aggregate lines by SKU; tag each with originating `runId`, `segmentId`, `productCode`; split into `runResults[]` for UI
+11. **Pricing stage (last, non-fatal)** — missing `pricing_rules` row produces `unitPrice=0` + warning; engine still returns the BOM
+12. Strip trace + most of computed for non-admin; return
+
+**Trace gating:** `role === 'admin'` → full `trace[]` + `computed{}`. Non-admin → `trace: []` and only `actual_height_mm` retained in `computed` (needed by `AchievedHeightBadge`).
+
+**Graceful math.js failures:** every `mathjs.evaluate` wrapped in try/catch. Failed rule ID + error logged to trace. Pipeline continues.
+
+See `docs/phase-v3-4-bom-calculator.md` for the full spec.
+
 ---
 
 ## 7. Deferred Features (v2)
@@ -316,6 +341,10 @@ VITE_SUPABASE_ANON_KEY=your-local-anon-key
 **v3 Testing:** Deno unit tests at `supabase/functions/bom-calculator/index_test.ts` — fixtures (TC-V3-1 through TC-V3-8) covering rule firings, selector resolution, companion expansion, validation errors, warnings, missing pricing, and malformed rules. See `docs/bom-calculator-pipeline.md`.
 
 v3 Cypress E2E coverage is a follow-up phase. `SchemaDrivenForm` emits `data-testid={field_key}` matching existing conventions so future selectors can be written against the `/fence-calculator` route.
+
+**v3 Testing:** Deno unit tests at `supabase/functions/bom-calculator/index_test.ts` — 8 fixtures (TC-V3-1 through TC-V3-8) covering rule firings, selector resolution, companion expansion, validation errors, warnings, missing pricing, and malformed rules. See `docs/phase-v3-4-bom-calculator.md`.
+
+v3 Cypress coverage is a follow-up phase. `SchemaDrivenForm` emits `data-testid={field_key}` matching existing conventions so future selectors reuse the same pattern.
 
 ---
 
