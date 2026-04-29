@@ -46,7 +46,10 @@ export function Header() {
         {user && (
           <nav className="hidden sm:flex items-center gap-0.5 ml-2">
             <NavLink to="/fence-calculator" end className={navLinkCls}>
-              Fence Calculator
+              Fence Calculator A
+            </NavLink>
+            <NavLink to="/fence-calculator-v4" end className={navLinkCls}>
+              Fence Calculator B
             </NavLink>
             {/* <NavLink to="/quotes" className={navLinkCls}>
               Quotes

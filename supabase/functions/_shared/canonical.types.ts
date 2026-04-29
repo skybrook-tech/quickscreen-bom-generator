@@ -10,6 +10,17 @@ export interface CanonicalPayload {
 
 export interface CanonicalRun {
   runId: string;
+  /**
+   * Per-run fence system override (v4+). When set, the engine uses this code
+   * for run-level validation instead of payload.productCode.
+   * Optional for backward compat — pre-v4 payloads do not set this.
+   */
+  productCode?: string;
+  /**
+   * Per-run variable defaults (v4+). Merged on top of payload.variables and
+   * below segment.variables by the engine. Optional for backward compat.
+   */
+  variables?: Record<string, string | number | boolean>;
   segments: CanonicalSegment[];
   geometry?: {
     points: Array<{ x: number; y: number }>;

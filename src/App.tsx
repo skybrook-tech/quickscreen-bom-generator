@@ -11,6 +11,7 @@ import { AdminGuard } from "./components/auth/AdminGuard";
 import { LoginPage } from "./pages/LoginPage";
 import { QuotesHistoryPage } from "./pages/QuotesHistoryPage";
 import { CalculatorV3Page } from "./pages/CalculatorV3Page";
+import { CalculatorV4Page } from "./pages/CalculatorV4Page";
 import { ProductsIndexPage } from "./pages/admin/ProductsIndexPage";
 import { ProductDetailPage } from "./pages/admin/ProductDetailPage";
 import { ComponentsIndexPage } from "./pages/admin/ComponentsIndexPage";
@@ -39,6 +40,14 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <CalculatorV3Page />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: "/fence-calculator-v4",
+    element: (
+      <AuthGuard>
+        <CalculatorV4Page />
       </AuthGuard>
     ),
   },

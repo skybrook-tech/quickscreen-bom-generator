@@ -189,13 +189,15 @@ Deno.serve(async (req: Request) => {
     }
 
     // Step 4 — load engine data per unique productCode (parallelised).
-    // Collect all unique productCodes from every segment across all runs.
+    // Collect all unique productCodes from every segment across all runs,
+    // plus any per-run productCode overrides (v4 feature).
     const allProductCodes = [
       payload.productCode, // top-level fence product (for validation context)
       ...new Set(
-        (payload.runs as CanonicalRun[]).flatMap((r) =>
-          r.segments.map((s: CanonicalSegment) => s.productCode),
-        ),
+        (payload.runs as CanonicalRun[]).flatMap((r) => [
+          r.productCode, // per-run fence system override (v4, optional)
+          ...r.segments.map((s: CanonicalSegment) => s.productCode),
+        ]),
       ),
     ].filter((c) => c && typeof c === "string") as string[];
     const uniqueProductCodes = [...new Set(allProductCodes)];
@@ -349,12 +351,14 @@ Deno.serve(async (req: Request) => {
           seg.rightTermination = { kind: "system_corner", angleDeg: 180 - rt.angleDeg };
         }
       }
-      // Determine the "primary" fence product for this run (from payload top-level)
-      const fenceEngineData = engineDataMap.get(payload.productCode);
+      // Determine the "primary" fence product for this run.
+      // v4 runs may carry their own productCode; fall back to payload top-level.
+      const fenceEngineData = engineDataMap.get(run.productCode ?? payload.productCode);
       if (!fenceEngineData) continue;
 
-      // Merge job-level variables for the run context
-      const mergedRunVars = { ...payload.variables };
+      // Merge job + run-level variables for the run context.
+      // Precedence: run.variables > payload.variables (segment overrides applied later per-segment).
+      const mergedRunVars = { ...payload.variables, ...(run.variables ?? {}) };
       const runCtx = normaliseVariables(
         mergedRunVars,
         fenceEngineData,

@@ -18,6 +18,20 @@ export interface CanonicalPayload {
 
 export interface CanonicalRun {
   runId: string;
+  /**
+   * Per-run fence system override (v4+). When set, this run uses a different
+   * fence product than payload.productCode. The engine loads engine data for
+   * this code and uses it for run-level validation and context. Segments in
+   * this run should set their productCode to match.
+   * Optional for backward compatibility — pre-v4 payloads do not set this.
+   */
+  productCode?: string;
+  /**
+   * Per-run variable defaults. Merged on top of payload.variables (job level)
+   * and below segment.variables. Engine precedence: segment > run > job.
+   * Optional for backward compatibility — pre-v4 payloads do not set this.
+   */
+  variables?: Record<string, string | number | boolean>;
   segments: CanonicalSegment[];
   /**
    * Canvas pixel coordinates of the run's endpoint chain: [start, seg0_end, seg1_end, …].

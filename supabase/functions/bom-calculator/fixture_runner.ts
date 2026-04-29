@@ -157,8 +157,9 @@ export async function runFixtures(): Promise<void> {
 
   const simpleFixtures = loadFixtures(join(fixtureDir, "simple"));
   const cornersFixtures = loadFixtures(join(fixtureDir, "corners"));
+  const v4Fixtures = loadFixtures(join(fixtureDir, "v4"));
 
-  const fixtures = [...simpleFixtures, ...cornersFixtures];
+  const fixtures = [...simpleFixtures, ...cornersFixtures, ...v4Fixtures];
 
   if (fixtures.length === 0) {
     console.warn("No *.fixture.json files found in", fixtureDir);

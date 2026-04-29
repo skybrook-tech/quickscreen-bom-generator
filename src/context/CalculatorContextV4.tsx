@@ -1,0 +1,331 @@
+import { createContext, useContext, useReducer } from "react";
+import type {
+  CanonicalPayload,
+  CanonicalRun,
+  CanonicalSegment,
+} from "../types/canonical.types";
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+export interface ExtraItem {
+  id: string;
+  sku: string;
+  description: string;
+  qty: number;
+  unitPrice: number;
+}
+
+export interface AddedSuggestion {
+  sku: string;
+  name: string;
+  qty: number;
+  unitPrice: number;
+}
+
+export interface CalculatorV4State {
+  jobName: string;
+  payload: CanonicalPayload | null;
+  bomResult: Record<string, unknown> | null;
+  /** Suggestions the user has accepted into the BOM (client-side only in v4 v1). */
+  addedSuggestions: AddedSuggestion[];
+  /** Suggestion SKUs the user has dismissed (added or otherwise hidden). */
+  dismissedSuggestionSkus: Set<string>;
+  /** SKUs from the engine BOM the user has manually removed. */
+  removedSkus: Set<string>;
+  /** Manual extra line items added by the user (post-BOM). */
+  extraItems: ExtraItem[];
+}
+
+const initialState: CalculatorV4State = {
+  jobName: "",
+  payload: null,
+  bomResult: null,
+  addedSuggestions: [],
+  dismissedSuggestionSkus: new Set(),
+  removedSkus: new Set(),
+  extraItems: [],
+};
+
+// ─── Actions ─────────────────────────────────────────────────────────────────
+
+export type CalculatorV4Action =
+  | { type: "SET_JOB_NAME"; name: string }
+  | { type: "INIT_PAYLOAD"; payload: CanonicalPayload }
+  | { type: "SET_PAYLOAD"; payload: CanonicalPayload }
+  | { type: "RESET_JOB" }
+  | {
+      type: "UPSERT_RUN_VARIABLES";
+      runId: string;
+      variables: Record<string, string | number | boolean>;
+    }
+  | { type: "SET_RUN_PRODUCT"; runId: string; productCode: string }
+  | { type: "ADD_RUN" }
+  | { type: "REMOVE_RUN"; runId: string }
+  | { type: "UPSERT_SEGMENT"; runId: string; segment: CanonicalSegment }
+  | { type: "REMOVE_SEGMENT"; runId: string; segmentId: string }
+  | { type: "DUPLICATE_SEGMENT"; runId: string; segmentId: string }
+  | { type: "SET_BOM_RESULT"; result: Record<string, unknown> }
+  | { type: "ADD_SUGGESTION"; suggestion: AddedSuggestion }
+  | { type: "DISMISS_SUGGESTION"; sku: string }
+  | { type: "REMOVE_ADDED_SUGGESTION"; sku: string }
+  | { type: "REMOVE_BOM_LINE"; sku: string }
+  | { type: "RESTORE_BOM_LINE"; sku: string }
+  | { type: "ADD_EXTRA"; item: ExtraItem }
+  | { type: "REMOVE_EXTRA"; id: string };
+
+// ─── Reducer ─────────────────────────────────────────────────────────────────
+
+function reducer(
+  state: CalculatorV4State,
+  action: CalculatorV4Action,
+): CalculatorV4State {
+  switch (action.type) {
+    case "SET_JOB_NAME":
+      return { ...state, jobName: action.name };
+    case "INIT_PAYLOAD":
+      return {
+        ...initialState,
+        jobName: state.jobName,
+        payload: action.payload,
+        dismissedSuggestionSkus: new Set(),
+        removedSkus: new Set(),
+      };
+    case "SET_PAYLOAD":
+      return { ...state, payload: action.payload };
+    case "RESET_JOB":
+      return initialState;
+    case "UPSERT_RUN_VARIABLES": {
+      if (!state.payload) return state;
+      const runs = state.payload.runs.map((r) =>
+        r.runId === action.runId
+          ? { ...r, variables: { ...(r.variables ?? {}), ...action.variables } }
+          : r,
+      );
+      return { ...state, payload: { ...state.payload, runs } };
+    }
+    case "ADD_RUN": {
+      if (!state.payload) return state;
+      const newRun: CanonicalRun = {
+        runId: crypto.randomUUID(),
+        productCode: state.payload.productCode, // inherit job default
+        variables: {},
+        segments: [],
+      };
+      return {
+        ...state,
+        payload: {
+          ...state.payload,
+          runs: [...state.payload.runs, newRun],
+        },
+      };
+    }
+    case "SET_RUN_PRODUCT": {
+      if (!state.payload) return state;
+      const runs = state.payload.runs.map((r) =>
+        r.runId === action.runId
+          ? { ...r, productCode: action.productCode, variables: {} }
+          : r,
+      );
+      return { ...state, payload: { ...state.payload, runs } };
+    }
+    case "REMOVE_RUN": {
+      if (!state.payload) return state;
+      // Don't allow removing the last run
+      if (state.payload.runs.length <= 1) return state;
+      return {
+        ...state,
+        payload: {
+          ...state.payload,
+          runs: state.payload.runs.filter((r) => r.runId !== action.runId),
+        },
+      };
+    }
+    case "UPSERT_SEGMENT": {
+      if (!state.payload) return state;
+      const segment = action.segment;
+      const runs = state.payload.runs.map((r) => {
+        if (r.runId !== action.runId) return r;
+        const segs = r.segments;
+        const idx = segs.findIndex((s) => s.segmentId === segment.segmentId);
+
+        let newSegs =
+          idx >= 0
+            ? segs.map((s, i) => (i === idx ? segment : s))
+            : [...segs, segment];
+
+        // Mirror termination changes to adjacent segments so shared boundaries
+        // stay consistent. Only mirrors non-segment_join terminations (canvas-
+        // drawn joins are owned by the canvas adapter).
+        if (idx >= 0) {
+          const prev = segs[idx];
+          const sorted = [...newSegs].sort((a, b) => a.sortOrder - b.sortOrder);
+          const sortedIdx = sorted.findIndex(
+            (s) => s.segmentId === segment.segmentId,
+          );
+
+          const rightChanged =
+            JSON.stringify(segment.rightTermination) !==
+            JSON.stringify(prev.rightTermination);
+          const leftChanged =
+            JSON.stringify(segment.leftTermination) !==
+            JSON.stringify(prev.leftTermination);
+
+          if (
+            rightChanged &&
+            segment.rightTermination.kind !== "segment_join" &&
+            sortedIdx < sorted.length - 1
+          ) {
+            const nextSeg = sorted[sortedIdx + 1];
+            const mirroredNext = {
+              ...nextSeg,
+              leftTermination: segment.rightTermination,
+            };
+            newSegs = newSegs.map((s) =>
+              s.segmentId === nextSeg.segmentId ? mirroredNext : s,
+            );
+          }
+
+          if (
+            leftChanged &&
+            segment.leftTermination.kind !== "segment_join" &&
+            sortedIdx > 0
+          ) {
+            const prevSeg = sorted[sortedIdx - 1];
+            const mirroredPrev = {
+              ...prevSeg,
+              rightTermination: segment.leftTermination,
+            };
+            newSegs = newSegs.map((s) =>
+              s.segmentId === prevSeg.segmentId ? mirroredPrev : s,
+            );
+          }
+        }
+
+        return { ...r, segments: newSegs };
+      });
+      return { ...state, payload: { ...state.payload, runs } };
+    }
+    case "REMOVE_SEGMENT": {
+      if (!state.payload) return state;
+      const runs = state.payload.runs.map((r) => {
+        if (r.runId !== action.runId) return r;
+        const remaining = r.segments
+          .filter((s) => s.segmentId !== action.segmentId)
+          .map((s, i) => ({ ...s, sortOrder: i }));
+        return { ...r, segments: remaining };
+      });
+      return { ...state, payload: { ...state.payload, runs } };
+    }
+    case "DUPLICATE_SEGMENT": {
+      if (!state.payload) return state;
+      const runs = state.payload.runs.map((r) => {
+        if (r.runId !== action.runId) return r;
+        const idx = r.segments.findIndex(
+          (s) => s.segmentId === action.segmentId,
+        );
+        if (idx === -1) return r;
+        const original = r.segments[idx];
+        const copy: CanonicalSegment = {
+          ...original,
+          segmentId: crypto.randomUUID(),
+          sortOrder: original.sortOrder + 1,
+        };
+        const before = r.segments.slice(0, idx + 1);
+        const after = r.segments
+          .slice(idx + 1)
+          .map((s) => ({ ...s, sortOrder: s.sortOrder + 1 }));
+        return { ...r, segments: [...before, copy, ...after] };
+      });
+      return { ...state, payload: { ...state.payload, runs } };
+    }
+    case "SET_BOM_RESULT":
+      return {
+        ...state,
+        bomResult: action.result,
+        // When a fresh BOM comes in, reset suggestion/removal state
+        addedSuggestions: [],
+        dismissedSuggestionSkus: new Set(),
+        removedSkus: new Set(),
+        extraItems: [],
+      };
+    case "ADD_SUGGESTION": {
+      const exists = state.addedSuggestions.find(
+        (s) => s.sku === action.suggestion.sku,
+      );
+      const next = exists
+        ? state.addedSuggestions.map((s) =>
+            s.sku === action.suggestion.sku
+              ? { ...s, qty: s.qty + action.suggestion.qty }
+              : s,
+          )
+        : [...state.addedSuggestions, action.suggestion];
+      return {
+        ...state,
+        addedSuggestions: next,
+        dismissedSuggestionSkus: new Set([
+          ...state.dismissedSuggestionSkus,
+          action.suggestion.sku,
+        ]),
+      };
+    }
+    case "DISMISS_SUGGESTION":
+      return {
+        ...state,
+        dismissedSuggestionSkus: new Set([
+          ...state.dismissedSuggestionSkus,
+          action.sku,
+        ]),
+      };
+    case "REMOVE_ADDED_SUGGESTION":
+      return {
+        ...state,
+        addedSuggestions: state.addedSuggestions.filter(
+          (s) => s.sku !== action.sku,
+        ),
+      };
+    case "REMOVE_BOM_LINE":
+      return {
+        ...state,
+        removedSkus: new Set([...state.removedSkus, action.sku]),
+      };
+    case "RESTORE_BOM_LINE": {
+      const next = new Set(state.removedSkus);
+      next.delete(action.sku);
+      return { ...state, removedSkus: next };
+    }
+    case "ADD_EXTRA":
+      return { ...state, extraItems: [...state.extraItems, action.item] };
+    case "REMOVE_EXTRA":
+      return {
+        ...state,
+        extraItems: state.extraItems.filter((i) => i.id !== action.id),
+      };
+    default:
+      return state;
+  }
+}
+
+// ─── Context ─────────────────────────────────────────────────────────────────
+
+interface CalculatorV4ContextValue {
+  state: CalculatorV4State;
+  dispatch: React.Dispatch<CalculatorV4Action>;
+}
+
+const Ctx = createContext<CalculatorV4ContextValue | null>(null);
+
+export function CalculatorV4Provider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return <Ctx.Provider value={{ state, dispatch }}>{children}</Ctx.Provider>;
+}
+
+export function useCalculatorV4() {
+  const ctx = useContext(Ctx);
+  if (!ctx)
+    throw new Error("useCalculatorV4 must be used inside CalculatorV4Provider");
+  return ctx;
+}

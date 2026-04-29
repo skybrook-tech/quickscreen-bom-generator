@@ -34,6 +34,10 @@ export const canonicalSegmentSchema = z.object({
 export const canonicalRunSchema = z
   .object({
     runId: z.string().uuid(),
+    productCode: z.string().optional(),
+    variables: z
+      .record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+      .optional(),
     segments: z.array(canonicalSegmentSchema),
     geometry: z
       .object({

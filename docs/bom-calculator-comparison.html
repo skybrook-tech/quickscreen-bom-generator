@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BOM Calculator: Sandbox vs Data-Driven Engine — Comparison Report</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #1a1d2e;
+      --ink-light: #4a5068;
+      --ink-muted: #7a819a;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --border: #e2e6f0;
+      --bg: #ffffff;
+      --bg-alt: #f8f9fc;
+      --green: #16a34a;
+      --green-bg: #f0fdf4;
+      --amber: #d97706;
+      --amber-bg: #fffbeb;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --page-width: 900px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--ink);
+      background: var(--bg);
+      max-width: var(--page-width);
+      margin: 0 auto;
+      padding: 48px 52px;
+    }
+
+    /* ── Cover ── */
+    .cover {
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 28px;
+      margin-bottom: 40px;
+    }
+    .cover-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .cover h1 {
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+    .cover-meta {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px 32px;
+      font-size: 13px;
+      color: var(--ink-light);
+    }
+    .cover-meta span { font-weight: 600; color: var(--ink); }
+
+    /* ── Typography ── */
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 40px 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 28px 0 10px;
+    }
+    h3.numbered {
+      counter-increment: h3counter;
+    }
+    p { margin-bottom: 12px; color: var(--ink-light); }
+    p strong { color: var(--ink); }
+    ul, ol { margin: 0 0 14px 22px; color: var(--ink-light); }
+    li { margin-bottom: 5px; }
+    li strong { color: var(--ink); }
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: var(--accent);
+    }
+    pre {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      padding: 14px 16px;
+      border-radius: 4px;
+      margin: 10px 0 16px;
+      overflow-x: auto;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 24px;
+      font-size: 13px;
+    }
+    thead tr { background: var(--ink); color: #fff; }
+    thead th {
+      padding: 9px 12px;
+      font-weight: 600;
+      font-size: 11.5px;
+      letter-spacing: 0.04em;
+      text-align: left;
+    }
+    tbody tr:nth-child(even) { background: var(--bg-alt); }
+    tbody tr:hover { background: var(--accent-light); }
+    tbody td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    tbody td:first-child { font-weight: 500; color: var(--ink); }
+    .mono { font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+    .badge-green { background: var(--green-bg); color: var(--green); }
+    .badge-amber { background: var(--amber-bg); color: var(--amber); }
+    .badge-red { background: var(--red-bg); color: var(--red); }
+
+    /* ── Callout boxes ── */
+    .callout {
+      border-left: 3px solid var(--accent);
+      background: var(--accent-light);
+      padding: 12px 16px;
+      border-radius: 0 4px 4px 0;
+      margin: 14px 0 20px;
+      font-size: 13px;
+      color: var(--ink-light);
+    }
+    .callout strong { color: var(--ink); }
+    .callout.amber { border-color: var(--amber); background: var(--amber-bg); }
+    .callout.green { border-color: var(--green); background: var(--green-bg); }
+
+    /* ── Pros/cons two-column ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0 24px; }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 16px 18px;
+      background: var(--bg-alt);
+    }
+    .card h4 {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card ul { margin-left: 16px; font-size: 13px; }
+    .card.pros h4 { color: var(--green); }
+    .card.cons h4 { color: var(--red); }
+    .card.engine h4 { color: var(--accent); border-color: var(--accent); }
+
+    /* ── Section divider ── */
+    .section-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: var(--ink);
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 3px;
+      margin-bottom: 6px;
+    }
+
+    /* ── Next steps ── */
+    .steps { counter-reset: stepcount; list-style: none; margin: 0 0 24px; padding: 0; }
+    .steps li {
+      counter-increment: stepcount;
+      display: flex;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--ink-light);
+      font-size: 13px;
+    }
+    .steps li::before {
+      content: counter(stepcount);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px;
+      height: 26px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .steps li strong { color: var(--ink); display: block; margin-bottom: 3px; }
+
+    /* ── Decision callout ── */
+    .decision {
+      background: #fefce8;
+      border: 1px solid #fde68a;
+      border-left: 3px solid var(--amber);
+      padding: 11px 15px;
+      border-radius: 0 4px 4px 0;
+      margin: 12px 0 16px;
+      font-size: 13px;
+      color: #78350f;
+    }
+    .decision::before {
+      content: "Decision needed: ";
+      font-weight: 700;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 52px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--ink-muted);
+    }
+
+    @media print {
+      body { padding: 32px 40px; }
+      h2 { page-break-before: auto; }
+      table { page-break-inside: avoid; }
+      .two-col { page-break-inside: avoid; }
+      .callout, .decision { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cover -->
+  <div class="cover">
+    <div class="cover-label">SkybrookAI · Internal Technical Report</div>
+    <h1>BOM Calculator:<br>Sandbox vs Data-Driven Engine</h1>
+    <div class="cover-meta">
+      <div>Date: <span>29 April 2026</span></div>
+      <div>Repo: <span>quickscreen-bom-generator</span></div>
+      <div>Branch analysed: <span>origin/codex/qshs-calculator-sandbox</span></div>
+      <div>Compared against: <span>master</span></div>
+    </div>
+  </div>
+
+  <!-- Background -->
+  <h2>Background</h2>
+  <p>Two BOM calculation implementations exist in the codebase, developed in parallel:</p>
+  <ul>
+    <li><strong>Data-driven engine</strong> — a Supabase Edge Function (<code>bom-calculator</code>) that reads rules, selectors, and companion rules from seeded Postgres tables and evaluates them at runtime using math.js. All calculation logic lives in JSON seed files per product.</li>
+    <li><strong>Sandbox local calculator</strong> — a client-side TypeScript implementation (<code>src/lib/localBomCalculator.ts</code>) built as a public/offline fallback. Hardcodes BOM logic directly in TypeScript.</li>
+  </ul>
+  <p>Several calculation decisions differ between the two. This report surfaces those differences so they can be resolved deliberately. UX/UI decisions will be consolidated separately once formula decisions are settled.</p>
+
+  <h3>Timeline</h3>
+  <table>
+    <thead><tr><th>Date</th><th>Event</th></tr></thead>
+    <tbody>
+      <tr><td>Apr 9–21</td><td>Data-driven engine built and merged (<code>bom-v3</code> PR)</td></tr>
+      <tr><td>Apr 27–28</td><td>Sandbox local calculator built on feature branch</td></tr>
+      <tr><td>Apr 29</td><td>Master branch updated with new fixtures, engine fixes, corner tests</td></tr>
+    </tbody>
+  </table>
+
+  <!-- Product Coverage -->
+  <h2>Product Coverage</h2>
+  <table>
+    <thead><tr><th>Product</th><th>Data-driven engine</th><th>Sandbox calculator</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>QSHS (horizontal slats)</td>
+        <td><span class="badge badge-green">Full</span></td>
+        <td><span class="badge badge-green">Full</span></td>
+      </tr>
+      <tr>
+        <td>BAYG</td>
+        <td><span class="badge badge-green">Full</span></td>
+        <td><span class="badge badge-green">Full</span></td>
+      </tr>
+      <tr>
+        <td>VS (vertical slats)</td>
+        <td><span class="badge badge-green">Full</span></td>
+        <td><span class="badge badge-green">Full (added Apr 28)</span></td>
+      </tr>
+      <tr>
+        <td>XPL</td>
+        <td><span class="badge badge-green">Full</span></td>
+        <td><span class="badge badge-red">Not implemented</span></td>
+      </tr>
+      <tr>
+        <td>Gates (QS_GATE)</td>
+        <td><span class="badge badge-green">Full</span></td>
+        <td><span class="badge badge-red">Not implemented</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Formula Differences -->
+  <h2>Formula Differences</h2>
+  <p>The sandbox was written by the subject matter expert. These are cases where both implementations produce a number but use different logic. Neither is labelled correct here — these need resolving against the physical product.</p>
+
+  <h3>1. Slat Count</h3>
+  <p>The most consequential divergence. Results in a 1-slat difference in most real-world configurations, which cascades into actual height, stock lengths, and pack counts.</p>
+
+  <table>
+    <thead><tr><th>Approach</th><th>Formula</th><th>Slat width</th><th>Rounding</th><th>Result (1800mm / 5mm gap)</th><th>Actual height</th></tr></thead>
+    <tbody>
+      <tr><td>Sandbox (SME)</td><td><code>floor((H + gap - 3) / (w + gap))</code></td><td>65.3mm physical</td><td>floor</td><td><strong>25 slats</strong></td><td>~1748mm</td></tr>
+      <tr><td>Data-driven</td><td><code>ceil((H - gap) / (w + gap))</code></td><td>65mm nominal</td><td>ceil</td><td><strong>26 slats</strong></td><td>~1818mm</td></tr>
+    </tbody>
+  </table>
+
+  <p>The SME used 65.3mm (the physical slat face width) and <code>floor</code> (slats that fit within the target). The engine uses nominal 65mm and <code>ceil</code> (slats needed to reach or exceed the target).</p>
+  <div class="decision">Which is correct: the number of slats that fit <em>within</em> the target height (SME / floor), or the number needed to <em>reach or exceed</em> it (engine / ceil)? Note that a third option — <code>ceil</code> with the SME's 65.3mm physical width — is not what either currently does.</div>
+
+  <h3>2. Panel Width — Post Material Deduction</h3>
+  <table>
+    <thead><tr><th>Approach</th><th>Formula</th><th>Panel width (10m run, five 50mm posts, 4 panels)</th></tr></thead>
+    <tbody>
+      <tr><td>Sandbox (SME)</td><td><code>segmentWidth / numPanels</code></td><td>2500mm</td></tr>
+      <tr><td>Data-driven</td><td><code>(segmentWidth − posts × postSize − wallDeductions) / numPanels</code></td><td>~2437mm</td></tr>
+    </tbody>
+  </table>
+  <p>The SME does not subtract post width from the run. The engine deducts post material first, reasoning that QSHS slats face-mount onto posts (clear face-to-face span).</p>
+  <div class="decision">Does the QSHS slat measurement convention include or exclude the post face width? This determines which is correct.</div>
+
+  <h3>3. Spacer Quantity</h3>
+  <table>
+    <thead><tr><th>Approach</th><th>Formula</th><th>Spacers per panel (26 slats)</th><th>Packs (4 panels)</th></tr></thead>
+    <tbody>
+      <tr><td>Sandbox (SME)</td><td><code>2 × (n + 1) × panels / 50</code></td><td>54</td><td><strong>5 packs</strong></td></tr>
+      <tr><td>Data-driven</td><td><code>2 × (n − 1) × panels / 50</code></td><td>50</td><td><strong>4 packs</strong></td></tr>
+    </tbody>
+  </table>
+  <p>The SME uses <code>n + 1</code>, implying spacers are also placed above the top slat and below the bottom slat. The engine uses <code>n - 1</code>, counting only gaps between slats.</p>
+  <div class="decision">Are spacers required at the top and bottom of the panel assembly, or only between slats?</div>
+
+  <h3>4. Side Frame Cap SKU</h3>
+  <table>
+    <thead><tr><th>Approach</th><th>SKU used</th></tr></thead>
+    <tbody>
+      <tr><td>Sandbox (SME)</td><td class="mono">QS-SFC-B</td></tr>
+      <tr><td>Data-driven</td><td class="mono">QS-SFCAP-B-2PK</td></tr>
+    </tbody>
+  </table>
+  <div class="decision">Confirm the correct current SKU against the Glass Outlet price list.</div>
+
+  <h3>5. VS Centre Support Rail</h3>
+  <table>
+    <thead><tr><th>Approach</th><th>CSR for VS panels</th></tr></thead>
+    <tbody>
+      <tr><td>Sandbox (SME)</td><td>Not emitted</td></tr>
+      <tr><td>Data-driven</td><td>Adds 1 CSR for panels 2000–3999mm, 2 for 4000–5999mm</td></tr>
+    </tbody>
+  </table>
+  <div class="decision">Does VS require a centre support rail, or is the horizontal rail system self-supporting?</div>
+
+  <!-- Full Diff -->
+  <h2>Full Feature Diff</h2>
+  <p>Beyond the formula differences above, the two implementations differ in product support and feature coverage.</p>
+
+  <h3>Present in Sandbox (SME) — Missing from Data-Driven Engine</h3>
+
+  <h3 style="font-size:13px; color:#d97706; font-weight:600; margin-top:18px;">Economy Slats (<code>finish_family = "economy"</code>)</h3>
+  <p>The sandbox has a full economy finish path producing <code>XP-6500-E65-{colour}</code> SKUs (6500mm stock, no centre web). The engine's <code>finish_type</code> variable only offers <code>standard</code> and <code>alumawood</code> — no economy option exists.</p>
+
+  <h3 style="font-size:13px; color:#d97706; font-weight:600; margin-top:18px;">Separate Post Colour</h3>
+  <p>The sandbox reads <code>post_colour_code</code> as a distinct variable from <code>colour_code</code>, so a job can have a black fence with monument posts. The engine has no <code>post_colour_code</code> variable — posts always use the fence colour.</p>
+
+  <h3 style="font-size:13px; color:#d97706; font-weight:600; margin-top:18px;">Colour Fallback for Non-Standard Colours</h3>
+  <p>The sandbox explicitly handles colours outside the standard Colorbond range — CSR caps, CSR plates, and post accessories all fall back to <code>MN</code> (Monument) if the colour isn't supported for that accessory. The engine uses <code>{colour}</code> placeholders directly; an unsupported colour generates an invalid SKU with no fallback.</p>
+
+  <h3 style="font-size:13px; color:#d97706; font-weight:600; margin-top:18px;">Installation Suggestions</h3>
+  <p>The sandbox generates a separate suggestions pass with human-readable reasons for each item. None of these exist in the engine seed data:</p>
+  <table>
+    <thead><tr><th>Suggestion</th><th>Trigger</th></tr></thead>
+    <tbody>
+      <tr><td>Rapid set concrete (1.5 bags/post)</td><td><code>mounting_type = in_ground</code></td></tr>
+      <tr><td>Core drill grout</td><td><code>mounting_type = core_drill</code></td></tr>
+      <tr><td>Masonry anchor pack</td><td><code>mounting_type = base_plate</code></td></tr>
+      <tr><td>Touch-up paint (per colour used)</td><td>Always</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="font-size:13px; color:#d97706; font-weight:600; margin-top:18px;">"Add to BOM" Suggestion UX</h3>
+  <p>The sandbox has a fully built suggestions panel — each suggestion shows a reason and has an "Add to BOM" button. The engine has no equivalent UI.</p>
+
+  <h3>Present in Data-Driven Engine — Missing from Sandbox</h3>
+
+  <h3 style="font-size:13px; color:#2563eb; font-weight:600; margin-top:18px;">XPL Product</h3>
+  <p>The sandbox explicitly does not support XPL and emits a warning for any XPL run. The engine has full XPL support including its proprietary post system (end posts, inline posts, corner posts) and 24mm slat insertion depth.</p>
+
+  <h3 style="font-size:13px; color:#2563eb; font-weight:600; margin-top:18px;">Gates (QS_GATE)</h3>
+  <p>The sandbox always returns an empty gate BOM with a TODO warning. The engine handles gates fully.</p>
+
+  <h3 style="font-size:13px; color:#2563eb; font-weight:600; margin-top:18px;">VS Centre Support Rail</h3>
+  <p>For VS panels wider than 2000mm the engine automatically adds a CSR with caps and top/base plates. The sandbox VS implementation does not emit CSR at all.</p>
+
+  <h3 style="font-size:13px; color:#2563eb; font-weight:600; margin-top:18px;">Corner Adapter (XP-6000-135)</h3>
+  <p>The engine emits a corner adapter SKU when a panel boundary angle is ~135°. The sandbox does not handle corner adapters.</p>
+
+  <h3 style="font-size:13px; color:#2563eb; font-weight:600; margin-top:18px;">Structured Warnings and Blocking Validations</h3>
+  <p>The engine has seeded per-product warnings (e.g. "panel over 1800mm — recommend HD post", "Primrose/Paperbark not available in 65mm HD post") returned as structured <code>warnings[]</code>, <code>errors[]</code>, and <code>assumptions[]</code>. The sandbox only emits ad-hoc warning strings.</p>
+
+  <h3 style="font-size:13px; color:#2563eb; font-weight:600; margin-top:18px;">Admin Trace Panel</h3>
+  <p>The engine returns a full trace of which rules fired and what values were computed at each step — visible to admin users. The sandbox has no equivalent.</p>
+
+  <h3>Complete Diff Summary</h3>
+  <table>
+    <thead><tr><th>Item</th><th>Sandbox (SME)</th><th>Data-driven engine</th></tr></thead>
+    <tbody>
+      <tr><td>Slat width used</td><td>65.3mm physical</td><td>65mm nominal</td></tr>
+      <tr><td>Slat count rounding</td><td>floor</td><td>ceil</td></tr>
+      <tr><td>Post material deducted from panel width</td><td>No</td><td>Yes</td></tr>
+      <tr><td>Spacer formula</td><td>n + 1</td><td>n − 1</td></tr>
+      <tr><td>SFC cap SKU</td><td class="mono">QS-SFC-B</td><td class="mono">QS-SFCAP-B-2PK</td></tr>
+      <tr><td>Economy slats</td><td><span class="badge badge-green">Yes</span></td><td><span class="badge badge-red">No</span></td></tr>
+      <tr><td>Separate post colour</td><td><span class="badge badge-green">Yes</span></td><td><span class="badge badge-red">No</span></td></tr>
+      <tr><td>Colour fallback for non-standard colours</td><td><span class="badge badge-green">Explicit → MN</span></td><td><span class="badge badge-red">No fallback</span></td></tr>
+      <tr><td>Installation suggestions (concrete, grout, anchors, paint)</td><td><span class="badge badge-green">Yes</span></td><td><span class="badge badge-red">No</span></td></tr>
+      <tr><td>"Add to BOM" suggestion UX</td><td><span class="badge badge-green">Yes</span></td><td><span class="badge badge-red">No</span></td></tr>
+      <tr><td>XPL product</td><td><span class="badge badge-red">No</span></td><td><span class="badge badge-green">Yes</span></td></tr>
+      <tr><td>Gates (QS_GATE)</td><td><span class="badge badge-red">No</span></td><td><span class="badge badge-green">Yes</span></td></tr>
+      <tr><td>VS centre support rail</td><td><span class="badge badge-red">No</span></td><td><span class="badge badge-green">Yes</span></td></tr>
+      <tr><td>Corner adapter (135°)</td><td><span class="badge badge-red">No</span></td><td><span class="badge badge-green">Yes</span></td></tr>
+      <tr><td>Structured warnings / blocking validations</td><td><span class="badge badge-red">No</span></td><td><span class="badge badge-green">Yes</span></td></tr>
+      <tr><td>Admin rule trace</td><td><span class="badge badge-red">No</span></td><td><span class="badge badge-green">Yes</span></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Suggestions Logic -->
+  <h2>Suggestions Logic</h2>
+  <p>Both implementations have a concept of "suggested accessories" — items shown to the user that are not included in the hard BOM until explicitly added. They handle this differently.</p>
+
+  <h3>Sandbox — Dedicated Suggestions Engine</h3>
+  <p>A standalone <code>suggestAccessories()</code> function runs as a separate pass after the BOM is calculated. Each suggestion carries a typed <code>reason</code> string and a <code>priced</code> flag, displayed in a dedicated UI panel with an "Add to BOM" button per item.</p>
+
+  <table>
+    <thead><tr><th>Trigger</th><th>Suggested item</th><th>Reason shown to user</th></tr></thead>
+    <tbody>
+      <tr><td><code>mounting_type = in_ground</code></td><td>Rapid set concrete (1.5 bags/post)</td><td>"Suggested at 1.5 bags per concreted-in post"</td></tr>
+      <tr><td><code>mounting_type = core_drill</code></td><td>Dress ring (XP-DR / XP-65DR)</td><td>"Dress rings suit core-drilled posts"</td></tr>
+      <tr><td><code>mounting_type = core_drill</code></td><td>Core drill grout</td><td>"Choose grout product to suit substrate"</td></tr>
+      <tr><td><code>mounting_type = base_plate</code></td><td>Base plate set</td><td>"Base plate sets suit base-plate-mounted posts"</td></tr>
+      <tr><td><code>mounting_type = base_plate</code></td><td>Masonry anchor pack</td><td>"Select fixing type to suit substrate"</td></tr>
+      <tr><td>Always</td><td>Touch-up paint (per colour)</td><td>"Suggested for colour-matched touch-ups after cutting"</td></tr>
+    </tbody>
+  </table>
+  <p>The sandbox only suggests base plate sets and dress rings if they are <strong>not already in the hard BOM</strong> — correct deduplication behaviour.</p>
+
+  <h3>Data-Driven Engine — Suggestions via Companion Rules</h3>
+  <p>Certain companion rules in the seed data carry an <code>is_suggestion: true</code> flag. The engine emits these as a separate <code>suggestions[]</code> array. Currently only one item type is flagged as a suggestion across all products:</p>
+
+  <table>
+    <thead><tr><th>Product</th><th>SKU</th><th>Quantity</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>QSHS, VS, BAYG, XPL</td><td class="mono">XP-BTP-{colour}</td><td>2 per CSR per panel</td><td>CSR top/base plates</td></tr>
+    </tbody>
+  </table>
+
+  <p>The engine does <strong>not</strong> currently generate installation-related suggestions (concrete bags, masonry anchors, grout, touch-up paint). These are not in any seed file.</p>
+
+  <h3>Comparison Summary</h3>
+  <table>
+    <thead><tr><th>Capability</th><th>Data-driven engine</th><th>Sandbox</th></tr></thead>
+    <tbody>
+      <tr><td>CSR top/base plates (XP-BTP)</td><td>Suggestion via companion rule</td><td>In hard BOM via selector</td></tr>
+      <tr><td>Concrete bags (in-ground)</td><td><span class="badge badge-red">Not implemented</span></td><td><span class="badge badge-green">Suggested with qty formula</span></td></tr>
+      <tr><td>Core drill grout</td><td><span class="badge badge-red">Not implemented</span></td><td><span class="badge badge-green">Suggested as free-text item</span></td></tr>
+      <tr><td>Masonry anchor pack</td><td><span class="badge badge-red">Not implemented</span></td><td><span class="badge badge-green">Suggested as free-text item</span></td></tr>
+      <tr><td>Touch-up paint</td><td><span class="badge badge-red">Not implemented</span></td><td><span class="badge badge-green">Suggested per colour</span></td></tr>
+      <tr><td>Human-readable reason text</td><td><span class="badge badge-red">Not implemented</span></td><td><span class="badge badge-green">Present on every suggestion</span></td></tr>
+      <tr><td>"Add to BOM" interaction</td><td><span class="badge badge-red">Not implemented</span></td><td><span class="badge badge-green">Full panel with add/added state</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout amber">The sandbox's installation-accessory suggestions are valuable for a complete customer-facing quote and are not in the data-driven engine at all. A path to convergence would be to add these as <code>product_warnings</code> with <code>severity: info</code>, or to introduce a dedicated <code>suggestions</code> section to the seed schema. The reason text is worth preserving.</div>
+
+  <!-- UX/UI Consolidation -->
+  <h2>UX/UI Consolidation</h2>
+  <p>The two implementations have developed UI components independently. These decisions have not yet been consolidated and should be addressed as a separate workstream once formula decisions are settled. Key areas requiring consolidation:</p>
+  <ul>
+    <li><strong>BOM results display</strong> — both have a <code>BOMResultTabs</code> component but with different tab structures and category ordering</li>
+    <li><strong>Suggested accessories panel</strong> — the sandbox has a full <code>SuggestedAccessoriesPanel</code> with add/added state; the data-driven engine surface needs to be designed</li>
+    <li><strong>Warnings and assumptions display</strong> — the data-driven engine has <code>BOMWarningsPanel</code> with structured severity levels (<code>warning</code>, <code>info</code>, <code>error</code>); the sandbox mixes these into a single list</li>
+    <li><strong>Achieved height badge</strong> — exists in the data-driven engine's UI (<code>AchievedHeightBadge</code>); not present in the sandbox</li>
+    <li><strong>Admin trace panel</strong> — data-driven engine only, gated by user role</li>
+    <li><strong>Public vs authenticated experience</strong> — the sandbox was explicitly built for an unauthenticated route; the data-driven engine requires login. This is the primary driver of the split and the UX implications of any consolidation decision flow from it</li>
+  </ul>
+
+  <!-- Structural Pros and Cons -->
+  <h2>Structural Pros and Cons</h2>
+
+  <h3>Data-Driven Engine</h3>
+  <div class="two-col">
+    <div class="card pros">
+      <h4>Pros</h4>
+      <ul>
+        <li>Product-agnostic — new fencing system = one JSON file, no code changes</li>
+        <li>All behaviour visible and editable in seed files without a deployment</li>
+        <li>Formulas are version-controlled and testable in isolation</li>
+        <li>Supports all products including XPL and gates</li>
+        <li>Fixture suite provides regression coverage</li>
+        <li>Structured warnings, info messages, and blocking errors per product</li>
+        <li>Admin trace output shows exactly which rules fired and why</li>
+      </ul>
+    </div>
+    <div class="card cons">
+      <h4>Cons</h4>
+      <ul>
+        <li>Requires live Supabase connection — no offline/public access without auth changes</li>
+        <li>Debugging requires understanding the math.js rule evaluation pipeline</li>
+        <li>Formula changes require a DB seed update and reset cycle</li>
+        <li>Installation-related suggestions not yet implemented</li>
+        <li>Some edge-case colour fallback logic less explicit than sandbox</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Sandbox Local Calculator</h3>
+  <div class="two-col">
+    <div class="card pros">
+      <h4>Pros</h4>
+      <ul>
+        <li>Works without authentication — usable as a public calculator</li>
+        <li>All logic in one readable TypeScript file — easy to trace</li>
+        <li>Richer installation suggestions with human-readable reason text</li>
+        <li>Full "Add to BOM" suggestion UX already built</li>
+        <li>Colour fallback for non-standard colours more explicitly handled</li>
+        <li>65.3mm physical slat width may be more accurate to supplier specs</li>
+      </ul>
+    </div>
+    <div class="card cons">
+      <h4>Cons</h4>
+      <ul>
+        <li>Three confirmed formula divergences from fixture suite</li>
+        <li>XPL and gates not implemented</li>
+        <li>VS missing centre support rail</li>
+        <li>Any formula change requires a code deployment</li>
+        <li>Duplicates logic from seed data — two sources of truth to maintain</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- AI Integration -->
+  <h2>AI Integration Comparison</h2>
+
+  <h3>Importing New Fencing Systems</h3>
+  <p>The seed format is structured JSON with a defined schema (<code>supabase/seeds/schemas/</code>). Adding a new fencing product means producing one JSON file that describes variables, rules (math.js expressions), component selectors, companion rules, and pricing. A <code>seed-mapper</code> skill already exists in the codebase to guide this process.</p>
+
+  <div class="two-col">
+    <div class="card engine">
+      <h4>Data-Driven Engine</h4>
+      <ul>
+        <li>AI reads a supplier PDF or build pack and extracts values into the JSON format</li>
+        <li>Schema validates the output automatically on <code>npm run seed:products</code></li>
+        <li>A bad seed file fails validation and is rejected cleanly — can't corrupt existing products</li>
+        <li>AI doesn't need to understand the engine pipeline — only the schema</li>
+        <li>In practice: supplier spec sheet in → draft seed file out in one pass, human validates against a known-good job</li>
+      </ul>
+    </div>
+    <div class="card cons">
+      <h4>Sandbox Calculator</h4>
+      <ul>
+        <li>Adding a new product requires modifying TypeScript logic — new branches, SKU builders, colour constants</li>
+        <li>No schema to validate against — errors surface at runtime</li>
+        <li>Each new product increases code complexity and maintenance burden</li>
+        <li>A bug silently produces wrong quantities rather than failing loudly</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout green">The data-driven engine's structured JSON format is essentially an AI-friendly interface to the calculation engine. The <code>seed-mapper</code> skill is already in place; the next step is testing it end-to-end against a real supplier document.</div>
+
+  <h3>Using AI to Operate the Calculator (Job Description → BOM)</h3>
+  <p>This is a planned feature — natural language job descriptions parsed into a canonical payload, then run through the calculator.</p>
+
+  <p><strong>Example flow (data-driven engine):</strong></p>
+  <pre>"10 metre black monument fence, 1800mm high, base plated, 2 gates"
+→ AI produces CanonicalPayload JSON
+→ POST /functions/v1/bom-calculator
+→ Full priced BOM returned</pre>
+
+  <p>The AI never touches the calculation logic — it only handles the natural language → structured data conversion. The AI's output is validated against the Zod schema before the calculator is even called. This separation is clean and the task is a reliable, constrained extraction.</p>
+
+  <p>The sandbox accepts the same canonical payload format, so the same AI parse step would work in principle. However, its formula gaps (XPL, gates, divergent slat count) mean the AI-generated payload may be correct while the resulting BOM is wrong. Running AI API calls client-side also has security implications.</p>
+
+  <p><strong>AI BOM review</strong> (also planned) is only meaningful against a BOM you trust. The data-driven engine's trace output — which rules fired and why — provides a much better foundation for an AI reviewer than the sandbox, which has no equivalent trace.</p>
+
+  <!-- Recommended Next Steps -->
+  <h2>Recommended Next Steps</h2>
+  <ol class="steps">
+    <li>
+      <div><strong>Resolve the three formula questions</strong>
+      Slat count rounding, panel width post deduction, and spacer +1 vs −1 need to be validated against physical installation documentation or a known-good job. Update fixture expectations once resolved.</div>
+    </li>
+    <li>
+      <div><strong>Confirm the SFC cap SKU</strong>
+      <code>QS-SFC-B</code> (sandbox) vs <code>QS-SFCAP-B-2PK</code> (engine) — verify against the current Glass Outlet price list.</div>
+    </li>
+    <li>
+      <div><strong>Decide the role of the local calculator</strong>
+      If it's a long-term public-facing feature, align its formulas with the resolved decisions and extend the fixture suite to cover both. If it's a temporary workaround, consider opening the edge function to unauthenticated requests instead — which avoids maintaining two implementations.</div>
+    </li>
+    <li>
+      <div><strong>Port the installation suggestions into the engine</strong>
+      Concrete bags, grout, masonry anchors, and touch-up paint are valuable in a customer quote. Add these as seed-level suggestions (<code>product_warnings severity: info</code> or a new <code>suggestions</code> section). Preserve the sandbox's reason text.</div>
+    </li>
+    <li>
+      <div><strong>Consolidate UX/UI components</strong>
+      Priority items once formulas are settled: BOM results display, suggested accessories panel, and warnings/assumptions presentation. The sandbox's <code>SuggestedAccessoriesPanel</code> and reason-text pattern are worth keeping regardless of which calculation approach is chosen.</div>
+    </li>
+    <li>
+      <div><strong>Validate the 65.3mm physical slat dimension</strong>
+      From the supplier spec sheet. If accurate, this should inform both implementations — ideally as a <code>design_slat_width_mm</code> variable in the seed data.</div>
+    </li>
+    <li>
+      <div><strong>Test AI-assisted product import end-to-end</strong>
+      The seed format and <code>seed-mapper</code> skill are already in place. Draft a new product (e.g. HSSG) from a real supplier document and run it through the validation pipeline to stress-test how well the AI-assisted import holds up.</div>
+    </li>
+  </ol>
+
+  <div class="footer">
+    Prepared by Cursor AI · Analysis based on git history and source code · 29 April 2026
+  </div>
+
+</body>
+</html>
