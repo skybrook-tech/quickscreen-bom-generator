@@ -13,7 +13,6 @@ import {
   normaliseVariablesForSystem,
 } from "../../lib/productOptionRules";
 import { Button } from "../shared/Button";
-import NumberInput from "../shared/NumberInput";
 import { SegmentRow } from "./SegmentRow";
 import { SchemaDrivenForm } from "./SchemaDrivenForm";
 
@@ -131,7 +130,11 @@ export function RunCard({ run, runIdx }: Props) {
     () =>
       applyProductOptionRules(
         run.productCode,
-        jobFields.filter((field) => !field.field_key.endsWith("_stock_length_mm")),
+        jobFields.filter(
+          (field) =>
+            !field.field_key.endsWith("_stock_length_mm") &&
+            field.field_key !== "max_panel_width_mm",
+        ),
         runVariables,
       ).filter((field) => field.field_key !== "post_colour_code"),
     [jobFields, run.productCode, runVariables],
@@ -207,11 +210,27 @@ export function RunCard({ run, runIdx }: Props) {
     ) {
       nextVariables.post_colour_code = value;
     }
+    const normalisedVariables = normaliseVariablesForSystem(
+      run.productCode,
+      nextVariables,
+    );
+    const shouldSyncSegmentHeights = [
+      "target_height_mm",
+      "slat_size_mm",
+      "slat_gap_mm",
+      "slat_gap_mode",
+    ].includes(key);
     dispatch({
       type: "UPSERT_RUN",
       run: {
         ...run,
-        variables: normaliseVariablesForSystem(run.productCode, nextVariables),
+        variables: normalisedVariables,
+        segments: shouldSyncSegmentHeights
+          ? run.segments.map((segment) => ({
+              ...segment,
+              targetHeightMm: Number(normalisedVariables.target_height_mm ?? 1800),
+            }))
+          : run.segments,
       },
     });
   }
@@ -296,7 +315,7 @@ export function RunCard({ run, runIdx }: Props) {
   }
 
   return (
-    <div className="rounded-lg border border-brand-border bg-brand-card p-4">
+    <div className="rounded-2xl border border-brand-border/70 bg-brand-card p-4 shadow-sm">
       <div className="mb-3 flex items-center justify-between gap-3">
         <h3 className="text-sm font-semibold text-brand-text">
           Run {runIdx + 1} - {run.productCode}
@@ -323,7 +342,7 @@ export function RunCard({ run, runIdx }: Props) {
         </div>
       </div>
 
-      <div className="mb-3 flex flex-wrap gap-3 text-xs text-brand-muted">
+      <div className="mb-3 flex flex-wrap gap-2 text-sm font-semibold text-brand-muted">
         <span>Total run incl. gates: {(calcTotalLength(run) / 1000).toFixed(2)}m</span>
         <span>Actual height: {actualHeight}mm</span>
         <span>Fence colour: {colourLabel(runVariables.colour_code)}</span>
@@ -347,9 +366,9 @@ export function RunCard({ run, runIdx }: Props) {
       </div>
 
       {editingRun && (
-        <div className="mb-3 space-y-4 rounded-md border border-brand-border/60 bg-brand-bg/60 p-3">
+        <div className="mb-3 space-y-4 rounded-2xl border border-brand-border/60 bg-brand-bg/70 p-3">
           <div>
-            <p className="mb-2 text-xs font-medium text-brand-muted">
+            <p className="mb-2 text-sm font-bold text-brand-muted">
               System type
             </p>
             <div className="flex flex-wrap gap-2">
@@ -358,10 +377,10 @@ export function RunCard({ run, runIdx }: Props) {
                   key={product.system_type}
                   type="button"
                   onClick={() => changeRunProduct(product.system_type)}
-                  className={`rounded-full border px-3 py-2 text-sm font-medium transition-colors ${
+                  className={`rounded-full border px-3 py-2 text-sm font-bold shadow-sm transition-colors ${
                     product.system_type === run.productCode
                       ? "border-blue-800 bg-blue-800 text-white shadow-sm"
-                      : "border-brand-border bg-white text-brand-text hover:border-blue-800 hover:text-blue-800"
+                      : "border-brand-border bg-brand-card text-brand-text hover:border-blue-800 hover:text-blue-800"
                   }`}
                 >
                   {product.system_type}
@@ -372,7 +391,7 @@ export function RunCard({ run, runIdx }: Props) {
 
           {optionFields.length > 0 && (
             <div>
-              <p className="mb-2 text-xs font-medium text-brand-muted">
+              <p className="mb-2 text-sm font-bold text-brand-muted">
                 Run options
               </p>
               <SchemaDrivenForm
@@ -384,14 +403,14 @@ export function RunCard({ run, runIdx }: Props) {
           )}
 
           <div>
-            <p className="mb-2 text-xs font-medium text-brand-muted">
+            <p className="mb-2 text-sm font-bold text-brand-muted">
               Post colour
             </p>
             {!editingPostColour ? (
               <button
                 type="button"
                 onClick={() => setEditingPostColour(true)}
-                className="rounded-md border border-brand-border bg-white px-3 py-2 text-sm text-brand-text transition-colors hover:border-blue-800 hover:text-blue-800"
+                className="rounded-full border border-brand-border bg-brand-card px-3 py-2 text-sm font-bold text-brand-text shadow-sm transition-colors hover:border-blue-800 hover:text-blue-800"
               >
                 Same as fence ({runVariables.colour_code ?? "B"})
               </button>
@@ -404,26 +423,9 @@ export function RunCard({ run, runIdx }: Props) {
             ) : null}
           </div>
 
-          <label className="flex flex-col gap-2">
-            <span className="text-xs font-medium text-brand-muted">
-              Max panel width
-            </span>
-            <div className="flex items-center gap-2">
-              <NumberInput
-                min={300}
-                max={maxPanelWidthForSystem(run.productCode)}
-                step={50}
-                value={jobMax}
-                onChange={(v) => handleRunFieldChange("max_panel_width_mm", v)}
-                className="w-28 rounded border border-brand-border bg-white px-3 py-2 text-sm text-brand-text"
-              />
-              <span className="text-sm text-brand-muted">mm</span>
-            </div>
-          </label>
-
           {visibleRunFields.length > 0 && (
             <div>
-              <p className="mb-2 text-xs font-medium text-brand-muted">
+              <p className="mb-2 text-sm font-bold text-brand-muted">
                 Posts and fixing
               </p>
               <SchemaDrivenForm
@@ -433,7 +435,7 @@ export function RunCard({ run, runIdx }: Props) {
               />
               {run.productCode === "XPL" &&
                 String(runVariables.post_system ?? "xpl") !== "xpl" && (
-                  <p className="mt-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900">
+                  <p className="mt-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold leading-relaxed text-amber-700">
                     Standard posts on XPress Plus need the XPress Plus side
                     frame and the insert that matches the selected gap.
                   </p>
@@ -456,6 +458,7 @@ export function RunCard({ run, runIdx }: Props) {
             runId={run.runId}
             seg={seg}
             segIdx={segIdx}
+            runIdx={runIdx}
             open={expandedId === seg.segmentId}
             onToggle={() =>
               setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))

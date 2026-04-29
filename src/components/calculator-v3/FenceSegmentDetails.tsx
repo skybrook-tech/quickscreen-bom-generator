@@ -74,7 +74,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Max panel width override */}
         <label className="flex flex-col gap-1">
-          <span className="text-brand-muted text-xs">Max panel width (mm)</span>
+          <span className="text-sm font-bold text-brand-muted">Max panel width (mm)</span>
           <NumberInput
             value={effectiveMax}
             onChange={(v) => updateMaxPanelWidth(v)}
@@ -86,7 +86,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
         {/* Post type - data-driven from run-scoped post_size variable */}
         <label className="flex flex-col gap-1">
-          <span className="text-brand-muted text-xs">Post type</span>
+          <span className="text-sm font-bold text-brand-muted">Post type</span>
           <select
             value={postSize}
             onChange={(e) =>
@@ -95,7 +95,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                 e.target.value || null,
               )
             }
-            className="bg-brand-bg border border-brand-border rounded px-2 py-1.5 text-sm text-brand-text"
+            className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
           >
             <option value="">Job default</option>
             {postSizeOptions.map((opt) => (
@@ -110,7 +110,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         {/* Post width - only unlocked for non-standard posts */}
         {isCustomPost && (
           <label className="flex flex-col gap-1">
-            <span className="text-brand-muted text-xs">Post width (mm)</span>
+            <span className="text-sm font-bold text-brand-muted">Post width (mm)</span>
             <NumberInput
               value={(v[SEGMENT_OPTION_KEYS.postWidthMm] as number | null) ?? null}
               onChange={(val) =>
@@ -124,7 +124,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
       {jobFields.length > 0 && (
         <div>
-          <p className="text-xs text-brand-muted mb-2 font-medium">
+          <p className="mb-2 text-sm font-bold text-brand-muted">
             Job settings override (this segment)
           </p>
           <SchemaDrivenForm

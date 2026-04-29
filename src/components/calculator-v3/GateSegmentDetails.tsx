@@ -27,10 +27,10 @@ interface Props {
 }
 
 function optionClasses(active: boolean) {
-  return `rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+  return `rounded-full border px-3 py-2 text-sm font-bold shadow-sm transition-colors ${
     active
       ? "border-blue-800 bg-blue-800 text-white shadow-sm"
-      : "border-brand-border bg-white text-brand-text hover:border-blue-800 hover:text-blue-800"
+      : "border-brand-border bg-brand-card text-brand-text hover:border-blue-800 hover:text-blue-800"
   }`;
 }
 
@@ -47,7 +47,7 @@ function OptionPills({
 }) {
   return (
     <div className="space-y-1">
-      <p className="text-[11px] font-medium text-brand-muted">{label}</p>
+      <p className="text-sm font-bold text-brand-muted">{label}</p>
       <div className="flex flex-wrap gap-2">
         {options.map((option) => (
           <button
@@ -131,8 +131,8 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   }
 
   return (
-    <div className="space-y-4 text-xs">
-      <div className="space-y-3 rounded-md border border-brand-border/50 bg-white/70 p-3">
+    <div className="space-y-4 text-sm font-semibold">
+      <div className="space-y-3 rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
         <OptionPills
           label="Gate type"
           value={movement}
@@ -147,7 +147,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         />
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto]">
           <label className="flex flex-col gap-1">
-            <span className="text-[11px] font-medium text-brand-muted">Gate height</span>
+            <span className="text-sm font-bold text-brand-muted">Gate height</span>
             <div className="flex items-center gap-2">
               <NumberInput
                 value={Number(seg.targetHeightMm ?? v[GATE_SEGMENT_STUB_KEYS.gateHeightMm] ?? runVars.target_height_mm ?? 1800)}
@@ -183,7 +183,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
       </div>
 
       {isSwing ? (
-        <div className="space-y-3 rounded-md border border-brand-border/50 bg-white/70 p-3">
+        <div className="space-y-3 rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
           <OptionPills
             label="Hinge / closer"
             value={String(v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "ML-TL-KF-H-FT")}
@@ -210,7 +210,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
           />
         </div>
       ) : (
-        <div className="space-y-3 rounded-md border border-brand-border/50 bg-white/70 p-3">
+        <div className="space-y-3 rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
           <OptionPills
             label="Track"
             value={String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")}
@@ -233,7 +233,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
       )}
 
       {movement !== "single_swing" && (
-        <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900">
+        <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-700">
           Frame and infill formulas for this gate type are being matched to the QSG workbooks before hardcoding. Selected hardware is still priced.
         </p>
       )}

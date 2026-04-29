@@ -76,6 +76,8 @@ const ENUM_LABELS: Record<string, string> = {
   standard: "Standard slats",
   economy: "Economy slats",
   alumawood: "Alumawood timber-look",
+  spacer: "Preset spacer gaps",
+  custom: "Custom gap",
   in_ground: "Concreted in ground",
   base_plate: "Base-plated to slab",
   core_drill: "Core-drilled into concrete",
@@ -100,6 +102,7 @@ function optionLabel(field: SchemaField, option: unknown): string {
     if (value === "20") return "20mm - open";
     return `${value}mm`;
   }
+  if (field.field_key === "target_height_mm") return `${value}mm`;
   return ENUM_LABELS[value] ?? value.replace(/_/g, " ");
 }
 
@@ -148,10 +151,10 @@ export function SchemaDrivenForm({
                         onClick={() =>
                           onChange(field.field_key, coerceValue(field, value))
                         }
-                        className={`inline-flex min-h-9 items-center gap-2 rounded-full border px-3 py-2 text-xs font-medium transition-colors sm:text-sm ${
+                        className={`inline-flex min-h-9 items-center gap-2 rounded-full border px-3 py-2 text-sm font-bold shadow-sm transition-colors ${
                           selected
                             ? "border-blue-800 bg-blue-800 text-white shadow-sm"
-                            : "border-brand-border bg-slate-50 text-brand-text hover:border-blue-800 hover:text-blue-800"
+                            : "border-brand-border bg-brand-card text-brand-text hover:border-blue-800 hover:text-blue-800"
                         }`}
                       >
                         {field.field_key === "colour_code" && (
@@ -195,7 +198,7 @@ export function SchemaDrivenForm({
                         : parseFloat(e.target.value),
                     )
                   }
-                  className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
+                  className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
                 />
               </FormField>
             </div>
@@ -213,7 +216,7 @@ export function SchemaDrivenForm({
                 type="checkbox"
                 checked={Boolean(variables[field.field_key])}
                 onChange={(e) => onChange(field.field_key, e.target.checked)}
-                className="rounded"
+                className="rounded border-brand-border bg-brand-card text-brand-accent"
               />
               <label className="text-sm font-medium text-brand-text">
                 {field.label}
@@ -237,7 +240,7 @@ export function SchemaDrivenForm({
                 aria-label={field.label}
                 value={String(variables[field.field_key] ?? "")}
                 onChange={(e) => onChange(field.field_key, e.target.value)}
-                className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
+                className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
               />
             </FormField>
           </div>

@@ -16,16 +16,18 @@ import {
   isSwingGateMovement,
   optionLabel,
 } from "../../lib/gateOptionRules";
+import { heightOptionsForSystem } from "../../lib/productOptionRules";
 
 interface Props {
   runId: string;
   seg: CanonicalSegment;
   segIdx: number;
+  runIdx: number;
   open: boolean;
   onToggle: () => void;
 }
 
-export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
+export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle }: Props) {
   const { state, dispatch } = useCalculator();
   const gate = seg.segmentKind === "gate_opening";
 
@@ -36,6 +38,24 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
       2600,
   );
   const effectiveMax = Number(seg.variables?.max_panel_width_mm ?? jobMax);
+  const runVariables = {
+    ...(state.payload?.variables ?? {}),
+    ...(run?.variables ?? {}),
+  };
+  const heightOptions = run
+    ? heightOptionsForSystem(run.productCode, runVariables)
+    : [];
+  const selectedHeight =
+    heightOptions.length > 0
+      ? heightOptions.includes(Number(seg.targetHeightMm))
+        ? Number(seg.targetHeightMm)
+        : heightOptions.reduce((best, height) =>
+            Math.abs(height - Number(seg.targetHeightMm ?? 1800)) <
+            Math.abs(best - Number(seg.targetHeightMm ?? 1800))
+              ? height
+              : best,
+          )
+      : Number(seg.targetHeightMm ?? 1800);
   const gateVars = seg.variables ?? {};
   const gateMovement = gateMovementOrDefault(gateVars[GATE_SEGMENT_STUB_KEYS.gateMovement]);
   const panelsLive = seg.segmentWidthMm
@@ -90,12 +110,14 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
   }
 
   return (
-    <div className="rounded border border-brand-border/50 bg-brand-bg text-xs overflow-hidden">
-      <div className="grid gap-2 p-2">
+    <div className="overflow-hidden rounded-2xl border border-brand-border/60 bg-brand-card text-sm font-semibold shadow-sm">
+      <div className="grid gap-3 p-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-brand-muted w-8 shrink-0">#{segIdx + 1}</span>
+          <span className="w-16 shrink-0 font-bold text-brand-text">
+            R{runIdx + 1}-#{segIdx + 1}
+          </span>
           <span
-            className={`text-[10px] w-[65px] flex items-center justify-center uppercase tracking-wide px-1.5 py-0.5 rounded shrink-0 ${
+            className={`flex w-[78px] shrink-0 items-center justify-center rounded-full border px-2 py-1 text-xs font-bold uppercase tracking-wide ${
               gate
                 ? "bg-amber-500/15 text-amber-600 border border-amber-500/30"
                 : "bg-brand-accent/10 text-brand-accent border border-brand-accent/25"
@@ -112,19 +134,35 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
           />
           <span className="text-brand-muted">m</span>
           <label className="text-brand-muted shrink-0">Height</label>
-          <NumberInput
-            value={seg.targetHeightMm ?? 1800}
-            onChange={(v) => updateGeometry("targetHeightMm", Number(v))}
-          />
+          {heightOptions.length > 0 ? (
+            <select
+              value={selectedHeight}
+              onChange={(event) =>
+                updateGeometry("targetHeightMm", Number(event.target.value))
+              }
+              className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+            >
+              {heightOptions.map((height) => (
+                <option key={height} value={height}>
+                  {height}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <NumberInput
+              value={seg.targetHeightMm ?? 1800}
+              onChange={(v) => updateGeometry("targetHeightMm", Number(v))}
+            />
+          )}
           <span className="text-brand-muted">mm</span>
           <div className="ml-auto flex items-center gap-1">
             <button
               type="button"
               onClick={onToggle}
-              className={`inline-flex items-center gap-1 rounded border px-2 py-1 text-[11px] font-medium transition-colors ${
+              className={`inline-flex items-center gap-1 rounded-full border px-3 py-2 text-sm font-bold transition-colors ${
                 open
                   ? "border-blue-800 bg-blue-800 text-white"
-                  : "border-brand-border bg-white text-brand-text hover:border-blue-800 hover:text-blue-800"
+                  : "border-brand-border bg-brand-card text-brand-text hover:border-blue-800 hover:text-blue-800"
               }`}
               aria-expanded={open}
               aria-label={open ? "Collapse details" : "Expand details"}
@@ -145,7 +183,7 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
                   segmentId: seg.segmentId,
                 })
               }
-              className="rounded px-2 py-1 text-xs text-red-500 hover:bg-red-50 hover:text-red-700"
+              className="rounded-full px-3 py-2 text-sm font-bold text-red-500 transition-colors hover:bg-red-500/10 hover:text-red-700"
               aria-label="Remove segment"
             >
               Remove
@@ -154,12 +192,12 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
         </div>
 
         {gate && gateSummary ? (
-          <div className="rounded bg-white px-2 py-1 text-[11px] leading-relaxed text-brand-muted">
+          <div className="rounded-xl border border-brand-border/50 bg-brand-bg/60 px-3 py-2 text-sm font-semibold leading-relaxed text-brand-muted">
             {gateSummary}
           </div>
         ) : null}
         {!gate && seg.segmentWidthMm ? (
-          <div className="flex flex-wrap items-center gap-2 text-[11px] text-brand-muted">
+          <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand-border/50 bg-brand-bg/60 px-3 py-2 text-sm font-semibold text-brand-muted">
             <span>
               {panelsLive} {panelsLive === 1 ? "panel" : "panels"}
             </span>
@@ -176,7 +214,7 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
       </div>
 
       {open && (
-        <div className="border-t border-brand-border/50 p-3 space-y-4 bg-brand-card/40">
+        <div className="space-y-4 border-t border-brand-border/50 bg-brand-bg/50 p-3">
           {gate ? (
             <GateSegmentDetails runId={runId} seg={seg} />
           ) : (

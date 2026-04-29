@@ -848,3 +848,26 @@ Implementation note:
 
 Verification:
 - `npm run build` passed after the QSG-only gate UI/filtering correction.
+
+### April 29, 2026 - Final sandbox polish and smoke check
+
+User priorities:
+- Keep XPress Plus as a fence system while removing only the discontinued XP gate frame systems.
+- Make horizontal sliding gates generate slats/frame lines, not hardware only.
+- Correct spacer quantities to one spacer per gap per end.
+- Make the calculator easier on the eye, improve dark mode, and make segment controls easier to read.
+
+Changes applied:
+- Restored XPL to the local fallback BOM path so the XPress Plus fence option is selectable and no longer produces an unsupported empty BOM warning.
+- Added QSHS custom gap mode while keeping preset spacer gaps for standard spacer-supported configurations.
+- Height choices for horizontal systems are now generated from the selected slat size and gap so users only choose achievable actual fence heights.
+- Sliding QSG gate BOMs now emit horizontal gate blade stock, HD rail stock, QSG side-frame stock, joiner blocks, rail screws, and selected sliding hardware.
+- Spacer quantity now follows `gaps x 2 ends x panels`, so a 25-slat panel has 24 gaps and 48 spacers.
+- Dark mode was fixed across the v3 calculator by removing hard-coded white/slate calculator surfaces and using the theme tokens instead.
+- Segment rows, gate options, form fields, accessory cards, and BOM quantity inputs were softened with rounder controls and stronger, larger text.
+
+Verification:
+- `npm run build` passed.
+- `git diff --check` passed with line-ending warnings only.
+- Local dev server responded with HTTP 200 at `http://127.0.0.1:5173/calculator`.
+- Existing Cypress QSHS baseline spec was attempted, but it is still written for the old login flow and fails looking for `[data-testid="sign-in-btn"]`. The test suite needs an auth-free sandbox update before it can be used as a reliable regression gate.

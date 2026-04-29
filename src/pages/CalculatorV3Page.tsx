@@ -28,7 +28,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Papa from "papaparse";
@@ -65,10 +65,23 @@ function CalculatorV3Content() {
   const [lineEdits, setLineEdits] = useState<Record<string, number | null>>({});
   const [saving, setSaving] = useState(false);
   const [jobName, setJobName] = useState("");
+  const [activeBomSummary, setActiveBomSummary] = useState<{
+    label: string;
+    grandTotal: number;
+  } | null>(null);
   const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
   const [mobileLayout, setMobileLayout] = useState(false);
   const [layoutOpen, setLayoutOpen] = useState(false);
   const [layoutFullscreen, setLayoutFullscreen] = useState(false);
+  const handleActiveBomSummaryChange = useCallback(
+    (summary: { label: string; grandTotal: number }) => {
+      setActiveBomSummary({
+        label: summary.label === "All Items" ? "All items" : summary.label,
+        grandTotal: summary.grandTotal,
+      });
+    },
+    [],
+  );
 
   useEffect(() => {
     const updateLayout = () => setMobileLayout(window.innerWidth < 768);
@@ -97,6 +110,7 @@ function CalculatorV3Content() {
     setLineEdits({});
     try {
       const result = await bomMutation.mutateAsync({ payload });
+      setActiveBomSummary(null);
       dispatch({ type: "SET_BOM_RESULT", result });
     } catch {
       // Error is available via bomMutation.error.
@@ -428,10 +442,10 @@ function CalculatorV3Content() {
   return (
     <AppShell>
       <div
-        className="relative flex h-full min-h-0 flex-col overflow-hidden bg-slate-100 md:flex-row"
+        className="relative flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row"
       >
         <aside
-          className="relative flex min-h-[46vh] w-full overflow-hidden border-b border-brand-border bg-white md:min-h-0 md:shrink-0 md:border-b-0 md:border-r"
+          className="relative flex min-h-[46vh] w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:shrink-0 md:border-b-0 md:border-r"
           style={mobileLayout ? undefined : { width: runPaneWidth }}
         >
           <div className="flex min-h-0 flex-1 flex-col">
@@ -445,7 +459,7 @@ function CalculatorV3Content() {
                 value={jobName}
                 onChange={(event) => setJobName(event.target.value)}
                 placeholder="Enter job name"
-                className="mb-4 w-full rounded-md border border-brand-border bg-white px-3 py-2 text-sm text-brand-text"
+                className="mb-4 w-full rounded-xl border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
               />
               {!payload ? (
                 <ProductSelectV3 />
@@ -454,7 +468,7 @@ function CalculatorV3Content() {
                   <button
                     type="button"
                     onClick={() => setLayoutOpen(true)}
-                    className="inline-flex items-center gap-2 rounded-md border border-blue-800/30 px-3 py-2 text-sm font-medium text-blue-800 transition-colors hover:bg-blue-800/10"
+                    className="inline-flex items-center gap-2 rounded-full border border-blue-800/30 px-3 py-2 text-sm font-bold text-blue-800 transition-colors hover:bg-blue-800/10"
                   >
                     <MapIcon size={15} />
                     Open layout map
@@ -506,13 +520,13 @@ function CalculatorV3Content() {
               </>
             )}
             </div>
-            <div className="border-t border-brand-border bg-white p-3 sm:p-5">
+            <div className="border-t border-brand-border bg-brand-card p-3 sm:p-5">
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   onClick={handleSaveJob}
                   disabled={!payload || saving}
-                  className="inline-flex items-center gap-2 rounded-md bg-blue-800 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-full bg-blue-800 px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
                   {saveJobLabel}
@@ -523,10 +537,11 @@ function CalculatorV3Content() {
                     dispatch({ type: "CLEAR_QUOTE" });
                     setExtraItems([]);
                     setLineEdits({});
+                    setActiveBomSummary(null);
                     setJobName("");
                   }}
                   disabled={!payload && !jobName}
-                  className="inline-flex items-center gap-2 rounded-md border border-red-500/30 px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-full border border-red-500/30 px-3 py-2 text-sm font-bold text-red-600 transition-colors hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <Trash2 size={15} />
                   Clear Job
@@ -540,21 +555,23 @@ function CalculatorV3Content() {
           type="button"
           aria-label="Resize panels"
           onMouseDown={handleResizeStart}
-          className="hidden w-1.5 shrink-0 cursor-col-resize bg-slate-200 transition-colors hover:bg-blue-800/40 md:block"
+          className="hidden w-1.5 shrink-0 cursor-col-resize bg-brand-border/60 transition-colors hover:bg-blue-800/40 md:block"
         />
 
         <main className="min-h-0 min-w-0 flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8">
           <div className="mx-auto max-w-6xl space-y-4 sm:space-y-5">
-            <section className="rounded-xl bg-white p-3 shadow-sm sm:p-5">
+            <section className="rounded-2xl border border-brand-border/60 bg-brand-card p-3 shadow-sm sm:p-5">
               <div className="mb-4 flex flex-wrap items-start justify-between gap-4 rounded-lg bg-blue-800 p-4 text-white sm:p-5">
                 <div>
                   <h2 className="text-lg font-bold">Bill of Materials</h2>
                   {summaryText && <p className="mt-1 text-sm opacity-80">{summaryText}</p>}
                 </div>
                 <div className="text-left sm:text-right">
-                  <p className="text-xs opacity-70">Auto quantity breaks</p>
+                  <p className="text-xs opacity-70">
+                    {activeBomSummary?.label ?? "Auto quantity breaks"}
+                  </p>
                   <p className="text-2xl font-bold">
-                    ${formatMoney(bomResultForTabs?.grandTotal ?? 0)}
+                    ${formatMoney(activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0)}
                   </p>
                 </div>
               </div>
@@ -563,7 +580,7 @@ function CalculatorV3Content() {
                   type="button"
                   onClick={handleGenerateBOM}
                   disabled={bomMutation.isPending || hasErrors || noSegments}
-                  className="inline-flex items-center gap-2 rounded-md bg-blue-800 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-full bg-blue-800 px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {bomMutation.isPending && (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -572,9 +589,12 @@ function CalculatorV3Content() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => dispatch({ type: "CLEAR_BOM_RESULT" })}
+                  onClick={() => {
+                    setActiveBomSummary(null);
+                    dispatch({ type: "CLEAR_BOM_RESULT" });
+                  }}
                   disabled={!bomResultForTabs}
-                  className="inline-flex items-center gap-2 rounded-md border border-brand-border px-3 py-2 text-sm font-medium text-brand-muted transition-colors hover:border-red-500/50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-full border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-red-500/50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <FileX2 size={15} />
                   Clear BOM
@@ -583,7 +603,7 @@ function CalculatorV3Content() {
                   type="button"
                   onClick={handlePrintBom}
                   disabled={!bomResultForTabs}
-                  className="inline-flex items-center gap-2 rounded-md border border-brand-border px-3 py-2 text-sm font-medium text-brand-muted transition-colors hover:border-blue-800 hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-full border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-blue-800 hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <Printer size={15} />
                   Print BOM
@@ -592,7 +612,7 @@ function CalculatorV3Content() {
                   type="button"
                   onClick={handleExportCsv}
                   disabled={!bomResultForTabs}
-                  className="inline-flex items-center gap-2 rounded-md border border-brand-border px-3 py-2 text-sm font-medium text-brand-muted transition-colors hover:border-blue-800 hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-full border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-blue-800 hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <Download size={15} />
                   Export CSV
@@ -604,7 +624,7 @@ function CalculatorV3Content() {
                   <BOMResultTabs
                     result={bomResultForTabs}
                     editable
-                    onQuantityChange={(item, quantity) =>
+                  onQuantityChange={(item, quantity) =>
                       setLineEdits((prev) => ({
                         ...prev,
                         [lineKey(item)]: quantity <= 0 ? null : quantity,
@@ -616,6 +636,7 @@ function CalculatorV3Content() {
                         [lineKey(item)]: null,
                       }))
                     }
+                    onActiveSummaryChange={handleActiveBomSummaryChange}
                   />
                   <SuggestedAccessoriesPanel
                     suggestions={suggestedAccessories}
@@ -637,7 +658,7 @@ function CalculatorV3Content() {
                   />
                 </>
               ) : (
-                <div className="rounded-lg border border-dashed border-brand-border bg-slate-50 px-5 py-10 text-center text-sm text-brand-muted">
+                <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/60 px-5 py-10 text-center text-sm font-semibold text-brand-muted">
                   Configure a run on the left, then generate the BOM to see selected products, quantities, GST, and grand total.
                 </div>
               )}
@@ -647,7 +668,7 @@ function CalculatorV3Content() {
 
         {layoutOpen && payload && (
           <div
-            className={`absolute bottom-0 top-0 z-20 border-l border-brand-border bg-white shadow-2xl ${
+            className={`absolute bottom-0 top-0 z-20 border-l border-brand-border bg-brand-card shadow-2xl ${
               layoutFullscreen || mobileLayout ? "left-0 right-0" : "left-[min(560px,45vw)] right-0"
             }`}
           >
@@ -663,7 +684,7 @@ function CalculatorV3Content() {
                   <button
                     type="button"
                     onClick={() => setLayoutOpen(false)}
-                    className="rounded-md border border-brand-border px-3 py-2 text-sm font-medium text-brand-muted hover:border-blue-800 hover:text-blue-800"
+                    className="rounded-full border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted hover:border-blue-800 hover:text-blue-800"
                     title="Minimize map"
                   >
                     Minimize
@@ -671,7 +692,7 @@ function CalculatorV3Content() {
                   <button
                     type="button"
                     onClick={() => setLayoutFullscreen((value) => !value)}
-                    className="rounded-md border border-brand-border p-2 text-brand-muted hover:border-blue-800 hover:text-blue-800"
+                    className="rounded-full border border-brand-border p-2 text-brand-muted hover:border-blue-800 hover:text-blue-800"
                     title={layoutFullscreen ? "Restore map" : "Expand map"}
                   >
                     {layoutFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
@@ -679,7 +700,7 @@ function CalculatorV3Content() {
                   <button
                     type="button"
                     onClick={() => setLayoutOpen(false)}
-                    className="rounded-md border border-brand-border p-2 text-brand-muted hover:border-red-500 hover:text-red-600"
+                    className="rounded-full border border-brand-border p-2 text-brand-muted hover:border-red-500 hover:text-red-600"
                     title="Close map"
                   >
                     <X size={16} />

@@ -37,7 +37,7 @@ type QtyLine = {
   segmentId: string;
 };
 
-const SUPPORTED_PRODUCTS = new Set(["QSHS", "BAYG", "VS"]);
+const SUPPORTED_PRODUCTS = new Set(["QSHS", "BAYG", "VS", "XPL"]);
 const STANDARD_COLOURS = new Set(["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]);
 const ALUMAWOOD_CORE_COLOURS = new Set(["KWI", "WRC"]);
 const CSR_CAP_COLOURS = new Set(["B", "G", "MN", "S", "SM", "W"]);
@@ -318,6 +318,11 @@ function gateHdRailSkuFor(colour: string): string {
   return `XP-6100-HD6545-${colourSkuSuffix(colour)}`;
 }
 
+function gateSideFrameSkuFor(slatSize: number, colour: string): string {
+  void slatSize;
+  return `QSG-GATESF-65-${colourSkuSuffix(colour)}`;
+}
+
 function gateStopSkuFor(colour: string): string {
   return `XP-4200-GSTOP-${colourSkuSuffix(colour)}`;
 }
@@ -366,9 +371,66 @@ function calculateGateSegment(
   };
 
   if (movement === "sliding") {
-    warnings.push(
-      "Sliding gate frame/infill quantities are not fully hardcoded yet; selected sliding hardware is priced from confirmed CSV SKUs.",
+    const bladeCutMm = Math.max(1, openingWidthMm - 86);
+    const railCutMm = Math.max(1, openingWidthMm - 80);
+    const frameCutMm = Math.max(1, gateHeightMm);
+    const designSlatSize = slatSize === 90 ? 90 : 65;
+    const numGateBlades = Math.max(
+      1,
+      Math.floor((gateHeightMm - 133 + slatGap) / (designSlatSize + slatGap)),
     );
+    const bladesPerStock = Math.max(1, Math.floor(6100 / bladeCutMm));
+    const railsPerStock = Math.max(1, Math.floor(6100 / railCutMm));
+    const sideFramesPerStock = Math.max(1, Math.floor(4200 / frameCutMm));
+
+    computed[run.runId][segment.segmentId] = {
+      ...(computed[run.runId][segment.segmentId] ?? {}),
+      gate_blade_count: numGateBlades,
+      gate_blade_cut_mm: Math.round(bladeCutMm),
+      gate_rail_cut_mm: Math.round(railCutMm),
+      gate_side_frame_cut_mm: Math.round(frameCutMm),
+    };
+
+    emit(lines, {
+      ...base,
+      sku: gateBladeSkuFor(colour),
+      category: "gate",
+      quantity: Math.ceil(numGateBlades / bladesPerStock),
+      unit: "length",
+      notes: `${numGateBlades} horizontal gate blades, ${Math.round(bladeCutMm)}mm cuts from 6100mm stock`,
+    });
+    emit(lines, {
+      ...base,
+      sku: gateHdRailSkuFor(colour),
+      category: "gate",
+      quantity: Math.ceil(2 / railsPerStock),
+      unit: "length",
+      notes: `Top/bottom HD rails, ${Math.round(railCutMm)}mm cuts from 6100mm stock`,
+    });
+    emit(lines, {
+      ...base,
+      sku: gateSideFrameSkuFor(slatSize, colour),
+      category: "gate",
+      quantity: Math.ceil(2 / sideFramesPerStock),
+      unit: "length",
+      notes: `QSG side frames, ${Math.round(frameCutMm)}mm cuts from 4200mm stock. Price is TBD if missing from seed.`,
+    });
+    emit(lines, {
+      ...base,
+      sku: slatSize === 90 ? "QSG-JBLOCK-90-4PK" : "QSG-JBLOCK-65-4PK",
+      category: "hardware",
+      quantity: Math.ceil(4 / 4),
+      unit: "pack",
+      notes: "QSG sliding gate joiner blocks",
+    });
+    emit(lines, {
+      ...base,
+      sku: "QSG-RS-10PK",
+      category: "screw",
+      quantity: Math.ceil(8 / 10),
+      unit: "pack",
+      notes: "QSG rail screws",
+    });
     const trackSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.slidingTrackType]) ?? "XPSG-6000-TRACK-ST";
     const trackQty = Math.ceil((openingWidthMm * 2) / stockLengthForSlidingTrack(trackSku));
     emit(lines, {
@@ -741,10 +803,12 @@ function calculateScreenRun(
     const sideFrameStocks = Math.ceil(sideFramePieces / sideFramesPerStock);
     const fSectionStocks = Math.ceil(fSectionPieces / sideFramesPerStock);
     const csrStocks = Math.ceil((numCsrPerPanel * numPanels) / csrPerStock);
-    const spacerPacks = isBayg
+    const usesPresetSpacers = String(vars.slat_gap_mode ?? "spacer") !== "custom";
+    const spacerEachQty = 2 * Math.max(0, numSlats - 1) * numPanels;
+    const spacerPacks = isBayg || !usesPresetSpacers
       ? 0
-      : Math.ceil((2 * (numSlats + 1) * numPanels) / 50);
-    const baygSpacers = isBayg ? 2 * (numSlats + 1) * numPanels : 0;
+      : Math.ceil(spacerEachQty / 50);
+    const baygSpacers = isBayg ? spacerEachQty : 0;
     const screwPacks = Math.ceil(
       (numSlats * 2 * numPanels * 1.01 + numCsrPerPanel * numPanels * 4) / 50,
     );
@@ -840,7 +904,7 @@ function calculateScreenRun(
       category: "accessory",
       quantity: spacerPacks,
       unit: "pack",
-      notes: `${slatGap}mm gap spacer packs`,
+      notes: `${spacerEachQty} spacers total: ${Math.max(0, numSlats - 1)} gaps x 2 ends x ${numPanels} panel(s)`,
     });
     emit(lines, {
       ...base,
@@ -848,7 +912,7 @@ function calculateScreenRun(
       category: "accessory",
       quantity: baygSpacers,
       unit: "each",
-      notes: "BAYG individual spacers",
+      notes: `${Math.max(0, numSlats - 1)} gaps x 2 ends x ${numPanels} panel(s)`,
     });
     emit(lines, {
       ...base,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import pluralize from "pluralize";
 import type { CalculatorBOMResult, BOMLineItem } from "../../types/bom.types";
 
@@ -7,6 +7,12 @@ interface BOMResultTabsProps {
   editable?: boolean;
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
+  onActiveSummaryChange?: (summary: {
+    label: string;
+    subtotal: number;
+    gst: number;
+    grandTotal: number;
+  }) => void;
 }
 
 const CATEGORY_ORDER = [
@@ -173,7 +179,7 @@ function ItemGroup({
                 onChange={(event) =>
                   onQuantityChange?.(item, Number(event.target.value))
                 }
-                className="w-20 rounded border border-brand-border bg-white px-2 py-1 text-right text-sm text-brand-text"
+                className="w-20 rounded-lg border border-brand-border bg-brand-card px-2 py-1 text-right text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
                 aria-label={`Quantity for ${item.sku}`}
               />
             ) : (
@@ -208,6 +214,7 @@ export function BOMResultTabs({
   editable,
   onQuantityChange,
   onRemoveLine,
+  onActiveSummaryChange,
 }: BOMResultTabsProps) {
   const [activeTab, setActiveTab] = useState("all");
 
@@ -233,6 +240,16 @@ export function BOMResultTabs({
   );
   const activeGst = parseFloat((activeTotal * 0.1).toFixed(2));
   const activeGrandTotal = parseFloat((activeTotal + activeGst).toFixed(2));
+  const activeLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? "All Items";
+
+  useEffect(() => {
+    onActiveSummaryChange?.({
+      label: activeLabel,
+      subtotal: activeTotal,
+      gst: activeGst,
+      grandTotal: activeGrandTotal,
+    });
+  }, [activeGrandTotal, activeGst, activeLabel, activeTotal, onActiveSummaryChange]);
 
   return (
     <div>

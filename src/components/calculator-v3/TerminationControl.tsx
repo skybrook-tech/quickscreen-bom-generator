@@ -55,16 +55,16 @@ export function TerminationControl({ runId, seg, side }: Props) {
   }
 
   return (
-    <div className="border border-brand-border/40 rounded-md p-3 space-y-2">
-      <p className="text-brand-text font-medium capitalize">
+    <div className="space-y-2 rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
+      <p className="font-bold capitalize text-brand-text">
         {side} termination
       </p>
       <label className="flex flex-col gap-1 max-w-xs">
-        <span className="text-brand-muted">Type</span>
+        <span className="text-sm font-bold text-brand-muted">Type</span>
         <select
           value={kind}
           onChange={(e) => setKind(e.target.value as TerminationKindUi | "")}
-          className="bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
+          className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
         >
           <option value="system_post">Standard post</option>
           <option value="corner">Corner</option>
@@ -78,7 +78,7 @@ export function TerminationControl({ runId, seg, side }: Props) {
           <select
             value={Number(v[degKey] ?? 90)}
             onChange={(e) => setScalar(degKey, Number(e.target.value))}
-            className="bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
+            className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
           >
             {CORNER_DEGREE_OPTIONS.map((d) => (
               <option key={d} value={d}>
@@ -91,13 +91,13 @@ export function TerminationControl({ runId, seg, side }: Props) {
 
       {kind === "non_system_termination" && (
         <label className="flex flex-col gap-1 max-w-xs">
-          <span className="text-brand-muted">Non-system type</span>
+          <span className="text-sm font-bold text-brand-muted">Non-system type</span>
           <select
             value={sub}
             onChange={(e) =>
               setScalar(subKey, e.target.value as NonSystemSubtypeUi)
             }
-            className="bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
+            className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
           >
             <option value="wall">Wall</option>
             <option value="non_system_post">Non-standard post</option>

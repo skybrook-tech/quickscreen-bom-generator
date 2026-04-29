@@ -8,7 +8,7 @@ interface FormFieldProps {
 export function FormField({ label, note, error, children }: FormFieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-xs font-semibold text-brand-muted uppercase tracking-wider">
+      <label className="text-sm font-bold text-brand-muted">
         {label}
       </label>
       {children}

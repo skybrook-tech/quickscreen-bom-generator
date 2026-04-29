@@ -64,6 +64,20 @@ export function gapOptionsForSystem(productCode: string) {
   return [];
 }
 
+export function heightOptionsForSystem(productCode: string, variables: Variables) {
+  if (productCode === "VS") return [];
+  const slatSize = Number(variables.slat_size_mm ?? 65);
+  const slatGap = Number(variables.slat_gap_mm ?? 5);
+  const slatDesignWidth = slatSize === 90 ? 90.3 : 65.3;
+  if (!Number.isFinite(slatGap) || slatGap < 0) return [];
+  const heights: number[] = [];
+  for (let slats = 1; slats <= 80; slats++) {
+    const height = Math.round(slats * (slatDesignWidth + slatGap) - slatGap + 3);
+    if (height >= 300 && height <= 2400) heights.push(height);
+  }
+  return heights;
+}
+
 export function colourOptionsForSystem(variables: Variables) {
   const finish = String(variables.finish_family ?? "standard");
   const slatSize = Number(variables.slat_size_mm ?? 65);
@@ -88,6 +102,7 @@ export function initialVariablesForSystem(productCode: string): Variables {
     colour_code: "B",
     post_colour_code: "B",
     slat_size_mm: 65,
+    slat_gap_mode: "spacer",
     slat_gap_mm: 5,
     post_size: 50,
     post_system: productCode === "XPL" ? "xpl" : "standard_50",
@@ -171,7 +186,16 @@ export function normaliseVariablesForSystem(
   }
 
   const gapOptions = gapOptionsForSystem(productCode);
-  if (gapOptions.length > 0) {
+  const customGapMode = productCode === "QSHS" && next.slat_gap_mode === "custom";
+  if (customGapMode) {
+    const gap = Number(next.slat_gap_mm);
+    next = {
+      ...next,
+      slat_gap_mode: "custom",
+      slat_gap_mm: Number.isFinite(gap) && gap >= 0 ? Math.round(gap) : 5,
+    };
+  } else if (gapOptions.length > 0) {
+    next = { ...next, slat_gap_mode: "spacer" };
     if (!gapOptions.map(String).includes(String(next.slat_gap_mm))) {
       next = { ...next, slat_gap_mm: gapOptions[0] };
     }
@@ -189,6 +213,17 @@ export function normaliseVariablesForSystem(
         ? Math.min(maxPanelWidth, Math.max(300, panelWidth))
         : maxPanelWidth,
   };
+
+  const heightOptions = heightOptionsForSystem(productCode, next);
+  const requestedHeight = Number(next.target_height_mm ?? 1800);
+  if (heightOptions.length > 0) {
+    const closest = heightOptions.reduce((best, height) =>
+      Math.abs(height - requestedHeight) < Math.abs(best - requestedHeight)
+        ? height
+        : best,
+    );
+    next = { ...next, target_height_mm: closest };
+  }
 
   return next;
 }
@@ -242,12 +277,51 @@ export function applyProductOptionRules(
 
     if (field.field_key === "slat_gap_mm") {
       const gapOptions = gapOptionsForSystem(productCode);
+      if (productCode === "QSHS") {
+        result.push(
+          optionField(
+            productCode,
+            "slat_gap_mode",
+            "Gap type",
+            ["spacer", "custom"],
+            "spacer",
+            field.sort_order - 1,
+          ),
+        );
+      }
       result.push(
         cloneField(field, {
-          control_type: gapOptions.length > 0 ? "select" : "number",
+          control_type:
+            productCode === "QSHS" && variables.slat_gap_mode === "custom"
+              ? "number"
+              : gapOptions.length > 0
+                ? "select"
+                : "number",
           data_type: "number",
-          options_json: gapOptions,
-          label: productCode === "VS" ? "Slat gap" : field.label,
+          options_json:
+            productCode === "QSHS" && variables.slat_gap_mode === "custom"
+              ? []
+              : gapOptions,
+          label:
+            productCode === "QSHS" && variables.slat_gap_mode === "custom"
+              ? "Custom slat gap"
+              : productCode === "VS"
+                ? "Slat gap"
+                : field.label,
+          unit: "mm",
+        }),
+      );
+      continue;
+    }
+
+    if (field.field_key === "target_height_mm") {
+      const heightOptions = heightOptionsForSystem(productCode, variables);
+      result.push(
+        cloneField(field, {
+          control_type: heightOptions.length > 0 ? "select" : field.control_type,
+          data_type: "number",
+          options_json: heightOptions.length > 0 ? heightOptions : field.options_json,
+          label: heightOptions.length > 0 ? "Actual fence height" : field.label,
           unit: "mm",
         }),
       );

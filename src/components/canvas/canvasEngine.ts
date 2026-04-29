@@ -70,6 +70,12 @@ interface Segment {
   gates: GateMarker[];
 }
 
+interface SegmentMapLabel {
+  text: string;
+  t: number;
+  kind: "panel" | "gate";
+}
+
 interface GateMarker {
   t: number; // 0–1 along segment
   widthMM: number;
@@ -337,6 +343,15 @@ function closestPointOnSegment(
   );
   const proj = lerp(s.p1, s.p2, t);
   return { point: proj, t, d: dist(p, proj) };
+}
+
+function offsetPointFromSegment(seg: Segment, t: number, offset: number): Point {
+  const base = lerp(seg.p1, seg.p2, t);
+  const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
+  return {
+    x: base.x - Math.sin(ang) * offset,
+    y: base.y + Math.cos(ang) * offset,
+  };
 }
 
 // ── Label editing overlay ─────────────────────────────────────────────────────
@@ -694,9 +709,20 @@ export function initCanvasEngine(
         if (!runs[ri].isBoundary) runColorIdx.set(ri, nbIdx++);
       }
     }
+    const segmentCounters = new Map<number, number>();
     for (const { seg, flatIdx, runIdx } of allSegs) {
       const colorIdx = runColorIdx.get(runIdx) ?? 0;
-      drawSegment(seg, flatIdx === hoveredSegIdx, getRunColor(colorIdx), getRunColorHover(colorIdx));
+      const runNumber = colorIdx + 1;
+      const startNumber = segmentCounters.get(runIdx) ?? 1;
+      const { labels, nextNumber } = segmentLabelsForMap(seg, runNumber, startNumber);
+      segmentCounters.set(runIdx, nextNumber);
+      drawSegment(
+        seg,
+        flatIdx === hoveredSegIdx,
+        getRunColor(colorIdx),
+        getRunColorHover(colorIdx),
+        labels,
+      );
     }
 
     // Boundary runs — dashed gray lines (non-product context lines)
@@ -1096,7 +1122,61 @@ export function initCanvasEngine(
     ctx.restore();
   }
 
-  function drawSegment(seg: Segment, hovered: boolean, runColor = COLOR.segment, runColorHover = COLOR.segmentHover) {
+  function segmentLabelsForMap(
+    seg: Segment,
+    runNumber: number,
+    startNumber: number,
+  ): { labels: SegmentMapLabel[]; nextNumber: number } {
+    const labels: SegmentMapLabel[] = [];
+    let number = startNumber;
+    const gates = seg.gates
+      .map((g) => {
+        const halfT = seg.lengthMM > 0 ? g.widthMM / seg.lengthMM / 2 : 0;
+        return {
+          tStart: Math.max(0, g.t - halfT),
+          tEnd: Math.min(1, g.t + halfT),
+        };
+      })
+      .sort((a, b) => a.tStart - b.tStart);
+
+    if (gates.length === 0) {
+      labels.push({ text: `R${runNumber}-#${number++}`, t: 0.5, kind: "panel" });
+      return { labels, nextNumber: number };
+    }
+
+    let cursor = 0;
+    for (const gate of gates) {
+      if ((gate.tStart - cursor) * seg.lengthMM > 1) {
+        labels.push({
+          text: `R${runNumber}-#${number++}`,
+          t: (cursor + gate.tStart) / 2,
+          kind: "panel",
+        });
+      }
+      labels.push({
+        text: `R${runNumber}-#${number++} Gate`,
+        t: (gate.tStart + gate.tEnd) / 2,
+        kind: "gate",
+      });
+      cursor = gate.tEnd;
+    }
+    if ((1 - cursor) * seg.lengthMM > 1) {
+      labels.push({
+        text: `R${runNumber}-#${number++}`,
+        t: (cursor + 1) / 2,
+        kind: "panel",
+      });
+    }
+    return { labels, nextNumber: number };
+  }
+
+  function drawSegment(
+    seg: Segment,
+    hovered: boolean,
+    runColor = COLOR.segment,
+    runColorHover = COLOR.segmentHover,
+    mapLabels: SegmentMapLabel[] = [],
+  ) {
     const lw = 3 / zoom;
     const segColor = hovered ? runColorHover : runColor;
     const segLw = hovered ? lw * 1.5 : lw;
@@ -1240,11 +1320,12 @@ export function initCanvasEngine(
 
     // Length label
     drawLabel(seg);
+    drawMapSegmentLabels(seg, mapLabels);
   }
 
   function drawLabel(seg: Segment) {
-    const mid = lerp(seg.p1, seg.p2, 0.5);
     const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
+    const mid = offsetPointFromSegment(seg, 0.5, 18 / zoom);
     const labelText =
       seg.lengthMM >= 1000
         ? `${(seg.lengthMM / 1000).toFixed(2)}m`
@@ -1272,6 +1353,35 @@ export function initCanvasEngine(
     ctx.textBaseline = "middle";
     ctx.fillText(labelText, 0, 0);
 
+    ctx.restore();
+  }
+
+  function drawMapSegmentLabels(seg: Segment, labels: SegmentMapLabel[]) {
+    if (zoom <= 0.18 || labels.length === 0) return;
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    for (const label of labels) {
+      const pt = offsetPointFromSegment(seg, label.t, -18 / zoom);
+      const fs = Math.max(8, 10 / zoom);
+      ctx.font = `bold ${fs}px sans-serif`;
+      const tw = ctx.measureText(label.text).width;
+      const padX = 4 / zoom;
+      const padY = 3 / zoom;
+      const bg = label.kind === "gate" ? "rgba(245,158,11,0.92)" : "rgba(15,23,42,0.9)";
+      ctx.fillStyle = bg;
+      ctx.beginPath();
+      ctx.roundRect(
+        pt.x - tw / 2 - padX,
+        pt.y - fs / 2 - padY,
+        tw + padX * 2,
+        fs + padY * 2,
+        4 / zoom,
+      );
+      ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(label.text, pt.x, pt.y);
+    }
     ctx.restore();
   }
 
@@ -1362,7 +1472,7 @@ export function initCanvasEngine(
     // Returns flat segment index if pt is near its midpoint label
     const allSegs = allSegmentsFlat();
     for (const { seg, flatIdx } of allSegs) {
-      const mid = lerp(seg.p1, seg.p2, 0.5);
+      const mid = offsetPointFromSegment(seg, 0.5, 18 / zoom);
       if (dist(pt, mid) < 30 / zoom) return flatIdx;
     }
     return -1;

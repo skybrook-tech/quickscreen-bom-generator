@@ -13,16 +13,23 @@
   --brand-accent-hover: #2563eb;
   --brand-muted:        #64748b;
   --brand-text:         #0f172a;
+  color-scheme: light;
 }
 
 [data-theme="dark"] {
-  --brand-bg:           #0f1117;
-  --brand-card:         #1a1d2e;
-  --brand-border:       #2a2d3e;
+  --brand-bg:           #111827;
+  --brand-card:         #1f2937;
+  --brand-border:       #334155;
   --brand-accent:       59 130 246;
   --brand-accent-hover: #2563eb;
-  --brand-muted:        #6b7280;
-  --brand-text:         #e5e7eb;
+  --brand-muted:        #cbd5e1;
+  --brand-text:         #f8fafc;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--brand-bg);
+  color: var(--brand-text);
 }
 
 @media print {

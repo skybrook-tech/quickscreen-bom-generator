@@ -42,7 +42,7 @@ export function SuggestedAccessoriesPanel({
           return (
             <div
               key={item.id}
-              className="grid gap-3 rounded-md border border-brand-border bg-slate-50 px-3 py-3 text-sm md:grid-cols-[1fr_auto]"
+              className="grid gap-3 rounded-2xl border border-brand-border/70 bg-brand-bg/60 px-3 py-3 text-sm font-semibold md:grid-cols-[1fr_auto]"
             >
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
@@ -78,7 +78,7 @@ export function SuggestedAccessoriesPanel({
                   type="button"
                   onClick={() => onAdd(item)}
                   disabled={added}
-                  className="flex items-center gap-1.5 rounded-md bg-brand-accent px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-brand-accent/90 disabled:cursor-not-allowed disabled:bg-slate-300"
+                  className="flex items-center gap-1.5 rounded-full bg-brand-accent px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-accent/90 disabled:cursor-not-allowed disabled:bg-brand-border"
                 >
                   {added ? <Check size={14} /> : <PlusCircle size={14} />}
                   {added ? "Added" : "Add"}
