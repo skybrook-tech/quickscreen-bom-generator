@@ -922,6 +922,18 @@
   "product_component_selectors": [
     {
       "product_system_type": "VS",
+      "selector_key": "vs_corner_adapter_135",
+      "component_category": "corner_adapter",
+      "selector_type": "exact",
+      "match_json": {},
+      "sku_pattern": "XP-6000-135-{colour}",
+      "priority": 100,
+      "notes": "135° corner adapter — same XP-6000-135 as QSHS",
+      "active": true,
+      "qty_key": "qty_corner_adapter_135"
+    },
+    {
+      "product_system_type": "VS",
       "selector_key": "vs_slat_65",
       "component_category": "slat",
       "selector_type": "exact",

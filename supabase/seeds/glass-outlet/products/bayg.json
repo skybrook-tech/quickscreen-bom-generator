@@ -1571,9 +1571,9 @@
       "component_category": "corner_adapter",
       "selector_type": "exact",
       "match_json": {},
-      "sku_pattern": "AW-5800-135-{finish}",
+      "sku_pattern": "AW-5800-135-{colour}",
       "priority": 100,
-      "notes": "135\u00b0 Alumawood corner adapter; finish resolved at runtime (KWI or WRC)",
+      "notes": "135\u00b0 Alumawood corner adapter; colour resolved at runtime (B, KWI, WRC, etc.)",
       "active": true,
       "qty_key": "qty_corner_adapter_135"
     },
