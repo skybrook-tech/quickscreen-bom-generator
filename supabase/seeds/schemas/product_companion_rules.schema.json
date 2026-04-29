@@ -50,6 +50,11 @@
         "description": "True if the companion SKU is sold as a pack (e.g. 50-pack of screws). Affects rounding behaviour in qty_formula.",
         "default": false
       },
+      "is_suggestion": {
+        "type": "boolean",
+        "description": "True if this companion should be routed to the suggestions[] bucket instead of lines[]. Suggestions are not included in totals.",
+        "default": false
+      },
       "priority": {
         "type": "integer",
         "default": 100

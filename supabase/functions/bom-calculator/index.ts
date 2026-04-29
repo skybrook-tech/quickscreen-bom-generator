@@ -309,6 +309,7 @@ Deno.serve(async (req: Request) => {
     // ─── Process runs ─────────────────────────────────────────────────────────
 
     const allLines: BomLineItemV3[] = [];
+    const allSuggestions: BomLineItemV3[] = [];
     const runResults: RunResult[] = [];
     const allErrors: string[] = [];
     const allWarnings: string[] = [];
@@ -361,6 +362,7 @@ Deno.serve(async (req: Request) => {
       );
       const runTrace: TraceEntry[] = [];
       const runLines: BomLineItemV3[] = [];
+      const runSuggestions: BomLineItemV3[] = [];
 
       // Step 6 — validation pass (fence product)
       let runHasError = false;
@@ -766,7 +768,7 @@ Deno.serve(async (req: Request) => {
                 companion.add_sku_pattern,
                 activeSegCtx,
               );
-              runLines.push({
+              const companionLine: BomLineItemV3 = {
                 sku,
                 name: "",
                 description: `${companion.add_category} — ${sku}`,
@@ -778,7 +780,12 @@ Deno.serve(async (req: Request) => {
                 runId: run.runId,
                 segmentId: segment.segmentId,
                 productCode: activeProductCode,
-              });
+              };
+              if (companion.is_suggestion) {
+                runSuggestions.push(companionLine);
+              } else {
+                runLines.push(companionLine);
+              }
             } catch (err) {
               allTrace.push({
                 stage: "companion",
@@ -810,6 +817,7 @@ Deno.serve(async (req: Request) => {
       }
 
       allLines.push(...runLines);
+      allSuggestions.push(...runSuggestions);
       runResults.push({
         runId: run.runId,
         label: `Run ${runResults.length + 1} — ${payload.productCode}`,
@@ -825,6 +833,7 @@ Deno.serve(async (req: Request) => {
       return Response.json(
         {
           lines: [],
+          suggestions: [],
           runResults: [],
           gateItems: [],
           totals: { subtotal: 0, gst: 0, grandTotal: 0 },
@@ -855,6 +864,19 @@ Deno.serve(async (req: Request) => {
     }
     const aggregatedLines = [...aggregated.values()];
 
+    // Aggregate suggestions separately (same de-dup logic, keyed by SKU only)
+    const aggregatedSuggestionsMap = new Map<string, BomLineItemV3>();
+    for (const line of allSuggestions) {
+      const key = line.sku;
+      const existing = aggregatedSuggestionsMap.get(key);
+      if (existing) {
+        existing.quantity += line.quantity;
+      } else {
+        aggregatedSuggestionsMap.set(key, { ...line });
+      }
+    }
+    const aggregatedSuggestions = [...aggregatedSuggestionsMap.values()];
+
     // Separate gate items for the response envelope — driven by product_type from DB,
     // not a hardcoded list of product codes.
     const gateProductCodeSet = new Set(
@@ -873,7 +895,7 @@ Deno.serve(async (req: Request) => {
     ]);
 
     // Backfill name/description on all lines from product_components
-    for (const line of [...aggregatedLines, ...allLines]) {
+    for (const line of [...aggregatedLines, ...allLines, ...aggregatedSuggestions]) {
       const comp = componentNames.get(line.sku);
       if (comp) {
         line.name = comp.name;
@@ -895,6 +917,13 @@ Deno.serve(async (req: Request) => {
           (line.quantity * line.unitPrice).toFixed(2),
         );
       }
+    }
+
+    // Price suggestions (informational — not included in totals)
+    for (const line of aggregatedSuggestions) {
+      const rules = pricingMap.get(line.sku) ?? [];
+      line.unitPrice = rules.length > 0 ? resolvePrice(rules, line.quantity) : 0;
+      line.lineTotal = parseFloat((line.quantity * line.unitPrice).toFixed(2));
     }
 
     // Propagate pricing back into per-run items for the UI tabs
@@ -938,6 +967,7 @@ Deno.serve(async (req: Request) => {
     return Response.json(
       {
         lines: aggregatedLines,
+        suggestions: aggregatedSuggestions,
         runResults,
         gateItems,
         totals: { subtotal, gst, grandTotal },

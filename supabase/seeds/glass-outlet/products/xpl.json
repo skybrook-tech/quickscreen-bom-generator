@@ -5,17 +5,43 @@
       "system_type": "XPL",
       "product_type": "fence",
       "name": "XPress Plus Premium Post Fence",
-      "description": "Friction-fit post system — slats insert directly into patented XPL posts (no side frames, no CFC). End posts are 1W, inline posts are 2W, corner posts are 90°.",
+      "description": "Friction-fit post system \u2014 slats insert directly into patented XPL posts (no side frames, no CFC). End posts are 1W, inline posts are 2W, corner posts are 90\u00b0.",
       "active": true,
       "sort_order": 3,
       "metadata": {
-        "allowedAngles": [45, 90],
+        "allowedAngles": [
+          45,
+          90
+        ],
         "options": {
-          "slatSize": ["65", "90"],
-          "slatGap": ["5", "9", "20"],
-          "colour": ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]
+          "slatSize": [
+            "65",
+            "90"
+          ],
+          "slatGap": [
+            "5",
+            "9",
+            "20"
+          ],
+          "colour": [
+            "B",
+            "MN",
+            "G",
+            "SM",
+            "W",
+            "BS",
+            "D",
+            "M",
+            "P",
+            "PB",
+            "S"
+          ]
         },
-        "post_types": ["1W", "2W", "90"],
+        "post_types": [
+          "1W",
+          "2W",
+          "90"
+        ],
         "slat_insertion_depth_1W_2W_mm": 24,
         "slat_insertion_depth_90_mm": 15
       }
@@ -24,12 +50,14 @@
   "product_components": [
     {
       "sku": "XPL-6000-1W-B",
-      "name": "XPL End Post 6000mm — Black Satin",
+      "name": "XPL End Post 6000mm \u2014 Black Satin",
       "description": "50x50mm one-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "1W"
       },
@@ -37,12 +65,14 @@
     },
     {
       "sku": "XPL-6000-1W-MN",
-      "name": "XPL End Post 6000mm — Monument Matt",
+      "name": "XPL End Post 6000mm \u2014 Monument Matt",
       "description": "50x50mm one-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "1W"
       },
@@ -50,12 +80,14 @@
     },
     {
       "sku": "XPL-6000-1W-G",
-      "name": "XPL End Post 6000mm — Woodland Grey",
+      "name": "XPL End Post 6000mm \u2014 Woodland Grey",
       "description": "50x50mm one-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "1W"
       },
@@ -63,12 +95,14 @@
     },
     {
       "sku": "XPL-6000-1W-SM",
-      "name": "XPL End Post 6000mm — Surfmist Matt",
+      "name": "XPL End Post 6000mm \u2014 Surfmist Matt",
       "description": "50x50mm one-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "1W"
       },
@@ -76,12 +110,14 @@
     },
     {
       "sku": "XPL-6000-1W-W",
-      "name": "XPL End Post 6000mm — Pearl White",
+      "name": "XPL End Post 6000mm \u2014 Pearl White",
       "description": "50x50mm one-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "1W"
       },
@@ -89,12 +125,14 @@
     },
     {
       "sku": "XPL-6000-1W-BS",
-      "name": "XPL End Post 6000mm — Basalt Satin",
+      "name": "XPL End Post 6000mm \u2014 Basalt Satin",
       "description": "50x50mm one-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "1W"
       },
@@ -102,12 +140,14 @@
     },
     {
       "sku": "XPL-6000-1W-D",
-      "name": "XPL End Post 6000mm — Dune Satin",
+      "name": "XPL End Post 6000mm \u2014 Dune Satin",
       "description": "50x50mm one-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "1W"
       },
@@ -115,12 +155,14 @@
     },
     {
       "sku": "XPL-6000-1W-M",
-      "name": "XPL End Post 6000mm — Mill",
+      "name": "XPL End Post 6000mm \u2014 Mill",
       "description": "50x50mm one-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 94.97,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "1W"
       },
@@ -128,12 +170,14 @@
     },
     {
       "sku": "XPL-6000-1W-P",
-      "name": "XPL End Post 6000mm — Primrose",
+      "name": "XPL End Post 6000mm \u2014 Primrose",
       "description": "50x50mm one-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "1W"
       },
@@ -141,12 +185,14 @@
     },
     {
       "sku": "XPL-6000-1W-PB",
-      "name": "XPL End Post 6000mm — Paperbark",
+      "name": "XPL End Post 6000mm \u2014 Paperbark",
       "description": "50x50mm one-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "1W"
       },
@@ -154,12 +200,14 @@
     },
     {
       "sku": "XPL-6000-1W-S",
-      "name": "XPL End Post 6000mm — Palladium Silver",
+      "name": "XPL End Post 6000mm \u2014 Palladium Silver",
       "description": "50x50mm one-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 110.69,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "1W"
       },
@@ -167,12 +215,14 @@
     },
     {
       "sku": "XPL-6000-2W-B",
-      "name": "XPL Inline Post 6000mm — Black Satin",
+      "name": "XPL Inline Post 6000mm \u2014 Black Satin",
       "description": "50x50mm two-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "2W"
       },
@@ -180,12 +230,14 @@
     },
     {
       "sku": "XPL-6000-2W-MN",
-      "name": "XPL Inline Post 6000mm — Monument Matt",
+      "name": "XPL Inline Post 6000mm \u2014 Monument Matt",
       "description": "50x50mm two-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "2W"
       },
@@ -193,12 +245,14 @@
     },
     {
       "sku": "XPL-6000-2W-G",
-      "name": "XPL Inline Post 6000mm — Woodland Grey",
+      "name": "XPL Inline Post 6000mm \u2014 Woodland Grey",
       "description": "50x50mm two-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "2W"
       },
@@ -206,12 +260,14 @@
     },
     {
       "sku": "XPL-6000-2W-SM",
-      "name": "XPL Inline Post 6000mm — Surfmist Matt",
+      "name": "XPL Inline Post 6000mm \u2014 Surfmist Matt",
       "description": "50x50mm two-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "2W"
       },
@@ -219,12 +275,14 @@
     },
     {
       "sku": "XPL-6000-2W-W",
-      "name": "XPL Inline Post 6000mm — Pearl White",
+      "name": "XPL Inline Post 6000mm \u2014 Pearl White",
       "description": "50x50mm two-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "2W"
       },
@@ -232,12 +290,14 @@
     },
     {
       "sku": "XPL-6000-2W-BS",
-      "name": "XPL Inline Post 6000mm — Basalt Satin",
+      "name": "XPL Inline Post 6000mm \u2014 Basalt Satin",
       "description": "50x50mm two-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "2W"
       },
@@ -245,12 +305,14 @@
     },
     {
       "sku": "XPL-6000-2W-D",
-      "name": "XPL Inline Post 6000mm — Dune Satin",
+      "name": "XPL Inline Post 6000mm \u2014 Dune Satin",
       "description": "50x50mm two-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "2W"
       },
@@ -258,12 +320,14 @@
     },
     {
       "sku": "XPL-6000-2W-M",
-      "name": "XPL Inline Post 6000mm — Mill",
+      "name": "XPL Inline Post 6000mm \u2014 Mill",
       "description": "50x50mm two-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 86.34,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "2W"
       },
@@ -271,12 +335,14 @@
     },
     {
       "sku": "XPL-6000-2W-S",
-      "name": "XPL Inline Post 6000mm — Palladium Silver",
+      "name": "XPL Inline Post 6000mm \u2014 Palladium Silver",
       "description": "50x50mm two-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 100.63,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "2W"
       },
@@ -284,12 +350,14 @@
     },
     {
       "sku": "XPL-6000-90-B",
-      "name": "XPL Corner Post 6000mm — Black Satin",
-      "description": "50x50mm 90° corner friction-fit post, 6000mm stock",
+      "name": "XPL Corner Post 6000mm \u2014 Black Satin",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "90"
       },
@@ -297,12 +365,14 @@
     },
     {
       "sku": "XPL-6000-90-MN",
-      "name": "XPL Corner Post 6000mm — Monument Matt",
-      "description": "50x50mm 90° corner friction-fit post, 6000mm stock",
+      "name": "XPL Corner Post 6000mm \u2014 Monument Matt",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "90"
       },
@@ -310,12 +380,14 @@
     },
     {
       "sku": "XPL-6000-90-G",
-      "name": "XPL Corner Post 6000mm — Woodland Grey",
-      "description": "50x50mm 90° corner friction-fit post, 6000mm stock",
+      "name": "XPL Corner Post 6000mm \u2014 Woodland Grey",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "90"
       },
@@ -323,12 +395,14 @@
     },
     {
       "sku": "XPL-6000-90-SM",
-      "name": "XPL Corner Post 6000mm — Surfmist Matt",
-      "description": "50x50mm 90° corner friction-fit post, 6000mm stock",
+      "name": "XPL Corner Post 6000mm \u2014 Surfmist Matt",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "90"
       },
@@ -336,12 +410,14 @@
     },
     {
       "sku": "XPL-6000-90-W",
-      "name": "XPL Corner Post 6000mm — Pearl White",
-      "description": "50x50mm 90° corner friction-fit post, 6000mm stock",
+      "name": "XPL Corner Post 6000mm \u2014 Pearl White",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "90"
       },
@@ -349,12 +425,14 @@
     },
     {
       "sku": "XPL-6000-90-BS",
-      "name": "XPL Corner Post 6000mm — Basalt Satin",
-      "description": "50x50mm 90° corner friction-fit post, 6000mm stock",
+      "name": "XPL Corner Post 6000mm \u2014 Basalt Satin",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "90"
       },
@@ -362,12 +440,14 @@
     },
     {
       "sku": "XPL-6000-90-D",
-      "name": "XPL Corner Post 6000mm — Dune Satin",
-      "description": "50x50mm 90° corner friction-fit post, 6000mm stock",
+      "name": "XPL Corner Post 6000mm \u2014 Dune Satin",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "90"
       },
@@ -375,12 +455,14 @@
     },
     {
       "sku": "XPL-6000-90-M",
-      "name": "XPL Corner Post 6000mm — Mill",
-      "description": "50x50mm 90° corner friction-fit post, 6000mm stock",
+      "name": "XPL Corner Post 6000mm \u2014 Mill",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 95.21,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "90"
       },
@@ -388,12 +470,14 @@
     },
     {
       "sku": "XPL-6000-90-S",
-      "name": "XPL Corner Post 6000mm — Palladium Silver",
-      "description": "50x50mm 90° corner friction-fit post, 6000mm stock",
+      "name": "XPL Corner Post 6000mm \u2014 Palladium Silver",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 106.59,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "90"
       },
@@ -401,12 +485,14 @@
     },
     {
       "sku": "XPL-SB-50PK-05MM",
-      "name": "XPL Spacer Block 5mm — 50 Pack",
+      "name": "XPL Spacer Block 5mm \u2014 50 Pack",
       "description": "UV stabilised ASA black 5mm spacer block, 50-pack",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.01,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "gap_mm": 5
       },
@@ -414,12 +500,14 @@
     },
     {
       "sku": "XPL-SB-50PK-09MM",
-      "name": "XPL Spacer Block 9mm — 50 Pack",
+      "name": "XPL Spacer Block 9mm \u2014 50 Pack",
       "description": "UV stabilised ASA black 9mm spacer block, 50-pack",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.01,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "gap_mm": 9
       },
@@ -427,12 +515,14 @@
     },
     {
       "sku": "XPL-SB-50PK-20MM",
-      "name": "XPL Spacer Block 20mm — 50 Pack",
+      "name": "XPL Spacer Block 20mm \u2014 50 Pack",
       "description": "UV stabilised ASA black 20mm spacer block, 50-pack (actual spacer 21mm)",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.56,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "gap_mm": 20
       },
@@ -440,276 +530,337 @@
     },
     {
       "sku": "XPL-SLATCLIP-10PK",
-      "name": "XPL Slat Locking Clip — 10 Pack",
+      "name": "XPL Slat Locking Clip \u2014 10 Pack",
       "description": "Powder coated aluminium slat locking clip, 10-pack incl. SS304 screws. Fixes top slat only.",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.69,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-BLOCK-5PK",
-      "name": "XPL Block — 5 Pack",
-      "description": "100mm long UV stabilised ASA block, 5-pack. Starting height spacer — can be cut to size.",
+      "name": "XPL Block \u2014 5 Pack",
+      "description": "100mm long UV stabilised ASA block, 5-pack. Starting height spacer \u2014 can be cut to size.",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.13,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-EP-B-2PK",
-      "name": "XPL End Plate 2-Pack — Black Satin",
+      "name": "XPL End Plate 2-Pack \u2014 Black Satin",
       "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-EP-MN-2PK",
-      "name": "XPL End Plate 2-Pack — Monument Matt",
+      "name": "XPL End Plate 2-Pack \u2014 Monument Matt",
       "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-EP-G-2PK",
-      "name": "XPL End Plate 2-Pack — Woodland Grey",
+      "name": "XPL End Plate 2-Pack \u2014 Woodland Grey",
       "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-EP-SM-2PK",
-      "name": "XPL End Plate 2-Pack — Surfmist Matt",
+      "name": "XPL End Plate 2-Pack \u2014 Surfmist Matt",
       "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-EP-W-2PK",
-      "name": "XPL End Plate 2-Pack — Pearl White",
+      "name": "XPL End Plate 2-Pack \u2014 Pearl White",
       "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-EP-BS-2PK",
-      "name": "XPL End Plate 2-Pack — Basalt Satin",
+      "name": "XPL End Plate 2-Pack \u2014 Basalt Satin",
       "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-EP-D-2PK",
-      "name": "XPL End Plate 2-Pack — Dune Satin",
+      "name": "XPL End Plate 2-Pack \u2014 Dune Satin",
       "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-EP-M-2PK",
-      "name": "XPL End Plate 2-Pack — Mill",
+      "name": "XPL End Plate 2-Pack \u2014 Mill",
       "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
       "category": "accessory",
       "unit": "pack",
       "default_price": 2.85,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-EP-P-2PK",
-      "name": "XPL End Plate 2-Pack — Primrose",
+      "name": "XPL End Plate 2-Pack \u2014 Primrose",
       "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-EP-PB-2PK",
-      "name": "XPL End Plate 2-Pack — Paperbark",
+      "name": "XPL End Plate 2-Pack \u2014 Paperbark",
       "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-EP-S-2PK",
-      "name": "XPL End Plate 2-Pack — Palladium Silver",
+      "name": "XPL End Plate 2-Pack \u2014 Palladium Silver",
       "description": "32x28x3mm aluminium end plate, 2-pack incl. 4x screws",
       "category": "accessory",
       "unit": "pack",
       "default_price": 3.35,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-6000-SF-B",
-      "name": "XPL Side Frame 6000mm — Black Satin",
+      "name": "XPL Side Frame 6000mm \u2014 Black Satin",
       "description": "XPL friction-fit side frame, 6000mm stock (used in BAYG side frame variant)",
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": ["XPL", "BAYG"],
+      "system_types": [
+        "XPL",
+        "BAYG"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-6000-SF-MN",
-      "name": "XPL Side Frame 6000mm — Monument Matt",
+      "name": "XPL Side Frame 6000mm \u2014 Monument Matt",
       "description": "XPL friction-fit side frame, 6000mm stock",
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": ["XPL", "BAYG"],
+      "system_types": [
+        "XPL",
+        "BAYG"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-6000-SF-G",
-      "name": "XPL Side Frame 6000mm — Woodland Grey",
+      "name": "XPL Side Frame 6000mm \u2014 Woodland Grey",
       "description": "XPL friction-fit side frame, 6000mm stock",
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": ["XPL", "BAYG"],
+      "system_types": [
+        "XPL",
+        "BAYG"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-6000-SF-SM",
-      "name": "XPL Side Frame 6000mm — Surfmist Matt",
+      "name": "XPL Side Frame 6000mm \u2014 Surfmist Matt",
       "description": "XPL friction-fit side frame, 6000mm stock",
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": ["XPL", "BAYG"],
+      "system_types": [
+        "XPL",
+        "BAYG"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-6000-SF-W",
-      "name": "XPL Side Frame 6000mm — Pearl White",
+      "name": "XPL Side Frame 6000mm \u2014 Pearl White",
       "description": "XPL friction-fit side frame, 6000mm stock",
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": ["XPL", "BAYG"],
+      "system_types": [
+        "XPL",
+        "BAYG"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-6000-SF-BS",
-      "name": "XPL Side Frame 6000mm — Basalt Satin",
+      "name": "XPL Side Frame 6000mm \u2014 Basalt Satin",
       "description": "XPL friction-fit side frame, 6000mm stock",
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": ["XPL", "BAYG"],
+      "system_types": [
+        "XPL",
+        "BAYG"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-6000-SF-D",
-      "name": "XPL Side Frame 6000mm — Dune Satin",
+      "name": "XPL Side Frame 6000mm \u2014 Dune Satin",
       "description": "XPL friction-fit side frame, 6000mm stock",
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": ["XPL", "BAYG"],
+      "system_types": [
+        "XPL",
+        "BAYG"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-6000-SF-M",
-      "name": "XPL Side Frame 6000mm — Mill",
+      "name": "XPL Side Frame 6000mm \u2014 Mill",
       "description": "XPL friction-fit side frame, 6000mm stock",
       "category": "side_frame",
       "unit": "length",
       "default_price": 34.18,
-      "system_types": ["XPL", "BAYG"],
+      "system_types": [
+        "XPL",
+        "BAYG"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-6000-SF-P",
-      "name": "XPL Side Frame 6000mm — Primrose",
+      "name": "XPL Side Frame 6000mm \u2014 Primrose",
       "description": "XPL friction-fit side frame, 6000mm stock",
       "category": "side_frame",
       "unit": "length",
       "default_price": 39.92,
-      "system_types": ["XPL", "BAYG"],
+      "system_types": [
+        "XPL",
+        "BAYG"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-6000-SF-PB",
-      "name": "XPL Side Frame 6000mm — Paperbark",
+      "name": "XPL Side Frame 6000mm \u2014 Paperbark",
       "description": "XPL friction-fit side frame, 6000mm stock",
       "category": "side_frame",
       "unit": "length",
       "default_price": 39.92,
-      "system_types": ["XPL", "BAYG"],
+      "system_types": [
+        "XPL",
+        "BAYG"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-6000-SF-S",
-      "name": "XPL Side Frame 6000mm — Palladium Silver",
+      "name": "XPL Side Frame 6000mm \u2014 Palladium Silver",
       "description": "XPL friction-fit side frame, 6000mm stock",
       "category": "side_frame",
       "unit": "length",
       "default_price": 43.91,
-      "system_types": ["XPL", "BAYG"],
+      "system_types": [
+        "XPL",
+        "BAYG"
+      ],
       "metadata": {},
       "active": true
     },
     {
       "sku": "XPL-6000-U-B",
-      "name": "Xpress Plus U-Channel 6000mm — Black Satin",
-      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm × 30mm. Black Satin.",
+      "name": "Xpress Plus U-Channel 6000mm \u2014 Black Satin",
+      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm \u00d7 30mm. Black Satin.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "B"
       },
@@ -717,12 +868,14 @@
     },
     {
       "sku": "XPL-6000-U-MN",
-      "name": "Xpress Plus U-Channel 6000mm — Monument Matt",
-      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm × 30mm. Monument Matt.",
+      "name": "Xpress Plus U-Channel 6000mm \u2014 Monument Matt",
+      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm \u00d7 30mm. Monument Matt.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "MN"
       },
@@ -730,12 +883,14 @@
     },
     {
       "sku": "XPL-6000-U-G",
-      "name": "Xpress Plus U-Channel 6000mm — Woodland Grey Matt",
-      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm × 30mm. Woodland Grey Matt.",
+      "name": "Xpress Plus U-Channel 6000mm \u2014 Woodland Grey Matt",
+      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm \u00d7 30mm. Woodland Grey Matt.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "G"
       },
@@ -743,12 +898,14 @@
     },
     {
       "sku": "XPL-6000-U-SM",
-      "name": "Xpress Plus U-Channel 6000mm — Surfmist Matt",
-      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm × 30mm. Surfmist Matt.",
+      "name": "Xpress Plus U-Channel 6000mm \u2014 Surfmist Matt",
+      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm \u00d7 30mm. Surfmist Matt.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "SM"
       },
@@ -756,12 +913,14 @@
     },
     {
       "sku": "XPL-6000-U-W",
-      "name": "Xpress Plus U-Channel 6000mm — Pearl White Gloss",
-      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm × 30mm. Pearl White Gloss.",
+      "name": "Xpress Plus U-Channel 6000mm \u2014 Pearl White Gloss",
+      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm \u00d7 30mm. Pearl White Gloss.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "W"
       },
@@ -769,12 +928,14 @@
     },
     {
       "sku": "XPL-6000-U-BS",
-      "name": "Xpress Plus U-Channel 6000mm — Basalt Satin",
-      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm × 30mm. Basalt Satin.",
+      "name": "Xpress Plus U-Channel 6000mm \u2014 Basalt Satin",
+      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm \u00d7 30mm. Basalt Satin.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "BS"
       },
@@ -782,12 +943,14 @@
     },
     {
       "sku": "XPL-6000-U-D",
-      "name": "Xpress Plus U-Channel 6000mm — Dune Satin",
-      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm × 30mm. Dune Satin.",
+      "name": "Xpress Plus U-Channel 6000mm \u2014 Dune Satin",
+      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm \u00d7 30mm. Dune Satin.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "D"
       },
@@ -795,12 +958,14 @@
     },
     {
       "sku": "XPL-6000-U-M",
-      "name": "Xpress Plus U-Channel 6000mm — Mill",
-      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm × 30mm. Mill.",
+      "name": "Xpress Plus U-Channel 6000mm \u2014 Mill",
+      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm \u00d7 30mm. Mill.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "M"
       },
@@ -808,12 +973,14 @@
     },
     {
       "sku": "XPL-6000-U-S",
-      "name": "Xpress Plus U-Channel 6000mm — Palladium Silver Pearl",
-      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm × 30mm. Palladium Silver Pearl.",
+      "name": "Xpress Plus U-Channel 6000mm \u2014 Palladium Silver Pearl",
+      "description": "6000mm Alloy 6063-T5 U-channel. Used for Method 2 wall-to-wall XPL side frame installation. 33mm \u00d7 30mm. Palladium Silver Pearl.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "S"
       },
@@ -821,12 +988,14 @@
     },
     {
       "sku": "XPL-6000-F-B",
-      "name": "Xpress Plus F-Section 6000mm — Black Satin",
-      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm × 32mm. Black Satin.",
+      "name": "Xpress Plus F-Section 6000mm \u2014 Black Satin",
+      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm \u00d7 32mm. Black Satin.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "B"
       },
@@ -834,12 +1003,14 @@
     },
     {
       "sku": "XPL-6000-F-MN",
-      "name": "Xpress Plus F-Section 6000mm — Monument Matt",
-      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm × 32mm. Monument Matt.",
+      "name": "Xpress Plus F-Section 6000mm \u2014 Monument Matt",
+      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm \u00d7 32mm. Monument Matt.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "MN"
       },
@@ -847,12 +1018,14 @@
     },
     {
       "sku": "XPL-6000-F-G",
-      "name": "Xpress Plus F-Section 6000mm — Woodland Grey Matt",
-      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm × 32mm. Woodland Grey Matt.",
+      "name": "Xpress Plus F-Section 6000mm \u2014 Woodland Grey Matt",
+      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm \u00d7 32mm. Woodland Grey Matt.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "G"
       },
@@ -860,12 +1033,14 @@
     },
     {
       "sku": "XPL-6000-F-SM",
-      "name": "Xpress Plus F-Section 6000mm — Surfmist Matt",
-      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm × 32mm. Surfmist Matt.",
+      "name": "Xpress Plus F-Section 6000mm \u2014 Surfmist Matt",
+      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm \u00d7 32mm. Surfmist Matt.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "SM"
       },
@@ -873,12 +1048,14 @@
     },
     {
       "sku": "XPL-6000-F-W",
-      "name": "Xpress Plus F-Section 6000mm — Pearl White Gloss",
-      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm × 32mm. Pearl White Gloss.",
+      "name": "Xpress Plus F-Section 6000mm \u2014 Pearl White Gloss",
+      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm \u00d7 32mm. Pearl White Gloss.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "W"
       },
@@ -886,12 +1063,14 @@
     },
     {
       "sku": "XPL-6000-F-BS",
-      "name": "Xpress Plus F-Section 6000mm — Basalt Satin",
-      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm × 32mm. Basalt Satin.",
+      "name": "Xpress Plus F-Section 6000mm \u2014 Basalt Satin",
+      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm \u00d7 32mm. Basalt Satin.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "BS"
       },
@@ -899,12 +1078,14 @@
     },
     {
       "sku": "XPL-6000-F-D",
-      "name": "Xpress Plus F-Section 6000mm — Dune Satin",
-      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm × 32mm. Dune Satin.",
+      "name": "Xpress Plus F-Section 6000mm \u2014 Dune Satin",
+      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm \u00d7 32mm. Dune Satin.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "D"
       },
@@ -912,12 +1093,14 @@
     },
     {
       "sku": "XPL-6000-F-M",
-      "name": "Xpress Plus F-Section 6000mm — Mill",
-      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm × 32mm. Mill.",
+      "name": "Xpress Plus F-Section 6000mm \u2014 Mill",
+      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm \u00d7 32mm. Mill.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "M"
       },
@@ -925,12 +1108,14 @@
     },
     {
       "sku": "XPL-6000-F-S",
-      "name": "Xpress Plus F-Section 6000mm — Palladium Silver Pearl",
-      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm × 32mm. Palladium Silver Pearl.",
+      "name": "Xpress Plus F-Section 6000mm \u2014 Palladium Silver Pearl",
+      "description": "6000mm Alloy 6060-T5 F-section. Method 2 alternative, ideal for void/cavity installations. 48mm \u00d7 32mm. Palladium Silver Pearl.",
       "category": "extrusion",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "S"
       },
@@ -938,12 +1123,14 @@
     },
     {
       "sku": "XPL-2100-INS09-B",
-      "name": "Xpress Plus Premium Insert 9mm 2100mm — Black Satin",
+      "name": "Xpress Plus Premium Insert 9mm 2100mm \u2014 Black Satin",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 9mm spacing. 65mm slats only. Black Satin.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "B",
         "gap_mm": 9,
@@ -953,12 +1140,14 @@
     },
     {
       "sku": "XPL-2100-INS09-MN",
-      "name": "Xpress Plus Premium Insert 9mm 2100mm — Monument Matt",
+      "name": "Xpress Plus Premium Insert 9mm 2100mm \u2014 Monument Matt",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 9mm spacing. 65mm slats only. Monument Matt.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "MN",
         "gap_mm": 9,
@@ -968,12 +1157,14 @@
     },
     {
       "sku": "XPL-2100-INS09-G",
-      "name": "Xpress Plus Premium Insert 9mm 2100mm — Woodland Grey Matt",
+      "name": "Xpress Plus Premium Insert 9mm 2100mm \u2014 Woodland Grey Matt",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 9mm spacing. 65mm slats only. Woodland Grey Matt.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "G",
         "gap_mm": 9,
@@ -983,12 +1174,14 @@
     },
     {
       "sku": "XPL-2100-INS09-SM",
-      "name": "Xpress Plus Premium Insert 9mm 2100mm — Surfmist Matt",
+      "name": "Xpress Plus Premium Insert 9mm 2100mm \u2014 Surfmist Matt",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 9mm spacing. 65mm slats only. Surfmist Matt.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "SM",
         "gap_mm": 9,
@@ -998,12 +1191,14 @@
     },
     {
       "sku": "XPL-2100-INS09-W",
-      "name": "Xpress Plus Premium Insert 9mm 2100mm — Pearl White Gloss",
+      "name": "Xpress Plus Premium Insert 9mm 2100mm \u2014 Pearl White Gloss",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 9mm spacing. 65mm slats only. Pearl White Gloss.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "W",
         "gap_mm": 9,
@@ -1013,12 +1208,14 @@
     },
     {
       "sku": "XPL-2100-INS09-BS",
-      "name": "Xpress Plus Premium Insert 9mm 2100mm — Basalt Satin",
+      "name": "Xpress Plus Premium Insert 9mm 2100mm \u2014 Basalt Satin",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 9mm spacing. 65mm slats only. Basalt Satin.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "BS",
         "gap_mm": 9,
@@ -1028,12 +1225,14 @@
     },
     {
       "sku": "XPL-2100-INS09-D",
-      "name": "Xpress Plus Premium Insert 9mm 2100mm — Dune Satin",
+      "name": "Xpress Plus Premium Insert 9mm 2100mm \u2014 Dune Satin",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 9mm spacing. 65mm slats only. Dune Satin.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "D",
         "gap_mm": 9,
@@ -1043,12 +1242,14 @@
     },
     {
       "sku": "XPL-2100-INS09-M",
-      "name": "Xpress Plus Premium Insert 9mm 2100mm — Mill",
+      "name": "Xpress Plus Premium Insert 9mm 2100mm \u2014 Mill",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 9mm spacing. 65mm slats only. Mill.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "M",
         "gap_mm": 9,
@@ -1058,12 +1259,14 @@
     },
     {
       "sku": "XPL-2100-INS09-S",
-      "name": "Xpress Plus Premium Insert 9mm 2100mm — Palladium Silver Pearl",
+      "name": "Xpress Plus Premium Insert 9mm 2100mm \u2014 Palladium Silver Pearl",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 9mm spacing. 65mm slats only. Palladium Silver Pearl.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "S",
         "gap_mm": 9,
@@ -1073,12 +1276,14 @@
     },
     {
       "sku": "XPL-2100-INS20-B",
-      "name": "Xpress Plus Premium Insert 20mm 2100mm — Black Satin",
+      "name": "Xpress Plus Premium Insert 20mm 2100mm \u2014 Black Satin",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 20mm spacing. 65mm slats only. Black Satin.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "B",
         "gap_mm": 20,
@@ -1088,12 +1293,14 @@
     },
     {
       "sku": "XPL-2100-INS20-MN",
-      "name": "Xpress Plus Premium Insert 20mm 2100mm — Monument Matt",
+      "name": "Xpress Plus Premium Insert 20mm 2100mm \u2014 Monument Matt",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 20mm spacing. 65mm slats only. Monument Matt.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "MN",
         "gap_mm": 20,
@@ -1103,12 +1310,14 @@
     },
     {
       "sku": "XPL-2100-INS20-G",
-      "name": "Xpress Plus Premium Insert 20mm 2100mm — Woodland Grey Matt",
+      "name": "Xpress Plus Premium Insert 20mm 2100mm \u2014 Woodland Grey Matt",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 20mm spacing. 65mm slats only. Woodland Grey Matt.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "G",
         "gap_mm": 20,
@@ -1118,12 +1327,14 @@
     },
     {
       "sku": "XPL-2100-INS20-SM",
-      "name": "Xpress Plus Premium Insert 20mm 2100mm — Surfmist Matt",
+      "name": "Xpress Plus Premium Insert 20mm 2100mm \u2014 Surfmist Matt",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 20mm spacing. 65mm slats only. Surfmist Matt.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "SM",
         "gap_mm": 20,
@@ -1133,12 +1344,14 @@
     },
     {
       "sku": "XPL-2100-INS20-W",
-      "name": "Xpress Plus Premium Insert 20mm 2100mm — Pearl White Gloss",
+      "name": "Xpress Plus Premium Insert 20mm 2100mm \u2014 Pearl White Gloss",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 20mm spacing. 65mm slats only. Pearl White Gloss.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "W",
         "gap_mm": 20,
@@ -1148,12 +1361,14 @@
     },
     {
       "sku": "XPL-2100-INS20-BS",
-      "name": "Xpress Plus Premium Insert 20mm 2100mm — Basalt Satin",
+      "name": "Xpress Plus Premium Insert 20mm 2100mm \u2014 Basalt Satin",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 20mm spacing. 65mm slats only. Basalt Satin.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "BS",
         "gap_mm": 20,
@@ -1163,12 +1378,14 @@
     },
     {
       "sku": "XPL-2100-INS20-D",
-      "name": "Xpress Plus Premium Insert 20mm 2100mm — Dune Satin",
+      "name": "Xpress Plus Premium Insert 20mm 2100mm \u2014 Dune Satin",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 20mm spacing. 65mm slats only. Dune Satin.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "D",
         "gap_mm": 20,
@@ -1178,12 +1395,14 @@
     },
     {
       "sku": "XPL-2100-INS20-M",
-      "name": "Xpress Plus Premium Insert 20mm 2100mm — Mill",
+      "name": "Xpress Plus Premium Insert 20mm 2100mm \u2014 Mill",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 20mm spacing. 65mm slats only. Mill.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "M",
         "gap_mm": 20,
@@ -1193,12 +1412,14 @@
     },
     {
       "sku": "XPL-2100-INS20-S",
-      "name": "Xpress Plus Premium Insert 20mm 2100mm — Palladium Silver Pearl",
+      "name": "Xpress Plus Premium Insert 20mm 2100mm \u2014 Palladium Silver Pearl",
       "description": "2100mm Alloy 6063-T6 aluminium insert. Slides into XPL side frame for precision 20mm spacing. 65mm slats only. Palladium Silver Pearl.",
       "category": "insert",
       "unit": "length",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "S",
         "gap_mm": 20,
@@ -1213,7 +1434,9 @@
       "category": "accessory",
       "unit": "each",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "block_length_mm": 1000
       },
@@ -1221,12 +1444,14 @@
     },
     {
       "sku": "XPL-SCHEX-12PK-B",
-      "name": "Hinge Panel Brace Screws 12Gx40mm Black Satin — 12 Pack",
+      "name": "Hinge Panel Brace Screws 12Gx40mm Black Satin \u2014 12 Pack",
       "description": "12Gx40mm self-drilling hex screws. Fix through post and slat on hinging panel adjacent to XPL gate. 12 per pack. Black Satin.",
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "B",
         "screw_count": 12
@@ -1235,12 +1460,14 @@
     },
     {
       "sku": "XPL-SCHEX-12PK-MN",
-      "name": "Hinge Panel Brace Screws 12Gx40mm Monument Matt — 12 Pack",
+      "name": "Hinge Panel Brace Screws 12Gx40mm Monument Matt \u2014 12 Pack",
       "description": "12Gx40mm self-drilling hex screws. Fix through post and slat on hinging panel adjacent to XPL gate. 12 per pack. Monument Matt.",
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "MN",
         "screw_count": 12
@@ -1249,12 +1476,14 @@
     },
     {
       "sku": "XPL-SCHEX-12PK-G",
-      "name": "Hinge Panel Brace Screws 12Gx40mm Woodland Grey Matt — 12 Pack",
+      "name": "Hinge Panel Brace Screws 12Gx40mm Woodland Grey Matt \u2014 12 Pack",
       "description": "12Gx40mm self-drilling hex screws. Fix through post and slat on hinging panel adjacent to XPL gate. 12 per pack. Woodland Grey Matt.",
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "G",
         "screw_count": 12
@@ -1263,12 +1492,14 @@
     },
     {
       "sku": "XPL-SCHEX-12PK-SM",
-      "name": "Hinge Panel Brace Screws 12Gx40mm Surfmist Matt — 12 Pack",
+      "name": "Hinge Panel Brace Screws 12Gx40mm Surfmist Matt \u2014 12 Pack",
       "description": "12Gx40mm self-drilling hex screws. Fix through post and slat on hinging panel adjacent to XPL gate. 12 per pack. Surfmist Matt.",
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "SM",
         "screw_count": 12
@@ -1277,12 +1508,14 @@
     },
     {
       "sku": "XPL-SCHEX-12PK-W",
-      "name": "Hinge Panel Brace Screws 12Gx40mm Pearl White Gloss — 12 Pack",
+      "name": "Hinge Panel Brace Screws 12Gx40mm Pearl White Gloss \u2014 12 Pack",
       "description": "12Gx40mm self-drilling hex screws. Fix through post and slat on hinging panel adjacent to XPL gate. 12 per pack. Pearl White Gloss.",
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "W",
         "screw_count": 12
@@ -1291,12 +1524,14 @@
     },
     {
       "sku": "XPL-SCHEX-12PK-BS",
-      "name": "Hinge Panel Brace Screws 12Gx40mm Basalt Satin — 12 Pack",
+      "name": "Hinge Panel Brace Screws 12Gx40mm Basalt Satin \u2014 12 Pack",
       "description": "12Gx40mm self-drilling hex screws. Fix through post and slat on hinging panel adjacent to XPL gate. 12 per pack. Basalt Satin.",
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "BS",
         "screw_count": 12
@@ -1305,12 +1540,14 @@
     },
     {
       "sku": "XPL-SCHEX-12PK-D",
-      "name": "Hinge Panel Brace Screws 12Gx40mm Dune Satin — 12 Pack",
+      "name": "Hinge Panel Brace Screws 12Gx40mm Dune Satin \u2014 12 Pack",
       "description": "12Gx40mm self-drilling hex screws. Fix through post and slat on hinging panel adjacent to XPL gate. 12 per pack. Dune Satin.",
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "D",
         "screw_count": 12
@@ -1319,12 +1556,14 @@
     },
     {
       "sku": "XPL-SCHEX-12PK-M",
-      "name": "Hinge Panel Brace Screws 12Gx40mm Mill — 12 Pack",
+      "name": "Hinge Panel Brace Screws 12Gx40mm Mill \u2014 12 Pack",
       "description": "12Gx40mm self-drilling hex screws. Fix through post and slat on hinging panel adjacent to XPL gate. 12 per pack. Mill.",
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "M",
         "screw_count": 12
@@ -1333,12 +1572,14 @@
     },
     {
       "sku": "XPL-SCHEX-12PK-S",
-      "name": "Hinge Panel Brace Screws 12Gx40mm Palladium Silver Pearl — 12 Pack",
+      "name": "Hinge Panel Brace Screws 12Gx40mm Palladium Silver Pearl \u2014 12 Pack",
       "description": "12Gx40mm self-drilling hex screws. Fix through post and slat on hinging panel adjacent to XPL gate. 12 per pack. Palladium Silver Pearl.",
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "S",
         "screw_count": 12
@@ -1347,12 +1588,14 @@
     },
     {
       "sku": "XP-ARMCSR-B",
-      "name": "CSR Mounting Arm 192mm — Black Satin",
+      "name": "CSR Mounting Arm 192mm \u2014 Black Satin",
       "description": "192mm shorter arm designed for mounting CSR alongside XPL side frames with 200mm support arms. Wall-side plate rotated horizontally. Black Satin.",
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "B"
       },
@@ -1360,12 +1603,14 @@
     },
     {
       "sku": "XP-ARMCSR-MN",
-      "name": "CSR Mounting Arm 192mm — Monument Matt",
+      "name": "CSR Mounting Arm 192mm \u2014 Monument Matt",
       "description": "192mm shorter arm designed for mounting CSR alongside XPL side frames with 200mm support arms. Wall-side plate rotated horizontally. Monument Matt.",
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "MN"
       },
@@ -1373,12 +1618,14 @@
     },
     {
       "sku": "XP-ARMCSR-G",
-      "name": "CSR Mounting Arm 192mm — Woodland Grey Matt",
+      "name": "CSR Mounting Arm 192mm \u2014 Woodland Grey Matt",
       "description": "192mm shorter arm designed for mounting CSR alongside XPL side frames with 200mm support arms. Wall-side plate rotated horizontally. Woodland Grey Matt.",
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "G"
       },
@@ -1386,12 +1633,14 @@
     },
     {
       "sku": "XP-ARMCSR-SM",
-      "name": "CSR Mounting Arm 192mm — Surfmist Matt",
+      "name": "CSR Mounting Arm 192mm \u2014 Surfmist Matt",
       "description": "192mm shorter arm designed for mounting CSR alongside XPL side frames with 200mm support arms. Wall-side plate rotated horizontally. Surfmist Matt.",
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "SM"
       },
@@ -1399,12 +1648,14 @@
     },
     {
       "sku": "XP-ARMCSR-W",
-      "name": "CSR Mounting Arm 192mm — Pearl White Gloss",
+      "name": "CSR Mounting Arm 192mm \u2014 Pearl White Gloss",
       "description": "192mm shorter arm designed for mounting CSR alongside XPL side frames with 200mm support arms. Wall-side plate rotated horizontally. Pearl White Gloss.",
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "W"
       },
@@ -1412,12 +1663,14 @@
     },
     {
       "sku": "XP-ARMCSR-M",
-      "name": "CSR Mounting Arm 192mm — Mill",
+      "name": "CSR Mounting Arm 192mm \u2014 Mill",
       "description": "192mm shorter arm designed for mounting CSR alongside XPL side frames with 200mm support arms. Wall-side plate rotated horizontally. Mill.",
       "category": "bracket",
       "unit": "each",
       "default_price": null,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "colour": "M"
       },
@@ -1425,12 +1678,14 @@
     },
     {
       "sku": "XPL-6000-2W-P",
-      "name": "XPL Inline Post 6000mm — Primrose",
+      "name": "XPL Inline Post 6000mm \u2014 Primrose",
       "description": "50x50mm two-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 0,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "2W",
         "colour": "P"
@@ -1439,12 +1694,14 @@
     },
     {
       "sku": "XPL-6000-2W-PB",
-      "name": "XPL Inline Post 6000mm — Paperbark",
+      "name": "XPL Inline Post 6000mm \u2014 Paperbark",
       "description": "50x50mm two-way friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 0,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "2W",
         "colour": "PB"
@@ -1453,12 +1710,14 @@
     },
     {
       "sku": "XPL-6000-90-P",
-      "name": "XPL Corner Post 6000mm — Primrose",
-      "description": "50x50mm 90° corner friction-fit post, 6000mm stock",
+      "name": "XPL Corner Post 6000mm \u2014 Primrose",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 0,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "90",
         "colour": "P"
@@ -1467,12 +1726,14 @@
     },
     {
       "sku": "XPL-6000-90-PB",
-      "name": "XPL Corner Post 6000mm — Paperbark",
-      "description": "50x50mm 90° corner friction-fit post, 6000mm stock",
+      "name": "XPL Corner Post 6000mm \u2014 Paperbark",
+      "description": "50x50mm 90\u00b0 corner friction-fit post, 6000mm stock",
       "category": "mounting",
       "unit": "length",
       "default_price": 0,
-      "system_types": ["XPL"],
+      "system_types": [
+        "XPL"
+      ],
       "metadata": {
         "post_way": "90",
         "colour": "PB"
@@ -1543,7 +1804,10 @@
       "unit": null,
       "required": true,
       "default_value_json": "standard",
-      "options_json": ["standard", "alumawood"],
+      "options_json": [
+        "standard",
+        "alumawood"
+      ],
       "scope": "job",
       "sort_order": 5,
       "active": true
@@ -1570,7 +1834,9 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 65,
-      "options_json": [65],
+      "options_json": [
+        65
+      ],
       "scope": "job",
       "sort_order": 20,
       "active": true
@@ -1583,7 +1849,11 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 9,
-      "options_json": [0, 9, 20],
+      "options_json": [
+        0,
+        9,
+        20
+      ],
       "scope": "job",
       "sort_order": 30,
       "active": true,
@@ -1597,7 +1867,11 @@
       "unit": null,
       "required": true,
       "default_value_json": "in_ground",
-      "options_json": ["in_ground", "base_plate", "core_drill"],
+      "options_json": [
+        "in_ground",
+        "base_plate",
+        "core_drill"
+      ],
       "scope": "run",
       "sort_order": 40,
       "active": true
@@ -1636,11 +1910,15 @@
       "unit": null,
       "required": true,
       "default_value_json": "xpl",
-      "options_json": ["xpl", "standard_50", "standard_65"],
+      "options_json": [
+        "xpl",
+        "standard_50",
+        "standard_65"
+      ],
       "scope": "run",
       "sort_order": 55,
       "active": true,
-      "notes": "xpl=patented XPL post system (1W/2W/90°); standard_50=50mm FP; standard_65=65mm HD"
+      "notes": "xpl=patented XPL post system (1W/2W/90\u00b0); standard_50=50mm FP; standard_65=65mm HD"
     },
     {
       "product_system_type": "XPL",
@@ -1650,7 +1928,11 @@
       "unit": null,
       "required": true,
       "default_value_json": "in_ground",
-      "options_json": ["in_ground", "base_plate", "core_drill"],
+      "options_json": [
+        "in_ground",
+        "base_plate",
+        "core_drill"
+      ],
       "scope": "run",
       "sort_order": 65,
       "active": true,
@@ -1696,7 +1978,23 @@
       "scope": "run",
       "sort_order": 80,
       "active": true,
-      "notes": "XPL 90° corner posts"
+      "notes": "XPL 90\u00b0 corner posts"
+    },
+    {
+      "product_system_type": "XPL",
+      "name": "post_size",
+      "label": "Post Size",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": false,
+      "default_value_json": "50",
+      "options_json": [
+        "50",
+        "65"
+      ],
+      "scope": "run",
+      "sort_order": 45,
+      "active": true
     }
   ],
   "product_validations": [
@@ -1723,12 +2021,36 @@
       "rule_set_name": "XPL Fence Rules",
       "version_label": "v1.0.0",
       "stage": "derive",
+      "name": "Post size from post_system",
+      "expression": "post_system == 'standard_50' ? '50' : (post_system == 'standard_65' ? '65' : 'xpl')",
+      "output_key": "post_size",
+      "priority": 5,
+      "active": false,
+      "notes": "Derive post_size string from post_system variable"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "Standard post length based on target height",
+      "expression": "(post_system_is_standard_50 == 1 or post_system_is_standard_65 == 1) ? (target_height_mm <= 2100 ? 2400 : 6000) : 0",
+      "output_key": "post_length_mm",
+      "priority": 6,
+      "active": true,
+      "notes": "2400mm posts for height <= 2100mm, 6000mm posts for taller"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
       "name": "insertion_depth_mm",
       "expression": "24",
       "output_key": "insertion_depth_mm",
       "priority": 10,
       "active": true,
-      "notes": "Slat insertion depth into 1W/2W posts is 24mm. For 90° corner post it is 15mm — handled per span."
+      "notes": "Slat insertion depth into 1W/2W posts is 24mm. For 90\u00b0 corner post it is 15mm \u2014 handled per span."
     },
     {
       "product_system_type": "XPL",
@@ -1794,7 +2116,7 @@
       "version_label": "v1.0.0",
       "stage": "stock",
       "name": "slat_stocks",
-      "expression": "ceil(num_slats / slat_cuts_per_stock)",
+      "expression": "ceil(num_slats * num_panels / slat_cuts_per_stock)",
       "output_key": "slat_stocks",
       "priority": 20,
       "active": true
@@ -1805,7 +2127,7 @@
       "version_label": "v1.0.0",
       "stage": "accessory",
       "name": "spacer_packs",
-      "expression": "slat_gap_mm > 0 ? ceil((num_slats - 1) / 50) : 0",
+      "expression": "slat_gap_mm > 0 ? ceil((num_slats - 1) * num_panels / 50) : 0",
       "output_key": "spacer_packs",
       "priority": 10,
       "active": true,
@@ -1820,8 +2142,8 @@
       "expression": "1",
       "output_key": "slatclip_packs",
       "priority": 20,
-      "active": true,
-      "notes": "1 pack XPL-SLATCLIP-10PK per panel — locks the top slat only"
+      "active": false,
+      "notes": "1 pack XPL-SLATCLIP-10PK per panel \u2014 locks the top slat only"
     },
     {
       "product_system_type": "XPL",
@@ -1887,7 +2209,7 @@
       "expression": "slatclip_packs",
       "output_key": "qty_slatclip",
       "priority": 60,
-      "active": true
+      "active": false
     },
     {
       "product_system_type": "XPL",
@@ -1895,7 +2217,7 @@
       "version_label": "v1.0.0",
       "stage": "derive",
       "name": "num_posts",
-      "expression": "xpl_end_post_count + xpl_inline_post_count + xpl_corner_post_count",
+      "expression": "(post_system_is_standard_50 == 0 and post_system_is_standard_65 == 0) ? (xpl_end_post_count + xpl_inline_post_count + xpl_corner_post_count) : num_posts",
       "output_key": "num_posts",
       "priority": 90,
       "active": true,
@@ -1907,7 +2229,7 @@
       "version_label": "v1.0.0",
       "stage": "derive",
       "name": "std_post_count",
-      "expression": "post_system != 'xpl' ? product_post_boundary_count : 0",
+      "expression": "(post_system_is_standard_50 == 1 or post_system_is_standard_65 == 1) ? num_posts : 0",
       "output_key": "std_post_count",
       "priority": 91,
       "active": true,
@@ -1919,11 +2241,11 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_xpl_end_post",
-      "expression": "post_system == 'xpl' ? xpl_end_post_count : 0",
+      "expression": "post_system_is_standard_50 == 0 and post_system_is_standard_65 == 0 ? xpl_end_post_count : 0",
       "output_key": "qty_xpl_end_post",
       "priority": 70,
       "active": true,
-      "notes": "XPL 1-way end post; priced TBD — see XPL catalogue"
+      "notes": "XPL 1-way end post; priced TBD \u2014 see XPL catalogue"
     },
     {
       "product_system_type": "XPL",
@@ -1931,7 +2253,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_xpl_inline_post",
-      "expression": "post_system == 'xpl' ? xpl_inline_post_count : 0",
+      "expression": "post_system_is_standard_50 == 0 and post_system_is_standard_65 == 0 ? xpl_inline_post_count : 0",
       "output_key": "qty_xpl_inline_post",
       "priority": 75,
       "active": true,
@@ -1943,11 +2265,11 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_xpl_corner_post",
-      "expression": "post_system == 'xpl' ? xpl_corner_post_count : 0",
+      "expression": "post_system_is_standard_50 == 0 and post_system_is_standard_65 == 0 ? xpl_corner_post_count : 0",
       "output_key": "qty_xpl_corner_post",
       "priority": 76,
       "active": true,
-      "notes": "XPL 90° corner post; priced TBD"
+      "notes": "XPL 90\u00b0 corner post; priced TBD"
     },
     {
       "product_system_type": "XPL",
@@ -1955,7 +2277,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_50_2400",
-      "expression": "post_system == 'standard_50' and target_height_mm <= 2100 ? std_post_count : 0",
+      "expression": "post_system_is_standard_50 == 1 and target_height_mm <= 2100 ? std_post_count : 0",
       "output_key": "qty_post_50_2400",
       "priority": 80,
       "active": true,
@@ -1967,7 +2289,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_50_6000",
-      "expression": "post_system == 'standard_50' and target_height_mm > 2100 ? std_post_count : 0",
+      "expression": "post_system_is_standard_50 == 1 and target_height_mm > 2100 ? std_post_count : 0",
       "output_key": "qty_post_50_6000",
       "priority": 81,
       "active": true,
@@ -1979,7 +2301,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_65_2400",
-      "expression": "post_system == 'standard_65' and target_height_mm <= 2100 ? std_post_count : 0",
+      "expression": "post_system_is_standard_65 == 1 and target_height_mm <= 2100 ? std_post_count : 0",
       "output_key": "qty_post_65_2400",
       "priority": 82,
       "active": true,
@@ -1991,7 +2313,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_post_65_6000",
-      "expression": "post_system == 'standard_65' and target_height_mm > 2100 ? std_post_count : 0",
+      "expression": "post_system_is_standard_65 == 1 and target_height_mm > 2100 ? std_post_count : 0",
       "output_key": "qty_post_65_6000",
       "priority": 83,
       "active": true,
@@ -2003,7 +2325,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_top_plate_50",
-      "expression": "post_system == 'standard_50' and target_height_mm > 2100 ? std_post_count : 0",
+      "expression": "post_system_is_standard_50 == 1 ? max(0, std_post_count - 1) : 0",
       "output_key": "qty_top_plate_50",
       "priority": 84,
       "active": true,
@@ -2015,7 +2337,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_base_plate_50",
-      "expression": "post_system == 'standard_50' and mounting_method == 'base_plate' ? std_post_count : 0",
+      "expression": "post_system_is_standard_50 == 1 and mounting_type_is_base_plate == 1 ? std_post_count : 0",
       "output_key": "qty_base_plate_50",
       "priority": 85,
       "active": true,
@@ -2027,7 +2349,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_domical_cover_50",
-      "expression": "post_system == 'standard_50' and mounting_method == 'base_plate' ? std_post_count : 0",
+      "expression": "post_system_is_standard_50 == 1 and mounting_type_is_base_plate == 1 ? std_post_count : 0",
       "output_key": "qty_domical_cover_50",
       "priority": 86,
       "active": true,
@@ -2039,7 +2361,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_dress_ring_50",
-      "expression": "post_system == 'standard_50' and mounting_method == 'core_drill' ? std_post_count : 0",
+      "expression": "post_system_is_standard_50 == 1 and mounting_type_is_core_drill == 1 ? std_post_count : 0",
       "output_key": "qty_dress_ring_50",
       "priority": 87,
       "active": true,
@@ -2051,7 +2373,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_top_plate_65",
-      "expression": "post_system == 'standard_65' and target_height_mm > 2100 ? std_post_count : 0",
+      "expression": "post_system_is_standard_65 == 1 ? max(0, std_post_count - 1) : 0",
       "output_key": "qty_top_plate_65",
       "priority": 88,
       "active": true,
@@ -2063,7 +2385,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_base_plate_65",
-      "expression": "post_system == 'standard_65' and mounting_method == 'base_plate' ? std_post_count : 0",
+      "expression": "post_system_is_standard_65 == 1 and mounting_type_is_base_plate == 1 ? std_post_count : 0",
       "output_key": "qty_base_plate_65",
       "priority": 89,
       "active": true,
@@ -2075,7 +2397,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_domical_cover_65",
-      "expression": "post_system == 'standard_65' and mounting_method == 'base_plate' ? std_post_count : 0",
+      "expression": "post_system_is_standard_65 == 1 and mounting_type_is_base_plate == 1 ? std_post_count : 0",
       "output_key": "qty_domical_cover_65",
       "priority": 90,
       "active": true,
@@ -2087,11 +2409,195 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_dress_ring_65",
-      "expression": "post_system == 'standard_65' and mounting_method == 'core_drill' ? std_post_count : 0",
+      "expression": "post_system_is_standard_65 == 1 and mounting_type_is_core_drill == 1 ? std_post_count : 0",
       "output_key": "qty_dress_ring_65",
       "priority": 91,
       "active": true,
       "notes": "Dress ring for HD core-drill install"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_csr",
+      "expression": "panel_width_mm < 2000 ? 0 : panel_width_mm < 4000 ? 1 : panel_width_mm < 6000 ? 2 : 3",
+      "output_key": "num_csr",
+      "priority": 50,
+      "active": true,
+      "notes": "CSR per panel"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "csr_cut_mm",
+      "expression": "target_height_mm - 6",
+      "output_key": "csr_cut_mm",
+      "priority": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "csr_stocks",
+      "expression": "num_csr > 0 ? stocks(num_csr * num_panels, 5800, csr_cut_mm) : 0",
+      "output_key": "csr_stocks",
+      "priority": 55,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "csr_cap_qty",
+      "expression": "num_csr * num_panels",
+      "output_key": "csr_cap_qty",
+      "priority": 20,
+      "active": true,
+      "notes": "1 CSR cap per CSR per panel"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "csr_plate_qty",
+      "expression": "num_csr * num_panels * 2",
+      "output_key": "csr_plate_qty",
+      "priority": 25,
+      "active": true,
+      "notes": "2 XP-BTP per CSR per panel"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_csr",
+      "expression": "csr_stocks",
+      "output_key": "qty_csr",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_csr_cap",
+      "expression": "csr_cap_qty",
+      "output_key": "qty_csr_cap",
+      "priority": 45,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "xpl_sf_stocks",
+      "expression": "stocks(2 * num_panels, 6000, actual_height_mm)",
+      "output_key": "xpl_sf_stocks",
+      "priority": 35,
+      "active": true,
+      "notes": "XPL-6000-SF-B stocks"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "xpl_fsec_stocks",
+      "expression": "stocks(2 * num_panels, 6000, actual_height_mm)",
+      "output_key": "xpl_fsec_stocks",
+      "priority": 36,
+      "active": true,
+      "notes": "XPL-6000-F-B stocks"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "xpl_ep_qty",
+      "expression": "2 * num_panels",
+      "output_key": "xpl_ep_qty",
+      "priority": 30,
+      "active": true,
+      "notes": "XPL-EP-B-2PK: 2 per panel"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "xpl_ins09_qty",
+      "expression": "slat_gap_mm == 9 ? 2 * num_panels : 0",
+      "output_key": "xpl_ins09_qty",
+      "priority": 31,
+      "active": true,
+      "notes": "XPL-2100-INS09-B: 2 per panel for 9mm gap"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_screw_packs",
+      "expression": "num_csr > 0 ? max(1, ceil(num_csr * 4 * num_panels / 50)) : 0",
+      "output_key": "qty_screw_packs",
+      "priority": 80,
+      "active": true,
+      "notes": "QS-SCREWS-50PK: 4 screws per CSR per panel"
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_xpl_sf",
+      "expression": "xpl_sf_stocks",
+      "output_key": "qty_xpl_sf",
+      "priority": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_xpl_fsec",
+      "expression": "xpl_fsec_stocks",
+      "output_key": "qty_xpl_fsec",
+      "priority": 51,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_xpl_ep",
+      "expression": "xpl_ep_qty",
+      "output_key": "qty_xpl_ep",
+      "priority": 52,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_xpl_ins09",
+      "expression": "xpl_ins09_qty",
+      "output_key": "qty_xpl_ins09",
+      "priority": 53,
+      "active": true
     }
   ],
   "product_component_selectors": [
@@ -2146,7 +2652,7 @@
       },
       "sku_pattern": "XPL-SB-50PK-09MM",
       "priority": 100,
-      "active": true,
+      "active": false,
       "qty_key": "qty_spacer_9mm"
     },
     {
@@ -2184,7 +2690,7 @@
       },
       "sku_pattern": "XPL-6000-1W-{colour}",
       "priority": 100,
-      "notes": "End/boundary post — 1-way",
+      "notes": "End/boundary post \u2014 1-way",
       "active": true,
       "qty_key": "qty_xpl_end_post"
     },
@@ -2198,7 +2704,7 @@
       },
       "sku_pattern": "XPL-6000-2W-{colour}",
       "priority": 100,
-      "notes": "Inline post between two spans — 2-way",
+      "notes": "Inline post between two spans \u2014 2-way",
       "active": true,
       "qty_key": "qty_xpl_inline_post"
     },
@@ -2212,7 +2718,7 @@
       },
       "sku_pattern": "XPL-6000-90-{colour}",
       "priority": 100,
-      "notes": "90° corner post",
+      "notes": "90\u00b0 corner post",
       "active": true,
       "qty_key": "qty_xpl_corner_post"
     },
@@ -2227,7 +2733,7 @@
       },
       "sku_pattern": "XP-2400-FP-{colour}",
       "priority": 100,
-      "notes": "50mm FP post 2400mm — shared component in qshs.json",
+      "notes": "50mm FP post 2400mm \u2014 shared component in qshs.json",
       "active": true,
       "qty_key": "qty_post_50_2400"
     },
@@ -2242,7 +2748,7 @@
       },
       "sku_pattern": "XP-6000-FP-{colour}",
       "priority": 100,
-      "notes": "50mm FP post 6000mm — shared component in qshs.json",
+      "notes": "50mm FP post 6000mm \u2014 shared component in qshs.json",
       "active": true,
       "qty_key": "qty_post_50_6000"
     },
@@ -2257,7 +2763,7 @@
       },
       "sku_pattern": "XP-2400-65HD-{colour}",
       "priority": 100,
-      "notes": "65mm HD post 2400mm — shared component in qshs.json",
+      "notes": "65mm HD post 2400mm \u2014 shared component in qshs.json",
       "active": true,
       "qty_key": "qty_post_65_2400"
     },
@@ -2272,7 +2778,7 @@
       },
       "sku_pattern": "XP-6000-65HD-{colour}",
       "priority": 100,
-      "notes": "65mm HD post 6000mm — shared component in qshs.json",
+      "notes": "65mm HD post 6000mm \u2014 shared component in qshs.json",
       "active": true,
       "qty_key": "qty_post_65_6000"
     },
@@ -2286,7 +2792,7 @@
       },
       "sku_pattern": "XP-TP-{colour}",
       "priority": 100,
-      "notes": "50mm post top plate — shared in qshs.json",
+      "notes": "50mm post top plate \u2014 shared in qshs.json",
       "active": true,
       "qty_key": "qty_top_plate_50"
     },
@@ -2300,7 +2806,7 @@
       },
       "sku_pattern": "XP-BP-SET-{colour}",
       "priority": 100,
-      "notes": "50mm post base plate set — shared in qshs.json",
+      "notes": "50mm post base plate set \u2014 shared in qshs.json",
       "active": true,
       "qty_key": "qty_base_plate_50"
     },
@@ -2314,7 +2820,7 @@
       },
       "sku_pattern": "XP-DC-2P-{colour}",
       "priority": 100,
-      "notes": "50mm post domical cover — shared in qshs.json",
+      "notes": "50mm post domical cover \u2014 shared in qshs.json",
       "active": true,
       "qty_key": "qty_domical_cover_50"
     },
@@ -2328,7 +2834,7 @@
       },
       "sku_pattern": "XP-DR-{colour}",
       "priority": 100,
-      "notes": "50mm post dress ring — shared in qshs.json",
+      "notes": "50mm post dress ring \u2014 shared in qshs.json",
       "active": true,
       "qty_key": "qty_dress_ring_50"
     },
@@ -2342,7 +2848,7 @@
       },
       "sku_pattern": "XP-65TP-{colour}",
       "priority": 100,
-      "notes": "65mm HD post top plate — shared in qshs.json",
+      "notes": "65mm HD post top plate \u2014 shared in qshs.json",
       "active": true,
       "qty_key": "qty_top_plate_65"
     },
@@ -2356,7 +2862,7 @@
       },
       "sku_pattern": "XP-65BP-SET-{colour}",
       "priority": 100,
-      "notes": "65mm HD post base plate set — shared in qshs.json",
+      "notes": "65mm HD post base plate set \u2014 shared in qshs.json",
       "active": true,
       "qty_key": "qty_base_plate_65"
     },
@@ -2370,7 +2876,7 @@
       },
       "sku_pattern": "XP-65DC-2P-{colour}",
       "priority": 100,
-      "notes": "65mm HD post domical cover — shared in qshs.json",
+      "notes": "65mm HD post domical cover \u2014 shared in qshs.json",
       "active": true,
       "qty_key": "qty_domical_cover_65"
     },
@@ -2384,7 +2890,7 @@
       },
       "sku_pattern": "XP-65DR-{colour}",
       "priority": 100,
-      "notes": "65mm HD post dress ring — shared in qshs.json",
+      "notes": "65mm HD post dress ring \u2014 shared in qshs.json",
       "active": true,
       "qty_key": "qty_dress_ring_65"
     },
@@ -2440,7 +2946,7 @@
       },
       "sku_pattern": "AW-5800-FP-KWI",
       "priority": 10,
-      "notes": "AW post override for KWI — 50_2400",
+      "notes": "AW post override for KWI \u2014 50_2400",
       "qty_key": "qty_post_50_2400",
       "active": true
     },
@@ -2454,7 +2960,7 @@
       },
       "sku_pattern": "AW-5800-FP-WRC",
       "priority": 10,
-      "notes": "AW post override for WRC — 50_2400",
+      "notes": "AW post override for WRC \u2014 50_2400",
       "qty_key": "qty_post_50_2400",
       "active": true
     },
@@ -2468,7 +2974,7 @@
       },
       "sku_pattern": "XP-2400-FP-MN",
       "priority": 10,
-      "notes": "AW post override for IG — 50_2400",
+      "notes": "AW post override for IG \u2014 50_2400",
       "qty_key": "qty_post_50_2400",
       "active": true
     },
@@ -2482,7 +2988,7 @@
       },
       "sku_pattern": "AW-5800-FP-KWI",
       "priority": 10,
-      "notes": "AW post override for KWI — 50_6000",
+      "notes": "AW post override for KWI \u2014 50_6000",
       "qty_key": "qty_post_50_6000",
       "active": true
     },
@@ -2496,7 +3002,7 @@
       },
       "sku_pattern": "AW-5800-FP-WRC",
       "priority": 10,
-      "notes": "AW post override for WRC — 50_6000",
+      "notes": "AW post override for WRC \u2014 50_6000",
       "qty_key": "qty_post_50_6000",
       "active": true
     },
@@ -2510,7 +3016,7 @@
       },
       "sku_pattern": "XP-6000-FP-MN",
       "priority": 10,
-      "notes": "AW post override for IG — 50_6000",
+      "notes": "AW post override for IG \u2014 50_6000",
       "qty_key": "qty_post_50_6000",
       "active": true
     },
@@ -2524,7 +3030,7 @@
       },
       "sku_pattern": "AW-5800-65HD-KWI",
       "priority": 10,
-      "notes": "AW post override for KWI — 65_2400",
+      "notes": "AW post override for KWI \u2014 65_2400",
       "qty_key": "qty_post_65_2400",
       "active": true
     },
@@ -2538,7 +3044,7 @@
       },
       "sku_pattern": "AW-5800-65HD-WRC",
       "priority": 10,
-      "notes": "AW post override for WRC — 65_2400",
+      "notes": "AW post override for WRC \u2014 65_2400",
       "qty_key": "qty_post_65_2400",
       "active": true
     },
@@ -2552,7 +3058,7 @@
       },
       "sku_pattern": "XP-2400-65HD-MN",
       "priority": 10,
-      "notes": "AW post override for IG — 65_2400",
+      "notes": "AW post override for IG \u2014 65_2400",
       "qty_key": "qty_post_65_2400",
       "active": true
     },
@@ -2566,7 +3072,7 @@
       },
       "sku_pattern": "AW-5800-65HD-KWI",
       "priority": 10,
-      "notes": "AW post override for KWI — 65_6000",
+      "notes": "AW post override for KWI \u2014 65_6000",
       "qty_key": "qty_post_65_6000",
       "active": true
     },
@@ -2580,7 +3086,7 @@
       },
       "sku_pattern": "AW-5800-65HD-WRC",
       "priority": 10,
-      "notes": "AW post override for WRC — 65_6000",
+      "notes": "AW post override for WRC \u2014 65_6000",
       "qty_key": "qty_post_65_6000",
       "active": true
     },
@@ -2594,7 +3100,7 @@
       },
       "sku_pattern": "XP-6000-65HD-MN",
       "priority": 10,
-      "notes": "AW post override for IG — 65_6000",
+      "notes": "AW post override for IG \u2014 65_6000",
       "qty_key": "qty_post_65_6000",
       "active": true
     },
@@ -2608,7 +3114,7 @@
       },
       "sku_pattern": "XP-TP-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for KWI → XP-TP-MN",
+      "notes": "AW post_accessory override for KWI \u2192 XP-TP-MN",
       "qty_key": "qty_top_plate_50",
       "active": true
     },
@@ -2622,7 +3128,7 @@
       },
       "sku_pattern": "XP-TP-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for WRC → XP-TP-MN",
+      "notes": "AW post_accessory override for WRC \u2192 XP-TP-MN",
       "qty_key": "qty_top_plate_50",
       "active": true
     },
@@ -2636,7 +3142,7 @@
       },
       "sku_pattern": "XP-TP-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for IG → XP-TP-MN",
+      "notes": "AW post_accessory override for IG \u2192 XP-TP-MN",
       "qty_key": "qty_top_plate_50",
       "active": true
     },
@@ -2650,7 +3156,7 @@
       },
       "sku_pattern": "XP-BP-SET-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for KWI → XP-BP-SET-MN",
+      "notes": "AW post_accessory override for KWI \u2192 XP-BP-SET-MN",
       "qty_key": "qty_base_plate_50",
       "active": true
     },
@@ -2664,7 +3170,7 @@
       },
       "sku_pattern": "XP-BP-SET-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for WRC → XP-BP-SET-MN",
+      "notes": "AW post_accessory override for WRC \u2192 XP-BP-SET-MN",
       "qty_key": "qty_base_plate_50",
       "active": true
     },
@@ -2678,7 +3184,7 @@
       },
       "sku_pattern": "XP-BP-SET-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for IG → XP-BP-SET-MN",
+      "notes": "AW post_accessory override for IG \u2192 XP-BP-SET-MN",
       "qty_key": "qty_base_plate_50",
       "active": true
     },
@@ -2692,7 +3198,7 @@
       },
       "sku_pattern": "XP-DC-2P-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for KWI → XP-DC-2P-MN",
+      "notes": "AW post_accessory override for KWI \u2192 XP-DC-2P-MN",
       "qty_key": "qty_domical_cover_50",
       "active": true
     },
@@ -2706,7 +3212,7 @@
       },
       "sku_pattern": "XP-DC-2P-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for WRC → XP-DC-2P-MN",
+      "notes": "AW post_accessory override for WRC \u2192 XP-DC-2P-MN",
       "qty_key": "qty_domical_cover_50",
       "active": true
     },
@@ -2720,7 +3226,7 @@
       },
       "sku_pattern": "XP-DC-2P-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for IG → XP-DC-2P-MN",
+      "notes": "AW post_accessory override for IG \u2192 XP-DC-2P-MN",
       "qty_key": "qty_domical_cover_50",
       "active": true
     },
@@ -2734,7 +3240,7 @@
       },
       "sku_pattern": "XP-DR-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for KWI → XP-DR-MN",
+      "notes": "AW post_accessory override for KWI \u2192 XP-DR-MN",
       "qty_key": "qty_dress_ring_50",
       "active": true
     },
@@ -2748,7 +3254,7 @@
       },
       "sku_pattern": "XP-DR-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for WRC → XP-DR-MN",
+      "notes": "AW post_accessory override for WRC \u2192 XP-DR-MN",
       "qty_key": "qty_dress_ring_50",
       "active": true
     },
@@ -2762,7 +3268,7 @@
       },
       "sku_pattern": "XP-DR-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for IG → XP-DR-MN",
+      "notes": "AW post_accessory override for IG \u2192 XP-DR-MN",
       "qty_key": "qty_dress_ring_50",
       "active": true
     },
@@ -2776,7 +3282,7 @@
       },
       "sku_pattern": "XP-65TP-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for KWI → XP-65TP-MN",
+      "notes": "AW post_accessory override for KWI \u2192 XP-65TP-MN",
       "qty_key": "qty_top_plate_65",
       "active": true
     },
@@ -2790,7 +3296,7 @@
       },
       "sku_pattern": "XP-65TP-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for WRC → XP-65TP-MN",
+      "notes": "AW post_accessory override for WRC \u2192 XP-65TP-MN",
       "qty_key": "qty_top_plate_65",
       "active": true
     },
@@ -2804,7 +3310,7 @@
       },
       "sku_pattern": "XP-65TP-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for IG → XP-65TP-MN",
+      "notes": "AW post_accessory override for IG \u2192 XP-65TP-MN",
       "qty_key": "qty_top_plate_65",
       "active": true
     },
@@ -2818,7 +3324,7 @@
       },
       "sku_pattern": "XP-65BP-SET-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for KWI → XP-65BP-SET-MN",
+      "notes": "AW post_accessory override for KWI \u2192 XP-65BP-SET-MN",
       "qty_key": "qty_base_plate_65",
       "active": true
     },
@@ -2832,7 +3338,7 @@
       },
       "sku_pattern": "XP-65BP-SET-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for WRC → XP-65BP-SET-MN",
+      "notes": "AW post_accessory override for WRC \u2192 XP-65BP-SET-MN",
       "qty_key": "qty_base_plate_65",
       "active": true
     },
@@ -2846,7 +3352,7 @@
       },
       "sku_pattern": "XP-65BP-SET-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for IG → XP-65BP-SET-MN",
+      "notes": "AW post_accessory override for IG \u2192 XP-65BP-SET-MN",
       "qty_key": "qty_base_plate_65",
       "active": true
     },
@@ -2860,7 +3366,7 @@
       },
       "sku_pattern": "XP-65DC-2P-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for KWI → XP-65DC-2P-MN",
+      "notes": "AW post_accessory override for KWI \u2192 XP-65DC-2P-MN",
       "qty_key": "qty_domical_cover_65",
       "active": true
     },
@@ -2874,7 +3380,7 @@
       },
       "sku_pattern": "XP-65DC-2P-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for WRC → XP-65DC-2P-MN",
+      "notes": "AW post_accessory override for WRC \u2192 XP-65DC-2P-MN",
       "qty_key": "qty_domical_cover_65",
       "active": true
     },
@@ -2888,7 +3394,7 @@
       },
       "sku_pattern": "XP-65DC-2P-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for IG → XP-65DC-2P-MN",
+      "notes": "AW post_accessory override for IG \u2192 XP-65DC-2P-MN",
       "qty_key": "qty_domical_cover_65",
       "active": true
     },
@@ -2902,7 +3408,7 @@
       },
       "sku_pattern": "XP-65DR-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for KWI → XP-65DR-MN",
+      "notes": "AW post_accessory override for KWI \u2192 XP-65DR-MN",
       "qty_key": "qty_dress_ring_65",
       "active": true
     },
@@ -2916,7 +3422,7 @@
       },
       "sku_pattern": "XP-65DR-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for WRC → XP-65DR-MN",
+      "notes": "AW post_accessory override for WRC \u2192 XP-65DR-MN",
       "qty_key": "qty_dress_ring_65",
       "active": true
     },
@@ -2930,9 +3436,127 @@
       },
       "sku_pattern": "XP-65DR-MN",
       "priority": 10,
-      "notes": "AW post_accessory override for IG → XP-65DR-MN",
+      "notes": "AW post_accessory override for IG \u2192 XP-65DR-MN",
       "qty_key": "qty_dress_ring_65",
       "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_csr",
+      "component_category": "centre_support_rail",
+      "selector_type": "exact",
+      "match_json": {},
+      "sku_pattern": "XP-5800-CSR-{colour}",
+      "priority": 100,
+      "active": true,
+      "qty_key": "qty_csr"
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_csr_kwi",
+      "component_category": "centre_support_rail",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "KWI"
+      },
+      "sku_pattern": "AW-5800-CSR-KWI",
+      "priority": 10,
+      "active": true,
+      "qty_key": "qty_csr"
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_csr_wrc",
+      "component_category": "centre_support_rail",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "WRC"
+      },
+      "sku_pattern": "AW-5800-CSR-WRC",
+      "priority": 10,
+      "active": true,
+      "qty_key": "qty_csr"
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_csr_ig",
+      "component_category": "centre_support_rail",
+      "selector_type": "exact",
+      "match_json": {
+        "colour_code": "IG"
+      },
+      "sku_pattern": "XP-5800-CSR-MN",
+      "priority": 10,
+      "active": true,
+      "qty_key": "qty_csr"
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_csr_cap",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "match_json": {},
+      "sku_pattern": "XP-CSRC-{colour}",
+      "priority": 100,
+      "active": true,
+      "qty_key": "qty_csr_cap"
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_side_frame",
+      "component_category": "side_frame",
+      "selector_type": "exact",
+      "match_json": {},
+      "sku_pattern": "XPL-6000-SF-{colour}",
+      "priority": 100,
+      "active": true,
+      "qty_key": "qty_xpl_sf"
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_f_channel",
+      "component_category": "f_channel",
+      "selector_type": "exact",
+      "match_json": {},
+      "sku_pattern": "XPL-6000-F-{colour}",
+      "priority": 100,
+      "active": true,
+      "qty_key": "qty_xpl_fsec"
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_ep",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "match_json": {},
+      "sku_pattern": "XPL-EP-B-2PK",
+      "priority": 100,
+      "active": true,
+      "qty_key": "qty_xpl_ep"
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_ins09",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_gap_mm": 9
+      },
+      "sku_pattern": "XPL-2100-INS09-B",
+      "priority": 10,
+      "active": true,
+      "qty_key": "qty_xpl_ins09"
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_screws",
+      "component_category": "fixing",
+      "selector_type": "exact",
+      "match_json": {},
+      "sku_pattern": "QS-SCREWS-50PK",
+      "priority": 100,
+      "active": true,
+      "qty_key": "qty_screw_packs"
     }
   ],
   "product_warnings": [
@@ -2941,7 +3565,7 @@
       "warning_key": "xpl_no_sf_cfc_reminder",
       "severity": "info",
       "condition_json": {},
-      "message": "XPL system does not use side frames or CFC covers — slats insert directly into friction-fit posts.",
+      "message": "XPL system does not use side frames or CFC covers \u2014 slats insert directly into friction-fit posts.",
       "active": true
     },
     {
@@ -2959,7 +3583,10 @@
       "condition_json": {
         "post_size": "65",
         "colour_code": {
-          "in": ["P", "PB"]
+          "in": [
+            "P",
+            "PB"
+          ]
         }
       },
       "message": "65mm HD posts are not available in Primrose (P) or Paperbark (PB). Please select a different colour for HD posts, or switch to 50mm FP posts.",
@@ -4875,7 +5502,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -4886,7 +5513,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -4897,7 +5524,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -4908,7 +5535,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -4919,7 +5546,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -4930,7 +5557,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -4941,7 +5568,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -4952,7 +5579,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -4963,7 +5590,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -4974,7 +5601,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -4985,7 +5612,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -4996,7 +5623,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5007,7 +5634,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5018,7 +5645,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5029,7 +5656,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5040,7 +5667,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5051,7 +5678,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5062,7 +5689,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5073,7 +5700,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5084,7 +5711,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5095,7 +5722,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5106,7 +5733,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5117,7 +5744,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5128,7 +5755,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5139,7 +5766,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5150,7 +5777,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5161,7 +5788,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5172,7 +5799,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5183,7 +5810,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5194,7 +5821,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5205,7 +5832,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5216,7 +5843,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5227,7 +5854,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5238,7 +5865,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5249,7 +5876,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5260,7 +5887,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5271,7 +5898,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5282,7 +5909,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5293,7 +5920,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5304,7 +5931,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5315,7 +5942,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5326,7 +5953,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5337,7 +5964,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5348,7 +5975,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5359,7 +5986,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5370,7 +5997,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5381,7 +6008,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5392,7 +6019,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5403,7 +6030,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5414,7 +6041,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5425,7 +6052,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5436,7 +6063,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5447,7 +6074,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5458,7 +6085,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5469,7 +6096,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5480,7 +6107,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5491,7 +6118,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5502,7 +6129,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5513,7 +6140,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5524,7 +6151,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5535,7 +6162,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5546,7 +6173,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5557,7 +6184,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5568,7 +6195,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5579,7 +6206,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5590,7 +6217,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5601,7 +6228,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5612,7 +6239,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5623,7 +6250,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5634,7 +6261,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5645,7 +6272,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5656,7 +6283,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5667,7 +6294,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5678,7 +6305,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5689,7 +6316,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5700,7 +6327,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5711,7 +6338,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5722,7 +6349,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5733,7 +6360,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5744,7 +6371,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5755,7 +6382,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5766,7 +6393,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5777,7 +6404,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5788,7 +6415,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5799,7 +6426,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5810,7 +6437,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5821,7 +6448,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5832,7 +6459,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5843,7 +6470,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5854,7 +6481,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5865,7 +6492,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5876,7 +6503,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5887,7 +6514,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5898,7 +6525,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5909,7 +6536,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5920,7 +6547,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5931,7 +6558,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5942,7 +6569,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5953,7 +6580,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5964,7 +6591,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5975,7 +6602,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5986,7 +6613,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5997,7 +6624,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6008,7 +6635,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6019,7 +6646,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6030,7 +6657,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6041,7 +6668,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6052,7 +6679,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6063,7 +6690,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6074,7 +6701,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6085,7 +6712,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6096,7 +6723,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6107,7 +6734,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6118,7 +6745,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6129,7 +6756,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6140,7 +6767,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6151,7 +6778,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6162,7 +6789,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6173,7 +6800,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6184,7 +6811,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6195,7 +6822,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6206,7 +6833,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6217,7 +6844,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6228,7 +6855,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6239,7 +6866,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6250,7 +6877,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6261,7 +6888,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6272,7 +6899,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6283,7 +6910,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6294,7 +6921,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6305,7 +6932,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6316,7 +6943,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6327,7 +6954,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6338,7 +6965,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6349,7 +6976,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6360,7 +6987,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6371,7 +6998,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6382,7 +7009,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6393,7 +7020,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6404,7 +7031,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6415,7 +7042,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6426,7 +7053,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6437,7 +7064,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6448,7 +7075,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6459,7 +7086,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6470,7 +7097,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6481,7 +7108,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6492,7 +7119,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6503,7 +7130,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6514,7 +7141,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6525,7 +7152,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6536,7 +7163,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6547,7 +7174,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6558,7 +7185,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6569,7 +7196,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6580,7 +7207,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6591,7 +7218,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6602,7 +7229,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6613,7 +7240,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6624,7 +7251,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6635,7 +7262,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6646,7 +7273,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6657,7 +7284,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6668,7 +7295,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6679,7 +7306,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6690,7 +7317,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6701,7 +7328,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6712,7 +7339,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     }
   ],
@@ -6763,6 +7390,20 @@
       "priority": 30,
       "notes": "Domical cover is already emitted by rule; companion enforces pairing if base plate is manually added",
       "active": false
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_key": "xpl_csr_add_btp",
+      "trigger_category": "centre_support_rail",
+      "trigger_match_json": {},
+      "add_category": "accessory",
+      "add_sku_pattern": "XP-BTP-{colour}",
+      "qty_formula": "csr_plate_qty",
+      "is_pack": false,
+      "is_suggestion": true,
+      "priority": 20,
+      "notes": "XP-BTP suggestion: 2 per CSR per panel. Suggested accessory.",
+      "active": true
     }
   ]
 }

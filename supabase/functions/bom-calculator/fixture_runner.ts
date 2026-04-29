@@ -32,6 +32,7 @@ export interface LineItem {
 export interface FixtureExpect {
   errors?: string[];
   lines?: Array<LineItem>;
+  suggestions?: Array<LineItem>;
   totals?: {
     grandTotal?: number | QtyAssertion;
   };
@@ -97,8 +98,9 @@ export function assertFixture(
     const IDENTIFIER = `${expectedSuggestion.sku} - ${expectedSuggestion.name}`;
     assertExists(
       actual,
-      `Expected SKU '${IDENTIFIER}' in BOM but it was not found`,
+      `Expected suggestion SKU '${IDENTIFIER}' in suggestions but it was not found`,
     );
+    assertQty(`suggestion SKU ${IDENTIFIER}`, actual.quantity, expectedSuggestion.qty);
   }
 
   for (const expectedLine of expect.lines ?? []) {

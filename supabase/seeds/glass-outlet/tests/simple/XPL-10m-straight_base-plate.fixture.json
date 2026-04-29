@@ -11,7 +11,9 @@
         "slat_size_mm": 65,
         "slat_gap_mm": 9,
         "mounting_type": "base_plate",
-        "max_panel_width_mm": 2600
+        "max_panel_width_mm": 2600,
+        "post_system": "standard_50",
+        "mounting_method": "base_plate"
       },
       "runs": [
         {
@@ -72,22 +74,30 @@
         "category": "accessory",
         "name": "Premium insert"
       },
-      { "sku": "XP-6100-S65-B", "qty": 48, "category": "slat", "name": "Slat" },
+      {
+        "sku": "XP-6100-S65-B",
+        "qty": 48,
+        "category": "slat",
+        "name": "Slat"
+      },
       {
         "sku": "QS-SCREWS-50PK",
         "qty": 1,
         "category": "fixing",
         "name": "Screws"
       },
-
       {
         "sku": "XP-2400-FP-B",
         "qty": 5,
         "category": "post",
         "name": "FP post"
       },
-      { "sku": "XP-TP-B", "qty": 4, "category": "accessory", "name": "TP cap" },
-
+      {
+        "sku": "XP-TP-B",
+        "qty": 4,
+        "category": "accessory",
+        "name": "TP cap"
+      },
       {
         "sku": "XP-CSRC-B",
         "qty": 4,
@@ -100,7 +110,6 @@
         "category": "centre_support_rail",
         "name": "CSR cap"
       },
-
       {
         "sku": "XP-BP-SET-B",
         "qty": 5,

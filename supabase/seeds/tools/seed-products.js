@@ -472,6 +472,7 @@ async function loadFile(path) {
       add_sku_pattern: r.add_sku_pattern,
       qty_formula: r.qty_formula,
       is_pack: r.is_pack ?? false,
+      is_suggestion: r.is_suggestion ?? false,
       priority: r.priority ?? 100,
       notes: r.notes ?? null,
       active: r.active,
