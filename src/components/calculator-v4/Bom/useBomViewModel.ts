@@ -25,6 +25,14 @@ export interface BomViewLine {
   isAddedSuggestion?: boolean;
 }
 
+/** Stable key for qty overrides (SKU or `extra:${id}`). */
+export function bomLineQtyKey(
+  line: Pick<BomViewLine, "source" | "sku" | "extraId">,
+): string {
+  if (line.source === "extra" && line.extraId) return `extra:${line.extraId}`;
+  return line.sku || "";
+}
+
 export interface BomViewModel {
   /** Engine lines, post-removal-filter, plus added suggestions, plus extras. */
   allLines: BomViewLine[];
@@ -45,18 +53,41 @@ export interface BomViewModel {
 
 const GST_RATE = 0.1;
 
+function applyQtyOverride(
+  baseQty: number,
+  baseLineTotal: number,
+  unitPrice: number,
+  lineKey: string,
+  overrides: Record<string, number>,
+): { quantity: number; lineTotal: number } {
+  const o = overrides[lineKey];
+  if (o === undefined)
+    return { quantity: baseQty, lineTotal: baseLineTotal };
+  const quantity = o;
+  return { quantity, lineTotal: quantity * unitPrice };
+}
+
 function asLine(
   l: BOMLineItem & { runId?: string },
   source: BomViewLine["source"],
+  overrides: Record<string, number>,
 ): BomViewLine {
+  const lineKey = l.sku;
+  const { quantity, lineTotal } = applyQtyOverride(
+    l.quantity,
+    l.lineTotal,
+    l.unitPrice,
+    lineKey,
+    overrides,
+  );
   return {
     sku: l.sku,
     name: l.name,
     description: l.description ?? l.name,
     unit: l.unit ?? "each",
-    quantity: l.quantity,
+    quantity,
     unitPrice: l.unitPrice,
-    lineTotal: l.lineTotal,
+    lineTotal,
     category: l.category ?? "accessory",
     source,
     runId: l.runId,
@@ -98,38 +129,63 @@ export function useBomViewModel(): BomViewModel {
     const generatedAt =
       (bom.generatedAt as string) ?? new Date().toISOString();
 
+    const overrides = state.qtyOverrides;
+
     const engineLines = rawLines
       .filter((l) => !state.removedSkus.has(l.sku))
-      .map((l) => asLine(l, "engine"));
+      .map((l) => asLine(l, "engine", overrides));
 
     const suggestionLines: BomViewLine[] = state.addedSuggestions.map(
-      (s: AddedSuggestion) => ({
-        sku: s.sku,
-        name: s.name,
-        description: s.name,
-        unit: "each",
-        quantity: s.qty,
-        unitPrice: s.unitPrice,
-        lineTotal: s.qty * s.unitPrice,
-        category: "suggested",
-        source: "suggestion",
-        isAddedSuggestion: true,
-      }),
+      (s: AddedSuggestion) => {
+        const baseQty = s.qty;
+        const baseTotal = s.qty * s.unitPrice;
+        const { quantity, lineTotal } = applyQtyOverride(
+          baseQty,
+          baseTotal,
+          s.unitPrice,
+          s.sku,
+          overrides,
+        );
+        return {
+          sku: s.sku,
+          name: s.name,
+          description: s.name,
+          unit: "each",
+          quantity,
+          unitPrice: s.unitPrice,
+          lineTotal,
+          category: "suggested",
+          source: "suggestion" as const,
+          isAddedSuggestion: true,
+        };
+      },
     );
 
     const extraLines: BomViewLine[] = state.extraItems.map(
-      (e: ExtraItem) => ({
-        sku: e.sku,
-        name: e.description,
-        description: e.description,
-        unit: "each",
-        quantity: e.qty,
-        unitPrice: e.unitPrice,
-        lineTotal: e.qty * e.unitPrice,
-        category: "extra",
-        source: "extra",
-        extraId: e.id,
-      }),
+      (e: ExtraItem) => {
+        const lineKey = `extra:${e.id}`;
+        const baseQty = e.qty;
+        const baseTotal = e.qty * e.unitPrice;
+        const { quantity, lineTotal } = applyQtyOverride(
+          baseQty,
+          baseTotal,
+          e.unitPrice,
+          lineKey,
+          overrides,
+        );
+        return {
+          sku: e.sku,
+          name: e.description,
+          description: e.description,
+          unit: "each",
+          quantity,
+          unitPrice: e.unitPrice,
+          lineTotal,
+          category: "extra",
+          source: "extra" as const,
+          extraId: e.id,
+        };
+      },
     );
 
     const allLines = [...engineLines, ...suggestionLines, ...extraLines];
@@ -138,12 +194,12 @@ export function useBomViewModel(): BomViewModel {
       runId: r.runId,
       items: r.items
         .filter((l) => !state.removedSkus.has(l.sku))
-        .map((l) => asLine(l, "engine")),
+        .map((l) => asLine(l, "engine", overrides)),
     }));
 
     const gateItemsView = gateItems
       .filter((l) => !state.removedSkus.has(l.sku))
-      .map((l) => asLine(l, "engine"));
+      .map((l) => asLine(l, "engine", overrides));
 
     const total = allLines.reduce((s, l) => s + l.lineTotal, 0);
     const gst = total * GST_RATE;
@@ -161,7 +217,13 @@ export function useBomViewModel(): BomViewModel {
       errors,
       hasResult: true,
     };
-  }, [bom, state.removedSkus, state.addedSuggestions, state.extraItems]);
+  }, [
+    bom,
+    state.removedSkus,
+    state.addedSuggestions,
+    state.extraItems,
+    state.qtyOverrides,
+  ]);
 }
 
 /**

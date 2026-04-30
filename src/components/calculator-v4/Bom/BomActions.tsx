@@ -1,10 +1,13 @@
-import { Download, FileText, Loader2, Sparkles } from "lucide-react";
-import { toast } from "sonner";
+import { Loader2, Sparkles } from "lucide-react";
+import { BOMExportActions } from "../../quote/BOMExportActions";
 import type { BomViewModel } from "./useBomViewModel";
+import { bomViewModelToCalculatorResult } from "./bomExportMapper";
 import BomAlerts from "./BomAlerts";
 
 interface Props {
   view: BomViewModel;
+  /** Used as PDF/CSV filename slug when non-empty. */
+  jobName?: string;
   isPending: boolean;
   onGenerate: () => void;
   canGenerate: boolean;
@@ -13,47 +16,20 @@ interface Props {
 }
 
 /**
- * Generate / Export buttons row above the BOM table.
- * Generate is the primary CTA; CSV/PDF are stubs (toast info) for v4 v1.
+ * Generate / Export row above the BOM table. CSV/PDF/Copy reuse v3 BOMExportActions.
  */
 export function BomActions({
   view,
+  jobName,
   isPending,
   onGenerate,
   canGenerate,
   errors,
   warnings,
 }: Props) {
-  function exportCsv() {
-    if (!view.hasResult) return;
-    const headers = ["SKU", "Description", "Unit", "Qty", "Unit $", "Line $"];
-    const rows = view.allLines.map((l) => [
-      l.sku,
-      l.description,
-      l.unit,
-      l.quantity,
-      l.unitPrice.toFixed(2),
-      l.lineTotal.toFixed(2),
-    ]);
-    const csv = [headers, ...rows]
-      .map((r) =>
-        r
-          .map((c) => {
-            const s = String(c);
-            return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-          })
-          .join(","),
-      )
-      .join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `bom-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success("CSV downloaded");
-  }
+  const exportResult = view.hasResult
+    ? bomViewModelToCalculatorResult(view)
+    : null;
 
   return (
     <div className="px-4 py-1 border-b border-brand-border bg-brand-card flex items-center gap-2 flex-shrink-0">
@@ -72,22 +48,14 @@ export function BomActions({
       </button>
       <BomAlerts errors={errors} warnings={warnings} />
       <div className="flex-1" />
-      <button
-        onClick={exportCsv}
-        disabled={!view.hasResult}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-brand-border text-xs font-medium text-brand-muted hover:text-brand-text hover:bg-brand-border/30 disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        <Download size={12} /> CSV
-      </button>
-      <button
-        onClick={() =>
-          toast.info("PDF export: not yet wired in v4 (use v3 for now)")
-        }
-        disabled={!view.hasResult}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-brand-border text-xs font-medium text-brand-muted hover:text-brand-text hover:bg-brand-border/30 disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        <FileText size={12} /> PDF
-      </button>
+      {exportResult ? (
+        <BOMExportActions
+          result={exportResult}
+          removedSkus={new Set()}
+          qtyOverrides={new Map()}
+          customerRef={jobName?.trim() || undefined}
+        />
+      ) : null}
     </div>
   );
 }

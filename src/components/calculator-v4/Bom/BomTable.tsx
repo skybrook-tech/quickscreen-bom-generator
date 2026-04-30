@@ -1,7 +1,11 @@
 import { Fragment } from "react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { BomTableRow } from "./BomTableRow";
-import { groupByCategory, type BomViewLine } from "./useBomViewModel";
+import {
+  bomLineQtyKey,
+  groupByCategory,
+  type BomViewLine,
+} from "./useBomViewModel";
 interface Props {
   lines: BomViewLine[];
 }
@@ -94,8 +98,15 @@ export function BomTable({ lines }: Props) {
             </tr>
             {g.items.map((line) => (
               <BomTableRow
-                key={`${line.source}-${line.sku}-${line.extraId ?? ""}`}
+                key={`${line.source}-${bomLineQtyKey(line)}`}
                 line={line}
+                onQtyChange={(lineKey, qty) =>
+                  dispatch({
+                    type: "SET_QTY_OVERRIDE",
+                    lineKey,
+                    qty,
+                  })
+                }
                 onRemove={() => {
                   if (line.source === "extra" && line.extraId) {
                     dispatch({ type: "REMOVE_EXTRA", id: line.extraId });

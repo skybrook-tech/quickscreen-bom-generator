@@ -3,6 +3,8 @@ import { Loader2, Sparkles } from "lucide-react";
 interface Props {
   pricingTier: string;
   grandTotal: number;
+  /** Shown under “Grand total” when viewing a filtered tab (run / gates). */
+  totalsScopeLabel?: string;
   isPending: boolean;
 }
 
@@ -16,7 +18,12 @@ const fmt = (n: number) =>
 /**
  * Top of the BOM panel — title, live indicator, pricing tier, grand total.
  */
-export function BomHeader({ pricingTier, grandTotal, isPending }: Props) {
+export function BomHeader({
+  pricingTier,
+  grandTotal,
+  totalsScopeLabel,
+  isPending,
+}: Props) {
   return (
     <div className="bg-blue-800 text-white px-4 py-3 flex-shrink-0">
       <div className="flex items-start justify-between gap-3">
@@ -45,6 +52,9 @@ export function BomHeader({ pricingTier, grandTotal, isPending }: Props) {
           <div className="text-[10px] uppercase tracking-wider text-white/70">
             Grand total
           </div>
+          {totalsScopeLabel ? (
+            <div className="text-[10px] text-white/65 mt-0.5">{totalsScopeLabel}</div>
+          ) : null}
           <div className="text-xl font-bold font-mono tabular-nums">
             {fmt(grandTotal)}
           </div>

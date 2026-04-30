@@ -1,4 +1,7 @@
+import { useMemo } from "react";
 import {
+  AlertCircle,
+  AlertTriangle,
   ChevronDown,
   ChevronRight,
   Copy,
@@ -6,10 +9,14 @@ import {
   Trash2,
 } from "lucide-react";
 import type { CanonicalSegment } from "../../../types/canonical.types";
+import type { SegmentDiagnostic } from "../../../types/bom.types";
+import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
+import { AchievedHeightBadge } from "../../calculator-v3/AchievedHeightBadge";
 import { InlineEdit } from "./InlineEdit";
 import { cn } from "../../../lib";
 
 interface Props {
+  runId: string;
   seg: CanonicalSegment;
   /** 1-based display index */
   index: number;
@@ -26,6 +33,7 @@ interface Props {
  * panel count, gate badge if applicable, duplicate / remove icons.
  */
 export function SegmentHeader({
+  runId,
   seg,
   index,
   open,
@@ -35,8 +43,27 @@ export function SegmentHeader({
   onDuplicate,
   onRemove,
 }: Props) {
+  const { state } = useCalculatorV4();
   const lengthM = (seg.segmentWidthMm ?? 0) / 1000;
   const isGate = seg.kind === "gate";
+
+  const diagnostics = useMemo(
+    () =>
+      (
+        (state.bomResult?.segmentDiagnostics as
+          | SegmentDiagnostic[]
+          | undefined) ?? []
+      ).filter((d) => d.segmentId === seg.segmentId),
+    [state.bomResult, seg.segmentId],
+  );
+
+  const hasDiagError = diagnostics.some((d) => d.severity === "error");
+  const hasDiagWarn =
+    !hasDiagError && diagnostics.some((d) => d.severity === "warning");
+
+  const computedRoot = state.bomResult?.computed as
+    | Record<string, Record<string, unknown>>
+    | undefined;
 
   const textStyle = cn("text-blue-500 hover:text-blue-600", {
     "text-blue-500": seg.kind === "fence",
@@ -63,10 +90,11 @@ export function SegmentHeader({
         )}
         onClick={onToggle}
       >
-        #{index}
+        S{index}
       </span>
 
       <InlineEdit
+        label="Length"
         value={lengthM}
         suffix="m"
         displayValue={lengthM.toFixed(2)}
@@ -75,6 +103,7 @@ export function SegmentHeader({
       />
       <span className={cn("text-brand-border", textStyle)}>·</span>
       <InlineEdit
+        label="Height"
         value={seg.targetHeightMm ?? 0}
         suffix="mm"
         onCommit={onHeightChange}
@@ -89,6 +118,49 @@ export function SegmentHeader({
           </span>
         </>
       )}
+
+      {!isGate && !!computedRoot && (
+        <AchievedHeightBadge
+          computed={computedRoot}
+          runId={runId}
+          segmentId={seg.segmentId}
+          targetHeightMm={seg.targetHeightMm}
+        />
+      )}
+
+      <div
+        className="flex items-center gap-0.5 shrink-0"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {hasDiagError && (
+          <button
+            type="button"
+            title={diagnostics
+              .filter((d) => d.severity === "error")
+              .map((d) => d.message)
+              .join(" | ")}
+            onClick={onToggle}
+            className="text-red-500 hover:text-red-400 p-1"
+            aria-label="Segment has BOM errors"
+          >
+            <AlertCircle size={15} />
+          </button>
+        )}
+        {hasDiagWarn && (
+          <button
+            type="button"
+            title={diagnostics
+              .filter((d) => d.severity === "warning")
+              .map((d) => d.message)
+              .join(" | ")}
+            onClick={onToggle}
+            className="text-amber-500 hover:text-amber-400 p-1"
+            aria-label="Segment has BOM warnings"
+          >
+            <AlertTriangle size={15} />
+          </button>
+        )}
+      </div>
 
       <div className="flex-1" onClick={onToggle} />
 

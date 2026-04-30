@@ -1,5 +1,6 @@
 import { Save, Trash2 } from "lucide-react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
+import { clearV4Draft } from "../../../lib/v4DraftStorage";
 import { toast } from "sonner";
 
 interface JobActionsProps {
@@ -29,6 +30,7 @@ export function JobActions({ onSave }: JobActionsProps) {
     )
       return;
     dispatch({ type: "RESET_JOB" });
+    clearV4Draft();
   };
 
   const hasJob = !!state.payload;

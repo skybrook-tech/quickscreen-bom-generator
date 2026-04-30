@@ -23,9 +23,11 @@ export function AchievedHeightBadge({
     targetHeightMm != null ? Math.abs(actualHeight - targetHeightMm) : null;
   const isClose = diff !== null && diff <= 5;
 
+  const text = `Actual: ${Math.round(actualHeight)}mm`;
+
   return (
-    <Badge variant={isClose ? "success" : "warning"} className="gap-1">
-      Final height: {Math.round(actualHeight)}mm
+    <Badge variant={isClose ? "success" : "warning"} className=" text-xs">
+      {text}
     </Badge>
   );
 }

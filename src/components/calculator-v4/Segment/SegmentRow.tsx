@@ -27,6 +27,7 @@ export function SegmentRow({ runId, seg, index }: Props) {
       data-testid={`v4-segment-row-${seg.segmentId}`}
     >
       <SegmentHeader
+        runId={runId}
         seg={seg}
         index={index}
         open={open}

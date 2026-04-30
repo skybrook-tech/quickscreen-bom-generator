@@ -24,6 +24,8 @@ export function RunHeader({ index, systemCode, summary }: Props) {
           <span>{summary.panelCount} panels</span>
           <span>·</span>
           <span>{summary.postCount} posts</span>
+          <span>·</span>
+          <span>{summary.cornerCount} corners</span>
         </div>
       </div>
     </div>

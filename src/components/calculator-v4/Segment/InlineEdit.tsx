@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { cn } from "../../../lib";
 
 interface InlineEditProps {
+  label: string;
   value: number;
   suffix: string;
   onCommit: (value: number) => void;
@@ -12,6 +13,7 @@ interface InlineEditProps {
 }
 
 export function InlineEdit({
+  label,
   value,
   suffix,
   onCommit,
@@ -44,6 +46,9 @@ export function InlineEdit({
         className="inline-flex items-center gap-0.5"
         onClick={(e) => e.stopPropagation()}
       >
+        <span className="text-xs text-brand-accent font-medium mr-1">
+          {label}
+        </span>
         <input
           ref={inputRef}
           type="number"
@@ -73,9 +78,12 @@ export function InlineEdit({
   return (
     <span
       onClick={start}
-      title="Click to edit"
+      title={`Click to edit ${label}`}
       className="group/inline relative inline-flex items-center gap-0.5 cursor-text rounded-lg px-1 -mx-1 hover:bg-brand-accent/10 transition-colors"
     >
+      <span className="text-xs text-brand-accent font-medium mr-1">
+        {label}
+      </span>
       <span
         className={cn(
           "font-mono text-sm tabular-nums group-hover/inline:text-brand-accent transition-colors",

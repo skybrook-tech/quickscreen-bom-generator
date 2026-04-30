@@ -1,4 +1,15 @@
-import { createContext, useContext, useReducer } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
+import {
+  draftFromPersisted,
+  loadV4Draft,
+  persistV4Draft,
+} from "../lib/v4DraftStorage";
 import type {
   CanonicalPayload,
   CanonicalRun,
@@ -36,6 +47,8 @@ export interface CalculatorV4State {
   removedSkus: Set<string>;
   /** Manual extra line items added by the user (post-BOM). */
   extraItems: ExtraItem[];
+  /** Per-line qty edits (SKU for engine lines; `extra:${id}` for manual extras). */
+  qtyOverrides: Record<string, number>;
 }
 
 const initialState: CalculatorV4State = {
@@ -47,6 +60,7 @@ const initialState: CalculatorV4State = {
   dismissedSuggestionSkus: new Set(),
   removedSkus: new Set(),
   extraItems: [],
+  qtyOverrides: {},
 };
 
 // ─── Actions ─────────────────────────────────────────────────────────────────
@@ -79,8 +93,23 @@ export type CalculatorV4Action =
   | { type: "REMOVE_ADDED_SUGGESTION"; sku: string }
   | { type: "REMOVE_BOM_LINE"; sku: string }
   | { type: "RESTORE_BOM_LINE"; sku: string }
+  | { type: "RESTORE_ALL_BOM_LINES" }
   | { type: "ADD_EXTRA"; item: ExtraItem }
-  | { type: "REMOVE_EXTRA"; id: string };
+  | { type: "REMOVE_EXTRA"; id: string }
+  | { type: "SET_QTY_OVERRIDE"; lineKey: string; qty: number }
+  | {
+      type: "HYDRATE_V4_DRAFT";
+      snapshot: {
+        jobName: string;
+        payload: CanonicalPayload | null;
+        bomResult: Record<string, unknown> | null;
+        addedSuggestions: AddedSuggestion[];
+        dismissedSuggestionSkus: Set<string>;
+        removedSkus: Set<string>;
+        extraItems: ExtraItem[];
+        qtyOverrides: Record<string, number>;
+      };
+    };
 
 // ─── Reducer ─────────────────────────────────────────────────────────────────
 
@@ -99,6 +128,7 @@ function reducer(
         openRunConfigRunId: null,
         dismissedSuggestionSkus: new Set(),
         removedSkus: new Set(),
+        qtyOverrides: {},
       };
     case "SET_PAYLOAD":
       return {
@@ -268,6 +298,7 @@ function reducer(
         dismissedSuggestionSkus: new Set(),
         removedSkus: new Set(),
         extraItems: [],
+        qtyOverrides: {},
       };
     case "ADD_SUGGESTION": {
       const exists = state.addedSuggestions.find(
@@ -318,6 +349,8 @@ function reducer(
       next.delete(action.sku);
       return { ...state, removedSkus: next };
     }
+    case "RESTORE_ALL_BOM_LINES":
+      return { ...state, removedSkus: new Set() };
     case "ADD_EXTRA":
       return { ...state, extraItems: [...state.extraItems, action.item] };
     case "REMOVE_EXTRA":
@@ -325,6 +358,27 @@ function reducer(
         ...state,
         extraItems: state.extraItems.filter((i) => i.id !== action.id),
       };
+    case "SET_QTY_OVERRIDE": {
+      const q = Math.max(0, action.qty);
+      const next = { ...state.qtyOverrides };
+      if (q === 0) delete next[action.lineKey];
+      else next[action.lineKey] = q;
+      return { ...state, qtyOverrides: next };
+    }
+    case "HYDRATE_V4_DRAFT": {
+      const s = action.snapshot;
+      return {
+        jobName: s.jobName,
+        payload: s.payload,
+        openRunConfigRunId: null,
+        bomResult: s.bomResult,
+        addedSuggestions: s.addedSuggestions,
+        dismissedSuggestionSkus: new Set(s.dismissedSuggestionSkus),
+        removedSkus: new Set(s.removedSkus),
+        extraItems: s.extraItems,
+        qtyOverrides: { ...s.qtyOverrides },
+      };
+    }
     default:
       return state;
   }
@@ -345,6 +399,36 @@ export function CalculatorV4Provider({
   children: React.ReactNode;
 }) {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [bootstrapped, setBootstrapped] = useState(false);
+
+  useEffect(() => {
+    const d = loadV4Draft();
+    if (d) {
+      dispatch({
+        type: "HYDRATE_V4_DRAFT",
+        snapshot: draftFromPersisted(d),
+      });
+    }
+    setBootstrapped(true);
+  }, []);
+
+  useEffect(() => {
+    if (!bootstrapped || typeof window === "undefined") return;
+    const id = window.setTimeout(() => {
+      persistV4Draft({
+        jobName: state.jobName,
+        payload: state.payload,
+        bomResult: state.bomResult,
+        addedSuggestions: state.addedSuggestions,
+        dismissedSuggestionSkus: state.dismissedSuggestionSkus,
+        removedSkus: state.removedSkus,
+        extraItems: state.extraItems,
+        qtyOverrides: state.qtyOverrides,
+      });
+    }, 300);
+    return () => window.clearTimeout(id);
+  }, [state, bootstrapped]);
+
   return <Ctx.Provider value={{ state, dispatch }}>{children}</Ctx.Provider>;
 }
 

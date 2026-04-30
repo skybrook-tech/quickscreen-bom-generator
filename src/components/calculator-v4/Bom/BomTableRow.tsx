@@ -1,9 +1,11 @@
 import { X } from "lucide-react";
-import type { BomViewLine } from "./useBomViewModel";
+import { Input } from "../../ui/Input";
+import { bomLineQtyKey, type BomViewLine } from "./useBomViewModel";
 
 interface Props {
   line: BomViewLine;
   onRemove: () => void;
+  onQtyChange: (lineKey: string, qty: number) => void;
 }
 
 const fmt = (n: number) =>
@@ -13,7 +15,10 @@ const fmt = (n: number) =>
     minimumFractionDigits: 2,
   }).format(n);
 
-export function BomTableRow({ line, onRemove }: Props) {
+export function BomTableRow({ line, onRemove, onQtyChange }: Props) {
+  const qtyKey = bomLineQtyKey(line);
+  const canEditQty = qtyKey.length > 0;
+
   return (
     <tr className="hover:bg-brand-border/15 transition-colors">
       <td className="text-brand-accent px-3 py-2 text-xs font-mono">
@@ -28,8 +33,22 @@ export function BomTableRow({ line, onRemove }: Props) {
         )}
       </td>
       <td className="px-3 py-2 text-xs text-brand-muted">{line.unit}</td>
-      <td className="px-3 py-2 text-xs font-mono tabular-nums text-right">
-        {line.quantity}
+      <td className="px-3 py-2 text-xs font-mono tabular-nums text-right align-top">
+        {canEditQty ? (
+          <Input
+            type="number"
+            min={0}
+            step={1}
+            value={line.quantity}
+            onChange={(e) =>
+              onQtyChange(qtyKey, Math.max(0, Number(e.target.value)))
+            }
+            className="w-16 py-1 px-2 text-right tabular-nums"
+            data-testid={`bom-qty-${qtyKey}`}
+          />
+        ) : (
+          line.quantity
+        )}
       </td>
       <td className="px-3 py-2 text-xs font-mono tabular-nums text-right">
         {fmt(line.unitPrice)}

@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
+import { cn } from "../../../lib";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { BomActions } from "./BomActions";
 import { BomHeader } from "./BomHeader";
@@ -7,7 +8,15 @@ import { BomTabs } from "./BomTabs";
 import { BomTotals } from "./BomTotals";
 import { ExtraItemsPanel } from "./ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "./SuggestedAccessoriesPanel";
-import { useBomViewModel } from "./useBomViewModel";
+import { useBomViewModel, type BomViewLine } from "./useBomViewModel";
+
+const GST_RATE = 0.1;
+
+function totalsFromLines(lines: BomViewLine[]) {
+  const subtotal = lines.reduce((s, l) => s + l.lineTotal, 0);
+  const gst = subtotal * GST_RATE;
+  return { subtotal, gst, grandTotal: subtotal + gst };
+}
 
 interface Props {
   isPending: boolean;
@@ -35,7 +44,7 @@ export function BomPanel({
   errors,
   warnings,
 }: Props) {
-  const { state } = useCalculatorV4();
+  const { state, dispatch } = useCalculatorV4();
   const view = useBomViewModel();
   const [activeTab, setActiveTab] = useState("all");
   const bomTableScrollRef = useRef<HTMLDivElement>(null);
@@ -61,13 +70,11 @@ export function BomPanel({
         count: r.items.length,
       });
     });
-    if (view.gateItems.length > 0) {
-      list.push({
-        id: "gates",
-        label: "Gates",
-        count: view.gateItems.length,
-      });
-    }
+    list.push({
+      id: "gates",
+      label: "Gates",
+      count: view.gateItems.length,
+    });
     return list;
   }, [view.allLines.length, view.runResults, view.gateItems.length]);
 
@@ -82,16 +89,36 @@ export function BomPanel({
     return view.allLines;
   }, [activeTab, view]);
 
+  const scopedTotals = useMemo(
+    () => totalsFromLines(visibleLines),
+    [visibleLines],
+  );
+
+  const totalsScopeLabel = useMemo(() => {
+    if (activeTab === "all") return "Whole job";
+    if (activeTab === "gates") return "Gates only";
+    if (activeTab.startsWith("run-")) {
+      const runId = activeTab.slice(4);
+      const idx = view.runResults.findIndex((r) => r.runId === runId);
+      return idx >= 0 ? `Run ${idx + 1} only` : "This run";
+    }
+    return "Whole job";
+  }, [activeTab, view.runResults]);
+
   return (
     <div className="rounded-xl border border-brand-border bg-brand-card overflow-hidden flex flex-col h-full shadow-sm">
       <BomHeader
         pricingTier={view.pricingTier}
-        grandTotal={view.grandTotal}
+        grandTotal={scopedTotals.grandTotal}
+        totalsScopeLabel={
+          activeTab === "all" ? undefined : totalsScopeLabel
+        }
         isPending={isPending}
       />
 
       <BomActions
         view={view}
+        jobName={state.jobName}
         isPending={isPending}
         onGenerate={onGenerate}
         canGenerate={canGenerate}
@@ -103,8 +130,30 @@ export function BomPanel({
         <BomTabs tabs={tabs} activeId={activeTab} onChange={setActiveTab} />
       )}
 
-      {/* Scrollable middle: table */}
-      <div ref={bomTableScrollRef} className="flex-1 overflow-y-auto min-h-0">
+      {state.removedSkus.size > 0 && (
+        <div className="flex items-center justify-between bg-amber-500/10 border-b border-amber-500/25 px-4 py-2 text-xs flex-shrink-0">
+          <span className="text-amber-700 dark:text-amber-400 font-medium">
+            {state.removedSkus.size} BOM{" "}
+            {state.removedSkus.size === 1 ? "line" : "lines"} hidden from totals
+          </span>
+          <button
+            type="button"
+            onClick={() => dispatch({ type: "RESTORE_ALL_BOM_LINES" })}
+            className="text-amber-700 dark:text-amber-400 underline hover:opacity-90"
+          >
+            Restore all
+          </button>
+        </div>
+      )}
+
+      {/* Scrollable middle: table — dim when engine returned blocking errors (v3 parity). */}
+      <div
+        ref={bomTableScrollRef}
+        className={cn(
+          "flex-1 overflow-y-auto min-h-0 transition-opacity",
+          errors.length > 0 && state.bomResult && "opacity-55",
+        )}
+      >
         <BomTable lines={visibleLines} />
       </div>
 
@@ -112,9 +161,10 @@ export function BomPanel({
       <SuggestedAccessoriesPanel onAddedSuggestion={scrollBomTableToBottom} />
       <ExtraItemsPanel />
       <BomTotals
-        total={view.total}
-        gst={view.gst}
-        grandTotal={view.grandTotal}
+        total={scopedTotals.subtotal}
+        gst={scopedTotals.gst}
+        grandTotal={scopedTotals.grandTotal}
+        scopeLabel={activeTab === "all" ? undefined : totalsScopeLabel}
       />
     </div>
   );

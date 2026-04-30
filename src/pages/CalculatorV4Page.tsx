@@ -69,7 +69,9 @@ function CalculatorV4Content() {
 
   const noSegments =
     !payload || payload.runs.every((r) => r.segments.length === 0);
-  const canGenerate = !!payload && !noSegments;
+  const hasBlockingErrors = errors.length > 0;
+  const canGenerate =
+    !!payload && !noSegments && !hasBlockingErrors;
 
   return (
     <AppShell>
