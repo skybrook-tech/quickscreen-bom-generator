@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import { cn } from "../../lib";
 
 interface SegmentedOption {
   value: string;
@@ -11,6 +12,7 @@ interface SegmentedProps {
   options: SegmentedOption[];
   size?: "sm" | "md";
   className?: string;
+  separated?: boolean;
 }
 
 export function Segmented({
@@ -19,28 +21,31 @@ export function Segmented({
   options,
   size = "sm",
   className = "",
+  separated = false,
 }: SegmentedProps) {
   const sizeClasses =
     size === "sm" ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm";
 
   return (
     <div
-      className={`inline-flex rounded-lg bg-neutral-200 p-0.5 gap-0.5 ${className}`}
+      className={`inline-flex rounded-full ${separated ? "bg-neutral-100 gap-2" : "bg-brand-bg gap-0.5 "} p-0.5 ${className}`}
     >
       {options.map((opt) => {
         const active = opt.value === value;
+
         return (
           <button
             key={opt.value}
             type="button"
             onClick={() => onChange(opt.value)}
-            className={[
-              "rounded-md font-medium transition-all",
+            className={cn([
+              "rounded-full font-medium transition-all",
               sizeClasses,
-              active
-                ? "bg-neutral-700 text-neutral-100 shadow-sm"
-                : "text-neutral-400 hover:text-neutral-200",
-            ].join(" ")}
+              {
+                "bg-brand-accent text-white shadow-sm": active || separated,
+                "text-brand hover:text-brand-accent": !active && !separated,
+              },
+            ])}
           >
             {opt.label}
           </button>

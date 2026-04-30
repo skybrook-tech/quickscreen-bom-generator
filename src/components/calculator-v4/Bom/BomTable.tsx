@@ -2,7 +2,8 @@ import { Fragment } from "react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { BomTableRow } from "./BomTableRow";
 import { groupByCategory, type BomViewLine } from "./useBomViewModel";
-
+import { Button } from "../../ui/Button";
+import { Sparkles } from "lucide-react";
 interface Props {
   lines: BomViewLine[];
 }
@@ -32,9 +33,7 @@ const CATEGORY_LABEL: Record<string, string> = {
 function labelFor(category: string): string {
   return (
     CATEGORY_LABEL[category] ??
-    category
-      .replace(/_/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase())
+    category.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
   );
 }
 
@@ -48,8 +47,8 @@ export function BomTable({ lines }: Props) {
 
   if (lines.length === 0) {
     return (
-      <div className="text-center py-12 text-sm text-brand-muted">
-        Generate a BOM to see line items here.
+      <div className="bg-slate-200/10 text-center py-12 text-sm text-brand-muted h-full flex flex-col items-center justify-center gap-4">
+        <p>Generate a BOM to see line items here.</p>
       </div>
     );
   }

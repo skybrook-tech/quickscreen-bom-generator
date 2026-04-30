@@ -3,10 +3,10 @@ import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { useProductVariables } from "../../../hooks/useProductVariables";
 import { useProducts } from "../../../hooks/useProducts";
 import type { CanonicalRun } from "../../../types/canonical.types";
-import { Segmented } from "../../ui/Segmented";
 import type { RunTab } from "./RunSubHeader";
 import { SchemaDrivenFormV4 } from "./SchemaDrivenFormV4";
 import type { SchemaField } from "../../calculator-v3/SchemaDrivenForm";
+import { ProductSelectV4 } from "../JobShell/ProductSelectV4";
 
 // Maps field_key → which tab it lives in.
 // Unmapped fields fall through to "style".
@@ -120,29 +120,10 @@ export function RunConfigPanel({ run, activeTab }: Props) {
           <label className="block text-[11px] font-medium uppercase tracking-wider text-neutral-500">
             Fence System
           </label>
-          {fenceProducts.length <= 2 ? (
-            <Segmented
-              value={runProductCode ?? ""}
-              onChange={handleProductChange}
-              options={fenceProducts.map((p) => ({
-                value: p.system_type,
-                label: p.system_type,
-              }))}
-              size="sm"
-            />
-          ) : (
-            <select
-              value={runProductCode ?? ""}
-              onChange={(e) => handleProductChange(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-neutral-700 text-sm focus:border-brand-accent outline-none"
-            >
-              {fenceProducts.map((p) => (
-                <option key={p.system_type} value={p.system_type}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-          )}
+          <ProductSelectV4
+            value={runProductCode ?? ""}
+            onChange={handleProductChange}
+          />
         </div>
       )}
 

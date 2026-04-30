@@ -104,18 +104,17 @@ function reducer(
       return { ...state, payload: { ...state.payload, runs } };
     }
     case "ADD_RUN": {
-      if (!state.payload) return state;
       const newRun: CanonicalRun = {
         runId: crypto.randomUUID(),
-        productCode: state.payload.productCode, // inherit job default
+        productCode: state.payload?.productCode ?? "", // inherit job default
         variables: {},
         segments: [],
       };
       return {
         ...state,
         payload: {
-          ...state.payload,
-          runs: [...state.payload.runs, newRun],
+          ...(state.payload ?? {}),
+          runs: [...(state.payload?.runs ?? []), newRun],
         },
       };
     }

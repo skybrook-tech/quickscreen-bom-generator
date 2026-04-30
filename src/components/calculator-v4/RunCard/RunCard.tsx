@@ -31,7 +31,7 @@ export function RunCard({ run, index, onAddGate }: Props) {
   );
 
   const summary = useRunSummary(run, effectiveVars);
-  const runProductCode = run.productCode ?? state.payload?.productCode ?? "—";
+  const runProductCode = run.productCode ?? "—";
 
   function handleAddSegment() {
     const sortOrder = run.segments.length;
@@ -45,12 +45,13 @@ export function RunCard({ run, index, onAddGate }: Props) {
       leftTermination: { kind: "system" },
       rightTermination: { kind: "system" },
     };
+
     dispatch({ type: "UPSERT_SEGMENT", runId: run.runId, segment: newSeg });
   }
 
   return (
     <div
-      className="rounded-xl border border-brand-border bg-brand-card overflow-hidden"
+      className="rounded-xl border border-brand-border bg-brand-card overflow-hidden shadow-sm"
       data-testid={`v4-run-card-${run.runId}`}
     >
       <RunHeader index={index} systemCode={runProductCode} summary={summary} />
@@ -63,9 +64,7 @@ export function RunCard({ run, index, onAddGate }: Props) {
         onTabChange={setActiveTab}
       />
 
-      {editing && (
-        <RunConfigPanel run={run} activeTab={activeTab} />
-      )}
+      {editing && <RunConfigPanel run={run} activeTab={activeTab} />}
 
       {!editing && (
         <div className="border-t border-brand-border p-4 space-y-3">
@@ -76,7 +75,9 @@ export function RunCard({ run, index, onAddGate }: Props) {
           <RunActions
             onAddSegment={handleAddSegment}
             onAddGate={() => onAddGate(run.runId)}
-            onRemoveRun={() => dispatch({ type: "REMOVE_RUN", runId: run.runId })}
+            onRemoveRun={() =>
+              dispatch({ type: "REMOVE_RUN", runId: run.runId })
+            }
             canRemove={(state.payload?.runs.length ?? 0) > 1}
           />
         </div>

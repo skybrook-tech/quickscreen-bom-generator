@@ -18,7 +18,7 @@ const fmt = (n: number) =>
  */
 export function BomHeader({ pricingTier, grandTotal, isPending }: Props) {
   return (
-    <div className="bg-gradient-to-br from-brand-accent to-brand-accent/80 text-white px-4 py-3 flex-shrink-0">
+    <div className="bg-blue-800 text-white px-4 py-3 flex-shrink-0">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">

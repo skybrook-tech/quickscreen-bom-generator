@@ -138,7 +138,7 @@ function FieldRenderer({
                 : parseFloat(e.target.value),
             )
           }
-          className="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 text-sm text-neutral-100 font-mono tabular-nums focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none"
+          className="w-full px-3 py-2 rounded-lg border border-brand-border text-sm text-brand-text font-mono tabular-nums focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none"
         />
       </FieldWrap>
     );

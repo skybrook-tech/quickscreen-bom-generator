@@ -3,6 +3,7 @@ import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import { SegmentDetails } from "./SegmentDetails";
 import { SegmentHeader } from "./SegmentHeader";
+import { cn } from "../../../lib";
 
 interface Props {
   runId: string;
@@ -16,12 +17,13 @@ export function SegmentRow({ runId, seg, index }: Props) {
 
   return (
     <div
-      className={[
-        "rounded-lg border overflow-hidden transition-colors",
-        open
-          ? "border-neutral-600 bg-neutral-900"
-          : "border-neutral-700 bg-neutral-900 hover:bg-neutral-800/50",
-      ].join(" ")}
+      className={cn("rounded-lg border overflow-hidden transition-colors", {
+        "border-brand-border bg-brand-card": open,
+        "border-blue-500 bg-blue-500/10 hover:bg-blue-500/20":
+          seg.kind === "fence",
+        "border-amber-500 bg-amber-500/10 hover:bg-amber-500/20":
+          seg.kind === "gate",
+      })}
       data-testid={`v4-segment-row-${seg.segmentId}`}
     >
       <SegmentHeader

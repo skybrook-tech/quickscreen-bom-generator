@@ -13,6 +13,8 @@ import { LayoutMapPane } from "../components/calculator-v4/LayoutMap/LayoutMapPa
 import { GatePane } from "../components/calculator-v4/Gate/GatePane";
 import { BomPanel } from "../components/calculator-v4/Bom/BomPanel";
 import { useBomCalculator } from "../hooks/useBomCalculator";
+import { ProductSelectV4 } from "../components/calculator-v4/JobShell/ProductSelectV4";
+import { CanonicalPayload } from "../types/canonical.types";
 
 /**
  * v4 calculator. Two-column layout: job/runs on the left, BOM on the right.
@@ -43,6 +45,27 @@ function CalculatorV4Content() {
     }
   }
 
+  function handleProductChange(productCode: string) {
+    const runId = crypto.randomUUID();
+
+    const initialPayload: CanonicalPayload = {
+      productCode: productCode,
+      schemaVersion: "v2",
+      // Job-level variables intentionally minimal in v4 — finish_type kept
+      // because some product_variables `visible_when_json` rules depend on it.
+      // The reducer will populate run-level variables on first edit.
+      variables: {
+        finish_type: "standard",
+        finish_family: "standard",
+      },
+      runs: [{ runId, productCode, variables: {}, segments: [] }],
+    };
+    dispatch({
+      type: "SET_PAYLOAD",
+      payload: initialPayload,
+    });
+  }
+
   const noSegments =
     !payload || payload.runs.every((r) => r.segments.length === 0);
   const canGenerate = !!payload && !noSegments;
@@ -67,8 +90,13 @@ function CalculatorV4Content() {
               <JobActions />
             </>
           ) : (
-            <div className="rounded-xl border border-dashed border-brand-border p-8 text-center text-sm text-brand-muted">
-              Pick a fence product to begin.
+            <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-brand-border p-8 text-center text-sm text-brand-muted">
+              <p className="text-brand-text">Pick a fence product to begin.</p>
+              <ProductSelectV4
+                value={state.payload?.productCode ?? ""}
+                onChange={handleProductChange}
+                separated={true}
+              />
             </div>
           )}
 

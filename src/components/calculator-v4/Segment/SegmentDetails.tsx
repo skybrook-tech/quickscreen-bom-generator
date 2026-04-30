@@ -3,6 +3,7 @@ import { ChevronDown } from "lucide-react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import { TerminationControl } from "./TerminationControl";
+import NumberInput from "../../ui/NumberInput";
 
 interface Props {
   runId: string;
@@ -27,19 +28,20 @@ export function SegmentDetails({ runId, seg }: Props) {
     "block text-[11px] font-medium uppercase tracking-wider text-neutral-500";
 
   return (
-    <div className="border-t border-neutral-700/60 p-3 bg-neutral-800/30 space-y-3">
+    <div className="p-3 bg-white space-y-3">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
           <label className={labelClass}>Length (m)</label>
           <div className="relative">
-            <input
-              type="number"
+            <NumberInput
               value={(seg.segmentWidthMm ?? 0) / 1000}
               step={0.1}
-              onChange={(e) =>
-                update({ segmentWidthMm: Math.max(0, Number(e.target.value) * 1000) })
+              onChange={(value) =>
+                update({
+                  segmentWidthMm: Math.max(0, value * 1000),
+                })
               }
-              className={`${inputClass} pr-8`}
+              className={`pr-8`}
               data-testid={`v4-seg-length-${seg.segmentId}`}
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500 pointer-events-none">
@@ -50,13 +52,12 @@ export function SegmentDetails({ runId, seg }: Props) {
         <div className="space-y-2">
           <label className={labelClass}>Height (mm)</label>
           <div className="relative">
-            <input
-              type="number"
+            <NumberInput
               value={seg.targetHeightMm ?? 0}
-              onChange={(e) =>
-                update({ targetHeightMm: Math.max(0, Number(e.target.value)) })
+              onChange={(value) =>
+                update({ targetHeightMm: Math.max(0, value) })
               }
-              className={`${inputClass} pr-10`}
+              className={`pr-10`}
               data-testid={`v4-seg-height-${seg.segmentId}`}
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500 pointer-events-none">

@@ -1,6 +1,5 @@
 import { Map as MapIcon } from "lucide-react";
 import { JobNameField } from "./JobNameField";
-import { ProductSelectV4 } from "./ProductSelectV4";
 
 interface JobShellProps {
   onOpenLayoutMap: () => void;
@@ -15,7 +14,6 @@ export function JobShell({ onOpenLayoutMap, hasPayload }: JobShellProps) {
   return (
     <div className="rounded-xl border border-brand-border bg-brand-card p-4 space-y-3">
       <JobNameField />
-      <ProductSelectV4 />
       <button
         type="button"
         onClick={onOpenLayoutMap}

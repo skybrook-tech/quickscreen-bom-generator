@@ -2,15 +2,20 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
 import { supabase } from "../../../lib/supabase";
-import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
-import type { CanonicalPayload } from "../../../types/canonical.types";
 import { Input } from "../../ui/Input";
+import { Segmented } from "../../ui/Segmented";
 
 interface FenceProduct {
   id: string;
   name: string;
   system_type: string;
   description: string | null;
+}
+
+interface Props {
+  value: string;
+  onChange: (value: string) => void;
+  separated?: boolean;
 }
 
 /**
@@ -22,8 +27,7 @@ interface FenceProduct {
  * lives in RunConfigPanel — we don't seed up-front so that engine job-level
  * defaults remain truly empty unless we ever expose a global defaults UI.
  */
-export function ProductSelectV4() {
-  const { state, dispatch } = useCalculatorV4();
+export function ProductSelectV4({ value, onChange, separated = false }: Props) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -43,7 +47,7 @@ export function ProductSelectV4() {
     },
   });
 
-  const currentCode = state.payload?.productCode ?? null;
+  const currentCode = value ?? null;
   const currentProduct = useMemo(
     () => products?.find((p) => p.system_type === currentCode),
     [products, currentCode],
@@ -75,26 +79,7 @@ export function ProductSelectV4() {
   }, []);
 
   function selectProduct(p: FenceProduct) {
-    const initialPayload: CanonicalPayload = {
-      productCode: p.system_type,
-      schemaVersion: "v2",
-      // Job-level variables intentionally minimal in v4 — finish_type kept
-      // because some product_variables `visible_when_json` rules depend on it.
-      // The reducer will populate run-level variables on first edit.
-      variables: {
-        finish_type: "standard",
-        finish_family: "standard",
-      },
-      runs: [
-        {
-          runId: crypto.randomUUID(),
-          productCode: p.system_type, // v4: seed run.productCode from selection
-          variables: {},
-          segments: [],
-        },
-      ],
-    };
-    dispatch({ type: "INIT_PAYLOAD", payload: initialPayload });
+    onChange(p.system_type);
     setOpen(false);
     setQuery("");
     setActiveIndex(-1);
@@ -121,6 +106,25 @@ export function ProductSelectV4() {
   const buttonLabel = currentProduct
     ? `${currentProduct.name} (${currentProduct.system_type})`
     : "Select a fencing system…";
+
+  if (filtered.length <= 10) {
+    return (
+      <Segmented
+        separated={separated}
+        value={currentProduct?.system_type ?? ""}
+        onChange={(value) =>
+          selectProduct(
+            filtered.find((p) => p.system_type === value) ?? filtered[0],
+          )
+        }
+        options={filtered.map((p) => ({
+          value: p.system_type,
+          label: p.system_type,
+        }))}
+        size="sm"
+      />
+    );
+  }
 
   return (
     <div ref={wrapperRef} className="relative" data-testid="v4-product-select">

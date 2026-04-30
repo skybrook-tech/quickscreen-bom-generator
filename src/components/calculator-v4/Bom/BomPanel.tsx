@@ -73,7 +73,7 @@ export function BomPanel({
   }, [activeTab, view]);
 
   return (
-    <div className="rounded-xl border border-brand-border bg-brand-bg overflow-hidden flex flex-col h-full">
+    <div className="rounded-xl border border-brand-border bg-brand-bg overflow-hidden flex flex-col h-full shadow-sm">
       <BomHeader
         pricingTier={view.pricingTier}
         grandTotal={view.grandTotal}
