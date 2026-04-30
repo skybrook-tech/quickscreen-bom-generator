@@ -310,7 +310,13 @@ function colourSkuSuffix(colour: string): string {
   return STANDARD_COLOURS.has(colour) || colour === "P" ? colour : "MN";
 }
 
-function gateBladeSkuFor(colour: string): string {
+function gateBladeSkuFor(
+  finishFamily: string,
+  economySlats: boolean,
+  slatSize: number,
+  colour: string,
+): string {
+  if (slatSize === 90) return slatSkuFor(finishFamily, economySlats, 90, colour);
   return `XP-6100-GB65-${colourSkuSuffix(colour)}`;
 }
 
@@ -351,6 +357,8 @@ function calculateGateSegment(
   const colour = String(vars[GATE_SEGMENT_STUB_KEYS.colourCode] ?? vars.colour_code ?? "B");
   const slatGap = toNumber(vars[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? vars.slat_gap_mm, 9);
   const slatSize = toNumber(vars[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? vars.slat_size_mm, 65);
+  const finishFamily = String(vars.finish_family ?? "standard");
+  const economySlats = finishFamily === "economy";
   const openingWidthMm = toNumber(segment.segmentWidthMm, 900);
   const gateHeightMm = toNumber(
     segment.targetHeightMm ?? vars[GATE_SEGMENT_STUB_KEYS.gateHeightMm],
@@ -393,7 +401,7 @@ function calculateGateSegment(
 
     emit(lines, {
       ...base,
-      sku: gateBladeSkuFor(colour),
+      sku: gateBladeSkuFor(finishFamily, economySlats, slatSize, colour),
       category: "gate",
       quantity: Math.ceil(numGateBlades / bladesPerStock),
       unit: "length",
@@ -488,19 +496,15 @@ function calculateGateSegment(
       `${build} gate build is selectable for workflow testing, but full frame kit rules still need QSG workbook verification.`,
     );
   }
-  if (slatSize !== 65) {
-    warnings.push("Gate blade stock is currently priced against confirmed 65mm gate blade SKUs; 90mm gate blade rules still need confirmation.");
-  }
-
   const bladeCutMm = Math.max(1, leafWidthMm - 86);
   const railCutMm = Math.max(1, leafWidthMm - 80);
-  const numGateBlades = Math.max(1, Math.floor((gateHeightMm - 133 + slatGap) / (65 + slatGap)));
+  const numGateBlades = Math.max(1, Math.floor((gateHeightMm - 133 + slatGap) / (slatSize + slatGap)));
   const bladesPerStock = Math.max(1, Math.floor(6100 / bladeCutMm));
   const railsPerStock = Math.max(1, Math.floor(6100 / railCutMm));
 
   emit(lines, {
     ...base,
-    sku: gateBladeSkuFor(colour),
+    sku: gateBladeSkuFor(finishFamily, economySlats, slatSize, colour),
     category: "gate",
     quantity: Math.ceil((numGateBlades * leafCount) / bladesPerStock),
     unit: "length",
@@ -551,7 +555,12 @@ function calculateVerticalSlatRun(
   computed: LocalBomResult["computed"],
 ): QtyLine[] {
   const lines: QtyLine[] = [];
-  const mergedRunVars = { ...payload.variables, ...(run.variables ?? {}) };
+  const firstFenceSegment = run.segments.find((s) => s.segmentKind !== "gate_opening");
+  const mergedRunVars = {
+    ...payload.variables,
+    ...(run.variables ?? {}),
+    ...(firstFenceSegment?.variables ?? {}),
+  };
   const colour = String(
     mergedRunVars.colour_code ?? mergedRunVars.colour ?? "B",
   );
@@ -611,6 +620,7 @@ function calculateVerticalSlatRun(
     const slatStocks = Math.ceil((numVerticalSlats * numPanels) / slatsPerStock);
     const railStocks = Math.ceil((2 * numPanels) / railsPerStock);
     const railInsertStocks = Math.ceil((2 * numPanels) / railInsertsPerStock);
+    const fSectionStocks = Math.ceil((2 * numPanels) / railInsertsPerStock);
     const leftCornerDeg = cornerDegreesFromVars(segment.variables, "left");
     const rightCornerDeg = cornerDegreesFromVars(segment.variables, "right");
     const screwPacks = Math.ceil(
@@ -655,6 +665,14 @@ function calculateVerticalSlatRun(
     });
     emit(lines, {
       ...base,
+      sku: quickscreenSkuFor(finishFamily, "F", colour),
+      category: "f_section",
+      quantity: fSectionStocks,
+      unit: "length",
+      notes: `F-section accepts vertical U-channel, ${Math.round(railCutMm)}mm cuts from 5800mm stock`,
+    });
+    emit(lines, {
+      ...base,
       sku: "QS-SCREWS-50PK",
       category: "screw",
       quantity: screwPacks,
@@ -681,7 +699,6 @@ function calculateVerticalSlatRun(
   }
 
   const postCount = runPostBoundaryCount(run) + internalPanelPosts;
-  const firstFenceSegment = run.segments.find((s) => s.segmentKind !== "gate_opening");
   const postHeight = toNumber(
     firstFenceSegment?.targetHeightMm ?? mergedRunVars.target_height_mm,
     1800,
@@ -709,7 +726,12 @@ function calculateScreenRun(
   computed: LocalBomResult["computed"],
 ): QtyLine[] {
   const lines: QtyLine[] = [];
-  const mergedRunVars = { ...payload.variables, ...(run.variables ?? {}) };
+  const firstFenceSegment = run.segments.find((s) => s.segmentKind !== "gate_opening");
+  const mergedRunVars = {
+    ...payload.variables,
+    ...(run.variables ?? {}),
+    ...(firstFenceSegment?.variables ?? {}),
+  };
   const colour = String(
     mergedRunVars.colour_code ?? mergedRunVars.colour ?? "B",
   );
@@ -942,7 +964,6 @@ function calculateScreenRun(
   }
 
   const postCount = runPostBoundaryCount(run) + internalPanelPosts;
-  const firstFenceSegment = run.segments.find((s) => s.segmentKind !== "gate_opening");
   const postHeight = toNumber(
     firstFenceSegment?.targetHeightMm ?? mergedRunVars.target_height_mm,
     1800,

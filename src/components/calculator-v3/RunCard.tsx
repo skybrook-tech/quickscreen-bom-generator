@@ -1,20 +1,16 @@
 import { useMemo, useState } from "react";
-import { Copy, Pencil, Plus, Trash2 } from "lucide-react";
+import { CheckCircle2, Copy, Plus, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
-import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
 import { defaultGateVariables } from "../../lib/gateOptionRules";
 import { calcRunStats } from "../../lib/runStats";
-import { localFenceProducts } from "../../lib/localSeedData";
 import {
-  applyProductOptionRules,
   initialVariablesForSystem,
   maxPanelWidthForSystem,
   normaliseVariablesForSystem,
 } from "../../lib/productOptionRules";
 import { Button } from "../shared/Button";
 import { SegmentRow } from "./SegmentRow";
-import { SchemaDrivenForm } from "./SchemaDrivenForm";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 
@@ -115,10 +111,6 @@ function SummaryItem({ label, value }: { label: string; value: string | number }
 export function RunCard({ run, runIdx }: Props) {
   const { state, dispatch } = useCalculator();
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [editingRun, setEditingRun] = useState(runIdx === 0);
-  const [editingPostColour, setEditingPostColour] = useState(false);
-  const { data: jobFields = [] } = useProductVariables(run.productCode, "job");
-  const { data: runFields = [] } = useProductVariables(run.productCode, "run");
 
   const runVariables = useMemo(
     () => ({
@@ -134,133 +126,9 @@ export function RunCard({ run, runIdx }: Props) {
   const panelLengths = panelLengthSummary(run, jobMax);
   const actualHeight = actualFenceHeightMm(run.productCode, runVariables);
   const matchesRunOne = run.variables?.settings_mode === "match_run_1";
-  const optionFields = useMemo(
-    () =>
-      applyProductOptionRules(
-        run.productCode,
-        jobFields.filter(
-          (field) =>
-            !field.field_key.endsWith("_stock_length_mm") &&
-            field.field_key !== "max_panel_width_mm",
-        ),
-        runVariables,
-      ).filter((field) => field.field_key !== "post_colour_code"),
-    [jobFields, run.productCode, runVariables],
-  );
-  const postColourField = useMemo(
-    () =>
-      applyProductOptionRules(run.productCode, [], runVariables).find(
-        (field) => field.field_key === "post_colour_code",
-      ),
-    [run.productCode, runVariables],
-  );
-  const visibleRunFields = runFields
-    .filter((field) => {
-      if (["left_boundary_type", "right_boundary_type"].includes(field.field_key)) {
-        return false;
-      }
-      if (run.productCode === "XPL" && field.field_key === "mounting_type") {
-        return false;
-      }
-      if (run.productCode !== "XPL" && field.field_key === "mounting_method") {
-        return false;
-      }
-      return true;
-    })
-    .map((field) => {
-      if (field.field_key === "mounting_type" || field.field_key === "mounting_method") {
-        return {
-          ...field,
-          label: "Post mounting type",
-          default_value_json: "in_ground",
-          options_json: ["in_ground", "base_plate", "core_drill"],
-        };
-      }
-      if (field.field_key === "post_system") {
-        return {
-          ...field,
-          label: "Post type",
-          default_value_json: run.productCode === "XPL" ? "xpl" : "standard_50",
-        };
-      }
-      if (field.field_key === "post_size") {
-        return {
-          ...field,
-          label: "Standard post size",
-          default_value_json: "50",
-        };
-      }
-      return field;
-    });
-
-  function handleRunFieldChange(
-    key: string,
-    value: string | number | boolean,
-  ) {
-    const previousColour = String(runVariables.colour_code ?? "");
-    const previousPostColour = String(
-      runVariables.post_colour_code ?? previousColour,
-    );
-    const nextVariables = {
-      ...(run.variables ?? {}),
-      [key]: value,
-    };
-    if (key === "mounting_type" || key === "mounting_method") {
-      nextVariables.mounting_type = value;
-      nextVariables.mounting_method = value;
-    }
-    if (key === "post_system") {
-      nextVariables.post_size = value === "standard_65" ? 65 : 50;
-    }
-    if (
-      key === "colour_code" &&
-      (!run.variables?.post_colour_code || previousPostColour === previousColour)
-    ) {
-      nextVariables.post_colour_code = value;
-    }
-    const normalisedVariables = normaliseVariablesForSystem(
-      run.productCode,
-      nextVariables,
-    );
-    const shouldSyncSegmentHeights = [
-      "target_height_mm",
-      "slat_size_mm",
-      "slat_gap_mm",
-      "slat_gap_mode",
-    ].includes(key);
-    dispatch({
-      type: "UPSERT_RUN",
-      run: {
-        ...run,
-        variables: normalisedVariables,
-        segments: shouldSyncSegmentHeights
-          ? run.segments.map((segment) => ({
-              ...segment,
-              targetHeightMm: Number(normalisedVariables.target_height_mm ?? 1800),
-            }))
-          : run.segments,
-      },
-    });
-  }
-
-  function changeRunProduct(productCode: string) {
-    dispatch({
-      type: "UPSERT_RUN",
-      run: {
-        ...run,
-        productCode,
-        variables: normaliseVariablesForSystem(productCode, {
-          ...initialVariablesForSystem(productCode),
-          settings_mode: "default",
-          colour_code: run.variables?.colour_code ?? "B",
-          post_colour_code:
-            run.variables?.post_colour_code ?? run.variables?.colour_code ?? "B",
-          max_panel_width_mm:
-            run.variables?.max_panel_width_mm ?? maxPanelWidthForSystem(productCode),
-        }),
-      },
-    });
-  }
+  const completedSegments = run.segments.filter(
+    (segment) => segment.variables?.segment_done === true,
+  ).length;
 
   function toggleRunOneSettings() {
     const runOne = state.payload?.runs[0];
@@ -298,12 +166,23 @@ export function RunCard({ run, runIdx }: Props) {
   }
 
   function addFenceSegment() {
+    const firstFenceSegment = run.segments.find((s) => s.segmentKind !== "gate_opening");
+    const inheritedVariables = firstFenceSegment?.variables
+      ? Object.fromEntries(
+          Object.entries(firstFenceSegment.variables).filter(
+            ([key]) => !["geometry_angle_deg", "segment_done"].includes(key),
+          ),
+        )
+      : undefined;
     upsertSegment({
       segmentId: crypto.randomUUID(),
       sortOrder: run.segments.length + 1,
       segmentKind: "panel",
       segmentWidthMm: jobMax,
-      targetHeightMm: Number(runVariables.target_height_mm ?? 1800),
+      targetHeightMm: Number(firstFenceSegment?.targetHeightMm ?? runVariables.target_height_mm ?? 1800),
+      variables: inheritedVariables
+        ? { ...inheritedVariables, segment_done: false }
+        : undefined,
     });
   }
 
@@ -317,7 +196,7 @@ export function RunCard({ run, runIdx }: Props) {
       segmentWidthMm: 900,
       targetHeightMm: targetHeight,
       gateProductCode: GATE_PRODUCT_CODE,
-      variables: defaultGateVariables(runVariables, targetHeight),
+      variables: defaultGateVariables({ ...runVariables, productCode: run.productCode }, targetHeight),
     });
     setExpandedId(segmentId);
   }
@@ -341,14 +220,6 @@ export function RunCard({ run, runIdx }: Props) {
               {matchesRunOne ? "Default settings" : "Match run 1"}
             </Button>
           )}
-          <Button
-            onClick={() => setEditingRun((value) => !value)}
-            icon={Pencil}
-            variant="ghost"
-            size="small"
-          >
-            {editingRun ? "Done" : "Edit run"}
-          </Button>
         </div>
       </div>
 
@@ -368,87 +239,11 @@ export function RunCard({ run, runIdx }: Props) {
         />
         <SummaryItem label="Corners" value={run.corners.length} />
         <SummaryItem label="Segments" value={run.segments.length} />
+        <SummaryItem label="Done" value={`${completedSegments}/${run.segments.length}`} />
         {stats.panels > 0 && <SummaryItem label="Panels" value={stats.panels} />}
         {panelLengths && <SummaryItem label="Panel lengths" value={panelLengths} />}
         {stats.posts > 0 && <SummaryItem label="Posts" value={stats.posts} />}
       </div>
-
-      {editingRun && (
-        <div className="mb-3 space-y-4 rounded-2xl border border-brand-border/60 bg-brand-bg/70 p-3">
-          <div>
-            <p className="mb-2 text-sm font-bold text-brand-muted">
-              System type
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {localFenceProducts.map((product) => (
-                <button
-                  key={product.system_type}
-                  type="button"
-                  onClick={() => changeRunProduct(product.system_type)}
-                  className={`rounded-full border px-3 py-2 text-sm font-bold shadow-sm transition-colors ${
-                    product.system_type === run.productCode
-                      ? "border-blue-800 bg-blue-800 text-white shadow-sm"
-                      : "border-brand-border bg-brand-card text-brand-text hover:border-blue-800 hover:text-blue-800"
-                  }`}
-                >
-                  {product.system_type}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {optionFields.length > 0 && (
-            <div>
-              <SchemaDrivenForm
-                fields={optionFields}
-                variables={runVariables}
-                onChange={handleRunFieldChange}
-              />
-            </div>
-          )}
-
-          <div>
-            <p className="mb-2 text-sm font-bold text-brand-muted">
-              Post colour
-            </p>
-            {!editingPostColour ? (
-              <button
-                type="button"
-                onClick={() => setEditingPostColour(true)}
-                className="rounded-full border border-brand-border bg-brand-card px-3 py-2 text-sm font-bold text-brand-text shadow-sm transition-colors hover:border-blue-800 hover:text-blue-800"
-              >
-                Same as fence ({runVariables.colour_code ?? "B"})
-              </button>
-            ) : postColourField ? (
-              <SchemaDrivenForm
-                fields={[postColourField]}
-                variables={runVariables}
-                onChange={handleRunFieldChange}
-              />
-            ) : null}
-          </div>
-
-          {visibleRunFields.length > 0 && (
-            <div>
-              <p className="mb-2 text-sm font-bold text-brand-muted">
-                Posts and fixing
-              </p>
-              <SchemaDrivenForm
-                fields={visibleRunFields}
-                variables={runVariables}
-                onChange={handleRunFieldChange}
-              />
-              {run.productCode === "XPL" &&
-                String(runVariables.post_system ?? "xpl") !== "xpl" && (
-                  <p className="mt-2 rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold leading-relaxed text-amber-700">
-                    Standard posts on XPress Plus need the XPress Plus side
-                    frame and the insert that matches the selected gap.
-                  </p>
-                )}
-            </div>
-          )}
-        </div>
-      )}
 
       {run.segments.length === 0 && (
         <p className="mb-3 text-xs italic text-brand-muted">
@@ -457,19 +252,48 @@ export function RunCard({ run, runIdx }: Props) {
       )}
 
       <div className="space-y-2">
-        {run.segments.map((seg, segIdx) => (
-          <SegmentRow
-            key={seg.segmentId}
-            runId={run.runId}
-            seg={seg}
-            segIdx={segIdx}
-            runIdx={runIdx}
-            open={expandedId === seg.segmentId}
-            onToggle={() =>
-              setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
-            }
-          />
-        ))}
+        {run.segments
+          .filter((segment) => segment.segmentKind !== "gate_opening")
+          .map((seg, segIdx) => (
+            <SegmentRow
+              key={seg.segmentId}
+              runId={run.runId}
+              seg={seg}
+              segIdx={segIdx}
+              runIdx={runIdx}
+              displayLabel={`R${runIdx + 1} S${segIdx + 1}`}
+              open={expandedId === seg.segmentId}
+              onToggle={() =>
+                setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
+              }
+            />
+          ))}
+        {run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
+          <div className="pt-2">
+            <p className="mb-2 flex items-center gap-2 text-sm font-bold text-brand-muted">
+              <CheckCircle2 size={15} />
+              Gates
+            </p>
+            <div className="space-y-2">
+              {run.segments
+                .filter((segment) => segment.segmentKind === "gate_opening")
+                .map((seg, gateIdx) => (
+                  <SegmentRow
+                    key={seg.segmentId}
+                    runId={run.runId}
+                    seg={seg}
+                    segIdx={gateIdx}
+                    runIdx={runIdx}
+                    displayLabel={`R${runIdx + 1} G${gateIdx + 1}`}
+                    open={expandedId === seg.segmentId}
+                    onToggle={() =>
+                      setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
+                    }
+                  />
+                ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="mt-3 flex flex-wrap justify-end gap-2">

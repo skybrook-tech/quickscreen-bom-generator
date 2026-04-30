@@ -871,3 +871,26 @@ Verification:
 - `git diff --check` passed with line-ending warnings only.
 - Local dev server responded with HTTP 200 at `http://127.0.0.1:5173/calculator`.
 - Existing Cypress QSHS baseline spec was attempted, but it is still written for the old login flow and fails looking for `[data-testid="sign-in-btn"]`. The test suite needs an auth-free sandbox update before it can be used as a reliable regression gate.
+
+### April 30, 2026 - Segment-led defaults, gate inheritance, and mapper stability
+
+User workflow finding:
+- Real jobs commonly have 10-15 segments and several gates, so separate run settings plus segment settings made material ordering confusing.
+- The cleaner workflow is for the first fence segment in a run to act as the default settings source for that run. Later fence segments and gates inherit those settings unless edited locally.
+
+Changes applied:
+- Moved the practical run configuration into the first segment options flow: system, colour, slat size, gap, height, post type, post size, mounting method, and max post spacing.
+- Removed visible stock-length controls, left termination type, and right termination type from the segment sidebar.
+- Added clearer segment labels (`R1 S1`, `R1 S2`) and grouped gate labels (`R1 G1`, `R1 G2`) so the sidebar matches the mapper.
+- Added a segment done toggle so long jobs can be marked off as each segment is checked.
+- New fence segments inherit the first segment's settings without copying mapper-only angle markers.
+- Gates now default from the run/first-segment style. A VS run creates vertical gate defaults, horizontal runs create horizontal gate defaults, and the first latch option is selected by default.
+- BOM calculations now merge first fence segment variables into the run variables before calculating, so the calculator engine follows the segment-led UI.
+- QSG gate blade logic now supports 90mm slats, instead of only defaulting to 65mm gate blades.
+- Vertical slat fence BOM now includes the F-section required to accept the vertical U-channel.
+- BOM row keys were made unique so manually changing a BOM quantity reliably refreshes that line's displayed total.
+
+Mapper stability note:
+- Canvas-to-canonical conversion now stores a `geometry_angle_deg` hint on generated panel segments.
+- Canonical-to-canvas conversion uses those angle hints when rebuilding the drawing, which prevents sidebar edits, undo, or gate splits from flattening angled/cornered runs into a straight line.
+- Gate splitting still needs deeper QA on complex angled layouts, but the current pass preserves the original segment angle enough to stop the obvious straight-line regression.

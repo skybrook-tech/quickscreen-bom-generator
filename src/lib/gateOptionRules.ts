@@ -126,8 +126,14 @@ export function gateBuildsForMovement(movement: GateMovement) {
   );
 }
 
-export function defaultGateBuildForMovement(movement: GateMovement): GateBuild {
-  return movement === "sliding" ? "qsg_sliding_horizontal" : "qsg_hinged_horizontal";
+export function defaultGateBuildForMovement(
+  movement: GateMovement,
+  vertical = false,
+): GateBuild {
+  if (movement === "sliding") {
+    return vertical ? "qsg_sliding_vertical" : "qsg_sliding_horizontal";
+  }
+  return vertical ? "qsg_hinged_vertical" : "qsg_hinged_horizontal";
 }
 
 export function defaultGateVariables(
@@ -136,9 +142,10 @@ export function defaultGateVariables(
 ) {
   const colour = String(runVariables.colour_code ?? runVariables.colour ?? "B");
   const slatGap = Number(runVariables.slat_gap_mm ?? 9);
+  const vertical = runVariables.productCode === "VS";
   return {
     [GATE_SEGMENT_STUB_KEYS.gateMovement]: "single_swing",
-    [GATE_SEGMENT_STUB_KEYS.gateBuild]: "qsg_hinged_horizontal",
+    [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement("single_swing", vertical),
     [GATE_SEGMENT_STUB_KEYS.leafCount]: 1,
     [GATE_SEGMENT_STUB_KEYS.matchRunHeight]: true,
     [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: targetHeightMm,
@@ -146,7 +153,7 @@ export function defaultGateVariables(
     [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(runVariables.slat_size_mm ?? 65),
     [GATE_SEGMENT_STUB_KEYS.slatGapMm]: slatGap,
     [GATE_SEGMENT_STUB_KEYS.hingeType]: "ML-TL-KF-H-FT",
-    [GATE_SEGMENT_STUB_KEYS.latchType]: "none",
+    [GATE_SEGMENT_STUB_KEYS.latchType]: LATCH_OPTIONS[0]?.value ?? "none",
     [GATE_SEGMENT_STUB_KEYS.dropBoltType]: "none",
     [GATE_SEGMENT_STUB_KEYS.gateStopType]: "auto",
     [GATE_SEGMENT_STUB_KEYS.includeLockBox]: false,

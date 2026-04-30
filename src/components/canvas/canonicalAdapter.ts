@@ -203,9 +203,10 @@ function expandSegmentWithGates(
         variables:
           gate.useGatePostsAsFenceTermination !== false
             ? {
+                geometry_angle_deg: Math.round(seg.angleDeg),
                 [SEGMENT_TERMINATION_KEYS.rightKind]: 'system_post',
               }
-            : undefined,
+            : { geometry_angle_deg: Math.round(seg.angleDeg) },
       });
     }
 
@@ -248,9 +249,10 @@ function expandSegmentWithGates(
         sorted.length > 0 &&
         sorted[sorted.length - 1].useGatePostsAsFenceTermination !== false
           ? {
+              geometry_angle_deg: Math.round(seg.angleDeg),
               [SEGMENT_TERMINATION_KEYS.leftKind]: 'system_post',
             }
-          : undefined,
+          : { geometry_angle_deg: Math.round(seg.angleDeg) },
     });
   }
 
@@ -339,6 +341,9 @@ export function canvasLayoutToCanonical(
           sortOrder: sortOrder++,
           segmentKind: 'panel',
           segmentWidthMm: Math.round(seg.lengthMM),
+          variables: {
+            geometry_angle_deg: Math.round(seg.angleDeg),
+          },
         });
       }
 
@@ -487,13 +492,12 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
       useGatePostsAsFenceTermination?: boolean;
     }> = [];
 
-    const fenceSegments = run.segments.filter(s => s.segmentKind !== 'gate_opening');
-
-    // Determine whether stored geometry is usable:
-    // geometry.points must have exactly fenceSegments.length + 1 entries
-    // (run start + one endpoint per fence segment).
+    // Determine whether stored geometry is usable. Older payloads may have
+    // fewer geometry points than fence segments after a gate split; in that
+    // case per-segment geometry_angle_deg hints preserve turns instead of
+    // falling back to a flat straight line.
     const geomPts = run.geometry?.points;
-    const useGeometry = !!(geomPts && geomPts.length === fenceSegments.length + 1);
+    const useGeometry = !!(geomPts && geomPts.length >= 2);
 
     let xCursor = 0;       // used only in flat-horizontal fallback
     let fenceSegIdx = 0;   // index into fenceSegments for geometry path
@@ -536,8 +540,9 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
         // Panel, bay_group, or corner
         const widthMm = canonSeg.segmentWidthMm ?? 1000;
         if (useGeometry) {
-          const sourceP0 = geomPts![fenceSegIdx];
-          const sourceP1 = geomPts![fenceSegIdx + 1];
+          const sourceIdx = Math.min(fenceSegIdx, geomPts!.length - 2);
+          const sourceP0 = geomPts![sourceIdx];
+          const sourceP1 = geomPts![sourceIdx + 1];
           const p0 =
             localFlatSegments.length > 0
               ? {
@@ -545,12 +550,14 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
                   y: localFlatSegments[localFlatSegments.length - 1].endY,
                 }
               : sourceP0;
-          const dx = sourceP1.x - sourceP0.x;
-          const dy = sourceP1.y - sourceP0.y;
-          const currentPx = Math.hypot(dx, dy);
+          const hintedAngle = Number(canonSeg.variables?.geometry_angle_deg);
+          const sourceAngle =
+            Number.isFinite(hintedAngle)
+              ? (hintedAngle * Math.PI) / 180
+              : Math.atan2(sourceP1.y - sourceP0.y, sourceP1.x - sourceP0.x);
           const targetPx = widthMm / 10; // 100px/m = 10mm per px
-          const unitX = currentPx > 0 ? dx / currentPx : 1;
-          const unitY = currentPx > 0 ? dy / currentPx : 0;
+          const unitX = Math.cos(sourceAngle);
+          const unitY = Math.sin(sourceAngle);
           const p1 = {
             x: p0.x + unitX * targetPx,
             y: p0.y + unitY * targetPx,

@@ -71,9 +71,12 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   const runVars = { ...(state.payload?.variables ?? {}), ...(run?.variables ?? {}) };
   const movement = gateMovementOrDefault(v[GATE_SEGMENT_STUB_KEYS.gateMovement]);
   const buildOptions = gateBuildsForMovement(movement);
+  const prefersVerticalGate =
+    run?.productCode === "VS" ||
+    String(v[GATE_SEGMENT_STUB_KEYS.gateBuild] ?? "").includes("vertical");
   const build = buildOptions.some((option) => option.value === v[GATE_SEGMENT_STUB_KEYS.gateBuild])
     ? String(v[GATE_SEGMENT_STUB_KEYS.gateBuild])
-    : defaultGateBuildForMovement(movement);
+    : defaultGateBuildForMovement(movement, prefersVerticalGate);
   const matchRunHeight = v[GATE_SEGMENT_STUB_KEYS.matchRunHeight] !== false;
   const isSwing = isSwingGateMovement(movement);
 
@@ -87,7 +90,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
 
   function setMovement(value: string) {
     const nextMovement = gateMovementOrDefault(value);
-    const nextBuild = defaultGateBuildForMovement(nextMovement);
+    const nextBuild = defaultGateBuildForMovement(nextMovement, prefersVerticalGate);
     upsertVariables({
       [GATE_SEGMENT_STUB_KEYS.gateMovement]: nextMovement,
       [GATE_SEGMENT_STUB_KEYS.gateBuild]: nextBuild,
@@ -97,7 +100,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
       [GATE_SEGMENT_STUB_KEYS.hingeType]:
         nextMovement === "sliding" ? "none" : v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "ML-TL-KF-H-FT",
       [GATE_SEGMENT_STUB_KEYS.latchType]:
-        nextMovement === "sliding" ? "none" : v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "none",
+        nextMovement === "sliding" ? "none" : v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "ML-TL",
     });
   }
 

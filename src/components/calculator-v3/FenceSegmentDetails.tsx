@@ -2,12 +2,19 @@ import { useMemo } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../types/canonical.types";
+import { localFenceProducts } from "../../lib/localSeedData";
 import {
+  applyProductOptionRules,
+  initialVariablesForSystem,
+  maxPanelWidthForSystem,
+  normaliseVariablesForSystem,
+} from "../../lib/productOptionRules";
+import {
+  GATE_SEGMENT_STUB_KEYS,
   SEGMENT_OPTION_KEYS,
   patchSegmentVariables,
 } from "../../lib/segmentTermination";
 import { SchemaDrivenForm } from "./SchemaDrivenForm";
-import { TerminationControl } from "./TerminationControl";
 import NumberInput from "../shared/NumberInput";
 
 const POST_SIZE_LABELS: Record<string, string> = {
@@ -22,14 +29,10 @@ interface Props {
 
 export function FenceSegmentDetails({ runId, seg }: Props) {
   const { state, dispatch } = useCalculator();
-  const productCode = state.payload?.productCode ?? null;
+  const run = state.payload?.runs.find((item) => item.runId === runId);
+  const productCode = run?.productCode ?? state.payload?.productCode ?? null;
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
   const { data: runFields = [] } = useProductVariables(productCode, "run");
-
-  const jobFieldKeys = useMemo(
-    () => new Set(jobFields.map((f) => f.field_key)),
-    [jobFields],
-  );
 
   // Post size options from the run-scoped post_size variable
   const postSizeOptions = useMemo(() => {
@@ -39,7 +42,19 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   }, [runFields]);
 
   const v = seg.variables ?? {};
-  const postSize = (v[SEGMENT_OPTION_KEYS.postSize] as string) ?? "";
+  const firstFenceSegmentId = run?.segments.find(
+    (segment) => segment.segmentKind !== "gate_opening",
+  )?.segmentId;
+  const isDefaultSegment = seg.segmentId === firstFenceSegmentId;
+  const runVariables = {
+    ...(state.payload?.variables ?? {}),
+    ...(run?.variables ?? {}),
+  };
+  const displayVariables = {
+    ...runVariables,
+    ...v,
+  };
+  const postSize = (displayVariables[SEGMENT_OPTION_KEYS.postSize] as string) ?? "";
   const isCustomPost = postSize === "custom";
 
   function upsertSegment(s: CanonicalSegment) {
@@ -47,11 +62,15 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   }
 
   function setScalar(key: string, value: string | number | boolean | null) {
+    if (isDefaultSegment && value !== null) {
+      syncDefaultVariables(key, value);
+      return;
+    }
     upsertSegment(patchSegmentVariables(seg, { [key]: value }));
   }
 
   function onJobOverrideChange(key: string, value: string | number | boolean) {
-    const base = state.payload?.variables[key];
+    const base = runVariables[key];
     upsertSegment(
       patchSegmentVariables(seg, { [key]: value === base ? null : value }),
     );
@@ -61,16 +80,223 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   const effectiveMax = Number(v.max_panel_width_mm ?? jobMax);
 
   function updateMaxPanelWidth(value: number | null) {
+    if (isDefaultSegment && value !== null) {
+      syncDefaultVariables("max_panel_width_mm", value);
+      return;
+    }
     upsertSegment(patchSegmentVariables(seg, { max_panel_width_mm: value }));
   }
 
   const mergedJobDisplay: Record<string, string | number | boolean> = {
-    ...(state.payload?.variables ?? {}),
-    ...v,
+    ...displayVariables,
   };
+  const optionFields = useMemo(
+    () =>
+      productCode
+        ? applyProductOptionRules(
+            productCode,
+            jobFields.filter(
+              (field) =>
+                !field.field_key.endsWith("_stock_length_mm") &&
+                field.field_key !== "max_panel_width_mm",
+            ),
+            mergedJobDisplay,
+          )
+        : [],
+    [jobFields, mergedJobDisplay, productCode],
+  );
+  const visibleRunFields = useMemo(
+    () =>
+      runFields
+        .filter(
+          (field) => {
+            if (["left_boundary_type", "right_boundary_type"].includes(field.field_key)) {
+              return false;
+            }
+            if (
+              field.field_key === "mounting_method" &&
+              runFields.some((candidate) => candidate.field_key === "mounting_type")
+            ) {
+              return false;
+            }
+            return true;
+          },
+        )
+        .map((field) => {
+          if (field.field_key === "mounting_type" || field.field_key === "mounting_method") {
+            return {
+              ...field,
+              label: "Post mounting type",
+              default_value_json: "in_ground",
+              options_json: ["in_ground", "base_plate", "core_drill"],
+            };
+          }
+          if (field.field_key === "post_system") {
+            return {
+              ...field,
+              label: "Post type",
+              default_value_json: productCode === "XPL" ? "xpl" : "standard_50",
+            };
+          }
+          if (field.field_key === "post_size") {
+            return {
+              ...field,
+              label: "Standard post size",
+              default_value_json: "50",
+            };
+          }
+          return field;
+        }),
+    [productCode, runFields],
+  );
+
+  function syncDefaultVariables(
+    key: string,
+    value: string | number | boolean,
+  ) {
+    if (!run || !productCode) return;
+    const previousColour = String(runVariables.colour_code ?? "");
+    const previousPostColour = String(
+      runVariables.post_colour_code ?? previousColour,
+    );
+    const nextVariables = {
+      ...(run.variables ?? {}),
+      [key]: value,
+    };
+    if (key === "mounting_type" || key === "mounting_method") {
+      nextVariables.mounting_type = value;
+      nextVariables.mounting_method = value;
+    }
+    if (key === "post_system") {
+      nextVariables.post_size = value === "standard_65" ? 65 : 50;
+    }
+    if (
+      key === "colour_code" &&
+      (!run.variables?.post_colour_code || previousPostColour === previousColour)
+    ) {
+      nextVariables.post_colour_code = value;
+    }
+    const normalised = normaliseVariablesForSystem(productCode, nextVariables);
+    const syncGeometryKeys = [
+      "target_height_mm",
+      "slat_size_mm",
+      "slat_gap_mm",
+      "slat_gap_mode",
+      "colour_code",
+      "post_colour_code",
+    ];
+    dispatch({
+      type: "UPSERT_RUN",
+      run: {
+        ...run,
+        variables: normalised,
+        segments: syncGeometryKeys.includes(key)
+          ? run.segments.map((segment) => {
+              if (segment.segmentKind === "gate_opening") {
+                return {
+                  ...segment,
+                  targetHeightMm: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
+                  variables: {
+                    ...(segment.variables ?? {}),
+                    [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
+                    [GATE_SEGMENT_STUB_KEYS.colourCode]: String(normalised.colour_code ?? "B"),
+                    [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(normalised.slat_size_mm ?? 65),
+                    [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(normalised.slat_gap_mm ?? 9),
+                  },
+                };
+              }
+              return {
+                ...segment,
+                targetHeightMm: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
+              };
+            })
+          : run.segments,
+      },
+    });
+  }
+
+  function handleOptionChange(key: string, value: string | number | boolean) {
+    if (isDefaultSegment) {
+      syncDefaultVariables(key, value);
+      return;
+    }
+    onJobOverrideChange(key, value);
+  }
+
+  function changeRunProduct(nextProductCode: string) {
+    if (!run) return;
+    const variables = normaliseVariablesForSystem(nextProductCode, {
+      ...initialVariablesForSystem(nextProductCode),
+      ...runVariables,
+      max_panel_width_mm:
+        runVariables.max_panel_width_mm ?? maxPanelWidthForSystem(nextProductCode),
+    });
+    dispatch({
+      type: "UPSERT_RUN",
+      run: {
+        ...run,
+        productCode: nextProductCode,
+        variables,
+        segments: run.segments.map((segment) => ({
+          ...segment,
+          targetHeightMm: Number(variables.target_height_mm ?? segment.targetHeightMm ?? 1800),
+        })),
+      },
+    });
+  }
 
   return (
     <div className="space-y-4">
+      {isDefaultSegment && run && (
+        <div className="space-y-3 rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
+          <p className="text-sm font-bold text-brand-muted">Default settings for this run</p>
+          <div>
+            <p className="mb-2 text-sm font-bold text-brand-muted">System type</p>
+            <div className="flex flex-wrap gap-2">
+              {localFenceProducts.map((product) => (
+                <button
+                  key={product.system_type}
+                  type="button"
+                  onClick={() => changeRunProduct(product.system_type)}
+                  className={`rounded-full border px-3 py-2 text-sm font-bold shadow-sm transition-colors ${
+                    product.system_type === run.productCode
+                      ? "border-blue-800 bg-blue-800 text-white shadow-sm"
+                      : "border-brand-border bg-brand-card text-brand-text hover:border-blue-800 hover:text-blue-800"
+                  }`}
+                >
+                  {product.system_type}
+                </button>
+              ))}
+            </div>
+          </div>
+          <SchemaDrivenForm
+            fields={optionFields}
+            variables={mergedJobDisplay}
+            onChange={handleOptionChange}
+          />
+          {visibleRunFields.length > 0 && (
+            <SchemaDrivenForm
+              fields={visibleRunFields}
+              variables={mergedJobDisplay}
+              onChange={handleOptionChange}
+            />
+          )}
+        </div>
+      )}
+
+      {!isDefaultSegment && optionFields.length > 0 && (
+        <div className="rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
+          <p className="mb-2 text-sm font-bold text-brand-muted">
+            Segment overrides
+          </p>
+          <SchemaDrivenForm
+            fields={optionFields}
+            variables={mergedJobDisplay}
+            onChange={handleOptionChange}
+          />
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Max panel width override */}
         <label className="flex flex-col gap-1">
@@ -122,27 +348,6 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         )}
       </div>
 
-      {jobFields.length > 0 && (
-        <div>
-          <p className="mb-2 text-sm font-bold text-brand-muted">
-            Job settings override (this segment)
-          </p>
-          <SchemaDrivenForm
-            fields={jobFields}
-            variables={mergedJobDisplay}
-            onChange={(key, value) => {
-              if (!jobFieldKeys.has(key)) return;
-              onJobOverrideChange(key, value);
-            }}
-          />
-        </div>
-      )}
-
-      <div className="grid grid-cols-2 gap-3">
-        {(["left", "right"] as const).map((side) => (
-          <TerminationControl key={side} runId={runId} seg={seg} side={side} />
-        ))}
-      </div>
     </div>
   );
 }

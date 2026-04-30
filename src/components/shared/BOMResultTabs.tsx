@@ -150,9 +150,9 @@ function ItemGroup({
           {pluralize(category)}
         </td>
       </tr>
-      {items.map((item) => (
+      {items.map((item, itemIndex) => (
         <tr
-          key={`${item.sku}-${item.category}`}
+          key={`${category}-${item.sku}-${item.category}-${item.description}-${itemIndex}`}
           className="border-b border-brand-border last:border-0 hover:bg-brand-accent/5 transition-colors"
         >
           <td className="py-2.5 px-3 text-xs font-mono text-brand-accent whitespace-nowrap">
