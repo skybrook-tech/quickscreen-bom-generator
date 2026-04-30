@@ -73,7 +73,7 @@ export function BomPanel({
   }, [activeTab, view]);
 
   return (
-    <div className="rounded-xl border border-brand-border bg-brand-bg overflow-hidden flex flex-col h-full shadow-sm">
+    <div className="rounded-xl border border-brand-border bg-white overflow-hidden flex flex-col h-full shadow-sm">
       <BomHeader
         pricingTier={view.pricingTier}
         grandTotal={view.grandTotal}
@@ -115,10 +115,10 @@ export function BomPanel({
       {/* Scrollable middle: table + suggestions */}
       <div className="flex-1 overflow-y-auto">
         <BomTable lines={visibleLines} />
-        <SuggestedAccessoriesPanel />
       </div>
 
       {/* Fixed footers */}
+      <SuggestedAccessoriesPanel />
       <ExtraItemsPanel />
       <BomTotals
         total={view.total}

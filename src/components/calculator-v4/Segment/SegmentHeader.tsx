@@ -3,7 +3,6 @@ import {
   ChevronRight,
   Copy,
   DoorOpen,
-  GripVertical,
   Trash2,
 } from "lucide-react";
 import type { CanonicalSegment } from "../../../types/canonical.types";

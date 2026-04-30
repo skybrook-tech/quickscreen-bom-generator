@@ -16,7 +16,7 @@ const fmt = (n: number) =>
 export function BomTableRow({ line, onRemove }: Props) {
   return (
     <tr className="hover:bg-brand-border/15 transition-colors">
-      <td className="px-3 py-2 text-xs font-mono text-brand-muted">
+      <td className="text-blue-500 px-3 py-2 text-xs font-mono text-brand-muted">
         {line.sku || "—"}
       </td>
       <td className="px-3 py-2 text-xs text-brand-text">

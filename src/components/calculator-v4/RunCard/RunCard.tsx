@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import type {
   CanonicalRun,
@@ -21,6 +21,12 @@ export function RunCard({ run, index, onAddGate }: Props) {
   const { state, dispatch } = useCalculatorV4();
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState<RunTab>("style");
+
+  useEffect(() => {
+    if (state.openRunConfigRunId !== run.runId) return;
+    setEditing(true);
+    dispatch({ type: "CLEAR_OPEN_RUN_CONFIG" });
+  }, [state.openRunConfigRunId, run.runId, dispatch]);
 
   const effectiveVars = useMemo(
     () => ({

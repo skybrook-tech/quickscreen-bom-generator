@@ -25,6 +25,8 @@ export interface AddedSuggestion {
 export interface CalculatorV4State {
   jobName: string;
   payload: CanonicalPayload | null;
+  /** After ADD_RUN or initial job create, that run's card should open config; cleared once applied. */
+  openRunConfigRunId: string | null;
   bomResult: Record<string, unknown> | null;
   /** Suggestions the user has accepted into the BOM (client-side only in v4 v1). */
   addedSuggestions: AddedSuggestion[];
@@ -39,6 +41,7 @@ export interface CalculatorV4State {
 const initialState: CalculatorV4State = {
   jobName: "",
   payload: null,
+  openRunConfigRunId: null,
   bomResult: null,
   addedSuggestions: [],
   dismissedSuggestionSkus: new Set(),
@@ -51,7 +54,12 @@ const initialState: CalculatorV4State = {
 export type CalculatorV4Action =
   | { type: "SET_JOB_NAME"; name: string }
   | { type: "INIT_PAYLOAD"; payload: CanonicalPayload }
-  | { type: "SET_PAYLOAD"; payload: CanonicalPayload }
+  | {
+      type: "SET_PAYLOAD";
+      payload: CanonicalPayload;
+      /** When set, RunCard opens config for this run (then cleared). Omitted → null. */
+      openRunConfigRunId?: string | null;
+    }
   | { type: "RESET_JOB" }
   | {
       type: "UPSERT_RUN_VARIABLES";
@@ -60,6 +68,7 @@ export type CalculatorV4Action =
     }
   | { type: "SET_RUN_PRODUCT"; runId: string; productCode: string }
   | { type: "ADD_RUN" }
+  | { type: "CLEAR_OPEN_RUN_CONFIG" }
   | { type: "REMOVE_RUN"; runId: string }
   | { type: "UPSERT_SEGMENT"; runId: string; segment: CanonicalSegment }
   | { type: "REMOVE_SEGMENT"; runId: string; segmentId: string }
@@ -87,13 +96,20 @@ function reducer(
         ...initialState,
         jobName: state.jobName,
         payload: action.payload,
+        openRunConfigRunId: null,
         dismissedSuggestionSkus: new Set(),
         removedSkus: new Set(),
       };
     case "SET_PAYLOAD":
-      return { ...state, payload: action.payload };
+      return {
+        ...state,
+        payload: action.payload,
+        openRunConfigRunId: action.openRunConfigRunId ?? null,
+      };
     case "RESET_JOB":
       return initialState;
+    case "CLEAR_OPEN_RUN_CONFIG":
+      return { ...state, openRunConfigRunId: null };
     case "UPSERT_RUN_VARIABLES": {
       if (!state.payload) return state;
       const runs = state.payload.runs.map((r) =>
@@ -104,17 +120,19 @@ function reducer(
       return { ...state, payload: { ...state.payload, runs } };
     }
     case "ADD_RUN": {
+      if (!state.payload) return state;
       const newRun: CanonicalRun = {
         runId: crypto.randomUUID(),
-        productCode: state.payload?.productCode ?? "", // inherit job default
+        productCode: state.payload.productCode,
         variables: {},
         segments: [],
       };
       return {
         ...state,
+        openRunConfigRunId: newRun.runId,
         payload: {
-          ...(state.payload ?? {}),
-          runs: [...(state.payload?.runs ?? []), newRun],
+          ...state.payload,
+          runs: [...state.payload.runs, newRun],
         },
       };
     }
@@ -133,6 +151,10 @@ function reducer(
       if (state.payload.runs.length <= 1) return state;
       return {
         ...state,
+        openRunConfigRunId:
+          state.openRunConfigRunId === action.runId
+            ? null
+            : state.openRunConfigRunId,
         payload: {
           ...state.payload,
           runs: state.payload.runs.filter((r) => r.runId !== action.runId),

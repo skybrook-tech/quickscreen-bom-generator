@@ -1,13 +1,6 @@
-import { Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
-
-const fmt = (n: number) =>
-  new Intl.NumberFormat("en-AU", {
-    style: "currency",
-    currency: "AUD",
-    minimumFractionDigits: 2,
-  }).format(n);
 
 /**
  * Manual extra-items panel. Fixed footer — visible whenever a BOM is loaded.
@@ -42,37 +35,8 @@ export function ExtraItemsPanel() {
   return (
     <div className="border-t border-brand-border bg-brand-card px-4 py-3 flex-shrink-0">
       <h3 className="text-[11px] font-semibold uppercase tracking-wider text-brand-muted mb-2">
-        Extra items
+        Add extra items
       </h3>
-
-      {state.extraItems.length > 0 && (
-        <div className="space-y-1 mb-2">
-          {state.extraItems.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center gap-2 px-2.5 py-1.5 bg-brand-border/15 rounded-md text-xs"
-            >
-              <span className="flex-1 text-brand-text truncate">
-                {item.description}
-              </span>
-              <span className="font-mono tabular-nums text-brand-muted">
-                ×{item.qty}
-              </span>
-              <span className="font-mono tabular-nums w-20 text-right">
-                {fmt(item.qty * item.unitPrice)}
-              </span>
-              <button
-                onClick={() =>
-                  dispatch({ type: "REMOVE_EXTRA", id: item.id })
-                }
-                className="p-1 text-brand-muted hover:text-red-500 rounded"
-              >
-                <X size={11} />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
 
       <div className="grid grid-cols-12 gap-2">
         <input

@@ -63,6 +63,7 @@ function CalculatorV4Content() {
     dispatch({
       type: "SET_PAYLOAD",
       payload: initialPayload,
+      openRunConfigRunId: runId,
     });
   }
 
