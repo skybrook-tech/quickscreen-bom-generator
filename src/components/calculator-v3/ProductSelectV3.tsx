@@ -3,7 +3,6 @@ import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 import { localFenceProducts } from "../../lib/localSeedData";
 import {
   initialVariablesForSystem,
-  maxPanelWidthForSystem,
 } from "../../lib/productOptionRules";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalPayload } from "../../types/canonical.types";
@@ -62,9 +61,6 @@ export function ProductSelectV3() {
 
   function selectProduct(p: FenceProduct) {
     const initialVariables = initialVariablesForSystem(p.system_type);
-    const initialWidth = Number(
-      initialVariables.max_panel_width_mm ?? maxPanelWidthForSystem(p.system_type),
-    );
     const initialHeight = Number(initialVariables.target_height_mm ?? 1800);
     const initialPayload: CanonicalPayload = {
       productCode: p.system_type,
@@ -82,7 +78,7 @@ export function ProductSelectV3() {
               segmentId: crypto.randomUUID(),
               sortOrder: 1,
               segmentKind: "panel",
-              segmentWidthMm: initialWidth,
+              segmentWidthMm: 0,
               targetHeightMm: initialHeight,
             },
           ],

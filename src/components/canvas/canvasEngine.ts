@@ -10,9 +10,12 @@ export interface CanvasSegment {
   angleDeg: number; // angle from horizontal
 }
 
+export type GateAnchor = "start" | "center" | "end";
+
 export interface CanvasGate {
   segmentIndex: number;
-  positionOnSegment: number; // 0–1 fraction along segment
+  positionOnSegment: number; // 0-1 fraction along segment
+  anchor?: GateAnchor;
   widthMM: number;
   useGatePostsAsFenceTermination?: boolean;
 }
@@ -77,7 +80,8 @@ interface SegmentMapLabel {
 }
 
 interface GateMarker {
-  t: number; // 0–1 along segment
+  t: number; // 0-1 along segment
+  anchor?: GateAnchor;
   widthMM: number;
   gateId?: string; // matches the GateConfig.id in GateContext once the gate is saved
   useGatePostsAsFenceTermination?: boolean;
@@ -345,6 +349,31 @@ function closestPointOnSegment(
   return { point: proj, t, d: dist(p, proj) };
 }
 
+function gateAnchorForPlacement(seg: Segment, t: number, gateWidthMM: number): GateAnchor {
+  if (seg.lengthMM <= 0) return "center";
+  const halfGateT = Math.min(0.5, gateWidthMM / seg.lengthMM / 2);
+  if (t <= halfGateT) return "start";
+  if (t >= 1 - halfGateT) return "end";
+  return "center";
+}
+
+function gateRange(seg: Segment, gate: Pick<GateMarker, "t" | "widthMM" | "anchor">) {
+  if (seg.lengthMM <= 0) {
+    return { tStart: gate.t, tEnd: gate.t, tMid: gate.t };
+  }
+  const gateT = Math.min(1, gate.widthMM / seg.lengthMM);
+  if (gate.anchor === "start") {
+    return { tStart: 0, tEnd: gateT, tMid: gateT / 2 };
+  }
+  if (gate.anchor === "end") {
+    return { tStart: 1 - gateT, tEnd: 1, tMid: 1 - gateT / 2 };
+  }
+  const halfT = gateT / 2;
+  const tStart = Math.max(0, gate.t - halfT);
+  const tEnd = Math.min(1, gate.t + halfT);
+  return { tStart, tEnd, tMid: (tStart + tEnd) / 2 };
+}
+
 function offsetPointFromSegment(seg: Segment, t: number, offset: number): Point {
   const base = lerp(seg.p1, seg.p2, t);
   const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
@@ -598,6 +627,7 @@ export function initCanvasEngine(
         gates.push({
           segmentIndex: flatIdx,
           positionOnSegment: g.t,
+          anchor: g.anchor,
           widthMM: g.widthMM,
           useGatePostsAsFenceTermination:
             g.useGatePostsAsFenceTermination ?? true,
@@ -638,6 +668,7 @@ export function initCanvasEngine(
           runGates.push({
             segmentIndex: flatOffset + si,
             positionOnSegment: g.t,
+            anchor: g.anchor,
             widthMM: g.widthMM,
             useGatePostsAsFenceTermination:
               g.useGatePostsAsFenceTermination ?? true,
@@ -1103,13 +1134,7 @@ export function initCanvasEngine(
         }
         let cursor = 0;
         const gates = seg.gates
-          .map((g) => {
-            const halfT = seg.lengthMM > 0 ? g.widthMM / seg.lengthMM / 2 : 0;
-            return {
-              tStart: Math.max(0, g.t - halfT),
-              tEnd: Math.min(1, g.t + halfT),
-            };
-          })
+          .map((g) => gateRange(seg, g))
           .sort((a, b) => a.tStart - b.tStart);
         for (const gate of gates) {
           if ((gate.tStart - cursor) * seg.lengthMM > 1) {
@@ -1175,13 +1200,7 @@ export function initCanvasEngine(
     let panelNumber = startPanelNumber;
     let gateNumber = startGateNumber;
     const gates = seg.gates
-      .map((g) => {
-        const halfT = seg.lengthMM > 0 ? g.widthMM / seg.lengthMM / 2 : 0;
-        return {
-          tStart: Math.max(0, g.t - halfT),
-          tEnd: Math.min(1, g.t + halfT),
-        };
-      })
+      .map((g) => gateRange(seg, g))
       .sort((a, b) => a.tStart - b.tStart);
 
     if (gates.length === 0) {
@@ -1200,7 +1219,7 @@ export function initCanvasEngine(
       }
       labels.push({
         text: `R${runNumber} G${gateNumber++}`,
-        t: (gate.tStart + gate.tEnd) / 2,
+        t: gate.tMid,
         kind: "gate",
       });
       cursor = gate.tEnd;
@@ -1229,14 +1248,7 @@ export function initCanvasEngine(
     // Build sorted list of gate gaps as (tStart, tEnd) pairs
     type GateGap = { tStart: number; tEnd: number; widthMM: number };
     const gaps: GateGap[] = seg.gates
-      .map((g) => {
-        const halfT = seg.lengthMM > 0 ? g.widthMM / seg.lengthMM / 2 : 0;
-        return {
-          tStart: Math.max(0, g.t - halfT),
-          tEnd: Math.min(1, g.t + halfT),
-          widthMM: g.widthMM,
-        };
-      })
+      .map((g) => ({ ...gateRange(seg, g), widthMM: g.widthMM }))
       .sort((a, b) => a.tStart - b.tStart);
 
     // Draw fence line as sections between/around gate gaps
@@ -1553,7 +1565,7 @@ export function initCanvasEngine(
         const seg = run.segments[si];
         for (let gi = 0; gi < seg.gates.length; gi++) {
           const gate = seg.gates[gi];
-          const midWorld = lerp(seg.p1, seg.p2, gate.t);
+          const midWorld = lerp(seg.p1, seg.p2, gateRange(seg, gate).tMid);
           result.push({
             screenPt: canvasToScreen(midWorld, pan, zoom),
             runIdx: ri,
@@ -1749,10 +1761,12 @@ export function initCanvasEngine(
         const allSegs = allSegmentsFlat();
         const info = allSegs[flatIdx];
         const proj = closestPointOnSegment(canvasPt, info.seg);
+        const gateAnchor = gateAnchorForPlacement(info.seg, proj.t, DEFAULT_GATE_WIDTH_MM);
         const gateIdx = info.seg.gates.length;
         undoStack.push({ type: "ADD_GATE", segIdx: flatIdx, gateIdx });
         info.seg.gates.push({
-          t: proj.t,
+          t: Math.max(0, Math.min(1, proj.t)),
+          anchor: gateAnchor,
           widthMM: DEFAULT_GATE_WIDTH_MM,
           useGatePostsAsFenceTermination: true,
         });
@@ -1829,7 +1843,9 @@ export function initCanvasEngine(
           const t =
             ((canvasPt.x - seg.p1.x) * dx + (canvasPt.y - seg.p1.y) * dy) /
             len2;
-          seg.gates[draggingGate.gateIdx].t = Math.max(0.05, Math.min(0.95, t));
+          const gate = seg.gates[draggingGate.gateIdx];
+          gate.t = Math.max(0, Math.min(1, t));
+          gate.anchor = gateAnchorForPlacement(seg, gate.t, gate.widthMM);
         }
         scheduleRedraw();
       }
@@ -2306,6 +2322,12 @@ export function initCanvasEngine(
     const info = allSegs[segIdx];
     if (info && info.seg.gates[gateIdx] !== undefined) {
       info.seg.gates[gateIdx].widthMM = widthMM;
+      info.seg.gates[gateIdx].anchor = gateAnchorForPlacement(
+        info.seg,
+        info.seg.gates[gateIdx].t,
+        widthMM,
+      );
+      notifyChange();
       scheduleRedraw();
     }
   }
@@ -2429,6 +2451,7 @@ export function initCanvasEngine(
         );
         seg.gates = segsGates.map((g) => ({
           t: g.positionOnSegment,
+          anchor: g.anchor,
           widthMM: g.widthMM,
           useGatePostsAsFenceTermination:
             g.useGatePostsAsFenceTermination ?? true,

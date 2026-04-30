@@ -533,9 +533,6 @@ function CalculatorV3Content() {
               <>
                 <hr className="border-brand-border/60" />
                 <section>
-                  <p className="mb-3 text-xs font-semibold uppercase tracking-[0.08em] text-brand-muted">
-                    Runs
-                  </p>
                   <RunListV3 />
                 </section>
 

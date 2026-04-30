@@ -921,6 +921,25 @@ Changes applied:
 
 Verification:
 - `npm run build` passed after these changes.
+
+### May 1, 2026 - Sidebar readability and endpoint gate placement
+
+User workflow finding:
+- The run master settings were hard to scan because labels and answers had the same visual weight.
+- New jobs should start with an explicit 0m first segment so the user enters the measured length rather than editing a prefilled panel length.
+- Gates need to be placeable at the start, end, or corner of a segment when the existing/corner post is intended to act as the gate post.
+
+Changes applied:
+- Removed the redundant `Runs` sidebar caption and made each `Run 1`, `Run 2` title larger and more prominent.
+- Master setting pills now render as label/value pairs, with the value in muted grey so the selected answers are easier to pick out.
+- New first segments now default to 0m for all systems.
+- Segment length and height controls were compacted for laptop sidebar layouts.
+- Canvas gate markers now support start/end anchoring. Clicking near the segment start or end places the gate opening flush with that endpoint/corner while preserving the full gate opening width.
+- Gate post previews, map labels, hit testing, canvas layout export, and canonical conversion now use the anchored gate opening range instead of forcing every gate to be centred away from the segment end.
+
+Verification:
+- `npm run build` passed after these changes.
+- Local app responded with HTTP 200 at `http://127.0.0.1:5173/calculator`.
 - Local app responded with HTTP 200 at `http://127.0.0.1:5173/calculator`.
 
 ### May 1, 2026 - Segment confirmation and master reset controls

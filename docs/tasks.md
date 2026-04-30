@@ -6,6 +6,8 @@
 > **v3 Engine** — V3-1 through V3-6 complete. V3-7 (docs cross-linking) is the only remaining item.
 > Start here for an overview: [`docs/how_it_works.md`](./how_it_works.md).
 
+Latest sandbox polish: run sidebar readability, 0m first-segment defaults, compact length/height controls, and endpoint/corner gate placement are implemented on `codex/qshs-calculator-sandbox`.
+
 ---
 
 ## Phases Overview

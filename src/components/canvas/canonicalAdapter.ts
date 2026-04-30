@@ -28,6 +28,7 @@
 // additional `panel` segments (before and after the gate opening).
 
 import type {
+  CanvasGate,
   CanvasLayout,
   CanvasSegment,
   CanvasRunSummary,
@@ -159,10 +160,23 @@ function detectCornerIndices(segments: CanvasSegment[]): Set<number> {
 // canonical segments: [panel?, gate_opening, panel?, gate_opening, …, panel?]
 // ---------------------------------------------------------------------------
 interface GateInSegment {
-  positionOnSegment: number; // 0–1 fraction
+  positionOnSegment: number; // 0-1 fraction
+  anchor?: CanvasGate['anchor'];
   widthMM: number;
   gateIndex: number; // index within this segment's gates
   useGatePostsAsFenceTermination?: boolean;
+}
+
+function gateFractions(totalMm: number, gate: Pick<GateInSegment, 'positionOnSegment' | 'widthMM' | 'anchor'>) {
+  if (totalMm <= 0) return { start: gate.positionOnSegment, end: gate.positionOnSegment };
+  const gateFraction = Math.min(1, gate.widthMM / totalMm);
+  if (gate.anchor === 'start') return { start: 0, end: gateFraction };
+  if (gate.anchor === 'end') return { start: 1 - gateFraction, end: 1 };
+  const half = gateFraction / 2;
+  return {
+    start: Math.max(0, gate.positionOnSegment - half),
+    end: Math.min(1, gate.positionOnSegment + half),
+  };
 }
 
 function expandSegmentWithGates(
@@ -181,10 +195,7 @@ function expandSegmentWithGates(
   let cursorFraction = 0;
 
   for (const gate of sorted) {
-    const gateStartFraction = gate.positionOnSegment - gate.widthMM / totalMm / 2;
-    const gateEndFraction = gate.positionOnSegment + gate.widthMM / totalMm / 2;
-    const clampedStart = Math.max(0, gateStartFraction);
-    const clampedEnd = Math.min(1, gateEndFraction);
+    const { start: clampedStart, end: clampedEnd } = gateFractions(totalMm, gate);
 
     // Fence panel before this gate opening
     const panelBeforeMm = (clampedStart - cursorFraction) * totalMm;
@@ -300,6 +311,7 @@ export function canvasLayoutToCanonical(
       if (!gatesPerFlatSeg.has(flatIdx)) gatesPerFlatSeg.set(flatIdx, []);
       gatesPerFlatSeg.get(flatIdx)!.push({
         positionOnSegment: gate.positionOnSegment,
+        anchor: gate.anchor,
         widthMM: gate.widthMM,
         gateIndex: gi,
         useGatePostsAsFenceTermination:
@@ -472,6 +484,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
   const allFlatGates: Array<{
     segmentIndex: number;
     positionOnSegment: number;
+    anchor?: CanvasGate['anchor'];
     widthMM: number;
     useGatePostsAsFenceTermination?: boolean;
   }> = [];
@@ -488,6 +501,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
     const runGates: Array<{
       segmentIndex: number;
       positionOnSegment: number;
+      anchor?: CanvasGate['anchor'];
       widthMM: number;
       useGatePostsAsFenceTermination?: boolean;
     }> = [];
@@ -511,6 +525,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
           allFlatGates.push({
             segmentIndex: precedingFlatIdx,
             positionOnSegment: 0.9,
+            anchor: 'end',
             widthMM: canonSeg.segmentWidthMm ?? 900,
             useGatePostsAsFenceTermination:
               canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
@@ -518,6 +533,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
           runGates.push({
             segmentIndex: precedingFlatIdx,
             positionOnSegment: 0.9,
+            anchor: 'end',
             widthMM: canonSeg.segmentWidthMm ?? 900,
             useGatePostsAsFenceTermination:
               canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
@@ -532,8 +548,8 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
             lengthMM: 1, angleDeg: 0,
           });
           const gateIdx = globalFlatOffset + localFlatSegments.length - 1;
-          allFlatGates.push({ segmentIndex: gateIdx, positionOnSegment: 0.5, widthMM: canonSeg.segmentWidthMm ?? 900 });
-          runGates.push({ segmentIndex: gateIdx, positionOnSegment: 0.5, widthMM: canonSeg.segmentWidthMm ?? 900 });
+          allFlatGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900 });
+          runGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900 });
           if (!useGeometry) xCursor += 1;
         }
       } else {

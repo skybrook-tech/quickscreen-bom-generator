@@ -265,7 +265,8 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
           <NumberInput
             value={parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
             step={0.01}
-            min={0.3}
+            min={0}
+            className="w-20 px-2 py-1.5 text-center tabular-nums"
             onChange={(v) => updateGeometry("segmentWidthMm", Math.round(Number(v) * 1000))}
           />
           <span className="text-brand-muted">m</span>
@@ -277,6 +278,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
                 updateGeometry("targetHeightMm", Number(event.target.value))
               }
               className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+              style={{ width: "5.25rem" }}
             >
               {heightOptions.map((height) => (
                 <option key={height} value={height}>
@@ -287,6 +289,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
           ) : (
             <NumberInput
               value={seg.targetHeightMm ?? 1800}
+              className="w-20 px-2 py-1.5 text-center tabular-nums"
               onChange={(v) => updateGeometry("targetHeightMm", Number(v))}
             />
           )}

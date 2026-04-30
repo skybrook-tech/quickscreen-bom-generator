@@ -1,6 +1,5 @@
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun } from "../../types/canonical.types";
-import { maxPanelWidthForSystem } from "../../lib/productOptionRules";
 import { RunCard } from "./RunCard";
 
 export function RunListV3() {
@@ -16,9 +15,6 @@ export function RunListV3() {
       ...(payload!.variables ?? {}),
       ...(firstRun?.variables ?? {}),
     };
-    const initialWidth = Number(
-      variables.max_panel_width_mm ?? maxPanelWidthForSystem(productCode),
-    );
     const initialHeight = Number(variables.target_height_mm ?? 1800);
     const newRun: CanonicalRun = {
       runId: crypto.randomUUID(),
@@ -31,7 +27,7 @@ export function RunListV3() {
           segmentId: crypto.randomUUID(),
           sortOrder: 1,
           segmentKind: "panel",
-          segmentWidthMm: initialWidth,
+          segmentWidthMm: 0,
           targetHeightMm: initialHeight,
         },
       ],

@@ -102,8 +102,9 @@ function panelLengthSummary(run: CanonicalRun, jobMaxPanelWidth: number) {
 
 function SummaryItem({ label, value }: { label: string; value: string | number }) {
   return (
-    <span className="rounded-full bg-brand-bg/80 px-2.5 py-1 text-brand-muted">
-      <strong className="font-bold text-brand-text">{label}:</strong> {value}
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-bg/80 px-2.5 py-1">
+      <strong className="font-bold text-brand-text">{label}:</strong>
+      <span className="font-semibold text-brand-muted">{value}</span>
     </span>
   );
 }
@@ -127,18 +128,23 @@ function runMasterVariables(
 function masterSummaryItems(productCode: string, variables: Record<string, unknown>) {
   const height = actualFenceHeightMm(productCode, variables);
   return [
-    `System type ${productCode}`,
-    `Height ${height}mm`,
-    `Fence colour ${colourLabel(variables.colour_code)}`,
-    `Post colour ${colourLabel(variables.post_colour_code ?? variables.colour_code)}`,
-    `Slat ${variables.slat_size_mm ?? 65}mm`,
-    `Gap ${variables.slat_gap_mm ?? 5}mm`,
-    `Post ${postSummaryLabel(productCode, variables)}`,
-    `Mounting ${
-      MOUNTING_LABELS[String(variables.mounting_method ?? variables.mounting_type ?? "in_ground")] ??
-      "Concreted in ground"
-    }`,
-    `Max post spacing ${variables.max_panel_width_mm ?? maxPanelWidthForSystem(productCode)}mm`,
+    { label: "System type", value: productCode },
+    { label: "Height", value: `${height}mm` },
+    { label: "Fence colour", value: colourLabel(variables.colour_code) },
+    { label: "Post colour", value: colourLabel(variables.post_colour_code ?? variables.colour_code) },
+    { label: "Slat", value: `${variables.slat_size_mm ?? 65}mm` },
+    { label: "Gap", value: `${variables.slat_gap_mm ?? 5}mm` },
+    { label: "Post", value: postSummaryLabel(productCode, variables) },
+    {
+      label: "Mounting",
+      value:
+        MOUNTING_LABELS[String(variables.mounting_method ?? variables.mounting_type ?? "in_ground")] ??
+        "Concreted in ground",
+    },
+    {
+      label: "Max post spacing",
+      value: `${variables.max_panel_width_mm ?? maxPanelWidthForSystem(productCode)}mm`,
+    },
   ];
 }
 
@@ -239,8 +245,11 @@ export function RunCard({ run, runIdx }: Props) {
     <div className="rounded-2xl border border-brand-border/70 bg-brand-card p-4 shadow-sm">
       <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
         <h3 className="grid gap-1 text-brand-text">
-          <span className="text-base font-bold">
-            Run {runIdx + 1} - Total Length : {(calcTotalLength(run) / 1000).toFixed(2)}m, Segments : {fenceSegments.length}, Gates {gates.length}
+          <span className="text-3xl font-extrabold leading-tight tracking-normal">
+            Run {runIdx + 1}
+          </span>
+          <span className="text-sm font-bold text-brand-text">
+            Total Length : {(calcTotalLength(run) / 1000).toFixed(2)}m, Segments : {fenceSegments.length}, Gates {gates.length}
           </span>
           <span className="text-sm italic text-brand-muted">Master Settings for Run {runIdx + 1}</span>
         </h3>
@@ -258,11 +267,9 @@ export function RunCard({ run, runIdx }: Props) {
         </div>
       </div>
 
-      <div className="mb-3 flex flex-wrap gap-2 text-sm font-bold">
+      <div className="mb-3 flex flex-wrap gap-2 text-sm font-semibold">
         {masterSummaryItems(run.productCode, runVariables).map((item) => (
-          <span key={item} className="rounded-full bg-brand-bg/80 px-2.5 py-1 text-brand-text">
-            {item}
-          </span>
+          <SummaryItem key={item.label} label={item.label} value={item.value} />
         ))}
         <SummaryItem label="Corners" value={run.corners.length} />
         <SummaryItem label="Segments" value={fenceSegments.length} />
