@@ -53,7 +53,7 @@ export function BomTable({ lines }: Props) {
 
   return (
     <table className="w-full">
-      <thead className="sticky top-0 bg-white backdrop-blur-sm z-10">
+      <thead className="sticky top-0  bg-brand-card backdrop-blur-sm z-10">
         <tr className="border-b border-brand-border">
           <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-brand-muted">
             Code
@@ -79,7 +79,7 @@ export function BomTable({ lines }: Props) {
       <tbody className="divide-y divide-brand-border/40">
         {groups.map((g) => (
           <Fragment key={`grp-${g.category}`}>
-            <tr className="bg-slate-100">
+            <tr className="dark:bg-slate-100/10 bg-slate-100/60">
               <td
                 colSpan={7}
                 className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-brand-muted"

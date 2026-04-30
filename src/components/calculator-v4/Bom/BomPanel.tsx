@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { BomActions } from "./BomActions";
 import { BomHeader } from "./BomHeader";
@@ -22,10 +22,9 @@ interface Props {
  *   - BomHeader (gradient — fixed)
  *   - BomActions (Generate / CSV / PDF — fixed)
  *   - BomTabs (All / Run N / Gates — fixed)
- *   - Errors/warnings strip (when present — fixed)
- *   - Scroll area:
- *       - BomTable (grouped by category)
- *       - SuggestedAccessoriesPanel (above the fixed footers)
+ *   - Errors/warnings alert (when present — opens dialog — fixed)
+ *   - Scroll area: BomTable (grouped by category)
+ *   - SuggestedAccessoriesPanel (fixed footer — scroll BOM table on Add)
  *   - ExtraItemsPanel (fixed footer)
  *   - BomTotals (fixed footer)
  */
@@ -39,6 +38,17 @@ export function BomPanel({
   const { state } = useCalculatorV4();
   const view = useBomViewModel();
   const [activeTab, setActiveTab] = useState("all");
+  const bomTableScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollBomTableToBottom = useCallback(() => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const el = bomTableScrollRef.current;
+        if (!el) return;
+        el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+      });
+    });
+  }, []);
 
   const tabs = useMemo(() => {
     const list = [
@@ -73,7 +83,7 @@ export function BomPanel({
   }, [activeTab, view]);
 
   return (
-    <div className="rounded-xl border border-brand-border bg-white overflow-hidden flex flex-col h-full shadow-sm">
+    <div className="rounded-xl border border-brand-border bg-brand-card overflow-hidden flex flex-col h-full shadow-sm">
       <BomHeader
         pricingTier={view.pricingTier}
         grandTotal={view.grandTotal}
@@ -85,40 +95,21 @@ export function BomPanel({
         isPending={isPending}
         onGenerate={onGenerate}
         canGenerate={canGenerate}
+        errors={errors}
+        warnings={warnings}
       />
-
-      {(errors.length > 0 || warnings.length > 0) && (
-        <div className="px-4 py-2 border-b border-brand-border space-y-1 flex-shrink-0">
-          {errors.map((e, i) => (
-            <div
-              key={`err-${i}`}
-              className="text-[11px] px-2.5 py-1.5 rounded bg-red-500/10 border border-red-500/30 text-red-500"
-            >
-              Error: {e}
-            </div>
-          ))}
-          {warnings.map((w, i) => (
-            <div
-              key={`warn-${i}`}
-              className="text-[11px] px-2.5 py-1.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400"
-            >
-              {w}
-            </div>
-          ))}
-        </div>
-      )}
 
       {state.bomResult && (
         <BomTabs tabs={tabs} activeId={activeTab} onChange={setActiveTab} />
       )}
 
-      {/* Scrollable middle: table + suggestions */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Scrollable middle: table */}
+      <div ref={bomTableScrollRef} className="flex-1 overflow-y-auto min-h-0">
         <BomTable lines={visibleLines} />
       </div>
 
       {/* Fixed footers */}
-      <SuggestedAccessoriesPanel />
+      <SuggestedAccessoriesPanel onAddedSuggestion={scrollBomTableToBottom} />
       <ExtraItemsPanel />
       <BomTotals
         total={view.total}

@@ -1,12 +1,15 @@
 import { Download, FileText, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import type { BomViewModel } from "./useBomViewModel";
+import BomAlerts from "./BomAlerts";
 
 interface Props {
   view: BomViewModel;
   isPending: boolean;
   onGenerate: () => void;
   canGenerate: boolean;
+  errors: string[];
+  warnings: string[];
 }
 
 /**
@@ -18,6 +21,8 @@ export function BomActions({
   isPending,
   onGenerate,
   canGenerate,
+  errors,
+  warnings,
 }: Props) {
   function exportCsv() {
     if (!view.hasResult) return;
@@ -30,17 +35,16 @@ export function BomActions({
       l.unitPrice.toFixed(2),
       l.lineTotal.toFixed(2),
     ]);
-    const csv =
-      [headers, ...rows]
-        .map((r) =>
-          r
-            .map((c) => {
-              const s = String(c);
-              return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-            })
-            .join(","),
-        )
-        .join("\n");
+    const csv = [headers, ...rows]
+      .map((r) =>
+        r
+          .map((c) => {
+            const s = String(c);
+            return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+          })
+          .join(","),
+      )
+      .join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -52,7 +56,7 @@ export function BomActions({
   }
 
   return (
-    <div className="px-4 py-3 border-b border-brand-border bg-brand-card flex items-center gap-2 flex-shrink-0">
+    <div className="px-4 py-1 border-b border-brand-border bg-brand-card flex items-center gap-2 flex-shrink-0">
       <button
         onClick={onGenerate}
         disabled={!canGenerate || isPending}
@@ -66,6 +70,7 @@ export function BomActions({
         )}
         {isPending ? "Calculating…" : "Generate BOM"}
       </button>
+      <BomAlerts errors={errors} warnings={warnings} />
       <div className="flex-1" />
       <button
         onClick={exportCsv}

@@ -16,7 +16,7 @@ const fmt = (n: number) =>
 export function BomTableRow({ line, onRemove }: Props) {
   return (
     <tr className="hover:bg-brand-border/15 transition-colors">
-      <td className="text-blue-500 px-3 py-2 text-xs font-mono text-brand-muted">
+      <td className="text-brand-accent px-3 py-2 text-xs font-mono">
         {line.sku || "—"}
       </td>
       <td className="px-3 py-2 text-xs text-brand-text">
@@ -41,7 +41,7 @@ export function BomTableRow({ line, onRemove }: Props) {
         <button
           onClick={onRemove}
           aria-label="Remove line"
-          className="p-1 text-brand-muted hover:text-red-500 hover:bg-red-500/10 rounded"
+          className="p-1 text-red-500 hover:text-red-500 hover:bg-red-500/10 rounded"
         >
           <X size={12} />
         </button>

@@ -297,13 +297,17 @@ function reducer(
           action.sku,
         ]),
       };
-    case "REMOVE_ADDED_SUGGESTION":
+    case "REMOVE_ADDED_SUGGESTION": {
+      const nextDismissed = new Set(state.dismissedSuggestionSkus);
+      nextDismissed.delete(action.sku);
       return {
         ...state,
         addedSuggestions: state.addedSuggestions.filter(
           (s) => s.sku !== action.sku,
         ),
+        dismissedSuggestionSkus: nextDismissed,
       };
+    }
     case "REMOVE_BOM_LINE":
       return {
         ...state,
