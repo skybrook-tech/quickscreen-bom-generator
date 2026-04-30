@@ -91,13 +91,13 @@ function BOMTable({
             <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider">
               Description
             </th>
-            <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-center">
+            <th className="hidden py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-center sm:table-cell">
               Unit
             </th>
             <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
               Qty
             </th>
-            <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right whitespace-nowrap">
+            <th className="hidden py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right whitespace-nowrap sm:table-cell">
               Unit $
             </th>
             <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
@@ -166,7 +166,7 @@ function ItemGroup({
               </span>
             )}
           </td>
-          <td className="py-2.5 px-3 text-sm text-brand-muted text-center">
+          <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-center sm:table-cell">
             {item.unit}
           </td>
           <td className="py-2.5 px-3 text-sm text-brand-text text-right tabular-nums">
@@ -186,7 +186,7 @@ function ItemGroup({
               item.quantity
             )}
           </td>
-          <td className="py-2.5 px-3 text-sm text-brand-muted text-right tabular-nums">
+          <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-right tabular-nums sm:table-cell">
             ${formatMoney(item.unitPrice)}
           </td>
           <td className="py-2.5 px-3 text-sm text-brand-text font-medium text-right tabular-nums">

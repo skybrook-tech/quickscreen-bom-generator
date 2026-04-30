@@ -922,6 +922,7 @@ export function initCanvasEngine(
     const allSegs = allSegmentsFlat();
     const nbRuns = runs.filter((r) => !r.isBoundary && r.finished);
     if (nbRuns.length === 0 && allSegs.length === 0) return;
+    if (hoveredSegIdx < 0) return;
 
     let line: string;
     const detailLines: string[] = [];
@@ -1000,13 +1001,20 @@ export function initCanvasEngine(
     const lines = [line, ...detailLines];
     const pad = 8;
     const fs = 12;
-    const x = 10;
-    const y = 10;
     ctx.save();
     ctx.font = `${fs}px sans-serif`;
     const w = Math.max(...lines.map((text) => ctx.measureText(text).width)) + pad * 2;
     const h = lines.length * (fs + 3) + pad * 2;
-    ctx.fillStyle = "rgba(26,29,46,0.85)";
+    const anchor = canvasToScreen(mouseCanvas, pan, zoom);
+    const x = Math.min(
+      canvas.width - w - 10,
+      Math.max(10, anchor.x + 18),
+    );
+    const y = Math.min(
+      canvas.height - h - 10,
+      Math.max(10, anchor.y + 18),
+    );
+    ctx.fillStyle = "rgba(15,23,42,0.78)";
     ctx.beginPath();
     ctx.roundRect(x, y, w, h, 4);
     ctx.fill();

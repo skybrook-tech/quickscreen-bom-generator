@@ -39,6 +39,10 @@ import type {
   CanonicalBoundary,
   CanonicalCorner,
 } from '../../types/canonical.types';
+import {
+  GATE_SEGMENT_STUB_KEYS,
+  SEGMENT_TERMINATION_KEYS,
+} from '../../lib/segmentTermination';
 
 // ---------------------------------------------------------------------------
 // Stable ID map — keyed by a deterministic descriptor so round-trips preserve
@@ -196,6 +200,12 @@ function expandSegmentWithGates(
         sortOrder: sortOrder++,
         segmentKind: 'panel',
         segmentWidthMm: Math.round(panelBeforeMm),
+        variables:
+          gate.useGatePostsAsFenceTermination !== false
+            ? {
+                [SEGMENT_TERMINATION_KEYS.rightKind]: 'system_post',
+              }
+            : undefined,
       });
     }
 
@@ -212,7 +222,7 @@ function expandSegmentWithGates(
       segmentKind: 'gate_opening',
       segmentWidthMm: Math.round(gate.widthMM),
       variables: {
-        use_gate_posts_as_fence_termination:
+        [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]:
           gate.useGatePostsAsFenceTermination ?? true,
       },
     });
@@ -234,6 +244,13 @@ function expandSegmentWithGates(
       sortOrder: sortOrder++,
       segmentKind: 'panel',
       segmentWidthMm: Math.round(trailingMm),
+      variables:
+        sorted.length > 0 &&
+        sorted[sorted.length - 1].useGatePostsAsFenceTermination !== false
+          ? {
+              [SEGMENT_TERMINATION_KEYS.leftKind]: 'system_post',
+            }
+          : undefined,
     });
   }
 

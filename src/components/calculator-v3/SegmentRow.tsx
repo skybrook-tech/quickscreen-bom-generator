@@ -95,20 +95,6 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle }: Props
     });
   }
 
-  function updateMaxPanelWidth(value: number) {
-    dispatch({
-      type: "UPSERT_SEGMENT",
-      runId,
-      segment: {
-        ...seg,
-        variables: {
-          ...(seg.variables ?? {}),
-          max_panel_width_mm: value,
-        },
-      },
-    });
-  }
-
   return (
     <div className="overflow-hidden rounded-2xl border border-brand-border/60 bg-brand-card text-sm font-semibold shadow-sm">
       <div className="grid gap-3 p-3">
@@ -201,14 +187,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle }: Props
             <span>
               {panelsLive} {panelsLive === 1 ? "panel" : "panels"}
             </span>
-            <label className="shrink-0">Post spacing</label>
-            <NumberInput
-              value={effectiveMax}
-              min={300}
-              step={50}
-              onChange={(v) => updateMaxPanelWidth(Number(v))}
-            />
-            <span>mm max</span>
+            <span>Max post spacing {effectiveMax}mm</span>
           </div>
         ) : null}
       </div>

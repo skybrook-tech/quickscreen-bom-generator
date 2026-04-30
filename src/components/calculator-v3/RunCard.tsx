@@ -104,6 +104,14 @@ function panelLengthSummary(run: CanonicalRun, jobMaxPanelWidth: number) {
     .join(", ");
 }
 
+function SummaryItem({ label, value }: { label: string; value: string | number }) {
+  return (
+    <span className="rounded-full bg-brand-bg/80 px-2.5 py-1 text-brand-muted">
+      <strong className="font-bold text-brand-text">{label}:</strong> {value}
+    </span>
+  );
+}
+
 export function RunCard({ run, runIdx }: Props) {
   const { state, dispatch } = useCalculator();
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -316,9 +324,11 @@ export function RunCard({ run, runIdx }: Props) {
 
   return (
     <div className="rounded-2xl border border-brand-border/70 bg-brand-card p-4 shadow-sm">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h3 className="text-sm font-semibold text-brand-text">
-          Run {runIdx + 1} - {run.productCode}
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <h3 className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-bold text-brand-text">
+          <span>Run {runIdx + 1} - {run.productCode}</span>
+          <span>Total run length {(calcTotalLength(run) / 1000).toFixed(2)}m</span>
+          <span>Height {actualHeight}mm</span>
         </h3>
         <div className="flex flex-wrap items-center justify-end gap-2">
           {runIdx > 0 && (
@@ -342,27 +352,25 @@ export function RunCard({ run, runIdx }: Props) {
         </div>
       </div>
 
-      <div className="mb-3 flex flex-wrap gap-2 text-sm font-semibold text-brand-muted">
-        <span>Total run incl. gates: {(calcTotalLength(run) / 1000).toFixed(2)}m</span>
-        <span>Actual height: {actualHeight}mm</span>
-        <span>Fence colour: {colourLabel(runVariables.colour_code)}</span>
-        <span>
-          Post colour: {colourLabel(runVariables.post_colour_code ?? runVariables.colour_code)}
-        </span>
-        <span>Slat: {runVariables.slat_size_mm ?? 65}mm</span>
-        <span>Gap: {runVariables.slat_gap_mm ?? 5}mm</span>
-        <span>{postSummaryLabel(run.productCode, runVariables)}</span>
-        <span>
-          Mounting:{" "}
-          {MOUNTING_LABELS[
-            String(runVariables.mounting_method ?? runVariables.mounting_type ?? "in_ground")
-          ] ?? "Concreted in ground"}
-        </span>
-        <span>Corners: {run.corners.length}</span>
-        <span>Segments: {run.segments.length}</span>
-        {stats.panels > 0 && <span>Panels: {stats.panels}</span>}
-        {panelLengths && <span>Panel lengths: {panelLengths}</span>}
-        {stats.posts > 0 && <span>Posts: {stats.posts}</span>}
+      <div className="mb-3 flex flex-wrap gap-2 text-sm font-semibold">
+        <SummaryItem label="Fence colour" value={colourLabel(runVariables.colour_code)} />
+        <SummaryItem label="Post colour" value={colourLabel(runVariables.post_colour_code ?? runVariables.colour_code)} />
+        <SummaryItem label="Slat" value={`${runVariables.slat_size_mm ?? 65}mm`} />
+        <SummaryItem label="Gap" value={`${runVariables.slat_gap_mm ?? 5}mm`} />
+        <SummaryItem label="Post" value={postSummaryLabel(run.productCode, runVariables)} />
+        <SummaryItem
+          label="Mounting"
+          value={
+            MOUNTING_LABELS[
+              String(runVariables.mounting_method ?? runVariables.mounting_type ?? "in_ground")
+            ] ?? "Concreted in ground"
+          }
+        />
+        <SummaryItem label="Corners" value={run.corners.length} />
+        <SummaryItem label="Segments" value={run.segments.length} />
+        {stats.panels > 0 && <SummaryItem label="Panels" value={stats.panels} />}
+        {panelLengths && <SummaryItem label="Panel lengths" value={panelLengths} />}
+        {stats.posts > 0 && <SummaryItem label="Posts" value={stats.posts} />}
       </div>
 
       {editingRun && (
@@ -391,9 +399,6 @@ export function RunCard({ run, runIdx }: Props) {
 
           {optionFields.length > 0 && (
             <div>
-              <p className="mb-2 text-sm font-bold text-brand-muted">
-                Run options
-              </p>
               <SchemaDrivenForm
                 fields={optionFields}
                 variables={runVariables}

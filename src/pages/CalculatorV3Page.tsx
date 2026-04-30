@@ -14,6 +14,8 @@ import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { suggestAccessories } from "../lib/suggestedAccessories";
 import { priceForSku } from "../lib/localBomCalculator";
+import { GATE_SEGMENT_STUB_KEYS } from "../lib/segmentTermination";
+import { GATE_MOVEMENTS, optionLabel as gateOptionLabel } from "../lib/gateOptionRules";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
 import {
@@ -49,6 +51,27 @@ const formatMoney = (value: number) =>
 
 const lineKey = (line: BOMLineItem) =>
   `${line.sku}|${line.category}|${line.description}`;
+
+const COLOUR_NAMES: Record<string, string> = {
+  B: "Black Satin",
+  MN: "Monument Matt",
+  G: "Woodland Grey Matt",
+  SM: "Surfmist Matt",
+  W: "Pearl White Gloss",
+  BS: "Basalt Satin",
+  D: "Dune Satin",
+  M: "Mill",
+  P: "Primrose",
+  PB: "Paperbark",
+  S: "Palladium Silver Pearl",
+  KWI: "Kwila",
+  WRC: "Western Red Cedar",
+};
+
+function colourName(code: unknown) {
+  const value = String(code ?? "B");
+  return COLOUR_NAMES[value] ? `${COLOUR_NAMES[value]} (${value})` : value;
+}
 
 function initialRunPaneWidth() {
   if (typeof window === "undefined") return 480;
@@ -422,20 +445,47 @@ function CalculatorV3Content() {
   const noSegments =
     !payload || payload.runs.every((r) => r.segments.length === 0);
 
-  const firstSegment = payload?.runs
+  const fenceSegments = payload?.runs
     .flatMap((run) => run.segments)
-    .find((segment) => segment.segmentKind !== "gate_opening");
+    .filter((segment) => segment.segmentKind !== "gate_opening") ?? [];
+  const gateSegments = payload?.runs
+    .flatMap((run) => run.segments)
+    .filter((segment) => segment.segmentKind === "gate_opening") ?? [];
+  const firstSegment = fenceSegments[0];
   const summaryHeight = Number(
     firstSegment?.targetHeightMm ?? payload?.variables.target_height_mm ?? 1800,
   );
-  const summaryLength = Number(firstSegment?.segmentWidthMm ?? 0);
+  const summaryLength = payload
+    ? payload.runs.reduce(
+        (total, run) =>
+          total + run.segments.reduce((sum, segment) => sum + Number(segment.segmentWidthMm ?? 0), 0),
+        0,
+      )
+    : 0;
   const firstRunVariables = {
     ...(payload?.variables ?? {}),
     ...(payload?.runs[0]?.variables ?? {}),
   };
   const cleanJobName = jobName.trim();
+  const systemSummary = payload
+    ? [...new Set(payload.runs.map((run) => run.productCode))].join(" + ")
+    : "";
+  const gateTypes = [
+    ...new Set(
+      gateSegments.map((segment) =>
+        gateOptionLabel(
+          GATE_MOVEMENTS,
+          segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement] ?? "single_swing",
+        ),
+      ),
+    ),
+  ].filter(Boolean);
+  const gateSummary =
+    gateSegments.length === 0
+      ? "No gates"
+      : `${gateSegments.length} ${gateSegments.length === 1 ? "gate" : "gates"} - ${gateTypes.join(", ")}`;
   const summaryText = payload
-    ? `${payload.runs[0]?.productCode ?? payload.productCode} - ${summaryHeight}H${summaryLength ? ` x ${summaryLength}L` : ""} - ${firstRunVariables.colour_code ?? "B"} - ${firstRunVariables.slat_size_mm ?? 65}mm / ${firstRunVariables.slat_gap_mm ?? 5}mm`
+    ? `${systemSummary} - ${(summaryLength / 1000).toFixed(2)}m total - ${summaryHeight}mm high - ${colourName(firstRunVariables.colour_code)} - ${gateSummary}`
     : cleanJobName;
   const saveJobLabel = jobName.trim() ? `Save ${jobName.trim()}` : "Save Job";
 
@@ -445,7 +495,9 @@ function CalculatorV3Content() {
         className="relative flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row"
       >
         <aside
-          className="relative flex min-h-[46vh] w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:shrink-0 md:border-b-0 md:border-r"
+          className={`relative flex w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${
+            bomResultForTabs ? "max-h-[32vh]" : "min-h-[46vh]"
+          }`}
           style={mobileLayout ? undefined : { width: runPaneWidth }}
         >
           <div className="flex min-h-0 flex-1 flex-col">

@@ -138,7 +138,6 @@ export function SchemaDrivenForm({
             >
               <FormField
                 label={field.label}
-                note={field.unit ? `Units: ${field.unit}` : undefined}
               >
                 <div className="flex flex-wrap gap-2">
                   {field.options_json.map((opt) => {
@@ -182,7 +181,6 @@ export function SchemaDrivenForm({
             >
               <FormField
                 label={field.label}
-                note={field.unit ? `Units: ${field.unit}` : undefined}
               >
                 <input
                   type="number"
@@ -233,7 +231,6 @@ export function SchemaDrivenForm({
           >
             <FormField
               label={field.label}
-              note={field.unit ? `Units: ${field.unit}` : undefined}
             >
               <input
                 type="text"
