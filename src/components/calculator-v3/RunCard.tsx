@@ -108,23 +108,54 @@ function SummaryItem({ label, value }: { label: string; value: string | number }
   );
 }
 
+function firstFenceSegment(run: CanonicalRun) {
+  return run.segments.find((segment) => segment.segmentKind !== "gate_opening");
+}
+
+function runMasterVariables(
+  run: CanonicalRun,
+  jobVariables: Record<string, string | number | boolean> | undefined,
+) {
+  const firstSegment = firstFenceSegment(run);
+  return {
+    ...(jobVariables ?? {}),
+    ...(run.variables ?? {}),
+    ...(firstSegment?.variables ?? {}),
+  };
+}
+
+function masterSummaryItems(productCode: string, variables: Record<string, unknown>) {
+  const height = actualFenceHeightMm(productCode, variables);
+  return [
+    `Height ${height}mm`,
+    `Fence colour ${colourLabel(variables.colour_code)}`,
+    `Post colour ${colourLabel(variables.post_colour_code ?? variables.colour_code)}`,
+    `Slat ${variables.slat_size_mm ?? 65}mm`,
+    `Gap ${variables.slat_gap_mm ?? 5}mm`,
+    `Post ${postSummaryLabel(productCode, variables)}`,
+    `Mounting ${
+      MOUNTING_LABELS[String(variables.mounting_method ?? variables.mounting_type ?? "in_ground")] ??
+      "Concreted in ground"
+    }`,
+    `Max post spacing ${variables.max_panel_width_mm ?? maxPanelWidthForSystem(productCode)}mm`,
+  ];
+}
+
 export function RunCard({ run, runIdx }: Props) {
   const { state, dispatch } = useCalculator();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const runVariables = useMemo(
-    () => ({
-      ...(state.payload?.variables ?? {}),
-      ...(run.variables ?? {}),
-    }),
-    [run.variables, state.payload?.variables],
+    () => runMasterVariables(run, state.payload?.variables),
+    [run, state.payload?.variables],
   );
   const jobMax = Number(
     runVariables.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode),
   );
   const stats = calcRunStats(run, jobMax);
   const panelLengths = panelLengthSummary(run, jobMax);
-  const actualHeight = actualFenceHeightMm(run.productCode, runVariables);
+  const fenceSegments = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
+  const gates = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
   const matchesRunOne = run.variables?.settings_mode === "match_run_1";
   const completedSegments = run.segments.filter(
     (segment) => segment.variables?.segment_done === true,
@@ -166,10 +197,10 @@ export function RunCard({ run, runIdx }: Props) {
   }
 
   function addFenceSegment() {
-    const firstFenceSegment = run.segments.find((s) => s.segmentKind !== "gate_opening");
-    const inheritedVariables = firstFenceSegment?.variables
+    const firstSegment = firstFenceSegment(run);
+    const inheritedVariables = firstSegment?.variables
       ? Object.fromEntries(
-          Object.entries(firstFenceSegment.variables).filter(
+          Object.entries(firstSegment.variables).filter(
             ([key]) => !["geometry_angle_deg", "segment_done"].includes(key),
           ),
         )
@@ -179,7 +210,7 @@ export function RunCard({ run, runIdx }: Props) {
       sortOrder: run.segments.length + 1,
       segmentKind: "panel",
       segmentWidthMm: jobMax,
-      targetHeightMm: Number(firstFenceSegment?.targetHeightMm ?? runVariables.target_height_mm ?? 1800),
+      targetHeightMm: Number(firstSegment?.targetHeightMm ?? runVariables.target_height_mm ?? 1800),
       variables: inheritedVariables
         ? { ...inheritedVariables, segment_done: false }
         : undefined,
@@ -187,7 +218,9 @@ export function RunCard({ run, runIdx }: Props) {
   }
 
   function addGateSegment() {
-    const targetHeight = Number(runVariables.target_height_mm ?? 1800);
+    const firstSegment = firstFenceSegment(run);
+    const masterVariables = runMasterVariables(run, state.payload?.variables);
+    const targetHeight = Number(firstSegment?.targetHeightMm ?? masterVariables.target_height_mm ?? 1800);
     const segmentId = crypto.randomUUID();
     upsertSegment({
       segmentId,
@@ -196,18 +229,19 @@ export function RunCard({ run, runIdx }: Props) {
       segmentWidthMm: 900,
       targetHeightMm: targetHeight,
       gateProductCode: GATE_PRODUCT_CODE,
-      variables: defaultGateVariables({ ...runVariables, productCode: run.productCode }, targetHeight),
+      variables: defaultGateVariables({ ...masterVariables, productCode: run.productCode }, targetHeight),
     });
     setExpandedId(segmentId);
   }
 
   return (
     <div className="rounded-2xl border border-brand-border/70 bg-brand-card p-4 shadow-sm">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-        <h3 className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-bold text-brand-text">
-          <span>Run {runIdx + 1} - {run.productCode}</span>
-          <span>Total run length {(calcTotalLength(run) / 1000).toFixed(2)}m</span>
-          <span>Height {actualHeight}mm</span>
+      <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+        <h3 className="grid gap-1 text-brand-text">
+          <span className="text-base font-bold">
+            Run {runIdx + 1} - Total Length : {(calcTotalLength(run) / 1000).toFixed(2)}m, Segments : {fenceSegments.length}, Gates {gates.length}
+          </span>
+          <span className="text-sm italic text-brand-muted">Master Settings for Run {runIdx + 1}</span>
         </h3>
         <div className="flex flex-wrap items-center justify-end gap-2">
           {runIdx > 0 && (
@@ -223,22 +257,14 @@ export function RunCard({ run, runIdx }: Props) {
         </div>
       </div>
 
-      <div className="mb-3 flex flex-wrap gap-2 text-sm font-semibold">
-        <SummaryItem label="Fence colour" value={colourLabel(runVariables.colour_code)} />
-        <SummaryItem label="Post colour" value={colourLabel(runVariables.post_colour_code ?? runVariables.colour_code)} />
-        <SummaryItem label="Slat" value={`${runVariables.slat_size_mm ?? 65}mm`} />
-        <SummaryItem label="Gap" value={`${runVariables.slat_gap_mm ?? 5}mm`} />
-        <SummaryItem label="Post" value={postSummaryLabel(run.productCode, runVariables)} />
-        <SummaryItem
-          label="Mounting"
-          value={
-            MOUNTING_LABELS[
-              String(runVariables.mounting_method ?? runVariables.mounting_type ?? "in_ground")
-            ] ?? "Concreted in ground"
-          }
-        />
+      <div className="mb-3 flex flex-wrap gap-2 text-sm font-bold">
+        {masterSummaryItems(run.productCode, runVariables).map((item) => (
+          <span key={item} className="rounded-full bg-brand-bg/80 px-2.5 py-1 text-brand-text">
+            {item}
+          </span>
+        ))}
         <SummaryItem label="Corners" value={run.corners.length} />
-        <SummaryItem label="Segments" value={run.segments.length} />
+        <SummaryItem label="Segments" value={fenceSegments.length} />
         <SummaryItem label="Done" value={`${completedSegments}/${run.segments.length}`} />
         {stats.panels > 0 && <SummaryItem label="Panels" value={stats.panels} />}
         {panelLengths && <SummaryItem label="Panel lengths" value={panelLengths} />}

@@ -709,13 +709,18 @@ export function initCanvasEngine(
         if (!runs[ri].isBoundary) runColorIdx.set(ri, nbIdx++);
       }
     }
-    const segmentCounters = new Map<number, number>();
+    const segmentCounters = new Map<number, { panel: number; gate: number }>();
     for (const { seg, flatIdx, runIdx } of allSegs) {
       const colorIdx = runColorIdx.get(runIdx) ?? 0;
       const runNumber = colorIdx + 1;
-      const startNumber = segmentCounters.get(runIdx) ?? 1;
-      const { labels, nextNumber } = segmentLabelsForMap(seg, runNumber, startNumber);
-      segmentCounters.set(runIdx, nextNumber);
+      const startNumbers = segmentCounters.get(runIdx) ?? { panel: 1, gate: 1 };
+      const { labels, nextPanelNumber, nextGateNumber } = segmentLabelsForMap(
+        seg,
+        runNumber,
+        startNumbers.panel,
+        startNumbers.gate,
+      );
+      segmentCounters.set(runIdx, { panel: nextPanelNumber, gate: nextGateNumber });
       drawSegment(
         seg,
         flatIdx === hoveredSegIdx,
@@ -1063,29 +1068,59 @@ export function initCanvasEngine(
     const squareSize = 6 / zoom;
     const half = squareSize / 2;
     const borderWidth = 1.5 / zoom;
+    const drawPost = (px: number, py: number) => {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(
+        px - half - borderWidth,
+        py - half - borderWidth,
+        squareSize + borderWidth * 2,
+        squareSize + borderWidth * 2,
+      );
+      ctx.fillStyle = "#f59e0b";
+      ctx.fillRect(px - half, py - half, squareSize, squareSize);
+    };
+    const drawPostRange = (seg: Segment, tStart: number, tEnd: number, maxW: number) => {
+      const lengthMm = (tEnd - tStart) * seg.lengthMM;
+      if (maxW <= 0 || lengthMm <= 0) return;
+      const numPanels = Math.max(1, Math.ceil(lengthMm / maxW));
+      for (let i = 0; i <= numPanels; i++) {
+        const localT = i / numPanels;
+        const t = tStart + (tEnd - tStart) * localT;
+        const px = seg.p1.x + t * (seg.p2.x - seg.p1.x);
+        const py = seg.p1.y + t * (seg.p2.y - seg.p1.y);
+        drawPost(px, py);
+      }
+    };
     ctx.save();
     let flatIdx = 0;
     for (const run of runs) {
       if (run.isBoundary || !run.finished) continue;
       for (const seg of run.segments) {
-        const maxW = segmentPanelWidths[flatIdx] ?? 0;
-        flatIdx++;
-        if (maxW <= 0 || seg.lengthMM <= 0) continue;
-        const numPanels = Math.ceil(seg.lengthMM / maxW);
-        const panelWidthMm = seg.lengthMM / numPanels;
-        for (let i = 0; i <= numPanels; i++) {
-          const t = (i * panelWidthMm) / seg.lengthMM;
-          const px = seg.p1.x + t * (seg.p2.x - seg.p1.x);
-          const py = seg.p1.y + t * (seg.p2.y - seg.p1.y);
-          ctx.fillStyle = "#ffffff";
-          ctx.fillRect(
-            px - half - borderWidth,
-            py - half - borderWidth,
-            squareSize + borderWidth * 2,
-            squareSize + borderWidth * 2,
-          );
-          ctx.fillStyle = "#f59e0b";
-          ctx.fillRect(px - half, py - half, squareSize, squareSize);
+        if (seg.gates.length === 0) {
+          drawPostRange(seg, 0, 1, segmentPanelWidths[flatIdx] ?? 0);
+          flatIdx++;
+          continue;
+        }
+        let cursor = 0;
+        const gates = seg.gates
+          .map((g) => {
+            const halfT = seg.lengthMM > 0 ? g.widthMM / seg.lengthMM / 2 : 0;
+            return {
+              tStart: Math.max(0, g.t - halfT),
+              tEnd: Math.min(1, g.t + halfT),
+            };
+          })
+          .sort((a, b) => a.tStart - b.tStart);
+        for (const gate of gates) {
+          if ((gate.tStart - cursor) * seg.lengthMM > 1) {
+            drawPostRange(seg, cursor, gate.tStart, segmentPanelWidths[flatIdx] ?? 0);
+            flatIdx++;
+          }
+          cursor = gate.tEnd;
+        }
+        if ((1 - cursor) * seg.lengthMM > 1) {
+          drawPostRange(seg, cursor, 1, segmentPanelWidths[flatIdx] ?? 0);
+          flatIdx++;
         }
       }
     }
@@ -1133,10 +1168,12 @@ export function initCanvasEngine(
   function segmentLabelsForMap(
     seg: Segment,
     runNumber: number,
-    startNumber: number,
-  ): { labels: SegmentMapLabel[]; nextNumber: number } {
+    startPanelNumber: number,
+    startGateNumber: number,
+  ): { labels: SegmentMapLabel[]; nextPanelNumber: number; nextGateNumber: number } {
     const labels: SegmentMapLabel[] = [];
-    let number = startNumber;
+    let panelNumber = startPanelNumber;
+    let gateNumber = startGateNumber;
     const gates = seg.gates
       .map((g) => {
         const halfT = seg.lengthMM > 0 ? g.widthMM / seg.lengthMM / 2 : 0;
@@ -1148,21 +1185,21 @@ export function initCanvasEngine(
       .sort((a, b) => a.tStart - b.tStart);
 
     if (gates.length === 0) {
-      labels.push({ text: `R${runNumber}-#${number++}`, t: 0.5, kind: "panel" });
-      return { labels, nextNumber: number };
+      labels.push({ text: `R${runNumber} S${panelNumber++}`, t: 0.5, kind: "panel" });
+      return { labels, nextPanelNumber: panelNumber, nextGateNumber: gateNumber };
     }
 
     let cursor = 0;
     for (const gate of gates) {
       if ((gate.tStart - cursor) * seg.lengthMM > 1) {
         labels.push({
-          text: `R${runNumber}-#${number++}`,
+          text: `R${runNumber} S${panelNumber++}`,
           t: (cursor + gate.tStart) / 2,
           kind: "panel",
         });
       }
       labels.push({
-        text: `R${runNumber}-#${number++} Gate`,
+        text: `R${runNumber} G${gateNumber++}`,
         t: (gate.tStart + gate.tEnd) / 2,
         kind: "gate",
       });
@@ -1170,12 +1207,12 @@ export function initCanvasEngine(
     }
     if ((1 - cursor) * seg.lengthMM > 1) {
       labels.push({
-        text: `R${runNumber}-#${number++}`,
+        text: `R${runNumber} S${panelNumber++}`,
         t: (cursor + 1) / 2,
         kind: "panel",
       });
     }
-    return { labels, nextNumber: number };
+    return { labels, nextPanelNumber: panelNumber, nextGateNumber: gateNumber };
   }
 
   function drawSegment(

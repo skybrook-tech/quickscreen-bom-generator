@@ -85,10 +85,10 @@ export const DROP_BOLT_OPTIONS: GateOption[] = [
 ];
 
 export const GATE_STOP_OPTIONS: GateOption[] = [
-  { value: "auto", label: "Catalogue default gate stop" },
+  { value: "none", label: "No gate stop" },
   { value: "SS-GS", label: "D&D gate stop", sku: "SS-GS" },
   { value: "SS-GS-SLIMLINE", label: "Slimline gate stop", sku: "SS-GS-SLIMLINE" },
-  { value: "none", label: "No gate stop" },
+  { value: "auto", label: "Catalogue default gate stop" },
 ];
 
 export const SLIDING_TRACK_OPTIONS: GateOption[] = [
@@ -143,6 +143,7 @@ export function defaultGateVariables(
   const colour = String(runVariables.colour_code ?? runVariables.colour ?? "B");
   const slatGap = Number(runVariables.slat_gap_mm ?? 9);
   const vertical = runVariables.productCode === "VS";
+  const postSize = Number(runVariables.post_size ?? 50);
   return {
     [GATE_SEGMENT_STUB_KEYS.gateMovement]: "single_swing",
     [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement("single_swing", vertical),
@@ -152,16 +153,17 @@ export function defaultGateVariables(
     [GATE_SEGMENT_STUB_KEYS.colourCode]: colour,
     [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(runVariables.slat_size_mm ?? 65),
     [GATE_SEGMENT_STUB_KEYS.slatGapMm]: slatGap,
-    [GATE_SEGMENT_STUB_KEYS.hingeType]: "ML-TL-KF-H-FT",
-    [GATE_SEGMENT_STUB_KEYS.latchType]: LATCH_OPTIONS[0]?.value ?? "none",
+    [GATE_SEGMENT_STUB_KEYS.hingeType]: "TC-H-AT-HD-B",
+    [GATE_SEGMENT_STUB_KEYS.latchType]: "LL-DL-KA",
     [GATE_SEGMENT_STUB_KEYS.dropBoltType]: "none",
-    [GATE_SEGMENT_STUB_KEYS.gateStopType]: "auto",
+    [GATE_SEGMENT_STUB_KEYS.gateStopType]: "none",
     [GATE_SEGMENT_STUB_KEYS.includeLockBox]: false,
     [GATE_SEGMENT_STUB_KEYS.lockBoxType]: "",
     [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]: true,
     [GATE_SEGMENT_STUB_KEYS.slidingTrackType]: "XPSG-6000-TRACK-ST",
     [GATE_SEGMENT_STUB_KEYS.slidingCatchType]: "XPSG-CATCH-U",
     [GATE_SEGMENT_STUB_KEYS.slidingMotorType]: "none",
+    [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: postSize,
   };
 }
 

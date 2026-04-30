@@ -21,6 +21,11 @@ import {
 } from "../../lib/gateOptionRules";
 import NumberInput from "../shared/NumberInput";
 
+const GATE_POST_SIZE_OPTIONS: GateOption[] = [
+  { value: "50", label: "Standard Post 50mm" },
+  { value: "65", label: "Standard Post 65mm HD" },
+];
+
 interface Props {
   runId: string;
   seg: CanonicalSegment;
@@ -77,8 +82,8 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   const build = buildOptions.some((option) => option.value === v[GATE_SEGMENT_STUB_KEYS.gateBuild])
     ? String(v[GATE_SEGMENT_STUB_KEYS.gateBuild])
     : defaultGateBuildForMovement(movement, prefersVerticalGate);
-  const matchRunHeight = v[GATE_SEGMENT_STUB_KEYS.matchRunHeight] !== false;
   const isSwing = isSwingGateMovement(movement);
+  const masterPostSize = String(runVars.post_size ?? 50);
 
   function upsertVariables(patch: Record<string, string | number | boolean | null | undefined>) {
     dispatch({
@@ -96,11 +101,13 @@ export function GateSegmentDetails({ runId, seg }: Props) {
       [GATE_SEGMENT_STUB_KEYS.gateBuild]: nextBuild,
       [GATE_SEGMENT_STUB_KEYS.leafCount]: nextMovement === "double_swing" ? 2 : 1,
       [GATE_SEGMENT_STUB_KEYS.dropBoltType]:
-        nextMovement === "double_swing" ? "QB124" : "none",
+        nextMovement === "double_swing" ? "SS-0300DB-B" : "none",
       [GATE_SEGMENT_STUB_KEYS.hingeType]:
-        nextMovement === "sliding" ? "none" : v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "ML-TL-KF-H-FT",
+        nextMovement === "sliding" ? "none" : v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B",
       [GATE_SEGMENT_STUB_KEYS.latchType]:
-        nextMovement === "sliding" ? "none" : v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "ML-TL",
+        nextMovement === "sliding" ? "none" : v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA",
+      [GATE_SEGMENT_STUB_KEYS.gateStopType]:
+        nextMovement === "sliding" ? "none" : v[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "none",
     });
   }
 
@@ -114,21 +121,6 @@ export function GateSegmentDetails({ runId, seg }: Props) {
           [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: value,
         }),
         targetHeightMm: value,
-      },
-    });
-  }
-
-  function setMatchRunHeight(value: boolean) {
-    const targetHeight = Number(runVars.target_height_mm ?? 1800);
-    dispatch({
-      type: "UPSERT_SEGMENT",
-      runId,
-      segment: {
-        ...patchSegmentVariables(seg, {
-          [GATE_SEGMENT_STUB_KEYS.matchRunHeight]: value,
-          [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: value ? targetHeight : seg.targetHeightMm,
-        }),
-        targetHeightMm: value ? targetHeight : seg.targetHeightMm,
       },
     });
   }
@@ -148,7 +140,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
           options={buildOptions}
           onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gateBuild]: value })}
         />
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto]">
+        <div className="grid grid-cols-1 gap-3">
           <label className="flex flex-col gap-1">
             <span className="text-sm font-bold text-brand-muted">Gate height</span>
             <div className="flex items-center gap-2">
@@ -162,15 +154,13 @@ export function GateSegmentDetails({ runId, seg }: Props) {
               <span className="text-brand-muted">mm</span>
             </div>
           </label>
-          <label className="flex items-center gap-2 pt-5">
-            <input
-              type="checkbox"
-              checked={matchRunHeight}
-              onChange={(e) => setMatchRunHeight(e.target.checked)}
-            />
-            <span className="text-brand-muted">Match run height</span>
-          </label>
         </div>
+        <OptionPills
+          label="Gate post"
+          value={String(v[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm] ?? masterPostSize)}
+          options={GATE_POST_SIZE_OPTIONS}
+          onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(value) })}
+        />
         <label className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -189,25 +179,25 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         <div className="space-y-3 rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
           <OptionPills
             label="Hinge / closer"
-            value={String(v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "ML-TL-KF-H-FT")}
+            value={String(v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B")}
             options={HINGE_OPTIONS}
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.hingeType]: value })}
           />
           <OptionPills
             label="Latch / lock"
-            value={String(v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "none")}
+            value={String(v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA")}
             options={LATCH_OPTIONS}
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.latchType]: value })}
           />
           <OptionPills
             label="Drop bolt"
-            value={String(v[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? (movement === "double_swing" ? "QB124" : "none"))}
+            value={String(v[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? (movement === "double_swing" ? "SS-0300DB-B" : "none"))}
             options={DROP_BOLT_OPTIONS}
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.dropBoltType]: value })}
           />
           <OptionPills
             label="Gate stop"
-            value={String(v[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "auto")}
+            value={String(v[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "none")}
             options={GATE_STOP_OPTIONS}
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gateStopType]: value })}
           />
@@ -235,11 +225,6 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         </div>
       )}
 
-      {movement !== "single_swing" && (
-        <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-700">
-          Frame and infill formulas for this gate type are being matched to the QSG workbooks before hardcoding. Selected hardware is still priced.
-        </p>
-      )}
     </div>
   );
 }

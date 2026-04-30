@@ -894,3 +894,31 @@ Mapper stability note:
 - Canvas-to-canonical conversion now stores a `geometry_angle_deg` hint on generated panel segments.
 - Canonical-to-canvas conversion uses those angle hints when rebuilding the drawing, which prevents sidebar edits, undo, or gate splits from flattening angled/cornered runs into a straight line.
 - Gate splitting still needs deeper QA on complex angled layouts, but the current pass preserves the original segment angle enough to stop the obvious straight-line regression.
+
+### April 30, 2026 - Run master display and QSG gate BOM hardening
+
+User workflow finding:
+- Long material-order jobs need fast visual confirmation that later segments and gates still match the run master settings.
+- Gate segments created from the mapper must inherit the run master settings even when they are created from geometry first and edited later in the sidebar.
+
+Changes applied:
+- Run headings now show total length, fence segment count, and gate count, followed by an italic `Master Settings for Run` line.
+- The run summary lists the first segment's master settings in bold pills, including height, colour, slat size, gap, post, mounting method, and max post spacing.
+- Segment and gate cards now show a large green check when their key settings still match the run master.
+- Removed the gate `Match run height` control because height now defaults from the run master.
+- Added a gate post size selector, defaulting to the run master post size.
+- Updated swing gate defaults:
+  - D&D TruClose heavy duty hinge set defaults for single and double swing.
+  - Lokk Latch Deluxe keyed alike defaults for single and double swing.
+  - Single swing defaults to no drop bolt.
+  - Double swing defaults to 300mm black drop bolt.
+  - Single and double swing default to no gate stop.
+- QSG gate BOM now emits side frames, joiner blocks, screw covers, rail screws, and frame top caps for swing gates as well as sliding gates.
+- Vertical gate builds now calculate vertical slat counts from gate width and cut slats to gate height, rather than using horizontal-blade logic.
+- Horizontal gate builds continue to calculate stacked slats by height and cut lengths by gate/leaf width.
+- Mapper labels now use the same language as the sidebar (`R1 S1`, `R1 G1`) and split fence labels around gate openings.
+- Live mapper post previews now split around gate openings, so post spacings are recalculated and shown separately on each side of a placed gate.
+
+Verification:
+- `npm run build` passed after these changes.
+- Local app responded with HTTP 200 at `http://127.0.0.1:5173/calculator`.

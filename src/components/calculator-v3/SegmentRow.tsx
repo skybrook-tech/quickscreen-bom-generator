@@ -1,6 +1,6 @@
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import { ChevronDown, Settings2 } from "lucide-react";
+import { CheckCircle2, ChevronDown, Settings2 } from "lucide-react";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
 import NumberInput from "../shared/NumberInput";
@@ -45,6 +45,11 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
   const runVariables = {
     ...(state.payload?.variables ?? {}),
     ...(run?.variables ?? {}),
+  };
+  const firstFenceSegment = run?.segments.find((item) => item.segmentKind !== "gate_opening");
+  const masterVariables = {
+    ...runVariables,
+    ...(firstFenceSegment?.variables ?? {}),
   };
   const segmentVariables = {
     ...runVariables,
@@ -92,6 +97,48 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
         .join(" - ")
     : "";
   const done = seg.variables?.segment_done === true;
+  const matchesMaster = (() => {
+    if (!run) return true;
+    if (gate) {
+      const gateVars = seg.variables ?? {};
+      const gateBuild = String(
+        gateVars[GATE_SEGMENT_STUB_KEYS.gateBuild] ??
+          (run.productCode === "VS" ? "qsg_hinged_vertical" : "qsg_hinged_horizontal"),
+      );
+      const expectedBuild = run.productCode === "VS"
+        ? gateBuild.includes("vertical")
+        : !gateBuild.includes("vertical");
+      return (
+        expectedBuild &&
+        Number(seg.targetHeightMm ?? gateVars[GATE_SEGMENT_STUB_KEYS.gateHeightMm] ?? 0) ===
+          Number(firstFenceSegment?.targetHeightMm ?? masterVariables.target_height_mm ?? 0) &&
+        String(gateVars[GATE_SEGMENT_STUB_KEYS.colourCode] ?? masterVariables.colour_code ?? "B") ===
+          String(masterVariables.colour_code ?? "B") &&
+        Number(gateVars[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVariables.slat_size_mm ?? 65) ===
+          Number(masterVariables.slat_size_mm ?? 65) &&
+        Number(gateVars[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVariables.slat_gap_mm ?? 9) ===
+          Number(masterVariables.slat_gap_mm ?? 9) &&
+        Number(gateVars[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm] ?? masterVariables.post_size ?? 50) ===
+          Number(masterVariables.post_size ?? 50)
+      );
+    }
+    if (seg.segmentId === firstFenceSegment?.segmentId) return true;
+    const vars = seg.variables ?? {};
+    const keys = [
+      "target_height_mm",
+      "colour_code",
+      "post_colour_code",
+      "slat_size_mm",
+      "slat_gap_mm",
+      "slat_gap_mode",
+      "post_size",
+      "post_system",
+      "mounting_type",
+      "mounting_method",
+      "max_panel_width_mm",
+    ];
+    return keys.every((key) => vars[key] === undefined || String(vars[key]) === String(masterVariables[key] ?? ""));
+  })();
 
   function updateGeometry(
     key: "segmentWidthMm" | "targetHeightMm",
@@ -113,11 +160,19 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
   }
 
   return (
-    <div className={`overflow-hidden rounded-2xl border text-sm font-semibold shadow-sm ${
+    <div className={`relative overflow-hidden rounded-2xl border text-sm font-semibold shadow-sm ${
       done ? "border-emerald-500/40 bg-emerald-500/5" : "border-brand-border/60 bg-brand-card"
     }`}>
+      <div
+        className={`absolute right-3 top-3 rounded-full transition-colors ${
+          matchesMaster ? "text-emerald-500" : "text-brand-muted/35"
+        }`}
+        title={matchesMaster ? "Matches master settings" : "This item has settings changed from the run master"}
+      >
+        <CheckCircle2 size={28} fill={matchesMaster ? "currentColor" : "none"} className={matchesMaster ? "text-emerald-500" : ""} />
+      </div>
       <div className="grid gap-3 p-3">
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 pr-9">
           <span className="w-16 shrink-0 font-bold text-brand-text">
             {displayLabel ?? `R${runIdx + 1} S${segIdx + 1}`}
           </span>

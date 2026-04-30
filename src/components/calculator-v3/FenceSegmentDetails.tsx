@@ -16,6 +16,7 @@ import {
 } from "../../lib/segmentTermination";
 import { SchemaDrivenForm } from "./SchemaDrivenForm";
 import NumberInput from "../shared/NumberInput";
+import { defaultGateBuildForMovement, gateMovementOrDefault } from "../../lib/gateOptionRules";
 
 const POST_SIZE_LABELS: Record<string, string> = {
   "50": "Standard Post 50mm",
@@ -184,6 +185,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
       "slat_gap_mode",
       "colour_code",
       "post_colour_code",
+      "post_size",
+      "post_system",
     ];
     dispatch({
       type: "UPSERT_RUN",
@@ -193,15 +196,23 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         segments: syncGeometryKeys.includes(key)
           ? run.segments.map((segment) => {
               if (segment.segmentKind === "gate_opening") {
+                const movement = gateMovementOrDefault(
+                  segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement],
+                );
                 return {
                   ...segment,
                   targetHeightMm: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
                   variables: {
                     ...(segment.variables ?? {}),
                     [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
+                    [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
+                      movement,
+                      productCode === "VS",
+                    ),
                     [GATE_SEGMENT_STUB_KEYS.colourCode]: String(normalised.colour_code ?? "B"),
                     [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(normalised.slat_size_mm ?? 65),
                     [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(normalised.slat_gap_mm ?? 9),
+                    [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(normalised.post_size ?? 50),
                   },
                 };
               }
@@ -240,6 +251,21 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         segments: run.segments.map((segment) => ({
           ...segment,
           targetHeightMm: Number(variables.target_height_mm ?? segment.targetHeightMm ?? 1800),
+          variables:
+            segment.segmentKind === "gate_opening"
+              ? {
+                  ...(segment.variables ?? {}),
+                  [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
+                    gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]),
+                    nextProductCode === "VS",
+                  ),
+                  [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(variables.target_height_mm ?? segment.targetHeightMm ?? 1800),
+                  [GATE_SEGMENT_STUB_KEYS.colourCode]: String(variables.colour_code ?? "B"),
+                  [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(variables.slat_size_mm ?? 65),
+                  [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(variables.slat_gap_mm ?? 9),
+                  [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(variables.post_size ?? 50),
+                }
+              : segment.variables,
         })),
       },
     });

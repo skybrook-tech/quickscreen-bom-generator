@@ -343,6 +343,60 @@ function knownSelectedSku(value: unknown): string | undefined {
   return sku;
 }
 
+function emitQsgGateFrameLines(
+  lines: QtyLine[],
+  base: { runId: string; segmentId: string },
+  slatSize: number,
+  colour: string,
+  leafCount: number,
+  frameCutMm: number,
+  railCutMm: number,
+): void {
+  const sideFramesPerStock = Math.max(1, Math.floor(4200 / frameCutMm));
+  const sideFramePieces = 2 * leafCount;
+  const railScrewPacks = Math.ceil(((railCutMm * 2 * leafCount) * 1.01) / 10);
+  emit(lines, {
+    ...base,
+    sku: gateSideFrameSkuFor(slatSize, colour),
+    category: "gate_side_frame",
+    quantity: Math.ceil(sideFramePieces / sideFramesPerStock),
+    unit: "length",
+    notes: `${sideFramePieces} QSG side-frame pieces, ${Math.round(frameCutMm)}mm cuts from 4200mm stock`,
+  });
+  emit(lines, {
+    ...base,
+    sku: slatSize === 90 ? "QSG-JBLOCK-90-4PK" : "QSG-JBLOCK-65-4PK",
+    category: "hardware",
+    quantity: leafCount,
+    unit: "pack",
+    notes: "QSG gate joiner blocks",
+  });
+  emit(lines, {
+    ...base,
+    sku: "QSG-SC-10PK",
+    category: "hardware",
+    quantity: leafCount,
+    unit: "pack",
+    notes: "QSG gate screw covers",
+  });
+  emit(lines, {
+    ...base,
+    sku: "QSG-RS-10PK",
+    category: "screw",
+    quantity: railScrewPacks,
+    unit: "pack",
+    notes: "QSG rail screws for top and bottom rails",
+  });
+  emit(lines, {
+    ...base,
+    sku: "QSG-FTC-65",
+    category: "accessory",
+    quantity: 4 * leafCount,
+    unit: "each",
+    notes: "QSG frame top caps, 4 per leaf",
+  });
+}
+
 function calculateGateSegment(
   run: CanonicalRun,
   segment: CanonicalRun["segments"][number],
@@ -353,7 +407,10 @@ function calculateGateSegment(
   const lines: QtyLine[] = [];
   const vars = { ...mergedRunVars, ...(segment.variables ?? {}) };
   const movement = String(vars[GATE_SEGMENT_STUB_KEYS.gateMovement] ?? "single_swing");
-  const build = String(vars[GATE_SEGMENT_STUB_KEYS.gateBuild] ?? "qsg_hinged_horizontal");
+  const build = String(
+    vars[GATE_SEGMENT_STUB_KEYS.gateBuild] ??
+      (run.productCode === "VS" ? "qsg_hinged_vertical" : "qsg_hinged_horizontal"),
+  );
   const colour = String(vars[GATE_SEGMENT_STUB_KEYS.colourCode] ?? vars.colour_code ?? "B");
   const slatGap = toNumber(vars[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? vars.slat_gap_mm, 9);
   const slatSize = toNumber(vars[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? vars.slat_size_mm, 65);
@@ -367,6 +424,7 @@ function calculateGateSegment(
   const leafCount = movement === "double_swing" ? 2 : 1;
   const leafWidthMm = Math.max(1, openingWidthMm / leafCount);
   const base = { runId: run.runId, segmentId: segment.segmentId };
+  const verticalBuild = build.includes("vertical");
 
   computed[run.runId] = computed[run.runId] ?? {};
   computed[run.runId][segment.segmentId] = {
@@ -379,17 +437,18 @@ function calculateGateSegment(
   };
 
   if (movement === "sliding") {
-    const bladeCutMm = Math.max(1, openingWidthMm - 86);
+    const bladeCutMm = verticalBuild ? Math.max(1, gateHeightMm - 133) : Math.max(1, openingWidthMm - 86);
     const railCutMm = Math.max(1, openingWidthMm - 80);
     const frameCutMm = Math.max(1, gateHeightMm);
     const designSlatSize = slatSize === 90 ? 90 : 65;
     const numGateBlades = Math.max(
       1,
-      Math.floor((gateHeightMm - 133 + slatGap) / (designSlatSize + slatGap)),
+      verticalBuild
+        ? Math.floor((openingWidthMm - 86 + slatGap) / (designSlatSize + slatGap))
+        : Math.floor((gateHeightMm - 133 + slatGap) / (designSlatSize + slatGap)),
     );
     const bladesPerStock = Math.max(1, Math.floor(6100 / bladeCutMm));
     const railsPerStock = Math.max(1, Math.floor(6100 / railCutMm));
-    const sideFramesPerStock = Math.max(1, Math.floor(4200 / frameCutMm));
 
     computed[run.runId][segment.segmentId] = {
       ...(computed[run.runId][segment.segmentId] ?? {}),
@@ -405,7 +464,7 @@ function calculateGateSegment(
       category: "gate",
       quantity: Math.ceil(numGateBlades / bladesPerStock),
       unit: "length",
-      notes: `${numGateBlades} horizontal gate blades, ${Math.round(bladeCutMm)}mm cuts from 6100mm stock`,
+      notes: `${numGateBlades} ${verticalBuild ? "vertical" : "horizontal"} gate blades, ${Math.round(bladeCutMm)}mm cuts from 6100mm stock`,
     });
     emit(lines, {
       ...base,
@@ -415,30 +474,7 @@ function calculateGateSegment(
       unit: "length",
       notes: `Top/bottom HD rails, ${Math.round(railCutMm)}mm cuts from 6100mm stock`,
     });
-    emit(lines, {
-      ...base,
-      sku: gateSideFrameSkuFor(slatSize, colour),
-      category: "gate",
-      quantity: Math.ceil(2 / sideFramesPerStock),
-      unit: "length",
-      notes: `QSG side frames, ${Math.round(frameCutMm)}mm cuts from 4200mm stock. Price is TBD if missing from seed.`,
-    });
-    emit(lines, {
-      ...base,
-      sku: slatSize === 90 ? "QSG-JBLOCK-90-4PK" : "QSG-JBLOCK-65-4PK",
-      category: "hardware",
-      quantity: Math.ceil(4 / 4),
-      unit: "pack",
-      notes: "QSG sliding gate joiner blocks",
-    });
-    emit(lines, {
-      ...base,
-      sku: "QSG-RS-10PK",
-      category: "screw",
-      quantity: Math.ceil(8 / 10),
-      unit: "pack",
-      notes: "QSG rail screws",
-    });
+    emitQsgGateFrameLines(lines, base, slatSize, colour, 1, frameCutMm, railCutMm);
     const trackSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.slidingTrackType]) ?? "XPSG-6000-TRACK-ST";
     const trackQty = Math.ceil((openingWidthMm * 2) / stockLengthForSlidingTrack(trackSku));
     emit(lines, {
@@ -486,19 +522,19 @@ function calculateGateSegment(
     return lines;
   }
 
-  if (movement !== "single_swing") {
-    warnings.push(
-      "Double swing gates are currently priced as selected hardware plus per-leaf QuickScreen gate materials; verify driveway frame rules before hardcoding.",
-    );
-  }
   if (!build.startsWith("qsg_hinged_")) {
     warnings.push(
       `${build} gate build is selectable for workflow testing, but full frame kit rules still need QSG workbook verification.`,
     );
   }
-  const bladeCutMm = Math.max(1, leafWidthMm - 86);
+  const bladeCutMm = verticalBuild ? Math.max(1, gateHeightMm - 133) : Math.max(1, leafWidthMm - 86);
   const railCutMm = Math.max(1, leafWidthMm - 80);
-  const numGateBlades = Math.max(1, Math.floor((gateHeightMm - 133 + slatGap) / (slatSize + slatGap)));
+  const numGateBlades = Math.max(
+    1,
+    verticalBuild
+      ? Math.floor((leafWidthMm - 86 + slatGap) / (slatSize + slatGap))
+      : Math.floor((gateHeightMm - 133 + slatGap) / (slatSize + slatGap)),
+  );
   const bladesPerStock = Math.max(1, Math.floor(6100 / bladeCutMm));
   const railsPerStock = Math.max(1, Math.floor(6100 / railCutMm));
 
@@ -508,7 +544,7 @@ function calculateGateSegment(
     category: "gate",
     quantity: Math.ceil((numGateBlades * leafCount) / bladesPerStock),
     unit: "length",
-    notes: `${numGateBlades} gate blades/leaf, ${Math.round(bladeCutMm)}mm cuts from 6100mm stock`,
+    notes: `${numGateBlades} ${verticalBuild ? "vertical" : "horizontal"} gate blades/leaf, ${Math.round(bladeCutMm)}mm cuts from 6100mm stock`,
   });
   emit(lines, {
     ...base,
@@ -518,6 +554,7 @@ function calculateGateSegment(
     unit: "length",
     notes: `Top/bottom HD rails, ${Math.round(railCutMm)}mm cuts from 6100mm stock`,
   });
+  emitQsgGateFrameLines(lines, base, slatSize, colour, leafCount, Math.max(1, gateHeightMm), railCutMm);
 
   if (String(vars[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "auto") === "auto") {
     emit(lines, {
@@ -533,11 +570,13 @@ function calculateGateSegment(
     if (stopSku) emit(lines, { ...base, sku: stopSku, category: "hardware", quantity: leafCount, unit: "each", notes: "Selected gate stop" });
   }
 
-  const hingeSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.hingeType]);
+  const hingeSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B");
   if (hingeSku) emit(lines, { ...base, sku: hingeSku, category: "hardware", quantity: leafCount, unit: "each", notes: "Selected hinge / latch hardware" });
-  const latchSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.latchType]);
+  const latchSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA");
   if (latchSku) emit(lines, { ...base, sku: latchSku, category: "hardware", quantity: 1, unit: "each", notes: "Selected latch / lock hardware" });
-  const dropBoltSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.dropBoltType]);
+  const dropBoltSku = knownSelectedSku(
+    vars[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? (movement === "double_swing" ? "SS-0300DB-B" : "none"),
+  );
   if (dropBoltSku) emit(lines, { ...base, sku: dropBoltSku, category: "hardware", quantity: 1, unit: "each", notes: "Selected drop bolt" });
   if (vars[GATE_SEGMENT_STUB_KEYS.includeLockBox] === true) {
     warnings.push(
@@ -1052,7 +1091,10 @@ export function calculateLocalBom(
   const gst = roundMoney(subtotal * 0.1);
   const grandTotal = roundMoney(subtotal + gst);
   const gateItems = lines.filter(
-    (line) => line.category === "gate" || line.category === "hardware",
+    (line) =>
+      line.category === "gate" ||
+      line.category === "hardware" ||
+      line.sku.startsWith("QSG-"),
   );
 
   return {

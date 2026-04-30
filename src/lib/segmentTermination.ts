@@ -58,6 +58,7 @@ export const GATE_SEGMENT_STUB_KEYS = {
   slidingTrackType: "sliding_track_type",
   slidingCatchType: "sliding_catch_type",
   slidingMotorType: "sliding_motor_type",
+  gatePostSizeMm: "gate_post_size_mm",
 } as const;
 
 export function parseTerminationKind(
