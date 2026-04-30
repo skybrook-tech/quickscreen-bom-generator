@@ -127,6 +127,7 @@ function runMasterVariables(
 function masterSummaryItems(productCode: string, variables: Record<string, unknown>) {
   const height = actualFenceHeightMm(productCode, variables);
   return [
+    `System type ${productCode}`,
     `Height ${height}mm`,
     `Fence colour ${colourLabel(variables.colour_code)}`,
     `Post colour ${colourLabel(variables.post_colour_code ?? variables.colour_code)}`,

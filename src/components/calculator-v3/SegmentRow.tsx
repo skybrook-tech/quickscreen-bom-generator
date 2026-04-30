@@ -15,6 +15,7 @@ import {
   SLIDING_CATCH_OPTIONS,
   SLIDING_MOTOR_OPTIONS,
   SLIDING_TRACK_OPTIONS,
+  defaultGateBuildForMovement,
   gateMovementOrDefault,
   isSwingGateMovement,
   optionLabel,
@@ -36,12 +37,6 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
   const gate = seg.segmentKind === "gate_opening";
 
   const run = state.payload?.runs.find((r) => r.runId === runId);
-  const jobMax = Number(
-    run?.variables?.max_panel_width_mm ??
-      state.payload?.variables.max_panel_width_mm ??
-      2600,
-  );
-  const effectiveMax = Number(seg.variables?.max_panel_width_mm ?? jobMax);
   const runVariables = {
     ...(state.payload?.variables ?? {}),
     ...(run?.variables ?? {}),
@@ -71,14 +66,11 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
       : Number(seg.targetHeightMm ?? segmentVariables.target_height_mm ?? 1800);
   const gateVars = seg.variables ?? {};
   const gateMovement = gateMovementOrDefault(gateVars[GATE_SEGMENT_STUB_KEYS.gateMovement]);
-  const panelsLive = seg.segmentWidthMm
-    ? Math.ceil(seg.segmentWidthMm / effectiveMax)
-    : 0;
   const gateSummaryParts = isSwingGateMovement(gateMovement)
     ? [
         optionLabel(GATE_MOVEMENTS, gateMovement),
-        optionLabel(HINGE_OPTIONS, gateVars[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "ML-TL-KF-H-FT"),
-        optionLabel(LATCH_OPTIONS, gateVars[GATE_SEGMENT_STUB_KEYS.latchType] ?? "none"),
+        optionLabel(HINGE_OPTIONS, gateVars[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B"),
+        optionLabel(LATCH_OPTIONS, gateVars[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA"),
       ]
     : [
         optionLabel(GATE_MOVEMENTS, gateMovement),
@@ -111,15 +103,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
       return (
         expectedBuild &&
         Number(seg.targetHeightMm ?? gateVars[GATE_SEGMENT_STUB_KEYS.gateHeightMm] ?? 0) ===
-          Number(firstFenceSegment?.targetHeightMm ?? masterVariables.target_height_mm ?? 0) &&
-        String(gateVars[GATE_SEGMENT_STUB_KEYS.colourCode] ?? masterVariables.colour_code ?? "B") ===
-          String(masterVariables.colour_code ?? "B") &&
-        Number(gateVars[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVariables.slat_size_mm ?? 65) ===
-          Number(masterVariables.slat_size_mm ?? 65) &&
-        Number(gateVars[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVariables.slat_gap_mm ?? 9) ===
-          Number(masterVariables.slat_gap_mm ?? 9) &&
-        Number(gateVars[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm] ?? masterVariables.post_size ?? 50) ===
-          Number(masterVariables.post_size ?? 50)
+          Number(firstFenceSegment?.targetHeightMm ?? masterVariables.target_height_mm ?? 0)
       );
     }
     if (seg.segmentId === firstFenceSegment?.segmentId) return true;
@@ -144,10 +128,96 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     key: "segmentWidthMm" | "targetHeightMm",
     value: number,
   ) {
+    if (key === "targetHeightMm" && run && seg.segmentId === firstFenceSegment?.segmentId) {
+      dispatch({
+        type: "UPSERT_RUN",
+        run: {
+          ...run,
+          variables: {
+            ...(run.variables ?? {}),
+            target_height_mm: value,
+          },
+          segments: run.segments.map((segment) => {
+            if (segment.segmentKind === "gate_opening") {
+              const movement = gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+              return {
+                ...segment,
+                targetHeightMm: value,
+                variables: {
+                  ...(segment.variables ?? {}),
+                  [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: value,
+                  [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
+                    movement,
+                    run.productCode === "VS",
+                  ),
+                },
+              };
+            }
+            return { ...segment, targetHeightMm: value };
+          }),
+        },
+      });
+      return;
+    }
     dispatch({
       type: "UPSERT_SEGMENT",
       runId,
-      segment: { ...seg, [key]: value },
+      segment:
+        gate && key === "targetHeightMm"
+          ? {
+              ...patchSegmentVariables(seg, {
+                [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: value,
+              }),
+              targetHeightMm: value,
+            }
+          : { ...seg, [key]: value },
+    });
+  }
+
+  function resetToMaster() {
+    if (!run) return;
+    const masterHeight = Number(firstFenceSegment?.targetHeightMm ?? masterVariables.target_height_mm ?? 1800);
+    if (gate) {
+      const movement = gateMovementOrDefault(seg.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+      dispatch({
+        type: "UPSERT_SEGMENT",
+        runId,
+        segment: {
+          ...patchSegmentVariables(seg, {
+            [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
+              movement,
+              run.productCode === "VS",
+            ),
+            [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: masterHeight,
+            [GATE_SEGMENT_STUB_KEYS.colourCode]: String(masterVariables.colour_code ?? "B"),
+            [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(masterVariables.slat_size_mm ?? 65),
+            [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(masterVariables.slat_gap_mm ?? 9),
+            [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(masterVariables.post_size ?? 50),
+          }),
+          targetHeightMm: masterHeight,
+        },
+      });
+      return;
+    }
+    dispatch({
+      type: "UPSERT_SEGMENT",
+      runId,
+      segment: {
+        ...patchSegmentVariables(seg, {
+          target_height_mm: null,
+          colour_code: null,
+          post_colour_code: null,
+          slat_size_mm: null,
+          slat_gap_mm: null,
+          slat_gap_mode: null,
+          post_size: null,
+          post_system: null,
+          mounting_type: null,
+          mounting_method: null,
+          max_panel_width_mm: null,
+        }),
+        targetHeightMm: masterHeight,
+      },
     });
   }
 
@@ -163,14 +233,17 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     <div className={`relative overflow-hidden rounded-2xl border text-sm font-semibold shadow-sm ${
       done ? "border-emerald-500/40 bg-emerald-500/5" : "border-brand-border/60 bg-brand-card"
     }`}>
-      <div
+      <button
+        type="button"
+        onClick={matchesMaster ? undefined : resetToMaster}
+        disabled={matchesMaster}
         className={`absolute right-3 top-3 rounded-full transition-colors ${
           matchesMaster ? "text-emerald-500" : "text-brand-muted/35"
-        }`}
-        title={matchesMaster ? "Matches master settings" : "This item has settings changed from the run master"}
+        } ${matchesMaster ? "cursor-default" : "hover:text-emerald-600"}`}
+        title={matchesMaster ? "Matches master settings" : "Reset to run master settings"}
       >
         <CheckCircle2 size={28} fill={matchesMaster ? "currentColor" : "none"} className={matchesMaster ? "text-emerald-500" : ""} />
-      </div>
+      </button>
       <div className="grid gap-3 p-3">
         <div className="flex flex-wrap items-center gap-2 pr-9">
           <span className="w-16 shrink-0 font-bold text-brand-text">
@@ -230,7 +303,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
               aria-expanded={open}
               aria-label={open ? "Collapse details" : "Expand details"}
             >
-              {gate ? "Gate options" : "Segment options"}
+              {gate ? "Configure more gate settings" : "Segment options"}
               {gate ? (
                 <ChevronDown size={14} className={`transition-transform ${open ? "rotate-180" : ""}`} />
               ) : (
@@ -246,7 +319,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
                   : "border-brand-border bg-brand-card text-brand-muted hover:border-emerald-500/50 hover:text-emerald-700"
               }`}
             >
-              {done ? "Segment done" : "Mark done"}
+              {done ? "Confirmed" : "Segment confirmed"}
             </button>
             <button
               type="button"
@@ -268,14 +341,6 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
         {gate && gateSummary ? (
           <div className="rounded-xl border border-brand-border/50 bg-brand-bg/60 px-3 py-2 text-sm font-semibold leading-relaxed text-brand-muted">
             {gateSummary}
-          </div>
-        ) : null}
-        {!gate && seg.segmentWidthMm ? (
-          <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand-border/50 bg-brand-bg/60 px-3 py-2 text-sm font-semibold text-brand-muted">
-            <span>
-              {panelsLive} {panelsLive === 1 ? "panel" : "panels"}
-            </span>
-            <span>Max post spacing {effectiveMax}mm</span>
           </div>
         ) : null}
       </div>

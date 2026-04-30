@@ -26,6 +26,36 @@ const GATE_POST_SIZE_OPTIONS: GateOption[] = [
   { value: "65", label: "Standard Post 65mm HD" },
 ];
 
+const COLOUR_OPTIONS: GateOption[] = [
+  { value: "B", label: "Black Satin" },
+  { value: "MN", label: "Monument Matt" },
+  { value: "G", label: "Woodland Grey Matt" },
+  { value: "SM", label: "Surfmist Matt" },
+  { value: "W", label: "Pearl White Gloss" },
+  { value: "BS", label: "Basalt Satin" },
+  { value: "D", label: "Dune Satin" },
+  { value: "M", label: "Mill" },
+  { value: "P", label: "Primrose" },
+  { value: "PB", label: "Paperbark" },
+  { value: "S", label: "Palladium Silver Pearl" },
+  { value: "KWI", label: "Kwila" },
+  { value: "WRC", label: "Western Red Cedar" },
+];
+
+const SLAT_SIZE_OPTIONS: GateOption[] = [
+  { value: "65", label: "65mm slat" },
+  { value: "90", label: "90mm slat" },
+];
+
+const SLAT_GAP_OPTIONS: GateOption[] = [
+  { value: "5", label: "5mm" },
+  { value: "9", label: "9mm" },
+  { value: "12", label: "12mm" },
+  { value: "15", label: "15mm" },
+  { value: "20", label: "20mm" },
+  { value: "30", label: "30mm" },
+];
+
 interface Props {
   runId: string;
   seg: CanonicalSegment;
@@ -84,6 +114,11 @@ export function GateSegmentDetails({ runId, seg }: Props) {
     : defaultGateBuildForMovement(movement, prefersVerticalGate);
   const isSwing = isSwingGateMovement(movement);
   const masterPostSize = String(runVars.post_size ?? 50);
+  const firstFenceSegment = run?.segments.find((segment) => segment.segmentKind !== "gate_opening");
+  const masterVars = {
+    ...runVars,
+    ...(firstFenceSegment?.variables ?? {}),
+  };
 
   function upsertVariables(patch: Record<string, string | number | boolean | null | undefined>) {
     dispatch({
@@ -157,9 +192,27 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         </div>
         <OptionPills
           label="Gate post"
-          value={String(v[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm] ?? masterPostSize)}
+          value={String(v[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm] ?? masterVars.post_size ?? masterPostSize)}
           options={GATE_POST_SIZE_OPTIONS}
           onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(value) })}
+        />
+        <OptionPills
+          label="Gate colour"
+          value={String(v[GATE_SEGMENT_STUB_KEYS.colourCode] ?? masterVars.colour_code ?? "B")}
+          options={COLOUR_OPTIONS}
+          onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.colourCode]: value })}
+        />
+        <OptionPills
+          label="Gate slat size"
+          value={String(v[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVars.slat_size_mm ?? 65)}
+          options={SLAT_SIZE_OPTIONS}
+          onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(value) })}
+        />
+        <OptionPills
+          label="Gate slat gap"
+          value={String(v[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVars.slat_gap_mm ?? 9)}
+          options={SLAT_GAP_OPTIONS}
+          onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(value) })}
         />
         <label className="flex items-center gap-2">
           <input

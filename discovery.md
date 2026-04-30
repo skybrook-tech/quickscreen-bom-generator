@@ -922,3 +922,22 @@ Changes applied:
 Verification:
 - `npm run build` passed after these changes.
 - Local app responded with HTTP 200 at `http://127.0.0.1:5173/calculator`.
+
+### May 1, 2026 - Segment confirmation and master reset controls
+
+User workflow finding:
+- The segment card summary was too noisy; the per-card panel/max-post-spacing box duplicated information and distracted from confirming the segment.
+- The green master-match check needs to be actionable, not just a status marker.
+
+Changes applied:
+- Removed the extra segment summary box that displayed panel count and max post spacing inside each segment card.
+- Renamed `Mark done` to `Segment confirmed`.
+- The first segment height now updates the run master height and flows through later fence segments and gates in that run.
+- The green check is now a reset-to-master button when an item differs from the run master. Pressing it restores the segment/gate settings to the run master and turns the check green.
+- Gate match status now only checks the user-facing master requirements: gate height and horizontal/vertical gate system type.
+- Gate height edits from the segment row now also update the gate BOM height variable.
+- Gate expanded settings now include segment-like controls for colour, slat size, slat gap, gate post size, and gate termination-post usage.
+- Run master settings now explicitly include system type.
+
+Verification:
+- `npm run build` passed after these changes.
