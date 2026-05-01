@@ -5,7 +5,7 @@
       "system_type": "QS_GATE",
       "product_type": "gate",
       "name": "QS Pedestrian Gate",
-      "description": "Single-leaf aluminium pedestrian gate compatible with QSHS, VS, XPL and BAYG fence systems. Screw-fixed 65mm horizontal slat blades with HD top/bottom rails and QSG gate side frames.",
+      "description": "Single-leaf aluminium pedestrian gate compatible with QSHS, VS, XPL and BAYG fence systems. Screw-fixed slat blades with 65mm QSG top/bottom rails and QSG 50x50 gate side frames.",
       "active": true,
       "sort_order": 10,
       "compatible_with_system_types": [
@@ -41,7 +41,7 @@
   "product_components": [
     {
       "sku": "XP-6100-GB65-B",
-      "name": "Gate Blade 65mm 6100mm \u2014 Black Satin",
+      "name": "Gate Blade 65mm 6100mm — Black Satin",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -58,7 +58,7 @@
     },
     {
       "sku": "XP-6100-GB65-MN",
-      "name": "Gate Blade 65mm 6100mm \u2014 Monument Matt",
+      "name": "Gate Blade 65mm 6100mm — Monument Matt",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -75,7 +75,7 @@
     },
     {
       "sku": "XP-6100-GB65-G",
-      "name": "Gate Blade 65mm 6100mm \u2014 Woodland Grey Matt",
+      "name": "Gate Blade 65mm 6100mm — Woodland Grey Matt",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -92,7 +92,7 @@
     },
     {
       "sku": "XP-6100-GB65-SM",
-      "name": "Gate Blade 65mm 6100mm \u2014 Surfmist Matt",
+      "name": "Gate Blade 65mm 6100mm — Surfmist Matt",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -109,7 +109,7 @@
     },
     {
       "sku": "XP-6100-GB65-W",
-      "name": "Gate Blade 65mm 6100mm \u2014 Pearl White Gloss",
+      "name": "Gate Blade 65mm 6100mm — Pearl White Gloss",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -126,7 +126,7 @@
     },
     {
       "sku": "XP-6100-GB65-BS",
-      "name": "Gate Blade 65mm 6100mm \u2014 Basalt Satin",
+      "name": "Gate Blade 65mm 6100mm — Basalt Satin",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -143,7 +143,7 @@
     },
     {
       "sku": "XP-6100-GB65-D",
-      "name": "Gate Blade 65mm 6100mm \u2014 Dune Satin",
+      "name": "Gate Blade 65mm 6100mm — Dune Satin",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -160,7 +160,7 @@
     },
     {
       "sku": "XP-6100-GB65-M",
-      "name": "Gate Blade 65mm 6100mm \u2014 Mill",
+      "name": "Gate Blade 65mm 6100mm — Mill",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -177,7 +177,7 @@
     },
     {
       "sku": "XP-6100-GB65-P",
-      "name": "Gate Blade 65mm 6100mm \u2014 Primrose",
+      "name": "Gate Blade 65mm 6100mm — Primrose",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -194,7 +194,7 @@
     },
     {
       "sku": "XP-6100-GB65-PB",
-      "name": "Gate Blade 65mm 6100mm \u2014 Paperbark",
+      "name": "Gate Blade 65mm 6100mm — Paperbark",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -211,7 +211,7 @@
     },
     {
       "sku": "XP-6100-GB65-S",
-      "name": "Gate Blade 65mm 6100mm \u2014 Palladium Silver Pearl",
+      "name": "Gate Blade 65mm 6100mm — Palladium Silver Pearl",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -227,9 +227,9 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-B",
-      "name": "HD Top/Bottom Rail 6100mm \u2014 Black Satin",
-      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "sku": "QSG-4800-RAIL65-B",
+      "name": "QSG 65mm Horizontal Gate Rail 4800mm — Black Satin",
+      "description": "65mm horizontal QSG gate rail, 4800mm stock length",
       "category": "rail",
       "unit": "length",
       "default_price": 124.56,
@@ -243,9 +243,9 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-MN",
-      "name": "HD Top/Bottom Rail 6100mm \u2014 Monument Matt",
-      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "sku": "QSG-4800-RAIL65-MN",
+      "name": "QSG 65mm Horizontal Gate Rail 4800mm — Monument Matt",
+      "description": "65mm horizontal QSG gate rail, 4800mm stock length",
       "category": "rail",
       "unit": "length",
       "default_price": 124.56,
@@ -259,9 +259,9 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-G",
-      "name": "HD Top/Bottom Rail 6100mm \u2014 Woodland Grey Matt",
-      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "sku": "QSG-4800-RAIL65-G",
+      "name": "QSG 65mm Horizontal Gate Rail 4800mm — Woodland Grey Matt",
+      "description": "65mm horizontal QSG gate rail, 4800mm stock length",
       "category": "rail",
       "unit": "length",
       "default_price": 124.56,
@@ -275,9 +275,9 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-SM",
-      "name": "HD Top/Bottom Rail 6100mm \u2014 Surfmist Matt",
-      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "sku": "QSG-4800-RAIL65-SM",
+      "name": "QSG 65mm Horizontal Gate Rail 4800mm — Surfmist Matt",
+      "description": "65mm horizontal QSG gate rail, 4800mm stock length",
       "category": "rail",
       "unit": "length",
       "default_price": 124.56,
@@ -291,9 +291,9 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-W",
-      "name": "HD Top/Bottom Rail 6100mm \u2014 Pearl White Gloss",
-      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "sku": "QSG-4800-RAIL65-W",
+      "name": "QSG 65mm Horizontal Gate Rail 4800mm — Pearl White Gloss",
+      "description": "65mm horizontal QSG gate rail, 4800mm stock length",
       "category": "rail",
       "unit": "length",
       "default_price": 124.56,
@@ -307,9 +307,9 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-BS",
-      "name": "HD Top/Bottom Rail 6100mm \u2014 Basalt Satin",
-      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "sku": "QSG-4800-RAIL65-BS",
+      "name": "QSG 65mm Horizontal Gate Rail 4800mm — Basalt Satin",
+      "description": "65mm horizontal QSG gate rail, 4800mm stock length",
       "category": "rail",
       "unit": "length",
       "default_price": 124.56,
@@ -323,9 +323,9 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-D",
-      "name": "HD Top/Bottom Rail 6100mm \u2014 Dune Satin",
-      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "sku": "QSG-4800-RAIL65-D",
+      "name": "QSG 65mm Horizontal Gate Rail 4800mm — Dune Satin",
+      "description": "65mm horizontal QSG gate rail, 4800mm stock length",
       "category": "rail",
       "unit": "length",
       "default_price": 124.56,
@@ -339,9 +339,9 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-M",
-      "name": "HD Top/Bottom Rail 6100mm \u2014 Mill",
-      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "sku": "QSG-4800-RAIL65-M",
+      "name": "QSG 65mm Horizontal Gate Rail 4800mm — Mill",
+      "description": "65mm horizontal QSG gate rail, 4800mm stock length",
       "category": "rail",
       "unit": "length",
       "default_price": 113.62,
@@ -355,9 +355,9 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-P",
-      "name": "HD Top/Bottom Rail 6100mm \u2014 Primrose",
-      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "sku": "QSG-4800-RAIL65-P",
+      "name": "QSG 65mm Horizontal Gate Rail 4800mm — Primrose",
+      "description": "65mm horizontal QSG gate rail, 4800mm stock length",
       "category": "rail",
       "unit": "length",
       "default_price": 124.56,
@@ -371,9 +371,9 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-PB",
-      "name": "HD Top/Bottom Rail 6100mm \u2014 Paperbark",
-      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "sku": "QSG-4800-RAIL65-PB",
+      "name": "QSG 65mm Horizontal Gate Rail 4800mm — Paperbark",
+      "description": "65mm horizontal QSG gate rail, 4800mm stock length",
       "category": "rail",
       "unit": "length",
       "default_price": 124.56,
@@ -387,9 +387,9 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-S",
-      "name": "HD Top/Bottom Rail 6100mm \u2014 Palladium Silver Pearl",
-      "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
+      "sku": "QSG-4800-RAIL65-S",
+      "name": "QSG 65mm Horizontal Gate Rail 4800mm — Palladium Silver Pearl",
+      "description": "65mm horizontal QSG gate rail, 4800mm stock length",
       "category": "rail",
       "unit": "length",
       "default_price": 124.56,
@@ -404,7 +404,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-B",
-      "name": "Gate Stop 4200mm \u2014 Black Satin",
+      "name": "Gate Stop 4200mm — Black Satin",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -420,7 +420,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-MN",
-      "name": "Gate Stop 4200mm \u2014 Monument Matt",
+      "name": "Gate Stop 4200mm — Monument Matt",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -436,7 +436,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-G",
-      "name": "Gate Stop 4200mm \u2014 Woodland Grey Matt",
+      "name": "Gate Stop 4200mm — Woodland Grey Matt",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -452,7 +452,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-SM",
-      "name": "Gate Stop 4200mm \u2014 Surfmist Matt",
+      "name": "Gate Stop 4200mm — Surfmist Matt",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -468,7 +468,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-W",
-      "name": "Gate Stop 4200mm \u2014 Pearl White Gloss",
+      "name": "Gate Stop 4200mm — Pearl White Gloss",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -484,7 +484,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-BS",
-      "name": "Gate Stop 4200mm \u2014 Basalt Satin",
+      "name": "Gate Stop 4200mm — Basalt Satin",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -500,7 +500,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-D",
-      "name": "Gate Stop 4200mm \u2014 Dune Satin",
+      "name": "Gate Stop 4200mm — Dune Satin",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -516,7 +516,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-M",
-      "name": "Gate Stop 4200mm \u2014 Mill",
+      "name": "Gate Stop 4200mm — Mill",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -532,7 +532,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-P",
-      "name": "Gate Stop 4200mm \u2014 Primrose",
+      "name": "Gate Stop 4200mm — Primrose",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side). Primrose exception pricing.",
       "category": "accessory",
       "unit": "length",
@@ -548,7 +548,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-PB",
-      "name": "Gate Stop 4200mm \u2014 Paperbark",
+      "name": "Gate Stop 4200mm — Paperbark",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side). Paperbark exception pricing.",
       "category": "accessory",
       "unit": "length",
@@ -564,7 +564,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-S",
-      "name": "Gate Stop 4200mm \u2014 Palladium Silver Pearl",
+      "name": "Gate Stop 4200mm — Palladium Silver Pearl",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -580,7 +580,7 @@
     },
     {
       "sku": "ML-TL",
-      "name": "Magna Latch \u2014 Latch Only",
+      "name": "Magna Latch — Latch Only",
       "description": "Magna Latch top-latch, latch only (no hinge included)",
       "category": "hardware",
       "unit": "each",
@@ -632,7 +632,7 @@
     },
     {
       "sku": "XP-LBOX-DL-B",
-      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Black Satin",
+      "name": "Lock Box — Lockwood 001 Deadlatch — Black Satin",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -648,7 +648,7 @@
     },
     {
       "sku": "XP-LBOX-DL-MN",
-      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Monument Matt",
+      "name": "Lock Box — Lockwood 001 Deadlatch — Monument Matt",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -664,7 +664,7 @@
     },
     {
       "sku": "XP-LBOX-DL-G",
-      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Woodland Grey Matt",
+      "name": "Lock Box — Lockwood 001 Deadlatch — Woodland Grey Matt",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -680,7 +680,7 @@
     },
     {
       "sku": "XP-LBOX-DL-SM",
-      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Surfmist Matt",
+      "name": "Lock Box — Lockwood 001 Deadlatch — Surfmist Matt",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -696,7 +696,7 @@
     },
     {
       "sku": "XP-LBOX-DL-W",
-      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Pearl White Gloss",
+      "name": "Lock Box — Lockwood 001 Deadlatch — Pearl White Gloss",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -712,7 +712,7 @@
     },
     {
       "sku": "XP-LBOX-DL-BS",
-      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Basalt Satin",
+      "name": "Lock Box — Lockwood 001 Deadlatch — Basalt Satin",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -728,7 +728,7 @@
     },
     {
       "sku": "XP-LBOX-DL-D",
-      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Dune Satin",
+      "name": "Lock Box — Lockwood 001 Deadlatch — Dune Satin",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -744,11 +744,11 @@
     },
     {
       "sku": "XP-LBOX-DL-M",
-      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Mill",
+      "name": "Lock Box — Lockwood 001 Deadlatch — Mill",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
-      "default_price": 22.0,
+      "default_price": 22,
       "system_types": [
         "GATE"
       ],
@@ -760,7 +760,7 @@
     },
     {
       "sku": "XP-LBOX-DL-P",
-      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Primrose",
+      "name": "Lock Box — Lockwood 001 Deadlatch — Primrose",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -776,7 +776,7 @@
     },
     {
       "sku": "XP-LBOX-DL-PB",
-      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Paperbark",
+      "name": "Lock Box — Lockwood 001 Deadlatch — Paperbark",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -792,7 +792,7 @@
     },
     {
       "sku": "XP-LBOX-DL-S",
-      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Palladium Silver Pearl",
+      "name": "Lock Box — Lockwood 001 Deadlatch — Palladium Silver Pearl",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -808,7 +808,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-B",
-      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Black Satin",
+      "name": "Lock Box — Lever/Knob Lock Set — Black Satin",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -824,7 +824,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-MN",
-      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Monument Matt",
+      "name": "Lock Box — Lever/Knob Lock Set — Monument Matt",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -840,7 +840,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-G",
-      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Woodland Grey Matt",
+      "name": "Lock Box — Lever/Knob Lock Set — Woodland Grey Matt",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -856,7 +856,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-SM",
-      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Surfmist Matt",
+      "name": "Lock Box — Lever/Knob Lock Set — Surfmist Matt",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -872,7 +872,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-W",
-      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Pearl White Gloss",
+      "name": "Lock Box — Lever/Knob Lock Set — Pearl White Gloss",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -888,7 +888,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-BS",
-      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Basalt Satin",
+      "name": "Lock Box — Lever/Knob Lock Set — Basalt Satin",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -904,7 +904,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-D",
-      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Dune Satin",
+      "name": "Lock Box — Lever/Knob Lock Set — Dune Satin",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -920,11 +920,11 @@
     },
     {
       "sku": "XP-LBOX-LSET-M",
-      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Mill",
+      "name": "Lock Box — Lever/Knob Lock Set — Mill",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
-      "default_price": 22.0,
+      "default_price": 22,
       "system_types": [
         "GATE"
       ],
@@ -936,7 +936,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-P",
-      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Primrose",
+      "name": "Lock Box — Lever/Knob Lock Set — Primrose",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -952,7 +952,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-PB",
-      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Paperbark",
+      "name": "Lock Box — Lever/Knob Lock Set — Paperbark",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -968,7 +968,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-S",
-      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Palladium Silver Pearl",
+      "name": "Lock Box — Lever/Knob Lock Set — Palladium Silver Pearl",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -983,9 +983,9 @@
       "active": true
     },
     {
-      "sku": "QSG-GATESF-65-B",
-      "name": "Gate Side Frame 65mm \u2014 Black Satin",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "sku": "QSG-4200-GSF50-B",
+      "name": "QSG 50x50 Gate Side Frame — Black Satin",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1001,9 +1001,9 @@
       "active": true
     },
     {
-      "sku": "QSG-GATESF-65-MN",
-      "name": "Gate Side Frame 65mm \u2014 Monument Matt",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "sku": "QSG-4200-GSF50-MN",
+      "name": "QSG 50x50 Gate Side Frame — Monument Matt",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1019,9 +1019,9 @@
       "active": true
     },
     {
-      "sku": "QSG-GATESF-65-G",
-      "name": "Gate Side Frame 65mm \u2014 Woodland Grey Matt",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "sku": "QSG-4200-GSF50-G",
+      "name": "QSG 50x50 Gate Side Frame — Woodland Grey Matt",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1037,9 +1037,9 @@
       "active": true
     },
     {
-      "sku": "QSG-GATESF-65-SM",
-      "name": "Gate Side Frame 65mm \u2014 Surfmist Matt",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "sku": "QSG-4200-GSF50-SM",
+      "name": "QSG 50x50 Gate Side Frame — Surfmist Matt",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1055,9 +1055,9 @@
       "active": true
     },
     {
-      "sku": "QSG-GATESF-65-W",
-      "name": "Gate Side Frame 65mm \u2014 Pearl White Gloss",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "sku": "QSG-4200-GSF50-W",
+      "name": "QSG 50x50 Gate Side Frame — Pearl White Gloss",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1073,9 +1073,9 @@
       "active": true
     },
     {
-      "sku": "QSG-GATESF-65-BS",
-      "name": "Gate Side Frame 65mm \u2014 Basalt Satin",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "sku": "QSG-4200-GSF50-BS",
+      "name": "QSG 50x50 Gate Side Frame — Basalt Satin",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1091,9 +1091,9 @@
       "active": true
     },
     {
-      "sku": "QSG-GATESF-65-D",
-      "name": "Gate Side Frame 65mm \u2014 Dune Satin",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "sku": "QSG-4200-GSF50-D",
+      "name": "QSG 50x50 Gate Side Frame — Dune Satin",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1109,9 +1109,9 @@
       "active": true
     },
     {
-      "sku": "QSG-GATESF-65-M",
-      "name": "Gate Side Frame 65mm \u2014 Mill",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "sku": "QSG-4200-GSF50-M",
+      "name": "QSG 50x50 Gate Side Frame — Mill",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1127,9 +1127,9 @@
       "active": true
     },
     {
-      "sku": "QSG-GATESF-65-P",
-      "name": "Gate Side Frame 65mm \u2014 Primrose",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "sku": "QSG-4200-GSF50-P",
+      "name": "QSG 50x50 Gate Side Frame — Primrose",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1145,9 +1145,9 @@
       "active": true
     },
     {
-      "sku": "QSG-GATESF-65-PB",
-      "name": "Gate Side Frame 65mm \u2014 Paperbark",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "sku": "QSG-4200-GSF50-PB",
+      "name": "QSG 50x50 Gate Side Frame — Paperbark",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1163,9 +1163,9 @@
       "active": true
     },
     {
-      "sku": "QSG-GATESF-65-S",
-      "name": "Gate Side Frame 65mm \u2014 Palladium Silver Pearl",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
+      "sku": "QSG-4200-GSF50-S",
+      "name": "QSG 50x50 Gate Side Frame — Palladium Silver Pearl",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1181,9 +1181,9 @@
       "active": true
     },
     {
-      "sku": "QSG-JBLOCK-65-4PK",
-      "name": "Joiner Block 65mm \u2014 4 Pack",
-      "description": "Gate joiner blocks for 65mm slat gates, pack of 4. No pricing in CSV \u2014 price TBD.",
+      "sku": "QSG-JOINER65-4PK",
+      "name": "QSG 65mm Joiner Block — 4 Pack",
+      "description": "Gate joiner blocks for 65mm slat gates, pack of 4. No pricing in CSV — price TBD.",
       "category": "joiner_block",
       "unit": "pack",
       "default_price": null,
@@ -1199,8 +1199,8 @@
     },
     {
       "sku": "QSG-JBLOCK-90-4PK",
-      "name": "Joiner Block 90mm \u2014 4 Pack",
-      "description": "Gate joiner blocks for 90mm slat gates, pack of 4. No pricing in CSV \u2014 price TBD.",
+      "name": "Joiner Block 90mm — 4 Pack",
+      "description": "Gate joiner blocks for 90mm slat gates, pack of 4. No pricing in CSV — price TBD.",
       "category": "joiner_block",
       "unit": "pack",
       "default_price": null,
@@ -1216,8 +1216,8 @@
     },
     {
       "sku": "QSG-SC-10PK",
-      "name": "Gate Screw Covers \u2014 10 Pack",
-      "description": "Screw covers for QS gate, pack of 10. No pricing in CSV \u2014 price TBD.",
+      "name": "Gate Screw Covers — 10 Pack",
+      "description": "Screw covers for QS gate, pack of 10. No pricing in CSV — price TBD.",
       "category": "hardware",
       "unit": "pack",
       "default_price": null,
@@ -1232,8 +1232,8 @@
     },
     {
       "sku": "QSG-RS-10PK",
-      "name": "Gate Rail Screws \u2014 10 Pack",
-      "description": "Rail screws for QS gate HD top/bottom rails, pack of 10. No pricing in CSV \u2014 price TBD.",
+      "name": "Gate Rail Screws — 10 Pack",
+      "description": "Rail screws for QS gate HD top/bottom rails, pack of 10. No pricing in CSV — price TBD.",
       "category": "hardware",
       "unit": "pack",
       "default_price": null,
@@ -1249,7 +1249,7 @@
     {
       "sku": "QSG-FTC-50",
       "name": "Gate Frame Top Cap 50mm",
-      "description": "Gate side frame top cap, 50mm. 4 caps per gate. No pricing in CSV \u2014 price TBD.",
+      "description": "Gate side frame top cap, 50mm. 4 caps per gate. No pricing in CSV — price TBD.",
       "category": "accessory",
       "unit": "each",
       "default_price": null,
@@ -1265,7 +1265,7 @@
     {
       "sku": "QSG-FTC-65",
       "name": "Gate Frame Top Cap 65mm",
-      "description": "Gate side frame top cap, 65mm. 4 caps per gate. No pricing in CSV \u2014 price TBD.",
+      "description": "Gate side frame top cap, 65mm. 4 caps per gate. No pricing in CSV — price TBD.",
       "category": "accessory",
       "unit": "each",
       "default_price": null,
@@ -1275,6 +1275,737 @@
       "metadata": {
         "frame_cap_size": "65",
         "pricing_status": "TBD"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-B",
+      "name": "QSG Gate Infill 4800mm - Black Satin",
+      "description": "QSG gate infill extrusion, 4800mm stock - Black Satin",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "B"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-B",
+      "name": "QSG Corner Infill 4200mm - Black Satin",
+      "description": "QSG corner infill extrusion, 4200mm stock - Black Satin",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "B"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-B",
+      "name": "QSG Gate Screw Cover 4200mm - Black Satin",
+      "description": "QSG gate screw cover extrusion, 4200mm stock - Black Satin",
+      "category": "hardware",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "B"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-B",
+      "name": "QSG 50x50 Gate Frame Top Cap - Black Satin",
+      "description": "QSG 50x50 gate frame top cap - Black Satin",
+      "category": "frame_top_cap",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "B"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-MN",
+      "name": "QSG Gate Infill 4800mm - Monument Matt",
+      "description": "QSG gate infill extrusion, 4800mm stock - Monument Matt",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "MN"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-MN",
+      "name": "QSG Corner Infill 4200mm - Monument Matt",
+      "description": "QSG corner infill extrusion, 4200mm stock - Monument Matt",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "MN"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-MN",
+      "name": "QSG Gate Screw Cover 4200mm - Monument Matt",
+      "description": "QSG gate screw cover extrusion, 4200mm stock - Monument Matt",
+      "category": "hardware",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "MN"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-MN",
+      "name": "QSG 50x50 Gate Frame Top Cap - Monument Matt",
+      "description": "QSG 50x50 gate frame top cap - Monument Matt",
+      "category": "frame_top_cap",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "MN"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-G",
+      "name": "QSG Gate Infill 4800mm - Woodland Grey Matt",
+      "description": "QSG gate infill extrusion, 4800mm stock - Woodland Grey Matt",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "G"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-G",
+      "name": "QSG Corner Infill 4200mm - Woodland Grey Matt",
+      "description": "QSG corner infill extrusion, 4200mm stock - Woodland Grey Matt",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "G"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-G",
+      "name": "QSG Gate Screw Cover 4200mm - Woodland Grey Matt",
+      "description": "QSG gate screw cover extrusion, 4200mm stock - Woodland Grey Matt",
+      "category": "hardware",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "G"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-G",
+      "name": "QSG 50x50 Gate Frame Top Cap - Woodland Grey Matt",
+      "description": "QSG 50x50 gate frame top cap - Woodland Grey Matt",
+      "category": "frame_top_cap",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "G"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-SM",
+      "name": "QSG Gate Infill 4800mm - Surfmist Matt",
+      "description": "QSG gate infill extrusion, 4800mm stock - Surfmist Matt",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "SM"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-SM",
+      "name": "QSG Corner Infill 4200mm - Surfmist Matt",
+      "description": "QSG corner infill extrusion, 4200mm stock - Surfmist Matt",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "SM"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-SM",
+      "name": "QSG Gate Screw Cover 4200mm - Surfmist Matt",
+      "description": "QSG gate screw cover extrusion, 4200mm stock - Surfmist Matt",
+      "category": "hardware",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "SM"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-SM",
+      "name": "QSG 50x50 Gate Frame Top Cap - Surfmist Matt",
+      "description": "QSG 50x50 gate frame top cap - Surfmist Matt",
+      "category": "frame_top_cap",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "SM"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-W",
+      "name": "QSG Gate Infill 4800mm - Pearl White Gloss",
+      "description": "QSG gate infill extrusion, 4800mm stock - Pearl White Gloss",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "W"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-W",
+      "name": "QSG Corner Infill 4200mm - Pearl White Gloss",
+      "description": "QSG corner infill extrusion, 4200mm stock - Pearl White Gloss",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "W"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-W",
+      "name": "QSG Gate Screw Cover 4200mm - Pearl White Gloss",
+      "description": "QSG gate screw cover extrusion, 4200mm stock - Pearl White Gloss",
+      "category": "hardware",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "W"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-W",
+      "name": "QSG 50x50 Gate Frame Top Cap - Pearl White Gloss",
+      "description": "QSG 50x50 gate frame top cap - Pearl White Gloss",
+      "category": "frame_top_cap",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "W"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-BS",
+      "name": "QSG Gate Infill 4800mm - Basalt Satin",
+      "description": "QSG gate infill extrusion, 4800mm stock - Basalt Satin",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "BS"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-BS",
+      "name": "QSG Corner Infill 4200mm - Basalt Satin",
+      "description": "QSG corner infill extrusion, 4200mm stock - Basalt Satin",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "BS"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-BS",
+      "name": "QSG Gate Screw Cover 4200mm - Basalt Satin",
+      "description": "QSG gate screw cover extrusion, 4200mm stock - Basalt Satin",
+      "category": "hardware",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "BS"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-BS",
+      "name": "QSG 50x50 Gate Frame Top Cap - Basalt Satin",
+      "description": "QSG 50x50 gate frame top cap - Basalt Satin",
+      "category": "frame_top_cap",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "BS"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-D",
+      "name": "QSG Gate Infill 4800mm - Dune Satin",
+      "description": "QSG gate infill extrusion, 4800mm stock - Dune Satin",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "D"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-D",
+      "name": "QSG Corner Infill 4200mm - Dune Satin",
+      "description": "QSG corner infill extrusion, 4200mm stock - Dune Satin",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "D"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-D",
+      "name": "QSG Gate Screw Cover 4200mm - Dune Satin",
+      "description": "QSG gate screw cover extrusion, 4200mm stock - Dune Satin",
+      "category": "hardware",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "D"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-D",
+      "name": "QSG 50x50 Gate Frame Top Cap - Dune Satin",
+      "description": "QSG 50x50 gate frame top cap - Dune Satin",
+      "category": "frame_top_cap",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "D"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-M",
+      "name": "QSG Gate Infill 4800mm - Mill",
+      "description": "QSG gate infill extrusion, 4800mm stock - Mill",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "M"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-M",
+      "name": "QSG Corner Infill 4200mm - Mill",
+      "description": "QSG corner infill extrusion, 4200mm stock - Mill",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "M"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-M",
+      "name": "QSG Gate Screw Cover 4200mm - Mill",
+      "description": "QSG gate screw cover extrusion, 4200mm stock - Mill",
+      "category": "hardware",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "M"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-M",
+      "name": "QSG 50x50 Gate Frame Top Cap - Mill",
+      "description": "QSG 50x50 gate frame top cap - Mill",
+      "category": "frame_top_cap",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "M"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-P",
+      "name": "QSG Gate Infill 4800mm - Primrose",
+      "description": "QSG gate infill extrusion, 4800mm stock - Primrose",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "P"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-P",
+      "name": "QSG Corner Infill 4200mm - Primrose",
+      "description": "QSG corner infill extrusion, 4200mm stock - Primrose",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "P"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-P",
+      "name": "QSG Gate Screw Cover 4200mm - Primrose",
+      "description": "QSG gate screw cover extrusion, 4200mm stock - Primrose",
+      "category": "hardware",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "P"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-P",
+      "name": "QSG 50x50 Gate Frame Top Cap - Primrose",
+      "description": "QSG 50x50 gate frame top cap - Primrose",
+      "category": "frame_top_cap",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "P"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-PB",
+      "name": "QSG Gate Infill 4800mm - Paperbark",
+      "description": "QSG gate infill extrusion, 4800mm stock - Paperbark",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "PB"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-PB",
+      "name": "QSG Corner Infill 4200mm - Paperbark",
+      "description": "QSG corner infill extrusion, 4200mm stock - Paperbark",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "PB"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-PB",
+      "name": "QSG Gate Screw Cover 4200mm - Paperbark",
+      "description": "QSG gate screw cover extrusion, 4200mm stock - Paperbark",
+      "category": "hardware",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "PB"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-PB",
+      "name": "QSG 50x50 Gate Frame Top Cap - Paperbark",
+      "description": "QSG 50x50 gate frame top cap - Paperbark",
+      "category": "frame_top_cap",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "PB"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-S",
+      "name": "QSG Gate Infill 4800mm - Palladium Silver Pearl",
+      "description": "QSG gate infill extrusion, 4800mm stock - Palladium Silver Pearl",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "S"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-S",
+      "name": "QSG Corner Infill 4200mm - Palladium Silver Pearl",
+      "description": "QSG corner infill extrusion, 4200mm stock - Palladium Silver Pearl",
+      "category": "gate_infill",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "S"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-S",
+      "name": "QSG Gate Screw Cover 4200mm - Palladium Silver Pearl",
+      "description": "QSG gate screw cover extrusion, 4200mm stock - Palladium Silver Pearl",
+      "category": "hardware",
+      "unit": "length",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "S"
+      },
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-S",
+      "name": "QSG 50x50 Gate Frame Top Cap - Palladium Silver Pearl",
+      "description": "QSG 50x50 gate frame top cap - Palladium Silver Pearl",
+      "category": "frame_top_cap",
+      "unit": "each",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "colour_code": "S"
+      },
+      "active": true
+    },
+    {
+      "sku": "AR-SCR-BR-50PK",
+      "name": "Aluminium Rail Screws - 50 Pack",
+      "description": "Rail screws for QSG 65mm horizontal gate rails, 50-pack",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-SCREWS-50PK",
+      "name": "QuickScreen Wafer Screws - 50 Pack",
+      "description": "Wafer screws for QuickScreen/QSG slats, 50-pack",
+      "category": "screw",
+      "unit": "pack",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {},
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-05MM-50PK",
+      "name": "QuickScreen 5mm Slat Spacers - 50 Pack",
+      "description": "5mm slat spacer pack for QuickScreen/QSG slats",
+      "category": "spacer",
+      "unit": "pack",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "slat_gap_mm": 5
+      },
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-09MM-50PK",
+      "name": "QuickScreen 9mm Slat Spacers - 50 Pack",
+      "description": "9mm slat spacer pack for QuickScreen/QSG slats",
+      "category": "spacer",
+      "unit": "pack",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "slat_gap_mm": 9
+      },
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-20MM-50PK",
+      "name": "QuickScreen 20mm Slat Spacers - 50 Pack",
+      "description": "20mm slat spacer pack for QuickScreen/QSG slats",
+      "category": "spacer",
+      "unit": "pack",
+      "default_price": null,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "slat_gap_mm": 20
       },
       "active": true
     }
@@ -1294,7 +2025,7 @@
       "version_label": "v1.0.0",
       "is_current": true,
       "effective_from": "2026-04-19",
-      "notes": "Initial QS gate rules \u2014 screw-fixed 65mm blades, HD rail, QSG side frames"
+      "notes": "Initial QS gate rules — screw-fixed 65mm blades, HD rail, QSG side frames"
     }
   ],
   "product_constraints": [
@@ -1530,12 +2261,12 @@
       "rule_set_name": "QS Gate Rules",
       "version_label": "v1.0.0",
       "stage": "derive",
-      "name": "hd_rail_cut_mm",
+      "name": "rail65_cut_mm",
       "expression": "gate_width_mm - 80",
-      "output_key": "hd_rail_cut_mm",
+      "output_key": "rail65_cut_mm",
       "priority": 20,
       "active": true,
-      "notes": "HD top/bottom rail cut = gate_width - 80mm"
+      "notes": "65mm QSG top/bottom rail cut = gate_width - 80mm"
     },
     {
       "product_system_type": "QS_GATE",
@@ -1591,11 +2322,11 @@
       "version_label": "v1.0.0",
       "stage": "stock",
       "name": "rails_per_stock_length",
-      "expression": "floor(6100 / hd_rail_cut_mm)",
+      "expression": "floor(4800 / rail65_cut_mm)",
       "output_key": "rails_per_stock_length",
       "priority": 120,
       "active": true,
-      "notes": "How many HD rail cuts from one 6100mm stock length"
+      "notes": "How many 65mm QSG rail cuts from one 4800mm stock length"
     },
     {
       "product_system_type": "QS_GATE",
@@ -1607,7 +2338,7 @@
       "output_key": "rail_stock_lengths_needed",
       "priority": 130,
       "active": true,
-      "notes": "2 HD rails needed per gate (top + bottom)"
+      "notes": "2 65mm QSG rails needed per gate (top + bottom)"
     },
     {
       "product_system_type": "QS_GATE",
@@ -1615,11 +2346,35 @@
       "version_label": "v1.0.0",
       "stage": "accessory",
       "name": "rail_screw_packs_needed",
-      "expression": "ceil(roundup((hd_rail_cut_mm * 2) * 1.01, -1) / 10)",
+      "expression": "ceil(4 / 50)",
       "output_key": "rail_screw_packs_needed",
       "priority": 200,
       "active": true,
-      "notes": "Rail screws for HD top + bottom rail: ROUNDUP((hd_rail_cut x2) x1.01, -1) total screws, then /10 for packs"
+      "notes": "Rail screws for 65mm QSG top + bottom rails, sold in 50-packs"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "slat_spacer_packs_needed",
+      "expression": "ceil(((num_gate_blades + 1) * 2) / 50)",
+      "output_key": "slat_spacer_packs_needed",
+      "priority": 205,
+      "active": true,
+      "notes": "Slat spacers for pedestrian gate slats, sold in 50-packs"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "wafer_screw_packs_needed",
+      "expression": "ceil((num_gate_blades * 2 * 1.01) / 50)",
+      "output_key": "wafer_screw_packs_needed",
+      "priority": 206,
+      "active": true,
+      "notes": "Wafer screws for pedestrian gate slats, sold in 50-packs"
     },
     {
       "product_system_type": "QS_GATE",
@@ -1643,7 +2398,7 @@
       "output_key": "gsf_total_screws",
       "priority": 220,
       "active": true,
-      "notes": "2 GSF per gate \u00d7 2 sides each = total GSF screws"
+      "notes": "2 GSF per gate × 2 sides each = total GSF screws"
     },
     {
       "product_system_type": "QS_GATE",
@@ -1662,12 +2417,12 @@
       "rule_set_name": "QS Gate Rules",
       "version_label": "v1.0.0",
       "stage": "component",
-      "name": "emit_hd_rails",
+      "name": "emit_rail65",
       "expression": "rail_stock_lengths_needed",
-      "output_key": "qty_hd_rail",
+      "output_key": "qty_rail65",
       "priority": 310,
       "active": true,
-      "notes": "Emit HD rail stock lengths \u2014 1 per gate typically (2 cuts per 6100mm stock)"
+      "notes": "Emit 65mm QSG rail stock lengths — 1 per gate typically (2 cuts per 4800mm stock)"
     },
     {
       "product_system_type": "QS_GATE",
@@ -1691,7 +2446,7 @@
       "output_key": "qty_hinge_latch",
       "priority": 330,
       "active": true,
-      "notes": "1 hinge/latch unit per gate \u2014 SKU resolved via hinge_type variable"
+      "notes": "1 hinge/latch unit per gate — SKU resolved via hinge_type variable"
     },
     {
       "product_system_type": "QS_GATE",
@@ -1703,7 +2458,7 @@
       "output_key": "qty_lock_box",
       "priority": 340,
       "active": true,
-      "notes": "1 lock box if include_lock_box is true \u2014 SKU resolved via lock_box_selector"
+      "notes": "1 lock box if include_lock_box is true — SKU resolved via lock_box_selector"
     },
     {
       "product_system_type": "QS_GATE",
@@ -1715,7 +2470,19 @@
       "output_key": "qty_gsf",
       "priority": 350,
       "active": true,
-      "notes": "2 QSG gate side frames per gate \u2014 GSF pricing TBD"
+      "notes": "2 QSG gate side frames per gate — GSF pricing TBD"
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_gate_infill",
+      "expression": "rail_stock_lengths_needed",
+      "output_key": "qty_gate_infill",
+      "priority": 355,
+      "active": true,
+      "notes": "QSG gate infill for top and bottom 65mm rail runs"
     },
     {
       "product_system_type": "QS_GATE",
@@ -1727,7 +2494,7 @@
       "output_key": "qty_jblock_pack",
       "priority": 360,
       "active": true,
-      "notes": "1 pack of joiner blocks per gate \u2014 size matches slat_size_mm (only 65 currently)"
+      "notes": "1 pack of joiner blocks per gate — size matches slat_size_mm (only 65 currently)"
     },
     {
       "product_system_type": "QS_GATE",
@@ -1739,7 +2506,7 @@
       "output_key": "qty_sc_pack",
       "priority": 370,
       "active": true,
-      "notes": "1 pack of screw covers per gate (QSG-SC-10PK)"
+      "notes": "1 screw cover length per gate"
     },
     {
       "product_system_type": "QS_GATE",
@@ -1751,7 +2518,7 @@
       "output_key": "qty_ftc",
       "priority": 380,
       "active": true,
-      "notes": "4 gate frame top caps per gate (2 per GSF \u00d7 2 GSF)"
+      "notes": "4 gate frame top caps per gate (2 per GSF × 2 GSF)"
     }
   ],
   "product_component_selectors": [
@@ -1764,21 +2531,21 @@
         "slat_size_mm": 65
       },
       "qty_key": "qty_gate_blade",
-      "sku_pattern": "XP-6100-GB65-{colour}",
+      "sku_pattern": "XP-6100-S65-{colour}",
       "priority": 100,
-      "notes": "Gate blade 65mm \u2014 colour resolved at runtime",
+      "notes": "Gate blade 65mm — colour resolved at runtime",
       "active": true
     },
     {
       "product_system_type": "QS_GATE",
-      "selector_key": "hd_rail",
+      "selector_key": "rail65",
       "component_category": "rail",
       "selector_type": "exact",
       "match_json": {},
-      "qty_key": "qty_hd_rail",
-      "sku_pattern": "XP-6100-HD6545-{colour}",
+      "qty_key": "qty_rail65",
+      "sku_pattern": "QSG-4800-RAIL65-{colour}",
       "priority": 100,
-      "notes": "HD top/bottom rail \u2014 colour resolved at runtime",
+      "notes": "65mm QSG top/bottom rail — colour resolved at runtime",
       "active": true
     },
     {
@@ -1792,7 +2559,7 @@
       "qty_key": "qty_gate_stop",
       "sku_pattern": "XP-4200-GSTOP-P",
       "priority": 10,
-      "notes": "Gate stop \u2014 Primrose (exception pricing)",
+      "notes": "Gate stop — Primrose (exception pricing)",
       "active": true
     },
     {
@@ -1806,7 +2573,7 @@
       "qty_key": "qty_gate_stop",
       "sku_pattern": "XP-4200-GSTOP-PB",
       "priority": 10,
-      "notes": "Gate stop \u2014 Paperbark (exception pricing)",
+      "notes": "Gate stop — Paperbark (exception pricing)",
       "active": true
     },
     {
@@ -1818,7 +2585,7 @@
       "qty_key": "qty_gate_stop",
       "sku_pattern": "XP-4200-GSTOP-{colour}",
       "priority": 100,
-      "notes": "Gate stop \u2014 standard colours fallback (checked after P/PB at priority 10)",
+      "notes": "Gate stop — standard colours fallback (checked after P/PB at priority 10)",
       "active": true
     },
     {
@@ -1830,7 +2597,7 @@
       "qty_key": "qty_hinge_latch",
       "sku_pattern": "{selected_hinge_sku}",
       "priority": 100,
-      "notes": "Hinge/latch unit \u2014 resolved via hinge_type variable map",
+      "notes": "Hinge/latch unit — resolved via hinge_type variable map",
       "active": true
     },
     {
@@ -1844,7 +2611,7 @@
       "qty_key": "qty_lock_box",
       "sku_pattern": "XP-LBOX-DL-{colour}",
       "priority": 100,
-      "notes": "Lockwood Deadlatch lock box \u2014 colour resolved at runtime",
+      "notes": "Lockwood Deadlatch lock box — colour resolved at runtime",
       "active": true
     },
     {
@@ -1858,7 +2625,7 @@
       "qty_key": "qty_lock_box",
       "sku_pattern": "XP-LBOX-LSET-{colour}",
       "priority": 100,
-      "notes": "Lever/Knob Lock Set lock box \u2014 colour resolved at runtime",
+      "notes": "Lever/Knob Lock Set lock box — colour resolved at runtime",
       "active": true
     },
     {
@@ -1870,9 +2637,21 @@
         "slat_size_mm": 65
       },
       "qty_key": "qty_gsf",
-      "sku_pattern": "QSG-GATESF-65-{colour}",
+      "sku_pattern": "QSG-4200-GSF50-{colour}",
       "priority": 100,
-      "notes": "Gate side frame 65mm \u2014 colour resolved at runtime. Pricing TBD.",
+      "notes": "QSG 50x50 gate side frame — colour resolved at runtime.",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "gate_infill",
+      "component_category": "gate_infill",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_gate_infill",
+      "sku_pattern": "QSG-4800-INF-{colour}",
+      "priority": 100,
+      "notes": "QSG gate infill for 65mm rails — colour resolved at runtime.",
       "active": true
     },
     {
@@ -1884,9 +2663,63 @@
         "slat_size_mm": 65
       },
       "qty_key": "qty_jblock_pack",
-      "sku_pattern": "QSG-JBLOCK-65-4PK",
+      "sku_pattern": "QSG-JOINER65-4PK",
       "priority": 100,
-      "notes": "Joiner block 65mm 4-pack \u2014 1 per gate. Pricing TBD.",
+      "notes": "Joiner block 65mm 4-pack — 1 per gate.",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "slat_spacers_5mm",
+      "component_category": "spacer",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_gap_mm": 5
+      },
+      "qty_key": "slat_spacer_packs_needed",
+      "sku_pattern": "QS-SPACER-05MM-50PK",
+      "priority": 100,
+      "notes": "5mm slat spacer pack for gate slats",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "slat_spacers_9mm",
+      "component_category": "spacer",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_gap_mm": 9
+      },
+      "qty_key": "slat_spacer_packs_needed",
+      "sku_pattern": "QS-SPACER-09MM-50PK",
+      "priority": 100,
+      "notes": "9mm slat spacer pack for gate slats",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "slat_spacers_20mm",
+      "component_category": "spacer",
+      "selector_type": "exact",
+      "match_json": {
+        "slat_gap_mm": 20
+      },
+      "qty_key": "slat_spacer_packs_needed",
+      "sku_pattern": "QS-SPACER-20MM-50PK",
+      "priority": 100,
+      "notes": "20mm slat spacer pack for gate slats",
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "wafer_screws",
+      "component_category": "screw",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "wafer_screw_packs_needed",
+      "sku_pattern": "QS-SCREWS-50PK",
+      "priority": 100,
+      "notes": "Wafer screws for gate slats",
       "active": true
     },
     {
@@ -1896,9 +2729,9 @@
       "selector_type": "exact",
       "match_json": {},
       "qty_key": "qty_sc_pack",
-      "sku_pattern": "QSG-SC-10PK",
+      "sku_pattern": "QSG-4200-COVER-{colour}",
       "priority": 200,
-      "notes": "Screw covers 10-pack \u2014 1 per gate. Pricing TBD.",
+      "notes": "Gate screw cover length — colour resolved at runtime.",
       "active": true
     },
     {
@@ -1908,9 +2741,9 @@
       "selector_type": "exact",
       "match_json": {},
       "qty_key": "rail_screw_packs_needed",
-      "sku_pattern": "QSG-RS-10PK",
+      "sku_pattern": "AR-SCR-BR-50PK",
       "priority": 300,
-      "notes": "Rail screws 10-pack \u2014 qty_rail_screw_packs per gate. Pricing TBD.",
+      "notes": "Rail screws 50-pack — qty_rail_screw_packs per gate.",
       "active": true
     },
     {
@@ -1922,9 +2755,9 @@
         "slat_size_mm": 65
       },
       "qty_key": "qty_ftc",
-      "sku_pattern": "QSG-FTC-65",
+      "sku_pattern": "QSG-GFC-50X50-{colour}",
       "priority": 90,
-      "notes": "Gate frame top cap 65mm \u2014 4 per gate. Pricing TBD.",
+      "notes": "Gate frame top cap 50x50 — colour resolved at runtime.",
       "active": true
     },
     {
@@ -1938,7 +2771,7 @@
       "qty_key": "qty_ftc",
       "sku_pattern": "QSG-FTC-50",
       "priority": 90,
-      "notes": "Gate frame top cap 50mm \u2014 4 per gate. Pricing TBD.",
+      "notes": "Gate frame top cap 50mm — 4 per gate. Pricing TBD.",
       "active": true
     }
   ],
@@ -1953,7 +2786,7 @@
       "qty_formula": "1",
       "is_pack": false,
       "priority": 10,
-      "notes": "Any gate \u2192 add 1x hinge/latch combo (user-selected type)",
+      "notes": "Any gate → add 1x hinge/latch combo (user-selected type)",
       "active": true
     },
     {
@@ -1962,12 +2795,25 @@
       "trigger_category": "slat",
       "trigger_match_json": {},
       "add_category": "gate_side_frame",
-      "add_sku_pattern": "QSG-GATESF-{spacing}-{colour}",
+      "add_sku_pattern": "QSG-4200-GSF50-{colour}",
       "qty_formula": "2",
       "is_pack": false,
       "priority": 20,
-      "notes": "QS gate \u2192 add 2x QSG gate side frames (replaces discontinued XP-4200-GSF)",
+      "notes": "QS gate → add 2x QSG 50x50 gate side frames",
       "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_key": "gate_add_infill",
+      "trigger_category": "rail",
+      "trigger_match_json": {},
+      "add_category": "gate_infill",
+      "add_sku_pattern": "QSG-4800-INF-{colour}",
+      "qty_formula": "trigger_qty",
+      "is_pack": false,
+      "priority": 25,
+      "notes": "Selector emits QSG infill; kept inactive to avoid duplicate companion lines.",
+      "active": false
     },
     {
       "product_system_type": "QS_GATE",
@@ -1975,12 +2821,38 @@
       "trigger_category": "slat",
       "trigger_match_json": {},
       "add_category": "joiner_block",
-      "add_sku_pattern": "QSG-JBLOCK-65-4PK",
+      "add_sku_pattern": "QSG-JOINER65-4PK",
       "qty_formula": "1",
       "is_pack": true,
       "priority": 30,
-      "notes": "QS gate \u2192 add 1x joiner block 4-pack (65mm \u2014 matching slat_size_mm)",
+      "notes": "QS gate → add 1x joiner block 4-pack (65mm — matching slat_size_mm)",
       "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_key": "gate_add_spacers",
+      "trigger_category": "slat",
+      "trigger_match_json": {},
+      "add_category": "spacer",
+      "add_sku_pattern": "QS-SPACER-{spacing}MM-50PK",
+      "qty_formula": "slat_spacer_packs_needed",
+      "is_pack": true,
+      "priority": 35,
+      "notes": "Selectors emit gap-specific spacer packs; kept inactive to avoid unresolved gap placeholders.",
+      "active": false
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_key": "gate_add_wafer_screws",
+      "trigger_category": "slat",
+      "trigger_match_json": {},
+      "add_category": "screw",
+      "add_sku_pattern": "QS-SCREWS-50PK",
+      "qty_formula": "wafer_screw_packs_needed",
+      "is_pack": true,
+      "priority": 36,
+      "notes": "Selector emits wafer screw packs; kept inactive to avoid duplicate companion lines.",
+      "active": false
     },
     {
       "product_system_type": "QS_GATE",
@@ -1988,11 +2860,11 @@
       "trigger_category": "slat",
       "trigger_match_json": {},
       "add_category": "hardware",
-      "add_sku_pattern": "QSG-SC-10PK",
+      "add_sku_pattern": "QSG-4200-COVER-{colour}",
       "qty_formula": "1",
-      "is_pack": true,
+      "is_pack": false,
       "priority": 40,
-      "notes": "QS gate \u2192 add 1x screw cover 10-pack",
+      "notes": "QS gate → add 1x gate screw cover length",
       "active": true
     },
     {
@@ -2001,11 +2873,11 @@
       "trigger_category": "rail",
       "trigger_match_json": {},
       "add_category": "hardware",
-      "add_sku_pattern": "QSG-RS-10PK",
+      "add_sku_pattern": "AR-SCR-BR-50PK",
       "qty_formula": "rail_screw_packs_needed",
       "is_pack": true,
       "priority": 50,
-      "notes": "QS gate \u2192 add rail screw packs = ROUNDUP((hd_rail_cut x2) x1.01, -1) / 10",
+      "notes": "QS gate → add rail screw 50-packs for the 65mm rails",
       "active": true
     },
     {
@@ -2014,11 +2886,11 @@
       "trigger_category": "gate_side_frame",
       "trigger_match_json": {},
       "add_category": "accessory",
-      "add_sku_pattern": "QSG-FTC-{frame_cap_size}",
-      "qty_formula": "4",
+      "add_sku_pattern": "QSG-GFC-50X50-{colour}",
+      "qty_formula": "1",
       "is_pack": false,
       "priority": 60,
-      "notes": "QS gate \u2192 add 4x gate frame top caps (2 per GSF \u00d7 2 GSF per gate)",
+      "notes": "QS gate → add 1x 50x50 gate frame top cap",
       "active": true
     }
   ],
@@ -2040,7 +2912,7 @@
       "warning_key": "gsf_pricing_tbd",
       "severity": "info",
       "condition_json": {},
-      "message": "Gate side frame (QSG-GATESF), joiner blocks, screw covers, rail screws and frame top caps do not yet have confirmed pricing. Quote will be incomplete until pricing is loaded.",
+      "message": "QSG gate extrusions, joiner blocks, screw covers, rail screws and frame top caps need final price verification. Quote may be incomplete until pricing is loaded.",
       "active": true
     },
     {
@@ -2048,7 +2920,7 @@
       "warning_key": "discontinued_gsf_replaced",
       "severity": "info",
       "condition_json": {},
-      "message": "XP-4200-GSF09 and XP-4200-GSF20 are discontinued. This gate uses QSG-GATESF side frames as replacement.",
+      "message": "XP gate frame systems are discontinued. This gate uses QSG-4200-GSF50 side frames and QSG-4800-RAIL65/90 horizontal gate rails.",
       "active": true
     }
   ],
@@ -2417,7 +3289,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-B",
+      "sku": "QSG-4800-RAIL65-B",
       "tier_code": "tier1",
       "rule": null,
       "price": 124.56,
@@ -2428,7 +3300,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-B",
+      "sku": "QSG-4800-RAIL65-B",
       "tier_code": "tier2",
       "rule": null,
       "price": 118.33,
@@ -2439,7 +3311,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-B",
+      "sku": "QSG-4800-RAIL65-B",
       "tier_code": "tier3",
       "rule": null,
       "price": 112.1,
@@ -2450,7 +3322,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-MN",
+      "sku": "QSG-4800-RAIL65-MN",
       "tier_code": "tier1",
       "rule": null,
       "price": 124.56,
@@ -2461,7 +3333,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-MN",
+      "sku": "QSG-4800-RAIL65-MN",
       "tier_code": "tier2",
       "rule": null,
       "price": 118.33,
@@ -2472,7 +3344,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-MN",
+      "sku": "QSG-4800-RAIL65-MN",
       "tier_code": "tier3",
       "rule": null,
       "price": 112.1,
@@ -2483,7 +3355,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-G",
+      "sku": "QSG-4800-RAIL65-G",
       "tier_code": "tier1",
       "rule": null,
       "price": 124.56,
@@ -2494,7 +3366,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-G",
+      "sku": "QSG-4800-RAIL65-G",
       "tier_code": "tier2",
       "rule": null,
       "price": 118.33,
@@ -2505,7 +3377,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-G",
+      "sku": "QSG-4800-RAIL65-G",
       "tier_code": "tier3",
       "rule": null,
       "price": 112.1,
@@ -2516,7 +3388,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-SM",
+      "sku": "QSG-4800-RAIL65-SM",
       "tier_code": "tier1",
       "rule": null,
       "price": 124.56,
@@ -2527,7 +3399,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-SM",
+      "sku": "QSG-4800-RAIL65-SM",
       "tier_code": "tier2",
       "rule": null,
       "price": 118.33,
@@ -2538,7 +3410,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-SM",
+      "sku": "QSG-4800-RAIL65-SM",
       "tier_code": "tier3",
       "rule": null,
       "price": 112.1,
@@ -2549,7 +3421,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-W",
+      "sku": "QSG-4800-RAIL65-W",
       "tier_code": "tier1",
       "rule": null,
       "price": 124.56,
@@ -2560,7 +3432,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-W",
+      "sku": "QSG-4800-RAIL65-W",
       "tier_code": "tier2",
       "rule": null,
       "price": 118.33,
@@ -2571,7 +3443,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-W",
+      "sku": "QSG-4800-RAIL65-W",
       "tier_code": "tier3",
       "rule": null,
       "price": 112.1,
@@ -2582,7 +3454,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-BS",
+      "sku": "QSG-4800-RAIL65-BS",
       "tier_code": "tier1",
       "rule": null,
       "price": 124.56,
@@ -2593,7 +3465,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-BS",
+      "sku": "QSG-4800-RAIL65-BS",
       "tier_code": "tier2",
       "rule": null,
       "price": 118.33,
@@ -2604,7 +3476,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-BS",
+      "sku": "QSG-4800-RAIL65-BS",
       "tier_code": "tier3",
       "rule": null,
       "price": 112.1,
@@ -2615,7 +3487,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-D",
+      "sku": "QSG-4800-RAIL65-D",
       "tier_code": "tier1",
       "rule": null,
       "price": 124.56,
@@ -2626,7 +3498,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-D",
+      "sku": "QSG-4800-RAIL65-D",
       "tier_code": "tier2",
       "rule": null,
       "price": 118.33,
@@ -2637,7 +3509,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-D",
+      "sku": "QSG-4800-RAIL65-D",
       "tier_code": "tier3",
       "rule": null,
       "price": 112.1,
@@ -2648,7 +3520,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-M",
+      "sku": "QSG-4800-RAIL65-M",
       "tier_code": "tier1",
       "rule": null,
       "price": 113.62,
@@ -2659,7 +3531,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-M",
+      "sku": "QSG-4800-RAIL65-M",
       "tier_code": "tier2",
       "rule": null,
       "price": 107.93,
@@ -2670,7 +3542,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-M",
+      "sku": "QSG-4800-RAIL65-M",
       "tier_code": "tier3",
       "rule": null,
       "price": 102.27,
@@ -2681,7 +3553,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-P",
+      "sku": "QSG-4800-RAIL65-P",
       "tier_code": "tier1",
       "rule": null,
       "price": 124.56,
@@ -2692,7 +3564,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-P",
+      "sku": "QSG-4800-RAIL65-P",
       "tier_code": "tier2",
       "rule": null,
       "price": 118.33,
@@ -2703,7 +3575,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-P",
+      "sku": "QSG-4800-RAIL65-P",
       "tier_code": "tier3",
       "rule": null,
       "price": 112.1,
@@ -2714,7 +3586,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-PB",
+      "sku": "QSG-4800-RAIL65-PB",
       "tier_code": "tier1",
       "rule": null,
       "price": 124.56,
@@ -2725,7 +3597,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-PB",
+      "sku": "QSG-4800-RAIL65-PB",
       "tier_code": "tier2",
       "rule": null,
       "price": 118.33,
@@ -2736,7 +3608,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-PB",
+      "sku": "QSG-4800-RAIL65-PB",
       "tier_code": "tier3",
       "rule": null,
       "price": 112.1,
@@ -2747,7 +3619,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-S",
+      "sku": "QSG-4800-RAIL65-S",
       "tier_code": "tier1",
       "rule": null,
       "price": 124.56,
@@ -2758,7 +3630,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-S",
+      "sku": "QSG-4800-RAIL65-S",
       "tier_code": "tier2",
       "rule": null,
       "price": 118.33,
@@ -2769,7 +3641,7 @@
       "active": true
     },
     {
-      "sku": "XP-6100-HD6545-S",
+      "sku": "QSG-4800-RAIL65-S",
       "tier_code": "tier3",
       "rule": null,
       "price": 112.1,
@@ -3150,7 +4022,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Single tier \u2014 no bulk pricing",
+      "notes": "Single tier — no bulk pricing",
       "active": true
     },
     {
@@ -3183,7 +4055,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Single tier \u2014 no bulk pricing",
+      "notes": "Single tier — no bulk pricing",
       "active": true
     },
     {
@@ -3216,7 +4088,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Single tier \u2014 no bulk pricing",
+      "notes": "Single tier — no bulk pricing",
       "active": true
     },
     {
@@ -3249,7 +4121,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Single tier \u2014 no bulk pricing",
+      "notes": "Single tier — no bulk pricing",
       "active": true
     },
     {
@@ -3300,7 +4172,7 @@
       "sku": "XP-LBOX-DL-B",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3333,7 +4205,7 @@
       "sku": "XP-LBOX-DL-MN",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3366,7 +4238,7 @@
       "sku": "XP-LBOX-DL-G",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3399,7 +4271,7 @@
       "sku": "XP-LBOX-DL-SM",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3432,7 +4304,7 @@
       "sku": "XP-LBOX-DL-W",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3465,7 +4337,7 @@
       "sku": "XP-LBOX-DL-BS",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3498,7 +4370,7 @@
       "sku": "XP-LBOX-DL-D",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3509,7 +4381,7 @@
       "sku": "XP-LBOX-DL-M",
       "tier_code": "tier1",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3564,7 +4436,7 @@
       "sku": "XP-LBOX-DL-P",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3597,7 +4469,7 @@
       "sku": "XP-LBOX-DL-PB",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3630,7 +4502,7 @@
       "sku": "XP-LBOX-DL-S",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3663,7 +4535,7 @@
       "sku": "XP-LBOX-LSET-B",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3696,7 +4568,7 @@
       "sku": "XP-LBOX-LSET-MN",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3729,7 +4601,7 @@
       "sku": "XP-LBOX-LSET-G",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3762,7 +4634,7 @@
       "sku": "XP-LBOX-LSET-SM",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3795,7 +4667,7 @@
       "sku": "XP-LBOX-LSET-W",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3828,7 +4700,7 @@
       "sku": "XP-LBOX-LSET-BS",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3861,7 +4733,7 @@
       "sku": "XP-LBOX-LSET-D",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3872,7 +4744,7 @@
       "sku": "XP-LBOX-LSET-M",
       "tier_code": "tier1",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3927,7 +4799,7 @@
       "sku": "XP-LBOX-LSET-P",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3960,7 +4832,7 @@
       "sku": "XP-LBOX-LSET-PB",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
@@ -3993,7 +4865,7 @@
       "sku": "XP-LBOX-LSET-S",
       "tier_code": "tier3",
       "rule": null,
-      "price": 22.0,
+      "price": 22,
       "priority": 0,
       "valid_from": null,
       "valid_to": null,

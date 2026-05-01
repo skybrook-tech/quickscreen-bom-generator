@@ -16,6 +16,8 @@ Latest sidebar pass: run cards now remove the redundant master-settings line, se
 
 Latest calculation correction: VS F-section stock in the local fallback calculator now uses two height-cut side F-sections per panel, matching the QuickScreen vertical slat catalogue assembly.
 
+Latest gate correction: QSG horizontal and vertical pedestrian swing gates now use the QSG side frame, normal QSG 65/90 gate rails, infill/channel infill, screw cover, joiner blocks, spacers, rail screws, wafer screws, and 50x50 top caps in the local fallback BOM. HD rails remain reserved for sliding-gate logic.
+
 ---
 
 ## Phases Overview

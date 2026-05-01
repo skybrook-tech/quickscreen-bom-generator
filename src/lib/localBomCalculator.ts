@@ -315,18 +315,48 @@ function gateBladeSkuFor(
   economySlats: boolean,
   slatSize: number,
   colour: string,
+  verticalBuild = false,
 ): string {
+  if (verticalBuild) return slatSkuFor(finishFamily, economySlats, slatSize, colour);
   if (slatSize === 90) return slatSkuFor(finishFamily, economySlats, 90, colour);
-  return `XP-6100-GB65-${colourSkuSuffix(colour)}`;
+  return `XP-6100-S65-${colourSkuSuffix(colour)}`;
+}
+
+function gateRailSkuFor(slatSize: number, colour: string): string {
+  void slatSize;
+  return `QSG-4800-RAIL65-${colourSkuSuffix(colour)}`;
 }
 
 function gateHdRailSkuFor(colour: string): string {
   return `XP-6100-HD6545-${colourSkuSuffix(colour)}`;
 }
 
-function gateSideFrameSkuFor(slatSize: number, colour: string): string {
-  void slatSize;
-  return `QSG-GATESF-65-${colourSkuSuffix(colour)}`;
+function gateSideFrameSkuFor(colour: string): string {
+  return `QSG-4200-GSF50-${colourSkuSuffix(colour)}`;
+}
+
+function gateInfillSkuFor(verticalBuild: boolean, colour: string): string {
+  return `${verticalBuild ? "QSG-4200-CINF" : "QSG-4800-INF"}-${colourSkuSuffix(colour)}`;
+}
+
+function gateScrewCoverSkuFor(colour: string): string {
+  return `QSG-4200-COVER-${colourSkuSuffix(colour)}`;
+}
+
+function gateTopCapSkuFor(colour: string): string {
+  return `QSG-GFC-50X50-${colourSkuSuffix(colour)}`;
+}
+
+function gateSpacerSkuFor(slatGap: number): string {
+  const roundedGap = Math.round(slatGap);
+  const gap =
+    roundedGap <= 5 ? "05" :
+    roundedGap <= 9 ? "09" :
+    roundedGap <= 12 ? "12" :
+    roundedGap <= 15 ? "15" :
+    roundedGap <= 20 ? "20" :
+    "30";
+  return `QS-SPACER-${gap}MM-50PK`;
 }
 
 function gateStopSkuFor(colour: string): string {
@@ -351,13 +381,23 @@ function emitQsgGateFrameLines(
   leafCount: number,
   frameCutMm: number,
   railCutMm: number,
+  verticalBuild: boolean,
+  numGateBlades: number,
+  slatGap: number,
 ): void {
   const sideFramesPerStock = Math.max(1, Math.floor(4200 / frameCutMm));
   const sideFramePieces = 2 * leafCount;
-  const railScrewPacks = Math.ceil(((railCutMm * 2 * leafCount) * 1.01) / 10);
+  const railScrewPacks = Math.ceil((4 * leafCount) / 50);
+  const infillStockLength = verticalBuild ? 4200 : 4800;
+  const infillCutMm = verticalBuild ? frameCutMm : railCutMm;
+  const infillsPerStock = Math.max(1, Math.floor(infillStockLength / infillCutMm));
+  const coverPieces = 2 * leafCount;
+  const coversPerStock = Math.max(1, Math.floor(4200 / frameCutMm));
+  const spacerPacks = Math.ceil((Math.max(0, numGateBlades - 1) * 2 * leafCount) / 50);
+  const waferScrewPacks = Math.ceil((numGateBlades * 2 * leafCount) / 50);
   emit(lines, {
     ...base,
-    sku: gateSideFrameSkuFor(slatSize, colour),
+    sku: gateSideFrameSkuFor(colour),
     category: "gate_side_frame",
     quantity: Math.ceil(sideFramePieces / sideFramesPerStock),
     unit: "length",
@@ -365,23 +405,23 @@ function emitQsgGateFrameLines(
   });
   emit(lines, {
     ...base,
-    sku: slatSize === 90 ? "QSG-JBLOCK-90-4PK" : "QSG-JBLOCK-65-4PK",
+    sku: slatSize === 90 ? "QSG-JOINER90-4PK" : "QSG-JOINER65-4PK",
     category: "hardware",
     quantity: leafCount,
     unit: "pack",
-    notes: "QSG gate joiner blocks",
+    notes: `${slatSize === 90 ? "90mm" : "65mm"} joiner blocks for QSG gate rails`,
   });
   emit(lines, {
     ...base,
-    sku: "QSG-SC-10PK",
+    sku: gateScrewCoverSkuFor(colour),
     category: "hardware",
-    quantity: leafCount,
-    unit: "pack",
-    notes: "QSG gate screw covers",
+    quantity: Math.ceil(coverPieces / coversPerStock),
+    unit: "length",
+    notes: `Gate screw cover, ${Math.round(frameCutMm)}mm cuts from 4200mm stock`,
   });
   emit(lines, {
     ...base,
-    sku: "QSG-RS-10PK",
+    sku: "AR-SCR-BR-50PK",
     category: "screw",
     quantity: railScrewPacks,
     unit: "pack",
@@ -389,11 +429,35 @@ function emitQsgGateFrameLines(
   });
   emit(lines, {
     ...base,
-    sku: "QSG-FTC-65",
+    sku: gateTopCapSkuFor(colour),
     category: "accessory",
     quantity: 4 * leafCount,
     unit: "each",
-    notes: "QSG frame top caps, 4 per leaf",
+    notes: "Gate top caps for 50mm x 50mm side frame, 4 per leaf",
+  });
+  emit(lines, {
+    ...base,
+    sku: gateInfillSkuFor(verticalBuild, colour),
+    category: "accessory",
+    quantity: Math.ceil((2 * leafCount) / infillsPerStock),
+    unit: "length",
+    notes: `${verticalBuild ? "Channel infill" : "Gate infill"} for gate frame void, ${Math.round(infillCutMm)}mm cuts from ${infillStockLength}mm stock`,
+  });
+  emit(lines, {
+    ...base,
+    sku: gateSpacerSkuFor(slatGap),
+    category: "spacer",
+    quantity: spacerPacks,
+    unit: "pack",
+    notes: `${Math.max(0, numGateBlades - 1)} gaps/leaf, one spacer at each end of each gap`,
+  });
+  emit(lines, {
+    ...base,
+    sku: "QS-SCREWS-50PK",
+    category: "screw",
+    quantity: waferScrewPacks,
+    unit: "pack",
+    notes: "16mm wafer screws for fixing slats to gate rails/side frames",
   });
 }
 
@@ -460,7 +524,7 @@ function calculateGateSegment(
 
     emit(lines, {
       ...base,
-      sku: gateBladeSkuFor(finishFamily, economySlats, slatSize, colour),
+      sku: gateBladeSkuFor(finishFamily, economySlats, slatSize, colour, verticalBuild),
       category: "gate",
       quantity: Math.ceil(numGateBlades / bladesPerStock),
       unit: "length",
@@ -472,9 +536,9 @@ function calculateGateSegment(
       category: "gate",
       quantity: Math.ceil(2 / railsPerStock),
       unit: "length",
-      notes: `Top/bottom HD rails, ${Math.round(railCutMm)}mm cuts from 6100mm stock`,
+      notes: `Top/bottom HD sliding gate rails, ${Math.round(railCutMm)}mm cuts from 6100mm stock`,
     });
-    emitQsgGateFrameLines(lines, base, slatSize, colour, 1, frameCutMm, railCutMm);
+    emitQsgGateFrameLines(lines, base, slatSize, colour, 1, frameCutMm, railCutMm, verticalBuild, numGateBlades, slatGap);
     const trackSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.slidingTrackType]) ?? "XPSG-6000-TRACK-ST";
     const trackQty = Math.ceil((openingWidthMm * 2) / stockLengthForSlidingTrack(trackSku));
     emit(lines, {
@@ -536,11 +600,11 @@ function calculateGateSegment(
       : Math.floor((gateHeightMm - 133 + slatGap) / (slatSize + slatGap)),
   );
   const bladesPerStock = Math.max(1, Math.floor(6100 / bladeCutMm));
-  const railsPerStock = Math.max(1, Math.floor(6100 / railCutMm));
+  const railsPerStock = Math.max(1, Math.floor(4800 / railCutMm));
 
   emit(lines, {
     ...base,
-    sku: gateBladeSkuFor(finishFamily, economySlats, slatSize, colour),
+    sku: gateBladeSkuFor(finishFamily, economySlats, slatSize, colour, verticalBuild),
     category: "gate",
     quantity: Math.ceil((numGateBlades * leafCount) / bladesPerStock),
     unit: "length",
@@ -548,13 +612,13 @@ function calculateGateSegment(
   });
   emit(lines, {
     ...base,
-    sku: gateHdRailSkuFor(colour),
+    sku: gateRailSkuFor(slatSize, colour),
     category: "gate",
     quantity: Math.ceil((2 * leafCount) / railsPerStock),
     unit: "length",
-    notes: `Top/bottom HD rails, ${Math.round(railCutMm)}mm cuts from 6100mm stock`,
+    notes: `Top/bottom ${slatSize === 90 ? "90mm" : "65mm"} QSG gate rails, ${Math.round(railCutMm)}mm cuts from 4800mm stock`,
   });
-  emitQsgGateFrameLines(lines, base, slatSize, colour, leafCount, Math.max(1, gateHeightMm), railCutMm);
+  emitQsgGateFrameLines(lines, base, slatSize, colour, leafCount, Math.max(1, gateHeightMm), railCutMm, verticalBuild, numGateBlades, slatGap);
 
   if (String(vars[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "auto") === "auto") {
     emit(lines, {

@@ -1004,6 +1004,22 @@ Changes applied:
 - Updated the F-section BOM note to say `2 vertical side F-sections/panel` with height-based cuts.
 - Confirmed the backend VS seed already uses `target_height_mm` for `fsec_stocks`, so no seed rule change was needed for this correction.
 
+### May 1, 2026 - QSG pedestrian gate component correction
+
+Catalogue/workbook finding:
+- The QSG pedestrian gate formula workbook is `Glass outlet xlsm sheets formulated sheets/CTS+QSG+Pedestrian+Gates~V3-T1 (1).xlsx`.
+- Both horizontal and vertical pedestrian gates use the QSG 50x50 gate side frame (`QSG-4200-GSF50-*`), not the older placeholder side-frame SKU.
+- Pedestrian gates use normal QSG horizontal gate rails (`QSG-4800-RAIL65-*` or `QSG-4800-RAIL90-*`). The heavy-duty `XP-6100-HD6545-*` rail belongs to sliding-gate logic, not pedestrian swing gates.
+- Required QSG pedestrian gate default components include side frames, top/bottom gate rails, slats, gate/channel infill, screw cover, 65/90 joiner blocks, slat spacers, `AR-SCR-BR-50PK` rail screws, `QS-SCREWS-50PK` wafer screws, `QSG-GFC-50X50-*` top caps, and selected hinges/latches.
+
+Changes applied:
+- Created a specialist gate-worker agent to inspect the gate path while the local fix was implemented.
+- Updated the local fallback pedestrian gate calculator to emit the QSG component stack for horizontal and vertical swing gates.
+- Vertical swing gates now use normal slat SKUs and channel infill by default; horizontal swing gates use normal slats and gate infill.
+- Kept HD rail usage on the sliding-gate branch only.
+- Added local fallback component metadata for QSG gate extrusions/caps so the BOM displays readable descriptions while final pricing is still being confirmed.
+- Updated the `qs_gate.json` seed direction to move away from HD pedestrian rails and old QSG placeholder side-frame SKUs.
+
 ### May 1, 2026 - Segment confirmation and master reset controls
 
 User workflow finding:

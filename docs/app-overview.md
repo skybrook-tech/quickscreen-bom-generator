@@ -195,6 +195,7 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
   - Supports the current sandbox systems and enough logic to keep the calculator testable locally.
   - Uses local seed data and local price breaks.
   - VS vertical slat fallback rule: slats and F sections are cut to fence height; each panel gets two height-cut side F sections, while the U-channel and QuickScreen frame inserts are cut to panel length.
+  - QSG pedestrian swing gate fallback rule: horizontal and vertical pedestrian gates use `QSG-4200-GSF50-*` side frames, `QSG-4800-RAIL65/90-*` gate rails, gate/channel infill, screw cover, joiner blocks, spacers, `AR-SCR-BR-50PK`, `QS-SCREWS-50PK`, and `QSG-GFC-50X50-*`. `XP-6100-HD6545-*` is kept for sliding gates.
   - This is not the long-term IP-protected source of truth; proven rules should move into backend seed data.
 
 - `src/lib/localSeedData.ts`
@@ -257,6 +258,7 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
 
 - `supabase/seeds/glass-outlet/products/qs_gate.json`
   - Shared QuickScreen gate product data.
+  - Current QSG direction is based on `CTS+QSG+Pedestrian+Gates~V3-T1 (1).xlsx`: pedestrian gates should use QSG side frames and normal QSG 65/90 gate rails, not the discontinued XP gate frame system and not sliding-gate HD rail.
 
 - `supabase/seeds/glass-outlet/products/gate_legacy.json`
   - Historical gate data. Do not extend unless intentionally migrating old rules.
