@@ -52,6 +52,41 @@ const formatMoney = (value: number) =>
 const lineKey = (line: BOMLineItem) =>
   `${line.sku}|${line.category}|${line.description}`;
 
+const bomGroupKey = (line: BOMLineItem) =>
+  `${line.sku}|${line.category}|${line.description}|${line.unit}`;
+
+function aggregateBomItems(items: BOMLineItem[]): BOMLineItem[] {
+  const grouped = new Map<string, BOMLineItem>();
+  for (const item of items) {
+    const key = bomGroupKey(item);
+    const existing = grouped.get(key);
+    if (!existing) {
+      grouped.set(key, { ...item });
+      continue;
+    }
+    const quantity = existing.quantity + item.quantity;
+    const lineTotalBeforeReprice = existing.lineTotal + item.lineTotal;
+    const unitPrice = priceForSku(item.sku, quantity);
+    const lineTotal =
+      unitPrice > 0 ? roundMoney(unitPrice * quantity) : roundMoney(lineTotalBeforeReprice);
+    grouped.set(key, {
+      ...existing,
+      quantity,
+      unitPrice: unitPrice > 0 ? unitPrice : roundMoney(lineTotal / Math.max(1, quantity)),
+      lineTotal,
+      notes:
+        existing.notes || item.notes
+          ? Array.from(new Set([existing.notes, item.notes].filter(Boolean))).join("; ")
+          : undefined,
+    });
+  }
+  return [...grouped.values()];
+}
+
+function gateLabel(runIndex: number, gateIndex: number) {
+  return `R${runIndex + 1} G${gateIndex + 1}`;
+}
+
 const COLOUR_NAMES: Record<string, string> = {
   B: "Black Satin",
   MN: "Monument Matt",
@@ -131,9 +166,10 @@ function CalculatorV3Content() {
     if (!payload) return;
     setExtraItems([]);
     setLineEdits({});
+    setActiveBomSummary(null);
+    dispatch({ type: "CLEAR_BOM_RESULT" });
     try {
       const result = await bomMutation.mutateAsync({ payload });
-      setActiveBomSummary(null);
       dispatch({ type: "SET_BOM_RESULT", result });
     } catch {
       // Error is available via bomMutation.error.
@@ -167,7 +203,9 @@ function CalculatorV3Content() {
 
   const bomResultForTabs: CalculatorBOMResult | null = lastBom
     ? (() => {
-        const baseAllItems = applyLineEdits((lastBom.lines as BOMLineItem[]) ?? []);
+        const baseAllItems = applyLineEdits(
+          aggregateBomItems((lastBom.lines as BOMLineItem[]) ?? []),
+        );
         const extraLineItems: BOMLineItem[] = extraItems.map((e) => ({
           category: "accessory",
           sku: e.sku ?? e.id,
@@ -183,22 +221,64 @@ function CalculatorV3Content() {
             runId: string;
             items: BOMLineItem[];
           }>) ?? []
-        ).map((r) => ({ runId: r.runId, items: applyLineEdits(r.items) }));
-        const gateItems = applyLineEdits((lastBom.gateItems as BOMLineItem[]) ?? []);
-        const baseTotal = roundMoney(
-          baseAllItems.reduce((sum, line) => sum + line.lineTotal, 0),
+        ).map((r) => ({
+          runId: r.runId,
+          items: applyLineEdits(aggregateBomItems(r.items)),
+        }));
+        const rawRunResults =
+          (lastBom.runResults as Array<{
+            runId: string;
+            items: BOMLineItem[];
+          }>) ?? [];
+        const gateResults =
+          payload?.runs.flatMap((run, runIndex) => {
+            let gateIndex = 0;
+            return run.segments.flatMap((segment) => {
+              if (segment.segmentKind !== "gate_opening") return [];
+              const label = gateLabel(runIndex, gateIndex++);
+              const runItems =
+                rawRunResults.find((result) => result.runId === run.runId)?.items ?? [];
+              return [
+                {
+                  id: segment.segmentId,
+                  label,
+                  items: applyLineEdits(
+                    aggregateBomItems(
+                      runItems.filter((item) => item.segmentId === segment.segmentId),
+                    ),
+                  ),
+                },
+              ];
+            });
+          }) ?? [];
+        const gateSegments =
+          payload?.runs.flatMap((run) =>
+            run.segments.filter((segment) => segment.segmentKind === "gate_opening"),
+          ) ?? [];
+        const runScopedGateItems = rawRunResults.flatMap((runResult) =>
+          runResult.items.filter(
+            (item) =>
+              item.productCode === "QS_GATE" ||
+              gateSegments.some((segment) => segment.segmentId === item.segmentId),
+          ),
         );
-        const extrasSubtotal = roundMoney(extraLineItems.reduce(
-          (sum, l) => sum + l.lineTotal,
-          0,
-        ));
-        const total = roundMoney(baseTotal + extrasSubtotal);
+        const rawGateItems =
+          runScopedGateItems.length > 0
+            ? runScopedGateItems
+            : ((lastBom.gateItems as BOMLineItem[]) ?? []);
+        const gateItems = applyLineEdits(aggregateBomItems(rawGateItems));
+        const allItems = aggregateBomItems([...baseAllItems, ...extraLineItems]);
+        const baseTotal = roundMoney(
+          allItems.reduce((sum, line) => sum + line.lineTotal, 0),
+        );
+        const total = baseTotal;
         const gst = roundMoney(total * 0.1);
         const grandTotal = roundMoney(total + gst);
         return {
           runResults,
+          gateResults,
           gateItems,
-          allItems: [...baseAllItems, ...extraLineItems],
+          allItems,
           total,
           gst,
           grandTotal,

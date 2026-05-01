@@ -116,6 +116,8 @@ Key shape:
 
 - `src/components/shared/BOMResultTabs.tsx`
   - Displays BOM tabs, scoped totals, editable line quantities, and removable line items.
+  - Tabs include all items, each run, all gates, and individual labelled gate tabs when gate segment data is available.
+  - Rows are expected to be aggregated by matching SKU/category/description/unit before display so repeated segment-level quantities read as one order line.
 
 - `src/components/calculator-v3/ExtraItemsPanel.tsx`
   - Lets the user add product search/manual extras to the generated BOM.
@@ -154,6 +156,7 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
   - Converts canonical payloads back to canvas layouts for reload/edit.
   - Splits a drawn segment into panel/gate/panel canonical pieces when a gate is placed.
   - Preserves geometry angle hints so angled layouts do not flatten during sidebar edits.
+  - Skips zero-length initial panel segments when rebuilding the visual canvas so a new job starts with a clear map.
 
 - `src/components/canvas/CanvasToolbar.tsx`, `MapControls.tsx`, `LayoutMinimap.tsx`
   - Supporting UI for drawing tools, Google Maps/satellite underlay settings, and map overview.

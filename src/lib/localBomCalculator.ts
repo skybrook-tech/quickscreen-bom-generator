@@ -1067,6 +1067,8 @@ export function calculateLocalBom(
       unitPrice,
       lineTotal: roundMoney(unitPrice * line.quantity),
       notes: line.notes,
+      runId: line.runId,
+      segmentId: line.segmentId,
     };
   });
 
@@ -1083,6 +1085,9 @@ export function calculateLocalBom(
         unitPrice,
         lineTotal: roundMoney(unitPrice * line.quantity),
         notes: line.notes,
+        runId: line.runId,
+        segmentId: line.segmentId,
+        productCode: run.productCode,
       };
     }),
   }));

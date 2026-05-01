@@ -218,6 +218,7 @@ export function BOMResultTabs({
 }: BOMResultTabsProps) {
   const [activeTab, setActiveTab] = useState("all");
 
+  const gateResults = result.gateResults ?? [];
   const tabs = [
     { id: "all", label: "All Items", count: result.allItems.length },
     ...result.runResults.map((r, i) => ({
@@ -226,6 +227,11 @@ export function BOMResultTabs({
       count: r.items.length,
     })),
     { id: "gates", label: "Gates", count: result.gateItems.length },
+    ...gateResults.map((gate) => ({
+      id: gate.id,
+      label: gate.label,
+      count: gate.items.length,
+    })),
   ];
 
   const activeItems =
@@ -233,7 +239,9 @@ export function BOMResultTabs({
       ? result.allItems
       : activeTab === "gates"
         ? result.gateItems
-        : result.runResults.find((r) => r.runId === activeTab)?.items ?? [];
+        : gateResults.find((gate) => gate.id === activeTab)?.items ??
+          result.runResults.find((r) => r.runId === activeTab)?.items ??
+          [];
 
   const activeTotal = parseFloat(
     activeItems.reduce((s, i) => s + i.lineTotal, 0).toFixed(2),

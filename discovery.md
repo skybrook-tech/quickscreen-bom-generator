@@ -953,6 +953,22 @@ Changes applied:
 
 Maintenance rule:
 - Update `docs/app-overview.md` whenever routes, file ownership, mapper behavior, backend seed structure, save/export behavior, or calculator engine responsibilities change.
+
+### May 1, 2026 - BOM grouping and clean mapper start
+
+User workflow finding:
+- The generated BOM should read like an order form: one row per product/SKU, not repeated rows per segment.
+- Users still need scoped tabs for all items, each run, all gates, and each labelled gate (`R1 G1`, `R2 G2`, etc.).
+- Pressing Generate BOM should replace the old result immediately so the user is not looking at stale pricing while the new calculation runs.
+- The mapper should open visually clear, without a blue snap dot before the first point is placed.
+
+Changes applied:
+- BOM display now aggregates matching SKU/category/description/unit lines inside each tab.
+- Added individual gate tabs based on canonical gate segment labels.
+- Generate BOM now clears the previous result before calling the calculator.
+- Local fallback run results now preserve `runId`, `segmentId`, and `productCode` metadata so gate tabs can filter accurately.
+- The canvas snap indicator now appears only after a drawing run has started.
+- Zero-length initial payload segments are skipped when rebuilding the canvas layout, so the map starts clear.
 - Local app responded with HTTP 200 at `http://127.0.0.1:5173/calculator`.
 
 ### May 1, 2026 - Segment confirmation and master reset controls

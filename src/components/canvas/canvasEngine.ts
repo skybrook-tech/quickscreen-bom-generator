@@ -885,16 +885,14 @@ export function initCanvasEngine(
     }
 
     // Snap indicator
-    if (tool === "draw") {
+    if (tool === "draw" && activeRunIdx >= 0) {
       const snapped = snapDrawingPoint(mouseCanvas);
-      if (snap || activeRunIdx >= 0) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(snapped.x, snapped.y, 4 / zoom, 0, Math.PI * 2);
-        ctx.fillStyle = COLOR.snap;
-        ctx.fill();
-        ctx.restore();
-      }
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(snapped.x, snapped.y, 4 / zoom, 0, Math.PI * 2);
+      ctx.fillStyle = COLOR.snap;
+      ctx.fill();
+      ctx.restore();
     }
 
     // Node labels (A, B, C…) and corner angle annotations

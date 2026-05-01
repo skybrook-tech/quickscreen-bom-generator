@@ -24,6 +24,9 @@ export interface BOMLineItem {
   unitPrice: number;    // ex-GST
   lineTotal: number;    // quantity × unitPrice
   notes?: string;
+  runId?: string;
+  segmentId?: string;
+  productCode?: string;
 }
 
 export interface PostPosition {
@@ -49,6 +52,7 @@ export type PricingTier = 'tier1' | 'tier2' | 'tier3';
 
 export interface CalculatorBOMResult {
   runResults: Array<{ runId: string; items: BOMLineItem[] }>;
+  gateResults?: Array<{ id: string; label: string; items: BOMLineItem[] }>;
   gateItems: BOMLineItem[];
   allItems: BOMLineItem[];
   total: number;

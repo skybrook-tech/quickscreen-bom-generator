@@ -555,6 +555,10 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
       } else {
         // Panel, bay_group, or corner
         const widthMm = canonSeg.segmentWidthMm ?? 1000;
+        if (widthMm <= 1) {
+          fenceSegIdx++;
+          continue;
+        }
         if (useGeometry) {
           const sourceIdx = Math.min(fenceSegIdx, geomPts!.length - 2);
           const sourceP0 = geomPts![sourceIdx];
