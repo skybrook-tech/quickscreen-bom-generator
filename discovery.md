@@ -1087,3 +1087,17 @@ Changes applied:
 
 Verification:
 - `npm run build` passed after these changes.
+
+### May 2, 2026 - Discontinued XP gate-frame removal
+
+Catalogue finding:
+- The attached XP pedestrian/sliding gate pages show the old slotted XP gate-frame family, including `XP-4200-GSF09`, `XP-4200-GSF20`, `XP-6100-GB65`, `XP-6100-HD6545`, `XP-LBOX-*`, and `XP-HDL-*`.
+- The current gate direction for horizontal and vertical slat gates is QuickScreen Gate System only: `QSG-4200-GSF50-*` side frames, `QSG-4800-RAIL65/90-*` pedestrian rails, `QSG-S-6100-TR65/90-*` sliding top rails, `QSG-S-6100-BR-*` sliding bottom rails, QSG infills/covers/caps/joiners, and normal slats.
+- `XP-6100-S65-*` remains valid because the current QuickScreen catalogue uses that as the normal 65mm slat. `XP-6100-GB65-*` is the retired screw-fluted gate blade and must not be emitted.
+- XPRESS Plus fence posts remain valid for XPL fence runs, but gates inside QSHS, VS, and XPL jobs must use the QuickScreen gate system.
+
+Changes applied:
+- Disabled the legacy gate seed file by renaming it to `gate_legacy.json.disabled`.
+- Set old XP gate-frame/blade/lockbox/lever-handle rows inactive in `qs_gate.json` and disabled their QS_GATE selectors/rules.
+- Removed old XP lever/knob latch options from the gate UI and blocked persisted old XP gate SKUs from the local fallback BOM.
+- Expanded current gate hardware choices with D&D, Six Star, Zeus, Colourbond, black/white hinge options, Magna Latch/Lokk Latch/T-Latch latch options, and gate-stop/drop-bolt options.

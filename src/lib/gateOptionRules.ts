@@ -58,23 +58,36 @@ export const HINGE_OPTIONS: GateOption[] = [
   { value: "ML-TL-TC-H-AT", label: "Magna Latch + TruClose adjustable hinge", sku: "ML-TL-TC-H-AT" },
   { value: "KF-AH-AT", label: "D&D Kwik Fit aluminium adjustable hinge", sku: "KF-AH-AT" },
   { value: "KF-H-FT", label: "D&D Kwik Fit fixed hinge pair", sku: "KF-H-FT" },
+  { value: "KF-H-NT", label: "D&D Kwik Fit no-tension hinge pair", sku: "KF-H-NT" },
   { value: "TC-H-AT-B", label: "D&D TruClose adjustable hinge - black", sku: "TC-H-AT-B" },
+  { value: "TC-H-AT-2L-B", label: "D&D TruClose two-leg adjustable hinge - black", sku: "TC-H-AT-2L-B" },
   { value: "TC-H-AT-HD-B", label: "D&D TruClose heavy duty hinge - black", sku: "TC-H-AT-HD-B" },
+  { value: "TC-H-AT-HD-2L-B", label: "D&D TruClose heavy duty two-leg hinge - black", sku: "TC-H-AT-HD-2L-B" },
   { value: "SURECLOSE-HH", label: "D&D SureClose hydraulic closer hinge", sku: "SURECLOSE-HH" },
+  { value: "SURECLOSE-NSC", label: "D&D SureClose non self-closing hinge", sku: "SURECLOSE-NSC" },
+  { value: "SS-BH10075-B", label: "Six Star 100x75 butt hinge - black", sku: "SS-BH10075-B" },
+  { value: "ZF-BBH-L", label: "Zeus ball bearing hinge - left", sku: "ZF-BBH-L" },
+  { value: "ZF-BBH-R", label: "Zeus ball bearing hinge - right", sku: "ZF-BBH-R" },
+  { value: "CB-HINGE-B-2PK", label: "Colourbond hinge pair - black", sku: "CB-HINGE-B-2PK" },
+  { value: "KF-AH-AT-W", label: "D&D Kwik Fit aluminium adjustable hinge - white", sku: "KF-AH-AT-W" },
+  { value: "TC-H-AT-2L-W", label: "D&D TruClose two-leg adjustable hinge - white", sku: "TC-H-AT-2L-W" },
+  { value: "TC-H-AT-HD-2L-W", label: "D&D TruClose heavy duty two-leg hinge - white", sku: "TC-H-AT-HD-2L-W" },
   { value: "none", label: "No hinge kit" },
 ];
 
 export const LATCH_OPTIONS: GateOption[] = [
   { value: "ML-TL", label: "Magna Latch top pull", sku: "ML-TL" },
+  { value: "ML-TL-W", label: "Magna Latch top pull - white", sku: "ML-TL-W" },
   { value: "LL-DL", label: "Lokk Latch Deluxe keyed different", sku: "LL-DL" },
   { value: "LL-DL-KA", label: "Lokk Latch Deluxe keyed alike", sku: "LL-DL-KA" },
-  { value: "XP-HDL-KNOB", label: "Lever/knob - Stanley round knob set", sku: "XP-HDL-KNOB" },
-  { value: "XP-HDL-LEVER", label: "Lever/knob - Stanley lever handle set", sku: "XP-HDL-LEVER" },
-  { value: "XP-HDL-LW534", label: "Lever/knob - Lockwood 534 round knob set", sku: "XP-HDL-LW534" },
+  { value: "LL-DL-W", label: "Lokk Latch Deluxe - white", sku: "LL-DL-W" },
   { value: "LLAA", label: "Lokk Latch general purpose lockable", sku: "LLAA" },
+  { value: "LLAA-W", label: "Lokk Latch general purpose lockable - white", sku: "LLAA-W" },
   { value: "LLB", label: "External access kit for LLAA", sku: "LLB" },
   { value: "T-L", label: "D&D T-Latch padlockable", sku: "T-L" },
   { value: "SS-DL-B", label: "Six Star D latch and striker - black", sku: "SS-DL-B" },
+  { value: "MR-FMLSL", label: "Magna Latch side-pull latch", sku: "MR-FMLSL" },
+  { value: "LL-GH", label: "D&D Lokk Latch gate handle", sku: "LL-GH" },
   { value: "none", label: "No latch" },
 ];
 
@@ -91,7 +104,6 @@ export const GATE_STOP_OPTIONS: GateOption[] = [
   { value: "none", label: "No gate stop" },
   { value: "SS-GS", label: "D&D gate stop", sku: "SS-GS" },
   { value: "SS-GS-SLIMLINE", label: "Slimline gate stop", sku: "SS-GS-SLIMLINE" },
-  { value: "auto", label: "Catalogue default gate stop" },
 ];
 
 export const SLIDING_TRACK_OPTIONS: GateOption[] = [

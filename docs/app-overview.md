@@ -199,7 +199,7 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
   - VS vertical slat fallback rule: slats and F sections are cut to fence height; each panel gets two height-cut side F sections, while the U-channel and QuickScreen frame inserts are cut to panel length.
   - QSG pedestrian swing gate fallback rule: horizontal and vertical pedestrian gates use `QSG-4200-GSF50-*` side frames, `QSG-4800-RAIL65/90-*` gate rails, gate/channel infill, screw cover, joiner blocks, spacers, `AR-SCR-BR-50PK`, `QS-SCREWS-50PK`, and `QSG-GFC-50X50-*`.
   - QSG sliding gate fallback rule: horizontal and vertical sliding gates use QSG sliding top/bottom rail SKUs (`QSG-S-6100-TR65/90-*`, `QSG-S-6100-BR-*`), QSG side frames, gate/channel infill, screw cover, joiner blocks, spacers, screws, top caps, wheel set/clamps, track, and horizontal-only centre support rails/plates.
-  - Lever/knob pedestrian gate fallback rule: selecting `XP-HDL-KNOB`, `XP-HDL-LEVER`, or `XP-HDL-LW534` adds the handle set plus the colour-matched `XP-LBOX-LSET-*` lockbox.
+  - Discontinued XP gate-frame guardrail: old slotted gate-frame and screw-fluted gate blade SKUs (`XP-4200-GSF*`, `XP-6100-GB65-*`, `XP-6100-HD6545-*`, `XP-LBOX-*`, `XP-HDL-*`, etc.) are blocked from fallback BOM output. XPRESS Plus fence posts and standard `XP-6100-S65-*` slats remain valid where the current QSG catalogue uses them.
   - This is not the long-term IP-protected source of truth; proven rules should move into backend seed data.
 
 - `src/lib/localSeedData.ts`

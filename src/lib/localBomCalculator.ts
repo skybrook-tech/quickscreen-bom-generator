@@ -363,27 +363,33 @@ function gateSpacerSkuFor(slatGap: number): string {
   return `QS-SPACER-${gap}MM-50PK`;
 }
 
-function gateStopSkuFor(colour: string): string {
-  return `XP-4200-GSTOP-${colourSkuSuffix(colour)}`;
-}
-
 function stockLengthForSlidingTrack(sku: string): number {
   return sku.includes("3000") ? 3000 : 6000;
+}
+
+const DISCONTINUED_XP_GATE_PREFIXES = [
+  "XP-4200-GSF",
+  "XP-4200-GI",
+  "XP-GFC",
+  "XP-SCREWSGF",
+  "XP-6100-GB65",
+  "XP-GKIT",
+  "XP-XBAT-4200-INF",
+  "XP-6100-HD6545",
+  "XP-4200-GSTOP",
+  "XP-LBOX-",
+  "XP-HDL-",
+];
+
+function isDiscontinuedXpGateSku(sku: string): boolean {
+  return DISCONTINUED_XP_GATE_PREFIXES.some((prefix) => sku.startsWith(prefix));
 }
 
 function knownSelectedSku(value: unknown): string | undefined {
   const sku = String(value ?? "");
   if (!sku || sku === "none" || sku === "auto") return undefined;
+  if (isDiscontinuedXpGateSku(sku)) return undefined;
   return sku;
-}
-
-const LEVER_KNOB_LATCH_SKUS = new Set(["XP-HDL-KNOB", "XP-HDL-LEVER", "XP-HDL-LW534"]);
-
-function gateLockBoxSkuFor(type: unknown, colour: string): string | undefined {
-  const lockBoxType = String(type ?? "");
-  if (lockBoxType === "XP-LBOX-DL") return `XP-LBOX-DL-${colourSkuSuffix(colour)}`;
-  if (lockBoxType === "XP-LBOX-LSET") return `XP-LBOX-LSET-${colourSkuSuffix(colour)}`;
-  return undefined;
 }
 
 function emitQsgGateFrameLines(
@@ -754,47 +760,20 @@ function calculateGateSegment(
   });
   emitQsgGateFrameLines(lines, base, slatSize, colour, leafCount, Math.max(1, gateHeightMm), railCutMm, verticalBuild, numGateBlades, slatGap);
 
-  if (String(vars[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "auto") === "auto") {
-    emit(lines, {
-      ...base,
-      sku: gateStopSkuFor(colour),
-      category: "gate",
-      quantity: 3 * leafCount,
-      unit: "length",
-      notes: "Catalogue default gate stops: 2 latch side + 1 hinge side per leaf",
-    });
-  } else {
-    const stopSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.gateStopType]);
-    if (stopSku) emit(lines, { ...base, sku: stopSku, category: "hardware", quantity: leafCount, unit: "each", notes: "Selected gate stop" });
-  }
+  const stopSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.gateStopType]);
+  if (stopSku) emit(lines, { ...base, sku: stopSku, category: "hardware", quantity: leafCount, unit: "each", notes: "Selected gate stop" });
 
   const hingeSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B");
   if (hingeSku) emit(lines, { ...base, sku: hingeSku, category: "hardware", quantity: leafCount, unit: "each", notes: "Selected hinge / latch hardware" });
   const latchSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA");
   if (latchSku) emit(lines, { ...base, sku: latchSku, category: "hardware", quantity: 1, unit: "each", notes: "Selected latch / lock hardware" });
-  const latchNeedsLeverKnobLockBox = latchSku ? LEVER_KNOB_LATCH_SKUS.has(latchSku) : false;
-  const lockBoxSku = latchNeedsLeverKnobLockBox
-    ? gateLockBoxSkuFor("XP-LBOX-LSET", colour)
-    : vars[GATE_SEGMENT_STUB_KEYS.includeLockBox] === true
-      ? gateLockBoxSkuFor(vars[GATE_SEGMENT_STUB_KEYS.lockBoxType], colour)
-      : undefined;
-  if (lockBoxSku) {
-    emit(lines, {
-      ...base,
-      sku: lockBoxSku,
-      category: "hardware",
-      quantity: 1,
-      unit: "each",
-      notes: latchNeedsLeverKnobLockBox ? "Lever/knob lockbox to suit selected handle set" : "Selected lockbox",
-    });
-  }
   const dropBoltSku = knownSelectedSku(
     vars[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? (movement === "double_swing" ? "SS-0300DB-B" : "none"),
   );
   if (dropBoltSku) emit(lines, { ...base, sku: dropBoltSku, category: "hardware", quantity: 1, unit: "each", notes: "Selected drop bolt" });
-  if (vars[GATE_SEGMENT_STUB_KEYS.includeLockBox] === true && !lockBoxSku) {
+  if (vars[GATE_SEGMENT_STUB_KEYS.includeLockBox] === true) {
     warnings.push(
-      "A lock-box option was present on this gate, but no compatible QuickScreen lockbox SKU could be resolved.",
+      "A legacy XP lock-box option was present on this gate, but XP gate frame hardware is discontinued and is no longer added to QuickScreen gates.",
     );
   }
 
