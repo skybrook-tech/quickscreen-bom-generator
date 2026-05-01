@@ -3029,7 +3029,7 @@
           "gt": 1100
         }
       },
-      "message": "Gate width is close to the 1200mm maximum. Verify structural adequacy.",
+      "message": "Gate width is close to the 1200mm maximum (recommended maximum swing-style opening). Verify structural adequacy.",
       "active": true
     },
     {

@@ -53,6 +53,18 @@ export interface CanvasEngineConfig {
     gateId: string | undefined,
     currentWidthMM: number,
   ) => void;
+  /**
+   * Called when the user right-clicks a fence/gate segment. Receives the flat
+   * segment index and screen-space coordinates so React can render a popover
+   * anchored at the cursor. Suppresses the canvas pan when a segment is hit.
+   */
+  onSegmentContextMenu?: (
+    flatSegIdx: number,
+    screenX: number,
+    screenY: number,
+  ) => void;
+  /** Fired after `loadLayout` replaces canvas state (form→canvas sync). Does not run on user edits — those use `onLayoutChange`. */
+  onRunSummariesRefresh?: (runs: CanvasRunSummary[]) => void;
 }
 
 // ── Internal state types ──────────────────────────────────────────────────────
@@ -458,6 +470,11 @@ export function initCanvasEngine(
   let hoveredSegIdx = -1; // flat index into all segments across all runs
   let animFrame = 0;
   let draggingNode: { runIdx: number; ptIdx: number } | null = null;
+  let draggingRun: {
+    runIdx: number;
+    originPoints: Point[];
+    grabCanvas: Point;
+  } | null = null;
   let draggingGate: {
     runIdx: number;
     segIdx: number;
@@ -477,8 +494,6 @@ export function initCanvasEngine(
   let jobPanelWidthMm: number | null = null;
   // Pre-computed stats text pushed from the canonical payload (via LayoutCanvasV3 → FenceLayoutCanvas).
   // Using the canonical data ensures the overlay always matches the form's calcRunStats output.
-  let pushedStatsGlobal = '';
-  let pushedStatsPerRun: string[] = [];
 
   // Resize canvas to fill its CSS size
   function resizeCanvas() {
@@ -894,110 +909,6 @@ export function initCanvasEngine(
       drawComputedPosts();
     }
 
-    ctx.restore();
-
-    // Stats overlay — drawn in screen space, independent of pan/zoom
-    drawStatsOverlay();
-  }
-
-  function drawStatsOverlay() {
-    const allSegs = allSegmentsFlat();
-    const nbRuns = runs.filter((r) => !r.isBoundary && r.finished);
-    if (nbRuns.length === 0 && allSegs.length === 0) return;
-
-    let line: string;
-    const detailLines: string[] = [];
-    const spacingText = (seg: Segment, flatIdx: number, label: string) => {
-      const maxW = segmentPanelWidths[flatIdx] ?? jobPanelWidthMm ?? 0;
-      if (maxW <= 0 || seg.lengthMM <= 0) return `${label}: post spacing not set`;
-      const panels = Math.max(1, Math.ceil(Math.round(seg.lengthMM) / maxW));
-      const actualSpacing = Math.round(seg.lengthMM / panels);
-      return `${label}: ${panels} panel${panels === 1 ? "" : "s"} @ ${actualSpacing}mm posts (max ${Math.round(maxW)}mm)`;
-    };
-
-    // Use pre-computed canonical stats if available (pushed from LayoutCanvasV3 via calcRunStats).
-    // Falls back to self-computed values when the overlay hasn't been populated yet.
-    if (hoveredSegIdx >= 0 && hoveredSegIdx < allSegs.length && pushedStatsPerRun.length > 0) {
-      // Hover mode — identify the non-boundary run index containing the hovered segment
-      const { runIdx } = allSegs[hoveredSegIdx];
-      let nbIdx = 0;
-      let flatStart = 0;
-      for (let ri = 0; ri < runs.length; ri++) {
-        if (runs[ri].isBoundary) continue;
-        if (ri === runIdx) break;
-        flatStart += runs[ri].segments.length;
-        nbIdx++;
-      }
-      line = pushedStatsPerRun[nbIdx] ?? pushedStatsGlobal;
-      const run = runs[runIdx];
-      run.segments.forEach((seg, si) => {
-        detailLines.push(spacingText(seg, flatStart + si, `S${si + 1}`));
-      });
-    } else if (hoveredSegIdx < 0 && pushedStatsGlobal) {
-      line = pushedStatsGlobal;
-      allSegs.slice(0, 3).forEach(({ seg }, i) => {
-        detailLines.push(spacingText(seg, i, `S${i + 1}`));
-      });
-      if (allSegs.length > 3) {
-        detailLines.push(`+ ${allSegs.length - 3} more segment${allSegs.length - 3 === 1 ? "" : "s"}`);
-      }
-    } else if (hoveredSegIdx >= 0 && hoveredSegIdx < allSegs.length) {
-      // Fallback: self-compute (no pushed stats yet)
-      const { runIdx } = allSegs[hoveredSegIdx];
-      const run = runs[runIdx];
-      let nbIdx = 0;
-      let flatStart = 0;
-      for (let ri = 0; ri < runs.length; ri++) {
-        if (runs[ri].isBoundary) continue;
-        if (ri === runIdx) break;
-        flatStart += runs[ri].segments.length;
-        nbIdx++;
-      }
-      const segs = run.segments.length;
-      const corners = countCorners([run]);
-      let panels = 0;
-      for (let si = 0; si < segs; si++) {
-        const maxW = segmentPanelWidths[flatStart + si] ?? 0;
-        if (maxW > 0) panels += Math.ceil(Math.round(run.segments[si].lengthMM) / maxW);
-        detailLines.push(spacingText(run.segments[si], flatStart + si, `S${si + 1}`));
-      }
-      line = `Run ${nbIdx + 1}  ·  ${segs} ${segs === 1 ? "seg" : "segs"}  ·  ${panels} ${panels === 1 ? "panel" : "panels"}  ·  ${corners} ${corners === 1 ? "corner" : "corners"}`;
-    } else {
-      // Fallback: self-compute global totals (no pushed stats yet)
-      const totalSegs = allSegs.length;
-      const totalCorners = countCorners(nbRuns);
-      let totalPanels = 0;
-      for (let i = 0; i < allSegs.length; i++) {
-        const maxW = segmentPanelWidths[i] ?? 0;
-        if (maxW > 0)
-          totalPanels += Math.ceil(Math.round(allSegs[i].seg.lengthMM) / maxW);
-        if (i < 3) detailLines.push(spacingText(allSegs[i].seg, i, `S${i + 1}`));
-      }
-      line = `${nbRuns.length} ${nbRuns.length === 1 ? "run" : "runs"}  ·  ${totalSegs} ${totalSegs === 1 ? "seg" : "segs"}  ·  ${totalPanels} ${totalPanels === 1 ? "panel" : "panels"}  ·  ${totalCorners} ${totalCorners === 1 ? "corner" : "corners"}`;
-      if (allSegs.length > 3) {
-        detailLines.push(`+ ${allSegs.length - 3} more segment${allSegs.length - 3 === 1 ? "" : "s"}`);
-      }
-    }
-
-    const lines = [line, ...detailLines];
-    const pad = 8;
-    const fs = 12;
-    const x = 10;
-    const y = 10;
-    ctx.save();
-    ctx.font = `${fs}px sans-serif`;
-    const w = Math.max(...lines.map((text) => ctx.measureText(text).width)) + pad * 2;
-    const h = lines.length * (fs + 3) + pad * 2;
-    ctx.fillStyle = "rgba(26,29,46,0.85)";
-    ctx.beginPath();
-    ctx.roundRect(x, y, w, h, 4);
-    ctx.fill();
-    ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-    lines.forEach((text, idx) => {
-      ctx.fillStyle = idx === 0 ? "#e5e7eb" : "#cbd5e1";
-      ctx.fillText(text, x + pad, y + pad + idx * (fs + 3));
-    });
     ctx.restore();
   }
 
@@ -1465,7 +1376,16 @@ export function initCanvasEngine(
 
   function onMouseDown(e: MouseEvent) {
     if (e.button === 2) {
-      // Right button: start pan
+      // Right button: segment context menu takes priority; else start pan
+      if (config.onSegmentContextMenu) {
+        const ctxCanvasPt = eventToCanvas(e);
+        const flatIdx = hitTestSegments(ctxCanvasPt, 10);
+        if (flatIdx >= 0) {
+          config.onSegmentContextMenu(flatIdx, e.clientX, e.clientY);
+          e.preventDefault();
+          return;
+        }
+      }
       isPanning = true;
       panStart = eventToScreen(e);
       panOrigin = { ...pan };
@@ -1637,6 +1557,22 @@ export function initCanvasEngine(
         const labelIdx = hitTestLabel(canvasPt);
         if (labelIdx >= 0) {
           startLabelEdit(labelIdx, eventToScreen(e));
+          return;
+        }
+      }
+
+      // Run body grab — translate the whole polyline
+      const bodyFlatIdx = hitTestSegments(canvasPt, 10);
+      if (bodyFlatIdx >= 0) {
+        const info = allSegmentsFlat()[bodyFlatIdx];
+        if (info) {
+          const run = runs[info.runIdx];
+          draggingRun = {
+            runIdx: info.runIdx,
+            originPoints: run.points.map((p) => ({ ...p })),
+            grabCanvas: { ...canvasPt },
+          };
+          canvas.style.cursor = "grabbing";
         }
       }
       return;
@@ -1664,6 +1600,33 @@ export function initCanvasEngine(
       run.points[draggingNode.ptIdx] = snapped;
       rebuildSegmentsPreservingGates(run, scale);
       scheduleRedraw();
+      return;
+    }
+
+    // Run-body dragging — translate every point in the run by the drag delta
+    if (draggingRun !== null) {
+      const dx = canvasPt.x - draggingRun.grabCanvas.x;
+      const dy = canvasPt.y - draggingRun.grabCanvas.y;
+      const run = runs[draggingRun.runIdx];
+      if (run) {
+        const translated: Point[] = draggingRun.originPoints.map((p) => ({
+          x: p.x + dx,
+          y: p.y + dy,
+        }));
+        // Snap the anchor only (first point) to keep relative shape intact
+        if (snap && translated.length > 0) {
+          const snappedAnchor = snapToGrid(translated[0], gridSize);
+          const adx = snappedAnchor.x - translated[0].x;
+          const ady = snappedAnchor.y - translated[0].y;
+          for (const p of translated) {
+            p.x += adx;
+            p.y += ady;
+          }
+        }
+        run.points = translated;
+        rebuildSegmentsPreservingGates(run, scale);
+        scheduleRedraw();
+      }
       return;
     }
 
@@ -1703,7 +1666,7 @@ export function initCanvasEngine(
       }
     }
 
-    if (draggingGate !== null) {
+    if (draggingGate !== null || draggingRun !== null) {
       canvas.style.cursor = "grabbing";
     } else if (overGate) {
       canvas.style.cursor = "grab";
@@ -1725,7 +1688,7 @@ export function initCanvasEngine(
       canvas.style.cursor = overNode
         ? "grab"
         : hoveredSegIdx >= 0
-          ? "pointer"
+          ? "grab"
           : "default";
     } else if (hoveredSegIdx !== prevHover) {
       canvas.style.cursor =
@@ -1749,6 +1712,13 @@ export function initCanvasEngine(
     if (draggingNode !== null) {
       notifyChange();
       draggingNode = null;
+      canvas.style.cursor = "default";
+      return;
+    }
+
+    if (draggingRun !== null) {
+      notifyChange();
+      draggingRun = null;
       canvas.style.cursor = "default";
       return;
     }
@@ -2189,16 +2159,8 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
-  /**
-   * Push pre-computed stats text from the canonical payload.
-   * `global` is shown when no segment is hovered. `perRun[i]` is shown when the
-   * user hovers over a segment in run i (non-boundary run index).
-   */
-  function setRunStatsTexts(global: string, perRun: string[]) {
-    pushedStatsGlobal = global;
-    pushedStatsPerRun = perRun;
-    scheduleRedraw();
-  }
+  /** Legacy hook — stats overlay removed in favour of React panels (v4). No-op. */
+  function setRunStatsTexts(_global: string, _perRun: string[]) {}
 
   /**
    * Replace the current canvas state with the runs described by `layout`.
@@ -2273,6 +2235,7 @@ export function initCanvasEngine(
     // would trigger handleLiveSync which dispatches SET_PAYLOAD with fresh IDs,
     // causing all RunCard components to remount and lose their expanded state.
     scheduleRedraw();
+    config.onRunSummariesRefresh?.(getLayout().runs);
   }
 
   function destroy() {

@@ -14,10 +14,12 @@ import { useRunSummary } from "./useRunSummary";
 interface Props {
   run: CanonicalRun;
   index: number;
+  /** 0-based index — matches canvas non-boundary run colour cycle */
+  runColorIndex: number;
   onAddGate: (runId: string) => void;
 }
 
-export function RunCard({ run, index, onAddGate }: Props) {
+export function RunCard({ run, index, runColorIndex, onAddGate }: Props) {
   const { state, dispatch } = useCalculatorV4();
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState<RunTab>("style");
@@ -96,7 +98,7 @@ export function RunCard({ run, index, onAddGate }: Props) {
           <h3 className="text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
             Segments ({run.segments.length})
           </h3>
-          <SegmentList run={run} />
+          <SegmentList run={run} runColorIndex={runColorIndex} />
           <RunActions
             onAddSegment={handleAddSegment}
             onAddGate={() => onAddGate(run.runId)}

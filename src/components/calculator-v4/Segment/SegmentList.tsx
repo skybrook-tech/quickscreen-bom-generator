@@ -3,12 +3,13 @@ import { SegmentRow } from "./SegmentRow";
 
 interface Props {
   run: CanonicalRun;
+  runColorIndex: number;
 }
 
 /**
  * Renders sorted SegmentRows for a single run. Empty state shown when none.
  */
-export function SegmentList({ run }: Props) {
+export function SegmentList({ run, runColorIndex }: Props) {
   const segments = [...run.segments].sort((a, b) => a.sortOrder - b.sortOrder);
 
   if (segments.length === 0) {
@@ -27,6 +28,7 @@ export function SegmentList({ run }: Props) {
           runId={run.runId}
           seg={seg}
           index={idx + 1}
+          runColorIndex={runColorIndex}
         />
       ))}
     </div>

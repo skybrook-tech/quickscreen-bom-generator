@@ -1,5 +1,7 @@
+import { useMemo } from "react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import type { CanonicalSegment } from "../../../types/canonical.types";
+import { mergeFenceJobRun } from "../../../lib/gateFenceResolve";
 import { SlideOutPane } from "../shared/SlideOutPane";
 import { GateForm } from "./GateForm";
 
@@ -19,6 +21,23 @@ interface Props {
 export function GatePane({ open, onClose, runId, editingSegmentId }: Props) {
   const { state, dispatch } = useCalculatorV4();
   const run = state.payload?.runs.find((r) => r.runId === runId);
+
+  const fenceContext = useMemo(
+    () =>
+      mergeFenceJobRun(state.payload?.variables, run?.variables),
+    [state.payload?.variables, run?.variables],
+  );
+
+  const maxFenceSegmentHeightMm = useMemo(() => {
+    if (!run?.segments?.length) return undefined;
+    const fenceSegs = run.segments.filter((s) => s.kind === "fence");
+    const heights = fenceSegs
+      .map((s) => s.targetHeightMm)
+      .filter((h): h is number => typeof h === "number" && h > 0);
+    if (heights.length === 0) return undefined;
+    return Math.max(...heights);
+  }, [run?.segments]);
+
   const initialSegment = editingSegmentId
     ? (run?.segments.find((s) => s.segmentId === editingSegmentId) ?? null)
     : null;
@@ -44,7 +63,10 @@ export function GatePane({ open, onClose, runId, editingSegmentId }: Props) {
     >
       {open && runId && (
         <GateForm
+          key={`${runId}:${editingSegmentId ?? "new"}`}
           initialSegment={initialSegment}
+          fenceContext={fenceContext}
+          maxFenceSegmentHeightMm={maxFenceSegmentHeightMm}
           onCancel={onClose}
           onSave={handleSave}
         />

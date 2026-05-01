@@ -11,6 +11,8 @@ import {
   persistV4Draft,
 } from "../lib/v4DraftStorage";
 import { normaliseVariablesForSystem } from "../lib/productOptionRules";
+import { computeNewRunAnchor } from "../lib/canvasBbox";
+import { removeSegmentFromRun } from "../lib/runSegmentRemove";
 import type {
   CanonicalPayload,
   CanonicalRun,
@@ -152,11 +154,16 @@ function reducer(
     }
     case "ADD_RUN": {
       if (!state.payload) return state;
+      const prevRuns = state.payload.runs;
+      const lastRun =
+        prevRuns.length > 0 ? prevRuns[prevRuns.length - 1] : undefined;
+      const [p0, p1] = computeNewRunAnchor(state.payload, prevRuns.length);
       const newRun: CanonicalRun = {
         runId: crypto.randomUUID(),
-        productCode: state.payload.productCode,
-        variables: {},
+        productCode: lastRun?.productCode ?? state.payload.productCode,
+        variables: lastRun?.variables ? { ...lastRun.variables } : {},
         segments: [],
+        geometry: { points: [p0, p1] },
       };
       return {
         ...state,
@@ -269,10 +276,7 @@ function reducer(
       if (!state.payload) return state;
       const runs = state.payload.runs.map((r) => {
         if (r.runId !== action.runId) return r;
-        const remaining = r.segments
-          .filter((s) => s.segmentId !== action.segmentId)
-          .map((s, i) => ({ ...s, sortOrder: i }));
-        return { ...r, segments: remaining };
+        return removeSegmentFromRun(r, action.segmentId);
       });
       return { ...state, payload: { ...state.payload, runs } };
     }

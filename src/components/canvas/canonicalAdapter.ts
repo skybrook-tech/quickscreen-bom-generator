@@ -362,51 +362,130 @@ export function canvasLayoutToCanonical(
   };
 }
 
+/** QS_GATE job-scope keys aligned with fence job/run vars — seed canvas gates for parity with GateForm. */
+const GATE_INHERIT_KEYS = [
+  "colour_code",
+  "finish_type",
+  "slat_size_mm",
+  "slat_gap_mm",
+] as const;
+
+function inheritFenceVarsForGateSegment(
+  fenceContext: Record<string, string | number | boolean>,
+  gs: CanonicalSegment,
+  ps: CanonicalSegment | undefined,
+): Record<string, string | number | boolean> {
+  const inherited: Record<string, string | number | boolean> = {};
+  for (const k of GATE_INHERIT_KEYS) {
+    if (fenceContext[k] === undefined) continue;
+    const inGs = gs.variables?.[k] !== undefined;
+    const inPs = ps?.variables?.[k] !== undefined;
+    if (!inGs && !inPs) inherited[k] = fenceContext[k]!;
+  }
+  return {
+    ...inherited,
+    ...(gs.variables ?? {}),
+    ...(ps?.variables ?? {}),
+  };
+}
+
+function mergeSegmentTerminations(
+  ps: CanonicalSegment,
+  gs: CanonicalSegment,
+): Pick<CanonicalSegment, "leftTermination" | "rightTermination"> {
+  return {
+    leftTermination:
+      ps.leftTermination.kind === "non_system"
+        ? ps.leftTermination
+        : ps.leftTermination.kind === "system_corner" &&
+            gs.leftTermination.kind === "system_corner"
+          ? ps.leftTermination
+          : gs.leftTermination,
+    rightTermination:
+      ps.rightTermination.kind === "non_system"
+        ? ps.rightTermination
+        : ps.rightTermination.kind === "system_corner" &&
+            gs.rightTermination.kind === "system_corner"
+          ? ps.rightTermination
+          : gs.rightTermination,
+  };
+}
+
 /**
- * After `canvasLayoutToCanonical`, re-attach manual per-segment `variables`
- * for matching `runId` / `segmentId` so layout redraw does not erase Run list
- * segment edits. Also preserves termination overrides set via the form.
+ * After `canvasLayoutToCanonical`, merge run-level `variables` / `productCode`,
+ * re-attach per-segment edits, and seed gate segments from fence context when
+ * needed (canvas protos omit gate variables).
  */
 export function mergeCanonicalPreservingSegmentMeta(
   previous: CanonicalPayload,
   generated: CanonicalPayload,
 ): CanonicalPayload {
   const prevRuns = new Map(previous.runs.map((r) => [r.runId, r]));
+  const lastPrevRun =
+    previous.runs.length > 0
+      ? previous.runs[previous.runs.length - 1]
+      : undefined;
+
   return {
     ...generated,
     runs: generated.runs.map((genRun) => {
       const prevRun = prevRuns.get(genRun.runId);
-      if (!prevRun) return genRun;
-      const prevSegMap = new Map(prevRun.segments.map((s) => [s.segmentId, s]));
+      const templateRun = prevRun ?? lastPrevRun;
+
+      const mergedRunVars = {
+        ...(templateRun?.variables ?? {}),
+        ...(genRun.variables ?? {}),
+      };
+
+      const mergedProductCode =
+        genRun.productCode ??
+        prevRun?.productCode ??
+        templateRun?.productCode ??
+        previous.productCode;
+
+      const fenceContext: Record<string, string | number | boolean> = {
+        ...previous.variables,
+        ...mergedRunVars,
+      };
+
+      const prevSegMap = prevRun
+        ? new Map(prevRun.segments.map((s) => [s.segmentId, s]))
+        : new Map<string, CanonicalSegment>();
+
       return {
         ...genRun,
+        variables: mergedRunVars,
+        productCode: mergedProductCode,
         segments: genRun.segments.map((gs) => {
           const ps = prevSegMap.get(gs.segmentId);
+
+          if (gs.kind === "gate") {
+            const variables = inheritFenceVarsForGateSegment(
+              fenceContext,
+              gs,
+              ps,
+            );
+            if (!ps) {
+              return {
+                ...gs,
+                variables,
+              };
+            }
+            return {
+              ...gs,
+              variables,
+              targetHeightMm: gs.targetHeightMm ?? ps.targetHeightMm,
+              ...mergeSegmentTerminations(ps, gs),
+            };
+          }
+
           if (!ps) return gs;
+
           return {
             ...gs,
             variables: { ...(ps.variables ?? {}), ...(gs.variables ?? {}) },
             targetHeightMm: gs.targetHeightMm ?? ps.targetHeightMm,
-            // Preserve termination overrides from the form ONLY if the user has
-            // explicitly set them. Rules:
-            // - non_system: always preserve (user explicitly set wall/post).
-            // - system_corner: preserve if canvas also produces a system_corner at
-            //   that boundary (user may have adjusted angle/direction in the form).
-            // - segment_join / system: use canvas value (canvas geometry wins).
-            leftTermination:
-              ps.leftTermination.kind === "non_system"
-                ? ps.leftTermination
-                : ps.leftTermination.kind === "system_corner" &&
-                    gs.leftTermination.kind === "system_corner"
-                  ? ps.leftTermination
-                  : gs.leftTermination,
-            rightTermination:
-              ps.rightTermination.kind === "non_system"
-                ? ps.rightTermination
-                : ps.rightTermination.kind === "system_corner" &&
-                    gs.rightTermination.kind === "system_corner"
-                  ? ps.rightTermination
-                  : gs.rightTermination,
+            ...mergeSegmentTerminations(ps, gs),
           };
         }),
       };
@@ -451,36 +530,35 @@ export function canonicalToCanvasLayout(
       widthMM: number;
     }> = [];
 
-    const fenceSegments = run.segments.filter((s) => s.kind === "fence");
-
     const geomPts = run.geometry?.points;
-    const useGeometry = !!(
-      geomPts && geomPts.length === fenceSegments.length + 1
-    );
+    /** ≥2 stored points give anchor + initial bearing + scale; segment list may
+     * have grown/shrunk on the sidebar without rewriting points — we still walk
+     * lengths + left/right corner terminations from canonical state. */
+    const useStoredAnchor = !!(geomPts && geomPts.length >= 2);
 
-    // When stored geometry is available, derive anchor + scale from the first
-    // segment and recompute all subsequent pixel positions from payload widths
-    // and system_corner angles. This ensures the canvas stays in sync with form
-    // edits to segment lengths and corner angles while preserving the drawn
-    // starting position and direction.
+    const firstFenceSeg = run.segments.find((s) => s.kind === "fence");
+    const firstFenceMm = firstFenceSeg?.segmentWidthMm ?? 1000;
+
+    // Anchor + scale: from stored polyline when possible; else synthetic start
+    // (eastbound, 0.1 px/mm) so sidebar-only edits still reflect lengths +
+    // corner angles from terminations.
     let curX = 0;
-    let curY = useGeometry ? (geomPts![0]?.y ?? 0) : 0;
+    let curY = yOrigin;
     let bearingRad = 0;
     let scale = 0.1; // px per mm fallback (1px = 10mm)
 
-    if (useGeometry && geomPts!.length >= 2) {
+    if (useStoredAnchor) {
       curX = geomPts![0].x;
       curY = geomPts![0].y;
       bearingRad = Math.atan2(
         geomPts![1].y - geomPts![0].y,
         geomPts![1].x - geomPts![0].x,
       );
-      const firstMm = fenceSegments[0]?.segmentWidthMm ?? 1000;
       const firstPx = ptDist(geomPts![0], geomPts![1]);
-      scale = firstMm > 0 ? firstPx / firstMm : 0.1;
+      scale =
+        firstFenceMm > 0 && firstPx > 1e-6 ? firstPx / firstFenceMm : 0.1;
     }
 
-    let xCursor = 0; // used only in no-geometry fallback
     const localFlatSegments: CanvasSegment[] = [];
 
     for (let ci = 0; ci < run.segments.length; ci++) {
@@ -500,8 +578,8 @@ export function canonicalToCanvasLayout(
           runGates.push(gateEntry);
         } else {
           // No preceding segment — stub
-          const startX = useGeometry ? (geomPts![0]?.x ?? 0) : xCursor;
-          const startY = useGeometry ? (geomPts![0]?.y ?? yOrigin) : yOrigin;
+          const startX = useStoredAnchor ? (geomPts![0]?.x ?? 0) : 0;
+          const startY = useStoredAnchor ? (geomPts![0]?.y ?? yOrigin) : yOrigin;
           localFlatSegments.push({
             startX,
             startY,
@@ -518,7 +596,6 @@ export function canonicalToCanvasLayout(
           };
           allFlatGates.push(gateEntry);
           runGates.push(gateEntry);
-          if (!useGeometry) xCursor += 1;
         }
       } else {
         // Fence segment — count corners from system_corner terminations
@@ -528,41 +605,26 @@ export function canonicalToCanvasLayout(
         }
 
         const widthMm = canonSeg.segmentWidthMm ?? 1000;
-        if (useGeometry) {
-          // Anchor + bearing reconstruction: preserve start position and scale
-          // from the first drawn segment; recompute subsequent points from
-          // payload widths and system_corner angles.
-          const pixLen = widthMm * scale;
-          const endX = curX + Math.cos(bearingRad) * pixLen;
-          const endY = curY + Math.sin(bearingRad) * pixLen;
-          localFlatSegments.push({
-            startX: curX,
-            startY: curY,
-            endX,
-            endY,
-            lengthMM: widthMm,
-            angleDeg: (bearingRad * 180) / Math.PI,
-          });
-          curX = endX;
-          curY = endY;
-          // Advance bearing for the next segment from this segment's right termination
-          const rt = canonSeg.rightTermination;
-          if (rt.kind === "system_corner") {
-            const signedTurn = Math.sign(rt.angleDeg) * (180 - Math.abs(rt.angleDeg));
-            bearingRad += (signedTurn * Math.PI) / 180;
-          }
-        } else {
-          const widthPx = widthMm / 10;
-          const endX = xCursor + widthPx;
-          localFlatSegments.push({
-            startX: xCursor,
-            startY: yOrigin,
-            endX,
-            endY: yOrigin,
-            lengthMM: widthMm,
-            angleDeg: 0,
-          });
-          xCursor = endX;
+        // Walk polyline from current bearing; turn using rightTermination when
+        // it encodes a structural corner (sidebar terminations drive direction).
+        const pixLen = widthMm * scale;
+        const endX = curX + Math.cos(bearingRad) * pixLen;
+        const endY = curY + Math.sin(bearingRad) * pixLen;
+        localFlatSegments.push({
+          startX: curX,
+          startY: curY,
+          endX,
+          endY,
+          lengthMM: widthMm,
+          angleDeg: (bearingRad * 180) / Math.PI,
+        });
+        curX = endX;
+        curY = endY;
+        const rt = canonSeg.rightTermination;
+        if (rt.kind === "system_corner") {
+          const signedTurn =
+            Math.sign(rt.angleDeg) * (180 - Math.abs(rt.angleDeg));
+          bearingRad += (signedTurn * Math.PI) / 180;
         }
         runTotalMm += widthMm;
       }

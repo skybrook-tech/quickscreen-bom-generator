@@ -35,11 +35,14 @@ export function SlideOutPane({
     };
   }, [open]);
 
-  // Close on Escape
+  // Close on Escape — but not while the layout segment context menu is open
+  // (that menu registers its own Escape handler; we must not steal the key first).
   useEffect(() => {
     if (!open) return;
     function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key !== "Escape") return;
+      if (document.querySelector('[data-testid="v4-segment-context-menu"]')) return;
+      onClose();
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);

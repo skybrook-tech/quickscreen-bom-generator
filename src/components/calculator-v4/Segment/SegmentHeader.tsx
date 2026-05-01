@@ -14,8 +14,8 @@ import type { CanonicalSegment } from "../../../types/canonical.types";
 import type { SegmentDiagnostic } from "../../../types/bom.types";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { useSegmentHeightOptions } from "../../../hooks/useSegmentHeightOptions";
+import { CANVAS_GATE_STROKE } from "../../../lib/runLineColors";
 import { InlineEdit } from "./InlineEdit";
-import { cn } from "../../../lib";
 
 interface Props {
   runId: string;
@@ -30,6 +30,7 @@ interface Props {
   onRemove: () => void;
   mergedVars: Record<string, string | number | boolean>;
   productCode: string | null;
+  fenceAccentHex: string;
 }
 
 export function SegmentHeader({
@@ -44,6 +45,7 @@ export function SegmentHeader({
   onRemove,
   mergedVars,
   productCode,
+  fenceAccentHex,
 }: Props) {
   const { state, dispatch } = useCalculatorV4();
   const lengthM = (seg.segmentWidthMm ?? 0) / 1000;
@@ -79,10 +81,7 @@ export function SegmentHeader({
   const hasDiagWarn =
     !hasDiagError && diagnostics.some((d) => d.severity === "warning");
 
-  const textStyle = cn("text-blue-500 hover:text-blue-600", {
-    "text-blue-500": seg.kind === "fence",
-    "text-amber-500": seg.kind === "gate",
-  });
+  const accentColor = isGate ? CANVAS_GATE_STROKE : fenceAccentHex;
 
   function setConfirmed(checked: boolean) {
     dispatch({
@@ -94,22 +93,18 @@ export function SegmentHeader({
 
   return (
     <div
-      className="flex items-center gap-2 px-3 py-2.5 cursor-pointer"
+      className="flex items-center gap-2 px-3 py-2.5 cursor-pointer transition-opacity hover:opacity-90"
+      style={{ color: accentColor }}
       onClick={() => onToggle()}
     >
       <button
-        className={textStyle}
+        className="bg-transparent border-0 p-0 cursor-pointer"
         aria-label={open ? "Collapse segment" : "Expand segment"}
       >
         {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
       </button>
 
-      <span
-        className={cn(
-          "font-mono text-xs font-semibold w-6 cursor-pointer",
-          textStyle,
-        )}
-      >
+      <span className="font-mono text-xs font-semibold w-6 cursor-pointer">
         S{index}
       </span>
 
@@ -137,19 +132,14 @@ export function SegmentHeader({
         suffix="m"
         displayValue={lengthM.toFixed(2)}
         onCommit={(v) => onLengthChange(v * 1000)}
-        className={textStyle}
         disabled={locked}
       />
-      <span className={cn("text-brand-border", textStyle)}>·</span>
+      <span className="text-brand-border opacity-60">·</span>
       <span
         className="inline-flex items-center gap-0.5"
         onClick={(e) => e.stopPropagation()}
       >
-        <span
-          className={cn("text-xs text-brand-accent font-medium", textStyle)}
-        >
-          Height
-        </span>
+        <span className="text-xs font-medium opacity-90">Height</span>
         {freeform && freeformBounds ? (
           <input
             type="number"
@@ -161,20 +151,14 @@ export function SegmentHeader({
               onHeightChange(clampFreeform(Number(e.target.value)))
             }
             disabled={locked}
-            className={cn(
-              "font-mono text-sm tabular-nums rounded border border-brand-border bg-brand-card px-1 py-0.5 max-w-[5.5rem] w-[5rem]",
-              textStyle,
-            )}
+            className="font-mono text-sm tabular-nums rounded border border-brand-border bg-brand-card px-1 py-0.5 max-w-[5.5rem] w-[5rem]"
           />
         ) : (
           <select
             value={heightSelectValue}
             onChange={(e) => onHeightChange(Number(e.target.value))}
             disabled={locked}
-            className={cn(
-              "font-mono text-sm tabular-nums rounded border border-brand-border bg-brand-card px-1 py-0.5 max-w-[5.5rem]",
-              textStyle,
-            )}
+            className="font-mono text-sm tabular-nums rounded border border-brand-border bg-brand-card px-1 py-0.5 max-w-[5.5rem]"
           >
             {heightOptionsMm.map((h) => (
               <option key={h} value={h}>
@@ -183,13 +167,19 @@ export function SegmentHeader({
             ))}
           </select>
         )}
-        <span className={cn("text-xs font-mono", textStyle)}>mm</span>
+        <span className="text-xs font-mono">mm</span>
       </span>
 
       {isGate && (
         <>
-          <span className={cn("text-brand-border", textStyle)}>·</span>
-          <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-800 dark:text-amber-400 font-medium">
+          <span className="text-brand-border opacity-60">·</span>
+          <span
+            className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded font-medium"
+            style={{
+              backgroundColor: "rgba(245, 158, 11, 0.2)",
+              color: "#78350f",
+            }}
+          >
             <DoorOpen size={10} /> Gate
           </span>
         </>
@@ -238,10 +228,7 @@ export function SegmentHeader({
         }}
         title="Duplicate segment"
         disabled={locked}
-        className={cn(
-          "p-1.5 text-brand-muted hover:text-brand-accent hover:bg-brand-accent/10 rounded disabled:opacity-40 disabled:pointer-events-none",
-          textStyle,
-        )}
+        className="p-1.5 text-brand-muted hover:text-brand-accent hover:bg-brand-accent/10 rounded disabled:opacity-40 disabled:pointer-events-none"
       >
         <Copy size={13} />
       </button>
@@ -251,10 +238,7 @@ export function SegmentHeader({
           onRemove();
         }}
         title="Remove segment"
-        className={cn(
-          textStyle,
-          "p-1.5 hover:text-red-500 hover:bg-red-500/20 rounded",
-        )}
+        className="p-1.5 hover:text-red-500 hover:bg-red-500/20 rounded"
       >
         <Trash2 size={13} />
       </button>

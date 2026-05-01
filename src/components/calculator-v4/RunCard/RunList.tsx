@@ -27,6 +27,7 @@ export function RunList({ onAddGate }: Props) {
               key={run.runId}
               run={run}
               index={i + 1}
+              runColorIndex={i}
               onAddGate={onAddGate}
             />
           ))}
