@@ -308,6 +308,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Data-driven job settings — `useProductVariables` hook loads `product_variables` from Postgres; `FALLBACK_FIELDS` deleted
 - [x] `SchemaDrivenForm` wraps fields at 1/3 width on desktop (responsive flex grid)
 - [x] Gate management UI — `GateListV3` + `GateFormV3` modal, backed by canonical payload QS_GATE runs
+- [x] Lever/knob pedestrian gate hardware options added from the lever/knob workbook: `XP-HDL-KNOB`, `XP-HDL-LEVER`, `XP-HDL-LW534`, with local fallback pricing and matching `XP-LBOX-LSET-*` lockbox BOM behavior.
 - [x] Extra items panel — typeahead against existing SKUs (via `search-products`) + create-on-the-fly for one-off lines
 - [x] v2 retired — `CalculatorPage`, `src/components/calculator/*`, `useCalculatorBOM`, `useFenceProducts`, `calculate-bom-v2` edge function all deleted. `/` redirects to `/calculator`.
 - [ ] v1 (`/new`, `MainApp`, `calculate-bom`) removal — deferred to a future pass.

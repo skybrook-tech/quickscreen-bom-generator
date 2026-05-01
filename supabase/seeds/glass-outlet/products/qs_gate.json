@@ -2008,6 +2008,54 @@
         "slat_gap_mm": 20
       },
       "active": true
+    },
+    {
+      "sku": "XP-HDL-KNOB",
+      "name": "Stanley Round Knob Set",
+      "description": "XPRESS Screening - Stanley round knob set for lever/knob pedestrian gate hardware",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 57.2,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "hardware_type": "lever_knob_handle",
+        "handle_type": "stanley_round_knob"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-HDL-LEVER",
+      "name": "Stanley Lever Handle Set",
+      "description": "XPRESS Screening - Stanley lever handle set for lever/knob pedestrian gate hardware",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 82.16,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "hardware_type": "lever_knob_handle",
+        "handle_type": "stanley_lever"
+      },
+      "active": true
+    },
+    {
+      "sku": "XP-HDL-LW534",
+      "name": "Lockwood 534 Round Knob Set",
+      "description": "XPRESS Screening - Lockwood 534 round knob set for lever/knob pedestrian gate hardware",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 199.68,
+      "system_types": [
+        "GATE"
+      ],
+      "metadata": {
+        "hardware_type": "lever_knob_handle",
+        "handle_type": "lockwood_534_round_knob"
+      },
+      "active": true
     }
   ],
   "rule_sets": [
@@ -4870,6 +4918,78 @@
       "valid_from": null,
       "valid_to": null,
       "notes": null,
+      "active": true
+    },
+    {
+      "sku": "XP-HDL-KNOB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 57.2,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "XP-HDL-KNOB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 51.47,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "XP-HDL-KNOB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 48.77,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "XP-HDL-LEVER",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 82.16,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "XP-HDL-LEVER",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 74.34,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "XP-HDL-LEVER",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 70.44,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "XP-HDL-LW534",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 199.68,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "XP-HDL-LW534",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 181.85,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "XP-HDL-LW534",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 172.29,
+      "priority": 0,
       "active": true
     }
   ]

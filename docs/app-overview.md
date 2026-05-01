@@ -198,6 +198,7 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
   - Uses local seed data and local price breaks.
   - VS vertical slat fallback rule: slats and F sections are cut to fence height; each panel gets two height-cut side F sections, while the U-channel and QuickScreen frame inserts are cut to panel length.
   - QSG pedestrian swing gate fallback rule: horizontal and vertical pedestrian gates use `QSG-4200-GSF50-*` side frames, `QSG-4800-RAIL65/90-*` gate rails, gate/channel infill, screw cover, joiner blocks, spacers, `AR-SCR-BR-50PK`, `QS-SCREWS-50PK`, and `QSG-GFC-50X50-*`. `XP-6100-HD6545-*` is kept for sliding gates.
+  - Lever/knob pedestrian gate fallback rule: selecting `XP-HDL-KNOB`, `XP-HDL-LEVER`, or `XP-HDL-LW534` adds the handle set plus the colour-matched `XP-LBOX-LSET-*` lockbox.
   - This is not the long-term IP-protected source of truth; proven rules should move into backend seed data.
 
 - `src/lib/localSeedData.ts`
@@ -214,7 +215,7 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
 
 - `src/lib/gateOptionRules.ts`
   - Gate-specific defaults and allowed options.
-  - Includes gate movements, builds, hinges, latches, drop bolts, gate stops, and default gate variables.
+  - Includes gate movements, builds, hinges, latches, lever/knob handle sets, drop bolts, gate stops, and default gate variables.
 
 - `src/lib/segmentTermination.ts`
   - Shared termination keys and helpers for system posts, wall/existing fence terminations, corners, and gate stubs.

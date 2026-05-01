@@ -373,6 +373,15 @@ function knownSelectedSku(value: unknown): string | undefined {
   return sku;
 }
 
+const LEVER_KNOB_LATCH_SKUS = new Set(["XP-HDL-KNOB", "XP-HDL-LEVER", "XP-HDL-LW534"]);
+
+function gateLockBoxSkuFor(type: unknown, colour: string): string | undefined {
+  const lockBoxType = String(type ?? "");
+  if (lockBoxType === "XP-LBOX-DL") return `XP-LBOX-DL-${colourSkuSuffix(colour)}`;
+  if (lockBoxType === "XP-LBOX-LSET") return `XP-LBOX-LSET-${colourSkuSuffix(colour)}`;
+  return undefined;
+}
+
 function emitQsgGateFrameLines(
   lines: QtyLine[],
   base: { runId: string; segmentId: string },
@@ -638,13 +647,29 @@ function calculateGateSegment(
   if (hingeSku) emit(lines, { ...base, sku: hingeSku, category: "hardware", quantity: leafCount, unit: "each", notes: "Selected hinge / latch hardware" });
   const latchSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA");
   if (latchSku) emit(lines, { ...base, sku: latchSku, category: "hardware", quantity: 1, unit: "each", notes: "Selected latch / lock hardware" });
+  const latchNeedsLeverKnobLockBox = latchSku ? LEVER_KNOB_LATCH_SKUS.has(latchSku) : false;
+  const lockBoxSku = latchNeedsLeverKnobLockBox
+    ? gateLockBoxSkuFor("XP-LBOX-LSET", colour)
+    : vars[GATE_SEGMENT_STUB_KEYS.includeLockBox] === true
+      ? gateLockBoxSkuFor(vars[GATE_SEGMENT_STUB_KEYS.lockBoxType], colour)
+      : undefined;
+  if (lockBoxSku) {
+    emit(lines, {
+      ...base,
+      sku: lockBoxSku,
+      category: "hardware",
+      quantity: 1,
+      unit: "each",
+      notes: latchNeedsLeverKnobLockBox ? "Lever/knob lockbox to suit selected handle set" : "Selected lockbox",
+    });
+  }
   const dropBoltSku = knownSelectedSku(
     vars[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? (movement === "double_swing" ? "SS-0300DB-B" : "none"),
   );
   if (dropBoltSku) emit(lines, { ...base, sku: dropBoltSku, category: "hardware", quantity: 1, unit: "each", notes: "Selected drop bolt" });
-  if (vars[GATE_SEGMENT_STUB_KEYS.includeLockBox] === true) {
+  if (vars[GATE_SEGMENT_STUB_KEYS.includeLockBox] === true && !lockBoxSku) {
     warnings.push(
-      "A legacy lock-box option was present on this gate, but XPress gate-frame lock-box systems are excluded from the QSG-only gate pass.",
+      "A lock-box option was present on this gate, but no compatible QuickScreen lockbox SKU could be resolved.",
     );
   }
 

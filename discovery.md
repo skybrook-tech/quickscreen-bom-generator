@@ -922,6 +922,23 @@ Changes applied:
 Verification:
 - `npm run build` passed after these changes.
 
+### May 1, 2026 - Lever/knob pedestrian gate options
+
+User workflow finding:
+- The lever and knob pedestrian gate workbook needs to be represented as selectable gate hardware without bringing back the discontinued XP gate frame system as a gate type.
+
+Source checked:
+- `Glass outlet xlsm sheets formulated sheets/CTS++Pedestrian+Gate+V9.1+Lever+and+Knob (1).xlsx`
+
+Changes applied:
+- Added latch/lock dropdown options for `XP-HDL-KNOB`, `XP-HDL-LEVER`, and `XP-HDL-LW534`.
+- Added local fallback product and pricing records for those handle sets.
+- Added the same handle set component/pricing rows to `supabase/seeds/glass-outlet/products/qs_gate.json`.
+- Updated the local QSG swing gate BOM so selecting one of those lever/knob handle sets also adds the colour-matched `XP-LBOX-LSET-*` lockbox.
+
+Implementation note:
+- This keeps the current QSG-only gate direction: the selectable gate build remains QSG hinged/sliding, while the lever/knob workbook contributes hardware options for pedestrian swing gates.
+
 ### May 1, 2026 - Sidebar readability and endpoint gate placement
 
 User workflow finding:
