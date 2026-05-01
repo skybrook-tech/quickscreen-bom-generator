@@ -199,6 +199,33 @@ const syntheticComponents: SeedComponent[] = [
       ["GATE"],
     ),
     component(
+      `QSG-S-6100-TR65-${colour}`,
+      `QSG 65mm Sliding Gate Top Rail ${colour}`,
+      `QuickScreen Gate System 65mm sliding gate top rail, 6100mm stock - ${colour}`,
+      "gate_rail",
+      "length",
+      colour === "M" ? 134.78 : 147.48,
+      ["GATE"],
+    ),
+    component(
+      `QSG-S-6100-TR90-${colour}`,
+      `QSG 90mm Sliding Gate Top Rail ${colour}`,
+      `QuickScreen Gate System 90mm sliding gate top rail, 6100mm stock - ${colour}`,
+      "gate_rail",
+      "length",
+      colour === "M" ? 134.78 : 147.48,
+      ["GATE"],
+    ),
+    component(
+      `QSG-S-6100-BR-${colour}`,
+      `QSG Sliding Gate Bottom Rail ${colour}`,
+      `QuickScreen Gate System sliding gate bottom rail, 6100mm stock - ${colour}`,
+      "gate_rail",
+      "length",
+      colour === "M" ? 134.78 : 147.48,
+      ["GATE"],
+    ),
+    component(
       `QSG-4800-INF-${colour}`,
       `QSG Gate Infill ${colour}`,
       `QuickScreen Gate System gate infill, 4800mm stock - ${colour}`,
@@ -278,6 +305,8 @@ const syntheticComponents: SeedComponent[] = [
     ["XPSG-TOPROLL-2PK", "XPRESS sliding gate nylon top roller 2 pack", 37.96],
     ["XPSG-WHEEL", "XPRESS sliding gate 80mm wheel", 21.53],
     ["XPSG-WHEEL-CS", "XPRESS sliding gate wheel clamping set 2 pack", 6],
+    ["QSG-S-WHEEL", "QuickScreen sliding gate 80mm wheel", 21.53],
+    ["QSG-S-WHEEL-CS-2PK", "QuickScreen sliding gate wheel clamping set 2 pack", 6],
   ].map(([sku, description, price]) =>
     component(
       String(sku),
@@ -602,6 +631,14 @@ const syntheticPricingRules: LocalPricingRule[] = [
   ...pricing("XP-1800-FP-MN", 26, 26, 26),
   ...pricing("XP-1800-FP-W", 26, 26, 26),
   ...pricing("XP-FOOT-ADJ", 12.24, 11.4, 10.41),
+  ...["B", "BS", "D", "G", "M", "MN", "P", "PB", "S", "SM", "W"].flatMap((colour) => {
+    const prices = colour === "M" ? [134.78, 128.04, 119.93] : [147.48, 140.1, 131.26];
+    return [
+      ...pricing(`QSG-S-6100-TR65-${colour}`, prices[0], prices[1], prices[2]),
+      ...pricing(`QSG-S-6100-TR90-${colour}`, prices[0], prices[1], prices[2]),
+      ...pricing(`QSG-S-6100-BR-${colour}`, prices[0], prices[1], prices[2]),
+    ];
+  }),
   ...[
     ["KF-AH-AT", 45.45, 45.45, 45.45],
     ["KF-H-FT", 14.5, 14.5, 14.5],
@@ -645,6 +682,8 @@ const syntheticPricingRules: LocalPricingRule[] = [
     ["XPSG-TOPROLL-2PK", 37.96, 34.15, 34.15],
     ["XPSG-WHEEL", 21.53, 19.38, 19.38],
     ["XPSG-WHEEL-CS", 6, 5.4, 5.4],
+    ["QSG-S-WHEEL", 21.53, 19.38, 19.38],
+    ["QSG-S-WHEEL-CS-2PK", 6, 5.4, 5.4],
   ].flatMap(([sku, tier1, tier2, tier3]) =>
     pricing(String(sku), Number(tier1), Number(tier2), Number(tier3)),
   ),

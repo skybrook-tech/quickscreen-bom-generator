@@ -939,6 +939,26 @@ Changes applied:
 Implementation note:
 - This keeps the current QSG-only gate direction: the selectable gate build remains QSG hinged/sliding, while the lever/knob workbook contributes hardware options for pedestrian swing gates.
 
+### May 2, 2026 - Sliding gate QSG component correction
+
+User workflow finding:
+- Sliding gate BOMs need to follow the QSG sliding gate catalogue pages, not the earlier simplified HD-rail-only fallback.
+
+Sources checked:
+- `Glass outlet xlsm sheets formulated sheets/CTS+Slat+Sliding+Gates+-+V9.01+-+Hamptons (2).xlsx`
+- `Glass outlet xlsm sheets formulated sheets/CTS+ALUMAWOOD+Sliding+Gates++V8-T1.xlsx`
+- User-supplied QSG catalogue screenshots for sliding gate option 1 horizontal and option 2 vertical.
+
+Changes applied:
+- Horizontal sliding gates now emit separate QSG sliding top rail, QSG sliding bottom rail, QSG gate side frames, gate infill, screw cover, joiner blocks, spacers, wafer screws, top caps, wheels, wheel clamping set, track, and selected sliding hardware.
+- Vertical sliding gates now emit QSG sliding top rail, bottom rail, side frames, channel infill, screw cover, joiner blocks, spacers, wafer screws, top caps, wheels, wheel clamping set, track, and selected sliding hardware.
+- Horizontal sliding gates now add centre support rails and top/bottom plates when the workbook spacing threshold requires them.
+- The local sliding gate quantity formulas now use the workbook/catalouge deductions for slat cuts, side-frame cuts, rail cuts, and slat counts.
+- Added local fallback and seed component/pricing rows for the QSG sliding rail and wheel SKUs: `QSG-S-6100-TR65-*`, `QSG-S-6100-TR90-*`, `QSG-S-6100-BR-*`, `QSG-S-WHEEL`, and `QSG-S-WHEEL-CS-2PK`.
+
+Implementation note:
+- The older XPSG rail and wheel rows remain in the seed/catalogue data for reference and historical compatibility, but the local sliding gate BOM now outputs the QSG catalogue codes shown in the current screenshots.
+
 ### May 1, 2026 - Sidebar readability and endpoint gate placement
 
 User workflow finding:
@@ -1026,14 +1046,14 @@ Changes applied:
 Catalogue/workbook finding:
 - The QSG pedestrian gate formula workbook is `Glass outlet xlsm sheets formulated sheets/CTS+QSG+Pedestrian+Gates~V3-T1 (1).xlsx`.
 - Both horizontal and vertical pedestrian gates use the QSG 50x50 gate side frame (`QSG-4200-GSF50-*`), not the older placeholder side-frame SKU.
-- Pedestrian gates use normal QSG horizontal gate rails (`QSG-4800-RAIL65-*` or `QSG-4800-RAIL90-*`). The heavy-duty `XP-6100-HD6545-*` rail belongs to sliding-gate logic, not pedestrian swing gates.
+- Pedestrian gates use normal QSG horizontal gate rails (`QSG-4800-RAIL65-*` or `QSG-4800-RAIL90-*`). A later sliding-gate pass replaced the temporary heavy-duty rail fallback with the current QSG sliding top/bottom rails.
 - Required QSG pedestrian gate default components include side frames, top/bottom gate rails, slats, gate/channel infill, screw cover, 65/90 joiner blocks, slat spacers, `AR-SCR-BR-50PK` rail screws, `QS-SCREWS-50PK` wafer screws, `QSG-GFC-50X50-*` top caps, and selected hinges/latches.
 
 Changes applied:
 - Created a specialist gate-worker agent to inspect the gate path while the local fix was implemented.
 - Updated the local fallback pedestrian gate calculator to emit the QSG component stack for horizontal and vertical swing gates.
 - Vertical swing gates now use normal slat SKUs and channel infill by default; horizontal swing gates use normal slats and gate infill.
-- Kept HD rail usage on the sliding-gate branch only.
+- Sliding gates were still using a temporary HD rail fallback at this point; this was corrected in the later sliding-gate pass.
 - Added local fallback component metadata for QSG gate extrusions/caps so the BOM displays readable descriptions while final pricing is still being confirmed.
 - Updated the `qs_gate.json` seed direction to move away from HD pedestrian rails and old QSG placeholder side-frame SKUs.
 

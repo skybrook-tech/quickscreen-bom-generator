@@ -323,12 +323,16 @@ function gateBladeSkuFor(
 }
 
 function gateRailSkuFor(slatSize: number, colour: string): string {
-  void slatSize;
-  return `QSG-4800-RAIL65-${colourSkuSuffix(colour)}`;
+  return `QSG-4800-RAIL${slatSize === 90 ? "90" : "65"}-${colourSkuSuffix(colour)}`;
 }
 
-function gateHdRailSkuFor(colour: string): string {
-  return `XP-6100-HD6545-${colourSkuSuffix(colour)}`;
+function slidingGateTopRailSkuFor(slatSize: number, colour: string, verticalBuild: boolean): string {
+  const railSize = verticalBuild ? 65 : slatSize === 90 ? 90 : 65;
+  return `QSG-S-6100-TR${railSize}-${colourSkuSuffix(colour)}`;
+}
+
+function slidingGateBottomRailSkuFor(colour: string): string {
+  return `QSG-S-6100-BR-${colourSkuSuffix(colour)}`;
 }
 
 function gateSideFrameSkuFor(colour: string): string {
@@ -470,6 +474,111 @@ function emitQsgGateFrameLines(
   });
 }
 
+function emitQsgSlidingGateFrameLines(
+  lines: QtyLine[],
+  base: { runId: string; segmentId: string },
+  slatSize: number,
+  colour: string,
+  frameCutMm: number,
+  railCutMm: number,
+  verticalBuild: boolean,
+  numGateBlades: number,
+  slatGap: number,
+): void {
+  const sideFramesPerStock = Math.max(1, Math.floor(4200 / frameCutMm));
+  const sideFramePieces = 2;
+  const coverPieces = 2;
+  const coversPerStock = Math.max(1, Math.floor(4200 / frameCutMm));
+  const infillStockLength = verticalBuild ? 4200 : 4800;
+  const infillPieces = 2;
+  const infillsPerStock = Math.max(1, Math.floor(infillStockLength / frameCutMm));
+  const railsPerStock = Math.max(1, Math.floor(6100 / railCutMm));
+  const railSize = verticalBuild ? 65 : slatSize === 90 ? 90 : 65;
+  const spacerPacks = Math.ceil((Math.max(0, numGateBlades - 1) * 2) / 50);
+  const waferScrewPacks = Math.ceil((numGateBlades * 2) / 50);
+
+  emit(lines, {
+    ...base,
+    sku: gateSideFrameSkuFor(colour),
+    category: "gate_side_frame",
+    quantity: Math.ceil(sideFramePieces / sideFramesPerStock),
+    unit: "length",
+    notes: `${sideFramePieces} QSG sliding side-frame pieces, ${Math.round(frameCutMm)}mm cuts from 4200mm stock`,
+  });
+  emit(lines, {
+    ...base,
+    sku: slidingGateTopRailSkuFor(slatSize, colour, verticalBuild),
+    category: "gate_rail",
+    quantity: Math.ceil(1 / railsPerStock),
+    unit: "length",
+    notes: `${railSize}mm sliding gate top rail, ${Math.round(railCutMm)}mm cut from 6100mm stock`,
+  });
+  emit(lines, {
+    ...base,
+    sku: slidingGateBottomRailSkuFor(colour),
+    category: "gate_rail",
+    quantity: Math.ceil(1 / railsPerStock),
+    unit: "length",
+    notes: `Sliding gate bottom rail, ${Math.round(railCutMm)}mm cut from 6100mm stock`,
+  });
+  emit(lines, {
+    ...base,
+    sku: railSize === 90 ? "QSG-JOINER90-4PK" : "QSG-JOINER65-4PK",
+    category: "hardware",
+    quantity: 1,
+    unit: "pack",
+    notes: `${railSize}mm joiner blocks for sliding gate rails`,
+  });
+  emit(lines, {
+    ...base,
+    sku: gateScrewCoverSkuFor(colour),
+    category: "hardware",
+    quantity: Math.ceil(coverPieces / coversPerStock),
+    unit: "length",
+    notes: `Gate screw cover, ${Math.round(frameCutMm)}mm cuts from 4200mm stock`,
+  });
+  emit(lines, {
+    ...base,
+    sku: gateInfillSkuFor(verticalBuild, colour),
+    category: "accessory",
+    quantity: Math.ceil(infillPieces / infillsPerStock),
+    unit: "length",
+    notes: `${verticalBuild ? "Gate channel infill" : "Gate infill"} for side-frame void, ${Math.round(frameCutMm)}mm cuts from ${infillStockLength}mm stock`,
+  });
+  emit(lines, {
+    ...base,
+    sku: "AR-SCR-BR-50PK",
+    category: "screw",
+    quantity: 1,
+    unit: "pack",
+    notes: "QSG rail screws for sliding top and bottom rails",
+  });
+  emit(lines, {
+    ...base,
+    sku: gateSpacerSkuFor(slatGap),
+    category: "spacer",
+    quantity: spacerPacks,
+    unit: "pack",
+    notes: `${Math.max(0, numGateBlades - 1)} gaps, one spacer at each end of each gap`,
+  });
+  emit(lines, {
+    ...base,
+    sku: "QS-SCREWS-50PK",
+    category: "screw",
+    quantity: waferScrewPacks,
+    unit: "pack",
+    notes: "16mm wafer screws for fixing slats to sliding gate rails/side frames",
+  });
+  emit(lines, {
+    ...base,
+    sku: gateTopCapSkuFor(colour),
+    category: "accessory",
+    quantity: 2,
+    unit: "each",
+    notes: "Gate top caps for the two sliding gate side frames",
+  });
+}
+
 function calculateGateSegment(
   run: CanonicalRun,
   segment: CanonicalRun["segments"][number],
@@ -510,18 +619,20 @@ function calculateGateSegment(
   };
 
   if (movement === "sliding") {
-    const bladeCutMm = verticalBuild ? Math.max(1, gateHeightMm - 133) : Math.max(1, openingWidthMm - 86);
+    const bladeCutMm = verticalBuild ? Math.max(1, gateHeightMm - 224) : Math.max(1, openingWidthMm - 86);
     const railCutMm = Math.max(1, openingWidthMm - 80);
-    const frameCutMm = Math.max(1, gateHeightMm);
+    const frameCutMm = Math.max(1, gateHeightMm - 31);
     const designSlatSize = slatSize === 90 ? 90 : 65;
     const numGateBlades = Math.max(
       1,
       verticalBuild
-        ? Math.floor((openingWidthMm - 86 + slatGap) / (designSlatSize + slatGap))
-        : Math.floor((gateHeightMm - 133 + slatGap) / (designSlatSize + slatGap)),
+        ? Math.floor((openingWidthMm - 89 + slatGap) / (designSlatSize + slatGap))
+        : Math.floor((gateHeightMm - slatGap - 216) / (designSlatSize + slatGap)),
     );
     const bladesPerStock = Math.max(1, Math.floor(6100 / bladeCutMm));
-    const railsPerStock = Math.max(1, Math.floor(6100 / railCutMm));
+    const csrCount = verticalBuild ? 0 : Math.max(0, Math.floor(railCutMm / 2000));
+    const csrCutMm = Math.max(1, frameCutMm - 206);
+    const csrsPerStock = Math.max(1, Math.floor(5800 / csrCutMm));
 
     computed[run.runId][segment.segmentId] = {
       ...(computed[run.runId][segment.segmentId] ?? {}),
@@ -529,6 +640,8 @@ function calculateGateSegment(
       gate_blade_cut_mm: Math.round(bladeCutMm),
       gate_rail_cut_mm: Math.round(railCutMm),
       gate_side_frame_cut_mm: Math.round(frameCutMm),
+      gate_csr_count: csrCount,
+      gate_csr_cut_mm: Math.round(csrCutMm),
     };
 
     emit(lines, {
@@ -539,15 +652,27 @@ function calculateGateSegment(
       unit: "length",
       notes: `${numGateBlades} ${verticalBuild ? "vertical" : "horizontal"} gate blades, ${Math.round(bladeCutMm)}mm cuts from 6100mm stock`,
     });
-    emit(lines, {
-      ...base,
-      sku: gateHdRailSkuFor(colour),
-      category: "gate",
-      quantity: Math.ceil(2 / railsPerStock),
-      unit: "length",
-      notes: `Top/bottom HD sliding gate rails, ${Math.round(railCutMm)}mm cuts from 6100mm stock`,
-    });
-    emitQsgGateFrameLines(lines, base, slatSize, colour, 1, frameCutMm, railCutMm, verticalBuild, numGateBlades, slatGap);
+    emitQsgSlidingGateFrameLines(lines, base, slatSize, colour, frameCutMm, railCutMm, verticalBuild, numGateBlades, slatGap);
+    if (csrCount > 0) {
+      const csrColour = colourSkuSuffix(colour);
+      const csrPlateSku = getComponent(`XP-BTP-${csrColour}`) ? `XP-BTP-${csrColour}` : "XP-BTP-MN";
+      emit(lines, {
+        ...base,
+        sku: `XP-5800-CSR-${csrColour}`,
+        category: "centre_support_rail",
+        quantity: Math.ceil(csrCount / csrsPerStock),
+        unit: "length",
+        notes: `${csrCount} centre support rail(s), ${Math.round(csrCutMm)}mm cuts from 5800mm stock`,
+      });
+      emit(lines, {
+        ...base,
+        sku: csrPlateSku,
+        category: "accessory",
+        quantity: csrCount * 2,
+        unit: "each",
+        notes: "Top and bottom plates for sliding gate centre support rails",
+      });
+    }
     const trackSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.slidingTrackType]) ?? "XPSG-6000-TRACK-ST";
     const trackQty = Math.ceil((openingWidthMm * 2) / stockLengthForSlidingTrack(trackSku));
     emit(lines, {
@@ -568,8 +693,8 @@ function calculateGateSegment(
         notes: "Track anchor pins for steel track",
       });
     }
-    emit(lines, { ...base, sku: "XPSG-WHEEL", category: "hardware", quantity: 2, unit: "each", notes: "Sliding gate wheels" });
-    emit(lines, { ...base, sku: "XPSG-WHEEL-CS", category: "hardware", quantity: 2, unit: "each", notes: "Wheel clamping sets" });
+    emit(lines, { ...base, sku: "QSG-S-WHEEL", category: "hardware", quantity: 2, unit: "each", notes: "Sliding gate wheels" });
+    emit(lines, { ...base, sku: "QSG-S-WHEEL-CS-2PK", category: "hardware", quantity: 1, unit: "pack", notes: "Sliding gate wheel clamping set, 2 pack" });
     emit(lines, { ...base, sku: "XPSG-GUIDE", category: "hardware", quantity: 1, unit: "each", notes: "Self-adjusting slide guide" });
     emit(lines, { ...base, sku: "XPSG-STOP", category: "hardware", quantity: 1, unit: "each", notes: "Bolt down sliding gate stop" });
     emit(lines, {
