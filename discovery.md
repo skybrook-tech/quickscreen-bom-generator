@@ -940,6 +940,19 @@ Changes applied:
 Verification:
 - `npm run build` passed after these changes.
 - Local app responded with HTTP 200 at `http://127.0.0.1:5173/calculator`.
+
+### May 1, 2026 - Living app overview file
+
+Project management finding:
+- The project now has enough moving parts that future calculator work needs a single current map of routes, files, data flow, canvas mapper responsibilities, fallback engine behavior, Supabase seed structure, and verification rules.
+
+Changes applied:
+- Added `docs/app-overview.md` as the living overview file.
+- Linked the overview from `docs/tasks.md` so future developers and agents can find it before changing calculator behavior.
+- Documented that this branch's active local calculator route is `/calculator`, even though older docs may mention `/fence-calculator`.
+
+Maintenance rule:
+- Update `docs/app-overview.md` whenever routes, file ownership, mapper behavior, backend seed structure, save/export behavior, or calculator engine responsibilities change.
 - Local app responded with HTTP 200 at `http://127.0.0.1:5173/calculator`.
 
 ### May 1, 2026 - Segment confirmation and master reset controls
