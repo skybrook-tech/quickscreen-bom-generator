@@ -2465,7 +2465,7 @@ export function initCanvasEngine(
     // The caller already has the latest data in context; firing onLayoutChange
     // would trigger handleLiveSync which dispatches SET_PAYLOAD with fresh IDs,
     // causing all RunCard components to remount and lose their expanded state.
-    scheduleRedraw();
+    fitToContent();
   }
 
   function destroy() {

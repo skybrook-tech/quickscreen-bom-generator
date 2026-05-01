@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
 import {
@@ -17,9 +18,11 @@ import {
   gateBuildsForMovement,
   gateMovementOrDefault,
   isSwingGateMovement,
+  optionLabel,
   type GateOption,
 } from "../../lib/gateOptionRules";
 import NumberInput from "../shared/NumberInput";
+import { useProductSearch } from "../../hooks/useProductSearch";
 
 const GATE_POST_SIZE_OPTIONS: GateOption[] = [
   { value: "50", label: "Standard Post 50mm" },
@@ -94,6 +97,89 @@ function OptionPills({
             {option.label}
           </button>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function HardwareDropdown({
+  label,
+  value,
+  options,
+  onChange,
+  placeholder = "Search inventory",
+}: {
+  label: string;
+  value: string;
+  options: GateOption[];
+  onChange: (value: string) => void;
+  placeholder?: string;
+}) {
+  const selectedLabel = optionLabel(options, value);
+  const hasPresetValue = options.some((option) => option.value === value);
+  const [query, setQuery] = useState("");
+  const { data: suggestions = [], isFetching } = useProductSearch(query);
+  const filteredSuggestions = suggestions.filter((item) => {
+    const haystack = `${item.sku} ${item.name} ${item.description} ${item.category}`.toLowerCase();
+    return haystack.includes("gate") || haystack.includes("hinge") || haystack.includes("latch") ||
+      haystack.includes("bolt") || haystack.includes("catch") || haystack.includes("track") ||
+      haystack.includes("motor") || haystack.includes("stop");
+  });
+
+  return (
+    <div className="space-y-2">
+      <label className="flex flex-col gap-1">
+        <span className="text-sm font-bold text-brand-muted">{label}</span>
+        <select
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-bold text-brand-text shadow-sm focus:border-blue-700 focus:outline-none"
+        >
+          {!hasPresetValue && value && (
+            <option value={value}>{value} - inventory selection</option>
+          )}
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <div className="rounded-lg border border-brand-border/70 bg-brand-card/80 p-2">
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder={`${placeholder} for ${label.toLowerCase()}`}
+          className="w-full rounded-md border border-brand-border bg-brand-bg px-2 py-1.5 text-sm font-semibold text-brand-text placeholder:text-brand-muted/70 focus:border-blue-700 focus:outline-none"
+        />
+        <p className="mt-1 text-xs font-semibold text-brand-muted">
+          Selected: <span className="text-brand-text">{selectedLabel || value}</span>
+        </p>
+        {query.trim().length >= 2 && (
+          <div className="mt-2 max-h-44 overflow-y-auto rounded-md border border-brand-border/60 bg-brand-bg">
+            {isFetching ? (
+              <div className="px-2 py-2 text-xs font-semibold text-brand-muted">Searching...</div>
+            ) : filteredSuggestions.length > 0 ? (
+              filteredSuggestions.map((item) => (
+                <button
+                  key={item.sku}
+                  type="button"
+                  onClick={() => {
+                    onChange(item.sku);
+                    setQuery("");
+                  }}
+                  className="block w-full border-b border-brand-border/50 px-2 py-2 text-left text-xs font-semibold text-brand-text last:border-b-0 hover:bg-blue-800 hover:text-white"
+                >
+                  <span className="block text-sm">{item.sku}</span>
+                  <span className="block text-brand-muted">{item.name}</span>
+                </button>
+              ))
+            ) : (
+              <div className="px-2 py-2 text-xs font-semibold text-brand-muted">No hardware matches.</div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -230,25 +316,25 @@ export function GateSegmentDetails({ runId, seg }: Props) {
 
       {isSwing ? (
         <div className="space-y-3 rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
-          <OptionPills
+          <HardwareDropdown
             label="Hinge / closer"
             value={String(v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B")}
             options={HINGE_OPTIONS}
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.hingeType]: value })}
           />
-          <OptionPills
+          <HardwareDropdown
             label="Latch / lock"
             value={String(v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA")}
             options={LATCH_OPTIONS}
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.latchType]: value })}
           />
-          <OptionPills
+          <HardwareDropdown
             label="Drop bolt"
             value={String(v[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? (movement === "double_swing" ? "SS-0300DB-B" : "none"))}
             options={DROP_BOLT_OPTIONS}
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.dropBoltType]: value })}
           />
-          <OptionPills
+          <HardwareDropdown
             label="Gate stop"
             value={String(v[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "none")}
             options={GATE_STOP_OPTIONS}
@@ -257,19 +343,19 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         </div>
       ) : (
         <div className="space-y-3 rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
-          <OptionPills
+          <HardwareDropdown
             label="Track"
             value={String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")}
             options={SLIDING_TRACK_OPTIONS}
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingTrackType]: value })}
           />
-          <OptionPills
+          <HardwareDropdown
             label="Catch"
             value={String(v[GATE_SEGMENT_STUB_KEYS.slidingCatchType] ?? "XPSG-CATCH-U")}
             options={SLIDING_CATCH_OPTIONS}
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingCatchType]: value })}
           />
-          <OptionPills
+          <HardwareDropdown
             label="Motor kit"
             value={String(v[GATE_SEGMENT_STUB_KEYS.slidingMotorType] ?? "none")}
             options={SLIDING_MOTOR_OPTIONS}

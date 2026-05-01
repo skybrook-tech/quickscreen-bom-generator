@@ -109,6 +109,7 @@ Key shape:
 - `src/components/calculator-v3/GateSegmentDetails.tsx`
   - Expanded gate-opening controls.
   - Covers gate build, movement, hardware, gate post size, colour, slat size, gap, and termination-post behavior.
+  - Hardware controls use dropdown selectors with inventory search inside each selector, so preset hardware can be chosen quickly or replaced by a searched SKU.
 
 - `src/components/calculator-v3/GateListV3.tsx` and `GateFormV3.tsx`
   - Older/auxiliary v3 gate list/form components. Prefer checking actual usage before extending them because gate workflow has moved heavily into segment rows.
@@ -143,6 +144,7 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
   - Owns drawing, tools, pan/zoom, grid, segment length edits, node dragging, gate placement, gate dragging, post previews, map drawing, labels, undo, and layout export/import.
   - Does not import React.
   - Recent behavior: gate markers can now anchor at `start`, `center`, or `end`, so a gate can sit flush at a segment end or corner while keeping the full opening width.
+  - Loading a layout from typed sidebar dimensions now fits the canvas view to the imported run so it opens centered instead of at the top-left.
 
 - `src/components/canvas/FenceLayoutCanvas.tsx`
   - React wrapper around the engine.

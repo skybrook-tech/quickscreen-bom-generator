@@ -18,6 +18,8 @@ Latest calculation correction: VS F-section stock in the local fallback calculat
 
 Latest gate correction: QSG horizontal and vertical pedestrian swing gates now use the QSG side frame, normal QSG 65/90 gate rails, infill/channel infill, screw cover, joiner blocks, spacers, rail screws, wafer screws, and 50x50 top caps in the local fallback BOM. HD rails remain reserved for sliding-gate logic.
 
+Latest workflow/UI correction: form-entered dimensions now center in the mapper when loaded, and gate hardware choices are dropdown selectors with inventory search inside each selector.
+
 ---
 
 ## Phases Overview

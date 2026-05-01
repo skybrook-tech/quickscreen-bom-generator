@@ -1020,6 +1020,18 @@ Changes applied:
 - Added local fallback component metadata for QSG gate extrusions/caps so the BOM displays readable descriptions while final pricing is still being confirmed.
 - Updated the `qs_gate.json` seed direction to move away from HD pedestrian rails and old QSG placeholder side-frame SKUs.
 
+### May 1, 2026 - Mapper centering and gate hardware selectors
+
+User workflow finding:
+- When dimensions were typed into the sidebar first and the mapper was opened afterward, the imported line appeared at the top-left of the canvas rather than centered for editing.
+- Gate hardware needed to feel like inventory selection: each hardware type should be chosen from a dropdown, with searchable product lookup available directly inside that selector.
+
+Changes applied:
+- Canvas `loadLayout` now fits the view to imported content after rebuilding runs from the canonical payload.
+- Swing gate hardware controls now use dropdown selectors for hinge/closer, latch/lock, drop bolt, and gate stop.
+- Sliding gate hardware controls now use dropdown selectors for track, catch, and motor kit.
+- Each hardware selector includes an inventory search box; selecting a searched SKU stores that SKU as the selected hardware value for BOM generation.
+
 ### May 1, 2026 - Segment confirmation and master reset controls
 
 User workflow finding:
