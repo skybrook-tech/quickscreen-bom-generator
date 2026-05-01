@@ -162,6 +162,25 @@ function CalculatorV3Content() {
     window.addEventListener("mouseup", onUp);
   }
 
+  const layoutMapButton = (onBeforeOpen?: () => void) => (
+    <button
+      type="button"
+      onClick={() => {
+        if (!layoutOpen) onBeforeOpen?.();
+        setLayoutOpen((open) => !open);
+      }}
+      className={`inline-flex items-center gap-2.5 rounded-full border px-4 py-3 text-sm font-extrabold shadow-sm transition-colors ${
+        layoutOpen
+          ? "border-blue-800 bg-blue-800 text-white hover:bg-blue-900"
+          : "border-blue-800/40 bg-blue-800/10 text-blue-800 hover:bg-blue-800 hover:text-white"
+      }`}
+      title={layoutOpen ? "Minimize layout map" : "Open layout map"}
+    >
+      <MapIcon size={22} strokeWidth={2.5} />
+      {layoutOpen ? "Minimize layout map" : "Open layout map"}
+    </button>
+  );
+
   async function handleGenerateBOM() {
     if (!payload) return;
     setExtraItems([]);
@@ -594,17 +613,14 @@ function CalculatorV3Content() {
                 className="mb-4 w-full rounded-xl border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
               />
               {!payload ? (
-                <ProductSelectV3 />
+                <ProductSelectV3
+                  mapAction={(selectDefaultProduct) =>
+                    layoutMapButton(selectDefaultProduct)
+                  }
+                />
               ) : (
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setLayoutOpen(true)}
-                    className="inline-flex items-center gap-2 rounded-full border border-blue-800/30 px-3 py-2 text-sm font-bold text-blue-800 transition-colors hover:bg-blue-800/10"
-                  >
-                    <MapIcon size={15} />
-                    Open layout map
-                  </button>
+                <div className="flex flex-wrap justify-end gap-2">
+                  {layoutMapButton()}
                 </div>
               )}
             </section>

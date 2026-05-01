@@ -3,7 +3,6 @@ import { CheckCircle2, Copy, Plus, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
 import { defaultGateVariables } from "../../lib/gateOptionRules";
-import { calcRunStats } from "../../lib/runStats";
 import {
   initialVariablesForSystem,
   maxPanelWidthForSystem,
@@ -22,93 +21,6 @@ interface Props {
 const calcTotalLength = (run: CanonicalRun) =>
   run.segments.reduce((acc, seg) => acc + (seg.segmentWidthMm ?? 0), 0);
 
-const MOUNTING_LABELS: Record<string, string> = {
-  in_ground: "Concreted in ground",
-  base_plate: "Base-plated to slab",
-  core_drill: "Core-drilled into concrete",
-};
-
-const COLOUR_NAMES: Record<string, string> = {
-  B: "Black Satin",
-  MN: "Monument Matt",
-  G: "Woodland Grey Matt",
-  SM: "Surfmist Matt",
-  W: "Pearl White Gloss",
-  BS: "Basalt Satin",
-  D: "Dune Satin",
-  M: "Mill",
-  P: "Primrose",
-  PB: "Paperbark",
-  S: "Palladium Silver Pearl",
-  KWI: "Kwila",
-  WRC: "Western Red Cedar",
-};
-
-const POST_SYSTEM_LABELS: Record<string, string> = {
-  xpl: "XPress Plus post",
-  standard_50: "Standard Post 50mm",
-  standard_65: "Standard Post 65mm HD",
-};
-
-function postSummaryLabel(productCode: string, variables: Record<string, unknown>) {
-  const postSystem = String(
-    variables.post_system ?? (productCode === "XPL" ? "xpl" : "standard_50"),
-  );
-  if (productCode === "XPL") {
-    return POST_SYSTEM_LABELS[postSystem] ?? "XPress Plus post";
-  }
-  const postSize = String(variables.post_size ?? "50");
-  return postSize === "65" ? "Standard Post 65mm HD" : "Standard Post 50mm";
-}
-
-function colourLabel(code: unknown) {
-  const colourCode = String(code ?? "B");
-  return COLOUR_NAMES[colourCode] ? `${COLOUR_NAMES[colourCode]} (${colourCode})` : colourCode;
-}
-
-function actualFenceHeightMm(productCode: string, variables: Record<string, unknown>) {
-  const targetHeight = Number(variables.target_height_mm ?? 1800);
-  if (productCode === "VS") return targetHeight;
-  const slatSize = Number(variables.slat_size_mm ?? 65);
-  const slatGap = Number(variables.slat_gap_mm ?? 5);
-  const slatDesignWidth = slatSize === 90 ? 90.3 : 65.3;
-  const numSlats = Math.max(
-    1,
-    Math.floor((targetHeight + slatGap - 3) / (slatDesignWidth + slatGap)),
-  );
-  return Math.round(numSlats * (slatDesignWidth + slatGap) - slatGap + 3);
-}
-
-function panelLengthSummary(run: CanonicalRun, jobMaxPanelWidth: number) {
-  const lengths = run.segments
-    .filter((segment) => segment.segmentKind !== "gate_opening" && Number(segment.segmentWidthMm ?? 0) > 0)
-    .flatMap((segment) => {
-      const maxPanelWidth = Math.max(
-        300,
-        Number(segment.variables?.max_panel_width_mm ?? jobMaxPanelWidth),
-      );
-      const panels = Math.max(1, Math.ceil(Number(segment.segmentWidthMm ?? 0) / maxPanelWidth));
-      const panelWidth = Number(segment.segmentWidthMm ?? 0) / panels;
-      return Array.from({ length: panels }, () => Math.round(panelWidth));
-    });
-
-  const counts = new Map<number, number>();
-  for (const length of lengths) counts.set(length, (counts.get(length) ?? 0) + 1);
-  return [...counts.entries()]
-    .sort((a, b) => b[0] - a[0])
-    .map(([length, count]) => `${count} x ${(length / 1000).toFixed(2)}m`)
-    .join(", ");
-}
-
-function SummaryItem({ label, value }: { label: string; value: string | number }) {
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-bg/80 px-2.5 py-1">
-      <strong className="font-bold text-brand-text">{label}:</strong>
-      <span className="font-semibold text-brand-muted">{value}</span>
-    </span>
-  );
-}
-
 function firstFenceSegment(run: CanonicalRun) {
   return run.segments.find((segment) => segment.segmentKind !== "gate_opening");
 }
@@ -125,29 +37,6 @@ function runMasterVariables(
   };
 }
 
-function masterSummaryItems(productCode: string, variables: Record<string, unknown>) {
-  const height = actualFenceHeightMm(productCode, variables);
-  return [
-    { label: "System type", value: productCode },
-    { label: "Height", value: `${height}mm` },
-    { label: "Fence colour", value: colourLabel(variables.colour_code) },
-    { label: "Post colour", value: colourLabel(variables.post_colour_code ?? variables.colour_code) },
-    { label: "Slat", value: `${variables.slat_size_mm ?? 65}mm` },
-    { label: "Gap", value: `${variables.slat_gap_mm ?? 5}mm` },
-    { label: "Post", value: postSummaryLabel(productCode, variables) },
-    {
-      label: "Mounting",
-      value:
-        MOUNTING_LABELS[String(variables.mounting_method ?? variables.mounting_type ?? "in_ground")] ??
-        "Concreted in ground",
-    },
-    {
-      label: "Max post spacing",
-      value: `${variables.max_panel_width_mm ?? maxPanelWidthForSystem(productCode)}mm`,
-    },
-  ];
-}
-
 export function RunCard({ run, runIdx }: Props) {
   const { state, dispatch } = useCalculator();
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -159,14 +48,9 @@ export function RunCard({ run, runIdx }: Props) {
   const jobMax = Number(
     runVariables.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode),
   );
-  const stats = calcRunStats(run, jobMax);
-  const panelLengths = panelLengthSummary(run, jobMax);
   const fenceSegments = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
   const gates = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
   const matchesRunOne = run.variables?.settings_mode === "match_run_1";
-  const completedSegments = run.segments.filter(
-    (segment) => segment.variables?.segment_done === true,
-  ).length;
 
   function toggleRunOneSettings() {
     const runOne = state.payload?.runs[0];
@@ -251,7 +135,6 @@ export function RunCard({ run, runIdx }: Props) {
           <span className="text-sm font-bold text-brand-text">
             Total Length : {(calcTotalLength(run) / 1000).toFixed(2)}m, Segments : {fenceSegments.length}, Gates {gates.length}
           </span>
-          <span className="text-sm italic text-brand-muted">Master Settings for Run {runIdx + 1}</span>
         </h3>
         <div className="flex flex-wrap items-center justify-end gap-2">
           {runIdx > 0 && (
@@ -265,18 +148,6 @@ export function RunCard({ run, runIdx }: Props) {
             </Button>
           )}
         </div>
-      </div>
-
-      <div className="mb-3 flex flex-wrap gap-2 text-sm font-semibold">
-        {masterSummaryItems(run.productCode, runVariables).map((item) => (
-          <SummaryItem key={item.label} label={item.label} value={item.value} />
-        ))}
-        <SummaryItem label="Corners" value={run.corners.length} />
-        <SummaryItem label="Segments" value={fenceSegments.length} />
-        <SummaryItem label="Done" value={`${completedSegments}/${run.segments.length}`} />
-        {stats.panels > 0 && <SummaryItem label="Panels" value={stats.panels} />}
-        {panelLengths && <SummaryItem label="Panel lengths" value={panelLengths} />}
-        {stats.posts > 0 && <SummaryItem label="Posts" value={stats.posts} />}
       </div>
 
       {run.segments.length === 0 && (

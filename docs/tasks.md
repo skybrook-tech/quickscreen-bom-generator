@@ -12,6 +12,8 @@ Living app overview: [`docs/app-overview.md`](./app-overview.md) now tracks curr
 
 Latest BOM workflow pass: generated BOM rows aggregate by product within each tab, individual gate tabs are labelled from the canonical gate segments, Generate BOM clears stale results before recalculating, and the mapper opens without the initial snap dot.
 
+Latest sidebar pass: run cards now remove the redundant master-settings line, segment cards show compact order summaries with bold values, length/height editing moved into segment options, segment cards have a blue 3D border, segment confirm/remove controls were reduced to a blue dot and two-click red X, and the layout map button now opens/minimizes the map.
+
 ---
 
 ## Phases Overview

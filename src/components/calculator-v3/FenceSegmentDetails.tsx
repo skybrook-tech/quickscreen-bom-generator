@@ -326,7 +326,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* Max panel width override */}
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-bold text-brand-muted">Max Post Spacings (mm)</span>
+          <span className="text-sm font-bold text-brand-muted">Post Spacing (mm)</span>
           <NumberInput
             value={effectiveMax}
             onChange={(v) => updateMaxPanelWidth(v)}

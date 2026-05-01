@@ -969,6 +969,26 @@ Changes applied:
 - Local fallback run results now preserve `runId`, `segmentId`, and `productCode` metadata so gate tabs can filter accurately.
 - The canvas snap indicator now appears only after a drawing run has started.
 - Zero-length initial payload segments are skipped when rebuilding the canvas layout, so the map starts clear.
+
+### May 1, 2026 - Segment card readability pass
+
+User workflow finding:
+- The run card was still repeating master-setting language that did not help quoting.
+- Segment cards needed to show the practical order details directly, while keeping editable dimensions and deeper settings inside the segment options dropdown.
+
+Changes applied:
+- Removed the `Master Settings for Run` line and the master setting pill block from each run card.
+- Run headers now only show run number, total length, segment count, and gate count.
+- Segment headings now emphasize labels such as `R1 S1` in larger blue type.
+- Closed segment cards now show a tight summary for length, height, system, colour, slat, gap, post type, mounting, post spacing, corner post, end post, and total post.
+- Post colour is only shown when it differs from the fence colour.
+- Length and height edit controls moved into the expanded segment options area.
+- Replaced the large segment-confirmed button with a small blue status dot and replaced the remove button with a red X.
+- Added a 3D blue gradient border around each segment card so separate segments are visually distinct.
+- Made the layout map button larger, moved it beside the initial fence-style selection, and made the same button open/minimize the map.
+- Changed the initial prompt to `Select fence style or open layout map`.
+- Segment summary values now carry the bold emphasis while labels are grey; length and height are slightly larger than the rest.
+- Segment removal now requires two clicks on the red X.
 - Local app responded with HTTP 200 at `http://127.0.0.1:5173/calculator`.
 
 ### May 1, 2026 - Segment confirmation and master reset controls

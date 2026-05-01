@@ -98,6 +98,7 @@ Key shape:
   - Renders the compact row for a panel or gate-opening segment.
   - Handles length/height editing, segment confirmation, reset-to-master, removal, and expand/collapse.
   - For gates, checks whether the gate matches the run master height and horizontal/vertical build type.
+  - Closed fence segment rows show the order summary: segment length, height, system, colour, slat, gap, post type, mounting, post spacing, corner/end/total posts. Length and height edit controls live in the expanded options area. Remove uses a two-click red X confirmation.
 
 ### Segment And Gate Details
 

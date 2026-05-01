@@ -6,6 +6,7 @@ import {
 } from "../../lib/productOptionRules";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalPayload } from "../../types/canonical.types";
+import type { ReactNode } from "react";
 
 interface FenceProduct {
   id: string;
@@ -35,7 +36,11 @@ function mergeFenceProducts(products: FenceProduct[]): FenceProduct[] {
   });
 }
 
-export function ProductSelectV3() {
+export function ProductSelectV3({
+  mapAction,
+}: {
+  mapAction?: (selectDefaultProduct: () => void) => ReactNode;
+}) {
   const { state, dispatch } = useCalculator();
 
   const { data: products = [] } = useQuery<FenceProduct[]>({
@@ -58,6 +63,9 @@ export function ProductSelectV3() {
 
   const currentCode = state.payload?.productCode ?? null;
   const selectedProduct = products.find((p) => p.system_type === currentCode);
+  const selectDefaultProduct = () => {
+    if (!currentCode && products[0]) selectProduct(products[0]);
+  };
 
   function selectProduct(p: FenceProduct) {
     const initialVariables = initialVariablesForSystem(p.system_type);
@@ -92,30 +100,33 @@ export function ProductSelectV3() {
   return (
     <div data-testid="product-select">
       {!currentCode && (
-        <p className="mb-2 text-sm font-semibold text-red-600">
-          Select fence style
+        <p className="mb-2 text-sm font-semibold text-emerald-600">
+          Select fence style or open layout map
         </p>
       )}
-      <div className="flex flex-wrap gap-2">
-        {products.map((product) => {
-          const selected = product.system_type === currentCode;
-          return (
-            <button
-              key={product.id}
-              type="button"
-              onClick={() => selectProduct(product)}
-              className={`rounded-full border px-4 py-2 text-sm font-bold shadow-sm transition-all ${
-                selected
-                  ? "border-blue-800 bg-blue-800 text-white shadow-sm"
-                  : "border-brand-border bg-brand-card text-brand-text hover:border-blue-800 hover:text-blue-800"
-              }`}
-              data-testid={`product-option-${product.system_type}`}
-              title={product.description ?? product.name}
-            >
-              {shortLabel(product)}
-            </button>
-          );
-        })}
+      <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+        <div className="flex flex-col items-start gap-2">
+          {products.map((product) => {
+            const selected = product.system_type === currentCode;
+            return (
+              <button
+                key={product.id}
+                type="button"
+                onClick={() => selectProduct(product)}
+                className={`rounded-full border px-4 py-2 text-sm font-bold shadow-sm transition-all ${
+                  selected
+                    ? "border-blue-800 bg-blue-800 text-white shadow-sm"
+                    : "border-brand-border bg-brand-card text-brand-text hover:border-blue-800 hover:text-blue-800"
+                }`}
+                data-testid={`product-option-${product.system_type}`}
+                title={product.description ?? product.name}
+              >
+                {shortLabel(product)}
+              </button>
+            );
+          })}
+        </div>
+        {mapAction && <div className="justify-self-start sm:justify-self-end">{mapAction(selectDefaultProduct)}</div>}
       </div>
       {selectedProduct?.description && (
         <p className="mt-2 text-xs leading-relaxed text-brand-muted">
