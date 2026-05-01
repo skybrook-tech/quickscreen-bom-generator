@@ -10,6 +10,7 @@ import {
   loadV4Draft,
   persistV4Draft,
 } from "../lib/v4DraftStorage";
+import { normaliseVariablesForSystem } from "../lib/productOptionRules";
 import type {
   CanonicalPayload,
   CanonicalRun,
@@ -167,13 +168,21 @@ function reducer(
       };
     }
     case "SET_RUN_PRODUCT": {
-      if (!state.payload) return state;
-      const runs = state.payload.runs.map((r) =>
+      const payload = state.payload;
+      if (!payload) return state;
+      const runs = payload.runs.map((r) =>
         r.runId === action.runId
-          ? { ...r, productCode: action.productCode, variables: {} }
+          ? {
+              ...r,
+              productCode: action.productCode,
+              variables: normaliseVariablesForSystem(action.productCode, {
+                ...payload.variables,
+                ...(r.variables ?? {}),
+              }),
+            }
           : r,
       );
-      return { ...state, payload: { ...state.payload, runs } };
+      return { ...state, payload: { ...payload, runs } };
     }
     case "REMOVE_RUN": {
       if (!state.payload) return state;
@@ -280,6 +289,7 @@ function reducer(
           ...original,
           segmentId: crypto.randomUUID(),
           sortOrder: original.sortOrder + 1,
+          confirmed: false,
         };
         const before = r.segments.slice(0, idx + 1);
         const after = r.segments

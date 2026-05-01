@@ -2,13 +2,13 @@ import { useMemo } from "react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { useProductVariables } from "../../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../../types/canonical.types";
-import type { SegmentDiagnostic } from "../../../types/bom.types";
 import { patchSegmentVariables } from "../../../lib/segmentTermination";
-import { BOMWarningsPanel } from "../../calculator-v3/BOMWarningsPanel";
+import { useSegmentHeightOptions } from "../../../hooks/useSegmentHeightOptions";
 import { SchemaDrivenFormV4 } from "../RunCard/SchemaDrivenFormV4";
 import { TerminationControl } from "./TerminationControl";
 import NumberInput from "../../ui/NumberInput";
 import { Select } from "../../ui/Select";
+import { cn } from "../../../lib";
 
 const POST_SIZE_KEY = "post_size";
 const POST_WIDTH_MM_KEY = "post_width_mm";
@@ -21,9 +21,10 @@ const POST_SIZE_LABELS: Record<string, string> = {
 interface Props {
   runId: string;
   seg: CanonicalSegment;
+  locked?: boolean;
 }
 
-export function SegmentDetails({ runId, seg }: Props) {
+export function SegmentDetails({ runId, seg, locked = false }: Props) {
   const { state, dispatch } = useCalculatorV4();
 
   const run = state.payload?.runs.find((r) => r.runId === runId);
@@ -43,15 +44,35 @@ export function SegmentDetails({ runId, seg }: Props) {
     return raw.map(String);
   }, [runFields]);
 
-  const diagnostics = useMemo(
-    () =>
-      (
-        (state.bomResult?.segmentDiagnostics as
-          | SegmentDiagnostic[]
-          | undefined) ?? []
-      ).filter((d) => d.segmentId === seg.segmentId),
-    [state.bomResult, seg.segmentId],
+  const mergedForHeights = useMemo(
+    () => ({
+      ...(state.payload?.variables ?? {}),
+      ...(run?.variables ?? {}),
+      ...(seg.variables ?? {}),
+    }),
+    [state.payload?.variables, run?.variables, seg.variables],
   );
+
+  const {
+    freeform,
+    freeformBounds,
+    optionsMm: heightOptionsMm,
+    clampFreeform,
+  } = useSegmentHeightOptions(
+    productCode,
+    mergedForHeights,
+    seg.targetHeightMm,
+  );
+
+  const heightSelectValue = String(
+    seg.targetHeightMm ??
+      heightOptionsMm[0] ??
+      freeformBounds?.minMm ??
+      1800,
+  );
+
+  const freeformHeightValue =
+    seg.targetHeightMm ?? freeformBounds?.minMm ?? 300;
 
   const v = seg.variables ?? {};
   const postSize = (v[POST_SIZE_KEY] as string) ?? "";
@@ -89,8 +110,22 @@ export function SegmentDetails({ runId, seg }: Props) {
 
   const isFence = seg.kind === "fence";
 
+  const lenMm = seg.segmentWidthMm ?? 0;
+  const panelsForSpacing =
+    effectiveMax > 0 && lenMm > 0
+      ? Math.max(1, Math.ceil(lenMm / effectiveMax))
+      : 1;
+  const actualPostSpacingMm =
+    panelsForSpacing > 0 ? Math.round(lenMm / panelsForSpacing) : 0;
+
   return (
-    <div className="p-3 bg-white space-y-4">
+    <div
+      className={cn(
+        "p-3 bg-white space-y-4",
+        locked && "opacity-60 pointer-events-none",
+      )}
+      aria-disabled={locked}
+    >
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
           <label className={labelClass}>Length (m)</label>
@@ -106,6 +141,7 @@ export function SegmentDetails({ runId, seg }: Props) {
               }
               className="pr-8"
               data-testid={`v4-seg-length-${seg.segmentId}`}
+              disabled={locked}
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500 pointer-events-none">
               m
@@ -114,22 +150,43 @@ export function SegmentDetails({ runId, seg }: Props) {
         </div>
         <div className="space-y-2">
           <label className={labelClass}>Height (mm)</label>
-          <div className="relative">
-            <NumberInput
-              value={seg.targetHeightMm ?? 0}
-              onChange={(value) =>
+          {freeform && freeformBounds ? (
+            <div data-testid={`v4-seg-height-${seg.segmentId}`}>
+              <NumberInput
+                value={freeformHeightValue}
+                min={freeformBounds.minMm}
+                max={freeformBounds.maxMm}
+                step={1}
+                onChange={(v) =>
+                  upsertSegment({
+                    ...seg,
+                    targetHeightMm: clampFreeform(v),
+                  })
+                }
+                disabled={locked}
+                className="bg-white border border-neutral-200 rounded-md"
+              />
+            </div>
+          ) : (
+            <Select
+              value={heightSelectValue}
+              onChange={(e) =>
                 upsertSegment({
                   ...seg,
-                  targetHeightMm: Math.max(0, value),
+                  targetHeightMm: Number(e.target.value),
                 })
               }
-              className="pr-10"
+              disabled={locked}
+              className="bg-white border border-neutral-200 rounded-md"
               data-testid={`v4-seg-height-${seg.segmentId}`}
-            />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500 pointer-events-none">
-              mm
-            </span>
-          </div>
+            >
+              {heightOptionsMm.map((h) => (
+                <option key={h} value={h}>
+                  {h} mm
+                </option>
+              ))}
+            </Select>
+          )}
         </div>
       </div>
 
@@ -137,7 +194,10 @@ export function SegmentDetails({ runId, seg }: Props) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label className="flex flex-col gap-1">
             <span className="text-neutral-500 text-xs">
-              Max panel width (mm)
+              Post spacing (mm)
+            </span>
+            <span className="text-[10px] text-neutral-400 -mt-0.5 mb-0.5">
+              Maximum bay width — drives spacing between posts along the run.
             </span>
             <NumberInput
               value={effectiveMax}
@@ -145,7 +205,14 @@ export function SegmentDetails({ runId, seg }: Props) {
               min={300}
               max={2600}
               step={50}
+              disabled={locked}
             />
+            {lenMm > 0 && actualPostSpacingMm > 0 ? (
+              <span className="text-[10px] text-neutral-500 mt-1">
+                Actual spacing this segment: ~{actualPostSpacingMm} mm (
+                {panelsForSpacing} bay{panelsForSpacing === 1 ? "" : "s"})
+              </span>
+            ) : null}
           </label>
 
           <label className="flex flex-col gap-1">
@@ -153,6 +220,7 @@ export function SegmentDetails({ runId, seg }: Props) {
             <Select
               value={postSize}
               onChange={(e) => setScalar(POST_SIZE_KEY, e.target.value || null)}
+              disabled={locked}
               className="bg-white border border-neutral-200 rounded-md"
             >
               <option value="">— Job default —</option>
@@ -172,6 +240,7 @@ export function SegmentDetails({ runId, seg }: Props) {
                 value={(v[POST_WIDTH_MM_KEY] as number | null) ?? null}
                 onChange={(val) => setScalar(POST_WIDTH_MM_KEY, val)}
                 min={1}
+                disabled={locked}
               />
             </label>
           )}
@@ -179,10 +248,10 @@ export function SegmentDetails({ runId, seg }: Props) {
       )}
 
       {isFence && jobFields.length > 0 && (
-        <div>
-          <p className="text-xs text-neutral-500 mb-2 font-medium">
+        <fieldset disabled={locked} className="min-w-0 border-0 p-0 m-0">
+          <legend className="text-xs text-neutral-500 mb-2 font-medium">
             Job settings override (this segment)
-          </p>
+          </legend>
           <SchemaDrivenFormV4
             fields={jobFields}
             variables={mergedJobDisplay}
@@ -191,12 +260,12 @@ export function SegmentDetails({ runId, seg }: Props) {
               onJobOverrideChange(key, value);
             }}
           />
-        </div>
+        </fieldset>
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <TerminationControl runId={runId} seg={seg} side="left" />
-        <TerminationControl runId={runId} seg={seg} side="right" />
+        <TerminationControl runId={runId} seg={seg} side="left" locked={locked} />
+        <TerminationControl runId={runId} seg={seg} side="right" locked={locked} />
       </div>
     </div>
   );

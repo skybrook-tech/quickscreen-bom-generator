@@ -72,11 +72,16 @@ export function RunConfigPanel({ run, activeTab }: Props) {
       const opts = Array.isArray(f.options_json)
         ? f.options_json.map(String)
         : [];
+      const allowCustomNumericGap =
+        f.field_key === "slat_gap_mm" &&
+        current != null &&
+        Number.isFinite(Number(current));
       if (
         opts.length > 0 &&
         current != null &&
         !opts.includes(String(current)) &&
-        f.default_value_json != null
+        f.default_value_json != null &&
+        !allowCustomNumericGap
       ) {
         missing[f.field_key] = f.default_value_json as
           | string

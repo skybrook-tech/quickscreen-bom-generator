@@ -11,6 +11,11 @@ export interface Product {
   sort_order: number;
   metadata?: {
     allowedAngles?: number[];
+    /** Tier A: drives pitch ladder vs freeform height input — see `parseTargetHeightUi` */
+    target_height_ui?: {
+      mode?: 'pitch_ladder' | 'freeform_mm';
+      pitch_var_keys?: string[];
+    };
     options?: {
       slatSize?: string[];
       slatGap?: string[];

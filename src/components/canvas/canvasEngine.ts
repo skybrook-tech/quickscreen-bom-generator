@@ -170,6 +170,24 @@ function snapToGrid(p: Point, gridSize: number): Point {
   };
 }
 
+function snapBearingFrom(origin: Point, candidate: Point, stepDeg: number): Point {
+  const d = dist(origin, candidate);
+  if (d === 0 || stepDeg <= 0) return candidate;
+  const bearing = angleDeg(origin, candidate);
+  const snapped = Math.round(bearing / stepDeg) * stepDeg;
+  const rad = (snapped * Math.PI) / 180;
+  return {
+    x: origin.x + d * Math.cos(rad),
+    y: origin.y + d * Math.sin(rad),
+  };
+}
+
+function fiveDegreeAngles(): number[] {
+  const values: number[] = [];
+  for (let a = 5; a <= 180; a += 5) values.push(a);
+  return values;
+}
+
 /**
  * Snap `candidate` so the interior corner angle at `junctionPoint`
  * (between the incoming segment prevPoint→junctionPoint and the outgoing
@@ -257,6 +275,16 @@ function buildSegmentsFromPoints(points: Point[], scale: number): Segment[] {
   return segs;
 }
 
+function rebuildSegmentsPreservingGates(run: Run, scale: number) {
+  const previousGates = run.segments.map((seg) =>
+    seg.gates.map((gate) => ({ ...gate })),
+  );
+  run.segments = buildSegmentsFromPoints(run.points, scale);
+  run.segments.forEach((seg, idx) => {
+    seg.gates = previousGates[idx] ?? [];
+  });
+}
+
 function angleBetween(a: Point, b: Point, c: Point): number {
   // Returns interior angle at b (in degrees) formed by segments a→b and b→c
   const dx1 = a.x - b.x,
@@ -269,18 +297,6 @@ function angleBetween(a: Point, b: Point, c: Point): number {
   if (mag1 === 0 || mag2 === 0) return 180;
   const cosAngle = Math.max(-1, Math.min(1, dot / (mag1 * mag2)));
   return (Math.acos(cosAngle) * 180) / Math.PI;
-}
-
-/**
- * Signed interior angle at b: positive = CW (right turn) in Y-down canvas coords,
- * negative = CCW (left turn). Uses cross product of vectors A→B and B→C.
- */
-function signedAngleBetween(a: Point, b: Point, c: Point): number {
-  const dx1 = b.x - a.x, dy1 = b.y - a.y; // A→B
-  const dx2 = c.x - b.x, dy2 = c.y - b.y; // B→C
-  const cross = dx1 * dy2 - dy1 * dx2;
-  const unsigned = angleBetween(a, b, c);
-  return cross >= 0 ? unsigned : -unsigned;
 }
 
 function countCorners(runs: Run[]): number {
@@ -319,6 +335,16 @@ function closestPointOnSegment(
   );
   const proj = lerp(s.p1, s.p2, t);
   return { point: proj, t, d: dist(p, proj) };
+}
+
+/** Gate centre parameter t along segment [0,1], staying inside so the gap fits on the segment. */
+function clampGateCenterT(t: number, widthMM: number, lengthMM: number): number {
+  if (lengthMM <= 0) return Math.max(0, Math.min(1, t));
+  const half = (widthMM / lengthMM) / 2;
+  if (half >= 0.5) return 0.5;
+  const lo = half;
+  const hi = 1 - half;
+  return Math.max(lo, Math.min(hi, t));
 }
 
 // ── Label editing overlay ─────────────────────────────────────────────────────
@@ -405,14 +431,17 @@ export function initCanvasEngine(
 
   /**
    * Compute the effective snap angle set for the current context.
-   * - Shift held: only 180° (straight continuation) — locks to straight line
-   * - No constraints: empty (free drawing)
-   * - Constraints active: declared angles + 180° (straight always valid)
+   * - Shift held: only 180° (straight continuation).
+   * - Product supplies allowedAngles: only those interior angles + straight (180°).
+   * - Otherwise, snap toggle on: 5° increments for free-form layouts.
    */
   function effectiveSnapAngles(shiftHeld: boolean): number[] {
     if (shiftHeld) return [180];
-    if (allowedAngles.length === 0) return [];
-    return Array.from(new Set([...allowedAngles, 180]));
+    if (allowedAngles.length > 0) {
+      return Array.from(new Set([...allowedAngles, 180]));
+    }
+    if (snap) return fiveDegreeAngles();
+    return [];
   }
   let mouseCanvas: Point = { x: 0, y: 0 };
   let isPanning = false;
@@ -487,6 +516,67 @@ export function initCanvasEngine(
       }
     }
     return result;
+  }
+
+  function setSegmentLength(flatIdx: number, lengthMM: number) {
+    const info = allSegmentsFlat()[flatIdx];
+    if (!info || lengthMM <= 0) return;
+
+    const run = runs[info.runIdx];
+    const start = run.points[info.segIdx];
+    const end = run.points[info.segIdx + 1];
+    if (!start || !end) return;
+
+    const currentWorldLength = dist(start, end);
+    if (currentWorldLength === 0) return;
+
+    const targetWorldLength = (lengthMM / 1000) * scale;
+    const unitX = (end.x - start.x) / currentWorldLength;
+    const unitY = (end.y - start.y) / currentWorldLength;
+    const nextEnd = {
+      x: start.x + unitX * targetWorldLength,
+      y: start.y + unitY * targetWorldLength,
+    };
+    const delta = {
+      x: nextEnd.x - end.x,
+      y: nextEnd.y - end.y,
+    };
+
+    // Move the edited endpoint and everything downstream so connected
+    // segments keep their shape, similar to professional plan editors.
+    for (let i = info.segIdx + 1; i < run.points.length; i++) {
+      run.points[i] = {
+        x: run.points[i].x + delta.x,
+        y: run.points[i].y + delta.y,
+      };
+    }
+    rebuildSegmentsPreservingGates(run, scale);
+    info.seg.lengthMM = lengthMM;
+    notifyChange();
+    scheduleRedraw();
+  }
+
+  function snapDrawingPoint(candidate: Point): Point {
+    if (activeRunIdx < 0 || !runs[activeRunIdx] || runs[activeRunIdx].finished) {
+      return candidate;
+    }
+    const run = runs[activeRunIdx];
+    if (run.points.length === 0) return candidate;
+    const lastPt = run.points[run.points.length - 1];
+    let snapped = snap ? snapToGrid(candidate, gridSize) : candidate;
+    if (shiftDown && run.points.length >= 2) {
+      const prev = run.points[run.points.length - 2];
+      return snapToAllowedAngle(prev, lastPt, snapped, [180]);
+    }
+    const angles = effectiveSnapAngles(false);
+    if (run.points.length >= 2 && angles.length > 0) {
+      const prev = run.points[run.points.length - 2];
+      return snapToAllowedAngle(prev, lastPt, snapped, angles);
+    }
+    if (run.points.length === 1 && snap) {
+      return snapBearingFrom(lastPt, snapped, 5);
+    }
+    return snapped;
   }
 
   function getLayout(): CanvasLayout {
@@ -662,14 +752,7 @@ export function initCanvasEngine(
       const run = runs[activeRunIdx];
       if (run && run.points.length > 0 && !run.finished) {
         const lastPt = run.points[run.points.length - 1];
-        let target = snap ? snapToGrid(mouseCanvas, gridSize) : mouseCanvas;
-        if (run.points.length >= 2) {
-          const prev = run.points[run.points.length - 2];
-          const angles = effectiveSnapAngles(shiftDown);
-          if (angles.length > 0) {
-            target = snapToAllowedAngle(prev, lastPt, target, angles);
-          }
-        }
+        const target = snapDrawingPoint(mouseCanvas);
         ctx.save();
         ctx.setLineDash([6, 4]);
         ctx.strokeStyle = COLOR.preview;
@@ -679,6 +762,9 @@ export function initCanvasEngine(
         ctx.lineTo(target.x, target.y);
         ctx.stroke();
         ctx.restore();
+
+        drawActiveEndpoint(lastPt, "last point");
+        drawActiveEndpoint(target, "next point", true);
 
         // Post position preview along the in-progress segment
         const segDist = dist(lastPt, target);
@@ -746,21 +832,8 @@ export function initCanvasEngine(
 
     // Snap indicator
     if (tool === "draw") {
-      let snapped = snap ? snapToGrid(mouseCanvas, gridSize) : mouseCanvas;
-      const snapAngles = effectiveSnapAngles(shiftDown);
-      if (
-        snapAngles.length > 0 &&
-        activeRunIdx >= 0 &&
-        runs[activeRunIdx] &&
-        runs[activeRunIdx].points.length >= 2 &&
-        !runs[activeRunIdx].finished
-      ) {
-        const run = runs[activeRunIdx];
-        const junction = run.points[run.points.length - 1];
-        const prev = run.points[run.points.length - 2];
-        snapped = snapToAllowedAngle(prev, junction, snapped, snapAngles);
-      }
-      if (snap || snapAngles.length > 0) {
+      const snapped = snapDrawingPoint(mouseCanvas);
+      if (snap || activeRunIdx >= 0) {
         ctx.save();
         ctx.beginPath();
         ctx.arc(snapped.x, snapped.y, 4 / zoom, 0, Math.PI * 2);
@@ -794,17 +867,17 @@ export function initCanvasEngine(
             pts[i].y - 4 / zoom,
           );
         }
-        // Corner angle annotations at intermediate nodes — signed (amber)
+        // Corner angle annotations at intermediate nodes
         for (let i = 1; i < pts.length - 1; i++) {
-          const signed = signedAngleBetween(pts[i - 1], pts[i], pts[i + 1]);
-          if (Math.abs(signed) > 2 && Math.abs(signed) < 175) {
-            const label = signed > 0 ? `+${Math.round(signed)}°` : `${Math.round(signed)}°`;
+          const angle = angleBetween(pts[i - 1], pts[i], pts[i + 1]);
+          if (angle > 2 && angle < 175) {
+            const angleText = `${Math.round(angle)}°`;
             const fs2 = Math.max(7, 9 / zoom);
             ctx.font = `${fs2}px sans-serif`;
-            ctx.fillStyle = "#f59e0b"; // amber — distinguishes from geometry labels
+            ctx.fillStyle = "#a78bfa";
             ctx.textAlign = "left";
             ctx.textBaseline = "top";
-            ctx.fillText(label, pts[i].x + 4 / zoom, pts[i].y + 4 / zoom);
+            ctx.fillText(angleText, pts[i].x + 4 / zoom, pts[i].y + 4 / zoom);
           }
         }
       }
@@ -833,6 +906,14 @@ export function initCanvasEngine(
     if (nbRuns.length === 0 && allSegs.length === 0) return;
 
     let line: string;
+    const detailLines: string[] = [];
+    const spacingText = (seg: Segment, flatIdx: number, label: string) => {
+      const maxW = segmentPanelWidths[flatIdx] ?? jobPanelWidthMm ?? 0;
+      if (maxW <= 0 || seg.lengthMM <= 0) return `${label}: post spacing not set`;
+      const panels = Math.max(1, Math.ceil(Math.round(seg.lengthMM) / maxW));
+      const actualSpacing = Math.round(seg.lengthMM / panels);
+      return `${label}: ${panels} panel${panels === 1 ? "" : "s"} @ ${actualSpacing}mm posts (max ${Math.round(maxW)}mm)`;
+    };
 
     // Use pre-computed canonical stats if available (pushed from LayoutCanvasV3 via calcRunStats).
     // Falls back to self-computed values when the overlay hasn't been populated yet.
@@ -840,14 +921,26 @@ export function initCanvasEngine(
       // Hover mode — identify the non-boundary run index containing the hovered segment
       const { runIdx } = allSegs[hoveredSegIdx];
       let nbIdx = 0;
+      let flatStart = 0;
       for (let ri = 0; ri < runs.length; ri++) {
         if (runs[ri].isBoundary) continue;
         if (ri === runIdx) break;
+        flatStart += runs[ri].segments.length;
         nbIdx++;
       }
       line = pushedStatsPerRun[nbIdx] ?? pushedStatsGlobal;
+      const run = runs[runIdx];
+      run.segments.forEach((seg, si) => {
+        detailLines.push(spacingText(seg, flatStart + si, `S${si + 1}`));
+      });
     } else if (hoveredSegIdx < 0 && pushedStatsGlobal) {
       line = pushedStatsGlobal;
+      allSegs.slice(0, 3).forEach(({ seg }, i) => {
+        detailLines.push(spacingText(seg, i, `S${i + 1}`));
+      });
+      if (allSegs.length > 3) {
+        detailLines.push(`+ ${allSegs.length - 3} more segment${allSegs.length - 3 === 1 ? "" : "s"}`);
+      }
     } else if (hoveredSegIdx >= 0 && hoveredSegIdx < allSegs.length) {
       // Fallback: self-compute (no pushed stats yet)
       const { runIdx } = allSegs[hoveredSegIdx];
@@ -866,6 +959,7 @@ export function initCanvasEngine(
       for (let si = 0; si < segs; si++) {
         const maxW = segmentPanelWidths[flatStart + si] ?? 0;
         if (maxW > 0) panels += Math.ceil(Math.round(run.segments[si].lengthMM) / maxW);
+        detailLines.push(spacingText(run.segments[si], flatStart + si, `S${si + 1}`));
       }
       line = `Run ${nbIdx + 1}  ·  ${segs} ${segs === 1 ? "seg" : "segs"}  ·  ${panels} ${panels === 1 ? "panel" : "panels"}  ·  ${corners} ${corners === 1 ? "corner" : "corners"}`;
     } else {
@@ -877,26 +971,33 @@ export function initCanvasEngine(
         const maxW = segmentPanelWidths[i] ?? 0;
         if (maxW > 0)
           totalPanels += Math.ceil(Math.round(allSegs[i].seg.lengthMM) / maxW);
+        if (i < 3) detailLines.push(spacingText(allSegs[i].seg, i, `S${i + 1}`));
       }
       line = `${nbRuns.length} ${nbRuns.length === 1 ? "run" : "runs"}  ·  ${totalSegs} ${totalSegs === 1 ? "seg" : "segs"}  ·  ${totalPanels} ${totalPanels === 1 ? "panel" : "panels"}  ·  ${totalCorners} ${totalCorners === 1 ? "corner" : "corners"}`;
+      if (allSegs.length > 3) {
+        detailLines.push(`+ ${allSegs.length - 3} more segment${allSegs.length - 3 === 1 ? "" : "s"}`);
+      }
     }
 
+    const lines = [line, ...detailLines];
     const pad = 8;
     const fs = 12;
     const x = 10;
     const y = 10;
     ctx.save();
     ctx.font = `${fs}px sans-serif`;
-    const w = ctx.measureText(line).width + pad * 2;
-    const h = fs + pad * 2;
+    const w = Math.max(...lines.map((text) => ctx.measureText(text).width)) + pad * 2;
+    const h = lines.length * (fs + 3) + pad * 2;
     ctx.fillStyle = "rgba(26,29,46,0.85)";
     ctx.beginPath();
     ctx.roundRect(x, y, w, h, 4);
     ctx.fill();
-    ctx.fillStyle = "#e5e7eb";
     ctx.textAlign = "left";
-    ctx.textBaseline = "middle";
-    ctx.fillText(line, x + pad, y + h / 2);
+    ctx.textBaseline = "top";
+    lines.forEach((text, idx) => {
+      ctx.fillStyle = idx === 0 ? "#e5e7eb" : "#cbd5e1";
+      ctx.fillText(text, x + pad, y + pad + idx * (fs + 3));
+    });
     ctx.restore();
   }
 
@@ -1182,6 +1283,30 @@ export function initCanvasEngine(
     ctx.restore();
   }
 
+  function drawActiveEndpoint(pt: Point, label: string, ghost = false) {
+    const radius = ghost ? 8 / zoom : 10 / zoom;
+    const ring = ghost ? "rgba(245,158,11,0.35)" : "rgba(96,165,250,0.35)";
+    const stroke = ghost ? "#f59e0b" : COLOR.activePoint;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, radius * 1.8, 0, Math.PI * 2);
+    ctx.fillStyle = ring;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, radius, 0, Math.PI * 2);
+    ctx.fillStyle = ghost ? "rgba(245,158,11,0.18)" : COLOR.pointFill;
+    ctx.fill();
+    ctx.strokeStyle = stroke;
+    ctx.lineWidth = 2.5 / zoom;
+    ctx.stroke();
+    ctx.font = `bold ${Math.max(10, 12 / zoom)}px sans-serif`;
+    ctx.fillStyle = stroke;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(label, pt.x, pt.y - radius * 2.1);
+    ctx.restore();
+  }
+
   function drawGatePreview(seg: Segment, t: number) {
     const gp = lerp(seg.p1, seg.p2, t);
     const size = 10 / zoom;
@@ -1251,6 +1376,15 @@ export function initCanvasEngine(
     return -1;
   }
 
+  function isNearActiveLastPoint(screenPt: Point, thresholdPx = 34): boolean {
+    if (activeRunIdx < 0 || runs[activeRunIdx]?.finished) return false;
+    const run = runs[activeRunIdx];
+    if (!run || run.points.length < 2) return false;
+    const last = run.points[run.points.length - 1];
+    const lastScreen = canvasToScreen(last, pan, zoom);
+    return dist(screenPt, lastScreen) <= thresholdPx;
+  }
+
   function getAllGateMidpoints(): Array<{
     screenPt: Point;
     runIdx: number;
@@ -1303,7 +1437,7 @@ export function initCanvasEngine(
     // Skip the pop when called from keyboard (Enter/Escape) since no extra point was added.
     if (popExtra && run.points.length > 1) {
       run.points.pop();
-      run.segments = buildSegmentsFromPoints(run.points, scale);
+      rebuildSegmentsPreservingGates(run, scale);
       // The matching ADD_POINT was just pushed; remove it from the undo stack.
       if (undoStack[undoStack.length - 1]?.type === "ADD_POINT") {
         undoStack.pop();
@@ -1343,19 +1477,6 @@ export function initCanvasEngine(
 
     const canvasPt = eventToCanvas(e);
     let worldPt = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
-    const mouseSnapAngles = effectiveSnapAngles(shiftDown);
-    if (
-      (mouseSnapAngles.length > 0) &&
-      activeRunIdx >= 0 &&
-      runs[activeRunIdx] &&
-      !runs[activeRunIdx].finished &&
-      runs[activeRunIdx].points.length >= 2
-    ) {
-      const run = runs[activeRunIdx];
-      const junction = run.points[run.points.length - 1];
-      const prev = run.points[run.points.length - 2];
-      worldPt = snapToAllowedAngle(prev, junction, worldPt, mouseSnapAngles);
-    }
     const screenPtDown = eventToScreen(e);
 
     // ── Gate hit-test (all modes) ────────────────────────────────────────────
@@ -1379,7 +1500,20 @@ export function initCanvasEngine(
       }
     }
 
+    if (!editingLabel && (tool === "draw" || tool === "move")) {
+      const labelIdx = hitTestLabel(canvasPt);
+      if (labelIdx >= 0 && !(tool === "draw" && activeRunIdx >= 0)) {
+        startLabelEdit(labelIdx, screenPtDown);
+        return;
+      }
+    }
+
     if (tool === "draw") {
+      if (isNearActiveLastPoint(screenPtDown)) {
+        stopChain(false);
+        return;
+      }
+
       if (activeRunIdx === -1 || runs[activeRunIdx]?.finished) {
         // Check if click is on the end-point of a finished run — resume it
         let resumedIdx = -1;
@@ -1418,8 +1552,9 @@ export function initCanvasEngine(
       } else {
         // Append point to the current run (multi-point polyline)
         const run = runs[activeRunIdx];
+        worldPt = snapDrawingPoint(canvasPt);
         run.points.push(worldPt);
-        run.segments = buildSegmentsFromPoints(run.points, scale);
+        rebuildSegmentsPreservingGates(run, scale);
         notifyChange();
         undoStack.push({ type: "ADD_POINT", runIdx: activeRunIdx });
       }
@@ -1441,8 +1576,9 @@ export function initCanvasEngine(
       } else {
         const run = runs[activeRunIdx];
         const prevRunIdx = activeRunIdx;
+        worldPt = snapDrawingPoint(canvasPt);
         run.points.push(worldPt);
-        run.segments = buildSegmentsFromPoints(run.points, scale);
+        rebuildSegmentsPreservingGates(run, scale);
         run.finished = true;
         notifyChange();
         const newRun: Run = {
@@ -1468,7 +1604,12 @@ export function initCanvasEngine(
         const proj = closestPointOnSegment(canvasPt, info.seg);
         const gateIdx = info.seg.gates.length;
         undoStack.push({ type: "ADD_GATE", segIdx: flatIdx, gateIdx });
-        info.seg.gates.push({ t: proj.t, widthMM: DEFAULT_GATE_WIDTH_MM });
+        const gt = clampGateCenterT(
+          proj.t,
+          DEFAULT_GATE_WIDTH_MM,
+          info.seg.lengthMM,
+        );
+        info.seg.gates.push({ t: gt, widthMM: DEFAULT_GATE_WIDTH_MM });
         notifyChange();
         scheduleRedraw();
         config.onGatePlaced?.(flatIdx, gateIdx, DEFAULT_GATE_WIDTH_MM);
@@ -1521,7 +1662,7 @@ export function initCanvasEngine(
       const snapped = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
       const run = runs[draggingNode.runIdx];
       run.points[draggingNode.ptIdx] = snapped;
-      run.segments = buildSegmentsFromPoints(run.points, scale);
+      rebuildSegmentsPreservingGates(run, scale);
       scheduleRedraw();
       return;
     }
@@ -1537,7 +1678,8 @@ export function initCanvasEngine(
           const t =
             ((canvasPt.x - seg.p1.x) * dx + (canvasPt.y - seg.p1.y) * dy) /
             len2;
-          seg.gates[draggingGate.gateIdx].t = Math.max(0.05, Math.min(0.95, t));
+          const gate = seg.gates[draggingGate.gateIdx];
+          gate.t = clampGateCenterT(t, gate.widthMM, seg.lengthMM);
         }
         scheduleRedraw();
       }
@@ -1638,17 +1780,26 @@ export function initCanvasEngine(
   }
 
   function onDblClick(e: MouseEvent) {
+    if (editingLabel) return;
+
     if (tool === "draw" && activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
-      // Stop the chain: discard the pending single-point run started by the first
-      // click of this double-click, and undo the CHAIN_POINT so the previous
-      // finished run is properly un-finished and trimmed.
-      stopChain();
+      const screenPt = eventToScreen(e);
+      stopChain(!isNearActiveLastPoint(screenPt));
       scheduleRedraw();
       return;
     }
 
-    // Scale calibration: double-click on an existing segment to set its real-world length
     const canvasPt = eventToCanvas(e);
+    const labelIdx = hitTestLabel(canvasPt);
+    if (labelIdx >= 0) {
+      startLabelEdit(labelIdx, eventToScreen(e));
+      return;
+    }
+
+    // Scale calibration is intentionally behind Alt+double-click so normal
+    // double-clicking a length label can never resize the whole drawing scale.
+    if (!e.altKey) return;
+
     const flatIdx = hitTestSegments(canvasPt, 12);
     if (flatIdx >= 0) {
       const allSegs = allSegmentsFlat();
@@ -1670,7 +1821,7 @@ export function initCanvasEngine(
       scale = enteredMM / segLengthWorld;
       // Recalculate all segment lengths with new scale
       for (const r of runs) {
-        r.segments = buildSegmentsFromPoints(r.points, scale);
+        rebuildSegmentsPreservingGates(r, scale);
       }
       notifyChange();
       scheduleRedraw();
@@ -1747,8 +1898,7 @@ export function initCanvasEngine(
         const num = parseFloat(val.replace(",", "."));
         if (!isNaN(num) && num > 0) {
           // Determine unit: if the number looks like metres (≤ 30), convert to mm
-          info.seg.lengthMM = num < 30 ? num * 1000 : num;
-          notifyChange();
+          setSegmentLength(flatIdx, num < 30 ? num * 1000 : num);
         }
         scheduleRedraw();
       },
@@ -1775,12 +1925,13 @@ export function initCanvasEngine(
         const run = runs[action.runIdx];
         if (run && run.points.length > 1) {
           run.points.pop();
-          run.segments = buildSegmentsFromPoints(run.points, scale);
+          rebuildSegmentsPreservingGates(run, scale);
         } else if (run) {
           runs.splice(action.runIdx, 1);
           undoStack.pop(); // also remove the ADD_RUN
           activeRunIdx = -1;
         }
+        if (run) rebuildSegmentsPreservingGates(run, scale);
         break;
       }
       case "CHAIN_POINT": {
@@ -1792,7 +1943,7 @@ export function initCanvasEngine(
           prevRun.finished = false;
           if (prevRun.points.length > 1) {
             prevRun.points.pop();
-            prevRun.segments = buildSegmentsFromPoints(prevRun.points, scale);
+            rebuildSegmentsPreservingGates(prevRun, scale);
           }
         }
         activeRunIdx = action.prevRunIdx;
@@ -1933,7 +2084,7 @@ export function initCanvasEngine(
     scale = pxPerMetre;
     // Recalculate all segment lengths
     for (const run of runs) {
-      run.segments = buildSegmentsFromPoints(run.points, scale);
+      rebuildSegmentsPreservingGates(run, scale);
     }
     notifyChange();
     scheduleRedraw();

@@ -17,6 +17,10 @@
       "metadata": {
         "product_family": "gate",
         "default_layout_type": "single_gate",
+        "target_height_ui": {
+          "mode": "pitch_ladder",
+          "pitch_var_keys": ["slat_size_mm", "slat_gap_mm"]
+        },
         "options": {
           "slat_size": [
             "65"

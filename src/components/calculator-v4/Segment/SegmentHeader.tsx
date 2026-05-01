@@ -6,12 +6,14 @@ import {
   ChevronRight,
   Copy,
   DoorOpen,
+  Pen,
+  PenOff,
   Trash2,
 } from "lucide-react";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import type { SegmentDiagnostic } from "../../../types/bom.types";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
-import { AchievedHeightBadge } from "../../calculator-v3/AchievedHeightBadge";
+import { useSegmentHeightOptions } from "../../../hooks/useSegmentHeightOptions";
 import { InlineEdit } from "./InlineEdit";
 import { cn } from "../../../lib";
 
@@ -26,12 +28,10 @@ interface Props {
   onHeightChange: (heightMm: number) => void;
   onDuplicate: () => void;
   onRemove: () => void;
+  mergedVars: Record<string, string | number | boolean>;
+  productCode: string | null;
 }
 
-/**
- * Collapsed segment row: chevron, drag handle, #, inline-editable length & height,
- * panel count, gate badge if applicable, duplicate / remove icons.
- */
 export function SegmentHeader({
   runId,
   seg,
@@ -42,10 +42,28 @@ export function SegmentHeader({
   onHeightChange,
   onDuplicate,
   onRemove,
+  mergedVars,
+  productCode,
 }: Props) {
-  const { state } = useCalculatorV4();
+  const { state, dispatch } = useCalculatorV4();
   const lengthM = (seg.segmentWidthMm ?? 0) / 1000;
   const isGate = seg.kind === "gate";
+  const locked = seg.confirmed === true;
+
+  const { freeform, freeformBounds, optionsMm: heightOptionsMm, clampFreeform } =
+    useSegmentHeightOptions(productCode, mergedVars, seg.targetHeightMm);
+
+  const heightSelectValue = String(
+    seg.targetHeightMm ??
+      heightOptionsMm[0] ??
+      freeformBounds?.minMm ??
+      1800,
+  );
+
+  const freeformValue =
+    seg.targetHeightMm ??
+    freeformBounds?.minMm ??
+    300;
 
   const diagnostics = useMemo(
     () =>
@@ -61,14 +79,18 @@ export function SegmentHeader({
   const hasDiagWarn =
     !hasDiagError && diagnostics.some((d) => d.severity === "warning");
 
-  const computedRoot = state.bomResult?.computed as
-    | Record<string, Record<string, unknown>>
-    | undefined;
-
   const textStyle = cn("text-blue-500 hover:text-blue-600", {
     "text-blue-500": seg.kind === "fence",
     "text-amber-500": seg.kind === "gate",
   });
+
+  function setConfirmed(checked: boolean) {
+    dispatch({
+      type: "UPSERT_SEGMENT",
+      runId,
+      segment: { ...seg, confirmed: checked },
+    });
+  }
 
   return (
     <div
@@ -76,7 +98,6 @@ export function SegmentHeader({
       onClick={() => onToggle()}
     >
       <button
-        onClick={onToggle}
         className={textStyle}
         aria-label={open ? "Collapse segment" : "Expand segment"}
       >
@@ -88,10 +109,27 @@ export function SegmentHeader({
           "font-mono text-xs font-semibold w-6 cursor-pointer",
           textStyle,
         )}
-        onClick={onToggle}
       >
         S{index}
       </span>
+
+      <label
+        className="flex items-center gap-1.5 shrink-0 cursor-pointer"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <input
+          type="checkbox"
+          checked={locked}
+          onChange={(e) => setConfirmed(e.target.checked)}
+          className="rounded border-brand-border"
+          aria-label="Segment confirmed"
+          data-testid={`v4-seg-confirmed-${seg.segmentId}`}
+        />
+
+        <span className="text-[10px] text-brand-muted whitespace-nowrap">
+          {locked ? <PenOff size={10} /> : <Pen size={10} />}
+        </span>
+      </label>
 
       <InlineEdit
         label="Length"
@@ -100,15 +138,53 @@ export function SegmentHeader({
         displayValue={lengthM.toFixed(2)}
         onCommit={(v) => onLengthChange(v * 1000)}
         className={textStyle}
+        disabled={locked}
       />
       <span className={cn("text-brand-border", textStyle)}>·</span>
-      <InlineEdit
-        label="Height"
-        value={seg.targetHeightMm ?? 0}
-        suffix="mm"
-        onCommit={onHeightChange}
-        className={textStyle}
-      />
+      <span
+        className="inline-flex items-center gap-0.5"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <span
+          className={cn("text-xs text-brand-accent font-medium", textStyle)}
+        >
+          Height
+        </span>
+        {freeform && freeformBounds ? (
+          <input
+            type="number"
+            min={freeformBounds.minMm}
+            max={freeformBounds.maxMm}
+            step={1}
+            value={freeformValue}
+            onChange={(e) =>
+              onHeightChange(clampFreeform(Number(e.target.value)))
+            }
+            disabled={locked}
+            className={cn(
+              "font-mono text-sm tabular-nums rounded border border-brand-border bg-brand-card px-1 py-0.5 max-w-[5.5rem] w-[5rem]",
+              textStyle,
+            )}
+          />
+        ) : (
+          <select
+            value={heightSelectValue}
+            onChange={(e) => onHeightChange(Number(e.target.value))}
+            disabled={locked}
+            className={cn(
+              "font-mono text-sm tabular-nums rounded border border-brand-border bg-brand-card px-1 py-0.5 max-w-[5.5rem]",
+              textStyle,
+            )}
+          >
+            {heightOptionsMm.map((h) => (
+              <option key={h} value={h}>
+                {h}
+              </option>
+            ))}
+          </select>
+        )}
+        <span className={cn("text-xs font-mono", textStyle)}>mm</span>
+      </span>
 
       {isGate && (
         <>
@@ -117,15 +193,6 @@ export function SegmentHeader({
             <DoorOpen size={10} /> Gate
           </span>
         </>
-      )}
-
-      {!isGate && !!computedRoot && (
-        <AchievedHeightBadge
-          computed={computedRoot}
-          runId={runId}
-          segmentId={seg.segmentId}
-          targetHeightMm={seg.targetHeightMm}
-        />
       )}
 
       <div
@@ -162,7 +229,7 @@ export function SegmentHeader({
         )}
       </div>
 
-      <div className="flex-1" onClick={onToggle} />
+      <div className="flex-1" />
 
       <button
         onClick={(e) => {
@@ -170,8 +237,9 @@ export function SegmentHeader({
           onDuplicate();
         }}
         title="Duplicate segment"
+        disabled={locked}
         className={cn(
-          "p-1.5 text-brand-muted hover:text-brand-accent hover:bg-brand-accent/10 rounded",
+          "p-1.5 text-brand-muted hover:text-brand-accent hover:bg-brand-accent/10 rounded disabled:opacity-40 disabled:pointer-events-none",
           textStyle,
         )}
       >

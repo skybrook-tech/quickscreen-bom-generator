@@ -10,6 +10,8 @@ interface Props {
   runId: string;
   seg: CanonicalSegment;
   side: "left" | "right";
+  /** When true, termination controls are disabled (segment confirmed). */
+  locked?: boolean;
 }
 
 const KIND = {
@@ -23,7 +25,12 @@ const KIND = {
  * v4 termination control. Same logic as v3 TerminationControl but restyled
  * to match v4 design (compact form fields, lighter borders, inline labels).
  */
-export function TerminationControl({ runId, seg, side }: Props) {
+export function TerminationControl({
+  runId,
+  seg,
+  side,
+  locked = false,
+}: Props) {
   const { dispatch } = useCalculatorV4();
   const { data: products } = useProducts();
 
@@ -92,6 +99,7 @@ export function TerminationControl({ runId, seg, side }: Props) {
       <select
         value={kindValue}
         onChange={(e) => handleKindChange(e.target.value)}
+        disabled={locked}
         className={selectClass}
       >
         <option value={KIND.SYSTEM}>Standard post</option>
@@ -112,6 +120,7 @@ export function TerminationControl({ runId, seg, side }: Props) {
                   angleDeg: sign * Number(e.target.value),
                 })
               }
+              disabled={locked}
               className={selectClass}
             >
               {allowedAngles.map((a) => (
@@ -131,6 +140,7 @@ export function TerminationControl({ runId, seg, side }: Props) {
                   angleDeg: (e.target.value === "right" ? 1 : -1) * mag,
                 })
               }
+              disabled={locked}
               className={selectClass}
             >
               <option value="right">Right turn</option>

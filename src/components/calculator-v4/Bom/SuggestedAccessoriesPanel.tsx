@@ -1,14 +1,8 @@
 import { ChevronDown, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
-
-interface Suggestion {
-  sku: string;
-  name: string;
-  desc: string;
-  qty: number;
-  unitPrice: number;
-}
+import { buildAccessorySuggestions } from "../../../lib/suggestedAccessories";
+import type { BOMLineItem } from "../../../types/bom.types";
 
 const fmt = (n: number) =>
   new Intl.NumberFormat("en-AU", {
@@ -16,60 +10,6 @@ const fmt = (n: number) =>
     currency: "AUD",
     minimumFractionDigits: 2,
   }).format(n);
-
-/**
- * v1 hardcoded suggested accessories derived from the current job state.
- *
- * TODO v4.2: move to engine response (`suggestions[]` field).
- * The migration path: extend `product_companion_rules` with a `suggested:boolean`
- * column, or introduce a new `product_suggestions` table; let the engine produce
- * suggestions in the same way it produces companions today, and replace this
- * hardcoded set with a read of `bomResult.suggestions`.
- */
-function buildSuggestions(
-  vars: Record<string, string | number | boolean>,
-  hasResult: boolean,
-): Suggestion[] {
-  if (!hasResult) return [];
-  const list: Suggestion[] = [];
-  const colour = String(vars.colour_code ?? "black-satin");
-
-  if (vars.mounting_type === "concreted-in-ground") {
-    list.push({
-      sku: "RAPIDSET-20KG",
-      name: "Rapid-set concrete bag (20kg)",
-      desc: "Recommended for concreted-in-ground posts.",
-      qty: 4,
-      unitPrice: 12.5,
-    });
-  }
-
-  list.push({
-    sku: "XP-6000-FP",
-    name: "Full-length post stock (6000mm)",
-    desc: "Spare 6m post in case of cuts/oversize runs.",
-    qty: 1,
-    unitPrice: 89.0,
-  });
-
-  list.push({
-    sku: `XP-TOUCHUP-${colour.slice(0, 2).toUpperCase()}`,
-    name: `Touch-up spray can — ${colour}`,
-    desc: "Colour-matched aerosol for site touch-ups.",
-    qty: 1,
-    unitPrice: 18.5,
-  });
-
-  list.push({
-    sku: "QS-CSR-KIT",
-    name: "Centre support rail kit",
-    desc: "Recommended for panels approaching max width.",
-    qty: 1,
-    unitPrice: 65.0,
-  });
-
-  return list;
-}
 
 interface Props {
   /** Called after a suggestion is added — e.g. scroll BOM table to show the new line. */
@@ -80,18 +20,12 @@ export function SuggestedAccessoriesPanel({ onAddedSuggestion }: Props) {
   const { state, dispatch } = useCalculatorV4();
   const [expanded, setExpanded] = useState(true);
 
-  const variables = useMemo(
-    () => ({
-      ...(state.payload?.variables ?? {}),
-      ...(state.payload?.runs[0]?.variables ?? {}),
-    }),
-    [state.payload],
-  );
-
   const visible = useMemo(() => {
-    const all = buildSuggestions(variables, !!state.bomResult);
+    if (!state.payload || !state.bomResult) return [];
+    const lines = (state.bomResult.lines as BOMLineItem[]) ?? [];
+    const all = buildAccessorySuggestions(state.payload, lines);
     return all.filter((s) => !state.dismissedSuggestionSkus.has(s.sku));
-  }, [variables, state.bomResult, state.dismissedSuggestionSkus]);
+  }, [state.payload, state.bomResult, state.dismissedSuggestionSkus]);
 
   if (!state.bomResult || visible.length === 0) return null;
 

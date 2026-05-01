@@ -9,6 +9,7 @@ interface NumberInputProps {
   className?: string;
   label?: string;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  disabled?: boolean;
 }
 
 const NumberInput = ({
@@ -20,6 +21,7 @@ const NumberInput = ({
   className,
   label,
   onBlur,
+  disabled,
 }: NumberInputProps) => {
   return (
     <label className="flex flex-col gap-1">
@@ -33,6 +35,7 @@ const NumberInput = ({
         onChange={(e) => onChange(Number((e.target as HTMLInputElement).value))}
         className={className}
         onBlur={onBlur}
+        disabled={disabled}
       />
     </label>
   );

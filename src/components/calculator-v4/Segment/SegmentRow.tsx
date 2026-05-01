@@ -1,6 +1,13 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
+import { useProducts } from "../../../hooks/useProducts";
 import type { CanonicalSegment } from "../../../types/canonical.types";
+import {
+  buildPitchLadderHeightOptions,
+  isFreeformHeightUi,
+  parseTargetHeightUi,
+  snapHeightToClosestPitchOption,
+} from "../../../lib/targetHeightOptions";
 import { SegmentDetails } from "./SegmentDetails";
 import { SegmentHeader } from "./SegmentHeader";
 import { cn } from "../../../lib";
@@ -12,8 +19,50 @@ interface Props {
 }
 
 export function SegmentRow({ runId, seg, index }: Props) {
-  const { dispatch } = useCalculatorV4();
+  const { dispatch, state } = useCalculatorV4();
   const [open, setOpen] = useState(false);
+  const { data: products = [] } = useProducts();
+
+  const run = state.payload?.runs.find((r) => r.runId === runId);
+  const productCode = run?.productCode ?? state.payload?.productCode ?? null;
+
+  const mergedVars = useMemo(() => {
+    return {
+      ...(state.payload?.variables ?? {}),
+      ...(run?.variables ?? {}),
+      ...(seg.variables ?? {}),
+    };
+  }, [state.payload?.variables, run?.variables, seg.variables]);
+
+  const heightMeta = useMemo(
+    () =>
+      parseTargetHeightUi(
+        products.find((p) => p.system_type === productCode)?.metadata,
+      ),
+    [products, productCode],
+  );
+
+  const pitchLadderOptions = useMemo(() => {
+    if (isFreeformHeightUi(heightMeta)) return [];
+    return buildPitchLadderHeightOptions(mergedVars, heightMeta);
+  }, [heightMeta, mergedVars]);
+
+  useEffect(() => {
+    if (isFreeformHeightUi(heightMeta) || pitchLadderOptions.length === 0)
+      return;
+
+    const cur = seg.targetHeightMm;
+    if (cur != null && pitchLadderOptions.includes(cur)) return;
+
+    const snapped = snapHeightToClosestPitchOption(cur, pitchLadderOptions);
+    if (snapped === null || snapped === cur) return;
+
+    dispatch({
+      type: "UPSERT_SEGMENT",
+      runId,
+      segment: { ...seg, targetHeightMm: snapped },
+    });
+  }, [dispatch, heightMeta, pitchLadderOptions, runId, seg]);
 
   return (
     <div
@@ -31,6 +80,8 @@ export function SegmentRow({ runId, seg, index }: Props) {
         seg={seg}
         index={index}
         open={open}
+        mergedVars={mergedVars}
+        productCode={productCode}
         onToggle={() => setOpen((o) => !o)}
         onLengthChange={(lengthMm) =>
           dispatch({
@@ -61,7 +112,13 @@ export function SegmentRow({ runId, seg, index }: Props) {
           })
         }
       />
-      {open && <SegmentDetails runId={runId} seg={seg} />}
+      {open && (
+        <SegmentDetails
+          runId={runId}
+          seg={seg}
+          locked={seg.confirmed === true}
+        />
+      )}
     </div>
   );
 }

@@ -33,6 +33,10 @@
           },
           "accessory_colour": "TR",
           "accessory_colour_note": "All post accessories (base plates, dress rings, top plates, domical covers) are Terrain (TR) only"
+        },
+        "target_height_ui": {
+          "mode": "pitch_ladder",
+          "pitch_var_keys": ["slat_size_mm", "slat_gap_mm"]
         }
       }
     }

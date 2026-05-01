@@ -105,10 +105,39 @@ export function BomPanel({
     return "Whole job";
   }, [activeTab, view.runResults]);
 
+  const headerSummary = useMemo(() => {
+    const payload = state.payload;
+    if (!payload) {
+      return { primary: "No job loaded", secondary: undefined as string | undefined };
+    }
+    const runs = payload.runs.length;
+    const segments = payload.runs.reduce((n, r) => n + r.segments.length, 0);
+    const primary = `${runs} ${runs === 1 ? "run" : "runs"} · ${segments} segment${segments === 1 ? "" : "s"}`;
+
+    if (!view.hasResult || view.runResults.length === 0) {
+      return { primary, secondary: undefined as string | undefined };
+    }
+
+    const money = new Intl.NumberFormat("en-AU", {
+      style: "currency",
+      currency: "AUD",
+      minimumFractionDigits: 2,
+    });
+    const parts = view.runResults.map((r, i) => {
+      const sub = r.items.reduce((s, l) => s + l.lineTotal, 0);
+      return `Run ${i + 1} ${money.format(sub)}`;
+    });
+    const secondary =
+      parts.length <= 4 ? parts.join(" · ") : `${parts.slice(0, 3).join(" · ")} · +${parts.length - 3} more`;
+
+    return { primary, secondary };
+  }, [state.payload, view.hasResult, view.runResults]);
+
   return (
     <div className="rounded-xl border border-brand-border bg-brand-card overflow-hidden flex flex-col h-full shadow-sm">
       <BomHeader
-        pricingTier={view.pricingTier}
+        summaryPrimary={headerSummary.primary}
+        summarySecondary={headerSummary.secondary}
         grandTotal={scopedTotals.grandTotal}
         totalsScopeLabel={
           activeTab === "all" ? undefined : totalsScopeLabel

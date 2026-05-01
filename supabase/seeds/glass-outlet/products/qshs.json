@@ -37,6 +37,10 @@
             "PB",
             "S"
           ]
+        },
+        "target_height_ui": {
+          "mode": "pitch_ladder",
+          "pitch_var_keys": ["slat_size_mm", "slat_gap_mm"]
         }
       }
     }

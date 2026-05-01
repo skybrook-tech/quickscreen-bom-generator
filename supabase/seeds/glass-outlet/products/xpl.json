@@ -43,7 +43,11 @@
           "90"
         ],
         "slat_insertion_depth_1W_2W_mm": 24,
-        "slat_insertion_depth_90_mm": 15
+        "slat_insertion_depth_90_mm": 15,
+        "target_height_ui": {
+          "mode": "pitch_ladder",
+          "pitch_var_keys": ["slat_size_mm", "slat_gap_mm"]
+        }
       }
     }
   ],

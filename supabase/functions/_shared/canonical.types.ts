@@ -42,6 +42,7 @@ export interface CanonicalSegment {
   productCode: string;
   segmentWidthMm?: number;
   targetHeightMm?: number;
+  confirmed?: boolean;
   leftTermination: SegmentTermination;
   rightTermination: SegmentTermination;
   variables?: Record<string, string | number | boolean>;

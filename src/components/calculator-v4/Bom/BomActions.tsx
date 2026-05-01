@@ -33,6 +33,14 @@ export function BomActions({
 
   return (
     <div className="px-4 py-1 border-b border-brand-border bg-brand-card flex items-center gap-2 flex-shrink-0">
+      {view.hasResult ? (
+        <span
+          className="text-[10px] text-brand-muted capitalize shrink-0"
+          title="Pricing tier"
+        >
+          {view.pricingTier.replace("tier", "T")}
+        </span>
+      ) : null}
       <button
         onClick={onGenerate}
         disabled={!canGenerate || isPending}

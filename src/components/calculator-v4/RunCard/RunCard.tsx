@@ -40,19 +40,38 @@ export function RunCard({ run, index, onAddGate }: Props) {
   const runProductCode = run.productCode ?? "—";
 
   function handleAddSegment() {
+    const sorted = [...run.segments].sort((a, b) => a.sortOrder - b.sortOrder);
+    const prevFence = [...sorted].reverse().find((s) => s.kind === "fence");
+    const prev = prevFence ?? sorted[sorted.length - 1];
     const sortOrder = run.segments.length;
-    const newSeg: CanonicalSegment = {
-      segmentId: crypto.randomUUID(),
-      sortOrder,
-      kind: "fence",
-      productCode: runProductCode,
-      segmentWidthMm: 3000,
-      targetHeightMm: Number(effectiveVars["target_height_mm"] ?? 1800),
-      leftTermination: { kind: "system" },
-      rightTermination: { kind: "system" },
-    };
 
-    dispatch({ type: "UPSERT_SEGMENT", runId: run.runId, segment: newSeg });
+    const base: CanonicalSegment = prev
+      ? {
+          segmentId: crypto.randomUUID(),
+          sortOrder,
+          kind: "fence",
+          productCode: runProductCode,
+          segmentWidthMm: 3000,
+          targetHeightMm:
+            prev.targetHeightMm ?? Number(effectiveVars["target_height_mm"] ?? 1800),
+          leftTermination: structuredClone(prev.leftTermination),
+          rightTermination: structuredClone(prev.rightTermination),
+          variables: prev.variables ? { ...prev.variables } : undefined,
+          confirmed: false,
+        }
+      : {
+          segmentId: crypto.randomUUID(),
+          sortOrder,
+          kind: "fence",
+          productCode: runProductCode,
+          segmentWidthMm: 3000,
+          targetHeightMm: Number(effectiveVars["target_height_mm"] ?? 1800),
+          leftTermination: { kind: "system" },
+          rightTermination: { kind: "system" },
+          confirmed: false,
+        };
+
+    dispatch({ type: "UPSERT_SEGMENT", runId: run.runId, segment: base });
   }
 
   return (

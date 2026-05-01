@@ -38,6 +38,9 @@
             "S"
           ]
         },
+        "target_height_ui": {
+          "mode": "freeform_mm"
+        },
         "notes": "VS slats (XP-6100-S65, QS-6100-S90), side frames (QS-5800-SF), CFC covers (QS-5800-CFC), F-sections (QS-5800-F), QS-SFC-B caps, and all post components are seeded in qshs.json with system_types including 'VS'. vs.json seeds only QS-5000-HORIZ (VS-unique U-channel)."
       }
     }

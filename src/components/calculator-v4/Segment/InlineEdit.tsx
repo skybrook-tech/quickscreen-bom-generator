@@ -10,6 +10,8 @@ interface InlineEditProps {
   displayValue?: string;
   min?: number;
   className?: string;
+  /** When true, row is display-only (segment confirmed). */
+  disabled?: boolean;
 }
 
 export function InlineEdit({
@@ -20,12 +22,14 @@ export function InlineEdit({
   displayValue,
   min = 0,
   className,
+  disabled = false,
 }: InlineEditProps) {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const start = (e: React.MouseEvent) => {
+    if (disabled) return;
     e.stopPropagation();
     setDraft(String(value));
     setEditing(true);
@@ -40,13 +44,34 @@ export function InlineEdit({
 
   const cancel = () => setEditing(false);
 
+  if (disabled) {
+    return (
+      <span
+        className={cn("inline-flex items-center gap-0.5 opacity-60 pointer-events-none", className)}
+      >
+        <span className={cn("text-xs text-brand-accent font-medium mr-1", className)}>
+          {label}
+        </span>
+        <span className={cn("font-mono text-sm tabular-nums", className)}>
+          {displayValue ?? value}
+        </span>
+        <span className={cn("text-xs font-mono", className)}>{suffix}</span>
+      </span>
+    );
+  }
+
   if (editing) {
     return (
       <span
         className="inline-flex items-center gap-0.5"
         onClick={(e) => e.stopPropagation()}
       >
-        <span className="text-xs text-brand-accent font-medium mr-1">
+        <span
+          className={cn(
+            "text-xs text-brand-accent font-medium mr-1",
+            className,
+          )}
+        >
           {label}
         </span>
         <input
@@ -81,7 +106,9 @@ export function InlineEdit({
       title={`Click to edit ${label}`}
       className="group/inline relative inline-flex items-center gap-0.5 cursor-text rounded-lg px-1 -mx-1 hover:bg-brand-accent/10 transition-colors"
     >
-      <span className="text-xs text-brand-accent font-medium mr-1">
+      <span
+        className={cn("text-xs text-brand-accent font-medium mr-1", className)}
+      >
         {label}
       </span>
       <span

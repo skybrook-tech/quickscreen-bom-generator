@@ -24,6 +24,7 @@ export const canonicalSegmentSchema = z.object({
   productCode: z.string(),
   segmentWidthMm: z.number().positive().optional(),
   targetHeightMm: z.number().positive().optional(),
+  confirmed: z.boolean().optional(),
   leftTermination: segmentTerminationSchema,
   rightTermination: segmentTerminationSchema,
   variables: z

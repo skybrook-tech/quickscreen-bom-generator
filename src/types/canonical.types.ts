@@ -77,6 +77,8 @@ export interface CanonicalSegment {
   /** Total run length of this segment in mm. */
   segmentWidthMm?: number;
   targetHeightMm?: number;
+  /** When true, segment row/details treat inputs as read-only (v4 UX). */
+  confirmed?: boolean;
   leftTermination: SegmentTermination;
   rightTermination: SegmentTermination;
   /**

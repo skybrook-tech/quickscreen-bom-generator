@@ -28,7 +28,7 @@ export function RunSubHeader({
   const colourHex = COLOUR_HEX[colourCode];
 
   return (
-    <div className="border-b border-brand-border flex items-center min-h-[40px]">
+    <div className="flex items-center min-h-[40px]">
       <div className="flex-1 overflow-hidden">
         {!editing ? (
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2 text-xs text-neutral-500 font-mono tabular-nums">

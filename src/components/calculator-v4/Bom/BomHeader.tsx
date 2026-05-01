@@ -1,7 +1,10 @@
 import { Loader2, Sparkles } from "lucide-react";
 
 interface Props {
-  pricingTier: string;
+  /** Primary summary under title, e.g. run/segment counts */
+  summaryPrimary: string;
+  /** Optional second line: per-run subtotals when BOM exists */
+  summarySecondary?: string;
   grandTotal: number;
   /** Shown under “Grand total” when viewing a filtered tab (run / gates). */
   totalsScopeLabel?: string;
@@ -16,10 +19,11 @@ const fmt = (n: number) =>
   }).format(n);
 
 /**
- * Top of the BOM panel — title, live indicator, pricing tier, grand total.
+ * Top of the BOM panel — title, live indicator, job summary, grand total.
  */
 export function BomHeader({
-  pricingTier,
+  summaryPrimary,
+  summarySecondary,
   grandTotal,
   totalsScopeLabel,
   isPending,
@@ -44,9 +48,12 @@ export function BomHeader({
               </span>
             )}
           </div>
-          <p className="text-xs text-white/80 mt-0.5 capitalize">
-            Pricing tier: {pricingTier.replace("tier", "Tier ")}
-          </p>
+          <p className="text-xs text-white/80 mt-0.5">{summaryPrimary}</p>
+          {summarySecondary ? (
+            <p className="text-[11px] text-white/70 mt-0.5 truncate max-w-[min(100vw-8rem,28rem)]">
+              {summarySecondary}
+            </p>
+          ) : null}
         </div>
         <div className="text-right">
           <div className="text-[10px] uppercase tracking-wider text-white/70">
