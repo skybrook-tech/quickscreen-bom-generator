@@ -653,13 +653,15 @@ function calculateVerticalSlatRun(
     );
     const slatCutMm = Math.max(1, targetHeightMm);
     const railCutMm = Math.max(1, panelWidthMm);
+    const fSectionCutMm = Math.max(1, targetHeightMm);
     const slatsPerStock = Math.max(1, Math.floor(slatStockLengthMm / slatCutMm));
     const railsPerStock = Math.max(1, Math.floor(5000 / railCutMm));
     const railInsertsPerStock = Math.max(1, Math.floor(5800 / railCutMm));
+    const fSectionsPerStock = Math.max(1, Math.floor(5800 / fSectionCutMm));
     const slatStocks = Math.ceil((numVerticalSlats * numPanels) / slatsPerStock);
     const railStocks = Math.ceil((2 * numPanels) / railsPerStock);
     const railInsertStocks = Math.ceil((2 * numPanels) / railInsertsPerStock);
-    const fSectionStocks = Math.ceil((2 * numPanels) / railInsertsPerStock);
+    const fSectionStocks = Math.ceil((2 * numPanels) / fSectionsPerStock);
     const leftCornerDeg = cornerDegreesFromVars(segment.variables, "left");
     const rightCornerDeg = cornerDegreesFromVars(segment.variables, "right");
     const screwPacks = Math.ceil(
@@ -673,6 +675,7 @@ function calculateVerticalSlatRun(
       panel_width_mm: Math.round(panelWidthMm),
       slat_cut_mm: Math.round(slatCutMm),
       rail_cut_mm: Math.round(railCutMm),
+      f_section_cut_mm: Math.round(fSectionCutMm),
       left_corner_degrees: leftCornerDeg,
       right_corner_degrees: rightCornerDeg,
     };
@@ -708,7 +711,7 @@ function calculateVerticalSlatRun(
       category: "f_section",
       quantity: fSectionStocks,
       unit: "length",
-      notes: `F-section accepts vertical U-channel, ${Math.round(railCutMm)}mm cuts from 5800mm stock`,
+      notes: `2 vertical side F-sections/panel, ${Math.round(fSectionCutMm)}mm cuts from 5800mm stock`,
     });
     emit(lines, {
       ...base,

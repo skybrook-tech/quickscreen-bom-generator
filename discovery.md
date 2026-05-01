@@ -991,6 +991,19 @@ Changes applied:
 - Segment removal now requires two clicks on the red X.
 - Local app responded with HTTP 200 at `http://127.0.0.1:5173/calculator`.
 
+### May 1, 2026 - VS F-section cut length correction
+
+Catalogue finding:
+- In the vertical slat assembly, the F section is the vertical side receiver for each panel, not a top/bottom rail.
+- Each vertical slat panel needs two F-section pieces: one on each side of the panel.
+- Those F-section pieces are cut to the fence/panel height, while the QuickScreen frame and U-channel rails are cut to panel length.
+
+Changes applied:
+- Corrected the local fallback vertical slat BOM so `QS-5800-F-*` stock is calculated from `targetHeightMm`.
+- Kept top/bottom U-channel and QuickScreen frame insert calculations tied to `panelWidthMm`.
+- Updated the F-section BOM note to say `2 vertical side F-sections/panel` with height-based cuts.
+- Confirmed the backend VS seed already uses `target_height_mm` for `fsec_stocks`, so no seed rule change was needed for this correction.
+
 ### May 1, 2026 - Segment confirmation and master reset controls
 
 User workflow finding:

@@ -194,6 +194,7 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
   - Frontend fallback BOM calculator.
   - Supports the current sandbox systems and enough logic to keep the calculator testable locally.
   - Uses local seed data and local price breaks.
+  - VS vertical slat fallback rule: slats and F sections are cut to fence height; each panel gets two height-cut side F sections, while the U-channel and QuickScreen frame inserts are cut to panel length.
   - This is not the long-term IP-protected source of truth; proven rules should move into backend seed data.
 
 - `src/lib/localSeedData.ts`
