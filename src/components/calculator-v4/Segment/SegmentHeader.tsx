@@ -189,7 +189,7 @@ export function SegmentHeader({
           className="flex items-center ml-auto gap-0.5 shrink-0"
           onClick={(e) => e.stopPropagation()}
         >
-          {!open && segmentMetrics && (
+          {segmentMetrics && (
             <div className="flex items-center w-full justify-end gap-2 mr-0.5">
               <div className="inline-flex flex-wrap items-center gap-x-2 gap-y-0.5">
                 <Tooltip content="Panel bays in this segment (from span width ÷ max panel width)">
