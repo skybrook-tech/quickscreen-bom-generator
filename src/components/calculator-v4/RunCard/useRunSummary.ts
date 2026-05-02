@@ -9,6 +9,7 @@ export interface RunSummary {
   panelCount: number;
   postCount: number;
   cornerCount: number;
+  gateCount: number;
 }
 
 /**
@@ -21,10 +22,7 @@ export function useRunSummary(
 ): RunSummary {
   return useMemo(() => {
     const segs = run.segments.filter((s) => s.kind === "fence");
-    const totalLengthMm = segs.reduce(
-      (s, x) => s + (x.segmentWidthMm ?? 0),
-      0,
-    );
+    const totalLengthMm = segs.reduce((s, x) => s + (x.segmentWidthMm ?? 0), 0);
     const totalLengthM = totalLengthMm / 1000;
 
     const maxHeightMm = segs.reduce(
@@ -55,6 +53,8 @@ export function useRunSummary(
     // Rough estimate: panels + 1 per fence segment for end-posts (engine wins).
     const postCount = panelCount + segs.length;
 
+    const gateCount = run.segments.filter((s) => s.kind === "gate").length;
+
     return {
       totalLengthM,
       maxHeightMm,
@@ -63,6 +63,7 @@ export function useRunSummary(
       panelCount,
       postCount,
       cornerCount,
+      gateCount,
     };
   }, [run, effectiveVars]);
 }
