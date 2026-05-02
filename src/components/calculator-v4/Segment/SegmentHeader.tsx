@@ -7,6 +7,7 @@ import {
   CornerDownRight,
   Copy,
   DoorOpen,
+  GitCompare,
   Trash2,
   RulerDimensionLine,
   StretchVertical,
@@ -15,7 +16,12 @@ import {
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import type { SegmentDiagnostic } from "../../../types/bom.types";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
+import { useProductVariables } from "../../../hooks/useProductVariables";
 import { useSegmentHeightOptions } from "../../../hooks/useSegmentHeightOptions";
+import {
+  computeSegmentRunSettingDeviations,
+  formatDeviationLine,
+} from "../../../lib/segmentRunDeviation";
 import { cn } from "../../../lib";
 import { CANVAS_GATE_STROKE } from "../../../lib/runLineColors";
 import { Tooltip } from "../../ui/Tooltip";
@@ -54,6 +60,45 @@ export function SegmentHeader({
   fenceAccentHex,
 }: Props) {
   const { state, dispatch } = useCalculatorV4();
+  const run = state.payload?.runs.find((r) => r.runId === runId);
+
+  const { data: jobFields = [] } = useProductVariables(productCode, "job");
+  const { data: runFields = [] } = useProductVariables(productCode, "run");
+  const { data: segmentFields = [] } = useProductVariables(
+    productCode,
+    "segment",
+  );
+
+  const variableLabelByKey = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const f of jobFields) m.set(f.field_key, f.label);
+    for (const f of runFields) m.set(f.field_key, f.label);
+    for (const f of segmentFields) m.set(f.field_key, f.label);
+    return m;
+  }, [jobFields, runFields, segmentFields]);
+
+  const runSettingDeviations = useMemo(
+    () =>
+      computeSegmentRunSettingDeviations(
+        state.payload?.productCode,
+        state.payload?.variables ?? {},
+        run,
+        seg,
+      ),
+    [state.payload?.productCode, state.payload?.variables, run, seg],
+  );
+
+  const runDeviationLines = useMemo(
+    () =>
+      runSettingDeviations.map((d) =>
+        formatDeviationLine(
+          d,
+          (k) => variableLabelByKey.get(k) ?? k.replace(/_/g, " "),
+        ),
+      ),
+    [runSettingDeviations, variableLabelByKey],
+  );
+
   const lengthM = (seg.segmentWidthMm ?? 0) / 1000;
   const isGate = seg.kind === "gate";
   const locked = seg.confirmed === true;
@@ -263,6 +308,38 @@ export function SegmentHeader({
               </span>
             </div>
           )}
+
+          {runDeviationLines.length > 0 && (
+            <Tooltip
+              content={
+                <div className="max-w-xs space-y-2 text-left">
+                  <p className="font-semibold text-xs text-brand-text">
+                    Different from run defaults
+                  </p>
+                  <ul className="list-disc pl-4 text-xs space-y-1 text-brand-text">
+                    {runDeviationLines.map((line, i) => (
+                      <li key={i}>{line}</li>
+                    ))}
+                  </ul>
+                </div>
+              }
+            >
+              <button
+                type="button"
+                onClick={(e) => e.stopPropagation()}
+                className={cn(
+                  "p-1 rounded-md shrink-0",
+                  locked
+                    ? "text-amber-200 hover:text-amber-100 hover:bg-white/10"
+                    : "text-amber-500 hover:text-amber-400 hover:bg-amber-500/10",
+                )}
+                aria-label="Segment settings differ from run defaults"
+              >
+                <GitCompare size={15} />
+              </button>
+            </Tooltip>
+          )}
+
           {hasDiagError && (
             <button
               type="button"
