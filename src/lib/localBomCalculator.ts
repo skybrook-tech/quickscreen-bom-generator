@@ -12,7 +12,7 @@ import {
   effectiveLegacyBoundaryType,
   type LegacyBoundaryType,
 } from "./segmentTermination";
-import { maxPanelWidthForSystem } from "./productOptionRules";
+import { clampPostSpacing, maxPanelWidthForSystem } from "./productOptionRules";
 
 type LocalBomResult = {
   lines: BOMLineItem[];
@@ -802,15 +802,9 @@ function calculateVerticalSlatRun(
   const finishFamily = String(mergedRunVars.finish_family ?? "standard");
   const economySlats = finishFamily === "economy";
   const slatStockLengthMm = economySlats ? 6500 : finishFamily === "alumawood" ? 5800 : 6100;
-  const maxPanelWidth = Math.min(
+  const maxPanelWidth = clampPostSpacing(
+    mergedRunVars.max_panel_width_mm,
     maxPanelWidthForSystem(run.productCode),
-    Math.max(
-      300,
-      toNumber(
-        mergedRunVars.max_panel_width_mm,
-        maxPanelWidthForSystem(run.productCode),
-      ),
-    ),
   );
   const mountingType = String(
     mergedRunVars.mounting_type ?? mergedRunVars.mounting_method ?? "in_ground",
@@ -832,10 +826,7 @@ function calculateVerticalSlatRun(
     );
     if (segmentWidthMm <= 0) continue;
 
-    const segmentMaxPanelWidth = Math.min(
-      maxPanelWidthForSystem(run.productCode),
-      Math.max(300, toNumber(vars.max_panel_width_mm, maxPanelWidth)),
-    );
+    const segmentMaxPanelWidth = clampPostSpacing(vars.max_panel_width_mm, maxPanelWidth);
     const numPanels = Math.max(1, Math.ceil(segmentWidthMm / segmentMaxPanelWidth));
     const panelWidthMm = segmentWidthMm / numPanels;
     internalPanelPosts += Math.max(0, numPanels - 1);
@@ -976,15 +967,9 @@ function calculateScreenRun(
   const finishFamily = String(mergedRunVars.finish_family ?? "standard");
   const economySlats = finishFamily === "economy";
   const slatStockLengthMm = economySlats ? 6500 : finishFamily === "alumawood" ? 5800 : 6100;
-  const maxPanelWidth = Math.min(
+  const maxPanelWidth = clampPostSpacing(
+    mergedRunVars.max_panel_width_mm,
     maxPanelWidthForSystem(run.productCode),
-    Math.max(
-      300,
-      toNumber(
-        mergedRunVars.max_panel_width_mm,
-        maxPanelWidthForSystem(run.productCode),
-      ),
-    ),
   );
   const mountingType = String(
     mergedRunVars.mounting_type ?? mergedRunVars.mounting_method ?? "in_ground",
@@ -1026,13 +1011,7 @@ function calculateScreenRun(
     const actualHeightMm = Math.round(
       numSlats * (slatDesignWidth + slatGap) - slatGap + 3,
     );
-    const segmentMaxPanelWidth = Math.min(
-      maxPanelWidthForSystem(run.productCode),
-      Math.max(
-        300,
-        toNumber(vars.max_panel_width_mm, maxPanelWidth),
-      ),
-    );
+    const segmentMaxPanelWidth = clampPostSpacing(vars.max_panel_width_mm, maxPanelWidth);
     const numPanels = Math.max(1, Math.ceil(segmentWidthMm / segmentMaxPanelWidth));
     const panelWidthMm = segmentWidthMm / numPanels;
     internalPanelPosts += Math.max(0, numPanels - 1);

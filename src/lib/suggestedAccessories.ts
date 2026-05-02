@@ -1,7 +1,7 @@
 import type { CanonicalPayload, CanonicalRun } from "../types/canonical.types";
 import type { BOMLineItem, ExtraItem } from "../types/bom.types";
 import { getComponent } from "./localSeedData";
-import { maxPanelWidthForSystem } from "./productOptionRules";
+import { clampPostSpacing, maxPanelWidthForSystem } from "./productOptionRules";
 
 type Variables = Record<string, string | number | boolean | undefined>;
 
@@ -32,19 +32,16 @@ const roundQty = (value: number) => Math.max(1, Math.ceil(value));
 
 function postCountForRun(run: CanonicalRun) {
   const runVars = run.variables ?? {};
-  const baseMaxPanelWidth = Math.min(
+  const baseMaxPanelWidth = clampPostSpacing(
+    runVars.max_panel_width_mm,
     maxPanelWidthForSystem(run.productCode),
-    Math.max(300, Number(runVars.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode))),
   );
   const internalPosts = run.segments
     .filter((segment) => segment.segmentKind !== "gate_opening")
     .reduce((sum, segment) => {
-      const maxPanelWidth = Math.min(
-        maxPanelWidthForSystem(run.productCode),
-        Math.max(
-          300,
-          Number(segment.variables?.max_panel_width_mm ?? baseMaxPanelWidth),
-        ),
+      const maxPanelWidth = clampPostSpacing(
+        segment.variables?.max_panel_width_mm,
+        baseMaxPanelWidth,
       );
       const panels = Math.max(
         1,
@@ -126,17 +123,17 @@ function csrPlateSku(vars: Variables) {
 }
 
 function fencePanelCounts(run: CanonicalRun, vars: Variables) {
-  const baseMaxPanelWidth = Math.min(
+  const baseMaxPanelWidth = clampPostSpacing(
+    vars.max_panel_width_mm,
     maxPanelWidthForSystem(run.productCode),
-    Math.max(300, Number(vars.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode))),
   );
 
   return run.segments
     .filter((segment) => segment.segmentKind !== "gate_opening")
     .map((segment) => {
-      const maxPanelWidth = Math.min(
-        maxPanelWidthForSystem(run.productCode),
-        Math.max(300, Number(segment.variables?.max_panel_width_mm ?? baseMaxPanelWidth)),
+      const maxPanelWidth = clampPostSpacing(
+        segment.variables?.max_panel_width_mm,
+        baseMaxPanelWidth,
       );
       const width = Number(segment.segmentWidthMm ?? 0);
       const panels = width > 0 ? Math.max(1, Math.ceil(width / maxPanelWidth)) : 0;

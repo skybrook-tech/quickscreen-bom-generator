@@ -1,6 +1,6 @@
 # QuickScreen BOM Generator - Living App Overview
 
-Last updated: 2026-05-01
+Last updated: 2026-05-02
 
 This file is the regular handoff overview for the app. Update it whenever a feature changes the app flow, calculator engine, seed model, canvas mapper, Supabase schema, or key file responsibilities.
 
@@ -98,13 +98,15 @@ Key shape:
   - Renders the compact row for a panel or gate-opening segment.
   - Handles length/height editing, segment confirmation, reset-to-master, removal, and expand/collapse.
   - For gates, checks whether the gate matches the run master height and horizontal/vertical build type.
-  - Closed fence segment rows show the order summary: segment length, height, system, colour, slat, gap, post type, mounting, post spacing, corner/end/total posts. Length and height edit controls live in the expanded options area. Remove uses a two-click red X confirmation.
+  - Closed fence segment rows show beginner-friendly titles such as `Run 1 Segment 1` and compact map labels such as `R1S1`.
+  - Closed fence segment rows show the order summary: segment length, height, system, colour, slat, gap, post type, mounting, max post spacing, corner/end/total posts. Length and height edit controls live in the expanded options area. Remove uses a two-click red X confirmation.
 
 ### Segment And Gate Details
 
 - `src/components/calculator-v3/FenceSegmentDetails.tsx`
   - Expanded fence segment controls.
   - Covers colour, post colour, slat size, gap, post size/system, mounting method, max post spacing, and related segment options.
+  - Max post spacing defaults to 2600mm and can be edited from 100mm to 3000mm. Values are clamped consistently in the UI, mapper preview, local fallback BOM, suggested accessories, and seed constraints.
 
 - `src/components/calculator-v3/GateSegmentDetails.tsx`
   - Expanded gate-opening controls.

@@ -22,7 +22,11 @@ import {
   isSwingGateMovement,
   optionLabel,
 } from "../../lib/gateOptionRules";
-import { heightOptionsForSystem, maxPanelWidthForSystem } from "../../lib/productOptionRules";
+import {
+  clampPostSpacing,
+  heightOptionsForSystem,
+  maxPanelWidthForSystem,
+} from "../../lib/productOptionRules";
 
 interface Props {
   runId: string;
@@ -58,8 +62,8 @@ const MOUNTING_LABELS: Record<string, string> = {
 
 const POST_SYSTEM_LABELS: Record<string, string> = {
   xpl: "XPress Plus post",
-  standard_50: "Standard Post 50mm",
-  standard_65: "Standard Post 65mm HD",
+  standard_50: "50mm Post Standard",
+  standard_65: "65mm Post Standard HD",
 };
 
 function colourLabel(code: unknown) {
@@ -75,7 +79,7 @@ function postLabel(productCode: string, variables: Record<string, unknown>) {
     return POST_SYSTEM_LABELS[postSystem] ?? "XPress Plus post";
   }
   const postSize = String(variables.post_size ?? "50");
-  return postSize === "65" ? "Standard Post 65mm HD" : "Standard Post 50mm";
+  return postSize === "65" ? "65mm Post Standard HD" : "50mm Post Standard";
 }
 
 function boolLabel(value: boolean) {
@@ -135,12 +139,12 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
       : Number(seg.targetHeightMm ?? segmentVariables.target_height_mm ?? 1800);
   const fenceColour = String(segmentVariables.colour_code ?? "B");
   const postColour = String(segmentVariables.post_colour_code ?? fenceColour);
-  const maxSpacing = Number(
+  const maxSpacing = clampPostSpacing(
     segmentVariables.max_panel_width_mm ?? maxPanelWidthForSystem(productCode),
+    maxPanelWidthForSystem(productCode),
   );
   const segmentLength = Number(seg.segmentWidthMm ?? 0);
-  const panelCount = segmentLength > 0 ? Math.max(1, Math.ceil(segmentLength / Math.max(300, maxSpacing))) : 0;
-  const postSpacing = panelCount > 0 ? Math.round(segmentLength / panelCount) : 0;
+  const panelCount = segmentLength > 0 ? Math.max(1, Math.ceil(segmentLength / maxSpacing)) : 0;
   const leftKind = String(segmentVariables[SEGMENT_TERMINATION_KEYS.leftKind] ?? "");
   const rightKind = String(segmentVariables[SEGMENT_TERMINATION_KEYS.rightKind] ?? "");
   const hasCornerPost =
@@ -174,7 +178,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
             MOUNTING_LABELS[String(segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground")] ??
             "Concreted",
         },
-        { label: "Post spacing", value: postSpacing > 0 ? `${postSpacing}mm` : "0mm" },
+        { label: "Max Post Spacing", value: `${maxSpacing}mm` },
         { label: "Corner post", value: boolLabel(hasCornerPost) },
         { label: "End post", value: endPostCount },
         { label: "Total post", value: totalPostCount },
@@ -204,6 +208,12 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
         .join(" - ")
     : "";
   const done = seg.variables?.segment_done === true;
+  const compactLabel =
+    displayLabel?.replace(/\s+/g, "") ??
+    `R${runIdx + 1}${gate ? "G" : "S"}${segIdx + 1}`;
+  const titleLabel = gate
+    ? `Run ${runIdx + 1} Gate ${segIdx + 1}`
+    : `Run ${runIdx + 1} Segment ${segIdx + 1}`;
   const matchesMaster = (() => {
     if (!run) return true;
     if (gate) {
@@ -349,30 +359,44 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     <div className={`relative overflow-hidden rounded-[0.9rem] text-sm font-semibold shadow-inner ${
       done ? "bg-blue-800/5" : "bg-brand-card"
     }`}>
-      <button
-        type="button"
-        onClick={matchesMaster ? undefined : resetToMaster}
-        disabled={matchesMaster}
-        className={`absolute right-3 top-3 rounded-full transition-colors ${
-          matchesMaster ? "text-emerald-500" : "text-brand-muted/35"
-        } ${matchesMaster ? "cursor-default" : "hover:text-emerald-600"}`}
-        title={matchesMaster ? "matching segment 1" : "Reset to match segment 1"}
-      >
-        <CheckCircle2 size={28} fill={matchesMaster ? "currentColor" : "none"} className={matchesMaster ? "text-emerald-500" : ""} />
-      </button>
-      <div className="grid gap-3 p-3">
-        <div className="flex flex-wrap items-center gap-2 pr-9">
-          <span className="shrink-0 text-xl font-extrabold leading-none tracking-normal text-blue-800">
-            {displayLabel ?? `R${runIdx + 1} S${segIdx + 1}`}
+      <div className="grid grid-cols-[2.4rem_minmax(0,1fr)] gap-3 p-3">
+        <div className="flex flex-col items-center gap-2 pt-1">
+          <button
+            type="button"
+            onClick={matchesMaster ? undefined : resetToMaster}
+            disabled={matchesMaster}
+            className={`rounded-full transition-colors ${
+              matchesMaster ? "text-emerald-500" : "text-brand-muted/35"
+            } ${matchesMaster ? "cursor-default" : "hover:text-emerald-600"}`}
+            title={matchesMaster ? "matching segment 1" : "Reset to match segment 1"}
+          >
+            <CheckCircle2
+              size={28}
+              fill={matchesMaster ? "currentColor" : "none"}
+              className={matchesMaster ? "text-emerald-500" : ""}
+            />
+          </button>
+          <span className="text-xl font-extrabold leading-none tracking-normal text-blue-800">
+            {compactLabel}
           </span>
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] leading-tight">
-              {summaryBits.map((item) => (
-                <SummaryBit key={item.label} label={item.label} value={item.value} />
-              ))}
-            </div>
-          </div>
-          <div className="ml-auto flex items-center gap-1">
+          <button
+            type="button"
+            onClick={toggleDone}
+            className={`h-3.5 w-3.5 rounded-full border transition-colors ${
+              done
+                ? "border-blue-900 bg-blue-900"
+                : "border-sky-300 bg-sky-200 hover:border-blue-800"
+            }`}
+            title={done ? "Segment confirmed" : "Mark segment confirmed"}
+            aria-label={done ? "Segment confirmed" : "Mark segment confirmed"}
+          />
+        </div>
+        <div className="min-w-0 space-y-3">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <span className="min-w-0 text-xl font-extrabold leading-tight tracking-normal text-blue-800">
+              {titleLabel}
+            </span>
+            <div className="flex items-center gap-1">
             <button
               type="button"
               onClick={onToggle}
@@ -391,17 +415,6 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
                 <Settings2 size={14} className={`transition-transform ${open ? "rotate-180" : ""}`} />
               )}
             </button>
-            <button
-              type="button"
-              onClick={toggleDone}
-              className={`h-3.5 w-3.5 rounded-full border transition-colors ${
-                done
-                  ? "border-blue-900 bg-blue-900"
-                  : "border-sky-300 bg-sky-200 hover:border-blue-800"
-              }`}
-              title={done ? "Segment confirmed" : "Mark segment confirmed"}
-              aria-label={done ? "Segment confirmed" : "Mark segment confirmed"}
-            />
             <button
               type="button"
               onClick={() => {
@@ -426,14 +439,20 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
             >
               <X size={18} strokeWidth={3} />
             </button>
+            </div>
           </div>
-        </div>
+          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] leading-tight">
+            {summaryBits.map((item) => (
+              <SummaryBit key={item.label} label={item.label} value={item.value} emphasis={item.emphasis} />
+            ))}
+          </div>
 
-        {gate && gateSummary ? (
-          <div className="rounded-xl border border-brand-border/50 bg-brand-bg/60 px-3 py-2 text-sm font-semibold leading-relaxed text-brand-muted">
-            {gateSummary}
-          </div>
-        ) : null}
+          {gate && gateSummary ? (
+            <div className="rounded-xl border border-brand-border/50 bg-brand-bg/60 px-3 py-2 text-sm font-semibold leading-relaxed text-brand-muted">
+              {gateSummary}
+            </div>
+          ) : null}
+        </div>
       </div>
 
       {open && (

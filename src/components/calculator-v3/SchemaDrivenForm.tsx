@@ -82,10 +82,10 @@ const ENUM_LABELS: Record<string, string> = {
   base_plate: "Base-plated to slab",
   core_drill: "Core-drilled into concrete",
   xpl: "XPress Plus post",
-  standard_50: "Standard Post 50mm",
-  standard_65: "Standard Post 65mm HD",
-  "50": "50x50mm",
-  "65": "65x65mm HD",
+  standard_50: "50mm Post Standard",
+  standard_65: "65mm Post Standard HD",
+  "50": "50mm Post Standard",
+  "65": "65mm Post Standard HD",
 };
 
 function optionLabel(field: SchemaField, option: unknown): string {

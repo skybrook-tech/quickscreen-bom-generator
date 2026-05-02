@@ -132,22 +132,22 @@
       "product_system_type": "VS",
       "name": "max_panel_width_mm",
       "constraint_type": "max",
-      "value_text": "2600",
+      "value_text": "3000",
       "unit": "mm",
       "severity": "warning",
       "applies_when_json": {},
-      "message": "Panel width above 2600mm is not supported; split into additional panels.",
+      "message": "Max post spacing above 3000mm is not supported; reduce spacing or split into additional panels.",
       "active": true
     },
     {
       "product_system_type": "VS",
       "name": "min_panel_width_mm",
       "constraint_type": "min",
-      "value_text": "300",
+      "value_text": "100",
       "unit": "mm",
       "severity": "error",
       "applies_when_json": {},
-      "message": "Panel width must be at least 300mm.",
+      "message": "Panel width must be at least 100mm.",
       "active": true
     },
     {
@@ -332,9 +332,9 @@
     {
       "product_system_type": "VS",
       "name": "panel_width_in_range",
-      "expression": "panel_width_mm >= 300 and panel_width_mm <= 2600",
+      "expression": "panel_width_mm >= 100 and panel_width_mm <= 3000",
       "severity": "error",
-      "message": "Panel width must be between 300mm and 2600mm.",
+      "message": "Panel width must be between 100mm and 3000mm.",
       "active": true
     },
     {
@@ -942,7 +942,7 @@
           "gt": 2600
         }
       },
-      "message": "Panel exceeds 2600mm recommended maximum; consider splitting into two panels.",
+      "message": "Panel exceeds the 2600mm standard max post spacing; verify engineering or split into more panels.",
       "active": true
     },
     {

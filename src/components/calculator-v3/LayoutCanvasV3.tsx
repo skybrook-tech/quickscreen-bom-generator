@@ -8,6 +8,7 @@ import {
   mergeCanonicalPreservingSegmentMeta,
 } from '../canvas/canonicalAdapter';
 import { calcRunStats } from '../../lib/runStats';
+import { clampPostSpacing } from '../../lib/productOptionRules';
 import type { CanvasLayout } from '../canvas/canvasEngine';
 import type { initCanvasEngine } from '../canvas/canvasEngine';
 
@@ -40,11 +41,11 @@ export function LayoutCanvasV3() {
   // Order matches the non-boundary flat segment order in the engine (allSegmentsFlat).
   const segmentPanelWidths = useMemo(() => {
     if (!payload) return [];
-    const jobMax = Number(payload.variables.max_panel_width_mm ?? 2600);
+    const jobMax = clampPostSpacing(payload.variables.max_panel_width_mm, 2600);
     return payload.runs.flatMap((run) =>
       run.segments
         .filter((s) => s.segmentKind !== "gate_opening")
-        .map((s) => Number(s.variables?.max_panel_width_mm ?? jobMax)),
+        .map((s) => clampPostSpacing(s.variables?.max_panel_width_mm, jobMax)),
     );
   }, [payload]);
 
@@ -52,7 +53,7 @@ export function LayoutCanvasV3() {
   // Pushed to the canvas engine overlay so it always matches the form's RunCard display.
   const runStatsTexts = useMemo(() => {
     if (!payload) return { global: '', perRun: [] as string[] };
-    const jobMax = Number(payload.variables.max_panel_width_mm ?? 2600);
+    const jobMax = clampPostSpacing(payload.variables.max_panel_width_mm, 2600);
     const perRun = payload.runs.map((run, i) => {
       const s = calcRunStats(run, jobMax);
       return `Run ${i + 1}  ·  ${s.fenceSegments} ${s.fenceSegments === 1 ? 'seg' : 'segs'}  ·  ${s.panels} ${s.panels === 1 ? 'panel' : 'panels'}  ·  ${s.posts} ${s.posts === 1 ? 'post' : 'posts'}  ·  ${s.corners} ${s.corners === 1 ? 'corner' : 'corners'}`;
@@ -156,7 +157,7 @@ export function LayoutCanvasV3() {
         onEngineReady={(engine) => { engineRef.current = engine; }}
         allowedAngles={allowedAngles}
         segmentPanelWidths={segmentPanelWidths}
-        jobPanelWidth={Number(payload?.variables.max_panel_width_mm) || 2600}
+        jobPanelWidth={clampPostSpacing(payload?.variables.max_panel_width_mm, 2600)}
         runStatsTexts={runStatsTexts}
       />
     </div>

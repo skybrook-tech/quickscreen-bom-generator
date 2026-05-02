@@ -25,8 +25,8 @@ import NumberInput from "../shared/NumberInput";
 import { useProductSearch } from "../../hooks/useProductSearch";
 
 const GATE_POST_SIZE_OPTIONS: GateOption[] = [
-  { value: "50", label: "Standard Post 50mm" },
-  { value: "65", label: "Standard Post 65mm HD" },
+  { value: "50", label: "50mm Post Standard" },
+  { value: "65", label: "65mm Post Standard HD" },
 ];
 
 const COLOUR_OPTIONS: GateOption[] = [

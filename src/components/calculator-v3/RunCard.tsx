@@ -4,6 +4,7 @@ import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
 import { defaultGateVariables } from "../../lib/gateOptionRules";
 import {
+  clampPostSpacing,
   initialVariablesForSystem,
   maxPanelWidthForSystem,
   normaliseVariablesForSystem,
@@ -45,8 +46,9 @@ export function RunCard({ run, runIdx }: Props) {
     () => runMasterVariables(run, state.payload?.variables),
     [run, state.payload?.variables],
   );
-  const jobMax = Number(
+  const jobMax = clampPostSpacing(
     runVariables.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode),
+    maxPanelWidthForSystem(run.productCode),
   );
   const fenceSegments = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
   const gates = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
@@ -166,7 +168,7 @@ export function RunCard({ run, runIdx }: Props) {
               seg={seg}
               segIdx={segIdx}
               runIdx={runIdx}
-              displayLabel={`R${runIdx + 1} S${segIdx + 1}`}
+              displayLabel={`R${runIdx + 1}S${segIdx + 1}`}
               open={expandedId === seg.segmentId}
               onToggle={() =>
                 setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
@@ -189,7 +191,7 @@ export function RunCard({ run, runIdx }: Props) {
                     seg={seg}
                     segIdx={gateIdx}
                     runIdx={runIdx}
-                    displayLabel={`R${runIdx + 1} G${gateIdx + 1}`}
+                    displayLabel={`R${runIdx + 1}G${gateIdx + 1}`}
                     open={expandedId === seg.segmentId}
                     onToggle={() =>
                       setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))

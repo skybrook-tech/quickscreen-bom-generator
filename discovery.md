@@ -1101,3 +1101,23 @@ Changes applied:
 - Set old XP gate-frame/blade/lockbox/lever-handle rows inactive in `qs_gate.json` and disabled their QS_GATE selectors/rules.
 - Removed old XP lever/knob latch options from the gate UI and blocked persisted old XP gate SKUs from the local fallback BOM.
 - Expanded current gate hardware choices with D&D, Six Star, Zeus, Colourbond, black/white hinge options, Magna Latch/Lokk Latch/T-Latch latch options, and gate-stop/drop-bolt options.
+
+### May 2, 2026 - Segment heading and max post spacing clarity
+
+User workflow finding:
+- First-time users need both a plain-language segment title and the compact code used on the map.
+- The compact code should not contain spaces, so `R1S1` and `R1G1` visually match the mapper labels.
+- Max post spacing is a user setting, not just a calculated panel spacing display, and the default should be 2600mm while still allowing 100-3000mm.
+- Vertical slat jobs need the same custom-gap escape hatch as QSHS horizontal slat jobs.
+
+Changes applied:
+- Segment and gate cards now show `Run 1 Segment 1` / `Run 1 Gate 1` alongside compact labels such as `R1S1` / `R1G1`.
+- The green reset-to-master check and blue confirmed dot moved into the left rail of each segment/gate card, leaving more room for the title and summary.
+- Sidebar and mapper labels now use the same no-space compact codes.
+- `Post spacing` wording changed to `Max Post Spacing` in summaries and segment options.
+- Max post spacing now defaults to 2600mm and clamps to 100-3000mm across UI normalisation, mapper stats, local fallback BOM, suggested accessories, and seed constraints.
+- VS vertical slat settings now support `Custom gap` as well as preset spacer gaps.
+- Standard post labels now put dimensions first: `50mm Post Standard` and `65mm Post Standard HD`.
+
+Verification:
+- `npm run build` passed after these changes.

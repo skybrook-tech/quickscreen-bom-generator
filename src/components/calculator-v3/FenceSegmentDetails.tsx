@@ -5,8 +5,11 @@ import type { CanonicalSegment } from "../../types/canonical.types";
 import { localFenceProducts } from "../../lib/localSeedData";
 import {
   applyProductOptionRules,
+  clampPostSpacing,
   initialVariablesForSystem,
+  MAX_POST_SPACING_MM,
   maxPanelWidthForSystem,
+  MIN_POST_SPACING_MM,
   normaliseVariablesForSystem,
 } from "../../lib/productOptionRules";
 import {
@@ -19,8 +22,8 @@ import NumberInput from "../shared/NumberInput";
 import { defaultGateBuildForMovement, gateMovementOrDefault } from "../../lib/gateOptionRules";
 
 const POST_SIZE_LABELS: Record<string, string> = {
-  "50": "Standard Post 50mm",
-  "65": "Standard Post 65mm HD",
+  "50": "50mm Post Standard",
+  "65": "65mm Post Standard HD",
 };
 
 interface Props {
@@ -77,15 +80,19 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     );
   }
 
-  const jobMax = Number(state.payload?.variables.max_panel_width_mm ?? 2600);
-  const effectiveMax = Number(v.max_panel_width_mm ?? jobMax);
+  const jobMax = clampPostSpacing(
+    state.payload?.variables.max_panel_width_mm,
+    maxPanelWidthForSystem(productCode),
+  );
+  const effectiveMax = clampPostSpacing(v.max_panel_width_mm, jobMax);
 
   function updateMaxPanelWidth(value: number | null) {
+    const nextValue = value === null ? null : clampPostSpacing(value, jobMax);
     if (isDefaultSegment && value !== null) {
-      syncDefaultVariables("max_panel_width_mm", value);
+      syncDefaultVariables("max_panel_width_mm", nextValue ?? jobMax);
       return;
     }
-    upsertSegment(patchSegmentVariables(seg, { max_panel_width_mm: value }));
+    upsertSegment(patchSegmentVariables(seg, { max_panel_width_mm: nextValue }));
   }
 
   const mergedJobDisplay: Record<string, string | number | boolean> = {
@@ -324,14 +331,14 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {/* Max panel width override */}
+        {/* Max post spacing override */}
         <label className="flex flex-col gap-1">
-          <span className="text-sm font-bold text-brand-muted">Post Spacing (mm)</span>
+          <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
           <NumberInput
             value={effectiveMax}
             onChange={(v) => updateMaxPanelWidth(v)}
-            min={300}
-            max={2600}
+            min={MIN_POST_SPACING_MM}
+            max={MAX_POST_SPACING_MM}
             step={50}
           />
         </label>

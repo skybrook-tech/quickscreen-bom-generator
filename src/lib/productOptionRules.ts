@@ -5,15 +5,23 @@ type Variables = Record<string, string | number | boolean>;
 const STANDARD_COLOURS = ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"];
 const ALUMAWOOD_COLOURS = ["KWI", "WRC"];
 const ECONOMY_COLOURS = ["B", "MN", "SM"];
+export const MIN_POST_SPACING_MM = 100;
+export const MAX_POST_SPACING_MM = 3000;
 
 const SYSTEM_MAX_PANEL_WIDTH: Record<string, number> = {
-  QSHS: 3000,
+  QSHS: 2600,
   VS: 2600,
-  XPL: 3000,
+  XPL: 2600,
 };
 
 export function maxPanelWidthForSystem(productCode: string | null | undefined) {
   return productCode ? (SYSTEM_MAX_PANEL_WIDTH[productCode] ?? 2600) : 2600;
+}
+
+export function clampPostSpacing(value: unknown, fallback = 2600) {
+  const spacing = Number(value);
+  const resolved = Number.isFinite(spacing) ? spacing : fallback;
+  return Math.min(MAX_POST_SPACING_MM, Math.max(MIN_POST_SPACING_MM, Math.round(resolved)));
 }
 
 function optionField(
@@ -186,7 +194,8 @@ export function normaliseVariablesForSystem(
   }
 
   const gapOptions = gapOptionsForSystem(productCode);
-  const customGapMode = productCode === "QSHS" && next.slat_gap_mode === "custom";
+  const supportsCustomGap = productCode === "QSHS" || productCode === "VS";
+  const customGapMode = supportsCustomGap && next.slat_gap_mode === "custom";
   if (customGapMode) {
     const gap = Number(next.slat_gap_mm);
     next = {
@@ -210,7 +219,7 @@ export function normaliseVariablesForSystem(
     ...next,
     max_panel_width_mm:
       Number.isFinite(panelWidth) && panelWidth > 0
-        ? Math.min(maxPanelWidth, Math.max(300, panelWidth))
+        ? clampPostSpacing(panelWidth, maxPanelWidth)
         : maxPanelWidth,
   };
 
@@ -277,7 +286,7 @@ export function applyProductOptionRules(
 
     if (field.field_key === "slat_gap_mm") {
       const gapOptions = gapOptionsForSystem(productCode);
-      if (productCode === "QSHS") {
+      if (productCode === "QSHS" || productCode === "VS") {
         result.push(
           optionField(
             productCode,
@@ -292,18 +301,18 @@ export function applyProductOptionRules(
       result.push(
         cloneField(field, {
           control_type:
-            productCode === "QSHS" && variables.slat_gap_mode === "custom"
+            (productCode === "QSHS" || productCode === "VS") && variables.slat_gap_mode === "custom"
               ? "number"
               : gapOptions.length > 0
                 ? "select"
                 : "number",
           data_type: "number",
           options_json:
-            productCode === "QSHS" && variables.slat_gap_mode === "custom"
+            (productCode === "QSHS" || productCode === "VS") && variables.slat_gap_mode === "custom"
               ? []
               : gapOptions,
           label:
-            productCode === "QSHS" && variables.slat_gap_mode === "custom"
+            (productCode === "QSHS" || productCode === "VS") && variables.slat_gap_mode === "custom"
               ? "Custom slat gap"
               : productCode === "VS"
                 ? "Slat gap"

@@ -726,11 +726,11 @@
       "product_system_type": "XPL",
       "name": "max_panel_width_mm",
       "constraint_type": "max",
-      "value_text": "2600",
+      "value_text": "3000",
       "unit": "mm",
       "severity": "warning",
       "applies_when_json": {},
-      "message": "Panel width above 2600mm not supported; split into additional panels.",
+      "message": "Max post spacing above 3000mm is not supported; reduce spacing or split into additional panels.",
       "active": true
     },
     {
@@ -917,9 +917,9 @@
     {
       "product_system_type": "XPL",
       "name": "panel_width_in_range",
-      "expression": "panel_width_mm >= 300 and panel_width_mm <= 2600",
+      "expression": "panel_width_mm >= 100 and panel_width_mm <= 3000",
       "severity": "error",
-      "message": "Panel width must be between 300mm and 2600mm.",
+      "message": "Panel width must be between 100mm and 3000mm.",
       "active": true
     }
   ],

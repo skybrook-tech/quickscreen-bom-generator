@@ -20,6 +20,8 @@ Latest gate correction: QSG horizontal and vertical pedestrian swing gates now u
 
 Latest workflow/UI correction: form-entered dimensions now center in the mapper when loaded, and gate hardware choices are dropdown selectors with inventory search inside each selector.
 
+Latest segment clarity pass: segment and gate cards now show full beginner-friendly titles (`Run 1 Segment 1`, `Run 1 Gate 1`) alongside compact map codes (`R1S1`, `R1G1`), the master-match check and confirmed dot sit in the left rail, max post spacing defaults to 2600mm with an editable 100-3000mm range, vertical slat runs can use custom gaps, and standard post labels now put the dimensions first.
+
 ---
 
 ## Phases Overview

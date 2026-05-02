@@ -962,7 +962,7 @@ export function initCanvasEngine(
     const detailLines: string[] = [];
     const spacingText = (seg: Segment, flatIdx: number, label: string) => {
       const maxW = segmentPanelWidths[flatIdx] ?? jobPanelWidthMm ?? 0;
-      if (maxW <= 0 || seg.lengthMM <= 0) return `${label} segment length: post spacing not set`;
+      if (maxW <= 0 || seg.lengthMM <= 0) return `${label} segment length: max post spacing not set`;
       const panels = Math.max(1, Math.ceil(Math.round(seg.lengthMM) / maxW));
       const actualSpacing = Math.round(seg.lengthMM / panels);
       return `${label} segment length ${(seg.lengthMM / 1000).toFixed(2)}m: ${panels} panel${panels === 1 ? "" : "s"} @ ${actualSpacing}mm spacing`;
@@ -1202,7 +1202,7 @@ export function initCanvasEngine(
       .sort((a, b) => a.tStart - b.tStart);
 
     if (gates.length === 0) {
-      labels.push({ text: `R${runNumber} S${panelNumber++}`, t: 0.5, kind: "panel" });
+      labels.push({ text: `R${runNumber}S${panelNumber++}`, t: 0.5, kind: "panel" });
       return { labels, nextPanelNumber: panelNumber, nextGateNumber: gateNumber };
     }
 
@@ -1210,13 +1210,13 @@ export function initCanvasEngine(
     for (const gate of gates) {
       if ((gate.tStart - cursor) * seg.lengthMM > 1) {
         labels.push({
-          text: `R${runNumber} S${panelNumber++}`,
+          text: `R${runNumber}S${panelNumber++}`,
           t: (cursor + gate.tStart) / 2,
           kind: "panel",
         });
       }
       labels.push({
-        text: `R${runNumber} G${gateNumber++}`,
+        text: `R${runNumber}G${gateNumber++}`,
         t: gate.tMid,
         kind: "gate",
       });
@@ -1224,7 +1224,7 @@ export function initCanvasEngine(
     }
     if ((1 - cursor) * seg.lengthMM > 1) {
       labels.push({
-        text: `R${runNumber} S${panelNumber++}`,
+        text: `R${runNumber}S${panelNumber++}`,
         t: (cursor + 1) / 2,
         kind: "panel",
       });

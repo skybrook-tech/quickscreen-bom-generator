@@ -1,4 +1,5 @@
 import type { CanonicalRun } from '../types/canonical.types';
+import { clampPostSpacing } from './productOptionRules';
 
 export interface RunStats {
   panels: number;
@@ -22,7 +23,7 @@ export function calcRunStats(run: CanonicalRun, jobMaxPanelWidth: number): RunSt
 
   let panels = 0;
   for (const seg of fenceSegs) {
-    const maxW = Number(seg.variables?.max_panel_width_mm ?? jobMaxPanelWidth);
+    const maxW = clampPostSpacing(seg.variables?.max_panel_width_mm, jobMaxPanelWidth);
     if (maxW > 0) panels += Math.ceil((seg.segmentWidthMm ?? 0) / maxW);
   }
 
