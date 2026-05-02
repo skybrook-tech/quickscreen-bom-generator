@@ -8,6 +8,7 @@ interface Props {
 
 /**
  * Renders sorted SegmentRows for a single run. Empty state shown when none.
+ * Fence segments are labelled S1, S2, … and gates G1, G2, … (separate ordinals).
  */
 export function SegmentList({ run, runColorIndex }: Props) {
   const segments = [...run.segments].sort((a, b) => a.sortOrder - b.sortOrder);
@@ -20,17 +21,26 @@ export function SegmentList({ run, runColorIndex }: Props) {
     );
   }
 
+  let fenceOrdinal = 0;
+  let gateOrdinal = 0;
+
   return (
     <div className="space-y-2">
-      {segments.map((seg, idx) => (
-        <SegmentRow
-          key={seg.segmentId}
-          runId={run.runId}
-          seg={seg}
-          index={idx + 1}
-          runColorIndex={runColorIndex}
-        />
-      ))}
+      {segments.map((seg) => {
+        const segmentLabel =
+          seg.kind === "gate"
+            ? `G${++gateOrdinal}`
+            : `S${++fenceOrdinal}`;
+        return (
+          <SegmentRow
+            key={seg.segmentId}
+            runId={run.runId}
+            seg={seg}
+            segmentLabel={segmentLabel}
+            runColorIndex={runColorIndex}
+          />
+        );
+      })}
     </div>
   );
 }

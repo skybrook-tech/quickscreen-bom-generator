@@ -4,24 +4,30 @@ import {
   AlertTriangle,
   ChevronDown,
   ChevronRight,
+  CornerDownRight,
   Copy,
   DoorOpen,
-  Pen,
-  PenOff,
   Trash2,
+  RulerDimensionLine,
+  StretchVertical,
+  GalleryHorizontalEnd,
 } from "lucide-react";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import type { SegmentDiagnostic } from "../../../types/bom.types";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { useSegmentHeightOptions } from "../../../hooks/useSegmentHeightOptions";
+import { cn } from "../../../lib";
 import { CANVAS_GATE_STROKE } from "../../../lib/runLineColors";
+import { Tooltip } from "../../ui/Tooltip";
 import { InlineEdit } from "./InlineEdit";
+
+const METRIC_ICON = 12;
 
 interface Props {
   runId: string;
   seg: CanonicalSegment;
-  /** 1-based display index */
-  index: number;
+  /** e.g. S1, G1 — ordinals increment separately per segment kind */
+  segmentLabel: string;
   open: boolean;
   onToggle: () => void;
   onLengthChange: (lengthMm: number) => void;
@@ -36,7 +42,7 @@ interface Props {
 export function SegmentHeader({
   runId,
   seg,
-  index,
+  segmentLabel,
   open,
   onToggle,
   onLengthChange,
@@ -52,20 +58,27 @@ export function SegmentHeader({
   const isGate = seg.kind === "gate";
   const locked = seg.confirmed === true;
 
-  const { freeform, freeformBounds, optionsMm: heightOptionsMm, clampFreeform } =
-    useSegmentHeightOptions(productCode, mergedVars, seg.targetHeightMm);
+  const {
+    freeform,
+    freeformBounds,
+    optionsMm: heightOptionsMm,
+    clampFreeform,
+  } = useSegmentHeightOptions(productCode, mergedVars, seg.targetHeightMm);
 
-  const heightSelectValue = String(
-    seg.targetHeightMm ??
-      heightOptionsMm[0] ??
-      freeformBounds?.minMm ??
-      1800,
-  );
+  const heightDisplayMm =
+    seg.targetHeightMm ?? heightOptionsMm[0] ?? freeformBounds?.minMm ?? 1800;
 
-  const freeformValue =
-    seg.targetHeightMm ??
-    freeformBounds?.minMm ??
-    300;
+  const segmentMetrics = useMemo(() => {
+    if (seg.kind !== "fence") return null;
+    const maxPanelMm = Number(mergedVars["max_panel_width_mm"] ?? 2600);
+    const w = seg.segmentWidthMm ?? 0;
+    const panels = Math.max(1, Math.ceil(w / maxPanelMm));
+    let corners = 0;
+    if (seg.leftTermination.kind === "system_corner") corners++;
+    if (seg.rightTermination.kind === "system_corner") corners++;
+    const posts = panels + 1;
+    return { panels, corners, posts };
+  }, [seg, mergedVars]);
 
   const diagnostics = useMemo(
     () =>
@@ -93,155 +106,255 @@ export function SegmentHeader({
 
   return (
     <div
-      className="flex items-center gap-2 px-3 py-2.5 cursor-pointer transition-opacity hover:opacity-90"
-      style={{ color: accentColor }}
+      className={cn(
+        "flex flex-col gap-1 px-3 py-2.5 cursor-pointer transition-opacity",
+        locked ? "hover:opacity-95 text-white" : "hover:opacity-90",
+      )}
+      style={
+        locked
+          ? { backgroundColor: accentColor, color: "#ffffff" }
+          : { color: accentColor }
+      }
       onClick={() => onToggle()}
     >
-      <button
-        className="bg-transparent border-0 p-0 cursor-pointer"
-        aria-label={open ? "Collapse segment" : "Expand segment"}
-      >
-        {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          className={cn(
+            "bg-transparent border-0 p-0 cursor-pointer",
+            locked && "text-white",
+          )}
+          aria-label={open ? "Collapse segment" : "Expand segment"}
+        >
+          {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+        </button>
 
-      <span className="font-mono text-xs font-semibold w-6 cursor-pointer">
-        S{index}
-      </span>
-
-      <label
-        className="flex items-center gap-1.5 shrink-0 cursor-pointer"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <input
-          type="checkbox"
-          checked={locked}
-          onChange={(e) => setConfirmed(e.target.checked)}
-          className="rounded border-brand-border"
-          aria-label="Segment confirmed"
-          data-testid={`v4-seg-confirmed-${seg.segmentId}`}
-        />
-
-        <span className="text-[10px] text-brand-muted whitespace-nowrap">
-          {locked ? <PenOff size={10} /> : <Pen size={10} />}
+        <span className="font-mono text-xs font-semibold min-w-[1.5rem] cursor-pointer tabular-nums">
+          {segmentLabel}
         </span>
-      </label>
 
-      <InlineEdit
-        label="Length"
-        value={lengthM}
-        suffix="m"
-        displayValue={lengthM.toFixed(2)}
-        onCommit={(v) => onLengthChange(v * 1000)}
-        disabled={locked}
-      />
-      <span className="text-brand-border opacity-60">·</span>
-      <span
-        className="inline-flex items-center gap-0.5"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <span className="text-xs font-medium opacity-90">Height</span>
-        {freeform && freeformBounds ? (
-          <input
-            type="number"
-            min={freeformBounds.minMm}
-            max={freeformBounds.maxMm}
-            step={1}
-            value={freeformValue}
-            onChange={(e) =>
-              onHeightChange(clampFreeform(Number(e.target.value)))
-            }
-            disabled={locked}
-            className="font-mono text-sm tabular-nums rounded border border-brand-border bg-brand-card px-1 py-0.5 max-w-[5.5rem] w-[5rem]"
-          />
-        ) : (
-          <select
-            value={heightSelectValue}
-            onChange={(e) => onHeightChange(Number(e.target.value))}
-            disabled={locked}
-            className="font-mono text-sm tabular-nums rounded border border-brand-border bg-brand-card px-1 py-0.5 max-w-[5.5rem]"
-          >
-            {heightOptionsMm.map((h) => (
-              <option key={h} value={h}>
-                {h}
-              </option>
-            ))}
-          </select>
-        )}
-        <span className="text-xs font-mono">mm</span>
-      </span>
-
-      {isGate && (
-        <>
-          <span className="text-brand-border opacity-60">·</span>
+        <InlineEdit
+          label="Segment length along run"
+          icon={RulerDimensionLine}
+          value={lengthM}
+          suffix="m"
+          displayValue={lengthM.toFixed(2)}
+          onCommit={(v) => onLengthChange(v * 1000)}
+          disabled={locked}
+          onAccentSurface={locked}
+        />
+        <span
+          className={cn(
+            "opacity-60",
+            locked ? "text-white/40" : "text-brand-border",
+          )}
+        >
+          ·
+        </span>
+        <Tooltip content="Target fence height (above ground)">
           <span
-            className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded font-medium"
-            style={{
-              backgroundColor: "rgba(245, 158, 11, 0.2)",
-              color: "#78350f",
-            }}
+            className="inline-flex items-center"
+            onClick={(e) => e.stopPropagation()}
+            aria-label="Fence height"
           >
-            <DoorOpen size={10} /> Gate
+            <InlineEdit
+              label="Target fence height (above ground)"
+              icon={RulerDimensionLine}
+              extraIconClassName="opacity-90 rotate-90"
+              value={heightDisplayMm}
+              suffix="mm"
+              displayValue={String(heightDisplayMm)}
+              onCommit={(v) => onHeightChange(freeform ? clampFreeform(v) : v)}
+              disabled={locked}
+              onAccentSurface={locked}
+              selectOptions={
+                !freeform && heightOptionsMm.length > 0
+                  ? heightOptionsMm
+                  : undefined
+              }
+              boundedInput={
+                freeform && freeformBounds
+                  ? {
+                      min: freeformBounds.minMm,
+                      max: freeformBounds.maxMm,
+                      step: 1,
+                    }
+                  : undefined
+              }
+            />
           </span>
-        </>
-      )}
+        </Tooltip>
 
-      <div
-        className="flex items-center gap-0.5 shrink-0"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {hasDiagError && (
+        <div
+          className="flex items-center ml-auto gap-0.5 shrink-0"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {!open && segmentMetrics && (
+            <div className="flex items-center w-full justify-end gap-2 mr-0.5">
+              <div className="inline-flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <Tooltip content="Panel bays in this segment (from span width ÷ max panel width)">
+                  <span
+                    className="inline-flex items-center gap-0.5 cursor-default text-xs tabular-nums"
+                    aria-label={`Panels in this segment: ${segmentMetrics.panels}`}
+                  >
+                    <GalleryHorizontalEnd
+                      size={METRIC_ICON}
+                      className="shrink-0 opacity-90"
+                      aria-hidden
+                    />
+                    <span className="font-mono">{segmentMetrics.panels}</span>
+                  </span>
+                </Tooltip>
+                <Tooltip content="Estimated posts for this segment (panel bays + ends)">
+                  <span
+                    className="inline-flex items-center gap-0.5 cursor-default text-xs tabular-nums"
+                    aria-label={`Estimated posts for this segment: ${segmentMetrics.posts}`}
+                  >
+                    <StretchVertical
+                      size={METRIC_ICON}
+                      className="shrink-0 opacity-90"
+                      aria-hidden
+                    />
+                    <span className="font-mono">{segmentMetrics.posts}</span>
+                  </span>
+                </Tooltip>
+                <Tooltip content="Structural corners on this segment (left + right terminations)">
+                  <span
+                    className="inline-flex items-center gap-0.5 cursor-default text-xs tabular-nums"
+                    aria-label={`Corners on this segment: ${segmentMetrics.corners}`}
+                  >
+                    <CornerDownRight
+                      size={METRIC_ICON}
+                      className="shrink-0 opacity-90"
+                      aria-hidden
+                    />
+                    <span className="font-mono">{segmentMetrics.corners}</span>
+                  </span>
+                </Tooltip>
+              </div>
+            </div>
+          )}
+
+          {isGate && (
+            <div className="flex items-center gap-0.5 mr-0.5">
+              <span
+                className={cn(
+                  "opacity-60",
+                  locked ? "text-white/40" : "text-brand-border",
+                )}
+              >
+                ·
+              </span>
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded font-medium",
+                  locked ? "bg-white/20 text-white" : "",
+                )}
+                style={
+                  locked
+                    ? undefined
+                    : {
+                        backgroundColor: "rgba(245, 158, 11, 0.2)",
+                        color: "#78350f",
+                      }
+                }
+              >
+                <DoorOpen size={10} /> Gate
+              </span>
+            </div>
+          )}
+          {hasDiagError && (
+            <button
+              type="button"
+              title={diagnostics
+                .filter((d) => d.severity === "error")
+                .map((d) => d.message)
+                .join(" | ")}
+              onClick={onToggle}
+              className={cn(
+                "p-1",
+                locked
+                  ? "text-white hover:text-white/90"
+                  : "text-red-500 hover:text-red-400",
+              )}
+              aria-label="Segment has BOM errors"
+            >
+              <AlertCircle size={15} />
+            </button>
+          )}
+          {hasDiagWarn && (
+            <button
+              type="button"
+              title={diagnostics
+                .filter((d) => d.severity === "warning")
+                .map((d) => d.message)
+                .join(" | ")}
+              onClick={onToggle}
+              className={cn(
+                "p-1",
+                locked
+                  ? "text-white hover:text-white/90"
+                  : "text-amber-500 hover:text-amber-400",
+              )}
+              aria-label="Segment has BOM warnings"
+            >
+              <AlertTriangle size={15} />
+            </button>
+          )}
+
+          <label
+            className="flex items-center gap-1.5 shrink-0 cursor-pointer"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <input
+              type="checkbox"
+              checked={locked}
+              onChange={(e) => setConfirmed(e.target.checked)}
+              className={cn(
+                "rounded",
+                locked
+                  ? "border-white/70 bg-white/10 accent-white"
+                  : "border-brand-border",
+              )}
+              aria-label="Segment confirmed"
+              data-testid={`v4-seg-confirmed-${seg.segmentId}`}
+            />
+          </label>
           <button
             type="button"
-            title={diagnostics
-              .filter((d) => d.severity === "error")
-              .map((d) => d.message)
-              .join(" | ")}
-            onClick={onToggle}
-            className="text-red-500 hover:text-red-400 p-1"
-            aria-label="Segment has BOM errors"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDuplicate();
+            }}
+            title="Duplicate segment"
+            disabled={locked}
+            className={cn(
+              "p-1.5 rounded disabled:opacity-40 disabled:pointer-events-none",
+              locked
+                ? "text-white hover:text-white hover:bg-white/15"
+                : "text-brand-muted hover:text-brand-accent hover:bg-brand-accent/10",
+            )}
           >
-            <AlertCircle size={15} />
+            <Copy size={13} />
           </button>
-        )}
-        {hasDiagWarn && (
           <button
             type="button"
-            title={diagnostics
-              .filter((d) => d.severity === "warning")
-              .map((d) => d.message)
-              .join(" | ")}
-            onClick={onToggle}
-            className="text-amber-500 hover:text-amber-400 p-1"
-            aria-label="Segment has BOM warnings"
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
+            title="Remove segment"
+            className={cn(
+              "p-1.5 rounded",
+              locked
+                ? "text-white hover:text-red-500 hover:bg-red-500/25"
+                : "hover:text-red-500 hover:bg-red-500/20",
+            )}
           >
-            <AlertTriangle size={15} />
+            <Trash2 size={13} />
           </button>
-        )}
+        </div>
       </div>
-
-      <div className="flex-1" />
-
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDuplicate();
-        }}
-        title="Duplicate segment"
-        disabled={locked}
-        className="p-1.5 text-brand-muted hover:text-brand-accent hover:bg-brand-accent/10 rounded disabled:opacity-40 disabled:pointer-events-none"
-      >
-        <Copy size={13} />
-      </button>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onRemove();
-        }}
-        title="Remove segment"
-        className="p-1.5 hover:text-red-500 hover:bg-red-500/20 rounded"
-      >
-        <Trash2 size={13} />
-      </button>
     </div>
   );
 }

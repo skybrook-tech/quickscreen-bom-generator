@@ -19,12 +19,13 @@ import { SegmentHeader } from "./SegmentHeader";
 interface Props {
   runId: string;
   seg: CanonicalSegment;
-  index: number;
+  /** e.g. S1, S2 for fence spans; G1 for gates (ordinals per kind). */
+  segmentLabel: string;
   /** 0-based — matches canvas run stroke palette */
   runColorIndex: number;
 }
 
-export function SegmentRow({ runId, seg, index, runColorIndex }: Props) {
+export function SegmentRow({ runId, seg, segmentLabel, runColorIndex }: Props) {
   const { dispatch, state } = useCalculatorV4();
   const [open, setOpen] = useState(false);
   const { data: products = [] } = useProducts();
@@ -33,7 +34,8 @@ export function SegmentRow({ runId, seg, index, runColorIndex }: Props) {
   const productCode = run?.productCode ?? state.payload?.productCode ?? null;
 
   const fenceAccentHex =
-    RUN_LINE_COLORS[runColorIndex % RUN_LINE_COLORS.length] ?? RUN_LINE_COLORS[0];
+    RUN_LINE_COLORS[runColorIndex % RUN_LINE_COLORS.length] ??
+    RUN_LINE_COLORS[0];
 
   const mergedVars = useMemo(() => {
     return {
@@ -83,19 +85,21 @@ export function SegmentRow({ runId, seg, index, runColorIndex }: Props) {
         }
       : {
           borderColor: CANVAS_GATE_STROKE,
-          backgroundColor: open ? "rgba(245, 158, 11, 0.12)" : "rgba(245, 158, 11, 0.06)",
+          backgroundColor: open
+            ? "rgba(245, 158, 11, 0.12)"
+            : "rgba(245, 158, 11, 0.06)",
         };
 
   return (
     <div
-      className="rounded-lg border-2 overflow-hidden transition-colors"
+      className="rounded-xl border-2 overflow-hidden transition-colors"
       style={rowStyle}
       data-testid={`v4-segment-row-${seg.segmentId}`}
     >
       <SegmentHeader
         runId={runId}
         seg={seg}
-        index={index}
+        segmentLabel={segmentLabel}
         open={open}
         mergedVars={mergedVars}
         productCode={productCode}
