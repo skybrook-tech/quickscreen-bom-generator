@@ -10,7 +10,7 @@ import {
   Minus,
   Crosshair,
 } from "lucide-react";
-import type { RefObject } from "react";
+import type { ReactNode, RefObject } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
 
 type Engine = ReturnType<typeof initCanvasEngine>;
@@ -25,6 +25,8 @@ interface CanvasToolbarProps {
   onToggleGrid: (v: boolean) => void;
   expanded: boolean;
   onToggleExpand: (v: boolean) => void;
+  /** Optional trailing controls (e.g. satellite underlay). */
+  trailingSlot?: ReactNode;
 }
 
 export function CanvasToolbar({
@@ -37,6 +39,7 @@ export function CanvasToolbar({
   onToggleGrid,
   expanded,
   onToggleExpand,
+  trailingSlot,
 }: CanvasToolbarProps) {
   const handleTool = (t: "draw" | "gate" | "move" | "boundary") => {
     engineRef.current?.setTool(t);
@@ -53,8 +56,11 @@ export function CanvasToolbar({
   const iconBtn =
     "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50 transition-colors";
 
+  const group = "flex flex-wrap items-center gap-1 rounded-lg bg-brand-bg/50 px-1.5 py-1 ring-1 ring-brand-border/80";
+
   return (
     <div className="flex flex-wrap items-center gap-2 p-2 bg-brand-card">
+      <div className={group} role="group" aria-label="Drawing tools">
       {/* Tool selector */}
       <button
         type="button"
@@ -88,9 +94,11 @@ export function CanvasToolbar({
       >
         <Minus size={13} /> Boundary
       </button>
+      </div>
 
-      <div className="w-px h-4 bg-brand-border" />
+      <div className="w-px h-5 self-center bg-brand-border opacity-70" aria-hidden />
 
+      <div className={group} role="group" aria-label="History">
       {/* Actions */}
       <button
         type="button"
@@ -108,6 +116,11 @@ export function CanvasToolbar({
       >
         <Trash2 size={13} /> Clear
       </button>
+      </div>
+
+      <div className="w-px h-5 self-center bg-brand-border opacity-70" aria-hidden />
+
+      <div className={group} role="group" aria-label="View">
       <button
         type="button"
         title="Centre view on drawn fence"
@@ -124,9 +137,22 @@ export function CanvasToolbar({
       >
         <RotateCcw size={13} /> Reset View
       </button>
+      <button
+        type="button"
+        onClick={() => onToggleExpand(!expanded)}
+        title={
+          expanded ? "Collapse canvas" : "Expand canvas for complex layouts"
+        }
+        className={iconBtn}
+      >
+        {expanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+        {expanded ? "Collapse" : "Expand"}
+      </button>
+      </div>
 
-      <div className="w-px h-4 bg-brand-border" />
+      <div className="w-px h-5 self-center bg-brand-border opacity-70" aria-hidden />
 
+      <div className={group} role="group" aria-label="Display">
       {/* Snap toggle */}
       <label className="flex items-center gap-1.5 text-xs text-brand-muted cursor-pointer">
         <input
@@ -151,21 +177,14 @@ export function CanvasToolbar({
         />
         Grid
       </label>
+      </div>
 
-      <div className="w-px h-4 bg-brand-border" />
-
-      {/* Expand/Collapse */}
-      <button
-        type="button"
-        onClick={() => onToggleExpand(!expanded)}
-        title={
-          expanded ? "Collapse canvas" : "Expand canvas for complex layouts"
-        }
-        className={iconBtn}
-      >
-        {expanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-        {expanded ? "Collapse" : "Expand"}
-      </button>
+      {trailingSlot ? (
+        <>
+          <div className="w-px h-5 self-center bg-brand-border opacity-70" aria-hidden />
+          {trailingSlot}
+        </>
+      ) : null}
     </div>
   );
 }

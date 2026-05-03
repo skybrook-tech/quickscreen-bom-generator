@@ -456,6 +456,7 @@ export function mergeCanonicalPreservingSegmentMeta(
         ...genRun,
         variables: mergedRunVars,
         productCode: mergedProductCode,
+        displayName: genRun.displayName ?? prevRun?.displayName,
         segments: genRun.segments.map((gs) => {
           const ps = prevSegMap.get(gs.segmentId);
 
@@ -633,8 +634,10 @@ export function canonicalToCanvasLayout(
     allFlatSegments.push(...localFlatSegments);
     globalFlatOffset += localFlatSegments.length;
 
+    const title =
+      run.displayName?.trim() || `Run ${ri + 1}`;
     runSummaries.push({
-      label: `Run ${ri + 1}`,
+      label: title,
       totalLengthM: runTotalMm / 1000,
       cornerCount: runCornerCount,
       gates: runGates,

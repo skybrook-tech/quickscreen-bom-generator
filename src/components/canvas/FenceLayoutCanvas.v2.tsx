@@ -1,5 +1,6 @@
 import { useRef, useEffect, useCallback, useState, useMemo } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Map } from "lucide-react";
+import { cn } from "../../lib";
 import { initCanvasEngine } from "./canvasEngine";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { MapControls } from "./MapControls";
@@ -95,6 +96,8 @@ export function FenceLayoutCanvas({
   const [expanded, setExpanded] = useState(false);
   const [applied, setApplied] = useState(false);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
+  const [satelliteOpen, setSatelliteOpen] = useState(false);
+  const [satelliteActive, setSatelliteActive] = useState(false);
 
   // Gate placed on canvas but not yet configured by user
   const [pendingGate, setPendingGate] = useState<PendingGate | null>(null);
@@ -275,6 +278,8 @@ export function FenceLayoutCanvas({
     }, 300);
   }, [fenceDispatch, gateDispatch, onApplied]);
 
+  const layoutValid = runSummaries.length > 0;
+
   const handleEditCanvasGateSave = useCallback(
     (gate: GateConfig) => {
       if (!editingCanvasGate) return;
@@ -301,7 +306,31 @@ export function FenceLayoutCanvas({
         onToggleGrid={setShowGrid}
         expanded={expanded}
         onToggleExpand={setExpanded}
+        trailingSlot={
+          <button
+            type="button"
+            onClick={() => setSatelliteOpen((o) => !o)}
+            className={cn(
+              "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border transition-colors",
+              satelliteActive
+                ? "border-brand-accent bg-brand-accent/25 text-brand-accent"
+                : satelliteOpen
+                  ? "border-brand-accent/60 bg-brand-accent/10 text-brand-text"
+                  : "border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50",
+            )}
+            title="Satellite map underlay — address, opacity, and scale"
+          >
+            <Map size={13} aria-hidden /> Satellite
+          </button>
+        }
       />
+
+      {satelliteOpen ? (
+        <MapControls
+          engineRef={engineRef}
+          onUnderlayActiveChange={setSatelliteActive}
+        />
+      ) : null}
 
       <div className="relative min-h-0 flex-1">
         <canvas
@@ -310,32 +339,33 @@ export function FenceLayoutCanvas({
           style={{ cursor: "crosshair" }}
         />
 
-        {/* Hint overlay */}
-        <div className="absolute bottom-2 left-2 text-xs text-brand-muted pointer-events-none select-none">
-          {activeTool === "draw" &&
-            "Click to place points · Double-click or Enter to finish · Esc to cancel"}
-          {activeTool === "gate" &&
-            "Click on a fence segment to place a gate marker"}
-          {activeTool === "move" &&
-            "Drag a node to move it · Drag a segment body to move the whole run · Right-click to edit · Click a label to edit length"}
-          {activeTool === "boundary" &&
-            "Draw non-product context lines (existing fences, walls, property lines) — not included in BOM"}
-        </div>
-
-        {/* Zoom hint — shifted off the right edge so it isn't occluded by the runs overview overlay */}
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-brand-muted pointer-events-none select-none">
-          Scroll = zoom · Right-drag = pan · Right-click segment = edit · Ctrl+Z
-          = undo
+        {/* Single hint strip — two overlapping absolute rows caused unreadable text */}
+        <div className="absolute bottom-2 left-2 right-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-brand-muted pointer-events-none select-none">
+          <span>
+            {activeTool === "draw" &&
+              "Click to place points · Double-click or Enter to finish · Esc to cancel"}
+            {activeTool === "gate" &&
+              "Click on a fence segment to place a gate marker"}
+            {activeTool === "move" &&
+              "Drag a node to move it · Drag a segment body to move the whole run · Right-click to edit · Click a label to edit length"}
+            {activeTool === "boundary" &&
+              "Draw non-product context lines (existing fences, walls, property lines) — not included in BOM"}
+          </span>
+          <span className="hidden sm:inline text-brand-border" aria-hidden>
+            |
+          </span>
+          <span className="text-brand-muted/90">
+            Scroll = zoom · Right-drag = pan · Right-click segment = edit ·
+            Ctrl+Z = undo
+          </span>
         </div>
 
         {renderOverlay?.(runSummaries)}
       </div>
 
-      <MapControls engineRef={engineRef} />
-
-      {/* Apply button */}
-      <div className="flex items-center justify-between p-3 bg-brand-card border-t border-brand-border">
-        <p className="text-xs text-brand-muted">
+      {/* Apply button — sticky so it stays reachable while scrolling the runs list */}
+      <div className="sticky bottom-0 z-10 flex items-center justify-between gap-3 p-3 bg-brand-card border-t border-brand-border">
+        <p className="text-xs text-brand-muted min-w-0">
           Draw your fence layout above, then click{" "}
           <strong className="text-brand-text">Use This Layout</strong> to
           populate the run length and corners in the form below.
@@ -343,10 +373,21 @@ export function FenceLayoutCanvas({
         <button
           type="button"
           onClick={handleUseLayout}
-          className="flex items-center gap-1.5 px-4 py-2 bg-brand-accent text-white text-sm font-medium rounded hover:bg-brand-accent-hover transition-colors shrink-0 ml-4"
+          disabled={!layoutValid}
+          title={
+            layoutValid
+              ? undefined
+              : "Draw at least one fence run on the canvas to continue"
+          }
+          className={cn(
+            "flex items-center gap-1.5 px-5 py-2.5 text-sm font-semibold rounded-lg shrink-0 transition-colors",
+            layoutValid
+              ? "bg-brand-accent text-white hover:bg-brand-accent-hover shadow-md shadow-brand-accent/20"
+              : "bg-brand-border text-brand-muted cursor-not-allowed opacity-60",
+          )}
         >
-          {applied ? "Applied!" : "Use This Layout"}
-          {!applied && <ArrowRight size={14} />}
+          {applied ? "Applied!" : "Use This Layout →"}
+          {!applied && layoutValid && <ArrowRight size={14} />}
         </button>
       </div>
 

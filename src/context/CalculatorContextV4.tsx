@@ -83,6 +83,7 @@ export type CalculatorV4Action =
       runId: string;
       variables: Record<string, string | number | boolean>;
     }
+  | { type: "SET_RUN_DISPLAY_NAME"; runId: string; displayName: string }
   | { type: "SET_RUN_PRODUCT"; runId: string; productCode: string }
   | { type: "ADD_RUN" }
   | { type: "CLEAR_OPEN_RUN_CONFIG" }
@@ -148,6 +149,16 @@ function reducer(
       const runs = state.payload.runs.map((r) =>
         r.runId === action.runId
           ? { ...r, variables: { ...(r.variables ?? {}), ...action.variables } }
+          : r,
+      );
+      return { ...state, payload: { ...state.payload, runs } };
+    }
+    case "SET_RUN_DISPLAY_NAME": {
+      if (!state.payload) return state;
+      const trimmed = action.displayName.trim();
+      const runs = state.payload.runs.map((r) =>
+        r.runId === action.runId
+          ? { ...r, displayName: trimmed || undefined }
           : r,
       );
       return { ...state, payload: { ...state.payload, runs } };

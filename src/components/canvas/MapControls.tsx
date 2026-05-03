@@ -25,6 +25,8 @@ interface PhotonFeature {
 
 interface MapControlsProps {
   engineRef: RefObject<Engine | null>;
+  /** Fires when a map tile has been loaded onto the canvas (underlay active). */
+  onUnderlayActiveChange?: (active: boolean) => void;
 }
 
 function formatSuggestion(f: PhotonFeature): { line1: string; line2: string } {
@@ -52,7 +54,10 @@ function suggestionText(f: PhotonFeature): string {
   return [line1, line2].filter(Boolean).join(", ");
 }
 
-export function MapControls({ engineRef }: MapControlsProps) {
+export function MapControls({
+  engineRef,
+  onUnderlayActiveChange,
+}: MapControlsProps) {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [opacity, setOpacity] = useState(0.5);
@@ -193,6 +198,7 @@ export function MapControls({ engineRef }: MapControlsProps) {
       const staticUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${loc.lat},${loc.lng}&zoom=${TILE_ZOOM}&size=640x400&maptype=${activeMapType}&key=${key}`;
       engineRef.current?.loadMapTile(staticUrl, opacity, loc.lat, TILE_ZOOM);
       mapLoadedRef.current = true;
+      onUnderlayActiveChange?.(true);
     } catch {
       setError("Failed to load map tile.");
     } finally {

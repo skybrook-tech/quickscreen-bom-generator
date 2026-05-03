@@ -105,6 +105,8 @@ interface Run {
   finished: boolean;
   segments: Segment[];
   isBoundary?: boolean;
+  /** Canvas/list title from canonical displayName or "Run n" — drives segment labels. */
+  displayLabel?: string;
 }
 
 // ── Scale constant: pixels per metre ──────────────────────────────────────────
@@ -657,7 +659,7 @@ export function initCanvasEngine(
         });
       });
       return {
-        label: `Run ${ri + 1}`,
+        label: run.displayLabel ?? `Run ${ri + 1}`,
         totalLengthM: runLengthM,
         cornerCount: runCorners,
         gates: runGates,
@@ -678,6 +680,113 @@ export function initCanvasEngine(
     config.onLayoutChange?.(getLayout());
   }
 
+  function fenceSegmentLabelText(seg: Segment, displayLabel?: string): string {
+    const len =
+      seg.lengthMM >= 1000
+        ? `${(seg.lengthMM / 1000).toFixed(2)}m`
+        : `${Math.round(seg.lengthMM)}mm`;
+    const t = displayLabel?.trim();
+    if (t) return `${t} · ${len}`;
+    return len;
+  }
+
+  /** Screen-space offsets (px) to separate overlapping fence length labels. */
+  function computeFenceLabelShifts(
+    allSegs: Array<{
+      seg: Segment;
+      flatIdx: number;
+      runIdx: number;
+      segIdx: number;
+    }>,
+  ): Map<number, { dx: number; dy: number }> {
+    const result = new Map<number, { dx: number; dy: number }>();
+    const fs = Math.max(10, 12 / zoom);
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.font = `${fs}px sans-serif`;
+
+    type Placed = {
+      left: number;
+      right: number;
+      top: number;
+      bottom: number;
+    };
+    const placed: Placed[] = [];
+    const pad = 4 / zoom;
+    const STEP_SCREEN = 18;
+
+    for (const { seg, flatIdx, runIdx } of allSegs) {
+      const mid = lerp(seg.p1, seg.p2, 0.5);
+      const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
+      const labelText = fenceSegmentLabelText(
+        seg,
+        runs[runIdx]?.displayLabel,
+      );
+      const tw = ctx.measureText(labelText).width;
+      const bh = fs + pad * 2;
+      const hw = (tw / 2 + pad) * zoom;
+      const hh = (bh / 2) * zoom;
+
+      let nx = -Math.sin(ang);
+      let ny = Math.cos(ang);
+      const nlen = Math.hypot(nx, ny) || 1;
+      nx /= nlen;
+      ny /= nlen;
+
+      const sx0 = pan.x + zoom * mid.x;
+      const sy0 = pan.y + zoom * mid.y;
+
+      let found = false;
+      for (let k = 0; k < 40; k++) {
+        const sign = k === 0 ? 1 : k % 2 === 1 ? 1 : -1;
+        const mag = Math.ceil(k / 2);
+        const offScreen = sign * mag * STEP_SCREEN;
+        const dx = nx * offScreen;
+        const dy = ny * offScreen;
+        const cx = sx0 + dx;
+        const cy = sy0 + dy;
+        const rect: Placed = {
+          left: cx - hw,
+          right: cx + hw,
+          top: cy - hh,
+          bottom: cy + hh,
+        };
+        let hit = false;
+        for (const p of placed) {
+          if (
+            !(
+              rect.right < p.left ||
+              rect.left > p.right ||
+              rect.bottom < p.top ||
+              rect.top > p.bottom
+            )
+          ) {
+            hit = true;
+            break;
+          }
+        }
+        if (!hit) {
+          placed.push(rect);
+          result.set(flatIdx, { dx, dy });
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        result.set(flatIdx, { dx: 0, dy: 0 });
+        placed.push({
+          left: sx0 - hw,
+          right: sx0 + hw,
+          top: sy0 - hh,
+          bottom: sy0 + hh,
+        });
+      }
+    }
+
+    ctx.restore();
+    return result;
+  }
+
   // ── Drawing ────────────────────────────────────────────────────────────────
 
   function draw() {
@@ -686,6 +795,9 @@ export function initCanvasEngine(
     const H = canvas.height;
 
     ctx.clearRect(0, 0, W, H);
+
+    const allSegs = allSegmentsFlat();
+    const fenceLabelShift = computeFenceLabelShifts(allSegs);
 
     ctx.save();
     ctx.translate(pan.x, pan.y);
@@ -711,8 +823,7 @@ export function initCanvasEngine(
       drawGrid(W, H);
     }
 
-    // All segments — coloured by run
-    const allSegs = allSegmentsFlat();
+    // All segments — coloured by run (allSegs computed before pan/zoom for label shifts)
     // Build runIdx → non-boundary run index (for color lookup)
     const runColorIdx = new Map<number, number>();
     {
@@ -730,6 +841,8 @@ export function initCanvasEngine(
         flatIdx === effectiveHoverSegIdx,
         getRunColor(colorIdx),
         getRunColorHover(colorIdx),
+        fenceLabelShift.get(flatIdx),
+        runIdx,
       );
     }
 
@@ -813,35 +926,34 @@ export function initCanvasEngine(
           ctx.restore();
         }
 
-        // Distance label on active preview line
+        // Live length near cursor (in-progress segment)
         if (segDist > 0) {
           const mm = pixelsToMM(segDist, scale);
           const label =
             mm >= 1000
               ? `${(mm / 1000).toFixed(2)}m`
               : `${Math.round(mm)}mm`;
-          const mid: Point = {
-            x: (lastPt.x + target.x) / 2,
-            y: (lastPt.y + target.y) / 2,
-          };
+          const lx = mouseCanvas.x;
+          const ly = mouseCanvas.y - 16 / zoom;
           ctx.save();
           ctx.font = `${12 / zoom}px sans-serif`;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           const textW = ctx.measureText(label).width;
           const pad = 4 / zoom;
+          const bh = 16 / zoom;
           ctx.fillStyle = COLOR.labelBg;
           ctx.beginPath();
           ctx.roundRect(
-            mid.x - textW / 2 - pad,
-            mid.y - 8 / zoom,
+            lx - textW / 2 - pad,
+            ly - bh / 2,
             textW + pad * 2,
-            16 / zoom,
+            bh,
             4 / zoom,
           );
           ctx.fill();
           ctx.fillStyle = COLOR.label;
-          ctx.fillText(label, mid.x, mid.y);
+          ctx.fillText(label, lx, ly);
           ctx.restore();
         }
       }
@@ -955,7 +1067,7 @@ export function initCanvasEngine(
   }
 
   function drawComputedPosts() {
-    if (segmentPanelWidths.length === 0) return;
+    const fallbackW = jobPanelWidthMm && jobPanelWidthMm > 0 ? jobPanelWidthMm : 2600;
     const squareSize = 6 / zoom;
     const half = squareSize / 2;
     const borderWidth = 1.5 / zoom;
@@ -964,7 +1076,7 @@ export function initCanvasEngine(
     for (const run of runs) {
       if (run.isBoundary || !run.finished) continue;
       for (const seg of run.segments) {
-        const maxW = segmentPanelWidths[flatIdx] ?? 0;
+        const maxW = segmentPanelWidths[flatIdx] ?? fallbackW;
         flatIdx++;
         if (maxW <= 0 || seg.lengthMM <= 0) continue;
         const numPanels = Math.ceil(seg.lengthMM / maxW);
@@ -1026,7 +1138,14 @@ export function initCanvasEngine(
     ctx.restore();
   }
 
-  function drawSegment(seg: Segment, hovered: boolean, runColor = COLOR.segment, runColorHover = COLOR.segmentHover) {
+  function drawSegment(
+    seg: Segment,
+    hovered: boolean,
+    runColor = COLOR.segment,
+    runColorHover = COLOR.segmentHover,
+    labelShiftPx?: { dx: number; dy: number },
+    runIdxForLabel?: number,
+  ) {
     const lw = 3 / zoom;
     const segColor = hovered ? runColorHover : runColor;
     const segLw = hovered ? lw * 1.5 : lw;
@@ -1169,16 +1288,27 @@ export function initCanvasEngine(
     ctx.restore();
 
     // Length label
-    drawLabel(seg);
+    const title =
+      runIdxForLabel !== undefined
+        ? runs[runIdxForLabel]?.displayLabel
+        : undefined;
+    drawLabel(seg, labelShiftPx, title);
   }
 
-  function drawLabel(seg: Segment) {
-    const mid = lerp(seg.p1, seg.p2, 0.5);
+  function drawLabel(
+    seg: Segment,
+    labelShiftPx?: { dx: number; dy: number },
+    displayLabel?: string,
+  ) {
+    const mid0 = lerp(seg.p1, seg.p2, 0.5);
+    const mid = labelShiftPx
+      ? {
+          x: mid0.x + labelShiftPx.dx / zoom,
+          y: mid0.y + labelShiftPx.dy / zoom,
+        }
+      : mid0;
     const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
-    const labelText =
-      seg.lengthMM >= 1000
-        ? `${(seg.lengthMM / 1000).toFixed(2)}m`
-        : `${Math.round(seg.lengthMM)}mm`;
+    const labelText = fenceSegmentLabelText(seg, displayLabel);
 
     ctx.save();
     ctx.translate(mid.x, mid.y);
@@ -2210,7 +2340,12 @@ export function initCanvasEngine(
       });
       // Remove duplicated intermediate points (each segment pushed its p2)
       // points is [run start, seg0.end, seg1.end, ...] which is correct as-is
-      newRuns.push({ points, segments, finished: true });
+      newRuns.push({
+        points,
+        segments,
+        finished: true,
+        displayLabel: runSummary.label,
+      });
     }
 
     // Restore boundary runs

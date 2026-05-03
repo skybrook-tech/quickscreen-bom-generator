@@ -247,6 +247,9 @@ export function SegmentHeader({
                       aria-hidden
                     />
                     <span className="font-mono">{segmentMetrics.panels}</span>
+                    <span className="text-neutral-500 hidden sm:inline text-[11px]">
+                      panels
+                    </span>
                   </span>
                 </Tooltip>
                 <Tooltip content="Estimated posts for this segment (panel bays + ends)">
@@ -260,6 +263,9 @@ export function SegmentHeader({
                       aria-hidden
                     />
                     <span className="font-mono">{segmentMetrics.posts}</span>
+                    <span className="text-neutral-500 hidden sm:inline text-[11px]">
+                      posts
+                    </span>
                   </span>
                 </Tooltip>
               </div>
@@ -365,24 +371,27 @@ export function SegmentHeader({
             </button>
           )}
 
-          <label
-            className="flex items-center gap-1.5 shrink-0 cursor-pointer"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <input
-              type="checkbox"
-              checked={locked}
-              onChange={(e) => setConfirmed(e.target.checked)}
-              className={cn(
-                "rounded",
-                locked
-                  ? "border-white/70 bg-white/10 accent-white"
-                  : "border-brand-border",
-              )}
-              aria-label="Segment confirmed"
-              data-testid={`v4-seg-confirmed-${seg.segmentId}`}
-            />
-          </label>
+          <Tooltip content="Confirmed — dimensions treated as final for this segment; locks quick edits and stresses the row for install-ready handoff.">
+            <label
+              className="flex items-center gap-1.5 shrink-0 cursor-pointer"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <input
+                type="checkbox"
+                checked={locked}
+                onChange={(e) => setConfirmed(e.target.checked)}
+                className={cn(
+                  "rounded",
+                  locked
+                    ? "border-white/70 bg-white/10 accent-white"
+                    : "border-brand-border",
+                )}
+                aria-label="Mark segment confirmed — lock dimensions"
+                data-testid={`v4-seg-confirmed-${seg.segmentId}`}
+              />
+            </label>
+          </Tooltip>
+          <Tooltip content="Duplicate this segment (same length and settings)">
           <button
             type="button"
             onClick={(e) => {
@@ -390,6 +399,7 @@ export function SegmentHeader({
               onDuplicate();
             }}
             title="Duplicate segment"
+            aria-label="Duplicate segment"
             disabled={locked}
             className={cn(
               "p-1.5 rounded disabled:opacity-40 disabled:pointer-events-none",
@@ -400,6 +410,8 @@ export function SegmentHeader({
           >
             <Copy size={13} />
           </button>
+          </Tooltip>
+          <Tooltip content="Remove this segment from the run (layout map updates when segments are removed)">
           <button
             type="button"
             onClick={(e) => {
@@ -407,6 +419,7 @@ export function SegmentHeader({
               onRemove();
             }}
             title="Remove segment"
+            aria-label="Remove segment"
             className={cn(
               "p-1.5 rounded",
               locked
@@ -416,6 +429,7 @@ export function SegmentHeader({
           >
             <Trash2 size={13} />
           </button>
+          </Tooltip>
         </div>
       </div>
     </div>

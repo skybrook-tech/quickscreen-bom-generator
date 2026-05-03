@@ -1,4 +1,5 @@
 import { Plus } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { RunCard } from "./RunCard";
 
@@ -12,6 +13,35 @@ interface Props {
 export function RunList({ onAddGate }: Props) {
   const { state, dispatch } = useCalculatorV4();
   const payload = state.payload;
+
+  /** Runs in this set are collapsed (session-only). */
+  const [collapsedIds, setCollapsedIds] = useState<Set<string>>(() => new Set());
+  const prevRunCountRef = useRef(0);
+
+  useEffect(() => {
+    const n = payload?.runs.length ?? 0;
+    if (n === prevRunCountRef.current + 1 && payload?.runs.length) {
+      setCollapsedIds(new Set(payload.runs.slice(0, -1).map((r) => r.runId)));
+    }
+    prevRunCountRef.current = n;
+  }, [payload?.runs]);
+
+  const toggleExpanded = useCallback((runId: string) => {
+    setCollapsedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(runId)) next.delete(runId);
+      else next.add(runId);
+      return next;
+    });
+  }, []);
+
+  const expandRun = useCallback((runId: string) => {
+    setCollapsedIds((prev) => {
+      const next = new Set(prev);
+      next.delete(runId);
+      return next;
+    });
+  }, []);
 
   if (!payload) return null;
 
@@ -29,6 +59,9 @@ export function RunList({ onAddGate }: Props) {
               index={i + 1}
               runColorIndex={i}
               onAddGate={onAddGate}
+              expanded={!collapsedIds.has(run.runId)}
+              onToggleExpanded={() => toggleExpanded(run.runId)}
+              expandRun={() => expandRun(run.runId)}
             />
           ))}
         </div>

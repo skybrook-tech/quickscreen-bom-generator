@@ -18,6 +18,10 @@ interface Props {
   /** 0-based index — matches canvas non-boundary run colour cycle */
   runColorIndex: number;
   onAddGate: (runId: string) => void;
+  expanded: boolean;
+  onToggleExpanded: () => void;
+  /** Ensures the card is expanded (e.g. when opening run config for a new run). */
+  expandRun?: () => void;
 }
 
 type BrowseTab = "full" | "segments" | "gates";
@@ -28,7 +32,15 @@ const BROWSE_TAB_FILTER: Record<BrowseTab, SegmentListFilter> = {
   gates: "gate",
 };
 
-export function RunCard({ run, index, runColorIndex, onAddGate }: Props) {
+export function RunCard({
+  run,
+  index,
+  runColorIndex,
+  onAddGate,
+  expanded,
+  onToggleExpanded,
+  expandRun,
+}: Props) {
   const { state, dispatch } = useCalculatorV4();
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState<RunTab>("style");
@@ -37,8 +49,9 @@ export function RunCard({ run, index, runColorIndex, onAddGate }: Props) {
   useEffect(() => {
     if (state.openRunConfigRunId !== run.runId) return;
     setEditing(true);
+    expandRun?.();
     dispatch({ type: "CLEAR_OPEN_RUN_CONFIG" });
-  }, [state.openRunConfigRunId, run.runId, dispatch]);
+  }, [state.openRunConfigRunId, run.runId, dispatch, expandRun]);
 
   const effectiveVars = useMemo(
     () => ({
@@ -96,20 +109,31 @@ export function RunCard({ run, index, runColorIndex, onAddGate }: Props) {
       className="rounded-xl border border-brand-border bg-brand-card overflow-hidden shadow-sm"
       data-testid={`v4-run-card-${run.runId}`}
     >
-      <RunHeader index={index} systemCode={runProductCode} summary={summary} />
-
-      <RunSubHeader
-        editing={editing}
-        onToggleEditing={() => setEditing((e) => !e)}
-        effectiveVars={effectiveVars}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
+      <RunHeader
+        runId={run.runId}
+        index={index}
+        displayName={run.displayName}
+        systemCode={runProductCode}
+        summary={summary}
+        expanded={expanded}
+        onToggleExpanded={onToggleExpanded}
+        compact={!expanded}
       />
 
-      {editing && <RunConfigPanel run={run} activeTab={activeTab} />}
+      {expanded && (
+        <>
+          <RunSubHeader
+            editing={editing}
+            onToggleEditing={() => setEditing((e) => !e)}
+            effectiveVars={effectiveVars}
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+          />
 
-      {!editing && (
-        <div className="border-t border-brand-border p-4 pt-1 space-y-3">
+          {editing && <RunConfigPanel run={run} activeTab={activeTab} />}
+
+          {!editing && (
+            <div className="border-t border-brand-border p-4 pt-1 space-y-3">
           <div className="flex flex-wrap gap-0 -mx-4 px-4 border-b border-brand-border">
             {(
               [
@@ -152,7 +176,9 @@ export function RunCard({ run, index, runColorIndex, onAddGate }: Props) {
             }
             canRemove={(state.payload?.runs.length ?? 0) > 1}
           />
-        </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

@@ -18,6 +18,8 @@ export interface CanonicalPayload {
 
 export interface CanonicalRun {
   runId: string;
+  /** User-facing label in lists and on canvas (defaults to "Run n" when absent). */
+  displayName?: string;
   /**
    * Per-run fence system override (v4+). When set, this run uses a different
    * fence product than payload.productCode. The engine loads engine data for

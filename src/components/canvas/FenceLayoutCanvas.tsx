@@ -290,21 +290,23 @@ export function FenceLayoutCanvas({
           style={{ height: expanded ? "700px" : "420px", cursor: "crosshair" }}
         />
 
-        {/* Hint overlay */}
-        <div className="absolute bottom-2 left-2 text-xs text-brand-muted pointer-events-none select-none">
-          {activeTool === "draw" &&
-            "Click to place points · Double-click or Enter to finish · Esc to cancel"}
-          {activeTool === "gate" &&
-            "Click on a fence segment to place a gate marker"}
-          {activeTool === "move" &&
-            "Drag nodes or gates to reposition · Click a label to edit length"}
-          {activeTool === "boundary" &&
-            "Draw non-product context lines (existing fences, walls, property lines) — not included in BOM"}
-        </div>
-
-        {/* Zoom hint */}
-        <div className="absolute bottom-2 right-2 text-xs text-brand-muted pointer-events-none select-none">
-          Scroll = zoom · Right-drag = pan · Ctrl+Z = undo
+        <div className="absolute bottom-2 left-2 right-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-brand-muted pointer-events-none select-none">
+          <span>
+            {activeTool === "draw" &&
+              "Click to place points · Double-click or Enter to finish · Esc to cancel"}
+            {activeTool === "gate" &&
+              "Click on a fence segment to place a gate marker"}
+            {activeTool === "move" &&
+              "Drag nodes or gates to reposition · Click a label to edit length"}
+            {activeTool === "boundary" &&
+              "Draw non-product context lines (existing fences, walls, property lines) — not included in BOM"}
+          </span>
+          <span className="hidden sm:inline text-brand-border" aria-hidden>
+            |
+          </span>
+          <span className="text-brand-muted/90">
+            Scroll = zoom · Right-drag = pan · Ctrl+Z = undo
+          </span>
         </div>
       </div>
 

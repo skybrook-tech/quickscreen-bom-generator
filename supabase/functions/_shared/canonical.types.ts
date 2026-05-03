@@ -10,6 +10,8 @@ export interface CanonicalPayload {
 
 export interface CanonicalRun {
   runId: string;
+  /** User-facing label (v4+); optional for backward compatibility. */
+  displayName?: string;
   /**
    * Per-run fence system override (v4+). When set, the engine uses this code
    * for run-level validation instead of payload.productCode.
