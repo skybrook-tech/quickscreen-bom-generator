@@ -279,7 +279,7 @@ export function FenceLayoutCanvas({
   );
 
   return (
-    <div className="space-y-0 h-full flex flex-col">
+    <div className="flex min-h-0 flex-1 flex-col space-y-0">
       <CanvasToolbar
         engineRef={engineRef}
         activeTool={activeTool}
@@ -292,7 +292,7 @@ export function FenceLayoutCanvas({
         onToggleExpand={setExpanded}
       />
 
-      <div className="relative flex-1">
+      <div className="relative min-h-0 flex-1">
         <canvas
           ref={canvasRef}
           className="w-full bg-brand-bg block h-full"
@@ -313,7 +313,8 @@ export function FenceLayoutCanvas({
 
         {/* Zoom hint — shifted off the right edge so it isn't occluded by the runs overview overlay */}
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-xs text-brand-muted pointer-events-none select-none">
-          Scroll = zoom · Right-drag = pan · Right-click segment = edit · Ctrl+Z = undo
+          Scroll = zoom · Right-drag = pan · Right-click segment = edit · Ctrl+Z
+          = undo
         </div>
 
         {renderOverlay?.(runSummaries)}

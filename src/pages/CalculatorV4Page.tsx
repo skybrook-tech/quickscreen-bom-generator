@@ -72,6 +72,11 @@ function CalculatorV4Content() {
   const hasBlockingErrors = errors.length > 0;
   const canGenerate = !!payload && !noSegments && !hasBlockingErrors;
 
+  function handleAddGate(runId: string) {
+    setGateRunId(runId);
+    setGateEditingId(null);
+  }
+
   return (
     <AppShell>
       <div className="h-full min-h-0 grid grid-cols-1 lg:grid-cols-[40%,60%] lg:grid-rows-1 gap-4 p-4 max-w-[1600px] mx-auto">
@@ -87,12 +92,7 @@ function CalculatorV4Content() {
           {payload ? (
             <>
               <div className="min-h-0 flex-1 overflow-y-auto pr-1 py-3 space-y-4">
-                <RunList
-                  onAddGate={(runId) => {
-                    setGateRunId(runId);
-                    setGateEditingId(null);
-                  }}
-                />
+                <RunList onAddGate={handleAddGate} />
                 {bomMutation.isError && (
                   <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-500">
                     Error:{" "}
@@ -130,7 +130,11 @@ function CalculatorV4Content() {
         </div>
       </div>
 
-      <LayoutMapPane open={layoutOpen} onClose={() => setLayoutOpen(false)} />
+      <LayoutMapPane
+        open={layoutOpen}
+        onClose={() => setLayoutOpen(false)}
+        onAddGate={handleAddGate}
+      />
       <GatePane
         open={gateOpen}
         onClose={() => {

@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Trash2 } from "lucide-react";
 import { FenceLayoutCanvas } from "../../canvas/FenceLayoutCanvas.v2";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { useProducts } from "../../../hooks/useProducts";
@@ -8,10 +7,12 @@ import {
   canonicalToCanvasLayout,
   mergeCanonicalPreservingSegmentMeta,
 } from "../../canvas/canonicalAdapter";
-import { RUN_LINE_COLORS } from "../../../lib/runLineColors";
-import type { CanvasLayout, CanvasRunSummary } from "../../canvas/canvasEngine";
+import type { CanvasLayout } from "../../canvas/canvasEngine";
 import type { initCanvasEngine } from "../../canvas/canvasEngine";
-import type { CanonicalPayload, CanonicalSegment } from "../../../types/canonical.types";
+import type {
+  CanonicalPayload,
+  CanonicalSegment,
+} from "../../../types/canonical.types";
 import { SegmentContextMenu } from "./SegmentContextMenu";
 
 function buildPayloadGeomKey(p: CanonicalPayload): string {
@@ -143,7 +144,12 @@ export function FenceLayoutCanvasV4() {
   ) {
     const hit = resolveCanonicalFromFlatIdx(flatIdx);
     if (!hit) return;
-    setCtxMenu({ runId: hit.runId, segment: hit.segment, x: screenX, y: screenY });
+    setCtxMenu({
+      runId: hit.runId,
+      segment: hit.segment,
+      x: screenX,
+      y: screenY,
+    });
   }
 
   function handleCommitCtxLength(mm: number) {
@@ -184,11 +190,11 @@ export function FenceLayoutCanvasV4() {
     ? (payload?.runs
         .find((r) => r.runId === ctxMenu.runId)
         ?.segments.find((s) => s.segmentId === ctxMenu.segment.segmentId) ??
-        ctxMenu.segment)
+      ctxMenu.segment)
     : null;
 
   return (
-    <div className="p-4 h-full">
+    <div className="flex min-h-0 flex-1 flex-col rounded-lg border border-brand-border p-4">
       <FenceLayoutCanvas
         onLayoutChange={handleLiveSync}
         onEngineReady={(engine) => {
@@ -198,18 +204,6 @@ export function FenceLayoutCanvasV4() {
         segmentPanelWidths={segmentPanelWidths}
         jobPanelWidth={Number(payload?.variables.max_panel_width_mm) || 2600}
         onSegmentContextMenu={handleSegmentContextMenu}
-        renderOverlay={(runs: CanvasRunSummary[]) =>
-          payload ? (
-            <RunsOverviewOverlay
-              runs={runs}
-              runIdsOrdered={payload.runs.map((r) => r.runId)}
-              onRemoveRun={(runId) =>
-                dispatch({ type: "REMOVE_RUN", runId })
-              }
-              canRemoveRun={payload.runs.length > 1}
-            />
-          ) : null
-        }
       />
       {ctxMenu && ctxMenuSegment ? (
         <SegmentContextMenu
@@ -222,102 +216,5 @@ export function FenceLayoutCanvasV4() {
         />
       ) : null}
     </div>
-  );
-}
-
-function RunsOverviewOverlay({
-  runs,
-  runIdsOrdered,
-  onRemoveRun,
-  canRemoveRun,
-}: {
-  runs: CanvasRunSummary[];
-  runIdsOrdered: string[];
-  onRemoveRun: (runId: string) => void;
-  canRemoveRun: boolean;
-}) {
-  if (runs.length === 0) return null;
-  const totalLengthM = runs.reduce((s, r) => s + r.totalLengthM, 0);
-  const totalCorners = runs.reduce((s, r) => s + r.cornerCount, 0);
-  const totalGates = runs.reduce((s, r) => s + r.gates.length, 0);
-  return (
-    <aside
-      className="absolute top-2 right-2 bottom-2 w-[260px] rounded-lg border border-brand-border bg-brand-card/95 backdrop-blur shadow-lg flex flex-col overflow-hidden pointer-events-auto"
-      data-testid="canvas-runs-overview"
-    >
-      <header className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-brand-muted border-b border-brand-border">
-        Runs ({runs.length})
-      </header>
-      <div className="flex-1 overflow-y-auto">
-        <table className="w-full text-xs">
-          <thead>
-            <tr className="bg-brand-bg/60 text-brand-muted uppercase tracking-wider">
-              <th className="text-left px-2 py-1.5 font-semibold w-8" aria-hidden />
-              <th className="text-left px-2 py-1.5 font-semibold">Run</th>
-              <th className="text-right px-2 py-1.5 font-semibold">Len</th>
-              <th className="text-right px-2 py-1.5 font-semibold">Cnr</th>
-              <th className="text-right px-2 py-1.5 font-semibold">Gt</th>
-              <th className="w-8 px-1" aria-hidden />
-            </tr>
-          </thead>
-          <tbody>
-            {runs.map((run, i) => {
-              const color =
-                RUN_LINE_COLORS[i % RUN_LINE_COLORS.length] ?? RUN_LINE_COLORS[0];
-              const runId = runIdsOrdered[i];
-              return (
-                <tr
-                  key={`${run.label}-${runId ?? i}`}
-                  className="border-t border-brand-border/50 text-brand-text"
-                >
-                  <td className="pl-2 py-1 align-middle">
-                    <span
-                      className="inline-block w-2.5 h-2.5 rounded-full shrink-0 ring-1 ring-white/20"
-                      style={{ backgroundColor: color }}
-                      title={`Run colour ${i + 1}`}
-                    />
-                  </td>
-                  <td className="py-1 pr-1 text-brand-muted">{run.label}</td>
-                  <td className="px-2 py-1 text-right tabular-nums">
-                    {run.totalLengthM.toFixed(2)}m
-                  </td>
-                  <td className="px-2 py-1 text-right tabular-nums">
-                    {run.cornerCount}
-                  </td>
-                  <td className="px-2 py-1 text-right tabular-nums">
-                    {run.gates.length}
-                  </td>
-                  <td className="py-1 pr-1 text-center align-middle">
-                    {runId && canRemoveRun ? (
-                      <button
-                        type="button"
-                        title="Remove run from layout"
-                        className="p-1 rounded text-brand-muted hover:text-red-400 hover:bg-red-500/15"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onRemoveRun(runId);
-                        }}
-                        data-testid={`canvas-remove-run-${runId}`}
-                      >
-                        <span className="sr-only">Remove run</span>
-                        <Trash2 size={13} aria-hidden />
-                      </button>
-                    ) : null}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-      {runs.length > 1 && (
-        <footer className="border-t border-brand-border px-3 py-2 text-xs font-semibold text-brand-text bg-brand-bg/50 flex items-center justify-between gap-2">
-          <span className="text-brand-muted shrink-0">Total</span>
-          <span className="tabular-nums text-right truncate">
-            {totalLengthM.toFixed(2)}m · {totalCorners} cnr · {totalGates} gt
-          </span>
-        </footer>
-      )}
-    </aside>
   );
 }
