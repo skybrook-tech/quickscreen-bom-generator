@@ -239,7 +239,7 @@ export function QuoteActions({
           className={btnCls}
           title="Copy to clipboard"
         >
-          {copying ? <Loader2 size={13} className="animate-spin" /> : <Copy size={13} />}
+          {copying ? <Loader2 size={16} className="animate-spin" /> : <Copy size={16} />}
           Copy
         </button>
       </div>
@@ -252,9 +252,9 @@ export function QuoteActions({
           title="Download CSV"
         >
           {csving ? (
-            <Loader2 size={13} className="animate-spin" />
+            <Loader2 size={16} className="animate-spin" />
           ) : (
-            <Download size={13} />
+            <Download size={16} />
           )}
           CSV
         </button>
@@ -268,9 +268,9 @@ export function QuoteActions({
           title="Download PDF"
         >
           {pdfing ? (
-            <Loader2 size={13} className="animate-spin" />
+            <Loader2 size={16} className="animate-spin" />
           ) : (
-            <Download size={13} />
+            <Download size={16} />
           )}
           PDF
         </button>
@@ -278,7 +278,7 @@ export function QuoteActions({
 
       {onEdit && (
         <button type="button" onClick={onEdit} className={primaryCls}>
-          <Pencil size={13} />
+          <Pencil size={16} />
           Edit Draft
         </button>
       )}
@@ -291,9 +291,9 @@ export function QuoteActions({
           className={primaryCls}
         >
           {saving ? (
-            <Loader2 size={13} className="animate-spin" />
+            <Loader2 size={16} className="animate-spin" />
           ) : (
-            <Save size={13} />
+            <Save size={16} />
           )}
           {saving
             ? isEditing

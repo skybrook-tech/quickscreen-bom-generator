@@ -18,8 +18,8 @@ export function AchievedHeightBadge({ computed, runId, segmentId, targetHeightMm
     <span
       className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${
         isClose
-          ? 'bg-green-500/10 border-green-500/30 text-green-400'
-          : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+          ? 'bg-brand-success/10 border-brand-success/30 text-brand-success'
+          : 'bg-brand-warning/10 border-brand-warning/30 text-brand-warning'
       }`}
     >
       Achieved {Math.round(actualHeight)}mm

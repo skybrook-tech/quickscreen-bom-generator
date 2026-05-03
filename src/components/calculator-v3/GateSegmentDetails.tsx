@@ -67,8 +67,8 @@ interface Props {
 function optionClasses(active: boolean) {
   return `rounded-full border px-3 py-2 text-sm font-bold shadow-sm transition-colors ${
     active
-      ? "border-blue-800 bg-blue-800 text-white shadow-sm"
-      : "border-brand-border bg-brand-card text-brand-text hover:border-blue-800 hover:text-blue-800"
+      ? "border-brand-primary bg-brand-primary text-white shadow-sm"
+      : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary"
   }`;
 }
 
@@ -133,7 +133,7 @@ function HardwareDropdown({
         <select
           value={value}
           onChange={(event) => onChange(event.target.value)}
-          className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-bold text-brand-text shadow-sm focus:border-blue-700 focus:outline-none"
+          className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-bold text-brand-text shadow-sm focus:border-brand-primary focus:outline-none"
         >
           {!hasPresetValue && value && (
             <option value={value}>{value} - inventory selection</option>
@@ -151,7 +151,7 @@ function HardwareDropdown({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={`${placeholder} for ${label.toLowerCase()}`}
-          className="w-full rounded-md border border-brand-border bg-brand-bg px-2 py-1.5 text-sm font-semibold text-brand-text placeholder:text-brand-muted/70 focus:border-blue-700 focus:outline-none"
+          className="w-full rounded-md border border-brand-border bg-brand-bg px-2 py-1.5 text-sm font-semibold text-brand-text placeholder:text-brand-muted/70 focus:border-brand-primary focus:outline-none"
         />
         <p className="mt-1 text-xs font-semibold text-brand-muted">
           Selected: <span className="text-brand-text">{selectedLabel || value}</span>
@@ -169,7 +169,7 @@ function HardwareDropdown({
                     onChange(item.sku);
                     setQuery("");
                   }}
-                  className="block w-full border-b border-brand-border/50 px-2 py-2 text-left text-xs font-semibold text-brand-text last:border-b-0 hover:bg-blue-800 hover:text-white"
+                  className="block w-full border-b border-brand-border/50 px-2 py-2 text-left text-xs font-semibold text-brand-text last:border-b-0 hover:bg-brand-primary hover:text-white"
                 >
                   <span className="block text-sm">{item.sku}</span>
                   <span className="block text-brand-muted">{item.name}</span>

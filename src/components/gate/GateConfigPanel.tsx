@@ -59,7 +59,7 @@ export function GateConfigPanel() {
         data-testid="add-gate-btn"
         className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-brand-accent border border-dashed border-brand-accent/30 rounded-lg hover:bg-brand-accent/5 hover:border-brand-accent/60 transition-colors"
       >
-        <Plus size={15} />
+        <Plus size={16} />
         Add Gate
       </button>
 

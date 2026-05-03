@@ -73,7 +73,7 @@ function ProductGrid() {
   }
 
   if (productsQuery.isError) {
-    return <p className="text-sm text-red-400">Failed to load products.</p>;
+    return <p className="text-sm text-brand-danger">Failed to load products.</p>;
   }
 
   const products = productsQuery.data ?? [];

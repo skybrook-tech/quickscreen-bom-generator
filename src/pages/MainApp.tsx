@@ -262,18 +262,18 @@ function AppContent() {
                   disabled={!descText.trim()}
                   className="flex items-center gap-2 px-4 py-2 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-md transition-colors"
                 >
-                  <Wand2 size={14} />
+                  <Wand2 size={16} />
                   Parse Description
                 </button>
                 {parseStatus?.type === "success" && (
-                  <div className="flex items-start gap-1.5 text-sm text-green-400 animate-fade-in">
-                    <CheckCircle2 size={14} className="mt-0.5 shrink-0" />
+                  <div className="flex items-start gap-1.5 text-sm text-brand-success animate-fade-in">
+                    <CheckCircle2 size={16} className="mt-0.5 shrink-0" />
                     <span>Detected: {parseStatus.detected.join(", ")}</span>
                   </div>
                 )}
                 {parseStatus?.type === "error" && (
-                  <div className="flex items-center gap-1.5 text-sm text-amber-400 animate-fade-in">
-                    <AlertCircle size={14} />
+                  <div className="flex items-center gap-1.5 text-sm text-brand-warning animate-fade-in">
+                    <AlertCircle size={16} />
                     <span>{parseStatus.message}</span>
                   </div>
                 )}
@@ -330,8 +330,8 @@ function AppContent() {
             <div className="lg:col-span-1 sticky top-6 space-y-4">
               {/* BOM error */}
               {bomMutation.isError && !bomMutation.isPending && (
-                <div className="bg-brand-card border border-red-900/40 rounded-xl p-4">
-                  <p className="text-sm text-red-400">{errorMessage}</p>
+                <div className="bg-brand-card border border-brand-danger/40 rounded-xl p-4">
+                  <p className="text-sm text-brand-danger">{errorMessage}</p>
                 </div>
               )}
 
@@ -349,7 +349,7 @@ function AppContent() {
                 !bomMutation.isError && (
                   <div className="bg-brand-card border border-brand-border rounded-xl p-6 text-center space-y-2">
                     <FileText
-                      size={28}
+                      size={20}
                       className="mx-auto text-brand-muted/40"
                     />
                     <p className="text-sm font-medium text-brand-muted">
@@ -455,7 +455,7 @@ function AppContent() {
               <button
                 type="button"
                 onClick={() => blocker.proceed()}
-                className="px-4 py-2 text-sm font-medium bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium bg-brand-danger hover:bg-brand-danger text-white rounded-lg transition-colors"
               >
                 Leave
               </button>

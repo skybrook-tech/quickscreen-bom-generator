@@ -3,6 +3,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+      },
       keyframes: {
         fadeInUp: {
           "0%": { opacity: "0", transform: "translateY(12px)" },
@@ -22,6 +25,10 @@ export default {
           bg: "var(--brand-bg)",
           card: "var(--brand-card)",
           border: "var(--brand-border)",
+          primary: "rgb(var(--brand-primary) / <alpha-value>)",
+          success: "rgb(var(--brand-success) / <alpha-value>)",
+          warning: "rgb(var(--brand-warning) / <alpha-value>)",
+          danger: "rgb(var(--brand-danger) / <alpha-value>)",
           accent: "rgb(var(--brand-accent) / <alpha-value>)",
           "accent-hover": "var(--brand-accent-hover)",
           muted: "var(--brand-muted)",

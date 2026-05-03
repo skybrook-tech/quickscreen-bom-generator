@@ -53,16 +53,16 @@ export function GateList({ gates, onEdit, onRemove }: GateListProps) {
               aria-label="Edit gate"
               className="p-1.5 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/60 transition-colors"
             >
-              <Pencil size={14} />
+              <Pencil size={16} />
             </button>
             <button
               type="button"
               onClick={() => onRemove(gate.id)}
               data-testid={`gate-remove-${idx}`}
               aria-label="Remove gate"
-              className="p-1.5 rounded-md text-brand-muted hover:text-red-400 hover:bg-red-400/10 transition-colors"
+              className="p-1.5 rounded-md text-brand-muted hover:text-brand-danger hover:bg-brand-danger/10 transition-colors"
             >
-              <Trash2 size={14} />
+              <Trash2 size={16} />
             </button>
           </div>
         </li>

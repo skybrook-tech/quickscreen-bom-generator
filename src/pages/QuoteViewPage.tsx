@@ -24,9 +24,9 @@ import type { SavedQuote, QuoteStatus } from '../types/quote.types';
 
 const STATUS_COLOURS: Record<string, string> = {
   draft:    'text-brand-muted bg-brand-border/30',
-  sent:     'text-blue-400 bg-blue-400/10',
-  accepted: 'text-green-400 bg-green-400/10',
-  expired:  'text-red-400 bg-red-400/10',
+  sent:     'text-brand-primary bg-brand-primary/10',
+  accepted: 'text-brand-success bg-brand-success/10',
+  expired:  'text-brand-danger bg-brand-danger/10',
 };
 
 const STATUS_OPTIONS: { value: QuoteStatus; label: string }[] = [
@@ -343,7 +343,7 @@ export function QuoteViewPage() {
     return (
       <AppShell>
         <div className="flex flex-col items-center justify-center h-64 gap-3">
-          <p className="text-sm text-red-400">{error ?? 'Quote not found'}</p>
+          <p className="text-sm text-brand-danger">{error ?? 'Quote not found'}</p>
           <Link to="/quotes" className="text-sm text-brand-accent hover:underline">← Back to quotes</Link>
         </div>
       </AppShell>
@@ -359,7 +359,7 @@ export function QuoteViewPage() {
             onClick={() => { setIsEditing(false); setEditStep('configure'); }}
             className="flex items-center gap-1 text-xs text-brand-muted hover:text-brand-text transition-colors shrink-0"
           >
-            <ArrowLeft size={13} />
+            <ArrowLeft size={16} />
             Cancel
           </button>
           <div className="flex-1">
@@ -378,7 +378,7 @@ export function QuoteViewPage() {
             to="/quotes"
             className="inline-flex items-center gap-1.5 text-sm text-brand-muted hover:text-brand-text transition-colors print:hidden"
           >
-            <ArrowLeft size={14} />
+            <ArrowLeft size={16} />
             All Quotes
           </Link>
         )}

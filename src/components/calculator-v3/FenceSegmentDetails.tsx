@@ -309,8 +309,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                   onClick={() => changeRunProduct(product.system_type)}
                   className={`rounded-full border px-3 py-2 text-sm font-bold shadow-sm transition-colors ${
                     product.system_type === run.productCode
-                      ? "border-blue-800 bg-blue-800 text-white shadow-sm"
-                      : "border-brand-border bg-brand-card text-brand-text hover:border-blue-800 hover:text-blue-800"
+                      ? "border-brand-primary bg-brand-primary text-white shadow-sm"
+                      : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary"
                   }`}
                 >
                   {product.system_type}

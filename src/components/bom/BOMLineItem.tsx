@@ -35,7 +35,7 @@ export function BOMLineItem({
           {item.description}
         </span>
         {item.notes && (
-          <span className="ml-2 text-xs text-yellow-400 font-medium">
+          <span className="ml-2 text-xs text-brand-warning font-medium">
             {item.notes}
           </span>
         )}

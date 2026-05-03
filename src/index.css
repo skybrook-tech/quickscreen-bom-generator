@@ -9,7 +9,11 @@
   --brand-bg:           #f1f5f9;
   --brand-card:         #ffffff;
   --brand-border:       #cbd5e1;
-  --brand-accent:       59 130 246;
+  --brand-primary:      30 64 175;
+  --brand-success:      5 150 105;
+  --brand-warning:      217 119 6;
+  --brand-danger:       220 38 38;
+  --brand-accent:       var(--brand-primary);
   --brand-accent-hover: #2563eb;
   --brand-muted:        #64748b;
   --brand-text:         #0f172a;
@@ -20,7 +24,11 @@
   --brand-bg:           #111827;
   --brand-card:         #1f2937;
   --brand-border:       #334155;
-  --brand-accent:       59 130 246;
+  --brand-primary:      59 130 246;
+  --brand-success:      16 185 129;
+  --brand-warning:      245 158 11;
+  --brand-danger:       239 68 68;
+  --brand-accent:       var(--brand-primary);
   --brand-accent-hover: #2563eb;
   --brand-muted:        #cbd5e1;
   --brand-text:         #f8fafc;
@@ -28,6 +36,9 @@
 }
 
 body {
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "cv02" 1, "cv03" 1, "cv04" 1;
   background: var(--brand-bg);
   color: var(--brand-text);
 }

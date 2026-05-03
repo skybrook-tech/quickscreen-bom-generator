@@ -180,7 +180,7 @@ export function RunCard({ run, runIdx }: Props) {
         {run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
           <div className="pt-2">
             <p className="mb-2 flex items-center gap-2 text-sm font-bold text-brand-muted">
-              <CheckCircle2 size={15} />
+              <CheckCircle2 size={16} />
               Gates
             </p>
             <div className="space-y-2">

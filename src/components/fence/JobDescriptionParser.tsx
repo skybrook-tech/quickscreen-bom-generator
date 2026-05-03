@@ -44,11 +44,11 @@ export function JobDescriptionParser() {
           onClick={handleParse}
           className="flex items-center gap-2 px-4 py-2 bg-brand-accent hover:bg-brand-accent-hover text-white text-sm font-medium rounded-md transition-colors"
         >
-          <Wand2 size={14} />
+          <Wand2 size={16} />
           Parse Description
         </button>
         {status && (
-          <p className={`text-sm font-medium ${status.type === 'success' ? 'text-green-700' : 'text-amber-700'}`}>
+          <p className={`text-sm font-medium ${status.type === 'success' ? 'text-brand-success' : 'text-brand-warning'}`}>
             {status.message}
           </p>
         )}

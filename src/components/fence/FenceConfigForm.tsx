@@ -33,10 +33,10 @@ interface FenceConfigFormProps {
 }
 
 const SYSTEM_TYPE_ICONS: Record<string, React.ReactNode> = {
-  QSHS: <AlignJustify size={18} />,
-  VS: <GalleryVertical size={18} />,
-  XPL: <Zap size={18} />,
-  BAYG: <Package size={18} />,
+  QSHS: <AlignJustify size={16} />,
+  VS: <GalleryVertical size={16} />,
+  XPL: <Zap size={16} />,
+  BAYG: <Package size={16} />,
 };
 
 export function FenceConfigForm({ onGenerate }: FenceConfigFormProps) {

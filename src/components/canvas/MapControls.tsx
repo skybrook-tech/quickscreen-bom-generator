@@ -229,7 +229,7 @@ export function MapControls({ engineRef }: MapControlsProps) {
       {/* Address search + map type */}
       <div className="flex flex-col gap-2 flex-1 min-w-[260px]">
         <div className="flex items-center gap-2">
-          <Map size={13} className="text-brand-muted shrink-0" />
+          <Map size={16} className="text-brand-muted shrink-0" />
           <div className="relative flex-1">
             <input
               ref={inputRef}
@@ -246,7 +246,7 @@ export function MapControls({ engineRef }: MapControlsProps) {
             />
             {fetchingAC && (
               <Loader2
-                size={10}
+                size={16}
                 className="absolute right-2 top-1/2 -translate-y-1/2 animate-spin text-brand-muted pointer-events-none"
               />
             )}
@@ -293,9 +293,9 @@ export function MapControls({ engineRef }: MapControlsProps) {
             className="flex items-center gap-1.5 px-2.5 py-1.5 bg-brand-accent/20 border border-brand-accent text-brand-accent rounded-md hover:bg-brand-accent/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
-              <Loader2 size={12} className="animate-spin" />
+              <Loader2 size={16} className="animate-spin" />
             ) : (
-              <Map size={12} />
+              <Map size={16} />
             )}
             Load
           </button>
@@ -347,7 +347,7 @@ export function MapControls({ engineRef }: MapControlsProps) {
         />
       </div>
 
-      {error && <p className="w-full text-red-400 text-xs mt-1">{error}</p>}
+      {error && <p className="w-full text-brand-danger text-xs mt-1">{error}</p>}
     </div>
   );
 }

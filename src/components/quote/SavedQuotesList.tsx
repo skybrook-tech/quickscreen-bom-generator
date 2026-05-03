@@ -9,9 +9,9 @@ interface SavedQuotesListProps {
 
 const STATUS_COLOURS: Record<string, string> = {
   draft:    'text-brand-muted',
-  sent:     'text-blue-400',
-  accepted: 'text-green-400',
-  expired:  'text-red-400',
+  sent:     'text-brand-primary',
+  accepted: 'text-brand-success',
+  expired:  'text-brand-danger',
 };
 
 export function SavedQuotesList({ onLoad, onClose }: SavedQuotesListProps) {
@@ -45,7 +45,7 @@ export function SavedQuotesList({ onLoad, onClose }: SavedQuotesListProps) {
             <p className="p-4 text-sm text-brand-muted">Loading quotes…</p>
           )}
           {quotesQuery.isError && (
-            <p className="p-4 text-sm text-red-400">Failed to load quotes</p>
+            <p className="p-4 text-sm text-brand-danger">Failed to load quotes</p>
           )}
           {quotesQuery.data?.length === 0 && (
             <p className="p-4 text-sm text-brand-muted">No saved quotes yet.</p>
@@ -79,15 +79,15 @@ export function SavedQuotesList({ onLoad, onClose }: SavedQuotesListProps) {
                   title="Load quote"
                   className="p-1.5 text-brand-muted hover:text-brand-accent transition-colors"
                 >
-                  <FolderOpen size={15} />
+                  <FolderOpen size={16} />
                 </button>
                 <button
                   type="button"
                   onClick={() => deleteQuote.mutate(quote.id)}
                   title="Delete quote"
-                  className="p-1.5 text-brand-muted hover:text-red-400 transition-colors"
+                  className="p-1.5 text-brand-muted hover:text-brand-danger transition-colors"
                 >
-                  <Trash2 size={15} />
+                  <Trash2 size={16} />
                 </button>
               </div>
             </div>

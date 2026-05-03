@@ -25,10 +25,10 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.error) {
       return (
-        <div className="bg-brand-card border border-red-800/50 rounded-lg p-4 flex items-start gap-3">
-          <AlertTriangle size={16} className="text-red-400 mt-0.5 shrink-0" />
+        <div className="bg-brand-card border border-brand-danger/50 rounded-lg p-4 flex items-start gap-3">
+          <AlertTriangle size={16} className="text-brand-danger mt-0.5 shrink-0" />
           <div>
-            <p className="text-sm font-medium text-red-400">
+            <p className="text-sm font-medium text-brand-danger">
               {this.props.label ?? 'Section'} failed to render
             </p>
             <p className="text-xs text-brand-muted mt-1">

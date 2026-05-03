@@ -404,9 +404,9 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
   }
 
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-blue-950 via-blue-600 to-sky-200 p-[2px] shadow-[0_2px_0_rgba(191,219,254,0.75),0_10px_22px_rgba(30,64,175,0.18)]">
+    <div className="rounded-2xl bg-gradient-to-br from-brand-primary via-brand-primary/70 to-brand-primary/15 p-[2px] shadow-[0_2px_0_rgba(191,219,254,0.75),0_10px_22px_rgba(30,64,175,0.18)]">
     <div className={`relative overflow-hidden rounded-[0.9rem] text-sm font-semibold shadow-inner ${
-      done ? "bg-blue-800/5" : "bg-brand-card"
+      done ? "bg-brand-primary/5" : "bg-brand-card"
     } cursor-pointer`}
       onDoubleClick={(event) => {
         const target = event.target as HTMLElement;
@@ -422,14 +422,14 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
             onClick={matchesMaster ? undefined : resetToMaster}
             disabled={matchesMaster}
             className={`rounded-full transition-colors ${
-              matchesMaster ? "text-emerald-500" : "text-brand-muted/35"
-            } ${matchesMaster ? "cursor-default" : "hover:text-emerald-600"}`}
+              matchesMaster ? "text-brand-success" : "text-brand-muted/35"
+            } ${matchesMaster ? "cursor-default" : "hover:text-brand-success"}`}
             title={matchesMaster ? "matching segment 1" : "Reset to match segment 1"}
           >
             <CheckCircle2
-              size={28}
+              size={20}
               fill={matchesMaster ? "currentColor" : "none"}
-              className={matchesMaster ? "text-emerald-500" : ""}
+              className={matchesMaster ? "text-brand-success" : ""}
             />
           </button>
           <span className="text-xl font-black leading-none tracking-normal text-black">
@@ -440,8 +440,8 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
             onClick={toggleDone}
             className={`h-3.5 w-3.5 rounded-full border transition-colors ${
               done
-                ? "border-blue-900 bg-blue-900"
-                : "border-sky-300 bg-sky-200 hover:border-blue-800"
+                ? "border-brand-primary/90 bg-brand-primary/90"
+                : "border-brand-primary/30 bg-brand-primary/15 hover:border-brand-primary"
             }`}
             title={done ? "Segment confirmed" : "Mark segment confirmed"}
             aria-label={done ? "Segment confirmed" : "Mark segment confirmed"}
@@ -469,13 +469,13 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
               onBlur={() => setConfirmRemove(false)}
               className={`inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
                 confirmRemove
-                  ? "bg-red-600 text-white hover:bg-red-700"
-                  : "text-red-500 hover:bg-red-500/10 hover:text-red-700"
+                  ? "bg-brand-danger text-white hover:bg-brand-danger/90"
+                  : "text-brand-danger hover:bg-brand-danger/10 hover:text-brand-danger/90"
               }`}
               aria-label={confirmRemove ? "Click again to remove segment" : "Remove segment"}
               title={confirmRemove ? "Click again to remove segment" : "Remove segment"}
             >
-              <X size={18} strokeWidth={3} />
+              <X size={16} strokeWidth={3} />
             </button>
             </div>
           </div>

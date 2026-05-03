@@ -62,7 +62,7 @@ export function CanvasToolbar({
         className={btnCls(activeTool === "draw")}
         onClick={() => handleTool("draw")}
       >
-        <Pencil size={13} /> Draw
+        <Pencil size={16} /> Draw
       </button>
       <button
         type="button"
@@ -70,7 +70,7 @@ export function CanvasToolbar({
         className={btnCls(activeTool === "gate")}
         onClick={() => handleTool("gate")}
       >
-        <GitMerge size={13} /> Gate
+        <GitMerge size={16} /> Gate
       </button>
       <button
         type="button"
@@ -78,7 +78,7 @@ export function CanvasToolbar({
         className={btnCls(activeTool === "move")}
         onClick={() => handleTool("move")}
       >
-        <Move size={13} /> Move / Edit
+        <Move size={16} /> Move / Edit
       </button>
       <button
         type="button"
@@ -86,7 +86,7 @@ export function CanvasToolbar({
         className={btnCls(activeTool === "boundary")}
         onClick={() => handleTool("boundary")}
       >
-        <Minus size={13} /> Boundary
+        <Minus size={16} /> Boundary
       </button>
 
       <div className="w-px h-4 bg-brand-border" />
@@ -98,7 +98,7 @@ export function CanvasToolbar({
         className={iconBtn}
         onClick={() => engineRef.current?.undo()}
       >
-        <Undo2 size={13} /> Undo
+        <Undo2 size={16} /> Undo
       </button>
       <button
         type="button"
@@ -106,7 +106,7 @@ export function CanvasToolbar({
         className={iconBtn}
         onClick={() => engineRef.current?.clear()}
       >
-        <Trash2 size={13} /> Clear
+        <Trash2 size={16} /> Clear
       </button>
       <button
         type="button"
@@ -114,7 +114,7 @@ export function CanvasToolbar({
         className={iconBtn}
         onClick={() => engineRef.current?.fitToContent()}
       >
-        <Crosshair size={13} /> Centre
+        <Crosshair size={16} /> Centre
       </button>
       <button
         type="button"
@@ -122,7 +122,7 @@ export function CanvasToolbar({
         className={iconBtn}
         onClick={() => engineRef.current?.resetView()}
       >
-        <RotateCcw size={13} /> Reset View
+        <RotateCcw size={16} /> Reset View
       </button>
 
       <div className="w-px h-4 bg-brand-border" />
@@ -163,7 +163,7 @@ export function CanvasToolbar({
         }
         className={iconBtn}
       >
-        {expanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+        {expanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
         {expanded ? "Collapse" : "Expand"}
       </button>
     </div>

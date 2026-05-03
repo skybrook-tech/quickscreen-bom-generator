@@ -66,7 +66,7 @@ export function BOMStep({
         onClick={onBack}
         className="flex items-center gap-1.5 text-sm text-brand-muted hover:text-brand-text transition-colors"
       >
-        <ArrowLeft size={14} />
+        <ArrowLeft size={16} />
         Edit Configuration
       </button>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
@@ -82,8 +82,8 @@ export function BOMStep({
 
           {/* Error state */}
           {isError && !isPending && (
-            <div className="bg-brand-card border border-red-900/40 rounded-xl p-5">
-              <p className="text-sm text-red-400">
+            <div className="bg-brand-card border border-brand-danger/40 rounded-xl p-5">
+              <p className="text-sm text-brand-danger">
                 {errorMessage ?? "BOM calculation failed. Is Supabase running?"}
               </p>
             </div>

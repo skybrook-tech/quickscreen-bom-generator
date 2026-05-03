@@ -10,25 +10,25 @@ export function BOMWarningsPanel({ errors, warnings, assumptions }: BOMWarningsP
   return (
     <div className="space-y-2">
       {errors.length > 0 && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
+        <div className="bg-brand-danger/10 border border-brand-danger/30 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-red-400 text-sm font-semibold">Errors — BOM blocked until resolved</span>
+            <span className="text-brand-danger text-sm font-semibold">Errors — BOM blocked until resolved</span>
           </div>
           <ul className="space-y-1">
             {errors.map((e, i) => (
-              <li key={i} className="text-red-400 text-sm">• {e}</li>
+              <li key={i} className="text-brand-danger text-sm">• {e}</li>
             ))}
           </ul>
         </div>
       )}
       {warnings.length > 0 && (
-        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
+        <div className="bg-brand-warning/10 border border-brand-warning/30 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-amber-400 text-sm font-semibold">Warnings</span>
+            <span className="text-brand-warning text-sm font-semibold">Warnings</span>
           </div>
           <ul className="space-y-1">
             {warnings.map((w, i) => (
-              <li key={i} className="text-amber-400 text-sm">• {w}</li>
+              <li key={i} className="text-brand-warning text-sm">• {w}</li>
             ))}
           </ul>
         </div>

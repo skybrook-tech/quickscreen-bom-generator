@@ -169,10 +169,10 @@ function CalculatorV3Content() {
         if (!layoutOpen) onBeforeOpen?.();
         setLayoutOpen((open) => !open);
       }}
-      className={`inline-flex items-center gap-2.5 rounded-full border px-4 py-3 text-sm font-extrabold shadow-sm transition-colors ${
+      className={`inline-flex items-center gap-2.5 rounded-lg border px-4 py-3 text-sm font-extrabold transition-colors hover:shadow-sm ${
         layoutOpen
-          ? "border-blue-800 bg-blue-800 text-white hover:bg-blue-900"
-          : "border-blue-800/40 bg-blue-800/10 text-blue-800 hover:bg-blue-800 hover:text-white"
+          ? "border-brand-primary bg-brand-primary text-white hover:bg-brand-primary/90"
+          : "border-brand-primary/40 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white"
       }`}
       title={layoutOpen ? "Minimize layout map" : "Open layout map"}
     >
@@ -637,7 +637,7 @@ function CalculatorV3Content() {
                     {errors.map((e, i) => (
                       <div
                         key={i}
-                        className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm text-red-500"
+                        className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-2 text-sm text-brand-danger"
                       >
                         Error: {e}
                       </div>
@@ -645,7 +645,7 @@ function CalculatorV3Content() {
                     {warnings.map((w, i) => (
                       <div
                         key={i}
-                        className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-sm text-amber-600"
+                        className="rounded-lg border border-brand-warning/30 bg-brand-warning/10 px-4 py-2 text-sm text-brand-warning"
                       >
                         Warning: {w}
                       </div>
@@ -654,7 +654,7 @@ function CalculatorV3Content() {
                 )}
 
                 {bomMutation.isError && (
-                  <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-500">
+                  <div className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-3 text-sm text-brand-danger">
                     Error:{" "}
                     {bomMutation.error instanceof Error
                       ? bomMutation.error.message
@@ -671,9 +671,9 @@ function CalculatorV3Content() {
                   type="button"
                   onClick={handleSaveJob}
                   disabled={!payload || saving}
-                  className="inline-flex items-center gap-2 rounded-full bg-blue-800 px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
+                  {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                   {saveJobLabel}
                 </button>
                 <button
@@ -686,9 +686,9 @@ function CalculatorV3Content() {
                     setJobName("");
                   }}
                   disabled={!payload && !jobName}
-                  className="inline-flex items-center gap-2 rounded-full border border-red-500/30 px-3 py-2 text-sm font-bold text-red-600 transition-colors hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-lg border border-brand-danger/30 px-3 py-2 text-sm font-bold text-brand-danger transition-colors hover:bg-brand-danger/10 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  <Trash2 size={15} />
+                  <Trash2 size={16} />
                   Clear Job
                 </button>
               </div>
@@ -700,13 +700,13 @@ function CalculatorV3Content() {
           type="button"
           aria-label="Resize panels"
           onMouseDown={handleResizeStart}
-          className="hidden w-1.5 shrink-0 cursor-col-resize bg-brand-border/60 transition-colors hover:bg-blue-800/40 md:block"
+          className="hidden w-1.5 shrink-0 cursor-col-resize bg-brand-border/60 transition-colors hover:bg-brand-primary/40 md:block"
         />
 
         <main className="min-h-0 min-w-0 flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8">
           <div className="mx-auto max-w-6xl space-y-4 sm:space-y-5">
-            <section className="rounded-2xl border border-brand-border/60 bg-brand-card p-3 shadow-sm sm:p-5">
-              <div className="mb-4 flex flex-wrap items-start justify-between gap-4 rounded-lg bg-blue-800 p-4 text-white sm:p-5">
+            <section className="rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5">
+              <div className="mb-4 flex flex-wrap items-start justify-between gap-4 rounded-lg bg-brand-primary p-4 text-white sm:p-5">
                 <div>
                   <h2 className="text-lg font-bold">Bill of Materials</h2>
                   {summaryText && <p className="mt-1 text-sm opacity-80">{summaryText}</p>}
@@ -725,7 +725,7 @@ function CalculatorV3Content() {
                   type="button"
                   onClick={handleGenerateBOM}
                   disabled={bomMutation.isPending || hasErrors || noSegments}
-                  className="inline-flex items-center gap-2 rounded-full bg-blue-800 px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-blue-900 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {bomMutation.isPending && (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -739,27 +739,27 @@ function CalculatorV3Content() {
                     dispatch({ type: "CLEAR_BOM_RESULT" });
                   }}
                   disabled={!bomResultForTabs}
-                  className="inline-flex items-center gap-2 rounded-full border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-red-500/50 hover:text-red-600 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-danger/50 hover:text-brand-danger hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  <FileX2 size={15} />
+                  <FileX2 size={16} />
                   Clear BOM
                 </button>
                 <button
                   type="button"
                   onClick={handlePrintBom}
                   disabled={!bomResultForTabs}
-                  className="inline-flex items-center gap-2 rounded-full border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-blue-800 hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  <Printer size={15} />
+                  <Printer size={16} />
                   Print BOM
                 </button>
                 <button
                   type="button"
                   onClick={handleExportCsv}
                   disabled={!bomResultForTabs}
-                  className="inline-flex items-center gap-2 rounded-full border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-blue-800 hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  <Download size={15} />
+                  <Download size={16} />
                   Export CSV
                 </button>
               </div>
@@ -829,7 +829,7 @@ function CalculatorV3Content() {
                   <button
                     type="button"
                     onClick={() => setLayoutOpen(false)}
-                    className="rounded-full border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted hover:border-blue-800 hover:text-blue-800"
+                    className="rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
                     title="Minimize map"
                   >
                     Minimize
@@ -837,7 +837,7 @@ function CalculatorV3Content() {
                   <button
                     type="button"
                     onClick={() => setLayoutFullscreen((value) => !value)}
-                    className="rounded-full border border-brand-border p-2 text-brand-muted hover:border-blue-800 hover:text-blue-800"
+                    className="rounded-lg border border-brand-border p-2 text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
                     title={layoutFullscreen ? "Restore map" : "Expand map"}
                   >
                     {layoutFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
@@ -845,7 +845,7 @@ function CalculatorV3Content() {
                   <button
                     type="button"
                     onClick={() => setLayoutOpen(false)}
-                    className="rounded-full border border-brand-border p-2 text-brand-muted hover:border-red-500 hover:text-red-600"
+                    className="rounded-lg border border-brand-border p-2 text-brand-muted transition-colors hover:border-brand-danger hover:text-brand-danger hover:shadow-sm"
                     title="Close map"
                   >
                     <X size={16} />

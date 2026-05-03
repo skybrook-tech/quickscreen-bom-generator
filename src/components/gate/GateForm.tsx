@@ -121,7 +121,7 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
             min="400"
             max="6000"
             data-testid="gate-opening-width"
-            className={inputCls + (swingWidthWarning ? ' border-yellow-500' : '')}
+            className={inputCls + (swingWidthWarning ? ' border-brand-warning' : '')}
           />
         </FormField>
       </div>

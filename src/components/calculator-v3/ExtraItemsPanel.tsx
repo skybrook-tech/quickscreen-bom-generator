@@ -131,9 +131,9 @@ export function ExtraItemsPanel({ items, onAdd, onRemove }: ExtraItemsPanelProps
                 type="button"
                 onClick={() => onRemove(item.id)}
                 aria-label="Remove extra item"
-                className="p-1 rounded text-brand-muted hover:text-red-400 hover:bg-red-400/10 transition-colors"
+                className="p-1 rounded text-brand-muted hover:text-brand-danger hover:bg-brand-danger/10 transition-colors"
               >
-                <Trash2 size={14} />
+                <Trash2 size={16} />
               </button>
             </li>
           ))}
@@ -272,7 +272,7 @@ export function ExtraItemsPanel({ items, onAdd, onRemove }: ExtraItemsPanelProps
           className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-accent hover:bg-brand-accent/90 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-md transition-colors whitespace-nowrap"
           data-testid="extra-items-add"
         >
-          <PlusCircle size={14} />
+          <PlusCircle size={16} />
           Add
         </button>
 
@@ -288,7 +288,7 @@ export function ExtraItemsPanel({ items, onAdd, onRemove }: ExtraItemsPanelProps
             aria-label="Cancel new item"
             className="p-1.5 text-brand-muted hover:text-brand-text transition-colors"
           >
-            <X size={14} />
+            <X size={16} />
           </button>
         )}
       </div>

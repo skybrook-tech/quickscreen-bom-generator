@@ -209,7 +209,7 @@ export function BOMDisplay({
                       </td>
                       <td className="py-2.5 px-3 text-sm text-brand-text">
                         {item.description}{" "}
-                        <span className="text-xs text-amber-500 font-medium">
+                        <span className="text-xs text-brand-warning font-medium">
                           extra
                         </span>
                       </td>

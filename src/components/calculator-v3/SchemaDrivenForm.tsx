@@ -152,8 +152,8 @@ export function SchemaDrivenForm({
                         }
                         className={`inline-flex min-h-9 items-center gap-2 rounded-full border px-3 py-2 text-sm font-bold shadow-sm transition-colors ${
                           selected
-                            ? "border-blue-800 bg-blue-800 text-white shadow-sm"
-                            : "border-brand-border bg-brand-card text-brand-text hover:border-blue-800 hover:text-blue-800"
+                            ? "border-brand-primary bg-brand-primary text-white shadow-sm"
+                            : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary"
                         }`}
                       >
                         {field.field_key === "colour_code" && (

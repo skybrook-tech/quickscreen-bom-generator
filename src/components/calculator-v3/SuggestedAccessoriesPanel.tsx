@@ -55,7 +55,7 @@ export function SuggestedAccessoriesPanel({
                 </div>
                 <p className="mt-1 text-xs text-brand-muted">{item.reason}</p>
                 {!item.priced && (
-                  <p className="mt-1 text-xs font-medium text-amber-700">
+                  <p className="mt-1 text-xs font-medium text-brand-warning">
                     Price not seeded yet.
                   </p>
                 )}
@@ -78,9 +78,9 @@ export function SuggestedAccessoriesPanel({
                   type="button"
                   onClick={() => onAdd(item)}
                   disabled={added}
-                  className="flex items-center gap-1.5 rounded-full bg-brand-accent px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-accent/90 disabled:cursor-not-allowed disabled:bg-brand-border"
+                  className="flex items-center gap-1.5 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:bg-brand-border"
                 >
-                  {added ? <Check size={14} /> : <PlusCircle size={14} />}
+                  {added ? <Check size={16} /> : <PlusCircle size={16} />}
                   {added ? "Added" : "Add"}
                 </button>
               </div>

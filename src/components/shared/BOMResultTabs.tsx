@@ -161,7 +161,7 @@ function ItemGroup({
           <td className="py-2.5 px-3 text-sm text-brand-text">
             {item.description}
             {item.notes && (
-              <span className="ml-1.5 text-xs text-amber-400">
+              <span className="ml-1.5 text-xs text-brand-warning">
                 {item.notes}
               </span>
             )}
@@ -197,7 +197,7 @@ function ItemGroup({
               <button
                 type="button"
                 onClick={() => onRemoveLine?.(item)}
-                className="rounded px-2 py-1 text-xs font-medium text-red-500 transition-colors hover:bg-red-500/10"
+                className="rounded px-2 py-1 text-xs font-medium text-brand-danger transition-colors hover:bg-brand-danger/10"
               >
                 Remove
               </button>

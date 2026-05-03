@@ -53,7 +53,7 @@ export function Header() {
               Quotes
             </NavLink>
             <NavLink to="/new" className={newQuoteLinkCls}>
-              <Plus size={12} />
+              <Plus size={16} />
               New Quote
             </NavLink>
           </nav>
@@ -83,7 +83,7 @@ export function Header() {
               title="Sign out"
               className="flex items-center gap-1.5 text-xs text-brand-muted hover:text-brand-text px-2.5 py-2 rounded-md hover:bg-brand-border/30 transition-colors"
             >
-              <LogOut size={13} />
+              <LogOut size={16} />
               <span className="hidden sm:inline">Sign out</span>
             </button>
           </>

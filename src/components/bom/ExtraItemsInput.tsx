@@ -226,7 +226,7 @@ export function ExtraItemsInput({ onAdd }: ExtraItemsInputProps) {
           disabled={!canAdd}
           className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-md transition-colors whitespace-nowrap"
         >
-          <PlusCircle size={14} />
+          <PlusCircle size={16} />
           Add
         </button>
       </div>

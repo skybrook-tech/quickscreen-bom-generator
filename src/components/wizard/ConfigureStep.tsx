@@ -26,7 +26,7 @@ export function ConfigureStep({ onBack, onGenerate, isGenerating, layoutData }: 
         onClick={onBack}
         className="flex items-center gap-1.5 text-sm text-brand-muted hover:text-brand-text transition-colors"
       >
-        <ArrowLeft size={14} />
+        <ArrowLeft size={16} />
         Back
       </button>
 

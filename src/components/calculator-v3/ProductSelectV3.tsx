@@ -100,7 +100,7 @@ export function ProductSelectV3({
   return (
     <div data-testid="product-select">
       {!currentCode && (
-        <p className="mb-2 text-sm font-semibold text-emerald-600">
+        <p className="mb-2 text-sm font-semibold text-brand-success">
           Select fence style or open layout map
         </p>
       )}
@@ -115,8 +115,8 @@ export function ProductSelectV3({
                 onClick={() => selectProduct(product)}
                 className={`rounded-full border px-4 py-2 text-sm font-bold shadow-sm transition-all ${
                   selected
-                    ? "border-blue-800 bg-blue-800 text-white shadow-sm"
-                    : "border-brand-border bg-brand-card text-brand-text hover:border-blue-800 hover:text-blue-800"
+                    ? "border-brand-primary bg-brand-primary text-white shadow-sm"
+                    : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary"
                 }`}
                 data-testid={`product-option-${product.system_type}`}
                 title={product.description ?? product.name}

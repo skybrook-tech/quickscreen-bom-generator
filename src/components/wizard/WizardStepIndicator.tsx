@@ -44,7 +44,7 @@ export function WizardStepIndicator({ currentStep, steps, onStepClick }: WizardS
                 ${isDone    ? 'border-brand-muted bg-brand-muted text-brand-bg' : ''}
                 ${isFuture  ? 'border-brand-border text-brand-border' : ''}
               `}>
-                {isDone ? <Check size={11} strokeWidth={3} /> : idx + 1}
+                {isDone ? <Check size={16} strokeWidth={3} /> : idx + 1}
               </span>
 
               {/* Label */}
