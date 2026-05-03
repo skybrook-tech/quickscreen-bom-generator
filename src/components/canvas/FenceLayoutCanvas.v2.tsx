@@ -35,6 +35,8 @@ interface FenceLayoutCanvasProps {
   ) => void;
   /** Optional content to render pinned inside the canvas (overlays, panels). */
   renderOverlay?: (runs: CanvasRunSummary[]) => React.ReactNode;
+  /** Flat fence-segment index under cursor changed (-1 = none). */
+  onFlatSegmentHoverChange?: (flatSegIdx: number) => void;
 }
 
 export function FenceLayoutCanvas({
@@ -47,6 +49,7 @@ export function FenceLayoutCanvas({
   allowedAngles: allowedAnglesProp,
   onSegmentContextMenu,
   renderOverlay,
+  onFlatSegmentHoverChange,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
@@ -65,6 +68,11 @@ export function FenceLayoutCanvas({
   const onSegmentContextMenuRef = useRef(onSegmentContextMenu);
   useEffect(() => {
     onSegmentContextMenuRef.current = onSegmentContextMenu;
+  });
+
+  const onFlatSegmentHoverChangeRef = useRef(onFlatSegmentHoverChange);
+  useEffect(() => {
+    onFlatSegmentHoverChangeRef.current = onFlatSegmentHoverChange;
   });
 
   // allowedAngles prop takes priority; fallback to product metadata lookup (v1 path)
@@ -144,6 +152,9 @@ export function FenceLayoutCanvas({
       },
       onRunSummariesRefresh: (summaryRuns) => {
         setRunSummaries(summaryRuns);
+      },
+      onFlatSegmentHoverChange: (flatSegIdx) => {
+        onFlatSegmentHoverChangeRef.current?.(flatSegIdx);
       },
     });
     engineRef.current = engine;

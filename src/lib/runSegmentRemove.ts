@@ -31,6 +31,44 @@ function splicePointsAfterTripleFenceMerge(
   };
 }
 
+/** Drop one vertex when removing a single fence segment; keeps pts.length === fenceCount + 1 invariant. */
+function splicePointsAfterSingleFenceRemoval(
+  geometry: CanonicalRun["geometry"] | undefined,
+  sorted: CanonicalSegment[],
+  sortedIdx: number,
+): CanonicalRun["geometry"] | undefined {
+  const cur = sorted[sortedIdx];
+  if (cur.kind !== "fence") return geometry;
+
+  const pts = geometry?.points;
+  if (!pts || pts.length < 2) return geometry;
+
+  let fenceCount = 0;
+  for (const s of sorted) {
+    if (s.kind === "fence") fenceCount++;
+  }
+
+  if (pts.length !== fenceCount + 1) return geometry;
+
+  let fenceEdgeIndex = 0;
+  for (let i = 0; i < sortedIdx; i++) {
+    if (sorted[i].kind === "fence") fenceEdgeIndex++;
+  }
+
+  const F = fenceCount;
+  if (fenceEdgeIndex === 0) {
+    return { points: pts.slice(1) };
+  }
+  if (fenceEdgeIndex === F - 1) {
+    return { points: pts.slice(0, -1) };
+  }
+  const removeAt = fenceEdgeIndex + 1;
+  if (removeAt <= 0 || removeAt >= pts.length) return geometry;
+  return {
+    points: [...pts.slice(0, removeAt), ...pts.slice(removeAt + 1)],
+  };
+}
+
 /**
  * Remove a segment; when the removed segment is a fence with fence neighbours
  * on both sides, merge into one fence (lengths sum, join terminations).
@@ -85,7 +123,9 @@ export function removeSegmentFromRun(
 
   const filtered = sorted.filter((s) => s.segmentId !== segmentId);
   const geometry =
-    cur.kind === "fence" ? undefined : run.geometry;
+    cur.kind === "fence"
+      ? splicePointsAfterSingleFenceRemoval(run.geometry, sorted, idx)
+      : run.geometry;
 
   return {
     ...run,

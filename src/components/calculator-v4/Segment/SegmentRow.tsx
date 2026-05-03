@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { cn } from "../../../lib";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { useProducts } from "../../../hooks/useProducts";
 import type { CanonicalSegment } from "../../../types/canonical.types";
@@ -13,6 +14,7 @@ import {
   parseTargetHeightUi,
   snapHeightToClosestPitchOption,
 } from "../../../lib/targetHeightOptions";
+import { useLayoutSegmentHighlight } from "../LayoutMap/LayoutSegmentHighlightContext";
 import { SegmentDetails } from "./SegmentDetails";
 import { SegmentHeader } from "./SegmentHeader";
 
@@ -26,6 +28,7 @@ interface Props {
 }
 
 export function SegmentRow({ runId, seg, segmentLabel, runColorIndex }: Props) {
+  const layoutHl = useLayoutSegmentHighlight();
   const { dispatch, state } = useCalculatorV4();
   const [open, setOpen] = useState(false);
   const { data: products = [] } = useProducts();
@@ -90,11 +93,31 @@ export function SegmentRow({ runId, seg, segmentLabel, runColorIndex }: Props) {
             : "rgba(245, 158, 11, 0.06)",
         };
 
+  const isLayoutLinkedHighlight =
+    !!layoutHl &&
+    seg.kind === "fence" &&
+    layoutHl.highlight?.runId === runId &&
+    layoutHl.highlight?.segmentId === seg.segmentId;
+
   return (
     <div
-      className="rounded-xl border-2 overflow-hidden transition-colors"
+      className={cn(
+        "rounded-xl border-2 overflow-hidden transition-colors",
+        isLayoutLinkedHighlight &&
+          "ring-2 ring-brand-accent ring-offset-2 ring-offset-brand-card",
+      )}
       style={rowStyle}
       data-testid={`v4-segment-row-${seg.segmentId}`}
+      onMouseEnter={() => {
+        if (layoutHl && seg.kind === "fence") {
+          layoutHl.setHighlight({ runId, segmentId: seg.segmentId });
+        }
+      }}
+      onMouseLeave={() => {
+        if (layoutHl && seg.kind === "fence") {
+          layoutHl.setHighlight(null);
+        }
+      }}
     >
       <SegmentHeader
         runId={runId}

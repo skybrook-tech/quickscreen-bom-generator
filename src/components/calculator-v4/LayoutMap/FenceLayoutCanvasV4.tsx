@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FenceLayoutCanvas } from "../../canvas/FenceLayoutCanvas.v2";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { useProducts } from "../../../hooks/useProducts";
@@ -14,6 +14,23 @@ import type {
   CanonicalSegment,
 } from "../../../types/canonical.types";
 import { SegmentContextMenu } from "./SegmentContextMenu";
+import { useLayoutSegmentHighlight } from "./LayoutSegmentHighlightContext";
+
+function flatIdxForFenceSegment(
+  p: CanonicalPayload,
+  runId: string,
+  segmentId: string,
+): number | null {
+  let cursor = 0;
+  for (const run of p.runs) {
+    for (const seg of run.segments) {
+      if (seg.kind === "gate") continue;
+      if (run.runId === runId && seg.segmentId === segmentId) return cursor;
+      cursor++;
+    }
+  }
+  return null;
+}
 
 function buildPayloadGeomKey(p: CanonicalPayload): string {
   return p.runs
@@ -44,8 +61,11 @@ export function FenceLayoutCanvasV4() {
   const { state, dispatch } = useCalculatorV4();
   const payload = state.payload;
   const { data: products } = useProducts();
+  const layoutHighlight = useLayoutSegmentHighlight();
 
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
+  /** Bumps when `onEngineReady` fires so highlight can sync to a new engine instance. */
+  const [engineGen, setEngineGen] = useState(0);
   const sourceRef = useRef<"canvas" | "form">("form");
   const prevGeomKeyRef = useRef("");
 
@@ -137,6 +157,43 @@ export function FenceLayoutCanvasV4() {
     return null;
   }
 
+  const handleFlatSegmentHoverChange = useCallback(
+    (flatIdx: number) => {
+      if (!layoutHighlight) return;
+      if (flatIdx < 0) {
+        layoutHighlight.setHighlight(null);
+        return;
+      }
+      if (!payload) return;
+      const hit = resolveCanonicalFromFlatIdx(flatIdx);
+      if (!hit) {
+        layoutHighlight.setHighlight(null);
+        return;
+      }
+      layoutHighlight.setHighlight({
+        runId: hit.runId,
+        segmentId: hit.segment.segmentId,
+      });
+    },
+    [layoutHighlight, payload],
+  );
+
+  useEffect(() => {
+    const engine = engineRef.current;
+    if (!engine) return;
+    if (!layoutHighlight || !payload) {
+      engine.setUiHighlightFlatSeg(null);
+      return;
+    }
+    const h = layoutHighlight.highlight;
+    if (!h) {
+      engine.setUiHighlightFlatSeg(null);
+      return;
+    }
+    const flat = flatIdxForFenceSegment(payload, h.runId, h.segmentId);
+    engine.setUiHighlightFlatSeg(flat);
+  }, [layoutHighlight, layoutHighlight?.highlight, payload, engineGen]);
+
   function handleSegmentContextMenu(
     flatIdx: number,
     screenX: number,
@@ -199,11 +256,15 @@ export function FenceLayoutCanvasV4() {
         onLayoutChange={handleLiveSync}
         onEngineReady={(engine) => {
           engineRef.current = engine;
+          setEngineGen((g) => g + 1);
         }}
         allowedAngles={allowedAngles}
         segmentPanelWidths={segmentPanelWidths}
         jobPanelWidth={Number(payload?.variables.max_panel_width_mm) || 2600}
         onSegmentContextMenu={handleSegmentContextMenu}
+        onFlatSegmentHoverChange={
+          layoutHighlight ? handleFlatSegmentHoverChange : undefined
+        }
       />
       {ctxMenu && ctxMenuSegment ? (
         <SegmentContextMenu

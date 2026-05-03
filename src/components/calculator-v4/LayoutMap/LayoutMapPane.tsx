@@ -1,6 +1,7 @@
 import { RunList } from "../RunCard/RunList";
 import { SlideOutPane } from "../shared/SlideOutPane";
 import { FenceLayoutCanvasV4 } from "./FenceLayoutCanvasV4";
+import { LayoutSegmentHighlightProvider } from "./LayoutSegmentHighlightContext";
 
 interface Props {
   open: boolean;
@@ -21,14 +22,16 @@ export function LayoutMapPane({ open, onClose, onAddGate }: Props) {
       title="Layout map"
       widthClass="md:w-[95%]"
     >
-      <div className="flex h-full min-h-0 gap-4 p-4">
-        <div className="flex w-[35%] shrink-0 flex-col overflow-y-auto min-h-0">
-          <RunList onAddGate={onAddGate} />
+      <LayoutSegmentHighlightProvider>
+        <div className="flex h-full min-h-0 gap-4 p-4">
+          <div className="flex w-[35%] shrink-0 flex-col overflow-y-auto min-h-0">
+            <RunList onAddGate={onAddGate} />
+          </div>
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+            <FenceLayoutCanvasV4 />
+          </div>
         </div>
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-          <FenceLayoutCanvasV4 />
-        </div>
-      </div>
+      </LayoutSegmentHighlightProvider>
     </SlideOutPane>
   );
 }

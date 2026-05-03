@@ -65,6 +65,8 @@ export interface CanvasEngineConfig {
   ) => void;
   /** Fired after `loadLayout` replaces canvas state (form→canvas sync). Does not run on user edits — those use `onLayoutChange`. */
   onRunSummariesRefresh?: (runs: CanvasRunSummary[]) => void;
+  /** Flat fence-segment index under cursor changed (-1 = none). For layout ↔ list hover sync. */
+  onFlatSegmentHoverChange?: (flatSegIdx: number) => void;
 }
 
 // ── Internal state types ──────────────────────────────────────────────────────
@@ -468,6 +470,8 @@ export function initCanvasEngine(
   let mapWorldHeight = 0; // world px
   let editingLabel = false;
   let hoveredSegIdx = -1; // flat index into all segments across all runs
+  /** List-driven highlight when pointer is not over a segment (-1 = off). */
+  let uiHighlightFlat = -1;
   let animFrame = 0;
   let draggingNode: { runIdx: number; ptIdx: number } | null = null;
   let draggingRun: {
@@ -717,9 +721,16 @@ export function initCanvasEngine(
         if (!runs[ri].isBoundary) runColorIdx.set(ri, nbIdx++);
       }
     }
+    const effectiveHoverSegIdx =
+      hoveredSegIdx >= 0 ? hoveredSegIdx : uiHighlightFlat;
     for (const { seg, flatIdx, runIdx } of allSegs) {
       const colorIdx = runColorIdx.get(runIdx) ?? 0;
-      drawSegment(seg, flatIdx === hoveredSegIdx, getRunColor(colorIdx), getRunColorHover(colorIdx));
+      drawSegment(
+        seg,
+        flatIdx === effectiveHoverSegIdx,
+        getRunColor(colorIdx),
+        getRunColorHover(colorIdx),
+      );
     }
 
     // Boundary runs — dashed gray lines (non-product context lines)
@@ -1652,6 +1663,9 @@ export function initCanvasEngine(
     // Update hover state
     const prevHover = hoveredSegIdx;
     hoveredSegIdx = hitTestSegments(canvasPt, 10);
+    if (hoveredSegIdx !== prevHover) {
+      config.onFlatSegmentHoverChange?.(hoveredSegIdx);
+    }
 
     // Gate hover cursor works in all modes
     const screenPt = eventToScreen(e);
@@ -2269,6 +2283,11 @@ export function initCanvasEngine(
   // Initial draw — fit to 50m wide view
   fitToWidth(50);
 
+  function setUiHighlightFlatSeg(idx: number | null) {
+    uiHighlightFlat = idx === null || idx < 0 ? -1 : idx;
+    scheduleRedraw();
+  }
+
   return {
     destroy,
     getLayout,
@@ -2291,5 +2310,6 @@ export function initCanvasEngine(
     loadLayout,
     fitToWidth,
     fitToContent,
+    setUiHighlightFlatSeg,
   };
 }
