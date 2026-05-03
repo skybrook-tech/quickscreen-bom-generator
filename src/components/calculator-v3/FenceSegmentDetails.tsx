@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../types/canonical.types";
@@ -85,6 +85,11 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     maxPanelWidthForSystem(productCode),
   );
   const effectiveMax = clampPostSpacing(v.max_panel_width_mm, jobMax);
+  const [maxSpacingDraft, setMaxSpacingDraft] = useState(String(effectiveMax));
+
+  useEffect(() => {
+    setMaxSpacingDraft(String(effectiveMax));
+  }, [effectiveMax]);
 
   function updateMaxPanelWidth(value: number | null) {
     const nextValue = value === null ? null : clampPostSpacing(value, jobMax);
@@ -93,6 +98,17 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
       return;
     }
     upsertSegment(patchSegmentVariables(seg, { max_panel_width_mm: nextValue }));
+  }
+
+  function commitMaxPanelWidth(value = maxSpacingDraft) {
+    const nextValue = Number(value);
+    if (!Number.isFinite(nextValue)) {
+      setMaxSpacingDraft(String(effectiveMax));
+      return;
+    }
+    const clamped = clampPostSpacing(nextValue, jobMax);
+    setMaxSpacingDraft(String(clamped));
+    updateMaxPanelWidth(clamped);
   }
 
   const mergedJobDisplay: Record<string, string | number | boolean> = {
@@ -334,12 +350,18 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         {/* Max post spacing override */}
         <label className="flex flex-col gap-1">
           <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
-          <NumberInput
-            value={effectiveMax}
-            onChange={(v) => updateMaxPanelWidth(v)}
+          <input
+            type="number"
+            value={maxSpacingDraft}
+            onChange={(event) => setMaxSpacingDraft(event.target.value)}
+            onBlur={() => commitMaxPanelWidth()}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") event.currentTarget.blur();
+            }}
             min={MIN_POST_SPACING_MM}
             max={MAX_POST_SPACING_MM}
             step={50}
+            className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
           />
         </label>
 

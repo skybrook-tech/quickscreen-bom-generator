@@ -92,6 +92,12 @@ function pricing(
   ];
 }
 
+const QSG_GATE_COLOUR_CODES = ["B", "BS", "D", "G", "M", "MN", "P", "PB", "S", "SM", "W"] as const;
+
+function qsgGateColourPrice(colour: string, coatedPrice: number, millPrice: number): number {
+  return colour === "M" ? millPrice : coatedPrice;
+}
+
 const syntheticComponents: SeedComponent[] = [
   {
     sku: "PAINT-B",
@@ -170,14 +176,14 @@ const syntheticComponents: SeedComponent[] = [
     12.24,
     ["VS"],
   ),
-  ...["B", "BS", "D", "G", "M", "MN", "P", "PB", "S", "SM", "W"].flatMap((colour) => [
+  ...QSG_GATE_COLOUR_CODES.flatMap((colour) => [
     component(
       `QSG-4200-GSF50-${colour}`,
       `QSG 50x50 Gate Side Frame ${colour}`,
       `QuickScreen Gate System 50x50mm gate side frame, 4200mm stock - ${colour}`,
       "gate_side_frame",
       "length",
-      0,
+      qsgGateColourPrice(colour, 90.04, 80.59),
       ["GATE"],
     ),
     component(
@@ -231,7 +237,7 @@ const syntheticComponents: SeedComponent[] = [
       `QuickScreen Gate System gate infill, 4800mm stock - ${colour}`,
       "gate_infill",
       "length",
-      0,
+      qsgGateColourPrice(colour, 15.7, 11.29),
       ["GATE"],
     ),
     component(
@@ -240,7 +246,7 @@ const syntheticComponents: SeedComponent[] = [
       `QuickScreen Gate System channel infill, 4200mm stock - ${colour}`,
       "gate_infill",
       "length",
-      0,
+      qsgGateColourPrice(colour, 39.65, 28.96),
       ["GATE"],
     ),
     component(
@@ -249,7 +255,7 @@ const syntheticComponents: SeedComponent[] = [
       `QuickScreen Gate System screw cover, 4200mm stock - ${colour}`,
       "gate_screw_cover",
       "length",
-      0,
+      qsgGateColourPrice(colour, 8.03, 5.51),
       ["GATE"],
     ),
     component(
@@ -258,7 +264,7 @@ const syntheticComponents: SeedComponent[] = [
       `QuickScreen Gate System 50x50mm flat gate top cap - ${colour}`,
       "frame_top_cap",
       "each",
-      0,
+      qsgGateColourPrice(colour, 2.73, 2.31),
       ["GATE"],
     ),
   ]),

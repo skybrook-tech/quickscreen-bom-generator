@@ -20,7 +20,7 @@ Latest gate correction: QSG horizontal and vertical pedestrian swing gates now u
 
 Latest workflow/UI correction: form-entered dimensions now center in the mapper when loaded, and gate hardware choices are dropdown selectors with inventory search inside each selector.
 
-Latest segment clarity pass: segment and gate cards now show full beginner-friendly titles (`Run 1 Segment 1`, `Run 1 Gate 1`) alongside compact map codes (`R1S1`, `R1G1`), the master-match check and confirmed dot sit in the left rail, max post spacing defaults to 2600mm with an editable 100-3000mm range, vertical slat runs can use custom gaps, and standard post labels now put the dimensions first.
+Latest segment clarity pass: segment and gate cards now show full beginner-friendly titles (`Run 1 Segment 1`, `Run 1 Gate 1`) alongside compact map codes (`R1S1`, `R1G1`) in bold black, the master-match check and confirmed dot sit in the left rail, max post spacing defaults to 2600mm with an editable 100-3000mm draft input, vertical slat runs can use custom gaps, and standard post labels now put the dimensions first.
 
 ---
 
@@ -313,6 +313,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Retired old XP gate-frame hardware from active gate paths: `gate_legacy.json` is disabled, QS_GATE seed rows/selectors/rules for `XP-6100-GB65-*`, `XP-4200-GSTOP-*`, `XP-LBOX-*`, and `XP-HDL-*` are inactive, and the local fallback blocks those discontinued SKUs from BOM output.
 - [x] Added a wider current-catalogue gate hardware menu for QSG gates, including D&D TruClose/Kwik Fit/SureClose hinges, Six Star/Zeus/Colourbond hinge options, Lokk Latch/Magna Latch/T-Latch latch options, white hardware variants, drop bolts, and gate stops.
 - [x] Sliding gate local fallback corrected to output QSG sliding gate rails, side frames, infill/channel infill, screw covers, joiners, spacers, top caps, wheel/clamp hardware, track, and horizontal centre support rails/plates.
+- [x] QSG gate pricing pass: verified missing active gate SKUs through Glass Outlet online lookup, added pricing for side frames, infills, screw covers, top caps, joiners, rail screws, screws, and spacers, and retired legacy placeholder QSG-SC/QSG-RS/QSG-FTC rows.
 - [x] Extra items panel — typeahead against existing SKUs (via `search-products`) + create-on-the-fly for one-off lines
 - [x] v2 retired — `CalculatorPage`, `src/components/calculator/*`, `useCalculatorBOM`, `useFenceProducts`, `calculate-bom-v2` edge function all deleted. `/` redirects to `/calculator`.
 - [ ] v1 (`/new`, `MainApp`, `calculate-bom`) removal — deferred to a future pass.

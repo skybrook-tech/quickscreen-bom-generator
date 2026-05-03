@@ -376,7 +376,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
               className={matchesMaster ? "text-emerald-500" : ""}
             />
           </button>
-          <span className="text-xl font-extrabold leading-none tracking-normal text-blue-800">
+          <span className="text-xl font-black leading-none tracking-normal text-black">
             {compactLabel}
           </span>
           <button
@@ -393,7 +393,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
         </div>
         <div className="min-w-0 space-y-3">
           <div className="flex flex-wrap items-start justify-between gap-2">
-            <span className="min-w-0 text-xl font-extrabold leading-tight tracking-normal text-blue-800">
+            <span className="min-w-0 text-xl font-black leading-tight tracking-normal text-black">
               {titleLabel}
             </span>
             <div className="flex items-center gap-1">

@@ -922,6 +922,26 @@ Changes applied:
 Verification:
 - `npm run build` passed after these changes.
 
+### May 2, 2026 - QSG gate online pricing pass
+
+Pricing workflow finding:
+- Glass Outlet online product pricing can be checked by logging into the customer site and calling `ajaxstuff.aspx/GetProductDetails` with `{ code, qty }`.
+- The current QSG gate seed still had active rows with `default_price: null` for gate side frames, gate infills, screw covers, top caps, joiners, rail screws, screws, and spacer packs.
+- `QSG-JBLOCK-90-4PK` did not resolve on the supplier site. The current online code is `QSG-JOINER90-4PK`.
+- Legacy placeholder rows `QSG-SC-10PK`, `QSG-RS-10PK`, `QSG-FTC-50`, and `QSG-FTC-65` did not resolve online and are superseded by the current QSG rows already used by the calculator: `QSG-4200-COVER-{colour}`, `AR-SCR-BR-50PK`, and `QSG-GFC-50X50-{colour}`.
+- Palladium Silver `-S` QSG gate extrusion/cap lookups did not resolve online. The seed now uses the standard coated colour price as a temporary pricing fallback and records that note in component metadata pending supplier confirmation.
+
+Changes applied:
+- Updated `qs_gate.json` so active QSG gate components have non-zero default pricing and pricing rules.
+- Added quantity-break rules for `AR-SCR-BR-50PK` based on the online quantity lookup.
+- Replaced the 90mm joiner placeholder SKU with `QSG-JOINER90-4PK`.
+- Marked unresolved legacy placeholder rows inactive so they do not appear as missing active gate pricing.
+- Updated the local fallback data for the same QSG gate component price defaults.
+
+Verification:
+- Active gate pricing audit now reports zero active `GATE` / `QS_GATE` component SKUs missing a positive default price or pricing rule.
+- Seed JSON schema validation passed after the pricing update.
+
 ### May 1, 2026 - Lever/knob pedestrian gate options
 
 User workflow finding:

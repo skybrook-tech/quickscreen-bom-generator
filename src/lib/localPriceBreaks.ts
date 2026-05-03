@@ -1,6 +1,7 @@
 // Generated from Glass Outlet CSV price-list quantity break columns.
 // Each array is the minimum quantity for tier1, tier2, and tier3 where available.
 export const localPriceBreaks = {
+  "AR-SCR-BR-50PK": [1,20,50],
   "CB-HINGE-B-2PK": [1,30],
   "MR-FMLSL": [1,20,40],
   "SS-BH10075-B": [1,30],

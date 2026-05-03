@@ -988,7 +988,7 @@
       "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
-      "default_price": null,
+      "default_price": 90.04,
       "system_types": [
         "GATE"
       ],
@@ -996,7 +996,7 @@
         "colour": "black-satin",
         "colour_code": "B",
         "slat_size_mm": 65,
-        "pricing_status": "TBD"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1006,7 +1006,7 @@
       "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
-      "default_price": null,
+      "default_price": 90.04,
       "system_types": [
         "GATE"
       ],
@@ -1014,7 +1014,7 @@
         "colour": "monument-matt",
         "colour_code": "MN",
         "slat_size_mm": 65,
-        "pricing_status": "TBD"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1024,7 +1024,7 @@
       "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
-      "default_price": null,
+      "default_price": 90.04,
       "system_types": [
         "GATE"
       ],
@@ -1032,7 +1032,7 @@
         "colour": "woodland-grey-matt",
         "colour_code": "G",
         "slat_size_mm": 65,
-        "pricing_status": "TBD"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1042,7 +1042,7 @@
       "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
-      "default_price": null,
+      "default_price": 90.04,
       "system_types": [
         "GATE"
       ],
@@ -1050,7 +1050,7 @@
         "colour": "surfmist-matt",
         "colour_code": "SM",
         "slat_size_mm": 65,
-        "pricing_status": "TBD"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1060,7 +1060,7 @@
       "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
-      "default_price": null,
+      "default_price": 90.04,
       "system_types": [
         "GATE"
       ],
@@ -1068,7 +1068,7 @@
         "colour": "pearl-white-gloss",
         "colour_code": "W",
         "slat_size_mm": 65,
-        "pricing_status": "TBD"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1078,7 +1078,7 @@
       "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
-      "default_price": null,
+      "default_price": 90.04,
       "system_types": [
         "GATE"
       ],
@@ -1086,7 +1086,7 @@
         "colour": "basalt-satin",
         "colour_code": "BS",
         "slat_size_mm": 65,
-        "pricing_status": "TBD"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1096,7 +1096,7 @@
       "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
-      "default_price": null,
+      "default_price": 90.04,
       "system_types": [
         "GATE"
       ],
@@ -1104,7 +1104,7 @@
         "colour": "dune-satin",
         "colour_code": "D",
         "slat_size_mm": 65,
-        "pricing_status": "TBD"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1114,7 +1114,7 @@
       "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
-      "default_price": null,
+      "default_price": 80.59,
       "system_types": [
         "GATE"
       ],
@@ -1122,7 +1122,7 @@
         "colour": "mill",
         "colour_code": "M",
         "slat_size_mm": 65,
-        "pricing_status": "TBD"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1132,7 +1132,7 @@
       "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
-      "default_price": null,
+      "default_price": 90.04,
       "system_types": [
         "GATE"
       ],
@@ -1140,7 +1140,7 @@
         "colour": "primrose",
         "colour_code": "P",
         "slat_size_mm": 65,
-        "pricing_status": "TBD"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1150,7 +1150,7 @@
       "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
-      "default_price": null,
+      "default_price": 90.04,
       "system_types": [
         "GATE"
       ],
@@ -1158,7 +1158,7 @@
         "colour": "paperbark",
         "colour_code": "PB",
         "slat_size_mm": 65,
-        "pricing_status": "TBD"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1168,7 +1168,7 @@
       "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
-      "default_price": null,
+      "default_price": 90.04,
       "system_types": [
         "GATE"
       ],
@@ -1176,7 +1176,8 @@
         "colour": "palladium-silver-pearl",
         "colour_code": "S",
         "slat_size_mm": 65,
-        "pricing_status": "TBD"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation."
       },
       "active": true
     },
@@ -1186,31 +1187,31 @@
       "description": "Gate joiner blocks for 65mm slat gates, pack of 4. No pricing in CSV — price TBD.",
       "category": "joiner_block",
       "unit": "pack",
-      "default_price": null,
+      "default_price": 7.88,
       "system_types": [
         "GATE"
       ],
       "metadata": {
         "slat_size_mm": 65,
         "pack_qty": 4,
-        "pricing_status": "TBD"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
     {
-      "sku": "QSG-JBLOCK-90-4PK",
-      "name": "Joiner Block 90mm — 4 Pack",
-      "description": "Gate joiner blocks for 90mm slat gates, pack of 4. No pricing in CSV — price TBD.",
+      "sku": "QSG-JOINER90-4PK",
+      "name": "QSG 90mm Joiner Block - 4 Pack",
+      "description": "QS Gate joiner blocks for 90mm top/bottom rails, pack of 4.",
       "category": "joiner_block",
       "unit": "pack",
-      "default_price": null,
+      "default_price": 8.3,
       "system_types": [
         "GATE"
       ],
       "metadata": {
         "slat_size_mm": 90,
         "pack_qty": 4,
-        "pricing_status": "TBD"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1226,9 +1227,11 @@
       ],
       "metadata": {
         "pack_qty": 10,
-        "pricing_status": "TBD"
+        "pricing_status": "legacy_placeholder_inactive",
+        "replaced_by": "QSG-4200-COVER-{colour}",
+        "pricing_note": "Supplier site returned no product; current QSG gate seed uses replacement SKU."
       },
-      "active": true
+      "active": false
     },
     {
       "sku": "QSG-RS-10PK",
@@ -1242,9 +1245,11 @@
       ],
       "metadata": {
         "pack_qty": 10,
-        "pricing_status": "TBD"
+        "pricing_status": "legacy_placeholder_inactive",
+        "replaced_by": "AR-SCR-BR-50PK",
+        "pricing_note": "Supplier site returned no product; current QSG gate seed uses replacement SKU."
       },
-      "active": true
+      "active": false
     },
     {
       "sku": "QSG-FTC-50",
@@ -1258,9 +1263,11 @@
       ],
       "metadata": {
         "frame_cap_size": "50",
-        "pricing_status": "TBD"
+        "pricing_status": "legacy_placeholder_inactive",
+        "replaced_by": "QSG-GFC-50X50-{colour}",
+        "pricing_note": "Supplier site returned no product; current QSG gate seed uses replacement SKU."
       },
-      "active": true
+      "active": false
     },
     {
       "sku": "QSG-FTC-65",
@@ -1274,9 +1281,11 @@
       ],
       "metadata": {
         "frame_cap_size": "65",
-        "pricing_status": "TBD"
+        "pricing_status": "legacy_placeholder_inactive",
+        "replaced_by": "QSG-GFC-50X50-{colour}",
+        "pricing_note": "Supplier site returned no product; current QSG gate seed uses replacement SKU."
       },
-      "active": true
+      "active": false
     },
     {
       "sku": "QSG-4800-INF-B",
@@ -1284,12 +1293,13 @@
       "description": "QSG gate infill extrusion, 4800mm stock - Black Satin",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 15.7,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "B"
+        "colour_code": "B",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1299,12 +1309,13 @@
       "description": "QSG corner infill extrusion, 4200mm stock - Black Satin",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 39.65,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "B"
+        "colour_code": "B",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1314,12 +1325,13 @@
       "description": "QSG gate screw cover extrusion, 4200mm stock - Black Satin",
       "category": "hardware",
       "unit": "length",
-      "default_price": null,
+      "default_price": 8.03,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "B"
+        "colour_code": "B",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1329,12 +1341,13 @@
       "description": "QSG 50x50 gate frame top cap - Black Satin",
       "category": "frame_top_cap",
       "unit": "each",
-      "default_price": null,
+      "default_price": 2.73,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "B"
+        "colour_code": "B",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1344,12 +1357,13 @@
       "description": "QSG gate infill extrusion, 4800mm stock - Monument Matt",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 15.7,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "MN"
+        "colour_code": "MN",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1359,12 +1373,13 @@
       "description": "QSG corner infill extrusion, 4200mm stock - Monument Matt",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 39.65,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "MN"
+        "colour_code": "MN",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1374,12 +1389,13 @@
       "description": "QSG gate screw cover extrusion, 4200mm stock - Monument Matt",
       "category": "hardware",
       "unit": "length",
-      "default_price": null,
+      "default_price": 8.03,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "MN"
+        "colour_code": "MN",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1389,12 +1405,13 @@
       "description": "QSG 50x50 gate frame top cap - Monument Matt",
       "category": "frame_top_cap",
       "unit": "each",
-      "default_price": null,
+      "default_price": 2.73,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "MN"
+        "colour_code": "MN",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1404,12 +1421,13 @@
       "description": "QSG gate infill extrusion, 4800mm stock - Woodland Grey Matt",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 15.7,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "G"
+        "colour_code": "G",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1419,12 +1437,13 @@
       "description": "QSG corner infill extrusion, 4200mm stock - Woodland Grey Matt",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 39.65,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "G"
+        "colour_code": "G",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1434,12 +1453,13 @@
       "description": "QSG gate screw cover extrusion, 4200mm stock - Woodland Grey Matt",
       "category": "hardware",
       "unit": "length",
-      "default_price": null,
+      "default_price": 8.03,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "G"
+        "colour_code": "G",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1449,12 +1469,13 @@
       "description": "QSG 50x50 gate frame top cap - Woodland Grey Matt",
       "category": "frame_top_cap",
       "unit": "each",
-      "default_price": null,
+      "default_price": 2.73,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "G"
+        "colour_code": "G",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1464,12 +1485,13 @@
       "description": "QSG gate infill extrusion, 4800mm stock - Surfmist Matt",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 15.7,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "SM"
+        "colour_code": "SM",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1479,12 +1501,13 @@
       "description": "QSG corner infill extrusion, 4200mm stock - Surfmist Matt",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 39.65,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "SM"
+        "colour_code": "SM",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1494,12 +1517,13 @@
       "description": "QSG gate screw cover extrusion, 4200mm stock - Surfmist Matt",
       "category": "hardware",
       "unit": "length",
-      "default_price": null,
+      "default_price": 8.03,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "SM"
+        "colour_code": "SM",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1509,12 +1533,13 @@
       "description": "QSG 50x50 gate frame top cap - Surfmist Matt",
       "category": "frame_top_cap",
       "unit": "each",
-      "default_price": null,
+      "default_price": 2.73,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "SM"
+        "colour_code": "SM",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1524,12 +1549,13 @@
       "description": "QSG gate infill extrusion, 4800mm stock - Pearl White Gloss",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 15.7,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "W"
+        "colour_code": "W",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1539,12 +1565,13 @@
       "description": "QSG corner infill extrusion, 4200mm stock - Pearl White Gloss",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 39.65,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "W"
+        "colour_code": "W",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1554,12 +1581,13 @@
       "description": "QSG gate screw cover extrusion, 4200mm stock - Pearl White Gloss",
       "category": "hardware",
       "unit": "length",
-      "default_price": null,
+      "default_price": 8.03,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "W"
+        "colour_code": "W",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1569,12 +1597,13 @@
       "description": "QSG 50x50 gate frame top cap - Pearl White Gloss",
       "category": "frame_top_cap",
       "unit": "each",
-      "default_price": null,
+      "default_price": 2.73,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "W"
+        "colour_code": "W",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1584,12 +1613,13 @@
       "description": "QSG gate infill extrusion, 4800mm stock - Basalt Satin",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 15.7,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "BS"
+        "colour_code": "BS",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1599,12 +1629,13 @@
       "description": "QSG corner infill extrusion, 4200mm stock - Basalt Satin",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 39.65,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "BS"
+        "colour_code": "BS",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1614,12 +1645,13 @@
       "description": "QSG gate screw cover extrusion, 4200mm stock - Basalt Satin",
       "category": "hardware",
       "unit": "length",
-      "default_price": null,
+      "default_price": 8.03,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "BS"
+        "colour_code": "BS",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1629,12 +1661,13 @@
       "description": "QSG 50x50 gate frame top cap - Basalt Satin",
       "category": "frame_top_cap",
       "unit": "each",
-      "default_price": null,
+      "default_price": 2.73,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "BS"
+        "colour_code": "BS",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1644,12 +1677,13 @@
       "description": "QSG gate infill extrusion, 4800mm stock - Dune Satin",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 15.7,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "D"
+        "colour_code": "D",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1659,12 +1693,13 @@
       "description": "QSG corner infill extrusion, 4200mm stock - Dune Satin",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 39.65,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "D"
+        "colour_code": "D",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1674,12 +1709,13 @@
       "description": "QSG gate screw cover extrusion, 4200mm stock - Dune Satin",
       "category": "hardware",
       "unit": "length",
-      "default_price": null,
+      "default_price": 8.03,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "D"
+        "colour_code": "D",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1689,12 +1725,13 @@
       "description": "QSG 50x50 gate frame top cap - Dune Satin",
       "category": "frame_top_cap",
       "unit": "each",
-      "default_price": null,
+      "default_price": 2.73,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "D"
+        "colour_code": "D",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1704,12 +1741,13 @@
       "description": "QSG gate infill extrusion, 4800mm stock - Mill",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 11.29,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "M"
+        "colour_code": "M",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1719,12 +1757,13 @@
       "description": "QSG corner infill extrusion, 4200mm stock - Mill",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 28.96,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "M"
+        "colour_code": "M",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1734,12 +1773,13 @@
       "description": "QSG gate screw cover extrusion, 4200mm stock - Mill",
       "category": "hardware",
       "unit": "length",
-      "default_price": null,
+      "default_price": 5.51,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "M"
+        "colour_code": "M",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1749,12 +1789,13 @@
       "description": "QSG 50x50 gate frame top cap - Mill",
       "category": "frame_top_cap",
       "unit": "each",
-      "default_price": null,
+      "default_price": 2.31,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "M"
+        "colour_code": "M",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1764,12 +1805,13 @@
       "description": "QSG gate infill extrusion, 4800mm stock - Primrose",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 15.7,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "P"
+        "colour_code": "P",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1779,12 +1821,13 @@
       "description": "QSG corner infill extrusion, 4200mm stock - Primrose",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 39.65,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "P"
+        "colour_code": "P",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1794,12 +1837,13 @@
       "description": "QSG gate screw cover extrusion, 4200mm stock - Primrose",
       "category": "hardware",
       "unit": "length",
-      "default_price": null,
+      "default_price": 8.03,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "P"
+        "colour_code": "P",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1809,12 +1853,13 @@
       "description": "QSG 50x50 gate frame top cap - Primrose",
       "category": "frame_top_cap",
       "unit": "each",
-      "default_price": null,
+      "default_price": 2.73,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "P"
+        "colour_code": "P",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1824,12 +1869,13 @@
       "description": "QSG gate infill extrusion, 4800mm stock - Paperbark",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 15.7,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "PB"
+        "colour_code": "PB",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1839,12 +1885,13 @@
       "description": "QSG corner infill extrusion, 4200mm stock - Paperbark",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 39.65,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "PB"
+        "colour_code": "PB",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1854,12 +1901,13 @@
       "description": "QSG gate screw cover extrusion, 4200mm stock - Paperbark",
       "category": "hardware",
       "unit": "length",
-      "default_price": null,
+      "default_price": 8.03,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "PB"
+        "colour_code": "PB",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1869,12 +1917,13 @@
       "description": "QSG 50x50 gate frame top cap - Paperbark",
       "category": "frame_top_cap",
       "unit": "each",
-      "default_price": null,
+      "default_price": 2.73,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "PB"
+        "colour_code": "PB",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1884,12 +1933,14 @@
       "description": "QSG gate infill extrusion, 4800mm stock - Palladium Silver Pearl",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 15.7,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "S"
+        "colour_code": "S",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation."
       },
       "active": true
     },
@@ -1899,12 +1950,14 @@
       "description": "QSG corner infill extrusion, 4200mm stock - Palladium Silver Pearl",
       "category": "gate_infill",
       "unit": "length",
-      "default_price": null,
+      "default_price": 39.65,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "S"
+        "colour_code": "S",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation."
       },
       "active": true
     },
@@ -1914,12 +1967,14 @@
       "description": "QSG gate screw cover extrusion, 4200mm stock - Palladium Silver Pearl",
       "category": "hardware",
       "unit": "length",
-      "default_price": null,
+      "default_price": 8.03,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "S"
+        "colour_code": "S",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation."
       },
       "active": true
     },
@@ -1929,12 +1984,14 @@
       "description": "QSG 50x50 gate frame top cap - Palladium Silver Pearl",
       "category": "frame_top_cap",
       "unit": "each",
-      "default_price": null,
+      "default_price": 2.73,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "colour_code": "S"
+        "colour_code": "S",
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation."
       },
       "active": true
     },
@@ -1944,11 +2001,13 @@
       "description": "Rail screws for QSG 65mm horizontal gate rails, 50-pack",
       "category": "screw",
       "unit": "pack",
-      "default_price": null,
+      "default_price": 4.16,
       "system_types": [
         "GATE"
       ],
-      "metadata": {},
+      "metadata": {
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+      },
       "active": true
     },
     {
@@ -1957,11 +2016,13 @@
       "description": "Wafer screws for QuickScreen/QSG slats, 50-pack",
       "category": "screw",
       "unit": "pack",
-      "default_price": null,
+      "default_price": 1.42,
       "system_types": [
         "GATE"
       ],
-      "metadata": {},
+      "metadata": {
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+      },
       "active": true
     },
     {
@@ -1970,12 +2031,13 @@
       "description": "5mm slat spacer pack for QuickScreen/QSG slats",
       "category": "spacer",
       "unit": "pack",
-      "default_price": null,
+      "default_price": 1.42,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "slat_gap_mm": 5
+        "slat_gap_mm": 5,
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -1985,12 +2047,13 @@
       "description": "9mm slat spacer pack for QuickScreen/QSG slats",
       "category": "spacer",
       "unit": "pack",
-      "default_price": null,
+      "default_price": 2.63,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "slat_gap_mm": 9
+        "slat_gap_mm": 9,
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -2000,12 +2063,13 @@
       "description": "20mm slat spacer pack for QuickScreen/QSG slats",
       "category": "spacer",
       "unit": "pack",
-      "default_price": null,
+      "default_price": 5.2,
       "system_types": [
         "GATE"
       ],
       "metadata": {
-        "slat_gap_mm": 20
+        "slat_gap_mm": 20,
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
       },
       "active": true
     },
@@ -3754,8 +3818,8 @@
       "qty_key": "qty_ftc",
       "sku_pattern": "QSG-FTC-50",
       "priority": 90,
-      "notes": "Gate frame top cap 50mm — 4 per gate. Pricing TBD.",
-      "active": true
+      "notes": "Gate frame top cap 50mm — 4 per gate. Pricing TBD. Inactive: legacy placeholder replaced by QSG-GFC-50X50-{colour}.",
+      "active": false
     }
   ],
   "product_companion_rules": [
@@ -7656,6 +7720,2118 @@
       "valid_from": null,
       "valid_to": null,
       "notes": "QuickScreen gate hardware option from current QSG catalogue",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-B",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-B",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-B",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-MN",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-MN",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-MN",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-G",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-G",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-G",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-SM",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-SM",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-SM",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-W",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-W",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-W",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-BS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-BS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-BS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-D",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-D",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-D",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 80.59,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 80.59,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 80.59,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 11.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 11.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 11.29,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 28.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 28.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 28.96,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 5.51,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.51,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 5.51,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-M",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.31,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-M",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.31,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-M",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.31,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-P",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-P",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-P",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-PB",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-PB",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-PB",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-GSF50-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 90.04,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4800-INF-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 15.7,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-CINF-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 39.65,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-4200-COVER-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8.03,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-S",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-S",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-GFC-50X50-S",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.73,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-JOINER65-4PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 7.88,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-JOINER65-4PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 7.88,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-JOINER65-4PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 7.88,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-JOINER90-4PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 8.3,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-JOINER90-4PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 8.3,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QSG-JOINER90-4PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8.3,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QS-SCREWS-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QS-SCREWS-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 1.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QS-SCREWS-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 1.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-05MM-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-05MM-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 1.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-05MM-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 1.42,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-09MM-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.63,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-09MM-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.63,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-09MM-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.63,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-20MM-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 5.2,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-20MM-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 5.2,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "QS-SPACER-20MM-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 5.2,
+      "priority": 0,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "AR-SCR-BR-50PK",
+      "tier_code": "tier1",
+      "rule": "qty >= 50",
+      "price": 3.67,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Quantity break verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "AR-SCR-BR-50PK",
+      "tier_code": "tier1",
+      "rule": "qty >= 20",
+      "price": 3.91,
+      "priority": 20,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Quantity break verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "AR-SCR-BR-50PK",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 4.16,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Quantity break verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "AR-SCR-BR-50PK",
+      "tier_code": "tier2",
+      "rule": "qty >= 50",
+      "price": 3.67,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Quantity break verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "AR-SCR-BR-50PK",
+      "tier_code": "tier2",
+      "rule": "qty >= 20",
+      "price": 3.91,
+      "priority": 20,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Quantity break verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "AR-SCR-BR-50PK",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 4.16,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Quantity break verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "AR-SCR-BR-50PK",
+      "tier_code": "tier3",
+      "rule": "qty >= 50",
+      "price": 3.67,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Quantity break verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "AR-SCR-BR-50PK",
+      "tier_code": "tier3",
+      "rule": "qty >= 20",
+      "price": 3.91,
+      "priority": 20,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Quantity break verified from Glass Outlet online product lookup on 2026-05-02.",
+      "active": true
+    },
+    {
+      "sku": "AR-SCR-BR-50PK",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 4.16,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Quantity break verified from Glass Outlet online product lookup on 2026-05-02.",
       "active": true
     }
   ]
