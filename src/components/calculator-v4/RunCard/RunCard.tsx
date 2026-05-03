@@ -5,10 +5,7 @@ import type {
   CanonicalRun,
   CanonicalSegment,
 } from "../../../types/canonical.types";
-import {
-  SegmentList,
-  type SegmentListFilter,
-} from "../Segment/SegmentList";
+import { SegmentList, type SegmentListFilter } from "../Segment/SegmentList";
 import { RunActions } from "./RunActions";
 import { RunConfigPanel } from "./RunConfigPanel";
 import { RunHeader } from "./RunHeader";
@@ -112,12 +109,16 @@ export function RunCard({ run, index, runColorIndex, onAddGate }: Props) {
       {editing && <RunConfigPanel run={run} activeTab={activeTab} />}
 
       {!editing && (
-        <div className="border-t border-brand-border p-4 space-y-3">
+        <div className="border-t border-brand-border p-4 pt-1 space-y-3">
           <div className="flex flex-wrap gap-0 -mx-4 px-4 border-b border-brand-border">
             {(
               [
                 { id: "full" as const, label: "Full run", count: segmentTotal },
-                { id: "segments" as const, label: "Segments", count: fenceCount },
+                {
+                  id: "segments" as const,
+                  label: "Segments",
+                  count: fenceCount,
+                },
                 { id: "gates" as const, label: "Gates", count: gateCount },
               ] as const
             ).map((tab) => (

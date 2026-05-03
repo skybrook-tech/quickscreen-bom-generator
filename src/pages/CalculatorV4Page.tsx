@@ -74,40 +74,46 @@ function CalculatorV4Content() {
 
   return (
     <AppShell>
-      <div className="h-full grid grid-cols-1 lg:grid-cols-[40%,60%] gap-4 p-4 max-w-[1600px] mx-auto">
-        {/* Left column — job + runs (scrolls naturally) */}
-        <div className="space-y-4 overflow-y-auto pb-8 pr-1">
-          <JobShell
-            onOpenLayoutMap={() => setLayoutOpen(true)}
-            hasPayload={!!payload}
-          />
+      <div className="h-full min-h-0 grid grid-cols-1 lg:grid-cols-[40%,60%] lg:grid-rows-1 gap-4 p-4 max-w-[1600px] mx-auto">
+        {/* Left column — JobShell + JobActions pin; runs list scrolls.
+            Cap height so inner scroll works even when the BOM column is shorter than the runs list. */}
+        <div className="flex h-full max-h-[calc(100dvh-5.5rem)] min-h-0 flex-col">
+          <div className="shrink-0">
+            <JobShell
+              onOpenLayoutMap={() => setLayoutOpen(true)}
+              hasPayload={!!payload}
+            />
+          </div>
           {payload ? (
             <>
-              <RunList
-                onAddGate={(runId) => {
-                  setGateRunId(runId);
-                  setGateEditingId(null);
-                }}
-              />
-              <JobActions />
+              <div className="min-h-0 flex-1 overflow-y-auto pr-1 py-3 space-y-4">
+                <RunList
+                  onAddGate={(runId) => {
+                    setGateRunId(runId);
+                    setGateEditingId(null);
+                  }}
+                />
+                {bomMutation.isError && (
+                  <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-500">
+                    Error:{" "}
+                    {bomMutation.error instanceof Error
+                      ? bomMutation.error.message
+                      : String(bomMutation.error)}
+                  </div>
+                )}
+              </div>
+              <div className="shrink-0 border-t border-brand-border/50 bg-brand-bg pt-3 pb-1">
+                <JobActions />
+              </div>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-brand-border p-8 text-center text-sm text-brand-muted">
+            <div className="min-h-0 flex-1 flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-brand-border p-8 text-center text-sm text-brand-muted">
               <p className="text-brand-text">Pick a fence product to begin.</p>
               <ProductSelectV4
                 value={state.payload?.productCode ?? ""}
                 onChange={handleProductChange}
                 separated={true}
               />
-            </div>
-          )}
-
-          {bomMutation.isError && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-500">
-              Error:{" "}
-              {bomMutation.error instanceof Error
-                ? bomMutation.error.message
-                : String(bomMutation.error)}
             </div>
           )}
         </div>

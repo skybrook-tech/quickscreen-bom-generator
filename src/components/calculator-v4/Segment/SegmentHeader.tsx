@@ -4,13 +4,12 @@ import {
   AlertTriangle,
   ChevronDown,
   ChevronRight,
-  CornerDownRight,
   Copy,
   DoorOpen,
   GitCompare,
   Trash2,
   RulerDimensionLine,
-  StretchVertical,
+  Fence,
   GalleryHorizontalEnd,
 } from "lucide-react";
 import type { CanonicalSegment } from "../../../types/canonical.types";
@@ -255,25 +254,12 @@ export function SegmentHeader({
                     className="inline-flex items-center gap-0.5 cursor-default text-xs tabular-nums"
                     aria-label={`Estimated posts for this segment: ${segmentMetrics.posts}`}
                   >
-                    <StretchVertical
+                    <Fence
                       size={METRIC_ICON}
                       className="shrink-0 opacity-90"
                       aria-hidden
                     />
                     <span className="font-mono">{segmentMetrics.posts}</span>
-                  </span>
-                </Tooltip>
-                <Tooltip content="Structural corners on this segment (left + right terminations)">
-                  <span
-                    className="inline-flex items-center gap-0.5 cursor-default text-xs tabular-nums"
-                    aria-label={`Corners on this segment: ${segmentMetrics.corners}`}
-                  >
-                    <CornerDownRight
-                      size={METRIC_ICON}
-                      className="shrink-0 opacity-90"
-                      aria-hidden
-                    />
-                    <span className="font-mono">{segmentMetrics.corners}</span>
                   </span>
                 </Tooltip>
               </div>
