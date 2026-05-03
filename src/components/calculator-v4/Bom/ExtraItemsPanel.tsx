@@ -25,7 +25,8 @@ export function ExtraItemsPanel() {
     return () => clearTimeout(t);
   }, [desc]);
 
-  const { data: suggestions = [], isFetching } = useProductSearch(debouncedQuery);
+  const { data: suggestions = [], isFetching } =
+    useProductSearch(debouncedQuery);
 
   useEffect(() => {
     function onClick(e: MouseEvent) {
@@ -45,10 +46,7 @@ export function ExtraItemsPanel() {
   const items = state.extraItems;
 
   const canAdd =
-    desc.trim().length > 0 &&
-    qty > 0 &&
-    unitPrice !== "" &&
-    unitPrice >= 0;
+    desc.trim().length > 0 && qty > 0 && unitPrice !== "" && unitPrice >= 0;
 
   function selectSuggestion(item: {
     sku: string;
@@ -125,10 +123,6 @@ export function ExtraItemsPanel() {
       className="border-t border-brand-border bg-brand-card px-4 py-3 flex-shrink-0"
       data-testid="extra-items-panel"
     >
-      <h3 className="text-[11px] font-semibold uppercase tracking-wider text-brand-muted mb-2">
-        Add extra items
-      </h3>
-
       {items.length > 0 && (
         <ul className="mb-3 space-y-1">
           {items.map((item) => (
@@ -164,7 +158,9 @@ export function ExtraItemsPanel() {
       <div ref={wrapperRef} className="flex flex-wrap gap-2 items-end">
         <div className="relative flex-1 min-w-[13rem]">
           <label className="block text-[11px] text-brand-muted mb-1">
-            {createMode ? "Description (new item)" : "Search SKU / description"}
+            {createMode
+              ? "Description (new item)"
+              : "Add extra items (search SKU or description or create new)"}
           </label>
           <Input
             type="text"
@@ -193,9 +189,7 @@ export function ExtraItemsPanel() {
           />
 
           {showDropdown && !createMode && (
-            <div
-              className="absolute z-50 top-full left-0 right-0 mt-0.5 bg-brand-card border border-brand-border rounded-md shadow-lg max-h-60 overflow-y-auto"
-            >
+            <div className="absolute z-50 top-full left-0 right-0 mt-0.5 bg-brand-card border border-brand-border rounded-md shadow-lg max-h-60 overflow-y-auto">
               {suggestions.length > 0 ? (
                 suggestions.map((item, idx) => (
                   <button

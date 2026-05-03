@@ -1,10 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
+import { cn } from "../../../lib";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import type {
   CanonicalRun,
   CanonicalSegment,
 } from "../../../types/canonical.types";
-import { SegmentList } from "../Segment/SegmentList";
+import {
+  SegmentList,
+  type SegmentListFilter,
+} from "../Segment/SegmentList";
 import { RunActions } from "./RunActions";
 import { RunConfigPanel } from "./RunConfigPanel";
 import { RunHeader } from "./RunHeader";
@@ -19,10 +23,19 @@ interface Props {
   onAddGate: (runId: string) => void;
 }
 
+type BrowseTab = "full" | "segments" | "gates";
+
+const BROWSE_TAB_FILTER: Record<BrowseTab, SegmentListFilter> = {
+  full: "all",
+  segments: "fence",
+  gates: "gate",
+};
+
 export function RunCard({ run, index, runColorIndex, onAddGate }: Props) {
   const { state, dispatch } = useCalculatorV4();
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState<RunTab>("style");
+  const [browseTab, setBrowseTab] = useState<BrowseTab>("full");
 
   useEffect(() => {
     if (state.openRunConfigRunId !== run.runId) return;
@@ -41,6 +54,10 @@ export function RunCard({ run, index, runColorIndex, onAddGate }: Props) {
   const summary = useRunSummary(run, effectiveVars);
   const runProductCode = run.productCode ?? "—";
 
+  const fenceCount = run.segments.filter((s) => s.kind === "fence").length;
+  const gateCount = run.segments.filter((s) => s.kind === "gate").length;
+  const segmentTotal = run.segments.length;
+
   function handleAddSegment() {
     const sorted = [...run.segments].sort((a, b) => a.sortOrder - b.sortOrder);
     const prevFence = [...sorted].reverse().find((s) => s.kind === "fence");
@@ -55,7 +72,8 @@ export function RunCard({ run, index, runColorIndex, onAddGate }: Props) {
           productCode: runProductCode,
           segmentWidthMm: 3000,
           targetHeightMm:
-            prev.targetHeightMm ?? Number(effectiveVars["target_height_mm"] ?? 1800),
+            prev.targetHeightMm ??
+            Number(effectiveVars["target_height_mm"] ?? 1800),
           leftTermination: structuredClone(prev.leftTermination),
           rightTermination: structuredClone(prev.rightTermination),
           variables: prev.variables ? { ...prev.variables } : undefined,
@@ -95,10 +113,36 @@ export function RunCard({ run, index, runColorIndex, onAddGate }: Props) {
 
       {!editing && (
         <div className="border-t border-brand-border p-4 space-y-3">
-          <h3 className="text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
-            Segments ({run.segments.length})
-          </h3>
-          <SegmentList run={run} runColorIndex={runColorIndex} />
+          <div className="flex flex-wrap gap-0 -mx-4 px-4 border-b border-brand-border">
+            {(
+              [
+                { id: "full" as const, label: "Full run", count: segmentTotal },
+                { id: "segments" as const, label: "Segments", count: fenceCount },
+                { id: "gates" as const, label: "Gates", count: gateCount },
+              ] as const
+            ).map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setBrowseTab(tab.id)}
+                className={cn(
+                  "py-2 px-3 text-xs font-medium border-b-2 transition-colors -mb-px",
+                  browseTab === tab.id
+                    ? "border-brand-accent text-brand-accent"
+                    : "border-transparent text-neutral-500 hover:text-neutral-300",
+                )}
+                data-testid={`v4-run-browse-${tab.id}`}
+              >
+                {tab.label}{" "}
+                <span className="tabular-nums opacity-80">({tab.count})</span>
+              </button>
+            ))}
+          </div>
+          <SegmentList
+            run={run}
+            runColorIndex={runColorIndex}
+            filter={BROWSE_TAB_FILTER[browseTab]}
+          />
           <RunActions
             onAddSegment={handleAddSegment}
             onAddGate={() => onAddGate(run.runId)}

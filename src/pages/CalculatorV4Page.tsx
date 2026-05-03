@@ -70,12 +70,11 @@ function CalculatorV4Content() {
   const noSegments =
     !payload || payload.runs.every((r) => r.segments.length === 0);
   const hasBlockingErrors = errors.length > 0;
-  const canGenerate =
-    !!payload && !noSegments && !hasBlockingErrors;
+  const canGenerate = !!payload && !noSegments && !hasBlockingErrors;
 
   return (
     <AppShell>
-      <div className="h-full grid grid-cols-1 lg:grid-cols-[1fr,2fr] gap-4 p-4 max-w-[1600px] mx-auto">
+      <div className="h-full grid grid-cols-1 lg:grid-cols-[40%,60%] gap-4 p-4 max-w-[1600px] mx-auto">
         {/* Left column — job + runs (scrolls naturally) */}
         <div className="space-y-4 overflow-y-auto pb-8 pr-1">
           <JobShell
