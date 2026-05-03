@@ -9,6 +9,7 @@ import {
   maxPanelWidthForSystem,
   normaliseVariablesForSystem,
 } from "../../lib/productOptionRules";
+import { calcRunStats } from "../../lib/runStats";
 import { Button } from "../shared/Button";
 import { SegmentRow } from "./SegmentRow";
 
@@ -52,6 +53,7 @@ export function RunCard({ run, runIdx }: Props) {
   );
   const fenceSegments = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
   const gates = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
+  const runStats = useMemo(() => calcRunStats(run, jobMax), [run, jobMax]);
   const matchesRunOne = run.variables?.settings_mode === "match_run_1";
 
   function toggleRunOneSettings() {
@@ -135,7 +137,7 @@ export function RunCard({ run, runIdx }: Props) {
             Run {runIdx + 1}
           </span>
           <span className="text-sm font-bold text-brand-text">
-            Total Length : {(calcTotalLength(run) / 1000).toFixed(2)}m, Segments : {fenceSegments.length}, Gates {gates.length}
+            Total Length : {(calcTotalLength(run) / 1000).toFixed(2)}m, Segments : {fenceSegments.length}, Gates {gates.length}, Total Post : {runStats.posts}
           </span>
         </h3>
         <div className="flex flex-wrap items-center justify-end gap-2">

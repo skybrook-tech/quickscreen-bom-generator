@@ -314,6 +314,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Added a wider current-catalogue gate hardware menu for QSG gates, including D&D TruClose/Kwik Fit/SureClose hinges, Six Star/Zeus/Colourbond hinge options, Lokk Latch/Magna Latch/T-Latch latch options, white hardware variants, drop bolts, and gate stops.
 - [x] Sliding gate local fallback corrected to output QSG sliding gate rails, side frames, infill/channel infill, screw covers, joiners, spacers, top caps, wheel/clamp hardware, track, and horizontal centre support rails/plates.
 - [x] QSG gate pricing pass: verified missing active gate SKUs through Glass Outlet online lookup, added pricing for side frames, infills, screw covers, top caps, joiners, rail screws, screws, and spacers, and retired legacy placeholder QSG-SC/QSG-RS/QSG-FTC rows.
+- [x] Run/segment sidebar cleanup: run headings now show total posts, matching segment cards only show length/height, changed segment cards only show differing settings, and segment options open by double-clicking the card.
 - [x] Extra items panel — typeahead against existing SKUs (via `search-products`) + create-on-the-fly for one-off lines
 - [x] v2 retired — `CalculatorPage`, `src/components/calculator/*`, `useCalculatorBOM`, `useFenceProducts`, `calculate-bom-v2` edge function all deleted. `/` redirects to `/calculator`.
 - [ ] v1 (`/new`, `MainApp`, `calculate-bom`) removal — deferred to a future pass.
