@@ -96,6 +96,38 @@ Extras specific to this repo (not in the portable spec):
   the engine.
 - **`active: true`** by default on every row. Only set `false` if you explicitly
   want a row disabled.
+- **`allowedAngles` in product metadata** drives canvas corner-snap for the draw
+  tool. Derive it from the product's physical corner capabilities:
+
+  | System characteristic | `allowedAngles` value |
+  |---|---|
+  | Can be cut/joined at any angle (timber, flexible systems) | Omit the key entirely (or `[]`) — no constraints, free draw |
+  | Rigid aluminium with 90° corner post only | `[90]` |
+  | Rigid aluminium with 45° mitre bracket as well | `[45, 90, 135]` |
+
+  **How to derive from catalogue / build pack:**
+  1. Scan for corner accessories — angle brackets, corner posts, mitre joiners.
+     Each distinct angle the system *physically supports* at a post junction
+     belongs in the array.
+  2. If the system has an "adjustable" angle connector covering an arbitrary
+     range, treat it like timber — omit the key (free draw).
+  3. **Do NOT include 180°** — the engine always adds straight-continuation
+     automatically.
+  4. **Why 45 and 135 both appear:** the engine measures the interior angle at
+     the vertex; a 45° mitre presents as either 45° or 135° depending on draw
+     direction, so both must be listed.
+  5. If you can't confirm from the source material, **ask the user** — do not
+     invent angles.
+
+  **Location:** `products[0].metadata.allowedAngles` (top-level product entry,
+  not a component row).
+
+  ```json
+  "metadata": {
+    "allowedAngles": [90],
+    "options": { ... }
+  }
+  ```
 - **Gates live in their own file.** A gate product can pair with multiple fence
   systems via `compatible_with_system_types`, so it doesn't belong in any one fence
   file. `qs_gate.json` is the live example (compatible with QSHS, VS, XPL, BAYG).
@@ -104,6 +136,34 @@ Extras specific to this repo (not in the portable spec):
   ask the user. Don't invent numbers.
 - **Seed data goes in `supabase/seeds/`, never in new migrations.** This is a
   repo-wide rule.
+- **Engine-provided geometry — DO NOT add `product_rules` for these.** The engine
+  injects them into `segCtx` automatically; writing seed rules for them silently
+  overrides the engine's values:
+  ```
+  num_panels, panel_width_mm, num_posts
+  system_termination_count, non_system_termination_count, non_system_wall_count
+  corner_count
+  left_is_system, right_is_system, left_is_wall, right_is_wall
+  left_is_non_system, right_is_non_system, left_is_join, right_is_join
+  left_is_corner, right_is_corner, left_angle_deg, right_angle_deg
+  ```
+- **Renamed variables (do not use the old names):**
+  ```
+  product_post_boundary_count   → system_termination_count
+  corner_post_count             → corner_count
+  wall_boundary_count           → non_system_wall_count
+  left_is_product_post          → left_is_system
+  right_is_product_post         → right_is_system
+  left_boundary_type            → structural leftTermination on the segment (not a variable)
+  right_boundary_type           → structural rightTermination on the segment (not a variable)
+  segment_kind                  → structural kind: 'fence' | 'gate' on the segment (not a variable)
+  ```
+- **`stocks()` math.js helper** is available in all rule expressions:
+  ```
+  stocks(cutsNeeded, stockLen, cutLen) → integer
+  ```
+  Replaces every `X_cuts_per_stock` + `X_stocks` rule pair. Handles 0/NaN gracefully.
+  Example: `stocks(num_slats, 6100, slat_cut_length_mm)` gives total stock lengths needed.
 
 ### Lazy-loaded references
 

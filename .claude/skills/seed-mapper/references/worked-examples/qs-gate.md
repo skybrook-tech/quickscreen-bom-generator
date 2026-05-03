@@ -171,15 +171,20 @@ for the QS_GATE file).
 
 ## Key takeaways for adding a new gate
 
-1. Gate-specific variables go at `scope: "segment"` (the gate is a single
-   segment in a dedicated run — not a per-run concept).
-2. Gate formulas need clearance offsets (`-3`, `-133`, `-86`, `-80`) derived
+1. A gate is a `kind: 'gate'` segment within a multi-segment fence run, not
+   a standalone run. Its `leftTermination` and `rightTermination` are both
+   `{ kind: "segment_join", angleDeg: 0 }`, placing it between two fence segments.
+   Gate-specific variables go at `scope: "segment"` — they live on that segment.
+2. The engine routes the gate segment to its product engine (QS_GATE) via
+   `segment.productCode`. No special branch in the engine code — the gate
+   product is just another `EngineData` entry looked up by product code.
+3. Gate formulas need clearance offsets (`-3`, `-133`, `-86`, `-80`) derived
    from the supplier's construction manual. Don't guess.
-3. Hinges and latches are user-selected via `hinge_type` / `latch_type`
+4. Hinges and latches are user-selected via `hinge_type` / `latch_type`
    variables, then the companion rules resolve the actual SKU via the
    `{selected_hinge_sku}` / `{selected_latch_sku}` placeholders — so the
    companion rule knows how many to add but the concrete SKU is resolved at
    runtime from the user's choice.
-4. Pack accessories (`QSG-SC-10PK`, `QSG-RS-10PK`) use `is_pack: true` and
+5. Pack accessories (`QSG-SC-10PK`, `QSG-RS-10PK`) use `is_pack: true` and
    `ceil(gate_qty / 10)` — one pack covers ten gates.
-5. Frame caps are 4 per gate (2 side frames × 2 top/bottom).
+6. Frame caps are 4 per gate (2 side frames × 2 top/bottom).

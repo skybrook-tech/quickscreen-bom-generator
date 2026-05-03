@@ -516,8 +516,8 @@ This section documents every fix applied to the BOM generator app. Update this i
 
 **Apps merged into single file**
 - `QuickScreen-BOM-Generator.html` is now the definitive app — combines:
-  - Generator's complete BOM logic, per-colour price DB `P{}`, F-section/dress ring/CSR cap support, 3-tier pricing, print/CSV/copy/Ask Claude export
-  - AI intake's Claude API integration (calls `claude-sonnet-4-20250514`, falls back to regex parser)
+  - Generator's complete BOM logic, per-colour price DB `P{}`, F-section/dress ring/CSR cap support, 3-tier pricing, print/CSV/copy/Ask Codex export
+  - AI intake's Codex API integration (calls `Codex-sonnet-4-20250514`, falls back to regex parser)
   - Fence mapper (collapsible section, external `fence-mapper.js` + `fence-mapper.css`)
 - `quickscreen_bom_ai_intake.html` preserved as-is for reference
 
