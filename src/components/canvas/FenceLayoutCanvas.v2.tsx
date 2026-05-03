@@ -38,6 +38,8 @@ interface FenceLayoutCanvasProps {
   renderOverlay?: (runs: CanvasRunSummary[]) => React.ReactNode;
   /** Flat fence-segment index under cursor changed (-1 = none). */
   onFlatSegmentHoverChange?: (flatSegIdx: number) => void;
+  /** Draw tool idle: click existing segment — select in run list (v4), do not start a new run. */
+  onFenceSegmentClick?: (flatSegIdx: number) => void;
 }
 
 export function FenceLayoutCanvas({
@@ -51,6 +53,7 @@ export function FenceLayoutCanvas({
   onSegmentContextMenu,
   renderOverlay,
   onFlatSegmentHoverChange,
+  onFenceSegmentClick,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
@@ -74,6 +77,11 @@ export function FenceLayoutCanvas({
   const onFlatSegmentHoverChangeRef = useRef(onFlatSegmentHoverChange);
   useEffect(() => {
     onFlatSegmentHoverChangeRef.current = onFlatSegmentHoverChange;
+  });
+
+  const onFenceSegmentClickRef = useRef(onFenceSegmentClick);
+  useEffect(() => {
+    onFenceSegmentClickRef.current = onFenceSegmentClick;
   });
 
   // allowedAngles prop takes priority; fallback to product metadata lookup (v1 path)
@@ -159,9 +167,15 @@ export function FenceLayoutCanvas({
       onFlatSegmentHoverChange: (flatSegIdx) => {
         onFlatSegmentHoverChangeRef.current?.(flatSegIdx);
       },
+      onFenceSegmentClick: (flatSegIdx) => {
+        onFenceSegmentClickRef.current?.(flatSegIdx);
+      },
     });
     engineRef.current = engine;
     onEngineReady?.(engine);
+    requestAnimationFrame(() => {
+      engine.fitToContent();
+    });
 
     return () => {
       engineRef.current?.destroy();

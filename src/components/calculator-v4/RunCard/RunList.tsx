@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
+import { useLayoutSegmentHighlight } from "../LayoutMap/LayoutSegmentHighlightContext";
 import { RunCard } from "./RunCard";
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 export function RunList({ onAddGate }: Props) {
   const { state, dispatch } = useCalculatorV4();
   const payload = state.payload;
+  const layoutHl = useLayoutSegmentHighlight();
 
   /** Runs in this set are collapsed (session-only). */
   const [collapsedIds, setCollapsedIds] = useState<Set<string>>(() => new Set());
@@ -42,6 +44,12 @@ export function RunList({ onAddGate }: Props) {
       return next;
     });
   }, []);
+
+  useEffect(() => {
+    if (!layoutHl) return;
+    layoutHl.setExpandRunForCanvas(expandRun);
+    return () => layoutHl.setExpandRunForCanvas(null);
+  }, [layoutHl, expandRun]);
 
   if (!payload) return null;
 

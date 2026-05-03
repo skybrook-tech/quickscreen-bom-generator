@@ -68,6 +68,8 @@ export function FenceLayoutCanvasV4() {
   const [engineGen, setEngineGen] = useState(0);
   const sourceRef = useRef<"canvas" | "form">("form");
   const prevGeomKeyRef = useRef("");
+  /** One auto-fit after form-driven layout lands so the map centres on existing geometry. */
+  const initialFormFitDoneRef = useRef(false);
 
   const [ctxMenu, setCtxMenu] = useState<{
     runId: string;
@@ -128,6 +130,13 @@ export function FenceLayoutCanvasV4() {
     try {
       const layout = canonicalToCanvasLayout(payload);
       engineRef.current.loadLayout(layout);
+      if (
+        !initialFormFitDoneRef.current &&
+        layout.segments.length > 0
+      ) {
+        initialFormFitDoneRef.current = true;
+        requestAnimationFrame(() => engineRef.current?.fitToContent());
+      }
     } catch {
       // ignore
     }
@@ -174,6 +183,16 @@ export function FenceLayoutCanvasV4() {
         runId: hit.runId,
         segmentId: hit.segment.segmentId,
       });
+    },
+    [layoutHighlight, payload],
+  );
+
+  const handleFenceSegmentClick = useCallback(
+    (flatIdx: number) => {
+      if (!layoutHighlight || !payload) return;
+      const hit = resolveCanonicalFromFlatIdx(flatIdx);
+      if (!hit) return;
+      layoutHighlight.requestOpenSegment(hit.runId, hit.segment.segmentId);
     },
     [layoutHighlight, payload],
   );
@@ -264,6 +283,9 @@ export function FenceLayoutCanvasV4() {
         onSegmentContextMenu={handleSegmentContextMenu}
         onFlatSegmentHoverChange={
           layoutHighlight ? handleFlatSegmentHoverChange : undefined
+        }
+        onFenceSegmentClick={
+          layoutHighlight ? handleFenceSegmentClick : undefined
         }
       />
       {ctxMenu && ctxMenuSegment ? (

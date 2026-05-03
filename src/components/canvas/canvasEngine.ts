@@ -67,6 +67,11 @@ export interface CanvasEngineConfig {
   onRunSummariesRefresh?: (runs: CanvasRunSummary[]) => void;
   /** Flat fence-segment index under cursor changed (-1 = none). For layout ↔ list hover sync. */
   onFlatSegmentHoverChange?: (flatSegIdx: number) => void;
+  /**
+   * Left-click on an existing fence segment while draw tool is idle (not continuing a chain).
+   * Used to select/open the segment in the run list instead of starting a new run.
+   */
+  onFenceSegmentClick?: (flatSegIdx: number) => void;
 }
 
 // ── Internal state types ──────────────────────────────────────────────────────
@@ -680,14 +685,30 @@ export function initCanvasEngine(
     config.onLayoutChange?.(getLayout());
   }
 
-  function fenceSegmentLabelText(seg: Segment, displayLabel?: string): string {
+  /** Fence run ordinal among non-boundary runs only (R1, R2, …). */
+  function fenceRunOrdinal1Based(runIdx: number): number {
+    let n = 0;
+    for (let i = 0; i < runIdx; i++) {
+      if (!runs[i].isBoundary) n++;
+    }
+    return n + 1;
+  }
+
+  function formatFenceSegmentLabel(
+    seg: Segment,
+    runOrdinal1Based: number,
+    segmentOrdinal1Based: number,
+  ): string {
     const len =
       seg.lengthMM >= 1000
         ? `${(seg.lengthMM / 1000).toFixed(2)}m`
         : `${Math.round(seg.lengthMM)}mm`;
-    const t = displayLabel?.trim();
-    if (t) return `${t} · ${len}`;
-    return len;
+    return `R${runOrdinal1Based}S${segmentOrdinal1Based} - ${len}`;
+  }
+
+  /** Match {@link drawFenceSegmentLabel} typography for collision boxes. */
+  function fenceLabelFontSizePx(): number {
+    return Math.max(8, 9 / zoom);
   }
 
   /** Screen-space offsets (px) to separate overlapping fence length labels. */
@@ -700,7 +721,7 @@ export function initCanvasEngine(
     }>,
   ): Map<number, { dx: number; dy: number }> {
     const result = new Map<number, { dx: number; dy: number }>();
-    const fs = Math.max(10, 12 / zoom);
+    const fs = fenceLabelFontSizePx();
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.font = `${fs}px sans-serif`;
@@ -712,15 +733,18 @@ export function initCanvasEngine(
       bottom: number;
     };
     const placed: Placed[] = [];
-    const pad = 4 / zoom;
-    const STEP_SCREEN = 18;
+    const pad = 3 / zoom;
+    /** Extra clearance from the fence stroke — labels sit callout-style off the line. */
+    const MIN_OFFSET_FROM_LINE_SCREEN = 26;
+    const STEP_SCREEN = 20;
 
-    for (const { seg, flatIdx, runIdx } of allSegs) {
+    for (const { seg, flatIdx, runIdx, segIdx } of allSegs) {
       const mid = lerp(seg.p1, seg.p2, 0.5);
       const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
-      const labelText = fenceSegmentLabelText(
+      const labelText = formatFenceSegmentLabel(
         seg,
-        runs[runIdx]?.displayLabel,
+        fenceRunOrdinal1Based(runIdx),
+        segIdx + 1,
       );
       const tw = ctx.measureText(labelText).width;
       const bh = fs + pad * 2;
@@ -740,7 +764,9 @@ export function initCanvasEngine(
       for (let k = 0; k < 40; k++) {
         const sign = k === 0 ? 1 : k % 2 === 1 ? 1 : -1;
         const mag = Math.ceil(k / 2);
-        const offScreen = sign * mag * STEP_SCREEN;
+        const offScreen =
+          sign * mag * STEP_SCREEN +
+          (sign >= 0 ? MIN_OFFSET_FROM_LINE_SCREEN : -MIN_OFFSET_FROM_LINE_SCREEN);
         const dx = nx * offScreen;
         const dy = ny * offScreen;
         const cx = sx0 + dx;
@@ -832,17 +858,20 @@ export function initCanvasEngine(
         if (!runs[ri].isBoundary) runColorIdx.set(ri, nbIdx++);
       }
     }
-    const effectiveHoverSegIdx =
-      hoveredSegIdx >= 0 ? hoveredSegIdx : uiHighlightFlat;
-    for (const { seg, flatIdx, runIdx } of allSegs) {
+    for (const { seg, flatIdx, runIdx, segIdx } of allSegs) {
       const colorIdx = runColorIdx.get(runIdx) ?? 0;
+      let emphasis: "none" | "hover" | "linked" = "none";
+      if (flatIdx === uiHighlightFlat && uiHighlightFlat >= 0) emphasis = "linked";
+      else if (flatIdx === hoveredSegIdx && hoveredSegIdx >= 0)
+        emphasis = "hover";
       drawSegment(
         seg,
-        flatIdx === effectiveHoverSegIdx,
+        emphasis,
         getRunColor(colorIdx),
         getRunColorHover(colorIdx),
         fenceLabelShift.get(flatIdx),
-        runIdx,
+        fenceRunOrdinal1Based(runIdx),
+        segIdx + 1,
       );
     }
 
@@ -1140,15 +1169,37 @@ export function initCanvasEngine(
 
   function drawSegment(
     seg: Segment,
-    hovered: boolean,
+    emphasis: "none" | "hover" | "linked",
     runColor = COLOR.segment,
     runColorHover = COLOR.segmentHover,
     labelShiftPx?: { dx: number; dy: number },
-    runIdxForLabel?: number,
+    labelRunOrdinal?: number,
+    labelSegOrdinal?: number,
   ) {
     const lw = 3 / zoom;
-    const segColor = hovered ? runColorHover : runColor;
-    const segLw = hovered ? lw * 1.5 : lw;
+    const segColor = emphasis === "none" ? runColor : runColorHover;
+    const segLw =
+      emphasis === "linked"
+        ? lw * 2.6
+        : emphasis === "hover"
+          ? lw * 1.5
+          : lw;
+
+    // List ↔ canvas selection: high-contrast halo on the full span (behind gate gaps)
+    if (emphasis === "linked") {
+      ctx.save();
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.lineWidth = (lw * 6.5) / zoom;
+      ctx.beginPath();
+      ctx.moveTo(seg.p1.x, seg.p1.y);
+      ctx.lineTo(seg.p2.x, seg.p2.y);
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(250, 204, 21, 0.85)";
+      ctx.lineWidth = (lw * 3.8) / zoom;
+      ctx.stroke();
+      ctx.restore();
+    }
 
     // Build sorted list of gate gaps as (tStart, tEnd) pairs
     type GateGap = { tStart: number; tEnd: number; widthMM: number };
@@ -1288,51 +1339,104 @@ export function initCanvasEngine(
     ctx.restore();
 
     // Length label
-    const title =
-      runIdxForLabel !== undefined
-        ? runs[runIdxForLabel]?.displayLabel
-        : undefined;
-    drawLabel(seg, labelShiftPx, title);
+    drawLabel(
+      seg,
+      labelShiftPx,
+      labelRunOrdinal !== undefined && labelSegOrdinal !== undefined
+        ? formatFenceSegmentLabel(seg, labelRunOrdinal, labelSegOrdinal)
+        : formatFenceSegmentLabel(seg, 1, 1),
+    );
+  }
+
+  function drawFenceSegmentLabel(
+    seg: Segment,
+    labelShiftPx: { dx: number; dy: number } | undefined,
+    labelText: string,
+  ) {
+    const midFence = lerp(seg.p1, seg.p2, 0.5);
+    const midBox = labelShiftPx
+      ? {
+          x: midFence.x + labelShiftPx.dx / zoom,
+          y: midFence.y + labelShiftPx.dy / zoom,
+        }
+      : midFence;
+    const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
+    const text = labelText;
+
+    const fs = fenceLabelFontSizePx();
+    const pad = 3 / zoom;
+    ctx.save();
+    ctx.font = `${fs}px sans-serif`;
+    const tw = ctx.measureText(text).width;
+    const bh = fs + pad * 2;
+    const corner = 2.5 / zoom;
+
+    const vx = midFence.x - midBox.x;
+    const vy = midFence.y - midBox.y;
+    const dist = Math.hypot(vx, vy);
+    if (dist > 4 / zoom) {
+      const tStem0 = 0.34;
+      const tStem1 = 0.88;
+      const stemStart = {
+        x: midBox.x + vx * tStem0,
+        y: midBox.y + vy * tStem0,
+      };
+      const stemEnd = {
+        x: midBox.x + vx * tStem1,
+        y: midBox.y + vy * tStem1,
+      };
+      const ux = vx / dist;
+      const uy = vy / dist;
+      const perpX = -uy;
+      const perpY = ux;
+      const aw = 3.5 / zoom;
+
+      ctx.strokeStyle = "rgba(148, 163, 184, 0.55)";
+      ctx.lineWidth = 1.15 / zoom;
+      ctx.beginPath();
+      ctx.moveTo(stemStart.x, stemStart.y);
+      ctx.lineTo(stemEnd.x, stemEnd.y);
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(148, 163, 184, 0.65)";
+      ctx.beginPath();
+      ctx.moveTo(midFence.x, midFence.y);
+      ctx.lineTo(stemEnd.x + perpX * aw, stemEnd.y + perpY * aw);
+      ctx.lineTo(stemEnd.x - perpX * aw, stemEnd.y - perpY * aw);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    ctx.translate(midBox.x, midBox.y);
+    const flip = ang > Math.PI / 2 || ang < -Math.PI / 2;
+    ctx.rotate(flip ? ang + Math.PI : ang);
+
+    ctx.fillStyle = COLOR.labelBg;
+    ctx.beginPath();
+    ctx.roundRect(-tw / 2 - pad, -bh / 2, tw + pad * 2, bh, corner);
+    ctx.fill();
+
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.35)";
+    ctx.lineWidth = 1 / zoom;
+    ctx.stroke();
+
+    ctx.fillStyle = COLOR.label;
+    ctx.font = `${fs}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, 0, 0);
+
+    ctx.restore();
   }
 
   function drawLabel(
     seg: Segment,
     labelShiftPx?: { dx: number; dy: number },
-    displayLabel?: string,
+    labelText?: string,
   ) {
-    const mid0 = lerp(seg.p1, seg.p2, 0.5);
-    const mid = labelShiftPx
-      ? {
-          x: mid0.x + labelShiftPx.dx / zoom,
-          y: mid0.y + labelShiftPx.dy / zoom,
-        }
-      : mid0;
-    const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
-    const labelText = fenceSegmentLabelText(seg, displayLabel);
-
-    ctx.save();
-    ctx.translate(mid.x, mid.y);
-    // Keep label readable (flip if upside-down)
-    const flip = ang > Math.PI / 2 || ang < -Math.PI / 2;
-    ctx.rotate(flip ? ang + Math.PI : ang);
-
-    const fs = Math.max(10, 12 / zoom);
-    ctx.font = `${fs}px sans-serif`;
-    const tw = ctx.measureText(labelText).width;
-    const pad = 4 / zoom;
-    const bh = fs + pad * 2;
-
-    ctx.fillStyle = COLOR.labelBg;
-    ctx.beginPath();
-    ctx.roundRect(-tw / 2 - pad, -bh / 2, tw + pad * 2, bh, 3 / zoom);
-    ctx.fill();
-
-    ctx.fillStyle = COLOR.label;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(labelText, 0, 0);
-
-    ctx.restore();
+    const text =
+      labelText ?? formatFenceSegmentLabel(seg, 1, 1);
+    drawFenceSegmentLabel(seg, labelShiftPx, text);
   }
 
   function drawActiveEndpoint(pt: Point, label: string, ghost = false) {
@@ -1419,12 +1523,32 @@ export function initCanvasEngine(
   }
 
   function hitTestLabel(pt: Point): number {
-    // Returns flat segment index if pt is near its midpoint label
     const allSegs = allSegmentsFlat();
-    for (const { seg, flatIdx } of allSegs) {
-      const mid = lerp(seg.p1, seg.p2, 0.5);
-      if (dist(pt, mid) < 30 / zoom) return flatIdx;
+    const shifts = computeFenceLabelShifts(allSegs);
+    const fs = fenceLabelFontSizePx();
+    const pad = 3 / zoom;
+    ctx.save();
+    ctx.font = `${fs}px sans-serif`;
+    for (const { seg, flatIdx, runIdx, segIdx } of allSegs) {
+      const mid0 = lerp(seg.p1, seg.p2, 0.5);
+      const sh = shifts.get(flatIdx);
+      const center = sh
+        ? { x: mid0.x + sh.dx / zoom, y: mid0.y + sh.dy / zoom }
+        : mid0;
+      const labelText = formatFenceSegmentLabel(
+        seg,
+        fenceRunOrdinal1Based(runIdx),
+        segIdx + 1,
+      );
+      const tw = ctx.measureText(labelText).width;
+      const bh = fs + pad * 2;
+      const hitR = Math.hypot(tw / 2 + pad, bh / 2) / zoom + 6 / zoom;
+      if (dist(pt, center) <= hitR) {
+        ctx.restore();
+        return flatIdx;
+      }
     }
+    ctx.restore();
     return -1;
   }
 
@@ -1513,6 +1637,73 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  /** Undo one placed vertex while drawing (Escape). Returns true if layout changed. */
+  function popLastDrawPoint(): boolean {
+    if (tool !== "draw") return false;
+    if (activeRunIdx < 0 || runs[activeRunIdx]?.finished) return false;
+    const run = runs[activeRunIdx];
+    if (!run || run.points.length === 0) return false;
+
+    if (run.points.length === 1) {
+      runs.splice(activeRunIdx, 1);
+      if (undoStack[undoStack.length - 1]?.type === "ADD_RUN") {
+        undoStack.pop();
+      }
+      activeRunIdx = -1;
+      notifyChange();
+      return true;
+    }
+
+    run.points.pop();
+    rebuildSegmentsPreservingGates(run, scale);
+    if (undoStack[undoStack.length - 1]?.type === "ADD_POINT") {
+      undoStack.pop();
+    }
+    notifyChange();
+    return true;
+  }
+
+  function onDocumentEscapeCapture(e: KeyboardEvent) {
+    if (e.key !== "Escape") return;
+    const el = e.target as HTMLElement | null;
+    if (
+      el?.closest?.(
+        "input, textarea, select, option, [contenteditable=true]",
+      )
+    ) {
+      return;
+    }
+    if (document.querySelector('[data-testid="v4-segment-context-menu"]')) {
+      return;
+    }
+    if (!popLastDrawPoint()) return;
+    e.preventDefault();
+    e.stopPropagation();
+    scheduleRedraw();
+  }
+
+  /** Screen px tolerance — segment body is thin at zoom. */
+  const FENCE_SEGMENT_PICK_PX = 16;
+
+  /**
+   * Open segment in UI (v4). Hit along the line or on the callout label — never
+   * mutates geometry (no vertex splits).
+   */
+  function tryPickFenceSegmentForUi(canvasPt: Point): boolean {
+    if (!config.onFenceSegmentClick) return false;
+
+    let flat = hitTestSegments(canvasPt, FENCE_SEGMENT_PICK_PX);
+    if (flat < 0) {
+      const labelFlat = hitTestLabel(canvasPt);
+      if (labelFlat >= 0) flat = labelFlat;
+    }
+    if (flat < 0) return false;
+
+    config.onFenceSegmentClick(flat);
+    scheduleRedraw();
+    return true;
+  }
+
   // ── Event handlers ─────────────────────────────────────────────────────────
 
   function onMouseDown(e: MouseEvent) {
@@ -1520,7 +1711,7 @@ export function initCanvasEngine(
       // Right button: segment context menu takes priority; else start pan
       if (config.onSegmentContextMenu) {
         const ctxCanvasPt = eventToCanvas(e);
-        const flatIdx = hitTestSegments(ctxCanvasPt, 10);
+        const flatIdx = hitTestSegments(ctxCanvasPt, FENCE_SEGMENT_PICK_PX);
         if (flatIdx >= 0) {
           config.onSegmentContextMenu(flatIdx, e.clientX, e.clientY);
           e.preventDefault();
@@ -1561,6 +1752,47 @@ export function initCanvasEngine(
       }
     }
 
+    if (tool === "draw") {
+      if (isNearActiveLastPoint(screenPtDown)) {
+        stopChain(false);
+        scheduleRedraw();
+        return;
+      }
+
+      // Resume from a finished run's endpoint — must beat segment pick (endpoint sits on the line).
+      if (activeRunIdx === -1 || runs[activeRunIdx]?.finished) {
+        let resumedIdx = -1;
+        for (let ri = 0; ri < runs.length; ri++) {
+          const run = runs[ri];
+          if (!run.finished || run.isBoundary || run.points.length === 0)
+            continue;
+          const endPtScreen = canvasToScreen(
+            run.points[run.points.length - 1],
+            pan,
+            zoom,
+          );
+          const dx = screenPtDown.x - endPtScreen.x;
+          const dy = screenPtDown.y - endPtScreen.y;
+          if (Math.sqrt(dx * dx + dy * dy) < 12) {
+            resumedIdx = ri;
+            break;
+          }
+        }
+
+        if (resumedIdx >= 0) {
+          runs[resumedIdx].finished = false;
+          activeRunIdx = resumedIdx;
+          undoStack.push({ type: "RESUME_RUN", runIdx: resumedIdx });
+          scheduleRedraw();
+          return;
+        }
+      }
+
+      if (tryPickFenceSegmentForUi(canvasPt)) {
+        return;
+      }
+    }
+
     if (!editingLabel && (tool === "draw" || tool === "move")) {
       const labelIdx = hitTestLabel(canvasPt);
       if (labelIdx >= 0 && !(tool === "draw" && activeRunIdx >= 0)) {
@@ -1570,48 +1802,16 @@ export function initCanvasEngine(
     }
 
     if (tool === "draw") {
-      if (isNearActiveLastPoint(screenPtDown)) {
-        stopChain(false);
-        return;
-      }
-
       if (activeRunIdx === -1 || runs[activeRunIdx]?.finished) {
-        // Check if click is on the end-point of a finished run — resume it
-        let resumedIdx = -1;
-        for (let ri = 0; ri < runs.length; ri++) {
-          const run = runs[ri];
-          if (!run.finished || run.isBoundary || run.points.length === 0) continue;
-          const endPtScreen = canvasToScreen(
-            run.points[run.points.length - 1],
-            pan,
-            zoom,
-          );
-          const dx = screenPtDown.x - endPtScreen.x;
-          const dy = screenPtDown.y - endPtScreen.y;
-          if (Math.sqrt(dx * dx + dy * dy) < 10) {
-            resumedIdx = ri;
-            break;
-          }
-        }
-
-        if (resumedIdx >= 0) {
-          // Resume the existing run — un-finish it so new points can be appended
-          runs[resumedIdx].finished = false;
-          activeRunIdx = resumedIdx;
-          undoStack.push({ type: "RESUME_RUN", runIdx: resumedIdx }); // undo will re-finish it
-        } else {
-          // Start a new run with this as the first point
-          const newRun: Run = {
-            points: [worldPt],
-            finished: false,
-            segments: [],
-          };
-          undoStack.push({ type: "ADD_RUN" });
-          runs.push(newRun);
-          activeRunIdx = runs.length - 1;
-        }
+        const newRun: Run = {
+          points: [worldPt],
+          finished: false,
+          segments: [],
+        };
+        undoStack.push({ type: "ADD_RUN" });
+        runs.push(newRun);
+        activeRunIdx = runs.length - 1;
       } else {
-        // Append point to the current run (multi-point polyline)
         const run = runs[activeRunIdx];
         worldPt = snapDrawingPoint(canvasPt);
         run.points.push(worldPt);
@@ -1792,7 +1992,7 @@ export function initCanvasEngine(
 
     // Update hover state
     const prevHover = hoveredSegIdx;
-    hoveredSegIdx = hitTestSegments(canvasPt, 10);
+    hoveredSegIdx = hitTestSegments(canvasPt, FENCE_SEGMENT_PICK_PX);
     if (hoveredSegIdx !== prevHover) {
       config.onFlatSegmentHoverChange?.(hoveredSegIdx);
     }
@@ -1970,12 +2170,8 @@ export function initCanvasEngine(
         scheduleRedraw();
       }
     }
-    if (e.key === "Escape" && tool === "draw") {
-      if (activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
-        stopChain(false); // keyboard — no extra mousedown point to pop
-        scheduleRedraw();
-      }
-    }
+    // Escape while drawing: pop last point — handled in capture phase (onDocumentEscapeCapture)
+    // so slide-out panels don't receive Escape first.
     if ((e.key === "z" || e.key === "Z") && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       undoLast();
@@ -2395,6 +2591,7 @@ export function initCanvasEngine(
     canvas.removeEventListener("dblclick", onDblClick);
     canvas.removeEventListener("wheel", onWheel);
     canvas.removeEventListener("contextmenu", onContextMenu);
+    document.removeEventListener("keydown", onDocumentEscapeCapture, true);
     window.removeEventListener("keydown", onKeyDown);
     window.removeEventListener("keyup", onKeyUp);
     window.removeEventListener("resize", onResize);
@@ -2411,12 +2608,13 @@ export function initCanvasEngine(
   canvas.addEventListener("dblclick", onDblClick);
   canvas.addEventListener("wheel", onWheel, { passive: false });
   canvas.addEventListener("contextmenu", onContextMenu);
+  document.addEventListener("keydown", onDocumentEscapeCapture, true);
   window.addEventListener("keydown", onKeyDown);
   window.addEventListener("keyup", onKeyUp);
   window.addEventListener("resize", onResize);
 
-  // Initial draw — fit to 50m wide view
-  fitToWidth(50);
+  // Initial framing — centre/zoom to drawn content (empty canvas → fitToWidth inside fitToContent)
+  fitToContent();
 
   function setUiHighlightFlatSeg(idx: number | null) {
     uiHighlightFlat = idx === null || idx < 0 ? -1 : idx;

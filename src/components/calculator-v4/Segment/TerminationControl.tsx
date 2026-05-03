@@ -4,6 +4,7 @@ import type {
   SegmentTermination,
 } from "../../../types/canonical.types";
 import { CORNER_DEGREE_OPTIONS } from "../../../lib/segmentTermination";
+import { terminationSelectOptionLabel } from "../../../lib/terminationDisplay";
 import { useProducts } from "../../../hooks/useProducts";
 
 interface Props {
@@ -102,11 +103,21 @@ export function TerminationControl({
         disabled={locked}
         className={selectClass}
       >
-        <option value={KIND.SYSTEM}>Standard post</option>
-        <option value={KIND.SYSTEM_CORNER}>Corner post</option>
-        <option value={KIND.NON_SYSTEM + ":wall"}>Wall mount</option>
-        <option value={KIND.NON_SYSTEM + ":post"}>Non-system post</option>
-        <option value={KIND.NON_SYSTEM + ":other"}>Other (no post)</option>
+        <option value={KIND.SYSTEM}>
+          {terminationSelectOptionLabel(KIND.SYSTEM)}
+        </option>
+        <option value={KIND.SYSTEM_CORNER}>
+          {terminationSelectOptionLabel(KIND.SYSTEM_CORNER)}
+        </option>
+        <option value={KIND.NON_SYSTEM + ":wall"}>
+          {terminationSelectOptionLabel(KIND.NON_SYSTEM + ":wall")}
+        </option>
+        <option value={KIND.NON_SYSTEM + ":post"}>
+          {terminationSelectOptionLabel(KIND.NON_SYSTEM + ":post")}
+        </option>
+        <option value={KIND.NON_SYSTEM + ":other"}>
+          {terminationSelectOptionLabel(KIND.NON_SYSTEM + ":other")}
+        </option>
       </select>
       {kindValue === KIND.SYSTEM_CORNER && (
         <div className="grid grid-cols-2 gap-2 mt-2">

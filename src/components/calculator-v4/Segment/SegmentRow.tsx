@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "../../../lib";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { useProducts } from "../../../hooks/useProducts";
@@ -15,6 +15,9 @@ import {
   snapHeightToClosestPitchOption,
 } from "../../../lib/targetHeightOptions";
 import { useLayoutSegmentHighlight } from "../LayoutMap/LayoutSegmentHighlightContext";
+import { useProductVariables } from "../../../hooks/useProductVariables";
+import { buildCollapsedSegmentSpecs } from "../../../lib/segmentCollapsedSpecs";
+import { SegmentCollapsedSpecRow } from "./SegmentCollapsedSpecRow";
 import { SegmentDetails } from "./SegmentDetails";
 import { SegmentHeader } from "./SegmentHeader";
 
@@ -31,10 +34,38 @@ export function SegmentRow({ runId, seg, segmentLabel, runColorIndex }: Props) {
   const layoutHl = useLayoutSegmentHighlight();
   const { dispatch, state } = useCalculatorV4();
   const [open, setOpen] = useState(false);
-  const { data: products = [] } = useProducts();
+  const rowRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const pending = layoutHl?.pendingOpenSegment;
+    if (
+      !pending ||
+      pending.runId !== runId ||
+      pending.segmentId !== seg.segmentId
+    ) {
+      return;
+    }
+    setOpen(true);
+    layoutHl.consumePendingOpen();
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        rowRef.current?.scrollIntoView({
+          block: "nearest",
+          behavior: "smooth",
+        });
+      });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [layoutHl, layoutHl?.pendingOpenSegment, runId, seg.segmentId]);
+  const { data: products = [] } = useProducts();
   const run = state.payload?.runs.find((r) => r.runId === runId);
   const productCode = run?.productCode ?? state.payload?.productCode ?? null;
+
+  const { data: jobFields = [] } = useProductVariables(productCode, "job");
+  const { data: segmentFields = [] } = useProductVariables(
+    productCode,
+    "segment",
+  );
 
   const fenceAccentHex =
     RUN_LINE_COLORS[runColorIndex % RUN_LINE_COLORS.length] ??
@@ -48,12 +79,26 @@ export function SegmentRow({ runId, seg, segmentLabel, runColorIndex }: Props) {
     };
   }, [state.payload?.variables, run?.variables, seg.variables]);
 
-  const heightMeta = useMemo(
-    () =>
-      parseTargetHeightUi(
-        products.find((p) => p.system_type === productCode)?.metadata,
-      ),
+  const metaForProduct = useMemo(
+    () => products.find((p) => p.system_type === productCode)?.metadata,
     [products, productCode],
+  );
+
+  const collapsedSpecs = useMemo(
+    () =>
+      buildCollapsedSegmentSpecs(
+        state.payload ?? null,
+        run,
+        seg,
+        jobFields,
+        segmentFields,
+      ),
+    [state.payload, run, seg, jobFields, segmentFields],
+  );
+
+  const heightMeta = useMemo(
+    () => parseTargetHeightUi(metaForProduct),
+    [metaForProduct],
   );
 
   const pitchLadderOptions = useMemo(() => {
@@ -101,6 +146,7 @@ export function SegmentRow({ runId, seg, segmentLabel, runColorIndex }: Props) {
 
   return (
     <div
+      ref={rowRef}
       className={cn(
         "rounded-xl border-2 overflow-hidden transition-colors",
         isLayoutLinkedHighlight &&
@@ -157,6 +203,14 @@ export function SegmentRow({ runId, seg, segmentLabel, runColorIndex }: Props) {
           })
         }
       />
+      {!open && collapsedSpecs.showSubRow && (
+        <SegmentCollapsedSpecRow
+          colour={collapsedSpecs.colour}
+          showColourSwatch={collapsedSpecs.showColourSwatch}
+          chips={collapsedSpecs.chips}
+          locked={seg.confirmed === true}
+        />
+      )}
       {open && (
         <SegmentDetails
           runId={runId}

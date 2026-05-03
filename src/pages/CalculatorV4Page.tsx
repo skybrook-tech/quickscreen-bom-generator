@@ -10,6 +10,7 @@ import { JobActions } from "../components/calculator-v4/JobShell/JobActions";
 import { JobShell } from "../components/calculator-v4/JobShell/JobShell";
 import { RunList } from "../components/calculator-v4/RunCard/RunList";
 import { LayoutMapPane } from "../components/calculator-v4/LayoutMap/LayoutMapPane";
+import { LayoutSegmentHighlightProvider } from "../components/calculator-v4/LayoutMap/LayoutSegmentHighlightContext";
 import { GatePane } from "../components/calculator-v4/Gate/GatePane";
 import { BomPanel } from "../components/calculator-v4/Bom/BomPanel";
 import { useBomCalculator } from "../hooks/useBomCalculator";
@@ -156,7 +157,9 @@ export function CalculatorV4Page() {
           unused by v4 reducers — the v4 source of truth is CalculatorContextV4. */}
       <FenceConfigProvider>
         <GateProvider>
-          <CalculatorV4Content />
+          <LayoutSegmentHighlightProvider>
+            <CalculatorV4Content />
+          </LayoutSegmentHighlightProvider>
         </GateProvider>
       </FenceConfigProvider>
     </CalculatorV4Provider>
