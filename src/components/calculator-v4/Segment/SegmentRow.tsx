@@ -59,7 +59,8 @@ export function SegmentRow({ runId, seg, segmentLabel, runColorIndex }: Props) {
   }, [layoutHl, layoutHl?.pendingOpenSegment, runId, seg.segmentId]);
   const { data: products = [] } = useProducts();
   const run = state.payload?.runs.find((r) => r.runId === runId);
-  const productCode = run?.productCode ?? state.payload?.productCode ?? null;
+  const runProductCode = run?.productCode ?? state.payload?.productCode ?? null;
+  const productCode = seg.productCode || runProductCode;
 
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
   const { data: segmentFields = [] } = useProductVariables(

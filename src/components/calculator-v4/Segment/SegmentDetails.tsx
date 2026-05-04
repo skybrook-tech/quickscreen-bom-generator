@@ -9,6 +9,7 @@ import { TerminationControl } from "./TerminationControl";
 import NumberInput from "../../ui/NumberInput";
 import { Select } from "../../ui/Select";
 import { cn } from "../../../lib";
+import { ProductSelectV4 } from "../JobShell/ProductSelectV4";
 
 const POST_SIZE_KEY = "post_size";
 const POST_WIDTH_MM_KEY = "post_width_mm";
@@ -28,7 +29,10 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
   const { state, dispatch } = useCalculatorV4();
 
   const run = state.payload?.runs.find((r) => r.runId === runId);
-  const productCode = run?.productCode ?? state.payload?.productCode ?? null;
+  const runProductCode = run?.productCode ?? state.payload?.productCode ?? null;
+  const productCode = seg.productCode || runProductCode;
+  const hasSystemOverride =
+    Boolean(runProductCode) && Boolean(seg.productCode) && seg.productCode !== runProductCode;
 
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
   const { data: runFields = [] } = useProductVariables(productCode, "run");
@@ -98,6 +102,15 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
 
   function updateMaxPanelWidth(value: number | null) {
     upsertSegment(patchSegmentVariables(seg, { max_panel_width_mm: value }));
+  }
+
+  function updateSegmentProduct(code: string) {
+    upsertSegment({ ...seg, productCode: code });
+  }
+
+  function clearSegmentProductOverride() {
+    if (!runProductCode) return;
+    upsertSegment({ ...seg, productCode: runProductCode });
   }
 
   const mergedJobDisplay: Record<string, string | number | boolean> = {
@@ -192,6 +205,39 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
 
       {isFence && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="space-y-2 sm:col-span-2 rounded-lg border border-brand-border/70 bg-brand-bg/40 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <div className="inline-flex items-center gap-2">
+                  <span className="text-[11px] font-medium uppercase tracking-wider text-neutral-500">
+                    Segment system
+                  </span>
+                  <span className="rounded-full border border-brand-border px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-muted">
+                    Override
+                  </span>
+                </div>
+                <p className="mt-0.5 text-[11px] text-neutral-500">
+                  Leave this matching the run default unless this segment uses a different fence system.
+                </p>
+              </div>
+              {hasSystemOverride && (
+                <button
+                  type="button"
+                  onClick={clearSegmentProductOverride}
+                  disabled={locked}
+                  className="text-xs font-medium text-brand-accent hover:underline disabled:opacity-40"
+                >
+                  Match run default
+                </button>
+              )}
+            </div>
+            <ProductSelectV4
+              value={productCode ?? ""}
+              onChange={updateSegmentProduct}
+              separated
+            />
+          </div>
+
           <label className="flex flex-col gap-1">
             <span className="text-neutral-500 text-xs">
               Post spacing (mm)

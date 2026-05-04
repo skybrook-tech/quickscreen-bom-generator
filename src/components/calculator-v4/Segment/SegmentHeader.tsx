@@ -9,8 +9,6 @@ import {
   GitCompare,
   Trash2,
   RulerDimensionLine,
-  Fence,
-  GalleryHorizontalEnd,
 } from "lucide-react";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import type { SegmentDiagnostic } from "../../../types/bom.types";
@@ -26,7 +24,6 @@ import { CANVAS_GATE_STROKE } from "../../../lib/runLineColors";
 import { Tooltip } from "../../ui/Tooltip";
 import { InlineEdit } from "./InlineEdit";
 
-const METRIC_ICON = 12;
 
 interface Props {
   runId: string;
@@ -112,17 +109,6 @@ export function SegmentHeader({
   const heightDisplayMm =
     seg.targetHeightMm ?? heightOptionsMm[0] ?? freeformBounds?.minMm ?? 1800;
 
-  const segmentMetrics = useMemo(() => {
-    if (seg.kind !== "fence") return null;
-    const maxPanelMm = Number(mergedVars["max_panel_width_mm"] ?? 2600);
-    const w = seg.segmentWidthMm ?? 0;
-    const panels = Math.max(1, Math.ceil(w / maxPanelMm));
-    let corners = 0;
-    if (seg.leftTermination.kind === "system_corner") corners++;
-    if (seg.rightTermination.kind === "system_corner") corners++;
-    const posts = panels + 1;
-    return { panels, corners, posts };
-  }, [seg, mergedVars]);
 
   const diagnostics = useMemo(
     () =>
@@ -233,45 +219,6 @@ export function SegmentHeader({
           className="flex items-center ml-auto gap-0.5 shrink-0"
           onClick={(e) => e.stopPropagation()}
         >
-          {segmentMetrics && (
-            <div className="flex items-center w-full justify-end gap-2 mr-0.5">
-              <div className="inline-flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                <Tooltip content="Panel bays in this segment (from span width ÷ max panel width)">
-                  <span
-                    className="inline-flex items-center gap-0.5 cursor-default text-xs tabular-nums"
-                    aria-label={`Panels in this segment: ${segmentMetrics.panels}`}
-                  >
-                    <GalleryHorizontalEnd
-                      size={METRIC_ICON}
-                      className="shrink-0 opacity-90"
-                      aria-hidden
-                    />
-                    <span className="font-mono">{segmentMetrics.panels}</span>
-                    <span className="text-neutral-500 hidden sm:inline text-[11px]">
-                      panels
-                    </span>
-                  </span>
-                </Tooltip>
-                <Tooltip content="Estimated posts for this segment (panel bays + ends)">
-                  <span
-                    className="inline-flex items-center gap-0.5 cursor-default text-xs tabular-nums"
-                    aria-label={`Estimated posts for this segment: ${segmentMetrics.posts}`}
-                  >
-                    <Fence
-                      size={METRIC_ICON}
-                      className="shrink-0 opacity-90"
-                      aria-hidden
-                    />
-                    <span className="font-mono">{segmentMetrics.posts}</span>
-                    <span className="text-neutral-500 hidden sm:inline text-[11px]">
-                      posts
-                    </span>
-                  </span>
-                </Tooltip>
-              </div>
-            </div>
-          )}
-
           {isGate && (
             <div className="flex items-center gap-0.5 mr-0.5">
               <span

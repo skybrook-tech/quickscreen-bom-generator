@@ -188,18 +188,26 @@ function reducer(
     case "SET_RUN_PRODUCT": {
       const payload = state.payload;
       if (!payload) return state;
-      const runs = payload.runs.map((r) =>
-        r.runId === action.runId
-          ? {
-              ...r,
-              productCode: action.productCode,
-              variables: normaliseVariablesForSystem(action.productCode, {
-                ...payload.variables,
-                ...(r.variables ?? {}),
-              }),
-            }
-          : r,
-      );
+      const runs = payload.runs.map((r) => {
+        if (r.runId !== action.runId) return r;
+        const previousProduct = r.productCode ?? payload.productCode;
+        const segments = r.segments.map((s) => {
+          const followsRunProduct =
+            !s.productCode || s.productCode === previousProduct;
+          return followsRunProduct
+            ? { ...s, productCode: action.productCode }
+            : s;
+        });
+        return {
+          ...r,
+          productCode: action.productCode,
+          variables: normaliseVariablesForSystem(action.productCode, {
+            ...payload.variables,
+            ...(r.variables ?? {}),
+          }),
+          segments,
+        };
+      });
       return { ...state, payload: { ...payload, runs } };
     }
     case "REMOVE_RUN": {

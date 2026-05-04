@@ -30,6 +30,14 @@
 
 ---
 
+## Codex PR Briefs
+
+- [x] Brief A - Design system tokens + base aesthetic *(draft PR #5 open)*
+- [x] Brief B - Run-vs-segment scope refactor: run defaults now have a dedicated run card, segment system choice is demoted to an override, new segments inherit run defaults instead of previous segment overrides, and run product changes propagate to non-overridden segments.
+- [x] Brief C - Saved-jobs library + Save Job feedback + autosave (frontend-only) *(draft PR #4 open)*
+
+---
+
 ## Phase 0 — Cypress Test Suite
 
 

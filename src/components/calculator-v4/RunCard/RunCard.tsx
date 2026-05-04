@@ -8,6 +8,7 @@ import type {
 import { SegmentList, type SegmentListFilter } from "../Segment/SegmentList";
 import { RunActions } from "./RunActions";
 import { RunConfigPanel } from "./RunConfigPanel";
+import { RunDefaultsCard } from "./RunDefaultsCard";
 import { RunHeader } from "./RunHeader";
 import { RunSubHeader, type RunTab } from "./RunSubHeader";
 import { useRunSummary } from "./useRunSummary";
@@ -86,7 +87,6 @@ export function RunCard({
             Number(effectiveVars["target_height_mm"] ?? 1800),
           leftTermination: structuredClone(prev.leftTermination),
           rightTermination: structuredClone(prev.rightTermination),
-          variables: prev.variables ? { ...prev.variables } : undefined,
           confirmed: false,
         }
       : {
@@ -134,6 +134,11 @@ export function RunCard({
 
           {!editing && (
             <div className="border-t border-brand-border p-4 pt-1 space-y-3">
+          <RunDefaultsCard
+            productCode={runProductCode}
+            effectiveVars={effectiveVars}
+            onEdit={() => setEditing(true)}
+          />
           <div className="flex flex-wrap gap-0 -mx-4 px-4 border-b border-brand-border">
             {(
               [

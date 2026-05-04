@@ -123,7 +123,7 @@ export function RunConfigPanel({ run, activeTab }: Props) {
       {activeTab === "style" && fenceProducts.length > 1 && (
         <div className="space-y-2">
           <label className="block text-[11px] font-medium uppercase tracking-wider text-neutral-500">
-            Fence System
+            Run system default
           </label>
           <ProductSelectV4
             value={runProductCode ?? ""}
