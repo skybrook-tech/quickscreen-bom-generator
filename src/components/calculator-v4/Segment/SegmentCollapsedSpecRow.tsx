@@ -23,7 +23,7 @@ export function SegmentCollapsedSpecRow({
     <div
       className={cn(
         "pl-7 pr-3 pb-2.5 pt-0 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[12px] leading-snug",
-        locked ? "text-white/80" : "text-neutral-500",
+        locked ? "text-white/80" : "text-brand-muted",
       )}
     >
       {showColourSwatch && colour ? (
@@ -39,7 +39,7 @@ export function SegmentCollapsedSpecRow({
           <span
             className={cn(
               "truncate max-w-[10rem]",
-              locked ? "text-white/70" : "text-neutral-500",
+              locked ? "text-white/70" : "text-brand-muted",
             )}
           >
             {colour.label}
@@ -54,7 +54,7 @@ export function SegmentCollapsedSpecRow({
               "inline-flex items-center rounded-md px-1.5 py-0.5 tabular-nums cursor-default max-w-full",
               locked
                 ? "bg-white/15 text-white/95"
-                : "bg-neutral-700/40 text-neutral-300",
+                : "bg-black/[0.06] dark:bg-white/10 text-brand-text",
             )}
           >
             {c.chipText}

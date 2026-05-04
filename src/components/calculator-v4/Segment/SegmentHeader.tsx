@@ -9,8 +9,6 @@ import {
   GitCompare,
   Trash2,
   RulerDimensionLine,
-  Fence,
-  GalleryHorizontalEnd,
 } from "lucide-react";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import type { SegmentDiagnostic } from "../../../types/bom.types";
@@ -25,8 +23,7 @@ import { cn } from "../../../lib";
 import { CANVAS_GATE_STROKE } from "../../../lib/runLineColors";
 import { Tooltip } from "../../ui/Tooltip";
 import { InlineEdit } from "./InlineEdit";
-
-const METRIC_ICON = 12;
+import SegmentMetrics from "./SegmentMetrics";
 
 interface Props {
   runId: string;
@@ -236,44 +233,7 @@ export function SegmentHeader({
           className="flex items-center ml-auto gap-0.5 shrink-0"
           onClick={(e) => e.stopPropagation()}
         >
-          {segmentMetrics && (
-            <div className="flex items-center w-full justify-end gap-2 mr-0.5">
-              <div className="inline-flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                <Tooltip content="Panel bays in this segment (from span width ÷ max panel width)">
-                  <span
-                    className="inline-flex items-center gap-0.5 cursor-default text-xs tabular-nums"
-                    aria-label={`Panels in this segment: ${segmentMetrics.panels}`}
-                  >
-                    <GalleryHorizontalEnd
-                      size={METRIC_ICON}
-                      className="shrink-0 opacity-90"
-                      aria-hidden
-                    />
-                    <span className="font-mono">{segmentMetrics.panels}</span>
-                    <span className="text-neutral-500 hidden sm:inline text-[11px]">
-                      panels
-                    </span>
-                  </span>
-                </Tooltip>
-                <Tooltip content="Estimated posts for this segment (panel bays + ends)">
-                  <span
-                    className="inline-flex items-center gap-0.5 cursor-default text-xs tabular-nums"
-                    aria-label={`Estimated posts for this segment: ${segmentMetrics.posts}`}
-                  >
-                    <Fence
-                      size={METRIC_ICON}
-                      className="shrink-0 opacity-90"
-                      aria-hidden
-                    />
-                    <span className="font-mono">{segmentMetrics.posts}</span>
-                    <span className="text-neutral-500 hidden sm:inline text-[11px]">
-                      posts
-                    </span>
-                  </span>
-                </Tooltip>
-              </div>
-            </div>
-          )}
+          {segmentMetrics && <SegmentMetrics segmentMetrics={segmentMetrics} />}
 
           {isGate && (
             <div className="flex items-center gap-0.5 mr-0.5">
@@ -395,24 +355,24 @@ export function SegmentHeader({
             </label>
           </Tooltip>
           <Tooltip content="Duplicate this segment (same length and settings)">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDuplicate();
-            }}
-            title="Duplicate segment"
-            aria-label="Duplicate segment"
-            disabled={locked}
-            className={cn(
-              "p-1.5 rounded disabled:opacity-40 disabled:pointer-events-none",
-              locked
-                ? "text-white hover:text-white hover:bg-white/15"
-                : "text-brand-muted hover:text-brand-accent hover:bg-brand-accent/10",
-            )}
-          >
-            <Copy size={13} />
-          </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDuplicate();
+              }}
+              title="Duplicate segment"
+              aria-label="Duplicate segment"
+              disabled={locked}
+              className={cn(
+                "p-1.5 rounded disabled:opacity-40 disabled:pointer-events-none",
+                locked
+                  ? "text-white hover:text-white hover:bg-white/15"
+                  : "text-brand-muted hover:text-brand-accent hover:bg-brand-accent/10",
+              )}
+            >
+              <Copy size={13} />
+            </button>
           </Tooltip>
           <Tooltip
             content={
@@ -421,24 +381,24 @@ export function SegmentHeader({
                 : "Remove this segment from the run (layout map updates when segments are removed)"
             }
           >
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemove();
-            }}
-            title="Remove segment"
-            aria-label="Remove segment"
-            disabled={removeDisabled}
-            className={cn(
-              "p-1.5 rounded disabled:opacity-40 disabled:pointer-events-none",
-              locked
-                ? "text-white hover:text-red-500 hover:bg-red-500/25"
-                : "hover:text-red-500 hover:bg-red-500/20",
-            )}
-          >
-            <Trash2 size={13} />
-          </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove();
+              }}
+              title="Remove segment"
+              aria-label="Remove segment"
+              disabled={removeDisabled}
+              className={cn(
+                "p-1.5 rounded disabled:opacity-40 disabled:pointer-events-none",
+                locked
+                  ? "text-white hover:text-red-500 hover:bg-red-500/25"
+                  : "hover:text-red-500 hover:bg-red-500/20",
+              )}
+            >
+              <Trash2 size={13} />
+            </button>
           </Tooltip>
         </div>
       </div>

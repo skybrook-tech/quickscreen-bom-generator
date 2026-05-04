@@ -54,17 +54,17 @@ function Stat({
   return (
     <Tooltip content={tooltip}>
       <span
-        className="inline-flex items-center gap-1 cursor-default text-xs text-neutral-600"
+        className="inline-flex items-center gap-1 cursor-default text-xs text-brand-muted"
         aria-label={ariaLabel}
       >
         <Icon
           size={ICON}
-          className={cn("shrink-0 text-neutral-500", className)}
+          className={cn("shrink-0 text-brand-muted", className)}
           aria-hidden
         />
         <span className="font-mono tabular-nums">{children}</span>
         {unitLabel ? (
-          <span className="text-neutral-500 hidden min-[380px]:inline">
+          <span className="text-brand-muted hidden min-[380px]:inline">
             {unitLabel}
           </span>
         ) : null}
@@ -114,7 +114,7 @@ export function RunHeader({
         <button
           type="button"
           onClick={onToggleExpanded}
-          className="shrink-0 p-1 rounded-md text-neutral-500 hover:text-brand-text hover:bg-brand-border/40 transition-colors"
+          className="shrink-0 p-1 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/40 transition-colors"
           aria-expanded={expanded}
           aria-label={expanded ? "Collapse run" : "Expand run"}
         >
@@ -129,7 +129,7 @@ export function RunHeader({
           <div className="inline-flex items-center gap-1.5 min-w-0">
             <Route
               size={16}
-              className="shrink-0 text-neutral-500"
+              className="shrink-0 text-brand-muted"
               aria-hidden
             />
             {editing ? (

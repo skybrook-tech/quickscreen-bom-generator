@@ -50,30 +50,22 @@ export function RunSubHeader({ effectiveVars, productCode }: Props) {
 
   const loading = Boolean(productCode) && (jobPending || runPending);
 
-  if (!productCode || loading) {
-    return (
-      <div className="flex items-center min-h-[40px]">
-        <div className="flex-1 px-4 py-2 text-xs text-neutral-500 font-mono tabular-nums">
-          —
-        </div>
+  const placeholder = (
+    <div className="flex items-center min-h-[40px]">
+      <div className="flex-1 px-4 py-2 text-xs text-brand-muted font-mono tabular-nums">
+        —
       </div>
-    );
-  }
+    </div>
+  );
 
-  if (visibleFields.length === 0) {
-    return (
-      <div className="flex items-center min-h-[40px]">
-        <div className="flex-1 px-4 py-2 text-xs text-neutral-500 font-mono tabular-nums">
-          —
-        </div>
-      </div>
-    );
-  }
+  if (!productCode || loading) return placeholder;
+
+  if (visibleFields.length === 0) return placeholder;
 
   return (
     <div className="flex items-center min-h-[40px]">
       <div className="flex-1 overflow-hidden">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 text-xs text-neutral-500 font-mono tabular-nums">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 text-xs font-mono tabular-nums">
           {visibleFields.map((field, i) => {
             const raw = effectiveVars[field.field_key];
             const valueText = formatVariableValueForChip(field, raw);
@@ -86,23 +78,26 @@ export function RunSubHeader({ effectiveVars, productCode }: Props) {
             return (
               <Fragment key={field.id}>
                 {i > 0 ? (
-                  <span className="text-neutral-600 select-none" aria-hidden>
+                  <span
+                    className="text-brand-muted select-none"
+                    aria-hidden
+                  >
                     ·
                   </span>
                 ) : null}
                 <span className="inline-flex items-center gap-1.5 min-w-0">
                   {hex ? (
                     <span
-                      className="w-2.5 h-2.5 shrink-0 rounded-sm ring-1 ring-neutral-700"
+                      className="w-2.5 h-2.5 shrink-0 rounded-sm ring-1 ring-brand-border"
                       style={{ backgroundColor: hex }}
                       aria-hidden
                     />
                   ) : null}
-                  <span className="text-neutral-400 truncate">{field.label}</span>
-                  <span className="text-neutral-600 select-none" aria-hidden>
+                  <span className="text-brand-muted truncate">{field.label}</span>
+                  <span className="text-brand-muted select-none" aria-hidden>
                     ·
                   </span>
-                  <span className="text-neutral-300 shrink-0">{valueText}</span>
+                  <span className="text-brand-text shrink-0">{valueText}</span>
                 </span>
               </Fragment>
             );

@@ -28,7 +28,13 @@ export function Segmented({
 
   return (
     <div
-      className={`inline-flex rounded-full ${separated ? "bg-neutral-100 gap-2" : "bg-brand-bg gap-0.5 "} p-0.5 ${className}`}
+      className={cn(
+        "inline-flex rounded-full p-0.5",
+        separated
+          ? "bg-slate-200/80 dark:bg-white/10 gap-2"
+          : "bg-brand-bg gap-0.5",
+        className,
+      )}
     >
       {options.map((opt) => {
         const active = opt.value === value;
@@ -43,7 +49,7 @@ export function Segmented({
               sizeClasses,
               {
                 "bg-brand-accent text-white shadow-sm": active || separated,
-                "text-brand hover:text-brand-accent": !active && !separated,
+                "text-brand-text hover:text-brand-accent": !active && !separated,
               },
             ])}
           >

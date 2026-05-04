@@ -106,7 +106,7 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
   };
 
   const labelClass =
-    "block text-[11px] font-medium uppercase tracking-wider text-neutral-500";
+    "block text-[11px] font-medium uppercase tracking-wider text-brand-muted";
 
   const isFence = seg.kind === "fence";
 
@@ -121,7 +121,7 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
   return (
     <div
       className={cn(
-        "p-3 bg-white space-y-4",
+        "p-3 bg-white dark:bg-brand-card space-y-4",
         locked && "opacity-60 pointer-events-none",
       )}
       aria-disabled={locked}
@@ -143,7 +143,7 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
               data-testid={`v4-seg-length-${seg.segmentId}`}
               disabled={locked}
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500 pointer-events-none">
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-brand-muted pointer-events-none">
               m
             </span>
           </div>
@@ -164,7 +164,7 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
                   })
                 }
                 disabled={locked}
-                className="bg-white border border-neutral-200 rounded-md"
+                className="rounded-md"
               />
             </div>
           ) : (
@@ -177,7 +177,7 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
                 })
               }
               disabled={locked}
-              className="bg-white border border-neutral-200 rounded-md"
+              className="rounded-md"
               data-testid={`v4-seg-height-${seg.segmentId}`}
             >
               {heightOptionsMm.map((h) => (
@@ -193,10 +193,10 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
       {isFence && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label className="flex flex-col gap-1">
-            <span className="text-neutral-500 text-xs">
+            <span className="text-brand-muted text-xs">
               Post spacing (mm)
             </span>
-            <span className="text-[10px] text-neutral-400 -mt-0.5 mb-0.5">
+            <span className="text-[10px] text-brand-muted -mt-0.5 mb-0.5">
               Maximum bay width — drives spacing between posts along the run.
             </span>
             <NumberInput
@@ -208,7 +208,7 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
               disabled={locked}
             />
             {lenMm > 0 && actualPostSpacingMm > 0 ? (
-              <span className="text-[10px] text-neutral-500 mt-1">
+              <span className="text-[10px] text-brand-muted mt-1">
                 Actual spacing this segment: ~{actualPostSpacingMm} mm (
                 {panelsForSpacing} bay{panelsForSpacing === 1 ? "" : "s"})
               </span>
@@ -216,12 +216,12 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className="text-neutral-500 text-xs">Post type</span>
+            <span className="text-brand-muted text-xs">Post type</span>
             <Select
               value={postSize}
               onChange={(e) => setScalar(POST_SIZE_KEY, e.target.value || null)}
               disabled={locked}
-              className="bg-white border border-neutral-200 rounded-md"
+              className="rounded-md"
             >
               <option value="">— Job default —</option>
               {postSizeOptions.map((opt) => (
@@ -235,7 +235,7 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
 
           {isCustomPost && (
             <label className="flex flex-col gap-1 sm:col-span-2">
-              <span className="text-neutral-500 text-xs">Post width (mm)</span>
+              <span className="text-brand-muted text-xs">Post width (mm)</span>
               <NumberInput
                 value={(v[POST_WIDTH_MM_KEY] as number | null) ?? null}
                 onChange={(val) => setScalar(POST_WIDTH_MM_KEY, val)}
@@ -249,7 +249,7 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
 
       {isFence && jobFields.length > 0 && (
         <fieldset disabled={locked} className="min-w-0 border-0 p-0 m-0">
-          <legend className="text-xs text-neutral-500 mb-2 font-medium">
+          <legend className="text-xs text-brand-muted mb-2 font-medium">
             Job settings override (this segment)
           </legend>
           <SchemaDrivenFormV4

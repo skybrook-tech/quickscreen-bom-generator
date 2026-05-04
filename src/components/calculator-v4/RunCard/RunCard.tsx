@@ -149,7 +149,7 @@ export function RunCard({
                     "py-2 px-3 text-xs font-medium border-b-2 transition-colors -mb-px",
                     browseTab === tab.id
                       ? "border-brand-accent text-brand-accent"
-                      : "border-transparent text-neutral-500 hover:text-neutral-300",
+                      : "border-transparent text-brand-muted hover:text-brand-text",
                   )}
                   data-testid={`v4-run-browse-${tab.id}`}
                 >

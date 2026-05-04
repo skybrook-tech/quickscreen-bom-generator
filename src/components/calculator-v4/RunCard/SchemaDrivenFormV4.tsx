@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { cn } from "../../../lib";
 import { useColourOptions } from "../../../hooks/useColourOptions";
 import {
   isVisible,
@@ -6,6 +7,15 @@ import {
 } from "../../calculator-v3/SchemaDrivenForm";
 import { Segmented } from "../../ui/Segmented";
 import { ColourSwatches } from "../../ui/ColourSwatches";
+
+/** Matches `Input.tsx` surfaces: `bg-white dark:bg-brand-card` + `border-brand-border`. */
+const CONTROL_CLASS = cn(
+  "w-full px-3 py-2 rounded-lg bg-white dark:bg-brand-card",
+  "border border-brand-border text-sm text-brand-text",
+  "focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none",
+);
+
+const CONTROL_MONO_CLASS = cn(CONTROL_CLASS, "font-mono tabular-nums");
 
 const CUSTOM_GAP_SEG_VALUE = "custom";
 /** Allow arbitrary mm; BOM spacer SKU mapping may still assume standard gaps. */
@@ -41,7 +51,7 @@ export function SchemaDrivenFormV4({ fields, variables, onChange }: Props) {
 
   if (visibleFields.length === 0) {
     return (
-      <p className="text-xs text-neutral-500 italic">
+      <p className="text-xs text-brand-muted italic">
         No configurable fields for this product.
       </p>
     );
@@ -138,7 +148,7 @@ function FieldRenderer({
         <select
           value={String(variables[field.field_key] ?? "")}
           onChange={(e) => onChange(field.field_key, e.target.value)}
-          className="w-full px-3 py-2 rounded-lg  border border-neutral-700 text-sm text-neutral-100 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none"
+          className={cn(CONTROL_CLASS, "appearance-auto")}
         >
           {field.options_json.map((opt) => (
             <option key={String(opt)} value={String(opt)}>
@@ -166,7 +176,7 @@ function FieldRenderer({
                 : parseFloat(e.target.value),
             )
           }
-          className="w-full px-3 py-2 rounded-lg border border-brand-border text-sm text-brand-text font-mono tabular-nums focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none"
+          className={CONTROL_MONO_CLASS}
         />
       </FieldWrap>
     );
@@ -184,7 +194,7 @@ function FieldRenderer({
           onChange={(e) => onChange(field.field_key, e.target.checked)}
           className="rounded"
         />
-        <label className="text-sm font-medium text-neutral-300">
+        <label className="text-sm font-medium text-brand-text">
           {field.label}
         </label>
       </div>
@@ -197,7 +207,7 @@ function FieldRenderer({
         type="text"
         value={String(variables[field.field_key] ?? "")}
         onChange={(e) => onChange(field.field_key, e.target.value)}
-        className="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 text-sm text-neutral-100 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none"
+        className={CONTROL_CLASS}
       />
     </FieldWrap>
   );
@@ -289,10 +299,10 @@ function SlatGapControl({
               step={1}
               value={Number.isFinite(num) ? num : 0}
               onChange={(e) => applyCustomMm(Number(e.target.value))}
-              className="w-28 px-3 py-2 rounded-lg border border-brand-border text-sm text-brand-text font-mono tabular-nums focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none"
+              className={cn(CONTROL_MONO_CLASS, "w-28")}
               aria-label="Custom slat gap mm"
             />
-            <span className="text-xs text-neutral-500">mm</span>
+            <span className="text-xs text-brand-muted">mm</span>
           </div>
         )}
       </div>
@@ -310,10 +320,10 @@ interface FieldWrapProps {
 function FieldWrap({ label, testId, unit, children }: FieldWrapProps) {
   return (
     <div className="space-y-2" data-testid={testId}>
-      <label className="block text-[11px] font-medium uppercase tracking-wider text-neutral-500">
+      <label className="block text-[11px] font-medium uppercase tracking-wider text-brand-muted">
         {label}
         {unit && (
-          <span className="ml-1 normal-case tracking-normal text-neutral-600">
+          <span className="ml-1 normal-case tracking-normal text-brand-muted">
             ({unit})
           </span>
         )}
