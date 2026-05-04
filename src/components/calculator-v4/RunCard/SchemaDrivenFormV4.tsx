@@ -1,12 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
-import { useColourOptions } from "../../../hooks/useColourOptions";
+import {
+  useColourOptions,
+  type ColourOption as ColourRow,
+} from "../../../hooks/useColourOptions";
 import {
   isVisible,
   type SchemaField,
 } from "../../calculator-v3/SchemaDrivenForm";
 import { POST_TYPE_LABELS } from "../../../lib/productOptionRules";
 import { Segmented } from "../../ui/Segmented";
-import { ColourSwatches } from "../../ui/ColourSwatches";
+import {
+  ColourPicker,
+  type ColourPickerOption,
+} from "../../ui/ColourPicker";
 
 const CUSTOM_GAP_SEG_VALUE = "custom";
 /** Allow arbitrary mm; BOM spacer SKU mapping may still assume standard gaps. */
@@ -39,6 +45,9 @@ export function SchemaDrivenFormV4({ fields, variables, onChange }: Props) {
   const visibleFields = fields.filter((f) =>
     isVisible(f.visible_when_json ?? {}, variables),
   );
+  const postColourField = visibleFields.find(
+    (f) => f.field_key === "post_colour_code",
+  );
 
   if (visibleFields.length === 0) {
     return (
@@ -50,16 +59,17 @@ export function SchemaDrivenFormV4({ fields, variables, onChange }: Props) {
 
   return (
     <div className="space-y-4">
-      {visibleFields.map((field) => (
+      {visibleFields
+        .filter((field) => field.field_key !== "post_colour_code")
+        .map((field) => (
         <FieldRenderer
           key={field.id}
           field={field}
           variables={variables}
           onChange={onChange}
-          allowedColours={allowedColours.map((c) => ({
-            value: c.value,
-            label: c.label,
-          }))}
+          colourRows={allColours}
+          allowedColourRows={allowedColours}
+          postColourField={postColourField}
         />
       ))}
     </div>
@@ -70,22 +80,29 @@ interface FieldRendererProps {
   field: SchemaField;
   variables: Record<string, string | number | boolean>;
   onChange: (key: string, value: string | number | boolean) => void;
-  allowedColours: { value: string; label: string }[];
+  colourRows: ColourRow[];
+  allowedColourRows: ColourRow[];
+  postColourField?: SchemaField;
 }
 
 function FieldRenderer({
   field,
   variables,
   onChange,
-  allowedColours,
+  colourRows,
+  allowedColourRows,
+  postColourField,
 }: FieldRendererProps) {
   if (field.field_key === "colour_code") {
     return (
       <FieldWrap label={field.label} testId={field.field_key}>
-        <ColourSwatches
-          value={String(variables[field.field_key] ?? "")}
-          onChange={(v) => onChange(field.field_key, v)}
-          colours={allowedColours}
+        <ColourControls
+          colourField={field}
+          postColourField={postColourField}
+          variables={variables}
+          onChange={onChange}
+          colourRows={colourRows}
+          allowedColourRows={allowedColourRows}
         />
       </FieldWrap>
     );
@@ -204,6 +221,128 @@ function FieldRenderer({
         className="w-full px-3 py-2 rounded-lg bg-neutral-800 border border-neutral-700 text-sm text-neutral-100 focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none"
       />
     </FieldWrap>
+  );
+}
+
+function codeForValue(value: string, colourRows: ColourRow[]) {
+  const row = colourRows.find(
+    (c) => c.value === value || c.short_code === value,
+  );
+  return row?.short_code ?? value;
+}
+
+function colourOptionsFromField(
+  field: SchemaField | undefined,
+  fallbackRows: ColourRow[],
+  allRows: ColourRow[],
+): ColourPickerOption[] {
+  const rawOptions = Array.isArray(field?.options_json)
+    ? field.options_json.map(String)
+    : [];
+  const sourceRows =
+    rawOptions.length > 0
+      ? rawOptions
+          .map((value) =>
+            allRows.find((c) => c.value === value || c.short_code === value),
+          )
+          .filter((row): row is ColourRow => Boolean(row))
+      : fallbackRows;
+
+  return sourceRows.map((row) => ({
+    value: row.short_code,
+    code: row.short_code,
+    label: row.label,
+    limited: row.limited,
+  }));
+}
+
+function ColourControls({
+  colourField,
+  postColourField,
+  variables,
+  onChange,
+  colourRows,
+  allowedColourRows,
+}: {
+  colourField: SchemaField;
+  postColourField?: SchemaField;
+  variables: Record<string, string | number | boolean>;
+  onChange: (key: string, value: string | number | boolean) => void;
+  colourRows: ColourRow[];
+  allowedColourRows: ColourRow[];
+}) {
+  const colourValue = codeForValue(
+    String(variables[colourField.field_key] ?? ""),
+    colourRows,
+  );
+  const postColourValue = codeForValue(
+    String(variables.post_colour_code ?? colourValue),
+    colourRows,
+  );
+  const postColourDifferent = postColourValue !== colourValue;
+
+  const colourOptions = colourOptionsFromField(
+    colourField,
+    allowedColourRows,
+    colourRows,
+  );
+  const postColourOptions = colourOptionsFromField(
+    postColourField,
+    colourRows,
+    colourRows,
+  );
+
+  function setFenceColour(value: string) {
+    onChange(colourField.field_key, value);
+    if (!postColourDifferent && postColourField) {
+      onChange(postColourField.field_key, value);
+    }
+  }
+
+  function togglePostColour(different: boolean) {
+    if (!postColourField) return;
+    const nextPostColour = different
+      ? (postColourOptions.find((option) => option.code !== colourValue)?.code ??
+        postColourValue)
+      : colourValue;
+    onChange(postColourField.field_key, nextPostColour);
+  }
+
+  return (
+    <div className="space-y-3">
+      <ColourPicker
+        value={colourValue}
+        onChange={setFenceColour}
+        options={colourOptions}
+      />
+
+      {postColourField && (
+        <div className="space-y-2">
+          <label className="inline-flex items-center gap-2 text-xs font-medium text-brand-muted">
+            <input
+              type="checkbox"
+              checked={postColourDifferent}
+              onChange={(e) => togglePostColour(e.target.checked)}
+              className="rounded border-brand-border text-brand-accent focus:ring-brand-accent/40"
+            />
+            Different colour for posts?
+          </label>
+
+          {postColourDifferent && (
+            <div className="rounded-lg border border-brand-border/70 bg-brand-bg/40 p-3">
+              <div className="mb-2 text-[11px] font-medium uppercase tracking-wider text-neutral-500">
+                Post colour
+              </div>
+              <ColourPicker
+                value={postColourValue}
+                onChange={(value) => onChange(postColourField.field_key, value)}
+                options={postColourOptions}
+              />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
