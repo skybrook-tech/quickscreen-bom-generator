@@ -24,6 +24,7 @@ import { CANVAS_GATE_STROKE } from "../../../lib/runLineColors";
 import { Tooltip } from "../../ui/Tooltip";
 import { InlineEdit } from "./InlineEdit";
 import SegmentMetrics from "./SegmentMetrics";
+import Separator from "../shared/Separator";
 
 interface Props {
   runId: string;
@@ -187,14 +188,7 @@ export function SegmentHeader({
           disabled={locked}
           onAccentSurface={locked}
         />
-        <span
-          className={cn(
-            "opacity-60",
-            locked ? "text-white/40" : "text-brand-border",
-          )}
-        >
-          ·
-        </span>
+        <Separator />
         <Tooltip content="Target fence height (above ground)">
           <span
             className="inline-flex items-center"
@@ -228,23 +222,16 @@ export function SegmentHeader({
             />
           </span>
         </Tooltip>
+        <Separator />
+        {segmentMetrics && <SegmentMetrics segmentMetrics={segmentMetrics} />}
 
         <div
           className="flex items-center ml-auto gap-0.5 shrink-0"
           onClick={(e) => e.stopPropagation()}
         >
-          {segmentMetrics && <SegmentMetrics segmentMetrics={segmentMetrics} />}
-
           {isGate && (
             <div className="flex items-center gap-0.5 mr-0.5">
-              <span
-                className={cn(
-                  "opacity-60",
-                  locked ? "text-white/40" : "text-brand-border",
-                )}
-              >
-                ·
-              </span>
+              <Separator />
               <span
                 className={cn(
                   "inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded font-medium",

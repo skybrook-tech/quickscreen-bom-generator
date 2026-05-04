@@ -9,6 +9,7 @@ import {
   Tag,
   RulerDimensionLine,
   DoorOpen,
+  Fence,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
@@ -27,8 +28,6 @@ interface Props {
   summary: RunSummary;
   expanded: boolean;
   onToggleExpanded: () => void;
-  /** When false, show shorter stats row (length + segment count only). */
-  compact?: boolean;
   /** When set, show per-run fence system control (if multiple products exist). */
   showProductSelect?: boolean;
 }
@@ -81,7 +80,6 @@ export function RunHeader({
   summary,
   expanded,
   onToggleExpanded,
-  compact = false,
   showProductSelect = false,
 }: Props) {
   const { dispatch, state } = useCalculatorV4();
@@ -203,42 +201,46 @@ export function RunHeader({
             {len}m
           </Stat>
 
-          {!compact && (
-            <>
-              <Stat
-                icon={GalleryHorizontalEnd}
-                tooltip="Number of panels"
-                ariaLabel={`Panels: ${summary.panelCount}`}
-                unitLabel="panels"
-              >
-                {summary.panelCount}
-              </Stat>
-              <Stat
-                icon={StretchVertical}
-                tooltip="Number of posts"
-                ariaLabel={`Posts: ${summary.postCount}`}
-                unitLabel="posts"
-              >
-                {summary.postCount}
-              </Stat>
-              <Stat
-                icon={CornerDownRight}
-                tooltip="Number of corners"
-                ariaLabel={`Corners: ${summary.cornerCount}`}
-                unitLabel="corners"
-              >
-                {summary.cornerCount}
-              </Stat>
-              <Stat
-                icon={DoorOpen}
-                tooltip="Number of gates"
-                ariaLabel={`Gates: ${summary.gateCount}`}
-                unitLabel="gates"
-              >
-                {summary.gateCount}
-              </Stat>
-            </>
-          )}
+          <Stat
+            icon={Fence}
+            tooltip="Fence segments (spans) in this run"
+            ariaLabel={`Fence segments: ${summary.fenceSegmentCount}`}
+            unitLabel="spans"
+          >
+            {summary.fenceSegmentCount}
+          </Stat>
+          <Stat
+            icon={DoorOpen}
+            tooltip="Gates in this run"
+            ariaLabel={`Gates: ${summary.gateCount}`}
+            unitLabel="gates"
+          >
+            {summary.gateCount}
+          </Stat>
+          <Stat
+            icon={GalleryHorizontalEnd}
+            tooltip="Number of panels"
+            ariaLabel={`Panels: ${summary.panelCount}`}
+            unitLabel="panels"
+          >
+            {summary.panelCount}
+          </Stat>
+          <Stat
+            icon={StretchVertical}
+            tooltip="Number of posts"
+            ariaLabel={`Posts: ${summary.postCount}`}
+            unitLabel="posts"
+          >
+            {summary.postCount}
+          </Stat>
+          <Stat
+            icon={CornerDownRight}
+            tooltip="Number of corners"
+            ariaLabel={`Corners: ${summary.cornerCount}`}
+            unitLabel="corners"
+          >
+            {summary.cornerCount}
+          </Stat>
         </div>
       </div>
     </div>

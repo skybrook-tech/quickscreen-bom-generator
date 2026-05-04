@@ -5,7 +5,10 @@ export interface RunSummary {
   totalLengthM: number;
   maxHeightMm: number;
   actualHeightMm: number;
+  /** All segments in run order (fence + gate). */
   segmentCount: number;
+  /** Fence spans only (excludes gates). */
+  fenceSegmentCount: number;
   panelCount: number;
   postCount: number;
   cornerCount: number;
@@ -60,6 +63,7 @@ export function useRunSummary(
       maxHeightMm,
       actualHeightMm,
       segmentCount: run.segments.length,
+      fenceSegmentCount: segs.length,
       panelCount,
       postCount,
       cornerCount,

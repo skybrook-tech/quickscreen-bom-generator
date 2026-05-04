@@ -117,7 +117,6 @@ export function RunCard({
         summary={summary}
         expanded={expanded}
         onToggleExpanded={onToggleExpanded}
-        compact={!expanded}
         showProductSelect={expanded}
       />
 

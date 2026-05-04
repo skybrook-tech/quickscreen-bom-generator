@@ -4,11 +4,15 @@ import type { SchemaField } from "../../calculator-v3/SchemaDrivenForm";
 import { useProductVariables } from "../../../hooks/useProductVariables";
 import { COLOUR_HEX } from "../../../lib/colourHex";
 import { formatVariableValueForChip } from "../../../lib/segmentCollapsedSpecs";
+import Separator from "../shared/Separator";
 
 /** Fields that show a Colorbond swatch when we have a hex for the stored code. */
 const COLOUR_SWATCH_KEYS = new Set(["colour_code", "post_colour_code"]);
 
-function mergeJobRunFields(job: SchemaField[], run: SchemaField[]): SchemaField[] {
+function mergeJobRunFields(
+  job: SchemaField[],
+  run: SchemaField[],
+): SchemaField[] {
   const byKey = new Map<string, SchemaField>();
   for (const f of job) byKey.set(f.field_key, f);
   for (const f of run) byKey.set(f.field_key, f);
@@ -77,14 +81,7 @@ export function RunSubHeader({ effectiveVars, productCode }: Props) {
 
             return (
               <Fragment key={field.id}>
-                {i > 0 ? (
-                  <span
-                    className="text-brand-muted select-none"
-                    aria-hidden
-                  >
-                    ·
-                  </span>
-                ) : null}
+                {i > 0 ? <Separator /> : null}
                 <span className="inline-flex items-center gap-1.5 min-w-0">
                   {hex ? (
                     <span
@@ -93,10 +90,10 @@ export function RunSubHeader({ effectiveVars, productCode }: Props) {
                       aria-hidden
                     />
                   ) : null}
-                  <span className="text-brand-muted truncate">{field.label}</span>
-                  <span className="text-brand-muted select-none" aria-hidden>
-                    ·
+                  <span className="text-brand-muted truncate">
+                    {field.label}
                   </span>
+                  <Separator />
                   <span className="text-brand-text shrink-0">{valueText}</span>
                 </span>
               </Fragment>

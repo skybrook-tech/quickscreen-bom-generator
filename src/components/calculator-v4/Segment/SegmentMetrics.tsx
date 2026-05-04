@@ -12,7 +12,7 @@ interface SegmentMetricsProps {
 
 const SegmentMetrics = ({ segmentMetrics }: SegmentMetricsProps) => {
   return (
-    <div className="flex items-center w-full justify-end gap-2 mr-0.5">
+    <div className="flex items-center gap-2">
       <div className="inline-flex flex-wrap items-center gap-x-2 gap-y-0.5">
         <Tooltip content="Panel bays in this segment (from span width ÷ max panel width)">
           <span
