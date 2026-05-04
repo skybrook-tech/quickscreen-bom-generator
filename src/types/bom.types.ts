@@ -13,6 +13,7 @@ export interface BOMLineItem {
   unitPrice: number;    // ex-GST
   lineTotal: number;    // quantity × unitPrice
   notes?: string;
+  warning?: string;
 }
 
 export interface PostPosition {

@@ -23,6 +23,8 @@ export interface BomViewLine {
   runId?: string;
   /** True if this line was added by the user from a suggestion. */
   isAddedSuggestion?: boolean;
+  /** Non-blocking line warning, shown as a chip instead of polluting copy. */
+  warning?: string;
 }
 
 /** Stable key for qty overrides (SKU or `extra:${id}`). */
@@ -67,6 +69,14 @@ function applyQtyOverride(
   return { quantity, lineTotal: quantity * unitPrice };
 }
 
+function cleanDescription(value: string | undefined, fallback: string) {
+  return (value ?? fallback)
+    .replace(/\bNo pricing[^.]*\.?/gi, "")
+    .replace(/\bPrice (?:TBD|TBC|not set)[^.]*\.?/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 function asLine(
   l: BOMLineItem & { runId?: string },
   source: BomViewLine["source"],
@@ -83,7 +93,7 @@ function asLine(
   return {
     sku: l.sku,
     name: l.name,
-    description: l.description ?? l.name,
+    description: cleanDescription(l.description, l.name),
     unit: l.unit ?? "each",
     quantity,
     unitPrice: l.unitPrice,
@@ -91,6 +101,7 @@ function asLine(
     category: l.category ?? "accessory",
     source,
     runId: l.runId,
+    warning: l.warning ?? (l.unitPrice <= 0 ? "Price TBD" : undefined),
   };
 }
 
@@ -149,7 +160,7 @@ export function useBomViewModel(): BomViewModel {
         return {
           sku: s.sku,
           name: s.name,
-          description: s.name,
+          description: cleanDescription(s.name, s.name),
           unit: "each",
           quantity,
           unitPrice: s.unitPrice,
@@ -157,6 +168,7 @@ export function useBomViewModel(): BomViewModel {
           category: "suggested",
           source: "suggestion" as const,
           isAddedSuggestion: true,
+          warning: s.unitPrice <= 0 ? "Price not set" : undefined,
         };
       },
     );

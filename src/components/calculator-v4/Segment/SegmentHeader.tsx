@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   AlertCircle,
   AlertTriangle,
@@ -10,6 +10,7 @@ import {
   Trash2,
   RulerDimensionLine,
 } from "lucide-react";
+import { toast } from "sonner";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import type { SegmentDiagnostic } from "../../../types/bom.types";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
@@ -22,6 +23,7 @@ import {
 import { cn } from "../../../lib";
 import { CANVAS_GATE_STROKE } from "../../../lib/runLineColors";
 import { Tooltip } from "../../ui/Tooltip";
+import { ConfirmDialog } from "../../ui/ConfirmDialog";
 import { InlineEdit } from "./InlineEdit";
 
 
@@ -56,6 +58,10 @@ export function SegmentHeader({
   fenceAccentHex,
 }: Props) {
   const { state, dispatch } = useCalculatorV4();
+  const [confirmRemoveOpen, setConfirmRemoveOpen] = useState(false);
+  const [pendingLongLengthMm, setPendingLongLengthMm] = useState<number | null>(
+    null,
+  );
   const run = state.payload?.runs.find((r) => r.runId === runId);
 
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
@@ -134,6 +140,19 @@ export function SegmentHeader({
     });
   }
 
+  function commitLengthMeters(valueM: number) {
+    if (!Number.isFinite(valueM) || valueM < 0) {
+      toast.error("Length must be a positive number.");
+      return;
+    }
+    const nextMm = Math.round(valueM * 1000);
+    if (valueM > 200) {
+      setPendingLongLengthMm(nextMm);
+      return;
+    }
+    onLengthChange(nextMm);
+  }
+
   return (
     <div
       className={cn(
@@ -169,7 +188,7 @@ export function SegmentHeader({
           value={lengthM}
           suffix="m"
           displayValue={lengthM.toFixed(2)}
-          onCommit={(v) => onLengthChange(v * 1000)}
+          onCommit={commitLengthMeters}
           disabled={locked}
           onAccentSurface={locked}
         />
@@ -363,7 +382,7 @@ export function SegmentHeader({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onRemove();
+              setConfirmRemoveOpen(true);
             }}
             title="Remove segment"
             aria-label="Remove segment"
@@ -379,6 +398,29 @@ export function SegmentHeader({
           </Tooltip>
         </div>
       </div>
+      <ConfirmDialog
+        open={confirmRemoveOpen}
+        title={`Remove ${segmentLabel}?`}
+        description={`This will delete ${segmentLabel} from this run and update the layout/BOM inputs. This cannot be undone.`}
+        confirmLabel={isGate ? "Remove gate" : "Remove segment"}
+        onConfirm={() => {
+          onRemove();
+          setConfirmRemoveOpen(false);
+        }}
+        onCancel={() => setConfirmRemoveOpen(false)}
+      />
+      <ConfirmDialog
+        open={pendingLongLengthMm !== null}
+        title="Use this long length?"
+        description="This segment is over 200m long, which is unusual for a fence run. Confirm the length is intentional before applying it."
+        confirmLabel="Use length"
+        tone="warning"
+        onConfirm={() => {
+          if (pendingLongLengthMm !== null) onLengthChange(pendingLongLengthMm);
+          setPendingLongLengthMm(null);
+        }}
+        onCancel={() => setPendingLongLengthMm(null)}
+      />
     </div>
   );
 }

@@ -92,6 +92,7 @@ export type CalculatorV4Action =
   | { type: "REMOVE_SEGMENT"; runId: string; segmentId: string }
   | { type: "DUPLICATE_SEGMENT"; runId: string; segmentId: string }
   | { type: "SET_BOM_RESULT"; result: Record<string, unknown> }
+  | { type: "CLEAR_BOM_RESULT" }
   | { type: "ADD_SUGGESTION"; suggestion: AddedSuggestion }
   | { type: "DISMISS_SUGGESTION"; sku: string }
   | { type: "REMOVE_ADDED_SUGGESTION"; sku: string }
@@ -332,6 +333,16 @@ function reducer(
         ...state,
         bomResult: action.result,
         // When a fresh BOM comes in, reset suggestion/removal state
+        addedSuggestions: [],
+        dismissedSuggestionSkus: new Set(),
+        removedSkus: new Set(),
+        extraItems: [],
+        qtyOverrides: {},
+      };
+    case "CLEAR_BOM_RESULT":
+      return {
+        ...state,
+        bomResult: null,
         addedSuggestions: [],
         dismissedSuggestionSkus: new Set(),
         removedSkus: new Set(),

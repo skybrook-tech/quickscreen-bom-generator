@@ -1,7 +1,9 @@
 import { Save, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { clearV4Draft } from "../../../lib/v4DraftStorage";
 import { toast } from "sonner";
+import { ConfirmDialog } from "../../ui/ConfirmDialog";
 
 interface JobActionsProps {
   onSave?: () => void;
@@ -13,6 +15,7 @@ interface JobActionsProps {
  */
 export function JobActions({ onSave }: JobActionsProps) {
   const { state, dispatch } = useCalculatorV4();
+  const [confirmClearOpen, setConfirmClearOpen] = useState(false);
 
   const handleSave = () => {
     if (onSave) {
@@ -23,14 +26,9 @@ export function JobActions({ onSave }: JobActionsProps) {
   };
 
   const handleClear = () => {
-    if (
-      !confirm(
-        "Clear the entire job? Run config, segments, and BOM result will be discarded.",
-      )
-    )
-      return;
     dispatch({ type: "RESET_JOB" });
     clearV4Draft();
+    setConfirmClearOpen(false);
   };
 
   const hasJob = !!state.payload;
@@ -46,13 +44,21 @@ export function JobActions({ onSave }: JobActionsProps) {
         <Save size={14} /> Save Job
       </button>
       <button
-        onClick={handleClear}
+        onClick={() => setConfirmClearOpen(true)}
         disabled={!hasJob}
         className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-brand-border text-sm font-medium text-red-500 hover:bg-red-500/10 disabled:opacity-40 disabled:cursor-not-allowed"
         data-testid="v4-clear-job"
       >
         <Trash2 size={14} /> Clear Job
       </button>
+      <ConfirmDialog
+        open={confirmClearOpen}
+        title="Clear this job?"
+        description="This will remove the job name, all runs, segments, gates, generated BOM lines, accessories, and local draft data. This cannot be undone."
+        confirmLabel="Clear job"
+        onConfirm={handleClear}
+        onCancel={() => setConfirmClearOpen(false)}
+      />
     </div>
   );
 }

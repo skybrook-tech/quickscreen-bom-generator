@@ -1,5 +1,6 @@
 import { DoorOpen, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { ConfirmDialog } from "../../ui/ConfirmDialog";
 
 interface Props {
   onAddSegment: () => void;
@@ -9,6 +10,7 @@ interface Props {
   onRemoveRun: () => void;
   canRemove: boolean;
   isBayg?: boolean;
+  removeSummary?: string;
 }
 
 /**
@@ -22,10 +24,17 @@ export function RunActions({
   onRemoveRun,
   canRemove,
   isBayg = false,
+  removeSummary,
 }: Props) {
   const [bulkCount, setBulkCount] = useState(1);
   const [bulkWidth, setBulkWidth] = useState(1000);
   const [bulkHeight, setBulkHeight] = useState(1800);
+  const [confirmRemoveOpen, setConfirmRemoveOpen] = useState(false);
+
+  function handleRemoveRun() {
+    onRemoveRun();
+    setConfirmRemoveOpen(false);
+  }
 
   return (
     <div className="space-y-2 pt-1">
@@ -126,7 +135,7 @@ export function RunActions({
           </button>
         )}
         <button
-          onClick={onRemoveRun}
+          onClick={() => setConfirmRemoveOpen(true)}
           disabled={!canRemove}
           className="px-3 py-2 rounded-md border border-dashed border-brand-border text-xs font-medium text-brand-danger hover:bg-brand-danger/10 transition flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
           data-testid="v4-remove-run"
@@ -134,6 +143,17 @@ export function RunActions({
           <Trash2 size={13} /> Remove run
         </button>
       </div>
+      <ConfirmDialog
+        open={confirmRemoveOpen}
+        title="Remove this run?"
+        description={
+          removeSummary ??
+          "This will delete this run and all of its segments, gates, and generated BOM inputs. This cannot be undone."
+        }
+        confirmLabel="Remove run"
+        onConfirm={handleRemoveRun}
+        onCancel={() => setConfirmRemoveOpen(false)}
+      />
     </div>
   );
 }

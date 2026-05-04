@@ -25,7 +25,14 @@ export function BomTableRow({ line, onRemove, onQtyChange }: Props) {
         {line.sku || "—"}
       </td>
       <td className="px-3 py-2 text-xs text-brand-text">
-        <div className="font-medium">{line.name}</div>
+        <div className="flex flex-wrap items-center gap-1.5 font-medium">
+          <span>{line.name}</span>
+          {line.warning && (
+            <span className="rounded-full border border-brand-warning/40 bg-brand-warning/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand-warning">
+              {line.warning}
+            </span>
+          )}
+        </div>
         {line.description && line.description !== line.name && (
           <div className="text-[11px] text-brand-muted truncate max-w-md">
             {line.description}

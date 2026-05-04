@@ -1,8 +1,10 @@
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { BOMExportActions } from "../../quote/BOMExportActions";
 import type { BomViewModel } from "./useBomViewModel";
 import { bomViewModelToCalculatorResult } from "./bomExportMapper";
 import BomAlerts from "./BomAlerts";
+import { ConfirmDialog } from "../../ui/ConfirmDialog";
 
 interface Props {
   view: BomViewModel;
@@ -10,6 +12,7 @@ interface Props {
   jobName?: string;
   isPending: boolean;
   onGenerate: () => void;
+  onClearBom: () => void;
   canGenerate: boolean;
   errors: string[];
   warnings: string[];
@@ -23,6 +26,7 @@ export function BomActions({
   jobName,
   isPending,
   onGenerate,
+  onClearBom,
   canGenerate,
   errors,
   warnings,
@@ -30,6 +34,7 @@ export function BomActions({
   const exportResult = view.hasResult
     ? bomViewModelToCalculatorResult(view)
     : null;
+  const [confirmClearOpen, setConfirmClearOpen] = useState(false);
 
   return (
     <div className="px-4 py-1 border-b border-brand-border bg-brand-card flex items-center gap-2 flex-shrink-0">
@@ -54,6 +59,16 @@ export function BomActions({
         )}
         {isPending ? "Calculating…" : "Generate BOM"}
       </button>
+      <button
+        type="button"
+        onClick={() => setConfirmClearOpen(true)}
+        disabled={!view.hasResult || isPending}
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-brand-border text-brand-danger text-xs font-medium hover:bg-brand-danger/10 disabled:opacity-40 disabled:cursor-not-allowed"
+        data-testid="v4-clear-bom"
+      >
+        <Trash2 size={13} />
+        Clear BOM
+      </button>
       <BomAlerts errors={errors} warnings={warnings} />
       <div className="flex-1" />
       {exportResult ? (
@@ -64,6 +79,17 @@ export function BomActions({
           customerRef={jobName?.trim() || undefined}
         />
       ) : null}
+      <ConfirmDialog
+        open={confirmClearOpen}
+        title="Clear generated BOM?"
+        description="This will remove generated BOM lines, suggested accessories, manual extra items, hidden-line choices, and quantity edits. Runs and segments will stay unchanged."
+        confirmLabel="Clear BOM"
+        onConfirm={() => {
+          onClearBom();
+          setConfirmClearOpen(false);
+        }}
+        onCancel={() => setConfirmClearOpen(false)}
+      />
     </div>
   );
 }

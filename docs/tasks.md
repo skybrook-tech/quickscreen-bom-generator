@@ -38,6 +38,7 @@
 - [x] Brief D - BAYG infill-panel system: BAYG now renders as a panel-only run with no post/gate sections, panel labels, bulk-add and match-all panel actions, and BAYG seed rules no longer emit posts or post accessories.
 - [x] Brief E - XPress Plus collapsed into Post Type: the legacy XPL `post_system` selector is hidden, `post_size` now carries XPress Plus / 50mm / 65mm / custom post choices, and the edge helper maps both old and new saved-job values to the correct XPL or standard post rules.
 - [x] Brief F - Height derivation transparency: segment height controls now show dynamic derived-height chips, disable pitch-ladder height selection until slat/gap are set, keep VS as custom-height, and clear invalid heights with a toast when options change.
+- [x] Brief G - Confirmation modals + validation + warning badges: destructive job/run/segment/BOM actions now use a branded confirmation modal, segment length rejects negative values and prompts above 200m, and missing-price BOM/suggested-accessory rows show chips instead of burying pricing warnings in descriptions.
 
 ---
 

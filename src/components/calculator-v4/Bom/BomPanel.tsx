@@ -150,6 +150,7 @@ export function BomPanel({
         jobName={state.jobName}
         isPending={isPending}
         onGenerate={onGenerate}
+        onClearBom={() => dispatch({ type: "CLEAR_BOM_RESULT" })}
         canGenerate={canGenerate}
         errors={errors}
         warnings={warnings}

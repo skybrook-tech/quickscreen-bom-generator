@@ -112,6 +112,7 @@ interface BomLineItemV3 {
   unitPrice: number;
   lineTotal: number;
   notes?: string;
+  warning?: string;
   runId?: string;
   segmentId?: string;
   productCode?: string;
@@ -921,6 +922,7 @@ Deno.serve(async (req: Request) => {
       if (rules.length === 0) {
         line.unitPrice = 0;
         line.lineTotal = 0;
+        line.warning = "Price TBD";
         allWarnings.push(`No pricing rule found for SKU: ${line.sku}`);
       } else {
         line.unitPrice = resolvePrice(rules, line.quantity);
@@ -935,16 +937,23 @@ Deno.serve(async (req: Request) => {
       const rules = pricingMap.get(line.sku) ?? [];
       line.unitPrice = rules.length > 0 ? resolvePrice(rules, line.quantity) : 0;
       line.lineTotal = parseFloat((line.quantity * line.unitPrice).toFixed(2));
+      if (rules.length === 0) line.warning = "Price not set";
     }
 
     // Propagate pricing back into per-run items for the UI tabs
     for (const rr of runResults) {
       for (const item of rr.items) {
         const rules = pricingMap.get(item.sku) ?? [];
-        item.unitPrice = resolvePrice(rules, item.quantity);
-        item.lineTotal = parseFloat(
-          (item.quantity * item.unitPrice).toFixed(2),
-        );
+        if (rules.length === 0) {
+          item.unitPrice = 0;
+          item.lineTotal = 0;
+          item.warning = "Price TBD";
+        } else {
+          item.unitPrice = resolvePrice(rules, item.quantity);
+          item.lineTotal = parseFloat(
+            (item.quantity * item.unitPrice).toFixed(2),
+          );
+        }
       }
     }
 

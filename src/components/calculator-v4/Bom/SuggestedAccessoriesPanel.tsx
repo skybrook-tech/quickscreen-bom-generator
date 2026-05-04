@@ -68,6 +68,11 @@ export function SuggestedAccessoriesPanel({ onAddedSuggestion }: Props) {
                   <span className="font-mono text-[10px] text-brand-accent">
                     {s.sku}
                   </span>
+                  {s.unitPrice <= 0 && (
+                    <span className="rounded-full border border-brand-warning/40 bg-brand-warning/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand-warning">
+                      Price not set
+                    </span>
+                  )}
                   <p className="text-[11px] text-brand-muted truncate">
                     {s.desc}
                   </p>

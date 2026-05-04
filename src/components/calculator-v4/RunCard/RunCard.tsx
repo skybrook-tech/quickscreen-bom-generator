@@ -265,6 +265,11 @@ export function RunCard({
             }
             canRemove={(state.payload?.runs.length ?? 0) > 1}
             isBayg={isBayg}
+            removeSummary={`This will delete Run ${index + 1} with ${fenceCount} ${
+              isBayg ? "panel" : "segment"
+            }${fenceCount === 1 ? "" : "s"}${
+              isBayg ? "" : ` and ${gateCount} gate${gateCount === 1 ? "" : "s"}`
+            }. Generated BOM lines for this run will no longer apply.`}
           />
             </div>
           )}

@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Info } from "lucide-react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { useProductVariables } from "../../../hooks/useProductVariables";
@@ -18,6 +18,7 @@ import {
   postTypeOptionsForSystem,
 } from "../../../lib/productOptionRules";
 import { Tooltip } from "../../ui/Tooltip";
+import { ConfirmDialog } from "../../ui/ConfirmDialog";
 
 const POST_SIZE_KEY = "post_size";
 const POST_WIDTH_MM_KEY = "post_width_mm";
@@ -36,6 +37,10 @@ export function SegmentDetails({
   isBayg = false,
 }: Props) {
   const { state, dispatch } = useCalculatorV4();
+  const [lengthError, setLengthError] = useState("");
+  const [pendingLongLengthM, setPendingLongLengthM] = useState<number | null>(
+    null,
+  );
 
   const run = state.payload?.runs.find((r) => r.runId === runId);
   const runProductCode = run?.productCode ?? state.payload?.productCode ?? null;
@@ -114,6 +119,30 @@ export function SegmentDetails({
     upsertSegment({ ...seg, productCode: code });
   }
 
+  function applyLength(value: number) {
+    setLengthError("");
+    upsertSegment({
+      ...seg,
+      segmentWidthMm: Math.max(0, isBayg ? value : value * 1000),
+    });
+  }
+
+  function handleLengthChange(value: number) {
+    if (isBayg) {
+      applyLength(value);
+      return;
+    }
+    if (!Number.isFinite(value) || value < 0) {
+      setLengthError("Length must be a positive number.");
+      return;
+    }
+    if (value > 200) {
+      setPendingLongLengthM(value);
+      return;
+    }
+    applyLength(value);
+  }
+
   function clearSegmentProductOverride() {
     if (!runProductCode) return;
     upsertSegment({ ...seg, productCode: runProductCode });
@@ -158,15 +187,10 @@ export function SegmentDetails({
           <div className="relative">
             <NumberInput
               value={isBayg ? (seg.segmentWidthMm ?? 0) : (seg.segmentWidthMm ?? 0) / 1000}
-              min={0}
+              min={isBayg ? 0 : undefined}
               max={isBayg ? 2600 : undefined}
               step={isBayg ? 1 : 0.1}
-              onChange={(value) =>
-                upsertSegment({
-                  ...seg,
-                  segmentWidthMm: Math.max(0, isBayg ? value : value * 1000),
-                })
-              }
+              onChange={handleLengthChange}
               className="pr-8"
               data-testid={`v4-seg-length-${seg.segmentId}`}
               disabled={locked}
@@ -175,6 +199,11 @@ export function SegmentDetails({
               {isBayg ? "mm" : "m"}
             </span>
           </div>
+          {lengthError && (
+            <p className="text-xs font-medium text-brand-danger">
+              {lengthError}
+            </p>
+          )}
         </div>
         <div className="space-y-2">
           <label className={labelClass}>Height (mm)</label>
@@ -359,6 +388,18 @@ export function SegmentDetails({
           />
         </div>
       )}
+      <ConfirmDialog
+        open={pendingLongLengthM !== null}
+        title="Use this long length?"
+        description="This segment is over 200m long, which is unusual for a fence run. Confirm the length is intentional before applying it."
+        confirmLabel="Use length"
+        tone="warning"
+        onConfirm={() => {
+          if (pendingLongLengthM !== null) applyLength(pendingLongLengthM);
+          setPendingLongLengthM(null);
+        }}
+        onCancel={() => setPendingLongLengthM(null)}
+      />
     </div>
   );
 }
