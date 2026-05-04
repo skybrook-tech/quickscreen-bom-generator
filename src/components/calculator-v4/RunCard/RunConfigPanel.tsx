@@ -28,6 +28,18 @@ function tabForField(field: SchemaField): RunTab {
   return FIELD_TAB_MAP[field.field_key] ?? "style";
 }
 
+const BAYG_HIDDEN_KEYS = new Set([
+  "mounting_type",
+  "mounting_method",
+  "post_size",
+  "post_colour_code",
+  "max_panel_width_mm",
+  "default_left_termination",
+  "default_right_termination",
+  "left_boundary_type",
+  "right_boundary_type",
+]);
+
 interface Props {
   run: CanonicalRun;
   activeTab: RunTab;
@@ -43,10 +55,14 @@ export function RunConfigPanel({ run, activeTab }: Props) {
   const { data: jobFields = [] } = useProductVariables(runProductCode, "job");
   const { data: runFields = [] } = useProductVariables(runProductCode, "run");
 
+  const isBayg = runProductCode === "BAYG";
+
   const allFields = useMemo(
     () =>
-      [...jobFields, ...runFields].sort((a, b) => a.sort_order - b.sort_order),
-    [jobFields, runFields],
+      [...jobFields, ...runFields]
+        .filter((f) => !isBayg || !BAYG_HIDDEN_KEYS.has(f.field_key))
+        .sort((a, b) => a.sort_order - b.sort_order),
+    [jobFields, runFields, isBayg],
   );
 
   const effectiveVars = useMemo(

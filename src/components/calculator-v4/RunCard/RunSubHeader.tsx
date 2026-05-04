@@ -9,6 +9,7 @@ interface Props {
   effectiveVars: Record<string, string | number | boolean>;
   activeTab: RunTab;
   onTabChange: (tab: RunTab) => void;
+  isBayg?: boolean;
 }
 
 const TABS: { id: RunTab; label: string }[] = [
@@ -23,9 +24,11 @@ export function RunSubHeader({
   effectiveVars,
   activeTab,
   onTabChange,
+  isBayg = false,
 }: Props) {
   const colourCode = String(effectiveVars["colour_code"] ?? "");
   const colourHex = COLOUR_HEX[colourCode];
+  const tabs = isBayg ? TABS.filter((tab) => tab.id !== "posts") : TABS;
 
   return (
     <div className="flex items-center min-h-[40px]">
@@ -50,7 +53,7 @@ export function RunSubHeader({
           </div>
         ) : (
           <div className="flex items-center gap-0 px-4">
-            {TABS.map((tab) => (
+            {tabs.map((tab) => (
               <button
                 key={tab.id}
                 type="button"

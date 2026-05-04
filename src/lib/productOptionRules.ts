@@ -10,6 +10,7 @@ const SYSTEM_MAX_PANEL_WIDTH: Record<string, number> = {
   QSHS: 3000,
   VS: 2600,
   XPL: 3000,
+  BAYG: 2600,
 };
 
 export function maxPanelWidthForSystem(productCode: string | null | undefined) {
@@ -43,6 +44,7 @@ function cloneField(field: SchemaField, patch: Partial<SchemaField>): SchemaFiel
 }
 
 export function finishOptionsForSystem(productCode: string) {
+  if (productCode === "BAYG") return ["standard", "alumawood"];
   if (productCode === "XPL") return ["standard", "alumawood"];
   if (productCode === "QSHS" || productCode === "VS") {
     return ["standard", "economy", "alumawood"];

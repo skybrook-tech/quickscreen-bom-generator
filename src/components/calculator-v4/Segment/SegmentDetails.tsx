@@ -23,9 +23,15 @@ interface Props {
   runId: string;
   seg: CanonicalSegment;
   locked?: boolean;
+  isBayg?: boolean;
 }
 
-export function SegmentDetails({ runId, seg, locked = false }: Props) {
+export function SegmentDetails({
+  runId,
+  seg,
+  locked = false,
+  isBayg = false,
+}: Props) {
   const { state, dispatch } = useCalculatorV4();
 
   const run = state.payload?.runs.find((r) => r.runId === runId);
@@ -141,15 +147,19 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
-          <label className={labelClass}>Length (m)</label>
+          <label className={labelClass}>
+            {isBayg ? "Panel width (mm)" : "Length (m)"}
+          </label>
           <div className="relative">
             <NumberInput
-              value={(seg.segmentWidthMm ?? 0) / 1000}
-              step={0.1}
+              value={isBayg ? (seg.segmentWidthMm ?? 0) : (seg.segmentWidthMm ?? 0) / 1000}
+              min={0}
+              max={isBayg ? 2600 : undefined}
+              step={isBayg ? 1 : 0.1}
               onChange={(value) =>
                 upsertSegment({
                   ...seg,
-                  segmentWidthMm: Math.max(0, value * 1000),
+                  segmentWidthMm: Math.max(0, isBayg ? value : value * 1000),
                 })
               }
               className="pr-8"
@@ -157,7 +167,7 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
               disabled={locked}
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-500 pointer-events-none">
-              m
+              {isBayg ? "mm" : "m"}
             </span>
           </div>
         </div>
@@ -203,7 +213,7 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
         </div>
       </div>
 
-      {isFence && (
+      {isFence && !isBayg && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-2 sm:col-span-2 rounded-lg border border-brand-border/70 bg-brand-bg/40 p-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -296,7 +306,9 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
       {isFence && jobFields.length > 0 && (
         <fieldset disabled={locked} className="min-w-0 border-0 p-0 m-0">
           <legend className="text-xs text-neutral-500 mb-2 font-medium">
-            Job settings override (this segment)
+            {isBayg
+              ? "Panel settings override"
+              : "Job settings override (this segment)"}
           </legend>
           <SchemaDrivenFormV4
             fields={jobFields}
@@ -309,10 +321,22 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
         </fieldset>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <TerminationControl runId={runId} seg={seg} side="left" locked={locked} />
-        <TerminationControl runId={runId} seg={seg} side="right" locked={locked} />
-      </div>
+      {!isBayg && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <TerminationControl
+            runId={runId}
+            seg={seg}
+            side="left"
+            locked={locked}
+          />
+          <TerminationControl
+            runId={runId}
+            seg={seg}
+            side="right"
+            locked={locked}
+          />
+        </div>
+      )}
     </div>
   );
 }

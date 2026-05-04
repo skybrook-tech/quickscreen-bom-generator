@@ -64,10 +64,24 @@ export function RunCard({
 
   const summary = useRunSummary(run, effectiveVars);
   const runProductCode = run.productCode ?? "—";
+  const isBayg = runProductCode === "BAYG";
 
   const fenceCount = run.segments.filter((s) => s.kind === "fence").length;
   const gateCount = run.segments.filter((s) => s.kind === "gate").length;
   const segmentTotal = run.segments.length;
+  const browseTabs: Array<{ id: BrowseTab; label: string; count: number }> =
+    isBayg
+      ? [{ id: "full", label: "Panels", count: fenceCount }]
+      : [
+          { id: "full", label: "Full run", count: segmentTotal },
+          { id: "segments", label: "Segments", count: fenceCount },
+          { id: "gates", label: "Gates", count: gateCount },
+        ];
+
+  useEffect(() => {
+    if (isBayg && activeTab === "posts") setActiveTab("style");
+    if (isBayg && browseTab === "gates") setBrowseTab("full");
+  }, [activeTab, browseTab, isBayg]);
 
   function handleAddSegment() {
     const sorted = [...run.segments].sort((a, b) => a.sortOrder - b.sortOrder);
@@ -81,7 +95,7 @@ export function RunCard({
           sortOrder,
           kind: "fence",
           productCode: runProductCode,
-          segmentWidthMm: 3000,
+          segmentWidthMm: isBayg ? 1000 : 3000,
           targetHeightMm:
             prev.targetHeightMm ??
             Number(effectiveVars["target_height_mm"] ?? 1800),
@@ -94,7 +108,7 @@ export function RunCard({
           sortOrder,
           kind: "fence",
           productCode: runProductCode,
-          segmentWidthMm: 3000,
+          segmentWidthMm: isBayg ? 1000 : 3000,
           targetHeightMm: Number(effectiveVars["target_height_mm"] ?? 1800),
           leftTermination: { kind: "system" },
           rightTermination: { kind: "system" },
@@ -102,6 +116,80 @@ export function RunCard({
         };
 
     dispatch({ type: "UPSERT_SEGMENT", runId: run.runId, segment: base });
+  }
+
+  function handleBulkAddPanels(
+    count: number,
+    widthMm: number,
+    heightMm: number,
+  ) {
+    if (!isBayg) return;
+    const startOrder =
+      run.segments.length === 0
+        ? 0
+        : Math.max(...run.segments.map((s) => s.sortOrder)) + 1;
+
+    const segments: CanonicalSegment[] = Array.from({ length: count }, (_, i) => ({
+      segmentId: crypto.randomUUID(),
+      sortOrder: startOrder + i,
+      kind: "fence",
+      productCode: runProductCode,
+      segmentWidthMm: widthMm,
+      targetHeightMm: heightMm,
+      leftTermination: { kind: "system" },
+      rightTermination: { kind: "system" },
+      confirmed: false,
+    }));
+
+    const payload = state.payload;
+    if (!payload) return;
+    dispatch({
+      type: "SET_PAYLOAD",
+      payload: {
+        ...payload,
+        runs: payload.runs.map((r) =>
+          r.runId === run.runId
+            ? { ...r, segments: [...r.segments, ...segments] }
+            : r,
+        ),
+      },
+    });
+  }
+
+  function handleMatchPanels() {
+    if (!isBayg) return;
+    const payload = state.payload;
+    const firstPanel = [...run.segments]
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .find((s) => s.kind === "fence");
+    if (!payload || !firstPanel) return;
+
+    dispatch({
+      type: "SET_PAYLOAD",
+      payload: {
+        ...payload,
+        runs: payload.runs.map((r) =>
+          r.runId === run.runId
+            ? {
+                ...r,
+                segments: r.segments.map((s) =>
+                  s.kind === "fence"
+                    ? {
+                        ...s,
+                        productCode: firstPanel.productCode ?? runProductCode,
+                        segmentWidthMm: firstPanel.segmentWidthMm,
+                        targetHeightMm: firstPanel.targetHeightMm,
+                        variables: firstPanel.variables
+                          ? { ...firstPanel.variables }
+                          : undefined,
+                      }
+                    : s,
+                ),
+              }
+            : r,
+        ),
+      },
+    });
   }
 
   return (
@@ -118,6 +206,7 @@ export function RunCard({
         expanded={expanded}
         onToggleExpanded={onToggleExpanded}
         compact={!expanded}
+        isBayg={isBayg}
       />
 
       {expanded && (
@@ -128,6 +217,7 @@ export function RunCard({
             effectiveVars={effectiveVars}
             activeTab={activeTab}
             onTabChange={setActiveTab}
+            isBayg={isBayg}
           />
 
           {editing && <RunConfigPanel run={run} activeTab={activeTab} />}
@@ -138,19 +228,10 @@ export function RunCard({
             productCode={runProductCode}
             effectiveVars={effectiveVars}
             onEdit={() => setEditing(true)}
+            isBayg={isBayg}
           />
           <div className="flex flex-wrap gap-0 -mx-4 px-4 border-b border-brand-border">
-            {(
-              [
-                { id: "full" as const, label: "Full run", count: segmentTotal },
-                {
-                  id: "segments" as const,
-                  label: "Segments",
-                  count: fenceCount,
-                },
-                { id: "gates" as const, label: "Gates", count: gateCount },
-              ] as const
-            ).map((tab) => (
+            {browseTabs.map((tab) => (
               <button
                 key={tab.id}
                 type="button"
@@ -172,14 +253,18 @@ export function RunCard({
             run={run}
             runColorIndex={runColorIndex}
             filter={BROWSE_TAB_FILTER[browseTab]}
+            isBayg={isBayg}
           />
           <RunActions
             onAddSegment={handleAddSegment}
+            onBulkAdd={handleBulkAddPanels}
+            onMatchPanels={handleMatchPanels}
             onAddGate={() => onAddGate(run.runId)}
             onRemoveRun={() =>
               dispatch({ type: "REMOVE_RUN", runId: run.runId })
             }
             canRemove={(state.payload?.runs.length ?? 0) > 1}
+            isBayg={isBayg}
           />
             </div>
           )}

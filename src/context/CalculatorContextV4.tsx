@@ -191,13 +191,18 @@ function reducer(
       const runs = payload.runs.map((r) => {
         if (r.runId !== action.runId) return r;
         const previousProduct = r.productCode ?? payload.productCode;
-        const segments = r.segments.map((s) => {
-          const followsRunProduct =
-            !s.productCode || s.productCode === previousProduct;
-          return followsRunProduct
-            ? { ...s, productCode: action.productCode }
-            : s;
-        });
+        const segments = r.segments
+          .filter((s) => action.productCode !== "BAYG" || s.kind !== "gate")
+          .map((s, index) => {
+            const followsRunProduct =
+              !s.productCode || s.productCode === previousProduct;
+            return {
+              ...(followsRunProduct
+                ? { ...s, productCode: action.productCode }
+                : s),
+              sortOrder: index,
+            };
+          });
         return {
           ...r,
           productCode: action.productCode,

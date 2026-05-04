@@ -969,7 +969,7 @@
       ],
       "scope": "run",
       "sort_order": 40,
-      "active": true
+      "active": false
     },
     {
       "product_system_type": "BAYG",
@@ -985,7 +985,7 @@
       ],
       "scope": "run",
       "sort_order": 50,
-      "active": true
+      "active": false
     },
     {
       "product_system_type": "BAYG",
@@ -1001,7 +1001,7 @@
       ],
       "scope": "run",
       "sort_order": 60,
-      "active": true
+      "active": false
     },
     {
       "product_system_type": "BAYG",
@@ -1043,7 +1043,7 @@
       ],
       "scope": "run",
       "sort_order": 60,
-      "active": true,
+      "active": false,
       "notes": "50=standard FP post; 65=heavy-duty HD post"
     },
     {
@@ -1061,7 +1061,7 @@
       ],
       "scope": "run",
       "sort_order": 70,
-      "active": true,
+      "active": false,
       "notes": "Drives accessory selection: base_plate\u2192BP+DC; core_drill\u2192DR; in_ground\u2192no accessories"
     }
   ],
@@ -1315,7 +1315,7 @@
       "expression": "product_post_boundary_count",
       "output_key": "num_posts",
       "priority": 100,
-      "active": true,
+      "active": false,
       "notes": "Engine-supplied count of post boundary positions for this run"
     },
     {
@@ -1327,7 +1327,7 @@
       "expression": "target_height_mm <= 2100 ? 2400 : 6000",
       "output_key": "post_length_mm",
       "priority": 105,
-      "active": true,
+      "active": false,
       "notes": "Posts supplied in 6000mm lengths; cut to required height in field"
     },
     {
@@ -1339,7 +1339,7 @@
       "expression": "post_size == '50' and target_height_mm <= 2100 ? num_posts : 0",
       "output_key": "qty_post_50_2400",
       "priority": 110,
-      "active": true,
+      "active": false,
       "notes": "2400mm FP post suits heights \u22642100mm (min 300mm in-ground)"
     },
     {
@@ -1351,7 +1351,7 @@
       "expression": "post_size == '50' and target_height_mm > 2100 ? num_posts : 0",
       "output_key": "qty_post_50_6000",
       "priority": 120,
-      "active": true,
+      "active": false,
       "notes": "6000mm FP post for taller fences; requires top plate"
     },
     {
@@ -1363,7 +1363,7 @@
       "expression": "post_size == '65' and target_height_mm <= 2100 ? num_posts : 0",
       "output_key": "qty_post_65_2400",
       "priority": 130,
-      "active": true,
+      "active": false,
       "notes": "2400mm HD post; not available in primrose or paperbark"
     },
     {
@@ -1375,7 +1375,7 @@
       "expression": "post_size == '65' and target_height_mm > 2100 ? num_posts : 0",
       "output_key": "qty_post_65_6000",
       "priority": 140,
-      "active": true,
+      "active": false,
       "notes": "6000mm HD post; requires top plate"
     },
     {
@@ -1387,7 +1387,7 @@
       "expression": "post_size == '50' ? max(0, num_posts - 1) : 0",
       "output_key": "qty_top_plate_50",
       "priority": 150,
-      "active": true,
+      "active": false,
       "notes": "Top plate caps 6000mm FP post; 1 per post"
     },
     {
@@ -1399,7 +1399,7 @@
       "expression": "post_size == '50' and mounting_type_is_base_plate == 1 ? num_posts : 0",
       "output_key": "qty_base_plate_50",
       "priority": 160,
-      "active": true,
+      "active": false,
       "notes": "Base plate set for surface-mount 50mm FP post"
     },
     {
@@ -1411,7 +1411,7 @@
       "expression": "post_size == '50' and mounting_type_is_base_plate == 1 ? num_posts : 0",
       "output_key": "qty_domical_cover_50",
       "priority": 170,
-      "active": true,
+      "active": false,
       "notes": "Domical cover over base plate bolt heads; 1 per post"
     },
     {
@@ -1423,7 +1423,7 @@
       "expression": "post_size == '50' and mounting_type_is_core_drill == 1 ? num_posts : 0",
       "output_key": "qty_dress_ring_50",
       "priority": 180,
-      "active": true,
+      "active": false,
       "notes": "Dress ring covers core-drill penetration; 1 per post"
     },
     {
@@ -1435,7 +1435,7 @@
       "expression": "post_size == '65' ? max(0, num_posts - 1) : 0",
       "output_key": "qty_top_plate_65",
       "priority": 190,
-      "active": true,
+      "active": false,
       "notes": "Top plate for 6000mm HD post; 1 per post"
     },
     {
@@ -1447,7 +1447,7 @@
       "expression": "post_size == '65' and mounting_type_is_base_plate == 1 ? num_posts : 0",
       "output_key": "qty_base_plate_65",
       "priority": 200,
-      "active": true,
+      "active": false,
       "notes": "Base plate set for surface-mount 65mm HD post"
     },
     {
@@ -1459,7 +1459,7 @@
       "expression": "post_size == '65' and mounting_type_is_base_plate == 1 ? num_posts : 0",
       "output_key": "qty_domical_cover_65",
       "priority": 210,
-      "active": true,
+      "active": false,
       "notes": "Domical cover for HD base plate; 1 per post"
     },
     {
@@ -1471,7 +1471,7 @@
       "expression": "post_size == '65' and mounting_type_is_core_drill == 1 ? num_posts : 0",
       "output_key": "qty_dress_ring_65",
       "priority": 220,
-      "active": true,
+      "active": false,
       "notes": "Dress ring for 65mm HD core-drill install; 1 per post"
     },
     {

@@ -28,9 +28,16 @@ interface Props {
   segmentLabel: string;
   /** 0-based — matches canvas run stroke palette */
   runColorIndex: number;
+  isBayg?: boolean;
 }
 
-export function SegmentRow({ runId, seg, segmentLabel, runColorIndex }: Props) {
+export function SegmentRow({
+  runId,
+  seg,
+  segmentLabel,
+  runColorIndex,
+  isBayg = false,
+}: Props) {
   const layoutHl = useLayoutSegmentHighlight();
   const { dispatch, state } = useCalculatorV4();
   const [open, setOpen] = useState(false);
@@ -217,6 +224,7 @@ export function SegmentRow({ runId, seg, segmentLabel, runColorIndex }: Props) {
           runId={runId}
           seg={seg}
           locked={seg.confirmed === true}
+          isBayg={isBayg}
         />
       )}
     </div>

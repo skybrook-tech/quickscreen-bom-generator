@@ -5,6 +5,7 @@ interface Props {
   productCode: string;
   effectiveVars: Record<string, string | number | boolean>;
   onEdit: () => void;
+  isBayg?: boolean;
 }
 
 const DEFAULT_FIELDS: Array<{
@@ -34,9 +35,22 @@ function formatValue(
   return String(value);
 }
 
-export function RunDefaultsCard({ productCode, effectiveVars, onEdit }: Props) {
+export function RunDefaultsCard({
+  productCode,
+  effectiveVars,
+  onEdit,
+  isBayg = false,
+}: Props) {
   const colourCode = String(effectiveVars.colour_code ?? "");
   const colourHex = COLOUR_HEX[colourCode];
+  const fields = isBayg
+    ? DEFAULT_FIELDS.filter(
+        (field) =>
+          !["mounting_type", "post_size", "max_panel_width_mm"].includes(
+            field.key,
+          ),
+      )
+    : DEFAULT_FIELDS;
 
   return (
     <div
@@ -49,7 +63,9 @@ export function RunDefaultsCard({ productCode, effectiveVars, onEdit }: Props) {
             Run defaults
           </div>
           <p className="text-[11px] text-brand-muted">
-            New segments inherit these settings until a segment override is set.
+            {isBayg
+              ? "New panels inherit these settings until a panel override is set."
+              : "New segments inherit these settings until a segment override is set."}
           </p>
         </div>
         <button
@@ -69,7 +85,7 @@ export function RunDefaultsCard({ productCode, effectiveVars, onEdit }: Props) {
             {productCode}
           </dd>
         </div>
-        {DEFAULT_FIELDS.map((field) => (
+        {fields.map((field) => (
           <div key={field.key} className="min-w-0">
             <dt className="text-brand-muted">{field.label}</dt>
             <dd className="flex min-w-0 items-center gap-1.5 font-semibold text-brand-text">

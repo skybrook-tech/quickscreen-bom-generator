@@ -27,6 +27,7 @@ interface Props {
   onToggleExpanded: () => void;
   /** When false, show shorter stats row (length + segment count only). */
   compact?: boolean;
+  isBayg?: boolean;
 }
 
 const ICON = 12;
@@ -78,6 +79,7 @@ export function RunHeader({
   expanded,
   onToggleExpanded,
   compact = false,
+  isBayg = false,
 }: Props) {
   const { dispatch } = useCalculatorV4();
   const len = summary.totalLengthM.toFixed(2);
@@ -175,10 +177,10 @@ export function RunHeader({
           </Stat>
 
           <span className="text-xs text-neutral-500 tabular-nums">
-            {summary.segmentCount} segments
+            {summary.segmentCount} {isBayg ? "panels" : "segments"}
           </span>
 
-          {!compact && (
+          {!compact && !isBayg && (
             <>
               <Stat
                 icon={GalleryHorizontalEnd}
@@ -213,6 +215,16 @@ export function RunHeader({
                 {summary.gateCount}
               </Stat>
             </>
+          )}
+          {!compact && isBayg && (
+            <Stat
+              icon={GalleryHorizontalEnd}
+              tooltip="Number of infill panels"
+              ariaLabel={`Panels: ${summary.segmentCount}`}
+              unitLabel="panels"
+            >
+              {summary.segmentCount}
+            </Stat>
           )}
         </div>
       </div>

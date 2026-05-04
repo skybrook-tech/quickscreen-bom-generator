@@ -8,6 +8,7 @@ interface Props {
   runColorIndex: number;
   /** Which rows to list — full chain order, fence spans only, or gates only. */
   filter?: SegmentListFilter;
+  isBayg?: boolean;
 }
 
 /**
@@ -18,6 +19,7 @@ export function SegmentList({
   run,
   runColorIndex,
   filter = "all",
+  isBayg = false,
 }: Props) {
   const sorted = [...run.segments].sort((a, b) => a.sortOrder - b.sortOrder);
 
@@ -30,7 +32,9 @@ export function SegmentList({
 
   if (segments.length === 0) {
     const msg =
-      filter === "fence"
+      isBayg
+        ? 'No panels yet. Use “Add panel” or bulk add panels below.'
+        : filter === "fence"
         ? 'No fence segments yet. Use “Add segment” below or draw on the layout map.'
         : filter === "gate"
           ? 'No gates yet. Use “Add gate” below or place one from the layout map.'
@@ -47,7 +51,9 @@ export function SegmentList({
     <div className="space-y-1.5">
       {segments.map((seg) => {
         let segmentLabel: string;
-        if (filter === "fence") {
+        if (isBayg) {
+          segmentLabel = `P${++fenceOrdinal}`;
+        } else if (filter === "fence") {
           segmentLabel = `S${++fenceOrdinal}`;
         } else if (filter === "gate") {
           segmentLabel = `G${++gateOrdinal}`;
@@ -62,6 +68,7 @@ export function SegmentList({
             seg={seg}
             segmentLabel={segmentLabel}
             runColorIndex={runColorIndex}
+            isBayg={isBayg}
           />
         );
       })}
