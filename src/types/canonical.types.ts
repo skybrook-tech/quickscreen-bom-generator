@@ -31,6 +31,8 @@ export interface CanonicalRun {
   /**
    * Per-run variable defaults. Merged on top of payload.variables (job level)
    * and below segment.variables. Engine precedence: segment > run > job.
+   * In v4, kept in sync with the first (master) fence segment’s `variables` for
+   * engine + gate context; not edited as its own surface in the UI.
    * Optional for backward compatibility — pre-v4 payloads do not set this.
    */
   variables?: Record<string, string | number | boolean>;

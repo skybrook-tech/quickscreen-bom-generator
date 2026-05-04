@@ -19,13 +19,10 @@ interface Props {
 }
 
 /**
- * v4 Product picker. Reads the products table (data-driven) and on selection
- * initializes a CanonicalPayload with empty job-level variables (UI doesn't
- * surface them in v4) and a single empty run with empty run.variables.
+ * v4 Product picker. Reads the products table (data-driven).
  *
- * The DefaultSettings-style "seed defaults from product_variables" effect
- * lives in RunConfigPanel — we don't seed up-front so that engine job-level
- * defaults remain truly empty unless we ever expose a global defaults UI.
+ * Job creation (`CalculatorV4Page`) builds a run with a master fence segment;
+ * missing keys are seeded onto that segment via `MasterFenceVariableSeeds`.
  */
 export function ProductSelectV4({ value, onChange, separated = false }: Props) {
   const [query, setQuery] = useState("");

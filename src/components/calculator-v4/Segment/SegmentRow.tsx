@@ -71,6 +71,11 @@ export function SegmentRow({ runId, seg, segmentLabel, runColorIndex }: Props) {
     RUN_LINE_COLORS[runColorIndex % RUN_LINE_COLORS.length] ??
     RUN_LINE_COLORS[0];
 
+  const fenceSegmentCount =
+    run?.segments.filter((s) => s.kind === "fence").length ?? 0;
+  const removeMasterFenceDisabled =
+    seg.kind === "fence" && fenceSegmentCount <= 1;
+
   const mergedVars = useMemo(() => {
     return {
       ...(state.payload?.variables ?? {}),
@@ -170,6 +175,7 @@ export function SegmentRow({ runId, seg, segmentLabel, runColorIndex }: Props) {
         seg={seg}
         segmentLabel={segmentLabel}
         open={open}
+        removeDisabled={removeMasterFenceDisabled}
         mergedVars={mergedVars}
         productCode={productCode}
         fenceAccentHex={fenceAccentHex}

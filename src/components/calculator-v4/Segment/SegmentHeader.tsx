@@ -39,6 +39,8 @@ interface Props {
   onHeightChange: (heightMm: number) => void;
   onDuplicate: () => void;
   onRemove: () => void;
+  /** When true, the only fence segment on the run — remove is blocked. */
+  removeDisabled?: boolean;
   mergedVars: Record<string, string | number | boolean>;
   productCode: string | null;
   fenceAccentHex: string;
@@ -54,6 +56,7 @@ export function SegmentHeader({
   onHeightChange,
   onDuplicate,
   onRemove,
+  removeDisabled = false,
   mergedVars,
   productCode,
   fenceAccentHex,
@@ -411,7 +414,13 @@ export function SegmentHeader({
             <Copy size={13} />
           </button>
           </Tooltip>
-          <Tooltip content="Remove this segment from the run (layout map updates when segments are removed)">
+          <Tooltip
+            content={
+              removeDisabled
+                ? "Cannot remove the only fence segment on this run"
+                : "Remove this segment from the run (layout map updates when segments are removed)"
+            }
+          >
           <button
             type="button"
             onClick={(e) => {
@@ -420,8 +429,9 @@ export function SegmentHeader({
             }}
             title="Remove segment"
             aria-label="Remove segment"
+            disabled={removeDisabled}
             className={cn(
-              "p-1.5 rounded",
+              "p-1.5 rounded disabled:opacity-40 disabled:pointer-events-none",
               locked
                 ? "text-white hover:text-red-500 hover:bg-red-500/25"
                 : "hover:text-red-500 hover:bg-red-500/20",

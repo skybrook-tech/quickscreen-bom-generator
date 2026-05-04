@@ -95,5 +95,5 @@ export function formatDeviationLine(
     d.fieldKey === "productCode"
       ? "Product code"
       : labelForKey(d.fieldKey);
-  return `${label}: ${formatScalar(d.effectiveValue)} (run default: ${formatScalar(d.baselineValue)})`;
+  return `${label}: ${formatScalar(d.effectiveValue)} (master segment: ${formatScalar(d.baselineValue)})`;
 }

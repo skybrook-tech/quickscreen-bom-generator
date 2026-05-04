@@ -15,7 +15,11 @@ import { GatePane } from "../components/calculator-v4/Gate/GatePane";
 import { BomPanel } from "../components/calculator-v4/Bom/BomPanel";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { ProductSelectV4 } from "../components/calculator-v4/JobShell/ProductSelectV4";
-import { CanonicalPayload } from "../types/canonical.types";
+import {
+  createInitialMasterFenceSegment,
+  syncRunVariablesFromMaster,
+} from "../lib/masterFenceSegment";
+import type { CanonicalPayload } from "../types/canonical.types";
 
 /**
  * v4 calculator. Two-column layout: job/runs on the left, BOM on the right.
@@ -48,18 +52,30 @@ function CalculatorV4Content() {
 
   function handleProductChange(productCode: string) {
     const runId = crypto.randomUUID();
-
+    const jobVariables = {
+      finish_type: "standard" as const,
+      finish_family: "standard" as const,
+    };
+    const master = createInitialMasterFenceSegment({
+      segmentId: crypto.randomUUID(),
+      productCode,
+      jobVariables,
+    });
     const initialPayload: CanonicalPayload = {
       productCode: productCode,
       schemaVersion: "v2",
       // Job-level variables intentionally minimal in v4 — finish_type kept
       // because some product_variables `visible_when_json` rules depend on it.
-      // The reducer will populate run-level variables on first edit.
-      variables: {
-        finish_type: "standard",
-        finish_family: "standard",
-      },
-      runs: [{ runId, productCode, variables: {}, segments: [] }],
+      // Master fence segment + mirrored run.variables are seeded by MasterFenceVariableSeeds.
+      variables: jobVariables,
+      runs: [
+        syncRunVariablesFromMaster({
+          runId,
+          productCode,
+          variables: {},
+          segments: [master],
+        }),
+      ],
     };
     dispatch({
       type: "SET_PAYLOAD",

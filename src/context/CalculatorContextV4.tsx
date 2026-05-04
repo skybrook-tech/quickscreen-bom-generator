@@ -13,9 +13,14 @@ import {
 import { normaliseVariablesForSystem } from "../lib/productOptionRules";
 import { computeNewRunAnchor } from "../lib/canvasBbox";
 import { removeSegmentFromRun } from "../lib/runSegmentRemove";
+import {
+  createInitialMasterFenceSegment,
+  getMasterFenceSegment,
+  normalizeV4PayloadRuns,
+  syncRunVariablesFromMaster,
+} from "../lib/masterFenceSegment";
 import type {
   CanonicalPayload,
-  CanonicalRun,
   CanonicalSegment,
 } from "../types/canonical.types";
 
@@ -128,7 +133,7 @@ function reducer(
       return {
         ...initialState,
         jobName: state.jobName,
-        payload: action.payload,
+        payload: normalizeV4PayloadRuns(action.payload),
         openRunConfigRunId: null,
         dismissedSuggestionSkus: new Set(),
         removedSkus: new Set(),
@@ -137,7 +142,9 @@ function reducer(
     case "SET_PAYLOAD":
       return {
         ...state,
-        payload: action.payload,
+        payload: action.payload
+          ? normalizeV4PayloadRuns(action.payload)
+          : null,
         openRunConfigRunId: action.openRunConfigRunId ?? null,
       };
     case "RESET_JOB":
@@ -146,11 +153,23 @@ function reducer(
       return { ...state, openRunConfigRunId: null };
     case "UPSERT_RUN_VARIABLES": {
       if (!state.payload) return state;
-      const runs = state.payload.runs.map((r) =>
-        r.runId === action.runId
-          ? { ...r, variables: { ...(r.variables ?? {}), ...action.variables } }
-          : r,
-      );
+      const runs = state.payload.runs.map((r) => {
+        if (r.runId !== action.runId) return r;
+        const master = getMasterFenceSegment(r);
+        if (!master) {
+          return {
+            ...r,
+            variables: { ...(r.variables ?? {}), ...action.variables },
+          };
+        }
+        const mergedVars = { ...(master.variables ?? {}), ...action.variables };
+        const nextSegs = r.segments.map((s) =>
+          s.segmentId === master.segmentId
+            ? { ...s, variables: mergedVars }
+            : s,
+        );
+        return syncRunVariablesFromMaster({ ...r, segments: nextSegs });
+      });
       return { ...state, payload: { ...state.payload, runs } };
     }
     case "SET_RUN_DISPLAY_NAME": {
@@ -169,13 +188,21 @@ function reducer(
       const lastRun =
         prevRuns.length > 0 ? prevRuns[prevRuns.length - 1] : undefined;
       const [p0, p1] = computeNewRunAnchor(state.payload, prevRuns.length);
-      const newRun: CanonicalRun = {
-        runId: crypto.randomUUID(),
-        productCode: lastRun?.productCode ?? state.payload.productCode,
-        variables: lastRun?.variables ? { ...lastRun.variables } : {},
-        segments: [],
+      const runId = crypto.randomUUID();
+      const productCode = lastRun?.productCode ?? state.payload.productCode;
+      const master = createInitialMasterFenceSegment({
+        segmentId: crypto.randomUUID(),
+        productCode,
+        jobVariables: state.payload.variables,
+        priorRun: lastRun,
+      });
+      const newRun = syncRunVariablesFromMaster({
+        runId,
+        productCode,
+        variables: {},
+        segments: [master],
         geometry: { points: [p0, p1] },
-      };
+      });
       return {
         ...state,
         openRunConfigRunId: newRun.runId,
@@ -188,18 +215,37 @@ function reducer(
     case "SET_RUN_PRODUCT": {
       const payload = state.payload;
       if (!payload) return state;
-      const runs = payload.runs.map((r) =>
-        r.runId === action.runId
-          ? {
-              ...r,
+      const runs = payload.runs.map((r) => {
+        if (r.runId !== action.runId) return r;
+        const normalized = normaliseVariablesForSystem(action.productCode, {
+          ...payload.variables,
+          ...(r.variables ?? {}),
+        });
+        const master = getMasterFenceSegment(r);
+        if (!master) {
+          return {
+            ...r,
+            productCode: action.productCode,
+            variables: normalized,
+          };
+        }
+        const segs = r.segments.map((s) => {
+          if (s.kind === "gate") return s;
+          if (s.segmentId === master.segmentId) {
+            return {
+              ...s,
               productCode: action.productCode,
-              variables: normaliseVariablesForSystem(action.productCode, {
-                ...payload.variables,
-                ...(r.variables ?? {}),
-              }),
-            }
-          : r,
-      );
+              variables: normalized,
+            };
+          }
+          return { ...s, productCode: action.productCode };
+        });
+        return syncRunVariablesFromMaster({
+          ...r,
+          productCode: action.productCode,
+          segments: segs,
+        });
+      });
       return { ...state, payload: { ...payload, runs } };
     }
     case "REMOVE_RUN": {
@@ -279,15 +325,31 @@ function reducer(
           }
         }
 
-        return { ...r, segments: newSegs };
+        return syncRunVariablesFromMaster({ ...r, segments: newSegs });
       });
       return { ...state, payload: { ...state.payload, runs } };
     }
     case "REMOVE_SEGMENT": {
       if (!state.payload) return state;
+      const targetRun = state.payload.runs.find(
+        (r) => r.runId === action.runId,
+      );
+      if (targetRun) {
+        const seg = targetRun.segments.find(
+          (s) => s.segmentId === action.segmentId,
+        );
+        if (seg?.kind === "fence") {
+          const fenceCount = targetRun.segments.filter(
+            (s) => s.kind === "fence",
+          ).length;
+          if (fenceCount <= 1) return state;
+        }
+      }
       const runs = state.payload.runs.map((r) => {
         if (r.runId !== action.runId) return r;
-        return removeSegmentFromRun(r, action.segmentId);
+        return syncRunVariablesFromMaster(
+          removeSegmentFromRun(r, action.segmentId),
+        );
       });
       return { ...state, payload: { ...state.payload, runs } };
     }
@@ -310,7 +372,10 @@ function reducer(
         const after = r.segments
           .slice(idx + 1)
           .map((s) => ({ ...s, sortOrder: s.sortOrder + 1 }));
-        return { ...r, segments: [...before, copy, ...after] };
+        return syncRunVariablesFromMaster({
+          ...r,
+          segments: [...before, copy, ...after],
+        });
       });
       return { ...state, payload: { ...state.payload, runs } };
     }
@@ -394,7 +459,7 @@ function reducer(
       const s = action.snapshot;
       return {
         jobName: s.jobName,
-        payload: s.payload,
+        payload: s.payload ? normalizeV4PayloadRuns(s.payload) : null,
         openRunConfigRunId: null,
         bomResult: s.bomResult,
         addedSuggestions: s.addedSuggestions,

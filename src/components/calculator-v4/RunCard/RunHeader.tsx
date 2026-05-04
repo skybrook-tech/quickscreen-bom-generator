@@ -16,6 +16,8 @@ import { Tooltip } from "../../ui/Tooltip";
 import type { RunSummary } from "./useRunSummary";
 import { cn } from "../../../lib";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
+import { useProducts } from "../../../hooks/useProducts";
+import { ProductSelectV4 } from "../JobShell/ProductSelectV4";
 
 interface Props {
   runId: string;
@@ -27,6 +29,8 @@ interface Props {
   onToggleExpanded: () => void;
   /** When false, show shorter stats row (length + segment count only). */
   compact?: boolean;
+  /** When set, show per-run fence system control (if multiple products exist). */
+  showProductSelect?: boolean;
 }
 
 const ICON = 12;
@@ -78,8 +82,13 @@ export function RunHeader({
   expanded,
   onToggleExpanded,
   compact = false,
+  showProductSelect = false,
 }: Props) {
-  const { dispatch } = useCalculatorV4();
+  const { dispatch, state } = useCalculatorV4();
+  const { data: products = [] } = useProducts();
+  const fenceProducts = products.filter(
+    (p) => p.active && p.system_type && p.system_type !== "QS_GATE",
+  );
   const len = summary.totalLengthM.toFixed(2);
   const defaultTitle = `Run ${index}`;
   const shownTitle = displayName?.trim() || defaultTitle;
@@ -155,15 +164,34 @@ export function RunHeader({
           </div>
         </Tooltip>
 
-        <Tooltip content="Fence system / product code for this run">
-          <span
-            className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-brand-accent text-brand-bg font-medium cursor-default"
-            aria-label={`Fence system: ${systemCode}`}
-          >
-            <Tag size={ICON} className="shrink-0 opacity-90" aria-hidden />
-            <span className="font-mono">{systemCode}</span>
-          </span>
-        </Tooltip>
+        {showProductSelect && fenceProducts.length > 1 ? (
+          <div className="min-w-[10rem] max-w-[14rem]">
+            <ProductSelectV4
+              value={
+                state.payload?.runs.find((r) => r.runId === runId)?.productCode ??
+                state.payload?.productCode ??
+                ""
+              }
+              onChange={(code) =>
+                dispatch({
+                  type: "SET_RUN_PRODUCT",
+                  runId,
+                  productCode: code,
+                })
+              }
+            />
+          </div>
+        ) : (
+          <Tooltip content="Fence system / product code for this run">
+            <span
+              className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-brand-accent text-brand-bg font-medium cursor-default"
+              aria-label={`Fence system: ${systemCode}`}
+            >
+              <Tag size={ICON} className="shrink-0 opacity-90" aria-hidden />
+              <span className="font-mono">{systemCode}</span>
+            </span>
+          </Tooltip>
+        )}
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <Stat
