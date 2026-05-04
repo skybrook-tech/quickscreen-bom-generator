@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { Info } from "lucide-react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { useProductVariables } from "../../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../../types/canonical.types";
@@ -11,9 +12,12 @@ import { Select } from "../../ui/Select";
 import { cn } from "../../../lib";
 import { ProductSelectV4 } from "../JobShell/ProductSelectV4";
 import {
+  hasHeightDerivationInputs,
+  heightDerivationLabel,
   POST_TYPE_LABELS,
   postTypeOptionsForSystem,
 } from "../../../lib/productOptionRules";
+import { Tooltip } from "../../ui/Tooltip";
 
 const POST_SIZE_KEY = "post_size";
 const POST_WIDTH_MM_KEY = "post_width_mm";
@@ -74,10 +78,7 @@ export function SegmentDetails({
   );
 
   const heightSelectValue = String(
-    seg.targetHeightMm ??
-      heightOptionsMm[0] ??
-      freeformBounds?.minMm ??
-      1800,
+    seg.targetHeightMm ?? "",
   );
 
   const freeformHeightValue =
@@ -127,6 +128,11 @@ export function SegmentDetails({
     "block text-[11px] font-medium uppercase tracking-wider text-neutral-500";
 
   const isFence = seg.kind === "fence";
+  const heightInputsReady = hasHeightDerivationInputs(
+    productCode,
+    mergedForHeights,
+  );
+  const heightChip = heightDerivationLabel(productCode, mergedForHeights);
 
   const lenMm = seg.segmentWidthMm ?? 0;
   const panelsForSpacing =
@@ -172,6 +178,14 @@ export function SegmentDetails({
         </div>
         <div className="space-y-2">
           <label className={labelClass}>Height (mm)</label>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-brand-border bg-brand-bg/60 px-2 py-1 text-[11px] font-medium text-brand-muted">
+            <span>{heightChip}</span>
+            <Tooltip content="These heights are the only valid panel heights given the slat size and gap. Each value = (slat × N) + (gap × (N−1)) + frame allowance.">
+              <span className="inline-flex cursor-help text-brand-muted">
+                <Info size={13} aria-hidden />
+              </span>
+            </Tooltip>
+          </div>
           {freeform && freeformBounds ? (
             <div data-testid={`v4-seg-height-${seg.segmentId}`}>
               <NumberInput
@@ -195,13 +209,20 @@ export function SegmentDetails({
               onChange={(e) =>
                 upsertSegment({
                   ...seg,
-                  targetHeightMm: Number(e.target.value),
+                  targetHeightMm: e.target.value
+                    ? Number(e.target.value)
+                    : undefined,
                 })
               }
-              disabled={locked}
+              disabled={locked || !heightInputsReady}
               className="bg-white border border-neutral-200 rounded-md"
               data-testid={`v4-seg-height-${seg.segmentId}`}
             >
+              <option value="" disabled>
+                {heightInputsReady
+                  ? "Select height"
+                  : "Set slat size and gap first"}
+              </option>
               {heightOptionsMm.map((h) => (
                 <option key={h} value={h}>
                   {h} mm

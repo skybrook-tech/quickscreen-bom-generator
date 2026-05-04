@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import { cn } from "../../../lib";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { useProducts } from "../../../hooks/useProducts";
@@ -12,7 +13,6 @@ import {
   buildPitchLadderHeightOptions,
   isFreeformHeightUi,
   parseTargetHeightUi,
-  snapHeightToClosestPitchOption,
 } from "../../../lib/targetHeightOptions";
 import { useLayoutSegmentHighlight } from "../LayoutMap/LayoutSegmentHighlightContext";
 import { useProductVariables } from "../../../hooks/useProductVariables";
@@ -119,16 +119,14 @@ export function SegmentRow({
       return;
 
     const cur = seg.targetHeightMm;
-    if (cur != null && pitchLadderOptions.includes(cur)) return;
-
-    const snapped = snapHeightToClosestPitchOption(cur, pitchLadderOptions);
-    if (snapped === null || snapped === cur) return;
+    if (cur == null || pitchLadderOptions.includes(cur)) return;
 
     dispatch({
       type: "UPSERT_SEGMENT",
       runId,
-      segment: { ...seg, targetHeightMm: snapped },
+      segment: { ...seg, targetHeightMm: undefined },
     });
+    toast.info("Height reset because options changed");
   }, [dispatch, heightMeta, pitchLadderOptions, runId, seg]);
 
   const rowStyle =

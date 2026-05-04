@@ -29,6 +29,29 @@ export function postTypeOptionsForSystem(
   return rawOptions.filter((option) => option !== "xpl");
 }
 
+export function heightDerivationLabel(
+  productCode: string | null | undefined,
+  variables: Variables,
+) {
+  if (productCode === "VS") return "Custom height (any value)";
+  const slat = variables.slat_size_mm;
+  const gap = variables.slat_gap_mm;
+  if (slat === undefined || slat === "" || gap === undefined || gap === "") {
+    return "Set slat size and gap first";
+  }
+  return `Heights derived from slat ${slat}mm × gap ${gap}mm`;
+}
+
+export function hasHeightDerivationInputs(
+  productCode: string | null | undefined,
+  variables: Variables,
+) {
+  if (productCode === "VS") return true;
+  const slat = Number(variables.slat_size_mm);
+  const gap = Number(variables.slat_gap_mm);
+  return Number.isFinite(slat) && Number.isFinite(gap);
+}
+
 const SYSTEM_MAX_PANEL_WIDTH: Record<string, number> = {
   QSHS: 3000,
   VS: 2600,
