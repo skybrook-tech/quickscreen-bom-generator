@@ -6,6 +6,29 @@ const STANDARD_COLOURS = ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", 
 const ALUMAWOOD_COLOURS = ["KWI", "WRC"];
 const ECONOMY_COLOURS = ["B", "MN", "SM"];
 
+// XPress Plus is modelled as a Post Type, not as a second post selector.
+// post_size values are interpreted by the data-driven engine as:
+// - "xpl": use XPress Plus patented 1W/2W/90 posts and auto-add XPL-only
+//   companions such as spacer blocks, inserts, end plates, side frame/F-section
+//   items while excluding standard FP/HD post components.
+// - "50" / "65": use standard 50mm FP or 65mm HD posts with standard post
+//   accessories, excluding patented XPL posts.
+// - "custom": non-system post; no post components are emitted.
+export const POST_TYPE_LABELS: Record<string, string> = {
+  xpl: "XPress Plus post",
+  "50": "50mm Post Standard",
+  "65": "65mm Post Standard HD",
+  custom: "Non-standard post",
+};
+
+export function postTypeOptionsForSystem(
+  productCode: string | null | undefined,
+  rawOptions: string[],
+) {
+  if (productCode === "XPL") return ["xpl", "50", "65", "custom"];
+  return rawOptions.filter((option) => option !== "xpl");
+}
+
 const SYSTEM_MAX_PANEL_WIDTH: Record<string, number> = {
   QSHS: 3000,
   VS: 2600,
@@ -146,6 +169,20 @@ export function normaliseVariablesForSystem(
   } else {
     const gap = Number(next.slat_gap_mm);
     next = { ...next, slat_gap_mm: Number.isFinite(gap) && gap >= 0 ? Math.round(gap) : 0 };
+  }
+
+  if (productCode === "XPL") {
+    const postTypeOptions = postTypeOptionsForSystem(productCode, [
+      "xpl",
+      "50",
+      "65",
+      "custom",
+    ]);
+    const postType = String(next.post_size ?? next.post_system ?? "xpl");
+    next = {
+      ...next,
+      post_size: postTypeOptions.includes(postType) ? postType : "xpl",
+    };
   }
 
   const maxPanelWidth = maxPanelWidthForSystem(productCode);

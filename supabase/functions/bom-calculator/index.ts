@@ -507,11 +507,12 @@ Deno.serve(async (req: Request) => {
 
         const postSizeNum = (() => {
           const ps = segVarsNorm["post_size"] ?? runCtx["post_size"];
-          return typeof ps === "string"
+          const n = typeof ps === "string"
             ? Number(ps)
             : typeof ps === "number"
               ? ps
               : 50;
+          return Number.isFinite(n) ? n : 0;
         })();
 
         const segCtx: Record<string, unknown> =
@@ -587,17 +588,23 @@ Deno.serve(async (req: Request) => {
                 post_system_is_xpl: (() => {
                   const ps =
                     segVarsNorm["post_system"] ?? runCtx["post_system"];
-                  return ps === "xpl" ? 1 : 0;
+                  const postSize =
+                    segVarsNorm["post_size"] ?? runCtx["post_size"];
+                  return ps === "xpl" || postSize === "xpl" ? 1 : 0;
                 })(),
                 post_system_is_standard_50: (() => {
                   const ps =
                     segVarsNorm["post_system"] ?? runCtx["post_system"];
-                  return ps === "standard_50" ? 1 : 0;
+                  const postSize =
+                    segVarsNorm["post_size"] ?? runCtx["post_size"];
+                  return ps === "standard_50" || postSize === "50" ? 1 : 0;
                 })(),
                 post_system_is_standard_65: (() => {
                   const ps =
                     segVarsNorm["post_system"] ?? runCtx["post_system"];
-                  return ps === "standard_65" ? 1 : 0;
+                  const postSize =
+                    segVarsNorm["post_size"] ?? runCtx["post_size"];
+                  return ps === "standard_65" || postSize === "65" ? 1 : 0;
                 })(),
                 width_deduction_mm: 0,
               };

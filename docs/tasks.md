@@ -36,6 +36,7 @@
 - [x] Brief B - Run-vs-segment scope refactor: run defaults now have a dedicated run card, segment system choice is demoted to an override, new segments inherit run defaults instead of previous segment overrides, and run product changes propagate to non-overridden segments.
 - [x] Brief C - Saved-jobs library + Save Job feedback + autosave (frontend-only) *(draft PR #4 open)*
 - [x] Brief D - BAYG infill-panel system: BAYG now renders as a panel-only run with no post/gate sections, panel labels, bulk-add and match-all panel actions, and BAYG seed rules no longer emit posts or post accessories.
+- [x] Brief E - XPress Plus collapsed into Post Type: the legacy XPL `post_system` selector is hidden, `post_size` now carries XPress Plus / 50mm / 65mm / custom post choices, and the edge helper maps both old and new saved-job values to the correct XPL or standard post rules.
 
 ---
 

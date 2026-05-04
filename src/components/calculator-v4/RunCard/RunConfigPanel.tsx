@@ -40,6 +40,13 @@ const BAYG_HIDDEN_KEYS = new Set([
   "right_boundary_type",
 ]);
 
+const XPL_HIDDEN_KEYS = new Set([
+  // XPress Plus is now selected from the standard Post Type (`post_size`)
+  // control. Hide the legacy seed field if an older local database still has
+  // it active so the UI never renders two Post Type controls.
+  "post_system",
+]);
+
 interface Props {
   run: CanonicalRun;
   activeTab: RunTab;
@@ -61,6 +68,7 @@ export function RunConfigPanel({ run, activeTab }: Props) {
     () =>
       [...jobFields, ...runFields]
         .filter((f) => !isBayg || !BAYG_HIDDEN_KEYS.has(f.field_key))
+        .filter((f) => runProductCode !== "XPL" || !XPL_HIDDEN_KEYS.has(f.field_key))
         .sort((a, b) => a.sort_order - b.sort_order),
     [jobFields, runFields, isBayg],
   );

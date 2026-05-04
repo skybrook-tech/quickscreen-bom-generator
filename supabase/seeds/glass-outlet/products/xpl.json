@@ -1921,8 +1921,8 @@
       ],
       "scope": "run",
       "sort_order": 55,
-      "active": true,
-      "notes": "xpl=patented XPL post system (1W/2W/90\u00b0); standard_50=50mm FP; standard_65=65mm HD"
+      "active": false,
+      "notes": "Legacy field kept for saved-job fallback only. New UI uses post_size=xpl/50/65/custom."
     },
     {
       "product_system_type": "XPL",
@@ -1987,18 +1987,21 @@
     {
       "product_system_type": "XPL",
       "name": "post_size",
-      "label": "Post Size",
+      "label": "Post Type",
       "data_type": "enum",
-      "unit": "mm",
-      "required": false,
-      "default_value_json": "50",
+      "unit": null,
+      "required": true,
+      "default_value_json": "xpl",
       "options_json": [
+        "xpl",
         "50",
-        "65"
+        "65",
+        "custom"
       ],
       "scope": "run",
       "sort_order": 45,
-      "active": true
+      "active": true,
+      "notes": "xpl=XPress Plus patented post system; 50=50mm Post Standard; 65=65mm Post Standard HD; custom=non-standard post/no post components."
     }
   ],
   "product_validations": [
@@ -2221,7 +2224,7 @@
       "version_label": "v1.0.0",
       "stage": "derive",
       "name": "num_posts",
-      "expression": "(post_system_is_standard_50 == 0 and post_system_is_standard_65 == 0) ? (xpl_end_post_count + xpl_inline_post_count + xpl_corner_post_count) : num_posts",
+      "expression": "post_system_is_xpl == 1 ? (xpl_end_post_count + xpl_inline_post_count + xpl_corner_post_count) : num_posts",
       "output_key": "num_posts",
       "priority": 90,
       "active": true,
@@ -2245,7 +2248,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_xpl_end_post",
-      "expression": "post_system_is_standard_50 == 0 and post_system_is_standard_65 == 0 ? xpl_end_post_count : 0",
+      "expression": "post_system_is_xpl == 1 ? xpl_end_post_count : 0",
       "output_key": "qty_xpl_end_post",
       "priority": 70,
       "active": true,
@@ -2257,7 +2260,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_xpl_inline_post",
-      "expression": "post_system_is_standard_50 == 0 and post_system_is_standard_65 == 0 ? xpl_inline_post_count : 0",
+      "expression": "post_system_is_xpl == 1 ? xpl_inline_post_count : 0",
       "output_key": "qty_xpl_inline_post",
       "priority": 75,
       "active": true,
@@ -2269,7 +2272,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_xpl_corner_post",
-      "expression": "post_system_is_standard_50 == 0 and post_system_is_standard_65 == 0 ? xpl_corner_post_count : 0",
+      "expression": "post_system_is_xpl == 1 ? xpl_corner_post_count : 0",
       "output_key": "qty_xpl_corner_post",
       "priority": 76,
       "active": true,
@@ -3623,7 +3626,7 @@
       "warning_key": "xpl_post_system_pricing_tbd",
       "severity": "warning",
       "condition_json": {
-        "post_system": "xpl"
+        "post_size": "xpl"
       },
       "message": "XPL patented post pricing is not yet in the price list. Confirm pricing with supplier before quoting.",
       "active": true
@@ -3633,7 +3636,7 @@
       "warning_key": "xpl_mounting_method_applies_standard_only",
       "severity": "info",
       "condition_json": {
-        "post_system": "xpl"
+        "post_size": "xpl"
       },
       "message": "Mounting method (in-ground / base plate / core drill) only applies when using standard 50mm or 65mm posts, not XPL patented posts.",
       "active": true

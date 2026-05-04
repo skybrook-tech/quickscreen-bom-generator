@@ -1,5 +1,6 @@
 import { Settings2 } from "lucide-react";
 import { COLOUR_HEX } from "../../../lib/colourHex";
+import { POST_TYPE_LABELS } from "../../../lib/productOptionRules";
 
 interface Props {
   productCode: string;
@@ -32,6 +33,7 @@ function formatValue(
   if (suffix && Number.isFinite(Number(value))) return `${value}${suffix}`;
   if (key === "finish_family") return String(value).replace(/_/g, " ");
   if (key === "mounting_type") return String(value).replace(/_/g, " ");
+  if (key === "post_size") return POST_TYPE_LABELS[String(value)] ?? String(value);
   return String(value);
 }
 

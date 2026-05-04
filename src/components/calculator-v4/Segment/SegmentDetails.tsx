@@ -10,14 +10,13 @@ import NumberInput from "../../ui/NumberInput";
 import { Select } from "../../ui/Select";
 import { cn } from "../../../lib";
 import { ProductSelectV4 } from "../JobShell/ProductSelectV4";
+import {
+  POST_TYPE_LABELS,
+  postTypeOptionsForSystem,
+} from "../../../lib/productOptionRules";
 
 const POST_SIZE_KEY = "post_size";
 const POST_WIDTH_MM_KEY = "post_width_mm";
-
-const POST_SIZE_LABELS: Record<string, string> = {
-  "50": "50×50 System Post",
-  "65": "65×65 HD Post",
-};
 
 interface Props {
   runId: string;
@@ -51,8 +50,8 @@ export function SegmentDetails({
   const postSizeOptions = useMemo(() => {
     const v = runFields.find((f) => f.field_key === "post_size");
     const raw = v?.options_json ?? ["50", "65"];
-    return raw.map(String);
-  }, [runFields]);
+    return postTypeOptionsForSystem(productCode, raw.map(String));
+  }, [productCode, runFields]);
 
   const mergedForHeights = useMemo(
     () => ({
@@ -272,7 +271,7 @@ export function SegmentDetails({
           </label>
 
           <label className="flex flex-col gap-1">
-            <span className="text-neutral-500 text-xs">Post type</span>
+            <span className="text-neutral-500 text-xs">Post Type</span>
             <Select
               value={postSize}
               onChange={(e) => setScalar(POST_SIZE_KEY, e.target.value || null)}
@@ -282,10 +281,12 @@ export function SegmentDetails({
               <option value="">— Job default —</option>
               {postSizeOptions.map((opt) => (
                 <option key={opt} value={opt}>
-                  {POST_SIZE_LABELS[opt] ?? `${opt}mm Post`}
+                  {POST_TYPE_LABELS[opt] ?? `${opt}mm Post`}
                 </option>
               ))}
-              <option value="custom">(Non-system post)</option>
+              {!postSizeOptions.includes("custom") && (
+                <option value="custom">{POST_TYPE_LABELS.custom}</option>
+              )}
             </Select>
           </label>
 

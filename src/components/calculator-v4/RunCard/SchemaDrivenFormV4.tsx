@@ -4,6 +4,7 @@ import {
   isVisible,
   type SchemaField,
 } from "../../calculator-v3/SchemaDrivenForm";
+import { POST_TYPE_LABELS } from "../../../lib/productOptionRules";
 import { Segmented } from "../../ui/Segmented";
 import { ColourSwatches } from "../../ui/ColourSwatches";
 
@@ -125,7 +126,10 @@ function FieldRenderer({
             onChange={(v) => onChange(field.field_key, v)}
             options={field.options_json.map((opt) => ({
               value: String(opt),
-              label: String(opt),
+              label:
+                field.field_key === "post_size"
+                  ? (POST_TYPE_LABELS[String(opt)] ?? String(opt))
+                  : String(opt),
             }))}
             size="sm"
           />
