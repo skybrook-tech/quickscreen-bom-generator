@@ -93,7 +93,7 @@ export function RunSubHeader({ effectiveVars, productCode }: Props) {
                   <span className="text-brand-muted truncate">
                     {field.label}
                   </span>
-                  <Separator />
+                  <Separator character="=" />
                   <span className="text-brand-text shrink-0">{valueText}</span>
                 </span>
               </Fragment>
