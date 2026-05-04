@@ -123,7 +123,10 @@ export function RunCard({
 
       {expanded && (
         <>
-          <RunSubHeader effectiveVars={effectiveVars} />
+          <RunSubHeader
+            effectiveVars={effectiveVars}
+            productCode={fenceProductCode || null}
+          />
 
           <div className="border-t border-brand-border p-4 pt-1 space-y-3">
             <div className="flex flex-wrap gap-0 -mx-4 px-4 border-b border-brand-border">

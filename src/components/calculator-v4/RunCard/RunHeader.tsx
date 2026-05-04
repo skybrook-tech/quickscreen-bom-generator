@@ -168,7 +168,8 @@ export function RunHeader({
           <div className="min-w-[10rem] max-w-[14rem]">
             <ProductSelectV4
               value={
-                state.payload?.runs.find((r) => r.runId === runId)?.productCode ??
+                state.payload?.runs.find((r) => r.runId === runId)
+                  ?.productCode ??
                 state.payload?.productCode ??
                 ""
               }
@@ -201,10 +202,6 @@ export function RunHeader({
           >
             {len}m
           </Stat>
-
-          <span className="text-xs text-neutral-500 tabular-nums">
-            {summary.segmentCount} segments
-          </span>
 
           {!compact && (
             <>
