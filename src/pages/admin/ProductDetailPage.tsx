@@ -216,8 +216,8 @@ function ComponentsTab({ systemType }: { systemType: string }) {
   return (
     <div>
       {unpricedCount > 0 && (
-        <div className="flex items-center gap-2 p-3 mb-4 bg-amber-500/10 border border-amber-500/20 rounded-lg text-xs text-amber-400">
-          <AlertCircle size={13} />
+        <div className="flex items-center gap-2 p-3 mb-4 bg-brand-warning/10 border border-brand-warning/20 rounded-lg text-xs text-brand-warning">
+          <AlertCircle size={16} />
           {unpricedCount} component{unpricedCount !== 1 ? 's' : ''} without pricing rules
         </div>
       )}
@@ -246,7 +246,7 @@ function ComponentsTab({ systemType }: { systemType: string }) {
                 <tr
                   key={c.id}
                   className={`border-b border-brand-border/50 hover:bg-brand-border/10 ${
-                    !c.hasPricing ? 'bg-amber-500/5' : i % 2 === 0 ? '' : 'bg-brand-bg/30'
+                    !c.hasPricing ? 'bg-brand-warning/5' : i % 2 === 0 ? '' : 'bg-brand-bg/30'
                   }`}
                 >
                   <td className="px-3 py-2 font-mono text-brand-text">{c.sku}</td>
@@ -333,7 +333,7 @@ export function ProductDetailPage() {
     return (
       <AdminLayout title="Product not found">
         <Link to="/admin/products" className="text-sm text-brand-accent hover:underline flex items-center gap-1.5">
-          <ArrowLeft size={13} />
+          <ArrowLeft size={16} />
           Back to products
         </Link>
       </AdminLayout>
@@ -365,7 +365,7 @@ export function ProductDetailPage() {
           to="/admin/products"
           className="text-xs text-brand-muted hover:text-brand-accent flex items-center gap-1.5 transition-colors"
         >
-          <ArrowLeft size={12} />
+          <ArrowLeft size={16} />
           All products
         </Link>
       </div>
@@ -438,8 +438,8 @@ export function ProductDetailPage() {
         {activeTab === 'rules' && (
           <>
             {!currentRuleVersion && (
-              <div className="flex items-center gap-2 p-3 mb-4 bg-amber-500/10 border border-amber-500/20 rounded-lg text-xs text-amber-400">
-                <AlertCircle size={13} />
+              <div className="flex items-center gap-2 p-3 mb-4 bg-brand-warning/10 border border-brand-warning/20 rounded-lg text-xs text-brand-warning">
+                <AlertCircle size={16} />
                 No current rule version found. Create a rule set and version before adding rules.
               </div>
             )}

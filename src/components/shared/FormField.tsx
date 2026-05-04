@@ -16,7 +16,7 @@ export function FormField({ label, note, error, children }: FormFieldProps) {
         <p className="text-xs text-brand-muted leading-snug">{note}</p>
       )}
       {error && (
-        <p className="text-xs text-red-400 leading-snug">{error}</p>
+        <p className="text-xs text-brand-danger leading-snug">{error}</p>
       )}
     </div>
   );

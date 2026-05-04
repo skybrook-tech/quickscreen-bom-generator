@@ -60,9 +60,9 @@ export function BomTableRow({ line, onRemove, onQtyChange }: Props) {
         <button
           onClick={onRemove}
           aria-label="Remove line"
-          className="p-1 text-red-500 hover:text-red-500 hover:bg-red-500/10 rounded"
+          className="p-1 text-brand-danger hover:text-brand-danger hover:bg-brand-danger/10 rounded"
         >
-          <X size={12} />
+          <X size={16} />
         </button>
       </td>
     </tr>

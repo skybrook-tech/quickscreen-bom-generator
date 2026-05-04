@@ -42,7 +42,7 @@ export function Segmented({
               "rounded-full font-medium transition-all",
               sizeClasses,
               {
-                "bg-brand-accent text-white shadow-sm": active || separated,
+                "bg-brand-accent text-white shadow-md": active || separated,
                 "text-brand hover:text-brand-accent": !active && !separated,
               },
             ])}

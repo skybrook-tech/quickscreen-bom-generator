@@ -16,7 +16,7 @@ import {
 } from '../../lib/constants';
 
 const inputCls =
-  'w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text ' +
+  'w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-lg text-sm text-brand-text ' +
   'focus:outline-none focus:ring-2 focus:ring-brand-accent/30 focus:border-brand-accent ' +
   'transition-colors disabled:opacity-40 disabled:cursor-not-allowed';
 
@@ -121,7 +121,7 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
             min="400"
             max="6000"
             data-testid="gate-opening-width"
-            className={inputCls + (swingWidthWarning ? ' border-yellow-500' : '')}
+            className={inputCls + (swingWidthWarning ? ' border-brand-warning' : '')}
           />
         </FormField>
       </div>
@@ -301,7 +301,7 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
         <button
           type="submit"
           data-testid="save-gate-btn"
-          className="flex-1 py-2 px-4 bg-brand-accent hover:bg-brand-accent-hover text-white font-semibold rounded-md transition-colors text-sm"
+          className="flex-1 py-2 px-4 bg-brand-accent hover:bg-brand-accent-hover text-white font-semibold rounded-lg transition-colors text-sm"
         >
           Save Gate
         </button>
@@ -309,7 +309,7 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
           type="button"
           onClick={onCancel}
           data-testid="gate-cancel-btn"
-          className="py-2 px-4 border border-brand-border text-brand-muted hover:text-brand-text rounded-md transition-colors text-sm"
+          className="py-2 px-4 border border-brand-border text-brand-muted hover:text-brand-text rounded-lg transition-colors text-sm"
         >
           Cancel
         </button>

@@ -325,7 +325,7 @@ export function FenceLayoutCanvas({
             type="button"
             onClick={() => setSatelliteOpen((o) => !o)}
             className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border transition-colors",
+              "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors",
               satelliteActive
                 ? "border-brand-accent bg-brand-accent/25 text-brand-accent"
                 : satelliteOpen
@@ -334,7 +334,7 @@ export function FenceLayoutCanvas({
             )}
             title="Satellite map underlay — address, opacity, and scale"
           >
-            <Map size={13} aria-hidden /> Satellite
+            <Map size={16} aria-hidden /> Satellite
           </button>
         }
       />
@@ -401,7 +401,7 @@ export function FenceLayoutCanvas({
           )}
         >
           {applied ? "Applied!" : "Use This Layout →"}
-          {!applied && layoutValid && <ArrowRight size={14} />}
+          {!applied && layoutValid && <ArrowRight size={16} />}
         </button>
       </div>
 

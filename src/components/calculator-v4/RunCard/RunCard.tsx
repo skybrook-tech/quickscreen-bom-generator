@@ -106,7 +106,7 @@ export function RunCard({
 
   return (
     <div
-      className="rounded-xl border border-brand-border bg-brand-card overflow-hidden shadow-sm"
+      className="rounded-xl border border-brand-border bg-brand-card overflow-hidden"
       data-testid={`v4-run-card-${run.runId}`}
     >
       <RunHeader

@@ -18,10 +18,10 @@ export function JobShell({ onOpenLayoutMap, hasPayload }: JobShellProps) {
         type="button"
         onClick={onOpenLayoutMap}
         disabled={!hasPayload}
-        className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md border border-brand-border text-sm font-medium text-brand-text hover:bg-brand-border/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg border border-brand-border text-sm font-medium text-brand-text hover:bg-brand-border/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         data-testid="v4-open-layout-map"
       >
-        <MapIcon size={14} /> Open layout map
+        <MapIcon size={16} /> Open layout map
       </button>
     </div>
   );

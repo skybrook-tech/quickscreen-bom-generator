@@ -138,7 +138,7 @@ export function BOMExportActions({
   };
 
   const btnCls =
-    "flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-md border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/60 hover:bg-brand-accent/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+    "flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/60 hover:bg-brand-accent/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
   return (
     <div className="flex flex-wrap gap-2 justify-end pt-3">
@@ -149,7 +149,7 @@ export function BOMExportActions({
         className={btnCls}
         title="Copy to clipboard"
       >
-        {copying ? <Loader2 size={13} className="animate-spin" /> : <Copy size={13} />}
+        {copying ? <Loader2 size={16} className="animate-spin" /> : <Copy size={16} />}
         Copy
       </button>
       <button
@@ -160,9 +160,9 @@ export function BOMExportActions({
         title="Download CSV"
       >
         {csving ? (
-          <Loader2 size={13} className="animate-spin" />
+          <Loader2 size={16} className="animate-spin" />
         ) : (
-          <Download size={13} />
+          <Download size={16} />
         )}
         CSV
       </button>
@@ -174,9 +174,9 @@ export function BOMExportActions({
         title="Download PDF"
       >
         {pdfing ? (
-          <Loader2 size={13} className="animate-spin" />
+          <Loader2 size={16} className="animate-spin" />
         ) : (
-          <Download size={13} />
+          <Download size={16} />
         )}
         PDF
       </button>

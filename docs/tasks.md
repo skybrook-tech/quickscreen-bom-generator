@@ -30,6 +30,14 @@
 
 ---
 
+## Codex PR Briefs
+
+- [x] Brief A - Design system tokens + base aesthetic: added primary/success/warning/danger brand tokens, Inter typography, global tabular numerals, 8px action radii, normalized icon sizing, and elevation cleanup.
+- [ ] Brief B - Run-vs-segment scope refactor
+- [ ] Brief C - Saved-jobs library + Save Job feedback + autosave (frontend-only) *(draft PR #4 open)*
+
+---
+
 ## Phase 0 — Cypress Test Suite
 
 

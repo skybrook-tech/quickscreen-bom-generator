@@ -235,7 +235,7 @@ export function MapControls({
       {/* Address search + map type */}
       <div className="flex flex-col gap-2 flex-1 min-w-[260px]">
         <div className="flex items-center gap-2">
-          <Map size={13} className="text-brand-muted shrink-0" />
+          <Map size={16} className="text-brand-muted shrink-0" />
           <div className="relative flex-1">
             <input
               ref={inputRef}
@@ -247,19 +247,19 @@ export function MapControls({
                 if (suggestions.length > 0) setShowDropdown(true);
               }}
               placeholder="Enter address for satellite underlay…"
-              className="w-full px-2 py-1.5 bg-brand-bg border border-brand-border rounded-md text-brand-text placeholder:text-brand-muted focus:outline-none focus:border-brand-accent text-xs"
+              className="w-full px-2 py-1.5 bg-brand-bg border border-brand-border rounded-lg text-brand-text placeholder:text-brand-muted focus:outline-none focus:border-brand-accent text-xs"
               autoComplete="off"
             />
             {fetchingAC && (
               <Loader2
-                size={10}
+                size={16}
                 className="absolute right-2 top-1/2 -translate-y-1/2 animate-spin text-brand-muted pointer-events-none"
               />
             )}
             {showDropdown && suggestions.length > 0 && (
               <div
                 ref={dropdownRef}
-                className="absolute z-50 top-full left-0 right-0 mt-0.5 bg-brand-card border border-brand-border rounded-md shadow-lg overflow-hidden"
+                className="absolute z-50 top-full left-0 right-0 mt-0.5 bg-brand-card border border-brand-border rounded-lg shadow-lg overflow-hidden"
               >
                 {suggestions.map((feature, idx) => {
                   const { line1, line2 } = formatSuggestion(feature);
@@ -296,12 +296,12 @@ export function MapControls({
             type="button"
             onClick={() => handleLoadMap()}
             disabled={loading || !address.trim()}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 bg-brand-accent/20 border border-brand-accent text-brand-accent rounded-md hover:bg-brand-accent/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 bg-brand-accent/20 border border-brand-accent text-brand-accent rounded-lg hover:bg-brand-accent/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
-              <Loader2 size={12} className="animate-spin" />
+              <Loader2 size={16} className="animate-spin" />
             ) : (
-              <Map size={12} />
+              <Map size={16} />
             )}
             Load
           </button>
@@ -353,7 +353,7 @@ export function MapControls({
         />
       </div>
 
-      {error && <p className="w-full text-red-400 text-xs mt-1">{error}</p>}
+      {error && <p className="w-full text-brand-danger text-xs mt-1">{error}</p>}
     </div>
   );
 }

@@ -73,10 +73,10 @@ export function RunSubHeader({
           onClick={onToggleEditing}
           type="button"
           title="Edit fence specifications for this run (colour, slats, posts, defaults)"
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium text-neutral-500 hover:text-neutral-200 hover:bg-neutral-700/60 min-w-[5.5rem] justify-center transition-colors"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-neutral-500 hover:text-neutral-200 hover:bg-neutral-700/60 min-w-[5.5rem] justify-center transition-colors"
           data-testid="v4-run-edit-toggle"
         >
-          <Edit2 size={12} aria-hidden />
+          <Edit2 size={16} aria-hidden />
           {editing ? "Done" : "Edit specs"}
         </button>
       </div>

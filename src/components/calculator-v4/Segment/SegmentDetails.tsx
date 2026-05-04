@@ -164,7 +164,7 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
                   })
                 }
                 disabled={locked}
-                className="bg-white border border-neutral-200 rounded-md"
+                className="bg-white border border-neutral-200 rounded-lg"
               />
             </div>
           ) : (
@@ -177,7 +177,7 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
                 })
               }
               disabled={locked}
-              className="bg-white border border-neutral-200 rounded-md"
+              className="bg-white border border-neutral-200 rounded-lg"
               data-testid={`v4-seg-height-${seg.segmentId}`}
             >
               {heightOptionsMm.map((h) => (
@@ -221,7 +221,7 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
               value={postSize}
               onChange={(e) => setScalar(POST_SIZE_KEY, e.target.value || null)}
               disabled={locked}
-              className="bg-white border border-neutral-200 rounded-md"
+              className="bg-white border border-neutral-200 rounded-lg"
             >
               <option value="">— Job default —</option>
               {postSizeOptions.map((opt) => (

@@ -134,7 +134,7 @@ export function BomPanel({
   }, [state.payload, view.hasResult, view.runResults]);
 
   return (
-    <div className="rounded-xl border border-brand-border bg-brand-card overflow-hidden flex flex-col h-full shadow-sm">
+    <div className="rounded-xl border border-brand-border bg-brand-card overflow-hidden flex flex-col h-full">
       <BomHeader
         summaryPrimary={headerSummary.primary}
         summarySecondary={headerSummary.secondary}
@@ -160,15 +160,15 @@ export function BomPanel({
       )}
 
       {state.removedSkus.size > 0 && (
-        <div className="flex items-center justify-between bg-amber-500/10 border-b border-amber-500/25 px-4 py-2 text-xs flex-shrink-0">
-          <span className="text-amber-700 dark:text-amber-400 font-medium">
+        <div className="flex items-center justify-between bg-brand-warning/10 border-b border-brand-warning/25 px-4 py-2 text-xs flex-shrink-0">
+          <span className="text-brand-warning dark:text-brand-warning font-medium">
             {state.removedSkus.size} BOM{" "}
             {state.removedSkus.size === 1 ? "line" : "lines"} hidden from totals
           </span>
           <button
             type="button"
             onClick={() => dispatch({ type: "RESTORE_ALL_BOM_LINES" })}
-            className="text-amber-700 dark:text-amber-400 underline hover:opacity-90"
+            className="text-brand-warning dark:text-brand-warning underline hover:opacity-90"
           >
             Restore all
           </button>

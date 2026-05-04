@@ -47,14 +47,14 @@ export function CanvasToolbar({
   };
 
   const btnCls = (active: boolean) =>
-    `flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${
+    `flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${
       active
         ? "border-brand-accent bg-brand-accent/20 text-brand-accent"
         : "border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50"
     }`;
 
   const iconBtn =
-    "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50 transition-colors";
+    "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50 transition-colors";
 
   const group = "flex flex-wrap items-center gap-1 rounded-lg bg-brand-bg/50 px-1.5 py-1 ring-1 ring-brand-border/80";
 
@@ -68,7 +68,7 @@ export function CanvasToolbar({
         className={btnCls(activeTool === "draw")}
         onClick={() => handleTool("draw")}
       >
-        <Pencil size={13} /> Draw
+        <Pencil size={16} /> Draw
       </button>
       <button
         type="button"
@@ -76,7 +76,7 @@ export function CanvasToolbar({
         className={btnCls(activeTool === "gate")}
         onClick={() => handleTool("gate")}
       >
-        <GitMerge size={13} /> Gate
+        <GitMerge size={16} /> Gate
       </button>
       <button
         type="button"
@@ -84,7 +84,7 @@ export function CanvasToolbar({
         className={btnCls(activeTool === "move")}
         onClick={() => handleTool("move")}
       >
-        <Move size={13} /> Edit
+        <Move size={16} /> Edit
       </button>
       <button
         type="button"
@@ -92,7 +92,7 @@ export function CanvasToolbar({
         className={btnCls(activeTool === "boundary")}
         onClick={() => handleTool("boundary")}
       >
-        <Minus size={13} /> Boundary
+        <Minus size={16} /> Boundary
       </button>
       </div>
 
@@ -106,7 +106,7 @@ export function CanvasToolbar({
         className={iconBtn}
         onClick={() => engineRef.current?.undo()}
       >
-        <Undo2 size={13} /> Undo
+        <Undo2 size={16} /> Undo
       </button>
       <button
         type="button"
@@ -114,7 +114,7 @@ export function CanvasToolbar({
         className={iconBtn}
         onClick={() => engineRef.current?.clear()}
       >
-        <Trash2 size={13} /> Clear
+        <Trash2 size={16} /> Clear
       </button>
       </div>
 
@@ -127,7 +127,7 @@ export function CanvasToolbar({
         className={iconBtn}
         onClick={() => engineRef.current?.fitToContent()}
       >
-        <Crosshair size={13} /> Centre
+        <Crosshair size={16} /> Centre
       </button>
       <button
         type="button"
@@ -135,7 +135,7 @@ export function CanvasToolbar({
         className={iconBtn}
         onClick={() => engineRef.current?.resetView()}
       >
-        <RotateCcw size={13} /> Reset View
+        <RotateCcw size={16} /> Reset View
       </button>
       <button
         type="button"
@@ -145,7 +145,7 @@ export function CanvasToolbar({
         }
         className={iconBtn}
       >
-        {expanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+        {expanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
         {expanded ? "Collapse" : "Expand"}
       </button>
       </div>

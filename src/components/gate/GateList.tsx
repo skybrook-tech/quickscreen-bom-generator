@@ -37,7 +37,7 @@ export function GateList({ gates, onEdit, onRemove }: GateListProps) {
           className="flex items-center justify-between px-3 py-3 bg-brand-bg border border-brand-border rounded-lg hover:border-brand-accent/40 transition-colors group"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-7 h-7 rounded-md bg-brand-accent/10 text-brand-accent text-xs font-bold flex items-center justify-center shrink-0 border border-brand-accent/20">
+            <div className="w-7 h-7 rounded-lg bg-brand-accent/10 text-brand-accent text-xs font-bold flex items-center justify-center shrink-0 border border-brand-accent/20">
               {idx + 1}
             </div>
             <div className="min-w-0">
@@ -51,18 +51,18 @@ export function GateList({ gates, onEdit, onRemove }: GateListProps) {
               onClick={() => onEdit(gate.id)}
               data-testid={`gate-edit-${idx}`}
               aria-label="Edit gate"
-              className="p-1.5 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/60 transition-colors"
+              className="p-1.5 rounded-lg text-brand-muted hover:text-brand-text hover:bg-brand-border/60 transition-colors"
             >
-              <Pencil size={14} />
+              <Pencil size={16} />
             </button>
             <button
               type="button"
               onClick={() => onRemove(gate.id)}
               data-testid={`gate-remove-${idx}`}
               aria-label="Remove gate"
-              className="p-1.5 rounded-md text-brand-muted hover:text-red-400 hover:bg-red-400/10 transition-colors"
+              className="p-1.5 rounded-lg text-brand-muted hover:text-brand-danger hover:bg-brand-danger/10 transition-colors"
             >
-              <Trash2 size={14} />
+              <Trash2 size={16} />
             </button>
           </div>
         </li>

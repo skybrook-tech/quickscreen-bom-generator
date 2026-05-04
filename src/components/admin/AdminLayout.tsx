@@ -15,7 +15,7 @@ const navItems = [
 
 export function AdminLayout({ children, title, subtitle }: AdminLayoutProps) {
   const navCls = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center gap-2 text-xs font-medium px-3 py-2 rounded-md transition-colors ${
+    `flex items-center gap-2 text-xs font-medium px-3 py-2 rounded-lg transition-colors ${
       isActive
         ? "bg-brand-accent/15 text-brand-accent"
         : "text-brand-muted hover:text-brand-text hover:bg-brand-border/20"
@@ -29,7 +29,7 @@ export function AdminLayout({ children, title, subtitle }: AdminLayoutProps) {
           to="/"
           className="flex items-center gap-1.5 text-xs text-brand-muted hover:text-brand-text transition-colors"
         >
-          <ArrowLeft size={13} />
+          <ArrowLeft size={16} />
           App
         </NavLink>
         <span className="text-brand-border/60">|</span>
@@ -39,7 +39,7 @@ export function AdminLayout({ children, title, subtitle }: AdminLayoutProps) {
         <nav className="flex items-center gap-0.5 ml-2">
           {navItems.map(({ to, label, icon: Icon }) => (
             <NavLink key={to} to={to} className={navCls}>
-              <Icon size={13} />
+              <Icon size={16} />
               {label}
             </NavLink>
           ))}

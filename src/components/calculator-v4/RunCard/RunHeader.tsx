@@ -105,14 +105,14 @@ export function RunHeader({
         <button
           type="button"
           onClick={onToggleExpanded}
-          className="shrink-0 p-1 rounded-md text-neutral-500 hover:text-brand-text hover:bg-brand-border/40 transition-colors"
+          className="shrink-0 p-1 rounded-lg text-neutral-500 hover:text-brand-text hover:bg-brand-border/40 transition-colors"
           aria-expanded={expanded}
           aria-label={expanded ? "Collapse run" : "Expand run"}
         >
           {expanded ? (
-            <ChevronDown size={18} aria-hidden />
+            <ChevronDown size={20} aria-hidden />
           ) : (
-            <ChevronRight size={18} aria-hidden />
+            <ChevronRight size={20} aria-hidden />
           )}
         </button>
 
@@ -157,7 +157,7 @@ export function RunHeader({
 
         <Tooltip content="Fence system / product code for this run">
           <span
-            className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-brand-accent text-brand-bg font-medium cursor-default"
+            className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-lg bg-brand-accent text-brand-bg font-medium cursor-default"
             aria-label={`Fence system: ${systemCode}`}
           >
             <Tag size={ICON} className="shrink-0 opacity-90" aria-hidden />

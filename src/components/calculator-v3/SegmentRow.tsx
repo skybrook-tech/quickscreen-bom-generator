@@ -108,10 +108,10 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
                 .filter((d) => d.severity === "error")
                 .map((d) => d.message)
                 .join(" | ")}
-              className="text-red-400 hover:text-red-300"
+              className="text-brand-danger hover:text-brand-danger/80"
               aria-label="Segment has errors"
             >
-              <AlertCircle size={15} />
+              <AlertCircle size={16} />
             </button>
           )}
           {hasWarning && (
@@ -122,10 +122,10 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
                 .filter((d) => d.severity === "warning")
                 .map((d) => d.message)
                 .join(" | ")}
-              className="text-amber-400 hover:text-amber-300"
+              className="text-brand-warning hover:text-brand-warning/80"
               aria-label="Segment has warnings"
             >
-              <AlertTriangle size={15} />
+              <AlertTriangle size={16} />
             </button>
           )}
           <button
@@ -149,7 +149,7 @@ export function SegmentRow({ runId, seg, segIdx, open, onToggle }: Props) {
                 segmentId: seg.segmentId,
               })
             }
-            className="ml-auto text-red-400 hover:text-red-300 text-xs p-1"
+            className="ml-auto text-brand-danger hover:text-brand-danger/80 text-xs p-1"
           >
             &#x2715;
           </button>

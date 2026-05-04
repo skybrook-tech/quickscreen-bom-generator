@@ -64,11 +64,11 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
           {...register('fullName')}
           type="text"
           autoComplete="name"
-          className="w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-md text-brand-text placeholder-brand-muted focus:outline-none focus:border-brand-accent"
+          className="w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-lg text-brand-text placeholder-brand-muted focus:outline-none focus:border-brand-accent"
           placeholder="Jane Smith"
         />
         {errors.fullName && (
-          <p className="mt-1 text-xs text-red-400">{errors.fullName.message}</p>
+          <p className="mt-1 text-xs text-brand-danger">{errors.fullName.message}</p>
         )}
       </div>
 
@@ -80,11 +80,11 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
           {...register('email')}
           type="email"
           autoComplete="email"
-          className="w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-md text-brand-text placeholder-brand-muted focus:outline-none focus:border-brand-accent"
+          className="w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-lg text-brand-text placeholder-brand-muted focus:outline-none focus:border-brand-accent"
           placeholder="you@example.com"
         />
         {errors.email && (
-          <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>
+          <p className="mt-1 text-xs text-brand-danger">{errors.email.message}</p>
         )}
       </div>
 
@@ -96,22 +96,22 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
           {...register('password')}
           type="password"
           autoComplete="new-password"
-          className="w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-md text-brand-text placeholder-brand-muted focus:outline-none focus:border-brand-accent"
+          className="w-full px-3 py-2 bg-brand-bg border border-brand-border rounded-lg text-brand-text placeholder-brand-muted focus:outline-none focus:border-brand-accent"
           placeholder="••••••••"
         />
         {errors.password && (
-          <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>
+          <p className="mt-1 text-xs text-brand-danger">{errors.password.message}</p>
         )}
       </div>
 
       {serverError && (
-        <p className="text-sm text-red-400">{serverError}</p>
+        <p className="text-sm text-brand-danger">{serverError}</p>
       )}
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full py-2 px-4 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-50 text-white font-medium rounded-md transition-colors"
+        className="w-full py-2 px-4 bg-brand-accent hover:bg-brand-accent-hover disabled:opacity-50 text-white font-medium rounded-lg transition-colors"
       >
         {isSubmitting ? 'Creating account…' : 'Create account'}
       </button>

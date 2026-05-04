@@ -58,7 +58,7 @@ export function TerminationControl({
         <label className="text-[11px] font-medium uppercase tracking-wider text-brand-muted">
           {side === "left" ? "Left" : "Right"} termination
         </label>
-        <div className="px-3 py-2 rounded-md bg-brand-border/20 border border-brand-border text-xs text-brand-muted">
+        <div className="px-3 py-2 rounded-lg bg-brand-border/20 border border-brand-border text-xs text-brand-muted">
           Straight join (canvas-driven)
         </div>
       </div>
@@ -90,7 +90,7 @@ export function TerminationControl({
   const sign = Math.sign(angleDeg) || 1;
 
   const selectClass =
-    "w-full px-3 py-2 rounded-md bg-white border border-brand-border text-sm text-brand-text focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none";
+    "w-full px-3 py-2 rounded-lg bg-white border border-brand-border text-sm text-brand-text focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none";
 
   return (
     <div className="space-y-1.5">

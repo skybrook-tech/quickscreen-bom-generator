@@ -134,7 +134,7 @@ export function ProductSelectV4({ value, onChange, separated = false }: Props) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between gap-2 px-3 py-2 bg-white border border-brand-border rounded-md text-sm text-brand-text hover:border-brand-accent/50 transition-colors"
+        className="w-full flex items-center justify-between gap-2 px-3 py-2 bg-white border border-brand-border rounded-lg text-sm text-brand-text hover:border-brand-accent/50 transition-colors"
       >
         <span
           className={currentProduct ? "text-brand-text" : "text-brand-muted"}
@@ -145,9 +145,9 @@ export function ProductSelectV4({ value, onChange, separated = false }: Props) {
       </button>
 
       {open && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-brand-card border border-brand-border rounded-md shadow-lg overflow-hidden">
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-brand-card border border-brand-border rounded-lg shadow-lg overflow-hidden">
           <div className="flex items-center gap-2 px-3 py-2 border-b border-brand-border">
-            <Search size={14} className="text-brand-muted shrink-0" />
+            <Search size={16} className="text-brand-muted shrink-0" />
             <Input
               autoFocus
               type="text"

@@ -156,7 +156,7 @@ function CalculatorV3Content() {
                 {errors.map((e, i) => (
                   <div
                     key={i}
-                    className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-2 text-sm text-red-400"
+                    className="bg-brand-danger/10 border border-brand-danger/30 rounded-lg px-4 py-2 text-sm text-brand-danger"
                   >
                     Error: {e}
                   </div>
@@ -164,7 +164,7 @@ function CalculatorV3Content() {
                 {warnings.map((w, i) => (
                   <div
                     key={i}
-                    className="bg-amber-500/10 border border-amber-500/30 rounded-lg px-4 py-2 text-sm text-amber-400"
+                    className="bg-brand-warning/10 border border-brand-warning/30 rounded-lg px-4 py-2 text-sm text-brand-warning"
                   >
                     Warning: {w}
                   </div>
@@ -188,7 +188,7 @@ function CalculatorV3Content() {
 
             {/* Mutation error */}
             {bomMutation.isError && (
-              <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-400">
+              <div className="bg-brand-danger/10 border border-brand-danger/30 rounded-lg px-4 py-3 text-sm text-brand-danger">
                 Error:{" "}
                 {bomMutation.error instanceof Error
                   ? bomMutation.error.message

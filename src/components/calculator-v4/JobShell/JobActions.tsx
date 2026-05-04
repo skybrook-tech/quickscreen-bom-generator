@@ -43,15 +43,15 @@ export function JobActions({ onSave }: JobActionsProps) {
         className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-text text-brand-bg text-sm font-medium hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
         data-testid="v4-save-job"
       >
-        <Save size={14} /> Save Job
+        <Save size={16} /> Save Job
       </button>
       <button
         onClick={handleClear}
         disabled={!hasJob}
-        className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-brand-border text-sm font-medium text-red-500 hover:bg-red-500/10 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-brand-border text-sm font-medium text-brand-danger hover:bg-brand-danger/10 disabled:opacity-40 disabled:cursor-not-allowed"
         data-testid="v4-clear-job"
       >
-        <Trash2 size={14} /> Clear Job
+        <Trash2 size={16} /> Clear Job
       </button>
     </div>
   );

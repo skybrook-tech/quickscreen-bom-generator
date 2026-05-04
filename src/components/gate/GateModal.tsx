@@ -68,7 +68,7 @@ export function GateModal({
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="p-1.5 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/60 transition-colors"
+            className="p-1.5 rounded-lg text-brand-muted hover:text-brand-text hover:bg-brand-border/60 transition-colors"
           >
             <X size={16} />
           </button>

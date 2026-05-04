@@ -136,7 +136,7 @@ export function ProductSelectV3() {
       {open && (
         <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-brand-card border border-brand-border rounded-lg shadow-lg overflow-hidden">
           <div className="flex items-center gap-2 px-3 py-2 border-b border-brand-border">
-            <Search size={14} className="text-brand-muted shrink-0" />
+            <Search size={16} className="text-brand-muted shrink-0" />
             <Input
               autoFocus
               type="text"

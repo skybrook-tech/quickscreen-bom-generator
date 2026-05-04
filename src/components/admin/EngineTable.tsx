@@ -40,7 +40,7 @@ function displayValue(value: unknown, type: ColumnType): React.ReactNode {
   }
   if (type === 'boolean') {
     return (
-      <span className={`text-xs font-medium ${value ? 'text-emerald-400' : 'text-brand-muted'}`}>
+      <span className={`text-xs font-medium ${value ? 'text-brand-success' : 'text-brand-muted'}`}>
         {value ? 'true' : 'false'}
       </span>
     );
@@ -54,7 +54,7 @@ function displayValue(value: unknown, type: ColumnType): React.ReactNode {
         </code>
       );
     } catch {
-      return <span className="text-xs text-red-400">invalid json</span>;
+      return <span className="text-xs text-brand-danger">invalid json</span>;
     }
   }
   if (type === 'textarea') {
@@ -150,7 +150,7 @@ function EditModal<T extends { id: string }>({
               <div key={col.key}>
                 <label className="block text-xs font-medium text-brand-muted mb-1">
                   {col.label}
-                  {col.required && <span className="text-red-400 ml-0.5">*</span>}
+                  {col.required && <span className="text-brand-danger ml-0.5">*</span>}
                 </label>
 
                 {col.type === 'select' ? (
@@ -198,8 +198,8 @@ function EditModal<T extends { id: string }>({
         {/* Footer */}
         <div className="px-5 py-4 border-t border-brand-border flex items-center justify-between">
           {error ? (
-            <div className="flex items-center gap-2 text-xs text-red-400">
-              <AlertCircle size={13} />
+            <div className="flex items-center gap-2 text-xs text-brand-danger">
+              <AlertCircle size={16} />
               {error}
             </div>
           ) : (
@@ -217,7 +217,7 @@ function EditModal<T extends { id: string }>({
               disabled={saving}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-brand-accent text-white rounded hover:bg-brand-accent-hover transition-colors disabled:opacity-50"
             >
-              <Check size={12} />
+              <Check size={16} />
               {saving ? 'Saving…' : 'Save'}
             </button>
           </div>
@@ -278,7 +278,7 @@ export function EngineTable<T extends { id: string }>({
           onClick={handleAdd}
           className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 bg-brand-accent/10 text-brand-accent border border-brand-accent/30 rounded hover:bg-brand-accent/20 transition-colors"
         >
-          <Plus size={12} />
+          <Plus size={16} />
           Add {entityLabel}
         </button>
       </div>
@@ -323,14 +323,14 @@ export function EngineTable<T extends { id: string }>({
                       className="p-1 text-brand-muted hover:text-brand-accent rounded transition-colors"
                       title="Edit"
                     >
-                      <Pencil size={12} />
+                      <Pencil size={16} />
                     </button>
                     <button
                       onClick={() => { setDeleting(row.id); setDeleteError(null); }}
-                      className="p-1 text-brand-muted hover:text-red-400 rounded transition-colors ml-1"
+                      className="p-1 text-brand-muted hover:text-brand-danger rounded transition-colors ml-1"
                       title="Delete"
                     >
-                      <Trash2 size={12} />
+                      <Trash2 size={16} />
                     </button>
                   </td>
                 </tr>
@@ -359,7 +359,7 @@ export function EngineTable<T extends { id: string }>({
             <h3 className="text-sm font-semibold text-brand-text mb-2">Delete {entityLabel}?</h3>
             <p className="text-xs text-brand-muted mb-4">This cannot be undone.</p>
             {deleteError && (
-              <p className="text-xs text-red-400 mb-3">{deleteError}</p>
+              <p className="text-xs text-brand-danger mb-3">{deleteError}</p>
             )}
             <div className="flex justify-end gap-2">
               <button
@@ -370,7 +370,7 @@ export function EngineTable<T extends { id: string }>({
               </button>
               <button
                 onClick={() => handleDeleteConfirm(deleting)}
-                className="px-3 py-1.5 text-xs font-medium bg-red-500/10 text-red-400 border border-red-500/30 rounded hover:bg-red-500/20 transition-colors"
+                className="px-3 py-1.5 text-xs font-medium bg-brand-danger/10 text-brand-danger border border-brand-danger/30 rounded hover:bg-brand-danger/20 transition-colors"
               >
                 Delete
               </button>

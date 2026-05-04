@@ -117,7 +117,7 @@ export function InlineEdit({
 
   const labelEl = Icon ? (
     <Icon
-      size={12}
+      size={16}
       className={cn(
         "shrink-0 mr-0.5",
         ink,
@@ -298,7 +298,7 @@ export function InlineEdit({
         {suffix}
       </span>
       <Edit2
-        size={9}
+        size={16}
         className={cn(
           "opacity-0 group-hover/inline:opacity-70 transition-opacity absolute -top-1.5 -right-2",
           pencil,

@@ -18,6 +18,9 @@ export default {
         "fade-in-up": "fadeInUp 0.25s ease-out forwards",
         "fade-in": "fadeIn 0.2s ease-out forwards",
       },
+      fontFamily: {
+        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+      },
       colors: {
         brand: {
           bg: "var(--brand-bg)",
@@ -25,6 +28,10 @@ export default {
           border: "var(--brand-border)",
           accent: "rgb(var(--brand-accent) / <alpha-value>)",
           "accent-hover": "var(--brand-accent-hover)",
+          primary: "rgb(var(--brand-primary) / <alpha-value>)",
+          success: "rgb(var(--brand-success) / <alpha-value>)",
+          warning: "rgb(var(--brand-warning) / <alpha-value>)",
+          danger: "rgb(var(--brand-danger) / <alpha-value>)",
           muted: "var(--brand-muted)",
           text: "var(--brand-text)",
         },

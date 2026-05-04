@@ -82,7 +82,7 @@ function PricingRows({ componentId, orgId, onRefresh }: PricingRowsProps) {
         </button>
       ) : (
         <>
-          {error && <p className="text-xs text-red-400 mb-2">{error}</p>}
+          {error && <p className="text-xs text-brand-danger mb-2">{error}</p>}
           {rows && rows.length > 0 ? (
             <table className="w-full text-xs mb-2">
               <thead>
@@ -98,13 +98,13 @@ function PricingRows({ componentId, orgId, onRefresh }: PricingRowsProps) {
                 {rows.map((r) => (
                   <tr key={r.id} className="border-t border-brand-border/30">
                     <td className="pr-3 py-1 font-mono text-brand-text">{r.tier_code}</td>
-                    <td className="pr-3 py-1 text-emerald-400">${r.price.toFixed(2)}</td>
+                    <td className="pr-3 py-1 text-brand-success">${r.price.toFixed(2)}</td>
                     <td className="pr-3 py-1 text-brand-muted">{r.priority}</td>
                     <td className="py-1 text-brand-muted font-mono">{r.rule ?? '—'}</td>
                     <td className="py-1 text-right">
                       <button
                         onClick={() => handleDelete(r.id)}
-                        className="text-red-400/60 hover:text-red-400 text-xs px-1"
+                        className="text-brand-danger/60 hover:text-brand-danger text-xs px-1"
                       >
                         ×
                       </button>
@@ -190,8 +190,8 @@ export function ComponentsIndexPage() {
     >
       {/* Warning banner */}
       {unpricedCount > 0 && (
-        <div className="flex items-center gap-2 p-3 mb-5 bg-amber-500/10 border border-amber-500/20 rounded-lg text-sm text-amber-400">
-          <AlertCircle size={15} />
+        <div className="flex items-center gap-2 p-3 mb-5 bg-brand-warning/10 border border-brand-warning/20 rounded-lg text-sm text-brand-warning">
+          <AlertCircle size={16} />
           <strong>{unpricedCount}</strong> component{unpricedCount !== 1 ? 's' : ''} without pricing rules
         </div>
       )}
@@ -199,7 +199,7 @@ export function ComponentsIndexPage() {
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3 mb-5">
         <div className="relative flex-1 min-w-48">
-          <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted pointer-events-none" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted pointer-events-none" />
           <input
             type="text"
             placeholder="Search SKU or name…"
@@ -250,7 +250,7 @@ export function ComponentsIndexPage() {
       {isLoading ? (
         <div className="py-8 text-center text-sm text-brand-muted animate-pulse">Loading components…</div>
       ) : error ? (
-        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-sm text-red-400">
+        <div className="p-4 bg-brand-danger/10 border border-brand-danger/20 rounded-lg text-sm text-brand-danger">
           {(error as Error).message}
         </div>
       ) : (
@@ -272,15 +272,15 @@ export function ComponentsIndexPage() {
                 <Fragment key={c.id}>
                   <tr
                     className={`border-b border-brand-border/50 hover:bg-brand-border/10 cursor-pointer ${
-                      !c.hasPricing ? 'bg-amber-500/5' : i % 2 === 0 ? '' : 'bg-brand-bg/30'
+                      !c.hasPricing ? 'bg-brand-warning/5' : i % 2 === 0 ? '' : 'bg-brand-bg/30'
                     }`}
                     onClick={() => toggleExpanded(c.id)}
                   >
                     <td className="px-3 py-2 text-brand-muted">
                       {expanded.has(c.id) ? (
-                        <ChevronDown size={12} />
+                        <ChevronDown size={16} />
                       ) : (
-                        <ChevronRight size={12} />
+                        <ChevronRight size={16} />
                       )}
                     </td>
                     <td className="px-3 py-2 font-mono text-brand-text">{c.sku}</td>

@@ -18,7 +18,7 @@ export function Header() {
   const initials = user?.email?.[0].toUpperCase() ?? "?";
 
   const navLinkCls = ({ isActive }: { isActive: boolean }) =>
-    `text-xs font-medium px-3 py-1.5 rounded-md transition-colors ${
+    `text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${
       isActive
         ? "text-brand-text bg-brand-border/40"
         : "text-brand-muted hover:text-brand-text hover:bg-brand-border/20"
@@ -55,21 +55,21 @@ export function Header() {
               Quotes
             </NavLink>
             <NavLink to="/new" className={newQuoteLinkCls}>
-              <Plus size={12} />
+              <Plus size={16} />
               New Quote
             </NavLink> */}
             {isAdmin && (
               <NavLink
                 to="/admin/products"
                 className={({ isActive }) =>
-                  `flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-md transition-colors ml-1 ${
+                  `flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ml-1 ${
                     isActive
-                      ? "text-amber-400 bg-amber-500/10"
-                      : "text-brand-muted hover:text-amber-400 hover:bg-amber-500/5"
+                      ? "text-brand-warning bg-brand-warning/10"
+                      : "text-brand-muted hover:text-brand-warning hover:bg-brand-warning/5"
                   }`
                 }
               >
-                <Settings size={12} />
+                <Settings size={16} />
                 Admin
               </NavLink>
             )}
@@ -84,7 +84,7 @@ export function Header() {
           title={
             theme === "light" ? "Switch to dark mode" : "Switch to light mode"
           }
-          className="p-2 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/30 transition-colors"
+          className="p-2 rounded-lg text-brand-muted hover:text-brand-text hover:bg-brand-border/30 transition-colors"
         >
           {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
         </button>
@@ -100,9 +100,9 @@ export function Header() {
             <button
               onClick={handleSignOut}
               title="Sign out"
-              className="flex items-center gap-1.5 text-xs text-brand-muted hover:text-brand-text px-2.5 py-2 rounded-md hover:bg-brand-border/30 transition-colors"
+              className="flex items-center gap-1.5 text-xs text-brand-muted hover:text-brand-text px-2.5 py-2 rounded-lg hover:bg-brand-border/30 transition-colors"
             >
-              <LogOut size={13} />
+              <LogOut size={16} />
               <span className="hidden sm:inline">Sign out</span>
             </button>
           </>

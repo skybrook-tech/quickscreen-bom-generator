@@ -5,7 +5,7 @@ import { useAdminProducts } from '../../hooks/useAdminProducts';
 
 const TYPE_COLOURS: Record<string, string> = {
   fence: 'text-brand-accent bg-brand-accent/10 border-brand-accent/30',
-  gate: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
+  gate: 'text-brand-success bg-brand-success/10 border-brand-success/30',
   other: 'text-brand-muted bg-brand-border/20 border-brand-border/40',
 };
 
@@ -25,7 +25,7 @@ export function ProductsIndexPage() {
         <div className="text-sm text-brand-muted animate-pulse">Loading products…</div>
       )}
       {error && (
-        <div className="text-sm text-red-400 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+        <div className="text-sm text-brand-danger p-4 bg-brand-danger/10 border border-brand-danger/20 rounded-lg">
           {error.message}
         </div>
       )}
@@ -57,7 +57,7 @@ export function ProductsIndexPage() {
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <div className="p-1.5 rounded bg-brand-border/30">
-                            <Package size={14} className="text-brand-muted" />
+                            <Package size={16} className="text-brand-muted" />
                           </div>
                           <div>
                             <div className="text-sm font-semibold text-brand-text group-hover:text-brand-accent transition-colors">
@@ -77,7 +77,7 @@ export function ProductsIndexPage() {
                             {product.product_type}
                           </span>
                           {!product.active && (
-                            <span className="text-xs px-1.5 py-0.5 rounded border text-red-400 bg-red-500/10 border-red-500/30">
+                            <span className="text-xs px-1.5 py-0.5 rounded border text-brand-danger bg-brand-danger/10 border-brand-danger/30">
                               inactive
                             </span>
                           )}
@@ -105,15 +105,15 @@ export function ProductsIndexPage() {
 
                       <div className="grid grid-cols-3 gap-2 pt-2 border-t border-brand-border/50">
                         <div className="flex items-center gap-1.5 text-xs text-brand-muted">
-                          <GitBranch size={11} />
+                          <GitBranch size={16} />
                           <span>{ruleSetCount} set{ruleSetCount !== 1 ? 's' : ''}</span>
                         </div>
                         <div className="flex items-center gap-1.5 text-xs text-brand-muted">
-                          <Variable size={11} />
+                          <Variable size={16} />
                           <span>{varCount} var{varCount !== 1 ? 's' : ''}</span>
                         </div>
                         <div className="flex items-center gap-1.5 text-xs text-brand-muted">
-                          <Puzzle size={11} />
+                          <Puzzle size={16} />
                           <span>{ruleCount} rule{ruleCount !== 1 ? 's' : ''}</span>
                         </div>
                         <div className="col-span-3 flex items-center justify-between mt-1">
@@ -121,7 +121,7 @@ export function ProductsIndexPage() {
                             {selectorCount} selector{selectorCount !== 1 ? 's' : ''}
                           </span>
                           <ChevronRight
-                            size={13}
+                            size={16}
                             className="text-brand-border group-hover:text-brand-accent transition-colors"
                           />
                         </div>

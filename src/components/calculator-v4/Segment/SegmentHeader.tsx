@@ -26,7 +26,7 @@ import { CANVAS_GATE_STROKE } from "../../../lib/runLineColors";
 import { Tooltip } from "../../ui/Tooltip";
 import { InlineEdit } from "./InlineEdit";
 
-const METRIC_ICON = 12;
+const METRIC_ICON = 16;
 
 interface Props {
   runId: string;
@@ -170,7 +170,7 @@ export function SegmentHeader({
           )}
           aria-label={open ? "Collapse segment" : "Expand segment"}
         >
-          {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+          {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
         </button>
 
         <span className="font-mono text-xs font-semibold min-w-[1.5rem] cursor-pointer tabular-nums">
@@ -296,7 +296,7 @@ export function SegmentHeader({
                       }
                 }
               >
-                <DoorOpen size={10} /> Gate
+                <DoorOpen size={16} /> Gate
               </span>
             </div>
           )}
@@ -320,14 +320,14 @@ export function SegmentHeader({
                 type="button"
                 onClick={(e) => e.stopPropagation()}
                 className={cn(
-                  "p-1 rounded-md shrink-0",
+                  "p-1 rounded-lg shrink-0",
                   locked
-                    ? "text-amber-200 hover:text-amber-100 hover:bg-white/10"
-                    : "text-amber-500 hover:text-amber-400 hover:bg-amber-500/10",
+                    ? "text-brand-warning/70 hover:text-brand-warning/60 hover:bg-white/10"
+                    : "text-brand-warning hover:text-brand-warning hover:bg-brand-warning/10",
                 )}
                 aria-label="Segment settings differ from run defaults"
               >
-                <GitCompare size={15} />
+                <GitCompare size={16} />
               </button>
             </Tooltip>
           )}
@@ -344,11 +344,11 @@ export function SegmentHeader({
                 "p-1",
                 locked
                   ? "text-white hover:text-white/90"
-                  : "text-red-500 hover:text-red-400",
+                  : "text-brand-danger hover:text-brand-danger",
               )}
               aria-label="Segment has BOM errors"
             >
-              <AlertCircle size={15} />
+              <AlertCircle size={16} />
             </button>
           )}
           {hasDiagWarn && (
@@ -363,11 +363,11 @@ export function SegmentHeader({
                 "p-1",
                 locked
                   ? "text-white hover:text-white/90"
-                  : "text-amber-500 hover:text-amber-400",
+                  : "text-brand-warning hover:text-brand-warning",
               )}
               aria-label="Segment has BOM warnings"
             >
-              <AlertTriangle size={15} />
+              <AlertTriangle size={16} />
             </button>
           )}
 
@@ -408,7 +408,7 @@ export function SegmentHeader({
                 : "text-brand-muted hover:text-brand-accent hover:bg-brand-accent/10",
             )}
           >
-            <Copy size={13} />
+            <Copy size={16} />
           </button>
           </Tooltip>
           <Tooltip content="Remove this segment from the run (layout map updates when segments are removed)">
@@ -423,11 +423,11 @@ export function SegmentHeader({
             className={cn(
               "p-1.5 rounded",
               locked
-                ? "text-white hover:text-red-500 hover:bg-red-500/25"
-                : "hover:text-red-500 hover:bg-red-500/20",
+                ? "text-white hover:text-brand-danger hover:bg-brand-danger/25"
+                : "hover:text-brand-danger hover:bg-brand-danger/20",
             )}
           >
-            <Trash2 size={13} />
+            <Trash2 size={16} />
           </button>
           </Tooltip>
         </div>

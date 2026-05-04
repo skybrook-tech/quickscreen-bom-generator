@@ -22,7 +22,7 @@ export function BomTabs({ tabs, activeId, onChange }: Props) {
           <button
             key={t.id}
             onClick={() => onChange(t.id)}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap transition ${
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition ${
               active
                 ? "bg-brand-accent/15 text-brand-accent"
                 : "text-brand-muted hover:bg-brand-border/30"

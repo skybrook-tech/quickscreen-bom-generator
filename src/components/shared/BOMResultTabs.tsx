@@ -167,7 +167,7 @@ function ItemGroup({
                 </div>
               )}
               {item.notes && (
-                <span className="text-xs text-amber-400 font-medium">
+                <span className="text-xs text-brand-warning font-medium">
                   {item.notes}
                 </span>
               )}
@@ -186,7 +186,7 @@ function ItemGroup({
                     onChange={(e) =>
                       onQtyChange(item.sku, Math.max(0, Number(e.target.value)))
                     }
-                    className="w-16 px-1.5 py-0.5 text-right bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text focus:outline-none focus:ring-1 focus:ring-brand-accent/50 focus:border-brand-accent tabular-nums"
+                    className="w-16 px-1.5 py-0.5 text-right bg-brand-bg border border-brand-border rounded-lg text-sm text-brand-text focus:outline-none focus:ring-1 focus:ring-brand-accent/50 focus:border-brand-accent tabular-nums"
                   />
                 </>
               ) : (
@@ -207,9 +207,9 @@ function ItemGroup({
                   type="button"
                   onClick={() => onRemove(item.sku)}
                   title="Remove line item"
-                  className="opacity-0 group-hover:opacity-100 p-1 rounded text-brand-muted hover:text-red-400 hover:bg-red-500/10 transition-all"
+                  className="opacity-0 group-hover:opacity-100 p-1 rounded text-brand-muted hover:text-brand-danger hover:bg-brand-danger/10 transition-all"
                 >
-                  <Trash2 size={13} />
+                  <Trash2 size={16} />
                 </button>
               </td>
             )}
@@ -283,14 +283,14 @@ export function BOMResultTabs({
     <div>
       {/* Removed items banner */}
       {removedCount > 0 && onRestoreAll && (
-        <div className="flex items-center justify-between bg-amber-500/10 border border-amber-500/30 rounded-lg px-3 py-2 mb-3 text-xs">
-          <span className="text-amber-400 font-medium">
+        <div className="flex items-center justify-between bg-brand-warning/10 border border-brand-warning/30 rounded-lg px-3 py-2 mb-3 text-xs">
+          <span className="text-brand-warning font-medium">
             {removedCount} line {removedCount === 1 ? "item" : "items"} removed
           </span>
           <button
             type="button"
             onClick={onRestoreAll}
-            className="text-amber-400 underline hover:text-amber-300"
+            className="text-brand-warning underline hover:text-brand-warning/80"
           >
             Restore all
           </button>

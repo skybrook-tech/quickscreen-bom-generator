@@ -69,7 +69,7 @@ export function BOMTracePanel({ trace, computed, isAdmin }: BOMTracePanelProps) 
                   {trace.map((entry, i) => (
                     <tr
                       key={i}
-                      className={`border-b border-brand-border/30 ${entry.error ? 'bg-red-500/5' : ''}`}
+                      className={`border-b border-brand-border/30 ${entry.error ? 'bg-brand-danger/5' : ''}`}
                     >
                       <td className="py-1 px-2 text-brand-muted">{entry.stage}</td>
                       <td className="py-1 px-2 text-brand-text">{entry.rule_name}</td>
@@ -79,12 +79,12 @@ export function BOMTracePanel({ trace, computed, isAdmin }: BOMTracePanelProps) 
                       >
                         {entry.expression}
                       </td>
-                      <td className="py-1 px-2 text-green-400">
+                      <td className="py-1 px-2 text-brand-success">
                         {entry.output_key != null && entry.output !== undefined
                           ? `${entry.output_key} = ${String(entry.output)}`
                           : ''}
                       </td>
-                      <td className="py-1 px-2 text-red-400">{entry.error}</td>
+                      <td className="py-1 px-2 text-brand-danger">{entry.error}</td>
                     </tr>
                   ))}
                 </tbody>

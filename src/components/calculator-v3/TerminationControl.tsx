@@ -54,7 +54,7 @@ export function TerminationControl({ runId, seg, side }: Props) {
   // segment_join = straight-through join, canvas-driven, read-only
   if (termination.kind === KINDS.SEGMENT_JOIN) {
     return (
-      <div className="border border-brand-border/40 rounded-md p-3 space-y-1">
+      <div className="border border-brand-border/40 rounded-lg p-3 space-y-1">
         <p className="text-brand-text font-medium capitalize">
           {side} termination
         </p>
@@ -88,7 +88,7 @@ export function TerminationControl({ runId, seg, side }: Props) {
   const sign = Math.sign(angleDeg) || 1;
 
   return (
-    <div className="border border-brand-border/40 rounded-md p-3 space-y-2">
+    <div className="border border-brand-border/40 rounded-lg p-3 space-y-2">
       <div>
         <p className="text-brand-text font-medium capitalize">
           {side} termination

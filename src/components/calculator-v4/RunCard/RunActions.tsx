@@ -20,25 +20,25 @@ export function RunActions({
     <div className="flex gap-2 pt-1">
       <button
         onClick={onAddSegment}
-        className="flex-1 py-2 rounded-md border border-dashed border-brand-border text-xs font-medium text-brand-muted hover:text-brand-accent hover:border-brand-accent hover:bg-brand-accent/5 transition flex items-center justify-center gap-1.5"
+        className="flex-1 py-2 rounded-lg border border-dashed border-brand-border text-xs font-medium text-brand-muted hover:text-brand-accent hover:border-brand-accent hover:bg-brand-accent/5 transition flex items-center justify-center gap-1.5"
         data-testid="v4-add-segment"
       >
-        <Plus size={13} /> Add segment
+        <Plus size={16} /> Add segment
       </button>
       <button
         onClick={onAddGate}
-        className="flex-1 py-2 rounded-md border border-dashed border-brand-border text-xs font-medium text-brand-muted hover:text-brand-accent hover:border-brand-accent hover:bg-brand-accent/5 transition flex items-center justify-center gap-1.5"
+        className="flex-1 py-2 rounded-lg border border-dashed border-brand-border text-xs font-medium text-brand-muted hover:text-brand-accent hover:border-brand-accent hover:bg-brand-accent/5 transition flex items-center justify-center gap-1.5"
         data-testid="v4-add-gate"
       >
-        <DoorOpen size={13} /> Add gate
+        <DoorOpen size={16} /> Add gate
       </button>
       <button
         onClick={onRemoveRun}
         disabled={!canRemove}
-        className="px-3 py-2 rounded-md border border-dashed border-brand-border text-xs font-medium text-red-500 hover:bg-red-500/10 transition flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="px-3 py-2 rounded-lg border border-dashed border-brand-border text-xs font-medium text-brand-danger hover:bg-brand-danger/10 transition flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed"
         data-testid="v4-remove-run"
       >
-        <Trash2 size={13} /> Remove run
+        <Trash2 size={16} /> Remove run
       </button>
     </div>
   );

@@ -29,7 +29,7 @@ export function BomHeader({
   isPending,
 }: Props) {
   return (
-    <div className="bg-blue-800 text-white px-4 py-3 flex-shrink-0">
+    <div className="bg-brand-primary text-white px-4 py-3 flex-shrink-0">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -38,12 +38,12 @@ export function BomHeader({
             </h2>
             {isPending ? (
               <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider bg-white/15 rounded-full px-2 py-0.5">
-                <Loader2 size={9} className="animate-spin" />
+                <Loader2 size={16} className="animate-spin" />
                 Calculating
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider bg-white/15 rounded-full px-2 py-0.5">
-                <Sparkles size={9} />
+                <Sparkles size={16} />
                 Live
               </span>
             )}

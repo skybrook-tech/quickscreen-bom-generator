@@ -91,7 +91,7 @@ export function GateListV3() {
               <div className="flex items-center gap-3 min-w-0">
                 <Badge
                   variant="info"
-                  className="w-7 h-7 rounded-md justify-center shrink-0 text-xs font-bold"
+                  className="w-7 h-7 rounded-lg justify-center shrink-0 text-xs font-bold"
                 >
                   {idx + 1}
                 </Badge>

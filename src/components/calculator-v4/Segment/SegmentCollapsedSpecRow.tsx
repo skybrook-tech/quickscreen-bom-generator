@@ -51,7 +51,7 @@ export function SegmentCollapsedSpecRow({
         <Tooltip key={c.id} content={c.tooltip}>
           <span
             className={cn(
-              "inline-flex items-center rounded-md px-1.5 py-0.5 tabular-nums cursor-default max-w-full",
+              "inline-flex items-center rounded-lg px-1.5 py-0.5 tabular-nums cursor-default max-w-full",
               locked
                 ? "bg-white/15 text-white/95"
                 : "bg-neutral-700/40 text-neutral-300",

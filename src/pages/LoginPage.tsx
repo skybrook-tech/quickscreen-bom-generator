@@ -34,7 +34,7 @@ export function LoginPage() {
         </div>
 
         <div className="bg-brand-card border border-brand-border rounded-lg p-6">
-          <div className="flex mb-6 gap-1 bg-brand-bg rounded-md p-1">
+          <div className="flex mb-6 gap-1 bg-brand-bg rounded-lg p-1">
             <button
               onClick={() => setMode('login')}
               className={`flex-1 py-1.5 text-sm font-medium rounded transition-colors ${

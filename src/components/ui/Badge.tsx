@@ -10,9 +10,9 @@ interface BadgeProps {
 
 const variantStyles: Record<BadgeVariant, string> = {
   default: "border-brand-border bg-brand-card text-brand-muted",
-  success: "border-green-500/50 bg-green-500/10 text-green-500",
-  warning: "border-amber-500/50 bg-amber-500/10 text-amber-500",
-  danger: "border-red-500/50 bg-red-500/10 text-red-400",
+  success: "border-brand-success/50 bg-brand-success/10 text-brand-success",
+  warning: "border-brand-warning/50 bg-brand-warning/10 text-brand-warning",
+  danger: "border-brand-danger/50 bg-brand-danger/10 text-brand-danger",
   info: "border-brand-accent/50 bg-brand-accent/10 text-brand-accent",
 };
 

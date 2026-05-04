@@ -118,7 +118,7 @@ export function ExtraItemsPanel({ items, onAdd, onRemove }: ExtraItemsPanelProps
           {items.map((item) => (
             <li
               key={item.id}
-              className="flex items-center gap-3 px-3 py-2 bg-brand-bg border border-brand-border rounded-md text-sm italic text-brand-muted"
+              className="flex items-center gap-3 px-3 py-2 bg-brand-bg border border-brand-border rounded-lg text-sm italic text-brand-muted"
             >
               <span className="font-mono text-xs text-brand-accent shrink-0">
                 {item.sku ?? 'EXTRA'}
@@ -166,12 +166,12 @@ export function ExtraItemsPanel({ items, onAdd, onRemove }: ExtraItemsPanelProps
             }}
             onKeyDown={handleKeyDown}
             data-testid="extra-items-search"
-            className="w-full bg-brand-bg rounded-md placeholder:text-brand-muted/60"
+            className="w-full bg-brand-bg rounded-lg placeholder:text-brand-muted/60"
           />
 
           {showDropdown && !createMode && (
             <div
-              className="absolute z-50 top-full left-0 right-0 mt-0.5 bg-brand-card border border-brand-border rounded-md shadow-lg"
+              className="absolute z-50 top-full left-0 right-0 mt-0.5 bg-brand-card border border-brand-border rounded-lg shadow-lg"
               style={{ maxHeight: '240px', overflowY: 'auto' }}
             >
               {suggestions.length > 0 ? (
@@ -232,7 +232,7 @@ export function ExtraItemsPanel({ items, onAdd, onRemove }: ExtraItemsPanelProps
               value={sku}
               onChange={(e) => setSku(e.target.value)}
               placeholder="EXTRA-…"
-              className="w-full bg-brand-bg rounded-md placeholder:text-brand-muted/60"
+              className="w-full bg-brand-bg rounded-lg placeholder:text-brand-muted/60"
             />
           </div>
         )}
@@ -246,7 +246,7 @@ export function ExtraItemsPanel({ items, onAdd, onRemove }: ExtraItemsPanelProps
             value={qty}
             onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
             onKeyDown={handleKeyDown}
-            className="w-20 bg-brand-bg rounded-md text-right tabular-nums"
+            className="w-20 bg-brand-bg rounded-lg text-right tabular-nums"
           />
         </div>
 
@@ -262,7 +262,7 @@ export function ExtraItemsPanel({ items, onAdd, onRemove }: ExtraItemsPanelProps
               setUnitPrice(isNaN(n) ? '' : n);
             }}
             onKeyDown={handleKeyDown}
-            className="w-28 bg-brand-bg rounded-md text-right tabular-nums"
+            className="w-28 bg-brand-bg rounded-lg text-right tabular-nums"
           />
         </div>
 

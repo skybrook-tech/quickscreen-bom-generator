@@ -376,7 +376,7 @@ export function FenceLayoutCanvas({
           className="flex items-center gap-1.5 px-4 py-2 bg-brand-accent text-white text-sm font-medium rounded hover:bg-brand-accent-hover transition-colors shrink-0 ml-4"
         >
           {applied ? "Applied!" : "Use This Layout"}
-          {!applied && <ArrowRight size={14} />}
+          {!applied && <ArrowRight size={16} />}
         </button>
       </div>
 

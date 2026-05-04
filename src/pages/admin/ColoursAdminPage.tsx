@@ -33,7 +33,7 @@ const FINISH_GROUPS = ['standard', 'alumawood'];
 
 const GROUP_COLOURS: Record<string, string> = {
   standard: 'text-brand-accent bg-brand-accent/10 border-brand-accent/20',
-  alumawood: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
+  alumawood: 'text-brand-warning bg-brand-warning/10 border-brand-warning/20',
 };
 
 export function ColoursAdminPage() {
@@ -137,14 +137,14 @@ export function ColoursAdminPage() {
           onClick={handleAdd}
           className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 bg-brand-accent/10 text-brand-accent border border-brand-accent/30 rounded hover:bg-brand-accent/20 transition-colors"
         >
-          <Plus size={12} />
+          <Plus size={16} />
           Add colour
         </button>
       </div>
 
       {isLoading && <div className="text-sm text-brand-muted animate-pulse">Loading…</div>}
       {error && (
-        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-sm text-red-400">
+        <div className="p-4 bg-brand-danger/10 border border-brand-danger/20 rounded-lg text-sm text-brand-danger">
           {(error as Error).message}
         </div>
       )}
@@ -196,12 +196,12 @@ export function ColoursAdminPage() {
                         </td>
                         <td className="px-3 py-2">
                           {c.limited && (
-                            <span className="text-xs text-amber-400">limited</span>
+                            <span className="text-xs text-brand-warning">limited</span>
                           )}
                         </td>
                         <td className="px-3 py-2 text-brand-muted">{c.sort_order}</td>
                         <td className="px-3 py-2">
-                          <span className={`text-xs ${c.active ? 'text-emerald-400' : 'text-brand-muted'}`}>
+                          <span className={`text-xs ${c.active ? 'text-brand-success' : 'text-brand-muted'}`}>
                             {c.active ? 'yes' : 'no'}
                           </span>
                         </td>
@@ -211,16 +211,16 @@ export function ColoursAdminPage() {
                             className="p-1 text-brand-muted hover:text-brand-accent rounded transition-colors"
                             title="Edit"
                           >
-                            <Pencil size={12} />
+                            <Pencil size={16} />
                           </button>
                           <button
                             onClick={() => {
                               if (confirm(`Delete "${c.label}"?`)) deleteMut.mutate(c.id);
                             }}
-                            className="p-1 text-brand-muted hover:text-red-400 rounded transition-colors ml-1"
+                            className="p-1 text-brand-muted hover:text-brand-danger rounded transition-colors ml-1"
                             title="Delete"
                           >
-                            <Trash2 size={12} />
+                            <Trash2 size={16} />
                           </button>
                         </td>
                       </tr>
@@ -305,8 +305,8 @@ export function ColoursAdminPage() {
 
             <div className="px-5 py-4 border-t border-brand-border flex items-center justify-between">
               {formError ? (
-                <div className="flex items-center gap-2 text-xs text-red-400">
-                  <AlertCircle size={13} />
+                <div className="flex items-center gap-2 text-xs text-brand-danger">
+                  <AlertCircle size={16} />
                   {formError}
                 </div>
               ) : (
@@ -324,7 +324,7 @@ export function ColoursAdminPage() {
                   disabled={saveMut.isPending}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-brand-accent text-white rounded hover:bg-brand-accent-hover transition-colors disabled:opacity-50"
                 >
-                  <Check size={12} />
+                  <Check size={16} />
                   {saveMut.isPending ? 'Saving…' : 'Save'}
                 </button>
               </div>

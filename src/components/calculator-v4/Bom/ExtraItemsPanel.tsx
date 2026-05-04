@@ -128,7 +128,7 @@ export function ExtraItemsPanel() {
           {items.map((item) => (
             <li
               key={item.id}
-              className="flex items-center gap-3 px-3 py-2 bg-brand-bg border border-brand-border rounded-md text-sm text-brand-muted"
+              className="flex items-center gap-3 px-3 py-2 bg-brand-bg border border-brand-border rounded-lg text-sm text-brand-muted"
             >
               <span className="font-mono text-xs text-brand-accent shrink-0">
                 {item.sku?.trim() ? item.sku : "EXTRA"}
@@ -185,11 +185,11 @@ export function ExtraItemsPanel() {
             }}
             onKeyDown={handleKeyDown}
             data-testid="v4-extra-desc"
-            className="w-full rounded-md placeholder:text-brand-muted/60"
+            className="w-full rounded-lg placeholder:text-brand-muted/60"
           />
 
           {showDropdown && !createMode && (
-            <div className="absolute z-50 top-full left-0 right-0 mt-0.5 bg-brand-card border border-brand-border rounded-md shadow-lg max-h-60 overflow-y-auto">
+            <div className="absolute z-50 top-full left-0 right-0 mt-0.5 bg-brand-card border border-brand-border rounded-lg shadow-lg max-h-60 overflow-y-auto">
               {suggestions.length > 0 ? (
                 suggestions.map((item, idx) => (
                   <button
@@ -252,7 +252,7 @@ export function ExtraItemsPanel() {
               value={sku}
               onChange={(e) => setSku(e.target.value)}
               placeholder="EXTRA-…"
-              className="w-full rounded-md placeholder:text-brand-muted/60"
+              className="w-full rounded-lg placeholder:text-brand-muted/60"
             />
           </div>
         )}
@@ -267,7 +267,7 @@ export function ExtraItemsPanel() {
             onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
             onKeyDown={handleKeyDown}
             data-testid="v4-extra-qty"
-            className="w-20 rounded-md text-right tabular-nums"
+            className="w-20 rounded-lg text-right tabular-nums"
           />
         </div>
 
@@ -286,7 +286,7 @@ export function ExtraItemsPanel() {
             }}
             onKeyDown={handleKeyDown}
             data-testid="v4-extra-price"
-            className="w-28 rounded-md text-right tabular-nums"
+            className="w-28 rounded-lg text-right tabular-nums"
           />
         </div>
 

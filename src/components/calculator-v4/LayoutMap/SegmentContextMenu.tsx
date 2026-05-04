@@ -121,10 +121,10 @@ export function SegmentContextMenu({
           onDelete();
           onClose();
         }}
-        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:bg-red-500/10 border-t border-brand-border"
+        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-brand-danger hover:bg-brand-danger/10 border-t border-brand-border"
         data-testid="v4-segment-context-delete"
       >
-        <Trash2 size={13} />
+        <Trash2 size={16} />
         Delete {kindLabel.toLowerCase()}
       </button>
     </div>

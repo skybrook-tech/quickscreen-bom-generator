@@ -95,7 +95,7 @@ function CalculatorV4Content() {
               <div className="min-h-0 flex-1 overflow-y-auto pr-1 py-3 space-y-4">
                 <RunList onAddGate={handleAddGate} />
                 {bomMutation.isError && (
-                  <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-500">
+                  <div className="bg-brand-danger/10 border border-brand-danger/30 rounded-lg px-4 py-3 text-sm text-brand-danger">
                     Error:{" "}
                     {bomMutation.error instanceof Error
                       ? bomMutation.error.message

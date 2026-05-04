@@ -44,13 +44,13 @@ export function BomActions({
       <button
         onClick={onGenerate}
         disabled={!canGenerate || isPending}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-brand-accent text-white text-xs font-medium hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-accent text-white text-xs font-medium hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
         data-testid="v4-generate-bom"
       >
         {isPending ? (
-          <Loader2 size={13} className="animate-spin" />
+          <Loader2 size={16} className="animate-spin" />
         ) : (
-          <Sparkles size={13} />
+          <Sparkles size={16} />
         )}
         {isPending ? "Calculating…" : "Generate BOM"}
       </button>
