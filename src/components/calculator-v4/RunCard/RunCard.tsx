@@ -112,6 +112,7 @@ export function RunCard({
       <RunHeader
         runId={run.runId}
         index={index}
+        runColorIndex={runColorIndex}
         displayName={run.displayName}
         systemCode={runProductCode}
         summary={summary}

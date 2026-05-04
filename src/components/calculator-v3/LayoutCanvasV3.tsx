@@ -3,6 +3,7 @@ import { FenceLayoutCanvas } from "../canvas/FenceLayoutCanvas";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProducts } from "../../hooks/useProducts";
 import {
+  buildStableIdMapForLayoutSync,
   canvasLayoutToCanonical,
   canonicalToCanvasLayout,
   mergeCanonicalPreservingSegmentMeta,
@@ -77,10 +78,12 @@ export function LayoutCanvasV3() {
     if (!payload) return;
     try {
       sourceRef.current = "canvas";
+      const stableIds = buildStableIdMapForLayoutSync(layout, payload);
       const generated = canvasLayoutToCanonical(
         layout,
         payload.productCode,
         payload.variables,
+        stableIds,
       );
       const canonical = mergeCanonicalPreservingSegmentMeta(payload, generated);
       dispatch({ type: "SET_PAYLOAD", payload: canonical });

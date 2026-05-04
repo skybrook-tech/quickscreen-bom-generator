@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { Tooltip } from "../../ui/Tooltip";
 import type { RunSummary } from "./useRunSummary";
 import { cn } from "../../../lib";
+import { RUN_LINE_COLORS } from "../../../lib/runLineColors";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { useProducts } from "../../../hooks/useProducts";
 import { ProductSelectV4 } from "../JobShell/ProductSelectV4";
@@ -23,6 +24,8 @@ import { ProductSelectV4 } from "../JobShell/ProductSelectV4";
 interface Props {
   runId: string;
   index: number;
+  /** Same palette index as canvas run stroke / segment rows */
+  runColorIndex: number;
   displayName?: string;
   systemCode: string;
   summary: RunSummary;
@@ -75,6 +78,7 @@ function Stat({
 export function RunHeader({
   runId,
   index,
+  runColorIndex,
   displayName,
   systemCode,
   summary,
@@ -88,6 +92,8 @@ export function RunHeader({
     (p) => p.active && p.system_type && p.system_type !== "QS_GATE",
   );
   const len = summary.totalLengthM.toFixed(2);
+  const runAccentHex =
+    RUN_LINE_COLORS[runColorIndex % RUN_LINE_COLORS.length] ?? RUN_LINE_COLORS[0];
   const defaultTitle = `Run ${index}`;
   const shownTitle = displayName?.trim() || defaultTitle;
   const [editing, setEditing] = useState(false);
@@ -127,7 +133,8 @@ export function RunHeader({
           <div className="inline-flex items-center gap-1.5 min-w-0">
             <Route
               size={16}
-              className="shrink-0 text-brand-muted"
+              className="shrink-0"
+              style={{ color: runAccentHex }}
               aria-hidden
             />
             {editing ? (

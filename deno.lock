@@ -160,6 +160,7 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
+        "npm:@floating-ui/react@~0.27.19",
         "npm:@hookform/resolvers@^5.2.2",
         "npm:@react-pdf/renderer@^4.3.3",
         "npm:@supabase/supabase-js@^2.101.1",

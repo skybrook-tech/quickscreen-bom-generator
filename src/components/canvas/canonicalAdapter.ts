@@ -207,6 +207,118 @@ function expandCanvasSegment(
   return { protos, nextSortOrder: sortOrder };
 }
 
+/** Descriptor strings for each `stableId(...)` segment call — order matches {@link expandCanvasSegment}. */
+function listExpandStableDescriptors(
+  runIdx: number,
+  flatSegIdx: number,
+  seg: CanvasSegment,
+  gates: GateInSegment[],
+): string[] {
+  const sorted = [...gates].sort(
+    (a, b) => a.positionOnSegment - b.positionOnSegment,
+  );
+  const totalMm = seg.lengthMM;
+  const out: string[] = [];
+  let cursorFraction = 0;
+
+  for (const gate of sorted) {
+    const gateStartFraction =
+      gate.positionOnSegment - gate.widthMM / totalMm / 2;
+    const gateEndFraction = gate.positionOnSegment + gate.widthMM / totalMm / 2;
+    const clampedStart = Math.max(0, gateStartFraction);
+    const clampedEnd = Math.min(1, gateEndFraction);
+
+    const panelBeforeMm = (clampedStart - cursorFraction) * totalMm;
+    if (panelBeforeMm > 1) {
+      out.push(`${runIdx}:${flatSegIdx}:before-gate${gate.gateIndex}`);
+    }
+
+    out.push(`${runIdx}:${flatSegIdx}:gate${gate.gateIndex}`);
+
+    cursorFraction = clampedEnd;
+  }
+
+  const trailingMm = (1 - cursorFraction) * totalMm;
+  if (trailingMm > 1) {
+    out.push(`${runIdx}:${flatSegIdx}:trailing`);
+  }
+
+  return out;
+}
+
+/** Same segment stable-id keys as `canvasLayoutToCanonical` for one run slice (order-preserving). */
+function collectSegmentStableDescriptors(slice: RunSlice): string[] {
+  const descriptors: string[] = [];
+  const gatesPerFlatSeg = new Map<number, GateInSegment[]>();
+  for (let gi = 0; gi < slice.summary.gates.length; gi++) {
+    const gate = slice.summary.gates[gi];
+    const flatIdx = gate.segmentIndex;
+    if (!gatesPerFlatSeg.has(flatIdx)) gatesPerFlatSeg.set(flatIdx, []);
+    gatesPerFlatSeg.get(flatIdx)!.push({
+      positionOnSegment: gate.positionOnSegment,
+      widthMM: gate.widthMM,
+      gateIndex: gi,
+    });
+  }
+
+  for (let si = 0; si < slice.segments.length; si++) {
+    const canvasSeg = slice.segments[si];
+    const flatIdx = slice.flatStart + si;
+    const gates = gatesPerFlatSeg.get(flatIdx);
+    if (gates && gates.length > 0) {
+      descriptors.push(
+        ...listExpandStableDescriptors(
+          slice.runIdx,
+          flatIdx,
+          canvasSeg,
+          gates,
+        ),
+      );
+    } else {
+      descriptors.push(`${slice.runIdx}:${flatIdx}`);
+    }
+  }
+
+  return descriptors;
+}
+
+/**
+ * Seeds `stableIds` so `canvasLayoutToCanonical` reuses existing run/segment
+ * UUIDs from a prior payload. Call this on every live canvas → canonical sync
+ * with the **current** `layout` and **previous** stored payload; otherwise each
+ * sync invents new `run:n` ids and `mergeCanonicalPreservingSegmentMeta` cannot
+ * match runs (e.g. custom `displayName` is lost).
+ *
+ * When the derived descriptor count for a run does not match the previous
+ * segment count (structure changed), only the run id is prefilled and new
+ * segment ids are allocated for that run.
+ */
+export function buildStableIdMapForLayoutSync(
+  layout: CanvasLayout,
+  previous: CanonicalPayload | null | undefined,
+): StableIdMap {
+  const stableIds: StableIdMap = {};
+  if (!previous?.runs?.length) return stableIds;
+
+  const runSlices = buildRunSlices(layout);
+  for (const slice of runSlices) {
+    const prevRun = previous.runs[slice.runIdx];
+    if (prevRun) {
+      stableIds[`run:${slice.runIdx}`] = prevRun.runId;
+    }
+    if (!prevRun?.segments?.length) continue;
+
+    const descs = collectSegmentStableDescriptors(slice);
+    if (descs.length !== prevRun.segments.length) continue;
+
+    for (let i = 0; i < descs.length; i++) {
+      stableIds[descs[i]] = prevRun.segments[i].segmentId;
+    }
+  }
+
+  return stableIds;
+}
+
 // ---------------------------------------------------------------------------
 // canvasLayoutToCanonical
 // ---------------------------------------------------------------------------
