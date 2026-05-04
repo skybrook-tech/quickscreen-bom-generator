@@ -6,6 +6,8 @@
 > **v3 Engine** — V3-1 through V3-6 complete. V3-7 (docs cross-linking) is the only remaining item.
 > Start here for an overview: [`docs/how_it_works.md`](./how_it_works.md).
 
+Latest Brief C pass: `/calculator` now has a collapsed Recent jobs panel, localStorage-backed `useJobs()` frontend seam, Save Job validation/toasts, and 5-second local draft autosave with reload restore prompt.
+
 ---
 
 ## Phases Overview
@@ -279,6 +281,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Data-driven job settings — `useProductVariables` hook loads `product_variables` from Postgres; `FALLBACK_FIELDS` deleted
 - [x] `SchemaDrivenForm` wraps fields at 1/3 width on desktop (responsive flex grid)
 - [x] Gate management UI — `GateListV3` + `GateFormV3` modal, backed by canonical payload QS_GATE runs
+- [x] Saved jobs frontend slice — collapsed Recent jobs panel, localStorage-backed `useJobs()` hook, Save Job validation/toasts, and autosave draft restore prompt.
 - [x] Extra items panel — typeahead against existing SKUs (via `search-products`) + create-on-the-fly for one-off lines
 - [x] v2 retired — `CalculatorPage`, `src/components/calculator/*`, `useCalculatorBOM`, `useFenceProducts`, `calculate-bom-v2` edge function all deleted. `/` redirects to `/calculator`.
 - [x] v1 (`/new`, `MainApp`, `calculate-bom`) removal — complete.

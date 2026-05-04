@@ -23,7 +23,7 @@ const initialState: CalculatorState = {
 
 export type CalculatorAction =
   | { type: "SET_PAYLOAD"; payload: CanonicalPayload }
-  | { type: "SET_BOM_RESULT"; result: Record<string, unknown> }
+  | { type: "SET_BOM_RESULT"; result: Record<string, unknown> | null }
   | { type: "UPSERT_RUN"; run: CanonicalRun }
   | { type: "UPSERT_SEGMENT"; runId: string; segment: CanonicalSegment }
   | { type: "REMOVE_SEGMENT"; runId: string; segmentId: string }
