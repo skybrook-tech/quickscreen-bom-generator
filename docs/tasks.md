@@ -30,6 +30,8 @@ Latest Brief J pass: fence segment settings now use progressive disclosure. Geom
 
 Latest Brief K pass: selected controls on the `/calculator` sandbox now use a clearer brand-primary selected state, checkmarks, `aria-pressed`, 8px button radius, and stronger hover affordances for product, system, and option controls.
 
+Latest Brief L pass: the calculator now has keyboard shortcut help (`?`), shortcuts for Generate BOM and CSV export, title tooltips on shortcut-enabled actions, BOM loading skeletons, a clearer empty state, and animated grand-total updates.
+
 ---
 
 ## Phases Overview

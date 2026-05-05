@@ -21,6 +21,8 @@ import { useAuth } from "../hooks/useAuth";
 import {
   Download,
   FileX2,
+  HelpCircle,
+  Keyboard,
   Loader2,
   Map as MapIcon,
   Maximize2,
@@ -30,7 +32,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import Papa from "papaparse";
@@ -113,6 +115,39 @@ function initialRunPaneWidth() {
   return Math.round(Math.min(680, Math.max(390, window.innerWidth / 3)));
 }
 
+function useAnimatedNumber(target: number) {
+  const [value, setValue] = useState(target);
+  const previous = useRef(target);
+
+  useEffect(() => {
+    const start = previous.current;
+    const delta = target - start;
+    if (Math.abs(delta) < 0.01) {
+      setValue(target);
+      previous.current = target;
+      return;
+    }
+
+    let frame = 0;
+    const startTime = performance.now();
+    const duration = 420;
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - startTime) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(start + delta * eased);
+      if (progress < 1) {
+        frame = requestAnimationFrame(tick);
+      } else {
+        previous.current = target;
+      }
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [target]);
+
+  return value;
+}
+
 function CalculatorV3Content() {
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
@@ -131,6 +166,7 @@ function CalculatorV3Content() {
   const [mobileLayout, setMobileLayout] = useState(false);
   const [layoutOpen, setLayoutOpen] = useState(false);
   const [layoutFullscreen, setLayoutFullscreen] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const handleActiveBomSummaryChange = useCallback(
     (summary: { label: string; grandTotal: number }) => {
       setActiveBomSummary({
@@ -194,6 +230,33 @@ function CalculatorV3Content() {
       // Error is available via bomMutation.error.
     }
   }
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      const target = event.target as HTMLElement | null;
+      const typing =
+        target?.tagName === "INPUT" ||
+        target?.tagName === "TEXTAREA" ||
+        target?.tagName === "SELECT" ||
+        target?.isContentEditable;
+      if (typing) return;
+      const mod = event.ctrlKey || event.metaKey;
+      if (event.key === "?") {
+        event.preventDefault();
+        setShortcutsOpen((open) => !open);
+      }
+      if (mod && event.key === "Enter") {
+        event.preventDefault();
+        void handleGenerateBOM();
+      }
+      if (mod && event.key.toLowerCase() === "e") {
+        event.preventDefault();
+        handleExportCsv();
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  });
 
   const lastBom = state.bomResult;
   const baseBomLines = ((lastBom?.lines as BOMLineItem[]) ?? []);
@@ -587,6 +650,9 @@ function CalculatorV3Content() {
     ? `${systemSummary} - ${(summaryLength / 1000).toFixed(2)}m total - ${summaryHeight}mm high - ${colourName(firstRunVariables.colour_code)} - ${gateSummary}`
     : cleanJobName;
   const saveJobLabel = jobName.trim() ? `Save ${jobName.trim()}` : "Save Job";
+  const animatedGrandTotal = useAnimatedNumber(
+    activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
+  );
 
   return (
     <AppShell>
@@ -722,7 +788,7 @@ function CalculatorV3Content() {
                     {activeBomSummary?.label ?? "Auto quantity breaks"}
                   </p>
                   <p className="font-mono text-4xl font-black tabular-nums text-brand-primary sm:text-5xl">
-                    ${formatMoney(activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0)}
+                    ${formatMoney(animatedGrandTotal)}
                   </p>
                 </div>
               </div>
@@ -731,6 +797,7 @@ function CalculatorV3Content() {
                   type="button"
                   onClick={handleGenerateBOM}
                   disabled={bomMutation.isPending || hasErrors || noSegments}
+                  title="Generate BOM (Ctrl+Enter)"
                   className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {bomMutation.isPending && (
@@ -754,6 +821,7 @@ function CalculatorV3Content() {
                   type="button"
                   onClick={handlePrintBom}
                   disabled={!bomResultForTabs}
+                  title="Export CSV (Ctrl+E)"
                   className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <Printer size={16} />
@@ -768,9 +836,32 @@ function CalculatorV3Content() {
                   <Download size={16} />
                   Export CSV
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setShortcutsOpen(true)}
+                  title="Keyboard shortcuts (?)"
+                  className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
+                >
+                  <Keyboard size={16} />
+                  Shortcuts
+                </button>
               </div>
 
-              {bomResultForTabs && !hasErrors ? (
+              {bomMutation.isPending ? (
+                <div className="space-y-3" aria-label="Generating BOM">
+                  {Array.from({ length: 7 }).map((_, index) => (
+                    <div
+                      key={index}
+                      className="grid gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3 sm:grid-cols-[8rem_1fr_5rem_6rem]"
+                    >
+                      <span className="h-4 animate-pulse rounded bg-brand-border/70" />
+                      <span className="h-4 animate-pulse rounded bg-brand-border/60" />
+                      <span className="h-4 animate-pulse rounded bg-brand-border/50" />
+                      <span className="h-4 animate-pulse rounded bg-brand-border/50" />
+                    </div>
+                  ))}
+                </div>
+              ) : bomResultForTabs && !hasErrors ? (
                 <>
                   <BOMResultTabs
                     result={bomResultForTabs}
@@ -810,6 +901,7 @@ function CalculatorV3Content() {
                 </>
               ) : (
                 <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/60 px-5 py-10 text-center text-sm font-semibold text-brand-muted">
+                  <HelpCircle className="mx-auto mb-3 text-brand-primary" size={32} />
                   Configure a run on the left, then generate the BOM to see selected products, quantities, GST, and grand total.
                 </div>
               )}
@@ -865,6 +957,60 @@ function CalculatorV3Content() {
           </div>
         )}
       </div>
+      {shortcutsOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Keyboard shortcuts"
+          onClick={() => setShortcutsOpen(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-brand-border bg-brand-card p-5 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="text-base font-extrabold text-brand-text">
+                Keyboard shortcuts
+              </h2>
+              <button
+                type="button"
+                onClick={() => setShortcutsOpen(false)}
+                className="rounded-lg p-1 text-brand-muted hover:bg-brand-border/40 hover:text-brand-text"
+                aria-label="Close shortcuts"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <dl className="space-y-3 text-sm">
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-brand-muted">Generate BOM</dt>
+                <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
+                  Ctrl + Enter
+                </dd>
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-brand-muted">Export CSV</dt>
+                <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
+                  Ctrl + E
+                </dd>
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-brand-muted">Open this panel</dt>
+                <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
+                  ?
+                </dd>
+              </div>
+              <div className="flex items-center justify-between gap-4">
+                <dt className="text-brand-muted">Canvas undo</dt>
+                <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
+                  Ctrl + Z
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }
