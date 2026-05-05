@@ -36,6 +36,8 @@ Latest Brief M pass: suggested accessories now support add/remove toggling, pers
 
 Latest Brief N pass: the app header now prioritises The Glass Outlet, the desktop run/BOM divider width persists locally, and mobile users get bottom Run/BOM/Map tabs so the BOM and layout map remain reachable on phones.
 
+Latest Brief O pass: the layout canvas now renders against a device-pixel-ratio-aware backing store for sharper lines on laptops/retina screens, and gate placement/dragging can snap to 100mm increments from the existing canvas toolbar.
+
 ---
 
 ## Phases Overview

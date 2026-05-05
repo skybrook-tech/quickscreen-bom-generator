@@ -357,6 +357,13 @@ function gateAnchorForPlacement(seg: Segment, t: number, gateWidthMM: number): G
   return "center";
 }
 
+function snapGatePositionTo100mm(seg: Segment, t: number, enabled: boolean): number {
+  const clamped = Math.max(0, Math.min(1, t));
+  if (!enabled || seg.lengthMM <= 0) return clamped;
+  const snappedMM = Math.round((clamped * seg.lengthMM) / 100) * 100;
+  return Math.max(0, Math.min(1, snappedMM / seg.lengthMM));
+}
+
 function gateRange(seg: Segment, gate: Pick<GateMarker, "t" | "widthMM" | "anchor">) {
   if (seg.lengthMM <= 0) {
     return { tStart: gate.t, tEnd: gate.t, tMid: gate.t };
@@ -460,6 +467,7 @@ export function initCanvasEngine(
   let pan: Point = { x: 0, y: 0 };
   let scale = DEFAULT_SCALE; // px per metre
   let snap = config.snapToGrid;
+  let gateSnap100 = true;
   let showGrid = config.showGrid;
   let gridSize = config.gridSize;
   let allowedAngles: number[] = config.allowedAngles ?? [];
@@ -513,13 +521,30 @@ export function initCanvasEngine(
   // Using the canonical data ensures the overlay always matches the form's calcRunStats output.
   let pushedStatsGlobal = '';
   let pushedStatsPerRun: string[] = [];
+  let cssCanvasWidth = 0;
+  let cssCanvasHeight = 0;
+  let devicePixelRatioScale = 1;
 
   // Resize canvas to fill its CSS size
   function resizeCanvas() {
     const rect = canvas.getBoundingClientRect();
-    if (canvas.width !== rect.width || canvas.height !== rect.height) {
-      canvas.width = rect.width;
-      canvas.height = rect.height;
+    const nextDpr = Math.max(1, window.devicePixelRatio || 1);
+    const nextWidth = Math.max(1, Math.round(rect.width));
+    const nextHeight = Math.max(1, Math.round(rect.height));
+    const backingWidth = Math.round(nextWidth * nextDpr);
+    const backingHeight = Math.round(nextHeight * nextDpr);
+    if (
+      canvas.width !== backingWidth ||
+      canvas.height !== backingHeight ||
+      cssCanvasWidth !== nextWidth ||
+      cssCanvasHeight !== nextHeight ||
+      devicePixelRatioScale !== nextDpr
+    ) {
+      cssCanvasWidth = nextWidth;
+      cssCanvasHeight = nextHeight;
+      devicePixelRatioScale = nextDpr;
+      canvas.width = backingWidth;
+      canvas.height = backingHeight;
     }
   }
 
@@ -701,10 +726,19 @@ export function initCanvasEngine(
 
   function draw() {
     resizeCanvas();
-    const W = canvas.width;
-    const H = canvas.height;
+    const W = cssCanvasWidth || canvas.getBoundingClientRect().width || 800;
+    const H = cssCanvasHeight || canvas.getBoundingClientRect().height || 420;
 
-    ctx.clearRect(0, 0, W, H);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.setTransform(
+      devicePixelRatioScale,
+      0,
+      0,
+      devicePixelRatioScale,
+      0,
+      0,
+    );
 
     ctx.save();
     ctx.translate(pan.x, pan.y);
@@ -1040,14 +1074,10 @@ export function initCanvasEngine(
     const w = Math.max(...lines.map((text) => ctx.measureText(text).width)) + pad * 2;
     const h = lines.length * (fs + 3) + pad * 2;
     const anchor = canvasToScreen(mouseCanvas, pan, zoom);
-    const x = Math.min(
-      canvas.width - w - 10,
-      Math.max(10, anchor.x + 18),
-    );
-    const y = Math.min(
-      canvas.height - h - 10,
-      Math.max(10, anchor.y + 18),
-    );
+    const screenW = cssCanvasWidth || canvas.getBoundingClientRect().width || 800;
+    const screenH = cssCanvasHeight || canvas.getBoundingClientRect().height || 420;
+    const x = Math.min(screenW - w - 10, Math.max(10, anchor.x + 18));
+    const y = Math.min(screenH - h - 10, Math.max(10, anchor.y + 18));
     ctx.fillStyle = "rgba(15,23,42,0.78)";
     ctx.beginPath();
     ctx.roundRect(x, y, w, h, 4);
@@ -1759,11 +1789,20 @@ export function initCanvasEngine(
         const allSegs = allSegmentsFlat();
         const info = allSegs[flatIdx];
         const proj = closestPointOnSegment(canvasPt, info.seg);
-        const gateAnchor = gateAnchorForPlacement(info.seg, proj.t, DEFAULT_GATE_WIDTH_MM);
+        const snappedGateT = snapGatePositionTo100mm(
+          info.seg,
+          proj.t,
+          gateSnap100,
+        );
+        const gateAnchor = gateAnchorForPlacement(
+          info.seg,
+          snappedGateT,
+          DEFAULT_GATE_WIDTH_MM,
+        );
         const gateIdx = info.seg.gates.length;
         undoStack.push({ type: "ADD_GATE", segIdx: flatIdx, gateIdx });
         info.seg.gates.push({
-          t: Math.max(0, Math.min(1, proj.t)),
+          t: snappedGateT,
           anchor: gateAnchor,
           widthMM: DEFAULT_GATE_WIDTH_MM,
           useGatePostsAsFenceTermination: true,
@@ -1842,7 +1881,7 @@ export function initCanvasEngine(
             ((canvasPt.x - seg.p1.x) * dx + (canvasPt.y - seg.p1.y) * dy) /
             len2;
           const gate = seg.gates[draggingGate.gateIdx];
-          gate.t = Math.max(0, Math.min(1, t));
+          gate.t = snapGatePositionTo100mm(seg, t, gateSnap100);
           gate.anchor = gateAnchorForPlacement(seg, gate.t, gate.widthMM);
         }
         scheduleRedraw();
@@ -2239,6 +2278,11 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  function setGateSnapTo100mm(enabled: boolean) {
+    gateSnap100 = enabled;
+    scheduleRedraw();
+  }
+
   function setAllowedAngles(angles: number[]) {
     allowedAngles = angles;
     scheduleRedraw();
@@ -2507,6 +2551,7 @@ export function initCanvasEngine(
     clear,
     resetView,
     setSnapToGrid,
+    setGateSnapTo100mm,
     setAllowedAngles,
     setShowGrid,
     setScale,

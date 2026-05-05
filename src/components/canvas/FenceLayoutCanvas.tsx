@@ -71,6 +71,7 @@ export function FenceLayoutCanvas({
     "draw",
   );
   const [snapEnabled, setSnapEnabled] = useState(true);
+  const [gateSnap100, setGateSnap100] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
   const [expanded, setExpanded] = useState(false);
   const [applied, setApplied] = useState(false);
@@ -197,6 +198,10 @@ export function FenceLayoutCanvas({
     engineRef.current?.setShowGrid(showGrid);
   }, [showGrid]);
 
+  useEffect(() => {
+    engineRef.current?.setGateSnapTo100mm(gateSnap100);
+  }, [gateSnap100]);
+
   // Sync postPositions prop into the canvas engine
   useEffect(() => {
     engineRef.current?.setPostPositions(postPositions ?? null);
@@ -297,6 +302,8 @@ export function FenceLayoutCanvas({
         onToolChange={setActiveTool}
         snapEnabled={snapEnabled}
         onSnapToggle={setSnapEnabled}
+        gateSnap100={gateSnap100}
+        onGateSnap100Toggle={setGateSnap100}
         showGrid={showGrid}
         onToggleGrid={setShowGrid}
         expanded={expanded}

@@ -21,6 +21,8 @@ interface CanvasToolbarProps {
   onToolChange: (t: "draw" | "gate" | "move" | "boundary") => void;
   snapEnabled: boolean;
   onSnapToggle: (v: boolean) => void;
+  gateSnap100: boolean;
+  onGateSnap100Toggle: (v: boolean) => void;
   showGrid: boolean;
   onToggleGrid: (v: boolean) => void;
   expanded: boolean;
@@ -33,6 +35,8 @@ export function CanvasToolbar({
   onToolChange,
   snapEnabled,
   onSnapToggle,
+  gateSnap100,
+  onGateSnap100Toggle,
   showGrid,
   onToggleGrid,
   expanded,
@@ -138,7 +142,20 @@ export function CanvasToolbar({
           }}
           className="accent-brand-accent"
         />
-        Snap to grid
+        Angle/grid snap
+      </label>
+
+      <label className="flex items-center gap-1.5 text-xs text-brand-muted cursor-pointer">
+        <input
+          type="checkbox"
+          checked={gateSnap100}
+          onChange={(e) => {
+            onGateSnap100Toggle(e.target.checked);
+            engineRef.current?.setGateSnapTo100mm(e.target.checked);
+          }}
+          className="accent-brand-accent"
+        />
+        Gate snap 100mm
       </label>
 
       {/* Grid toggle */}
