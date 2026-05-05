@@ -26,6 +26,8 @@ Latest Codex PR brief pass: Tier 1 Brief A design foundations are in progress wi
 
 Latest Brief I pass: the `/calculator` BOM hero now uses an editorial summary layout with the scoped total as the main typographic element, BOM rows show the active quantity-break tier, and rows close to the next seeded quantity break show how many more units are needed for the next tier.
 
+Latest Brief J pass: fence segment settings now use progressive disclosure. Geometry stays immediately visible, deeper Style/Posts/Advanced settings sit behind a persisted "Show more settings" control, keeping the initial segment editor compact.
+
 ---
 
 ## Phases Overview

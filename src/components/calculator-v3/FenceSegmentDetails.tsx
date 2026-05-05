@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../types/canonical.types";
@@ -29,6 +29,38 @@ const POST_SIZE_LABELS: Record<string, string> = {
 interface Props {
   runId: string;
   seg: CanonicalSegment;
+}
+
+function sectionStorageKey(segmentId: string) {
+  return `qsg-segment-settings:${segmentId}`;
+}
+
+function SettingsSection({
+  title,
+  children,
+  defaultOpen = false,
+}: {
+  title: string;
+  children: ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <div className="rounded-2xl border border-brand-border/60 bg-brand-bg/60">
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm font-extrabold text-brand-text"
+      >
+        <span>{title}</span>
+        <span className="text-xs font-bold text-brand-primary">
+          {open ? "Hide" : "Show"}
+        </span>
+      </button>
+      {open && <div className="space-y-3 border-t border-brand-border/50 p-3">{children}</div>}
+    </div>
+  );
 }
 
 export function FenceSegmentDetails({ runId, seg }: Props) {
@@ -86,10 +118,22 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   );
   const effectiveMax = clampPostSpacing(v.max_panel_width_mm, jobMax);
   const [maxSpacingDraft, setMaxSpacingDraft] = useState(String(effectiveMax));
+  const [showMoreSettings, setShowMoreSettings] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem(sectionStorageKey(seg.segmentId)) === "open";
+  });
 
   useEffect(() => {
     setMaxSpacingDraft(String(effectiveMax));
   }, [effectiveMax]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(
+      sectionStorageKey(seg.segmentId),
+      showMoreSettings ? "open" : "closed",
+    );
+  }, [seg.segmentId, showMoreSettings]);
 
   function updateMaxPanelWidth(value: number | null) {
     const nextValue = value === null ? null : clampPostSpacing(value, jobMax);
@@ -296,58 +340,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
   return (
     <div className="space-y-4">
-      {isDefaultSegment && run && (
-        <div className="space-y-3 rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
-          <p className="text-sm font-bold text-brand-muted">Default settings for this run</p>
-          <div>
-            <p className="mb-2 text-sm font-bold text-brand-muted">System type</p>
-            <div className="flex flex-wrap gap-2">
-              {localFenceProducts.map((product) => (
-                <button
-                  key={product.system_type}
-                  type="button"
-                  onClick={() => changeRunProduct(product.system_type)}
-                  className={`rounded-full border px-3 py-2 text-sm font-bold shadow-sm transition-colors ${
-                    product.system_type === run.productCode
-                      ? "border-brand-primary bg-brand-primary text-white shadow-sm"
-                      : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary"
-                  }`}
-                >
-                  {product.system_type}
-                </button>
-              ))}
-            </div>
-          </div>
-          <SchemaDrivenForm
-            fields={optionFields}
-            variables={mergedJobDisplay}
-            onChange={handleOptionChange}
-          />
-          {visibleRunFields.length > 0 && (
-            <SchemaDrivenForm
-              fields={visibleRunFields}
-              variables={mergedJobDisplay}
-              onChange={handleOptionChange}
-            />
-          )}
-        </div>
-      )}
-
-      {!isDefaultSegment && optionFields.length > 0 && (
-        <div className="rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
-          <p className="mb-2 text-sm font-bold text-brand-muted">
-            Segment overrides
-          </p>
-          <SchemaDrivenForm
-            fields={optionFields}
-            variables={mergedJobDisplay}
-            onChange={handleOptionChange}
-          />
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {/* Max post spacing override */}
+      <SettingsSection title="Geometry" defaultOpen>
         <label className="flex flex-col gap-1">
           <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
           <input
@@ -364,44 +357,102 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
             className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
           />
         </label>
+      </SettingsSection>
 
-        {/* Post type - data-driven from run-scoped post_size variable */}
-        <label className="flex flex-col gap-1">
-          <span className="text-sm font-bold text-brand-muted">Post type</span>
-          <select
-            value={postSize}
-            onChange={(e) =>
-              setScalar(
-                SEGMENT_OPTION_KEYS.postSize,
-                e.target.value || null,
-              )
-            }
-            className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-          >
-            <option value="">Job default</option>
-            {postSizeOptions.map((opt) => (
-              <option key={opt} value={opt}>
-                {POST_SIZE_LABELS[opt] ?? `${opt}mm Post`}
-              </option>
-            ))}
-            <option value="custom">Non-standard post</option>
-          </select>
-        </label>
+      <button
+        type="button"
+        onClick={() => setShowMoreSettings((value) => !value)}
+        className="w-full rounded-lg border border-brand-primary/35 bg-brand-primary/10 px-3 py-2 text-sm font-extrabold text-brand-primary transition-colors hover:bg-brand-primary hover:text-white"
+      >
+        {showMoreSettings ? "Hide more settings" : "Show more settings"}
+      </button>
 
-        {/* Post width - only unlocked for non-standard posts */}
-        {isCustomPost && (
-          <label className="flex flex-col gap-1">
-            <span className="text-sm font-bold text-brand-muted">Post width (mm)</span>
-            <NumberInput
-              value={(v[SEGMENT_OPTION_KEYS.postWidthMm] as number | null) ?? null}
-              onChange={(val) =>
-                setScalar(SEGMENT_OPTION_KEYS.postWidthMm, val)
-              }
-              min={1}
-            />
-          </label>
-        )}
-      </div>
+      {showMoreSettings && (
+        <>
+          {(isDefaultSegment && run) || (!isDefaultSegment && optionFields.length > 0) ? (
+            <SettingsSection title={isDefaultSegment ? "Style" : "Style overrides"} defaultOpen>
+              {isDefaultSegment && run && (
+                <div>
+                  <p className="mb-2 text-sm font-bold text-brand-muted">System type</p>
+                  <div className="flex flex-wrap gap-2">
+                    {localFenceProducts.map((product) => (
+                      <button
+                        key={product.system_type}
+                        type="button"
+                        onClick={() => changeRunProduct(product.system_type)}
+                        className={`rounded-full border px-3 py-2 text-sm font-bold shadow-sm transition-colors ${
+                          product.system_type === run.productCode
+                            ? "border-brand-primary bg-brand-primary text-white shadow-sm"
+                            : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary"
+                        }`}
+                      >
+                        {product.system_type}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {optionFields.length > 0 && (
+                <SchemaDrivenForm
+                  fields={optionFields}
+                  variables={mergedJobDisplay}
+                  onChange={handleOptionChange}
+                />
+              )}
+            </SettingsSection>
+          ) : null}
+
+          <SettingsSection title="Posts">
+            {isDefaultSegment && visibleRunFields.length > 0 && (
+              <SchemaDrivenForm
+                fields={visibleRunFields}
+                variables={mergedJobDisplay}
+                onChange={handleOptionChange}
+              />
+            )}
+            <label className="flex flex-col gap-1">
+              <span className="text-sm font-bold text-brand-muted">Post type</span>
+              <select
+                value={postSize}
+                onChange={(e) =>
+                  setScalar(
+                    SEGMENT_OPTION_KEYS.postSize,
+                    e.target.value || null,
+                  )
+                }
+                className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+              >
+                <option value="">Job default</option>
+                {postSizeOptions.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {POST_SIZE_LABELS[opt] ?? `${opt}mm Post`}
+                  </option>
+                ))}
+                <option value="custom">Non-standard post</option>
+              </select>
+            </label>
+          </SettingsSection>
+
+          <SettingsSection title="Advanced">
+            {isCustomPost ? (
+              <label className="flex flex-col gap-1">
+                <span className="text-sm font-bold text-brand-muted">Post width (mm)</span>
+                <NumberInput
+                  value={(v[SEGMENT_OPTION_KEYS.postWidthMm] as number | null) ?? null}
+                  onChange={(val) =>
+                    setScalar(SEGMENT_OPTION_KEYS.postWidthMm, val)
+                  }
+                  min={1}
+                />
+              </label>
+            ) : (
+              <p className="text-xs font-semibold text-brand-muted">
+                Choose a non-standard post type to enter a custom post width.
+              </p>
+            )}
+          </SettingsSection>
+        </>
+      )}
 
     </div>
   );
