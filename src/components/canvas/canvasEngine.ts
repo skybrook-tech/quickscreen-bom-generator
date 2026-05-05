@@ -8,6 +8,7 @@ export interface CanvasSegment {
   endY: number;
   lengthMM: number; // real-world length in mm (user-editable)
   angleDeg: number; // angle from horizontal
+  contextType?: "boundary" | "building";
 }
 
 export type GateAnchor = "start" | "center" | "end";
@@ -17,6 +18,7 @@ export interface CanvasGate {
   positionOnSegment: number; // 0-1 fraction along segment
   anchor?: GateAnchor;
   widthMM: number;
+  gateId?: string;
   useGatePostsAsFenceTermination?: boolean;
 }
 
@@ -84,6 +86,8 @@ interface Segment {
 interface SegmentMapLabel {
   text: string;
   t: number;
+  tStart: number;
+  tEnd: number;
   kind: "panel" | "gate";
 }
 
@@ -95,7 +99,7 @@ interface GateMarker {
   useGatePostsAsFenceTermination?: boolean;
 }
 
-type Tool = "draw" | "gate" | "move" | "boundary";
+type Tool = "draw" | "gate" | "move" | "boundary" | "building";
 
 type UndoAction =
   | { type: "ADD_POINT"; runIdx: number }
@@ -122,6 +126,7 @@ interface Run {
   finished: boolean;
   segments: Segment[];
   isBoundary?: boolean;
+  boundaryType?: "boundary" | "building";
 }
 
 // ── Scale constant: pixels per metre ──────────────────────────────────────────
@@ -511,6 +516,7 @@ export function initCanvasEngine(
   let undoStack: UndoAction[] = [];
   let redoStack: RedoEntry[] = [];
   let gateVisuals: Record<string, CanvasGateVisual> = {};
+  let highlightedMapLabel: string | null = null;
   let mapImage: HTMLImageElement | null = null;
   let mapOpacity = 0.5;
   let mapWorldOriginX = 0; // world px — centre of the tile
@@ -627,6 +633,26 @@ export function initCanvasEngine(
       : { gateType: "single-swing", swingDirection: "out" };
   }
 
+  function drawHighlightedMapLabel(seg: Segment, label: SegmentMapLabel) {
+    const start = lerp(seg.p1, seg.p2, label.tStart);
+    const end = lerp(seg.p1, seg.p2, label.tEnd);
+    ctx.save();
+    ctx.strokeStyle = "rgba(245,158,11,0.88)";
+    ctx.lineWidth = 9 / zoom;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,0.9)";
+    ctx.lineWidth = 3 / zoom;
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.stroke();
+    ctx.restore();
+  }
+
   function setSegmentLength(flatIdx: number, lengthMM: number) {
     const info = allSegmentsFlat()[flatIdx];
     if (!info || lengthMM <= 0) return;
@@ -704,6 +730,7 @@ export function initCanvasEngine(
           positionOnSegment: g.t,
           anchor: g.anchor,
           widthMM: g.widthMM,
+          gateId: g.gateId,
           useGatePostsAsFenceTermination:
             g.useGatePostsAsFenceTermination ?? true,
         });
@@ -722,6 +749,7 @@ export function initCanvasEngine(
           endY: seg.p2.y,
           lengthMM: seg.lengthMM,
           angleDeg: angleDeg(seg.p1, seg.p2),
+          contextType: run.boundaryType ?? "boundary",
         });
       }
     }
@@ -745,6 +773,7 @@ export function initCanvasEngine(
             positionOnSegment: g.t,
             anchor: g.anchor,
             widthMM: g.widthMM,
+            gateId: g.gateId,
             useGatePostsAsFenceTermination:
               g.useGatePostsAsFenceTermination ?? true,
           });
@@ -848,7 +877,7 @@ export function initCanvasEngine(
     // Boundary runs — dashed gray lines (non-product context lines)
     {
       const hasActiveBoundary =
-        tool === "boundary" &&
+        (tool === "boundary" || tool === "building") &&
         activeRunIdx >= 0 &&
         runs[activeRunIdx]?.isBoundary &&
         !runs[activeRunIdx].finished;
@@ -856,9 +885,10 @@ export function initCanvasEngine(
         if (!run.isBoundary) continue;
         if (run.segments.length === 0) continue;
         ctx.save();
-        ctx.setLineDash([8 / zoom, 4 / zoom]);
-        ctx.strokeStyle = "#6b7280";
-        ctx.lineWidth = 2 / zoom;
+        const isBuilding = run.boundaryType === "building";
+        ctx.setLineDash(isBuilding ? [] : [8 / zoom, 4 / zoom]);
+        ctx.strokeStyle = isBuilding ? "rgba(30,64,175,0.88)" : "#6b7280";
+        ctx.lineWidth = isBuilding ? 3 / zoom : 2 / zoom;
         for (const seg of run.segments) {
           ctx.beginPath();
           ctx.moveTo(seg.p1.x, seg.p1.y);
@@ -873,9 +903,10 @@ export function initCanvasEngine(
         const run = runs[activeRunIdx];
         const lastPt = run.points[run.points.length - 1];
         ctx.save();
-        ctx.setLineDash([6 / zoom, 4 / zoom]);
-        ctx.strokeStyle = "rgba(107,114,128,0.5)";
-        ctx.lineWidth = 2 / zoom;
+        const isBuilding = run.boundaryType === "building";
+        ctx.setLineDash(isBuilding ? [] : [6 / zoom, 4 / zoom]);
+        ctx.strokeStyle = isBuilding ? "rgba(30,64,175,0.5)" : "rgba(107,114,128,0.5)";
+        ctx.lineWidth = isBuilding ? 3 / zoom : 2 / zoom;
         ctx.beginPath();
         ctx.moveTo(lastPt.x, lastPt.y);
         ctx.lineTo(mouseCanvas.x, mouseCanvas.y);
@@ -886,15 +917,16 @@ export function initCanvasEngine(
     }
 
     // Preview line (while drawing)
-    if (tool === "draw" && activeRunIdx >= 0) {
+    if ((tool === "draw" || tool === "building") && activeRunIdx >= 0) {
       const run = runs[activeRunIdx];
       if (run && run.points.length > 0 && !run.finished) {
         const lastPt = run.points[run.points.length - 1];
         const target = snapDrawingPoint(mouseCanvas);
         ctx.save();
-        ctx.setLineDash([6, 4]);
-        ctx.strokeStyle = COLOR.preview;
-        ctx.lineWidth = 2 / zoom;
+        const isBuilding = run.boundaryType === "building";
+        ctx.setLineDash(isBuilding ? [] : [6, 4]);
+        ctx.strokeStyle = isBuilding ? "rgba(30,64,175,0.72)" : COLOR.preview;
+        ctx.lineWidth = isBuilding ? 3 / zoom : 2 / zoom;
         ctx.beginPath();
         ctx.moveTo(lastPt.x, lastPt.y);
         ctx.lineTo(target.x, target.y);
@@ -906,7 +938,7 @@ export function initCanvasEngine(
 
         // Post position preview along the in-progress segment
         const segDist = dist(lastPt, target);
-        if (jobPanelWidthMm && jobPanelWidthMm > 0 && segDist > 0) {
+        if (!isBuilding && jobPanelWidthMm && jobPanelWidthMm > 0 && segDist > 0) {
           const previewLengthMm = pixelsToMM(segDist, scale);
           const numPanels = Math.ceil(previewLengthMm / jobPanelWidthMm);
           const sq = 5 / zoom;
@@ -1282,7 +1314,7 @@ export function initCanvasEngine(
       .sort((a, b) => a.tStart - b.tStart);
 
     if (gates.length === 0) {
-      labels.push({ text: `R${runNumber}S${panelNumber++}`, t: 0.5, kind: "panel" });
+      labels.push({ text: `R${runNumber}S${panelNumber++}`, t: 0.5, tStart: 0, tEnd: 1, kind: "panel" });
       return { labels, nextPanelNumber: panelNumber, nextGateNumber: gateNumber };
     }
 
@@ -1292,12 +1324,16 @@ export function initCanvasEngine(
         labels.push({
           text: `R${runNumber}S${panelNumber++}`,
           t: (cursor + gate.tStart) / 2,
+          tStart: cursor,
+          tEnd: gate.tStart,
           kind: "panel",
         });
       }
       labels.push({
         text: `R${runNumber}G${gateNumber++}`,
         t: gate.tMid,
+        tStart: gate.tStart,
+        tEnd: gate.tEnd,
         kind: "gate",
       });
       cursor = gate.tEnd;
@@ -1306,6 +1342,8 @@ export function initCanvasEngine(
       labels.push({
         text: `R${runNumber}S${panelNumber++}`,
         t: (cursor + 1) / 2,
+        tStart: cursor,
+        tEnd: 1,
         kind: "panel",
       });
     }
@@ -1406,6 +1444,7 @@ export function initCanvasEngine(
     const lw = 3 / zoom;
     const segColor = hovered ? runColorHover : runColor;
     const segLw = hovered ? lw * 1.5 : lw;
+    const highlightedLabel = mapLabels.find((label) => label.text === highlightedMapLabel);
 
     // Build sorted list of gate gaps as (tStart, tEnd) pairs
     type GateGap = { tStart: number; tEnd: number; widthMM: number; gate: GateMarker };
@@ -1414,6 +1453,8 @@ export function initCanvasEngine(
       .sort((a, b) => a.tStart - b.tStart);
 
     // Draw fence line as sections between/around gate gaps
+    if (highlightedLabel) drawHighlightedMapLabel(seg, highlightedLabel);
+
     ctx.save();
     ctx.strokeStyle = segColor;
     ctx.lineWidth = segLw;
@@ -1830,7 +1871,7 @@ export function initCanvasEngine(
       }
     }
 
-    if (tool === "draw") {
+    if (tool === "draw" || tool === "building") {
       if (isNearActiveLastPoint(screenPtDown)) {
         stopChain(false);
         return;
@@ -1855,7 +1896,7 @@ export function initCanvasEngine(
           }
         }
 
-        if (resumedIdx >= 0) {
+        if (resumedIdx >= 0 && tool === "draw") {
           // Resume the existing run — un-finish it so new points can be appended
           runs[resumedIdx].finished = false;
           activeRunIdx = resumedIdx;
@@ -1866,6 +1907,8 @@ export function initCanvasEngine(
             points: [worldPt],
             finished: false,
             segments: [],
+            isBoundary: tool === "building",
+            boundaryType: tool === "building" ? "building" : undefined,
           };
           pushUndo({ type: "ADD_RUN" });
           runs.push(newRun);
@@ -2071,7 +2114,7 @@ export function initCanvasEngine(
           ? tool === "gate"
             ? "crosshair"
             : "pointer"
-          : tool === "draw"
+          : tool === "draw" || tool === "building"
             ? "crosshair"
             : "default";
     }
@@ -2113,7 +2156,7 @@ export function initCanvasEngine(
         );
       }
       draggingGate = null;
-      canvas.style.cursor = tool === "draw" ? "crosshair" : "default";
+      canvas.style.cursor = tool === "draw" || tool === "building" ? "crosshair" : "default";
       return;
     }
   }
@@ -2121,7 +2164,7 @@ export function initCanvasEngine(
   function onDblClick(e: MouseEvent) {
     if (editingLabel) return;
 
-    if (tool === "draw" && activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
+    if ((tool === "draw" || tool === "building") && activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
       const screenPt = eventToScreen(e);
       stopChain(!isNearActiveLastPoint(screenPt));
       scheduleRedraw();
@@ -2347,14 +2390,14 @@ export function initCanvasEngine(
 
   function setTool(t: Tool) {
     tool = t;
-    if (t === "draw" || t === "boundary") {
+    if (t === "draw" || t === "boundary" || t === "building") {
       canvas.style.cursor = "crosshair";
     } else if (t === "move") {
       canvas.style.cursor = "grab";
     } else {
       canvas.style.cursor = "default";
     }
-    if (t !== "draw" && t !== "boundary") {
+    if (t !== "draw" && t !== "boundary" && t !== "building") {
       // Finish any active drawing run
       if (activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
         const run = runs[activeRunIdx];
@@ -2596,6 +2639,11 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  function setHighlightedMapLabel(label: string | null) {
+    highlightedMapLabel = label;
+    scheduleRedraw();
+  }
+
   /**
    * Replace the current canvas state with the runs described by `layout`.
    * Used for form-driven geometry changes (bidirectional sync).
@@ -2642,6 +2690,7 @@ export function initCanvasEngine(
         segments: [{ p1, p2, lengthMM: cseg.lengthMM, gates: [] }],
         finished: true,
         isBoundary: true,
+        boundaryType: cseg.contextType ?? "boundary",
       });
     }
 
@@ -2657,6 +2706,7 @@ export function initCanvasEngine(
           t: g.positionOnSegment,
           anchor: g.anchor,
           widthMM: g.widthMM,
+          gateId: g.gateId,
           useGatePostsAsFenceTermination:
             g.useGatePostsAsFenceTermination ?? true,
         }));
@@ -2729,6 +2779,7 @@ export function initCanvasEngine(
     setJobPanelWidth,
     setRunStatsTexts,
     setGateVisuals,
+    setHighlightedMapLabel,
     loadLayout,
     fitToWidth,
     fitToContent,

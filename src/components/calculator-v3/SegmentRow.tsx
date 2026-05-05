@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import { CheckCircle2, X } from "lucide-react";
+import { CheckCircle2, SlidersHorizontal, X } from "lucide-react";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
 import NumberInput from "../shared/NumberInput";
@@ -19,6 +19,7 @@ import {
   heightOptionsForSystem,
   maxPanelWidthForSystem,
 } from "../../lib/productOptionRules";
+import { colourName } from "./ColourPalette";
 
 interface Props {
   runId: string;
@@ -29,22 +30,6 @@ interface Props {
   onToggle: () => void;
   displayLabel?: string;
 }
-
-const COLOUR_NAMES: Record<string, string> = {
-  B: "Black Satin",
-  MN: "Monument Matt",
-  G: "Woodland Grey Matt",
-  SM: "Surfmist Matt",
-  W: "Pearl White Gloss",
-  BS: "Basalt Satin",
-  D: "Dune Satin",
-  M: "Mill",
-  P: "Primrose",
-  PB: "Paperbark",
-  S: "Palladium Silver Pearl",
-  KWI: "Kwila",
-  WRC: "Western Red Cedar",
-};
 
 const MOUNTING_LABELS: Record<string, string> = {
   in_ground: "Concreted",
@@ -57,11 +42,6 @@ const POST_SYSTEM_LABELS: Record<string, string> = {
   standard_50: "50mm Post Standard",
   standard_65: "65mm Post Standard HD",
 };
-
-function colourLabel(code: unknown) {
-  const colourCode = String(code ?? "B");
-  return COLOUR_NAMES[colourCode] ?? colourCode;
-}
 
 function postLabel(productCode: string, variables: Record<string, unknown>) {
   const postSystem = String(
@@ -223,10 +203,17 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     (masterRightKind === "system_post" || masterRightKind === "" ? 1 : 0);
   const summaryBitsBase = [
     { label: "Length", value: `${(segmentLength / 1000).toFixed(2)}m`, emphasis: true },
-    { label: "Height", value: `${selectedHeight}mm`, emphasis: true },
   ];
   const rawDifferenceBits = gate
     ? [
+        {
+          label: "Height",
+          value: `${selectedHeight}mm`,
+          changed: !sameValue(
+            selectedHeight,
+            firstFenceSegment?.targetHeightMm ?? masterVariables.target_height_mm ?? 1800,
+          ),
+        },
         {
           label: "Gate style",
           value: gateBuild.includes("vertical") ? "Vertical slat" : "Horizontal slat",
@@ -234,14 +221,14 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
         },
         {
           label: "Colour",
-          value: colourLabel(fenceColour),
+          value: colourName(fenceColour),
           changed: !sameValue(fenceColour, masterFenceColour),
         },
         ...(postColour !== fenceColour
           ? [
               {
                 label: "Post colour",
-                value: colourLabel(postColour),
+                value: colourName(postColour),
                 changed: !sameValue(postColour, masterPostColour),
               },
             ]
@@ -249,16 +236,24 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
       ]
     : [
         {
+          label: "Height",
+          value: `${selectedHeight}mm`,
+          changed: !sameValue(
+            selectedHeight,
+            firstFenceSegment?.targetHeightMm ?? masterVariables.target_height_mm ?? 1800,
+          ),
+        },
+        {
           label: "System",
           value: productCode,
           changed: !sameValue(productCode, run?.productCode ?? state.payload?.productCode ?? "QSHS"),
         },
-        { label: "Colour", value: colourLabel(fenceColour), changed: !sameValue(fenceColour, masterFenceColour) },
+        { label: "Colour", value: colourName(fenceColour), changed: !sameValue(fenceColour, masterFenceColour) },
         ...(postColour !== fenceColour
           ? [
               {
                 label: "Post colour",
-                value: colourLabel(postColour),
+                value: colourName(postColour),
                 changed: !sameValue(postColour, masterPostColour),
               },
             ]
@@ -403,6 +398,13 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     });
   }
 
+  function setMapHover(value: string | null) {
+    if (typeof window === "undefined") return;
+    window.dispatchEvent(
+      new CustomEvent("qsbom:hover-map-label", { detail: value }),
+    );
+  }
+
   return (
     <div className="rounded-2xl bg-gradient-to-br from-brand-primary via-brand-primary/70 to-brand-primary/15 p-[2px] shadow-[0_2px_0_rgba(191,219,254,0.75),0_10px_22px_rgba(30,64,175,0.18)]">
     <div className={`relative overflow-hidden rounded-[0.9rem] text-sm font-semibold shadow-inner ${
@@ -433,7 +435,13 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
             />
           </button>
           <span className="text-xl font-black leading-none tracking-normal text-black">
-            {compactLabel}
+            <span
+              onMouseEnter={() => setMapHover(compactLabel)}
+              onMouseLeave={() => setMapHover(null)}
+              title="Hover to highlight this segment on the map"
+            >
+              {compactLabel}
+            </span>
           </span>
           <button
             type="button"
@@ -453,6 +461,19 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
               {titleLabel}
             </span>
             <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={onToggle}
+              className={`inline-flex h-8 w-8 items-center justify-center rounded-lg border transition-colors ${
+                open
+                  ? "border-brand-primary bg-brand-primary text-white"
+                  : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
+              }`}
+              aria-label={open ? "Collapse segment settings" : "Expand segment settings"}
+              title={open ? "Collapse settings" : "Expand settings"}
+            >
+              <SlidersHorizontal size={16} />
+            </button>
             <button
               type="button"
               onClick={() => {

@@ -493,13 +493,7 @@ export function mergeCanonicalPreservingSegmentMeta(
 
 export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout {
   const allFlatSegments: CanvasSegment[] = [];
-  const allFlatGates: Array<{
-    segmentIndex: number;
-    positionOnSegment: number;
-    anchor?: CanvasGate['anchor'];
-    widthMM: number;
-    useGatePostsAsFenceTermination?: boolean;
-  }> = [];
+  const allFlatGates: CanvasGate[] = [];
   const runSummaries: CanvasRunSummary[] = [];
 
   let globalFlatOffset = 0;
@@ -510,13 +504,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
 
     let runTotalMm = 0;
     let runCornerCount = 0;
-    const runGates: Array<{
-      segmentIndex: number;
-      positionOnSegment: number;
-      anchor?: CanvasGate['anchor'];
-      widthMM: number;
-      useGatePostsAsFenceTermination?: boolean;
-    }> = [];
+    const runGates: CanvasGate[] = [];
 
     // Determine whether stored geometry is usable. Older payloads may have
     // fewer geometry points than fence segments after a gate split; in that
@@ -569,6 +557,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
           positionOnSegment,
           anchor: canonSeg.gateAnchor ?? 'center' as CanvasGate['anchor'],
           widthMM: canonSeg.segmentWidthMm ?? 900,
+          gateId: canonSeg.segmentId,
           useGatePostsAsFenceTermination:
             canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
         };
@@ -603,6 +592,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
             positionOnSegment,
             anchor: gateAnchor,
             widthMM: canonSeg.segmentWidthMm ?? 900,
+            gateId: canonSeg.segmentId,
             useGatePostsAsFenceTermination:
               canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
           });
@@ -611,6 +601,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
             positionOnSegment,
             anchor: gateAnchor,
             widthMM: canonSeg.segmentWidthMm ?? 900,
+            gateId: canonSeg.segmentId,
             useGatePostsAsFenceTermination:
               canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
           });
@@ -624,8 +615,8 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
             lengthMM: 1, angleDeg: 0,
           });
           const gateIdx = globalFlatOffset + localFlatSegments.length - 1;
-          allFlatGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900 });
-          runGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900 });
+          allFlatGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900, gateId: canonSeg.segmentId });
+          runGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900, gateId: canonSeg.segmentId });
           if (!useGeometry) xCursor += 1;
         }
       } else {

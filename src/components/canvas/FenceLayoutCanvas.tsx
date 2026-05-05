@@ -10,7 +10,7 @@ import { useFenceConfig } from "../../context/FenceConfigContext";
 import { useGates } from "../../context/GateContext";
 import { useProducts } from "../../hooks/useProducts";
 import type { GateConfig } from "../../schemas/gate.schema";
-import type { CanvasLayout, CanvasRunSummary } from "./canvasEngine";
+import type { CanvasGateVisual, CanvasLayout, CanvasRunSummary } from "./canvasEngine";
 import type { PostPosition } from "../../types/bom.types";
 
 interface PendingGate {
@@ -20,6 +20,7 @@ interface PendingGate {
 }
 
 const DEFAULT_GATE_WIDTH_FALLBACK = 900;
+type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building";
 
 interface FenceLayoutCanvasProps {
   onApplied?: (layout: CanvasLayout) => void;
@@ -33,6 +34,7 @@ interface FenceLayoutCanvasProps {
   allowedAngles?: number[];
   /** Pre-computed stats text from calcRunStats — keeps canvas overlay in sync with form. */
   runStatsTexts?: { global: string; perRun: string[] };
+  gateVisuals?: Record<string, CanvasGateVisual>;
 }
 
 export function FenceLayoutCanvas({
@@ -44,6 +46,7 @@ export function FenceLayoutCanvas({
   jobPanelWidth,
   allowedAngles: allowedAnglesProp,
   runStatsTexts,
+  gateVisuals = {},
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
@@ -69,7 +72,7 @@ export function FenceLayoutCanvas({
   const gatesRef = useRef(gates);
   gatesRef.current = gates;
 
-  const [activeTool, setActiveTool] = useState<"draw" | "gate" | "move" | "boundary">(
+  const [activeTool, setActiveTool] = useState<CanvasTool>(
     "draw",
   );
   const [snapEnabled, setSnapEnabled] = useState(true);
@@ -99,7 +102,7 @@ export function FenceLayoutCanvas({
   const [pendingGateWidth, setPendingGateWidth] = useState(DEFAULT_GATE_WIDTH_FALLBACK);
   const [useGatePostsAsTermination, setUseGatePostsAsTermination] = useState(true);
 
-  const handleToolChange = useCallback((tool: "draw" | "gate" | "move" | "boundary") => {
+  const handleToolChange = useCallback((tool: CanvasTool) => {
     setActiveTool(tool);
     if (
       tool === "boundary" &&
@@ -247,17 +250,29 @@ export function FenceLayoutCanvas({
 
   useEffect(() => {
     engineRef.current?.setGateVisuals(
-      Object.fromEntries(
-        gates.map((gate) => [
-          gate.id,
-          {
-            gateType: gate.gateType,
-            swingDirection: gate.swingDirection,
-          },
-        ]),
-      ),
+      {
+        ...gateVisuals,
+        ...Object.fromEntries(
+          gates.map((gate) => [
+            gate.id,
+            {
+              gateType: gate.gateType,
+              swingDirection: gate.swingDirection,
+            },
+          ]),
+        ),
+      },
     );
-  }, [gates]);
+  }, [gateVisuals, gates]);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const label = (event as CustomEvent<string | null>).detail ?? null;
+      engineRef.current?.setHighlightedMapLabel(label);
+    };
+    window.addEventListener("qsbom:hover-map-label", handler);
+    return () => window.removeEventListener("qsbom:hover-map-label", handler);
+  }, []);
 
   // When expanded changes, trigger a window resize event so the engine's
   // internal onResize handler picks up the new canvas CSS height.

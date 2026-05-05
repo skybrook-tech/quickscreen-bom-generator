@@ -1,5 +1,6 @@
 import { FormField } from "../shared/FormField";
 import { Check } from "lucide-react";
+import { ColourPalette, COLOUR_LABELS } from "./ColourPalette";
 
 export interface SchemaField {
   id: string;
@@ -37,42 +38,6 @@ function isVisible(
 
 const FIELD_WRAPPER = "w-full";
 
-const COLOUR_LABELS: Record<string, string> = {
-  B: "Black Satin",
-  MN: "Monument Matt",
-  G: "Woodland Grey Matt",
-  SM: "Surfmist Matt",
-  W: "Pearl White Gloss",
-  BS: "Basalt Satin",
-  D: "Dune Satin",
-  M: "Mill (raw aluminium)",
-  P: "Primrose",
-  PB: "Paperbark",
-  S: "Palladium Silver Pearl",
-  KWI: "Kwila",
-  WRC: "Western Red Cedar",
-  IG: "Island Grey",
-  TR: "Terrain",
-};
-
-const COLOUR_SWATCHES: Record<string, string> = {
-  B: "#1a1a1a",
-  MN: "#5a5c5e",
-  G: "#6b7264",
-  SM: "#d6d2c8",
-  W: "#e8e4d8",
-  BS: "#4a4d52",
-  D: "#bca98a",
-  M: "#c8c4bc",
-  P: "#f5e8c0",
-  PB: "#c0a882",
-  S: "#b8bec6",
-  KWI: "#7a5c3a",
-  WRC: "#a07850",
-  IG: "#9fa8a8",
-  TR: "#8c7055",
-};
-
 const ENUM_LABELS: Record<string, string> = {
   standard: "Standard slats",
   economy: "Economy slats",
@@ -92,7 +57,7 @@ const ENUM_LABELS: Record<string, string> = {
 function optionLabel(field: SchemaField, option: unknown): string {
   const value = String(option);
   if (field.field_key === "finish_family") return ENUM_LABELS[value] ?? value;
-  if (field.field_key === "colour_code") {
+  if (field.field_key === "colour_code" || field.field_key === "post_colour_code") {
     const limited = value === "P" || value === "PB" ? " - limited" : "";
     return `${COLOUR_LABELS[value] ?? value} (${value})${limited}`;
   }
@@ -131,6 +96,7 @@ export function SchemaDrivenForm({
           field.options_json.length > 0
         ) {
           const currentValue = String(variables[field.field_key] ?? "");
+          const isColourField = field.field_key === "colour_code" || field.field_key === "post_colour_code";
           return (
             <div
               key={field.id}
@@ -140,6 +106,15 @@ export function SchemaDrivenForm({
               <FormField
                 label={field.label}
               >
+                {isColourField ? (
+                  <ColourPalette
+                    value={currentValue}
+                    options={field.options_json.map(String)}
+                    onChange={(value) =>
+                      onChange(field.field_key, coerceValue(field, value))
+                    }
+                  />
+                ) : (
                 <div className="flex flex-wrap gap-2">
                   {field.options_json.map((opt) => {
                     const value = String(opt);
@@ -159,17 +134,12 @@ export function SchemaDrivenForm({
                         }`}
                       >
                         {selected && <Check size={16} aria-hidden />}
-                        {field.field_key === "colour_code" && (
-                          <span
-                            className="h-3 w-3 rounded-full border border-black/20"
-                            style={{ background: COLOUR_SWATCHES[value] ?? "#ddd" }}
-                          />
-                        )}
                         {optionLabel(field, opt)}
                       </button>
                     );
                   })}
                 </div>
+                )}
               </FormField>
             </div>
           );

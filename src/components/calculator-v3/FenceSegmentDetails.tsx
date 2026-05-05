@@ -1,5 +1,5 @@
 import { type ReactNode, useEffect, useMemo, useState } from "react";
-import { Check } from "lucide-react";
+import { Check, SlidersHorizontal } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../types/canonical.types";
@@ -341,35 +341,37 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
   return (
     <div className="space-y-4">
-      <SettingsSection title="Geometry" defaultOpen>
-        <label className="flex flex-col gap-1">
-          <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
-          <input
-            type="number"
-            value={maxSpacingDraft}
-            onChange={(event) => setMaxSpacingDraft(event.target.value)}
-            onBlur={() => commitMaxPanelWidth()}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") event.currentTarget.blur();
-            }}
-            min={MIN_POST_SPACING_MM}
-            max={MAX_POST_SPACING_MM}
-            step={50}
-            className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-          />
-        </label>
-      </SettingsSection>
-
       <button
         type="button"
         onClick={() => setShowMoreSettings((value) => !value)}
-        className="w-full rounded-lg border border-brand-primary/35 bg-brand-primary/10 px-3 py-2 text-sm font-extrabold text-brand-primary transition-colors hover:bg-brand-primary hover:text-white"
+        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-brand-primary/35 bg-brand-primary/10 text-brand-primary transition-colors hover:bg-brand-primary hover:text-white"
+        aria-label={showMoreSettings ? "Hide more settings" : "Show more settings"}
+        title={showMoreSettings ? "Hide more settings" : "Show more settings"}
       >
-        {showMoreSettings ? "Hide more settings" : "Show more settings"}
+        <SlidersHorizontal size={16} />
       </button>
 
       {showMoreSettings && (
         <>
+          <SettingsSection title="Post spacing" defaultOpen>
+            <label className="flex flex-col gap-1">
+              <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
+              <input
+                type="number"
+                value={maxSpacingDraft}
+                onChange={(event) => setMaxSpacingDraft(event.target.value)}
+                onBlur={() => commitMaxPanelWidth()}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") event.currentTarget.blur();
+                }}
+                min={MIN_POST_SPACING_MM}
+                max={MAX_POST_SPACING_MM}
+                step={50}
+                className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+              />
+            </label>
+          </SettingsSection>
+
           {(isDefaultSegment && run) || (!isDefaultSegment && optionFields.length > 0) ? (
             <SettingsSection title={isDefaultSegment ? "Style" : "Style overrides"} defaultOpen>
               {isDefaultSegment && run && (

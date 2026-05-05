@@ -23,6 +23,7 @@ import {
 } from "../../lib/gateOptionRules";
 import NumberInput from "../shared/NumberInput";
 import { useProductSearch } from "../../hooks/useProductSearch";
+import { ColourPalette } from "./ColourPalette";
 
 const GATE_POST_SIZE_OPTIONS: GateOption[] = [
   { value: "50", label: "50mm Post Standard" },
@@ -43,6 +44,16 @@ const COLOUR_OPTIONS: GateOption[] = [
   { value: "S", label: "Palladium Silver Pearl" },
   { value: "KWI", label: "Kwila" },
   { value: "WRC", label: "Western Red Cedar" },
+];
+
+const SWING_DIRECTION_OPTIONS: GateOption[] = [
+  { value: "out", label: "Swing out" },
+  { value: "in", label: "Swing in" },
+];
+
+const SLIDING_DIRECTION_OPTIONS: GateOption[] = [
+  { value: "left", label: "Slide left" },
+  { value: "right", label: "Slide right" },
 ];
 
 const SLAT_SIZE_OPTIONS: GateOption[] = [
@@ -199,6 +210,11 @@ export function GateSegmentDetails({ runId, seg }: Props) {
     ? String(v[GATE_SEGMENT_STUB_KEYS.gateBuild])
     : defaultGateBuildForMovement(movement, prefersVerticalGate);
   const isSwing = isSwingGateMovement(movement);
+  const directionOptions = isSwing ? SWING_DIRECTION_OPTIONS : SLIDING_DIRECTION_OPTIONS;
+  const currentDirection = String(
+    v[GATE_SEGMENT_STUB_KEYS.openingDirection] ??
+      (isSwing ? "out" : "right"),
+  );
   const masterPostSize = String(runVars.post_size ?? 50);
   const firstFenceSegment = run?.segments.find((segment) => segment.segmentKind !== "gate_opening");
   const masterVars = {
@@ -220,6 +236,8 @@ export function GateSegmentDetails({ runId, seg }: Props) {
     upsertVariables({
       [GATE_SEGMENT_STUB_KEYS.gateMovement]: nextMovement,
       [GATE_SEGMENT_STUB_KEYS.gateBuild]: nextBuild,
+      [GATE_SEGMENT_STUB_KEYS.openingDirection]:
+        nextMovement === "sliding" ? "right" : "out",
       [GATE_SEGMENT_STUB_KEYS.leafCount]: nextMovement === "double_swing" ? 2 : 1,
       [GATE_SEGMENT_STUB_KEYS.dropBoltType]:
         nextMovement === "double_swing" ? "SS-0300DB-B" : "none",
@@ -261,6 +279,14 @@ export function GateSegmentDetails({ runId, seg }: Props) {
           options={buildOptions}
           onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gateBuild]: value })}
         />
+        <OptionPills
+          label={isSwing ? "Opening direction" : "Slide direction"}
+          value={currentDirection}
+          options={directionOptions}
+          onChange={(value) =>
+            upsertVariables({ [GATE_SEGMENT_STUB_KEYS.openingDirection]: value })
+          }
+        />
         <div className="grid grid-cols-1 gap-3">
           <label className="flex flex-col gap-1">
             <span className="text-sm font-bold text-brand-muted">Gate height</span>
@@ -282,12 +308,14 @@ export function GateSegmentDetails({ runId, seg }: Props) {
           options={GATE_POST_SIZE_OPTIONS}
           onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(value) })}
         />
-        <OptionPills
-          label="Gate colour"
-          value={String(v[GATE_SEGMENT_STUB_KEYS.colourCode] ?? masterVars.colour_code ?? "B")}
-          options={COLOUR_OPTIONS}
-          onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.colourCode]: value })}
-        />
+        <div className="space-y-1">
+          <p className="text-sm font-bold text-brand-muted">Gate colour</p>
+          <ColourPalette
+            value={String(v[GATE_SEGMENT_STUB_KEYS.colourCode] ?? masterVars.colour_code ?? "B")}
+            options={COLOUR_OPTIONS.map((option) => option.value)}
+            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.colourCode]: value })}
+          />
+        </div>
         <OptionPills
           label="Gate slat size"
           value={String(v[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVars.slat_size_mm ?? 65)}

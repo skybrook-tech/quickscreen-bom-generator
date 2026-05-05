@@ -170,6 +170,7 @@ function CalculatorV3Content() {
   const [layoutOpen, setLayoutOpen] = useState(false);
   const [layoutFullscreen, setLayoutFullscreen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [confirmClearJob, setConfirmClearJob] = useState(false);
   const handleActiveBomSummaryChange = useCallback(
     (summary: { label: string; grandTotal: number }) => {
       setActiveBomSummary({
@@ -754,17 +755,23 @@ function CalculatorV3Content() {
                 <button
                   type="button"
                   onClick={() => {
+                    if (!confirmClearJob) {
+                      setConfirmClearJob(true);
+                      return;
+                    }
                     dispatch({ type: "CLEAR_QUOTE" });
                     setExtraItems([]);
                     setLineEdits({});
                     setActiveBomSummary(null);
                     setJobName("");
+                    setConfirmClearJob(false);
                   }}
+                  onBlur={() => setConfirmClearJob(false)}
                   disabled={!payload && !jobName}
                   className="inline-flex items-center gap-2 rounded-lg border border-brand-danger/30 px-3 py-2 text-sm font-bold text-brand-danger transition-colors hover:bg-brand-danger/10 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <Trash2 size={16} />
-                  Clear Job
+                  {confirmClearJob ? "Click again" : "Clear Job"}
                 </button>
               </div>
             </div>

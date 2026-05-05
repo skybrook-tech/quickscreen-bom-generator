@@ -9,9 +9,9 @@ import {
   maxPanelWidthForSystem,
   normaliseVariablesForSystem,
 } from "../../lib/productOptionRules";
-import { calcRunStats } from "../../lib/runStats";
 import { Button } from "../shared/Button";
 import { SegmentRow } from "./SegmentRow";
+import { colourName } from "./ColourPalette";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 
@@ -42,6 +42,7 @@ function runMasterVariables(
 export function RunCard({ run, runIdx }: Props) {
   const { state, dispatch } = useCalculator();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [confirmRemoveRun, setConfirmRemoveRun] = useState(false);
 
   const runVariables = useMemo(
     () => runMasterVariables(run, state.payload?.variables),
@@ -51,10 +52,12 @@ export function RunCard({ run, runIdx }: Props) {
     runVariables.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode),
     maxPanelWidthForSystem(run.productCode),
   );
-  const fenceSegments = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
-  const gates = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
-  const runStats = useMemo(() => calcRunStats(run, jobMax), [run, jobMax]);
   const matchesRunOne = run.variables?.settings_mode === "match_run_1";
+  const firstSegment = firstFenceSegment(run);
+  const runLengthM = (calcTotalLength(run) / 1000).toFixed(2);
+  const runHeight = Number(firstSegment?.targetHeightMm ?? runVariables.target_height_mm ?? 1800);
+  const slatSize = Number(runVariables.slat_size_mm ?? 65);
+  const slatGap = Number(runVariables.slat_gap_mm ?? 5);
 
   function toggleRunOneSettings() {
     const runOne = state.payload?.runs[0];
@@ -136,8 +139,13 @@ export function RunCard({ run, runIdx }: Props) {
           <span className="text-3xl font-extrabold leading-tight tracking-normal">
             Run {runIdx + 1}
           </span>
-          <span className="text-sm font-bold text-brand-text">
-            Total Length : {(calcTotalLength(run) / 1000).toFixed(2)}m, Segments : {fenceSegments.length}, Gates {gates.length}, Total Post : {runStats.posts}
+          <span className="flex flex-wrap gap-x-2.5 gap-y-1 text-sm text-brand-muted">
+            <span>System Type: <strong className="text-brand-text">{run.productCode}</strong></span>
+            <span>Length: <strong className="text-brand-text">{runLengthM}m</strong></span>
+            <span>Height: <strong className="text-brand-text">{runHeight}mm</strong></span>
+            <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
+            <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
+            <span>Gap size: <strong className="text-brand-text">{slatGap}mm</strong></span>
           </span>
         </h3>
         <div className="flex flex-wrap items-center justify-end gap-2">
@@ -213,12 +221,18 @@ export function RunCard({ run, runIdx }: Props) {
           Add gate
         </Button>
         <Button
-          onClick={() => dispatch({ type: "REMOVE_RUN", runId: run.runId })}
+          onClick={() => {
+            if (!confirmRemoveRun) {
+              setConfirmRemoveRun(true);
+              return;
+            }
+            dispatch({ type: "REMOVE_RUN", runId: run.runId });
+          }}
           icon={Trash2}
           variant="ghost-danger"
           size="small"
         >
-          Remove run
+          {confirmRemoveRun ? "Click again" : "Remove run"}
         </Button>
       </div>
     </div>

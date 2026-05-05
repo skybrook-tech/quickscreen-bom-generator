@@ -9,7 +9,14 @@ import {
 } from '../canvas/canonicalAdapter';
 import { calcRunStats } from '../../lib/runStats';
 import { clampPostSpacing } from '../../lib/productOptionRules';
-import type { CanvasLayout } from '../canvas/canvasEngine';
+import {
+  GATE_SEGMENT_STUB_KEYS,
+} from '../../lib/segmentTermination';
+import {
+  gateMovementOrDefault,
+  isSwingGateMovement,
+} from '../../lib/gateOptionRules';
+import type { CanvasGateVisual, CanvasLayout } from '../canvas/canvasEngine';
 import type { initCanvasEngine } from '../canvas/canvasEngine';
 
 export function LayoutCanvasV3() {
@@ -67,6 +74,37 @@ export function LayoutCanvasV3() {
     );
     const global = `${payload.runs.length} ${payload.runs.length === 1 ? 'run' : 'runs'}  ·  ${totals.segs} ${totals.segs === 1 ? 'seg' : 'segs'}  ·  ${totals.panels} ${totals.panels === 1 ? 'panel' : 'panels'}  ·  ${totals.posts} ${totals.posts === 1 ? 'post' : 'posts'}  ·  ${totals.corners} ${totals.corners === 1 ? 'corner' : 'corners'}`;
     return { global, perRun };
+  }, [payload]);
+
+  const gateVisuals = useMemo<Record<string, CanvasGateVisual>>(() => {
+    if (!payload) return {};
+    const entries: Array<[string, CanvasGateVisual]> = [];
+    for (const run of payload.runs) {
+      for (const segment of run.segments) {
+        if (segment.segmentKind !== 'gate_opening') continue;
+        const movement = gateMovementOrDefault(
+          segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement],
+        );
+        const gateType =
+          movement === 'sliding'
+            ? 'sliding'
+            : movement === 'double_swing'
+              ? 'double-swing'
+              : 'single-swing';
+        const fallbackDirection = isSwingGateMovement(movement) ? 'out' : 'right';
+        entries.push([
+          segment.segmentId,
+          {
+            gateType,
+            swingDirection: String(
+              segment.variables?.[GATE_SEGMENT_STUB_KEYS.openingDirection] ??
+                fallbackDirection,
+            ) as CanvasGateVisual['swingDirection'],
+          },
+        ]);
+      }
+    }
+    return Object.fromEntries(entries);
   }, [payload]);
 
   // Canvas → form (live): convert canvas layout to canonical and dispatch
@@ -172,6 +210,7 @@ export function LayoutCanvasV3() {
         segmentPanelWidths={segmentPanelWidths}
         jobPanelWidth={clampPostSpacing(payload?.variables.max_panel_width_mm, 2600)}
         runStatsTexts={runStatsTexts}
+        gateVisuals={gateVisuals}
       />
     </div>
   );

@@ -1,5 +1,6 @@
 import {
   Pencil,
+  Building2,
   GitMerge,
   Move,
   Undo2,
@@ -12,15 +13,16 @@ import {
   Crosshair,
   CircleHelp,
 } from "lucide-react";
-import type { RefObject } from "react";
+import { useState, type RefObject } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
 
 type Engine = ReturnType<typeof initCanvasEngine>;
+type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building";
 
 interface CanvasToolbarProps {
   engineRef: RefObject<Engine | null>;
-  activeTool: "draw" | "gate" | "move" | "boundary";
-  onToolChange: (t: "draw" | "gate" | "move" | "boundary") => void;
+  activeTool: CanvasTool;
+  onToolChange: (t: CanvasTool) => void;
   snapEnabled: boolean;
   onSnapToggle: (v: boolean) => void;
   gateSnap100: boolean;
@@ -46,7 +48,8 @@ export function CanvasToolbar({
   onToggleExpand,
   onHelpOpen,
 }: CanvasToolbarProps) {
-  const handleTool = (t: "draw" | "gate" | "move" | "boundary") => {
+  const [confirmClear, setConfirmClear] = useState(false);
+  const handleTool = (t: CanvasTool) => {
     engineRef.current?.setTool(t);
     onToolChange(t);
   };
@@ -96,6 +99,14 @@ export function CanvasToolbar({
       >
         <Minus size={16} /> Boundary
       </button>
+      <button
+        type="button"
+        title="Draw a building or fixed structure line"
+        className={btnCls(activeTool === "building")}
+        onClick={() => handleTool("building")}
+      >
+        <Building2 size={16} /> Building
+      </button>
 
       <div className="w-px h-4 bg-brand-border" />
 
@@ -118,11 +129,19 @@ export function CanvasToolbar({
       </button>
       <button
         type="button"
-        title="Clear all"
-        className={iconBtn}
-        onClick={() => engineRef.current?.clear()}
+        title={confirmClear ? "Click again to clear all" : "Clear all"}
+        className={`${iconBtn} ${confirmClear ? "border-brand-danger text-brand-danger" : ""}`}
+        onClick={() => {
+          if (!confirmClear) {
+            setConfirmClear(true);
+            return;
+          }
+          engineRef.current?.clear();
+          setConfirmClear(false);
+        }}
+        onBlur={() => setConfirmClear(false)}
       >
-        <Trash2 size={16} /> Clear
+        <Trash2 size={16} /> {confirmClear ? "Click again" : "Clear"}
       </button>
       <button
         type="button"
