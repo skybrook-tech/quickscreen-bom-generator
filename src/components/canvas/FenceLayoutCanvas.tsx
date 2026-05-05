@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { initCanvasEngine } from "./canvasEngine";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { MapControls } from "./MapControls";
+import type { MapUiState } from "./MapControls";
 import { GateModal } from "../gate/GateModal";
 import { useFenceConfig } from "../../context/FenceConfigContext";
 import { useGates } from "../../context/GateContext";
@@ -76,6 +77,12 @@ export function FenceLayoutCanvas({
   const [expanded, setExpanded] = useState(false);
   const [applied, setApplied] = useState(false);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
+  const [mapUiState, setMapUiState] = useState<MapUiState>({
+    mapType: "satellite",
+    hasAddress: false,
+    hasLoadedMap: false,
+    calibrationLabel: "",
+  });
 
   // Gate placed on canvas but not yet configured by user
   const [pendingGate, setPendingGate] = useState<PendingGate | null>(null);
@@ -333,9 +340,25 @@ export function FenceLayoutCanvas({
         <div className="absolute bottom-2 right-2 text-xs text-brand-muted pointer-events-none select-none">
           Scroll = zoom · Right-drag = pan · Ctrl+Z = undo
         </div>
+        {mapUiState.mapType === "satellite" &&
+          !mapUiState.hasLoadedMap &&
+          !mapUiState.hasAddress && (
+            <div className="absolute left-1/2 top-4 -translate-x-1/2 rounded-lg border border-brand-accent/40 bg-brand-card/90 px-3 py-2 text-xs font-medium text-brand-text shadow-md pointer-events-none">
+              Enter a job address above to load the satellite underlay
+            </div>
+          )}
+
+        {mapUiState.calibrationLabel && (
+          <div className="absolute right-2 top-2 rounded-full border border-brand-success/40 bg-brand-card/95 px-3 py-1 text-xs font-semibold text-brand-success shadow-md pointer-events-none">
+            Calibrated: {mapUiState.calibrationLabel}
+          </div>
+        )}
       </div>
 
-      <MapControls engineRef={engineRef} />
+      <MapControls
+        engineRef={engineRef}
+        onMapUiStateChange={setMapUiState}
+      />
 
       {/* Run summary table */}
       {runSummaries.length > 0 && (

@@ -2340,8 +2340,8 @@ export function initCanvasEngine(
       mapWorldHeight = img.height * metersPerPixel * scale;
       // Anchor the tile centre to the current view centre so the map appears
       // immediately beneath the visible canvas area when loaded.
-      const cw = canvas.width || canvas.getBoundingClientRect().width || 800;
-      const ch = canvas.height || canvas.getBoundingClientRect().height || 400;
+      const cw = cssCanvasWidth || canvas.getBoundingClientRect().width || 800;
+      const ch = cssCanvasHeight || canvas.getBoundingClientRect().height || 400;
       mapWorldOriginX = (cw / 2 - pan.x) / zoom;
       mapWorldOriginY = (ch / 2 - pan.y) / zoom;
       scheduleRedraw();

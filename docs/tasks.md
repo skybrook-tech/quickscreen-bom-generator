@@ -38,6 +38,8 @@ Latest Brief N pass: the app header now prioritises The Glass Outlet, the deskto
 
 Latest Brief O pass: the layout canvas now renders against a device-pixel-ratio-aware backing store for sharper lines on laptops/retina screens, and gate placement/dragging can snap to 100mm increments from the existing canvas toolbar.
 
+Latest Brief P pass: the map underlay now uses the Google Maps key path for Static Maps and Places autocomplete, auto-calibrates canvas scale from latitude/zoom when an address loads, shows calibration feedback, and keeps a satellite empty-state hint visible until an address is selected.
+
 ---
 
 ## Phases Overview
