@@ -32,6 +32,8 @@ Latest Brief K pass: selected controls on the `/calculator` sandbox now use a cl
 
 Latest Brief L pass: the calculator now has keyboard shortcut help (`?`), shortcuts for Generate BOM and CSV export, title tooltips on shortcut-enabled actions, BOM loading skeletons, a clearer empty state, and animated grand-total updates.
 
+Latest Brief M pass: suggested accessories now support add/remove toggling, persistent hide/restore preferences with undo toast, and pinned catalogue suggestions via SKU/description search.
+
 ---
 
 ## Phases Overview

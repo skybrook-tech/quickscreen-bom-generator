@@ -890,6 +890,9 @@ function CalculatorV3Content() {
                           : [...prev, item],
                       )
                     }
+                    onRemove={(id) =>
+                      setExtraItems((prev) => prev.filter((item) => item.id !== id))
+                    }
                   />
                   <ExtraItemsPanel
                     items={extraItems}
