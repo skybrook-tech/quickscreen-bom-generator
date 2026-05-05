@@ -42,6 +42,8 @@ Latest Brief P pass: the map underlay now uses the Google Maps key path for Stat
 
 Latest Brief Q pass: canvas-to-canonical payloads now retain per-gate position, gate anchor, and source canvas segment metadata so multi-run layouts and gate markers survive save/load round-trips; applying a drawn layout now asks before replacing existing configured runs.
 
+Latest Brief R pass: the canvas toolbar now includes Redo with Ctrl+Y/Ctrl+Shift+Z support, undone actions can be restored from full canvas snapshots, and placed gates now render differently for single swing, double swing, and sliding directions based on the gate editor settings.
+
 ---
 
 ## Phases Overview

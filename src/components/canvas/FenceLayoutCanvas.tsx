@@ -110,6 +110,7 @@ export function FenceLayoutCanvas({
         gatePostSize: "65x65",
         hingeType: "dd-kwik-fit-adjustable",
         latchType: "dd-magna-latch-top-pull",
+        swingDirection: "out",
       };
       setPendingGateWidth(defaultWidthMM);
       setUseGatePostsAsTermination(true);
@@ -230,6 +231,20 @@ export function FenceLayoutCanvas({
     engineRef.current?.setRunStatsTexts(runStatsTexts.global, runStatsTexts.perRun);
   }, [runStatsTexts]);
 
+  useEffect(() => {
+    engineRef.current?.setGateVisuals(
+      Object.fromEntries(
+        gates.map((gate) => [
+          gate.id,
+          {
+            gateType: gate.gateType,
+            swingDirection: gate.swingDirection,
+          },
+        ]),
+      ),
+    );
+  }, [gates]);
+
   // When expanded changes, trigger a window resize event so the engine's
   // internal onResize handler picks up the new canvas CSS height.
   useEffect(() => {
@@ -269,6 +284,7 @@ export function FenceLayoutCanvas({
             gatePostSize: "65x65" as const,
             hingeType: "dd-kwik-fit-adjustable" as const,
             latchType: "dd-magna-latch-top-pull" as const,
+            swingDirection: "out" as const,
             qty: 1,
           },
         });

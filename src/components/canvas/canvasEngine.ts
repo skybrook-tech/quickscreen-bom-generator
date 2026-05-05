@@ -59,6 +59,14 @@ export interface CanvasEngineConfig {
   ) => void;
 }
 
+export type CanvasGateType = "single-swing" | "double-swing" | "sliding";
+export type CanvasGateSwingDirection = "in" | "out" | "left" | "right";
+
+export interface CanvasGateVisual {
+  gateType: CanvasGateType;
+  swingDirection?: CanvasGateSwingDirection;
+}
+
 // ── Internal state types ──────────────────────────────────────────────────────
 
 interface Point {
@@ -97,6 +105,17 @@ type UndoAction =
   | { type: "ADD_GATE"; segIdx: number; gateIdx: number }
   | { type: "CLEAR"; runs: Run[]; scale: number }
   | { type: "CHAIN_POINT"; prevRunIdx: number; newRunIdx: number };
+
+interface CanvasSnapshot {
+  runs: Run[];
+  scale: number;
+  activeRunIdx: number;
+}
+
+interface RedoEntry {
+  action: UndoAction;
+  snapshot: CanvasSnapshot;
+}
 
 interface Run {
   points: Point[];
@@ -490,6 +509,8 @@ export function initCanvasEngine(
   let panStart: Point = { x: 0, y: 0 };
   let panOrigin: Point = { x: 0, y: 0 };
   let undoStack: UndoAction[] = [];
+  let redoStack: RedoEntry[] = [];
+  let gateVisuals: Record<string, CanvasGateVisual> = {};
   let mapImage: HTMLImageElement | null = null;
   let mapOpacity = 0.5;
   let mapWorldOriginX = 0; // world px — centre of the tile
@@ -575,6 +596,35 @@ export function initCanvasEngine(
       }
     }
     return result;
+  }
+
+  function cloneRuns(): Run[] {
+    return JSON.parse(JSON.stringify(runs)) as Run[];
+  }
+
+  function snapshot(): CanvasSnapshot {
+    return {
+      runs: cloneRuns(),
+      scale,
+      activeRunIdx,
+    };
+  }
+
+  function restoreSnapshot(next: CanvasSnapshot) {
+    runs = JSON.parse(JSON.stringify(next.runs)) as Run[];
+    scale = next.scale;
+    activeRunIdx = next.activeRunIdx;
+  }
+
+  function pushUndo(action: UndoAction) {
+    undoStack.push(action);
+    redoStack = [];
+  }
+
+  function gateVisualFor(gate: GateMarker): CanvasGateVisual {
+    return gate.gateId && gateVisuals[gate.gateId]
+      ? gateVisuals[gate.gateId]
+      : { gateType: "single-swing", swingDirection: "out" };
   }
 
   function setSegmentLength(flatIdx: number, lengthMM: number) {
@@ -1262,6 +1312,90 @@ export function initCanvasEngine(
     return { labels, nextPanelNumber: panelNumber, nextGateNumber: gateNumber };
   }
 
+  function drawArrow(fromX: number, fromY: number, toX: number, toY: number) {
+    const head = 5 / zoom;
+    const angle = Math.atan2(toY - fromY, toX - fromX);
+    ctx.beginPath();
+    ctx.moveTo(fromX, fromY);
+    ctx.lineTo(toX, toY);
+    ctx.lineTo(
+      toX - Math.cos(angle - Math.PI / 6) * head,
+      toY - Math.sin(angle - Math.PI / 6) * head,
+    );
+    ctx.moveTo(toX, toY);
+    ctx.lineTo(
+      toX - Math.cos(angle + Math.PI / 6) * head,
+      toY - Math.sin(angle + Math.PI / 6) * head,
+    );
+    ctx.stroke();
+  }
+
+  function drawPlacedGateVisual(seg: Segment, gate: GateMarker) {
+    const range = gateRange(seg, gate);
+    const pStart = lerp(seg.p1, seg.p2, range.tStart);
+    const pEnd = lerp(seg.p1, seg.p2, range.tEnd);
+    const mid = lerp(pStart, pEnd, 0.5);
+    const visual = gateVisualFor(gate);
+    const direction = visual.swingDirection ?? (visual.gateType === "sliding" ? "right" : "out");
+    const angle = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
+    const width = Math.max(14 / zoom, dist(pStart, pEnd));
+    const swing = Math.min(width * 0.55, 34 / zoom);
+    const side = direction === "in" || direction === "left" ? -1 : 1;
+
+    ctx.save();
+    ctx.translate(mid.x, mid.y);
+    ctx.rotate(angle);
+    ctx.strokeStyle = COLOR.gate;
+    ctx.fillStyle = COLOR.gate;
+    ctx.lineWidth = 1.6 / zoom;
+    ctx.setLineDash([]);
+
+    if (visual.gateType === "sliding") {
+      const arrow = direction === "left" ? -1 : 1;
+      ctx.strokeRect(-width / 2, -5 / zoom, width, 10 / zoom);
+      drawArrow(-width * 0.25 * arrow, 0, width * 0.32 * arrow, 0);
+      ctx.font = `bold ${Math.max(8, 10 / zoom)}px sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("SL", 0, -8 / zoom);
+      ctx.restore();
+      return;
+    }
+
+    if (visual.gateType === "double-swing") {
+      ctx.beginPath();
+      ctx.arc(-width / 2, 0, swing, side > 0 ? 0 : -Math.PI / 2, side > 0 ? Math.PI / 2 : 0, side < 0);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(width / 2, 0, swing, side > 0 ? Math.PI / 2 : Math.PI, side > 0 ? Math.PI : Math.PI / 2, side < 0);
+      ctx.stroke();
+      drawArrow(-width / 2, 0, -width / 2 + swing * 0.55, side * swing * 0.55);
+      drawArrow(width / 2, 0, width / 2 - swing * 0.55, side * swing * 0.55);
+      ctx.font = `bold ${Math.max(8, 10 / zoom)}px sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("DBL", 0, -8 / zoom);
+      ctx.restore();
+      return;
+    }
+
+    const hingeX = gate.anchor === "end" ? width / 2 : -width / 2;
+    const leafEndX = gate.anchor === "end" ? hingeX - swing : hingeX + swing;
+    ctx.beginPath();
+    ctx.moveTo(hingeX, 0);
+    ctx.lineTo(leafEndX, side * swing);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(hingeX, 0, swing, 0, side * Math.PI / 2, side < 0);
+    ctx.stroke();
+    drawArrow(hingeX, 0, leafEndX, side * swing);
+    ctx.font = `bold ${Math.max(8, 10 / zoom)}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("SG", 0, -8 / zoom);
+    ctx.restore();
+  }
+
   function drawSegment(
     seg: Segment,
     hovered: boolean,
@@ -1274,9 +1408,9 @@ export function initCanvasEngine(
     const segLw = hovered ? lw * 1.5 : lw;
 
     // Build sorted list of gate gaps as (tStart, tEnd) pairs
-    type GateGap = { tStart: number; tEnd: number; widthMM: number };
+    type GateGap = { tStart: number; tEnd: number; widthMM: number; gate: GateMarker };
     const gaps: GateGap[] = seg.gates
-      .map((g) => ({ ...gateRange(seg, g), widthMM: g.widthMM }))
+      .map((g) => ({ ...gateRange(seg, g), widthMM: g.widthMM, gate: g }))
       .sort((a, b) => a.tStart - b.tStart);
 
     // Draw fence line as sections between/around gate gaps
@@ -1312,6 +1446,7 @@ export function initCanvasEngine(
     for (const gap of gaps) {
       const pStart = lerp(seg.p1, seg.p2, gap.tStart);
       const pEnd = lerp(seg.p1, seg.p2, gap.tEnd);
+      drawPlacedGateVisual(seg, gap.gate);
 
       // Dashed amber gap line
       ctx.save();
@@ -1640,7 +1775,7 @@ export function initCanvasEngine(
     } else {
       // Finish the run with its accumulated points
       run.finished = true;
-      undoStack.push({ type: "FINISH_RUN", runIdx: activeRunIdx });
+      pushUndo({ type: "FINISH_RUN", runIdx: activeRunIdx });
       notifyChange();
     }
 
@@ -1724,7 +1859,7 @@ export function initCanvasEngine(
           // Resume the existing run — un-finish it so new points can be appended
           runs[resumedIdx].finished = false;
           activeRunIdx = resumedIdx;
-          undoStack.push({ type: "RESUME_RUN", runIdx: resumedIdx }); // undo will re-finish it
+          pushUndo({ type: "RESUME_RUN", runIdx: resumedIdx }); // undo will re-finish it
         } else {
           // Start a new run with this as the first point
           const newRun: Run = {
@@ -1732,7 +1867,7 @@ export function initCanvasEngine(
             finished: false,
             segments: [],
           };
-          undoStack.push({ type: "ADD_RUN" });
+          pushUndo({ type: "ADD_RUN" });
           runs.push(newRun);
           activeRunIdx = runs.length - 1;
         }
@@ -1743,7 +1878,7 @@ export function initCanvasEngine(
         run.points.push(worldPt);
         rebuildSegmentsPreservingGates(run, scale);
         notifyChange();
-        undoStack.push({ type: "ADD_POINT", runIdx: activeRunIdx });
+        pushUndo({ type: "ADD_POINT", runIdx: activeRunIdx });
       }
       scheduleRedraw();
       return;
@@ -1757,7 +1892,7 @@ export function initCanvasEngine(
           segments: [],
           isBoundary: true,
         };
-        undoStack.push({ type: "ADD_RUN" });
+        pushUndo({ type: "ADD_RUN" });
         runs.push(newRun);
         activeRunIdx = runs.length - 1;
       } else {
@@ -1777,7 +1912,7 @@ export function initCanvasEngine(
         runs.push(newRun);
         const newRunIdx = runs.length - 1;
         activeRunIdx = newRunIdx;
-        undoStack.push({ type: "CHAIN_POINT", prevRunIdx, newRunIdx });
+        pushUndo({ type: "CHAIN_POINT", prevRunIdx, newRunIdx });
       }
       scheduleRedraw();
       return;
@@ -1800,7 +1935,7 @@ export function initCanvasEngine(
           DEFAULT_GATE_WIDTH_MM,
         );
         const gateIdx = info.seg.gates.length;
-        undoStack.push({ type: "ADD_GATE", segIdx: flatIdx, gateIdx });
+        pushUndo({ type: "ADD_GATE", segIdx: flatIdx, gateIdx });
         info.seg.gates.push({
           t: snappedGateT,
           anchor: gateAnchor,
@@ -2066,6 +2201,14 @@ export function initCanvasEngine(
         scheduleRedraw();
       }
     }
+    if (
+      ((e.key === "y" || e.key === "Y") && (e.ctrlKey || e.metaKey)) ||
+      ((e.key === "z" || e.key === "Z") && e.shiftKey && (e.ctrlKey || e.metaKey))
+    ) {
+      e.preventDefault();
+      redoLast();
+      return;
+    }
     if ((e.key === "z" || e.key === "Z") && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       undoLast();
@@ -2118,6 +2261,7 @@ export function initCanvasEngine(
   function undoLast() {
     if (undoStack.length === 0) return;
     const action = undoStack.pop()!;
+    redoStack.push({ action, snapshot: snapshot() });
 
     switch (action.type) {
       case "ADD_RUN": {
@@ -2190,6 +2334,15 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  function redoLast() {
+    const entry = redoStack.pop();
+    if (!entry) return;
+    restoreSnapshot(entry.snapshot);
+    undoStack.push(entry.action);
+    notifyChange();
+    scheduleRedraw();
+  }
+
   // ── Public API ─────────────────────────────────────────────────────────────
 
   function setTool(t: Tool) {
@@ -2207,7 +2360,7 @@ export function initCanvasEngine(
         const run = runs[activeRunIdx];
         if (run.points.length >= 2) {
           run.finished = true;
-          undoStack.push({ type: "FINISH_RUN", runIdx: activeRunIdx });
+          pushUndo({ type: "FINISH_RUN", runIdx: activeRunIdx });
           notifyChange();
         } else {
           runs.splice(activeRunIdx, 1);
@@ -2222,8 +2375,12 @@ export function initCanvasEngine(
     undoLast();
   }
 
+  function redo() {
+    redoLast();
+  }
+
   function clear() {
-    undoStack.push({
+    pushUndo({
       type: "CLEAR",
       runs: JSON.parse(JSON.stringify(runs)),
       scale,
@@ -2434,6 +2591,11 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  function setGateVisuals(visuals: Record<string, CanvasGateVisual>) {
+    gateVisuals = visuals;
+    scheduleRedraw();
+  }
+
   /**
    * Replace the current canvas state with the runs described by `layout`.
    * Used for form-driven geometry changes (bidirectional sync).
@@ -2505,6 +2667,7 @@ export function initCanvasEngine(
     runs = newRuns;
     activeRunIdx = -1;
     undoStack = [];
+    redoStack = [];
     // Do NOT call notifyChange() here — this is a form→canvas push.
     // The caller already has the latest data in context; firing onLayoutChange
     // would trigger handleLiveSync which dispatches SET_PAYLOAD with fresh IDs,
@@ -2548,6 +2711,7 @@ export function initCanvasEngine(
     getLayout,
     setTool,
     undo,
+    redo,
     clear,
     resetView,
     setSnapToGrid,
@@ -2564,6 +2728,7 @@ export function initCanvasEngine(
     setSegmentPanelWidths,
     setJobPanelWidth,
     setRunStatsTexts,
+    setGateVisuals,
     loadLayout,
     fitToWidth,
     fitToContent,

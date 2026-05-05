@@ -3,6 +3,7 @@ import {
   GitMerge,
   Move,
   Undo2,
+  Redo2,
   Trash2,
   RotateCcw,
   Maximize2,
@@ -103,6 +104,14 @@ export function CanvasToolbar({
         onClick={() => engineRef.current?.undo()}
       >
         <Undo2 size={16} /> Undo
+      </button>
+      <button
+        type="button"
+        title="Redo (Ctrl+Y or Ctrl+Shift+Z)"
+        className={iconBtn}
+        onClick={() => engineRef.current?.redo()}
+      >
+        <Redo2 size={16} /> Redo
       </button>
       <button
         type="button"

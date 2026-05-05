@@ -75,8 +75,17 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
       if (current === '90') {
         setValue('slatSize', 'match-fence');
       }
+      const direction = watch('swingDirection');
+      if (direction === 'left' || direction === 'right') {
+        setValue('swingDirection', 'out');
+      }
+    } else if (isSliding) {
+      const direction = watch('swingDirection');
+      if (direction === 'in' || direction === 'out') {
+        setValue('swingDirection', 'right');
+      }
     }
-  }, [isSwing, setValue, watch]);
+  }, [isSliding, isSwing, setValue, watch]);
 
   const onSubmit = (data: GateConfig) => {
     onSave(data);
@@ -88,7 +97,7 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
 
       {/* ── Gate type ──────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-4">
         <FormField label="Gate Type" error={errors.gateType?.message}>
           <GateTypeSelect
             {...register('gateType')}
@@ -123,6 +132,26 @@ export function GateForm({ gateId, initialValues, onSave, onCancel }: GateFormPr
             data-testid="gate-opening-width"
             className={inputCls + (swingWidthWarning ? ' border-brand-warning' : '')}
           />
+        </FormField>
+
+        <FormField label={isSliding ? "Slide Direction" : "Swing Direction"} error={errors.swingDirection?.message}>
+          <select
+            {...register('swingDirection')}
+            data-testid="gate-swing-direction"
+            className={inputCls}
+          >
+            {isSliding ? (
+              <>
+                <option value="left">Slide left</option>
+                <option value="right">Slide right</option>
+              </>
+            ) : (
+              <>
+                <option value="out">Swing out</option>
+                <option value="in">Swing in</option>
+              </>
+            )}
+          </select>
         </FormField>
       </div>
 

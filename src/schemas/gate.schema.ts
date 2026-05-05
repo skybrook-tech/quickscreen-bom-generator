@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { Colour, SlatGap, SlatSize } from './fence.schema';
 
 export const GateType = z.enum(['single-swing', 'double-swing', 'sliding']);
+export const GateSwingDirection = z.enum(['in', 'out', 'left', 'right']);
 
 export const GatePostSize = z.enum(['50x50', '65x65', '75x75', '100x100']);
 
@@ -30,6 +31,7 @@ export const GateSchema = z.object({
   gatePostSize: GatePostSize,
   hingeType:    HingeType,
   latchType:    LatchType,
+  swingDirection: GateSwingDirection,
 });
 
 export type GateConfig = z.infer<typeof GateSchema>;
@@ -45,4 +47,5 @@ export const defaultGateConfig: Omit<GateConfig, 'id'> = {
   gatePostSize: '65x65',
   hingeType:    'dd-kwik-fit-adjustable',
   latchType:    'dd-magna-latch-top-pull',
+  swingDirection: 'out',
 };
