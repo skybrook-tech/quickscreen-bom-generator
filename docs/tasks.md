@@ -24,6 +24,8 @@ Latest segment clarity pass: segment and gate cards now show full beginner-frien
 
 Latest Codex PR brief pass: Tier 1 Brief A design foundations are in progress with CSS-backed brand accent tokens (`brand-primary`, `brand-success`, `brand-warning`, `brand-danger`), Inter typography, global tabular numerals, standardized Lucide icon sizing, and action-button radius cleanup.
 
+Latest Brief I pass: the `/calculator` BOM hero now uses an editorial summary layout with the scoped total as the main typographic element, BOM rows show the active quantity-break tier, and rows close to the next seeded quantity break show how many more units are needed for the next tier.
+
 ---
 
 ## Phases Overview

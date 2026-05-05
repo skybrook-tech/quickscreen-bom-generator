@@ -706,16 +706,22 @@ function CalculatorV3Content() {
         <main className="min-h-0 min-w-0 flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8">
           <div className="mx-auto max-w-6xl space-y-4 sm:space-y-5">
             <section className="rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5">
-              <div className="mb-4 flex flex-wrap items-start justify-between gap-4 rounded-lg bg-brand-primary p-4 text-white sm:p-5">
-                <div>
-                  <h2 className="text-lg font-bold">Bill of Materials</h2>
-                  {summaryText && <p className="mt-1 text-sm opacity-80">{summaryText}</p>}
+              <div className="mb-4 flex flex-col gap-4 border-b border-brand-border pb-5 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-muted">
+                    Bill of Materials
+                  </p>
+                  {summaryText && (
+                    <p className="mt-2 max-w-3xl text-sm font-semibold text-brand-text">
+                      {summaryText}
+                    </p>
+                  )}
                 </div>
                 <div className="text-left sm:text-right">
-                  <p className="text-xs opacity-70">
+                  <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
                     {activeBomSummary?.label ?? "Auto quantity breaks"}
                   </p>
-                  <p className="text-2xl font-bold">
+                  <p className="font-mono text-4xl font-black tabular-nums text-brand-primary sm:text-5xl">
                     ${formatMoney(activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0)}
                   </p>
                 </div>

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import pluralize from "pluralize";
 import type { CalculatorBOMResult, BOMLineItem } from "../../types/bom.types";
+import { localPriceBreaks, tierForSkuQuantity } from "../../lib/localPriceBreaks";
+import { priceForSku } from "../../lib/localBomCalculator";
 
 interface BOMResultTabsProps {
   result: CalculatorBOMResult;
@@ -36,6 +38,33 @@ const formatMoney = (value: number) =>
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value);
+
+function tierLabel(item: BOMLineItem) {
+  return tierForSkuQuantity(item.sku, item.quantity).replace(/^tier/i, "Tier ");
+}
+
+function nextBreakHint(item: BOMLineItem) {
+  const breaks = (localPriceBreaks as Record<string, readonly number[] | undefined>)[
+    item.sku
+  ];
+  const nextBreak = breaks?.find((qty) => qty > item.quantity);
+  if (!nextBreak) return null;
+
+  const nextUnitPrice = priceForSku(item.sku, nextBreak);
+  if (nextUnitPrice <= 0 || item.unitPrice <= 0 || nextUnitPrice >= item.unitPrice) {
+    return {
+      more: nextBreak - item.quantity,
+      tier: tierForSkuQuantity(item.sku, nextBreak).replace(/^tier/i, "Tier "),
+      savingPct: null as number | null,
+    };
+  }
+
+  return {
+    more: nextBreak - item.quantity,
+    tier: tierForSkuQuantity(item.sku, nextBreak).replace(/^tier/i, "Tier "),
+    savingPct: Math.round(((item.unitPrice - nextUnitPrice) / item.unitPrice) * 100),
+  };
+}
 
 function sortItems(items: BOMLineItem[]): BOMLineItem[] {
   return [...items].sort((a, b) => {
@@ -151,6 +180,9 @@ function ItemGroup({
         </td>
       </tr>
       {items.map((item, itemIndex) => (
+        (() => {
+          const hint = nextBreakHint(item);
+          return (
         <tr
           key={`${category}-${item.sku}-${item.category}-${item.description}-${itemIndex}`}
           className="border-b border-brand-border last:border-0 hover:bg-brand-accent/5 transition-colors"
@@ -159,11 +191,22 @@ function ItemGroup({
             {item.sku}
           </td>
           <td className="py-2.5 px-3 text-sm text-brand-text">
-            {item.description}
-            {item.notes && (
-              <span className="ml-1.5 text-xs text-brand-warning">
-                {item.notes}
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span>{item.description}</span>
+              <span className="rounded-full border border-brand-primary/30 bg-brand-primary/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-primary">
+                {tierLabel(item)}
               </span>
+              {item.notes && (
+                <span className="text-xs text-brand-warning">
+                  {item.notes}
+                </span>
+              )}
+            </div>
+            {hint && (
+              <p className="mt-1 text-[11px] font-semibold text-brand-success">
+                {hint.more} more for {hint.tier}
+                {hint.savingPct ? ` (save ${hint.savingPct}%)` : ""}
+              </p>
             )}
           </td>
           <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-center sm:table-cell">
@@ -204,6 +247,8 @@ function ItemGroup({
             </td>
           )}
         </tr>
+          );
+        })()
       ))}
     </>
   );
