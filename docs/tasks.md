@@ -28,6 +28,8 @@ Latest Brief I pass: the `/calculator` BOM hero now uses an editorial summary la
 
 Latest Brief J pass: fence segment settings now use progressive disclosure. Geometry stays immediately visible, deeper Style/Posts/Advanced settings sit behind a persisted "Show more settings" control, keeping the initial segment editor compact.
 
+Latest Brief K pass: selected controls on the `/calculator` sandbox now use a clearer brand-primary selected state, checkmarks, `aria-pressed`, 8px button radius, and stronger hover affordances for product, system, and option controls.
+
 ---
 
 ## Phases Overview

@@ -7,6 +7,7 @@ import {
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalPayload } from "../../types/canonical.types";
 import type { ReactNode } from "react";
+import { Check } from "lucide-react";
 
 interface FenceProduct {
   id: string;
@@ -113,14 +114,16 @@ export function ProductSelectV3({
                 key={product.id}
                 type="button"
                 onClick={() => selectProduct(product)}
-                className={`rounded-full border px-4 py-2 text-sm font-bold shadow-sm transition-all ${
+                aria-pressed={selected}
+                className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-bold transition-all ${
                   selected
                     ? "border-brand-primary bg-brand-primary text-white shadow-sm"
-                    : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary"
+                    : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
                 }`}
                 data-testid={`product-option-${product.system_type}`}
                 title={product.description ?? product.name}
               >
+                {selected && <Check size={16} aria-hidden />}
                 {shortLabel(product)}
               </button>
             );

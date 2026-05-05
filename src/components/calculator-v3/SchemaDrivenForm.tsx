@@ -1,4 +1,5 @@
 import { FormField } from "../shared/FormField";
+import { Check } from "lucide-react";
 
 export interface SchemaField {
   id: string;
@@ -150,12 +151,14 @@ export function SchemaDrivenForm({
                         onClick={() =>
                           onChange(field.field_key, coerceValue(field, value))
                         }
-                        className={`inline-flex min-h-9 items-center gap-2 rounded-full border px-3 py-2 text-sm font-bold shadow-sm transition-colors ${
+                        aria-pressed={selected}
+                        className={`inline-flex min-h-9 items-center gap-2 rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${
                           selected
                             ? "border-brand-primary bg-brand-primary text-white shadow-sm"
-                            : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary"
+                            : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
                         }`}
                       >
+                        {selected && <Check size={16} aria-hidden />}
                         {field.field_key === "colour_code" && (
                           <span
                             className="h-3 w-3 rounded-full border border-black/20"

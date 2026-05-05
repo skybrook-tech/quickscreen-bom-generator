@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { Check } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../types/canonical.types";
@@ -380,12 +381,16 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                         key={product.system_type}
                         type="button"
                         onClick={() => changeRunProduct(product.system_type)}
-                        className={`rounded-full border px-3 py-2 text-sm font-bold shadow-sm transition-colors ${
+                        aria-pressed={product.system_type === run.productCode}
+                        className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${
                           product.system_type === run.productCode
                             ? "border-brand-primary bg-brand-primary text-white shadow-sm"
-                            : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary"
+                            : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
                         }`}
                       >
+                        {product.system_type === run.productCode && (
+                          <Check size={16} aria-hidden />
+                        )}
                         {product.system_type}
                       </button>
                     ))}
