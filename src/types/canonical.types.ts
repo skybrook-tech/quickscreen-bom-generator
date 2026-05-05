@@ -47,6 +47,11 @@ export interface CanonicalSegment {
   sortOrder: number;
   segmentKind: SegmentKind;
   segmentWidthMm?: number;
+  /** Canvas-only metadata used to preserve map gate positions across save/load. */
+  positionOnSegment?: number;
+  gateAnchor?: 'start' | 'center' | 'end';
+  canvasSegmentIndex?: number;
+  sourceSegmentLengthMm?: number;
   targetHeightMm?: number;
   bayCount?: number;
   gateProductCode?: string;

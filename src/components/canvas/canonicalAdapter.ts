@@ -183,6 +183,7 @@ function expandSegmentWithGates(
   seg: CanvasSegment,
   gates: GateInSegment[],
   flatSegIdx: number,
+  localSegIdx: number,
   runIdx: number,
   stableIds: StableIdMap,
   sortOrderBase: number,
@@ -211,6 +212,8 @@ function expandSegmentWithGates(
         sortOrder: sortOrder++,
         segmentKind: 'panel',
         segmentWidthMm: Math.round(panelBeforeMm),
+        canvasSegmentIndex: localSegIdx,
+        sourceSegmentLengthMm: Math.round(totalMm),
         variables:
           gate.useGatePostsAsFenceTermination !== false
             ? {
@@ -233,6 +236,10 @@ function expandSegmentWithGates(
       sortOrder: sortOrder++,
       segmentKind: 'gate_opening',
       segmentWidthMm: Math.round(gate.widthMM),
+      positionOnSegment: gate.positionOnSegment,
+      gateAnchor: gate.anchor,
+      canvasSegmentIndex: localSegIdx,
+      sourceSegmentLengthMm: Math.round(totalMm),
       variables: {
         [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]:
           gate.useGatePostsAsFenceTermination ?? true,
@@ -256,6 +263,8 @@ function expandSegmentWithGates(
       sortOrder: sortOrder++,
       segmentKind: 'panel',
       segmentWidthMm: Math.round(trailingMm),
+      canvasSegmentIndex: localSegIdx,
+      sourceSegmentLengthMm: Math.round(totalMm),
       variables:
         sorted.length > 0 &&
         sorted[sorted.length - 1].useGatePostsAsFenceTermination !== false
@@ -334,6 +343,7 @@ export function canvasLayoutToCanonical(
           seg,
           gates,
           flatIdx,
+          si,
           slice.runIdx,
           stableIds,
           sortOrder,
@@ -353,6 +363,8 @@ export function canvasLayoutToCanonical(
           sortOrder: sortOrder++,
           segmentKind: 'panel',
           segmentWidthMm: Math.round(seg.lengthMM),
+          canvasSegmentIndex: si,
+          sourceSegmentLengthMm: Math.round(seg.lengthMM),
           variables: {
             geometry_angle_deg: Math.round(seg.angleDeg),
           },
@@ -517,23 +529,87 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
     let fenceSegIdx = 0;   // index into fenceSegments for geometry path
     const localFlatSegments: CanvasSegment[] = [];
 
+    const hasCanvasSegmentMetadata =
+      useGeometry &&
+      run.segments.some((segment) => segment.canvasSegmentIndex !== undefined);
+
+    if (hasCanvasSegmentMetadata) {
+      for (let i = 0; i < geomPts!.length - 1; i++) {
+        const p0 = geomPts![i];
+        const p1 = geomPts![i + 1];
+        const metadataSource = run.segments.find(
+          (segment) => segment.canvasSegmentIndex === i,
+        );
+        const lengthMM =
+          metadataSource?.sourceSegmentLengthMm ??
+          metadataSource?.segmentWidthMm ??
+          Math.round(Math.hypot(p1.x - p0.x, p1.y - p0.y) * 10);
+        localFlatSegments.push({
+          startX: p0.x,
+          startY: p0.y,
+          endX: p1.x,
+          endY: p1.y,
+          lengthMM,
+          angleDeg: Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / Math.PI,
+        });
+        runTotalMm += lengthMM;
+      }
+
+      for (const canonSeg of run.segments) {
+        if (canonSeg.segmentKind !== 'gate_opening') continue;
+        const localSegIdx = canonSeg.canvasSegmentIndex ?? 0;
+        if (!localFlatSegments[localSegIdx]) continue;
+        const flatIdx = globalFlatOffset + localSegIdx;
+        const positionOnSegment =
+          typeof canonSeg.positionOnSegment === 'number'
+            ? Math.max(0, Math.min(1, canonSeg.positionOnSegment))
+            : 0.9;
+        const gate = {
+          segmentIndex: flatIdx,
+          positionOnSegment,
+          anchor: canonSeg.gateAnchor ?? 'center' as CanvasGate['anchor'],
+          widthMM: canonSeg.segmentWidthMm ?? 900,
+          useGatePostsAsFenceTermination:
+            canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
+        };
+        allFlatGates.push(gate);
+        runGates.push(gate);
+      }
+
+      runCornerCount = run.corners.length;
+      allFlatSegments.push(...localFlatSegments);
+      globalFlatOffset += localFlatSegments.length;
+      runSummaries.push({
+        label: `Run ${ri + 1}`,
+        totalLengthM: runTotalMm / 1000,
+        cornerCount: runCornerCount,
+        gates: runGates,
+      });
+      continue;
+    }
+
     for (const canonSeg of run.segments) {
       if (canonSeg.segmentKind === 'gate_opening') {
         // Attach this gate to the most recent canvas segment
         const precedingFlatIdx = globalFlatOffset + localFlatSegments.length - 1;
         if (localFlatSegments.length > 0) {
+          const positionOnSegment =
+            typeof canonSeg.positionOnSegment === 'number'
+              ? Math.max(0, Math.min(1, canonSeg.positionOnSegment))
+              : 0.9;
+          const gateAnchor = canonSeg.gateAnchor ?? 'end';
           allFlatGates.push({
             segmentIndex: precedingFlatIdx,
-            positionOnSegment: 0.9,
-            anchor: 'end',
+            positionOnSegment,
+            anchor: gateAnchor,
             widthMM: canonSeg.segmentWidthMm ?? 900,
             useGatePostsAsFenceTermination:
               canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
           });
           runGates.push({
             segmentIndex: precedingFlatIdx,
-            positionOnSegment: 0.9,
-            anchor: 'end',
+            positionOnSegment,
+            anchor: gateAnchor,
             widthMM: canonSeg.segmentWidthMm ?? 900,
             useGatePostsAsFenceTermination:
               canonSeg.variables?.use_gate_posts_as_fence_termination !== false,

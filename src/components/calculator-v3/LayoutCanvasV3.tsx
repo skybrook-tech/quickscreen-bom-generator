@@ -92,6 +92,19 @@ export function LayoutCanvasV3() {
 
   function handleApplyLayout(layout: CanvasLayout) {
     if (!payload) return;
+    const existingRunCount = payload.runs.length;
+    const existingSegmentCount = payload.runs.reduce(
+      (count, run) => count + run.segments.length,
+      0,
+    );
+    if (
+      existingSegmentCount > 0 &&
+      !window.confirm(
+        `Replace ${existingRunCount} existing run${existingRunCount === 1 ? '' : 's'} with the drawn layout?`,
+      )
+    ) {
+      return;
+    }
     try {
       sourceRef.current = 'canvas';
       payload.runs.forEach((run, idx) => {

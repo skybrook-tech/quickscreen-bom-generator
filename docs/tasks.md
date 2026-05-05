@@ -40,6 +40,8 @@ Latest Brief O pass: the layout canvas now renders against a device-pixel-ratio-
 
 Latest Brief P pass: the map underlay now uses the Google Maps key path for Static Maps and Places autocomplete, auto-calibrates canvas scale from latitude/zoom when an address loads, shows calibration feedback, and keeps a satellite empty-state hint visible until an address is selected.
 
+Latest Brief Q pass: canvas-to-canonical payloads now retain per-gate position, gate anchor, and source canvas segment metadata so multi-run layouts and gate markers survive save/load round-trips; applying a drawn layout now asks before replacing existing configured runs.
+
 ---
 
 ## Phases Overview
