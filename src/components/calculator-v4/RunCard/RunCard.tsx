@@ -66,6 +66,11 @@ export function RunCard({
   const fenceCount = run.segments.filter((s) => s.kind === "fence").length;
   const gateCount = run.segments.filter((s) => s.kind === "gate").length;
   const segmentTotal = run.segments.length;
+  const canRemoveRun = (state.payload?.runs.length ?? 0) > 1;
+
+  function handleRemoveRun() {
+    dispatch({ type: "REMOVE_RUN", runId: run.runId });
+  }
 
   function handleAddSegment() {
     const sorted = [...run.segments].sort((a, b) => a.sortOrder - b.sortOrder);
@@ -119,6 +124,8 @@ export function RunCard({
         expanded={expanded}
         onToggleExpanded={onToggleExpanded}
         showProductSelect={expanded}
+        canRemoveRun={canRemoveRun}
+        onRemoveRun={handleRemoveRun}
       />
 
       {expanded && (
@@ -166,10 +173,8 @@ export function RunCard({
             <RunActions
               onAddSegment={handleAddSegment}
               onAddGate={() => onAddGate(run.runId)}
-              onRemoveRun={() =>
-                dispatch({ type: "REMOVE_RUN", runId: run.runId })
-              }
-              canRemove={(state.payload?.runs.length ?? 0) > 1}
+              onRemoveRun={handleRemoveRun}
+              canRemove={canRemoveRun}
             />
           </div>
         </>

@@ -10,6 +10,7 @@ import {
   RulerDimensionLine,
   DoorOpen,
   Fence,
+  Trash2,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
@@ -33,6 +34,9 @@ interface Props {
   onToggleExpanded: () => void;
   /** When set, show per-run fence system control (if multiple products exist). */
   showProductSelect?: boolean;
+  /** Always visible (including collapsed) — matches RunActions remove when expanded */
+  onRemoveRun: () => void;
+  canRemoveRun: boolean;
 }
 
 const ICON = 12;
@@ -85,6 +89,8 @@ export function RunHeader({
   expanded,
   onToggleExpanded,
   showProductSelect = false,
+  onRemoveRun,
+  canRemoveRun,
 }: Props) {
   const { dispatch, state } = useCalculatorV4();
   const { data: products = [] } = useProducts();
@@ -250,6 +256,25 @@ export function RunHeader({
           </Stat>
         </div>
       </div>
+
+      <Tooltip
+        content={
+          canRemoveRun
+            ? "Remove this run"
+            : "Cannot remove the last run — add another run first"
+        }
+      >
+        <button
+          type="button"
+          onClick={onRemoveRun}
+          disabled={!canRemoveRun}
+          className="shrink-0 p-2 rounded-md text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          aria-label="Remove run"
+          data-testid="v4-remove-run-header"
+        >
+          <Trash2 size={18} aria-hidden />
+        </button>
+      </Tooltip>
     </div>
   );
 }
