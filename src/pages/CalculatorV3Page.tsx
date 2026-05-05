@@ -112,6 +112,8 @@ function colourName(code: unknown) {
 
 function initialRunPaneWidth() {
   if (typeof window === "undefined") return 480;
+  const stored = Number(window.localStorage.getItem("qsg-run-pane-width"));
+  if (Number.isFinite(stored) && stored > 0) return stored;
   return Math.round(Math.min(680, Math.max(390, window.innerWidth / 3)));
 }
 
@@ -164,6 +166,7 @@ function CalculatorV3Content() {
   } | null>(null);
   const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
   const [mobileLayout, setMobileLayout] = useState(false);
+  const [mobileTab, setMobileTab] = useState<"run" | "bom" | "map">("run");
   const [layoutOpen, setLayoutOpen] = useState(false);
   const [layoutFullscreen, setLayoutFullscreen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -185,12 +188,15 @@ function CalculatorV3Content() {
   }, []);
 
   function handleResizeStart() {
+    let latestWidth = runPaneWidth;
     const onMove = (event: MouseEvent) => {
       const maxWidth = Math.min(760, window.innerWidth * 0.58);
       const minWidth = Math.min(390, Math.max(320, window.innerWidth - 360));
-      setRunPaneWidth(Math.round(Math.min(maxWidth, Math.max(minWidth, event.clientX))));
+      latestWidth = Math.round(Math.min(maxWidth, Math.max(minWidth, event.clientX)));
+      setRunPaneWidth(latestWidth);
     };
     const onUp = () => {
+      window.localStorage.setItem("qsg-run-pane-width", String(latestWidth));
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
     };
@@ -204,6 +210,7 @@ function CalculatorV3Content() {
       onClick={() => {
         if (!layoutOpen) onBeforeOpen?.();
         setLayoutOpen((open) => !open);
+        if (mobileLayout) setMobileTab("map");
       }}
       className={`inline-flex items-center gap-2.5 rounded-lg border px-4 py-3 text-sm font-extrabold transition-colors hover:shadow-sm ${
         layoutOpen
@@ -660,7 +667,9 @@ function CalculatorV3Content() {
         className="relative flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row"
       >
         <aside
-          className={`relative flex w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${
+          className={`relative w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${
+            mobileLayout && mobileTab !== "run" ? "hidden" : "flex"
+          } ${
             bomResultForTabs ? "max-h-[32vh]" : "min-h-[46vh]"
           }`}
           style={mobileLayout ? undefined : { width: runPaneWidth }}
@@ -769,7 +778,11 @@ function CalculatorV3Content() {
           className="hidden w-1.5 shrink-0 cursor-col-resize bg-brand-border/60 transition-colors hover:bg-brand-primary/40 md:block"
         />
 
-        <main className="min-h-0 min-w-0 flex-1 overflow-y-auto p-3 sm:p-5 lg:p-8">
+        <main
+          className={`min-h-0 min-w-0 flex-1 overflow-y-auto p-3 pb-24 sm:p-5 lg:p-8 ${
+            mobileLayout && mobileTab !== "bom" ? "hidden" : ""
+          }`}
+        >
           <div className="mx-auto max-w-6xl space-y-4 sm:space-y-5">
             <section className="rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5">
               <div className="mb-4 flex flex-col gap-4 border-b border-brand-border pb-5 sm:flex-row sm:items-start sm:justify-between">
@@ -960,6 +973,31 @@ function CalculatorV3Content() {
           </div>
         )}
       </div>
+      {mobileLayout && (
+        <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-brand-border bg-brand-card/95 p-2 shadow-2xl backdrop-blur md:hidden">
+          {([
+            ["run", "Run"],
+            ["bom", "BOM"],
+            ["map", "Map"],
+          ] as const).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => {
+                setMobileTab(id);
+                if (id === "map") setLayoutOpen(true);
+              }}
+              className={`rounded-lg px-3 py-2 text-sm font-extrabold transition-colors ${
+                mobileTab === id
+                  ? "bg-brand-primary text-white"
+                  : "text-brand-muted hover:bg-brand-border/40 hover:text-brand-text"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </nav>
+      )}
       {shortcutsOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"

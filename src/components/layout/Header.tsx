@@ -34,13 +34,14 @@ export function Header() {
       {/* ── Brand + Nav ───────────────────────────────────────────── */}
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-3 py-3">
-          <span className="text-xs font-bold text-brand-accent tracking-widest uppercase px-2 py-1 rounded border border-brand-accent/40 bg-brand-accent/5 hidden sm:inline">
-            SkybrookAI
-          </span>
-          <span className="text-brand-border/60 hidden sm:inline">|</span>
           <div className="leading-tight">
-            <p className="text-sm font-semibold text-brand-text">The Glass Outlet</p>
-            <p className="text-xs text-brand-muted">QuickScreen BOM Generator</p>
+            <p className="text-base font-black tracking-tight text-brand-text sm:text-lg">
+              The Glass Outlet
+            </p>
+            <p className="text-xs font-semibold text-brand-muted">
+              QuickScreen BOM Generator
+              <span className="hidden sm:inline"> · Powered by SkyBrookAI</span>
+            </p>
           </div>
         </div>
 

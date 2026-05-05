@@ -34,6 +34,8 @@ Latest Brief L pass: the calculator now has keyboard shortcut help (`?`), shortc
 
 Latest Brief M pass: suggested accessories now support add/remove toggling, persistent hide/restore preferences with undo toast, and pinned catalogue suggestions via SKU/description search.
 
+Latest Brief N pass: the app header now prioritises The Glass Outlet, the desktop run/BOM divider width persists locally, and mobile users get bottom Run/BOM/Map tabs so the BOM and layout map remain reachable on phones.
+
 ---
 
 ## Phases Overview
