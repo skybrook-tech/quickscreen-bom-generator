@@ -10,6 +10,7 @@ import {
   Minimize2,
   Minus,
   Crosshair,
+  CircleHelp,
 } from "lucide-react";
 import type { RefObject } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
@@ -28,6 +29,7 @@ interface CanvasToolbarProps {
   onToggleGrid: (v: boolean) => void;
   expanded: boolean;
   onToggleExpand: (v: boolean) => void;
+  onHelpOpen: () => void;
 }
 
 export function CanvasToolbar({
@@ -42,6 +44,7 @@ export function CanvasToolbar({
   onToggleGrid,
   expanded,
   onToggleExpand,
+  onHelpOpen,
 }: CanvasToolbarProps) {
   const handleTool = (t: "draw" | "gate" | "move" | "boundary") => {
     engineRef.current?.setTool(t);
@@ -191,6 +194,15 @@ export function CanvasToolbar({
       >
         {expanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
         {expanded ? "Collapse" : "Expand"}
+      </button>
+      <button
+        type="button"
+        onClick={onHelpOpen}
+        title="Layout map help"
+        aria-label="Layout map help"
+        className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-brand-primary/50 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20 transition-colors"
+      >
+        <CircleHelp size={16} /> Help
       </button>
     </div>
   );

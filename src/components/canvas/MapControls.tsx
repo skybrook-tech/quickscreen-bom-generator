@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Map, Loader2 } from "lucide-react";
+import { Info, Map, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import type { RefObject, KeyboardEvent } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
@@ -483,14 +483,21 @@ export function MapControls({
       </div>
 
       <div className="flex items-center gap-2">
-        <span className="text-xs text-brand-muted">Scale</span>
+        <span className="flex items-center gap-1 text-xs text-brand-muted">
+          Scale
+          <Info
+            size={14}
+            className="text-brand-muted"
+            aria-label="Scale help"
+          />
+        </span>
         <input
           type="number"
           value={scaleInput}
           onChange={(e) => setScaleInput(e.target.value)}
           onBlur={handleScaleBlur}
           className="w-20 text-xs bg-brand-bg border border-brand-border rounded px-2 py-1 text-brand-text"
-          title="Scale: px per metre"
+          title="px per metre - the canvas distance for 1m of real fence. Auto-calibrates when you load a satellite address."
           min="0.01"
           step="any"
         />

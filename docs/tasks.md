@@ -44,6 +44,8 @@ Latest Brief Q pass: canvas-to-canonical payloads now retain per-gate position, 
 
 Latest Brief R pass: the canvas toolbar now includes Redo with Ctrl+Y/Ctrl+Shift+Z support, undone actions can be restored from full canvas snapshots, and placed gates now render differently for single swing, double swing, and sliding directions based on the gate editor settings.
 
+Latest Brief S pass: the layout mapper now has a top-level Help button with a four-section cheat sheet, first-use Boundary mode guidance, hidden corner instruction clutter, a clarified px/m scale control, and token-aligned primary mapper actions.
+
 ---
 
 ## Phases Overview

@@ -4,6 +4,7 @@ import { initCanvasEngine } from "./canvasEngine";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { MapControls } from "./MapControls";
 import type { MapUiState } from "./MapControls";
+import { HelpCheatSheet } from "./HelpCheatSheet";
 import { GateModal } from "../gate/GateModal";
 import { useFenceConfig } from "../../context/FenceConfigContext";
 import { useGates } from "../../context/GateContext";
@@ -77,6 +78,8 @@ export function FenceLayoutCanvas({
   const [expanded, setExpanded] = useState(false);
   const [applied, setApplied] = useState(false);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [boundaryHintVisible, setBoundaryHintVisible] = useState(false);
   const [mapUiState, setMapUiState] = useState<MapUiState>({
     mapType: "satellite",
     hasAddress: false,
@@ -95,6 +98,17 @@ export function FenceLayoutCanvas({
   } | null>(null);
   const [pendingGateWidth, setPendingGateWidth] = useState(DEFAULT_GATE_WIDTH_FALLBACK);
   const [useGatePostsAsTermination, setUseGatePostsAsTermination] = useState(true);
+
+  const handleToolChange = useCallback((tool: "draw" | "gate" | "move" | "boundary") => {
+    setActiveTool(tool);
+    if (
+      tool === "boundary" &&
+      window.localStorage.getItem("qsbom.boundaryHintSeen") !== "true"
+    ) {
+      setBoundaryHintVisible(true);
+      window.localStorage.setItem("qsbom.boundaryHintSeen", "true");
+    }
+  }, []);
 
   const handleGatePlaced = useCallback(
     (segIdx: number, gateIdx: number, defaultWidthMM: number) => {
@@ -322,7 +336,7 @@ export function FenceLayoutCanvas({
       <CanvasToolbar
         engineRef={engineRef}
         activeTool={activeTool}
-        onToolChange={setActiveTool}
+        onToolChange={handleToolChange}
         snapEnabled={snapEnabled}
         onSnapToggle={setSnapEnabled}
         gateSnap100={gateSnap100}
@@ -331,6 +345,7 @@ export function FenceLayoutCanvas({
         onToggleGrid={setShowGrid}
         expanded={expanded}
         onToggleExpand={setExpanded}
+        onHelpOpen={() => setHelpOpen(true)}
       />
 
       <div className="relative">
@@ -341,7 +356,7 @@ export function FenceLayoutCanvas({
         />
 
         {/* Hint overlay */}
-        <div className="absolute bottom-2 left-2 text-xs text-brand-muted pointer-events-none select-none">
+        <div className="hidden">
           {activeTool === "draw" &&
             "Click to place points · Double-click the blue marker to finish · Click a length label to edit"}
           {activeTool === "gate" &&
@@ -353,9 +368,26 @@ export function FenceLayoutCanvas({
         </div>
 
         {/* Zoom hint */}
-        <div className="absolute bottom-2 right-2 text-xs text-brand-muted pointer-events-none select-none">
+        <div className="hidden">
           Scroll = zoom · Right-drag = pan · Ctrl+Z = undo
         </div>
+        {boundaryHintVisible && (
+          <div className="absolute left-4 top-4 max-w-xs rounded-lg border border-brand-warning/40 bg-brand-card/95 p-3 text-xs text-brand-text shadow-md">
+            <div className="font-semibold text-brand-warning">Boundary tool</div>
+            <p className="mt-1 text-brand-muted">
+              Draw existing fences, walls, or property lines for context. These
+              do not appear in your BOM.
+            </p>
+            <button
+              type="button"
+              onClick={() => setBoundaryHintVisible(false)}
+              className="mt-2 rounded-lg border border-brand-border px-2 py-1 font-semibold text-brand-muted hover:border-brand-primary hover:text-brand-text"
+            >
+              Got it
+            </button>
+          </div>
+        )}
+
         {mapUiState.mapType === "satellite" &&
           !mapUiState.hasLoadedMap &&
           !mapUiState.hasAddress && (
@@ -437,7 +469,7 @@ export function FenceLayoutCanvas({
         <button
           type="button"
           onClick={handleUseLayout}
-          className="flex items-center gap-1.5 px-4 py-2 bg-brand-accent text-white text-sm font-medium rounded hover:bg-brand-accent-hover transition-colors shrink-0 ml-4"
+          className="flex items-center gap-1.5 px-4 py-2 bg-brand-primary text-white text-sm font-medium rounded-lg hover:bg-brand-accent-hover transition-colors shrink-0 ml-4"
         >
           {applied ? "Applied!" : "Use This Layout"}
           {!applied && <ArrowRight size={16} />}
@@ -519,6 +551,8 @@ export function FenceLayoutCanvas({
           onClose={() => setEditingCanvasGate(null)}
         />
       )}
+
+      <HelpCheatSheet open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   );
 }
