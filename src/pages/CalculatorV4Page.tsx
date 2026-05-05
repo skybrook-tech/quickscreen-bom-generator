@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { AppShell } from "../components/layout/AppShell";
 import {
   CalculatorV4Provider,
@@ -31,6 +32,20 @@ function CalculatorV4Content() {
   const { state, dispatch } = useCalculatorV4();
   const payload = state.payload;
   const bomMutation = useBomCalculator();
+  const location = useLocation();
+
+  // Load a job that was navigated in from the Quotes history page
+  useEffect(() => {
+    const incoming = (location.state as { v4Payload?: unknown; savedQuoteId?: string } | null);
+    if (!incoming?.v4Payload) return;
+    dispatch({ type: "INIT_PAYLOAD", payload: incoming.v4Payload as import("../types/canonical.types").CanonicalPayload });
+    if (incoming.savedQuoteId) {
+      dispatch({ type: "SET_SAVED_QUOTE_ID", id: incoming.savedQuoteId });
+    }
+    // Clear router state so a page refresh doesn't re-apply
+    window.history.replaceState({}, "", location.pathname);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [layoutOpen, setLayoutOpen] = useState(false);
   const [gateRunId, setGateRunId] = useState<string | null>(null);

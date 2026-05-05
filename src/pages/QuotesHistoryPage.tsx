@@ -1,8 +1,21 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Trash2, Plus, FileText, Search } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Trash2, Plus, FileText, Search, ExternalLink } from "lucide-react";
 import { AppShell } from "../components/layout/AppShell";
 import { useQuotes } from "../hooks/useQuotes";
+import type { SavedQuote } from "../types/quote.types";
+import type { CanonicalPayload } from "../types/canonical.types";
+
+/** Returns the v4 canonical payload if the quote was saved from Calculator B. */
+function extractV4Payload(quote: SavedQuote): CanonicalPayload | null {
+  try {
+    const notes = JSON.parse(quote.notes ?? "null");
+    if (notes && notes.v4_payload) return notes.v4_payload as CanonicalPayload;
+  } catch {
+    // not a v4 quote
+  }
+  return null;
+}
 
 const STATUS_COLOURS: Record<string, string> = {
   draft: "text-brand-muted bg-brand-border/30",
@@ -13,6 +26,7 @@ const STATUS_COLOURS: Record<string, string> = {
 
 export function QuotesHistoryPage() {
   const { quotesQuery, deleteQuote } = useQuotes();
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
 
   const quotes = quotesQuery.data ?? [];
@@ -143,7 +157,9 @@ export function QuotesHistoryPage() {
                       )}
                     </td>
                     <td className="px-4 py-3 text-brand-muted hidden sm:table-cell">
-                      {quote.fence_config?.systemType ?? "—"}
+                      {extractV4Payload(quote)
+                        ? <span className="text-xs px-1.5 py-0.5 bg-brand-accent/10 text-brand-accent rounded font-medium">Calc B</span>
+                        : (quote.fence_config?.systemType ?? "—")}
                     </td>
                     <td className="px-4 py-3 text-brand-muted hidden md:table-cell">
                       {quote.fence_config?.totalRunLength != null
@@ -170,6 +186,24 @@ export function QuotesHistoryPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
+                        {extractV4Payload(quote) && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              navigate("/fence-calculator-v4", {
+                                state: {
+                                  v4Payload: extractV4Payload(quote),
+                                  savedQuoteId: quote.id,
+                                },
+                              })
+                            }
+                            title="Open in Calculator B"
+                            className="flex items-center gap-1 px-2 py-1 text-xs text-brand-accent hover:bg-brand-accent/10 rounded transition-colors"
+                          >
+                            <ExternalLink size={12} />
+                            <span className="hidden sm:inline">Open in B</span>
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={() => deleteQuote.mutate(quote.id)}

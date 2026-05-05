@@ -18,6 +18,7 @@ import { ComponentsIndexPage } from "./pages/admin/ComponentsIndexPage";
 import { ColoursAdminPage } from "./pages/admin/ColoursAdminPage";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { ProfileProvider } from "./context/ProfileContext";
+import { NotFoundPage } from "./pages/NotFoundPage";
 
 function ThemedToaster() {
   const { theme } = useTheme();
@@ -25,71 +26,77 @@ function ThemedToaster() {
 }
 
 const router = createBrowserRouter([
-  { path: "/login", element: <LoginPage /> },
-  { path: "/", element: <Navigate to="/fence-calculator" replace /> },
   {
-    path: "/fence-calculator",
-    element: (
-      <AuthGuard>
-        <CalculatorV3Page />
-      </AuthGuard>
-    ),
-  },
-  {
-    path: "/calculator",
-    element: (
-      <AuthGuard>
-        <CalculatorV3Page />
-      </AuthGuard>
-    ),
-  },
-  {
-    path: "/fence-calculator-v4",
-    element: (
-      <AuthGuard>
-        <CalculatorV4Page />
-      </AuthGuard>
-    ),
-  },
-  {
-    path: "/quotes",
-    element: (
-      <AuthGuard>
-        <QuotesHistoryPage />
-      </AuthGuard>
-    ),
-  },
-  {
-    path: "/admin/products",
-    element: (
-      <AdminGuard>
-        <ProductsIndexPage />
-      </AdminGuard>
-    ),
-  },
-  {
-    path: "/admin/products/:id",
-    element: (
-      <AdminGuard>
-        <ProductDetailPage />
-      </AdminGuard>
-    ),
-  },
-  {
-    path: "/admin/components",
-    element: (
-      <AdminGuard>
-        <ComponentsIndexPage />
-      </AdminGuard>
-    ),
-  },
-  {
-    path: "/admin/colours",
-    element: (
-      <AdminGuard>
-        <ColoursAdminPage />
-      </AdminGuard>
-    ),
+    errorElement: <NotFoundPage />,
+    children: [
+      { path: "/login", element: <LoginPage /> },
+      { path: "/", element: <Navigate to="/fence-calculator" replace /> },
+      {
+        path: "/fence-calculator",
+        element: (
+          <AuthGuard>
+            <CalculatorV3Page />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: "/calculator",
+        element: (
+          <AuthGuard>
+            <CalculatorV3Page />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: "/fence-calculator-v4",
+        element: (
+          <AuthGuard>
+            <CalculatorV4Page />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: "/quotes",
+        element: (
+          <AuthGuard>
+            <QuotesHistoryPage />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: "/admin/products",
+        element: (
+          <AdminGuard>
+            <ProductsIndexPage />
+          </AdminGuard>
+        ),
+      },
+      {
+        path: "/admin/products/:id",
+        element: (
+          <AdminGuard>
+            <ProductDetailPage />
+          </AdminGuard>
+        ),
+      },
+      {
+        path: "/admin/components",
+        element: (
+          <AdminGuard>
+            <ComponentsIndexPage />
+          </AdminGuard>
+        ),
+      },
+      {
+        path: "/admin/colours",
+        element: (
+          <AdminGuard>
+            <ColoursAdminPage />
+          </AdminGuard>
+        ),
+      },
+      { path: "*", element: <NotFoundPage asNotFound /> },
+    ],
   },
 ]);
 

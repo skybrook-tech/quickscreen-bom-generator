@@ -47,6 +47,10 @@ export interface CalculatorV4State {
   /** After ADD_RUN or initial job create, that run's card should open config; cleared once applied. */
   openRunConfigRunId: string | null;
   bomResult: Record<string, unknown> | null;
+  /** True when the payload has changed since the last BOM was generated. */
+  bomStale: boolean;
+  /** Supabase quotes.id for the last successful save — used to upsert on subsequent saves. */
+  savedQuoteId: string | null;
   /** Suggestions the user has accepted into the BOM (client-side only in v4 v1). */
   addedSuggestions: AddedSuggestion[];
   /** Suggestion SKUs the user has dismissed (added or otherwise hidden). */
@@ -64,6 +68,8 @@ const initialState: CalculatorV4State = {
   payload: null,
   openRunConfigRunId: null,
   bomResult: null,
+  bomStale: false,
+  savedQuoteId: null,
   addedSuggestions: [],
   dismissedSuggestionSkus: new Set(),
   removedSkus: new Set(),
@@ -106,6 +112,7 @@ export type CalculatorV4Action =
   | { type: "ADD_EXTRA"; item: ExtraItem }
   | { type: "REMOVE_EXTRA"; id: string }
   | { type: "SET_QTY_OVERRIDE"; lineKey: string; qty: number }
+  | { type: "SET_SAVED_QUOTE_ID"; id: string }
   | {
       type: "HYDRATE_V4_DRAFT";
       snapshot: {
@@ -133,8 +140,11 @@ function reducer(
       return {
         ...initialState,
         jobName: state.jobName,
+        savedQuoteId: state.savedQuoteId,
         payload: normalizeV4PayloadRuns(action.payload),
         openRunConfigRunId: null,
+        bomResult: null,
+        bomStale: false,
         dismissedSuggestionSkus: new Set(),
         removedSkus: new Set(),
         qtyOverrides: {},
@@ -146,6 +156,7 @@ function reducer(
           ? normalizeV4PayloadRuns(action.payload)
           : null,
         openRunConfigRunId: action.openRunConfigRunId ?? null,
+        bomStale: true,
       };
     case "RESET_JOB":
       return initialState;
@@ -170,7 +181,7 @@ function reducer(
         );
         return syncRunVariablesFromMaster({ ...r, segments: nextSegs });
       });
-      return { ...state, payload: { ...state.payload, runs } };
+      return { ...state, payload: { ...state.payload, runs }, bomStale: true };
     }
     case "SET_RUN_DISPLAY_NAME": {
       if (!state.payload) return state;
@@ -206,6 +217,7 @@ function reducer(
       return {
         ...state,
         openRunConfigRunId: newRun.runId,
+        bomStale: true,
         payload: {
           ...state.payload,
           runs: [...state.payload.runs, newRun],
@@ -246,7 +258,7 @@ function reducer(
           segments: segs,
         });
       });
-      return { ...state, payload: { ...payload, runs } };
+      return { ...state, payload: { ...payload, runs }, bomStale: true };
     }
     case "REMOVE_RUN": {
       if (!state.payload) return state;
@@ -258,6 +270,7 @@ function reducer(
           state.openRunConfigRunId === action.runId
             ? null
             : state.openRunConfigRunId,
+        bomStale: true,
         payload: {
           ...state.payload,
           runs: state.payload.runs.filter((r) => r.runId !== action.runId),
@@ -327,7 +340,7 @@ function reducer(
 
         return syncRunVariablesFromMaster({ ...r, segments: newSegs });
       });
-      return { ...state, payload: { ...state.payload, runs } };
+      return { ...state, payload: { ...state.payload, runs }, bomStale: true };
     }
     case "REMOVE_SEGMENT": {
       if (!state.payload) return state;
@@ -351,7 +364,7 @@ function reducer(
           removeSegmentFromRun(r, action.segmentId),
         );
       });
-      return { ...state, payload: { ...state.payload, runs } };
+      return { ...state, payload: { ...state.payload, runs }, bomStale: true };
     }
     case "DUPLICATE_SEGMENT": {
       if (!state.payload) return state;
@@ -377,12 +390,13 @@ function reducer(
           segments: [...before, copy, ...after],
         });
       });
-      return { ...state, payload: { ...state.payload, runs } };
+      return { ...state, payload: { ...state.payload, runs }, bomStale: true };
     }
     case "SET_BOM_RESULT":
       return {
         ...state,
         bomResult: action.result,
+        bomStale: false,
         // When a fresh BOM comes in, reset suggestion/removal state
         addedSuggestions: [],
         dismissedSuggestionSkus: new Set(),
@@ -455,6 +469,8 @@ function reducer(
       else next[action.lineKey] = q;
       return { ...state, qtyOverrides: next };
     }
+    case "SET_SAVED_QUOTE_ID":
+      return { ...state, savedQuoteId: action.id };
     case "HYDRATE_V4_DRAFT": {
       const s = action.snapshot;
       return {
@@ -462,6 +478,8 @@ function reducer(
         payload: s.payload ? normalizeV4PayloadRuns(s.payload) : null,
         openRunConfigRunId: null,
         bomResult: s.bomResult,
+        bomStale: false,
+        savedQuoteId: null,
         addedSuggestions: s.addedSuggestions,
         dismissedSuggestionSkus: new Set(s.dismissedSuggestionSkus),
         removedSkus: new Set(s.removedSkus),

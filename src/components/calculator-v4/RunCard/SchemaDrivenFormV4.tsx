@@ -176,6 +176,7 @@ function FieldRenderer({
                 : parseFloat(e.target.value),
             )
           }
+          onFocus={(e) => e.target.select()}
           className={CONTROL_MONO_CLASS}
         />
       </FieldWrap>
@@ -299,6 +300,7 @@ function SlatGapControl({
               step={1}
               value={Number.isFinite(num) ? num : 0}
               onChange={(e) => applyCustomMm(Number(e.target.value))}
+              onFocus={(e) => e.target.select()}
               className={cn(CONTROL_MONO_CLASS, "w-28")}
               aria-label="Custom slat gap mm"
             />

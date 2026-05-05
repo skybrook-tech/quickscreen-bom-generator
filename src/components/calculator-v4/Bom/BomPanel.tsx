@@ -143,6 +143,8 @@ export function BomPanel({
           activeTab === "all" ? undefined : totalsScopeLabel
         }
         isPending={isPending}
+        isStale={state.bomStale}
+        hasBom={!!state.bomResult}
       />
 
       <BomActions
