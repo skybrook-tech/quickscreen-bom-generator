@@ -13,6 +13,12 @@ import {
   type LegacyBoundaryType,
 } from "./segmentTermination";
 import { clampPostSpacing, maxPanelWidthForSystem } from "./productOptionRules";
+import {
+  baseHardwareSku,
+  isTruCloseHardware,
+  isWhiteHardwareFinish,
+  kitForHardwareSelection,
+} from "./gateHardware";
 
 type LocalBomResult = {
   lines: BOMLineItem[];
@@ -763,10 +769,70 @@ function calculateGateSegment(
   const stopSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.gateStopType]);
   if (stopSku) emit(lines, { ...base, sku: stopSku, category: "hardware", quantity: leafCount, unit: "each", notes: "Selected gate stop" });
 
-  const hingeSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B");
-  if (hingeSku) emit(lines, { ...base, sku: hingeSku, category: "hardware", quantity: leafCount, unit: "each", notes: "Selected hinge / latch hardware" });
-  const latchSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA");
-  if (latchSku) emit(lines, { ...base, sku: latchSku, category: "hardware", quantity: 1, unit: "each", notes: "Selected latch / lock hardware" });
+  const whiteHardware = isWhiteHardwareFinish(colour);
+  const hingeValue = String(vars[GATE_SEGMENT_STUB_KEYS.hingeType] ?? (whiteHardware ? "TC-H-AT-HD-2L-W" : "TC-H-AT-HD-B"));
+  const latchValue = String(vars[GATE_SEGMENT_STUB_KEYS.latchType] ?? (whiteHardware ? "LL-DL-W" : "LL-DL-KA"));
+  const selectedKitSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.hardwareKitSku]);
+  const matchingKit = kitForHardwareSelection(hingeValue, latchValue);
+  const kitSku = selectedKitSku && matchingKit?.kitSku === selectedKitSku ? selectedKitSku : undefined;
+  const hingeSku = knownSelectedSku(hingeValue);
+  const latchSku = knownSelectedSku(latchValue);
+  if (kitSku) {
+    emit(lines, {
+      ...base,
+      sku: kitSku,
+      category: "hardware",
+      quantity: leafCount,
+      unit: "each",
+      notes: "Selected hinge and latch kit",
+    });
+  } else {
+    if (hingeSku) {
+      emit(lines, {
+        ...base,
+        sku: hingeSku,
+        category: "hardware",
+        quantity: leafCount,
+        unit: "each",
+        notes: matchingKit
+          ? `Selected hinge hardware; kit available as ${matchingKit.kitSku}`
+          : "Selected hinge hardware",
+      });
+    }
+    if (latchSku) {
+      emit(lines, {
+        ...base,
+        sku: latchSku,
+        category: "hardware",
+        quantity: 1,
+        unit: "each",
+        notes: matchingKit
+          ? `Selected latch / lock hardware; kit available as ${matchingKit.kitSku}`
+          : "Selected latch / lock hardware",
+      });
+    }
+  }
+  const hardwareForCaps = kitSku ?? hingeSku ?? baseHardwareSku(hingeValue);
+  if (isTruCloseHardware(hardwareForCaps)) {
+    emit(lines, {
+      ...base,
+      sku: "TC-CAPS3",
+      category: "hardware",
+      quantity: leafCount,
+      unit: "each",
+      notes: "Auto-added for selected TruClose hinges",
+    });
+  }
+  if (vars[GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit] === true) {
+    emit(lines, {
+      ...base,
+      sku: "LLB",
+      category: "hardware",
+      quantity: 1,
+      unit: "each",
+      notes: "Optional external access kit for selected Lokk Latch",
+    });
+  }
   const dropBoltSku = knownSelectedSku(
     vars[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? (movement === "double_swing" ? "SS-0300DB-B" : "none"),
   );

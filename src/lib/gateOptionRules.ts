@@ -97,7 +97,6 @@ export const DROP_BOLT_OPTIONS: GateOption[] = [
   { value: "LB-PL", label: "D&D Lokk Bolt 450mm lockable", sku: "LB-PL" },
   { value: "ZF-DB400-B", label: "Zeus 400mm drop bolt - black", sku: "ZF-DB400-B" },
   { value: "SS-0300DB-B", label: "300mm drop bolt - black", sku: "SS-0300DB-B" },
-  { value: "SS-0300DB-ZP", label: "300mm drop bolt - zinc plated", sku: "SS-0300DB-ZP" },
 ];
 
 export const GATE_STOP_OPTIONS: GateOption[] = [
@@ -172,6 +171,8 @@ export function defaultGateVariables(
     [GATE_SEGMENT_STUB_KEYS.latchType]: "LL-DL-KA",
     [GATE_SEGMENT_STUB_KEYS.dropBoltType]: "none",
     [GATE_SEGMENT_STUB_KEYS.gateStopType]: "none",
+    [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
+    [GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit]: false,
     [GATE_SEGMENT_STUB_KEYS.includeLockBox]: false,
     [GATE_SEGMENT_STUB_KEYS.lockBoxType]: "",
     [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]: true,

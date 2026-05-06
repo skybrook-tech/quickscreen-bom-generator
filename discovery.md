@@ -922,6 +922,23 @@ Changes applied:
 Verification:
 - `npm run build` passed after these changes.
 
+### May 7, 2026 - Brief T guided gate hardware picker
+
+Catalogue/product rule finding:
+- Gate hardware selection needs to be guided by estimated gate mass, self-closing requirements, hinge rating, hinge gap suitability, and finish availability rather than a flat dropdown.
+- The active QuickScreen gate hardware set includes D&D TruClose/Kwik Fit/SureClose hinges, Six Star/Zeus/Colourbond hinge options, D&D Magna Latch/Lokk Latch/T-Latch latch options, white hardware variants where the catalogue offers them, four drop-bolt SKUs, and known hinge/latch kit combinations.
+- The local fallback can safely estimate gate weight for selector guidance using catalogue kg/m constants, but pricing remains sourced from the existing seed/catalogue data path.
+
+Changes applied:
+- Added a gate hardware rules module with live weight estimation, hinge/latch ranking, white-SKU resolution helpers, TruClose detection, and known kit matching.
+- Replaced swing-gate hinge and latch dropdowns with guided picker cards that show fit/tight/fail status, reason tags, white-finish limitations, recommended hardware, and kit-use prompts.
+- Kept drop bolts and gate stops as searchable inventory dropdowns, with the active drop-bolt list narrowed to four selectable SKUs plus `none`.
+- Updated the local fallback BOM to emit the selected hinge/latch or selected kit, auto-add `TC-CAPS3` for TruClose hardware, and add optional `LLB` external access kits when selected.
+
+Verification:
+- `npm run build` passed.
+- Rules smoke check: 900x900 65/9 recommends `TC-H-AT-B`, 1500x1800 65/9 estimates 38.8kg and recommends `TC-H-AT-HD-B`, and 2100x2100 90/9 recommends `KF-AH-AT`.
+
 ### May 2, 2026 - QSG gate online pricing pass
 
 Pricing workflow finding:

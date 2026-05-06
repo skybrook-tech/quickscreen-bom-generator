@@ -48,6 +48,8 @@ Latest Brief S pass: the layout mapper now has a top-level Help button with a fo
 
 Latest installer-map workflow pass: user-facing segment copy is now section copy in the active V3 workspace, run settings are directly editable at the run level, section codes show green when matching run settings, typed section length edits take priority when redrawing the map, gate placement asks for width/type before dropping with a width preview, and the canvas toolbar can print an installer-ready map.
 
+Latest Brief T pass: swing gates now show a live estimated gate weight, rank catalogue hinges by fit/tight/fail against the required rating, guide latch selection with white-finish handling, expose the four active drop-bolt SKUs, offer known hinge/latch kits, and emit selected hardware/TruClose caps through the local fallback BOM.
+
 ---
 
 ## Phases Overview

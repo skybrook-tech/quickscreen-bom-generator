@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
 import {
@@ -9,8 +9,6 @@ import {
   DROP_BOLT_OPTIONS,
   GATE_MOVEMENTS,
   GATE_STOP_OPTIONS,
-  HINGE_OPTIONS,
-  LATCH_OPTIONS,
   SLIDING_CATCH_OPTIONS,
   SLIDING_MOTOR_OPTIONS,
   SLIDING_TRACK_OPTIONS,
@@ -21,6 +19,19 @@ import {
   optionLabel,
   type GateOption,
 } from "../../lib/gateOptionRules";
+import {
+  baseHardwareSku,
+  estimateGateWeight,
+  isWhiteHardwareFinish,
+  kitForHardwareSelection,
+  rankHinges,
+  rankLatches,
+  type GateHardwareStatus,
+  type GateWeightEstimate,
+  type HingeHardware,
+  type LatchHardware,
+  type RankedHardware,
+} from "../../lib/gateHardware";
 import NumberInput from "../shared/NumberInput";
 import { useProductSearch } from "../../hooks/useProductSearch";
 import { ColourPalette } from "./ColourPalette";
@@ -196,6 +207,183 @@ function HardwareDropdown({
   );
 }
 
+function statusClasses(status: GateHardwareStatus) {
+  if (status === "fit") return "border-brand-success/50 bg-brand-success/10 text-brand-success";
+  if (status === "tight") return "border-brand-warning/60 bg-brand-warning/10 text-brand-warning";
+  return "border-brand-danger/50 bg-brand-danger/10 text-brand-danger";
+}
+
+function statusLabel(status: GateHardwareStatus) {
+  if (status === "fit") return "Fits";
+  if (status === "tight") return "Tight fit";
+  return "Does not fit";
+}
+
+function GateWeightCard({ estimate }: { estimate: GateWeightEstimate }) {
+  return (
+    <div className="rounded-lg border border-brand-border/70 bg-brand-card p-3 shadow-none">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-bold text-brand-text">Estimated gate weight</p>
+          <p className="text-xs font-semibold text-brand-muted">
+            Includes frame, slats, hardware allowance and 30% hinge safety margin.
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-xl font-black tabular-nums text-brand-primary">{estimate.totalKg.toFixed(1)}kg</p>
+          <p className="text-xs font-bold text-brand-muted">
+            Need {estimate.requiredRatingKg}kg+ hinges
+          </p>
+        </div>
+      </div>
+      <div className="mt-3 grid grid-cols-3 gap-2 text-xs font-bold text-brand-muted">
+        <span>Slats <b className="text-brand-text">{estimate.slatCount}</b></span>
+        <span>Slat kg <b className="text-brand-text">{estimate.slatWeightKg.toFixed(1)}</b></span>
+        <span>Frame kg <b className="text-brand-text">{estimate.frameWeightKg.toFixed(1)}</b></span>
+      </div>
+    </div>
+  );
+}
+
+function HardwareReasonTags({
+  status,
+  reasons,
+}: {
+  status: GateHardwareStatus;
+  reasons: string[];
+}) {
+  const tags = reasons.length > 0 ? reasons : status === "tight" ? ["Close to required rating"] : [];
+  if (tags.length === 0) return null;
+  return (
+    <div className="mt-2 flex flex-wrap gap-1">
+      {tags.map((reason) => (
+        <span
+          key={reason}
+          className={`rounded-full border px-2 py-0.5 text-[11px] font-bold ${statusClasses(status)}`}
+        >
+          {reason}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function HingePicker({
+  value,
+  options,
+  onChange,
+}: {
+  value: string;
+  options: RankedHardware<HingeHardware>[];
+  onChange: (value: string) => void;
+}) {
+  const baseValue = baseHardwareSku(value);
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-sm font-bold text-brand-muted">Hinge / closer</p>
+        <span className="text-xs font-bold text-brand-muted">{options.length} catalogue hinges</span>
+      </div>
+      <div className="grid gap-2">
+        {options.map((option) => {
+          const active = baseValue === option.sku || value === option.effectiveSku;
+          return (
+            <button
+              key={option.sku}
+              type="button"
+              onClick={() => onChange(option.effectiveSku)}
+              className={`rounded-lg border p-3 text-left shadow-none transition hover:shadow-sm ${
+                active
+                  ? "border-brand-primary bg-brand-primary/10"
+                  : "border-brand-border bg-brand-card hover:border-brand-primary"
+              } ${option.status === "fail" ? "opacity-60" : ""}`}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="text-sm font-black text-brand-text">{option.label}</p>
+                  <p className="text-xs font-bold text-brand-muted">
+                    {option.effectiveSku} - {option.ratingKg}kg - gap {option.gapMinMm}-{option.gapMaxMm}mm
+                  </p>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  {option.recommended && (
+                    <span className="rounded-full bg-brand-success px-2 py-0.5 text-[11px] font-black text-white">
+                      Recommended cheapest fit
+                    </span>
+                  )}
+                  <span className={`rounded-full border px-2 py-0.5 text-[11px] font-black ${statusClasses(option.status)}`}>
+                    {statusLabel(option.status)}
+                  </span>
+                </div>
+              </div>
+              <HardwareReasonTags status={option.status} reasons={option.reasons} />
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function LatchPicker({
+  value,
+  options,
+  onChange,
+}: {
+  value: string;
+  options: RankedHardware<LatchHardware>[];
+  onChange: (value: string) => void;
+}) {
+  const baseValue = baseHardwareSku(value);
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-sm font-bold text-brand-muted">Latch / lock</p>
+        <span className="text-xs font-bold text-brand-muted">Filtered to gate movement</span>
+      </div>
+      <div className="grid gap-2">
+        {options.map((option) => {
+          const active = baseValue === option.sku || value === option.effectiveSku;
+          return (
+            <button
+              key={option.sku}
+              type="button"
+              onClick={() => onChange(option.effectiveSku)}
+              className={`rounded-lg border p-3 text-left shadow-none transition hover:shadow-sm ${
+                active
+                  ? "border-brand-primary bg-brand-primary/10"
+                  : "border-brand-border bg-brand-card hover:border-brand-primary"
+              } ${option.status === "fail" ? "opacity-60" : ""}`}
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="text-sm font-black text-brand-text">{option.label}</p>
+                  <p className="text-xs font-bold text-brand-muted">
+                    {option.effectiveSku}
+                    {option.lockable ? " - lockable" : ""}
+                    {option.poolSafe ? " - pool safe" : ""}
+                  </p>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  {option.recommended && (
+                    <span className="rounded-full bg-brand-success px-2 py-0.5 text-[11px] font-black text-white">
+                      Recommended
+                    </span>
+                  )}
+                  <span className={`rounded-full border px-2 py-0.5 text-[11px] font-black ${statusClasses(option.status)}`}>
+                    {statusLabel(option.status)}
+                  </span>
+                </div>
+              </div>
+              <HardwareReasonTags status={option.status} reasons={option.reasons} />
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function GateSegmentDetails({ runId, seg }: Props) {
   const { state, dispatch } = useCalculator();
   const v = seg.variables ?? {};
@@ -219,6 +407,91 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   const masterVars = {
     ...runVars,
   };
+  const gateColour = String(v[GATE_SEGMENT_STUB_KEYS.colourCode] ?? masterVars.colour_code ?? "B");
+  const slatSizeMm = Number(v[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVars.slat_size_mm ?? 65);
+  const slatGapMm = Number(v[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVars.slat_gap_mm ?? 9);
+  const gateHeightMm = Number(
+    seg.targetHeightMm ??
+      v[GATE_SEGMENT_STUB_KEYS.gateHeightMm] ??
+      runVars.target_height_mm ??
+      1800,
+  );
+  const gateWidthMm = Number(seg.segmentWidthMm ?? 900);
+  const whiteFinish = isWhiteHardwareFinish(gateColour);
+  const weightEstimate = useMemo(
+    () =>
+      estimateGateWeight({
+        widthMm: gateWidthMm,
+        heightMm: gateHeightMm,
+        slatSizeMm,
+        slatGapMm,
+        finishFamily: String(masterVars.finish_family ?? "standard"),
+        build,
+        movement,
+      }),
+    [build, gateHeightMm, gateWidthMm, movement, slatGapMm, slatSizeMm, masterVars.finish_family],
+  );
+  const rankedHinges = useMemo(
+    () =>
+      rankHinges({
+        requiredRatingKg: weightEstimate.requiredRatingKg,
+        gateGapMm: 20,
+        whiteFinish,
+        requireSelfClosing: true,
+      }),
+    [weightEstimate.requiredRatingKg, whiteFinish],
+  );
+  const rankedLatches = useMemo(
+    () =>
+      rankLatches({
+        movement,
+        whiteFinish,
+      }),
+    [movement, whiteFinish],
+  );
+  const currentHingeValue = String(v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B");
+  const currentLatchValue = String(v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA");
+  const currentHingeBase = baseHardwareSku(currentHingeValue);
+  const currentLatchBase = baseHardwareSku(currentLatchValue);
+  const currentHingeStatus =
+    rankedHinges.find((option) => option.sku === currentHingeBase || option.effectiveSku === currentHingeValue)?.status ??
+    "fail";
+  const currentLatchStatus =
+    rankedLatches.find((option) => option.sku === currentLatchBase || option.effectiveSku === currentLatchValue)?.status ??
+    "fail";
+  const currentHingeEffectiveSku = rankedHinges.find(
+    (option) => option.sku === currentHingeBase || option.effectiveSku === currentHingeValue,
+  )?.effectiveSku;
+  const currentLatchEffectiveSku = rankedLatches.find(
+    (option) => option.sku === currentLatchBase || option.effectiveSku === currentLatchValue,
+  )?.effectiveSku;
+  const recommendedHingeSku = rankedHinges.find((option) => option.recommended)?.effectiveSku;
+  const recommendedLatchSku = rankedLatches.find((option) => option.recommended)?.effectiveSku;
+  const matchingHardwareKit = kitForHardwareSelection(currentHingeValue, currentLatchValue);
+  const selectedKitSku = String(v[GATE_SEGMENT_STUB_KEYS.hardwareKitSku] ?? "");
+  const latchCanUseExternalAccessKit = currentLatchBase === "LLAA" || currentLatchBase.startsWith("LL-DL");
+
+  useEffect(() => {
+    if (!isSwing || !recommendedHingeSku || currentHingeStatus !== "fail") return;
+    upsertVariables({ [GATE_SEGMENT_STUB_KEYS.hingeType]: recommendedHingeSku });
+  }, [currentHingeStatus, isSwing, recommendedHingeSku]);
+
+  useEffect(() => {
+    if (!isSwing || !currentHingeEffectiveSku || currentHingeStatus === "fail") return;
+    if (currentHingeValue === currentHingeEffectiveSku) return;
+    upsertVariables({ [GATE_SEGMENT_STUB_KEYS.hingeType]: currentHingeEffectiveSku });
+  }, [currentHingeEffectiveSku, currentHingeStatus, currentHingeValue, isSwing]);
+
+  useEffect(() => {
+    if (!isSwing || !recommendedLatchSku || currentLatchStatus !== "fail") return;
+    upsertVariables({ [GATE_SEGMENT_STUB_KEYS.latchType]: recommendedLatchSku });
+  }, [currentLatchStatus, isSwing, recommendedLatchSku]);
+
+  useEffect(() => {
+    if (!isSwing || !currentLatchEffectiveSku || currentLatchStatus === "fail") return;
+    if (currentLatchValue === currentLatchEffectiveSku) return;
+    upsertVariables({ [GATE_SEGMENT_STUB_KEYS.latchType]: currentLatchEffectiveSku });
+  }, [currentLatchEffectiveSku, currentLatchStatus, currentLatchValue, isSwing]);
 
   function upsertVariables(patch: Record<string, string | number | boolean | null | undefined>) {
     dispatch({
@@ -245,6 +518,8 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         nextMovement === "sliding" ? "none" : v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA",
       [GATE_SEGMENT_STUB_KEYS.gateStopType]:
         nextMovement === "sliding" ? "none" : v[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "none",
+      [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
+      [GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit]: false,
     });
   }
 
@@ -342,18 +617,67 @@ export function GateSegmentDetails({ runId, seg }: Props) {
 
       {isSwing ? (
         <div className="space-y-3 rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
-          <HardwareDropdown
-            label="Hinge / closer"
-            value={String(v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B")}
-            options={HINGE_OPTIONS}
-            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.hingeType]: value })}
+          <GateWeightCard estimate={weightEstimate} />
+          <HingePicker
+            value={currentHingeValue}
+            options={rankedHinges}
+            onChange={(value) =>
+              upsertVariables({
+                [GATE_SEGMENT_STUB_KEYS.hingeType]: value,
+                [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
+              })
+            }
           />
-          <HardwareDropdown
-            label="Latch / lock"
-            value={String(v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA")}
-            options={LATCH_OPTIONS}
-            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.latchType]: value })}
+          <LatchPicker
+            value={currentLatchValue}
+            options={rankedLatches}
+            onChange={(value) =>
+              upsertVariables({
+                [GATE_SEGMENT_STUB_KEYS.latchType]: value,
+                [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
+              })
+            }
           />
+          {matchingHardwareKit && (
+            <div className="rounded-lg border border-brand-success/40 bg-brand-success/10 p-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <p className="text-sm font-black text-brand-success">Save as kit</p>
+                  <p className="text-xs font-bold text-brand-muted">
+                    {matchingHardwareKit.label} - {matchingHardwareKit.kitSku}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    upsertVariables({
+                      [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]:
+                        selectedKitSku === matchingHardwareKit.kitSku ? "" : matchingHardwareKit.kitSku,
+                    })
+                  }
+                  className="rounded-lg border border-brand-success bg-brand-card px-3 py-1.5 text-xs font-black text-brand-success hover:shadow-sm"
+                >
+                  {selectedKitSku === matchingHardwareKit.kitSku ? "Using kit" : "Use kit"}
+                </button>
+              </div>
+            </div>
+          )}
+          {latchCanUseExternalAccessKit && (
+            <label className="flex items-center gap-2 rounded-lg border border-brand-border/70 bg-brand-card p-3">
+              <input
+                type="checkbox"
+                checked={v[GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit] === true}
+                onChange={(e) =>
+                  upsertVariables({
+                    [GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit]: e.target.checked,
+                  })
+                }
+              />
+              <span className="text-sm font-bold text-brand-muted">
+                Add external access kit <b className="text-brand-text">LLB</b>
+              </span>
+            </label>
+          )}
           <HardwareDropdown
             label="Drop bolt"
             value={String(v[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? (movement === "double_swing" ? "SS-0300DB-B" : "none"))}

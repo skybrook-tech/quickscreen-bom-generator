@@ -50,6 +50,8 @@ export const GATE_SEGMENT_STUB_KEYS = {
   latchType: "latch_type",
   dropBoltType: "drop_bolt_type",
   gateStopType: "gate_stop_type",
+  hardwareKitSku: "hardware_kit_sku",
+  includeExternalAccessKit: "include_external_access_kit",
   includeLockBox: "include_lock_box",
   lockBoxType: "lock_box_type",
   useGatePostsAsFenceTermination: "use_gate_posts_as_fence_termination",
