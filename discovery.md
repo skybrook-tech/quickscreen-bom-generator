@@ -1020,6 +1020,22 @@ Verification:
 - `npm run build` passed.
 - Source-level check confirmed rack quantity remains `ceil(gate_width_mm / 1000)`, mains distance over 30m selects `XPSG-FILO-400PRO-SP`, and solar emits `XPSG-FILO-400` plus `XPSG-FILO-SOLAR`.
 
+### May 7, 2026 - Brief Z end-condition field
+
+Catalogue/rule finding:
+- The local fallback already had a wall-termination path that skips product-post behaviour and emits F-section stock for wall ends.
+- The UI did not expose a simple installer-facing endpoint choice, and the existing hidden non-system subtype only supported wall/non-standard post.
+
+Changes applied:
+- Replaced the unused termination dropdown with a chip-based endpoint control for Post, Wall, Pillar, and Void.
+- Added the end-condition picker to fence section additional settings for both left and right ends.
+- Mid-run endpoints without explicit overrides display as read-only and show "Shared with adjacent section".
+- Extended non-system subtype parsing so Wall, Pillar, and Void all flow through the existing wall/F-section BOM behaviour.
+
+Verification:
+- `npm run build` passed.
+- Source-level check confirmed default endpoints remain Post, while Wall/Pillar/Void store `non_system_termination` and resolve to the wall/F-section BOM path.
+
 ### May 2, 2026 - QSG gate online pricing pass
 
 Pricing workflow finding:

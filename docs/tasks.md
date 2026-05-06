@@ -60,6 +60,8 @@ Latest Brief X pass: sliding gates now expose track, top guide, and catch choice
 
 Latest Brief Y pass: sliding gates now have an optional Filo 400 automation flow with mains/solar power, long-run split-pack switching, battery/keypad/extra remote options, rack count preview, automation subtotal, and BOM lines grouped under automation.
 
+Latest Brief Z pass: fence section settings now include left/right end-condition chips for Post, Wall, Pillar, and Void; non-post ends flow through the existing wall/F-section BOM path while adjacent shared ends render read-only.
+
 ---
 
 ## Phases Overview

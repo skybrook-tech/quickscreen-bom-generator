@@ -11,7 +11,7 @@ export type TerminationKindUi =
   | "system_post"
   | "non_system_termination";
 
-export type NonSystemSubtypeUi = "wall" | "non_system_post";
+export type NonSystemSubtypeUi = "wall" | "pillar" | "void" | "non_system_post";
 
 /** Legacy engine / boundary enum (matches CanonicalBoundary.type). */
 export type LegacyBoundaryType =
@@ -85,7 +85,7 @@ export function parseTerminationKind(
 export function parseNonSystemSubtype(
   raw: unknown,
 ): NonSystemSubtypeUi | undefined {
-  if (raw === "wall" || raw === "non_system_post") return raw;
+  if (raw === "wall" || raw === "pillar" || raw === "void" || raw === "non_system_post") return raw;
   return undefined;
 }
 
@@ -114,7 +114,7 @@ export function effectiveLegacyBoundaryType(
       ? SEGMENT_TERMINATION_KEYS.leftNonSystemSubtype
       : SEGMENT_TERMINATION_KEYS.rightNonSystemSubtype;
   const sub = parseNonSystemSubtype(vars?.[subKey]);
-  if (sub === "wall") return "wall";
+  if (sub === "wall" || sub === "pillar" || sub === "void") return "wall";
   return "brick_post";
 }
 

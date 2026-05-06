@@ -16,6 +16,7 @@ import {
 } from "../../lib/segmentTermination";
 import { SchemaDrivenForm } from "./SchemaDrivenForm";
 import NumberInput from "../shared/NumberInput";
+import { TerminationControl } from "./TerminationControl";
 
 const POST_SIZE_LABELS: Record<string, string> = {
   "50": "50mm Post Standard",
@@ -82,6 +83,10 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     ...runVariables,
     ...v,
   };
+  const fenceSegments = run?.segments.filter((segment) => segment.segmentKind !== "gate_opening") ?? [];
+  const segmentIndex = fenceSegments.findIndex((segment) => segment.segmentId === seg.segmentId);
+  const leftEndReadOnly = segmentIndex > 0 && !v.left_termination_kind;
+  const rightEndReadOnly = segmentIndex >= 0 && segmentIndex < fenceSegments.length - 1 && !v.right_termination_kind;
   const postSize = (displayVariables[SEGMENT_OPTION_KEYS.postSize] as string) ?? "";
   const isCustomPost = postSize === "custom";
 
@@ -206,6 +211,23 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
               )}
             </SettingsSection>
           ) : null}
+
+          <SettingsSection title="End conditions" defaultOpen>
+            <div className="grid gap-3 lg:grid-cols-2">
+              <TerminationControl
+                runId={runId}
+                seg={seg}
+                side="left"
+                readOnly={leftEndReadOnly}
+              />
+              <TerminationControl
+                runId={runId}
+                seg={seg}
+                side="right"
+                readOnly={rightEndReadOnly}
+              />
+            </div>
+          </SettingsSection>
 
           <SettingsSection title="Posts">
             <label className="flex flex-col gap-1">
