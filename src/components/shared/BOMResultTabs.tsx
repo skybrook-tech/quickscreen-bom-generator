@@ -28,6 +28,7 @@ const CATEGORY_ORDER = [
   "rail",
   "bracket",
   "gate",
+  "automation",
   "hardware",
   "accessory",
   "screw",

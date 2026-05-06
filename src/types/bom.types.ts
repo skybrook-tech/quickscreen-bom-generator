@@ -12,6 +12,7 @@ export type BOMCategory =
   | 'screw'
   | 'gate'
   | 'hardware'
+  | 'automation'
   | 'accessory';
 export type BOMUnit = 'each' | 'length' | 'pack' | 'box';
 

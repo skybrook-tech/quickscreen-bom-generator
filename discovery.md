@@ -1004,6 +1004,22 @@ Verification:
 - `npm run build` passed.
 - Source-level check confirmed track quantity still uses `ceil((2 x gate width) / track length)`, catch emits the selected `XPSG-CATCH-U/F`, and guide emits the selected `XPSG-GUIDE` or `XPSG-TOPROLL-2PK`.
 
+### May 7, 2026 - Brief Y Filo 400 sliding gate automation
+
+Catalogue/rule finding:
+- The Filo 400 kit family was already present in the local seed/pricing fallback, but the UI only exposed a simple motor-kit dropdown and the BOM only emitted the motor plus rack.
+- The catalogue automation flow needs power-source choice, split-pack substitution for long mains runs, solar kit, backup battery, keypad, extra remotes, and rack quantity from gate width.
+
+Changes applied:
+- Added sliding gate automation variables for enabled state, power source, mains distance, battery, keypad, and extra remotes.
+- Replaced the sliding motor dropdown with an "Add automation kit" sub-flow shown only for sliding gates.
+- Added a live automation summary card with selected SKUs, rack count, subtotal, and electrician note.
+- Updated the BOM fallback to emit automation SKUs under a new `automation` category: motor/split-pack, solar kit, battery, keypad, extra remotes, and rack sections.
+
+Verification:
+- `npm run build` passed.
+- Source-level check confirmed rack quantity remains `ceil(gate_width_mm / 1000)`, mains distance over 30m selects `XPSG-FILO-400PRO-SP`, and solar emits `XPSG-FILO-400` plus `XPSG-FILO-SOLAR`.
+
 ### May 2, 2026 - QSG gate online pricing pass
 
 Pricing workflow finding:

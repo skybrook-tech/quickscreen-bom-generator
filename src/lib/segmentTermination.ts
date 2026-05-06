@@ -61,6 +61,12 @@ export const GATE_SEGMENT_STUB_KEYS = {
   slidingGuideType: "sliding_guide_type",
   slidingCatchType: "sliding_catch_type",
   slidingMotorType: "sliding_motor_type",
+  automationEnabled: "automation_enabled",
+  automationPowerSource: "automation_power_source",
+  automationCableDistanceM: "automation_cable_distance_m",
+  automationBattery: "automation_battery",
+  automationKeypad: "automation_keypad",
+  automationExtraRemotes: "automation_extra_remotes",
   gatePostSizeMm: "gate_post_size_mm",
 } as const;
 

@@ -734,16 +734,40 @@ function calculateGateSegment(
       unit: "each",
       notes: "Sliding gate catch",
     });
-    const motorSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.slidingMotorType]);
+    const automationEnabled = vars[GATE_SEGMENT_STUB_KEYS.automationEnabled] === true;
+    const cableDistanceM = toNumber(vars[GATE_SEGMENT_STUB_KEYS.automationCableDistanceM], 0);
+    const automationPower = String(vars[GATE_SEGMENT_STUB_KEYS.automationPowerSource] ?? "mains");
+    const automationMotorSku =
+      automationPower === "mains" && cableDistanceM > 30
+        ? "XPSG-FILO-400PRO-SP"
+        : "XPSG-FILO-400";
+    const motorSku = automationEnabled
+      ? automationMotorSku
+      : knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.slidingMotorType]);
     if (motorSku) {
-      emit(lines, { ...base, sku: motorSku, category: "hardware", quantity: 1, unit: "each", notes: "Selected sliding motor kit" });
+      emit(lines, { ...base, sku: motorSku, category: "automation", quantity: 1, unit: "each", notes: automationEnabled ? "Selected Filo 400 automation kit" : "Selected sliding motor kit" });
+      if (automationEnabled && automationPower === "solar") {
+        emit(lines, { ...base, sku: "XPSG-FILO-SOLAR", category: "automation", quantity: 1, unit: "each", notes: "Solar power kit for Filo 400 automation" });
+      }
+      if (automationEnabled && vars[GATE_SEGMENT_STUB_KEYS.automationBattery] === true) {
+        emit(lines, { ...base, sku: "XPSG-FILO-BATTERY", category: "automation", quantity: 1, unit: "each", notes: "Backup battery for Filo 400 automation" });
+      }
+      if (automationEnabled && vars[GATE_SEGMENT_STUB_KEYS.automationKeypad] === true) {
+        emit(lines, { ...base, sku: "XPSG-FILO-WKP", category: "automation", quantity: 1, unit: "each", notes: "Wireless keypad for Filo 400 automation" });
+      }
+      const extraRemotes = automationEnabled
+        ? Math.min(10, Math.max(0, toNumber(vars[GATE_SEGMENT_STUB_KEYS.automationExtraRemotes], 0)))
+        : 0;
+      if (extraRemotes > 0) {
+        emit(lines, { ...base, sku: "XPSG-FILO-REMOTE", category: "automation", quantity: extraRemotes, unit: "each", notes: "Extra Filo 400 remotes" });
+      }
       emit(lines, {
         ...base,
         sku: "XPSG-FILO-RACK",
-        category: "hardware",
+        category: "automation",
         quantity: Math.ceil(openingWidthMm / 1000),
         unit: "each",
-        notes: "Motor rack, 1m sections",
+        notes: `Motor rack, ${Math.ceil(openingWidthMm / 1000)} x 1m sections for ${Math.round(openingWidthMm)}mm gate width`,
       });
     }
     return lines;

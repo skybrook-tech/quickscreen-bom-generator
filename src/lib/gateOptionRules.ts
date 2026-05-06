@@ -186,6 +186,12 @@ export function defaultGateVariables(
     [GATE_SEGMENT_STUB_KEYS.slidingGuideType]: "XPSG-GUIDE",
     [GATE_SEGMENT_STUB_KEYS.slidingCatchType]: "XPSG-CATCH-U",
     [GATE_SEGMENT_STUB_KEYS.slidingMotorType]: "none",
+    [GATE_SEGMENT_STUB_KEYS.automationEnabled]: false,
+    [GATE_SEGMENT_STUB_KEYS.automationPowerSource]: "mains",
+    [GATE_SEGMENT_STUB_KEYS.automationCableDistanceM]: 0,
+    [GATE_SEGMENT_STUB_KEYS.automationBattery]: false,
+    [GATE_SEGMENT_STUB_KEYS.automationKeypad]: false,
+    [GATE_SEGMENT_STUB_KEYS.automationExtraRemotes]: 0,
     [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: postSize,
   };
 }

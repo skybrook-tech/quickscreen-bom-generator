@@ -58,6 +58,8 @@ Latest Brief W pass: gate openings now validate against catalogue width maximums
 
 Latest Brief X pass: sliding gates now expose track, top guide, and catch choices, emit the selected guide/catch/track SKUs, auto-add centre support rail/cap/plates for sliding gates over 3000mm, and suggest the same CSR kit for shorter sliding gates.
 
+Latest Brief Y pass: sliding gates now have an optional Filo 400 automation flow with mains/solar power, long-run split-pack switching, battery/keypad/extra remote options, rack count preview, automation subtotal, and BOM lines grouped under automation.
+
 ---
 
 ## Phases Overview

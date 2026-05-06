@@ -11,7 +11,6 @@ import {
   GATE_STOP_OPTIONS,
   SLIDING_CATCH_OPTIONS,
   SLIDING_GUIDE_OPTIONS,
-  SLIDING_MOTOR_OPTIONS,
   SLIDING_TRACK_OPTIONS,
   defaultGateBuildForMovement,
   gateBuildsForMovement,
@@ -36,6 +35,7 @@ import {
 import NumberInput from "../shared/NumberInput";
 import { useProductSearch } from "../../hooks/useProductSearch";
 import { ColourPalette } from "./ColourPalette";
+import { priceForSku } from "../../lib/localBomCalculator";
 
 const GATE_POST_SIZE_OPTIONS: GateOption[] = [
   { value: "50", label: "50mm Post Standard" },
@@ -471,6 +471,30 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   const matchingHardwareKit = kitForHardwareSelection(currentHingeValue, currentLatchValue);
   const selectedKitSku = String(v[GATE_SEGMENT_STUB_KEYS.hardwareKitSku] ?? "");
   const latchCanUseExternalAccessKit = currentLatchBase === "LLAA" || currentLatchBase.startsWith("LL-DL");
+  const automationEnabled = v[GATE_SEGMENT_STUB_KEYS.automationEnabled] === true;
+  const automationPower = String(v[GATE_SEGMENT_STUB_KEYS.automationPowerSource] ?? "mains");
+  const cableDistanceM = Number(v[GATE_SEGMENT_STUB_KEYS.automationCableDistanceM] ?? 0);
+  const automationMotorSku =
+    automationPower === "mains" && cableDistanceM > 30
+      ? "XPSG-FILO-400PRO-SP"
+      : "XPSG-FILO-400";
+  const rackCount = Math.max(1, Math.ceil(gateWidthMm / 1000));
+  const extraRemoteCount = Math.min(
+    10,
+    Math.max(0, Number(v[GATE_SEGMENT_STUB_KEYS.automationExtraRemotes] ?? 0)),
+  );
+  const automationSummary = [
+    { sku: automationMotorSku, qty: 1 },
+    ...(automationPower === "solar" ? [{ sku: "XPSG-FILO-SOLAR", qty: 1 }] : []),
+    ...(v[GATE_SEGMENT_STUB_KEYS.automationBattery] === true ? [{ sku: "XPSG-FILO-BATTERY", qty: 1 }] : []),
+    ...(v[GATE_SEGMENT_STUB_KEYS.automationKeypad] === true ? [{ sku: "XPSG-FILO-WKP", qty: 1 }] : []),
+    ...(extraRemoteCount > 0 ? [{ sku: "XPSG-FILO-REMOTE", qty: extraRemoteCount }] : []),
+    { sku: "XPSG-FILO-RACK", qty: rackCount },
+  ];
+  const automationSubtotal = automationSummary.reduce(
+    (sum, item) => sum + priceForSku(item.sku, item.qty) * item.qty,
+    0,
+  );
 
   useEffect(() => {
     if (!isSwing || !recommendedHingeSku || currentHingeStatus !== "fail") return;
@@ -718,12 +742,110 @@ export function GateSegmentDetails({ runId, seg }: Props) {
             options={SLIDING_CATCH_OPTIONS}
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingCatchType]: value })}
           />
-          <HardwareDropdown
-            label="Motor kit"
-            value={String(v[GATE_SEGMENT_STUB_KEYS.slidingMotorType] ?? "none")}
-            options={SLIDING_MOTOR_OPTIONS}
-            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingMotorType]: value })}
-          />
+          <div className="space-y-3 rounded-lg border border-brand-border/70 bg-brand-card p-3">
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={automationEnabled}
+                onChange={(e) =>
+                  upsertVariables({
+                    [GATE_SEGMENT_STUB_KEYS.automationEnabled]: e.target.checked,
+                    [GATE_SEGMENT_STUB_KEYS.slidingMotorType]: e.target.checked ? "none" : "none",
+                  })
+                }
+              />
+              <span className="text-sm font-black text-brand-text">Add automation kit?</span>
+            </label>
+            {automationEnabled && (
+              <div className="space-y-3">
+                <OptionPills
+                  label="Power source"
+                  value={automationPower}
+                  options={[
+                    { value: "mains", label: "Mains powered" },
+                    { value: "solar", label: "Solar powered" },
+                  ]}
+                  onChange={(value) =>
+                    upsertVariables({ [GATE_SEGMENT_STUB_KEYS.automationPowerSource]: value })
+                  }
+                />
+                {automationPower === "mains" && (
+                  <label className="flex flex-col gap-1">
+                    <span className="text-sm font-bold text-brand-muted">Motor distance from mains outlet (m)</span>
+                    <NumberInput
+                      value={cableDistanceM}
+                      min={0}
+                      step={1}
+                      className="w-24 px-2 py-1.5 text-center tabular-nums"
+                      onChange={(value) =>
+                        upsertVariables({
+                          [GATE_SEGMENT_STUB_KEYS.automationCableDistanceM]: Number(value),
+                        })
+                      }
+                    />
+                    {cableDistanceM > 30 && (
+                      <span className="rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-1 text-xs font-bold text-brand-success">
+                        Switched to Split Pack - better for long cable runs
+                      </span>
+                    )}
+                  </label>
+                )}
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={v[GATE_SEGMENT_STUB_KEYS.automationBattery] === true}
+                    onChange={(e) =>
+                      upsertVariables({ [GATE_SEGMENT_STUB_KEYS.automationBattery]: e.target.checked })
+                    }
+                  />
+                  <span className="text-sm font-bold text-brand-muted">Add backup battery for power outages</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={v[GATE_SEGMENT_STUB_KEYS.automationKeypad] === true}
+                    onChange={(e) =>
+                      upsertVariables({ [GATE_SEGMENT_STUB_KEYS.automationKeypad]: e.target.checked })
+                    }
+                  />
+                  <span className="text-sm font-bold text-brand-muted">Wireless keypad</span>
+                </label>
+                <label className="flex flex-col gap-1">
+                  <span className="text-sm font-bold text-brand-muted">Extra remotes</span>
+                  <NumberInput
+                    value={extraRemoteCount}
+                    min={0}
+                    max={10}
+                    step={1}
+                    className="w-20 px-2 py-1.5 text-center tabular-nums"
+                    onChange={(value) =>
+                      upsertVariables({
+                        [GATE_SEGMENT_STUB_KEYS.automationExtraRemotes]: Math.min(10, Math.max(0, Number(value))),
+                      })
+                    }
+                  />
+                </label>
+                <div className="rounded-lg border border-brand-border/70 bg-brand-bg/70 p-3">
+                  <p className="text-sm font-black text-brand-text">Automation summary</p>
+                  <div className="mt-2 space-y-1 text-xs font-bold text-brand-muted">
+                    {automationSummary.map((item) => (
+                      <div key={item.sku} className="flex justify-between gap-2">
+                        <span>{item.qty} x {item.sku}</span>
+                        <span>${priceForSku(item.sku, item.qty).toFixed(2)}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-2 flex justify-between text-sm font-black text-brand-text">
+                    <span>Automation subtotal</span>
+                    <span>${automationSubtotal.toFixed(2)}</span>
+                  </div>
+                  <p className="mt-2 text-xs font-semibold text-brand-muted">
+                    Installation by certified electrician recommended for mains-powered kits.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
