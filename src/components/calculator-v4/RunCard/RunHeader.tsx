@@ -19,8 +19,6 @@ import type { RunSummary } from "./useRunSummary";
 import { cn } from "../../../lib";
 import { RUN_LINE_COLORS } from "../../../lib/runLineColors";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
-import { useProducts } from "../../../hooks/useProducts";
-import { ProductSelectV4 } from "../JobShell/ProductSelectV4";
 
 interface Props {
   runId: string;
@@ -88,15 +86,11 @@ export function RunHeader({
   summary,
   expanded,
   onToggleExpanded,
-  showProductSelect = false,
   onRemoveRun,
   canRemoveRun,
 }: Props) {
-  const { dispatch, state } = useCalculatorV4();
-  const { data: products = [] } = useProducts();
-  const fenceProducts = products.filter(
-    (p) => p.active && p.system_type && p.system_type !== "QS_GATE",
-  );
+  const { dispatch } = useCalculatorV4();
+
   const len = summary.totalLengthM.toFixed(2);
   const runAccentHex =
     RUN_LINE_COLORS[runColorIndex % RUN_LINE_COLORS.length] ?? RUN_LINE_COLORS[0];
@@ -175,25 +169,6 @@ export function RunHeader({
           </div>
         </Tooltip>
 
-        {showProductSelect && fenceProducts.length > 1 ? (
-          <div className="min-w-[10rem] max-w-[14rem]">
-            <ProductSelectV4
-              value={
-                state.payload?.runs.find((r) => r.runId === runId)
-                  ?.productCode ??
-                state.payload?.productCode ??
-                ""
-              }
-              onChange={(code) =>
-                dispatch({
-                  type: "SET_RUN_PRODUCT",
-                  runId,
-                  productCode: code,
-                })
-              }
-            />
-          </div>
-        ) : (
           <Tooltip content="Fence system / product code for this run">
             <span
               className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-brand-accent text-brand-bg font-medium cursor-default"
@@ -203,7 +178,6 @@ export function RunHeader({
               <span className="font-mono">{systemCode}</span>
             </span>
           </Tooltip>
-        )}
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <Stat

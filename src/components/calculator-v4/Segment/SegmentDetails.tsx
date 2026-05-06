@@ -9,6 +9,7 @@ import { TerminationControl } from "./TerminationControl";
 import NumberInput from "../../ui/NumberInput";
 import { Select } from "../../ui/Select";
 import { cn } from "../../../lib";
+import { ProductSelectV4 } from "../JobShell/ProductSelectV4";
 
 const POST_SIZE_KEY = "post_size";
 const POST_WIDTH_MM_KEY = "post_width_mm";
@@ -22,9 +23,10 @@ interface Props {
   runId: string;
   seg: CanonicalSegment;
   locked?: boolean;
+  isMaster: boolean;
 }
 
-export function SegmentDetails({ runId, seg, locked = false }: Props) {
+export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) {
   const { state, dispatch } = useCalculatorV4();
 
   const run = state.payload?.runs.find((r) => r.runId === runId);
@@ -118,6 +120,7 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
   const actualPostSpacingMm =
     panelsForSpacing > 0 ? Math.round(lenMm / panelsForSpacing) : 0;
 
+    console.log("isMaster", isMaster);
   return (
     <div
       className={cn(
@@ -125,7 +128,24 @@ export function SegmentDetails({ runId, seg, locked = false }: Props) {
         locked && "opacity-60 pointer-events-none",
       )}
       aria-disabled={locked}
-    >
+    > {
+      isMaster && ( <ProductSelectV4
+        value={
+          state.payload?.runs.find((r) => r.runId === runId)
+            ?.productCode ??
+          state.payload?.productCode ??
+          ""
+        }
+        onChange={(code) =>
+          dispatch({
+            type: "SET_RUN_PRODUCT",
+            runId,
+            productCode: code,
+          })
+        }
+      />)
+    }
+       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
           <label className={labelClass}>Length (m)</label>

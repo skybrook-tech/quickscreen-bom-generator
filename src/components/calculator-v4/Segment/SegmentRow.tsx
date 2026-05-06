@@ -28,9 +28,11 @@ interface Props {
   segmentLabel: string;
   /** 0-based — matches canvas run stroke palette */
   runColorIndex: number;
+  /** Whether this is the master segment for the run (only one per run). */
+  isMaster: boolean;
 }
 
-export function SegmentRow({ runId, seg, segmentLabel, runColorIndex }: Props) {
+export function SegmentRow({ runId, seg, segmentLabel, runColorIndex, isMaster }: Props) {
   const layoutHl = useLayoutSegmentHighlight();
   const { dispatch, state } = useCalculatorV4();
   const [open, setOpen] = useState(false);
@@ -209,19 +211,13 @@ export function SegmentRow({ runId, seg, segmentLabel, runColorIndex }: Props) {
           })
         }
       />
-      {!open && collapsedSpecs.showSubRow && (
-        <SegmentCollapsedSpecRow
-          colour={collapsedSpecs.colour}
-          showColourSwatch={collapsedSpecs.showColourSwatch}
-          chips={collapsedSpecs.chips}
-          locked={seg.confirmed === true}
-        />
-      )}
+     
       {open && (
         <SegmentDetails
           runId={runId}
           seg={seg}
           locked={seg.confirmed === true}
+          isMaster={isMaster}
         />
       )}
     </div>

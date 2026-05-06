@@ -7,6 +7,7 @@ import {
 } from "../../calculator-v3/SchemaDrivenForm";
 import { Segmented } from "../../ui/Segmented";
 import { ColourSwatches } from "../../ui/ColourSwatches";
+import { slugToLabel } from "../../../lib/slugLabels";
 
 /** Matches `Input.tsx` surfaces: `bg-white dark:bg-brand-card` + `border-brand-border`. */
 const CONTROL_CLASS = cn(
@@ -135,7 +136,7 @@ function FieldRenderer({
             onChange={(v) => onChange(field.field_key, v)}
             options={field.options_json.map((opt) => ({
               value: String(opt),
-              label: String(opt),
+              label: slugToLabel(String(opt)),
             }))}
             size="sm"
           />
@@ -152,7 +153,7 @@ function FieldRenderer({
         >
           {field.options_json.map((opt) => (
             <option key={String(opt)} value={String(opt)}>
-              {String(opt)}
+              {slugToLabel(String(opt))}
             </option>
           ))}
         </select>

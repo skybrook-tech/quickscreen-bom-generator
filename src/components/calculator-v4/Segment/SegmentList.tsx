@@ -45,7 +45,7 @@ export function SegmentList({
 
   return (
     <div className="space-y-1.5">
-      {segments.map((seg) => {
+      {segments.map((seg, index) => {
         let segmentLabel: string;
         if (filter === "fence") {
           segmentLabel = `S${++fenceOrdinal}`;
@@ -55,6 +55,8 @@ export function SegmentList({
           segmentLabel =
             seg.kind === "gate" ? `G${++gateOrdinal}` : `S${++fenceOrdinal}`;
         }
+        const isMaster = index === 0;
+
         return (
           <SegmentRow
             key={seg.segmentId}
@@ -62,6 +64,7 @@ export function SegmentList({
             seg={seg}
             segmentLabel={segmentLabel}
             runColorIndex={runColorIndex}
+            isMaster={isMaster}
           />
         );
       })}

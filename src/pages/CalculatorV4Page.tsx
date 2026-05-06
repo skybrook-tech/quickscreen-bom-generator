@@ -9,6 +9,7 @@ import { FenceConfigProvider } from "../context/FenceConfigContext";
 import { GateProvider } from "../context/GateContext";
 import { JobActions } from "../components/calculator-v4/JobShell/JobActions";
 import { JobShell } from "../components/calculator-v4/JobShell/JobShell";
+import { QuoteDetailsPanel } from "../components/calculator-v4/JobShell/QuoteDetailsPanel";
 import { RunList } from "../components/calculator-v4/RunCard/RunList";
 import { LayoutMapPane } from "../components/calculator-v4/LayoutMap/LayoutMapPane";
 import { LayoutSegmentHighlightProvider } from "../components/calculator-v4/LayoutMap/LayoutSegmentHighlightContext";
@@ -124,6 +125,7 @@ function CalculatorV4Content() {
           {payload ? (
             <>
               <div className="min-h-0 flex-1 overflow-y-auto pr-1 py-3 space-y-4">
+                <QuoteDetailsPanel />
                 <RunList onAddGate={handleAddGate} />
                 {bomMutation.isError && (
                   <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-500">

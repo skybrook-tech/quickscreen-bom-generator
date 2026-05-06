@@ -4,6 +4,8 @@ interface Props {
   grandTotal: number;
   /** Footer hint matching active BOM tab scope. */
   scopeLabel?: string;
+  /** Count of lines excluded because unitPrice === 0. */
+  tbcCount?: number;
 }
 
 const fmt = (n: number) =>
@@ -16,11 +18,16 @@ const fmt = (n: number) =>
 /**
  * Fixed footer totals row. Subtotal / GST / Grand total.
  */
-export function BomTotals({ total, gst, grandTotal, scopeLabel }: Props) {
+export function BomTotals({ total, gst, grandTotal, scopeLabel, tbcCount }: Props) {
   return (
     <div className="border-t border-brand-border bg-brand-card px-4 py-3 flex-shrink-0">
       {scopeLabel ? (
         <p className="text-[10px] text-brand-muted mb-2">{scopeLabel}</p>
+      ) : null}
+      {tbcCount && tbcCount > 0 ? (
+        <p className="text-[10px] text-amber-600 dark:text-amber-400 mb-2">
+          {tbcCount} {tbcCount === 1 ? "item" : "items"} excluded — Price TBC
+        </p>
       ) : null}
       <div className="grid grid-cols-3 gap-3 text-xs">
         <div>

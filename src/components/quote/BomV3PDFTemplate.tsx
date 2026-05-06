@@ -99,6 +99,9 @@ interface BomV3PDFTemplateProps {
   pricingTier: string;
   generatedAt: string;
   customerRef?: string;
+  customerEmail?: string;
+  siteAddress?: string;
+  validUntil?: string;
 }
 
 export function BomV3PDFTemplate({
@@ -109,6 +112,9 @@ export function BomV3PDFTemplate({
   pricingTier,
   generatedAt,
   customerRef,
+  customerEmail,
+  siteAddress,
+  validUntil,
 }: BomV3PDFTemplateProps) {
   const sorted = sortItems(items);
   const groups = groupByCategory(sorted);
@@ -126,9 +132,20 @@ export function BomV3PDFTemplate({
             <Text style={{ fontFamily: "Helvetica-Bold" }}>
               {customerRef || "BOM Quote"}
             </Text>
+            {customerEmail ? (
+              <Text style={{ color: "#6b7280" }}>{customerEmail}</Text>
+            ) : null}
+            {siteAddress ? (
+              <Text style={{ color: "#6b7280" }}>{siteAddress}</Text>
+            ) : null}
             <Text style={{ color: "#6b7280" }}>
               {new Date(generatedAt).toLocaleDateString("en-AU")}
             </Text>
+            {validUntil ? (
+              <Text style={{ color: "#6b7280" }}>
+                Valid until: {new Date(validUntil).toLocaleDateString("en-AU")}
+              </Text>
+            ) : null}
             <Text style={{ color: "#6b7280" }}>
               {pricingTier.replace("tier", "Tier ")}
             </Text>

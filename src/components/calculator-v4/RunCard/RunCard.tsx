@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "../../../lib";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
+import { useUndoToast } from "../../../hooks/useUndoToast";
 import type {
   CanonicalRun,
   CanonicalSegment,
@@ -67,9 +68,22 @@ export function RunCard({
   const gateCount = run.segments.filter((s) => s.kind === "gate").length;
   const segmentTotal = run.segments.length;
   const canRemoveRun = (state.payload?.runs.length ?? 0) > 1;
+  const removedPayloadRef = useRef<typeof state.payload>(null);
+
+  const { trigger: triggerRemoveUndo } = useUndoToast(
+    `Run ${index + 1} removed`,
+    () => {
+      if (removedPayloadRef.current) {
+        dispatch({ type: "SET_PAYLOAD", payload: removedPayloadRef.current });
+      }
+    },
+    6000,
+  );
 
   function handleRemoveRun() {
+    removedPayloadRef.current = state.payload;
     dispatch({ type: "REMOVE_RUN", runId: run.runId });
+    triggerRemoveUndo();
   }
 
   function handleAddSegment() {

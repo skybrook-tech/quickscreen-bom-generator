@@ -9,6 +9,7 @@ import {
   computeSegmentRunSettingDeviations,
   type SegmentRunDeviation,
 } from "./segmentRunDeviation";
+import { slugToLabel } from "./slugLabels";
 
 export interface CollapsedColourSwatch {
   code: string;
@@ -52,7 +53,7 @@ export function formatVariableValueForChip(
   ) {
     const sv = String(value);
     const opt = field.options_json.find((o) => String(o) === sv);
-    if (opt !== undefined) return String(opt);
+    if (opt !== undefined) return slugToLabel(String(opt));
   }
 
   if (field.data_type === "number" || field.data_type === "integer") {

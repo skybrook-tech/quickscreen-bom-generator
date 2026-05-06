@@ -13,9 +13,11 @@ import { useBomViewModel, type BomViewLine } from "./useBomViewModel";
 const GST_RATE = 0.1;
 
 function totalsFromLines(lines: BomViewLine[]) {
-  const subtotal = lines.reduce((s, l) => s + l.lineTotal, 0);
+  const pricedLines = lines.filter((l) => l.unitPrice > 0);
+  const tbcCount = lines.length - pricedLines.length;
+  const subtotal = pricedLines.reduce((s, l) => s + l.lineTotal, 0);
   const gst = subtotal * GST_RATE;
-  return { subtotal, gst, grandTotal: subtotal + gst };
+  return { subtotal, gst, grandTotal: subtotal + gst, tbcCount };
 }
 
 interface Props {
@@ -150,6 +152,7 @@ export function BomPanel({
       <BomActions
         view={view}
         jobName={state.jobName}
+        quoteDetails={state.quoteDetails}
         isPending={isPending}
         onGenerate={onGenerate}
         canGenerate={canGenerate}
@@ -196,6 +199,7 @@ export function BomPanel({
         gst={scopedTotals.gst}
         grandTotal={scopedTotals.grandTotal}
         scopeLabel={activeTab === "all" ? undefined : totalsScopeLabel}
+        tbcCount={scopedTotals.tbcCount}
       />
     </div>
   );

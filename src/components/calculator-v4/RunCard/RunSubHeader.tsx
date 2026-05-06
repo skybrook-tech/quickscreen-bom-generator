@@ -69,7 +69,7 @@ export function RunSubHeader({ effectiveVars, productCode }: Props) {
   return (
     <div className="flex items-center min-h-[40px]">
       <div className="flex-1 overflow-hidden">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-2 text-xs font-mono tabular-nums">
+        <div className="flex flex-wrap items-center gap-x-1 gap-y-1 px-4 py-2 text-xs font-mono tabular-nums">
           {visibleFields.map((field, i) => {
             const raw = effectiveVars[field.field_key];
             const valueText = formatVariableValueForChip(field, raw);
@@ -81,8 +81,7 @@ export function RunSubHeader({ effectiveVars, productCode }: Props) {
 
             return (
               <Fragment key={field.id}>
-                {i > 0 ? <Separator /> : null}
-                <span className="inline-flex items-center gap-1.5 min-w-0">
+                <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-brand-card border border-brand-border text-brand-bg font-medium cursor-default ">
                   {hex ? (
                     <span
                       className="w-2.5 h-2.5 shrink-0 rounded-sm ring-1 ring-brand-border"
@@ -93,7 +92,6 @@ export function RunSubHeader({ effectiveVars, productCode }: Props) {
                   <span className="text-brand-muted truncate">
                     {field.label}
                   </span>
-                  <Separator character="=" />
                   <span className="text-brand-text shrink-0">{valueText}</span>
                 </span>
               </Fragment>

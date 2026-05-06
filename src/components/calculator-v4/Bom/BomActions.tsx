@@ -3,11 +3,13 @@ import { BOMExportActions } from "../../quote/BOMExportActions";
 import type { BomViewModel } from "./useBomViewModel";
 import { bomViewModelToCalculatorResult } from "./bomExportMapper";
 import BomAlerts from "./BomAlerts";
+import type { QuoteDetails } from "../../../context/CalculatorContextV4";
 
 interface Props {
   view: BomViewModel;
   /** Used as PDF/CSV filename slug when non-empty. */
   jobName?: string;
+  quoteDetails?: QuoteDetails;
   isPending: boolean;
   onGenerate: () => void;
   canGenerate: boolean;
@@ -21,6 +23,7 @@ interface Props {
 export function BomActions({
   view,
   jobName,
+  quoteDetails,
   isPending,
   onGenerate,
   canGenerate,
@@ -33,14 +36,6 @@ export function BomActions({
 
   return (
     <div className="px-4 py-1 border-b border-brand-border bg-brand-card flex items-center gap-2 flex-shrink-0">
-      {view.hasResult ? (
-        <span
-          className="text-[10px] text-brand-muted capitalize shrink-0"
-          title="Pricing tier"
-        >
-          {view.pricingTier.replace("tier", "T")}
-        </span>
-      ) : null}
       <button
         onClick={onGenerate}
         disabled={!canGenerate || isPending}
@@ -61,7 +56,10 @@ export function BomActions({
           result={exportResult}
           removedSkus={new Set()}
           qtyOverrides={new Map()}
-          customerRef={jobName?.trim() || undefined}
+          customerRef={quoteDetails?.customer?.trim() || jobName?.trim() || undefined}
+          customerEmail={quoteDetails?.email || undefined}
+          siteAddress={quoteDetails?.siteAddress || undefined}
+          validUntil={quoteDetails?.validUntil || undefined}
         />
       ) : null}
     </div>

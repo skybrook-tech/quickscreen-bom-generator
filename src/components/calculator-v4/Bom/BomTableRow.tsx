@@ -50,12 +50,26 @@ export function BomTableRow({ line, onRemove, onQtyChange }: Props) {
           line.quantity
         )}
       </td>
-      <td className="px-3 py-2 text-xs font-mono tabular-nums text-right">
-        {fmt(line.unitPrice)}
-      </td>
-      <td className="px-3 py-2 text-xs font-mono tabular-nums text-right font-semibold text-brand-text">
-        {fmt(line.lineTotal)}
-      </td>
+      {line.unitPrice === 0 ? (
+        <td
+          colSpan={2}
+          className="px-3 py-2 text-right"
+          title="No confirmed price for this SKU — please check with The Glass Outlet."
+        >
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/25">
+            Price TBC
+          </span>
+        </td>
+      ) : (
+        <>
+          <td className="px-3 py-2 text-xs font-mono tabular-nums text-right">
+            {fmt(line.unitPrice)}
+          </td>
+          <td className="px-3 py-2 text-xs font-mono tabular-nums text-right font-semibold text-brand-text">
+            {fmt(line.lineTotal)}
+          </td>
+        </>
+      )}
       <td className="px-2 py-2 w-8">
         <button
           onClick={onRemove}

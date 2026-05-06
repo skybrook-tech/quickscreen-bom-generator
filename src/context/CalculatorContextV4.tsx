@@ -41,8 +41,22 @@ export interface AddedSuggestion {
   unitPrice: number;
 }
 
+export interface QuoteDetails {
+  customer: string;
+  email: string;
+  siteAddress: string;
+  validUntil: string;
+}
+
+function defaultValidUntil(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 14);
+  return d.toISOString().slice(0, 10);
+}
+
 export interface CalculatorV4State {
   jobName: string;
+  quoteDetails: QuoteDetails;
   payload: CanonicalPayload | null;
   /** After ADD_RUN or initial job create, that run's card should open config; cleared once applied. */
   openRunConfigRunId: string | null;
@@ -65,6 +79,12 @@ export interface CalculatorV4State {
 
 const initialState: CalculatorV4State = {
   jobName: "",
+  quoteDetails: {
+    customer: "",
+    email: "",
+    siteAddress: "",
+    validUntil: defaultValidUntil(),
+  },
   payload: null,
   openRunConfigRunId: null,
   bomResult: null,
@@ -81,6 +101,7 @@ const initialState: CalculatorV4State = {
 
 export type CalculatorV4Action =
   | { type: "SET_JOB_NAME"; name: string }
+  | { type: "SET_QUOTE_DETAILS"; details: Partial<QuoteDetails> }
   | { type: "INIT_PAYLOAD"; payload: CanonicalPayload }
   | {
       type: "SET_PAYLOAD";
@@ -136,6 +157,8 @@ function reducer(
   switch (action.type) {
     case "SET_JOB_NAME":
       return { ...state, jobName: action.name };
+    case "SET_QUOTE_DETAILS":
+      return { ...state, quoteDetails: { ...state.quoteDetails, ...action.details } };
     case "INIT_PAYLOAD":
       return {
         ...initialState,
@@ -159,7 +182,7 @@ function reducer(
         bomStale: true,
       };
     case "RESET_JOB":
-      return initialState;
+      return { ...initialState, quoteDetails: { ...initialState.quoteDetails, validUntil: defaultValidUntil() } };
     case "CLEAR_OPEN_RUN_CONFIG":
       return { ...state, openRunConfigRunId: null };
     case "UPSERT_RUN_VARIABLES": {
@@ -475,6 +498,7 @@ function reducer(
       const s = action.snapshot;
       return {
         jobName: s.jobName,
+        quoteDetails: initialState.quoteDetails,
         payload: s.payload ? normalizeV4PayloadRuns(s.payload) : null,
         openRunConfigRunId: null,
         bomResult: s.bomResult,

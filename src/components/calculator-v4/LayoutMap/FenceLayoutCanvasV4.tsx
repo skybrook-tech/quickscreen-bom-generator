@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import { FenceLayoutCanvas } from "../../canvas/FenceLayoutCanvas.v2";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { useProducts } from "../../../hooks/useProducts";
@@ -69,6 +70,7 @@ export function FenceLayoutCanvasV4() {
   const [engineGen, setEngineGen] = useState(0);
   const sourceRef = useRef<"canvas" | "form">("form");
   const prevGeomKeyRef = useRef("");
+  const syncToastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** One auto-fit after form-driven layout lands so the map centres on existing geometry. */
   const initialFormFitDoneRef = useRef(false);
 
@@ -113,6 +115,17 @@ export function FenceLayoutCanvasV4() {
       );
       const canonical = mergeCanonicalPreservingSegmentMeta(payload, generated);
       dispatch({ type: "SET_PAYLOAD", payload: canonical });
+
+      // Debounced toast so we don't fire on every mouse-move
+      if (syncToastTimerRef.current) clearTimeout(syncToastTimerRef.current);
+      syncToastTimerRef.current = setTimeout(() => {
+        const totalM = layout.totalLengthM.toFixed(1);
+        const segCount = layout.segments.length;
+        toast.success(
+          `Layout captured: ${totalM} m across ${segCount} segment${segCount === 1 ? "" : "s"}`,
+          { id: "canvas-sync", duration: 2000 },
+        );
+      }, 1000);
     } catch {
       // Canvas layout not yet valid
     }

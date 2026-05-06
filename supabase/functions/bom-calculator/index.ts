@@ -67,21 +67,22 @@ async function loadPricing(
 
 async function loadComponentNames(
   orgId: string,
-): Promise<Map<string, { name: string; description: string }>> {
+): Promise<Map<string, { name: string; description: string; defaultPrice: number | null }>> {
   const supabaseAdmin = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
   const { data } = await supabaseAdmin
     .from("product_components")
-    .select("sku, name, description")
+    .select("sku, name, description, default_price")
     .eq("org_id", orgId)
     .eq("active", true);
-  const map = new Map<string, { name: string; description: string }>();
+  const map = new Map<string, { name: string; description: string; defaultPrice: number | null }>();
   for (const row of data ?? []) {
     map.set(row.sku, {
       name: row.name ?? "",
       description: row.description ?? "",
+      defaultPrice: row.default_price ?? null,
     });
   }
   return map;
@@ -909,24 +910,29 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    for (const line of aggregatedLines) {
-      const rules = pricingMap.get(line.sku) ?? [];
-      if (rules.length === 0) {
-        line.unitPrice = 0;
-        line.lineTotal = 0;
-        allWarnings.push(`No pricing rule found for SKU: ${line.sku}`);
-      } else {
-        line.unitPrice = resolvePrice(rules, line.quantity);
-        line.lineTotal = parseFloat(
-          (line.quantity * line.unitPrice).toFixed(2),
-        );
+    function resolveLinePrice(sku: string, quantity: number): number {
+      const rules = pricingMap.get(sku) ?? [];
+      if (rules.length > 0) return resolvePrice(rules, quantity);
+      const defaultPrice = componentNames.get(sku)?.defaultPrice ?? null;
+      if (defaultPrice !== null && defaultPrice > 0) {
+        allAssumptions.push(`Using default_price for SKU: ${sku} (no tier pricing rule)`);
+        return defaultPrice;
       }
+      allWarnings.push(`No pricing rule found for SKU: ${sku}`);
+      return 0;
+    }
+
+    for (const line of aggregatedLines) {
+      line.unitPrice = resolveLinePrice(line.sku, line.quantity);
+      line.lineTotal = parseFloat((line.quantity * line.unitPrice).toFixed(2));
     }
 
     // Price suggestions (informational — not included in totals)
     for (const line of aggregatedSuggestions) {
       const rules = pricingMap.get(line.sku) ?? [];
-      line.unitPrice = rules.length > 0 ? resolvePrice(rules, line.quantity) : 0;
+      line.unitPrice = rules.length > 0
+        ? resolvePrice(rules, line.quantity)
+        : (componentNames.get(line.sku)?.defaultPrice ?? 0);
       line.lineTotal = parseFloat((line.quantity * line.unitPrice).toFixed(2));
     }
 
@@ -934,10 +940,10 @@ Deno.serve(async (req: Request) => {
     for (const rr of runResults) {
       for (const item of rr.items) {
         const rules = pricingMap.get(item.sku) ?? [];
-        item.unitPrice = resolvePrice(rules, item.quantity);
-        item.lineTotal = parseFloat(
-          (item.quantity * item.unitPrice).toFixed(2),
-        );
+        item.unitPrice = rules.length > 0
+          ? resolvePrice(rules, item.quantity)
+          : (componentNames.get(item.sku)?.defaultPrice ?? 0);
+        item.lineTotal = parseFloat((item.quantity * item.unitPrice).toFixed(2));
       }
     }
 

@@ -104,10 +104,45 @@ export function ProductSelectV4({ value, onChange, separated = false }: Props) {
     ? `${currentProduct.name} (${currentProduct.system_type})`
     : "Select a fencing system…";
 
+  if (filtered.length <= 10 && separated) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" data-testid="v4-product-cards">
+        {filtered.map((p) => {
+          const selected = p.system_type === currentProduct?.system_type;
+          return (
+            <button
+              key={p.id}
+              type="button"
+              onClick={() => selectProduct(p)}
+              className={`text-left p-4 rounded-xl border transition-all duration-150 ${
+                selected
+                  ? "border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/40 shadow-sm"
+                  : "border-brand-border bg-brand-card hover:border-brand-accent/50 hover:shadow-sm"
+              }`}
+            >
+              <div className="font-semibold text-sm text-brand-text leading-tight">
+                {p.name}
+              </div>
+              {p.description && (
+                <div className="text-xs text-brand-muted mt-1 leading-snug">
+                  {p.description}
+                </div>
+              )}
+              <div className="mt-2">
+                <span className="inline-block font-mono text-[10px] bg-brand-border/40 text-brand-muted px-1.5 py-0.5 rounded">
+                  {p.system_type}
+                </span>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
   if (filtered.length <= 10) {
     return (
       <Segmented
-        separated={separated}
         value={currentProduct?.system_type ?? ""}
         onChange={(value) =>
           selectProduct(

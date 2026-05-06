@@ -1,16 +1,45 @@
+import { useRef } from "react";
 import { Save, Trash2 } from "lucide-react";
-import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
+import {
+  useCalculatorV4,
+  type AddedSuggestion,
+  type ExtraItem,
+} from "../../../context/CalculatorContextV4";
 import { clearV4Draft } from "../../../lib/v4DraftStorage";
 import { useQuotes } from "../../../hooks/useQuotes";
+import { useUndoToast } from "../../../hooks/useUndoToast";
 import { toast } from "sonner";
+import type { CanonicalPayload } from "../../../types/canonical.types";
 
 interface JobActionsProps {
   onSave?: () => void;
 }
 
+interface ClearSnapshot {
+  jobName: string;
+  payload: CanonicalPayload | null;
+  bomResult: Record<string, unknown> | null;
+  addedSuggestions: AddedSuggestion[];
+  dismissedSuggestionSkus: Set<string>;
+  removedSkus: Set<string>;
+  extraItems: ExtraItem[];
+  qtyOverrides: Record<string, number>;
+}
+
 export function JobActions({ onSave }: JobActionsProps) {
   const { state, dispatch } = useCalculatorV4();
   const { saveQuote, updateQuote } = useQuotes();
+  const clearSnapshotRef = useRef<ClearSnapshot | null>(null);
+
+  const { trigger: triggerClearUndo } = useUndoToast(
+    "Job cleared",
+    () => {
+      if (clearSnapshotRef.current) {
+        dispatch({ type: "HYDRATE_V4_DRAFT", snapshot: clearSnapshotRef.current });
+      }
+    },
+    10000,
+  );
 
   const handleSave = async () => {
     if (onSave) {
@@ -23,10 +52,14 @@ export function JobActions({ onSave }: JobActionsProps) {
       return;
     }
 
-    const customerRef = state.jobName.trim() || "Untitled job";
+    const customerRef =
+      state.quoteDetails.customer.trim() ||
+      state.jobName.trim() ||
+      "Untitled job";
     const notesPayload = JSON.stringify({
       v4_payload: state.payload,
       bomResult: state.bomResult,
+      quoteDetails: state.quoteDetails,
     });
 
     try {
@@ -66,14 +99,20 @@ export function JobActions({ onSave }: JobActionsProps) {
   };
 
   const handleClear = () => {
-    if (
-      !confirm(
-        "Clear the entire job? Run config, segments, and BOM result will be discarded.",
-      )
-    )
-      return;
+    // Capture snapshot for undo before destroying state
+    clearSnapshotRef.current = {
+      jobName: state.jobName,
+      payload: state.payload,
+      bomResult: state.bomResult,
+      addedSuggestions: [...state.addedSuggestions],
+      dismissedSuggestionSkus: new Set(state.dismissedSuggestionSkus),
+      removedSkus: new Set(state.removedSkus),
+      extraItems: [...state.extraItems],
+      qtyOverrides: { ...state.qtyOverrides },
+    };
     dispatch({ type: "RESET_JOB" });
     clearV4Draft();
+    triggerClearUndo();
   };
 
   const hasJob = !!state.payload;

@@ -7,6 +7,8 @@ import {
   Copy,
   DoorOpen,
   GitCompare,
+  Lock,
+  LockOpen,
   Trash2,
   RulerDimensionLine,
 } from "lucide-react";
@@ -25,6 +27,8 @@ import { Tooltip } from "../../ui/Tooltip";
 import { InlineEdit } from "./InlineEdit";
 import SegmentMetrics from "./SegmentMetrics";
 import Separator from "../shared/Separator";
+import { SegmentCollapsedSpecRow } from "./SegmentCollapsedSpecRow";
+import { buildCollapsedSegmentSpecs } from "../../../lib/segmentCollapsedSpecs";
 
 interface Props {
   runId: string;
@@ -148,6 +152,19 @@ export function SegmentHeader({
       segment: { ...seg, confirmed: checked },
     });
   }
+
+  const collapsedSpecs = useMemo(
+    () =>
+      buildCollapsedSegmentSpecs(
+        state.payload ?? null,
+        run,
+        seg,
+        jobFields,
+        segmentFields,
+      ),
+    [state.payload, run, seg, jobFields, segmentFields],
+  );
+
 
   return (
     <div
@@ -321,25 +338,35 @@ export function SegmentHeader({
             </button>
           )}
 
-          <Tooltip content="Confirmed — dimensions treated as final for this segment; locks quick edits and stresses the row for install-ready handoff.">
-            <label
-              className="flex items-center gap-1.5 shrink-0 cursor-pointer"
-              onClick={(e) => e.stopPropagation()}
+          <Tooltip
+            content={
+              locked
+                ? "Confirmed — dimensions locked. Click to unlock for editing."
+                : "Click to confirm — dimensions treated as final for this segment; locks quick edits and stresses the row for install-ready handoff."
+            }
+          >
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setConfirmed(!locked);
+              }}
+              aria-label={
+                locked
+                  ? "Unlock segment dimensions"
+                  : "Mark segment confirmed — lock dimensions"
+              }
+              aria-pressed={locked}
+              data-testid={`v4-seg-confirmed-${seg.segmentId}`}
+              className={cn(
+                "p-1.5 rounded shrink-0",
+                locked
+                  ? "text-white hover:text-white hover:bg-white/15"
+                  : "text-brand-muted hover:text-brand-accent hover:bg-brand-accent/10",
+              )}
             >
-              <input
-                type="checkbox"
-                checked={locked}
-                onChange={(e) => setConfirmed(e.target.checked)}
-                className={cn(
-                  "rounded",
-                  locked
-                    ? "border-white/70 bg-white/10 accent-white"
-                    : "border-brand-border",
-                )}
-                aria-label="Mark segment confirmed — lock dimensions"
-                data-testid={`v4-seg-confirmed-${seg.segmentId}`}
-              />
-            </label>
+              {locked ? <Lock size={13} /> : <LockOpen size={13} />}
+            </button>
           </Tooltip>
           <Tooltip content="Duplicate this segment (same length and settings)">
             <button
@@ -389,6 +416,15 @@ export function SegmentHeader({
           </Tooltip>
         </div>
       </div>
+
+      {!open && collapsedSpecs.showSubRow && (
+        <SegmentCollapsedSpecRow
+          colour={collapsedSpecs.colour}
+          showColourSwatch={collapsedSpecs.showColourSwatch}
+          chips={collapsedSpecs.chips}
+          locked={seg.confirmed === true}
+        />
+      )}
     </div>
   );
 }

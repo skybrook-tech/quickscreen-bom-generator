@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Download, Loader2, Copy } from "lucide-react";
+import { Download, Loader2, Copy, Eye } from "lucide-react";
 import { toast } from "sonner";
-import { pdf } from "@react-pdf/renderer";
+import { pdf, PDFViewer } from "@react-pdf/renderer";
 import Papa from "papaparse";
 import { BomV3PDFTemplate } from "./BomV3PDFTemplate";
+import { SlideOutPane } from "../calculator-v4/shared/SlideOutPane";
 import type { CalculatorBOMResult, BOMLineItem } from "../../types/bom.types";
 
 interface BOMExportActionsProps {
@@ -11,6 +12,9 @@ interface BOMExportActionsProps {
   removedSkus?: Set<string>;
   qtyOverrides?: Map<string, number>;
   customerRef?: string;
+  customerEmail?: string;
+  siteAddress?: string;
+  validUntil?: string;
 }
 
 function applyOverrides(
@@ -35,8 +39,12 @@ export function BOMExportActions({
   removedSkus,
   qtyOverrides,
   customerRef,
+  customerEmail,
+  siteAddress,
+  validUntil,
 }: BOMExportActionsProps) {
   const [pdfing, setPdfing] = useState(false);
+  const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false);
   const [csving, setCsving] = useState(false);
   const [copying, setCopying] = useState(false);
 
@@ -112,20 +120,25 @@ export function BOMExportActions({
     setCsving(false);
   };
 
-  const handlePDF = async () => {
+  const pdfTemplate = (
+    <BomV3PDFTemplate
+      items={effectiveItems}
+      subtotal={subtotal}
+      gst={gst}
+      grandTotal={grandTotal}
+      pricingTier={result.pricingTier}
+      generatedAt={result.generatedAt}
+      customerRef={customerRef}
+      customerEmail={customerEmail}
+      siteAddress={siteAddress}
+      validUntil={validUntil}
+    />
+  );
+
+  const handlePDFDownload = async () => {
     setPdfing(true);
     try {
-      const blob = await pdf(
-        <BomV3PDFTemplate
-          items={effectiveItems}
-          subtotal={subtotal}
-          gst={gst}
-          grandTotal={grandTotal}
-          pricingTier={result.pricingTier}
-          generatedAt={result.generatedAt}
-          customerRef={customerRef}
-        />,
-      ).toBlob();
+      const blob = await pdf(pdfTemplate).toBlob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -141,6 +154,37 @@ export function BOMExportActions({
     "flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-md border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/60 hover:bg-brand-accent/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
   return (
+    <>
+    <SlideOutPane
+      open={pdfPreviewOpen}
+      onClose={() => setPdfPreviewOpen(false)}
+      title="PDF Preview"
+      subtitle={customerRef || undefined}
+      widthClass="md:w-[700px]"
+    >
+      <div className="flex flex-col h-full min-h-0">
+        <div className="flex-1 min-h-0">
+          {pdfPreviewOpen && (
+            <div className="w-full" style={{ height: "calc(100vh - 140px)" }}>
+              <PDFViewer width="100%" height="100%">
+                {pdfTemplate}
+              </PDFViewer>
+            </div>
+          )}
+        </div>
+        <div className="flex-shrink-0 border-t border-brand-border px-5 py-3 flex justify-end">
+          <button
+            type="button"
+            onClick={handlePDFDownload}
+            disabled={pdfing}
+            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-brand-accent text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {pdfing ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+            Download PDF
+          </button>
+        </div>
+      </div>
+    </SlideOutPane>
     <div className="flex flex-wrap gap-2 justify-end pt-3">
       <button
         type="button"
@@ -168,18 +212,15 @@ export function BOMExportActions({
       </button>
       <button
         type="button"
-        onClick={handlePDF}
-        disabled={pdfing || effectiveItems.length === 0}
+        onClick={() => setPdfPreviewOpen(true)}
+        disabled={effectiveItems.length === 0}
         className={btnCls}
-        title="Download PDF"
+        title="Preview & download PDF"
       >
-        {pdfing ? (
-          <Loader2 size={13} className="animate-spin" />
-        ) : (
-          <Download size={13} />
-        )}
+        <Eye size={13} />
         PDF
       </button>
     </div>
+    </>
   );
 }
