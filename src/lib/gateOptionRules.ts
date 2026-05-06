@@ -116,6 +116,11 @@ export const SLIDING_CATCH_OPTIONS: GateOption[] = [
   { value: "XPSG-CATCH-F", label: "Sliding gate adjustable F catch", sku: "XPSG-CATCH-F" },
 ];
 
+export const SLIDING_GUIDE_OPTIONS: GateOption[] = [
+  { value: "XPSG-GUIDE", label: "Slide guide - uneven ground", sku: "XPSG-GUIDE" },
+  { value: "XPSG-TOPROLL-2PK", label: "Guide rollers 2-pack - flat ground", sku: "XPSG-TOPROLL-2PK" },
+];
+
 export const SLIDING_MOTOR_OPTIONS: GateOption[] = [
   { value: "none", label: "No motor kit" },
   { value: "XPSG-FILO-400", label: "FILO 400 Pro motor kit", sku: "XPSG-FILO-400" },
@@ -178,6 +183,7 @@ export function defaultGateVariables(
     [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]: true,
     [GATE_SEGMENT_STUB_KEYS.openingDirection]: "out",
     [GATE_SEGMENT_STUB_KEYS.slidingTrackType]: "XPSG-6000-TRACK-ST",
+    [GATE_SEGMENT_STUB_KEYS.slidingGuideType]: "XPSG-GUIDE",
     [GATE_SEGMENT_STUB_KEYS.slidingCatchType]: "XPSG-CATCH-U",
     [GATE_SEGMENT_STUB_KEYS.slidingMotorType]: "none",
     [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: postSize,

@@ -115,6 +115,9 @@ export function gatePatchForAlternative(
     [GATE_SEGMENT_STUB_KEYS.hingeType]: movement === "sliding" ? "none" : "TC-H-AT-HD-B",
     [GATE_SEGMENT_STUB_KEYS.latchType]: movement === "sliding" ? "none" : "LL-DL-KA",
     [GATE_SEGMENT_STUB_KEYS.gateStopType]: "none",
+    [GATE_SEGMENT_STUB_KEYS.slidingTrackType]: "XPSG-6000-TRACK-ST",
+    [GATE_SEGMENT_STUB_KEYS.slidingGuideType]: "XPSG-GUIDE",
+    [GATE_SEGMENT_STUB_KEYS.slidingCatchType]: "XPSG-CATCH-U",
     [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
     [GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit]: false,
   };

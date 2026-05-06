@@ -987,6 +987,23 @@ Verification:
 - `npm run build` passed.
 - Validation smoke check passed for pedestrian horizontal 2100/2200/2400, pedestrian vertical 1200/2000, and sliding horizontal 6000/6500.
 
+### May 7, 2026 - Brief X sliding gate component completeness
+
+Catalogue/rule finding:
+- Current sliding gates already emitted QSG sliding rails, side frames, wheels, clamping set, track, slide guide, stop, catch, and motor rack where relevant.
+- Missing/incomplete pieces were the selectable top guide system, required CSR kit for wide sliding gates, and optional CSR suggestions for shorter sliding gates.
+- Track type and catch type were already user-selectable; this pass preserved those controls and added the missing top guide selector.
+
+Changes applied:
+- Added a `sliding_guide_type` gate variable with catalogue options `XPSG-GUIDE` and `XPSG-TOPROLL-2PK`.
+- Sliding gate BOM now emits the selected guide system instead of hardcoding `XPSG-GUIDE`.
+- Sliding gate BOM now auto-adds centre support rail stock, one CSR cap, and two top/base plates for gates over 3000mm.
+- Suggested accessories now offers the CSR, cap, and two plates for sliding gates at or under 3000mm.
+
+Verification:
+- `npm run build` passed.
+- Source-level check confirmed track quantity still uses `ceil((2 x gate width) / track length)`, catch emits the selected `XPSG-CATCH-U/F`, and guide emits the selected `XPSG-GUIDE` or `XPSG-TOPROLL-2PK`.
+
 ### May 2, 2026 - QSG gate online pricing pass
 
 Pricing workflow finding:

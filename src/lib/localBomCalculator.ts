@@ -643,7 +643,8 @@ function calculateGateSegment(
         : Math.floor((gateHeightMm - slatGap - 216) / (designSlatSize + slatGap)),
     );
     const bladesPerStock = Math.max(1, Math.floor(6100 / bladeCutMm));
-    const csrCount = verticalBuild ? 0 : Math.max(0, Math.floor(railCutMm / 2000));
+    const csrRequired = openingWidthMm > 3000;
+    const csrCount = csrRequired ? 1 : 0;
     const csrCutMm = Math.max(1, frameCutMm - 206);
     const csrsPerStock = Math.max(1, Math.floor(5800 / csrCutMm));
 
@@ -671,11 +672,19 @@ function calculateGateSegment(
       const csrPlateSku = getComponent(`XP-BTP-${csrColour}`) ? `XP-BTP-${csrColour}` : "XP-BTP-MN";
       emit(lines, {
         ...base,
-        sku: `XP-5800-CSR-${csrColour}`,
+        sku: csrSkuFor(finishFamily, csrColour),
         category: "centre_support_rail",
         quantity: Math.ceil(csrCount / csrsPerStock),
         unit: "length",
-        notes: `${csrCount} centre support rail(s), ${Math.round(csrCutMm)}mm cuts from 5800mm stock`,
+        notes: `${csrCount} centre support rail(s) required for sliding gates over 3000mm, ${Math.round(csrCutMm)}mm cuts from 5800mm stock`,
+      });
+      emit(lines, {
+        ...base,
+        sku: `XP-CSRC-${csrCapColour(csrColour)}`,
+        category: "accessory",
+        quantity: csrCount,
+        unit: "each",
+        notes: "Centre support rail cap for sliding gate centre support rail",
       });
       emit(lines, {
         ...base,
@@ -708,7 +717,14 @@ function calculateGateSegment(
     }
     emit(lines, { ...base, sku: "QSG-S-WHEEL", category: "hardware", quantity: 2, unit: "each", notes: "Sliding gate wheels" });
     emit(lines, { ...base, sku: "QSG-S-WHEEL-CS-2PK", category: "hardware", quantity: 1, unit: "pack", notes: "Sliding gate wheel clamping set, 2 pack" });
-    emit(lines, { ...base, sku: "XPSG-GUIDE", category: "hardware", quantity: 1, unit: "each", notes: "Self-adjusting slide guide" });
+    emit(lines, {
+      ...base,
+      sku: knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.slidingGuideType]) ?? "XPSG-GUIDE",
+      category: "hardware",
+      quantity: 1,
+      unit: "each",
+      notes: "Selected sliding gate top guide system",
+    });
     emit(lines, { ...base, sku: "XPSG-STOP", category: "hardware", quantity: 1, unit: "each", notes: "Bolt down sliding gate stop" });
     emit(lines, {
       ...base,

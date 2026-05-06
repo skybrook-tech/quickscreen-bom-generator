@@ -122,6 +122,19 @@ function csrPlateSku(vars: Variables) {
   return `XP-BTP-${csrPlateColour(postColour)}`;
 }
 
+function csrSku(vars: Variables) {
+  const finishFamily = String(vars.finish_family ?? "standard");
+  const fenceColour = String(vars.colour_code ?? vars.colour ?? "B");
+  if (finishFamily === "alumawood" && ALUMAWOOD_CORE_COLOURS.has(fenceColour)) {
+    return `AW-5800-CSR-${fenceColour}`;
+  }
+  return `XP-5800-CSR-${postColourFromVars(vars)}`;
+}
+
+function csrCapSku(vars: Variables) {
+  return `XP-CSRC-${csrPlateColour(postColourFromVars(vars))}`;
+}
+
 function fencePanelCounts(run: CanonicalRun, vars: Variables) {
   const baseMaxPanelWidth = clampPostSpacing(
     vars.max_panel_width_mm,
@@ -296,6 +309,41 @@ export function suggestAccessories(
           ),
         );
       }
+    }
+
+    const shortSlidingGates = run.segments.filter((segment) => {
+      if (segment.segmentKind !== "gate_opening") return false;
+      const movement = String(segment.variables?.gate_movement ?? "");
+      return movement === "sliding" && Number(segment.segmentWidthMm ?? 0) <= 3000;
+    });
+    if (shortSlidingGates.length > 0) {
+      suggestions.push(
+        componentSuggestion(
+          csrSku(vars),
+          shortSlidingGates.length,
+          "catalogue_gap",
+          "Optional: centre support rail for sliding gates at or under 3000mm.",
+          "Optional sliding gate centre support rail",
+        ),
+      );
+      suggestions.push(
+        componentSuggestion(
+          csrCapSku(vars),
+          shortSlidingGates.length,
+          "catalogue_gap",
+          "Optional: cap to finish the sliding gate centre support rail.",
+          "Optional centre support rail cap",
+        ),
+      );
+      suggestions.push(
+        componentSuggestion(
+          csrPlateSku(vars),
+          shortSlidingGates.length * 2,
+          "catalogue_gap",
+          "Optional: top and bottom plates if adding a sliding gate centre support rail.",
+          "Optional centre support rail top/base plate",
+        ),
+      );
     }
   }
 

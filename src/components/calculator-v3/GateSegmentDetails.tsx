@@ -10,6 +10,7 @@ import {
   GATE_MOVEMENTS,
   GATE_STOP_OPTIONS,
   SLIDING_CATCH_OPTIONS,
+  SLIDING_GUIDE_OPTIONS,
   SLIDING_MOTOR_OPTIONS,
   SLIDING_TRACK_OPTIONS,
   defaultGateBuildForMovement,
@@ -518,6 +519,12 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         nextMovement === "sliding" ? "none" : v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA",
       [GATE_SEGMENT_STUB_KEYS.gateStopType]:
         nextMovement === "sliding" ? "none" : v[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "none",
+      [GATE_SEGMENT_STUB_KEYS.slidingTrackType]:
+        nextMovement === "sliding" ? v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST" : "XPSG-6000-TRACK-ST",
+      [GATE_SEGMENT_STUB_KEYS.slidingGuideType]:
+        nextMovement === "sliding" ? v[GATE_SEGMENT_STUB_KEYS.slidingGuideType] ?? "XPSG-GUIDE" : "XPSG-GUIDE",
+      [GATE_SEGMENT_STUB_KEYS.slidingCatchType]:
+        nextMovement === "sliding" ? v[GATE_SEGMENT_STUB_KEYS.slidingCatchType] ?? "XPSG-CATCH-U" : "XPSG-CATCH-U",
       [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
       [GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit]: false,
     });
@@ -700,7 +707,13 @@ export function GateSegmentDetails({ runId, seg }: Props) {
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingTrackType]: value })}
           />
           <HardwareDropdown
-            label="Catch"
+            label="Top guide system"
+            value={String(v[GATE_SEGMENT_STUB_KEYS.slidingGuideType] ?? "XPSG-GUIDE")}
+            options={SLIDING_GUIDE_OPTIONS}
+            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingGuideType]: value })}
+          />
+          <HardwareDropdown
+            label="Catch type"
             value={String(v[GATE_SEGMENT_STUB_KEYS.slidingCatchType] ?? "XPSG-CATCH-U")}
             options={SLIDING_CATCH_OPTIONS}
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingCatchType]: value })}

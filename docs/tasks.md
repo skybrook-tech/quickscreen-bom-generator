@@ -56,6 +56,8 @@ Latest Brief V pass: QSG gate infill selection now keeps horizontal gates on `QS
 
 Latest Brief W pass: gate openings now validate against catalogue width maximums by gate type/orientation, show warning/error chips with alternative suggestions, offer a switch-to-alternative action, and block Generate BOM only for hard gate-width errors.
 
+Latest Brief X pass: sliding gates now expose track, top guide, and catch choices, emit the selected guide/catch/track SKUs, auto-add centre support rail/cap/plates for sliding gates over 3000mm, and suggest the same CSR kit for shorter sliding gates.
+
 ---
 
 ## Phases Overview
