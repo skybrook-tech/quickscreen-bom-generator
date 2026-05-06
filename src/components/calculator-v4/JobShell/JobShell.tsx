@@ -1,5 +1,6 @@
 import { Map as MapIcon } from "lucide-react";
 import { JobNameField } from "./JobNameField";
+import { Button } from "../../ui/Button";
 
 interface JobShellProps {
   onOpenLayoutMap: () => void;
@@ -12,17 +13,25 @@ interface JobShellProps {
  */
 export function JobShell({ onOpenLayoutMap, hasPayload }: JobShellProps) {
   return (
-    <div className="rounded-xl border border-brand-border bg-brand-card p-4 space-y-3">
-      <JobNameField />
-      <button
-        type="button"
+    <div className="py-4  flex flex-col gap-1">
+      <label className="text-[11px] font-medium uppercase tracking-wider text-brand-muted mb-4">
+        Job
+        <JobNameField />
+      </label>
+
+
+      {/* <QuoteDetailsPanel /> */}
+
+      <Button
+        variant="primary"
         onClick={onOpenLayoutMap}
         disabled={!hasPayload}
-        className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md border border-brand-border text-sm font-medium text-brand-text hover:bg-brand-border/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="text-center flex items-center justify-center gap-2"
         data-testid="v4-open-layout-map"
       >
-        <MapIcon size={14} /> Open layout map
-      </button>
+        <MapIcon size={14} /> Use layout tool
+      </Button>
+
     </div>
   );
 }

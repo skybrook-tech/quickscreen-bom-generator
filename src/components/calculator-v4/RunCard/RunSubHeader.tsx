@@ -67,7 +67,7 @@ export function RunSubHeader({ effectiveVars, productCode }: Props) {
   if (visibleFields.length === 0) return placeholder;
 
   return (
-    <div className="flex items-center min-h-[40px]">
+    <div className="flex items-center min-h-[40px] dark:bg-slate-100/10 bg-slate-100/60">
       <div className="flex-1 overflow-hidden">
         <div className="flex flex-wrap items-center gap-x-1 gap-y-1 px-4 py-2 text-xs font-mono tabular-nums">
           {visibleFields.map((field, i) => {

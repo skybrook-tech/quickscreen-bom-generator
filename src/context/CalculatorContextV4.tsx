@@ -78,7 +78,7 @@ export interface CalculatorV4State {
 }
 
 const initialState: CalculatorV4State = {
-  jobName: "",
+  jobName: "Untitled Job",
   quoteDetails: {
     customer: "",
     email: "",
@@ -104,17 +104,17 @@ export type CalculatorV4Action =
   | { type: "SET_QUOTE_DETAILS"; details: Partial<QuoteDetails> }
   | { type: "INIT_PAYLOAD"; payload: CanonicalPayload }
   | {
-      type: "SET_PAYLOAD";
-      payload: CanonicalPayload;
-      /** When set, RunCard opens config for this run (then cleared). Omitted → null. */
-      openRunConfigRunId?: string | null;
-    }
+    type: "SET_PAYLOAD";
+    payload: CanonicalPayload;
+    /** When set, RunCard opens config for this run (then cleared). Omitted → null. */
+    openRunConfigRunId?: string | null;
+  }
   | { type: "RESET_JOB" }
   | {
-      type: "UPSERT_RUN_VARIABLES";
-      runId: string;
-      variables: Record<string, string | number | boolean>;
-    }
+    type: "UPSERT_RUN_VARIABLES";
+    runId: string;
+    variables: Record<string, string | number | boolean>;
+  }
   | { type: "SET_RUN_DISPLAY_NAME"; runId: string; displayName: string }
   | { type: "SET_RUN_PRODUCT"; runId: string; productCode: string }
   | { type: "ADD_RUN" }
@@ -135,18 +135,18 @@ export type CalculatorV4Action =
   | { type: "SET_QTY_OVERRIDE"; lineKey: string; qty: number }
   | { type: "SET_SAVED_QUOTE_ID"; id: string }
   | {
-      type: "HYDRATE_V4_DRAFT";
-      snapshot: {
-        jobName: string;
-        payload: CanonicalPayload | null;
-        bomResult: Record<string, unknown> | null;
-        addedSuggestions: AddedSuggestion[];
-        dismissedSuggestionSkus: Set<string>;
-        removedSkus: Set<string>;
-        extraItems: ExtraItem[];
-        qtyOverrides: Record<string, number>;
-      };
+    type: "HYDRATE_V4_DRAFT";
+    snapshot: {
+      jobName: string;
+      payload: CanonicalPayload | null;
+      bomResult: Record<string, unknown> | null;
+      addedSuggestions: AddedSuggestion[];
+      dismissedSuggestionSkus: Set<string>;
+      removedSkus: Set<string>;
+      extraItems: ExtraItem[];
+      qtyOverrides: Record<string, number>;
     };
+  };
 
 // ─── Reducer ─────────────────────────────────────────────────────────────────
 
@@ -433,10 +433,10 @@ function reducer(
       );
       const next = exists
         ? state.addedSuggestions.map((s) =>
-            s.sku === action.suggestion.sku
-              ? { ...s, qty: s.qty + action.suggestion.qty }
-              : s,
-          )
+          s.sku === action.suggestion.sku
+            ? { ...s, qty: s.qty + action.suggestion.qty }
+            : s,
+        )
         : [...state.addedSuggestions, action.suggestion];
       return {
         ...state,

@@ -44,7 +44,7 @@ export function SegmentList({
   let gateOrdinal = 0;
 
   return (
-    <div className="space-y-1.5">
+    <div className="flex flex-col">
       {segments.map((seg, index) => {
         let segmentLabel: string;
         if (filter === "fence") {

@@ -377,33 +377,7 @@ export function FenceLayoutCanvas({
         {renderOverlay?.(runSummaries)}
       </div>
 
-      {/* Apply button — sticky so it stays reachable while scrolling the runs list */}
-      <div className="sticky bottom-0 z-10 flex items-center justify-between gap-3 p-3 bg-brand-card border-t border-brand-border">
-        <p className="text-xs text-brand-muted min-w-0">
-          Draw your fence layout above, then click{" "}
-          <strong className="text-brand-text">Use This Layout</strong> to
-          populate the run length and corners in the form below.
-        </p>
-        <button
-          type="button"
-          onClick={handleUseLayout}
-          disabled={!layoutValid}
-          title={
-            layoutValid
-              ? undefined
-              : "Draw at least one fence run on the canvas to continue"
-          }
-          className={cn(
-            "flex items-center gap-1.5 px-5 py-2.5 text-sm font-semibold rounded-lg shrink-0 transition-colors",
-            layoutValid
-              ? "bg-brand-accent text-white hover:bg-brand-accent-hover shadow-md shadow-brand-accent/20"
-              : "bg-brand-border text-brand-muted cursor-not-allowed opacity-60",
-          )}
-        >
-          {applied ? "Applied!" : "Use This Layout →"}
-          {!applied && layoutValid && <ArrowRight size={14} />}
-        </button>
-      </div>
+
 
       {/* Gate modal — opens immediately when a gate marker is placed on the canvas */}
       {pendingGate && (

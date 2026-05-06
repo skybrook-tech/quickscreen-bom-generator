@@ -191,9 +191,11 @@ export function SegmentHeader({
           {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
         </button>
 
-        <span className="font-mono text-xs font-semibold min-w-[1.5rem] cursor-pointer tabular-nums">
-          {segmentLabel}
-        </span>
+        <div className="bg-brand-accent/10 rounded-md p-1 flex items-center justify-center aspect-square" style={{ backgroundColor: accentColor, }}>
+          <span className="font-mono text-center text-xs text-white font-semibold min-w-[1.5rem] cursor-pointer tabular-nums">
+            {segmentLabel}
+          </span>
+        </div>
 
         <InlineEdit
           label="Segment length along run"
@@ -230,10 +232,10 @@ export function SegmentHeader({
               boundedInput={
                 freeform && freeformBounds
                   ? {
-                      min: freeformBounds.minMm,
-                      max: freeformBounds.maxMm,
-                      step: 1,
-                    }
+                    min: freeformBounds.minMm,
+                    max: freeformBounds.maxMm,
+                    step: 1,
+                  }
                   : undefined
               }
             />
@@ -258,9 +260,9 @@ export function SegmentHeader({
                   locked
                     ? undefined
                     : {
-                        backgroundColor: "rgba(245, 158, 11, 0.2)",
-                        color: "#78350f",
-                      }
+                      backgroundColor: "rgba(245, 158, 11, 0.2)",
+                      color: "#78350f",
+                    }
                 }
               >
                 <DoorOpen size={10} /> Gate

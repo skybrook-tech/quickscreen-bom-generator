@@ -94,29 +94,29 @@ export function RunCard({
 
     const base: CanonicalSegment = prev
       ? {
-          segmentId: crypto.randomUUID(),
-          sortOrder,
-          kind: "fence",
-          productCode: fenceProductCode,
-          segmentWidthMm: 3000,
-          targetHeightMm:
-            prev.targetHeightMm ??
-            Number(effectiveVars["target_height_mm"] ?? 1800),
-          leftTermination: structuredClone(prev.leftTermination),
-          rightTermination: structuredClone(prev.rightTermination),
-          confirmed: false,
-        }
+        segmentId: crypto.randomUUID(),
+        sortOrder,
+        kind: "fence",
+        productCode: fenceProductCode,
+        segmentWidthMm: 3000,
+        targetHeightMm:
+          prev.targetHeightMm ??
+          Number(effectiveVars["target_height_mm"] ?? 1800),
+        leftTermination: structuredClone(prev.leftTermination),
+        rightTermination: structuredClone(prev.rightTermination),
+        confirmed: false,
+      }
       : {
-          segmentId: crypto.randomUUID(),
-          sortOrder,
-          kind: "fence",
-          productCode: fenceProductCode,
-          segmentWidthMm: 3000,
-          targetHeightMm: Number(effectiveVars["target_height_mm"] ?? 1800),
-          leftTermination: { kind: "system" },
-          rightTermination: { kind: "system" },
-          confirmed: false,
-        };
+        segmentId: crypto.randomUUID(),
+        sortOrder,
+        kind: "fence",
+        productCode: fenceProductCode,
+        segmentWidthMm: 3000,
+        targetHeightMm: Number(effectiveVars["target_height_mm"] ?? 1800),
+        leftTermination: { kind: "system" },
+        rightTermination: { kind: "system" },
+        confirmed: false,
+      };
 
     dispatch({ type: "UPSERT_SEGMENT", runId: run.runId, segment: base });
   }
@@ -149,7 +149,7 @@ export function RunCard({
             productCode={fenceProductCode || null}
           />
 
-          <div className="border-t border-brand-border p-4 pt-1 space-y-3">
+          <div className="border-t border-brand-border  pt-1">
             <div className="flex flex-wrap gap-0 -mx-4 px-4 border-b border-brand-border">
               {(
                 [

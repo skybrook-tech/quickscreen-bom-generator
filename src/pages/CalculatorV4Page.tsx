@@ -45,7 +45,7 @@ function CalculatorV4Content() {
     }
     // Clear router state so a page refresh doesn't re-apply
     window.history.replaceState({}, "", location.pathname);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const [layoutOpen, setLayoutOpen] = useState(false);
@@ -125,7 +125,6 @@ function CalculatorV4Content() {
           {payload ? (
             <>
               <div className="min-h-0 flex-1 overflow-y-auto pr-1 py-3 space-y-4">
-                <QuoteDetailsPanel />
                 <RunList onAddGate={handleAddGate} />
                 {bomMutation.isError && (
                   <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-500">

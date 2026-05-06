@@ -32,7 +32,13 @@ interface Props {
   isMaster: boolean;
 }
 
-export function SegmentRow({ runId, seg, segmentLabel, runColorIndex, isMaster }: Props) {
+export function SegmentRow({
+  runId,
+  seg,
+  segmentLabel,
+  runColorIndex,
+  isMaster,
+}: Props) {
   const layoutHl = useLayoutSegmentHighlight();
   const { dispatch, state } = useCalculatorV4();
   const [open, setOpen] = useState(false);
@@ -91,18 +97,6 @@ export function SegmentRow({ runId, seg, segmentLabel, runColorIndex, isMaster }
     [products, productCode],
   );
 
-  const collapsedSpecs = useMemo(
-    () =>
-      buildCollapsedSegmentSpecs(
-        state.payload ?? null,
-        run,
-        seg,
-        jobFields,
-        segmentFields,
-      ),
-    [state.payload, run, seg, jobFields, segmentFields],
-  );
-
   const heightMeta = useMemo(
     () => parseTargetHeightUi(metaForProduct),
     [metaForProduct],
@@ -133,17 +127,17 @@ export function SegmentRow({ runId, seg, segmentLabel, runColorIndex, isMaster }
   const rowStyle =
     seg.kind === "fence"
       ? {
-          borderColor: fenceAccentHex,
-          backgroundColor: open
-            ? hexWithAlpha(fenceAccentHex, 0.12)
-            : hexWithAlpha(fenceAccentHex, 0.06),
-        }
+        borderColor: fenceAccentHex,
+        backgroundColor: open
+          ? hexWithAlpha(fenceAccentHex, 0.12)
+          : hexWithAlpha(fenceAccentHex, 0.06),
+      }
       : {
-          borderColor: CANVAS_GATE_STROKE,
-          backgroundColor: open
-            ? "rgba(245, 158, 11, 0.12)"
-            : "rgba(245, 158, 11, 0.06)",
-        };
+        borderColor: CANVAS_GATE_STROKE,
+        backgroundColor: open
+          ? "rgba(245, 158, 11, 0.12)"
+          : "rgba(245, 158, 11, 0.06)",
+      };
 
   const isLayoutLinkedHighlight =
     !!layoutHl &&
@@ -155,11 +149,12 @@ export function SegmentRow({ runId, seg, segmentLabel, runColorIndex, isMaster }
     <div
       ref={rowRef}
       className={cn(
-        "rounded-xl border-2 overflow-hidden transition-colors",
-        isLayoutLinkedHighlight &&
-          "ring-2 ring-brand-accent ring-offset-2 ring-offset-brand-card",
+        "overflow-hidden transition-colors hover:bg-brand-accent/5 py-1.5",
+        !isMaster && "border-t border-brand-border",
+        // isLayoutLinkedHighlight &&
+        // "ring-2 ring-brand-accent ring-offset-2 ring-offset-brand-card",
       )}
-      style={rowStyle}
+      // style={rowStyle}
       data-testid={`v4-segment-row-${seg.segmentId}`}
       onMouseEnter={() => {
         if (layoutHl && seg.kind === "fence") {
@@ -211,7 +206,7 @@ export function SegmentRow({ runId, seg, segmentLabel, runColorIndex, isMaster }
           })
         }
       />
-     
+
       {open && (
         <SegmentDetails
           runId={runId}
