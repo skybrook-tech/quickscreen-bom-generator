@@ -46,6 +46,8 @@ Latest Brief R pass: the canvas toolbar now includes Redo with Ctrl+Y/Ctrl+Shift
 
 Latest Brief S pass: the layout mapper now has a top-level Help button with a four-section cheat sheet, first-use Boundary mode guidance, hidden corner instruction clutter, a clarified px/m scale control, and token-aligned primary mapper actions.
 
+Latest installer-map workflow pass: user-facing segment copy is now section copy in the active V3 workspace, run settings are directly editable at the run level, section codes show green when matching run settings, typed section length edits take priority when redrawing the map, gate placement asks for width/type before dropping with a width preview, and the canvas toolbar can print an installer-ready map.
+
 ---
 
 ## Phases Overview

@@ -1,26 +1,21 @@
 import { type ReactNode, useEffect, useMemo, useState } from "react";
-import { Check, SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import { localFenceProducts } from "../../lib/localSeedData";
 import {
   applyProductOptionRules,
   clampPostSpacing,
-  initialVariablesForSystem,
   MAX_POST_SPACING_MM,
   maxPanelWidthForSystem,
   MIN_POST_SPACING_MM,
-  normaliseVariablesForSystem,
 } from "../../lib/productOptionRules";
 import {
-  GATE_SEGMENT_STUB_KEYS,
   SEGMENT_OPTION_KEYS,
   patchSegmentVariables,
 } from "../../lib/segmentTermination";
 import { SchemaDrivenForm } from "./SchemaDrivenForm";
 import NumberInput from "../shared/NumberInput";
-import { defaultGateBuildForMovement, gateMovementOrDefault } from "../../lib/gateOptionRules";
 
 const POST_SIZE_LABELS: Record<string, string> = {
   "50": "50mm Post Standard",
@@ -79,10 +74,6 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   }, [runFields]);
 
   const v = seg.variables ?? {};
-  const firstFenceSegmentId = run?.segments.find(
-    (segment) => segment.segmentKind !== "gate_opening",
-  )?.segmentId;
-  const isDefaultSegment = seg.segmentId === firstFenceSegmentId;
   const runVariables = {
     ...(state.payload?.variables ?? {}),
     ...(run?.variables ?? {}),
@@ -99,10 +90,6 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   }
 
   function setScalar(key: string, value: string | number | boolean | null) {
-    if (isDefaultSegment && value !== null) {
-      syncDefaultVariables(key, value);
-      return;
-    }
     upsertSegment(patchSegmentVariables(seg, { [key]: value }));
   }
 
@@ -138,10 +125,6 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
   function updateMaxPanelWidth(value: number | null) {
     const nextValue = value === null ? null : clampPostSpacing(value, jobMax);
-    if (isDefaultSegment && value !== null) {
-      syncDefaultVariables("max_panel_width_mm", nextValue ?? jobMax);
-      return;
-    }
     upsertSegment(patchSegmentVariables(seg, { max_panel_width_mm: nextValue }));
   }
 
@@ -174,169 +157,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         : [],
     [jobFields, mergedJobDisplay, productCode],
   );
-  const visibleRunFields = useMemo(
-    () =>
-      runFields
-        .filter(
-          (field) => {
-            if (["left_boundary_type", "right_boundary_type"].includes(field.field_key)) {
-              return false;
-            }
-            if (
-              field.field_key === "mounting_method" &&
-              runFields.some((candidate) => candidate.field_key === "mounting_type")
-            ) {
-              return false;
-            }
-            return true;
-          },
-        )
-        .map((field) => {
-          if (field.field_key === "mounting_type" || field.field_key === "mounting_method") {
-            return {
-              ...field,
-              label: "Post mounting type",
-              default_value_json: "in_ground",
-              options_json: ["in_ground", "base_plate", "core_drill"],
-            };
-          }
-          if (field.field_key === "post_system") {
-            return {
-              ...field,
-              label: "Post type",
-              default_value_json: productCode === "XPL" ? "xpl" : "standard_50",
-            };
-          }
-          if (field.field_key === "post_size") {
-            return {
-              ...field,
-              label: "Standard post size",
-              default_value_json: "50",
-            };
-          }
-          return field;
-        }),
-    [productCode, runFields],
-  );
-
-  function syncDefaultVariables(
-    key: string,
-    value: string | number | boolean,
-  ) {
-    if (!run || !productCode) return;
-    const previousColour = String(runVariables.colour_code ?? "");
-    const previousPostColour = String(
-      runVariables.post_colour_code ?? previousColour,
-    );
-    const nextVariables = {
-      ...(run.variables ?? {}),
-      [key]: value,
-    };
-    if (key === "mounting_type" || key === "mounting_method") {
-      nextVariables.mounting_type = value;
-      nextVariables.mounting_method = value;
-    }
-    if (key === "post_system") {
-      nextVariables.post_size = value === "standard_65" ? 65 : 50;
-    }
-    if (
-      key === "colour_code" &&
-      (!run.variables?.post_colour_code || previousPostColour === previousColour)
-    ) {
-      nextVariables.post_colour_code = value;
-    }
-    const normalised = normaliseVariablesForSystem(productCode, nextVariables);
-    const syncGeometryKeys = [
-      "target_height_mm",
-      "slat_size_mm",
-      "slat_gap_mm",
-      "slat_gap_mode",
-      "colour_code",
-      "post_colour_code",
-      "post_size",
-      "post_system",
-    ];
-    dispatch({
-      type: "UPSERT_RUN",
-      run: {
-        ...run,
-        variables: normalised,
-        segments: syncGeometryKeys.includes(key)
-          ? run.segments.map((segment) => {
-              if (segment.segmentKind === "gate_opening") {
-                const movement = gateMovementOrDefault(
-                  segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement],
-                );
-                return {
-                  ...segment,
-                  targetHeightMm: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
-                  variables: {
-                    ...(segment.variables ?? {}),
-                    [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
-                    [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
-                      movement,
-                      productCode === "VS",
-                    ),
-                    [GATE_SEGMENT_STUB_KEYS.colourCode]: String(normalised.colour_code ?? "B"),
-                    [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(normalised.slat_size_mm ?? 65),
-                    [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(normalised.slat_gap_mm ?? 9),
-                    [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(normalised.post_size ?? 50),
-                  },
-                };
-              }
-              return {
-                ...segment,
-                targetHeightMm: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
-              };
-            })
-          : run.segments,
-      },
-    });
-  }
-
   function handleOptionChange(key: string, value: string | number | boolean) {
-    if (isDefaultSegment) {
-      syncDefaultVariables(key, value);
-      return;
-    }
     onJobOverrideChange(key, value);
-  }
-
-  function changeRunProduct(nextProductCode: string) {
-    if (!run) return;
-    const variables = normaliseVariablesForSystem(nextProductCode, {
-      ...initialVariablesForSystem(nextProductCode),
-      ...runVariables,
-      max_panel_width_mm:
-        runVariables.max_panel_width_mm ?? maxPanelWidthForSystem(nextProductCode),
-    });
-    dispatch({
-      type: "UPSERT_RUN",
-      run: {
-        ...run,
-        productCode: nextProductCode,
-        variables,
-        segments: run.segments.map((segment) => ({
-          ...segment,
-          targetHeightMm: Number(variables.target_height_mm ?? segment.targetHeightMm ?? 1800),
-          variables:
-            segment.segmentKind === "gate_opening"
-              ? {
-                  ...(segment.variables ?? {}),
-                  [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
-                    gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]),
-                    nextProductCode === "VS",
-                  ),
-                  [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(variables.target_height_mm ?? segment.targetHeightMm ?? 1800),
-                  [GATE_SEGMENT_STUB_KEYS.colourCode]: String(variables.colour_code ?? "B"),
-                  [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(variables.slat_size_mm ?? 65),
-                  [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(variables.slat_gap_mm ?? 9),
-                  [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(variables.post_size ?? 50),
-                }
-              : segment.variables,
-        })),
-      },
-    });
   }
 
   return (
@@ -373,33 +195,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
             </label>
           </SettingsSection>
 
-          {(isDefaultSegment && run) || (!isDefaultSegment && optionFields.length > 0) ? (
-            <SettingsSection title={isDefaultSegment ? "Style" : "Style overrides"} defaultOpen>
-              {isDefaultSegment && run && (
-                <div>
-                  <p className="mb-2 text-sm font-bold text-brand-muted">System type</p>
-                  <div className="flex flex-wrap gap-2">
-                    {localFenceProducts.map((product) => (
-                      <button
-                        key={product.system_type}
-                        type="button"
-                        onClick={() => changeRunProduct(product.system_type)}
-                        aria-pressed={product.system_type === run.productCode}
-                        className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${
-                          product.system_type === run.productCode
-                            ? "border-brand-primary bg-brand-primary text-white shadow-sm"
-                            : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-                        }`}
-                      >
-                        {product.system_type === run.productCode && (
-                          <Check size={16} aria-hidden />
-                        )}
-                        {product.system_type}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+          {optionFields.length > 0 ? (
+            <SettingsSection title="Style overrides" defaultOpen>
               {optionFields.length > 0 && (
                 <SchemaDrivenForm
                   fields={optionFields}
@@ -411,13 +208,6 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
           ) : null}
 
           <SettingsSection title="Posts">
-            {isDefaultSegment && visibleRunFields.length > 0 && (
-              <SchemaDrivenForm
-                fields={visibleRunFields}
-                variables={mergedJobDisplay}
-                onChange={handleOptionChange}
-              />
-            )}
             <label className="flex flex-col gap-1">
               <span className="text-sm font-bold text-brand-muted">Post type</span>
               <select

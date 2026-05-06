@@ -12,6 +12,7 @@ import {
 import { Button } from "../shared/Button";
 import { SegmentRow } from "./SegmentRow";
 import { colourName } from "./ColourPalette";
+import { RunSettingsEditor } from "./RunSettingsEditor";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 
@@ -31,11 +32,9 @@ function runMasterVariables(
   run: CanonicalRun,
   jobVariables: Record<string, string | number | boolean> | undefined,
 ) {
-  const firstSegment = firstFenceSegment(run);
   return {
     ...(jobVariables ?? {}),
     ...(run.variables ?? {}),
-    ...(firstSegment?.variables ?? {}),
   };
 }
 
@@ -56,7 +55,7 @@ export function RunCard({ run, runIdx }: Props) {
   const matchesRunOne = run.variables?.settings_mode === "match_run_1";
   const firstSegment = firstFenceSegment(run);
   const runLengthM = (calcTotalLength(run) / 1000).toFixed(2);
-  const runHeight = Number(firstSegment?.targetHeightMm ?? runVariables.target_height_mm ?? 1800);
+  const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
   const slatSize = Number(runVariables.slat_size_mm ?? 65);
   const slatGap = Number(runVariables.slat_gap_mm ?? 5);
 
@@ -106,30 +105,19 @@ export function RunCard({ run, runIdx }: Props) {
   }
 
   function addFenceSegment() {
-    const firstSegment = firstFenceSegment(run);
-    const inheritedVariables = firstSegment?.variables
-      ? Object.fromEntries(
-          Object.entries(firstSegment.variables).filter(
-            ([key]) => !["geometry_angle_deg", "segment_done"].includes(key),
-          ),
-        )
-      : undefined;
     upsertSegment({
       segmentId: crypto.randomUUID(),
       sortOrder: run.segments.length + 1,
       segmentKind: "panel",
       segmentWidthMm: jobMax,
-      targetHeightMm: Number(firstSegment?.targetHeightMm ?? runVariables.target_height_mm ?? 1800),
-      variables: inheritedVariables
-        ? { ...inheritedVariables, segment_done: false }
-        : undefined,
+      targetHeightMm: Number(runVariables.target_height_mm ?? 1800),
+      variables: undefined,
     });
   }
 
   function addGateSegment() {
-    const firstSegment = firstFenceSegment(run);
     const masterVariables = runMasterVariables(run, state.payload?.variables);
-    const targetHeight = Number(firstSegment?.targetHeightMm ?? masterVariables.target_height_mm ?? 1800);
+    const targetHeight = Number(masterVariables.target_height_mm ?? 1800);
     const segmentId = crypto.randomUUID();
     upsertSegment({
       segmentId,
@@ -148,7 +136,7 @@ export function RunCard({ run, runIdx }: Props) {
       <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
         <h3 className="grid gap-1 text-brand-text">
           <span className="text-3xl font-extrabold leading-tight tracking-normal">
-            Run {runIdx + 1}
+            Run {runIdx + 1} — {runLengthM}m
           </span>
           <span className="flex flex-wrap gap-x-2.5 gap-y-1 text-sm text-brand-muted">
             <span>System Type: <strong className="text-brand-text">{run.productCode}</strong></span>
@@ -173,9 +161,11 @@ export function RunCard({ run, runIdx }: Props) {
         </div>
       </div>
 
+      <RunSettingsEditor run={run} />
+
       {run.segments.length === 0 && (
         <p className="mb-3 text-xs italic text-brand-muted">
-          No segments yet. Draw on canvas or add manually.
+          No sections yet. Draw on canvas or add manually.
         </p>
       )}
 
@@ -226,7 +216,7 @@ export function RunCard({ run, runIdx }: Props) {
 
       <div className="mt-3 flex flex-wrap justify-end gap-2">
         <Button onClick={addFenceSegment} icon={Plus} variant="ghost" size="small">
-          Add segment
+          Add section
         </Button>
         <Button onClick={addGateSegment} icon={Plus} variant="ghost" size="small">
           Add gate

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import { CheckCircle2, SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X } from "lucide-react";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
 import NumberInput from "../shared/NumberInput";
@@ -92,10 +92,8 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     ...(state.payload?.variables ?? {}),
     ...(run?.variables ?? {}),
   };
-  const firstFenceSegment = run?.segments.find((item) => item.segmentKind !== "gate_opening");
   const masterVariables = {
     ...runVariables,
-    ...(firstFenceSegment?.variables ?? {}),
   };
   const segmentVariables = {
     ...runVariables,
@@ -141,26 +139,24 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
   const expectedGateBuild = productCode === "VS"
     ? gateBuild.includes("vertical")
     : !gateBuild.includes("vertical");
-  const done = seg.variables?.segment_done === true;
   const compactLabel =
     displayLabel?.replace(/\s+/g, "") ??
     `R${runIdx + 1}${gate ? "G" : "S"}${segIdx + 1}`;
   const titleLabel = gate
     ? `Run ${runIdx + 1} Gate ${segIdx + 1}`
-    : `Run ${runIdx + 1} Segment ${segIdx + 1}`;
+    : `Run ${runIdx + 1} Section ${segIdx + 1}`;
   const matchesMaster = (() => {
     if (!run) return true;
     if (gate) {
       return (
         expectedGateBuild &&
         Number(seg.targetHeightMm ?? gateVars[GATE_SEGMENT_STUB_KEYS.gateHeightMm] ?? 0) ===
-          Number(firstFenceSegment?.targetHeightMm ?? masterVariables.target_height_mm ?? 0)
+          Number(masterVariables.target_height_mm ?? 0)
       );
     }
-    if (seg.segmentId === firstFenceSegment?.segmentId) return true;
     const vars = seg.variables ?? {};
     const segmentHeight = Number(seg.targetHeightMm ?? vars.target_height_mm ?? 0);
-    const masterSegmentHeight = Number(firstFenceSegment?.targetHeightMm ?? masterVariables.target_height_mm ?? 0);
+    const masterSegmentHeight = Number(masterVariables.target_height_mm ?? 0);
     if (segmentHeight !== masterSegmentHeight) return false;
     const keys = [
       "target_height_mm",
@@ -189,9 +185,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     masterVariables.max_panel_width_mm ?? maxPanelWidthForSystem(productCode),
     maxPanelWidthForSystem(productCode),
   );
-  const masterSegmentLength = Number(firstFenceSegment?.segmentWidthMm ?? 0);
-  const masterPanelCount =
-    masterSegmentLength > 0 ? Math.max(1, Math.ceil(masterSegmentLength / masterMaxSpacing)) : 0;
+  const masterPanelCount = segmentLength > 0 ? Math.max(1, Math.ceil(segmentLength / masterMaxSpacing)) : 0;
   const masterLeftKind = String(masterVariables[SEGMENT_TERMINATION_KEYS.leftKind] ?? "");
   const masterRightKind = String(masterVariables[SEGMENT_TERMINATION_KEYS.rightKind] ?? "");
   const masterHasCornerPost =
@@ -211,7 +205,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
           value: `${selectedHeight}mm`,
           changed: !sameValue(
             selectedHeight,
-            firstFenceSegment?.targetHeightMm ?? masterVariables.target_height_mm ?? 1800,
+            masterVariables.target_height_mm ?? 1800,
           ),
         },
         {
@@ -256,7 +250,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
           value: `${selectedHeight}mm`,
           changed: !sameValue(
             selectedHeight,
-            firstFenceSegment?.targetHeightMm ?? masterVariables.target_height_mm ?? 1800,
+            masterVariables.target_height_mm ?? 1800,
           ),
         },
         {
@@ -314,37 +308,6 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     key: "segmentWidthMm" | "targetHeightMm",
     value: number,
   ) {
-    if (key === "targetHeightMm" && run && seg.segmentId === firstFenceSegment?.segmentId) {
-      dispatch({
-        type: "UPSERT_RUN",
-        run: {
-          ...run,
-          variables: {
-            ...(run.variables ?? {}),
-            target_height_mm: value,
-          },
-          segments: run.segments.map((segment) => {
-            if (segment.segmentKind === "gate_opening") {
-              const movement = gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
-              return {
-                ...segment,
-                targetHeightMm: value,
-                variables: {
-                  ...(segment.variables ?? {}),
-                  [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: value,
-                  [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
-                    movement,
-                    run.productCode === "VS",
-                  ),
-                },
-              };
-            }
-            return { ...segment, targetHeightMm: value };
-          }),
-        },
-      });
-      return;
-    }
     dispatch({
       type: "UPSERT_SEGMENT",
       runId,
@@ -362,7 +325,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
 
   function resetToMaster() {
     if (!run) return;
-    const masterHeight = Number(firstFenceSegment?.targetHeightMm ?? masterVariables.target_height_mm ?? 1800);
+    const masterHeight = Number(masterVariables.target_height_mm ?? 1800);
     if (gate) {
       const movement = gateMovementOrDefault(seg.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
       dispatch({
@@ -407,14 +370,6 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     });
   }
 
-  function toggleDone() {
-    dispatch({
-      type: "UPSERT_SEGMENT",
-      runId,
-      segment: patchSegmentVariables(seg, { segment_done: !done }),
-    });
-  }
-
   function setMapHover(value: string | null) {
     if (typeof window === "undefined") return;
     window.dispatchEvent(
@@ -424,9 +379,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
 
   return (
     <div className="rounded-2xl bg-gradient-to-br from-brand-primary via-brand-primary/70 to-brand-primary/15 p-[2px] shadow-[0_2px_0_rgba(191,219,254,0.75),0_10px_22px_rgba(30,64,175,0.18)]">
-    <div className={`relative overflow-hidden rounded-[0.9rem] text-sm font-semibold shadow-inner ${
-      done ? "bg-brand-primary/5" : "bg-brand-card"
-    } cursor-pointer`}
+    <div className="relative cursor-pointer overflow-hidden rounded-[0.9rem] bg-brand-card text-sm font-semibold shadow-inner"
       onDoubleClick={(event) => {
         const target = event.target as HTMLElement;
         if (target.closest("button,input,select,textarea,a")) return;
@@ -440,41 +393,30 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
             type="button"
             onClick={matchesMaster ? undefined : resetToMaster}
             disabled={matchesMaster}
-            className={`rounded-full transition-colors ${
-              matchesMaster ? "text-brand-success" : "text-brand-muted/35"
-            } ${matchesMaster ? "cursor-default" : "hover:text-brand-success"}`}
-            title={matchesMaster ? "matching segment 1" : "Reset to match segment 1"}
+            className="rounded-lg px-0.5 text-center transition-colors disabled:cursor-default"
           >
-            <CheckCircle2
-              size={20}
-              fill={matchesMaster ? "currentColor" : "none"}
-              className={matchesMaster ? "text-brand-success" : ""}
-            />
-          </button>
-          <span className="text-xl font-black leading-none tracking-normal text-black">
             <span
               onMouseEnter={() => setMapHover(compactLabel)}
               onMouseLeave={() => setMapHover(null)}
-              title="Hover to highlight this segment on the map"
+              title={
+                matchesMaster
+                  ? "Matches the current Run Settings. Hover to highlight this section on the map."
+                  : "This section has settings different from the Run Settings. Click to match the run settings."
+              }
+              className={`text-xl font-black leading-none tracking-normal transition-colors ${
+                matchesMaster ? "text-brand-success" : "text-black hover:text-brand-primary"
+              }`}
             >
               {compactLabel}
             </span>
+          </button>
+          <span className="max-w-[2.6rem] text-center text-[9px] font-bold leading-tight text-brand-muted">
+            {matchesMaster ? "Run match" : "Override"}
           </span>
-          <button
-            type="button"
-            onClick={toggleDone}
-            className={`h-3.5 w-3.5 rounded-full border transition-colors ${
-              done
-                ? "border-brand-primary/90 bg-brand-primary/90"
-                : "border-brand-primary/30 bg-brand-primary/15 hover:border-brand-primary"
-            }`}
-            title={done ? "Segment confirmed" : "Mark segment confirmed"}
-            aria-label={done ? "Segment confirmed" : "Mark segment confirmed"}
-          />
         </div>
         <div className="min-w-0 space-y-3">
           <div className="flex flex-wrap items-start justify-between gap-2">
-            <span className="min-w-0 font-serif text-2xl font-black leading-tight tracking-normal text-black">
+            <span className="min-w-0 font-serif text-2xl font-black italic leading-tight tracking-normal text-black">
               {titleLabel}
             </span>
             <div className="flex items-center gap-1">
@@ -486,7 +428,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
                   ? "border-brand-primary bg-brand-primary text-white"
                   : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
               }`}
-              aria-label={open ? "Collapse segment settings" : "Expand segment settings"}
+              aria-label={open ? "Collapse section settings" : "Expand section settings"}
               title={open ? "Save settings and collapse" : "Open settings"}
             >
               <SlidersHorizontal size={16} />
@@ -511,8 +453,8 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
                   ? "bg-brand-danger text-white hover:bg-brand-danger/90"
                   : "text-brand-danger hover:bg-brand-danger/10 hover:text-brand-danger/90"
               }`}
-              aria-label={confirmRemove ? "Click again to remove segment" : "Remove segment"}
-              title={confirmRemove ? "Click again to remove segment" : "Remove segment"}
+              aria-label={confirmRemove ? "Click again to remove section" : "Remove section"}
+              title={confirmRemove ? "Click again to remove section" : "Remove section"}
             >
               <X size={16} strokeWidth={3} />
             </button>

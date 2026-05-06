@@ -17,7 +17,7 @@ const sections = [
   {
     title: "Placing gates",
     items: [
-      "Choose Gate, then click a fence segment.",
+      "Choose Gate, then click a fence section.",
       "Drag a gate in Move / Edit mode to reposition it.",
       "Open the gate editor to choose single, double, sliding, and swing direction.",
     ],

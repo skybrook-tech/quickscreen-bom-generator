@@ -216,10 +216,8 @@ export function GateSegmentDetails({ runId, seg }: Props) {
       (isSwing ? "out" : "right"),
   );
   const masterPostSize = String(runVars.post_size ?? 50);
-  const firstFenceSegment = run?.segments.find((segment) => segment.segmentKind !== "gate_opening");
   const masterVars = {
     ...runVars,
-    ...(firstFenceSegment?.variables ?? {}),
   };
 
   function upsertVariables(patch: Record<string, string | number | boolean | null | undefined>) {

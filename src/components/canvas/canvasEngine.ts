@@ -20,6 +20,8 @@ export interface CanvasGate {
   widthMM: number;
   gateId?: string;
   useGatePostsAsFenceTermination?: boolean;
+  gateType?: CanvasGateType;
+  swingDirection?: CanvasGateSwingDirection;
 }
 
 export interface CanvasRunSummary {
@@ -53,6 +55,7 @@ export interface CanvasEngineConfig {
     segIdx: number,
     gateIdx: number,
     defaultWidthMM: number,
+    gateType?: CanvasGateType,
   ) => void;
   /** Called when the user clicks (not drags) an existing gate marker — open its editor */
   onGateEdit?: (
@@ -105,6 +108,8 @@ interface GateMarker {
   widthMM: number;
   gateId?: string; // matches the GateConfig.id in GateContext once the gate is saved
   useGatePostsAsFenceTermination?: boolean;
+  gateType?: CanvasGateType;
+  swingDirection?: CanvasGateSwingDirection;
 }
 
 type Tool = "draw" | "gate" | "move" | "boundary" | "building" | "text";
@@ -525,6 +530,11 @@ export function initCanvasEngine(
   let undoStack: UndoAction[] = [];
   let redoStack: RedoEntry[] = [];
   let gateVisuals: Record<string, CanvasGateVisual> = {};
+  let pendingGatePlacement: CanvasGateVisual & { widthMM: number } = {
+    gateType: "single-swing",
+    swingDirection: "out",
+    widthMM: DEFAULT_GATE_WIDTH_MM,
+  };
   let highlightedMapLabel: string | null = null;
   let textNotes: CanvasTextNote[] = [];
   let mapImage: HTMLImageElement | null = null;
@@ -640,7 +650,10 @@ export function initCanvasEngine(
   function gateVisualFor(gate: GateMarker): CanvasGateVisual {
     return gate.gateId && gateVisuals[gate.gateId]
       ? gateVisuals[gate.gateId]
-      : { gateType: "single-swing", swingDirection: "out" };
+      : {
+          gateType: gate.gateType ?? "single-swing",
+          swingDirection: gate.swingDirection ?? "out",
+        };
   }
 
   function drawHighlightedMapLabel(seg: Segment, label: SegmentMapLabel) {
@@ -743,6 +756,8 @@ export function initCanvasEngine(
           gateId: g.gateId,
           useGatePostsAsFenceTermination:
             g.useGatePostsAsFenceTermination ?? true,
+          gateType: g.gateType,
+          swingDirection: g.swingDirection,
         });
       });
     });
@@ -786,6 +801,8 @@ export function initCanvasEngine(
             gateId: g.gateId,
             useGatePostsAsFenceTermination:
               g.useGatePostsAsFenceTermination ?? true,
+            gateType: g.gateType,
+            swingDirection: g.swingDirection,
           });
         });
       });
@@ -1019,7 +1036,7 @@ export function initCanvasEngine(
       ctx.save();
       ctx.beginPath();
       ctx.arc(snapped.x, snapped.y, 4 / zoom, 0, Math.PI * 2);
-      ctx.fillStyle = COLOR.snap;
+      ctx.fillStyle = "#f59e0b";
       ctx.fill();
       ctx.restore();
     }
@@ -1091,10 +1108,10 @@ export function initCanvasEngine(
     const detailLines: string[] = [];
     const spacingText = (seg: Segment, flatIdx: number, label: string) => {
       const maxW = segmentPanelWidths[flatIdx] ?? jobPanelWidthMm ?? 0;
-      if (maxW <= 0 || seg.lengthMM <= 0) return `${label} segment length: max post spacing not set`;
+      if (maxW <= 0 || seg.lengthMM <= 0) return `${label} section length: max post spacing not set`;
       const panels = Math.max(1, Math.ceil(Math.round(seg.lengthMM) / maxW));
       const actualSpacing = Math.round(seg.lengthMM / panels);
-      return `${label} segment length ${(seg.lengthMM / 1000).toFixed(2)}m: ${panels} panel${panels === 1 ? "" : "s"} @ ${actualSpacing}mm spacing`;
+      return `${label} section length ${(seg.lengthMM / 1000).toFixed(2)}m: ${panels} panel${panels === 1 ? "" : "s"} @ ${actualSpacing}mm spacing`;
     };
 
     // Use pre-computed canonical stats if available (pushed from LayoutCanvasV3 via calcRunStats).
@@ -1121,7 +1138,7 @@ export function initCanvasEngine(
         detailLines.push(spacingText(seg, i, `S${i + 1}`));
       });
       if (allSegs.length > 3) {
-        detailLines.push(`+ ${allSegs.length - 3} more segment${allSegs.length - 3 === 1 ? "" : "s"}`);
+        detailLines.push(`+ ${allSegs.length - 3} more section${allSegs.length - 3 === 1 ? "" : "s"}`);
       }
     } else if (hoveredSegIdx >= 0 && hoveredSegIdx < allSegs.length) {
       // Fallback: self-compute (no pushed stats yet)
@@ -1157,7 +1174,7 @@ export function initCanvasEngine(
       }
       line = `${nbRuns.length} ${nbRuns.length === 1 ? "run" : "runs"}  ·  ${totalSegs} ${totalSegs === 1 ? "seg" : "segs"}  ·  ${totalPanels} ${totalPanels === 1 ? "panel" : "panels"}  ·  ${totalCorners} ${totalCorners === 1 ? "corner" : "corners"}`;
       if (allSegs.length > 3) {
-        detailLines.push(`+ ${allSegs.length - 3} more segment${allSegs.length - 3 === 1 ? "" : "s"}`);
+        detailLines.push(`+ ${allSegs.length - 3} more section${allSegs.length - 3 === 1 ? "" : "s"}`);
       }
     }
 
@@ -1688,8 +1705,8 @@ export function initCanvasEngine(
 
   function drawActiveEndpoint(pt: Point, label: string, ghost = false) {
     const radius = ghost ? 8 / zoom : 10 / zoom;
-    const ring = ghost ? "rgba(245,158,11,0.35)" : "rgba(96,165,250,0.35)";
-    const stroke = ghost ? "#f59e0b" : COLOR.activePoint;
+    const ring = ghost ? "rgba(245,158,11,0.35)" : "rgba(15,23,42,0.18)";
+    const stroke = ghost ? "#f59e0b" : "#0f172a";
     ctx.save();
     ctx.beginPath();
     ctx.arc(pt.x, pt.y, radius * 1.8, 0, Math.PI * 2);
@@ -1697,7 +1714,7 @@ export function initCanvasEngine(
     ctx.fill();
     ctx.beginPath();
     ctx.arc(pt.x, pt.y, radius, 0, Math.PI * 2);
-    ctx.fillStyle = ghost ? "rgba(245,158,11,0.18)" : COLOR.pointFill;
+    ctx.fillStyle = ghost ? "rgba(245,158,11,0.18)" : "rgba(255,255,255,0.92)";
     ctx.fill();
     ctx.strokeStyle = stroke;
     ctx.lineWidth = 2.5 / zoom;
@@ -1711,24 +1728,52 @@ export function initCanvasEngine(
   }
 
   function drawGatePreview(seg: Segment, t: number) {
-    const gp = lerp(seg.p1, seg.p2, t);
-    const size = 10 / zoom;
+    const previewGate: GateMarker = {
+      t,
+      anchor: gateAnchorForPlacement(seg, t, pendingGatePlacement.widthMM),
+      widthMM: pendingGatePlacement.widthMM,
+      gateType: pendingGatePlacement.gateType,
+      swingDirection: pendingGatePlacement.swingDirection,
+    };
+    const range = gateRange(seg, previewGate);
+    const pStart = lerp(seg.p1, seg.p2, range.tStart);
+    const pEnd = lerp(seg.p1, seg.p2, range.tEnd);
+    const gp = lerp(pStart, pEnd, 0.5);
     const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
+    const width = Math.max(14 / zoom, dist(pStart, pEnd));
 
     ctx.save();
     ctx.translate(gp.x, gp.y);
     ctx.rotate(ang);
-    ctx.globalAlpha = 0.6;
+    ctx.globalAlpha = 0.72;
 
-    ctx.beginPath();
-    ctx.arc(0, 0, size, 0, Math.PI);
+    ctx.fillStyle = "rgba(245,158,11,0.14)";
     ctx.strokeStyle = COLOR.gate;
     ctx.lineWidth = 2 / zoom;
-    ctx.stroke();
+    ctx.strokeRect(-width / 2, -7 / zoom, width, 14 / zoom);
+    ctx.fillRect(-width / 2, -7 / zoom, width, 14 / zoom);
+
+    if (pendingGatePlacement.gateType === "sliding") {
+      const arrow = pendingGatePlacement.swingDirection === "left" ? -1 : 1;
+      drawArrow(-width * 0.3 * arrow, 0, width * 0.35 * arrow, 0);
+    } else {
+      const side = pendingGatePlacement.swingDirection === "in" ? -1 : 1;
+      const swing = Math.min(width * 0.55, 34 / zoom);
+      ctx.beginPath();
+      ctx.arc(-width / 2, 0, swing, side > 0 ? 0 : -Math.PI / 2, side > 0 ? Math.PI / 2 : 0, side < 0);
+      ctx.stroke();
+    }
+
+    ctx.font = `bold ${Math.max(9, 11 / zoom)}px sans-serif`;
+    ctx.fillStyle = COLOR.gate;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(`${pendingGatePlacement.widthMM}mm`, 0, -10 / zoom);
 
     ctx.beginPath();
-    ctx.moveTo(-size, 0);
-    ctx.lineTo(size, 0);
+    ctx.moveTo(-width / 2, 0);
+    ctx.lineTo(width / 2, 0);
+    ctx.strokeStyle = COLOR.gate;
     ctx.stroke();
 
     ctx.restore();
@@ -2033,19 +2078,21 @@ export function initCanvasEngine(
         const gateAnchor = gateAnchorForPlacement(
           info.seg,
           snappedGateT,
-          DEFAULT_GATE_WIDTH_MM,
+          pendingGatePlacement.widthMM,
         );
         const gateIdx = info.seg.gates.length;
         pushUndo({ type: "ADD_GATE", segIdx: flatIdx, gateIdx });
         info.seg.gates.push({
           t: snappedGateT,
           anchor: gateAnchor,
-          widthMM: DEFAULT_GATE_WIDTH_MM,
+          widthMM: pendingGatePlacement.widthMM,
           useGatePostsAsFenceTermination: true,
+          gateType: pendingGatePlacement.gateType,
+          swingDirection: pendingGatePlacement.swingDirection,
         });
         notifyChange();
         scheduleRedraw();
-        config.onGatePlaced?.(flatIdx, gateIdx, DEFAULT_GATE_WIDTH_MM);
+        config.onGatePlaced?.(flatIdx, gateIdx, pendingGatePlacement.widthMM, pendingGatePlacement.gateType);
       }
       return;
     }
@@ -2251,7 +2298,7 @@ export function initCanvasEngine(
       );
       if (segLengthWorld === 0) return;
       const response = prompt(
-        "Enter real-world length for this segment (e.g. 2500 for 2500mm or 2.5 for 2.5m):",
+        "Enter real-world length for this section (e.g. 2500 for 2500mm or 2.5 for 2.5m):",
       );
       if (response === null) return;
       const parsed = parseFloat(response.replace(",", "."));
@@ -2698,6 +2745,53 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  function setPendingGatePlacement(config: Partial<CanvasGateVisual & { widthMM: number }>) {
+    pendingGatePlacement = {
+      ...pendingGatePlacement,
+      ...config,
+      widthMM: Math.max(100, Number(config.widthMM ?? pendingGatePlacement.widthMM)),
+    };
+    scheduleRedraw();
+  }
+
+  function hasSatelliteUnderlay() {
+    return mapImage !== null;
+  }
+
+  function printMap(options: { includeSatellite?: boolean } = {}) {
+    const originalOpacity = mapOpacity;
+    if (!options.includeSatellite) mapOpacity = 0;
+    draw();
+    const dataUrl = canvas.toDataURL("image/png");
+    mapOpacity = originalOpacity;
+    draw();
+
+    const printWindow = window.open("", "_blank", "noopener,noreferrer");
+    if (!printWindow) return;
+    printWindow.document.write(`
+      <!doctype html>
+      <html>
+        <head>
+          <title>Fence Layout Map</title>
+          <style>
+            body { margin: 0; padding: 18px; font-family: Arial, sans-serif; color: #111827; }
+            h1 { margin: 0 0 10px; font-size: 18px; }
+            p { margin: 0 0 12px; font-size: 12px; color: #4b5563; }
+            img { width: 100%; height: auto; border: 1px solid #d1d5db; }
+            @media print { body { padding: 10mm; } }
+          </style>
+        </head>
+        <body>
+          <h1>Fence Layout Map</h1>
+          <p>Installer guide showing section lengths, gate openings, run measurements, notes, and drawn context lines.</p>
+          <img src="${dataUrl}" alt="Fence layout map" />
+          <script>window.onload = () => window.print();</script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  }
+
   function setHighlightedMapLabel(label: string | null) {
     highlightedMapLabel = label;
     scheduleRedraw();
@@ -2789,6 +2883,8 @@ export function initCanvasEngine(
           gateId: g.gateId,
           useGatePostsAsFenceTermination:
             g.useGatePostsAsFenceTermination ?? true,
+          gateType: g.gateType,
+          swingDirection: g.swingDirection,
         }));
         flatIdx++;
       }
@@ -2860,6 +2956,9 @@ export function initCanvasEngine(
     setJobPanelWidth,
     setRunStatsTexts,
     setGateVisuals,
+    setPendingGatePlacement,
+    hasSatelliteUnderlay,
+    printMap,
     setHighlightedMapLabel,
     loadLayout,
     fitToWidth,

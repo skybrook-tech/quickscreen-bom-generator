@@ -169,6 +169,7 @@ function CalculatorV3Content() {
   const [mobileTab, setMobileTab] = useState<"run" | "bom" | "map">("run");
   const [layoutOpen, setLayoutOpen] = useState(false);
   const [layoutFullscreen, setLayoutFullscreen] = useState(false);
+  const [includeMapInBomPrint, setIncludeMapInBomPrint] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [confirmClearJob, setConfirmClearJob] = useState(false);
   const clearJobButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -562,6 +563,11 @@ function CalculatorV3Content() {
   }
 
   function handlePrintBom() {
+    if (includeMapInBomPrint) {
+      setLayoutOpen(true);
+      window.setTimeout(() => window.print(), 120);
+      return;
+    }
     window.print();
   }
 
@@ -631,31 +637,10 @@ function CalculatorV3Content() {
   const noSegments =
     !payload || payload.runs.every((r) => r.segments.length === 0);
 
-  const fenceSegments = payload?.runs
-    .flatMap((run) => run.segments)
-    .filter((segment) => segment.segmentKind !== "gate_opening") ?? [];
   const gateSegments = payload?.runs
     .flatMap((run) => run.segments)
     .filter((segment) => segment.segmentKind === "gate_opening") ?? [];
-  const firstSegment = fenceSegments[0];
-  const summaryHeight = Number(
-    firstSegment?.targetHeightMm ?? payload?.variables.target_height_mm ?? 1800,
-  );
-  const summaryLength = payload
-    ? payload.runs.reduce(
-        (total, run) =>
-          total + run.segments.reduce((sum, segment) => sum + Number(segment.segmentWidthMm ?? 0), 0),
-        0,
-      )
-    : 0;
-  const firstRunVariables = {
-    ...(payload?.variables ?? {}),
-    ...(payload?.runs[0]?.variables ?? {}),
-  };
   const cleanJobName = jobName.trim();
-  const systemSummary = payload
-    ? [...new Set(payload.runs.map((run) => run.productCode))].join(" + ")
-    : "";
   const gateTypes = [
     ...new Set(
       gateSegments.map((segment) =>
@@ -670,8 +655,27 @@ function CalculatorV3Content() {
     gateSegments.length === 0
       ? "No gates"
       : `${gateSegments.length} ${gateSegments.length === 1 ? "gate" : "gates"} - ${gateTypes.join(", ")}`;
+  const runBomSummaries = payload?.runs.map((run, index) => {
+    const vars = {
+      ...(payload.variables ?? {}),
+      ...(run.variables ?? {}),
+    };
+    const lengthM = run.segments.reduce(
+      (sum, segment) => sum + Number(segment.segmentWidthMm ?? 0),
+      0,
+    ) / 1000;
+    return [
+      `Run ${index + 1}`,
+      `${lengthM.toFixed(2)}m`,
+      run.productCode,
+      `${Number(vars.target_height_mm ?? 1800)}mm`,
+      colourName(vars.colour_code),
+      `${Number(vars.slat_size_mm ?? 65)}mm slat`,
+      `${Number(vars.slat_gap_mm ?? 5)}mm gap`,
+    ].join(" - ");
+  }) ?? [];
   const summaryText = payload
-    ? `${systemSummary} - ${(summaryLength / 1000).toFixed(2)}m total - ${summaryHeight}mm high - ${colourName(firstRunVariables.colour_code)} - ${gateSummary}`
+    ? `${runBomSummaries.join(" | ")} - ${gateSummary}`
     : cleanJobName;
   const saveJobLabel = jobName.trim() ? `Save ${jobName.trim()}` : "Save Job";
   const animatedGrandTotal = useAnimatedNumber(
@@ -875,6 +879,15 @@ function CalculatorV3Content() {
                   <Printer size={16} />
                   Print BOM
                 </button>
+                <label className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted">
+                  <input
+                    type="checkbox"
+                    checked={includeMapInBomPrint}
+                    onChange={(event) => setIncludeMapInBomPrint(event.target.checked)}
+                    className="accent-brand-primary"
+                  />
+                  Include map
+                </label>
                 <button
                   type="button"
                   onClick={handleExportCsv}

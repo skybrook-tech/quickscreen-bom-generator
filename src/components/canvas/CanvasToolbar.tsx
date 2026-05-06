@@ -7,6 +7,7 @@ import {
   Undo2,
   Redo2,
   Trash2,
+  Printer,
   RotateCcw,
   Maximize2,
   Minimize2,
@@ -33,6 +34,7 @@ interface CanvasToolbarProps {
   expanded: boolean;
   onToggleExpand: (v: boolean) => void;
   onHelpOpen: () => void;
+  onPrintMap: () => void;
 }
 
 export function CanvasToolbar({
@@ -48,6 +50,7 @@ export function CanvasToolbar({
   expanded,
   onToggleExpand,
   onHelpOpen,
+  onPrintMap,
 }: CanvasToolbarProps) {
   const [confirmClear, setConfirmClear] = useState(false);
   const clearButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -89,7 +92,7 @@ export function CanvasToolbar({
       </button>
       <button
         type="button"
-        title="Place gate on segment"
+        title="Place gate on section"
         className={btnCls(activeTool === "gate")}
         onClick={() => handleTool("gate")}
       >
@@ -97,7 +100,7 @@ export function CanvasToolbar({
       </button>
       <button
         type="button"
-        title="Move the drawing, drag nodes, or edit segment lengths"
+        title="Move the drawing, drag nodes, or edit section lengths"
         className={btnCls(activeTool === "move")}
         onClick={() => handleTool("move")}
       >
@@ -171,6 +174,14 @@ export function CanvasToolbar({
         onClick={() => engineRef.current?.fitToContent()}
       >
         <Crosshair size={16} /> Centre
+      </button>
+      <button
+        type="button"
+        title="Print installer-ready layout map"
+        className={iconBtn}
+        onClick={onPrintMap}
+      >
+        <Printer size={16} /> Print Map
       </button>
       <button
         type="button"

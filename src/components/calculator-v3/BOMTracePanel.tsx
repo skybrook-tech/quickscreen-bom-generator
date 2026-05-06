@@ -109,7 +109,7 @@ export function BOMTracePanel({ trace, computed, isAdmin }: BOMTracePanelProps) 
                   {Object.entries(segs as Record<string, unknown>).map(([segId, vals]) => (
                     <div key={segId} className="pl-4 mb-2">
                       <div className="text-xs text-brand-muted/70 mb-1">
-                        Segment: {segId.slice(0, 8)}&hellip;
+                        Section: {segId.slice(0, 8)}&hellip;
                       </div>
                       <pre className="text-xs text-brand-text bg-brand-card rounded p-2 overflow-x-auto">
                         {JSON.stringify(vals, null, 2)}

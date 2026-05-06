@@ -63,7 +63,7 @@ export function LayoutCanvasV3() {
     const jobMax = clampPostSpacing(payload.variables.max_panel_width_mm, 2600);
     const perRun = payload.runs.map((run, i) => {
       const s = calcRunStats(run, jobMax);
-      return `Run ${i + 1}  ·  ${s.fenceSegments} ${s.fenceSegments === 1 ? 'seg' : 'segs'}  ·  ${s.panels} ${s.panels === 1 ? 'panel' : 'panels'}  ·  ${s.posts} ${s.posts === 1 ? 'post' : 'posts'}  ·  ${s.corners} ${s.corners === 1 ? 'corner' : 'corners'}`;
+      return [`Run ${i + 1}`, `${s.fenceSegments} ${s.fenceSegments === 1 ? 'section' : 'sections'}`, `${s.panels} ${s.panels === 1 ? 'panel' : 'panels'}`, `${s.posts} ${s.posts === 1 ? 'post' : 'posts'}`, `${s.corners} ${s.corners === 1 ? 'corner' : 'corners'}`].join(' - ');
     });
     const totals = payload.runs.reduce(
       (acc, run) => {
@@ -72,7 +72,7 @@ export function LayoutCanvasV3() {
       },
       { panels: 0, posts: 0, corners: 0, segs: 0 },
     );
-    const global = `${payload.runs.length} ${payload.runs.length === 1 ? 'run' : 'runs'}  ·  ${totals.segs} ${totals.segs === 1 ? 'seg' : 'segs'}  ·  ${totals.panels} ${totals.panels === 1 ? 'panel' : 'panels'}  ·  ${totals.posts} ${totals.posts === 1 ? 'post' : 'posts'}  ·  ${totals.corners} ${totals.corners === 1 ? 'corner' : 'corners'}`;
+    const global = [`${payload.runs.length} ${payload.runs.length === 1 ? 'run' : 'runs'}`, `${totals.segs} ${totals.segs === 1 ? 'section' : 'sections'}`, `${totals.panels} ${totals.panels === 1 ? 'panel' : 'panels'}`, `${totals.posts} ${totals.posts === 1 ? 'post' : 'posts'}`, `${totals.corners} ${totals.corners === 1 ? 'corner' : 'corners'}`].join(' - ');
     return { global, perRun };
   }, [payload]);
 
