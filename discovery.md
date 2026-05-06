@@ -972,6 +972,21 @@ Verification:
 - `npm run build` passed.
 - Source-level check: `gateInfillSkuFor(verticalBuild, colour)` emits `QSG-4200-CINF-*` for vertical builds and `QSG-4800-INF-*` for horizontal builds; sliding infill stock count now uses `infillCutMm` derived from orientation.
 
+### May 7, 2026 - Brief W gate width validation
+
+Catalogue/rule finding:
+- QuickScreen gate maximum widths differ by movement and orientation: pedestrian horizontal 2100mm, pedestrian vertical 1200mm, sliding horizontal 6150mm, and sliding vertical 6166mm.
+- Pedestrian gates can warn up to 110% of max and suggest a catalogue alternative; sliding gates should hard-block once over the catalogue maximum because there is no larger QuickScreen sliding alternative.
+
+Changes applied:
+- Added `src/lib/gateConstraints.ts` with max-width constants, gate type/orientation resolution, validation status, alternative suggestions, and switch-to-alternative patches.
+- Gate section length editing now shows yellow warning chips for soft overages and red hard errors with a switch button when an alternative exists.
+- Generate BOM buttons and the Ctrl+Enter path now block while any hard gate-width error exists; warning-only gates still allow BOM generation.
+
+Verification:
+- `npm run build` passed.
+- Validation smoke check passed for pedestrian horizontal 2100/2200/2400, pedestrian vertical 1200/2000, and sliding horizontal 6000/6500.
+
 ### May 2, 2026 - QSG gate online pricing pass
 
 Pricing workflow finding:

@@ -15,6 +15,11 @@ import {
   gateMovementOrDefault,
 } from "../../lib/gateOptionRules";
 import {
+  gatePatchForAlternative,
+  gateTypeLabel,
+  validateGateWidth,
+} from "../../lib/gateConstraints";
+import {
   clampPostSpacing,
   heightEntriesForSystem,
   maxPanelWidthForSystem,
@@ -139,6 +144,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     (leftKind === "system_post" || leftKind === "" ? 1 : 0) +
     (rightKind === "system_post" || rightKind === "" ? 1 : 0);
   const gateVars = seg.variables ?? {};
+  const gateWidthValidation = gate ? validateGateWidth(seg) : null;
   const gateBuild = String(
     gateVars[GATE_SEGMENT_STUB_KEYS.gateBuild] ??
       (productCode === "VS" ? "qsg_hinged_vertical" : "qsg_hinged_horizontal"),
@@ -354,6 +360,21 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     });
   }
 
+  function switchGateToAlternative() {
+    if (!gateWidthValidation?.alternative) return;
+    dispatch({
+      type: "UPSERT_SEGMENT",
+      runId,
+      segment: patchSegmentVariables(
+        seg,
+        gatePatchForAlternative(
+          gateWidthValidation.alternative,
+          gateMovementOrDefault(seg.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]),
+        ),
+      ),
+    });
+  }
+
   function resetToMaster() {
     if (!run) return;
     const masterHeight = Number(masterVariables.target_height_mm ?? 1800);
@@ -563,6 +584,25 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
               )}
             </label>
           </div>
+          {gateWidthValidation?.status === "warning" && (
+            <div className="rounded-lg border border-brand-warning/40 bg-brand-warning/10 px-3 py-2 text-xs font-bold text-brand-warning">
+              {gateWidthValidation.message}
+            </div>
+          )}
+          {gateWidthValidation?.status === "error" && (
+            <div className="space-y-2 rounded-lg border border-brand-danger/40 bg-brand-danger/10 px-3 py-2 text-xs font-bold text-brand-danger">
+              <p>{gateWidthValidation.message}</p>
+              {gateWidthValidation.alternative && (
+                <button
+                  type="button"
+                  onClick={switchGateToAlternative}
+                  className="rounded-lg border border-brand-danger/50 bg-brand-card px-3 py-1.5 text-xs font-black text-brand-danger hover:shadow-sm"
+                >
+                  Switch to {gateTypeLabel(gateWidthValidation.alternative)}
+                </button>
+              )}
+            </div>
+          )}
           <div className="rounded-lg border border-brand-border/60 bg-brand-card/70 p-3">
             <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
               Current settings

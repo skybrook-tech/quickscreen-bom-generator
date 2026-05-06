@@ -16,6 +16,7 @@ import { suggestAccessories } from "../lib/suggestedAccessories";
 import { priceForSku } from "../lib/localBomCalculator";
 import { GATE_SEGMENT_STUB_KEYS } from "../lib/segmentTermination";
 import { GATE_MOVEMENTS, optionLabel as gateOptionLabel } from "../lib/gateOptionRules";
+import { gateTypeLabel, validateGateWidth } from "../lib/gateConstraints";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
 import {
@@ -239,6 +240,10 @@ function CalculatorV3Content() {
 
   async function handleGenerateBOM() {
     if (!payload) return;
+    if (gateWidthErrors.length > 0) {
+      toast.error("Fix gate width errors before generating the BOM.");
+      return;
+    }
     setExtraItems([]);
     setLineEdits({});
     setActiveBomSummary(null);
@@ -636,6 +641,15 @@ function CalculatorV3Content() {
   const hasErrors = errors.length > 0;
   const noSegments =
     !payload || payload.runs.every((r) => r.segments.length === 0);
+  const gateWidthValidations =
+    payload?.runs.flatMap((run) =>
+      run.segments
+        .filter((segment) => segment.segmentKind === "gate_opening")
+        .map((segment) => ({ runId: run.runId, segmentId: segment.segmentId, ...validateGateWidth(segment) })),
+    ) ?? [];
+  const gateWidthErrors = gateWidthValidations.filter((item) => item.status === "error");
+  const gateWidthWarnings = gateWidthValidations.filter((item) => item.status === "warning");
+  const hasBlockingErrors = hasErrors || gateWidthErrors.length > 0;
 
   const gateSegments = payload?.runs
     .flatMap((run) => run.segments)
@@ -749,6 +763,27 @@ function CalculatorV3Content() {
                   </div>
                 )}
 
+                {(gateWidthErrors.length > 0 || gateWidthWarnings.length > 0) && (
+                  <div className="space-y-2">
+                    {gateWidthErrors.map((item) => (
+                      <div
+                        key={`${item.runId}-${item.segmentId}`}
+                        className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-2 text-sm font-bold text-brand-danger"
+                      >
+                        {item.message}
+                      </div>
+                    ))}
+                    {gateWidthWarnings.map((item) => (
+                      <div
+                        key={`${item.runId}-${item.segmentId}`}
+                        className="rounded-lg border border-brand-warning/30 bg-brand-warning/10 px-4 py-2 text-sm font-bold text-brand-warning"
+                      >
+                        {item.message ?? `Gate width is over the ${gateTypeLabel(item.gateType)} maximum.`}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {bomMutation.isError && (
                   <div className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-3 text-sm text-brand-danger">
                     Error:{" "}
@@ -797,7 +832,7 @@ function CalculatorV3Content() {
                 <button
                   type="button"
                   onClick={handleGenerateBOMFromFooter}
-                  disabled={bomMutation.isPending || hasErrors || noSegments}
+                  disabled={bomMutation.isPending || hasBlockingErrors || noSegments}
                   className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {bomMutation.isPending && (
@@ -848,7 +883,7 @@ function CalculatorV3Content() {
                 <button
                   type="button"
                   onClick={handleGenerateBOM}
-                  disabled={bomMutation.isPending || hasErrors || noSegments}
+                  disabled={bomMutation.isPending || hasBlockingErrors || noSegments}
                   title="Generate BOM (Ctrl+Enter)"
                   className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                 >
@@ -922,7 +957,7 @@ function CalculatorV3Content() {
                     </div>
                   ))}
                 </div>
-              ) : bomResultForTabs && !hasErrors ? (
+              ) : bomResultForTabs && !hasBlockingErrors ? (
                 <>
                   <BOMResultTabs
                     result={bomResultForTabs}

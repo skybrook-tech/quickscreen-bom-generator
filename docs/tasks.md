@@ -54,6 +54,8 @@ Latest Brief U pass: QSHS/XPL height choices now derive live from the catalogue 
 
 Latest Brief V pass: QSG gate infill selection now keeps horizontal gates on `QSG-4800-INF` cut to gate width and vertical gates on `QSG-4200-CINF` cut to gate height, including the sliding-gate fallback path.
 
+Latest Brief W pass: gate openings now validate against catalogue width maximums by gate type/orientation, show warning/error chips with alternative suggestions, offer a switch-to-alternative action, and block Generate BOM only for hard gate-width errors.
+
 ---
 
 ## Phases Overview
