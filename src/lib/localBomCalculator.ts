@@ -80,7 +80,7 @@ function roundMoney(value: number): number {
 
 function designSlatWidthMm(productCode: string, slatSize: number): number {
   if (productCode === "QSHS" || productCode === "BAYG") {
-    return slatSize === 90 ? 90.3 : 65.3;
+    return slatSize === 90 ? 90 : 65;
   }
   return slatSize;
 }

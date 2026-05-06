@@ -1,6 +1,7 @@
 import { FormField } from "../shared/FormField";
 import { Check } from "lucide-react";
 import { ColourPalette, COLOUR_LABELS } from "./ColourPalette";
+import { DerivationChip } from "../ui/DerivationChip";
 
 export interface SchemaField {
   id: string;
@@ -54,8 +55,18 @@ const ENUM_LABELS: Record<string, string> = {
   "65": "65mm Post Standard HD",
 };
 
+function optionValue(option: unknown): string {
+  if (option && typeof option === "object" && "value" in option) {
+    return String((option as { value: unknown }).value);
+  }
+  return String(option);
+}
+
 function optionLabel(field: SchemaField, option: unknown): string {
-  const value = String(option);
+  if (option && typeof option === "object" && "label" in option) {
+    return String((option as { label: unknown }).label);
+  }
+  const value = optionValue(option);
   if (field.field_key === "finish_family") return ENUM_LABELS[value] ?? value;
   if (field.field_key === "colour_code" || field.field_key === "post_colour_code") {
     const limited = value === "P" || value === "PB" ? " - limited" : "";
@@ -106,6 +117,18 @@ export function SchemaDrivenForm({
               <FormField
                 label={field.label}
               >
+                {field.field_key === "target_height_mm" && (
+                  <div className="mb-2">
+                    {field.options_json.length > 0 ? (
+                      <DerivationChip
+                        label="Heights for"
+                        value={`${variables.slat_size_mm ?? "?"}mm x ${variables.slat_gap_mm ?? "?"}mm gap`}
+                      />
+                    ) : (
+                      <DerivationChip label="Custom height" value="free input" tone="muted" />
+                    )}
+                  </div>
+                )}
                 {isColourField ? (
                   <ColourPalette
                     value={currentValue}
@@ -117,7 +140,7 @@ export function SchemaDrivenForm({
                 ) : (
                 <div className="flex flex-wrap gap-2">
                   {field.options_json.map((opt) => {
-                    const value = String(opt);
+                    const value = optionValue(opt);
                     const selected = value === currentValue;
                     return (
                       <button
@@ -155,6 +178,11 @@ export function SchemaDrivenForm({
               <FormField
                 label={field.label}
               >
+                {field.field_key === "target_height_mm" && (
+                  <div className="mb-2">
+                    <DerivationChip label="Custom height" value="free input" tone="muted" />
+                  </div>
+                )}
                 <input
                   type="number"
                   aria-label={`${field.label} ${field.unit ?? ""}`.trim()}

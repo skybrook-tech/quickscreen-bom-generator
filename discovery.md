@@ -939,6 +939,23 @@ Verification:
 - `npm run build` passed.
 - Rules smoke check: 900x900 65/9 recommends `TC-H-AT-B`, 1500x1800 65/9 estimates 38.8kg and recommends `TC-H-AT-HD-B`, and 2100x2100 90/9 recommends `KF-AH-AT`.
 
+### May 7, 2026 - Brief U live height derivation
+
+Catalogue/formula finding:
+- QSHS and XPL height choices must derive from the QuickScreen catalogue formula `Height = ((slat + gap) x N) - gap + 3`, where `N` is the slat count.
+- The previous generated heights used effective slat widths (`65.3`/`90.3`) in the UI helper, which made examples like 65/5/14 land at 982mm instead of the catalogue 978mm.
+- VS remains a free height because the vertical slat system is not constrained by the same horizontal slat height table.
+
+Changes applied:
+- Added `src/lib/heights.ts` with `deriveHeights`, nearest-height, and slat-count lookup helpers.
+- Updated product option normalisation to keep `slat_count` in form variables and recompute height from that count when slat size or gap changes.
+- Run settings and section settings now show a derivation chip for QSHS/XPL height choices, display height options as `height - N slats`, and show `Custom height` for VS.
+- The local fallback QSHS/BAYG horizontal slat count now uses exact 65mm/90mm catalogue widths so generated BOM slat counts align with the new height selector.
+
+Verification:
+- `npm run build` passed.
+- Formula smoke check passed for 65/5/14 = 978, 65/9/14 = 1030, 65/20/14 = 1173, 90/5/14 = 1328, and 90/9/14 = 1380.
+
 ### May 2, 2026 - QSG gate online pricing pass
 
 Pricing workflow finding:

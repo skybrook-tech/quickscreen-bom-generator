@@ -1,4 +1,10 @@
 import type { SchemaField } from "../components/calculator-v3/SchemaDrivenForm";
+import {
+  deriveHeights,
+  derivedHeightForSlatCount,
+  nearestDerivedHeight,
+  type DerivedHeight,
+} from "./heights";
 
 type Variables = Record<string, string | number | boolean>;
 
@@ -73,17 +79,20 @@ export function gapOptionsForSystem(productCode: string) {
 }
 
 export function heightOptionsForSystem(productCode: string, variables: Variables) {
+  return heightEntriesForSystem(productCode, variables).map((item) => item.height);
+}
+
+export function heightEntriesForSystem(productCode: string, variables: Variables): DerivedHeight[] {
   if (productCode === "VS") return [];
   const slatSize = Number(variables.slat_size_mm ?? 65);
   const slatGap = Number(variables.slat_gap_mm ?? 5);
-  const slatDesignWidth = slatSize === 90 ? 90.3 : 65.3;
-  if (!Number.isFinite(slatGap) || slatGap < 0) return [];
-  const heights: number[] = [];
-  for (let slats = 1; slats <= 80; slats++) {
-    const height = Math.round(slats * (slatDesignWidth + slatGap) - slatGap + 3);
-    if (height >= 300 && height <= 2400) heights.push(height);
-  }
-  return heights;
+  if ((slatSize !== 65 && slatSize !== 90) || !Number.isFinite(slatGap) || slatGap < 0) return [];
+  return deriveHeights(slatSize, slatGap, {
+    minN: 5,
+    maxN: 40,
+    minHeight: 300,
+    maxHeight: 2400,
+  });
 }
 
 export function colourOptionsForSystem(variables: Variables) {
@@ -223,15 +232,19 @@ export function normaliseVariablesForSystem(
         : maxPanelWidth,
   };
 
-  const heightOptions = heightOptionsForSystem(productCode, next);
+  const heightOptions = heightEntriesForSystem(productCode, next);
   const requestedHeight = Number(next.target_height_mm ?? 1800);
   if (heightOptions.length > 0) {
-    const closest = heightOptions.reduce((best, height) =>
-      Math.abs(height - requestedHeight) < Math.abs(best - requestedHeight)
-        ? height
-        : best,
-    );
-    next = { ...next, target_height_mm: closest };
+    const selected =
+      derivedHeightForSlatCount(heightOptions, next.slat_count) ??
+      nearestDerivedHeight(heightOptions, requestedHeight);
+    if (selected) {
+      next = {
+        ...next,
+        target_height_mm: selected.height,
+        slat_count: selected.N,
+      };
+    }
   }
 
   return next;
@@ -324,12 +337,18 @@ export function applyProductOptionRules(
     }
 
     if (field.field_key === "target_height_mm") {
-      const heightOptions = heightOptionsForSystem(productCode, variables);
+      const heightOptions = heightEntriesForSystem(productCode, variables);
       result.push(
         cloneField(field, {
           control_type: heightOptions.length > 0 ? "select" : field.control_type,
           data_type: "number",
-          options_json: heightOptions.length > 0 ? heightOptions : field.options_json,
+          options_json:
+            heightOptions.length > 0
+              ? heightOptions.map((item) => ({
+                  value: item.height,
+                  label: `${item.height}mm - ${item.N} slats`,
+                }))
+              : field.options_json,
           label: heightOptions.length > 0 ? "Actual fence height" : field.label,
           unit: "mm",
         }),

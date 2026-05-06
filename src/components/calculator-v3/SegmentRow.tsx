@@ -16,10 +16,16 @@ import {
 } from "../../lib/gateOptionRules";
 import {
   clampPostSpacing,
-  heightOptionsForSystem,
+  heightEntriesForSystem,
   maxPanelWidthForSystem,
 } from "../../lib/productOptionRules";
+import {
+  derivedHeightForSlatCount,
+  nearestDerivedHeight,
+  type DerivedHeight,
+} from "../../lib/heights";
 import { colourName } from "./ColourPalette";
+import { DerivationChip } from "../ui/DerivationChip";
 
 interface Props {
   runId: string;
@@ -100,20 +106,21 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     ...(seg.variables ?? {}),
   };
   const productCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
-  const heightOptions = run
-    ? heightOptionsForSystem(run.productCode, segmentVariables)
+  const heightEntries = run
+    ? heightEntriesForSystem(run.productCode, segmentVariables)
     : [];
+  const heightInputsReady =
+    productCode === "VS" ||
+    (Number.isFinite(Number(segmentVariables.slat_size_mm)) &&
+      Number.isFinite(Number(segmentVariables.slat_gap_mm)));
+  const selectedHeightEntry =
+    derivedHeightForSlatCount(heightEntries, seg.variables?.slat_count ?? segmentVariables.slat_count) ??
+    nearestDerivedHeight(
+      heightEntries,
+      Number(seg.targetHeightMm ?? segmentVariables.target_height_mm ?? 1800),
+    );
   const selectedHeight =
-    heightOptions.length > 0
-      ? heightOptions.includes(Number(seg.targetHeightMm))
-        ? Number(seg.targetHeightMm)
-        : heightOptions.reduce((best, height) =>
-            Math.abs(height - Number(seg.targetHeightMm ?? segmentVariables.target_height_mm ?? 1800)) <
-            Math.abs(best - Number(seg.targetHeightMm ?? segmentVariables.target_height_mm ?? 1800))
-              ? height
-              : best,
-          )
-      : Number(seg.targetHeightMm ?? segmentVariables.target_height_mm ?? 1800);
+    selectedHeightEntry?.height ?? Number(seg.targetHeightMm ?? segmentVariables.target_height_mm ?? 1800);
   const fenceColour = String(segmentVariables.colour_code ?? "B");
   const postColour = String(segmentVariables.post_colour_code ?? fenceColour);
   const maxSpacing = clampPostSpacing(
@@ -323,6 +330,30 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     });
   }
 
+  function updateDerivedHeight(entry: DerivedHeight) {
+    dispatch({
+      type: "UPSERT_SEGMENT",
+      runId,
+      segment:
+        gate
+          ? {
+              ...patchSegmentVariables(seg, {
+                [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: entry.height,
+                target_height_mm: entry.height,
+                slat_count: entry.N,
+              }),
+              targetHeightMm: entry.height,
+            }
+          : {
+              ...patchSegmentVariables(seg, {
+                target_height_mm: entry.height,
+                slat_count: entry.N,
+              }),
+              targetHeightMm: entry.height,
+            },
+    });
+  }
+
   function resetToMaster() {
     if (!run) return;
     const masterHeight = Number(masterVariables.target_height_mm ?? 1800);
@@ -354,6 +385,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
       segment: {
         ...patchSegmentVariables(seg, {
           target_height_mm: null,
+          slat_count: null,
           colour_code: null,
           post_colour_code: null,
           slat_size_mm: null,
@@ -489,26 +521,45 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
             </label>
             <label className="flex flex-col gap-1">
               <span className="text-sm font-bold text-brand-muted">Height (mm)</span>
-              {heightOptions.length > 0 ? (
-                <select
-                  value={selectedHeight}
-                  onChange={(event) =>
-                    updateGeometry("targetHeightMm", Number(event.target.value))
-                  }
-                  className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-                >
-                  {heightOptions.map((height) => (
-                    <option key={height} value={height}>
-                      {height}
-                    </option>
-                  ))}
-                </select>
+              {productCode === "VS" ? (
+                <>
+                  <DerivationChip label="Custom height" value="free input" tone="muted" />
+                  <NumberInput
+                    value={seg.targetHeightMm ?? 1800}
+                    className="w-24 px-2 py-1.5 text-center tabular-nums"
+                    onChange={(v) => updateGeometry("targetHeightMm", Number(v))}
+                  />
+                </>
+              ) : heightEntries.length > 0 && heightInputsReady ? (
+                <>
+                  <DerivationChip
+                    label="Heights for"
+                    value={`${segmentVariables.slat_size_mm ?? "?"}mm x ${segmentVariables.slat_gap_mm ?? "?"}mm gap`}
+                  />
+                  <select
+                    value={selectedHeight}
+                    onChange={(event) => {
+                      const entry = heightEntries.find(
+                        (item) => item.height === Number(event.target.value),
+                      );
+                      if (entry) updateDerivedHeight(entry);
+                    }}
+                    className="w-44 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+                  >
+                    {heightEntries.map((entry) => (
+                      <option key={entry.N} value={entry.height}>
+                        {entry.height}mm - {entry.N} slats
+                      </option>
+                    ))}
+                  </select>
+                </>
               ) : (
-                <NumberInput
-                  value={seg.targetHeightMm ?? 1800}
-                  className="w-24 px-2 py-1.5 text-center tabular-nums"
-                  onChange={(v) => updateGeometry("targetHeightMm", Number(v))}
-                />
+                <select
+                  disabled
+                  className="w-52 rounded-lg border border-brand-border bg-brand-card/70 px-3 py-2 text-sm font-semibold text-brand-muted shadow-sm"
+                >
+                  <option>Select slat size and gap first</option>
+                </select>
               )}
             </label>
           </div>

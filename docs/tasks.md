@@ -50,6 +50,8 @@ Latest installer-map workflow pass: user-facing segment copy is now section copy
 
 Latest Brief T pass: swing gates now show a live estimated gate weight, rank catalogue hinges by fit/tight/fail against the required rating, guide latch selection with white-finish handling, expose the four active drop-bolt SKUs, offer known hinge/latch kits, and emit selected hardware/TruClose caps through the local fallback BOM.
 
+Latest Brief U pass: QSHS/XPL height choices now derive live from the catalogue formula `((slat + gap) x N) - gap + 3`, store the selected slat count, rebuild when slat size/gap changes, show derivation chips, and keep VS as a custom free-height input.
+
 ---
 
 ## Phases Overview

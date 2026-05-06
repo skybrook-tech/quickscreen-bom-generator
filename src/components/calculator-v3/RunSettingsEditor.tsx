@@ -112,12 +112,16 @@ export function RunSettingsEditor({ run }: Props) {
     if (key === "colour_code" && (!run.variables?.post_colour_code || previousPostColour === previousColour)) {
       nextVariables.post_colour_code = value;
     }
+    if (key === "target_height_mm") {
+      delete nextVariables.slat_count;
+    }
     const normalised = normaliseVariablesForSystem(nextProductCode, nextVariables);
     const syncKeys = new Set([
       "target_height_mm",
       "slat_size_mm",
       "slat_gap_mm",
       "slat_gap_mode",
+      "slat_count",
       "colour_code",
       "post_colour_code",
       "post_size",
