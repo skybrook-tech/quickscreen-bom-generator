@@ -52,6 +52,8 @@ Latest Brief T pass: swing gates now show a live estimated gate weight, rank cat
 
 Latest Brief U pass: QSHS/XPL height choices now derive live from the catalogue formula `((slat + gap) x N) - gap + 3`, store the selected slat count, rebuild when slat size/gap changes, show derivation chips, and keep VS as a custom free-height input.
 
+Latest Brief V pass: QSG gate infill selection now keeps horizontal gates on `QSG-4800-INF` cut to gate width and vertical gates on `QSG-4200-CINF` cut to gate height, including the sliding-gate fallback path.
+
 ---
 
 ## Phases Overview

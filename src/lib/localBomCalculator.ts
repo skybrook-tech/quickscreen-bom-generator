@@ -502,8 +502,9 @@ function emitQsgSlidingGateFrameLines(
   const coverPieces = 2;
   const coversPerStock = Math.max(1, Math.floor(4200 / frameCutMm));
   const infillStockLength = verticalBuild ? 4200 : 4800;
+  const infillCutMm = verticalBuild ? frameCutMm : railCutMm;
   const infillPieces = 2;
-  const infillsPerStock = Math.max(1, Math.floor(infillStockLength / frameCutMm));
+  const infillsPerStock = Math.max(1, Math.floor(infillStockLength / infillCutMm));
   const railsPerStock = Math.max(1, Math.floor(6100 / railCutMm));
   const railSize = verticalBuild ? 65 : slatSize === 90 ? 90 : 65;
   const spacerPacks = Math.ceil((Math.max(0, numGateBlades - 1) * 2) / 50);
@@ -555,7 +556,7 @@ function emitQsgSlidingGateFrameLines(
     category: "accessory",
     quantity: Math.ceil(infillPieces / infillsPerStock),
     unit: "length",
-    notes: `${verticalBuild ? "Gate channel infill" : "Gate infill"} for side-frame void, ${Math.round(frameCutMm)}mm cuts from ${infillStockLength}mm stock`,
+    notes: `${verticalBuild ? "Gate channel infill" : "Gate infill"} for side-frame void, ${Math.round(infillCutMm)}mm cuts from ${infillStockLength}mm stock`,
   });
   emit(lines, {
     ...base,

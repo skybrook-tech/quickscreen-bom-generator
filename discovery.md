@@ -956,6 +956,22 @@ Verification:
 - `npm run build` passed.
 - Formula smoke check passed for 65/5/14 = 978, 65/9/14 = 1030, 65/20/14 = 1173, 90/5/14 = 1328, and 90/9/14 = 1380.
 
+### May 7, 2026 - Brief V vertical gate infill SKU fix
+
+Catalogue/formula finding:
+- The current local fallback already routed vertical QuickScreen gates to `QSG-4200-CINF-*` and horizontal QuickScreen gates to `QSG-4800-INF-*`.
+- Pedestrian gate cut logic was correct: horizontal gate infill cuts to the rail/gate-width cut, while vertical channel infill cuts to the side-frame/gate-height cut.
+- Sliding gate cut logic still used the side-frame/gate-height cut for both horizontal and vertical infill, which made horizontal sliding gate `QSG-4800-INF-*` stock counts wrong.
+
+Changes applied:
+- Updated the QSG sliding gate frame helper so horizontal sliding gate infill cuts from `QSG-4800-INF-*` use the gate-width rail cut.
+- Kept vertical sliding gate channel infill on `QSG-4200-CINF-*` with the gate-height side-frame cut.
+- Confirmed `QSG-4200-CINF-*` exists in the local fallback metadata and `qs_gate.json` seed for active catalogue colours.
+
+Verification:
+- `npm run build` passed.
+- Source-level check: `gateInfillSkuFor(verticalBuild, colour)` emits `QSG-4200-CINF-*` for vertical builds and `QSG-4800-INF-*` for horizontal builds; sliding infill stock count now uses `infillCutMm` derived from orientation.
+
 ### May 2, 2026 - QSG gate online pricing pass
 
 Pricing workflow finding:
