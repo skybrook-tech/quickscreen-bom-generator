@@ -37,6 +37,8 @@ export interface CanvasLayout {
   runs: CanvasRunSummary[];
   /** Non-product boundary lines (neighbouring fences, property lines, etc.). Ignored by canonicalAdapter. */
   boundaries: CanvasSegment[];
+  /** Free text notes placed by the user on the map. Ignored by canonicalAdapter. */
+  textNotes?: CanvasTextNote[];
 }
 
 export interface CanvasEngineConfig {
@@ -69,6 +71,12 @@ export interface CanvasGateVisual {
   swingDirection?: CanvasGateSwingDirection;
 }
 
+export interface CanvasTextNote {
+  x: number;
+  y: number;
+  text: string;
+}
+
 // ── Internal state types ──────────────────────────────────────────────────────
 
 interface Point {
@@ -99,7 +107,7 @@ interface GateMarker {
   useGatePostsAsFenceTermination?: boolean;
 }
 
-type Tool = "draw" | "gate" | "move" | "boundary" | "building";
+type Tool = "draw" | "gate" | "move" | "boundary" | "building" | "text";
 
 type UndoAction =
   | { type: "ADD_POINT"; runIdx: number }
@@ -422,15 +430,16 @@ function createLabelInput(
   initialValue: string,
   onCommit: (v: string) => void,
   onCancel: () => void,
+  width = 80,
 ): HTMLInputElement {
   const inp = document.createElement("input");
   inp.type = "text";
   inp.value = initialValue;
   inp.style.cssText = `
     position: absolute;
-    left: ${screenPos.x - 40}px;
+    left: ${screenPos.x - width / 2}px;
     top: ${screenPos.y - 13}px;
-    width: 80px;
+    width: ${width}px;
     padding: 2px 6px;
     font-size: 12px;
     background: #1a1d2e;
@@ -517,6 +526,7 @@ export function initCanvasEngine(
   let redoStack: RedoEntry[] = [];
   let gateVisuals: Record<string, CanvasGateVisual> = {};
   let highlightedMapLabel: string | null = null;
+  let textNotes: CanvasTextNote[] = [];
   let mapImage: HTMLImageElement | null = null;
   let mapOpacity = 0.5;
   let mapWorldOriginX = 0; // world px — centre of the tile
@@ -794,6 +804,7 @@ export function initCanvasEngine(
       cornerCount: countCorners(nonBoundaryRuns),
       runs: runSummaries,
       boundaries,
+      textNotes: [...textNotes],
     };
   }
 
@@ -915,6 +926,8 @@ export function initCanvasEngine(
         ctx.restore();
       }
     }
+
+    drawTextNotes();
 
     // Preview line (while drawing)
     if ((tool === "draw" || tool === "building") && activeRunIdx >= 0) {
@@ -1434,6 +1447,33 @@ export function initCanvasEngine(
     ctx.restore();
   }
 
+  function drawTextNotes() {
+    if (textNotes.length === 0) return;
+    ctx.save();
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    for (const note of textNotes) {
+      const text = note.text.trim();
+      if (!text) continue;
+      const fs = Math.max(10, 13 / zoom);
+      ctx.font = `bold ${fs}px sans-serif`;
+      const padX = 7 / zoom;
+      const padY = 5 / zoom;
+      const textW = ctx.measureText(text).width;
+      const h = fs + padY * 2;
+      ctx.fillStyle = "rgba(26,29,46,0.9)";
+      ctx.strokeStyle = "rgba(59,130,246,0.9)";
+      ctx.lineWidth = 1.4 / zoom;
+      ctx.beginPath();
+      ctx.roundRect(note.x, note.y - h / 2, textW + padX * 2, h, 5 / zoom);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = COLOR.label;
+      ctx.fillText(text, note.x + padX, note.y);
+    }
+    ctx.restore();
+  }
+
   function drawSegment(
     seg: Segment,
     hovered: boolean,
@@ -1871,6 +1911,24 @@ export function initCanvasEngine(
       }
     }
 
+    if (tool === "text") {
+      createLabelInput(
+        container,
+        screenPtDown,
+        "",
+        (value) => {
+          const text = value.trim();
+          if (!text) return;
+          textNotes.push({ x: canvasPt.x, y: canvasPt.y, text });
+          notifyChange();
+          scheduleRedraw();
+        },
+        () => {},
+        180,
+      );
+      return;
+    }
+
     if (tool === "draw" || tool === "building") {
       if (isNearActiveLastPoint(screenPtDown)) {
         stopChain(false);
@@ -2114,7 +2172,7 @@ export function initCanvasEngine(
           ? tool === "gate"
             ? "crosshair"
             : "pointer"
-          : tool === "draw" || tool === "building"
+          : tool === "draw" || tool === "building" || tool === "text"
             ? "crosshair"
             : "default";
     }
@@ -2156,7 +2214,7 @@ export function initCanvasEngine(
         );
       }
       draggingGate = null;
-      canvas.style.cursor = tool === "draw" || tool === "building" ? "crosshair" : "default";
+      canvas.style.cursor = tool === "draw" || tool === "building" || tool === "text" ? "crosshair" : "default";
       return;
     }
   }
@@ -2164,7 +2222,7 @@ export function initCanvasEngine(
   function onDblClick(e: MouseEvent) {
     if (editingLabel) return;
 
-    if ((tool === "draw" || tool === "building") && activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
+    if ((tool === "draw" || tool === "building" || tool === "boundary") && activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
       const screenPt = eventToScreen(e);
       stopChain(!isNearActiveLastPoint(screenPt));
       scheduleRedraw();
@@ -2390,7 +2448,7 @@ export function initCanvasEngine(
 
   function setTool(t: Tool) {
     tool = t;
-    if (t === "draw" || t === "boundary" || t === "building") {
+    if (t === "draw" || t === "boundary" || t === "building" || t === "text") {
       canvas.style.cursor = "crosshair";
     } else if (t === "move") {
       canvas.style.cursor = "grab";
@@ -2429,6 +2487,7 @@ export function initCanvasEngine(
       scale,
     });
     runs = [];
+    textNotes = [];
     activeRunIdx = -1;
     notifyChange();
     scheduleRedraw();
@@ -2651,6 +2710,27 @@ export function initCanvasEngine(
    */
   function loadLayout(layout: CanvasLayout) {
     const newRuns: Run[] = [];
+    const preservedBoundaries: CanvasSegment[] = [];
+    for (const run of runs) {
+      if (!run.isBoundary) continue;
+      for (const seg of run.segments) {
+        preservedBoundaries.push({
+          startX: seg.p1.x,
+          startY: seg.p1.y,
+          endX: seg.p2.x,
+          endY: seg.p2.y,
+          lengthMM: seg.lengthMM,
+          angleDeg: angleDeg(seg.p1, seg.p2),
+          contextType: run.boundaryType ?? "boundary",
+        });
+      }
+    }
+    const nextBoundaries =
+      layout.boundaries && layout.boundaries.length > 0
+        ? layout.boundaries
+        : preservedBoundaries;
+    const nextTextNotes =
+      layout.textNotes && layout.textNotes.length > 0 ? layout.textNotes : textNotes;
 
     // Group flat segments into runs using totalLengthM as slice boundaries
     let segIdx = 0;
@@ -2682,7 +2762,7 @@ export function initCanvasEngine(
     }
 
     // Restore boundary runs
-    for (const cseg of layout.boundaries ?? []) {
+    for (const cseg of nextBoundaries) {
       const p1 = { x: cseg.startX, y: cseg.startY };
       const p2 = { x: cseg.endX, y: cseg.endY };
       newRuns.push({
@@ -2715,6 +2795,7 @@ export function initCanvasEngine(
     }
 
     runs = newRuns;
+    textNotes = [...nextTextNotes];
     activeRunIdx = -1;
     undoStack = [];
     redoStack = [];

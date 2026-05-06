@@ -171,6 +171,7 @@ function CalculatorV3Content() {
   const [layoutFullscreen, setLayoutFullscreen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [confirmClearJob, setConfirmClearJob] = useState(false);
+  const clearJobButtonRef = useRef<HTMLButtonElement | null>(null);
   const handleActiveBomSummaryChange = useCallback(
     (summary: { label: string; grandTotal: number }) => {
       setActiveBomSummary({
@@ -187,6 +188,16 @@ function CalculatorV3Content() {
     window.addEventListener("resize", updateLayout);
     return () => window.removeEventListener("resize", updateLayout);
   }, []);
+
+  useEffect(() => {
+    if (!confirmClearJob) return;
+    const resetOnOutsideClick = (event: PointerEvent) => {
+      if (clearJobButtonRef.current?.contains(event.target as Node)) return;
+      setConfirmClearJob(false);
+    };
+    window.addEventListener("pointerdown", resetOnOutsideClick, true);
+    return () => window.removeEventListener("pointerdown", resetOnOutsideClick, true);
+  }, [confirmClearJob]);
 
   function handleResizeStart() {
     let latestWidth = runPaneWidth;
@@ -237,6 +248,11 @@ function CalculatorV3Content() {
     } catch {
       // Error is available via bomMutation.error.
     }
+  }
+
+  async function handleGenerateBOMFromFooter() {
+    setLayoutOpen(false);
+    await handleGenerateBOM();
   }
 
   useEffect(() => {
@@ -753,6 +769,7 @@ function CalculatorV3Content() {
                   {saveJobLabel}
                 </button>
                 <button
+                  ref={clearJobButtonRef}
                   type="button"
                   onClick={() => {
                     if (!confirmClearJob) {
@@ -772,6 +789,17 @@ function CalculatorV3Content() {
                 >
                   <Trash2 size={16} />
                   {confirmClearJob ? "Click again" : "Clear Job"}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleGenerateBOMFromFooter}
+                  disabled={bomMutation.isPending || hasErrors || noSegments}
+                  className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {bomMutation.isPending && (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  )}
+                  Generate BOM
                 </button>
               </div>
             </div>
@@ -900,6 +928,13 @@ function CalculatorV3Content() {
                     }
                     onActiveSummaryChange={handleActiveBomSummaryChange}
                   />
+                  <ExtraItemsPanel
+                    items={extraItems}
+                    onAdd={(item) => setExtraItems((prev) => [...prev, item])}
+                    onRemove={(id) =>
+                      setExtraItems((prev) => prev.filter((i) => i.id !== id))
+                    }
+                  />
                   <SuggestedAccessoriesPanel
                     suggestions={suggestedAccessories}
                     addedItems={extraItems}
@@ -912,13 +947,6 @@ function CalculatorV3Content() {
                     }
                     onRemove={(id) =>
                       setExtraItems((prev) => prev.filter((item) => item.id !== id))
-                    }
-                  />
-                  <ExtraItemsPanel
-                    items={extraItems}
-                    onAdd={(item) => setExtraItems((prev) => [...prev, item])}
-                    onRemove={(id) =>
-                      setExtraItems((prev) => prev.filter((i) => i.id !== id))
                     }
                   />
                 </>

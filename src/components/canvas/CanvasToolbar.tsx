@@ -1,6 +1,7 @@
 import {
   Pencil,
   Building2,
+  Type,
   GitMerge,
   Move,
   Undo2,
@@ -13,11 +14,11 @@ import {
   Crosshair,
   CircleHelp,
 } from "lucide-react";
-import { useState, type RefObject } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
 
 type Engine = ReturnType<typeof initCanvasEngine>;
-type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building";
+type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text";
 
 interface CanvasToolbarProps {
   engineRef: RefObject<Engine | null>;
@@ -49,10 +50,21 @@ export function CanvasToolbar({
   onHelpOpen,
 }: CanvasToolbarProps) {
   const [confirmClear, setConfirmClear] = useState(false);
+  const clearButtonRef = useRef<HTMLButtonElement | null>(null);
   const handleTool = (t: CanvasTool) => {
     engineRef.current?.setTool(t);
     onToolChange(t);
   };
+
+  useEffect(() => {
+    if (!confirmClear) return;
+    const resetOnOutsideClick = (event: PointerEvent) => {
+      if (clearButtonRef.current?.contains(event.target as Node)) return;
+      setConfirmClear(false);
+    };
+    window.addEventListener("pointerdown", resetOnOutsideClick, true);
+    return () => window.removeEventListener("pointerdown", resetOnOutsideClick, true);
+  }, [confirmClear]);
 
   const btnCls = (active: boolean) =>
     `flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${
@@ -107,11 +119,20 @@ export function CanvasToolbar({
       >
         <Building2 size={16} /> Building
       </button>
+      <button
+        type="button"
+        title="Place a text note on the map"
+        className={btnCls(activeTool === "text")}
+        onClick={() => handleTool("text")}
+      >
+        <Type size={16} /> Text
+      </button>
 
       <div className="w-px h-4 bg-brand-border" />
 
       {/* Actions */}
       <button
+        ref={clearButtonRef}
         type="button"
         title="Undo (Ctrl+Z)"
         className={iconBtn}
@@ -129,7 +150,7 @@ export function CanvasToolbar({
       </button>
       <button
         type="button"
-        title={confirmClear ? "Click again to clear all" : "Clear all"}
+        title={confirmClear ? "Click again to clear map" : "Clear map"}
         className={`${iconBtn} ${confirmClear ? "border-brand-danger text-brand-danger" : ""}`}
         onClick={() => {
           if (!confirmClear) {
@@ -141,7 +162,7 @@ export function CanvasToolbar({
         }}
         onBlur={() => setConfirmClear(false)}
       >
-        <Trash2 size={16} /> {confirmClear ? "Click again" : "Clear"}
+        <Trash2 size={16} /> {confirmClear ? "Click again" : "Clear map"}
       </button>
       <button
         type="button"

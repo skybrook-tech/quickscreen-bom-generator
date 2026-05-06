@@ -344,11 +344,12 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
       <button
         type="button"
         onClick={() => setShowMoreSettings((value) => !value)}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-brand-primary/35 bg-brand-primary/10 text-brand-primary transition-colors hover:bg-brand-primary hover:text-white"
+        className="inline-flex items-center gap-2 rounded-lg border border-brand-primary/35 bg-brand-primary/10 px-3 py-2 text-sm font-extrabold text-brand-primary transition-colors hover:bg-brand-primary hover:text-white"
         aria-label={showMoreSettings ? "Hide more settings" : "Show more settings"}
         title={showMoreSettings ? "Hide more settings" : "Show more settings"}
       >
         <SlidersHorizontal size={16} />
+        Additional settings
       </button>
 
       {showMoreSettings && (

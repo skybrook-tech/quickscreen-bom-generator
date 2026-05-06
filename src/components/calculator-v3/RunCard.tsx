@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, Copy, Plus, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
@@ -43,6 +43,7 @@ export function RunCard({ run, runIdx }: Props) {
   const { state, dispatch } = useCalculator();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [confirmRemoveRun, setConfirmRemoveRun] = useState(false);
+  const removeRunRef = useRef<HTMLDivElement | null>(null);
 
   const runVariables = useMemo(
     () => runMasterVariables(run, state.payload?.variables),
@@ -58,6 +59,16 @@ export function RunCard({ run, runIdx }: Props) {
   const runHeight = Number(firstSegment?.targetHeightMm ?? runVariables.target_height_mm ?? 1800);
   const slatSize = Number(runVariables.slat_size_mm ?? 65);
   const slatGap = Number(runVariables.slat_gap_mm ?? 5);
+
+  useEffect(() => {
+    if (!confirmRemoveRun) return;
+    const resetOnOutsideClick = (event: PointerEvent) => {
+      if (removeRunRef.current?.contains(event.target as Node)) return;
+      setConfirmRemoveRun(false);
+    };
+    window.addEventListener("pointerdown", resetOnOutsideClick, true);
+    return () => window.removeEventListener("pointerdown", resetOnOutsideClick, true);
+  }, [confirmRemoveRun]);
 
   function toggleRunOneSettings() {
     const runOne = state.payload?.runs[0];
@@ -220,20 +231,22 @@ export function RunCard({ run, runIdx }: Props) {
         <Button onClick={addGateSegment} icon={Plus} variant="ghost" size="small">
           Add gate
         </Button>
-        <Button
-          onClick={() => {
-            if (!confirmRemoveRun) {
-              setConfirmRemoveRun(true);
-              return;
-            }
-            dispatch({ type: "REMOVE_RUN", runId: run.runId });
-          }}
-          icon={Trash2}
-          variant="ghost-danger"
-          size="small"
-        >
-          {confirmRemoveRun ? "Click again" : "Remove run"}
-        </Button>
+        <div ref={removeRunRef}>
+          <Button
+            onClick={() => {
+              if (!confirmRemoveRun) {
+                setConfirmRemoveRun(true);
+                return;
+              }
+              dispatch({ type: "REMOVE_RUN", runId: run.runId });
+            }}
+            icon={Trash2}
+            variant="ghost-danger"
+            size="small"
+          >
+            {confirmRemoveRun ? "Click again" : "Remove run"}
+          </Button>
+        </div>
       </div>
     </div>
   );

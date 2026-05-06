@@ -695,5 +695,6 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
     cornerCount: totalCornerCount,
     runs: runSummaries,
     boundaries: [], // canonical payload has no boundary context lines
+    textNotes: [], // canonical payload has no text annotations
   };
 }

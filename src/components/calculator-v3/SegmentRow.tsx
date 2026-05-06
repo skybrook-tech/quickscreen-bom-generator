@@ -224,6 +224,22 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
           value: colourName(fenceColour),
           changed: !sameValue(fenceColour, masterFenceColour),
         },
+        {
+          label: "Slat",
+          value: `${segmentVariables[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVariables.slat_size_mm ?? 65}mm`,
+          changed: !sameValue(
+            segmentVariables[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVariables.slat_size_mm ?? 65,
+            masterVariables.slat_size_mm ?? 65,
+          ),
+        },
+        {
+          label: "Gap",
+          value: `${segmentVariables[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVariables.slat_gap_mm ?? 9}mm`,
+          changed: !sameValue(
+            segmentVariables[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVariables.slat_gap_mm ?? 9,
+            masterVariables.slat_gap_mm ?? 9,
+          ),
+        },
         ...(postColour !== fenceColour
           ? [
               {
@@ -292,6 +308,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
   const differenceBits =
     matchesMaster ? [] : rawDifferenceBits.filter((item) => item.changed);
   const summaryBits = [...summaryBitsBase, ...differenceBits];
+  const visibleSettings = rawDifferenceBits.filter((item) => item.label !== "Height");
 
   function updateGeometry(
     key: "segmentWidthMm" | "targetHeightMm",
@@ -457,22 +474,23 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
         </div>
         <div className="min-w-0 space-y-3">
           <div className="flex flex-wrap items-start justify-between gap-2">
-            <span className="min-w-0 text-xl font-black leading-tight tracking-normal text-black">
+            <span className="min-w-0 font-serif text-2xl font-black leading-tight tracking-normal text-black">
               {titleLabel}
             </span>
             <div className="flex items-center gap-1">
             <button
               type="button"
               onClick={onToggle}
-              className={`inline-flex h-8 w-8 items-center justify-center rounded-lg border transition-colors ${
+              className={`inline-flex h-8 items-center justify-center gap-1 rounded-lg border px-2 text-xs font-extrabold transition-colors ${
                 open
                   ? "border-brand-primary bg-brand-primary text-white"
                   : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
               }`}
               aria-label={open ? "Collapse segment settings" : "Expand segment settings"}
-              title={open ? "Collapse settings" : "Expand settings"}
+              title={open ? "Save settings and collapse" : "Open settings"}
             >
               <SlidersHorizontal size={16} />
+              {open ? "Save" : "Settings"}
             </button>
             <button
               type="button"
@@ -551,6 +569,16 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
                 />
               )}
             </label>
+          </div>
+          <div className="rounded-lg border border-brand-border/60 bg-brand-card/70 p-3">
+            <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
+              Current settings
+            </p>
+            <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] leading-tight">
+              {visibleSettings.map((item) => (
+                <SummaryBit key={item.label} label={item.label} value={item.value} />
+              ))}
+            </div>
           </div>
           {gate ? (
             <GateSegmentDetails runId={runId} seg={seg} />
