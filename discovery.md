@@ -1272,6 +1272,21 @@ Changes applied:
 Verification:
 - `npm run build` passed after the changes.
 
+### May 7, 2026 - Brief AD louvre bracket treatment
+
+Catalogue/CSV finding:
+- QuickScreen/Xpress louvre bracket packs (`QS-LB-*`) suit 65 x 16.5mm slats and include one left bracket, one right bracket, and screws.
+- CSV quantity breaks are 1-41, 42-149, and 150+ with standard coated pricing at 4.43 / 4.11 / 3.67, mill at 3.40 / 3.17 / 2.90, and Paperbark/White at 4.26 / 3.95 / 3.53.
+
+Changes applied:
+- Added a QSHS-only louvre treatment toggle in section additional settings. It is usable only for 65mm slats and explains that louvres are 40-degree fixed-angle brackets.
+- Local fallback BOM emits one `QS-LB-*` bracket pack per slat per panel when louvre treatment is on.
+- Slat fixing screws are reduced for louvre sections because the bracket pack handles the slat-end fixing.
+- Added local component metadata, pricing rules, and quantity breaks for QS-LB colour variants found in the CSV.
+
+Verification:
+- `npm run build` passed after the changes.
+
 ### May 7, 2026 - Brief AC concrete, grout, and fixing-kit choices
 
 Catalogue finding:

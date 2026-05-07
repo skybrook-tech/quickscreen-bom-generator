@@ -97,6 +97,9 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   const rightEndReadOnly = segmentIndex >= 0 && segmentIndex < fenceSegments.length - 1 && !v.right_termination_kind;
   const postSize = (displayVariables[SEGMENT_OPTION_KEYS.postSize] as string) ?? "";
   const isCustomPost = postSize === "custom";
+  const slatSize = Number(displayVariables.slat_size_mm ?? 65);
+  const showLouvreSetting = productCode === "QSHS";
+  const louvreEnabled = v.louvre_treatment === true || v.louvre_treatment === "true";
   const cornerControls = (["left", "right"] as const)
     .map((side) => {
       const kindKey =
@@ -256,6 +259,37 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
               )}
             </SettingsSection>
           ) : null}
+
+          {showLouvreSetting && (
+            <SettingsSection title="Louvre treatment" defaultOpen>
+              <div className="rounded-xl border border-brand-border/60 bg-brand-card/70 p-3">
+                <label className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={louvreEnabled && slatSize === 65}
+                    disabled={slatSize !== 65}
+                    onChange={(event) =>
+                      setScalar("louvre_treatment", event.target.checked)
+                    }
+                    className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
+                  />
+                  <span>
+                    <span className="block text-sm font-extrabold text-brand-text">
+                      Louvre treatment (40 degree angle)
+                    </span>
+                    <span className="mt-1 block text-xs font-semibold text-brand-muted">
+                      Slats angle 40 degrees downward. Louvres only available with 65mm slats.
+                    </span>
+                    {slatSize !== 65 && (
+                      <span className="mt-1 block text-xs font-bold text-brand-warning">
+                        Switch this section to 65mm slats to use louvre brackets.
+                      </span>
+                    )}
+                  </span>
+                </label>
+              </div>
+            </SettingsSection>
+          )}
 
           <SettingsSection title="End conditions" defaultOpen>
             <div className="grid gap-3 lg:grid-cols-2">

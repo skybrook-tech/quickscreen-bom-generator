@@ -178,6 +178,11 @@ function angleAdapterSkuFor(finishFamily: string, colour: string): string {
   return `XP-6000-135-${colour}`;
 }
 
+function louvreBracketSkuFor(colour: string): string {
+  const sku = `QS-LB-${colour}`;
+  return getComponent(sku) ? sku : "QS-LB-MN";
+}
+
 function postSkuFor(
   finishFamily: string,
   postSize: number,
@@ -1304,8 +1309,16 @@ function calculateScreenRun(
       ? 0
       : Math.ceil(spacerEachQty / 50);
     const baygSpacers = isBayg ? spacerEachQty : 0;
+    const louvreTreatment =
+      run.productCode === "QSHS" &&
+      slatSize === 65 &&
+      (vars.louvre_treatment === true || vars.louvre_treatment === "true");
+    if ((vars.louvre_treatment === true || vars.louvre_treatment === "true") && !louvreTreatment) {
+      warnings.push("Louvre treatment is only available for QSHS with 65mm horizontal slats.");
+    }
+    const slatFixingScrews = louvreTreatment ? 0 : numSlats * 2 * numPanels * 1.01;
     const screwPacks = Math.ceil(
-      (numSlats * 2 * numPanels * 1.01 + numCsrPerPanel * numPanels * 4) / 50,
+      (slatFixingScrews + numCsrPerPanel * numPanels * 4) / 50,
     );
     const fSectionScrewQty =
       fSectionPieces > 0
@@ -1333,6 +1346,14 @@ function calculateScreenRun(
       quantity: slatStocks,
       unit: "length",
       notes: `${numSlats} slats/panel, ${Math.round(slatCutMm)}mm cuts from ${slatStockLengthMm}mm stock`,
+    });
+    emit(lines, {
+      ...base,
+      sku: louvreBracketSkuFor(colour),
+      category: "bracket",
+      quantity: louvreTreatment ? numSlats * numPanels : 0,
+      unit: "pack",
+      notes: "Louvre installation - 40 degree final slat angle; one left/right bracket pair per slat",
     });
     emit(lines, {
       ...base,

@@ -346,6 +346,17 @@ const syntheticComponents: SeedComponent[] = [
       ["QSHS", "BAYG", "VS"],
     ),
   ),
+  ...["B", "BS", "D", "G", "M", "MN", "PB", "S", "SM", "W"].map((colour) =>
+    component(
+      `QS-LB-${colour}`,
+      `QuickScreen/Xpress Louvre Bracket Pack ${colour}`,
+      `Louvre bracket pack for 65 x 16.5mm slat, includes left bracket, right bracket and screws - ${colour}`,
+      "bracket",
+      "pack",
+      colour === "M" ? 3.4 : colour === "PB" || colour === "W" ? 4.26 : 4.43,
+      ["QSHS"],
+    ),
+  ),
   component(
     "XP-6000-135-M",
     "XPRESS/QuickScreen 135 Degree Adapter Mill",
@@ -720,6 +731,12 @@ const syntheticPricingRules: LocalPricingRule[] = [
   ...["B", "BS", "D", "G", "M", "MN", "P", "S", "SM", "W"].flatMap((colour) =>
     pricing(`XP-SCREWS-${colour}`, 6.36, 5.99, 5.16),
   ),
+  ...["B", "BS", "D", "G", "MN", "S", "SM"].flatMap((colour) =>
+    pricing(`QS-LB-${colour}`, 4.43, 4.11, 3.67),
+  ),
+  ...pricing("QS-LB-M", 3.4, 3.17, 2.9),
+  ...pricing("QS-LB-PB", 4.26, 3.95, 3.53),
+  ...pricing("QS-LB-W", 4.26, 3.95, 3.53),
   ...pricing("QS-SPACER-05MM-50PK", 1.42, 1.22, 1.05),
   ...pricing("QS-SPACER-09MM-50PK", 2.63, 2.26, 1.95),
   ...pricing("QS-SPACER-12MM-50PK", 3.47, 2.98, 2.57),
