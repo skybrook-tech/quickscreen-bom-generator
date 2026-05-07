@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import { useEffect } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalRun } from "../../types/canonical.types";
@@ -11,6 +12,11 @@ import {
 } from "../../lib/productOptionRules";
 import { GATE_SEGMENT_STUB_KEYS } from "../../lib/segmentTermination";
 import { localFenceProducts } from "../../lib/localSeedData";
+import {
+  POST_FIXING_MATERIALS,
+  isPreferredGroutSku,
+} from "../../lib/postFixingOptions";
+import { getPreferredGroutSku, setPreferredGroutSku } from "../../lib/userPrefs";
 import { SchemaDrivenForm, type SchemaField } from "./SchemaDrivenForm";
 
 interface Props {
@@ -90,6 +96,27 @@ export function RunSettingsEditor({ run }: Props) {
     ],
     variables,
   );
+  const mountingType = String(
+    variables.mounting_type ?? variables.mounting_method ?? "in_ground",
+  );
+  const postFixingSku = isPreferredGroutSku(variables.post_fixing_material_sku)
+    ? variables.post_fixing_material_sku
+    : getPreferredGroutSku();
+  const substrate = String(variables.base_plate_substrate ?? "concrete");
+
+  useEffect(() => {
+    if (run.variables?.post_fixing_material_sku) return;
+    dispatch({
+      type: "UPSERT_RUN",
+      run: {
+        ...run,
+        variables: {
+          ...(run.variables ?? {}),
+          post_fixing_material_sku: getPreferredGroutSku(),
+        },
+      },
+    });
+  }, [dispatch, run]);
 
   function updateRunVariables(
     key: string,
@@ -105,6 +132,15 @@ export function RunSettingsEditor({ run }: Props) {
     if (key === "mounting_type" || key === "mounting_method") {
       nextVariables.mounting_type = value;
       nextVariables.mounting_method = value;
+      if (value === "base_plate" && !nextVariables.base_plate_substrate) {
+        nextVariables.base_plate_substrate = "concrete";
+      }
+      if (value === "in_ground" && !nextVariables.post_fixing_material_sku) {
+        nextVariables.post_fixing_material_sku = getPreferredGroutSku();
+      }
+    }
+    if (key === "post_fixing_material_sku" && isPreferredGroutSku(value)) {
+      setPreferredGroutSku(value);
     }
     if (key === "post_system") {
       nextVariables.post_size = value === "standard_65" ? 65 : 50;
@@ -230,6 +266,46 @@ export function RunSettingsEditor({ run }: Props) {
         </div>
       </div>
       <SchemaDrivenForm fields={fields} variables={variables} onChange={updateRunVariables} />
+      <div className="mt-3 grid gap-3 rounded-2xl border border-brand-border/60 bg-brand-card/70 p-3 md:grid-cols-2">
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-bold text-brand-muted">Post-fixing material</span>
+          <select
+            value={postFixingSku}
+            onChange={(event) =>
+              updateRunVariables("post_fixing_material_sku", event.target.value)
+            }
+            className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+          >
+            {POST_FIXING_MATERIALS.map((item) => (
+              <option key={item.sku} value={item.sku}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+          <span className="text-xs font-semibold text-brand-muted">
+            Used for concreted-in posts at 1.5 bags per post.
+          </span>
+        </label>
+
+        {mountingType === "base_plate" && (
+          <label className="flex flex-col gap-1">
+            <span className="text-sm font-bold text-brand-muted">Substrate</span>
+            <select
+              value={substrate}
+              onChange={(event) =>
+                updateRunVariables("base_plate_substrate", event.target.value)
+              }
+              className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+            >
+              <option value="concrete">Concrete</option>
+              <option value="timber">Timber</option>
+            </select>
+            <span className="text-xs font-semibold text-brand-muted">
+              Selects the fixing kit for each base-plated post.
+            </span>
+          </label>
+        )}
+      </div>
     </div>
   );
 }

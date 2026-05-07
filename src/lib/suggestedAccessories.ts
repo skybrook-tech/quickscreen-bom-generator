@@ -77,26 +77,7 @@ function componentSuggestion(
     unitPrice: component?.default_price ?? 0,
     category,
     reason,
-    priced: typeof component?.default_price === "number",
-  };
-}
-
-function genericSuggestion(
-  id: string,
-  description: string,
-  quantity: number,
-  category: SuggestedAccessory["category"],
-  reason: string,
-): SuggestedAccessory {
-  return {
-    id: `suggested-${id}`,
-    sku: id,
-    description,
-    quantity: roundQty(quantity),
-    unitPrice: 0,
-    category,
-    reason,
-    priced: false,
+    priced: typeof component?.default_price === "number" && component.default_price > 0,
   };
 }
 
@@ -182,18 +163,6 @@ export function suggestAccessories(
     const firstFenceSegment = run.segments.find((segment) => segment.segmentKind !== "gate_opening");
     const postHeight = Number(firstFenceSegment?.targetHeightMm ?? vars.target_height_mm ?? 1800);
 
-    if (mountingType === "in_ground") {
-      suggestions.push(
-        genericSuggestion(
-          `rapid-set-${run.runId}`,
-          "Rapid set concrete bag",
-          postCount * 1.5,
-          "fixing",
-          "Suggested at 1.5 bags per concreted-in post.",
-        ),
-      );
-    }
-
     if (mountingType === "core_drill") {
       const dressRingSku =
         postSize === 65 ? `XP-65DR-${postColour}` : `XP-DR-${postColour}`;
@@ -208,15 +177,6 @@ export function suggestAccessories(
           ),
         );
       }
-      suggestions.push(
-        genericSuggestion(
-          `core-grout-${run.runId}`,
-          "Core drill grout or high-strength non-shrink grout",
-          postCount,
-          "fixing",
-          "Choose the grout product and quantity to suit the substrate and hole size.",
-        ),
-      );
     }
 
     if (mountingType === "base_plate") {
@@ -251,15 +211,17 @@ export function suggestAccessories(
           ),
         );
       }
-      suggestions.push(
-        genericSuggestion(
-          `base-plate-fixings-${run.runId}`,
-          "Base plate masonry fixing / anchor pack",
-          postCount,
-          "fixing",
-          "Select fixing type to suit concrete, masonry, steel, or timber substrate.",
-        ),
-      );
+      if (String(vars.base_plate_substrate ?? "concrete") === "concrete") {
+        suggestions.push(
+          componentSuggestion(
+            "SOUD-CA1400",
+            postCount,
+            "fixing",
+            "For damp or soft concrete; provides pressure-free anchor fixing.",
+            "Soudafix chemical anchor",
+          ),
+        );
+      }
     }
 
     if (finishFamily !== "alumawood") {
@@ -362,6 +324,18 @@ export function suggestAccessories(
         "finish",
         "Suggested for colour-matched touch-ups after cutting and installation.",
         `Touch up paint - ${colour}`,
+      ),
+    );
+  }
+
+  if (bomSkus.has("SOUD-CA1400")) {
+    suggestions.push(
+      componentSuggestion(
+        "SOUD-GUN",
+        1,
+        "fixing",
+        "Heavy duty cartridge gun for SOUD-CA1400.",
+        "Soudafix cartridge gun",
       ),
     );
   }

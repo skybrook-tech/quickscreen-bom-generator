@@ -1271,6 +1271,26 @@ Changes applied:
 
 Verification:
 - `npm run build` passed after the changes.
+
+### May 7, 2026 - Brief AC concrete, grout, and fixing-kit choices
+
+Catalogue finding:
+- Page 24 offers multiple concrete/grout choices rather than a single rapid-set suggestion.
+- Base-plated posts need substrate-specific fixing kits: timber lag kit or concrete threaded rod kit.
+- Soudafix chemical anchor and the matching gun are useful suggested accessories for concrete base plates, but should not be auto-added to every job.
+
+Changes applied:
+- Added run-level `Post-fixing material` and `Substrate` controls in Run Settings. Grout choice persists in local storage as the next-run default.
+- Local fallback BOM now emits the selected concrete/grout SKU at 1.5 bags per concreted-in post.
+- Base-plate mounting now emits `S-120ROD-4PK` for concrete substrate or `S-110LAG-4PK` for timber substrate at one pack per base-plated post.
+- Suggested accessories now show `SOUD-CA1400` when base-plated to concrete. `SOUD-GUN` appears only after the chemical anchor is added.
+- Added local component metadata for the five grout choices, both substrate fixing kits, and Soudafix items. Prices are intentionally left at zero until supplier pricing is verified.
+
+Deferred:
+- Perth depot warning is not wired yet because the current app has no depot preference field to test against.
+
+Verification:
+- `npm run build` passed after the changes.
 - Source review confirmed the existing stock-length branch already uses 6500mm for economy and 6100mm for standard slats.
 
 ### May 7, 2026 - Brief AB 135-degree angle adapter

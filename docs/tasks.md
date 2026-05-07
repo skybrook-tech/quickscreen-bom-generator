@@ -22,7 +22,7 @@ Latest workflow/UI correction: form-entered dimensions now center in the mapper 
 
 Latest segment clarity pass: segment and gate cards now show full beginner-friendly titles (`Run 1 Segment 1`, `Run 1 Gate 1`) alongside compact map codes (`R1S1`, `R1G1`) in bold black, the master-match check and confirmed dot sit in the left rail, max post spacing defaults to 2600mm with an editable 100-3000mm draft input, vertical slat runs can use custom gaps, and standard post labels now put the dimensions first.
 
-Latest Codex PR brief pass: Tier 6 Brief AB is complete. Canvas-derived corners now classify as 90 degree, 135 degree, or custom, section settings expose editable corner overrides, 135 degree corners emit the adapter plus screw pack, and custom angles produce a supplier-verification BOM warning line.
+Latest Codex PR brief pass: Tier 6 Brief AC is complete. Run settings now include post-fixing material and base-plate substrate choices, local BOM emits selected concrete/grout and substrate fixing kits, chemical anchor suggestions appear for concrete base plates, and grout choice persists locally for future runs.
 
 Latest Brief I pass: the `/calculator` BOM hero now uses an editorial summary layout with the scoped total as the main typographic element, BOM rows show the active quantity-break tier, and rows close to the next seeded quantity break show how many more units are needed for the next tier.
 
@@ -358,6 +358,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Tier 1 Brief A foundation pass started: hardcoded primary/success/warning/danger colour utility classes replaced with brand tokens, Inter added as the app font, action buttons moved toward the 8px radius standard, and icon sizes normalized to 16/20px with the layout-map CTA kept at 22px.
 - [x] Tier 6 Brief AA: Economy 65mm slats now aggregate required stock lengths by run, order `XP-6500-E65-*` as packs of 96, show the pack note/waste prompt, block invalid 90mm economy combinations, and provide a BOM switch action to convert affected run sections to Standard slats.
 - [x] Tier 6 Brief AB: Canvas-derived corners now classify as 90 degree, 135 degree, or custom, section settings expose editable corner overrides, 135 degree corners emit the adapter plus screw pack, and custom angles produce a supplier-verification BOM warning line.
+- [x] Tier 6 Brief AC: Run settings now include post-fixing material and base-plate substrate choices, local BOM emits selected concrete/grout and substrate fixing kits, chemical anchor suggestions appear for concrete base plates, and grout choice persists locally for future runs.
 - [x] Extra items panel — typeahead against existing SKUs (via `search-products`) + create-on-the-fly for one-off lines
 - [x] v2 retired — `CalculatorPage`, `src/components/calculator/*`, `useCalculatorBOM`, `useFenceProducts`, `calculate-bom-v2` edge function all deleted. `/` redirects to `/calculator`.
 - [ ] v1 (`/new`, `MainApp`, `calculate-bom`) removal — deferred to a future pass.

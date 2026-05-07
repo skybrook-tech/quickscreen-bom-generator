@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import type { ExtraItem } from "../../types/bom.types";
 import type { SuggestedAccessory } from "../../lib/suggestedAccessories";
 import { useProductSearch } from "../../hooks/useProductSearch";
+import { getComponent } from "../../lib/localSeedData";
 
 interface SuggestedAccessoriesPanelProps {
   suggestions: SuggestedAccessory[];
@@ -51,15 +52,33 @@ export function SuggestedAccessoriesPanel({
     [addedItems],
   );
 
+  const dependentSuggestions = useMemo(() => {
+    if (!addedBySku.has("SOUD-CA1400") || addedBySku.has("SOUD-GUN")) return [];
+    const component = getComponent("SOUD-GUN");
+    return [
+      {
+        id: "suggested-soud-gun-dependent",
+        sku: "SOUD-GUN",
+        description:
+          component?.description ?? "Heavy duty cartridge gun for SOUD-CA1400",
+        quantity: 1,
+        unitPrice: component?.default_price ?? 0,
+        category: "fixing",
+        reason: "Heavy duty cartridge gun for SOUD-CA1400.",
+        priced: Boolean(component?.default_price && component.default_price > 0),
+      } satisfies SuggestedAccessory,
+    ];
+  }, [addedBySku]);
+
   const visible = useMemo(() => {
-    const all = [...pinned, ...suggestions];
+    const all = [...dependentSuggestions, ...pinned, ...suggestions];
     const byKey = new Map<string, SuggestedAccessory>();
     for (const item of all) {
       const key = item.sku ?? item.id;
       if (!dismissed.has(key)) byKey.set(key, item);
     }
     return [...byKey.values()];
-  }, [dismissed, pinned, suggestions]);
+  }, [dependentSuggestions, dismissed, pinned, suggestions]);
 
   if (suggestions.length === 0 && pinned.length === 0) return null;
 

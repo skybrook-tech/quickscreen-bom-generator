@@ -21,6 +21,7 @@ import {
   isWhiteHardwareFinish,
   kitForHardwareSelection,
 } from "./gateHardware";
+import { substrateFixingKitSku } from "./postFixingOptions";
 
 type LocalBomResult = {
   lines: BOMLineItem[];
@@ -420,6 +421,46 @@ function emitPostLines(
       quantity: postCount,
       unit: "each",
       notes: "Dress rings",
+    });
+  }
+}
+
+function emitPostFixingLines(
+  lines: QtyLine[],
+  run: CanonicalRun,
+  segmentId: string,
+  postCount: number,
+  vars: Record<string, string | number | boolean>,
+  mountingType: string,
+) {
+  if (postCount <= 0) return;
+
+  if (mountingType === "in_ground") {
+    const sku = String(vars.post_fixing_material_sku ?? "GROUT-RSC");
+    emit(lines, {
+      runId: run.runId,
+      segmentId,
+      sku,
+      category: "accessory",
+      quantity: postCount * 1.5,
+      unit: "bag",
+      notes: "Post-fixing material at 1.5 bags per concreted-in post",
+    });
+  }
+
+  if (mountingType === "base_plate") {
+    const substrate = vars.base_plate_substrate ?? "concrete";
+    emit(lines, {
+      runId: run.runId,
+      segmentId,
+      sku: substrateFixingKitSku(substrate),
+      category: "accessory",
+      quantity: postCount,
+      unit: "pack",
+      notes:
+        substrate === "timber"
+          ? "Timber fixing kit, one 4-pack per base-plated post"
+          : "Concrete fixing kit, one 4-pack per base-plated post",
     });
   }
 }
@@ -1151,6 +1192,14 @@ function calculateVerticalSlatRun(
     postColour,
     mountingType,
   );
+  emitPostFixingLines(
+    lines,
+    run,
+    firstFenceSegment?.segmentId ?? run.runId,
+    postCount,
+    mergedRunVars,
+    mountingType,
+  );
 
   return lines;
 }
@@ -1393,6 +1442,14 @@ function calculateScreenRun(
     postSize,
     postHeight,
     postColour,
+    mountingType,
+  );
+  emitPostFixingLines(
+    lines,
+    run,
+    firstFenceSegment?.segmentId ?? run.runId,
+    postCount,
+    mergedRunVars,
     mountingType,
   );
 

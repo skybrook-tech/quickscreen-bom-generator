@@ -14,7 +14,7 @@ export type BOMCategory =
   | 'hardware'
   | 'automation'
   | 'accessory';
-export type BOMUnit = 'each' | 'length' | 'pack' | 'box';
+export type BOMUnit = 'each' | 'length' | 'pack' | 'box' | 'bag';
 
 export interface BOMLineItem {
   category: BOMCategory;
