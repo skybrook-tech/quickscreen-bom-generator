@@ -1255,3 +1255,20 @@ Changes applied:
 
 Verification:
 - `npm run build` passed after these changes.
+
+### May 7, 2026 - Brief AA economy slat pack enforcement
+
+Catalogue finding:
+- Economy 65mm slats (`XP-6500-E65-*`) are sold only in packs of 96 and use 6500mm stock length.
+- Economy slats are 65mm only; 90mm economy is not a valid catalogue combination.
+
+Changes applied:
+- Local fallback BOM now aggregates required economy stock lengths by run before rounding to packs, so small sections in one run do not over-order separate packs.
+- Economy slat BOM lines display as packs, show `pack of 96` in the table, and carry a `Sold in packs of 96 only` note.
+- Waste above 50% adds a `Switch to Standard slats?` prompt and a BOM-row `Switch` button that updates affected economy sections to Standard and regenerates the BOM.
+- The page blocks invalid 90mm economy payloads, including old saved jobs or imported payloads that bypass the normal product-option filtering.
+- Pricing for economy packs is calculated from 96 ordered slat lengths per pack, while tier selection still uses the actual ordered length count.
+
+Verification:
+- `npm run build` passed after the changes.
+- Source review confirmed the existing stock-length branch already uses 6500mm for economy and 6100mm for standard slats.

@@ -58,6 +58,15 @@ const lineKey = (line: BOMLineItem) =>
 const bomGroupKey = (line: BOMLineItem) =>
   `${line.sku}|${line.category}|${line.description}|${line.unit}`;
 
+const ECONOMY_SLAT_PACK_SIZE = 96;
+
+function priceForBomLine(line: Pick<BOMLineItem, "sku" | "unit">, quantity: number) {
+  if (line.sku.startsWith("XP-6500-E65") && line.unit === "pack") {
+    return roundMoney(priceForSku(line.sku, quantity * ECONOMY_SLAT_PACK_SIZE) * ECONOMY_SLAT_PACK_SIZE);
+  }
+  return priceForSku(line.sku, quantity);
+}
+
 function aggregateBomItems(items: BOMLineItem[]): BOMLineItem[] {
   const grouped = new Map<string, BOMLineItem>();
   for (const item of items) {
@@ -69,7 +78,7 @@ function aggregateBomItems(items: BOMLineItem[]): BOMLineItem[] {
     }
     const quantity = existing.quantity + item.quantity;
     const lineTotalBeforeReprice = existing.lineTotal + item.lineTotal;
-    const unitPrice = priceForSku(item.sku, quantity);
+    const unitPrice = priceForBomLine(item, quantity);
     const lineTotal =
       unitPrice > 0 ? roundMoney(unitPrice * quantity) : roundMoney(lineTotalBeforeReprice);
     grouped.set(key, {
@@ -240,6 +249,10 @@ function CalculatorV3Content() {
 
   async function handleGenerateBOM() {
     if (!payload) return;
+    if (economySlatErrors.length > 0) {
+      toast.error("Economy slats are only available in 65mm. Fix the slat size or range first.");
+      return;
+    }
     if (gateWidthErrors.length > 0) {
       toast.error("Fix gate width errors before generating the BOM.");
       return;
@@ -259,6 +272,49 @@ function CalculatorV3Content() {
   async function handleGenerateBOMFromFooter() {
     setLayoutOpen(false);
     await handleGenerateBOM();
+  }
+
+  async function handleSwitchEconomyToStandard(item: BOMLineItem) {
+    if (!payload) return;
+    const nextPayload = {
+      ...payload,
+      runs: payload.runs.map((run) => {
+        if (item.runId && run.runId !== item.runId) return run;
+        const runVariables =
+          run.variables?.finish_family === "economy"
+            ? { ...run.variables, finish_family: "standard" }
+            : run.variables;
+        return {
+          ...run,
+          variables: runVariables,
+          segments: run.segments.map((segment) => {
+            const variables = segment.variables ?? {};
+            const inheritsRunEconomy = run.variables?.finish_family === "economy" && variables.finish_family == null;
+            if (variables.finish_family !== "economy" && !inheritsRunEconomy) return segment;
+            return {
+              ...segment,
+              variables: {
+                ...variables,
+                finish_family: "standard",
+              },
+            };
+          }),
+        };
+      }),
+    };
+
+    setExtraItems([]);
+    setLineEdits({});
+    setActiveBomSummary(null);
+    dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
+    dispatch({ type: "CLEAR_BOM_RESULT" });
+    try {
+      const result = await bomMutation.mutateAsync({ payload: nextPayload });
+      dispatch({ type: "SET_BOM_RESULT", result });
+      toast.success("Switched Economy slats to Standard and regenerated the BOM.");
+    } catch {
+      toast.error("Switched to Standard, but BOM regeneration failed.");
+    }
   }
 
   useEffect(() => {
@@ -300,7 +356,7 @@ function CalculatorV3Content() {
         const edit = lineEdits[lineKey(line)];
         if (edit === null) return null;
         if (typeof edit === "number") {
-          const unitPrice = priceForSku(line.sku, edit);
+          const unitPrice = priceForBomLine(line, edit);
           return {
             ...line,
             quantity: edit,
@@ -641,6 +697,20 @@ function CalculatorV3Content() {
   const hasErrors = errors.length > 0;
   const noSegments =
     !payload || payload.runs.every((r) => r.segments.length === 0);
+  const economySlatErrors =
+    payload?.runs.flatMap((run, runIndex) => {
+      const runVars = { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
+      return run.segments
+        .filter((segment) => segment.segmentKind !== "gate_opening")
+        .flatMap((segment, segmentIndex) => {
+          const vars = { ...runVars, ...(segment.variables ?? {}) };
+          return vars.finish_family === "economy" && Number(vars.slat_size_mm ?? 65) === 90
+            ? [
+                `Run ${runIndex + 1} Section ${segmentIndex + 1}: Economy slats only available in 65mm - switch slat size or pick Standard.`,
+              ]
+            : [];
+        });
+    }) ?? [];
   const gateWidthValidations =
     payload?.runs.flatMap((run) =>
       run.segments
@@ -649,7 +719,7 @@ function CalculatorV3Content() {
     ) ?? [];
   const gateWidthErrors = gateWidthValidations.filter((item) => item.status === "error");
   const gateWidthWarnings = gateWidthValidations.filter((item) => item.status === "warning");
-  const hasBlockingErrors = hasErrors || gateWidthErrors.length > 0;
+  const hasBlockingErrors = hasErrors || gateWidthErrors.length > 0 || economySlatErrors.length > 0;
 
   const gateSegments = payload?.runs
     .flatMap((run) => run.segments)
@@ -758,6 +828,19 @@ function CalculatorV3Content() {
                         className="rounded-lg border border-brand-warning/30 bg-brand-warning/10 px-4 py-2 text-sm text-brand-warning"
                       >
                         Warning: {w}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {economySlatErrors.length > 0 && (
+                  <div className="space-y-2">
+                    {economySlatErrors.map((message) => (
+                      <div
+                        key={message}
+                        className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-2 text-sm font-bold text-brand-danger"
+                      >
+                        {message}
                       </div>
                     ))}
                   </div>
@@ -974,6 +1057,7 @@ function CalculatorV3Content() {
                         [lineKey(item)]: null,
                       }))
                     }
+                    onSwitchEconomyToStandard={handleSwitchEconomyToStandard}
                     onActiveSummaryChange={handleActiveBomSummaryChange}
                   />
                   <ExtraItemsPanel

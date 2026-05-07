@@ -9,6 +9,7 @@ interface BOMResultTabsProps {
   editable?: boolean;
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
+  onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
   onActiveSummaryChange?: (summary: {
     label: string;
     subtotal: number;
@@ -41,10 +42,15 @@ const formatMoney = (value: number) =>
   }).format(value);
 
 function tierLabel(item: BOMLineItem) {
-  return tierForSkuQuantity(item.sku, item.quantity).replace(/^tier/i, "Tier ");
+  const pricingQty =
+    item.sku.startsWith("XP-6500-E65") && item.unit === "pack"
+      ? item.quantity * 96
+      : item.quantity;
+  return tierForSkuQuantity(item.sku, pricingQty).replace(/^tier/i, "Tier ");
 }
 
 function nextBreakHint(item: BOMLineItem) {
+  if (item.sku.startsWith("XP-6500-E65") && item.unit === "pack") return null;
   const breaks = (localPriceBreaks as Record<string, readonly number[] | undefined>)[
     item.sku
   ];
@@ -65,6 +71,12 @@ function nextBreakHint(item: BOMLineItem) {
     tier: tierForSkuQuantity(item.sku, nextBreak).replace(/^tier/i, "Tier "),
     savingPct: Math.round(((item.unitPrice - nextUnitPrice) / item.unitPrice) * 100),
   };
+}
+
+function unitLabel(item: BOMLineItem) {
+  return item.sku.startsWith("XP-6500-E65") && item.unit === "pack"
+    ? "pack of 96"
+    : item.unit;
 }
 
 function sortItems(items: BOMLineItem[]): BOMLineItem[] {
@@ -93,11 +105,13 @@ function BOMTable({
   editable,
   onQuantityChange,
   onRemoveLine,
+  onSwitchEconomyToStandard,
 }: {
   items: BOMLineItem[];
   editable?: boolean;
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
+  onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
 }) {
   const sorted = sortItems(items);
   const groups = groupByCategory(sorted);
@@ -149,6 +163,7 @@ function BOMTable({
               editable={editable}
               onQuantityChange={onQuantityChange}
               onRemoveLine={onRemoveLine}
+              onSwitchEconomyToStandard={onSwitchEconomyToStandard}
             />
           ))}
         </tbody>
@@ -163,12 +178,14 @@ function ItemGroup({
   editable,
   onQuantityChange,
   onRemoveLine,
+  onSwitchEconomyToStandard,
 }: {
   category: string;
   items: BOMLineItem[];
   editable?: boolean;
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
+  onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
 }) {
   return (
     <>
@@ -183,6 +200,9 @@ function ItemGroup({
       {items.map((item, itemIndex) => (
         (() => {
           const hint = nextBreakHint(item);
+          const canSwitchEconomy =
+            item.sku.startsWith("XP-6500-E65") &&
+            item.notes?.includes("Switch to Standard slats?");
           return (
         <tr
           key={`${category}-${item.sku}-${item.category}-${item.description}-${itemIndex}`}
@@ -202,6 +222,15 @@ function ItemGroup({
                   {item.notes}
                 </span>
               )}
+              {canSwitchEconomy && (
+                <button
+                  type="button"
+                  onClick={() => onSwitchEconomyToStandard?.(item)}
+                  className="rounded-full border border-brand-warning/40 bg-brand-warning/10 px-2 py-0.5 text-[11px] font-bold text-brand-warning transition-colors hover:bg-brand-warning/20"
+                >
+                  Switch
+                </button>
+              )}
             </div>
             {hint && (
               <p className="mt-1 text-[11px] font-semibold text-brand-success">
@@ -211,7 +240,7 @@ function ItemGroup({
             )}
           </td>
           <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-center sm:table-cell">
-            {item.unit}
+            {unitLabel(item)}
           </td>
           <td className="py-2.5 px-3 text-sm text-brand-text text-right tabular-nums">
             {editable ? (
@@ -260,6 +289,7 @@ export function BOMResultTabs({
   editable,
   onQuantityChange,
   onRemoveLine,
+  onSwitchEconomyToStandard,
   onActiveSummaryChange,
 }: BOMResultTabsProps) {
   const [activeTab, setActiveTab] = useState("all");
@@ -340,6 +370,7 @@ export function BOMResultTabs({
         editable={editable}
         onQuantityChange={onQuantityChange}
         onRemoveLine={onRemoveLine}
+        onSwitchEconomyToStandard={onSwitchEconomyToStandard}
       />
 
       {/* Summary */}

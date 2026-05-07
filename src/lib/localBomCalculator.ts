@@ -101,6 +101,60 @@ function slatSkuFor(finishFamily: string, economySlats: boolean, slatSize: numbe
   return slatSize === 90 ? `QS-6100-S90-${colour}` : `XP-6100-S65-${colour}`;
 }
 
+const ECONOMY_SLAT_PACK_SIZE = 96;
+
+function isEconomySlatSku(sku: string): boolean {
+  return sku.startsWith("XP-6500-E65");
+}
+
+function applyEconomySlatPackRule(line: QtyLine): QtyLine {
+  if (!isEconomySlatSku(line.sku)) return line;
+
+  const neededLengths = Math.ceil(line.quantity);
+  if (neededLengths <= 0) return line;
+
+  const packs = Math.ceil(neededLengths / ECONOMY_SLAT_PACK_SIZE);
+  const orderedLengths = packs * ECONOMY_SLAT_PACK_SIZE;
+  const wastePct = (orderedLengths - neededLengths) / Math.max(1, neededLengths);
+  const switchNote =
+    wastePct > 0.5
+      ? ` Buying ${orderedLengths} economy slats but only need ${neededLengths}. Switch to Standard slats?`
+      : "";
+  return {
+    ...line,
+    quantity: packs,
+    unit: "pack",
+    notes: `${line.notes ? `${line.notes}; ` : ""}Sold in packs of 96 only.${switchNote}`,
+  };
+}
+
+function priceQtyLine(line: QtyLine): number {
+  if (isEconomySlatSku(line.sku) && line.unit === "pack") {
+    return roundMoney(
+      priceForSku(line.sku, line.quantity * ECONOMY_SLAT_PACK_SIZE) *
+        ECONOMY_SLAT_PACK_SIZE,
+    );
+  }
+  return priceForSku(line.sku, line.quantity);
+}
+
+function aggregateQtyLines(lines: QtyLine[], keyForLine: (line: QtyLine) => string): QtyLine[] {
+  const aggregated = new Map<string, QtyLine>();
+  for (const line of lines) {
+    const key = keyForLine(line);
+    const existing = aggregated.get(key);
+    if (existing) {
+      existing.quantity += line.quantity;
+      if (line.notes && !existing.notes?.includes(line.notes)) {
+        existing.notes = existing.notes ? `${existing.notes}; ${line.notes}` : line.notes;
+      }
+    } else {
+      aggregated.set(key, { ...line });
+    }
+  }
+  return [...aggregated.values()].map(applyEconomySlatPackRule);
+}
+
 function quickscreenSkuFor(finishFamily: string, family: "SF" | "CFC" | "F", colour: string): string {
   const prefix = finishFamily === "alumawood" ? "AWQS" : "QS";
   return `${prefix}-5800-${family}-${colour}`;
@@ -1324,19 +1378,13 @@ export function calculateLocalBom(
     };
   });
 
-  const aggregated = new Map<string, QtyLine>();
-  for (const line of runResults.flatMap((run) => run.items)) {
-    const key = `${line.sku}__${line.runId}`;
-    const existing = aggregated.get(key);
-    if (existing) {
-      existing.quantity += line.quantity;
-    } else {
-      aggregated.set(key, { ...line });
-    }
-  }
+  const aggregated = aggregateQtyLines(
+    runResults.flatMap((run) => run.items),
+    (line) => `${line.sku}__${line.runId}`,
+  );
 
-  const lines: BOMLineItem[] = [...aggregated.values()].map((line) => {
-    const unitPrice = priceForSku(line.sku, line.quantity);
+  const lines: BOMLineItem[] = aggregated.map((line) => {
+    const unitPrice = priceQtyLine(line);
     if (unitPrice === 0) {
       assumptions.push(`No local price found for SKU ${line.sku}.`);
     }
@@ -1356,8 +1404,8 @@ export function calculateLocalBom(
 
   const pricedRunResults = runResults.map((run) => ({
     runId: run.runId,
-    items: run.items.map((line) => {
-      const unitPrice = priceForSku(line.sku, line.quantity);
+    items: aggregateQtyLines(run.items, (line) => `${line.sku}__${line.runId}`).map((line) => {
+      const unitPrice = priceQtyLine(line);
       return {
         category: line.category as BOMLineItem["category"],
         sku: line.sku,
