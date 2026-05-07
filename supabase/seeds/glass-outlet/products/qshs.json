@@ -5609,6 +5609,19 @@
       "scope": "segment",
       "sort_order": 47,
       "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "name": "post_colour_code",
+      "label": "Post colour",
+      "data_type": "string",
+      "unit": null,
+      "required": false,
+      "default_value_json": "",
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 49,
+      "active": true
     }
   ],
   "product_validations": [
@@ -5630,6 +5643,18 @@
     }
   ],
   "product_rules": [
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "effective_post_colour_code",
+      "expression": "post_colour_code != '' ? post_colour_code : colour_code",
+      "output_key": "post_colour_code",
+      "priority": 5,
+      "active": true,
+      "notes": "Post colour falls back to fence infill colour if not explicitly set"
+    },
     {
       "product_system_type": "QSHS",
       "rule_set_name": "QSHS Fence Rules",

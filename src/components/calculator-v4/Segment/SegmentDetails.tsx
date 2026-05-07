@@ -8,9 +8,19 @@ import { SchemaDrivenFormV4 } from "../RunCard/SchemaDrivenFormV4";
 import { TerminationControl } from "./TerminationControl";
 import NumberInput from "../../ui/NumberInput";
 import { Select } from "../../ui/Select";
+import { Segmented } from "../../ui/Segmented";
+import { ColourSwatches, type ColourOption } from "../../ui/ColourSwatches";
+import { COLOUR_HEX } from "../../../lib/colourHex";
 import { cn } from "../../../lib";
 import { ProductSelectV4 } from "../JobShell/ProductSelectV4";
 import { GateSegmentDetails } from "./GateSegmentDetails";
+
+const POST_COLOUR_KEY = "post_colour_code";
+
+const COLOUR_OPTIONS: ColourOption[] = Object.keys(COLOUR_HEX).map((key) => ({
+  value: key,
+  label: key.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+}));
 
 const POST_SIZE_KEY = "post_size";
 const POST_WIDTH_MM_KEY = "post_width_mm";
@@ -46,6 +56,11 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
     const raw = v?.options_json ?? ["50", "65"];
     return raw.map(String);
   }, [runFields]);
+
+  const slatSizeOptions = useMemo(() => {
+    const f = jobFields.find((f) => f.field_key === "slat_size_mm");
+    return (f?.options_json ?? ["65", "90"]).map(String);
+  }, [jobFields]);
 
   const mergedForHeights = useMemo(
     () => ({
@@ -214,6 +229,18 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
         </div>
       </div>
 
+      {isFence && slatSizeOptions.length > 1 && (
+        <div className="space-y-2">
+          <label className={labelClass}>Slat size</label>
+          <Segmented
+            value={String(v.slat_size_mm ?? state.payload?.variables.slat_size_mm ?? slatSizeOptions[0] ?? "65")}
+            onChange={(val) => setScalar("slat_size_mm", val)}
+            options={slatSizeOptions.map((o) => ({ value: o, label: `${o}mm` }))}
+            size="sm"
+          />
+        </div>
+      )}
+
       {isFence && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label className="flex flex-col gap-1">
@@ -267,6 +294,42 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
                 disabled={locked}
               />
             </label>
+          )}
+        </div>
+      )}
+
+      {isFence && (
+        <div className="space-y-1">
+          <div className="flex items-center justify-between">
+            <span className={labelClass}>Post colour</span>
+            <label className="flex items-center gap-1.5 text-xs text-brand-muted cursor-pointer">
+              <input
+                type="checkbox"
+                disabled={locked}
+                checked={!!v[POST_COLOUR_KEY]}
+                onChange={(e) => {
+                  const jobColour = String(state.payload?.variables.colour_code ?? "black-satin");
+                  setScalar(POST_COLOUR_KEY, e.target.checked ? jobColour : null);
+                }}
+              />
+              Custom
+            </label>
+          </div>
+          {v[POST_COLOUR_KEY] ? (
+            <ColourSwatches
+              value={String(v[POST_COLOUR_KEY])}
+              onChange={(val) => setScalar(POST_COLOUR_KEY, val)}
+              colours={COLOUR_OPTIONS}
+            />
+          ) : (
+            <p className="text-xs text-brand-muted">
+              Matching fence colour —{" "}
+              <span className="text-brand-text">
+                {COLOUR_OPTIONS.find(
+                  (o) => o.value === String(state.payload?.variables.colour_code ?? ""),
+                )?.label ?? String(state.payload?.variables.colour_code ?? "—")}
+              </span>
+            </p>
           )}
         </div>
       )}

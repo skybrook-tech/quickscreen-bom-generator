@@ -2638,6 +2638,19 @@
       "scope": "segment",
       "sort_order": 105,
       "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "post_colour_code",
+      "label": "Post colour",
+      "data_type": "string",
+      "unit": null,
+      "required": false,
+      "default_value_json": "",
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 107,
+      "active": true
     }
   ],
   "product_validations": [
@@ -2667,6 +2680,18 @@
     }
   ],
   "product_rules": [
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "effective_post_colour_code",
+      "expression": "post_colour_code != '' ? post_colour_code : colour_code",
+      "output_key": "post_colour_code",
+      "priority": 5,
+      "active": true,
+      "notes": "Post colour falls back to gate infill colour if not explicitly set"
+    },
     {
       "product_system_type": "QS_GATE",
       "rule_set_name": "QS Gate Rules",

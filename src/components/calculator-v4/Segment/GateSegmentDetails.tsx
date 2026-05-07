@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Segmented } from "../../ui/Segmented";
+import { ColourSwatches, type ColourOption } from "../../ui/ColourSwatches";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import { patchSegmentVariables } from "../../../lib/segmentTermination";
@@ -34,8 +35,6 @@ import NumberInput from "../../ui/NumberInput";
 import { useProductSearch } from "../../../hooks/useProductSearch";
 import {
   COLOUR_HEX,
-  LIMITED_COLOURS,
-  getSwatchTextColour,
 } from "../../../lib/colourHex";
 import {
   mergeFenceJobRun,
@@ -51,7 +50,7 @@ const GATE_POST_SIZE_OPTIONS: GateOption[] = [
   { value: "65", label: "65mm Post Standard HD" },
 ];
 
-const COLOUR_OPTIONS: GateOption[] = Object.keys(COLOUR_HEX).map((key) => ({
+const COLOUR_OPTIONS: ColourOption[] = Object.keys(COLOUR_HEX).map((key) => ({
   value: key,
   label: key
     .replace(/-/g, " ")
@@ -109,57 +108,6 @@ function SegmentedField({
         size="sm"
         className={disabled ? "pointer-events-none opacity-60" : ""}
       />
-    </div>
-  );
-}
-
-function ColourPicker({
-  value,
-  onChange,
-  disabled,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  disabled?: boolean;
-}) {
-  return (
-    <div className="space-y-1">
-      <p className="text-[11px] font-medium uppercase tracking-wider text-brand-muted">
-        Gate colour
-      </p>
-      <div className="flex flex-wrap gap-1.5">
-        {COLOUR_OPTIONS.map((opt) => {
-          const hex = COLOUR_HEX[opt.value] ?? "#888";
-          const textCol = getSwatchTextColour(hex);
-          const active = value === opt.value;
-          const limited = LIMITED_COLOURS.has(opt.value);
-          return (
-            <button
-              key={opt.value}
-              type="button"
-              disabled={disabled}
-              onClick={() => onChange(opt.value)}
-              title={opt.label + (limited ? " (limited)" : "")}
-              className={`h-7 w-7 rounded-full ring-offset-1 transition-all ${
-                active
-                  ? "ring-2 ring-brand-accent scale-110"
-                  : "ring-1 ring-brand-border hover:ring-brand-accent hover:scale-105"
-              }`}
-              style={{ backgroundColor: hex, color: textCol }}
-            >
-              {limited && (
-                <span className="block h-1.5 w-1.5 mx-auto rounded-full bg-amber-400 opacity-80" />
-              )}
-            </button>
-          );
-        })}
-      </div>
-      <p className="text-[10px] text-brand-muted">
-        Selected:{" "}
-        <span className="text-brand-text">
-          {COLOUR_OPTIONS.find((o) => o.value === value)?.label ?? value}
-        </span>
-      </p>
     </div>
   );
 }
@@ -845,12 +793,65 @@ export function GateSegmentDetails({ runId, seg, locked = false }: Props) {
           disabled={locked}
         />
 
+        {/* Post colour — always visible; defaults to match gate colour */}
+        <div className="space-y-1">
+          <div className="flex items-center justify-between">
+            <p className="text-[11px] font-medium uppercase tracking-wider text-brand-muted">
+              Post colour
+            </p>
+            <label className="flex items-center gap-1.5 text-xs text-brand-muted cursor-pointer">
+              <input
+                type="checkbox"
+                disabled={locked}
+                checked={!!v.post_colour_code}
+                onChange={(e) =>
+                  upsertVariables({ post_colour_code: e.target.checked ? gateColour : "" })
+                }
+              />
+              Custom
+            </label>
+          </div>
+          {v.post_colour_code ? (
+            <div className={locked ? "pointer-events-none opacity-60" : ""}>
+              <ColourSwatches
+                value={String(v.post_colour_code)}
+                onChange={(value) => upsertVariables({ post_colour_code: value })}
+                colours={COLOUR_OPTIONS}
+              />
+            </div>
+          ) : (
+            <p className="text-xs text-brand-muted">
+              Matching gate colour —{" "}
+              <span className="text-brand-text">
+                {COLOUR_OPTIONS.find((o) => o.value === gateColour)?.label ?? gateColour}
+              </span>
+            </p>
+          )}
+        </div>
+
         {/* Colour / slat options — hidden when match-fence */}
         {!matchFence && (
           <>
-            <ColourPicker
-              value={gateColour}
-              onChange={(value) => upsertVariables({ colour_code: value })}
+            <div className="space-y-1">
+              <p className="text-[11px] font-medium uppercase tracking-wider text-brand-muted">
+                Gate colour
+              </p>
+              <div className={locked ? "pointer-events-none opacity-60" : ""}>
+                <ColourSwatches
+                  value={gateColour}
+                  onChange={(value) => upsertVariables({ colour_code: value })}
+                  colours={COLOUR_OPTIONS}
+                />
+              </div>
+            </div>
+            <SegmentedField
+              label="Gate slat size"
+              value={String(slatSizeMm)}
+              options={[
+                { value: "65", label: "65mm" },
+                { value: "90", label: "90mm" },
+              ]}
+              onChange={(value) => upsertVariables({ slat_size_mm: Number(value) })}
               disabled={locked}
             />
             <SegmentedField
