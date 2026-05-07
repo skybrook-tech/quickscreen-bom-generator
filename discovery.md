@@ -15,6 +15,26 @@ Build a data-driven BOM (Bill of Materials) quoting configurator for Glass Outle
 
 ---
 
+## May 7, 2026 - Sidebar minimisation and map text-note pass
+
+UI finding:
+- Installer workflows need the sidebar to stay compact while still showing what is selected. Large always-open run and section settings made longer jobs feel cluttered.
+- Gate dimensions are easier to enter and verify in millimetres because supplier/catalogue widths are specified that way.
+- The mapper text tool needed a real "draw note box, then type" workflow rather than a tiny click-only label.
+
+Changes applied:
+- Run settings are now collapsible and auto-collapse after the pointer has left the run-settings area for 10 seconds.
+- Run settings fields render as compact accordions showing the current selected value until opened.
+- Section cards now use a stronger centred heading, a compact status/code bubble, and an icon-only settings control that auto-collapses after 10 seconds away from the card.
+- Section settings no longer have a separate "Additional settings" button; the editable groups are individually collapsible and show selected summaries.
+- Gate sections now show and edit width in millimetres instead of metre length entry.
+- The canvas text tool now lets the user drag out a note box, then type text into it.
+
+Verification:
+- `npm run build` passed after the changes.
+
+---
+
 ## Phase 1 — Knowledge Extraction
 
 ### What we started with

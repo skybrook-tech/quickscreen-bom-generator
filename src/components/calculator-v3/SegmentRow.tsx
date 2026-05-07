@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
 import { SlidersHorizontal, X } from "lucide-react";
@@ -96,6 +96,7 @@ function sameValue(left: unknown, right: unknown) {
 export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, displayLabel }: Props) {
   const { state, dispatch } = useCalculator();
   const [confirmRemove, setConfirmRemove] = useState(false);
+  const collapseTimerRef = useRef<number | null>(null);
   const gate = seg.segmentKind === "gate_opening";
 
   const run = state.payload?.runs.find((r) => r.runId === runId);
@@ -209,7 +210,9 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     (masterLeftKind === "system_post" || masterLeftKind === "" ? 1 : 0) +
     (masterRightKind === "system_post" || masterRightKind === "" ? 1 : 0);
   const summaryBitsBase = [
-    { label: "Length", value: `${(segmentLength / 1000).toFixed(2)}m`, emphasis: true },
+    gate
+      ? { label: "Width", value: `${segmentLength}mm`, emphasis: true }
+      : { label: "Length", value: `${(segmentLength / 1000).toFixed(2)}m`, emphasis: true },
   ];
   const rawDifferenceBits = gate
     ? [
@@ -430,9 +433,28 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     );
   }
 
+  useEffect(
+    () => () => {
+      if (collapseTimerRef.current) window.clearTimeout(collapseTimerRef.current);
+    },
+    [],
+  );
+
+  function keepOpenWhileHovered() {
+    if (collapseTimerRef.current) window.clearTimeout(collapseTimerRef.current);
+  }
+
+  function scheduleCollapse() {
+    if (!open) return;
+    if (collapseTimerRef.current) window.clearTimeout(collapseTimerRef.current);
+    collapseTimerRef.current = window.setTimeout(() => onToggle(), 10000);
+  }
+
   return (
     <div className="rounded-2xl bg-gradient-to-br from-brand-primary via-brand-primary/70 to-brand-primary/15 p-[2px] shadow-[0_2px_0_rgba(191,219,254,0.75),0_10px_22px_rgba(30,64,175,0.18)]">
     <div className="relative cursor-pointer overflow-hidden rounded-[0.9rem] bg-brand-card text-sm font-semibold shadow-inner"
+      onMouseEnter={keepOpenWhileHovered}
+      onMouseLeave={scheduleCollapse}
       onDoubleClick={(event) => {
         const target = event.target as HTMLElement;
         if (target.closest("button,input,select,textarea,a")) return;
@@ -440,13 +462,17 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
       }}
       title="Double-click to edit options"
     >
-      <div className="grid grid-cols-[2.4rem_minmax(0,1fr)] gap-3 p-3">
-        <div className="flex flex-col items-center gap-2 pt-1">
+      <div className="grid grid-cols-[3.8rem_minmax(0,1fr)] gap-3 p-3">
+        <div className="flex flex-col items-center justify-center gap-2">
           <button
             type="button"
             onClick={matchesMaster ? undefined : resetToMaster}
             disabled={matchesMaster}
-            className="rounded-lg px-0.5 text-center transition-colors disabled:cursor-default"
+            className={`rounded-full px-3 py-2 text-center shadow-sm transition-colors disabled:cursor-default ${
+              matchesMaster
+                ? "bg-brand-success text-white"
+                : "bg-brand-warning/15 text-black hover:bg-brand-primary hover:text-white"
+            }`}
           >
             <span
               onMouseEnter={() => setMapHover(compactLabel)}
@@ -456,27 +482,22 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
                   ? "Matches the current Run Settings. Hover to highlight this section on the map."
                   : "This section has settings different from the Run Settings. Click to match the run settings."
               }
-              className={`text-xl font-black leading-none tracking-normal transition-colors ${
-                matchesMaster ? "text-brand-success" : "text-black hover:text-brand-primary"
-              }`}
+              className="text-base font-black leading-none tracking-normal"
             >
               {compactLabel}
             </span>
           </button>
-          <span className="max-w-[2.6rem] text-center text-[9px] font-bold leading-tight text-brand-muted">
-            {matchesMaster ? "Run match" : "Override"}
-          </span>
         </div>
         <div className="min-w-0 space-y-3">
-          <div className="flex flex-wrap items-start justify-between gap-2">
-            <span className="min-w-0 font-serif text-2xl font-black italic leading-tight tracking-normal text-black">
+          <div className="grid gap-2">
+            <span className="min-w-0 text-center font-sans text-2xl font-black leading-tight tracking-normal text-black">
               {titleLabel}
             </span>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center justify-center gap-1">
             <button
               type="button"
               onClick={onToggle}
-              className={`inline-flex h-8 items-center justify-center gap-1 rounded-lg border px-2 text-xs font-extrabold transition-colors ${
+              className={`inline-flex h-8 w-8 items-center justify-center rounded-full border text-xs font-extrabold transition-colors ${
                 open
                   ? "border-brand-primary bg-brand-primary text-white"
                   : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
@@ -485,7 +506,6 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
               title={open ? "Save settings and collapse" : "Open settings"}
             >
               <SlidersHorizontal size={16} />
-              {open ? "Save" : "Settings"}
             </button>
             <button
               type="button"
@@ -531,13 +551,20 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
         <div className="space-y-4 border-t border-brand-border/50 bg-brand-bg/50 p-3">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <label className="flex flex-col gap-1">
-              <span className="text-sm font-bold text-brand-muted">Length (m)</span>
+              <span className="text-sm font-bold text-brand-muted">
+                {gate ? "Width (mm)" : "Length (m)"}
+              </span>
               <NumberInput
-                value={parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
-                step={0.01}
+                value={gate ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
+                step={gate ? 50 : 0.01}
                 min={0}
-                className="w-24 px-2 py-1.5 text-center tabular-nums"
-                onChange={(v) => updateGeometry("segmentWidthMm", Math.round(Number(v) * 1000))}
+                className="w-28 px-2 py-1.5 text-center tabular-nums"
+                onChange={(v) =>
+                  updateGeometry(
+                    "segmentWidthMm",
+                    gate ? Math.round(Number(v)) : Math.round(Number(v) * 1000),
+                  )
+                }
               />
             </label>
             <label className="flex flex-col gap-1">

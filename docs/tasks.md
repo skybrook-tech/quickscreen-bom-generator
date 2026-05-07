@@ -62,6 +62,8 @@ Latest Brief Y pass: sliding gates now have an optional Filo 400 automation flow
 
 Latest Brief Z pass: fence section settings now include left/right end-condition chips for Post, Wall, Pillar, and Void; non-post ends flow through the existing wall/F-section BOM path while adjacent shared ends render read-only.
 
+Latest sidebar and mapper usability pass: run settings now collapse independently with auto-collapse after idle hover, run fields render as compact selected-value accordions, section cards have a stronger centered title and map-code bubble, section settings use compact collapsible groups without a separate advanced button, gate dimensions edit as millimetre widths, and the mapper text tool now supports dragging a note box before typing.
+
 ---
 
 ## Phases Overview

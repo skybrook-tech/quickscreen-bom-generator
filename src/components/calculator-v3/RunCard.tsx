@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CheckCircle2, Copy, Plus, Trash2 } from "lucide-react";
+import { CheckCircle2, Copy, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
 import { defaultGateVariables } from "../../lib/gateOptionRules";
@@ -44,7 +44,9 @@ export function RunCard({ run, runIdx }: Props) {
   const { state, dispatch } = useCalculator();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [confirmRemoveRun, setConfirmRemoveRun] = useState(false);
+  const [runSettingsOpen, setRunSettingsOpen] = useState(true);
   const removeRunRef = useRef<HTMLDivElement | null>(null);
+  const runCollapseRef = useRef<number | null>(null);
 
   const runVariables = useMemo(
     () => runMasterVariables(run, state.payload?.variables),
@@ -92,6 +94,22 @@ export function RunCard({ run, runIdx }: Props) {
     window.addEventListener("pointerdown", resetOnOutsideClick, true);
     return () => window.removeEventListener("pointerdown", resetOnOutsideClick, true);
   }, [confirmRemoveRun]);
+
+  useEffect(
+    () => () => {
+      if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
+    },
+    [],
+  );
+
+  function keepRunSettingsOpen() {
+    if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
+  }
+
+  function scheduleRunSettingsCollapse() {
+    if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
+    runCollapseRef.current = window.setTimeout(() => setRunSettingsOpen(false), 10000);
+  }
 
   function toggleRunOneSettings() {
     const runOne = state.payload?.runs[0];
@@ -185,7 +203,26 @@ export function RunCard({ run, runIdx }: Props) {
         </div>
       </div>
 
-      <RunSettingsEditor run={run} />
+      <div
+        className="mb-3"
+        onMouseEnter={keepRunSettingsOpen}
+        onMouseLeave={scheduleRunSettingsCollapse}
+      >
+        <button
+          type="button"
+          onClick={() => setRunSettingsOpen((value) => !value)}
+          className={`mb-2 inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-extrabold transition-colors ${
+            runSettingsOpen
+              ? "border-brand-primary bg-brand-primary text-white"
+              : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
+          }`}
+          title={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
+        >
+          <SlidersHorizontal size={16} />
+          {runSettingsOpen ? "Save run settings" : "Run settings"}
+        </button>
+        {runSettingsOpen && <RunSettingsEditor run={run} />}
+      </div>
 
       {installVideoKeys.length > 0 && (
         <details className="mb-3 rounded-xl border border-brand-border/70 bg-brand-bg/40 p-3">

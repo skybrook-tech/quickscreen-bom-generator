@@ -78,6 +78,8 @@ export interface CanvasTextNote {
   x: number;
   y: number;
   text: string;
+  width?: number;
+  height?: number;
 }
 
 // ── Internal state types ──────────────────────────────────────────────────────
@@ -537,6 +539,7 @@ export function initCanvasEngine(
   };
   let highlightedMapLabel: string | null = null;
   let textNotes: CanvasTextNote[] = [];
+  let pendingTextNote: { start: Point; current: Point } | null = null;
   let mapImage: HTMLImageElement | null = null;
   let mapOpacity = 0.5;
   let mapWorldOriginX = 0; // world px — centre of the tile
@@ -945,6 +948,7 @@ export function initCanvasEngine(
     }
 
     drawTextNotes();
+    drawPendingTextNote();
 
     // Preview line (while drawing)
     if ((tool === "draw" || tool === "building") && activeRunIdx >= 0) {
@@ -1477,17 +1481,37 @@ export function initCanvasEngine(
       const padX = 7 / zoom;
       const padY = 5 / zoom;
       const textW = ctx.measureText(text).width;
-      const h = fs + padY * 2;
+      const boxW = Math.max(note.width ?? 0, textW + padX * 2);
+      const h = Math.max(note.height ?? 0, fs + padY * 2);
       ctx.fillStyle = "rgba(26,29,46,0.9)";
       ctx.strokeStyle = "rgba(59,130,246,0.9)";
       ctx.lineWidth = 1.4 / zoom;
       ctx.beginPath();
-      ctx.roundRect(note.x, note.y - h / 2, textW + padX * 2, h, 5 / zoom);
+      ctx.roundRect(note.x, note.y, boxW, h, 5 / zoom);
       ctx.fill();
       ctx.stroke();
       ctx.fillStyle = COLOR.label;
-      ctx.fillText(text, note.x + padX, note.y);
+      ctx.fillText(text, note.x + padX, note.y + h / 2);
     }
+    ctx.restore();
+  }
+
+  function drawPendingTextNote() {
+    if (!pendingTextNote) return;
+    const x = Math.min(pendingTextNote.start.x, pendingTextNote.current.x);
+    const y = Math.min(pendingTextNote.start.y, pendingTextNote.current.y);
+    const width = Math.abs(pendingTextNote.current.x - pendingTextNote.start.x);
+    const height = Math.abs(pendingTextNote.current.y - pendingTextNote.start.y);
+    if (width < 2 || height < 2) return;
+    ctx.save();
+    ctx.setLineDash([6 / zoom, 4 / zoom]);
+    ctx.fillStyle = "rgba(59,130,246,0.12)";
+    ctx.strokeStyle = "rgba(59,130,246,0.95)";
+    ctx.lineWidth = 1.4 / zoom;
+    ctx.beginPath();
+    ctx.roundRect(x, y, width, height, 5 / zoom);
+    ctx.fill();
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -1957,20 +1981,8 @@ export function initCanvasEngine(
     }
 
     if (tool === "text") {
-      createLabelInput(
-        container,
-        screenPtDown,
-        "",
-        (value) => {
-          const text = value.trim();
-          if (!text) return;
-          textNotes.push({ x: canvasPt.x, y: canvasPt.y, text });
-          notifyChange();
-          scheduleRedraw();
-        },
-        () => {},
-        180,
-      );
+      pendingTextNote = { start: canvasPt, current: canvasPt };
+      scheduleRedraw();
       return;
     }
 
@@ -2172,6 +2184,13 @@ export function initCanvasEngine(
       return;
     }
 
+    if (pendingTextNote) {
+      pendingTextNote.current = canvasPt;
+      canvas.style.cursor = "crosshair";
+      scheduleRedraw();
+      return;
+    }
+
     // Update hover state
     const prevHover = hoveredSegIdx;
     hoveredSegIdx = hitTestSegments(canvasPt, 10);
@@ -2228,6 +2247,40 @@ export function initCanvasEngine(
   }
 
   function onMouseUp(e: MouseEvent) {
+    if (pendingTextNote && e.button === 0) {
+      pendingTextNote.current = eventToCanvas(e);
+      const x = Math.min(pendingTextNote.start.x, pendingTextNote.current.x);
+      const y = Math.min(pendingTextNote.start.y, pendingTextNote.current.y);
+      const width = Math.max(90 / zoom, Math.abs(pendingTextNote.current.x - pendingTextNote.start.x));
+      const height = Math.max(34 / zoom, Math.abs(pendingTextNote.current.y - pendingTextNote.start.y));
+      const screenCenter = canvasToScreen(
+        { x: x + width / 2, y: y + height / 2 },
+        pan,
+        zoom,
+      );
+      const inputWidth = Math.max(160, Math.min(420, width * zoom));
+      pendingTextNote = null;
+      createLabelInput(
+        container,
+        screenCenter,
+        "",
+        (value) => {
+          const text = value.trim();
+          if (!text) {
+            scheduleRedraw();
+            return;
+          }
+          textNotes.push({ x, y, width, height, text });
+          notifyChange();
+          scheduleRedraw();
+        },
+        () => scheduleRedraw(),
+        inputWidth,
+      );
+      scheduleRedraw();
+      return;
+    }
+
     if (e.button === 2 || (e.button === 0 && isPanning)) {
       isPanning = false;
       canvas.style.cursor = tool === "move" ? "grab" : "default";
@@ -2495,6 +2548,7 @@ export function initCanvasEngine(
 
   function setTool(t: Tool) {
     tool = t;
+    if (t !== "text") pendingTextNote = null;
     if (t === "draw" || t === "boundary" || t === "building" || t === "text") {
       canvas.style.cursor = "crosshair";
     } else if (t === "move") {

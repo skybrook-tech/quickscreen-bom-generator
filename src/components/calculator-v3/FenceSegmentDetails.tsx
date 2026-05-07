@@ -1,5 +1,4 @@
 import { type ReactNode, useEffect, useMemo, useState } from "react";
-import { SlidersHorizontal } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../types/canonical.types";
@@ -36,16 +35,14 @@ interface Props {
   seg: CanonicalSegment;
 }
 
-function sectionStorageKey(segmentId: string) {
-  return `qsg-segment-settings:${segmentId}`;
-}
-
 function SettingsSection({
   title,
+  summary,
   children,
   defaultOpen = false,
 }: {
   title: string;
+  summary?: string;
   children: ReactNode;
   defaultOpen?: boolean;
 }) {
@@ -59,8 +56,13 @@ function SettingsSection({
         className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm font-extrabold text-brand-text"
       >
         <span>{title}</span>
-        <span className="text-xs font-bold text-brand-primary">
-          {open ? "Hide" : "Show"}
+        <span className="flex min-w-0 items-center gap-2 text-xs font-bold text-brand-primary">
+          {!open && summary ? (
+            <span className="max-w-[11rem] truncate rounded-full bg-brand-card px-2 py-0.5 text-brand-muted">
+              {summary}
+            </span>
+          ) : null}
+          <span>{open ? "Hide" : "Show"}</span>
         </span>
       </button>
       {open && <div className="space-y-3 border-t border-brand-border/50 p-3">{children}</div>}
@@ -159,22 +161,9 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   );
   const effectiveMax = clampPostSpacing(v.max_panel_width_mm, jobMax);
   const [maxSpacingDraft, setMaxSpacingDraft] = useState(String(effectiveMax));
-  const [showMoreSettings, setShowMoreSettings] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem(sectionStorageKey(seg.segmentId)) === "open";
-  });
-
   useEffect(() => {
     setMaxSpacingDraft(String(effectiveMax));
   }, [effectiveMax]);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(
-      sectionStorageKey(seg.segmentId),
-      showMoreSettings ? "open" : "closed",
-    );
-  }, [seg.segmentId, showMoreSettings]);
 
   function updateMaxPanelWidth(value: number | null) {
     const nextValue = value === null ? null : clampPostSpacing(value, jobMax);
@@ -210,46 +199,48 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         : [],
     [jobFields, mergedJobDisplay, productCode],
   );
+  const optionSummary = optionFields
+    .map((field) => {
+      const raw = mergedJobDisplay[field.field_key] ?? field.default_value_json;
+      if (raw === undefined || raw === null || raw === "") return null;
+      const label =
+        raw === true
+          ? "Yes"
+          : raw === false
+            ? "No"
+            : `${raw}${field.unit ?? ""}`;
+      return `${field.label}: ${label}`;
+    })
+    .filter(Boolean)
+    .slice(0, 2)
+    .join(" / ");
   function handleOptionChange(key: string, value: string | number | boolean) {
     onJobOverrideChange(key, value);
   }
 
   return (
     <div className="space-y-4">
-      <button
-        type="button"
-        onClick={() => setShowMoreSettings((value) => !value)}
-        className="inline-flex items-center gap-2 rounded-lg border border-brand-primary/35 bg-brand-primary/10 px-3 py-2 text-sm font-extrabold text-brand-primary transition-colors hover:bg-brand-primary hover:text-white"
-        aria-label={showMoreSettings ? "Hide more settings" : "Show more settings"}
-        title={showMoreSettings ? "Hide more settings" : "Show more settings"}
-      >
-        <SlidersHorizontal size={16} />
-        Additional settings
-      </button>
-
-      {showMoreSettings && (
-        <>
-          <SettingsSection title="Post spacing" defaultOpen>
-            <label className="flex flex-col gap-1">
-              <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
-              <input
-                type="number"
-                value={maxSpacingDraft}
-                onChange={(event) => setMaxSpacingDraft(event.target.value)}
-                onBlur={() => commitMaxPanelWidth()}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") event.currentTarget.blur();
-                }}
-                min={MIN_POST_SPACING_MM}
-                max={MAX_POST_SPACING_MM}
-                step={50}
-                className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-              />
-            </label>
-          </SettingsSection>
+      <SettingsSection title="Post spacing" summary={`${effectiveMax}mm`} defaultOpen>
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
+          <input
+            type="number"
+            value={maxSpacingDraft}
+            onChange={(event) => setMaxSpacingDraft(event.target.value)}
+            onBlur={() => commitMaxPanelWidth()}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") event.currentTarget.blur();
+            }}
+            min={MIN_POST_SPACING_MM}
+            max={MAX_POST_SPACING_MM}
+            step={50}
+            className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+          />
+        </label>
+      </SettingsSection>
 
           {optionFields.length > 0 ? (
-            <SettingsSection title="Style overrides" defaultOpen>
+            <SettingsSection title="Style overrides" summary={optionSummary || "Run defaults"}>
               {optionFields.length > 0 && (
                 <SchemaDrivenForm
                   fields={optionFields}
@@ -261,7 +252,10 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
           ) : null}
 
           {showLouvreSetting && (
-            <SettingsSection title="Louvre treatment" defaultOpen>
+            <SettingsSection
+              title="Louvre treatment"
+              summary={louvreEnabled && slatSize === 65 ? "On" : "Off"}
+            >
               <div className="rounded-xl border border-brand-border/60 bg-brand-card/70 p-3">
                 <label className="flex items-start gap-3">
                   <input
@@ -291,7 +285,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
             </SettingsSection>
           )}
 
-          <SettingsSection title="End conditions" defaultOpen>
+          <SettingsSection title="End conditions" summary="Left / right ends">
             <div className="grid gap-3 lg:grid-cols-2">
               <TerminationControl
                 runId={runId}
@@ -309,7 +303,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
           </SettingsSection>
 
           {cornerControls.length > 0 && (
-            <SettingsSection title="Corners" defaultOpen>
+            <SettingsSection title="Corners" summary={`${cornerControls.length} corner${cornerControls.length === 1 ? "" : "s"}`}>
               <div className="space-y-3">
                 {cornerControls.map((corner) => (
                   <label key={corner.side} className="flex flex-col gap-1">
@@ -360,7 +354,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
             </SettingsSection>
           )}
 
-          <SettingsSection title="Posts">
+          <SettingsSection title="Posts" summary={POST_SIZE_LABELS[postSize] ?? (postSize ? `${postSize}mm Post` : "Run default")}>
             <label className="flex flex-col gap-1">
               <span className="text-sm font-bold text-brand-muted">Post type</span>
               <select
@@ -384,25 +378,22 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
             </label>
           </SettingsSection>
 
-          <SettingsSection title="Advanced">
-            {isCustomPost ? (
-              <label className="flex flex-col gap-1">
-                <span className="text-sm font-bold text-brand-muted">Post width (mm)</span>
-                <NumberInput
-                  value={(v[SEGMENT_OPTION_KEYS.postWidthMm] as number | null) ?? null}
-                  onChange={(val) =>
-                    setScalar(SEGMENT_OPTION_KEYS.postWidthMm, val)
-                  }
-                  min={1}
-                />
-              </label>
-            ) : (
-              <p className="text-xs font-semibold text-brand-muted">
-                Choose a non-standard post type to enter a custom post width.
-              </p>
-            )}
-          </SettingsSection>
-        </>
+      {isCustomPost && (
+        <SettingsSection
+          title="Custom post width"
+          summary={`${v[SEGMENT_OPTION_KEYS.postWidthMm] ?? "Not set"}mm`}
+        >
+          <label className="flex flex-col gap-1">
+            <span className="text-sm font-bold text-brand-muted">Post width (mm)</span>
+            <NumberInput
+              value={(v[SEGMENT_OPTION_KEYS.postWidthMm] as number | null) ?? null}
+              onChange={(val) =>
+                setScalar(SEGMENT_OPTION_KEYS.postWidthMm, val)
+              }
+              min={1}
+            />
+          </label>
+        </SettingsSection>
       )}
 
     </div>

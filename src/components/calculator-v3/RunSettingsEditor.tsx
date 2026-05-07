@@ -18,6 +18,7 @@ import {
 } from "../../lib/postFixingOptions";
 import { getPreferredGroutSku, setPreferredGroutSku } from "../../lib/userPrefs";
 import { SchemaDrivenForm, type SchemaField } from "./SchemaDrivenForm";
+import { colourName } from "./ColourPalette";
 
 interface Props {
   run: CanonicalRun;
@@ -74,6 +75,17 @@ function shapeRunField(field: SchemaField, productCode: string): SchemaField | n
     };
   }
   return field;
+}
+
+function fieldValueLabel(field: SchemaField, variables: Record<string, string | number | boolean>) {
+  const raw = variables[field.field_key] ?? field.default_value_json;
+  if (field.field_key === "colour_code" || field.field_key === "post_colour_code") {
+    return colourName(raw);
+  }
+  if (raw === true) return "Yes";
+  if (raw === false) return "No";
+  if (raw === undefined || raw === null || raw === "") return "Default";
+  return `${raw}${field.unit ? field.unit : ""}`;
 }
 
 export function RunSettingsEditor({ run }: Props) {
@@ -235,18 +247,18 @@ export function RunSettingsEditor({ run }: Props) {
   }
 
   return (
-    <div className="mb-3 rounded-2xl border border-brand-border/70 bg-brand-bg/55 p-3">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-brand-muted">
-          Run Settings
-        </p>
-        <span className="text-xs font-semibold text-brand-muted">
-          Sections inherit these settings unless overridden.
-        </span>
-      </div>
-      <div className="mb-3">
-        <p className="mb-2 text-sm font-bold text-brand-muted">System type</p>
-        <div className="flex flex-wrap gap-2">
+    <div className="mb-3 space-y-2 rounded-2xl border border-brand-border/70 bg-brand-bg/55 p-3">
+      <p className="text-xs font-semibold text-brand-muted">
+        Sections inherit these settings unless overridden.
+      </p>
+      <details className="rounded-xl border border-brand-border/60 bg-brand-card/70">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3 py-2 text-sm font-extrabold text-brand-text">
+          <span>System type</span>
+          <span className="rounded-full bg-brand-primary px-3 py-1 text-xs text-white">
+            {run.productCode}
+          </span>
+        </summary>
+        <div className="flex flex-wrap gap-2 border-t border-brand-border/50 p-3">
           {localFenceProducts.map((product) => (
             <button
               key={product.system_type}
@@ -264,8 +276,25 @@ export function RunSettingsEditor({ run }: Props) {
             </button>
           ))}
         </div>
+      </details>
+      <div className="grid gap-2">
+        {fields.map((field) => (
+          <details
+            key={`${field.id}-${field.field_key}`}
+            className="rounded-xl border border-brand-border/60 bg-brand-card/70"
+          >
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3 py-2 text-sm font-extrabold text-brand-text">
+              <span>{field.label}</span>
+              <span className="max-w-[12rem] truncate rounded-full bg-brand-bg px-3 py-1 text-xs font-bold text-brand-muted">
+                {fieldValueLabel(field, variables)}
+              </span>
+            </summary>
+            <div className="border-t border-brand-border/50 p-3">
+              <SchemaDrivenForm fields={[field]} variables={variables} onChange={updateRunVariables} />
+            </div>
+          </details>
+        ))}
       </div>
-      <SchemaDrivenForm fields={fields} variables={variables} onChange={updateRunVariables} />
       <div className="mt-3 grid gap-3 rounded-2xl border border-brand-border/60 bg-brand-card/70 p-3 md:grid-cols-2">
         <label className="flex flex-col gap-1">
           <span className="text-sm font-bold text-brand-muted">Post-fixing material</span>
