@@ -598,26 +598,11 @@ export function GateSegmentDetails({ runId, seg }: Props) {
     });
   }
 
-  function updateHeight(value: number) {
-    dispatch({
-      type: "UPSERT_SEGMENT",
-      runId,
-      segment: {
-        ...patchSegmentVariables(seg, {
-          [GATE_SEGMENT_STUB_KEYS.matchRunHeight]: false,
-          [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: value,
-        }),
-        targetHeightMm: value,
-      },
-    });
-  }
-
   return (
     <div className="space-y-4 text-sm font-semibold">
       <GateSettingsSection
-        title="Gate basics"
+        title="Gate type"
         summary={`${optionLabel(GATE_MOVEMENTS, movement)} / ${Number(seg.segmentWidthMm ?? 0)}mm wide`}
-        defaultOpen
       >
         <OptionPills
           label="Gate type"
@@ -625,12 +610,24 @@ export function GateSegmentDetails({ runId, seg }: Props) {
           options={GATE_MOVEMENTS}
           onChange={setMovement}
         />
+      </GateSettingsSection>
+
+      <GateSettingsSection
+        title="QSG gate system"
+        summary={optionLabel(buildOptions, build)}
+      >
         <OptionPills
           label="QSG gate system"
           value={build}
           options={buildOptions}
           onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gateBuild]: value })}
         />
+      </GateSettingsSection>
+
+      <GateSettingsSection
+        title={isSwing ? "Opening direction" : "Slide direction"}
+        summary={optionLabel(directionOptions, currentDirection)}
+      >
         <OptionPills
           label={isSwing ? "Opening direction" : "Slide direction"}
           value={currentDirection}
@@ -639,27 +636,24 @@ export function GateSegmentDetails({ runId, seg }: Props) {
             upsertVariables({ [GATE_SEGMENT_STUB_KEYS.openingDirection]: value })
           }
         />
-        <div className="grid grid-cols-1 gap-3">
-          <label className="flex flex-col gap-1">
-            <span className="text-sm font-bold text-brand-muted">Gate height</span>
-            <div className="flex items-center gap-2">
-              <NumberInput
-                value={Number(seg.targetHeightMm ?? v[GATE_SEGMENT_STUB_KEYS.gateHeightMm] ?? runVars.target_height_mm ?? 1800)}
-                min={600}
-                max={2500}
-                step={50}
-                onChange={(value) => updateHeight(Number(value))}
-              />
-              <span className="text-brand-muted">mm</span>
-            </div>
-          </label>
-        </div>
+      </GateSettingsSection>
+
+      <GateSettingsSection
+        title="Gate post"
+        summary={`${String(v[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm] ?? masterVars.post_size ?? masterPostSize)}mm`}
+      >
         <OptionPills
           label="Gate post"
           value={String(v[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm] ?? masterVars.post_size ?? masterPostSize)}
           options={GATE_POST_SIZE_OPTIONS}
           onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(value) })}
         />
+      </GateSettingsSection>
+
+      <GateSettingsSection
+        title="Gate colour"
+        summary={String(v[GATE_SEGMENT_STUB_KEYS.colourCode] ?? masterVars.colour_code ?? "B")}
+      >
         <div className="space-y-1">
           <p className="text-sm font-bold text-brand-muted">Gate colour</p>
           <ColourPalette
@@ -668,18 +662,36 @@ export function GateSegmentDetails({ runId, seg }: Props) {
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.colourCode]: value })}
           />
         </div>
+      </GateSettingsSection>
+
+      <GateSettingsSection
+        title="Gate slat size"
+        summary={`${String(v[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVars.slat_size_mm ?? 65)}mm`}
+      >
         <OptionPills
           label="Gate slat size"
           value={String(v[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVars.slat_size_mm ?? 65)}
           options={SLAT_SIZE_OPTIONS}
           onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(value) })}
         />
+      </GateSettingsSection>
+
+      <GateSettingsSection
+        title="Gate slat gap"
+        summary={`${String(v[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVars.slat_gap_mm ?? 9)}mm`}
+      >
         <OptionPills
           label="Gate slat gap"
           value={String(v[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVars.slat_gap_mm ?? 9)}
           options={SLAT_GAP_OPTIONS}
           onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(value) })}
         />
+      </GateSettingsSection>
+
+      <GateSettingsSection
+        title="Gate termination posts"
+        summary={v[GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination] === false ? "Fence posts separate" : "Use gate posts"}
+      >
         <label className="flex items-center gap-2">
           <input
             type="checkbox"

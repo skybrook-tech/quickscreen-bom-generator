@@ -1329,6 +1329,26 @@ Changes applied:
 Verification:
 - `npm run build` passed after the changes.
 
+### May 8, 2026 - Layout map and sidebar settings polish
+
+UI finding:
+- The active layout-map overlay was still using a fixed left offset, so it could drift over the run/sidebar column when the sidebar was resized.
+- Section and gate controls had become too icon-heavy after the compacting pass; first-time users needed clearer labels without reopening the clutter.
+- Louvre treatment belongs at run level for the normal workflow because it should usually apply to the whole run, not be discovered separately inside every section.
+
+Changes applied:
+- The active-job map button now lives beside the BOM action buttons and uses a more obvious 3D globe-style drawing CTA.
+- The map header controls moved to the left and the overlay now starts after the actual sidebar width, preventing overlap.
+- Section cards now show labelled `Section settings` / `Gate settings` buttons, with the remove X isolated on the right.
+- Current settings now show `Panel width` rather than `Max Post Spacing`; the editable post spacing control is collapsed at the bottom of section settings.
+- Section `Style overrides` was renamed to `Slats, colors, and spacings`.
+- QSHS louvre treatment moved from section settings into run settings next to post-fixing material.
+- Gate settings were split into separate collapsible controls for type, QSG gate system, direction, post, colour, slat size, slat gap, termination posts, and hardware. The duplicate gate-height field was removed from the gate details panel.
+
+Verification:
+- `npm run build` passed.
+- Browser smoke test confirmed the map overlay no longer overlaps the sidebar, the renamed section settings appear, and the gate details no longer show `Gate basics`.
+
 ### May 7, 2026 - Brief AE suggested accessory expansion
 
 Catalogue/CSV finding:

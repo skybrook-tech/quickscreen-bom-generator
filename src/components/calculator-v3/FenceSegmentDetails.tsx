@@ -99,10 +99,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   const rightEndReadOnly = segmentIndex >= 0 && segmentIndex < fenceSegments.length - 1 && !v.right_termination_kind;
   const postSize = (displayVariables[SEGMENT_OPTION_KEYS.postSize] as string) ?? "";
   const isCustomPost = postSize === "custom";
-  const slatSize = Number(displayVariables.slat_size_mm ?? 65);
   const isBayg = productCode === "BAYG";
-  const showLouvreSetting = productCode === "QSHS";
-  const louvreEnabled = v.louvre_treatment === true || v.louvre_treatment === "true";
   const cornerControls = (["left", "right"] as const)
     .map((side) => {
       const kindKey =
@@ -193,7 +190,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
             jobFields.filter(
               (field) =>
                 !field.field_key.endsWith("_stock_length_mm") &&
-                field.field_key !== "max_panel_width_mm",
+                field.field_key !== "max_panel_width_mm" &&
+                field.field_key !== "louvre_treatment",
             ),
             mergedJobDisplay,
           )
@@ -221,29 +219,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
   return (
     <div className="space-y-4">
-      {!isBayg && (
-      <SettingsSection title="Post spacing" summary={`${effectiveMax}mm`} defaultOpen>
-        <label className="flex flex-col gap-1">
-          <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
-          <input
-            type="number"
-            value={maxSpacingDraft}
-            onChange={(event) => setMaxSpacingDraft(event.target.value)}
-            onBlur={() => commitMaxPanelWidth()}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") event.currentTarget.blur();
-            }}
-            min={MIN_POST_SPACING_MM}
-            max={MAX_POST_SPACING_MM}
-            step={50}
-            className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-          />
-        </label>
-      </SettingsSection>
-      )}
-
           {optionFields.length > 0 ? (
-            <SettingsSection title="Style overrides" summary={optionSummary || "Run defaults"}>
+            <SettingsSection title="Slats, colors, and spacings" summary={optionSummary || "Run defaults"}>
               {optionFields.length > 0 && (
                 <SchemaDrivenForm
                   fields={optionFields}
@@ -253,40 +230,6 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
               )}
             </SettingsSection>
           ) : null}
-
-          {showLouvreSetting && (
-            <SettingsSection
-              title="Louvre treatment"
-              summary={louvreEnabled && slatSize === 65 ? "On" : "Off"}
-            >
-              <div className="rounded-xl border border-brand-border/60 bg-brand-card/70 p-3">
-                <label className="flex items-start gap-3">
-                  <input
-                    type="checkbox"
-                    checked={louvreEnabled && slatSize === 65}
-                    disabled={slatSize !== 65}
-                    onChange={(event) =>
-                      setScalar("louvre_treatment", event.target.checked)
-                    }
-                    className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
-                  />
-                  <span>
-                    <span className="block text-sm font-extrabold text-brand-text">
-                      Louvre treatment (40 degree angle)
-                    </span>
-                    <span className="mt-1 block text-xs font-semibold text-brand-muted">
-                      Slats angle 40 degrees downward. Louvres only available with 65mm slats.
-                    </span>
-                    {slatSize !== 65 && (
-                      <span className="mt-1 block text-xs font-bold text-brand-warning">
-                        Switch this section to 65mm slats to use louvre brackets.
-                      </span>
-                    )}
-                  </span>
-                </label>
-              </div>
-            </SettingsSection>
-          )}
 
       {!isBayg && (
       <SettingsSection title="End conditions" summary="Left / right ends">
@@ -401,6 +344,27 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
             />
           </label>
         </SettingsSection>
+      )}
+
+      {!isBayg && (
+      <SettingsSection title="Post spacing" summary={`${effectiveMax}mm`}>
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
+          <input
+            type="number"
+            value={maxSpacingDraft}
+            onChange={(event) => setMaxSpacingDraft(event.target.value)}
+            onBlur={() => commitMaxPanelWidth()}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") event.currentTarget.blur();
+            }}
+            min={MIN_POST_SPACING_MM}
+            max={MAX_POST_SPACING_MM}
+            step={50}
+            className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+          />
+        </label>
+      </SettingsSection>
       )}
 
     </div>

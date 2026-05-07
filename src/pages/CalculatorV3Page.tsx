@@ -22,12 +22,12 @@ import { useAuth } from "../hooks/useAuth";
 import {
   Download,
   FileX2,
+  Globe2,
   HelpCircle,
   Keyboard,
   Loader2,
   Maximize2,
   Minimize2,
-  PencilRuler,
   Printer,
   Save,
   Sparkles,
@@ -238,16 +238,16 @@ function CalculatorV3Content() {
         setLayoutOpen((open) => !open);
         if (mobileLayout) setMobileTab("map");
       }}
-      className={`group relative inline-flex items-center gap-3 overflow-hidden rounded-2xl border px-4 py-3 text-sm font-black transition-all hover:-translate-y-0.5 hover:shadow-md ${
+      className={`group relative inline-flex items-center gap-3 overflow-hidden rounded-full border px-4 py-2.5 text-sm font-black transition-all hover:-translate-y-0.5 hover:shadow-md ${
         layoutOpen
           ? "border-brand-primary bg-brand-primary text-white hover:bg-brand-primary/90"
-          : "border-brand-primary/40 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white"
+          : "border-brand-primary/50 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white"
       }`}
       title={layoutOpen ? "Minimize layout map" : "Open layout map"}
     >
-      <span className="absolute inset-0 bg-white/0 transition-colors group-hover:bg-white/10" />
-      <span className="relative grid h-9 w-9 place-items-center rounded-xl bg-white/15">
-        <PencilRuler size={22} strokeWidth={2.5} />
+      <span className="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.42),rgba(59,130,246,0.12)_42%,rgba(15,23,42,0.1))] transition-colors group-hover:bg-white/10" />
+      <span className="relative grid h-11 w-11 place-items-center rounded-full border border-white/30 bg-gradient-to-br from-white/35 via-brand-primary/40 to-brand-primary shadow-[inset_-5px_-7px_12px_rgba(15,23,42,0.25),inset_4px_4px_10px_rgba(255,255,255,0.35),0_8px_16px_rgba(37,99,235,0.28)]">
+        <Globe2 size={24} strokeWidth={2.5} />
       </span>
       <span className="relative">{layoutOpen ? "Minimize layout map" : "Draw layout map"}</span>
     </button>
@@ -866,11 +866,7 @@ function CalculatorV3Content() {
                     layoutMapButton(selectDefaultProduct)
                   }
                 />
-              ) : (
-                <div className="flex flex-wrap justify-end gap-2">
-                  {layoutMapButton()}
-                </div>
-              )}
+              ) : null}
             </section>
 
             {payload && (
@@ -1030,7 +1026,8 @@ function CalculatorV3Content() {
                   </p>
                 </div>
               </div>
-              <div className="mb-4 flex flex-wrap gap-2">
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                {payload && <div className="mr-2">{layoutMapButton()}</div>}
                 <button
                   type="button"
                   onClick={handleGenerateBOM}
@@ -1163,17 +1160,12 @@ function CalculatorV3Content() {
         {layoutOpen && payload && (
           <div
             className={`absolute bottom-0 top-0 z-20 border-l border-brand-border bg-brand-card shadow-2xl ${
-              layoutFullscreen || mobileLayout ? "left-0 right-0" : "left-[min(560px,45vw)] right-0"
+              layoutFullscreen || mobileLayout ? "left-0 right-0" : ""
             }`}
+            style={layoutFullscreen || mobileLayout ? undefined : { left: runPaneWidth + 6, right: 0 }}
           >
             <div className="flex h-full min-h-0 flex-col">
-              <div className="flex items-center justify-between border-b border-brand-border px-4 py-3">
-                <div>
-                  <p className="text-sm font-semibold text-brand-text">Layout map</p>
-                  <p className="text-xs text-brand-muted">
-                    Draw runs, gates, and map underlay
-                  </p>
-                </div>
+              <div className="flex items-center gap-3 border-b border-brand-border px-4 py-3">
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
@@ -1191,6 +1183,14 @@ function CalculatorV3Content() {
                   >
                     {layoutFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
                   </button>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-brand-text">Layout map</p>
+                  <p className="text-xs text-brand-muted">
+                    Draw runs, gates, and map underlay
+                  </p>
+                </div>
+                <div className="ml-auto">
                   <button
                     type="button"
                     onClick={() => setLayoutOpen(false)}

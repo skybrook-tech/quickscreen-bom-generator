@@ -136,6 +136,12 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
   );
   const segmentLength = Number(seg.segmentWidthMm ?? 0);
   const panelCount = segmentLength > 0 ? Math.max(1, Math.ceil(segmentLength / maxSpacing)) : 0;
+  const panelWidthSummary =
+    panelCount <= 0
+      ? "0mm"
+      : panelCount === 1
+        ? `${Math.round(segmentLength)}mm`
+        : `${panelCount} x ${Math.round(segmentLength / panelCount)}mm`;
   const leftKind = String(segmentVariables[SEGMENT_TERMINATION_KEYS.leftKind] ?? "");
   const rightKind = String(segmentVariables[SEGMENT_TERMINATION_KEYS.rightKind] ?? "");
   const hasCornerPost =
@@ -323,7 +329,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
             ),
         },
         { label: "Panel Count", value: panelCount, changed: !isBayg && !sameValue(panelCount, masterPanelCount) },
-        { label: "Max Post Spacing", value: `${maxSpacing}mm`, changed: !isBayg && !sameValue(maxSpacing, masterMaxSpacing) },
+        { label: "Panel width", value: panelWidthSummary, changed: !isBayg && !sameValue(maxSpacing, masterMaxSpacing) },
         { label: "Corner post", value: boolLabel(hasCornerPost), changed: !isBayg && hasCornerPost !== masterHasCornerPost },
         { label: "End post", value: endPostCount, changed: !isBayg && !sameValue(endPostCount, masterEndPostCount) },
       ];
@@ -332,7 +338,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
   const summaryBits = [...summaryBitsBase, ...differenceBits];
   const visibleSettings = rawDifferenceBits.filter((item) => {
     if (item.label === "Height") return false;
-    if (isBayg && ["Post", "Mounting", "Panel Count", "Max Post Spacing", "Corner post", "End post"].includes(item.label)) {
+    if (isBayg && ["Post", "Mounting", "Panel Count", "Panel width", "Corner post", "End post"].includes(item.label)) {
       return false;
     }
     return true;
@@ -490,7 +496,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
       }}
       title="Double-click to edit options"
     >
-      <div className="grid grid-cols-[3.8rem_minmax(0,1fr)] gap-3 p-3">
+      <div className="grid grid-cols-[3.8rem_minmax(0,1fr)_2rem] gap-3 p-3">
         <div className="flex flex-col items-center justify-center gap-2">
           <button
             type="button"
@@ -525,39 +531,16 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
             <button
               type="button"
               onClick={onToggle}
-              className={`inline-flex h-8 w-8 items-center justify-center rounded-full border text-xs font-extrabold transition-colors ${
+              className={`inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border px-3 text-xs font-extrabold transition-colors ${
                 open
                   ? "border-brand-primary bg-brand-primary text-white"
                   : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
               }`}
-              aria-label={open ? "Collapse section settings" : "Expand section settings"}
-              title={open ? "Save settings and collapse" : "Open settings"}
+              aria-label={open ? (gate ? "Collapse gate settings" : "Collapse section settings") : (gate ? "Expand gate settings" : "Expand section settings")}
+              title={open ? "Save settings and collapse" : (gate ? "Open gate settings" : "Open section settings")}
             >
               <SlidersHorizontal size={16} />
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (!confirmRemove) {
-                  setConfirmRemove(true);
-                  return;
-                }
-                dispatch({
-                  type: "REMOVE_SEGMENT",
-                  runId,
-                  segmentId: seg.segmentId,
-                });
-              }}
-              onBlur={() => setConfirmRemove(false)}
-              className={`inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
-                confirmRemove
-                  ? "bg-brand-danger text-white hover:bg-brand-danger/90"
-                  : "text-brand-danger hover:bg-brand-danger/10 hover:text-brand-danger/90"
-              }`}
-              aria-label={confirmRemove ? "Click again to remove section" : "Remove section"}
-              title={confirmRemove ? "Click again to remove section" : "Remove section"}
-            >
-              <X size={16} strokeWidth={3} />
+              <span>{open ? "Save settings" : gate ? "Gate settings" : "Section settings"}</span>
             </button>
             </div>
           </div>
@@ -572,6 +555,32 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
             ))}
           </div>
 
+        </div>
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() => {
+              if (!confirmRemove) {
+                setConfirmRemove(true);
+                return;
+              }
+              dispatch({
+                type: "REMOVE_SEGMENT",
+                runId,
+                segmentId: seg.segmentId,
+              });
+            }}
+            onBlur={() => setConfirmRemove(false)}
+            className={`inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
+              confirmRemove
+                ? "bg-brand-danger text-white hover:bg-brand-danger/90"
+                : "text-brand-danger hover:bg-brand-danger/10 hover:text-brand-danger/90"
+            }`}
+            aria-label={confirmRemove ? "Click again to remove section" : "Remove section"}
+            title={confirmRemove ? "Click again to remove section" : "Remove section"}
+          >
+            <X size={16} strokeWidth={3} />
+          </button>
         </div>
       </div>
 

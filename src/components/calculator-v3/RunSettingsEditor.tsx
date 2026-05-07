@@ -30,6 +30,7 @@ const HIDDEN_FIELD_KEYS = new Set([
   "slat_stock_length_mm",
   "rail_stock_length_mm",
   "side_frame_stock_length_mm",
+  "louvre_treatment",
 ]);
 
 function shapeRunField(field: SchemaField, productCode: string): SchemaField | null {
@@ -115,6 +116,8 @@ export function RunSettingsEditor({ run }: Props) {
     ? variables.post_fixing_material_sku
     : getPreferredGroutSku();
   const substrate = String(variables.base_plate_substrate ?? "concrete");
+  const slatSize = Number(variables.slat_size_mm ?? 65);
+  const louvreEnabled = variables.louvre_treatment === true || variables.louvre_treatment === "true";
 
   useEffect(() => {
     if (run.variables?.post_fixing_material_sku) return;
@@ -323,6 +326,33 @@ export function RunSettingsEditor({ run }: Props) {
             Used for concreted-in posts at 1.5 bags per post.
           </span>
         </label>
+
+        {productCode === "QSHS" && (
+          <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
+            <input
+              type="checkbox"
+              checked={louvreEnabled && slatSize === 65}
+              disabled={slatSize !== 65}
+              onChange={(event) =>
+                updateRunVariables("louvre_treatment", event.target.checked)
+              }
+              className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
+            />
+            <span>
+              <span className="block text-sm font-extrabold text-brand-text">
+                Louvre treatment
+              </span>
+              <span className="mt-1 block text-xs font-semibold text-brand-muted">
+                40 degree slat angle. Available with 65mm slats.
+              </span>
+              {slatSize !== 65 && (
+                <span className="mt-1 block text-xs font-bold text-brand-warning">
+                  Switch run slats to 65mm to use louvre brackets.
+                </span>
+              )}
+            </span>
+          </label>
+        )}
 
         {mountingType === "base_plate" && (
           <label className="flex flex-col gap-1">
