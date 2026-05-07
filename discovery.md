@@ -1304,6 +1304,21 @@ Changes applied:
 Verification:
 - `npm run build` passed after the changes.
 
+### May 7, 2026 - Brief AF BOM polish
+
+Catalogue/audit finding:
+- The BOM panel needed to better communicate the flat-pack delivery model, show catalogue-page context, expose carton buying hints, and provide installer video links without changing pricing logic.
+
+Changes applied:
+- Added a line-items / cut-list toggle to the BOM result tabs. The cut-list view groups stock into Pack 1 long lengths, Pack 2 slats, and Pack 3 hardware/accessories, using existing BOM notes to show cut lengths where available.
+- Added `src/lib/cataloguePages.ts` so BOM SKUs show compact `p.N` catalogue chips. The chips currently provide page tooltips because no public hosted catalogue PDF URL has been locked in.
+- Added `src/lib/cartonQuantities.ts` so BOM rows near a carton threshold show how many more units reach the carton quantity and the approximate saving when seeded tier pricing supports it.
+- Added QR install-video cards using `qrcode.react`. They render in run headers and under the active BOM section for QSHS, VS, pedestrian gate, and sliding gate contexts.
+
+Verification:
+- `npm run build` passed after the changes.
+- Real phone-camera QR scanning was not performed inside Codex; the generated QR SVGs contain the placeholder install URLs from the brief and are visible in the browser/print BOM surface.
+
 ### May 7, 2026 - Brief AC concrete, grout, and fixing-kit choices
 
 Catalogue finding:

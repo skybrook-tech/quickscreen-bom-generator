@@ -13,6 +13,8 @@ import { Button } from "../shared/Button";
 import { SegmentRow } from "./SegmentRow";
 import { colourName } from "./ColourPalette";
 import { RunSettingsEditor } from "./RunSettingsEditor";
+import { InstallVideoQR } from "./InstallVideoQR";
+import type { InstallVideoKey } from "../../lib/installVideos";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 
@@ -58,6 +60,28 @@ export function RunCard({ run, runIdx }: Props) {
   const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
   const slatSize = Number(runVariables.slat_size_mm ?? 65);
   const slatGap = Number(runVariables.slat_gap_mm ?? 5);
+  const installVideoKeys = useMemo(() => {
+    const keys = new Set<InstallVideoKey>();
+    if (run.productCode === "QSHS") keys.add("QSHS");
+    if (run.productCode === "VS") keys.add("VS");
+    if (
+      run.segments.some((segment) => {
+        const movement = String(segment.variables?.gate_movement ?? "");
+        return segment.segmentKind === "gate_opening" && movement === "sliding";
+      })
+    ) {
+      keys.add("QS_GATE_SLIDE");
+    }
+    if (
+      run.segments.some((segment) => {
+        const movement = String(segment.variables?.gate_movement ?? "single_swing");
+        return segment.segmentKind === "gate_opening" && movement !== "sliding";
+      })
+    ) {
+      keys.add("QS_GATE_PED");
+    }
+    return [...keys];
+  }, [run.productCode, run.segments]);
 
   useEffect(() => {
     if (!confirmRemoveRun) return;
@@ -162,6 +186,19 @@ export function RunCard({ run, runIdx }: Props) {
       </div>
 
       <RunSettingsEditor run={run} />
+
+      {installVideoKeys.length > 0 && (
+        <details className="mb-3 rounded-xl border border-brand-border/70 bg-brand-bg/40 p-3">
+          <summary className="cursor-pointer text-xs font-extrabold uppercase tracking-wide text-brand-muted">
+            Install videos
+          </summary>
+          <div className="mt-3 flex flex-wrap gap-3">
+            {installVideoKeys.map((key) => (
+              <InstallVideoQR key={key} videoKey={key} compact />
+            ))}
+          </div>
+        </details>
+      )}
 
       {run.segments.length === 0 && (
         <p className="mb-3 text-xs italic text-brand-muted">
