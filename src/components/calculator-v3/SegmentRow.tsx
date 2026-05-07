@@ -112,6 +112,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     ...(seg.variables ?? {}),
   };
   const productCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
+  const isBayg = productCode === "BAYG";
   const heightEntries = run
     ? heightEntriesForSystem(run.productCode, segmentVariables)
     : [];
@@ -158,7 +159,9 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     `R${runIdx + 1}${gate ? "G" : "S"}${segIdx + 1}`;
   const titleLabel = gate
     ? `Run ${runIdx + 1} Gate ${segIdx + 1}`
-    : `Run ${runIdx + 1} Section ${segIdx + 1}`;
+    : isBayg
+      ? `Run ${runIdx + 1} Panel ${segIdx + 1}`
+      : `Run ${runIdx + 1} Section ${segIdx + 1}`;
   const matchesMaster = (() => {
     if (!run) return true;
     if (gate) {
@@ -212,7 +215,12 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
   const summaryBitsBase = [
     gate
       ? { label: "Width", value: `${segmentLength}mm`, emphasis: true }
-      : { label: "Length", value: `${(segmentLength / 1000).toFixed(2)}m`, emphasis: true },
+      : isBayg
+        ? { label: "Width", value: `${segmentLength}mm`, emphasis: true }
+        : { label: "Length", value: `${(segmentLength / 1000).toFixed(2)}m`, emphasis: true },
+    ...(isBayg && !gate
+      ? [{ label: "Qty", value: Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1))), emphasis: true }]
+      : []),
   ];
   const rawDifferenceBits = gate
     ? [
@@ -298,8 +306,9 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
           label: "Post",
           value: postLabel(productCode, segmentVariables),
           changed:
-            !sameValue(segmentVariables.post_system, masterVariables.post_system) ||
-            !sameValue(segmentVariables.post_size ?? 50, masterVariables.post_size ?? 50),
+            !isBayg &&
+            (!sameValue(segmentVariables.post_system, masterVariables.post_system) ||
+              !sameValue(segmentVariables.post_size ?? 50, masterVariables.post_size ?? 50)),
         },
         {
           label: "Mounting",
@@ -307,18 +316,27 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
             MOUNTING_LABELS[String(segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground")] ??
             "Concreted",
           changed:
-            !sameValue(segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground",
-              masterVariables.mounting_method ?? masterVariables.mounting_type ?? "in_ground"),
+            !isBayg &&
+            !sameValue(
+              segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground",
+              masterVariables.mounting_method ?? masterVariables.mounting_type ?? "in_ground",
+            ),
         },
-        { label: "Panel Count", value: panelCount, changed: !sameValue(panelCount, masterPanelCount) },
-        { label: "Max Post Spacing", value: `${maxSpacing}mm`, changed: !sameValue(maxSpacing, masterMaxSpacing) },
-        { label: "Corner post", value: boolLabel(hasCornerPost), changed: hasCornerPost !== masterHasCornerPost },
-        { label: "End post", value: endPostCount, changed: !sameValue(endPostCount, masterEndPostCount) },
+        { label: "Panel Count", value: panelCount, changed: !isBayg && !sameValue(panelCount, masterPanelCount) },
+        { label: "Max Post Spacing", value: `${maxSpacing}mm`, changed: !isBayg && !sameValue(maxSpacing, masterMaxSpacing) },
+        { label: "Corner post", value: boolLabel(hasCornerPost), changed: !isBayg && hasCornerPost !== masterHasCornerPost },
+        { label: "End post", value: endPostCount, changed: !isBayg && !sameValue(endPostCount, masterEndPostCount) },
       ];
   const differenceBits =
     matchesMaster ? [] : rawDifferenceBits.filter((item) => item.changed);
   const summaryBits = [...summaryBitsBase, ...differenceBits];
-  const visibleSettings = rawDifferenceBits.filter((item) => item.label !== "Height");
+  const visibleSettings = rawDifferenceBits.filter((item) => {
+    if (item.label === "Height") return false;
+    if (isBayg && ["Post", "Mounting", "Panel Count", "Max Post Spacing", "Corner post", "End post"].includes(item.label)) {
+      return false;
+    }
+    return true;
+  });
 
   function updateGeometry(
     key: "segmentWidthMm" | "targetHeightMm",
@@ -360,6 +378,16 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
               }),
               targetHeightMm: entry.height,
             },
+    });
+  }
+
+  function updatePanelQuantity(value: number) {
+    dispatch({
+      type: "UPSERT_SEGMENT",
+      runId,
+      segment: patchSegmentVariables(seg, {
+        panel_quantity: Math.max(1, Math.round(Number(value) || 1)),
+      }),
     });
   }
 
@@ -552,17 +580,17 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <label className="flex flex-col gap-1">
               <span className="text-sm font-bold text-brand-muted">
-                {gate ? "Width (mm)" : "Length (m)"}
+                {gate || isBayg ? "Width (mm)" : "Length (m)"}
               </span>
               <NumberInput
-                value={gate ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
-                step={gate ? 50 : 0.01}
+                value={gate || isBayg ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
+                step={gate || isBayg ? 50 : 0.01}
                 min={0}
                 className="w-28 px-2 py-1.5 text-center tabular-nums"
                 onChange={(v) =>
                   updateGeometry(
                     "segmentWidthMm",
-                    gate ? Math.round(Number(v)) : Math.round(Number(v) * 1000),
+                    gate || isBayg ? Math.round(Number(v)) : Math.round(Number(v) * 1000),
                   )
                 }
               />
@@ -610,6 +638,18 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
                 </select>
               )}
             </label>
+            {isBayg && !gate && (
+              <label className="flex flex-col gap-1">
+                <span className="text-sm font-bold text-brand-muted">Quantity</span>
+                <NumberInput
+                  value={Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1)))}
+                  step={1}
+                  min={1}
+                  className="w-24 px-2 py-1.5 text-center tabular-nums"
+                  onChange={(v) => updatePanelQuantity(Number(v))}
+                />
+              </label>
+            )}
           </div>
           {gateWidthValidation?.status === "warning" && (
             <div className="rounded-lg border border-brand-warning/40 bg-brand-warning/10 px-3 py-2 text-xs font-bold text-brand-warning">

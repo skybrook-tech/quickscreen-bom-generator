@@ -20,7 +20,7 @@ interface PendingGate {
 }
 
 const DEFAULT_GATE_WIDTH_FALLBACK = 900;
-type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text";
+type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar";
 
 interface FenceLayoutCanvasProps {
   onApplied?: (layout: CanvasLayout) => void;

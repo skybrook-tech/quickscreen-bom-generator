@@ -1275,10 +1275,15 @@ function calculateScreenRun(
     const actualHeightMm = Math.round(
       numSlats * (slatDesignWidth + slatGap) - slatGap + 3,
     );
+    const baygPanelQty = isBayg
+      ? Math.max(1, Math.round(toNumber(vars.panel_quantity, 1)))
+      : 1;
     const segmentMaxPanelWidth = clampPostSpacing(vars.max_panel_width_mm, maxPanelWidth);
-    const numPanels = Math.max(1, Math.ceil(segmentWidthMm / segmentMaxPanelWidth));
-    const panelWidthMm = segmentWidthMm / numPanels;
-    internalPanelPosts += Math.max(0, numPanels - 1);
+    const numPanels = isBayg
+      ? baygPanelQty
+      : Math.max(1, Math.ceil(segmentWidthMm / segmentMaxPanelWidth));
+    const panelWidthMm = isBayg ? segmentWidthMm : segmentWidthMm / numPanels;
+    if (!isBayg) internalPanelPosts += Math.max(0, numPanels - 1);
     const slatCutMm = Math.max(1, panelWidthMm - 15);
     const sideFrameCutMm = Math.max(1, actualHeightMm - 3);
     const csrCutMm = Math.max(1, actualHeightMm - 6);
@@ -1448,7 +1453,7 @@ function calculateScreenRun(
     }
   }
 
-  const postCount = runPostBoundaryCount(run) + internalPanelPosts;
+  const postCount = isBayg ? 0 : runPostBoundaryCount(run) + internalPanelPosts;
   const postHeight = toNumber(
     firstFenceSegment?.targetHeightMm ?? mergedRunVars.target_height_mm,
     1800,

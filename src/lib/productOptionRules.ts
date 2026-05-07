@@ -18,6 +18,7 @@ const SYSTEM_MAX_PANEL_WIDTH: Record<string, number> = {
   QSHS: 2600,
   VS: 2600,
   XPL: 2600,
+  BAYG: 3000,
 };
 
 export function maxPanelWidthForSystem(productCode: string | null | undefined) {
@@ -73,6 +74,7 @@ export function slatOptionsForSystem(productCode: string, variables: Variables) 
 
 export function gapOptionsForSystem(productCode: string) {
   if (productCode === "XPL") return [5, 9, 20];
+  if (productCode === "BAYG") return [5, 9, 20];
   if (productCode === "QSHS") return [5, 9, 12, 15, 20, 30];
   if (productCode === "VS") return [5, 9, 20];
   return [];

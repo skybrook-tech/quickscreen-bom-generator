@@ -29,6 +29,7 @@ export function RunListV3() {
           segmentKind: "panel",
           segmentWidthMm: 0,
           targetHeightMm: initialHeight,
+          variables: productCode === "BAYG" ? { panel_quantity: 1 } : undefined,
         },
       ],
       corners: [],

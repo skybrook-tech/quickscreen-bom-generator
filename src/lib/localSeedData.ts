@@ -936,7 +936,7 @@ export const localFenceProducts = localProducts.filter((product) => {
     .find((p) => p.system_type === product.system_type);
   return (
     seedProduct?.product_type !== "gate" &&
-    ["QSHS", "VS", "XPL"].includes(product.system_type)
+    ["QSHS", "VS", "XPL", "BAYG"].includes(product.system_type)
   );
 });
 

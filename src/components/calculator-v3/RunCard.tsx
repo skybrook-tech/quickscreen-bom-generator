@@ -24,7 +24,13 @@ interface Props {
 }
 
 const calcTotalLength = (run: CanonicalRun) =>
-  run.segments.reduce((acc, seg) => acc + (seg.segmentWidthMm ?? 0), 0);
+  run.segments.reduce((acc, seg) => {
+    const qty =
+      run.productCode === "BAYG" && seg.segmentKind !== "gate_opening"
+        ? Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1)))
+        : 1;
+    return acc + (seg.segmentWidthMm ?? 0) * qty;
+  }, 0);
 
 function firstFenceSegment(run: CanonicalRun) {
   return run.segments.find((segment) => segment.segmentKind !== "gate_opening");
@@ -84,6 +90,7 @@ export function RunCard({ run, runIdx }: Props) {
     }
     return [...keys];
   }, [run.productCode, run.segments]);
+  const isBayg = run.productCode === "BAYG";
 
   useEffect(() => {
     if (!confirmRemoveRun) return;
@@ -151,9 +158,9 @@ export function RunCard({ run, runIdx }: Props) {
       segmentId: crypto.randomUUID(),
       sortOrder: run.segments.length + 1,
       segmentKind: "panel",
-      segmentWidthMm: jobMax,
+      segmentWidthMm: isBayg ? 1000 : jobMax,
       targetHeightMm: Number(runVariables.target_height_mm ?? 1800),
-      variables: undefined,
+      variables: isBayg ? { panel_quantity: 1 } : undefined,
     });
   }
 
@@ -182,7 +189,7 @@ export function RunCard({ run, runIdx }: Props) {
           </span>
           <span className="flex flex-wrap gap-x-2.5 gap-y-1 text-sm text-brand-muted">
             <span>System Type: <strong className="text-brand-text">{run.productCode}</strong></span>
-            <span>Length: <strong className="text-brand-text">{runLengthM}m</strong></span>
+            <span>{isBayg ? "Total panel width" : "Length"}: <strong className="text-brand-text">{runLengthM}m</strong></span>
             <span>Height: <strong className="text-brand-text">{runHeight}mm</strong></span>
             <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
             <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
@@ -260,7 +267,7 @@ export function RunCard({ run, runIdx }: Props) {
               }
             />
           ))}
-        {run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
+        {!isBayg && run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
           <div className="pt-2">
             <p className="mb-2 flex items-center gap-2 text-sm font-bold text-brand-muted">
               <CheckCircle2 size={16} />
@@ -290,11 +297,13 @@ export function RunCard({ run, runIdx }: Props) {
 
       <div className="mt-3 flex flex-wrap justify-end gap-2">
         <Button onClick={addFenceSegment} icon={Plus} variant="ghost" size="small">
-          Add section
+          {isBayg ? "Add panel size" : "Add section"}
         </Button>
-        <Button onClick={addGateSegment} icon={Plus} variant="ghost" size="small">
-          Add gate
-        </Button>
+        {!isBayg && (
+          <Button onClick={addGateSegment} icon={Plus} variant="ghost" size="small">
+            Add gate
+          </Button>
+        )}
         <div ref={removeRunRef}>
           <Button
             onClick={() => {

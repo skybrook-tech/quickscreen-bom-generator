@@ -100,6 +100,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   const postSize = (displayVariables[SEGMENT_OPTION_KEYS.postSize] as string) ?? "";
   const isCustomPost = postSize === "custom";
   const slatSize = Number(displayVariables.slat_size_mm ?? 65);
+  const isBayg = productCode === "BAYG";
   const showLouvreSetting = productCode === "QSHS";
   const louvreEnabled = v.louvre_treatment === true || v.louvre_treatment === "true";
   const cornerControls = (["left", "right"] as const)
@@ -220,6 +221,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
   return (
     <div className="space-y-4">
+      {!isBayg && (
       <SettingsSection title="Post spacing" summary={`${effectiveMax}mm`} defaultOpen>
         <label className="flex flex-col gap-1">
           <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
@@ -238,6 +240,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
           />
         </label>
       </SettingsSection>
+      )}
 
           {optionFields.length > 0 ? (
             <SettingsSection title="Style overrides" summary={optionSummary || "Run defaults"}>
@@ -285,7 +288,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
             </SettingsSection>
           )}
 
-          <SettingsSection title="End conditions" summary="Left / right ends">
+      {!isBayg && (
+      <SettingsSection title="End conditions" summary="Left / right ends">
             <div className="grid gap-3 lg:grid-cols-2">
               <TerminationControl
                 runId={runId}
@@ -300,7 +304,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                 readOnly={rightEndReadOnly}
               />
             </div>
-          </SettingsSection>
+      </SettingsSection>
+      )}
 
           {cornerControls.length > 0 && (
             <SettingsSection title="Corners" summary={`${cornerControls.length} corner${cornerControls.length === 1 ? "" : "s"}`}>
@@ -354,7 +359,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
             </SettingsSection>
           )}
 
-          <SettingsSection title="Posts" summary={POST_SIZE_LABELS[postSize] ?? (postSize ? `${postSize}mm Post` : "Run default")}>
+      {!isBayg && (
+      <SettingsSection title="Posts" summary={POST_SIZE_LABELS[postSize] ?? (postSize ? `${postSize}mm Post` : "Run default")}>
             <label className="flex flex-col gap-1">
               <span className="text-sm font-bold text-brand-muted">Post type</span>
               <select
@@ -376,9 +382,10 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                 <option value="custom">Non-standard post</option>
               </select>
             </label>
-          </SettingsSection>
+      </SettingsSection>
+      )}
 
-      {isCustomPost && (
+      {!isBayg && isCustomPost && (
         <SettingsSection
           title="Custom post width"
           summary={`${v[SEGMENT_OPTION_KEYS.postWidthMm] ?? "Not set"}mm`}

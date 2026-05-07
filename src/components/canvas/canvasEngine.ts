@@ -41,6 +41,8 @@ export interface CanvasLayout {
   boundaries: CanvasSegment[];
   /** Free text notes placed by the user on the map. Ignored by canonicalAdapter. */
   textNotes?: CanvasTextNote[];
+  /** Existing posts and pillars placed as site context. Ignored by canonicalAdapter. */
+  siteMarkers?: CanvasSiteMarker[];
 }
 
 export interface CanvasEngineConfig {
@@ -82,6 +84,13 @@ export interface CanvasTextNote {
   height?: number;
 }
 
+export interface CanvasSiteMarker {
+  x: number;
+  y: number;
+  markerType: "post" | "pillar";
+  label?: string;
+}
+
 // ── Internal state types ──────────────────────────────────────────────────────
 
 interface Point {
@@ -114,7 +123,7 @@ interface GateMarker {
   swingDirection?: CanvasGateSwingDirection;
 }
 
-type Tool = "draw" | "gate" | "move" | "boundary" | "building" | "text";
+type Tool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar";
 
 type UndoAction =
   | { type: "ADD_POINT"; runIdx: number }
@@ -129,6 +138,8 @@ interface CanvasSnapshot {
   runs: Run[];
   scale: number;
   activeRunIdx: number;
+  textNotes: CanvasTextNote[];
+  siteMarkers: CanvasSiteMarker[];
 }
 
 interface RedoEntry {
@@ -539,6 +550,7 @@ export function initCanvasEngine(
   };
   let highlightedMapLabel: string | null = null;
   let textNotes: CanvasTextNote[] = [];
+  let siteMarkers: CanvasSiteMarker[] = [];
   let pendingTextNote: { start: Point; current: Point } | null = null;
   let mapImage: HTMLImageElement | null = null;
   let mapOpacity = 0.5;
@@ -636,6 +648,8 @@ export function initCanvasEngine(
       runs: cloneRuns(),
       scale,
       activeRunIdx,
+      textNotes: JSON.parse(JSON.stringify(textNotes)) as CanvasTextNote[],
+      siteMarkers: JSON.parse(JSON.stringify(siteMarkers)) as CanvasSiteMarker[],
     };
   }
 
@@ -643,6 +657,8 @@ export function initCanvasEngine(
     runs = JSON.parse(JSON.stringify(next.runs)) as Run[];
     scale = next.scale;
     activeRunIdx = next.activeRunIdx;
+    textNotes = JSON.parse(JSON.stringify(next.textNotes ?? [])) as CanvasTextNote[];
+    siteMarkers = JSON.parse(JSON.stringify(next.siteMarkers ?? [])) as CanvasSiteMarker[];
   }
 
   function pushUndo(action: UndoAction) {
@@ -825,6 +841,7 @@ export function initCanvasEngine(
       runs: runSummaries,
       boundaries,
       textNotes: [...textNotes],
+      siteMarkers: [...siteMarkers],
     };
   }
 
@@ -948,6 +965,7 @@ export function initCanvasEngine(
     }
 
     drawTextNotes();
+    drawSiteMarkers();
     drawPendingTextNote();
 
     // Preview line (while drawing)
@@ -1515,6 +1533,42 @@ export function initCanvasEngine(
     ctx.restore();
   }
 
+  function drawSiteMarkers() {
+    if (siteMarkers.length === 0) return;
+    ctx.save();
+    ctx.font = `900 ${13 / zoom}px Inter, system-ui, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    for (const marker of siteMarkers) {
+      const size = marker.markerType === "pillar" ? 18 / zoom : 14 / zoom;
+      ctx.lineWidth = 2 / zoom;
+      ctx.fillStyle =
+        marker.markerType === "pillar"
+          ? "rgba(245,158,11,0.22)"
+          : "rgba(16,185,129,0.22)";
+      ctx.strokeStyle = marker.markerType === "pillar" ? "#f59e0b" : "#10b981";
+      if (marker.markerType === "pillar") {
+        ctx.beginPath();
+        ctx.roundRect(marker.x - size / 2, marker.y - size / 2, size, size, 3 / zoom);
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.arc(marker.x, marker.y, size / 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      }
+      ctx.fillStyle = COLOR.label;
+      ctx.fillText(marker.markerType === "pillar" ? "P" : "EP", marker.x, marker.y);
+      if (marker.label) {
+        ctx.font = `800 ${11 / zoom}px Inter, system-ui, sans-serif`;
+        ctx.fillText(marker.label, marker.x, marker.y - size);
+        ctx.font = `900 ${13 / zoom}px Inter, system-ui, sans-serif`;
+      }
+    }
+    ctx.restore();
+  }
+
   function drawSegment(
     seg: Segment,
     hovered: boolean,
@@ -1983,6 +2037,28 @@ export function initCanvasEngine(
     if (tool === "text") {
       pendingTextNote = { start: canvasPt, current: canvasPt };
       scheduleRedraw();
+      return;
+    }
+
+    if (tool === "post" || tool === "pillar") {
+      const markerType = tool;
+      createLabelInput(
+        container,
+        screenPtDown,
+        markerType === "pillar" ? "Pillar" : "Existing post",
+        (value) => {
+          siteMarkers.push({
+            x: canvasPt.x,
+            y: canvasPt.y,
+            markerType,
+            label: value.trim() || (markerType === "pillar" ? "Pillar" : "Existing post"),
+          });
+          notifyChange();
+          scheduleRedraw();
+        },
+        () => scheduleRedraw(),
+        180,
+      );
       return;
     }
 
@@ -2549,7 +2625,7 @@ export function initCanvasEngine(
   function setTool(t: Tool) {
     tool = t;
     if (t !== "text") pendingTextNote = null;
-    if (t === "draw" || t === "boundary" || t === "building" || t === "text") {
+    if (t === "draw" || t === "boundary" || t === "building" || t === "text" || t === "post" || t === "pillar") {
       canvas.style.cursor = "crosshair";
     } else if (t === "move") {
       canvas.style.cursor = "grab";
@@ -2589,6 +2665,7 @@ export function initCanvasEngine(
     });
     runs = [];
     textNotes = [];
+    siteMarkers = [];
     activeRunIdx = -1;
     notifyChange();
     scheduleRedraw();
@@ -2879,6 +2956,8 @@ export function initCanvasEngine(
         : preservedBoundaries;
     const nextTextNotes =
       layout.textNotes && layout.textNotes.length > 0 ? layout.textNotes : textNotes;
+    const nextSiteMarkers =
+      layout.siteMarkers && layout.siteMarkers.length > 0 ? layout.siteMarkers : siteMarkers;
 
     // Group flat segments into runs using totalLengthM as slice boundaries
     let segIdx = 0;
@@ -2946,6 +3025,7 @@ export function initCanvasEngine(
 
     runs = newRuns;
     textNotes = [...nextTextNotes];
+    siteMarkers = [...nextSiteMarkers];
     activeRunIdx = -1;
     undoStack = [];
     redoStack = [];

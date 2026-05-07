@@ -223,25 +223,32 @@ export function RunSettingsEditor({ run }: Props) {
         ...run,
         productCode: nextProductCode,
         variables: nextVariables,
-        segments: run.segments.map((segment) => ({
-          ...segment,
-          targetHeightMm: Number(nextVariables.target_height_mm ?? segment.targetHeightMm ?? 1800),
-          variables:
-            segment.segmentKind === "gate_opening"
-              ? {
-                  ...(segment.variables ?? {}),
-                  [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
-                    gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]),
-                    nextProductCode === "VS",
-                  ),
-                  [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(nextVariables.target_height_mm ?? segment.targetHeightMm ?? 1800),
-                  [GATE_SEGMENT_STUB_KEYS.colourCode]: String(nextVariables.colour_code ?? "B"),
-                  [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(nextVariables.slat_size_mm ?? 65),
-                  [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(nextVariables.slat_gap_mm ?? 9),
-                  [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(nextVariables.post_size ?? 50),
-                }
-              : segment.variables,
-        })),
+        segments: run.segments
+          .filter((segment) => nextProductCode !== "BAYG" || segment.segmentKind !== "gate_opening")
+          .map((segment) => ({
+            ...segment,
+            targetHeightMm: Number(nextVariables.target_height_mm ?? segment.targetHeightMm ?? 1800),
+            variables:
+              segment.segmentKind === "gate_opening"
+                ? {
+                    ...(segment.variables ?? {}),
+                    [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
+                      gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]),
+                      nextProductCode === "VS",
+                    ),
+                    [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(nextVariables.target_height_mm ?? segment.targetHeightMm ?? 1800),
+                    [GATE_SEGMENT_STUB_KEYS.colourCode]: String(nextVariables.colour_code ?? "B"),
+                    [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(nextVariables.slat_size_mm ?? 65),
+                    [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(nextVariables.slat_gap_mm ?? 9),
+                    [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(nextVariables.post_size ?? 50),
+                  }
+                : {
+                    ...(segment.variables ?? {}),
+                    ...(nextProductCode === "BAYG" && segment.variables?.panel_quantity == null
+                      ? { panel_quantity: 1 }
+                      : {}),
+                  },
+          })),
       },
     });
   }
@@ -295,6 +302,7 @@ export function RunSettingsEditor({ run }: Props) {
           </details>
         ))}
       </div>
+      {productCode !== "BAYG" && (
       <div className="mt-3 grid gap-3 rounded-2xl border border-brand-border/60 bg-brand-card/70 p-3 md:grid-cols-2">
         <label className="flex flex-col gap-1">
           <span className="text-sm font-bold text-brand-muted">Post-fixing material</span>
@@ -335,6 +343,7 @@ export function RunSettingsEditor({ run }: Props) {
           </label>
         )}
       </div>
+      )}
     </div>
   );
 }

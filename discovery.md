@@ -35,6 +35,28 @@ Verification:
 
 ---
 
+## May 7, 2026 - BAY-G panel workflow and launch screen pass
+
+Catalogue/seed finding:
+- BAY-G is a buy-as-you-go infill-screen workflow for screens between existing walls, posts, or pillars. It should not behave like a normal post-and-gate fence run.
+- Existing seed data already included BAY-G variables and local BOM support, but the active fence selector filtered it out.
+- BAY-G spacer handling differs from packed QSHS spacers: the fallback engine emits individual spacers for BAY-G rather than 50-packs.
+
+Changes applied:
+- Restored BAY-G in the system selector with the label `BAY-G - Infill Screens`.
+- BAY-G runs now add panel-size groups where each group has width, height, and quantity.
+- BAY-G hides gate controls and post controls in the run/section UI, and the local fallback BOM suppresses post and post-fixing lines.
+- The opening calculator state now uses a branded Glass Outlet intro screen with only three ways to begin: choose a system, open the map, or enter a job name.
+- The layout map CTA now uses a drawing-tool style icon and stronger visual treatment.
+- Gate settings now use collapsible sections like section settings.
+- The map toolbar is grouped into Draw, Site, Actions, and View. Site tools now include existing post and pillar markers for drawing wall/post context.
+
+Verification:
+- `npm run build` passed after the changes.
+- Chrome smoke test confirmed intro render, BAY-G selection, BAY-G panel quantity UI, hidden BAY-G gate control, BAY-G BOM generation, grouped map toolbar, text note placement, and existing-post placement.
+
+---
+
 ## Phase 1 — Knowledge Extraction
 
 ### What we started with

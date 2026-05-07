@@ -25,11 +25,12 @@ import {
   HelpCircle,
   Keyboard,
   Loader2,
-  Map as MapIcon,
   Maximize2,
   Minimize2,
+  PencilRuler,
   Printer,
   Save,
+  Sparkles,
   Trash2,
   X,
 } from "lucide-react";
@@ -179,6 +180,7 @@ function CalculatorV3Content() {
   const [mobileTab, setMobileTab] = useState<"run" | "bom" | "map">("run");
   const [layoutOpen, setLayoutOpen] = useState(false);
   const [layoutFullscreen, setLayoutFullscreen] = useState(false);
+  const [introDismissed, setIntroDismissed] = useState(false);
   const [includeMapInBomPrint, setIncludeMapInBomPrint] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [confirmClearJob, setConfirmClearJob] = useState(false);
@@ -232,18 +234,22 @@ function CalculatorV3Content() {
       type="button"
       onClick={() => {
         if (!layoutOpen) onBeforeOpen?.();
+        setIntroDismissed(true);
         setLayoutOpen((open) => !open);
         if (mobileLayout) setMobileTab("map");
       }}
-      className={`inline-flex items-center gap-2.5 rounded-lg border px-4 py-3 text-sm font-extrabold transition-colors hover:shadow-sm ${
+      className={`group relative inline-flex items-center gap-3 overflow-hidden rounded-2xl border px-4 py-3 text-sm font-black transition-all hover:-translate-y-0.5 hover:shadow-md ${
         layoutOpen
           ? "border-brand-primary bg-brand-primary text-white hover:bg-brand-primary/90"
           : "border-brand-primary/40 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white"
       }`}
       title={layoutOpen ? "Minimize layout map" : "Open layout map"}
     >
-      <MapIcon size={22} strokeWidth={2.5} />
-      {layoutOpen ? "Minimize layout map" : "Open layout map"}
+      <span className="absolute inset-0 bg-white/0 transition-colors group-hover:bg-white/10" />
+      <span className="relative grid h-9 w-9 place-items-center rounded-xl bg-white/15">
+        <PencilRuler size={22} strokeWidth={2.5} />
+      </span>
+      <span className="relative">{layoutOpen ? "Minimize layout map" : "Draw layout map"}</span>
     </button>
   );
 
@@ -745,7 +751,13 @@ function CalculatorV3Content() {
       ...(run.variables ?? {}),
     };
     const lengthM = run.segments.reduce(
-      (sum, segment) => sum + Number(segment.segmentWidthMm ?? 0),
+      (sum, segment) => {
+        const qty =
+          run.productCode === "BAYG" && segment.segmentKind !== "gate_opening"
+            ? Math.max(1, Math.round(Number(segment.variables?.panel_quantity ?? 1)))
+            : 1;
+        return sum + Number(segment.segmentWidthMm ?? 0) * qty;
+      },
       0,
     ) / 1000;
     return [
@@ -765,9 +777,65 @@ function CalculatorV3Content() {
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
+  const showIntro = !payload && !introDismissed && !layoutOpen && !jobName.trim();
 
   return (
     <AppShell>
+      {showIntro ? (
+        <div className="relative min-h-full overflow-hidden bg-brand-bg text-brand-text">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.35),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(16,185,129,0.28),transparent_24%),radial-gradient(circle_at_50%_80%,rgba(245,158,11,0.18),transparent_30%)]" />
+          <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:44px_44px]" />
+          <div className="relative mx-auto flex min-h-full max-w-6xl flex-col items-center justify-center gap-8 px-5 py-12 text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-brand-primary/40 bg-brand-card/80 px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-brand-primary shadow-md">
+              <Sparkles size={16} />
+              Powered by Sky Brooke AI
+            </div>
+            <div className="space-y-3">
+              <h1 className="text-5xl font-black tracking-normal text-white sm:text-7xl lg:text-8xl">
+                The Glass Outlet
+              </h1>
+              <p className="mx-auto max-w-2xl text-base font-semibold text-brand-muted sm:text-lg">
+                Start with a system, sketch the job, or name the quote. The calculator opens as soon as you make the first move.
+              </p>
+            </div>
+            <div className="grid w-full max-w-5xl gap-4 rounded-3xl border border-brand-border/70 bg-brand-card/80 p-5 text-left shadow-2xl backdrop-blur md:grid-cols-[1.2fr_0.9fr]">
+              <div className="rounded-2xl border border-brand-border/70 bg-brand-bg/70 p-4">
+                <ProductSelectV3
+                  mapAction={(selectDefaultProduct) =>
+                    layoutMapButton(() => {
+                      setIntroDismissed(true);
+                      selectDefaultProduct();
+                    })
+                  }
+                />
+              </div>
+              <div className="space-y-4 rounded-2xl border border-brand-border/70 bg-brand-bg/70 p-4">
+                <label className="block">
+                  <span className="mb-2 block text-sm font-black text-brand-muted">Job name</span>
+                  <input
+                    type="text"
+                    value={jobName}
+                    onChange={(event) => {
+                      setJobName(event.target.value);
+                      if (event.target.value.trim()) setIntroDismissed(true);
+                    }}
+                    placeholder="12 Smith St screens"
+                    className="w-full rounded-2xl border border-brand-border bg-brand-card px-4 py-3 text-lg font-black text-brand-text shadow-sm outline-none transition-colors focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setIntroDismissed(true)}
+                  className="w-full rounded-2xl border border-brand-border px-4 py-3 text-sm font-black text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+                >
+                  Open workspace without choosing yet
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
       <div
         className="relative flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row"
       >
@@ -1218,6 +1286,8 @@ function CalculatorV3Content() {
             </dl>
           </div>
         </div>
+      )}
+        </>
       )}
     </AppShell>
   );

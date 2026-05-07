@@ -1,8 +1,10 @@
 import {
   Pencil,
   Building2,
+  CircleDot,
   Type,
   GitMerge,
+  Landmark,
   Move,
   Undo2,
   Redo2,
@@ -19,7 +21,7 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
 
 type Engine = ReturnType<typeof initCanvasEngine>;
-type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text";
+type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar";
 
 interface CanvasToolbarProps {
   engineRef: RefObject<Engine | null>;
@@ -80,8 +82,9 @@ export function CanvasToolbar({
     "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50 transition-colors";
 
   return (
-    <div className="flex flex-wrap items-center gap-2 p-2 bg-brand-card">
-      {/* Tool selector */}
+    <div className="flex flex-wrap items-center gap-3 p-2 bg-brand-card">
+      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
+        <span className="text-[10px] font-black uppercase tracking-wide text-brand-muted">Draw</span>
       <button
         type="button"
         title="Draw fence run"
@@ -106,6 +109,10 @@ export function CanvasToolbar({
       >
         <Move size={16} /> Move / Edit
       </button>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
+        <span className="text-[10px] font-black uppercase tracking-wide text-brand-muted">Site</span>
       <button
         type="button"
         title="Draw a non-product boundary line (existing fence, wall, property line)"
@@ -124,16 +131,32 @@ export function CanvasToolbar({
       </button>
       <button
         type="button"
+        title="Place an existing post marker"
+        className={btnCls(activeTool === "post")}
+        onClick={() => handleTool("post")}
+      >
+        <CircleDot size={16} /> Existing post
+      </button>
+      <button
+        type="button"
+        title="Place an existing pillar marker"
+        className={btnCls(activeTool === "pillar")}
+        onClick={() => handleTool("pillar")}
+      >
+        <Landmark size={16} /> Pillar
+      </button>
+      <button
+        type="button"
         title="Place a text note on the map"
         className={btnCls(activeTool === "text")}
         onClick={() => handleTool("text")}
       >
         <Type size={16} /> Text
       </button>
+      </div>
 
-      <div className="w-px h-4 bg-brand-border" />
-
-      {/* Actions */}
+      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
+        <span className="text-[10px] font-black uppercase tracking-wide text-brand-muted">Actions</span>
       <button
         ref={clearButtonRef}
         type="button"
@@ -191,10 +214,10 @@ export function CanvasToolbar({
       >
         <RotateCcw size={16} /> Reset View
       </button>
+      </div>
 
-      <div className="w-px h-4 bg-brand-border" />
-
-      {/* Snap toggle */}
+      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
+        <span className="text-[10px] font-black uppercase tracking-wide text-brand-muted">View</span>
       <label className="flex items-center gap-1.5 text-xs text-brand-muted cursor-pointer">
         <input
           type="checkbox"
@@ -246,6 +269,7 @@ export function CanvasToolbar({
         {expanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
         {expanded ? "Collapse" : "Expand"}
       </button>
+      </div>
       <button
         type="button"
         onClick={onHelpOpen}

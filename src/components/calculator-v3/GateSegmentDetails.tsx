@@ -36,6 +36,7 @@ import NumberInput from "../shared/NumberInput";
 import { useProductSearch } from "../../hooks/useProductSearch";
 import { ColourPalette } from "./ColourPalette";
 import { priceForSku } from "../../lib/localBomCalculator";
+import type { ReactNode } from "react";
 
 const GATE_POST_SIZE_OPTIONS: GateOption[] = [
   { value: "50", label: "50mm Post Standard" },
@@ -218,6 +219,49 @@ function statusLabel(status: GateHardwareStatus) {
   if (status === "fit") return "Fits";
   if (status === "tight") return "Tight fit";
   return "Does not fit";
+}
+
+function rankedLabel<T extends { sku: string; label: string }>(
+  options: Array<RankedHardware<T>>,
+  value: string,
+) {
+  const match = options.find((option) => option.effectiveSku === value || option.sku === value);
+  return match?.label ?? value;
+}
+
+function GateSettingsSection({
+  title,
+  summary,
+  children,
+  defaultOpen = false,
+}: {
+  title: string;
+  summary?: string;
+  children: ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <div className="rounded-2xl border border-brand-border/50 bg-brand-bg/60">
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm font-extrabold text-brand-text"
+      >
+        <span>{title}</span>
+        <span className="flex min-w-0 items-center gap-2 text-xs font-bold text-brand-primary">
+          {!open && summary ? (
+            <span className="max-w-[12rem] truncate rounded-full bg-brand-card px-2 py-0.5 text-brand-muted">
+              {summary}
+            </span>
+          ) : null}
+          <span>{open ? "Hide" : "Show"}</span>
+        </span>
+      </button>
+      {open && <div className="space-y-3 border-t border-brand-border/50 p-3">{children}</div>}
+    </div>
+  );
 }
 
 function GateWeightCard({ estimate }: { estimate: GateWeightEstimate }) {
@@ -570,7 +614,11 @@ export function GateSegmentDetails({ runId, seg }: Props) {
 
   return (
     <div className="space-y-4 text-sm font-semibold">
-      <div className="space-y-3 rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
+      <GateSettingsSection
+        title="Gate basics"
+        summary={`${optionLabel(GATE_MOVEMENTS, movement)} / ${Number(seg.segmentWidthMm ?? 0)}mm wide`}
+        defaultOpen
+      >
         <OptionPills
           label="Gate type"
           value={movement}
@@ -644,10 +692,13 @@ export function GateSegmentDetails({ runId, seg }: Props) {
           />
           <span className="text-brand-muted">Use gate posts as fence termination posts</span>
         </label>
-      </div>
+      </GateSettingsSection>
 
       {isSwing ? (
-        <div className="space-y-3 rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
+        <GateSettingsSection
+          title="Swing hardware"
+          summary={`${rankedLabel(rankedHinges, currentHingeValue)} / ${rankedLabel(rankedLatches, currentLatchValue)}`}
+        >
           <GateWeightCard estimate={weightEstimate} />
           <HingePicker
             value={currentHingeValue}
@@ -721,9 +772,12 @@ export function GateSegmentDetails({ runId, seg }: Props) {
             options={GATE_STOP_OPTIONS}
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gateStopType]: value })}
           />
-        </div>
+        </GateSettingsSection>
       ) : (
-        <div className="space-y-3 rounded-2xl border border-brand-border/50 bg-brand-bg/60 p-3">
+        <GateSettingsSection
+          title="Sliding hardware"
+          summary={`${String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")} / ${automationEnabled ? "Automation on" : "Manual"}`}
+        >
           <HardwareDropdown
             label="Track"
             value={String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")}
@@ -844,9 +898,9 @@ export function GateSegmentDetails({ runId, seg }: Props) {
                   </p>
                 </div>
               </div>
-            )}
+              )}
           </div>
-        </div>
+        </GateSettingsSection>
       )}
 
     </div>

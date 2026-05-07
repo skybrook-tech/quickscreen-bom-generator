@@ -64,6 +64,8 @@ Latest Brief Z pass: fence section settings now include left/right end-condition
 
 Latest sidebar and mapper usability pass: run settings now collapse independently with auto-collapse after idle hover, run fields render as compact selected-value accordions, section cards have a stronger centered title and map-code bubble, section settings use compact collapsible groups without a separate advanced button, gate dimensions edit as millimetre widths, and the mapper text tool now supports dragging a note box before typing.
 
+Latest BAY-G and launch workflow pass: BAY-G is restored to the active system selector as an infill-screen workflow, BAY-G runs use width/height/quantity panel groups with no gate/post controls and no post BOM lines, the calculator now opens on a branded Glass Outlet start screen, the layout-map CTA uses a drawing-oriented treatment, gate settings are grouped into collapsible sections, and the mapper toolbar now groups drawing/site/action/view tools with existing-post and pillar markers.
+
 ---
 
 ## Phases Overview
