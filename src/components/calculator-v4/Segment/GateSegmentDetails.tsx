@@ -514,8 +514,8 @@ export function GateSegmentDetails({ runId, seg, locked = false }: Props) {
     [movement, whiteFinish],
   );
 
-  const currentHingeValue = String(v.hinge_type ?? "TC-H-AT-HD-B");
-  const currentLatchValue = String(v.latch_sku ?? "LL-DL-KA");
+  const currentHingeValue = String(v.hinge_type ?? "ML-TL-TC-H-AT");
+  const currentLatchValue = String(v.latch_sku ?? "none");
   const currentHingeBase = baseHardwareSku(currentHingeValue);
   const currentLatchBase = baseHardwareSku(currentLatchValue);
 
@@ -615,11 +615,11 @@ export function GateSegmentDetails({ runId, seg, locked = false }: Props) {
       hinge_type:
         nextMovement === "sliding"
           ? "none"
-          : (v.hinge_type as string) ?? "TC-H-AT-HD-B",
+          : (v.hinge_type as string) ?? "ML-TL-TC-H-AT",
       latch_sku:
         nextMovement === "sliding"
           ? "none"
-          : (v.latch_sku as string) ?? "LL-DL-KA",
+          : (v.latch_sku as string) ?? "none",
       gate_stop_sku:
         nextMovement === "sliding" ? "none" : (v.gate_stop_sku as string) ?? "none",
       sliding_track_sku:
@@ -887,9 +887,14 @@ export function GateSegmentDetails({ runId, seg, locked = false }: Props) {
             value={currentHingeValue}
             options={rankedHinges}
             disabled={locked}
-            onChange={(value) =>
-              upsertVariables({ hinge_type: value, hardware_kit_sku: "" })
-            }
+            onChange={(value) => {
+              const isComboKit = ["ML-TL", "ML-TL-KF-H-FT", "ML-TL-TC-H-AT", "ML-TL-W"].includes(value);
+              upsertVariables({
+                hinge_type: value,
+                hardware_kit_sku: "",
+                latch_sku: isComboKit ? "none" : (v.latch_sku !== "none" ? (v.latch_sku as string) : "LL-DL-KA"),
+              });
+            }}
           />
           <LatchPicker
             value={currentLatchValue}
