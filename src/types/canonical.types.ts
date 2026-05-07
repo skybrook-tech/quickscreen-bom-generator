@@ -65,5 +65,5 @@ export interface CanonicalSegment {
 export interface CanonicalCorner {
   cornerId: string;
   afterSegmentId: string;
-  type: '90';
+  type: '90' | '135' | 'custom';
 }

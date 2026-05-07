@@ -41,6 +41,7 @@ import type {
   CanonicalCorner,
 } from '../../types/canonical.types';
 import {
+  classifyCorner,
   GATE_SEGMENT_STUB_KEYS,
   SEGMENT_TERMINATION_KEYS,
 } from '../../lib/segmentTermination';
@@ -71,15 +72,19 @@ function angleDelta(a: number, b: number): number {
   return diff > 180 ? 360 - diff : diff;
 }
 
-function nearestCornerDegrees(prev: CanvasSegment, next: CanvasSegment): 90 | 135 {
+function cornerInfo(prev: CanvasSegment, next: CanvasSegment): {
+  measured: number;
+  type: 'right' | 'obtuse' | 'custom';
+  degrees: 90 | 135 | number;
+  canonicalType: '90' | '135' | 'custom';
+} {
   const turn = angleDelta(prev.angleDeg, next.angleDeg);
   const interior = 180 - turn;
-  return Math.abs(interior - 135) < Math.min(
-    Math.abs(interior - 90),
-    Math.abs(interior - 180),
-  )
-    ? 135
-    : 90;
+  const measured = Math.round(interior);
+  const type = classifyCorner(measured);
+  if (type === 'right') return { measured, type, degrees: 90, canonicalType: '90' };
+  if (type === 'obtuse') return { measured, type, degrees: 135, canonicalType: '135' };
+  return { measured, type, degrees: measured, canonicalType: 'custom' };
 }
 
 // ---------------------------------------------------------------------------
@@ -202,6 +207,44 @@ function gateFractions(totalMm: number, gate: Pick<GateInSegment, 'positionOnSeg
     start: Math.max(0, gate.positionOnSegment - half),
     end: Math.min(1, gate.positionOnSegment + half),
   };
+}
+
+function mergeSegmentVariables(
+  previous: CanonicalSegment['variables'],
+  generated: CanonicalSegment['variables'],
+): CanonicalSegment['variables'] {
+  const merged = { ...(previous ?? {}), ...(generated ?? {}) };
+
+  for (const side of ['left', 'right'] as const) {
+    const manualKey =
+      side === 'left'
+        ? SEGMENT_TERMINATION_KEYS.leftCornerManual
+        : SEGMENT_TERMINATION_KEYS.rightCornerManual;
+    if (previous?.[manualKey] !== true) continue;
+
+    const keys =
+      side === 'left'
+        ? [
+            SEGMENT_TERMINATION_KEYS.leftKind,
+            SEGMENT_TERMINATION_KEYS.leftCornerDegrees,
+            SEGMENT_TERMINATION_KEYS.leftCornerMeasuredDegrees,
+            SEGMENT_TERMINATION_KEYS.leftCornerType,
+            SEGMENT_TERMINATION_KEYS.leftCornerManual,
+          ]
+        : [
+            SEGMENT_TERMINATION_KEYS.rightKind,
+            SEGMENT_TERMINATION_KEYS.rightCornerDegrees,
+            SEGMENT_TERMINATION_KEYS.rightCornerMeasuredDegrees,
+            SEGMENT_TERMINATION_KEYS.rightCornerType,
+            SEGMENT_TERMINATION_KEYS.rightCornerManual,
+          ];
+
+    for (const key of keys) {
+      if (previous[key] !== undefined) merged[key] = previous[key];
+    }
+  }
+
+  return Object.keys(merged).length ? merged : undefined;
 }
 
 function expandSegmentWithGates(
@@ -403,7 +446,7 @@ export function canvasLayoutToCanonical(
       // If there is a corner after this segment, record it
       if (cornerIndices.has(si) && canonSegments.length > 0) {
         const prevSegmentId = canonSegments[canonSegments.length - 1].segmentId;
-        const cornerDegrees = nearestCornerDegrees(
+        const corner = cornerInfo(
           slice.segments[si],
           slice.segments[si + 1],
         );
@@ -411,7 +454,10 @@ export function canvasLayoutToCanonical(
         prevSegment.variables = {
           ...(prevSegment.variables ?? {}),
           right_termination_kind: 'corner',
-          right_corner_degrees: cornerDegrees,
+          right_corner_degrees: corner.degrees,
+          right_corner_measured_degrees: corner.measured,
+          right_corner_type: corner.type,
+          right_corner_manual: false,
         };
         const cornerDesc = `corner:${slice.runIdx}:after:${si}`;
         const cornerId = stableIds[cornerDesc] ?? (() => {
@@ -422,7 +468,7 @@ export function canvasLayoutToCanonical(
         canonCorners.push({
           cornerId,
           afterSegmentId: prevSegmentId,
-          type: '90',
+          type: corner.canonicalType,
         });
       }
     }
@@ -499,7 +545,7 @@ export function mergeCanonicalPreservingSegmentMeta(
           if (!ps) return gs;
           return {
             ...gs,
-            variables: { ...(ps.variables ?? {}), ...(gs.variables ?? {}) },
+            variables: mergeSegmentVariables(ps.variables, gs.variables),
             targetHeightMm: gs.targetHeightMm ?? ps.targetHeightMm,
             gateProductCode: gs.gateProductCode ?? ps.gateProductCode,
           };

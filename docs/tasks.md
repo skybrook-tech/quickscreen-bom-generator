@@ -22,7 +22,7 @@ Latest workflow/UI correction: form-entered dimensions now center in the mapper 
 
 Latest segment clarity pass: segment and gate cards now show full beginner-friendly titles (`Run 1 Segment 1`, `Run 1 Gate 1`) alongside compact map codes (`R1S1`, `R1G1`) in bold black, the master-match check and confirmed dot sit in the left rail, max post spacing defaults to 2600mm with an editable 100-3000mm draft input, vertical slat runs can use custom gaps, and standard post labels now put the dimensions first.
 
-Latest Codex PR brief pass: Tier 6 Brief AA is complete. Economy 65mm slats now aggregate required stock lengths by run, order `XP-6500-E65-*` as packs of 96, show the pack note/waste prompt, block invalid 90mm economy combinations, and provide a BOM switch action to convert affected run sections to Standard slats.
+Latest Codex PR brief pass: Tier 6 Brief AB is complete. Canvas-derived corners now classify as 90 degree, 135 degree, or custom, section settings expose editable corner overrides, 135 degree corners emit the adapter plus screw pack, and custom angles produce a supplier-verification BOM warning line.
 
 Latest Brief I pass: the `/calculator` BOM hero now uses an editorial summary layout with the scoped total as the main typographic element, BOM rows show the active quantity-break tier, and rows close to the next seeded quantity break show how many more units are needed for the next tier.
 
@@ -357,6 +357,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Run/segment sidebar cleanup: run headings now show total posts, matching segment cards only show length/height, changed segment cards only show differing settings, and segment options open by double-clicking the card.
 - [x] Tier 1 Brief A foundation pass started: hardcoded primary/success/warning/danger colour utility classes replaced with brand tokens, Inter added as the app font, action buttons moved toward the 8px radius standard, and icon sizes normalized to 16/20px with the layout-map CTA kept at 22px.
 - [x] Tier 6 Brief AA: Economy 65mm slats now aggregate required stock lengths by run, order `XP-6500-E65-*` as packs of 96, show the pack note/waste prompt, block invalid 90mm economy combinations, and provide a BOM switch action to convert affected run sections to Standard slats.
+- [x] Tier 6 Brief AB: Canvas-derived corners now classify as 90 degree, 135 degree, or custom, section settings expose editable corner overrides, 135 degree corners emit the adapter plus screw pack, and custom angles produce a supplier-verification BOM warning line.
 - [x] Extra items panel — typeahead against existing SKUs (via `search-products`) + create-on-the-fly for one-off lines
 - [x] v2 retired — `CalculatorPage`, `src/components/calculator/*`, `useCalculatorBOM`, `useFenceProducts`, `calculate-bom-v2` edge function all deleted. `/` redirects to `/calculator`.
 - [ ] v1 (`/new`, `MainApp`, `calculate-bom`) removal — deferred to a future pass.

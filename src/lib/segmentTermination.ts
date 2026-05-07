@@ -24,9 +24,15 @@ export type LegacyBoundaryType =
 export const SEGMENT_TERMINATION_KEYS = {
   leftKind: "left_termination_kind",
   leftCornerDegrees: "left_corner_degrees",
+  leftCornerMeasuredDegrees: "left_corner_measured_degrees",
+  leftCornerType: "left_corner_type",
+  leftCornerManual: "left_corner_manual",
   leftNonSystemSubtype: "left_non_system_subtype",
   rightKind: "right_termination_kind",
   rightCornerDegrees: "right_corner_degrees",
+  rightCornerMeasuredDegrees: "right_corner_measured_degrees",
+  rightCornerType: "right_corner_type",
+  rightCornerManual: "right_corner_manual",
   rightNonSystemSubtype: "right_non_system_subtype",
 } as const;
 
@@ -144,4 +150,27 @@ export function cornerDegreesFromVars(
   if (raw === undefined || raw === null) return undefined;
   const n = typeof raw === "number" ? raw : Number(raw);
   return Number.isFinite(n) ? n : undefined;
+}
+
+export type CornerType = "right" | "obtuse" | "custom";
+
+export function classifyCorner(angleDeg: number): CornerType {
+  if (Math.abs(angleDeg - 90) <= 2) return "right";
+  if (Math.abs(angleDeg - 135) <= 5) return "obtuse";
+  return "custom";
+}
+
+export function cornerTypeFromVars(
+  vars: Record<string, string | number | boolean> | undefined,
+  side: "left" | "right",
+): CornerType | undefined {
+  const typeKey =
+    side === "left"
+      ? SEGMENT_TERMINATION_KEYS.leftCornerType
+      : SEGMENT_TERMINATION_KEYS.rightCornerType;
+  const rawType = vars?.[typeKey];
+  if (rawType === "right" || rawType === "obtuse" || rawType === "custom") return rawType;
+
+  const degrees = cornerDegreesFromVars(vars, side);
+  return degrees === undefined ? undefined : classifyCorner(degrees);
 }

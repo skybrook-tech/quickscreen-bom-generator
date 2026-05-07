@@ -1272,3 +1272,19 @@ Changes applied:
 Verification:
 - `npm run build` passed after the changes.
 - Source review confirmed the existing stock-length branch already uses 6500mm for economy and 6100mm for standard slats.
+
+### May 7, 2026 - Brief AB 135-degree angle adapter
+
+Catalogue finding:
+- QuickScreen 135-degree angle adapters are 6000mm stock lengths and are required when a section turns through an obtuse 135-degree corner rather than a normal 90-degree post corner.
+- The app already carried raw drawn geometry and had an older nearest-90/135 fallback, but it did not classify custom angles or add the adapter screw pack.
+
+Changes applied:
+- Added a shared corner classifier: 90 degrees within 2 degrees is `right`, 135 degrees within 5 degrees is `obtuse`, everything else is `custom`.
+- Canvas-to-canonical conversion now stores detected corner type, measured angle, and corner degree metadata on the preceding section.
+- Section settings now show a compact `Corners` editor when a corner exists, allowing the user to manually choose 90-degree, 135-degree adapter, or custom verification. Manual selections persist through live layout sync until the layout is reset.
+- Local fallback BOM now emits one 135-degree adapter and one colour-matched `XP-SCREWS-*` pack per 135-degree corner, with the adapter cut note tied to run/section height.
+- Custom angles emit a supplier-verification BOM line and warning instead of silently choosing the nearest standard corner.
+
+Verification:
+- `npm run build` passed after the changes.

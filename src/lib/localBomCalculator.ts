@@ -9,8 +9,10 @@ import { tierForSkuQuantity } from "./localPriceBreaks";
 import {
   GATE_SEGMENT_STUB_KEYS,
   cornerDegreesFromVars,
+  cornerTypeFromVars,
   effectiveLegacyBoundaryType,
   type LegacyBoundaryType,
+  type CornerType,
 } from "./segmentTermination";
 import { clampPostSpacing, maxPanelWidthForSystem } from "./productOptionRules";
 import {
@@ -175,13 +177,6 @@ function angleAdapterSkuFor(finishFamily: string, colour: string): string {
   return `XP-6000-135-${colour}`;
 }
 
-function nearestNamedCorner(degrees: number | undefined): 90 | 135 | undefined {
-  if (!degrees) return undefined;
-  return Math.abs(degrees - 135) < Math.min(Math.abs(degrees - 90), Math.abs(degrees - 180))
-    ? 135
-    : 90;
-}
-
 function postSkuFor(
   finishFamily: string,
   postSize: number,
@@ -277,6 +272,9 @@ function describeSku(sku: string, fallbackCategory: string): string {
   if (sku.startsWith("XP-6500-E65-")) {
     return `65mm Economy slat, no centre web, 6500mm stock${colourSuffix}`;
   }
+  if (sku === "CUSTOM-ANGLE-CORNER") {
+    return "Custom angle corner - supplier verification required";
+  }
   const description = component?.description ?? component?.name ?? `${fallbackCategory} - ${sku}`;
   return colourSuffix && !description.toLowerCase().includes(COLOUR_NAMES[colourCode].toLowerCase())
     ? `${description}${colourSuffix}`
@@ -289,6 +287,66 @@ function emit(
 ): void {
   if (!Number.isFinite(line.quantity) || line.quantity <= 0) return;
   lines.push({ ...line, quantity: Math.ceil(line.quantity) });
+}
+
+function cornerLabel(side: "left" | "right", segmentId: string) {
+  return `${side} corner on ${segmentId.slice(0, 8)}`;
+}
+
+function cornerTypeFromDegrees(degrees: number | undefined): CornerType | undefined {
+  if (degrees === undefined) return undefined;
+  if (Math.abs(degrees - 90) <= 2) return "right";
+  if (Math.abs(degrees - 135) <= 5) return "obtuse";
+  return "custom";
+}
+
+function emitCornerLines(
+  lines: QtyLine[],
+  warnings: string[],
+  base: { runId: string; segmentId: string },
+  vars: Record<string, string | number | boolean> | undefined,
+  side: "left" | "right",
+  finishFamily: string,
+  colour: string,
+  runHeightMm: number,
+) {
+  const explicitType = cornerTypeFromVars(vars, side);
+  const degrees = cornerDegreesFromVars(vars, side);
+  const type = explicitType ?? cornerTypeFromDegrees(degrees);
+  if (!type || type === "right") return;
+
+  const label = cornerLabel(side, base.segmentId);
+
+  if (type === "custom") {
+    const message = `Custom angle (${Math.round(degrees ?? 0)} degrees) at ${label} - verify components with supplier before ordering.`;
+    warnings.push(message);
+    emit(lines, {
+      ...base,
+      sku: "CUSTOM-ANGLE-CORNER",
+      category: "accessory",
+      quantity: 1,
+      unit: "each",
+      notes: message,
+    });
+    return;
+  }
+
+  emit(lines, {
+    ...base,
+    sku: angleAdapterSkuFor(finishFamily, colour),
+    category: "accessory",
+    quantity: 1,
+    unit: "length",
+    notes: `135 degree angle adapter - installed at ${label}, cut to ${Math.round(runHeightMm)}mm from stock`,
+  });
+  emit(lines, {
+    ...base,
+    sku: `XP-SCREWS-${standardAccessoryColour(colour)}`,
+    category: "screw",
+    quantity: 1,
+    unit: "pack",
+    notes: `Extra screws for 135 degree angle adapter at ${label}`,
+  });
 }
 
 function runPostBoundaryCount(run: CanonicalRun): number {
@@ -1066,17 +1124,8 @@ function calculateVerticalSlatRun(
       unit: "pack",
       notes: "Vertical slat fixing screws",
     });
-    const angleAdapterCount =
-      (nearestNamedCorner(leftCornerDeg) === 135 ? 1 : 0) +
-      (nearestNamedCorner(rightCornerDeg) === 135 ? 1 : 0);
-    emit(lines, {
-      ...base,
-      sku: angleAdapterSkuFor(finishFamily, colour),
-      category: "accessory",
-      quantity: angleAdapterCount,
-      unit: "length",
-      notes: "135 degree angle adapter for drawn corner",
-    });
+    emitCornerLines(lines, warnings, base, segment.variables, "left", finishFamily, colour, targetHeightMm);
+    emitCornerLines(lines, warnings, base, segment.variables, "right", finishFamily, colour, targetHeightMm);
 
     if (panelWidthMm > 2600) {
       warnings.push(
@@ -1319,17 +1368,8 @@ function calculateScreenRun(
       unit: "pack",
       notes: "Screening screws",
     });
-    const angleAdapterCount =
-      (nearestNamedCorner(leftCornerDeg) === 135 ? 1 : 0) +
-      (nearestNamedCorner(rightCornerDeg) === 135 ? 1 : 0);
-    emit(lines, {
-      ...base,
-      sku: angleAdapterSkuFor(finishFamily, colour),
-      category: "accessory",
-      quantity: angleAdapterCount,
-      unit: "length",
-      notes: "135 degree angle adapter for drawn corner",
-    });
+    emitCornerLines(lines, warnings, base, segment.variables, "left", finishFamily, colour, actualHeightMm);
+    emitCornerLines(lines, warnings, base, segment.variables, "right", finishFamily, colour, actualHeightMm);
 
     if (panelWidthMm > 2600) {
       warnings.push(
