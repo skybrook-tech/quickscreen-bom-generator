@@ -112,8 +112,62 @@ export function RunHeader({
     });
   }
 
+
+  const stats = [
+    {
+      icon: RulerDimensionLine,
+      tooltip: "Total length along this run",
+      ariaLabel: `Total length along this run: ${len} metres`,
+      value: len,
+      unit: "m",
+    },
+
+    {
+      icon: Fence,
+      tooltip: "Fence segments (spans) in this run",
+      ariaLabel: `Fence segments: ${summary.fenceSegmentCount}`,
+      value: summary.fenceSegmentCount,
+      unit: "spans",
+    },
+
+    {
+      icon: DoorOpen,
+      tooltip: "Gates in this run",
+      ariaLabel: `Gates: ${summary.gateCount}`,
+      value: summary.gateCount,
+      unit: "gates",
+    },
+
+    {
+      icon: GalleryHorizontalEnd,
+      tooltip: "Number of panels",
+      ariaLabel: `Panels: ${summary.panelCount}`,
+      value: summary.panelCount,
+      unit: "panels",
+    },
+
+    {
+      icon: StretchVertical,
+      tooltip: "Number of posts",
+      ariaLabel: `Posts: ${summary.postCount}`,
+      value: summary.postCount,
+      unit: "posts",
+    },
+
+    {
+      icon: CornerDownRight,
+      tooltip: "Number of corners",
+      ariaLabel: `Corners: ${summary.cornerCount}`,
+      value: summary.cornerCount,
+      unit: "corners",
+    },
+
+
+
+  ]
+
   return (
-    <div className="px-4 py-3 flex items-center gap-3 border-b border-brand-border">
+    <div className="px-4 py-3 flex items-center gap-3 ">
       <div className="flex-1 min-w-0 flex items-center flex-wrap gap-x-3 gap-y-1">
         <button
           type="button"
@@ -169,65 +223,29 @@ export function RunHeader({
           </div>
         </Tooltip>
 
-          <Tooltip content="Fence system / product code for this run">
-            <span
-              className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-brand-accent text-brand-bg font-medium cursor-default"
-              aria-label={`Fence system: ${systemCode}`}
-            >
-              <Tag size={ICON} className="shrink-0 opacity-90" aria-hidden />
-              <span className="font-mono">{systemCode}</span>
-            </span>
-          </Tooltip>
+        <Tooltip content="Fence system / product code for this run">
+          <span
+            className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-brand-accent text-brand-bg font-medium cursor-default"
+            aria-label={`Fence system: ${systemCode}`}
+          >
+            <Tag size={ICON} className="shrink-0 opacity-90" aria-hidden />
+            <span className="font-mono">{systemCode}</span>
+          </span>
+        </Tooltip>
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-          <Stat
-            icon={RulerDimensionLine}
-            tooltip="Total length along this run"
-            ariaLabel={`Total length along this run: ${len} metres`}
-          >
-            {len}m
-          </Stat>
+          {stats.filter((stat) => Number(stat.value) > 0).map((stat) => (
+            <Stat
+              key={stat.icon.name}
+              icon={stat.icon}
+              tooltip={stat.tooltip}
+              ariaLabel={stat.ariaLabel}
+              unitLabel={stat.unit}
+            >
+              {stat.value}
+            </Stat>
+          ))}
 
-          <Stat
-            icon={Fence}
-            tooltip="Fence segments (spans) in this run"
-            ariaLabel={`Fence segments: ${summary.fenceSegmentCount}`}
-            unitLabel="spans"
-          >
-            {summary.fenceSegmentCount}
-          </Stat>
-          <Stat
-            icon={DoorOpen}
-            tooltip="Gates in this run"
-            ariaLabel={`Gates: ${summary.gateCount}`}
-            unitLabel="gates"
-          >
-            {summary.gateCount}
-          </Stat>
-          <Stat
-            icon={GalleryHorizontalEnd}
-            tooltip="Number of panels"
-            ariaLabel={`Panels: ${summary.panelCount}`}
-            unitLabel="panels"
-          >
-            {summary.panelCount}
-          </Stat>
-          <Stat
-            icon={StretchVertical}
-            tooltip="Number of posts"
-            ariaLabel={`Posts: ${summary.postCount}`}
-            unitLabel="posts"
-          >
-            {summary.postCount}
-          </Stat>
-          <Stat
-            icon={CornerDownRight}
-            tooltip="Number of corners"
-            ariaLabel={`Corners: ${summary.cornerCount}`}
-            unitLabel="corners"
-          >
-            {summary.cornerCount}
-          </Stat>
         </div>
       </div>
 

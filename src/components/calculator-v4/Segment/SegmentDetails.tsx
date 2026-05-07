@@ -10,6 +10,7 @@ import NumberInput from "../../ui/NumberInput";
 import { Select } from "../../ui/Select";
 import { cn } from "../../../lib";
 import { ProductSelectV4 } from "../JobShell/ProductSelectV4";
+import { GateSegmentDetails } from "./GateSegmentDetails";
 
 const POST_SIZE_KEY = "post_size";
 const POST_WIDTH_MM_KEY = "post_width_mm";
@@ -112,6 +113,10 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
 
   const isFence = seg.kind === "fence";
 
+  if (seg.kind === "gate") {
+    return <GateSegmentDetails runId={runId} seg={seg} locked={locked} />;
+  }
+
   const lenMm = seg.segmentWidthMm ?? 0;
   const panelsForSpacing =
     effectiveMax > 0 && lenMm > 0
@@ -120,7 +125,6 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
   const actualPostSpacingMm =
     panelsForSpacing > 0 ? Math.round(lenMm / panelsForSpacing) : 0;
 
-    console.log("isMaster", isMaster);
   return (
     <div
       className={cn(

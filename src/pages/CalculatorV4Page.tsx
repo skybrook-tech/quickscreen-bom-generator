@@ -9,11 +9,10 @@ import { FenceConfigProvider } from "../context/FenceConfigContext";
 import { GateProvider } from "../context/GateContext";
 import { JobActions } from "../components/calculator-v4/JobShell/JobActions";
 import { JobShell } from "../components/calculator-v4/JobShell/JobShell";
-import { QuoteDetailsPanel } from "../components/calculator-v4/JobShell/QuoteDetailsPanel";
 import { RunList } from "../components/calculator-v4/RunCard/RunList";
 import { LayoutMapPane } from "../components/calculator-v4/LayoutMap/LayoutMapPane";
 import { LayoutSegmentHighlightProvider } from "../components/calculator-v4/LayoutMap/LayoutSegmentHighlightContext";
-import { GatePane } from "../components/calculator-v4/Gate/GatePane";
+import { useLayoutSegmentHighlight } from "../components/calculator-v4/LayoutMap/LayoutSegmentHighlightContext";
 import { BomPanel } from "../components/calculator-v4/Bom/BomPanel";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { ProductSelectV4 } from "../components/calculator-v4/JobShell/ProductSelectV4";
@@ -21,7 +20,7 @@ import {
   createInitialMasterFenceSegment,
   syncRunVariablesFromMaster,
 } from "../lib/masterFenceSegment";
-import type { CanonicalPayload } from "../types/canonical.types";
+import type { CanonicalPayload, CanonicalSegment } from "../types/canonical.types";
 
 /**
  * v4 calculator. Two-column layout: job/runs on the left, BOM on the right.
@@ -48,10 +47,8 @@ function CalculatorV4Content() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const layoutHl = useLayoutSegmentHighlight();
   const [layoutOpen, setLayoutOpen] = useState(false);
-  const [gateRunId, setGateRunId] = useState<string | null>(null);
-  const [gateEditingId, setGateEditingId] = useState<string | null>(null);
-  const gateOpen = gateRunId !== null;
 
   const errors = (state.bomResult?.errors as string[]) ?? [];
   const warnings = (state.bomResult?.warnings as string[]) ?? [];
@@ -106,8 +103,30 @@ function CalculatorV4Content() {
   const canGenerate = !!payload && !noSegments && !hasBlockingErrors;
 
   function handleAddGate(runId: string) {
-    setGateRunId(runId);
-    setGateEditingId(null);
+    const newSegmentId = crypto.randomUUID();
+    const run = state.payload?.runs.find((r) => r.runId === runId);
+    const newSegment: CanonicalSegment = {
+      segmentId: newSegmentId,
+      sortOrder: run?.segments.length ?? 0,
+      kind: "gate",
+      productCode: "QS_GATE",
+      segmentWidthMm: 900,
+      targetHeightMm: 1800,
+      leftTermination: { kind: "system" },
+      rightTermination: { kind: "system" },
+      variables: {
+        gate_movement: "single_swing",
+        gate_build: "qsg_hinged_horizontal",
+        gate_post_size_mm: "50",
+        opening_direction: "out",
+        hinge_type: "TC-H-AT-HD-B",
+        latch_sku: "LL-DL-KA",
+        drop_bolt_sku: "none",
+        gate_stop_sku: "none",
+      },
+    };
+    dispatch({ type: "UPSERT_SEGMENT", runId, segment: newSegment });
+    layoutHl?.requestOpenSegment(runId, newSegmentId);
   }
 
   return (
@@ -167,15 +186,6 @@ function CalculatorV4Content() {
         open={layoutOpen}
         onClose={() => setLayoutOpen(false)}
         onAddGate={handleAddGate}
-      />
-      <GatePane
-        open={gateOpen}
-        onClose={() => {
-          setGateRunId(null);
-          setGateEditingId(null);
-        }}
-        runId={gateRunId}
-        editingSegmentId={gateEditingId}
       />
     </AppShell>
   );

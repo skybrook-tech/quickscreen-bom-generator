@@ -19,7 +19,10 @@
         "default_layout_type": "single_gate",
         "target_height_ui": {
           "mode": "pitch_ladder",
-          "pitch_var_keys": ["slat_size_mm", "slat_gap_mm"]
+          "pitch_var_keys": [
+            "slat_size_mm",
+            "slat_gap_mm"
+          ]
         },
         "options": {
           "slat_size": [
@@ -45,7 +48,7 @@
   "product_components": [
     {
       "sku": "XP-6100-GB65-B",
-      "name": "Gate Blade 65mm 6100mm — Black Satin",
+      "name": "Gate Blade 65mm 6100mm \u2014 Black Satin",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -62,7 +65,7 @@
     },
     {
       "sku": "XP-6100-GB65-MN",
-      "name": "Gate Blade 65mm 6100mm — Monument Matt",
+      "name": "Gate Blade 65mm 6100mm \u2014 Monument Matt",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -79,7 +82,7 @@
     },
     {
       "sku": "XP-6100-GB65-G",
-      "name": "Gate Blade 65mm 6100mm — Woodland Grey Matt",
+      "name": "Gate Blade 65mm 6100mm \u2014 Woodland Grey Matt",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -96,7 +99,7 @@
     },
     {
       "sku": "XP-6100-GB65-SM",
-      "name": "Gate Blade 65mm 6100mm — Surfmist Matt",
+      "name": "Gate Blade 65mm 6100mm \u2014 Surfmist Matt",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -113,7 +116,7 @@
     },
     {
       "sku": "XP-6100-GB65-W",
-      "name": "Gate Blade 65mm 6100mm — Pearl White Gloss",
+      "name": "Gate Blade 65mm 6100mm \u2014 Pearl White Gloss",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -130,7 +133,7 @@
     },
     {
       "sku": "XP-6100-GB65-BS",
-      "name": "Gate Blade 65mm 6100mm — Basalt Satin",
+      "name": "Gate Blade 65mm 6100mm \u2014 Basalt Satin",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -147,7 +150,7 @@
     },
     {
       "sku": "XP-6100-GB65-D",
-      "name": "Gate Blade 65mm 6100mm — Dune Satin",
+      "name": "Gate Blade 65mm 6100mm \u2014 Dune Satin",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -164,7 +167,7 @@
     },
     {
       "sku": "XP-6100-GB65-M",
-      "name": "Gate Blade 65mm 6100mm — Mill",
+      "name": "Gate Blade 65mm 6100mm \u2014 Mill",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -181,7 +184,7 @@
     },
     {
       "sku": "XP-6100-GB65-P",
-      "name": "Gate Blade 65mm 6100mm — Primrose",
+      "name": "Gate Blade 65mm 6100mm \u2014 Primrose",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -198,7 +201,7 @@
     },
     {
       "sku": "XP-6100-GB65-PB",
-      "name": "Gate Blade 65mm 6100mm — Paperbark",
+      "name": "Gate Blade 65mm 6100mm \u2014 Paperbark",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -215,7 +218,7 @@
     },
     {
       "sku": "XP-6100-GB65-S",
-      "name": "Gate Blade 65mm 6100mm — Palladium Silver Pearl",
+      "name": "Gate Blade 65mm 6100mm \u2014 Palladium Silver Pearl",
       "description": "65mm horizontal gate blade, screw-fixed, 6100mm stock length",
       "category": "slat",
       "unit": "length",
@@ -232,7 +235,7 @@
     },
     {
       "sku": "XP-6100-HD6545-B",
-      "name": "HD Top/Bottom Rail 6100mm — Black Satin",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Black Satin",
       "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
       "category": "rail",
       "unit": "length",
@@ -248,7 +251,7 @@
     },
     {
       "sku": "XP-6100-HD6545-MN",
-      "name": "HD Top/Bottom Rail 6100mm — Monument Matt",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Monument Matt",
       "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
       "category": "rail",
       "unit": "length",
@@ -264,7 +267,7 @@
     },
     {
       "sku": "XP-6100-HD6545-G",
-      "name": "HD Top/Bottom Rail 6100mm — Woodland Grey Matt",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Woodland Grey Matt",
       "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
       "category": "rail",
       "unit": "length",
@@ -280,7 +283,7 @@
     },
     {
       "sku": "XP-6100-HD6545-SM",
-      "name": "HD Top/Bottom Rail 6100mm — Surfmist Matt",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Surfmist Matt",
       "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
       "category": "rail",
       "unit": "length",
@@ -296,7 +299,7 @@
     },
     {
       "sku": "XP-6100-HD6545-W",
-      "name": "HD Top/Bottom Rail 6100mm — Pearl White Gloss",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Pearl White Gloss",
       "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
       "category": "rail",
       "unit": "length",
@@ -312,7 +315,7 @@
     },
     {
       "sku": "XP-6100-HD6545-BS",
-      "name": "HD Top/Bottom Rail 6100mm — Basalt Satin",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Basalt Satin",
       "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
       "category": "rail",
       "unit": "length",
@@ -328,7 +331,7 @@
     },
     {
       "sku": "XP-6100-HD6545-D",
-      "name": "HD Top/Bottom Rail 6100mm — Dune Satin",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Dune Satin",
       "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
       "category": "rail",
       "unit": "length",
@@ -344,7 +347,7 @@
     },
     {
       "sku": "XP-6100-HD6545-M",
-      "name": "HD Top/Bottom Rail 6100mm — Mill",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Mill",
       "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
       "category": "rail",
       "unit": "length",
@@ -360,7 +363,7 @@
     },
     {
       "sku": "XP-6100-HD6545-P",
-      "name": "HD Top/Bottom Rail 6100mm — Primrose",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Primrose",
       "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
       "category": "rail",
       "unit": "length",
@@ -376,7 +379,7 @@
     },
     {
       "sku": "XP-6100-HD6545-PB",
-      "name": "HD Top/Bottom Rail 6100mm — Paperbark",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Paperbark",
       "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
       "category": "rail",
       "unit": "length",
@@ -392,7 +395,7 @@
     },
     {
       "sku": "XP-6100-HD6545-S",
-      "name": "HD Top/Bottom Rail 6100mm — Palladium Silver Pearl",
+      "name": "HD Top/Bottom Rail 6100mm \u2014 Palladium Silver Pearl",
       "description": "Heavy-duty top/bottom rail for QS gate, 6100mm stock length",
       "category": "rail",
       "unit": "length",
@@ -408,7 +411,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-B",
-      "name": "Gate Stop 4200mm — Black Satin",
+      "name": "Gate Stop 4200mm \u2014 Black Satin",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -424,7 +427,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-MN",
-      "name": "Gate Stop 4200mm — Monument Matt",
+      "name": "Gate Stop 4200mm \u2014 Monument Matt",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -440,7 +443,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-G",
-      "name": "Gate Stop 4200mm — Woodland Grey Matt",
+      "name": "Gate Stop 4200mm \u2014 Woodland Grey Matt",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -456,7 +459,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-SM",
-      "name": "Gate Stop 4200mm — Surfmist Matt",
+      "name": "Gate Stop 4200mm \u2014 Surfmist Matt",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -472,7 +475,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-W",
-      "name": "Gate Stop 4200mm — Pearl White Gloss",
+      "name": "Gate Stop 4200mm \u2014 Pearl White Gloss",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -488,7 +491,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-BS",
-      "name": "Gate Stop 4200mm — Basalt Satin",
+      "name": "Gate Stop 4200mm \u2014 Basalt Satin",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -504,7 +507,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-D",
-      "name": "Gate Stop 4200mm — Dune Satin",
+      "name": "Gate Stop 4200mm \u2014 Dune Satin",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -520,7 +523,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-M",
-      "name": "Gate Stop 4200mm — Mill",
+      "name": "Gate Stop 4200mm \u2014 Mill",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -536,7 +539,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-P",
-      "name": "Gate Stop 4200mm — Primrose",
+      "name": "Gate Stop 4200mm \u2014 Primrose",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side). Primrose exception pricing.",
       "category": "accessory",
       "unit": "length",
@@ -552,7 +555,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-PB",
-      "name": "Gate Stop 4200mm — Paperbark",
+      "name": "Gate Stop 4200mm \u2014 Paperbark",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side). Paperbark exception pricing.",
       "category": "accessory",
       "unit": "length",
@@ -568,7 +571,7 @@
     },
     {
       "sku": "XP-4200-GSTOP-S",
-      "name": "Gate Stop 4200mm — Palladium Silver Pearl",
+      "name": "Gate Stop 4200mm \u2014 Palladium Silver Pearl",
       "description": "Aluminium gate stop extrusion, 4200mm stock. 3 per gate (2 latch side + 1 hinge side).",
       "category": "accessory",
       "unit": "length",
@@ -584,7 +587,7 @@
     },
     {
       "sku": "ML-TL",
-      "name": "Magna Latch — Latch Only",
+      "name": "Magna Latch \u2014 Latch Only",
       "description": "Magna Latch top-latch, latch only (no hinge included)",
       "category": "hardware",
       "unit": "each",
@@ -636,7 +639,7 @@
     },
     {
       "sku": "XP-LBOX-DL-B",
-      "name": "Lock Box — Lockwood 001 Deadlatch — Black Satin",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Black Satin",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -652,7 +655,7 @@
     },
     {
       "sku": "XP-LBOX-DL-MN",
-      "name": "Lock Box — Lockwood 001 Deadlatch — Monument Matt",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Monument Matt",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -668,7 +671,7 @@
     },
     {
       "sku": "XP-LBOX-DL-G",
-      "name": "Lock Box — Lockwood 001 Deadlatch — Woodland Grey Matt",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Woodland Grey Matt",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -684,7 +687,7 @@
     },
     {
       "sku": "XP-LBOX-DL-SM",
-      "name": "Lock Box — Lockwood 001 Deadlatch — Surfmist Matt",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Surfmist Matt",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -700,7 +703,7 @@
     },
     {
       "sku": "XP-LBOX-DL-W",
-      "name": "Lock Box — Lockwood 001 Deadlatch — Pearl White Gloss",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Pearl White Gloss",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -716,7 +719,7 @@
     },
     {
       "sku": "XP-LBOX-DL-BS",
-      "name": "Lock Box — Lockwood 001 Deadlatch — Basalt Satin",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Basalt Satin",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -732,7 +735,7 @@
     },
     {
       "sku": "XP-LBOX-DL-D",
-      "name": "Lock Box — Lockwood 001 Deadlatch — Dune Satin",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Dune Satin",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -748,7 +751,7 @@
     },
     {
       "sku": "XP-LBOX-DL-M",
-      "name": "Lock Box — Lockwood 001 Deadlatch — Mill",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Mill",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -764,7 +767,7 @@
     },
     {
       "sku": "XP-LBOX-DL-P",
-      "name": "Lock Box — Lockwood 001 Deadlatch — Primrose",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Primrose",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -780,7 +783,7 @@
     },
     {
       "sku": "XP-LBOX-DL-PB",
-      "name": "Lock Box — Lockwood 001 Deadlatch — Paperbark",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Paperbark",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -796,7 +799,7 @@
     },
     {
       "sku": "XP-LBOX-DL-S",
-      "name": "Lock Box — Lockwood 001 Deadlatch — Palladium Silver Pearl",
+      "name": "Lock Box \u2014 Lockwood 001 Deadlatch \u2014 Palladium Silver Pearl",
       "description": "Lockwood 001 Deadlatch lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -812,7 +815,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-B",
-      "name": "Lock Box — Lever/Knob Lock Set — Black Satin",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Black Satin",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -828,7 +831,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-MN",
-      "name": "Lock Box — Lever/Knob Lock Set — Monument Matt",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Monument Matt",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -844,7 +847,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-G",
-      "name": "Lock Box — Lever/Knob Lock Set — Woodland Grey Matt",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Woodland Grey Matt",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -860,7 +863,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-SM",
-      "name": "Lock Box — Lever/Knob Lock Set — Surfmist Matt",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Surfmist Matt",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -876,7 +879,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-W",
-      "name": "Lock Box — Lever/Knob Lock Set — Pearl White Gloss",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Pearl White Gloss",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -892,7 +895,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-BS",
-      "name": "Lock Box — Lever/Knob Lock Set — Basalt Satin",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Basalt Satin",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -908,7 +911,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-D",
-      "name": "Lock Box — Lever/Knob Lock Set — Dune Satin",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Dune Satin",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -924,7 +927,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-M",
-      "name": "Lock Box — Lever/Knob Lock Set — Mill",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Mill",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -940,7 +943,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-P",
-      "name": "Lock Box — Lever/Knob Lock Set — Primrose",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Primrose",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -956,7 +959,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-PB",
-      "name": "Lock Box — Lever/Knob Lock Set — Paperbark",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Paperbark",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -972,7 +975,7 @@
     },
     {
       "sku": "XP-LBOX-LSET-S",
-      "name": "Lock Box — Lever/Knob Lock Set — Palladium Silver Pearl",
+      "name": "Lock Box \u2014 Lever/Knob Lock Set \u2014 Palladium Silver Pearl",
       "description": "Lever/Knob Lock Set lock box for QS gate",
       "category": "hardware",
       "unit": "each",
@@ -988,8 +991,8 @@
     },
     {
       "sku": "QSG-GATESF-65-B",
-      "name": "Gate Side Frame 65mm — Black Satin",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
+      "name": "Gate Side Frame 65mm \u2014 Black Satin",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1006,8 +1009,8 @@
     },
     {
       "sku": "QSG-GATESF-65-MN",
-      "name": "Gate Side Frame 65mm — Monument Matt",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
+      "name": "Gate Side Frame 65mm \u2014 Monument Matt",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1024,8 +1027,8 @@
     },
     {
       "sku": "QSG-GATESF-65-G",
-      "name": "Gate Side Frame 65mm — Woodland Grey Matt",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
+      "name": "Gate Side Frame 65mm \u2014 Woodland Grey Matt",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1042,8 +1045,8 @@
     },
     {
       "sku": "QSG-GATESF-65-SM",
-      "name": "Gate Side Frame 65mm — Surfmist Matt",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
+      "name": "Gate Side Frame 65mm \u2014 Surfmist Matt",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1060,8 +1063,8 @@
     },
     {
       "sku": "QSG-GATESF-65-W",
-      "name": "Gate Side Frame 65mm — Pearl White Gloss",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
+      "name": "Gate Side Frame 65mm \u2014 Pearl White Gloss",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1078,8 +1081,8 @@
     },
     {
       "sku": "QSG-GATESF-65-BS",
-      "name": "Gate Side Frame 65mm — Basalt Satin",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
+      "name": "Gate Side Frame 65mm \u2014 Basalt Satin",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1096,8 +1099,8 @@
     },
     {
       "sku": "QSG-GATESF-65-D",
-      "name": "Gate Side Frame 65mm — Dune Satin",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
+      "name": "Gate Side Frame 65mm \u2014 Dune Satin",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1114,8 +1117,8 @@
     },
     {
       "sku": "QSG-GATESF-65-M",
-      "name": "Gate Side Frame 65mm — Mill",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
+      "name": "Gate Side Frame 65mm \u2014 Mill",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1132,8 +1135,8 @@
     },
     {
       "sku": "QSG-GATESF-65-P",
-      "name": "Gate Side Frame 65mm — Primrose",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
+      "name": "Gate Side Frame 65mm \u2014 Primrose",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1150,8 +1153,8 @@
     },
     {
       "sku": "QSG-GATESF-65-PB",
-      "name": "Gate Side Frame 65mm — Paperbark",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
+      "name": "Gate Side Frame 65mm \u2014 Paperbark",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1168,8 +1171,8 @@
     },
     {
       "sku": "QSG-GATESF-65-S",
-      "name": "Gate Side Frame 65mm — Palladium Silver Pearl",
-      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV — price TBD.",
+      "name": "Gate Side Frame 65mm \u2014 Palladium Silver Pearl",
+      "description": "QSG gate side frame for 65mm slat spacing, replaces discontinued XP-4200-GSF. No pricing in CSV \u2014 price TBD.",
       "category": "gate_side_frame",
       "unit": "length",
       "default_price": null,
@@ -1186,8 +1189,8 @@
     },
     {
       "sku": "QSG-JBLOCK-65-4PK",
-      "name": "Joiner Block 65mm — 4 Pack",
-      "description": "Gate joiner blocks for 65mm slat gates, pack of 4. No pricing in CSV — price TBD.",
+      "name": "Joiner Block 65mm \u2014 4 Pack",
+      "description": "Gate joiner blocks for 65mm slat gates, pack of 4. No pricing in CSV \u2014 price TBD.",
       "category": "joiner_block",
       "unit": "pack",
       "default_price": null,
@@ -1203,8 +1206,8 @@
     },
     {
       "sku": "QSG-JBLOCK-90-4PK",
-      "name": "Joiner Block 90mm — 4 Pack",
-      "description": "Gate joiner blocks for 90mm slat gates, pack of 4. No pricing in CSV — price TBD.",
+      "name": "Joiner Block 90mm \u2014 4 Pack",
+      "description": "Gate joiner blocks for 90mm slat gates, pack of 4. No pricing in CSV \u2014 price TBD.",
       "category": "joiner_block",
       "unit": "pack",
       "default_price": null,
@@ -1220,8 +1223,8 @@
     },
     {
       "sku": "QSG-SC-10PK",
-      "name": "Gate Screw Covers — 10 Pack",
-      "description": "Screw covers for QS gate, pack of 10. No pricing in CSV — price TBD.",
+      "name": "Gate Screw Covers \u2014 10 Pack",
+      "description": "Screw covers for QS gate, pack of 10. No pricing in CSV \u2014 price TBD.",
       "category": "hardware",
       "unit": "pack",
       "default_price": null,
@@ -1236,8 +1239,8 @@
     },
     {
       "sku": "QSG-RS-10PK",
-      "name": "Gate Rail Screws — 10 Pack",
-      "description": "Rail screws for QS gate HD top/bottom rails, pack of 10. No pricing in CSV — price TBD.",
+      "name": "Gate Rail Screws \u2014 10 Pack",
+      "description": "Rail screws for QS gate HD top/bottom rails, pack of 10. No pricing in CSV \u2014 price TBD.",
       "category": "hardware",
       "unit": "pack",
       "default_price": null,
@@ -1253,7 +1256,7 @@
     {
       "sku": "QSG-FTC-50",
       "name": "Gate Frame Top Cap 50mm",
-      "description": "Gate side frame top cap, 50mm. 4 caps per gate. No pricing in CSV — price TBD.",
+      "description": "Gate side frame top cap, 50mm. 4 caps per gate. No pricing in CSV \u2014 price TBD.",
       "category": "accessory",
       "unit": "each",
       "default_price": null,
@@ -1269,7 +1272,7 @@
     {
       "sku": "QSG-FTC-65",
       "name": "Gate Frame Top Cap 65mm",
-      "description": "Gate side frame top cap, 65mm. 4 caps per gate. No pricing in CSV — price TBD.",
+      "description": "Gate side frame top cap, 65mm. 4 caps per gate. No pricing in CSV \u2014 price TBD.",
       "category": "accessory",
       "unit": "each",
       "default_price": null,
@@ -1284,7 +1287,7 @@
     },
     {
       "sku": "QSG-4800-RAIL65-B",
-      "name": "QSG Gate Rail 65mm 4800mm — Black Satin",
+      "name": "QSG Gate Rail 65mm 4800mm \u2014 Black Satin",
       "description": "4800mm top/bottom horizontal gate rail for 65mm (and 90mm) slats. Alloy. Non-weld joiner block assembly. Black Satin.",
       "category": "gate_rail",
       "unit": "length",
@@ -1299,7 +1302,7 @@
     },
     {
       "sku": "QSG-4800-RAIL65-MN",
-      "name": "QSG Gate Rail 65mm 4800mm — Monument Matt",
+      "name": "QSG Gate Rail 65mm 4800mm \u2014 Monument Matt",
       "description": "4800mm top/bottom horizontal gate rail for 65mm (and 90mm) slats. Alloy. Non-weld joiner block assembly. Monument Matt.",
       "category": "gate_rail",
       "unit": "length",
@@ -1314,7 +1317,7 @@
     },
     {
       "sku": "QSG-4800-RAIL65-G",
-      "name": "QSG Gate Rail 65mm 4800mm — Woodland Grey Matt",
+      "name": "QSG Gate Rail 65mm 4800mm \u2014 Woodland Grey Matt",
       "description": "4800mm top/bottom horizontal gate rail for 65mm (and 90mm) slats. Alloy. Non-weld joiner block assembly. Woodland Grey Matt.",
       "category": "gate_rail",
       "unit": "length",
@@ -1329,7 +1332,7 @@
     },
     {
       "sku": "QSG-4800-RAIL65-SM",
-      "name": "QSG Gate Rail 65mm 4800mm — Surfmist Matt",
+      "name": "QSG Gate Rail 65mm 4800mm \u2014 Surfmist Matt",
       "description": "4800mm top/bottom horizontal gate rail for 65mm (and 90mm) slats. Alloy. Non-weld joiner block assembly. Surfmist Matt.",
       "category": "gate_rail",
       "unit": "length",
@@ -1344,7 +1347,7 @@
     },
     {
       "sku": "QSG-4800-RAIL65-W",
-      "name": "QSG Gate Rail 65mm 4800mm — Pearl White Gloss",
+      "name": "QSG Gate Rail 65mm 4800mm \u2014 Pearl White Gloss",
       "description": "4800mm top/bottom horizontal gate rail for 65mm (and 90mm) slats. Alloy. Non-weld joiner block assembly. Pearl White Gloss.",
       "category": "gate_rail",
       "unit": "length",
@@ -1359,7 +1362,7 @@
     },
     {
       "sku": "QSG-4800-RAIL65-BS",
-      "name": "QSG Gate Rail 65mm 4800mm — Basalt Satin",
+      "name": "QSG Gate Rail 65mm 4800mm \u2014 Basalt Satin",
       "description": "4800mm top/bottom horizontal gate rail for 65mm (and 90mm) slats. Alloy. Non-weld joiner block assembly. Basalt Satin.",
       "category": "gate_rail",
       "unit": "length",
@@ -1374,7 +1377,7 @@
     },
     {
       "sku": "QSG-4800-RAIL65-D",
-      "name": "QSG Gate Rail 65mm 4800mm — Dune Satin",
+      "name": "QSG Gate Rail 65mm 4800mm \u2014 Dune Satin",
       "description": "4800mm top/bottom horizontal gate rail for 65mm (and 90mm) slats. Alloy. Non-weld joiner block assembly. Dune Satin.",
       "category": "gate_rail",
       "unit": "length",
@@ -1389,7 +1392,7 @@
     },
     {
       "sku": "QSG-4800-RAIL65-M",
-      "name": "QSG Gate Rail 65mm 4800mm — Mill",
+      "name": "QSG Gate Rail 65mm 4800mm \u2014 Mill",
       "description": "4800mm top/bottom horizontal gate rail for 65mm (and 90mm) slats. Alloy. Non-weld joiner block assembly. Mill.",
       "category": "gate_rail",
       "unit": "length",
@@ -1404,7 +1407,7 @@
     },
     {
       "sku": "QSG-4800-RAIL65-P",
-      "name": "QSG Gate Rail 65mm 4800mm — Primrose",
+      "name": "QSG Gate Rail 65mm 4800mm \u2014 Primrose",
       "description": "4800mm top/bottom horizontal gate rail for 65mm (and 90mm) slats. Alloy. Non-weld joiner block assembly. Primrose.",
       "category": "gate_rail",
       "unit": "length",
@@ -1419,7 +1422,7 @@
     },
     {
       "sku": "QSG-4800-RAIL65-PB",
-      "name": "QSG Gate Rail 65mm 4800mm — Paperbark",
+      "name": "QSG Gate Rail 65mm 4800mm \u2014 Paperbark",
       "description": "4800mm top/bottom horizontal gate rail for 65mm (and 90mm) slats. Alloy. Non-weld joiner block assembly. Paperbark.",
       "category": "gate_rail",
       "unit": "length",
@@ -1434,7 +1437,7 @@
     },
     {
       "sku": "QSG-4800-RAIL65-S",
-      "name": "QSG Gate Rail 65mm 4800mm — Palladium Silver Pearl",
+      "name": "QSG Gate Rail 65mm 4800mm \u2014 Palladium Silver Pearl",
       "description": "4800mm top/bottom horizontal gate rail for 65mm (and 90mm) slats. Alloy. Non-weld joiner block assembly. Palladium Silver Pearl.",
       "category": "gate_rail",
       "unit": "length",
@@ -1449,7 +1452,7 @@
     },
     {
       "sku": "QSG-4800-RAIL90-B",
-      "name": "QSG Gate Rail 90mm 4800mm — Black Satin",
+      "name": "QSG Gate Rail 90mm 4800mm \u2014 Black Satin",
       "description": "4800mm top/bottom horizontal gate rail for 90mm slats. Non-weld joiner block assembly. Black Satin.",
       "category": "gate_rail",
       "unit": "length",
@@ -1464,7 +1467,7 @@
     },
     {
       "sku": "QSG-4800-RAIL90-MN",
-      "name": "QSG Gate Rail 90mm 4800mm — Monument Matt",
+      "name": "QSG Gate Rail 90mm 4800mm \u2014 Monument Matt",
       "description": "4800mm top/bottom horizontal gate rail for 90mm slats. Non-weld joiner block assembly. Monument Matt.",
       "category": "gate_rail",
       "unit": "length",
@@ -1479,7 +1482,7 @@
     },
     {
       "sku": "QSG-4800-RAIL90-G",
-      "name": "QSG Gate Rail 90mm 4800mm — Woodland Grey Matt",
+      "name": "QSG Gate Rail 90mm 4800mm \u2014 Woodland Grey Matt",
       "description": "4800mm top/bottom horizontal gate rail for 90mm slats. Non-weld joiner block assembly. Woodland Grey Matt.",
       "category": "gate_rail",
       "unit": "length",
@@ -1494,7 +1497,7 @@
     },
     {
       "sku": "QSG-4800-RAIL90-SM",
-      "name": "QSG Gate Rail 90mm 4800mm — Surfmist Matt",
+      "name": "QSG Gate Rail 90mm 4800mm \u2014 Surfmist Matt",
       "description": "4800mm top/bottom horizontal gate rail for 90mm slats. Non-weld joiner block assembly. Surfmist Matt.",
       "category": "gate_rail",
       "unit": "length",
@@ -1509,7 +1512,7 @@
     },
     {
       "sku": "QSG-4800-RAIL90-W",
-      "name": "QSG Gate Rail 90mm 4800mm — Pearl White Gloss",
+      "name": "QSG Gate Rail 90mm 4800mm \u2014 Pearl White Gloss",
       "description": "4800mm top/bottom horizontal gate rail for 90mm slats. Non-weld joiner block assembly. Pearl White Gloss.",
       "category": "gate_rail",
       "unit": "length",
@@ -1524,7 +1527,7 @@
     },
     {
       "sku": "QSG-4800-RAIL90-BS",
-      "name": "QSG Gate Rail 90mm 4800mm — Basalt Satin",
+      "name": "QSG Gate Rail 90mm 4800mm \u2014 Basalt Satin",
       "description": "4800mm top/bottom horizontal gate rail for 90mm slats. Non-weld joiner block assembly. Basalt Satin.",
       "category": "gate_rail",
       "unit": "length",
@@ -1539,7 +1542,7 @@
     },
     {
       "sku": "QSG-4800-RAIL90-D",
-      "name": "QSG Gate Rail 90mm 4800mm — Dune Satin",
+      "name": "QSG Gate Rail 90mm 4800mm \u2014 Dune Satin",
       "description": "4800mm top/bottom horizontal gate rail for 90mm slats. Non-weld joiner block assembly. Dune Satin.",
       "category": "gate_rail",
       "unit": "length",
@@ -1554,7 +1557,7 @@
     },
     {
       "sku": "QSG-4800-RAIL90-M",
-      "name": "QSG Gate Rail 90mm 4800mm — Mill",
+      "name": "QSG Gate Rail 90mm 4800mm \u2014 Mill",
       "description": "4800mm top/bottom horizontal gate rail for 90mm slats. Non-weld joiner block assembly. Mill.",
       "category": "gate_rail",
       "unit": "length",
@@ -1569,7 +1572,7 @@
     },
     {
       "sku": "QSG-4800-RAIL90-P",
-      "name": "QSG Gate Rail 90mm 4800mm — Primrose",
+      "name": "QSG Gate Rail 90mm 4800mm \u2014 Primrose",
       "description": "4800mm top/bottom horizontal gate rail for 90mm slats. Non-weld joiner block assembly. Primrose.",
       "category": "gate_rail",
       "unit": "length",
@@ -1584,7 +1587,7 @@
     },
     {
       "sku": "QSG-4800-RAIL90-PB",
-      "name": "QSG Gate Rail 90mm 4800mm — Paperbark",
+      "name": "QSG Gate Rail 90mm 4800mm \u2014 Paperbark",
       "description": "4800mm top/bottom horizontal gate rail for 90mm slats. Non-weld joiner block assembly. Paperbark.",
       "category": "gate_rail",
       "unit": "length",
@@ -1599,7 +1602,7 @@
     },
     {
       "sku": "QSG-4800-RAIL90-S",
-      "name": "QSG Gate Rail 90mm 4800mm — Palladium Silver Pearl",
+      "name": "QSG Gate Rail 90mm 4800mm \u2014 Palladium Silver Pearl",
       "description": "4800mm top/bottom horizontal gate rail for 90mm slats. Non-weld joiner block assembly. Palladium Silver Pearl.",
       "category": "gate_rail",
       "unit": "length",
@@ -1614,7 +1617,7 @@
     },
     {
       "sku": "QSG-4200-COVER-B",
-      "name": "QSG Gate Screw Cover 4200mm — Black Satin",
+      "name": "QSG Gate Screw Cover 4200mm \u2014 Black Satin",
       "description": "Snap-in cover 4200mm. Mates with gate side frame and top/bottom rails to conceal slat fixing screws. Alloy 6060-T5. Black Satin.",
       "category": "gate_cover",
       "unit": "length",
@@ -1629,7 +1632,7 @@
     },
     {
       "sku": "QSG-4200-COVER-MN",
-      "name": "QSG Gate Screw Cover 4200mm — Monument Matt",
+      "name": "QSG Gate Screw Cover 4200mm \u2014 Monument Matt",
       "description": "Snap-in cover 4200mm. Mates with gate side frame and top/bottom rails to conceal slat fixing screws. Alloy 6060-T5. Monument Matt.",
       "category": "gate_cover",
       "unit": "length",
@@ -1644,7 +1647,7 @@
     },
     {
       "sku": "QSG-4200-COVER-G",
-      "name": "QSG Gate Screw Cover 4200mm — Woodland Grey Matt",
+      "name": "QSG Gate Screw Cover 4200mm \u2014 Woodland Grey Matt",
       "description": "Snap-in cover 4200mm. Mates with gate side frame and top/bottom rails to conceal slat fixing screws. Alloy 6060-T5. Woodland Grey Matt.",
       "category": "gate_cover",
       "unit": "length",
@@ -1659,7 +1662,7 @@
     },
     {
       "sku": "QSG-4200-COVER-SM",
-      "name": "QSG Gate Screw Cover 4200mm — Surfmist Matt",
+      "name": "QSG Gate Screw Cover 4200mm \u2014 Surfmist Matt",
       "description": "Snap-in cover 4200mm. Mates with gate side frame and top/bottom rails to conceal slat fixing screws. Alloy 6060-T5. Surfmist Matt.",
       "category": "gate_cover",
       "unit": "length",
@@ -1674,7 +1677,7 @@
     },
     {
       "sku": "QSG-4200-COVER-W",
-      "name": "QSG Gate Screw Cover 4200mm — Pearl White Gloss",
+      "name": "QSG Gate Screw Cover 4200mm \u2014 Pearl White Gloss",
       "description": "Snap-in cover 4200mm. Mates with gate side frame and top/bottom rails to conceal slat fixing screws. Alloy 6060-T5. Pearl White Gloss.",
       "category": "gate_cover",
       "unit": "length",
@@ -1689,7 +1692,7 @@
     },
     {
       "sku": "QSG-4200-COVER-BS",
-      "name": "QSG Gate Screw Cover 4200mm — Basalt Satin",
+      "name": "QSG Gate Screw Cover 4200mm \u2014 Basalt Satin",
       "description": "Snap-in cover 4200mm. Mates with gate side frame and top/bottom rails to conceal slat fixing screws. Alloy 6060-T5. Basalt Satin.",
       "category": "gate_cover",
       "unit": "length",
@@ -1704,7 +1707,7 @@
     },
     {
       "sku": "QSG-4200-COVER-D",
-      "name": "QSG Gate Screw Cover 4200mm — Dune Satin",
+      "name": "QSG Gate Screw Cover 4200mm \u2014 Dune Satin",
       "description": "Snap-in cover 4200mm. Mates with gate side frame and top/bottom rails to conceal slat fixing screws. Alloy 6060-T5. Dune Satin.",
       "category": "gate_cover",
       "unit": "length",
@@ -1719,7 +1722,7 @@
     },
     {
       "sku": "QSG-4200-COVER-M",
-      "name": "QSG Gate Screw Cover 4200mm — Mill",
+      "name": "QSG Gate Screw Cover 4200mm \u2014 Mill",
       "description": "Snap-in cover 4200mm. Mates with gate side frame and top/bottom rails to conceal slat fixing screws. Alloy 6060-T5. Mill.",
       "category": "gate_cover",
       "unit": "length",
@@ -1734,7 +1737,7 @@
     },
     {
       "sku": "QSG-4200-COVER-S",
-      "name": "QSG Gate Screw Cover 4200mm — Palladium Silver Pearl",
+      "name": "QSG Gate Screw Cover 4200mm \u2014 Palladium Silver Pearl",
       "description": "Snap-in cover 4200mm. Mates with gate side frame and top/bottom rails to conceal slat fixing screws. Alloy 6060-T5. Palladium Silver Pearl.",
       "category": "gate_cover",
       "unit": "length",
@@ -1749,7 +1752,7 @@
     },
     {
       "sku": "QSG-4800-INF-B",
-      "name": "QSG Gate Infill 4800mm — Black Satin",
+      "name": "QSG Gate Infill 4800mm \u2014 Black Satin",
       "description": "Snap-in infill 4800mm. Fills unused channels in gate side frame or rails. Alloy 6060-T5. Black Satin.",
       "category": "gate_infill",
       "unit": "length",
@@ -1764,7 +1767,7 @@
     },
     {
       "sku": "QSG-4800-INF-MN",
-      "name": "QSG Gate Infill 4800mm — Monument Matt",
+      "name": "QSG Gate Infill 4800mm \u2014 Monument Matt",
       "description": "Snap-in infill 4800mm. Fills unused channels in gate side frame or rails. Alloy 6060-T5. Monument Matt.",
       "category": "gate_infill",
       "unit": "length",
@@ -1779,7 +1782,7 @@
     },
     {
       "sku": "QSG-4800-INF-G",
-      "name": "QSG Gate Infill 4800mm — Woodland Grey Matt",
+      "name": "QSG Gate Infill 4800mm \u2014 Woodland Grey Matt",
       "description": "Snap-in infill 4800mm. Fills unused channels in gate side frame or rails. Alloy 6060-T5. Woodland Grey Matt.",
       "category": "gate_infill",
       "unit": "length",
@@ -1794,7 +1797,7 @@
     },
     {
       "sku": "QSG-4800-INF-SM",
-      "name": "QSG Gate Infill 4800mm — Surfmist Matt",
+      "name": "QSG Gate Infill 4800mm \u2014 Surfmist Matt",
       "description": "Snap-in infill 4800mm. Fills unused channels in gate side frame or rails. Alloy 6060-T5. Surfmist Matt.",
       "category": "gate_infill",
       "unit": "length",
@@ -1809,7 +1812,7 @@
     },
     {
       "sku": "QSG-4800-INF-W",
-      "name": "QSG Gate Infill 4800mm — Pearl White Gloss",
+      "name": "QSG Gate Infill 4800mm \u2014 Pearl White Gloss",
       "description": "Snap-in infill 4800mm. Fills unused channels in gate side frame or rails. Alloy 6060-T5. Pearl White Gloss.",
       "category": "gate_infill",
       "unit": "length",
@@ -1824,7 +1827,7 @@
     },
     {
       "sku": "QSG-4800-INF-BS",
-      "name": "QSG Gate Infill 4800mm — Basalt Satin",
+      "name": "QSG Gate Infill 4800mm \u2014 Basalt Satin",
       "description": "Snap-in infill 4800mm. Fills unused channels in gate side frame or rails. Alloy 6060-T5. Basalt Satin.",
       "category": "gate_infill",
       "unit": "length",
@@ -1839,7 +1842,7 @@
     },
     {
       "sku": "QSG-4800-INF-D",
-      "name": "QSG Gate Infill 4800mm — Dune Satin",
+      "name": "QSG Gate Infill 4800mm \u2014 Dune Satin",
       "description": "Snap-in infill 4800mm. Fills unused channels in gate side frame or rails. Alloy 6060-T5. Dune Satin.",
       "category": "gate_infill",
       "unit": "length",
@@ -1854,7 +1857,7 @@
     },
     {
       "sku": "QSG-4800-INF-M",
-      "name": "QSG Gate Infill 4800mm — Mill",
+      "name": "QSG Gate Infill 4800mm \u2014 Mill",
       "description": "Snap-in infill 4800mm. Fills unused channels in gate side frame or rails. Alloy 6060-T5. Mill.",
       "category": "gate_infill",
       "unit": "length",
@@ -1869,7 +1872,7 @@
     },
     {
       "sku": "QSG-4800-INF-S",
-      "name": "QSG Gate Infill 4800mm — Palladium Silver Pearl",
+      "name": "QSG Gate Infill 4800mm \u2014 Palladium Silver Pearl",
       "description": "Snap-in infill 4800mm. Fills unused channels in gate side frame or rails. Alloy 6060-T5. Palladium Silver Pearl.",
       "category": "gate_infill",
       "unit": "length",
@@ -1884,7 +1887,7 @@
     },
     {
       "sku": "QSG-4200-CINF-B",
-      "name": "QSG Gate Curved Infill 4200mm — Black Satin",
+      "name": "QSG Gate Curved Infill 4200mm \u2014 Black Satin",
       "description": "Snap-in curved infill 4200mm for vertical slat gate fabrications. 50mm extended channel. Alloy 6060-T5. Black Satin.",
       "category": "gate_infill",
       "unit": "length",
@@ -1899,7 +1902,7 @@
     },
     {
       "sku": "QSG-4200-CINF-MN",
-      "name": "QSG Gate Curved Infill 4200mm — Monument Matt",
+      "name": "QSG Gate Curved Infill 4200mm \u2014 Monument Matt",
       "description": "Snap-in curved infill 4200mm for vertical slat gate fabrications. 50mm extended channel. Alloy 6060-T5. Monument Matt.",
       "category": "gate_infill",
       "unit": "length",
@@ -1914,7 +1917,7 @@
     },
     {
       "sku": "QSG-4200-CINF-G",
-      "name": "QSG Gate Curved Infill 4200mm — Woodland Grey Matt",
+      "name": "QSG Gate Curved Infill 4200mm \u2014 Woodland Grey Matt",
       "description": "Snap-in curved infill 4200mm for vertical slat gate fabrications. 50mm extended channel. Alloy 6060-T5. Woodland Grey Matt.",
       "category": "gate_infill",
       "unit": "length",
@@ -1929,7 +1932,7 @@
     },
     {
       "sku": "QSG-4200-CINF-SM",
-      "name": "QSG Gate Curved Infill 4200mm — Surfmist Matt",
+      "name": "QSG Gate Curved Infill 4200mm \u2014 Surfmist Matt",
       "description": "Snap-in curved infill 4200mm for vertical slat gate fabrications. 50mm extended channel. Alloy 6060-T5. Surfmist Matt.",
       "category": "gate_infill",
       "unit": "length",
@@ -1944,7 +1947,7 @@
     },
     {
       "sku": "QSG-4200-CINF-W",
-      "name": "QSG Gate Curved Infill 4200mm — Pearl White Gloss",
+      "name": "QSG Gate Curved Infill 4200mm \u2014 Pearl White Gloss",
       "description": "Snap-in curved infill 4200mm for vertical slat gate fabrications. 50mm extended channel. Alloy 6060-T5. Pearl White Gloss.",
       "category": "gate_infill",
       "unit": "length",
@@ -1959,7 +1962,7 @@
     },
     {
       "sku": "QSG-4200-CINF-BS",
-      "name": "QSG Gate Curved Infill 4200mm — Basalt Satin",
+      "name": "QSG Gate Curved Infill 4200mm \u2014 Basalt Satin",
       "description": "Snap-in curved infill 4200mm for vertical slat gate fabrications. 50mm extended channel. Alloy 6060-T5. Basalt Satin.",
       "category": "gate_infill",
       "unit": "length",
@@ -1974,7 +1977,7 @@
     },
     {
       "sku": "QSG-4200-CINF-D",
-      "name": "QSG Gate Curved Infill 4200mm — Dune Satin",
+      "name": "QSG Gate Curved Infill 4200mm \u2014 Dune Satin",
       "description": "Snap-in curved infill 4200mm for vertical slat gate fabrications. 50mm extended channel. Alloy 6060-T5. Dune Satin.",
       "category": "gate_infill",
       "unit": "length",
@@ -1989,7 +1992,7 @@
     },
     {
       "sku": "QSG-4200-CINF-M",
-      "name": "QSG Gate Curved Infill 4200mm — Mill",
+      "name": "QSG Gate Curved Infill 4200mm \u2014 Mill",
       "description": "Snap-in curved infill 4200mm for vertical slat gate fabrications. 50mm extended channel. Alloy 6060-T5. Mill.",
       "category": "gate_infill",
       "unit": "length",
@@ -2004,7 +2007,7 @@
     },
     {
       "sku": "QSG-4200-CINF-S",
-      "name": "QSG Gate Curved Infill 4200mm — Palladium Silver Pearl",
+      "name": "QSG Gate Curved Infill 4200mm \u2014 Palladium Silver Pearl",
       "description": "Snap-in curved infill 4200mm for vertical slat gate fabrications. 50mm extended channel. Alloy 6060-T5. Palladium Silver Pearl.",
       "category": "gate_infill",
       "unit": "length",
@@ -2019,7 +2022,7 @@
     },
     {
       "sku": "AR-SCR-BR-50PK",
-      "name": "Gate Rail Screws SS304HC — 50 Pack",
+      "name": "Gate Rail Screws SS304HC \u2014 50 Pack",
       "description": "12Gx25mm panhead screws with square drive. SS304HC. Secures joiner blocks to gate side frame. 50 per pack.",
       "category": "fixing",
       "unit": "pack",
@@ -2047,8 +2050,8 @@
     },
     {
       "sku": "XP-GATESTOP-RIV-10PK",
-      "name": "Gate Stop Countersunk Rivet — 10 Pack",
-      "description": "4.0×8.4 countersunk aluminium rivet. Use when affixing gate stop to post with Lockwood 001 deadlatch lockbox (avoids screw head interference). 10 per pack.",
+      "name": "Gate Stop Countersunk Rivet \u2014 10 Pack",
+      "description": "4.0\u00d78.4 countersunk aluminium rivet. Use when affixing gate stop to post with Lockwood 001 deadlatch lockbox (avoids screw head interference). 10 per pack.",
       "category": "fixing",
       "unit": "pack",
       "default_price": null,
@@ -2175,7 +2178,7 @@
     {
       "sku": "XP-GKIT-LSET09",
       "name": "9mm Gate Lockbox Kit (Lever/Knob Set)",
-      "description": "Complete gate side frame kit machined for 9mm spacing with lever/knob lockbox. Includes 2× GSF, 2× inserts, gate stops, rubber, caps, screws. Black/MN/G only.",
+      "description": "Complete gate side frame kit machined for 9mm spacing with lever/knob lockbox. Includes 2\u00d7 GSF, 2\u00d7 inserts, gate stops, rubber, caps, screws. Black/MN/G only.",
       "category": "gate_kit",
       "unit": "kit",
       "default_price": null,
@@ -2190,7 +2193,7 @@
     {
       "sku": "XP-GKIT-LSET20",
       "name": "20mm Gate Lockbox Kit (Lever/Knob Set)",
-      "description": "Complete gate side frame kit machined for 20mm spacing with lever/knob lockbox. Includes 2× GSF, 2× inserts, gate stops, rubber, caps, screws. Black/MN/G only.",
+      "description": "Complete gate side frame kit machined for 20mm spacing with lever/knob lockbox. Includes 2\u00d7 GSF, 2\u00d7 inserts, gate stops, rubber, caps, screws. Black/MN/G only.",
       "category": "gate_kit",
       "unit": "kit",
       "default_price": null,
@@ -2219,7 +2222,7 @@
     },
     {
       "sku": "XP-SCREWS-B",
-      "name": "Gate Wafer Screws Black — 100 Pack",
+      "name": "Gate Wafer Screws Black \u2014 100 Pack",
       "description": "10Gx16mm self-drilling wafer head zinc plated screws, powder coated Black. 100 per pack.",
       "category": "fixing",
       "unit": "pack",
@@ -2235,7 +2238,7 @@
     },
     {
       "sku": "XP-SCREWS-MN",
-      "name": "Gate Wafer Screws Monument — 100 Pack",
+      "name": "Gate Wafer Screws Monument \u2014 100 Pack",
       "description": "10Gx16mm self-drilling wafer head zinc plated screws, powder coated Monument. 100 per pack.",
       "category": "fixing",
       "unit": "pack",
@@ -2251,7 +2254,7 @@
     },
     {
       "sku": "XP-SCREWSGF-10PK",
-      "name": "Gate Frame Screws 12Gx65mm — 10 Pack",
+      "name": "Gate Frame Screws 12Gx65mm \u2014 10 Pack",
       "description": "12Gx65mm hex flange head screws. Secures gate slats to side frames through pre-machined holes. 10 per pack.",
       "category": "fixing",
       "unit": "pack",
@@ -2280,7 +2283,7 @@
       "version_label": "v1.0.0",
       "is_current": true,
       "effective_from": "2026-04-19",
-      "notes": "Initial QS gate rules — screw-fixed 65mm blades, HD rail, QSG side frames",
+      "notes": "Initial QS gate rules \u2014 screw-fixed 65mm blades, HD rail, QSG side frames",
       "active": true
     }
   ],
@@ -2417,7 +2420,7 @@
         "ML-TL-TC-H-AT",
         "ML-TL-W"
       ],
-      "scope": "run",
+      "scope": "segment",
       "sort_order": 40,
       "active": true
     },
@@ -2430,7 +2433,7 @@
       "required": false,
       "default_value_json": false,
       "options_json": [],
-      "scope": "run",
+      "scope": "segment",
       "sort_order": 50,
       "active": true
     },
@@ -2446,7 +2449,7 @@
         "XP-LBOX-DL",
         "XP-LBOX-LSET"
       ],
-      "scope": "run",
+      "scope": "segment",
       "sort_order": 60,
       "active": true
     },
@@ -2474,6 +2477,166 @@
       "options_json": [],
       "scope": "segment",
       "sort_order": 80,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_movement",
+      "label": "Gate Movement",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "single_swing",
+      "options_json": [
+        "single_swing",
+        "double_swing",
+        "sliding"
+      ],
+      "scope": "segment",
+      "sort_order": 85,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_build",
+      "label": "Gate Build",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "qsg_hinged_horizontal",
+      "options_json": [
+        "qsg_hinged_horizontal",
+        "qsg_hinged_vertical",
+        "qsg_sliding_horizontal",
+        "qsg_sliding_vertical"
+      ],
+      "scope": "segment",
+      "sort_order": 87,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_post_size_mm",
+      "label": "Gate Post Size",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": false,
+      "default_value_json": "50",
+      "options_json": [
+        "50",
+        "65"
+      ],
+      "scope": "segment",
+      "sort_order": 89,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "opening_direction",
+      "label": "Opening Direction",
+      "data_type": "enum",
+      "unit": null,
+      "required": false,
+      "default_value_json": "out",
+      "options_json": [
+        "out",
+        "in",
+        "left",
+        "right"
+      ],
+      "scope": "segment",
+      "sort_order": 91,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "latch_sku",
+      "label": "Latch",
+      "data_type": "string",
+      "unit": null,
+      "required": false,
+      "default_value_json": "ML-TL",
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 93,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "drop_bolt_sku",
+      "label": "Drop Bolt",
+      "data_type": "string",
+      "unit": null,
+      "required": false,
+      "default_value_json": "none",
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 95,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_stop_sku",
+      "label": "Gate Stop",
+      "data_type": "string",
+      "unit": null,
+      "required": false,
+      "default_value_json": "none",
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 97,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "sliding_track_sku",
+      "label": "Sliding Track",
+      "data_type": "string",
+      "unit": null,
+      "required": false,
+      "default_value_json": "XPSG-6000-TRACK-ST",
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 99,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "sliding_guide_sku",
+      "label": "Sliding Guide",
+      "data_type": "string",
+      "unit": null,
+      "required": false,
+      "default_value_json": "XPSG-GUIDE",
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 101,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "sliding_catch_sku",
+      "label": "Sliding Catch",
+      "data_type": "string",
+      "unit": null,
+      "required": false,
+      "default_value_json": "XPSG-CATCH-U",
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 103,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "automation_enabled",
+      "label": "Automation",
+      "data_type": "boolean",
+      "unit": null,
+      "required": false,
+      "default_value_json": false,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 105,
       "active": true
     }
   ],
@@ -2634,7 +2797,7 @@
       "output_key": "gsf_total_screws",
       "priority": 220,
       "active": true,
-      "notes": "2 GSF per gate × 2 sides each = total GSF screws"
+      "notes": "2 GSF per gate \u00d7 2 sides each = total GSF screws"
     },
     {
       "product_system_type": "QS_GATE",
@@ -2658,7 +2821,7 @@
       "output_key": "qty_hd_rail",
       "priority": 310,
       "active": true,
-      "notes": "Emit HD rail stock lengths — 1 per gate typically (2 cuts per 6100mm stock)"
+      "notes": "Emit HD rail stock lengths \u2014 1 per gate typically (2 cuts per 6100mm stock)"
     },
     {
       "product_system_type": "QS_GATE",
@@ -2682,7 +2845,7 @@
       "output_key": "qty_hinge_latch",
       "priority": 330,
       "active": true,
-      "notes": "1 hinge/latch unit per gate — SKU resolved via hinge_type variable"
+      "notes": "1 hinge/latch unit per gate \u2014 SKU resolved via hinge_type variable"
     },
     {
       "product_system_type": "QS_GATE",
@@ -2694,7 +2857,7 @@
       "output_key": "qty_lock_box",
       "priority": 340,
       "active": true,
-      "notes": "1 lock box if include_lock_box is true — SKU resolved via lock_box_selector"
+      "notes": "1 lock box if include_lock_box is true \u2014 SKU resolved via lock_box_selector"
     },
     {
       "product_system_type": "QS_GATE",
@@ -2706,7 +2869,7 @@
       "output_key": "qty_gsf",
       "priority": 350,
       "active": true,
-      "notes": "2 QSG gate side frames per gate — GSF pricing TBD"
+      "notes": "2 QSG gate side frames per gate \u2014 GSF pricing TBD"
     },
     {
       "product_system_type": "QS_GATE",
@@ -2718,7 +2881,7 @@
       "output_key": "qty_jblock_pack",
       "priority": 360,
       "active": true,
-      "notes": "1 pack of joiner blocks per gate — size matches slat_size_mm (only 65 currently)"
+      "notes": "1 pack of joiner blocks per gate \u2014 size matches slat_size_mm (only 65 currently)"
     },
     {
       "product_system_type": "QS_GATE",
@@ -2742,7 +2905,7 @@
       "output_key": "qty_ftc",
       "priority": 380,
       "active": true,
-      "notes": "4 gate frame top caps per gate (2 per GSF × 2 GSF)"
+      "notes": "4 gate frame top caps per gate (2 per GSF \u00d7 2 GSF)"
     }
   ],
   "product_component_selectors": [
@@ -2756,7 +2919,7 @@
       },
       "sku_pattern": "XP-6100-GB65-{colour}",
       "priority": 100,
-      "notes": "Gate blade 65mm — colour resolved at runtime",
+      "notes": "Gate blade 65mm \u2014 colour resolved at runtime",
       "active": true,
       "qty_key": "qty_gate_blade"
     },
@@ -2768,7 +2931,7 @@
       "match_json": {},
       "sku_pattern": "XP-6100-HD6545-{colour}",
       "priority": 100,
-      "notes": "HD top/bottom rail — colour resolved at runtime",
+      "notes": "HD top/bottom rail \u2014 colour resolved at runtime",
       "active": true,
       "qty_key": "qty_hd_rail"
     },
@@ -2782,7 +2945,7 @@
       },
       "sku_pattern": "XP-4200-GSTOP-{colour}",
       "priority": 90,
-      "notes": "Gate stop — standard colours (not Primrose/Paperbark)",
+      "notes": "Gate stop \u2014 standard colours (not Primrose/Paperbark)",
       "active": true,
       "qty_key": "qty_gate_stop"
     },
@@ -2796,7 +2959,7 @@
       },
       "sku_pattern": "XP-4200-GSTOP-P",
       "priority": 100,
-      "notes": "Gate stop — Primrose (exception pricing)",
+      "notes": "Gate stop \u2014 Primrose (exception pricing)",
       "active": true,
       "qty_key": "qty_gate_stop"
     },
@@ -2810,7 +2973,7 @@
       },
       "sku_pattern": "XP-4200-GSTOP-PB",
       "priority": 100,
-      "notes": "Gate stop — Paperbark (exception pricing)",
+      "notes": "Gate stop \u2014 Paperbark (exception pricing)",
       "active": true,
       "qty_key": "qty_gate_stop"
     },
@@ -2820,9 +2983,9 @@
       "component_category": "hardware",
       "selector_type": "exact",
       "match_json": {},
-      "sku_pattern": "{selected_hinge_sku}",
+      "sku_pattern": "{hinge_type}",
       "priority": 100,
-      "notes": "Hinge/latch unit — resolved via hinge_type variable map",
+      "notes": "Hinge/latch unit \u2014 resolved via hinge_type variable map",
       "active": true,
       "qty_key": "qty_hinge_latch"
     },
@@ -2836,7 +2999,7 @@
       },
       "sku_pattern": "XP-LBOX-DL-{colour}",
       "priority": 100,
-      "notes": "Lockwood Deadlatch lock box — colour resolved at runtime",
+      "notes": "Lockwood Deadlatch lock box \u2014 colour resolved at runtime",
       "active": true,
       "qty_key": "qty_lock_box"
     },
@@ -2850,7 +3013,7 @@
       },
       "sku_pattern": "XP-LBOX-LSET-{colour}",
       "priority": 100,
-      "notes": "Lever/Knob Lock Set lock box — colour resolved at runtime",
+      "notes": "Lever/Knob Lock Set lock box \u2014 colour resolved at runtime",
       "active": true,
       "qty_key": "qty_lock_box"
     },
@@ -2864,7 +3027,7 @@
       },
       "sku_pattern": "QSG-GATESF-65-{colour}",
       "priority": 100,
-      "notes": "Gate side frame 65mm — colour resolved at runtime. Pricing TBD.",
+      "notes": "Gate side frame 65mm \u2014 colour resolved at runtime. Pricing TBD.",
       "active": true,
       "qty_key": "qty_gsf"
     },
@@ -2878,7 +3041,7 @@
       },
       "sku_pattern": "QSG-JBLOCK-65-4PK",
       "priority": 100,
-      "notes": "Joiner block 65mm 4-pack — 1 per gate. Pricing TBD.",
+      "notes": "Joiner block 65mm 4-pack \u2014 1 per gate. Pricing TBD.",
       "active": true,
       "qty_key": "qty_jblock_pack"
     },
@@ -2892,7 +3055,7 @@
       },
       "sku_pattern": "QSG-SC-10PK",
       "priority": 100,
-      "notes": "Screw covers 10-pack — 1 per gate. Pricing TBD.",
+      "notes": "Screw covers 10-pack \u2014 1 per gate. Pricing TBD.",
       "active": true,
       "qty_key": "qty_sc_pack"
     },
@@ -2906,7 +3069,7 @@
       },
       "sku_pattern": "QSG-RS-10PK",
       "priority": 100,
-      "notes": "Rail screws 10-pack — qty_rail_screw_packs per gate. Pricing TBD.",
+      "notes": "Rail screws 10-pack \u2014 qty_rail_screw_packs per gate. Pricing TBD.",
       "active": true,
       "qty_key": "rail_screw_packs_needed"
     },
@@ -2920,7 +3083,7 @@
       },
       "sku_pattern": "QSG-FTC-65",
       "priority": 90,
-      "notes": "Gate frame top cap 65mm — 4 per gate. Pricing TBD.",
+      "notes": "Gate frame top cap 65mm \u2014 4 per gate. Pricing TBD.",
       "active": true,
       "qty_key": "qty_ftc"
     },
@@ -2934,7 +3097,7 @@
       },
       "sku_pattern": "QSG-FTC-50",
       "priority": 90,
-      "notes": "Gate frame top cap 50mm — 4 per gate. Pricing TBD.",
+      "notes": "Gate frame top cap 50mm \u2014 4 per gate. Pricing TBD.",
       "active": true,
       "qty_key": "qty_ftc"
     }
@@ -2950,7 +3113,7 @@
       "qty_formula": "1",
       "is_pack": false,
       "priority": 10,
-      "notes": "Any gate → add 1x hinge/latch combo (user-selected type)",
+      "notes": "Any gate \u2192 add 1x hinge/latch combo (user-selected type)",
       "active": true
     },
     {
@@ -2963,7 +3126,7 @@
       "qty_formula": "2",
       "is_pack": false,
       "priority": 20,
-      "notes": "QS gate → add 2x QSG gate side frames (replaces discontinued XP-4200-GSF)",
+      "notes": "QS gate \u2192 add 2x QSG gate side frames (replaces discontinued XP-4200-GSF)",
       "active": true
     },
     {
@@ -2976,7 +3139,7 @@
       "qty_formula": "1",
       "is_pack": true,
       "priority": 30,
-      "notes": "QS gate → add 1x joiner block 4-pack (65mm — matching slat_size_mm)",
+      "notes": "QS gate \u2192 add 1x joiner block 4-pack (65mm \u2014 matching slat_size_mm)",
       "active": true
     },
     {
@@ -2989,7 +3152,7 @@
       "qty_formula": "1",
       "is_pack": true,
       "priority": 40,
-      "notes": "QS gate → add 1x screw cover 10-pack",
+      "notes": "QS gate \u2192 add 1x screw cover 10-pack",
       "active": true
     },
     {
@@ -3002,7 +3165,7 @@
       "qty_formula": "rail_screw_packs_needed",
       "is_pack": true,
       "priority": 50,
-      "notes": "QS gate → add rail screw packs = ROUNDUP((hd_rail_cut x2) x1.01, -1) / 10",
+      "notes": "QS gate \u2192 add rail screw packs = ROUNDUP((hd_rail_cut x2) x1.01, -1) / 10",
       "active": true
     },
     {
@@ -3015,7 +3178,7 @@
       "qty_formula": "4",
       "is_pack": false,
       "priority": 60,
-      "notes": "QS gate → add 4x gate frame top caps (2 per GSF × 2 GSF per gate)",
+      "notes": "QS gate \u2192 add 4x gate frame top caps (2 per GSF \u00d7 2 GSF per gate)",
       "active": true
     }
   ],
@@ -4147,7 +4310,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Single tier — no bulk pricing",
+      "notes": "Single tier \u2014 no bulk pricing",
       "active": true
     },
     {
@@ -4180,7 +4343,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Single tier — no bulk pricing",
+      "notes": "Single tier \u2014 no bulk pricing",
       "active": true
     },
     {
@@ -4213,7 +4376,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Single tier — no bulk pricing",
+      "notes": "Single tier \u2014 no bulk pricing",
       "active": true
     },
     {
@@ -4246,7 +4409,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Single tier — no bulk pricing",
+      "notes": "Single tier \u2014 no bulk pricing",
       "active": true
     },
     {
@@ -5005,7 +5168,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5016,7 +5179,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5027,7 +5190,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5038,7 +5201,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5049,7 +5212,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5060,7 +5223,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5071,7 +5234,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5082,7 +5245,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5093,7 +5256,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5104,7 +5267,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5115,7 +5278,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5126,7 +5289,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5137,7 +5300,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5148,7 +5311,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5159,7 +5322,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5170,7 +5333,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5181,7 +5344,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5192,7 +5355,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5203,7 +5366,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5214,7 +5377,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5225,7 +5388,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5236,7 +5399,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5247,7 +5410,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5258,7 +5421,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5269,7 +5432,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5280,7 +5443,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5291,7 +5454,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5302,7 +5465,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5313,7 +5476,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5324,7 +5487,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5335,7 +5498,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5346,7 +5509,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5357,7 +5520,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5368,7 +5531,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5379,7 +5542,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5390,7 +5553,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5401,7 +5564,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5412,7 +5575,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5423,7 +5586,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5434,7 +5597,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5445,7 +5608,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5456,7 +5619,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5467,7 +5630,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5478,7 +5641,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5489,7 +5652,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5500,7 +5663,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5511,7 +5674,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5522,7 +5685,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5533,7 +5696,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5544,7 +5707,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5555,7 +5718,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5566,7 +5729,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5577,7 +5740,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5588,7 +5751,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5599,7 +5762,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5610,7 +5773,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5621,7 +5784,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5632,7 +5795,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5643,7 +5806,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5654,7 +5817,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5665,7 +5828,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5676,7 +5839,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5687,7 +5850,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5698,7 +5861,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5709,7 +5872,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5720,7 +5883,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5731,7 +5894,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5742,7 +5905,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5753,7 +5916,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5764,7 +5927,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5775,7 +5938,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5786,7 +5949,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5797,7 +5960,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5808,7 +5971,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5819,7 +5982,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5830,7 +5993,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5841,7 +6004,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5852,7 +6015,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5863,7 +6026,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5874,7 +6037,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5885,7 +6048,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5896,7 +6059,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5907,7 +6070,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5918,7 +6081,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5929,7 +6092,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5940,7 +6103,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5951,7 +6114,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5962,7 +6125,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5973,7 +6136,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5984,7 +6147,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -5995,7 +6158,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6006,7 +6169,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6017,7 +6180,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6028,7 +6191,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6039,7 +6202,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6050,7 +6213,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6061,7 +6224,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6072,7 +6235,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6083,7 +6246,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6094,7 +6257,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6105,7 +6268,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6116,7 +6279,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6127,7 +6290,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6138,7 +6301,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6149,7 +6312,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6160,7 +6323,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6171,7 +6334,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6182,7 +6345,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6193,7 +6356,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6204,7 +6367,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6215,7 +6378,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6226,7 +6389,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6237,7 +6400,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6248,7 +6411,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6259,7 +6422,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6270,7 +6433,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6281,7 +6444,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6292,7 +6455,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6303,7 +6466,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6314,7 +6477,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6325,7 +6488,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6336,7 +6499,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6347,7 +6510,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6358,7 +6521,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6369,7 +6532,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6380,7 +6543,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6391,7 +6554,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6402,7 +6565,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6413,7 +6576,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6424,7 +6587,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6435,7 +6598,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6446,7 +6609,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6457,7 +6620,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6468,7 +6631,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6479,7 +6642,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6490,7 +6653,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6501,7 +6664,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6512,7 +6675,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6523,7 +6686,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6534,7 +6697,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6545,7 +6708,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6556,7 +6719,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6567,7 +6730,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6578,7 +6741,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6589,7 +6752,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6600,7 +6763,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6611,7 +6774,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6622,7 +6785,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6633,7 +6796,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6644,7 +6807,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6655,7 +6818,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6666,7 +6829,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6677,7 +6840,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6688,7 +6851,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6699,7 +6862,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6710,7 +6873,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6721,7 +6884,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6732,7 +6895,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6743,7 +6906,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6754,7 +6917,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6765,7 +6928,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6776,7 +6939,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6787,7 +6950,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6798,7 +6961,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6809,7 +6972,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6820,7 +6983,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6831,7 +6994,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6842,7 +7005,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6853,7 +7016,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6864,7 +7027,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6875,7 +7038,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6886,7 +7049,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6897,7 +7060,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6908,7 +7071,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6919,7 +7082,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6930,7 +7093,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6941,7 +7104,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6952,7 +7115,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6963,7 +7126,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6974,7 +7137,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6985,7 +7148,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -6996,7 +7159,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7007,7 +7170,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7018,7 +7181,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7029,7 +7192,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7040,7 +7203,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7051,7 +7214,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7062,7 +7225,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7073,7 +7236,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7084,7 +7247,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7095,7 +7258,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7106,7 +7269,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7117,7 +7280,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7128,7 +7291,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7139,7 +7302,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7150,7 +7313,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7161,7 +7324,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     },
     {
@@ -7172,7 +7335,7 @@
       "priority": 0,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price TBC — not yet in supplier price list.",
+      "notes": "Price TBC \u2014 not yet in supplier price list.",
       "active": true
     }
   ]
