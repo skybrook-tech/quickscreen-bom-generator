@@ -22,7 +22,7 @@ Latest workflow/UI correction: form-entered dimensions now center in the mapper 
 
 Latest segment clarity pass: segment and gate cards now show full beginner-friendly titles (`Run 1 Segment 1`, `Run 1 Gate 1`) alongside compact map codes (`R1S1`, `R1G1`) in bold black, the master-match check and confirmed dot sit in the left rail, max post spacing defaults to 2600mm with an editable 100-3000mm draft input, vertical slat runs can use custom gaps, and standard post labels now put the dimensions first.
 
-Latest Codex PR brief pass: Tier 6 Brief AD is complete. QSHS 65mm sections can enable louvre treatment, the local BOM emits `QS-LB-*` bracket packs per slat/panel, slat fixing screws are reduced for louvre sections, and QS-LB pricing/quantity breaks are loaded from the CSV.
+Latest Codex PR brief pass: Tier 6 Brief AE is complete. Suggested accessories now cover gate handles, driver bits, post plugs, core-drill tooling/epoxy prompts, base-plate threadlocker prompts, general silicone, and gate-colour touch-up paint with local CSV-backed pricing.
 
 Latest Brief I pass: the `/calculator` BOM hero now uses an editorial summary layout with the scoped total as the main typographic element, BOM rows show the active quantity-break tier, and rows close to the next seeded quantity break show how many more units are needed for the next tier.
 
@@ -360,6 +360,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Tier 6 Brief AB: Canvas-derived corners now classify as 90 degree, 135 degree, or custom, section settings expose editable corner overrides, 135 degree corners emit the adapter plus screw pack, and custom angles produce a supplier-verification BOM warning line.
 - [x] Tier 6 Brief AC: Run settings now include post-fixing material and base-plate substrate choices, local BOM emits selected concrete/grout and substrate fixing kits, chemical anchor suggestions appear for concrete base plates, and grout choice persists locally for future runs.
 - [x] Tier 6 Brief AD: QSHS 65mm sections can enable louvre treatment, the local BOM emits `QS-LB-*` bracket packs per slat/panel, slat fixing screws are reduced for louvre sections, and QS-LB pricing/quantity breaks are loaded from the CSV.
+- [x] Tier 6 Brief AE: Suggested accessories now include gate handles, driver bits, post plugs, core-drill dress-ring/tooling/epoxy prompts, base-plate threadlocker prompts, general silicone, and gate-colour touch-up paint suggestions with local CSV-backed pricing for the new SKUs.
 - [x] Extra items panel — typeahead against existing SKUs (via `search-products`) + create-on-the-fly for one-off lines
 - [x] v2 retired — `CalculatorPage`, `src/components/calculator/*`, `useCalculatorBOM`, `useFenceProducts`, `calculate-bom-v2` edge function all deleted. `/` redirects to `/calculator`.
 - [ ] v1 (`/new`, `MainApp`, `calculate-bom`) removal — deferred to a future pass.

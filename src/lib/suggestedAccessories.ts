@@ -2,6 +2,7 @@ import type { CanonicalPayload, CanonicalRun } from "../types/canonical.types";
 import type { BOMLineItem, ExtraItem } from "../types/bom.types";
 import { getComponent } from "./localSeedData";
 import { clampPostSpacing, maxPanelWidthForSystem } from "./productOptionRules";
+import { GATE_SEGMENT_STUB_KEYS } from "./segmentTermination";
 
 type Variables = Record<string, string | number | boolean | undefined>;
 
@@ -27,6 +28,27 @@ const POST_COLOURS = new Set([
 
 const ALUMAWOOD_CORE_COLOURS = new Set(["KWI", "WRC"]);
 const CSR_PLATE_COLOURS = new Set(["B", "BS", "D", "G", "M", "MN", "S", "SM", "W"]);
+const LIGHT_POST_PLUG_COLOURS = new Set(["W", "SM", "P", "PB", "S"]);
+const MONUMENT_POST_PLUG_COLOURS = new Set(["MN", "BS", "D", "G", "M"]);
+const DIAMOND_REVOLUTION_KIT_SKUS = [
+  "REV-CD-2S",
+  "REV-STAND",
+  "REV-TEMPLATE",
+  "REV-LEVEL",
+  "REV-GUARD",
+  "REV-BASE",
+  "REV-BIT-08",
+  "REV-BIT-10",
+  "REV-BIT-12",
+  "REV-BIT-14",
+  "REV-BIT-20",
+  "REV-BIT-42",
+  "REV-BIT-53",
+  "REV-BIT-63",
+  "REV-BIT-76",
+  "REV-BIT-83",
+  "REV-BIT-89",
+] as const;
 
 const roundQty = (value: number) => Math.max(1, Math.ceil(value));
 
@@ -116,6 +138,16 @@ function csrCapSku(vars: Variables) {
   return `XP-CSRC-${csrPlateColour(postColourFromVars(vars))}`;
 }
 
+function postPlugSku(vars: Variables) {
+  const colour = postColourFromVars(vars);
+  if (colour === "B") return "SS-POSTPLUG-4PK";
+  if (colour === "W") return "SS-POSTPLUG-4PK-W";
+  if (colour === "MN") return "SS-POSTPLUG-4PK-MN";
+  if (LIGHT_POST_PLUG_COLOURS.has(colour)) return "SS-POSTPLUG-4PK-W";
+  if (MONUMENT_POST_PLUG_COLOURS.has(colour)) return "SS-POSTPLUG-4PK-MN";
+  return "SS-POSTPLUG-4PK";
+}
+
 function fencePanelCounts(run: CanonicalRun, vars: Variables) {
   const baseMaxPanelWidth = clampPostSpacing(
     vars.max_panel_width_mm,
@@ -152,8 +184,6 @@ export function suggestAccessories(
   for (const run of payload.runs) {
     const vars = mergedVars(payload, run);
     const postCount = postCountForRun(run);
-    if (postCount <= 0) continue;
-
     const mountingType = String(
       vars.mounting_type ?? vars.mounting_method ?? "in_ground",
     );
@@ -162,6 +192,21 @@ export function suggestAccessories(
     const finishFamily = String(vars.finish_family ?? "standard");
     const firstFenceSegment = run.segments.find((segment) => segment.segmentKind !== "gate_opening");
     const postHeight = Number(firstFenceSegment?.targetHeightMm ?? vars.target_height_mm ?? 1800);
+    const gateCount = run.segments.filter((segment) => segment.segmentKind === "gate_opening").length;
+
+    if (gateCount > 0) {
+      suggestions.push(
+        componentSuggestion(
+          "LL-GH",
+          gateCount,
+          "catalogue_gap",
+          "Optional D&D black polymer side-fixing gate handle, suggested once per gate.",
+          "D&D black polymer side-fixing gate handle",
+        ),
+      );
+    }
+
+    if (postCount <= 0) continue;
 
     if (mountingType === "core_drill") {
       const dressRingSku =
@@ -176,6 +221,38 @@ export function suggestAccessories(
             "Core-drill dress ring",
           ),
         );
+      }
+
+      suggestions.push(
+        componentSuggestion(
+          postPlugSku(vars),
+          Math.ceil(postCount / 4),
+          "post_accessory",
+          "Post plugs cap fixing-hole posts; selected in the nearest available B / MN / W finish.",
+          "32mm OD post plug 4 pack",
+        ),
+      );
+      suggestions.push(
+        componentSuggestion(
+          "SOUD-EPOFIX",
+          1,
+          "fixing",
+          "Epoxy option for core-drilled post fixing.",
+          "Soudal Epofix epoxy",
+        ),
+      );
+      if (postCount > 5) {
+        for (const sku of DIAMOND_REVOLUTION_KIT_SKUS) {
+          suggestions.push(
+            componentSuggestion(
+              sku,
+              1,
+              "catalogue_gap",
+              "Need a core drill? We sell a full Diamond Revolution kit for larger core-drilled jobs.",
+              "Diamond Revolution core drilling kit item",
+            ),
+          );
+        }
       }
     }
 
@@ -211,6 +288,24 @@ export function suggestAccessories(
           ),
         );
       }
+      suggestions.push(
+        componentSuggestion(
+          postPlugSku(vars),
+          Math.ceil(postCount / 4),
+          "post_accessory",
+          "Post plugs cap fixing-hole posts; selected in the nearest available B / MN / W finish.",
+          "32mm OD post plug 4 pack",
+        ),
+      );
+      suggestions.push(
+        componentSuggestion(
+          "ULTRALOC-3242",
+          1,
+          "fixing",
+          "Threadlocker for base-plate mounting fixings.",
+          "Ultraloc 3242 threadlocker",
+        ),
+      );
       if (String(vars.base_plate_substrate ?? "concrete") === "concrete") {
         suggestions.push(
           componentSuggestion(
@@ -275,7 +370,7 @@ export function suggestAccessories(
 
     const shortSlidingGates = run.segments.filter((segment) => {
       if (segment.segmentKind !== "gate_opening") return false;
-      const movement = String(segment.variables?.gate_movement ?? "");
+      const movement = String(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement] ?? "");
       return movement === "sliding" && Number(segment.segmentWidthMm ?? 0) <= 3000;
     });
     if (shortSlidingGates.length > 0) {
@@ -314,6 +409,13 @@ export function suggestAccessories(
   finishColours.add(fenceColour);
   const postColour = postColourFromVars(payload.variables);
   finishColours.add(postColour);
+  for (const run of payload.runs) {
+    for (const segment of run.segments) {
+      if (segment.segmentKind !== "gate_opening") continue;
+      const gateColour = String(segment.variables?.[GATE_SEGMENT_STUB_KEYS.colourCode] ?? "");
+      if (gateColour) finishColours.add(gateColour);
+    }
+  }
 
   for (const colour of finishColours) {
     const sku = `PAINT-${colour}`;
@@ -336,6 +438,42 @@ export function suggestAccessories(
         "fixing",
         "Heavy duty cartridge gun for SOUD-CA1400.",
         "Soudafix cartridge gun",
+      ),
+    );
+  }
+
+  if (bomSkus.has("QSG-JOINER65-4PK") || bomSkus.has("QSG-JOINER90-4PK")) {
+    suggestions.push(
+      componentSuggestion(
+        "DB-PH3",
+        1,
+        "fixing",
+        "Phillips #3 driver bit suits QuickScreen gate joiner block screws.",
+        "Phillips #3 driver bit",
+      ),
+    );
+  }
+
+  if (bomSkus.has("AR-SCR-BR-50PK")) {
+    suggestions.push(
+      componentSuggestion(
+        "DB-SQ3.4",
+        1,
+        "fixing",
+        "Square #3.4 driver bit suits gate rail screws.",
+        "Square #3.4 driver bit",
+      ),
+    );
+  }
+
+  if (payload.runs.length > 0) {
+    suggestions.push(
+      componentSuggestion(
+        "FB-V60",
+        1,
+        "fixing",
+        "General-purpose glazing silicone for finishing and sealing on site.",
+        "Bostik V60 glazing silicone",
       ),
     );
   }

@@ -1287,6 +1287,23 @@ Changes applied:
 Verification:
 - `npm run build` passed after the changes.
 
+### May 7, 2026 - Brief AE suggested accessory expansion
+
+Catalogue/CSV finding:
+- Accessory prompts were missing several installer add-ons that should be offered contextually but not auto-added to the BOM: gate handles, driver bits, post plugs, core-drill tooling, threadlocker, silicone, and core-drill epoxy.
+- CSV pricing was found for the new accessories, including post plugs, driver bits, Diamond Revolution drill/bit SKUs, Soudal/Bostik chemical products, and substrate fixing kits.
+
+Changes applied:
+- Suggested accessories now show `LL-GH` once per gate, `DB-PH3` when QSG joiner blocks are in the BOM, and `DB-SQ3.4` when gate rail screws are in the BOM.
+- Base-plated and core-drilled jobs now suggest nearest-colour post plugs in B / MN / W at one 4-pack per four posts.
+- Base-plated jobs suggest `ULTRALOC-3242`; core-drilled jobs suggest `SOUD-EPOFIX`; every job suggests `FB-V60`.
+- Larger core-drilled jobs with more than five posts now surface the Diamond Revolution drill kit and bit SKUs as optional suggestions only.
+- Touch-up paint suggestions now also consider gate colours that differ from the run colour.
+- Local fallback component metadata, quantity breaks, and pricing were added for the newly suggested SKUs and for the previously unpriced substrate/Soudafix items.
+
+Verification:
+- `npm run build` passed after the changes.
+
 ### May 7, 2026 - Brief AC concrete, grout, and fixing-kit choices
 
 Catalogue finding:
