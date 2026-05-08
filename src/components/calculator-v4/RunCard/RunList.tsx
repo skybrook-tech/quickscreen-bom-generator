@@ -75,7 +75,7 @@ export function RunList({ onAddGate }: Props) {
         </div>
         <button
           onClick={() => dispatch({ type: "ADD_RUN" })}
-          className="w-full mt-3 px-3 py-2.5 rounded-md border border-dashed border-brand-border text-sm font-medium text-brand-muted hover:text-brand-accent hover:border-brand-accent hover:bg-brand-accent/5 transition flex items-center justify-center gap-1.5"
+          className="w-full mt-3 px-3 py-2.5 rounded-[var(--brand-radius-sm)] border border-dashed border-brand-border text-sm font-medium text-brand-muted hover:text-brand-accent hover:border-brand-accent hover:bg-brand-accent/5 transition flex items-center justify-center gap-1.5"
           data-testid="v4-add-run"
         >
           <Plus size={14} /> Add run

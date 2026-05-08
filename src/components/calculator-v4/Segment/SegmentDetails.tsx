@@ -84,9 +84,9 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
 
   const heightSelectValue = String(
     seg.targetHeightMm ??
-      heightOptionsMm[0] ??
-      freeformBounds?.minMm ??
-      1800,
+    heightOptionsMm[0] ??
+    freeformBounds?.minMm ??
+    1800,
   );
 
   const freeformHeightValue =
@@ -148,23 +148,23 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
       )}
       aria-disabled={locked}
     > {
-      isMaster && ( <ProductSelectV4
-        value={
-          state.payload?.runs.find((r) => r.runId === runId)
-            ?.productCode ??
-          state.payload?.productCode ??
-          ""
-        }
-        onChange={(code) =>
-          dispatch({
-            type: "SET_RUN_PRODUCT",
-            runId,
-            productCode: code,
-          })
-        }
-      />)
-    }
-       
+        isMaster && (<ProductSelectV4
+          value={
+            state.payload?.runs.find((r) => r.runId === runId)
+              ?.productCode ??
+            state.payload?.productCode ??
+            ""
+          }
+          onChange={(code) =>
+            dispatch({
+              type: "SET_RUN_PRODUCT",
+              runId,
+              productCode: code,
+            })
+          }
+        />)
+      }
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="space-y-2">
           <label className={labelClass}>Length (m)</label>
@@ -203,7 +203,6 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
                   })
                 }
                 disabled={locked}
-                className="rounded-md"
               />
             </div>
           ) : (
@@ -216,7 +215,6 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
                 })
               }
               disabled={locked}
-              className="rounded-md"
               data-testid={`v4-seg-height-${seg.segmentId}`}
             >
               {heightOptionsMm.map((h) => (
@@ -247,9 +245,7 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
             <span className="text-brand-muted text-xs">
               Post spacing (mm)
             </span>
-            <span className="text-[10px] text-brand-muted -mt-0.5 mb-0.5">
-              Maximum bay width — drives spacing between posts along the run.
-            </span>
+
             <NumberInput
               value={effectiveMax}
               onChange={(val) => updateMaxPanelWidth(val)}
@@ -258,6 +254,9 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
               step={50}
               disabled={locked}
             />
+            <span className="text-[10px] text-brand-muted -mt-0.5 mb-0.5">
+              Maximum bay width — drives spacing between posts along the run.
+            </span>
             {lenMm > 0 && actualPostSpacingMm > 0 ? (
               <span className="text-[10px] text-brand-muted mt-1">
                 Actual spacing this segment: ~{actualPostSpacingMm} mm (
@@ -272,7 +271,6 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
               value={postSize}
               onChange={(e) => setScalar(POST_SIZE_KEY, e.target.value || null)}
               disabled={locked}
-              className="rounded-md"
             >
               <option value="">— Job default —</option>
               {postSizeOptions.map((opt) => (

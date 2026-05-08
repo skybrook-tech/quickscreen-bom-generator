@@ -114,11 +114,10 @@ export function ProductSelectV4({ value, onChange, separated = false }: Props) {
               key={p.id}
               type="button"
               onClick={() => selectProduct(p)}
-              className={`text-left p-4 rounded-xl border transition-all duration-150 ${
-                selected
-                  ? "border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/40 shadow-sm"
-                  : "border-brand-border bg-brand-card hover:border-brand-accent/50 hover:shadow-sm"
-              }`}
+              className={`text-left p-4 rounded-[var(--brand-radius)] border transition-all duration-150 ${selected
+                ? "border-brand-accent bg-brand-accent/5 ring-1 ring-brand-accent/40 shadow-sm"
+                : "border-brand-border bg-brand-card hover:border-brand-accent/50 hover:shadow-sm"
+                }`}
             >
               <div className="font-semibold text-sm text-brand-text leading-tight">
                 {p.name}
@@ -142,19 +141,24 @@ export function ProductSelectV4({ value, onChange, separated = false }: Props) {
 
   if (filtered.length <= 10) {
     return (
-      <Segmented
-        value={currentProduct?.system_type ?? ""}
-        onChange={(value) =>
-          selectProduct(
-            filtered.find((p) => p.system_type === value) ?? filtered[0],
-          )
-        }
-        options={filtered.map((p) => ({
-          value: p.system_type,
-          label: p.system_type,
-        }))}
-        size="sm"
-      />
+      <div className="space-y-1.5">
+        <label className="text-[11px] font-medium uppercase tracking-wider text-brand-muted block mb-1.5">
+          Product type
+        </label>
+        <Segmented
+          value={currentProduct?.system_type ?? ""}
+          onChange={(value) =>
+            selectProduct(
+              filtered.find((p) => p.system_type === value) ?? filtered[0],
+            )
+          }
+          options={filtered.map((p) => ({
+            value: p.system_type,
+            label: p.system_type,
+          }))}
+          size="sm"
+        />
+      </div>
     );
   }
 
@@ -166,7 +170,7 @@ export function ProductSelectV4({ value, onChange, separated = false }: Props) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between gap-2 px-3 py-2 bg-white border border-brand-border rounded-md text-sm text-brand-text hover:border-brand-accent/50 transition-colors"
+        className="w-full flex items-center justify-between gap-2 px-3 py-2 bg-white border border-brand-border rounded-[var(--brand-radius-sm)] text-sm text-brand-text hover:border-brand-accent/50 transition-colors"
       >
         <span
           className={currentProduct ? "text-brand-text" : "text-brand-muted"}
@@ -177,7 +181,7 @@ export function ProductSelectV4({ value, onChange, separated = false }: Props) {
       </button>
 
       {open && (
-        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-brand-card border border-brand-border rounded-md shadow-lg overflow-hidden">
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-brand-card border border-brand-border rounded-[var(--brand-radius-sm)] shadow-lg overflow-hidden">
           <div className="flex items-center gap-2 px-3 py-2 border-b border-brand-border">
             <Search size={14} className="text-brand-muted shrink-0" />
             <Input
@@ -213,11 +217,10 @@ export function ProductSelectV4({ value, onChange, separated = false }: Props) {
                         selectProduct(p);
                       }}
                       onMouseEnter={() => setActiveIndex(idx)}
-                      className={`w-full text-left px-3 py-2 text-sm transition-colors ${
-                        active
-                          ? "bg-brand-accent/15 text-brand-accent"
-                          : "text-brand-text hover:bg-brand-border/50"
-                      } ${selected ? "font-medium" : ""}`}
+                      className={`w-full text-left px-3 py-2 text-sm transition-colors ${active
+                        ? "bg-brand-accent/15 text-brand-accent"
+                        : "text-brand-text hover:bg-brand-border/50"
+                        } ${selected ? "font-medium" : ""}`}
                     >
                       <div className="font-mono text-xs text-brand-muted">
                         {p.system_type}

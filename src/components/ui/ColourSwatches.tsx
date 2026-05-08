@@ -37,7 +37,7 @@ export function ColourSwatches({
             title={c.label}
             onClick={() => onChange(c.value)}
             className={[
-              "relative w-8 h-8 rounded-md transition-all",
+              "relative w-8 h-8 rounded-[var(--brand-radius-sm)] transition-all",
               selected
                 ? "ring-2 ring-brand-accent ring-offset-2 ring-offset-brand-bg scale-110"
                 : "ring-1 ring-neutral-700 hover:scale-105",

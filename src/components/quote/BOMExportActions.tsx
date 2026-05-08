@@ -151,7 +151,7 @@ export function BOMExportActions({
   };
 
   const btnCls =
-    "flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-md border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/60 hover:bg-brand-accent/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+    "flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-[var(--brand-radius-sm)] border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/60 hover:bg-brand-accent/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
   return (
     <>
@@ -177,7 +177,7 @@ export function BOMExportActions({
             type="button"
             onClick={handlePDFDownload}
             disabled={pdfing}
-            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-brand-accent text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-[var(--brand-radius-sm)] bg-brand-accent text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {pdfing ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
             Download PDF

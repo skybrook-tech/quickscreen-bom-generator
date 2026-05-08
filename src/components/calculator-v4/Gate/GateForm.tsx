@@ -198,7 +198,7 @@ export function GateForm({
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto p-5 space-y-5">
-        <label className="flex items-start gap-3 cursor-pointer rounded-lg border border-brand-border bg-brand-card/40 px-3 py-2.5">
+        <label className="flex items-start gap-3 cursor-pointer rounded-[var(--brand-radius)] border border-brand-border bg-brand-card/40 px-3 py-2.5">
           <input
             type="checkbox"
             className="mt-1 rounded border-brand-border"
@@ -239,7 +239,7 @@ export function GateForm({
               const n = Number(raw);
               handleChange("gate_width_mm", Number.isFinite(n) ? n : raw);
             }}
-            className="w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text"
+            className="w-full rounded-[var(--brand-radius-sm)] border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text"
             data-testid="v4-gate-width-mm"
           />
           {widthSoftWarn ? (
@@ -280,7 +280,7 @@ export function GateForm({
                   }
                   handleChange("gate_height_mm", Number(v));
                 }}
-                className="rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text"
+                className="rounded-[var(--brand-radius-sm)] border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text"
                 data-testid="v4-gate-height-preset"
               >
                 {GATE_HEIGHT_PRESETS_MM.map((p) => (
@@ -302,7 +302,7 @@ export function GateForm({
                     if (!Number.isFinite(n)) return;
                     handleChange("gate_height_mm", clampGateHeightMm(n));
                   }}
-                  className="w-28 rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text"
+                  className="w-28 rounded-[var(--brand-radius-sm)] border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text"
                   data-testid="v4-gate-height-custom"
                 />
               ) : null}
@@ -312,7 +312,7 @@ export function GateForm({
             </p>
           </div>
         ) : (
-          <p className="text-sm text-brand-muted rounded-md border border-brand-border/60 bg-brand-card/30 px-3 py-2">
+          <p className="text-sm text-brand-muted rounded-[var(--brand-radius-sm)] border border-brand-border/60 bg-brand-card/30 px-3 py-2">
             Gate height matches fence:{" "}
             <span className="text-brand-text font-medium tabular-nums">
               {resolveMatchFenceSegmentVars(fenceContext, maxFenceSegmentHeightMm)
@@ -336,14 +336,14 @@ export function GateForm({
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 rounded-md text-sm text-brand-muted hover:text-brand-text"
+          className="px-4 py-2 rounded-[var(--brand-radius-sm)] text-sm text-brand-muted hover:text-brand-text"
         >
           Cancel
         </button>
         <button
           type="button"
           onClick={handleSave}
-          className="px-4 py-2 rounded-md bg-brand-accent text-white text-sm font-medium hover:opacity-90"
+          className="px-4 py-2 rounded-[var(--brand-radius-sm)] bg-brand-accent text-white text-sm font-medium hover:opacity-90"
           data-testid="v4-gate-save"
         >
           {initialSegment ? "Save changes" : "Add gate"}

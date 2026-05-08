@@ -16,15 +16,15 @@ interface Props {
 const Chip = ({ children, locked }: { children: React.ReactNode, locked: boolean }) => {
   return (
     <span
-    className={cn(
-      "inline-flex items-center rounded-md gap-1 px-1.5 py-0.5 tabular-nums cursor-default max-w-full",
-      locked
-        ? "bg-white/25 text-white"
-        : "bg-black/[0.06] dark:bg-white/10 text-brand-text",
-    )}
-  >
-    {children}
-  </span>
+      className={cn(
+        "inline-flex items-center rounded-[var(--brand-radius-sm)] gap-1 px-1.5 py-0.5 tabular-nums cursor-default max-w-full",
+        locked
+          ? "bg-white/25 text-white"
+          : "bg-black/[0.06] dark:bg-white/10 text-brand-text",
+      )}
+    >
+      {children}
+    </span>
   );
 };
 
@@ -45,7 +45,7 @@ export function SegmentCollapsedSpecRow({
         <Chip locked={locked}>
           <span
             className={cn(
-              "inline-block size-3.5 rounded-sm shrink-0 ring-1 ring-inset",
+              "inline-block size-3.5 rounded-[var(--brand-radius-sm)] shrink-0 ring-1 ring-inset",
               locked ? "ring-white/50" : "ring-black/20",
             )}
             style={{ backgroundColor: colour.hex ?? "#888" }}
@@ -66,7 +66,7 @@ export function SegmentCollapsedSpecRow({
       {chips.map((c) => (
         <Tooltip key={c.id} content={c.tooltip}>
           <Chip locked={locked}>
-      
+
             {c.chipText}
           </Chip>
         </Tooltip>

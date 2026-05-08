@@ -4,7 +4,7 @@ import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { BomActions } from "./BomActions";
 import { BomHeader } from "./BomHeader";
 import { BomTable } from "./BomTable";
-import { BomTabs } from "./BomTabs";
+import { Tabs } from "../shared/Tabs";
 import { BomTotals } from "./BomTotals";
 import { ExtraItemsPanel } from "./ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "./SuggestedAccessoriesPanel";
@@ -136,7 +136,7 @@ export function BomPanel({
   }, [state.payload, view.hasResult, view.runResults]);
 
   return (
-    <div className="rounded-xl border border-brand-border bg-brand-card overflow-hidden flex flex-col h-full shadow-sm">
+    <div className="rounded-[var(--brand-radius)] border border-brand-border bg-brand-card overflow-hidden flex flex-col h-full shadow-sm">
       <BomHeader
         summaryPrimary={headerSummary.primary}
         summarySecondary={headerSummary.secondary}
@@ -161,7 +161,7 @@ export function BomPanel({
       />
 
       {state.bomResult && (
-        <BomTabs tabs={tabs} activeId={activeTab} onChange={setActiveTab} />
+        <Tabs tabs={tabs} activeId={activeTab} onChange={setActiveTab} />
       )}
 
       {state.removedSkus.size > 0 && (

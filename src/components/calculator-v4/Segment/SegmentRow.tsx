@@ -124,26 +124,8 @@ export function SegmentRow({
     });
   }, [dispatch, heightMeta, pitchLadderOptions, runId, seg]);
 
-  const rowStyle =
-    seg.kind === "fence"
-      ? {
-        borderColor: fenceAccentHex,
-        backgroundColor: open
-          ? hexWithAlpha(fenceAccentHex, 0.12)
-          : hexWithAlpha(fenceAccentHex, 0.06),
-      }
-      : {
-        borderColor: CANVAS_GATE_STROKE,
-        backgroundColor: open
-          ? "rgba(245, 158, 11, 0.12)"
-          : "rgba(245, 158, 11, 0.06)",
-      };
 
-  const isLayoutLinkedHighlight =
-    !!layoutHl &&
-    seg.kind === "fence" &&
-    layoutHl.highlight?.runId === runId &&
-    layoutHl.highlight?.segmentId === seg.segmentId;
+
 
   return (
     <div

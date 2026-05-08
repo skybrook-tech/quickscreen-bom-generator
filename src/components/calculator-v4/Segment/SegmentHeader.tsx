@@ -170,12 +170,10 @@ export function SegmentHeader({
     <div
       className={cn(
         "flex flex-col gap-1 px-3 py-2.5 cursor-pointer transition-opacity",
-        locked ? "hover:opacity-95 text-white" : "hover:opacity-90",
+        "hover:opacity-90",
       )}
       style={
-        locked
-          ? { backgroundColor: accentColor, color: "#ffffff" }
-          : { color: accentColor }
+        { color: accentColor }
       }
       onClick={() => onToggle()}
     >
@@ -184,14 +182,13 @@ export function SegmentHeader({
           type="button"
           className={cn(
             "bg-transparent border-0 p-0 cursor-pointer",
-            locked && "text-white",
           )}
           aria-label={open ? "Collapse segment" : "Expand segment"}
         >
           {open ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
         </button>
 
-        <div className="bg-brand-accent/10 rounded-md p-1 flex items-center justify-center aspect-square" style={{ backgroundColor: accentColor, }}>
+        <div className="bg-brand-accent/10 rounded-[var(--brand-radius-sm)] p-1 flex items-center justify-center aspect-square" style={{ backgroundColor: accentColor, }}>
           <span className="font-mono text-center text-xs text-white font-semibold min-w-[1.5rem] cursor-pointer tabular-nums">
             {segmentLabel}
           </span>
@@ -205,7 +202,6 @@ export function SegmentHeader({
           displayValue={lengthM.toFixed(2)}
           onCommit={(v) => onLengthChange(v * 1000)}
           disabled={locked}
-          onAccentSurface={locked}
         />
         <Separator />
         <Tooltip content="Target fence height (above ground)">
@@ -223,7 +219,6 @@ export function SegmentHeader({
               displayValue={String(heightDisplayMm)}
               onCommit={(v) => onHeightChange(freeform ? clampFreeform(v) : v)}
               disabled={locked}
-              onAccentSurface={locked}
               selectOptions={
                 !freeform && heightOptionsMm.length > 0
                   ? heightOptionsMm
@@ -253,8 +248,7 @@ export function SegmentHeader({
               <Separator />
               <span
                 className={cn(
-                  "inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded font-medium",
-                  locked ? "bg-white/20 text-white" : "",
+                  "inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-[var(--brand-radius-sm)] font-medium",
                 )}
                 style={
                   locked
@@ -289,10 +283,8 @@ export function SegmentHeader({
                 type="button"
                 onClick={(e) => e.stopPropagation()}
                 className={cn(
-                  "p-1 rounded-md shrink-0",
-                  locked
-                    ? "text-amber-200 hover:text-amber-100 hover:bg-white/10"
-                    : "text-amber-500 hover:text-amber-400 hover:bg-amber-500/10",
+                  "p-1 rounded-[var(--brand-radius-sm)] shrink-0",
+                  "text-amber-500 hover:text-amber-400 hover:bg-amber-500/10",
                 )}
                 aria-label="Segment settings differ from run defaults"
               >
@@ -311,9 +303,7 @@ export function SegmentHeader({
               onClick={onToggle}
               className={cn(
                 "p-1",
-                locked
-                  ? "text-white hover:text-white/90"
-                  : "text-red-500 hover:text-red-400",
+                "text-red-500 hover:text-red-400",
               )}
               aria-label="Segment has BOM errors"
             >
@@ -330,9 +320,7 @@ export function SegmentHeader({
               onClick={onToggle}
               className={cn(
                 "p-1",
-                locked
-                  ? "text-white hover:text-white/90"
-                  : "text-amber-500 hover:text-amber-400",
+                "text-amber-500 hover:text-amber-400",
               )}
               aria-label="Segment has BOM warnings"
             >
@@ -361,10 +349,9 @@ export function SegmentHeader({
               aria-pressed={locked}
               data-testid={`v4-seg-confirmed-${seg.segmentId}`}
               className={cn(
-                "p-1.5 rounded shrink-0",
-                locked
-                  ? "text-white hover:text-white hover:bg-white/15"
-                  : "text-brand-muted hover:text-brand-accent hover:bg-brand-accent/10",
+                "p-1.5 rounded-[var(--brand-radius-sm)] shrink-0",
+                "text-brand-muted hover:text-brand-accent hover:bg-brand-accent/10",
+                { "text-white hover:text-white/90 bg-brand-accent": locked }
               )}
             >
               {locked ? <Lock size={13} /> : <LockOpen size={13} />}
@@ -381,10 +368,8 @@ export function SegmentHeader({
               aria-label="Duplicate segment"
               disabled={locked}
               className={cn(
-                "p-1.5 rounded disabled:opacity-40 disabled:pointer-events-none",
-                locked
-                  ? "text-white hover:text-white hover:bg-white/15"
-                  : "text-brand-muted hover:text-brand-accent hover:bg-brand-accent/10",
+                "p-1.5 rounded-[var(--brand-radius-sm)] disabled:opacity-40 disabled:pointer-events-none",
+                "text-brand-muted hover:text-brand-accent hover:bg-brand-accent/10",
               )}
             >
               <Copy size={13} />
@@ -407,10 +392,8 @@ export function SegmentHeader({
               aria-label="Remove segment"
               disabled={removeDisabled}
               className={cn(
-                "p-1.5 rounded disabled:opacity-40 disabled:pointer-events-none",
-                locked
-                  ? "text-white hover:text-red-500 hover:bg-red-500/25"
-                  : "hover:text-red-500 hover:bg-red-500/20",
+                "p-1.5 rounded-[var(--brand-radius-sm)] disabled:opacity-40 disabled:pointer-events-none",
+                "hover:text-red-500 hover:bg-red-500/20",
               )}
             >
               <Trash2 size={13} />
@@ -419,14 +402,16 @@ export function SegmentHeader({
         </div>
       </div>
 
-      {!open && collapsedSpecs.showSubRow && (
-        <SegmentCollapsedSpecRow
-          colour={collapsedSpecs.colour}
-          showColourSwatch={collapsedSpecs.showColourSwatch}
-          chips={collapsedSpecs.chips}
-          locked={seg.confirmed === true}
-        />
-      )}
-    </div>
+      {
+        !open && collapsedSpecs.showSubRow && (
+          <SegmentCollapsedSpecRow
+            colour={collapsedSpecs.colour}
+            showColourSwatch={collapsedSpecs.showColourSwatch}
+            chips={collapsedSpecs.chips}
+            locked={seg.confirmed === true}
+          />
+        )
+      }
+    </div >
   );
 }

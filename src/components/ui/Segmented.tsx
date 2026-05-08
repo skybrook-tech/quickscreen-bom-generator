@@ -29,7 +29,7 @@ export function Segmented({
   return (
     <div
       className={cn(
-        "inline-flex rounded-full p-0.5",
+        "inline-flex rounded-[var(--brand-radius-sm)] p-0.5",
         separated
           ? "bg-slate-200/80 dark:bg-white/10 gap-2"
           : "bg-brand-bg gap-0.5",
@@ -45,7 +45,7 @@ export function Segmented({
             type="button"
             onClick={() => onChange(opt.value)}
             className={cn([
-              "rounded-full font-medium transition-all",
+              "rounded-[var(--brand-radius-sm)] font-medium transition-all",
               sizeClasses,
               {
                 "bg-brand-accent text-white shadow-sm": active || separated,

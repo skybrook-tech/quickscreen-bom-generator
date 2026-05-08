@@ -3,6 +3,8 @@ import type { User } from '@supabase/supabase-js';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../lib/supabase';
+import type { TenantTheme } from '../lib/tenantThemes';
+import { adjustThemeContrast } from '../lib/tenantThemes';
 
 // ─── Context ──────────────────────────────────────────────────────────────────
 
@@ -12,6 +14,8 @@ interface ProfileContextValue {
   role: string | null;
   orgId: string | null;
   isAdmin: boolean;
+  /** Full theme config loaded from this org's branding JSONB, or null. */
+  tenantTheme: TenantTheme | null;
   /** True while auth OR profile are still resolving — safe to gate on. */
   isLoading: boolean;
 }
@@ -21,6 +25,7 @@ const ProfileContext = createContext<ProfileContextValue>({
   role: null,
   orgId: null,
   isAdmin: false,
+  tenantTheme: null,
   isLoading: true,
 });
 
@@ -40,11 +45,15 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('role, org_id')
+        .select('role, org_id, organisation:organisations(branding)')
         .eq('id', user!.id)
         .single();
       if (error) throw error;
-      return data as { role: string; org_id: string };
+      return data as unknown as {
+        role: string;
+        org_id: string;
+        organisation: { branding: TenantTheme | null } | null;
+      };
     },
   });
 
@@ -59,6 +68,9 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         role: profile?.role ?? null,
         orgId: profile?.org_id ?? null,
         isAdmin: profile?.role === 'admin',
+        tenantTheme: profile?.organisation?.branding
+          ? adjustThemeContrast(profile.organisation.branding)
+          : null,
         isLoading,
       }}
     >

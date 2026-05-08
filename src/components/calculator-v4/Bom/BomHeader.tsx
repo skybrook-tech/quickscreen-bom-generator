@@ -61,7 +61,10 @@ export function BomHeader({
   })();
 
   return (
-    <div className="bg-blue-800 text-white px-4 py-3 flex-shrink-0">
+    <div className="bg-blue-800 px-4 py-3 flex-shrink-0" style={{
+      background: "var(--brand-header-bg)",
+      color: "var(--brand-header-text)",
+    }}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -70,19 +73,19 @@ export function BomHeader({
             </h2>
             {badge}
           </div>
-          <p className="text-xs text-white/80 mt-0.5">{summaryPrimary}</p>
+          <p className="text-xs mt-0.5">{summaryPrimary}</p>
           {summarySecondary ? (
-            <p className="text-[11px] text-white/70 mt-0.5 truncate max-w-[min(100vw-8rem,28rem)]">
+            <p className="text-[11px] mt-0.5 truncate max-w-[min(100vw-8rem,28rem)]">
               {summarySecondary}
             </p>
           ) : null}
         </div>
         <div className="text-right">
-          <div className="text-[10px] uppercase tracking-wider text-white/70">
+          <div className="text-[10px] uppercase tracking-wider">
             Grand total
           </div>
           {totalsScopeLabel ? (
-            <div className="text-[10px] text-white/65 mt-0.5">{totalsScopeLabel}</div>
+            <div className="text-[10px] mt-0.5">{totalsScopeLabel}</div>
           ) : null}
           <div className={`text-xl font-bold font-mono tabular-nums transition-opacity ${isStale && hasBom ? "opacity-50" : ""}`}>
             {fmt(grandTotal)}

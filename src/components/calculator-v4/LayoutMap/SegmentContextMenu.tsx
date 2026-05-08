@@ -78,7 +78,7 @@ export function SegmentContextMenu({
     <div
       ref={rootRef}
       role="menu"
-      className="fixed z-[1000] min-w-[220px] rounded-lg border border-brand-border bg-brand-card shadow-xl overflow-hidden"
+      className="fixed z-[1000] min-w-[220px] rounded-[var(--brand-radius)] border border-brand-border bg-brand-card shadow-xl overflow-hidden"
       style={{ left: x, top: y }}
       data-testid="v4-segment-context-menu"
     >
@@ -104,7 +104,7 @@ export function SegmentContextMenu({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onBlur={commit}
-          className="flex-1 font-mono text-sm rounded border border-brand-border bg-brand-bg px-2 py-1 text-brand-text"
+          className="flex-1 font-mono text-sm rounded-[var(--brand-radius-sm)] border border-brand-border bg-brand-bg px-2 py-1 text-brand-text"
           data-testid="v4-segment-context-length"
         />
         <span className="text-xs font-mono text-brand-muted">m</span>

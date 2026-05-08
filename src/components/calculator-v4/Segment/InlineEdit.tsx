@@ -133,7 +133,7 @@ export function InlineEdit({
   );
 
   const sharedInputClass = cn(
-    "font-mono text-sm tabular-nums rounded border px-1 py-0.5 max-w-[5.5rem] outline-none focus:ring-2",
+    "font-mono text-sm tabular-nums rounded-[var(--brand-radius-sm)] border px-1 py-0.5 max-w-[5.5rem] outline-none focus:ring-2",
     onAccentSurface
       ? "border-white/40 bg-white/10 text-white focus:ring-white/35"
       : "border-brand-border bg-brand-card text-brand-text focus:ring-brand-accent/30",
@@ -254,7 +254,7 @@ export function InlineEdit({
             }
           }}
           className={cn(
-            "w-16 px-1.5 py-0 rounded-lg border text-sm font-mono tabular-nums outline-none focus:ring-2",
+            "w-16 px-1.5 py-0 rounded-[var(--brand-radius-sm)] border text-sm font-mono tabular-nums outline-none focus:ring-2",
             onAccentSurface
               ? "border-white/40 bg-white/10 text-white focus:ring-white/35"
               : "border-brand-border bg-brand-card text-brand-text focus:ring-brand-accent/30",
@@ -272,7 +272,7 @@ export function InlineEdit({
       title={`Click to edit ${label}`}
       aria-label={label}
       className={cn(
-        "group/inline relative inline-flex items-center gap-0.5 cursor-text rounded-lg px-1 -mx-1 transition-colors",
+        "group/inline relative inline-flex items-center gap-0.5 cursor-text rounded-[var(--brand-radius-sm)] px-1 -mx-1 transition-colors",
         rowHoverBg,
       )}
     >

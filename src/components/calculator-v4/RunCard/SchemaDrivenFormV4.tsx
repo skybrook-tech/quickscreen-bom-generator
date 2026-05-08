@@ -11,7 +11,7 @@ import { slugToLabel } from "../../../lib/slugLabels";
 
 /** Matches `Input.tsx` surfaces: `bg-white dark:bg-brand-card` + `border-brand-border`. */
 const CONTROL_CLASS = cn(
-  "w-full px-3 py-2 rounded-lg bg-white dark:bg-brand-card",
+  "w-full px-3 py-2 rounded-[var(--brand-radius-sm)] bg-white dark:bg-brand-card",
   "border border-brand-border text-sm text-brand-text",
   "focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 outline-none",
 );

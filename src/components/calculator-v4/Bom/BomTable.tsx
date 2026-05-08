@@ -57,8 +57,8 @@ export function BomTable({ lines }: Props) {
 
   return (
     <table className="w-full">
-      <thead className="sticky top-0  bg-brand-card backdrop-blur-sm z-10">
-        <tr className="border-b border-brand-border">
+      <thead className="sticky top-0  bg-brand-card backdrop-blur-sm z-10 shadow-md">
+        <tr className="">
           <th className="px-3 py-2 text-left text-[10px] font-semibold uppercase tracking-wider text-brand-muted">
             Code
           </th>

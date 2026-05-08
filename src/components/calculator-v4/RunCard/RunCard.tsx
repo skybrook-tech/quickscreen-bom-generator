@@ -12,6 +12,7 @@ import { MasterFenceVariableSeeds } from "./MasterFenceVariableSeeds";
 import { RunHeader } from "./RunHeader";
 import { RunSubHeader } from "./RunSubHeader";
 import { useRunSummary } from "./useRunSummary";
+import { Tabs } from "../shared/Tabs";
 
 interface Props {
   run: CanonicalRun;
@@ -121,9 +122,15 @@ export function RunCard({
     dispatch({ type: "UPSERT_SEGMENT", runId: run.runId, segment: base });
   }
 
+  const tabs = [
+    { id: "full", label: "Full run", count: segmentTotal },
+    { id: "segments", label: "Segments", count: fenceCount },
+    { id: "gates", label: "Gates", count: gateCount },
+  ];
+
   return (
     <div
-      className="rounded-xl border border-brand-border bg-brand-card overflow-hidden shadow-sm"
+      className="rounded-[var(--brand-radius)] border border-brand-border bg-brand-card overflow-hidden shadow-sm"
       data-testid={`v4-run-card-${run.runId}`}
     >
       <MasterFenceVariableSeeds run={run} />
@@ -150,35 +157,8 @@ export function RunCard({
           />
 
           <div className="border-t border-brand-border  pt-1">
-            <div className="flex flex-wrap gap-0 -mx-4 px-4 border-b border-brand-border">
-              {(
-                [
-                  { id: "full" as const, label: "Full run", count: segmentTotal },
-                  {
-                    id: "segments" as const,
-                    label: "Segments",
-                    count: fenceCount,
-                  },
-                  { id: "gates" as const, label: "Gates", count: gateCount },
-                ] as const
-              ).map((tab) => (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setBrowseTab(tab.id)}
-                  className={cn(
-                    "py-2 px-3 text-xs font-medium border-b-2 transition-colors -mb-px",
-                    browseTab === tab.id
-                      ? "border-brand-accent text-brand-accent"
-                      : "border-transparent text-brand-muted hover:text-brand-text",
-                  )}
-                  data-testid={`v4-run-browse-${tab.id}`}
-                >
-                  {tab.label}{" "}
-                  <span className="tabular-nums opacity-80">({tab.count})</span>
-                </button>
-              ))}
-            </div>
+            <Tabs tabs={tabs} activeId={browseTab} onChange={(id) => setBrowseTab(id as BrowseTab)} />
+
             <SegmentList
               run={run}
               runColorIndex={runColorIndex}

@@ -123,7 +123,7 @@ export function JobActions({ onSave }: JobActionsProps) {
       <button
         onClick={handleSave}
         disabled={!hasJob || isSaving}
-        className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-text text-brand-bg text-sm font-medium hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="flex items-center gap-1.5 px-4 py-2 rounded-[var(--brand-radius-sm)] bg-brand-text text-brand-bg text-sm font-medium hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
         data-testid="v4-save-job"
       >
         <Save size={14} />
@@ -132,7 +132,7 @@ export function JobActions({ onSave }: JobActionsProps) {
       <button
         onClick={handleClear}
         disabled={!hasJob}
-        className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-brand-border text-sm font-medium text-red-500 hover:bg-red-500/10 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="flex items-center gap-1.5 px-4 py-2 rounded-[var(--brand-radius-sm)] border border-brand-border text-sm font-medium text-red-500 hover:bg-red-500/10 disabled:opacity-40 disabled:cursor-not-allowed"
         data-testid="v4-clear-job"
       >
         <Trash2 size={14} /> Clear Job

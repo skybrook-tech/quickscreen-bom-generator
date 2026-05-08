@@ -133,7 +133,7 @@ export function RunSubHeader({ effectiveVars, productCode }: Props) {
               <span
                 key={field.id}
                 data-pill-item
-                className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-brand-card border border-brand-border text-brand-bg font-medium cursor-default"
+                className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-[var(--brand-radius-sm)] bg-brand-card border border-brand-border text-brand-bg font-medium cursor-default"
               >
                 {hex ? (
                   <span
@@ -152,7 +152,7 @@ export function RunSubHeader({ effectiveVars, productCode }: Props) {
             <button
               type="button"
               onClick={() => setExpanded(true)}
-              className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-brand-card border border-brand-border text-brand-muted font-medium cursor-pointer hover:text-brand-text transition-colors"
+              className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-[var(--brand-radius-sm)] bg-brand-card border border-brand-border text-brand-muted font-medium cursor-pointer hover:text-brand-text transition-colors"
             >
               +{hiddenCount} more
             </button>
@@ -162,7 +162,7 @@ export function RunSubHeader({ effectiveVars, productCode }: Props) {
             <button
               type="button"
               onClick={() => setExpanded(false)}
-              className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-brand-card border border-brand-border text-brand-muted font-medium cursor-pointer hover:text-brand-text transition-colors"
+              className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-[var(--brand-radius-sm)] bg-brand-card border border-brand-border text-brand-muted font-medium cursor-pointer hover:text-brand-text transition-colors"
             >
               show less
             </button>

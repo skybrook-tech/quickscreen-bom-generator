@@ -13,6 +13,10 @@
   --brand-accent-hover: #2563eb;
   --brand-muted:        #64748b;
   --brand-text:         #0f172a;
+  --brand-radius:          0.75rem;
+  --brand-radius-sm:       0.5rem;
+  --brand-header-bg:       transparent;
+  --brand-header-text:     inherit;
 }
 
 [data-theme="dark"] {
@@ -24,6 +28,7 @@
   --brand-muted:        #6b7280;
   --brand-text:         #e5e7eb;
 }
+
 
 @media print {
   /* Hide everything except the BOM table and summary */

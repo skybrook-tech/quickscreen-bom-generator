@@ -13,12 +13,12 @@ interface ButtonProps {
 }
 
 const sharedStyles =
-  "rounded-md flex items-center gap-2 hover:opacity-70 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed";
+  "rounded-[var(--brand-radius-sm)] flex items-center gap-2 hover:opacity-70 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed";
 
 const variants = {
   secondary:
     "bg-brand-bg border border-brand-border text-brand-text hover:bg-brand-border/20",
-  primary: "bg-brand-accent text-brand-bg hover:bg-brand-accent/80",
+  primary: "bg-brand-accent text-white hover:bg-brand-accent/80",
   danger: "bg-red-500 text-white hover:bg-red-600",
   warning: "bg-yellow-500 text-white hover:bg-yellow-600",
   info: "bg-blue-500 text-white hover:bg-blue-600",

@@ -18,7 +18,7 @@ const BomAlerts = ({
           <button
             type="button"
             onClick={() => setAlertDialogOpen(true)}
-            className={`w-full flex items-center gap-2 px-3 py-1 rounded-lg border text-left text-sm transition-colors ${
+            className={`w-full flex items-center gap-2 px-3 py-1 rounded-[var(--brand-radius-sm)] border text-left text-sm transition-colors ${
               errors.length > 0
                 ? "bg-red-500/10 border-red-500/35 text-red-600 hover:bg-red-500/15"
                 : "bg-amber-500/10 border-amber-500/35 text-amber-700 hover:bg-amber-500/15 dark:text-amber-400"
@@ -64,7 +64,7 @@ const BomAlerts = ({
                 onClick={() => setAlertDialogOpen(false)}
                 aria-hidden
               />
-              <div className="relative w-full max-w-lg bg-brand-card border border-brand-border rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[min(80vh,520px)]">
+              <div className="relative w-full max-w-lg bg-brand-card border border-brand-border rounded-[var(--brand-radius)] shadow-2xl overflow-hidden flex flex-col max-h-[min(80vh,520px)]">
                 <div className="flex items-center justify-between px-4 py-3 border-b border-brand-border flex-shrink-0">
                   <h2
                     id="bom-alert-dialog-title"
@@ -76,7 +76,7 @@ const BomAlerts = ({
                     type="button"
                     onClick={() => setAlertDialogOpen(false)}
                     aria-label="Close"
-                    className="p-1.5 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/60 transition-colors"
+                    className="p-1.5 rounded-[var(--brand-radius-sm)] text-brand-muted hover:text-brand-text hover:bg-brand-border/60 transition-colors"
                   >
                     <X size={18} />
                   </button>
@@ -85,7 +85,7 @@ const BomAlerts = ({
                   {errors.map((e, i) => (
                     <div
                       key={`err-${i}`}
-                      className="text-[11px] px-2.5 py-1.5 rounded bg-red-500/10 border border-red-500/30 text-red-600"
+                      className="text-[11px] px-2.5 py-1.5 rounded-[var(--brand-radius-sm)] bg-red-500/10 border border-red-500/30 text-red-600"
                     >
                       <span className="font-semibold">Error: </span>
                       {e}
@@ -94,7 +94,7 @@ const BomAlerts = ({
                   {warnings.map((w, i) => (
                     <div
                       key={`warn-${i}`}
-                      className="text-[11px] px-2.5 py-1.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400"
+                      className="text-[11px] px-2.5 py-1.5 rounded-[var(--brand-radius-sm)] bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-400"
                     >
                       {w}
                     </div>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useProfile } from "../context/ProfileContext";
 import { AppShell } from "../components/layout/AppShell";
 import {
   CalculatorV4Provider,
@@ -33,6 +34,7 @@ function CalculatorV4Content() {
   const payload = state.payload;
   const bomMutation = useBomCalculator();
   const location = useLocation();
+  const { tenantTheme } = useProfile();
 
   // Load a job that was navigated in from the Quotes history page
   useEffect(() => {
@@ -128,66 +130,67 @@ function CalculatorV4Content() {
     dispatch({ type: "UPSERT_SEGMENT", runId, segment: newSegment });
     layoutHl?.requestOpenSegment(runId, newSegmentId);
   }
-
   return (
-    <AppShell>
-      <div className="h-full min-h-0 grid grid-cols-1 lg:grid-cols-[40%,60%] lg:grid-rows-1 gap-4 p-4 max-w-[1600px] mx-auto">
-        {/* Left column — JobShell + JobActions pin; runs list scrolls.
+    <div style={tenantTheme?.cssVars as React.CSSProperties | undefined}>
+      <AppShell branding={tenantTheme?.branding}>
+        <div className="h-full min-h-0 grid grid-cols-1 lg:grid-cols-[40%,60%] lg:grid-rows-1 gap-4 p-4 max-w-[1600px] mx-auto">
+          {/* Left column — JobShell + JobActions pin; runs list scrolls.
             Cap height so inner scroll works even when the BOM column is shorter than the runs list. */}
-        <div className="flex h-full max-h-[calc(100dvh-5.5rem)] min-h-0 flex-col">
-          <div className="shrink-0">
-            <JobShell
-              onOpenLayoutMap={() => setLayoutOpen(true)}
-              hasPayload={!!payload}
-            />
-          </div>
-          {payload ? (
-            <>
-              <div className="min-h-0 flex-1 overflow-y-auto pr-1 py-3 space-y-4">
-                <RunList onAddGate={handleAddGate} />
-                {bomMutation.isError && (
-                  <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-500">
-                    Error:{" "}
-                    {bomMutation.error instanceof Error
-                      ? bomMutation.error.message
-                      : String(bomMutation.error)}
-                  </div>
-                )}
-              </div>
-              <div className="shrink-0 border-t border-brand-border/50 bg-brand-bg pt-3 pb-1">
-                <JobActions />
-              </div>
-            </>
-          ) : (
-            <div className="min-h-0 flex-1 flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-brand-border p-8 text-center text-sm text-brand-muted">
-              <p className="text-brand-text">Pick a fence product to begin.</p>
-              <ProductSelectV4
-                value={state.payload?.productCode ?? ""}
-                onChange={handleProductChange}
-                separated={true}
+          <div className="flex h-full max-h-[calc(100dvh-5.5rem)] min-h-0 flex-col">
+            <div className="shrink-0">
+              <JobShell
+                onOpenLayoutMap={() => setLayoutOpen(true)}
+                hasPayload={!!payload}
               />
             </div>
-          )}
+            {payload ? (
+              <>
+                <div className="min-h-0 flex-1 overflow-y-auto pr-1 py-3 space-y-4">
+                  <RunList onAddGate={handleAddGate} />
+                  {bomMutation.isError && (
+                    <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-500">
+                      Error:{" "}
+                      {bomMutation.error instanceof Error
+                        ? bomMutation.error.message
+                        : String(bomMutation.error)}
+                    </div>
+                  )}
+                </div>
+                <div className="shrink-0 border-t border-brand-border/50 bg-brand-bg pt-3 pb-1">
+                  <JobActions />
+                </div>
+              </>
+            ) : (
+              <div className="min-h-0 flex-1 flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-brand-border p-8 text-center text-sm text-brand-muted">
+                <p className="text-brand-text">Pick a fence product to begin.</p>
+                <ProductSelectV4
+                  value={state.payload?.productCode ?? ""}
+                  onChange={handleProductChange}
+                  separated={true}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Right column — BOM panel */}
+          <div className="lg:sticky lg:top-0 lg:h-full min-h-[640px]">
+            <BomPanel
+              isPending={bomMutation.isPending}
+              onGenerate={handleGenerate}
+              canGenerate={canGenerate}
+              errors={errors}
+              warnings={warnings}
+            />
+          </div>
         </div>
 
-        {/* Right column — BOM panel */}
-        <div className="lg:sticky lg:top-0 lg:h-full min-h-[640px]">
-          <BomPanel
-            isPending={bomMutation.isPending}
-            onGenerate={handleGenerate}
-            canGenerate={canGenerate}
-            errors={errors}
-            warnings={warnings}
-          />
-        </div>
-      </div>
-
-      <LayoutMapPane
-        open={layoutOpen}
-        onClose={() => setLayoutOpen(false)}
-        onAddGate={handleAddGate}
-      />
-    </AppShell>
+        <LayoutMapPane
+          open={layoutOpen}
+          onClose={() => setLayoutOpen(false)}
+          onAddGate={handleAddGate}
+        />
+      </AppShell>
+    </div>
   );
 }
 

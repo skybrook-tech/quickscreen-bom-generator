@@ -35,7 +35,7 @@ export function SuggestedAccessoriesPanel({ onAddedSuggestion }: Props) {
         type="button"
         onClick={() => setExpanded((e) => !e)}
         aria-expanded={expanded}
-        className="w-full flex items-center justify-between gap-2  text-left rounded-md py-0.5 -mx-1 px-1 hover:bg-brand-border/20 transition-colors"
+        className="w-full flex items-center justify-between gap-2  text-left rounded-[var(--brand-radius-sm)] py-0.5 -mx-1 px-1 hover:bg-brand-border/20 transition-colors"
       >
         <span className="flex items-center gap-1.5 min-w-0">
           <ChevronDown
@@ -58,7 +58,7 @@ export function SuggestedAccessoriesPanel({ onAddedSuggestion }: Props) {
           {visible.map((s) => (
             <div
               key={s.sku}
-              className="flex items-center gap-3 px-3 py-2 rounded-md bg-brand-card border border-brand-border"
+              className="flex items-center gap-3 px-3 py-2 rounded-[var(--brand-radius-sm)] bg-brand-card border border-brand-border"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -92,7 +92,7 @@ export function SuggestedAccessoriesPanel({ onAddedSuggestion }: Props) {
                   });
                   onAddedSuggestion?.();
                 }}
-                className="flex items-center gap-1 px-2.5 py-1 rounded-md bg-brand-accent text-white text-xs font-medium hover:bg-brand-accent/80 transition-colors"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-[var(--brand-radius-sm)] bg-brand-accent text-white text-xs font-medium hover:bg-brand-accent/80 transition-colors"
                 data-testid={`v4-add-suggestion-${s.sku}`}
               >
                 <Plus size={12} /> Add

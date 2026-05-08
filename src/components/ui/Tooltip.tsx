@@ -84,7 +84,7 @@ export function Tooltip({
             ref={refs.setFloating}
             style={floatingStyles}
             className={cn(
-              "z-[10000] max-w-xs whitespace-normal rounded-md border border-brand-border bg-brand-card px-2 py-1 text-xs text-brand-text shadow-md pointer-events-none",
+              "z-[10000] max-w-xs whitespace-normal rounded-[var(--brand-radius-sm)] border border-brand-border bg-brand-card px-2 py-1 text-xs text-brand-text shadow-md pointer-events-none",
               contentClassName,
             )}
             {...getFloatingProps()}

@@ -80,7 +80,7 @@ export function SlideOutPane({
           <button
             onClick={onClose}
             aria-label="Close panel"
-            className="flex-shrink-0 p-1.5 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/40 transition-colors"
+            className="flex-shrink-0 p-1.5 rounded-[var(--brand-radius-sm)] text-brand-muted hover:text-brand-text hover:bg-brand-border/40 transition-colors"
           >
             <X size={16} />
           </button>

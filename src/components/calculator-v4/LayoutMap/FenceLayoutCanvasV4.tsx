@@ -286,7 +286,7 @@ export function FenceLayoutCanvasV4() {
     : null;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col rounded-lg border border-brand-border p-4">
+    <div className="flex min-h-0 flex-1 flex-col rounded-[var(--brand-radius)] border border-brand-border p-4">
       <FenceLayoutCanvas
         onLayoutChange={handleLiveSync}
         onEngineReady={(engine) => {

@@ -11,9 +11,9 @@ interface Props {
 }
 
 /**
- * Pill-style tab bar above the BOM table. Shows All / Run N / Gates etc.
+ * Pill-style tab bar. Shows All / Run N / Gates etc.
  */
-export function BomTabs({ tabs, activeId, onChange }: Props) {
+export function Tabs({ tabs, activeId, onChange }: Props) {
   return (
     <div className="flex items-center gap-1 px-4 py-2 border-b border-brand-border bg-brand-card overflow-x-auto flex-shrink-0">
       {tabs.map((t) => {
@@ -22,21 +22,19 @@ export function BomTabs({ tabs, activeId, onChange }: Props) {
           <button
             key={t.id}
             onClick={() => onChange(t.id)}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap transition ${
-              active
+            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-[var(--brand-radius-sm)] text-xs font-medium whitespace-nowrap transition ${active
                 ? "bg-brand-accent/15 text-brand-accent"
                 : "text-brand-muted hover:bg-brand-border/30"
-            }`}
-            data-testid={`v4-bom-tab-${t.id}`}
+              }`}
+            data-testid={`v4-tab-${t.id}`}
           >
             {t.label}
             {t.count != null && (
               <span
-                className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                  active
+                className={`text-[10px] px-1.5 py-0.5 rounded-full ${active
                     ? "bg-brand-accent/20 text-brand-accent"
                     : "bg-brand-border/40 text-brand-muted"
-                }`}
+                  }`}
               >
                 {t.count}
               </span>

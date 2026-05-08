@@ -1,14 +1,16 @@
 import { Header } from "./Header";
+import type { TenantBranding } from "../../lib/tenantThemes";
 
 interface AppShellProps {
   children: React.ReactNode;
   topBar?: React.ReactNode;
+  branding?: TenantBranding;
 }
 
-export function AppShell({ children, topBar }: AppShellProps) {
+export function AppShell({ children, topBar, branding }: AppShellProps) {
   return (
     <div className="h-screen overflow-hidden bg-brand-bg text-brand-text flex flex-col">
-      <Header />
+      <Header branding={branding} />
       {topBar && (
         <div className="shrink-0 bg-brand-bg border-b border-brand-border/60">
           {topBar}

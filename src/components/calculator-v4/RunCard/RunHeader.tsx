@@ -58,12 +58,13 @@ function Stat({
   return (
     <Tooltip content={tooltip}>
       <span
-        className="inline-flex items-center gap-1 cursor-default text-xs text-brand-muted"
+        className="inline-flex items-center gap-1 cursor-default text-xs"
+        style={{ opacity: 0.6 }}
         aria-label={ariaLabel}
       >
         <Icon
           size={ICON}
-          className={cn("shrink-0 text-brand-muted", className)}
+          className={cn("shrink-0", className)}
           aria-hidden
         />
         <span className="font-mono tabular-nums">{children}</span>
@@ -167,12 +168,18 @@ export function RunHeader({
   ]
 
   return (
-    <div className="px-4 py-3 flex items-center gap-3 ">
+    <div
+      className="px-4 py-3 flex items-center gap-3"
+      style={{
+        background: "var(--brand-header-bg)",
+        color: "var(--brand-header-text)",
+      }}
+    >
       <div className="flex-1 min-w-0 flex items-center flex-wrap gap-x-3 gap-y-1">
         <button
           type="button"
           onClick={onToggleExpanded}
-          className="shrink-0 p-1 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/40 transition-colors"
+          className="shrink-0 p-1 rounded-[var(--brand-radius-sm)] text-brand-muted hover:text-brand-text hover:bg-brand-border/40 transition-colors"
           aria-expanded={expanded}
           aria-label={expanded ? "Collapse run" : "Expand run"}
         >
@@ -204,7 +211,7 @@ export function RunHeader({
                     setEditing(false);
                   }
                 }}
-                className="min-w-[8rem] max-w-[14rem] px-2 py-0.5 text-base font-semibold bg-brand-bg border border-brand-border rounded text-brand-text"
+                className="min-w-[8rem] max-w-[14rem] px-2 py-0.5 text-base font-semibold bg-brand-bg border border-brand-border rounded-[var(--brand-radius-sm)] text-brand-text"
                 autoFocus
                 aria-label="Run name"
                 maxLength={120}
@@ -225,7 +232,7 @@ export function RunHeader({
 
         <Tooltip content="Fence system / product code for this run">
           <span
-            className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md bg-brand-accent text-brand-bg font-medium cursor-default"
+            className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-[var(--brand-radius-sm)] bg-brand-accent text-white font-medium cursor-default"
             aria-label={`Fence system: ${systemCode}`}
           >
             <Tag size={ICON} className="shrink-0 opacity-90" aria-hidden />
@@ -260,7 +267,7 @@ export function RunHeader({
           type="button"
           onClick={onRemoveRun}
           disabled={!canRemoveRun}
-          className="shrink-0 p-2 rounded-md text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          className="shrink-0 p-2 rounded-[var(--brand-radius-sm)] text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
           aria-label="Remove run"
           data-testid="v4-remove-run-header"
         >
