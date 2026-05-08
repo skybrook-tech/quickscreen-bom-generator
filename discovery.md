@@ -1329,6 +1329,19 @@ Changes applied:
 Verification:
 - `npm run build` passed after the changes.
 
+### May 8, 2026 - Glass Outlet branding pass
+
+UI finding:
+- The launch screen used plain text for The Glass Outlet, and the BOM panel only showed `Bill of Materials`, so the supplier brand did not carry through strongly enough.
+
+Changes applied:
+- Added a reusable `GlassOutletLogo` component that recreates the stacked glass-pane mark and wordmark as an SVG/text lockup using the app's `brand-primary` dark-blue token.
+- Replaced the launch-screen plain heading with the dark-blue Glass Outlet logo lockup.
+- Added the same Glass Outlet logo lockup to the BOM header beside the Bill of Materials label.
+
+Verification:
+- `npm run build` passed after adding the component and wiring it into the page.
+
 ### May 8, 2026 - Layout map and sidebar settings polish
 
 UI finding:

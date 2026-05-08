@@ -11,6 +11,7 @@ import { LayoutCanvasV3 } from "../components/calculator-v3/LayoutCanvasV3";
 import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
+import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { suggestAccessories } from "../lib/suggestedAccessories";
 import { priceForSku } from "../lib/localBomCalculator";
@@ -790,10 +791,12 @@ function CalculatorV3Content() {
               <Sparkles size={16} />
               Powered by Sky Brooke AI
             </div>
-            <div className="space-y-3">
-              <h1 className="text-5xl font-black tracking-normal text-white sm:text-7xl lg:text-8xl">
-                The Glass Outlet
-              </h1>
+            <div className="space-y-5">
+              <GlassOutletLogo
+                className="justify-center text-brand-primary"
+                iconClassName="h-20 w-24 sm:h-24 sm:w-28 lg:h-28 lg:w-32"
+                textClassName="text-5xl sm:text-7xl lg:text-8xl"
+              />
               <p className="mx-auto max-w-2xl text-base font-semibold text-brand-muted sm:text-lg">
                 Start with a system, sketch the job, or name the quote. The calculator opens as soon as you make the first move.
               </p>
@@ -1008,9 +1011,17 @@ function CalculatorV3Content() {
             <section className="rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5">
               <div className="mb-4 flex flex-col gap-4 border-b border-brand-border pb-5 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-muted">
-                    Bill of Materials
-                  </p>
+                  <div className="mb-3 flex flex-wrap items-center gap-3">
+                    <GlassOutletLogo
+                      className="text-brand-primary"
+                      iconClassName="h-10 w-12"
+                      textClassName="text-2xl"
+                    />
+                    <div className="h-10 w-px bg-brand-border" />
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-muted">
+                      Bill of Materials
+                    </p>
+                  </div>
                   {summaryText && (
                     <p className="mt-2 max-w-3xl text-sm font-semibold text-brand-text">
                       {summaryText}
