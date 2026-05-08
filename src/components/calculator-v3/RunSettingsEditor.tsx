@@ -213,28 +213,28 @@ export function RunSettingsEditor({ run }: Props) {
         variables: normalised,
         segments: syncKeys.has(key)
           ? run.segments.map((segment) => {
-              if (segment.segmentKind === "gate_opening") {
-                const movement = gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
-                return {
-                  ...segment,
-                  targetHeightMm: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
-                  variables: {
-                    ...(clearKeys(segment.variables) ?? {}),
-                    [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(movement, nextProductCode === "VS"),
-                    [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
-                    [GATE_SEGMENT_STUB_KEYS.colourCode]: String(normalised.colour_code ?? "B"),
-                    [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(normalised.slat_size_mm ?? 65),
-                    [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(normalised.slat_gap_mm ?? 9),
-                    [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(normalised.post_size ?? 50),
-                  },
-                };
-              }
+            if (segment.segmentKind === "gate_opening") {
+              const movement = gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
               return {
                 ...segment,
                 targetHeightMm: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
-                variables: clearKeys(segment.variables),
+                variables: {
+                  ...(clearKeys(segment.variables) ?? {}),
+                  [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(movement, nextProductCode === "VS"),
+                  [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
+                  [GATE_SEGMENT_STUB_KEYS.colourCode]: String(normalised.colour_code ?? "B"),
+                  [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(normalised.slat_size_mm ?? 65),
+                  [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(normalised.slat_gap_mm ?? 9),
+                  [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(normalised.post_size ?? 50),
+                },
               };
-            })
+            }
+            return {
+              ...segment,
+              targetHeightMm: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
+              variables: clearKeys(segment.variables),
+            };
+          })
           : run.segments,
       },
     });
@@ -260,30 +260,30 @@ export function RunSettingsEditor({ run }: Props) {
             variables:
               segment.segmentKind === "gate_opening"
                 ? {
-                    ...(segment.variables ?? {}),
-                    [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
-                      gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]),
-                      nextProductCode === "VS",
-                    ),
-                    [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(nextVariables.target_height_mm ?? segment.targetHeightMm ?? 1800),
-                    [GATE_SEGMENT_STUB_KEYS.colourCode]: String(nextVariables.colour_code ?? "B"),
-                    [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(nextVariables.slat_size_mm ?? 65),
-                    [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(nextVariables.slat_gap_mm ?? 9),
-                    [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(nextVariables.post_size ?? 50),
-                  }
+                  ...(segment.variables ?? {}),
+                  [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
+                    gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]),
+                    nextProductCode === "VS",
+                  ),
+                  [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(nextVariables.target_height_mm ?? segment.targetHeightMm ?? 1800),
+                  [GATE_SEGMENT_STUB_KEYS.colourCode]: String(nextVariables.colour_code ?? "B"),
+                  [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(nextVariables.slat_size_mm ?? 65),
+                  [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(nextVariables.slat_gap_mm ?? 9),
+                  [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(nextVariables.post_size ?? 50),
+                }
                 : {
-                    ...(segment.variables ?? {}),
-                    ...(nextProductCode === "BAYG" && segment.variables?.panel_quantity == null
-                      ? { panel_quantity: 1 }
-                      : {}),
-                  },
+                  ...(segment.variables ?? {}),
+                  ...(nextProductCode === "BAYG" && segment.variables?.panel_quantity == null
+                    ? { panel_quantity: 1 }
+                    : {}),
+                },
           })),
       },
     });
   }
 
   return (
-    <div className="mb-3 space-y-2 rounded-2xl border border-brand-border/70 bg-brand-bg/55 p-3">
+    <div className="mb-3 space-y-2 border-t border-brand-border/70 bg-brand-bg/55 p-3">
       <p className="text-xs font-semibold text-brand-muted">
         Sections inherit these settings unless overridden.
       </p>
@@ -301,11 +301,10 @@ export function RunSettingsEditor({ run }: Props) {
               type="button"
               onClick={() => changeRunProduct(product.system_type)}
               aria-pressed={product.system_type === run.productCode}
-              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${
-                product.system_type === run.productCode
-                  ? "border-brand-primary bg-brand-primary text-white shadow-sm"
-                  : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-              }`}
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${product.system_type === run.productCode
+                ? "border-brand-primary bg-brand-primary text-white shadow-sm"
+                : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
+                }`}
             >
               {product.system_type === run.productCode && <Check size={16} aria-hidden />}
               {product.system_type}
@@ -332,73 +331,73 @@ export function RunSettingsEditor({ run }: Props) {
         ))}
       </div>
       {productCode !== "BAYG" && (
-      <div className="mt-3 grid gap-3 rounded-2xl border border-brand-border/60 bg-brand-card/70 p-3 md:grid-cols-2">
-        <label className="flex flex-col gap-1">
-          <span className="text-sm font-bold text-brand-muted">Post-fixing material</span>
-          <select
-            value={postFixingSku}
-            onChange={(event) =>
-              updateRunVariables("post_fixing_material_sku", event.target.value)
-            }
-            className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-          >
-            {POST_FIXING_MATERIALS.map((item) => (
-              <option key={item.sku} value={item.sku}>
-                {item.label}
-              </option>
-            ))}
-          </select>
-          <span className="text-xs font-semibold text-brand-muted">
-            Used for concreted-in posts at 1.5 bags per post.
-          </span>
-        </label>
-
-        {productCode === "QSHS" && (
-          <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
-            <input
-              type="checkbox"
-              checked={louvreEnabled && slatSize === 65}
-              disabled={slatSize !== 65}
-              onChange={(event) =>
-                updateRunVariables("louvre_treatment", event.target.checked)
-              }
-              className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
-            />
-            <span>
-              <span className="block text-sm font-extrabold text-brand-text">
-                Louvre treatment
-              </span>
-              <span className="mt-1 block text-xs font-semibold text-brand-muted">
-                40 degree slat angle. Available with 65mm slats.
-              </span>
-              {slatSize !== 65 && (
-                <span className="mt-1 block text-xs font-bold text-brand-warning">
-                  Switch run slats to 65mm to use louvre brackets.
-                </span>
-              )}
-            </span>
-          </label>
-        )}
-
-        {mountingType === "base_plate" && (
+        <div className="mt-3 grid gap-3 rounded-2xl border border-brand-border/60 bg-brand-card/70 p-3 md:grid-cols-2">
           <label className="flex flex-col gap-1">
-            <span className="text-sm font-bold text-brand-muted">Substrate</span>
+            <span className="text-sm font-bold text-brand-muted">Post-fixing material</span>
             <select
-              value={substrate}
+              value={postFixingSku}
               onChange={(event) =>
-                updateRunVariables("base_plate_substrate", event.target.value)
+                updateRunVariables("post_fixing_material_sku", event.target.value)
               }
               className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
             >
-              <option value="concrete">Concrete</option>
-              <option value="timber">Timber</option>
+              {POST_FIXING_MATERIALS.map((item) => (
+                <option key={item.sku} value={item.sku}>
+                  {item.label}
+                </option>
+              ))}
             </select>
             <span className="text-xs font-semibold text-brand-muted">
-              Selects the fixing kit for each base-plated post.
+              Used for concreted-in posts at 1.5 bags per post.
             </span>
           </label>
-        )}
-      </div>
+
+          {productCode === "QSHS" && (
+            <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
+              <input
+                type="checkbox"
+                checked={louvreEnabled && slatSize === 65}
+                disabled={slatSize !== 65}
+                onChange={(event) =>
+                  updateRunVariables("louvre_treatment", event.target.checked)
+                }
+                className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
+              />
+              <span>
+                <span className="block text-sm font-extrabold text-brand-text">
+                  Louvre treatment
+                </span>
+                <span className="mt-1 block text-xs font-semibold text-brand-muted">
+                  40 degree slat angle. Available with 65mm slats.
+                </span>
+                {slatSize !== 65 && (
+                  <span className="mt-1 block text-xs font-bold text-brand-warning">
+                    Switch run slats to 65mm to use louvre brackets.
+                  </span>
+                )}
+              </span>
+            </label>
+          )}
+
+          {mountingType === "base_plate" && (
+            <label className="flex flex-col gap-1">
+              <span className="text-sm font-bold text-brand-muted">Substrate</span>
+              <select
+                value={substrate}
+                onChange={(event) =>
+                  updateRunVariables("base_plate_substrate", event.target.value)
+                }
+                className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+              >
+                <option value="concrete">Concrete</option>
+                <option value="timber">Timber</option>
+              </select>
+              <span className="text-xs font-semibold text-brand-muted">
+                Selects the fixing kit for each base-plated post.
+              </span>
+            </label>
+          )}
+        </div>
       )}
     </div>
   );

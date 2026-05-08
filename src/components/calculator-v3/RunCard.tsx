@@ -181,10 +181,10 @@ export function RunCard({ run, runIdx }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-brand-border/70 bg-brand-card p-4 shadow-sm">
-      <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+    <div className="rounded-2xl border border-brand-brand bg-brand-card py-4 shadow-md">
+      <div className="px-4 mb-3 flex flex-wrap items-start justify-between gap-3">
         <h3 className="grid gap-1 text-brand-text">
-          <span className="text-3xl font-extrabold leading-tight tracking-normal">
+          <span className="text-xl font-extrabold leading-tight tracking-normal">
             Run {runIdx + 1} — {runLengthM}m
           </span>
           <span className="flex flex-wrap gap-x-2.5 gap-y-1 text-sm text-brand-muted">
@@ -208,119 +208,135 @@ export function RunCard({ run, runIdx }: Props) {
             </Button>
           )}
         </div>
-      </div>
 
-      <div
-        className="mb-3"
-        onMouseEnter={keepRunSettingsOpen}
-        onMouseLeave={scheduleRunSettingsCollapse}
-      >
-        <button
-          type="button"
-          onClick={() => setRunSettingsOpen((value) => !value)}
-          className={`mb-2 inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-extrabold transition-colors ${
-            runSettingsOpen
-              ? "border-brand-primary bg-brand-primary text-white"
-              : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
-          }`}
-          title={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
+        <div
+          className="mb-3"
+          onMouseEnter={keepRunSettingsOpen}
+          onMouseLeave={scheduleRunSettingsCollapse}
         >
-          <SlidersHorizontal size={16} />
-          {runSettingsOpen ? "Save run settings" : "Run settings"}
-        </button>
-        {runSettingsOpen && <RunSettingsEditor run={run} />}
-      </div>
+          <div className="flex justify-end">
 
-      {installVideoKeys.length > 0 && (
-        <details className="mb-3 rounded-xl border border-brand-border/70 bg-brand-bg/40 p-3">
-          <summary className="cursor-pointer text-xs font-extrabold uppercase tracking-wide text-brand-muted">
-            Install videos
-          </summary>
-          <div className="mt-3 flex flex-wrap gap-3">
-            {installVideoKeys.map((key) => (
-              <InstallVideoQR key={key} videoKey={key} compact />
-            ))}
+            <button
+              type="button"
+              onClick={() => setRunSettingsOpen((value) => !value)}
+              className={`ml-auto mb-2 inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-extrabold transition-colors ${runSettingsOpen
+                ? "border-brand-primary bg-brand-primary text-white"
+                : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
+                }`}
+              title={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
+            >
+              <SlidersHorizontal size={16} />
+              {runSettingsOpen ? "Save run settings" : "Run settings"}
+            </button>
           </div>
-        </details>
-      )}
-
-      {run.segments.length === 0 && (
-        <p className="mb-3 text-xs italic text-brand-muted">
-          No sections yet. Draw on canvas or add manually.
-        </p>
-      )}
-
-      <div className="space-y-2">
-        {run.segments
-          .filter((segment) => segment.segmentKind !== "gate_opening")
-          .map((seg, segIdx) => (
-            <SegmentRow
-              key={seg.segmentId}
-              runId={run.runId}
-              seg={seg}
-              segIdx={segIdx}
-              runIdx={runIdx}
-              displayLabel={`R${runIdx + 1}S${segIdx + 1}`}
-              open={expandedId === seg.segmentId}
-              onToggle={() =>
-                setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
-              }
-            />
-          ))}
-        {!isBayg && run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
-          <div className="pt-2">
-            <p className="mb-2 flex items-center gap-2 text-sm font-bold text-brand-muted">
-              <CheckCircle2 size={16} />
-              Gates
-            </p>
-            <div className="space-y-2">
-              {run.segments
-                .filter((segment) => segment.segmentKind === "gate_opening")
-                .map((seg, gateIdx) => (
-                  <SegmentRow
-                    key={seg.segmentId}
-                    runId={run.runId}
-                    seg={seg}
-                    segIdx={gateIdx}
-                    runIdx={runIdx}
-                    displayLabel={`R${runIdx + 1}G${gateIdx + 1}`}
-                    open={expandedId === seg.segmentId}
-                    onToggle={() =>
-                      setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
-                    }
-                  />
-                ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="mt-3 flex flex-wrap justify-end gap-2">
-        <Button onClick={addFenceSegment} icon={Plus} variant="ghost" size="small">
-          {isBayg ? "Add panel size" : "Add section"}
-        </Button>
-        {!isBayg && (
-          <Button onClick={addGateSegment} icon={Plus} variant="ghost" size="small">
-            Add gate
-          </Button>
-        )}
-        <div ref={removeRunRef}>
-          <Button
-            onClick={() => {
-              if (!confirmRemoveRun) {
-                setConfirmRemoveRun(true);
-                return;
-              }
-              dispatch({ type: "REMOVE_RUN", runId: run.runId });
-            }}
-            icon={Trash2}
-            variant="ghost-danger"
-            size="small"
-          >
-            {confirmRemoveRun ? "Click again" : "Remove run"}
-          </Button>
         </div>
       </div>
+
+      {runSettingsOpen && <RunSettingsEditor run={run} />}
+
+
+      {!runSettingsOpen && (
+        <>
+
+
+          {
+            installVideoKeys.length > 0 && (
+              <div className="px-4">
+                <details className="mb-3 rounded-xl border border-brand-border/70 bg-brand-bg/40 p-3">
+                  <summary className="cursor-pointer text-xs font-extrabold uppercase tracking-wide text-brand-muted">
+                    Install videos
+                  </summary>
+                  <div className="mt-3 flex flex-wrap gap-3">
+                    {installVideoKeys.map((key) => (
+                      <InstallVideoQR key={key} videoKey={key} compact />
+                    ))}
+                  </div>
+                </details>
+              </div>
+            )
+          }
+
+          {run.segments.length === 0 && (
+            <p className="px-4 mb-3 text-xs italic text-brand-muted">
+              No sections yet. Draw on canvas or add manually.
+            </p>
+          )}
+
+          <div className="px-4 space-y-2">
+            {run.segments
+              .filter((segment) => segment.segmentKind !== "gate_opening")
+              .map((seg, segIdx) => (
+                <SegmentRow
+                  key={seg.segmentId}
+                  runId={run.runId}
+                  seg={seg}
+                  segIdx={segIdx}
+                  runIdx={runIdx}
+                  displayLabel={`R${runIdx + 1}S${segIdx + 1}`}
+                  open={expandedId === seg.segmentId}
+                  onToggle={() =>
+                    setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
+                  }
+                />
+              ))}
+            {!isBayg && run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
+              <div className="pt-2">
+                <p className="mb-2 flex items-center gap-2 text-sm font-bold text-brand-muted">
+                  <CheckCircle2 size={16} />
+                  Gates
+                </p>
+                <div className="space-y-2">
+                  {run.segments
+                    .filter((segment) => segment.segmentKind === "gate_opening")
+                    .map((seg, gateIdx) => (
+                      <SegmentRow
+                        key={seg.segmentId}
+                        runId={run.runId}
+                        seg={seg}
+                        segIdx={gateIdx}
+                        runIdx={runIdx}
+                        displayLabel={`R${runIdx + 1}G${gateIdx + 1}`}
+                        open={expandedId === seg.segmentId}
+                        onToggle={() =>
+                          setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
+                        }
+                      />
+                    ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="px-4 mt-3 flex flex-wrap justify-end gap-2">
+            <Button onClick={addFenceSegment} icon={Plus} variant="ghost" size="small">
+              {isBayg ? "Add panel size" : "Add section"}
+            </Button>
+            {!isBayg && (
+              <Button onClick={addGateSegment} icon={Plus} variant="ghost" size="small">
+                Add gate
+              </Button>
+            )}
+            <div ref={removeRunRef}>
+              <Button
+                onClick={() => {
+                  if (!confirmRemoveRun) {
+                    setConfirmRemoveRun(true);
+                    return;
+                  }
+                  dispatch({ type: "REMOVE_RUN", runId: run.runId });
+                }}
+                icon={Trash2}
+                variant="ghost-danger"
+                size="small"
+              >
+                {confirmRemoveRun ? "Click again" : "Remove run"}
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
+
+
     </div>
   );
 }

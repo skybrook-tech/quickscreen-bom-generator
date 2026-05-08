@@ -159,7 +159,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
   const gateWidthValidation = gate ? validateGateWidth(seg) : null;
   const gateBuild = String(
     gateVars[GATE_SEGMENT_STUB_KEYS.gateBuild] ??
-      (productCode === "VS" ? "qsg_hinged_vertical" : "qsg_hinged_horizontal"),
+    (productCode === "VS" ? "qsg_hinged_vertical" : "qsg_hinged_horizontal"),
   );
   const expectedGateBuild = productCode === "VS"
     ? gateBuild.includes("vertical")
@@ -168,10 +168,10 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     displayLabel?.replace(/\s+/g, "") ??
     `R${runIdx + 1}${gate ? "G" : "S"}${segIdx + 1}`;
   const titleLabel = gate
-    ? `Run ${runIdx + 1} Gate ${segIdx + 1}`
+    ? `Gate ${segIdx + 1}`
     : isBayg
-      ? `Run ${runIdx + 1} Panel ${segIdx + 1}`
-      : `Run ${runIdx + 1} Section ${segIdx + 1}`;
+      ? `Panel ${segIdx + 1}`
+      : `Section ${segIdx + 1}`;
   const matchesMaster = (() => {
     if (!run) return true;
     if (gate) {
@@ -228,6 +228,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
   const masterEndPostCount =
     (masterLeftKind === "system_post" || masterLeftKind === "" ? 1 : 0) +
     (masterRightKind === "system_post" || masterRightKind === "" ? 1 : 0);
+
   const summaryBitsBase = [
     gate
       ? { label: "Width", value: `${segmentLength}mm`, emphasis: true }
@@ -238,111 +239,112 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
       ? [{ label: "Qty", value: Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1))), emphasis: true }]
       : []),
   ];
+
   const rawDifferenceBits = gate
     ? [
-        {
-          label: "Height",
-          value: `${selectedHeight}mm`,
-          changed: !sameValue(
-            selectedHeight,
-            masterVariables.target_height_mm ?? 1800,
-          ),
-        },
-        {
-          label: "Gate style",
-          value: gateBuild.includes("vertical") ? "Vertical slat" : "Horizontal slat",
-          changed: !expectedGateBuild,
-        },
-        {
-          label: "Colour",
-          value: colourName(fenceColour),
-          changed: !sameValue(fenceColour, masterFenceColour),
-        },
-        {
-          label: "Slat",
-          value: `${segmentVariables[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVariables.slat_size_mm ?? 65}mm`,
-          changed: !sameValue(
-            segmentVariables[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVariables.slat_size_mm ?? 65,
-            masterVariables.slat_size_mm ?? 65,
-          ),
-        },
-        {
-          label: "Gap",
-          value: `${segmentVariables[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVariables.slat_gap_mm ?? 9}mm`,
-          changed: !sameValue(
-            segmentVariables[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVariables.slat_gap_mm ?? 9,
-            masterVariables.slat_gap_mm ?? 9,
-          ),
-        },
-        ...(postColour !== fenceColour
-          ? [
-              {
-                label: "Post colour",
-                value: colourName(postColour),
-                changed: !sameValue(postColour, masterPostColour),
-              },
-            ]
-          : []),
-      ]
+      {
+        label: "Height",
+        value: `${selectedHeight}mm`,
+        changed: !sameValue(
+          selectedHeight,
+          masterVariables.target_height_mm ?? 1800,
+        ),
+      },
+      {
+        label: "Gate style",
+        value: gateBuild.includes("vertical") ? "Vertical slat" : "Horizontal slat",
+        changed: !expectedGateBuild,
+      },
+      {
+        label: "Colour",
+        value: colourName(fenceColour),
+        changed: !sameValue(fenceColour, masterFenceColour),
+      },
+      {
+        label: "Slat",
+        value: `${segmentVariables[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVariables.slat_size_mm ?? 65}mm`,
+        changed: !sameValue(
+          segmentVariables[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVariables.slat_size_mm ?? 65,
+          masterVariables.slat_size_mm ?? 65,
+        ),
+      },
+      {
+        label: "Gap",
+        value: `${segmentVariables[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVariables.slat_gap_mm ?? 9}mm`,
+        changed: !sameValue(
+          segmentVariables[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVariables.slat_gap_mm ?? 9,
+          masterVariables.slat_gap_mm ?? 9,
+        ),
+      },
+      ...(postColour !== fenceColour
+        ? [
+          {
+            label: "Post colour",
+            value: colourName(postColour),
+            changed: !sameValue(postColour, masterPostColour),
+          },
+        ]
+        : []),
+    ]
     : [
-        {
-          label: "Height",
-          value: `${selectedHeight}mm`,
-          changed: !sameValue(
-            selectedHeight,
-            masterVariables.target_height_mm ?? 1800,
+      {
+        label: "Height",
+        value: `${selectedHeight}mm`,
+        changed: !sameValue(
+          selectedHeight,
+          masterVariables.target_height_mm ?? 1800,
+        ),
+      },
+      {
+        label: "System",
+        value: productCode,
+        changed: !sameValue(productCode, run?.productCode ?? state.payload?.productCode ?? "QSHS"),
+      },
+      { label: "Colour", value: colourName(fenceColour), changed: !sameValue(fenceColour, masterFenceColour) },
+      ...(postColour !== fenceColour
+        ? [
+          {
+            label: "Post colour",
+            value: colourName(postColour),
+            changed: !sameValue(postColour, masterPostColour),
+          },
+        ]
+        : []),
+      {
+        label: "Slat",
+        value: `${segmentVariables.slat_size_mm ?? 65}mm`,
+        changed: !sameValue(segmentVariables.slat_size_mm ?? 65, masterVariables.slat_size_mm ?? 65),
+      },
+      {
+        label: "Gap",
+        value: `${segmentVariables.slat_gap_mm ?? 5}mm`,
+        changed: !sameValue(segmentVariables.slat_gap_mm ?? 5, masterVariables.slat_gap_mm ?? 5),
+      },
+      {
+        label: "Post",
+        value: postLabel(productCode, segmentVariables),
+        changed:
+          !isBayg &&
+          (!sameValue(segmentVariables.post_system, masterVariables.post_system) ||
+            !sameValue(segmentVariables.post_size ?? 50, masterVariables.post_size ?? 50)),
+      },
+      {
+        label: "Mounting",
+        value:
+          MOUNTING_LABELS[String(segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground")] ??
+          "Concreted",
+        changed:
+          !isBayg &&
+          !sameValue(
+            segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground",
+            masterVariables.mounting_method ?? masterVariables.mounting_type ?? "in_ground",
           ),
-        },
-        {
-          label: "System",
-          value: productCode,
-          changed: !sameValue(productCode, run?.productCode ?? state.payload?.productCode ?? "QSHS"),
-        },
-        { label: "Colour", value: colourName(fenceColour), changed: !sameValue(fenceColour, masterFenceColour) },
-        ...(postColour !== fenceColour
-          ? [
-              {
-                label: "Post colour",
-                value: colourName(postColour),
-                changed: !sameValue(postColour, masterPostColour),
-              },
-            ]
-          : []),
-        {
-          label: "Slat",
-          value: `${segmentVariables.slat_size_mm ?? 65}mm`,
-          changed: !sameValue(segmentVariables.slat_size_mm ?? 65, masterVariables.slat_size_mm ?? 65),
-        },
-        {
-          label: "Gap",
-          value: `${segmentVariables.slat_gap_mm ?? 5}mm`,
-          changed: !sameValue(segmentVariables.slat_gap_mm ?? 5, masterVariables.slat_gap_mm ?? 5),
-        },
-        {
-          label: "Post",
-          value: postLabel(productCode, segmentVariables),
-          changed:
-            !isBayg &&
-            (!sameValue(segmentVariables.post_system, masterVariables.post_system) ||
-              !sameValue(segmentVariables.post_size ?? 50, masterVariables.post_size ?? 50)),
-        },
-        {
-          label: "Mounting",
-          value:
-            MOUNTING_LABELS[String(segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground")] ??
-            "Concreted",
-          changed:
-            !isBayg &&
-            !sameValue(
-              segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground",
-              masterVariables.mounting_method ?? masterVariables.mounting_type ?? "in_ground",
-            ),
-        },
-        { label: "Panel Count", value: panelCount, changed: !isBayg && !sameValue(panelCount, masterPanelCount) },
-        { label: "Panel width", value: panelWidthSummary, changed: !isBayg && !sameValue(maxSpacing, masterMaxSpacing) },
-        { label: "Corner post", value: boolLabel(hasCornerPost), changed: !isBayg && hasCornerPost !== masterHasCornerPost },
-        { label: "End post", value: endPostCount, changed: !isBayg && !sameValue(endPostCount, masterEndPostCount) },
-      ];
+      },
+      { label: "Panel Count", value: panelCount, changed: !isBayg && !sameValue(panelCount, masterPanelCount) },
+      { label: "Panel width", value: panelWidthSummary, changed: !isBayg && !sameValue(maxSpacing, masterMaxSpacing) },
+      { label: "Corner post", value: boolLabel(hasCornerPost), changed: !isBayg && hasCornerPost !== masterHasCornerPost },
+      { label: "End post", value: endPostCount, changed: !isBayg && !sameValue(endPostCount, masterEndPostCount) },
+    ];
   const differenceBits =
     matchesMaster ? [] : rawDifferenceBits.filter((item) => item.changed);
   const summaryBits = [...summaryBitsBase, ...differenceBits];
@@ -364,11 +366,11 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
       segment:
         gate && key === "targetHeightMm"
           ? {
-              ...patchSegmentVariables(seg, {
-                [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: value,
-              }),
-              targetHeightMm: value,
-            }
+            ...patchSegmentVariables(seg, {
+              [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: value,
+            }),
+            targetHeightMm: value,
+          }
           : { ...seg, [key]: value },
     });
   }
@@ -380,20 +382,20 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
       segment:
         gate
           ? {
-              ...patchSegmentVariables(seg, {
-                [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: entry.height,
-                target_height_mm: entry.height,
-                slat_count: entry.N,
-              }),
-              targetHeightMm: entry.height,
-            }
+            ...patchSegmentVariables(seg, {
+              [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: entry.height,
+              target_height_mm: entry.height,
+              slat_count: entry.N,
+            }),
+            targetHeightMm: entry.height,
+          }
           : {
-              ...patchSegmentVariables(seg, {
-                target_height_mm: entry.height,
-                slat_count: entry.N,
-              }),
-              targetHeightMm: entry.height,
-            },
+            ...patchSegmentVariables(seg, {
+              target_height_mm: entry.height,
+              slat_count: entry.N,
+            }),
+            targetHeightMm: entry.height,
+          },
     });
   }
 
@@ -484,233 +486,228 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
     [],
   );
 
-  function keepOpenWhileHovered() {
-    if (collapseTimerRef.current) window.clearTimeout(collapseTimerRef.current);
-  }
 
-  function scheduleCollapse() {
-    if (!open) return;
-    if (collapseTimerRef.current) window.clearTimeout(collapseTimerRef.current);
-    collapseTimerRef.current = window.setTimeout(() => onToggle(), 10000);
-  }
 
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-brand-primary via-brand-primary/70 to-brand-primary/15 p-[2px] shadow-[0_2px_0_rgba(191,219,254,0.75),0_10px_22px_rgba(30,64,175,0.18)]">
-    <div className="relative cursor-pointer overflow-hidden rounded-[0.9rem] bg-brand-card text-sm font-semibold shadow-inner"
-      onMouseEnter={keepOpenWhileHovered}
-      onMouseLeave={scheduleCollapse}
-      onDoubleClick={(event) => {
-        const target = event.target as HTMLElement;
-        if (target.closest("button,input,select,textarea,a")) return;
-        onToggle();
-      }}
-      title="Double-click to edit options"
-    >
-      <div className="grid grid-cols-[3.8rem_minmax(0,1fr)_2rem] gap-3 p-3">
-        <div className="flex flex-col items-center justify-center gap-2">
-          <button
-            type="button"
-            onClick={matchesMaster ? undefined : resetToMaster}
-            title={
-              matchesMaster
-                ? "Matches the current Run Settings. Hover to highlight this section on the map."
-                : "Click to set to default run settings and match this section to the Run Settings."
-            }
-            className={`rounded-full px-3 py-2 text-center shadow-sm transition-colors ${
-              matchesMaster
-                ? "cursor-default bg-brand-success text-white"
-                : "bg-brand-warning/15 text-black hover:bg-brand-primary hover:text-white"
-            }`}
-          >
-            <span
-              onMouseEnter={() => setMapHover(compactLabel)}
-              onMouseLeave={() => setMapHover(null)}
-              title={
-                matchesMaster
-                  ? "Matches the current Run Settings. Hover to highlight this section on the map."
-                  : "Click to set to default run settings and match this section to the Run Settings."
-              }
-              className="text-base font-black leading-none tracking-normal"
-            >
-              {compactLabel}
-            </span>
-          </button>
-        </div>
-        <div className="min-w-0 space-y-3">
-          <div className="grid gap-2">
-            <span className="min-w-0 text-center font-sans text-2xl font-black leading-tight tracking-normal text-black">
-              {titleLabel}
-            </span>
-            <div className="flex items-center justify-center gap-1">
-            <button
-              type="button"
-              onClick={onToggle}
-              className={`inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border px-3 text-xs font-extrabold transition-colors ${
-                open
-                  ? "border-brand-primary bg-brand-primary text-white"
-                  : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
-              }`}
-              aria-label={open ? (gate ? "Collapse gate settings" : "Collapse section settings") : (gate ? "Expand gate settings" : "Expand section settings")}
-              title={open ? "Save settings and collapse" : (gate ? "Open gate settings" : "Open section settings")}
-            >
-              <SlidersHorizontal size={16} />
-              <span>{open ? "Save settings" : gate ? "Gate settings" : "Section settings"}</span>
-            </button>
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] leading-tight">
-            {summaryBits.map((item) => (
-              <SummaryBit
-                key={item.label}
-                label={item.label}
-                value={item.value}
-                emphasis={"emphasis" in item ? item.emphasis : undefined}
-              />
-            ))}
-          </div>
+    <div className="rounded-2xl bg-gradient-to-br from-brand-primary via-brand-primary/70 to-brand-primary/15 p-[2px] shadow-md">
+      <div className="relative cursor-pointer overflow-hidden rounded-[0.9rem] bg-brand-card text-sm font-semibold shadow-inner"
+        onDoubleClick={(event) => {
+          const target = event.target as HTMLElement;
+          if (target.closest("button,input,select,textarea,a")) return;
+          onToggle();
+        }}
+        title="Double-click to edit options"
+      >
+        <div className="p-2">
 
-        </div>
-        <div className="flex justify-end">
-          <button
-            type="button"
-            onClick={() => {
-              if (!confirmRemove) {
-                setConfirmRemove(true);
-                return;
-              }
-              dispatch({
-                type: "REMOVE_SEGMENT",
-                runId,
-                segmentId: seg.segmentId,
-              });
-            }}
-            onBlur={() => setConfirmRemove(false)}
-            className={`inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
-              confirmRemove
-                ? "bg-brand-danger text-white hover:bg-brand-danger/90"
-                : "text-brand-danger hover:bg-brand-danger/10 hover:text-brand-danger/90"
-            }`}
-            aria-label={confirmRemove ? "Click again to remove section" : "Remove section"}
-            title={confirmRemove ? "Click again to remove section" : "Remove section"}
-          >
-            <X size={16} strokeWidth={3} />
-          </button>
-        </div>
-      </div>
-
-      {open && (
-        <div className="space-y-4 border-t border-brand-border/50 bg-brand-bg/50 p-3">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <label className="flex flex-col gap-1">
-              <span className="text-sm font-bold text-brand-muted">
-                {gate || isBayg ? "Width (mm)" : "Length (m)"}
-              </span>
-              <NumberInput
-                value={gate || isBayg ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
-                step={gate || isBayg ? 50 : 0.01}
-                min={0}
-                className="w-28 px-2 py-1.5 text-center tabular-nums"
-                onChange={(v) =>
-                  updateGeometry(
-                    "segmentWidthMm",
-                    gate || isBayg ? Math.round(Number(v)) : Math.round(Number(v) * 1000),
-                  )
-                }
-              />
-            </label>
-            <label className="flex flex-col gap-1">
-              <span className="text-sm font-bold text-brand-muted">Height (mm)</span>
-              {productCode === "VS" ? (
-                <>
-                  <DerivationChip label="Custom height" value="free input" tone="muted" />
-                  <NumberInput
-                    value={seg.targetHeightMm ?? 1800}
-                    className="w-24 px-2 py-1.5 text-center tabular-nums"
-                    onChange={(v) => updateGeometry("targetHeightMm", Number(v))}
-                  />
-                </>
-              ) : heightEntries.length > 0 && heightInputsReady ? (
-                <>
-                  <DerivationChip
-                    label="Heights for"
-                    value={`${segmentVariables.slat_size_mm ?? "?"}mm x ${segmentVariables.slat_gap_mm ?? "?"}mm gap`}
-                  />
-                  <select
-                    value={selectedHeight}
-                    onChange={(event) => {
-                      const entry = heightEntries.find(
-                        (item) => item.height === Number(event.target.value),
-                      );
-                      if (entry) updateDerivedHeight(entry);
-                    }}
-                    className="w-44 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-                  >
-                    {heightEntries.map((entry) => (
-                      <option key={entry.N} value={entry.height}>
-                        {entry.height}mm - {entry.N} slats
-                      </option>
-                    ))}
-                  </select>
-                </>
-              ) : (
-                <select
-                  disabled
-                  className="w-52 rounded-lg border border-brand-border bg-brand-card/70 px-3 py-2 text-sm font-semibold text-brand-muted shadow-sm"
-                >
-                  <option>Select slat size and gap first</option>
-                </select>
-              )}
-            </label>
-            {isBayg && !gate && (
-              <label className="flex flex-col gap-1">
-                <span className="text-sm font-bold text-brand-muted">Quantity</span>
-                <NumberInput
-                  value={Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1)))}
-                  step={1}
-                  min={1}
-                  className="w-24 px-2 py-1.5 text-center tabular-nums"
-                  onChange={(v) => updatePanelQuantity(Number(v))}
-                />
-              </label>
-            )}
-          </div>
-          {gateWidthValidation?.status === "warning" && (
-            <div className="rounded-lg border border-brand-warning/40 bg-brand-warning/10 px-3 py-2 text-xs font-bold text-brand-warning">
-              {gateWidthValidation.message}
-            </div>
-          )}
-          {gateWidthValidation?.status === "error" && (
-            <div className="space-y-2 rounded-lg border border-brand-danger/40 bg-brand-danger/10 px-3 py-2 text-xs font-bold text-brand-danger">
-              <p>{gateWidthValidation.message}</p>
-              {gateWidthValidation.alternative && (
+          <div className="min-w-0 space-y-3 w-full">
+            <div className="gap-2 flex items-center">
+              <div className="flex flex-col items-center justify-center gap-2">
                 <button
                   type="button"
-                  onClick={switchGateToAlternative}
-                  className="rounded-lg border border-brand-danger/50 bg-brand-card px-3 py-1.5 text-xs font-black text-brand-danger hover:shadow-sm"
+                  onClick={matchesMaster ? undefined : resetToMaster}
+                  title={
+                    matchesMaster
+                      ? "Matches the current Run Settings. Hover to highlight this section on the map."
+                      : "Click to set to default run settings and match this section to the Run Settings."
+                  }
+                  className={`rounded-full px-2 py-1 text-center shadow-sm transition-colors ${matchesMaster
+                    ? "cursor-default bg-brand-success text-white"
+                    : "bg-brand-warning/15 text-black hover:bg-brand-primary hover:text-white"
+                    }`}
                 >
-                  Switch to {gateTypeLabel(gateWidthValidation.alternative)}
+                  <span
+                    onMouseEnter={() => setMapHover(compactLabel)}
+                    onMouseLeave={() => setMapHover(null)}
+                    title={
+                      matchesMaster
+                        ? "Matches the current Run Settings. Hover to highlight this section on the map."
+                        : "Click to set to default run settings and match this section to the Run Settings."
+                    }
+                    className="text-base font-black leading-none tracking-normal"
+                  >
+                    {compactLabel}
+                  </span>
                 </button>
-              )}
+              </div>
+              <p className="min-w-0 text-center text-xl">
+                {titleLabel}
+              </p>
+              <div className="flex items-center justify-center gap-1 ml-auto">
+                <button
+                  type="button"
+                  onClick={onToggle}
+                  className={`inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border px-3 text-xs font-extrabold transition-colors ${open
+                    ? "border-brand-primary bg-brand-primary text-white"
+                    : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
+                    }`}
+                  aria-label={open ? (gate ? "Collapse gate settings" : "Collapse section settings") : (gate ? "Expand gate settings" : "Expand section settings")}
+                  title={open ? "Save settings and collapse" : (gate ? "Open gate settings" : "Open section settings")}
+                >
+                  <SlidersHorizontal size={16} />
+                  <span>{open ? "Save settings" : gate ? "Gate settings" : "Section settings"}</span>
+                </button>
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!confirmRemove) {
+                      setConfirmRemove(true);
+                      return;
+                    }
+                    dispatch({
+                      type: "REMOVE_SEGMENT",
+                      runId,
+                      segmentId: seg.segmentId,
+                    });
+                  }}
+                  onBlur={() => setConfirmRemove(false)}
+                  className={`inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors ${confirmRemove
+                    ? "bg-brand-danger text-white hover:bg-brand-danger/90"
+                    : "text-brand-danger hover:bg-brand-danger/10 hover:text-brand-danger/90"
+                    }`}
+                  aria-label={confirmRemove ? "Click again to remove section" : "Remove section"}
+                  title={confirmRemove ? "Click again to remove section" : "Remove section"}
+                >
+                  <X size={16} strokeWidth={3} />
+                </button>
+              </div>
             </div>
-          )}
-          <div className="rounded-lg border border-brand-border/60 bg-brand-card/70 p-3">
-            <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
-              Current settings
-            </p>
-            <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] leading-tight">
-              {visibleSettings.map((item) => (
-                <SummaryBit key={item.label} label={item.label} value={item.value} />
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] leading-tight">
+              {summaryBits.map((item) => (
+                <SummaryBit
+                  key={item.label}
+                  label={item.label}
+                  value={item.value}
+                  emphasis={"emphasis" in item ? item.emphasis : undefined}
+                />
               ))}
             </div>
+
           </div>
-          {gate ? (
-            <GateSegmentDetails runId={runId} seg={seg} />
-          ) : (
-            <FenceSegmentDetails runId={runId} seg={seg} />
-          )}
+
         </div>
-      )}
-    </div>
+
+        {open && (
+          <div className="space-y-4 border-t border-brand-border/50 bg-brand-bg/50 p-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <label className="flex flex-col gap-1">
+                <span className="text-sm font-bold text-brand-muted">
+                  {gate || isBayg ? "Width (mm)" : "Length (m)"}
+                </span>
+                <NumberInput
+                  value={gate || isBayg ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
+                  step={gate || isBayg ? 50 : 0.01}
+                  min={0}
+                  className="w-28 px-2 py-1.5 text-center tabular-nums"
+                  onChange={(v) =>
+                    updateGeometry(
+                      "segmentWidthMm",
+                      gate || isBayg ? Math.round(Number(v)) : Math.round(Number(v) * 1000),
+                    )
+                  }
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <div className="flex items-center gap-1">
+
+                  <span className="text-sm font-bold text-brand-muted">Height (mm)</span>
+
+                </div>
+                {productCode === "VS" ? (
+                  <>
+
+                    <NumberInput
+                      value={seg.targetHeightMm ?? 1800}
+                      className="w-24 px-2 py-1.5 text-center tabular-nums"
+                      onChange={(v) => updateGeometry("targetHeightMm", Number(v))}
+                    />
+                  </>
+                ) : heightEntries.length > 0 && heightInputsReady ? (
+                  <>
+                    <select
+                      value={selectedHeight}
+                      onChange={(event) => {
+                        const entry = heightEntries.find(
+                          (item) => item.height === Number(event.target.value),
+                        );
+                        if (entry) updateDerivedHeight(entry);
+                      }}
+                      className="w-44 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+                    >
+                      {heightEntries.map((entry) => (
+                        <option key={entry.N} value={entry.height}>
+                          {entry.height}mm - {entry.N} slats
+                        </option>
+                      ))}
+                    </select>
+
+                  </>
+                ) : (
+                  <select
+                    disabled
+                    className="w-52 rounded-lg border border-brand-border bg-brand-card/70 px-3 py-2 text-sm font-semibold text-brand-muted shadow-sm"
+                  >
+                    <option>Select slat size and gap first</option>
+                  </select>
+                )}
+                {productCode === "VS" ? (
+                  <span className="text-xs text-brand-muted/70">Custom height</span>
+                ) : (
+                  <span className="text-xs text-brand-muted">Calculated for {segmentVariables.slat_size_mm ?? "?"}mm x {segmentVariables.slat_gap_mm ?? "?"}mm gap</span>
+                )}
+              </label>
+              {isBayg && !gate && (
+                <label className="flex flex-col gap-1">
+                  <span className="text-sm font-bold text-brand-muted">Quantity</span>
+                  <NumberInput
+                    value={Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1)))}
+                    step={1}
+                    min={1}
+                    className="w-24 px-2 py-1.5 text-center tabular-nums"
+                    onChange={(v) => updatePanelQuantity(Number(v))}
+                  />
+                </label>
+              )}
+            </div>
+            {gateWidthValidation?.status === "warning" && (
+              <div className="rounded-lg border border-brand-warning/40 bg-brand-warning/10 px-3 py-2 text-xs font-bold text-brand-warning">
+                {gateWidthValidation.message}
+              </div>
+            )}
+            {gateWidthValidation?.status === "error" && (
+              <div className="space-y-2 rounded-lg border border-brand-danger/40 bg-brand-danger/10 px-3 py-2 text-xs font-bold text-brand-danger">
+                <p>{gateWidthValidation.message}</p>
+                {gateWidthValidation.alternative && (
+                  <button
+                    type="button"
+                    onClick={switchGateToAlternative}
+                    className="rounded-lg border border-brand-danger/50 bg-brand-card px-3 py-1.5 text-xs font-black text-brand-danger hover:shadow-sm"
+                  >
+                    Switch to {gateTypeLabel(gateWidthValidation.alternative)}
+                  </button>
+                )}
+              </div>
+            )}
+            <div className="rounded-lg border border-brand-border/60 bg-brand-card/70 p-3">
+              <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
+                Current settings
+              </p>
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] leading-tight">
+                {visibleSettings.map((item) => (
+                  <SummaryBit key={item.label} label={item.label} value={item.value} />
+                ))}
+              </div>
+            </div>
+            {gate ? (
+              <GateSegmentDetails runId={runId} seg={seg} />
+            ) : (
+              <FenceSegmentDetails runId={runId} seg={seg} />
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

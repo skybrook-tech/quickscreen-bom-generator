@@ -274,18 +274,14 @@ function CalculatorV3Content() {
         setLayoutOpen((open) => !open);
         if (mobileLayout) setMobileTab("map");
       }}
-      className={`group relative inline-flex items-center gap-3 overflow-hidden rounded-full border px-4 py-2.5 text-sm font-black transition-all hover:-translate-y-0.5 hover:shadow-md ${
-        layoutOpen
-          ? "border-brand-primary bg-brand-primary text-white hover:bg-brand-primary/90"
-          : "border-brand-primary/50 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white"
-      }`}
+      className={`group relative inline-flex items-center gap-3 overflow-hidden rounded-full border px-4 py-2.5 text-sm font-black transition-all hover:-translate-y-0.5 hover:shadow-md ${layoutOpen
+        ? "border-brand-primary bg-brand-primary text-white hover:bg-brand-primary/90"
+        : "border-brand-primary/50 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white"
+        }`}
       title={layoutOpen ? "Minimize layout map" : "Open layout map"}
     >
-      <span className="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.42),rgba(59,130,246,0.12)_42%,rgba(15,23,42,0.1))] transition-colors group-hover:bg-white/10" />
-      <span className="relative grid h-11 w-11 place-items-center rounded-full border border-white/30 bg-gradient-to-br from-white/35 via-brand-primary/40 to-brand-primary shadow-[inset_-5px_-7px_12px_rgba(15,23,42,0.25),inset_4px_4px_10px_rgba(255,255,255,0.35),0_8px_16px_rgba(37,99,235,0.28)]">
-        <Globe2 size={24} strokeWidth={2.5} />
-      </span>
-      <span className="relative">{layoutOpen ? "Minimize layout map" : "Draw layout map"}</span>
+      <Globe2 size={24} strokeWidth={2.5} />
+      <span className="relative">{layoutOpen ? "Minimize layout map" : "Use layout tool"}</span>
     </button>
   );
 
@@ -413,92 +409,92 @@ function CalculatorV3Content() {
 
   const bomResultForTabs: CalculatorBOMResult | null = lastBom
     ? (() => {
-        const baseAllItems = applyLineEdits(
-          aggregateBomItems((lastBom.lines as BOMLineItem[]) ?? []),
-        );
-        const extraLineItems: BOMLineItem[] = extraItems.map((e) => ({
-          category: "accessory",
-          sku: e.sku ?? e.id,
-          description: e.description,
-          quantity: e.quantity,
-          unit: "each",
-          unitPrice: e.unitPrice,
-          lineTotal: roundMoney(e.unitPrice * e.quantity),
-          notes: "added manually",
-        }));
-        const runResults = (
-          (lastBom.runResults as Array<{
-            runId: string;
-            items: BOMLineItem[];
-          }>) ?? []
-        ).map((r) => ({
-          runId: r.runId,
-          items: applyLineEdits(aggregateBomItems(r.items)),
-        }));
-        const rawRunResults =
-          (lastBom.runResults as Array<{
-            runId: string;
-            items: BOMLineItem[];
-          }>) ?? [];
-        const gateResults =
-          payload?.runs.flatMap((run, runIndex) => {
-            let gateIndex = 0;
-            return run.segments.flatMap((segment) => {
-              if (segment.segmentKind !== "gate_opening") return [];
-              const label = gateLabel(runIndex, gateIndex++);
-              const runItems =
-                rawRunResults.find((result) => result.runId === run.runId)?.items ?? [];
-              return [
-                {
-                  id: segment.segmentId,
-                  label,
-                  items: applyLineEdits(
-                    aggregateBomItems(
-                      runItems.filter((item) => item.segmentId === segment.segmentId),
-                    ),
+      const baseAllItems = applyLineEdits(
+        aggregateBomItems((lastBom.lines as BOMLineItem[]) ?? []),
+      );
+      const extraLineItems: BOMLineItem[] = extraItems.map((e) => ({
+        category: "accessory",
+        sku: e.sku ?? e.id,
+        description: e.description,
+        quantity: e.quantity,
+        unit: "each",
+        unitPrice: e.unitPrice,
+        lineTotal: roundMoney(e.unitPrice * e.quantity),
+        notes: "added manually",
+      }));
+      const runResults = (
+        (lastBom.runResults as Array<{
+          runId: string;
+          items: BOMLineItem[];
+        }>) ?? []
+      ).map((r) => ({
+        runId: r.runId,
+        items: applyLineEdits(aggregateBomItems(r.items)),
+      }));
+      const rawRunResults =
+        (lastBom.runResults as Array<{
+          runId: string;
+          items: BOMLineItem[];
+        }>) ?? [];
+      const gateResults =
+        payload?.runs.flatMap((run, runIndex) => {
+          let gateIndex = 0;
+          return run.segments.flatMap((segment) => {
+            if (segment.segmentKind !== "gate_opening") return [];
+            const label = gateLabel(runIndex, gateIndex++);
+            const runItems =
+              rawRunResults.find((result) => result.runId === run.runId)?.items ?? [];
+            return [
+              {
+                id: segment.segmentId,
+                label,
+                items: applyLineEdits(
+                  aggregateBomItems(
+                    runItems.filter((item) => item.segmentId === segment.segmentId),
                   ),
-                },
-              ];
-            });
-          }) ?? [];
-        const gateSegments =
-          payload?.runs.flatMap((run) =>
-            run.segments.filter((segment) => segment.segmentKind === "gate_opening"),
-          ) ?? [];
-        const runScopedGateItems = rawRunResults.flatMap((runResult) =>
-          runResult.items.filter(
-            (item) =>
-              item.productCode === "QS_GATE" ||
-              gateSegments.some((segment) => segment.segmentId === item.segmentId),
-          ),
-        );
-        const rawGateItems =
-          runScopedGateItems.length > 0
-            ? runScopedGateItems
-            : ((lastBom.gateItems as BOMLineItem[]) ?? []);
-        const gateItems = applyLineEdits(aggregateBomItems(rawGateItems));
-        const allItems = aggregateBomItems([...baseAllItems, ...extraLineItems]);
-        const baseTotal = roundMoney(
-          allItems.reduce((sum, line) => sum + line.lineTotal, 0),
-        );
-        const total = baseTotal;
-        const gst = roundMoney(total * 0.1);
-        const grandTotal = roundMoney(total + gst);
-        return {
-          runResults,
-          gateResults,
-          gateItems,
-          allItems,
-          total,
-          gst,
-          grandTotal,
-          pricingTier:
-            (lastBom.pricingTier as CalculatorBOMResult["pricingTier"]) ??
-            "tier1",
-          generatedAt:
-            (lastBom.generatedAt as string) ?? new Date().toISOString(),
-        };
-      })()
+                ),
+              },
+            ];
+          });
+        }) ?? [];
+      const gateSegments =
+        payload?.runs.flatMap((run) =>
+          run.segments.filter((segment) => segment.segmentKind === "gate_opening"),
+        ) ?? [];
+      const runScopedGateItems = rawRunResults.flatMap((runResult) =>
+        runResult.items.filter(
+          (item) =>
+            item.productCode === "QS_GATE" ||
+            gateSegments.some((segment) => segment.segmentId === item.segmentId),
+        ),
+      );
+      const rawGateItems =
+        runScopedGateItems.length > 0
+          ? runScopedGateItems
+          : ((lastBom.gateItems as BOMLineItem[]) ?? []);
+      const gateItems = applyLineEdits(aggregateBomItems(rawGateItems));
+      const allItems = aggregateBomItems([...baseAllItems, ...extraLineItems]);
+      const baseTotal = roundMoney(
+        allItems.reduce((sum, line) => sum + line.lineTotal, 0),
+      );
+      const total = baseTotal;
+      const gst = roundMoney(total * 0.1);
+      const grandTotal = roundMoney(total + gst);
+      return {
+        runResults,
+        gateResults,
+        gateItems,
+        allItems,
+        total,
+        gst,
+        grandTotal,
+        pricingTier:
+          (lastBom.pricingTier as CalculatorBOMResult["pricingTier"]) ??
+          "tier1",
+        generatedAt:
+          (lastBom.generatedAt as string) ?? new Date().toISOString(),
+      };
+    })()
     : null;
 
   async function handleSaveJob() {
@@ -517,14 +513,14 @@ function CalculatorV3Content() {
     };
     const quoteBom = bomResultForTabs
       ? {
-          fenceItems: bomResultForTabs.allItems,
-          gateItems: bomResultForTabs.gateItems,
-          total: bomResultForTabs.total,
-          gst: bomResultForTabs.gst,
-          grandTotal: bomResultForTabs.grandTotal,
-          pricingTier: bomResultForTabs.pricingTier,
-          generatedAt: bomResultForTabs.generatedAt,
-        }
+        fenceItems: bomResultForTabs.allItems,
+        gateItems: bomResultForTabs.gateItems,
+        total: bomResultForTabs.total,
+        gst: bomResultForTabs.gst,
+        grandTotal: bomResultForTabs.grandTotal,
+        pricingTier: bomResultForTabs.pricingTier,
+        generatedAt: bomResultForTabs.generatedAt,
+      }
       : emptyBom;
 
     if (!isSupabaseConfigured) {
@@ -748,8 +744,8 @@ function CalculatorV3Content() {
           const vars = { ...runVars, ...(segment.variables ?? {}) };
           return vars.finish_family === "economy" && Number(vars.slat_size_mm ?? 65) === 90
             ? [
-                `Run ${runIndex + 1} Section ${segmentIndex + 1}: Economy slats only available in 65mm - switch slat size or pick Standard.`,
-              ]
+              `Run ${runIndex + 1} Section ${segmentIndex + 1}: Economy slats only available in 65mm - switch slat size or pick Standard.`,
+            ]
             : [];
         });
     }) ?? [];
@@ -824,7 +820,7 @@ function CalculatorV3Content() {
           <div className="relative mx-auto flex min-h-full max-w-6xl flex-col items-center justify-center gap-8 px-5 py-12 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-brand-primary/40 bg-brand-card/80 px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-brand-primary shadow-md">
               <Sparkles size={16} />
-              Powered by Sky Brooke AI
+              Powered by SkybrookAI
             </div>
             <div className="space-y-5">
               <GlassOutletLogo
@@ -874,475 +870,470 @@ function CalculatorV3Content() {
         </div>
       ) : (
         <>
-      <div
-        className="relative flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row"
-      >
-        <aside
-          className={`relative w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${
-            mobileLayout && mobileTab !== "run" ? "hidden" : "flex"
-          } ${
-            bomResultForTabs ? "max-h-[32vh]" : "min-h-[46vh]"
-          }`}
-          style={mobileLayout ? undefined : { width: runPaneWidth }}
-        >
-          <div className="flex min-h-0 flex-1 flex-col">
-            <div className="flex-1 space-y-4 overflow-y-auto p-3 sm:p-5">
-            <section>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-[0.08em] text-brand-muted">
-                Job Name
-              </p>
-              <input
-                type="text"
-                value={jobName}
-                onChange={(event) => setJobName(event.target.value)}
-                placeholder="Enter job name"
-                className="mb-4 w-full rounded-xl border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-              />
-              {!payload ? (
-                <ProductSelectV3
-                  mapAction={(selectDefaultProduct) =>
-                    layoutMapButton(selectDefaultProduct)
-                  }
-                />
-              ) : null}
-            </section>
-
-            {payload && (
-              <>
-                <hr className="border-brand-border/60" />
-                <section>
-                  <RunListV3 />
-                </section>
-
-                {(errors.length > 0 || warnings.length > 0) && (
-                  <div className="space-y-2">
-                    {errors.map((e, i) => (
-                      <div
-                        key={i}
-                        className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-2 text-sm text-brand-danger"
-                      >
-                        Error: {e}
-                      </div>
-                    ))}
-                    {warnings.map((w, i) => (
-                      <div
-                        key={i}
-                        className="rounded-lg border border-brand-warning/30 bg-brand-warning/10 px-4 py-2 text-sm text-brand-warning"
-                      >
-                        Warning: {w}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {economySlatErrors.length > 0 && (
-                  <div className="space-y-2">
-                    {economySlatErrors.map((message) => (
-                      <div
-                        key={message}
-                        className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-2 text-sm font-bold text-brand-danger"
-                      >
-                        {message}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {(gateWidthErrors.length > 0 || gateWidthWarnings.length > 0) && (
-                  <div className="space-y-2">
-                    {gateWidthErrors.map((item) => (
-                      <div
-                        key={`${item.runId}-${item.segmentId}`}
-                        className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-2 text-sm font-bold text-brand-danger"
-                      >
-                        {item.message}
-                      </div>
-                    ))}
-                    {gateWidthWarnings.map((item) => (
-                      <div
-                        key={`${item.runId}-${item.segmentId}`}
-                        className="rounded-lg border border-brand-warning/30 bg-brand-warning/10 px-4 py-2 text-sm font-bold text-brand-warning"
-                      >
-                        {item.message ?? `Gate width is over the ${gateTypeLabel(item.gateType)} maximum.`}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {bomMutation.isError && (
-                  <div className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-3 text-sm text-brand-danger">
-                    Error:{" "}
-                    {bomMutation.error instanceof Error
-                      ? bomMutation.error.message
-                      : String(bomMutation.error)}
-                  </div>
-                )}
-
-              </>
-            )}
-            </div>
-            <div className="border-t border-brand-border bg-brand-card p-3 pb-24 sm:p-5 md:pb-5">
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={handleSaveJob}
-                  disabled={!payload || saving}
-                  className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                  {saveJobLabel}
-                </button>
-                <button
-                  ref={clearJobButtonRef}
-                  type="button"
-                  onClick={() => {
-                    if (!confirmClearJob) {
-                      setConfirmClearJob(true);
-                      return;
-                    }
-                    dispatch({ type: "CLEAR_QUOTE" });
-                    setExtraItems([]);
-                    setLineEdits({});
-                    setActiveBomSummary(null);
-                    setJobName("");
-                    setConfirmClearJob(false);
-                  }}
-                  onBlur={() => setConfirmClearJob(false)}
-                  disabled={!payload && !jobName}
-                  className="inline-flex items-center gap-2 rounded-lg border border-brand-danger/30 px-3 py-2 text-sm font-bold text-brand-danger transition-colors hover:bg-brand-danger/10 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  <Trash2 size={16} />
-                  {confirmClearJob ? "Click again" : "Clear Job"}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleGenerateBOMFromFooter}
-                  disabled={bomMutation.isPending || hasBlockingErrors || noSegments}
-                  className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {bomMutation.isPending && (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  )}
-                  Generate BOM
-                </button>
-              </div>
-            </div>
-          </div>
-        </aside>
-
-        <button
-          type="button"
-          aria-label="Resize panels"
-          onMouseDown={handleResizeStart}
-          className="hidden w-1.5 shrink-0 cursor-col-resize bg-brand-border/60 transition-colors hover:bg-brand-primary/40 md:block"
-        />
-
-        <main
-          className={`min-h-0 min-w-0 flex-1 overflow-y-auto p-3 pb-24 sm:p-5 lg:p-8 ${
-            mobileLayout && mobileTab !== "bom" ? "hidden" : ""
-          }`}
-        >
-          <div className="mx-auto max-w-6xl space-y-4 sm:space-y-5">
-            <section className="rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5">
-              <div className="mb-4 flex flex-col gap-4 border-b border-brand-border pb-5 sm:flex-row sm:items-start sm:justify-between">
-                <div className="min-w-0">
-                  <div className="mb-3 flex flex-wrap items-center gap-3">
-                    <GlassOutletLogo
-                      className="text-brand-primary"
-                      iconClassName="h-10 w-12"
-                      textClassName="text-2xl"
-                    />
-                    <div className="h-10 w-px bg-brand-border" />
-                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-muted">
-                      Bill of Materials
-                    </p>
-                  </div>
-                  {summaryText && (
-                    <p className="mt-2 max-w-3xl text-sm font-semibold text-brand-text">
-                      {summaryText}
-                    </p>
-                  )}
-                </div>
-                <div className="text-left sm:text-right">
-                  <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
-                    {activeBomSummary?.label ?? "Auto quantity breaks"}
-                  </p>
-                  <p className="font-mono text-4xl font-black tabular-nums text-brand-primary sm:text-5xl">
-                    ${formatMoney(animatedGrandTotal)}
-                  </p>
-                </div>
-              </div>
-              <div className="mb-4 flex flex-wrap items-center gap-2">
-                {payload && <div className="mr-2">{layoutMapButton()}</div>}
-                <button
-                  type="button"
-                  onClick={handleGenerateBOM}
-                  disabled={bomMutation.isPending || hasBlockingErrors || noSegments}
-                  title="Generate BOM (Ctrl+Enter)"
-                  className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {bomMutation.isPending && (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  )}
-                  Generate BOM
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setActiveBomSummary(null);
-                    dispatch({ type: "CLEAR_BOM_RESULT" });
-                  }}
-                  disabled={!bomResultForTabs}
-                  className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-danger/50 hover:text-brand-danger hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  <FileX2 size={16} />
-                  Clear BOM
-                </button>
-                <button
-                  type="button"
-                  onClick={handlePrintBom}
-                  disabled={!bomResultForTabs}
-                  title="Export CSV (Ctrl+E)"
-                  className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  <Printer size={16} />
-                  Print BOM
-                </button>
-                <label className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted">
-                  <input
-                    type="checkbox"
-                    checked={includeMapInBomPrint}
-                    onChange={(event) => setIncludeMapInBomPrint(event.target.checked)}
-                    className="accent-brand-primary"
-                  />
-                  Include map
-                </label>
-                <button
-                  type="button"
-                  onClick={handleExportCsv}
-                  disabled={!bomResultForTabs}
-                  className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  <Download size={16} />
-                  Export CSV
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShortcutsOpen(true)}
-                  title="Keyboard shortcuts (?)"
-                  className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-                >
-                  <Keyboard size={16} />
-                  Shortcuts
-                </button>
-              </div>
-
-              {bomMutation.isPending ? (
-                <div className="space-y-3" aria-label="Generating BOM">
-                  {Array.from({ length: 7 }).map((_, index) => (
-                    <div
-                      key={index}
-                      className="grid gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3 sm:grid-cols-[8rem_1fr_5rem_6rem]"
-                    >
-                      <span className="h-4 animate-pulse rounded bg-brand-border/70" />
-                      <span className="h-4 animate-pulse rounded bg-brand-border/60" />
-                      <span className="h-4 animate-pulse rounded bg-brand-border/50" />
-                      <span className="h-4 animate-pulse rounded bg-brand-border/50" />
-                    </div>
-                  ))}
-                </div>
-              ) : bomResultForTabs && !hasBlockingErrors ? (
-                <>
-                  <BOMResultTabs
-                    result={bomResultForTabs}
-                    editable
-                  onQuantityChange={(item, quantity) =>
-                      setLineEdits((prev) => ({
-                        ...prev,
-                        [lineKey(item)]: quantity <= 0 ? null : quantity,
-                      }))
-                    }
-                    onRemoveLine={(item) =>
-                      setLineEdits((prev) => ({
-                        ...prev,
-                        [lineKey(item)]: null,
-                      }))
-                    }
-                    onSwitchEconomyToStandard={handleSwitchEconomyToStandard}
-                    onActiveSummaryChange={handleActiveBomSummaryChange}
-                  />
-                  <ExtraItemsPanel
-                    items={extraItems}
-                    onAdd={(item) => setExtraItems((prev) => [...prev, item])}
-                    onRemove={(id) =>
-                      setExtraItems((prev) => prev.filter((i) => i.id !== id))
-                    }
-                  />
-                  <SuggestedAccessoriesPanel
-                    suggestions={suggestedAccessories}
-                    addedItems={extraItems}
-                    onAdd={(item) =>
-                      setExtraItems((prev) =>
-                        prev.some((existing) => (existing.sku ?? existing.id) === (item.sku ?? item.id))
-                          ? prev
-                          : [...prev, item],
-                      )
-                    }
-                    onRemove={(id) =>
-                      setExtraItems((prev) => prev.filter((item) => item.id !== id))
-                    }
-                  />
-                </>
-              ) : (
-                <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/60 px-5 py-10 text-center text-sm font-semibold text-brand-muted">
-                  <HelpCircle className="mx-auto mb-3 text-brand-primary" size={32} />
-                  Configure a run on the left, then generate the BOM to see selected products, quantities, GST, and grand total.
-                </div>
-              )}
-            </section>
-          </div>
-        </main>
-
-        {layoutOpen && payload && (
           <div
-            className={`z-20 border-l border-brand-border bg-brand-card shadow-2xl ${
-              mobileLayout
-                ? "fixed inset-x-0 bottom-[4.5rem] top-[4.5rem] border-l-0"
-                : `absolute bottom-0 top-0 ${layoutFullscreen ? "left-0 right-0" : ""}`
-            }`}
-            style={layoutFullscreen || mobileLayout ? undefined : { left: runPaneWidth + 6, right: 0 }}
+            className="relative flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row"
           >
-            <div className="flex h-full min-h-0 flex-col">
-              <div className="flex items-center gap-2 border-b border-brand-border px-2 py-2 sm:gap-3 sm:px-4 sm:py-3">
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setLayoutOpen(false)}
-                    className="rounded-lg border border-brand-border px-2 py-1.5 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm sm:px-3 sm:py-2 sm:text-sm"
-                    title="Minimize map"
-                  >
-                    Minimize
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setLayoutFullscreen((value) => !value)}
-                    className="rounded-lg border border-brand-border p-2 text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-                    title={layoutFullscreen ? "Restore map" : "Expand map"}
-                  >
-                    {layoutFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-                  </button>
+            <aside
+              className={`relative w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${mobileLayout && mobileTab !== "run" ? "hidden" : "flex"
+                } ${bomResultForTabs ? "max-h-[32vh]" : "min-h-[46vh]"
+                }`}
+              style={mobileLayout ? undefined : { width: runPaneWidth }}
+            >
+              <div className="flex min-h-0 flex-1 flex-col">
+                <div className="flex-1 space-y-4 overflow-y-auto p-3 sm:p-5">
+                  <section>
+                    <p className="mb-3 text-xs font-semibold uppercase tracking-[0.08em] text-brand-muted">
+                      Job Name
+                    </p>
+                    <input
+                      type="text"
+                      value={jobName}
+                      onChange={(event) => setJobName(event.target.value)}
+                      placeholder="Enter job name"
+                      className="mb-4 w-full rounded-xl border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+                    />
+                    {!payload ? (
+                      <ProductSelectV3
+                        mapAction={(selectDefaultProduct) =>
+                          layoutMapButton(selectDefaultProduct)
+                        }
+                      />
+                    ) : null}
+                  </section>
+
+                  {payload && (
+                    <>
+                      <hr className="border-brand-border/60" />
+                      <section>
+                        <RunListV3 />
+                      </section>
+
+                      {(errors.length > 0 || warnings.length > 0) && (
+                        <div className="space-y-2">
+                          {errors.map((e, i) => (
+                            <div
+                              key={i}
+                              className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-2 text-sm text-brand-danger"
+                            >
+                              Error: {e}
+                            </div>
+                          ))}
+                          {warnings.map((w, i) => (
+                            <div
+                              key={i}
+                              className="rounded-lg border border-brand-warning/30 bg-brand-warning/10 px-4 py-2 text-sm text-brand-warning"
+                            >
+                              Warning: {w}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {economySlatErrors.length > 0 && (
+                        <div className="space-y-2">
+                          {economySlatErrors.map((message) => (
+                            <div
+                              key={message}
+                              className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-2 text-sm font-bold text-brand-danger"
+                            >
+                              {message}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {(gateWidthErrors.length > 0 || gateWidthWarnings.length > 0) && (
+                        <div className="space-y-2">
+                          {gateWidthErrors.map((item) => (
+                            <div
+                              key={`${item.runId}-${item.segmentId}`}
+                              className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-2 text-sm font-bold text-brand-danger"
+                            >
+                              {item.message}
+                            </div>
+                          ))}
+                          {gateWidthWarnings.map((item) => (
+                            <div
+                              key={`${item.runId}-${item.segmentId}`}
+                              className="rounded-lg border border-brand-warning/30 bg-brand-warning/10 px-4 py-2 text-sm font-bold text-brand-warning"
+                            >
+                              {item.message ?? `Gate width is over the ${gateTypeLabel(item.gateType)} maximum.`}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {bomMutation.isError && (
+                        <div className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-3 text-sm text-brand-danger">
+                          Error:{" "}
+                          {bomMutation.error instanceof Error
+                            ? bomMutation.error.message
+                            : String(bomMutation.error)}
+                        </div>
+                      )}
+
+                    </>
+                  )}
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-brand-text">Layout map</p>
-                  <p className="hidden text-xs text-brand-muted sm:block">
-                    Draw runs, gates, and map underlay
-                  </p>
+                <div className="border-t border-brand-border bg-brand-card p-3 pb-24 sm:p-5 md:pb-5">
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={handleSaveJob}
+                      disabled={!payload || saving}
+                      className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                      {saveJobLabel}
+                    </button>
+                    <button
+                      ref={clearJobButtonRef}
+                      type="button"
+                      onClick={() => {
+                        if (!confirmClearJob) {
+                          setConfirmClearJob(true);
+                          return;
+                        }
+                        dispatch({ type: "CLEAR_QUOTE" });
+                        setExtraItems([]);
+                        setLineEdits({});
+                        setActiveBomSummary(null);
+                        setJobName("");
+                        setConfirmClearJob(false);
+                      }}
+                      onBlur={() => setConfirmClearJob(false)}
+                      disabled={!payload && !jobName}
+                      className="inline-flex items-center gap-2 rounded-lg border border-brand-danger/30 px-3 py-2 text-sm font-bold text-brand-danger transition-colors hover:bg-brand-danger/10 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      <Trash2 size={16} />
+                      {confirmClearJob ? "Click again" : "Clear Job"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleGenerateBOMFromFooter}
+                      disabled={bomMutation.isPending || hasBlockingErrors || noSegments}
+                      className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      {bomMutation.isPending && (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      )}
+                      Generate BOM
+                    </button>
+                  </div>
                 </div>
-                <div className="ml-auto">
+              </div>
+            </aside>
+
+            <button
+              type="button"
+              aria-label="Resize panels"
+              onMouseDown={handleResizeStart}
+              className="hidden w-1.5 shrink-0 cursor-col-resize bg-brand-border/60 transition-colors hover:bg-brand-primary/40 md:block"
+            />
+
+            <main
+              className={`min-h-0 min-w-0 flex-1 overflow-y-auto p-3 pb-24 sm:p-5 lg:p-8 ${mobileLayout && mobileTab !== "bom" ? "hidden" : ""
+                }`}
+            >
+              <div className="mx-auto max-w-6xl space-y-4 sm:space-y-5">
+                <section className="rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5">
+                  <div className="mb-4 flex flex-col gap-4 border-b border-brand-border pb-5 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="min-w-0">
+                      <div className="mb-3 flex flex-wrap items-center gap-3">
+                        <GlassOutletLogo
+                          className="text-brand-primary"
+                          iconClassName="h-10 w-12"
+                          textClassName="text-2xl"
+                        />
+                        <div className="h-10 w-px bg-brand-border" />
+                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-muted">
+                          Bill of Materials
+                        </p>
+                      </div>
+                      {summaryText && (
+                        <p className="mt-2 max-w-3xl text-sm font-semibold text-brand-text">
+                          {summaryText}
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-left sm:text-right">
+                      <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
+                        {activeBomSummary?.label ?? "Auto quantity breaks"}
+                      </p>
+                      <p className="font-mono text-4xl font-black tabular-nums text-brand-primary sm:text-5xl">
+                        ${formatMoney(animatedGrandTotal)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mb-4 flex flex-wrap items-center gap-2">
+                    {payload && <div className="mr-2">{layoutMapButton()}</div>}
+                    <button
+                      type="button"
+                      onClick={handleGenerateBOM}
+                      disabled={bomMutation.isPending || hasBlockingErrors || noSegments}
+                      title="Generate BOM (Ctrl+Enter)"
+                      className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      {bomMutation.isPending && (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      )}
+                      Generate BOM
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveBomSummary(null);
+                        dispatch({ type: "CLEAR_BOM_RESULT" });
+                      }}
+                      disabled={!bomResultForTabs}
+                      className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-danger/50 hover:text-brand-danger hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      <FileX2 size={16} />
+                      Clear BOM
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handlePrintBom}
+                      disabled={!bomResultForTabs}
+                      title="Export CSV (Ctrl+E)"
+                      className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      <Printer size={16} />
+                      Print BOM
+                    </button>
+                    <label className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted">
+                      <input
+                        type="checkbox"
+                        checked={includeMapInBomPrint}
+                        onChange={(event) => setIncludeMapInBomPrint(event.target.checked)}
+                        className="accent-brand-primary"
+                      />
+                      Include map
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleExportCsv}
+                      disabled={!bomResultForTabs}
+                      className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      <Download size={16} />
+                      Export CSV
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShortcutsOpen(true)}
+                      title="Keyboard shortcuts (?)"
+                      className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
+                    >
+                      <Keyboard size={16} />
+                      Shortcuts
+                    </button>
+                  </div>
+
+                  {bomMutation.isPending ? (
+                    <div className="space-y-3" aria-label="Generating BOM">
+                      {Array.from({ length: 7 }).map((_, index) => (
+                        <div
+                          key={index}
+                          className="grid gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3 sm:grid-cols-[8rem_1fr_5rem_6rem]"
+                        >
+                          <span className="h-4 animate-pulse rounded bg-brand-border/70" />
+                          <span className="h-4 animate-pulse rounded bg-brand-border/60" />
+                          <span className="h-4 animate-pulse rounded bg-brand-border/50" />
+                          <span className="h-4 animate-pulse rounded bg-brand-border/50" />
+                        </div>
+                      ))}
+                    </div>
+                  ) : bomResultForTabs && !hasBlockingErrors ? (
+                    <>
+                      <BOMResultTabs
+                        result={bomResultForTabs}
+                        editable
+                        onQuantityChange={(item, quantity) =>
+                          setLineEdits((prev) => ({
+                            ...prev,
+                            [lineKey(item)]: quantity <= 0 ? null : quantity,
+                          }))
+                        }
+                        onRemoveLine={(item) =>
+                          setLineEdits((prev) => ({
+                            ...prev,
+                            [lineKey(item)]: null,
+                          }))
+                        }
+                        onSwitchEconomyToStandard={handleSwitchEconomyToStandard}
+                        onActiveSummaryChange={handleActiveBomSummaryChange}
+                      />
+                      <ExtraItemsPanel
+                        items={extraItems}
+                        onAdd={(item) => setExtraItems((prev) => [...prev, item])}
+                        onRemove={(id) =>
+                          setExtraItems((prev) => prev.filter((i) => i.id !== id))
+                        }
+                      />
+                      <SuggestedAccessoriesPanel
+                        suggestions={suggestedAccessories}
+                        addedItems={extraItems}
+                        onAdd={(item) =>
+                          setExtraItems((prev) =>
+                            prev.some((existing) => (existing.sku ?? existing.id) === (item.sku ?? item.id))
+                              ? prev
+                              : [...prev, item],
+                          )
+                        }
+                        onRemove={(id) =>
+                          setExtraItems((prev) => prev.filter((item) => item.id !== id))
+                        }
+                      />
+                    </>
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/60 px-5 py-10 text-center text-sm font-semibold text-brand-muted">
+                      <HelpCircle className="mx-auto mb-3 text-brand-primary" size={32} />
+                      Configure a run on the left, then generate the BOM to see selected products, quantities, GST, and grand total.
+                    </div>
+                  )}
+                </section>
+              </div>
+            </main>
+
+            {layoutOpen && payload && (
+              <div
+                className={`z-20 border-l border-brand-border bg-brand-card shadow-2xl ${mobileLayout
+                  ? "fixed inset-x-0 bottom-[4.5rem] top-[4.5rem] border-l-0"
+                  : `absolute bottom-0 top-0 ${layoutFullscreen ? "left-0 right-0" : ""}`
+                  }`}
+                style={layoutFullscreen || mobileLayout ? undefined : { left: runPaneWidth + 6, right: 0 }}
+              >
+                <div className="flex h-full min-h-0 flex-col">
+                  <div className="flex items-center gap-2 border-b border-brand-border px-2 py-2 sm:gap-3 sm:px-4 sm:py-3">
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setLayoutOpen(false)}
+                        className="rounded-lg border border-brand-border px-2 py-1.5 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm sm:px-3 sm:py-2 sm:text-sm"
+                        title="Minimize map"
+                      >
+                        Minimize
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setLayoutFullscreen((value) => !value)}
+                        className="rounded-lg border border-brand-border p-2 text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
+                        title={layoutFullscreen ? "Restore map" : "Expand map"}
+                      >
+                        {layoutFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                      </button>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-brand-text">Layout map</p>
+                      <p className="hidden text-xs text-brand-muted sm:block">
+                        Draw runs, gates, and map underlay
+                      </p>
+                    </div>
+                    <div className="ml-auto">
+                      <button
+                        type="button"
+                        onClick={() => setLayoutOpen(false)}
+                        className="rounded-lg border border-brand-border p-2 text-brand-muted transition-colors hover:border-brand-danger hover:text-brand-danger hover:shadow-sm"
+                        title="Close map"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="min-h-0 flex-1 overflow-y-auto p-2 pb-24 sm:p-4">
+                    <LayoutCanvasV3 />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          {mobileLayout && (
+            <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-brand-border bg-brand-card/95 p-2 shadow-2xl backdrop-blur md:hidden">
+              {([
+                ["run", "Run"],
+                ["bom", "BOM"],
+                ["map", "Map"],
+              ] as const).map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => {
+                    setMobileTab(id);
+                    if (id === "map") {
+                      if (!payload) {
+                        dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
+                      }
+                      setIntroDismissed(true);
+                      setLayoutOpen(true);
+                    } else {
+                      setLayoutOpen(false);
+                    }
+                  }}
+                  className={`rounded-lg px-3 py-2 text-sm font-extrabold transition-colors ${mobileTab === id
+                    ? "bg-brand-primary text-white"
+                    : "text-brand-muted hover:bg-brand-border/40 hover:text-brand-text"
+                    }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </nav>
+          )}
+          {shortcutsOpen && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Keyboard shortcuts"
+              onClick={() => setShortcutsOpen(false)}
+            >
+              <div
+                className="w-full max-w-md rounded-2xl border border-brand-border bg-brand-card p-5 shadow-2xl"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <h2 className="text-base font-extrabold text-brand-text">
+                    Keyboard shortcuts
+                  </h2>
                   <button
                     type="button"
-                    onClick={() => setLayoutOpen(false)}
-                    className="rounded-lg border border-brand-border p-2 text-brand-muted transition-colors hover:border-brand-danger hover:text-brand-danger hover:shadow-sm"
-                    title="Close map"
+                    onClick={() => setShortcutsOpen(false)}
+                    className="rounded-lg p-1 text-brand-muted hover:bg-brand-border/40 hover:text-brand-text"
+                    aria-label="Close shortcuts"
                   >
                     <X size={16} />
                   </button>
                 </div>
-              </div>
-              <div className="min-h-0 flex-1 overflow-y-auto p-2 pb-24 sm:p-4">
-                <LayoutCanvasV3 />
+                <dl className="space-y-3 text-sm">
+                  <div className="flex items-center justify-between gap-4">
+                    <dt className="text-brand-muted">Generate BOM</dt>
+                    <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
+                      Ctrl + Enter
+                    </dd>
+                  </div>
+                  <div className="flex items-center justify-between gap-4">
+                    <dt className="text-brand-muted">Export CSV</dt>
+                    <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
+                      Ctrl + E
+                    </dd>
+                  </div>
+                  <div className="flex items-center justify-between gap-4">
+                    <dt className="text-brand-muted">Open this panel</dt>
+                    <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
+                      ?
+                    </dd>
+                  </div>
+                  <div className="flex items-center justify-between gap-4">
+                    <dt className="text-brand-muted">Canvas undo</dt>
+                    <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
+                      Ctrl + Z
+                    </dd>
+                  </div>
+                </dl>
               </div>
             </div>
-          </div>
-        )}
-      </div>
-      {mobileLayout && (
-        <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-brand-border bg-brand-card/95 p-2 shadow-2xl backdrop-blur md:hidden">
-          {([
-            ["run", "Run"],
-            ["bom", "BOM"],
-            ["map", "Map"],
-          ] as const).map(([id, label]) => (
-            <button
-              key={id}
-              type="button"
-              onClick={() => {
-                setMobileTab(id);
-                if (id === "map") {
-                  if (!payload) {
-                    dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
-                  }
-                  setIntroDismissed(true);
-                  setLayoutOpen(true);
-                } else {
-                  setLayoutOpen(false);
-                }
-              }}
-              className={`rounded-lg px-3 py-2 text-sm font-extrabold transition-colors ${
-                mobileTab === id
-                  ? "bg-brand-primary text-white"
-                  : "text-brand-muted hover:bg-brand-border/40 hover:text-brand-text"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </nav>
-      )}
-      {shortcutsOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Keyboard shortcuts"
-          onClick={() => setShortcutsOpen(false)}
-        >
-          <div
-            className="w-full max-w-md rounded-2xl border border-brand-border bg-brand-card p-5 shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="text-base font-extrabold text-brand-text">
-                Keyboard shortcuts
-              </h2>
-              <button
-                type="button"
-                onClick={() => setShortcutsOpen(false)}
-                className="rounded-lg p-1 text-brand-muted hover:bg-brand-border/40 hover:text-brand-text"
-                aria-label="Close shortcuts"
-              >
-                <X size={16} />
-              </button>
-            </div>
-            <dl className="space-y-3 text-sm">
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-brand-muted">Generate BOM</dt>
-                <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
-                  Ctrl + Enter
-                </dd>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-brand-muted">Export CSV</dt>
-                <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
-                  Ctrl + E
-                </dd>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-brand-muted">Open this panel</dt>
-                <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
-                  ?
-                </dd>
-              </div>
-              <div className="flex items-center justify-between gap-4">
-                <dt className="text-brand-muted">Canvas undo</dt>
-                <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
-                  Ctrl + Z
-                </dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-      )}
+          )}
         </>
       )}
     </AppShell>
