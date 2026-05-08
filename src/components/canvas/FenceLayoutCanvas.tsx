@@ -432,7 +432,7 @@ export function FenceLayoutCanvas({
       <div className="relative">
         <canvas
           ref={canvasRef}
-          className="w-full bg-brand-bg block"
+          className="block w-full touch-none bg-brand-bg"
           style={{ height: expanded ? "700px" : "420px", cursor: "crosshair" }}
         />
 
@@ -472,7 +472,7 @@ export function FenceLayoutCanvas({
         {mapUiState.mapType === "satellite" &&
           !mapUiState.hasLoadedMap &&
           !mapUiState.hasAddress && (
-            <div className="absolute left-1/2 top-4 -translate-x-1/2 rounded-lg border border-brand-accent/40 bg-brand-card/90 px-3 py-2 text-xs font-medium text-brand-text shadow-md pointer-events-none">
+            <div className="pointer-events-none absolute left-1/2 top-4 hidden -translate-x-1/2 rounded-lg border border-brand-accent/40 bg-brand-card/90 px-3 py-2 text-xs font-medium text-brand-text shadow-md sm:block">
               Enter a job address above to load the satellite underlay
             </div>
           )}

@@ -15,6 +15,7 @@ import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { suggestAccessories } from "../lib/suggestedAccessories";
 import { priceForSku } from "../lib/localBomCalculator";
+import { initialVariablesForSystem } from "../lib/productOptionRules";
 import { GATE_SEGMENT_STUB_KEYS } from "../lib/segmentTermination";
 import { GATE_MOVEMENTS, optionLabel as gateOptionLabel } from "../lib/gateOptionRules";
 import { gateTypeLabel, validateGateWidth } from "../lib/gateConstraints";
@@ -44,6 +45,7 @@ import type {
   BOMLineItem,
   ExtraItem,
 } from "../types/bom.types";
+import type { CanonicalPayload } from "../types/canonical.types";
 
 const roundMoney = (value: number) =>
   Math.round((value + Number.EPSILON) * 100) / 100;
@@ -127,6 +129,36 @@ function initialRunPaneWidth() {
   const stored = Number(window.localStorage.getItem("qsg-run-pane-width"));
   if (Number.isFinite(stored) && stored > 0) return stored;
   return Math.round(Math.min(680, Math.max(390, window.innerWidth / 3)));
+}
+
+function createInitialPayload(systemType = "QSHS"): CanonicalPayload {
+  const initialVariables = initialVariablesForSystem(systemType);
+  const initialHeight = Number(initialVariables.target_height_mm ?? 1800);
+  return {
+    productCode: systemType,
+    schemaVersion: "v1",
+    variables: initialVariables,
+    runs: [
+      {
+        runId: crypto.randomUUID(),
+        productCode: systemType,
+        variables: initialVariables,
+        leftBoundary: { type: "product_post" },
+        rightBoundary: { type: "product_post" },
+        segments: [
+          {
+            segmentId: crypto.randomUUID(),
+            sortOrder: 1,
+            segmentKind: "panel",
+            segmentWidthMm: 0,
+            targetHeightMm: initialHeight,
+            variables: systemType === "BAYG" ? { panel_quantity: 1 } : undefined,
+          },
+        ],
+        corners: [],
+      },
+    ],
+  };
 }
 
 function useAnimatedNumber(target: number) {
@@ -235,6 +267,9 @@ function CalculatorV3Content() {
       type="button"
       onClick={() => {
         if (!layoutOpen) onBeforeOpen?.();
+        if (!payload) {
+          dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
+        }
         setIntroDismissed(true);
         setLayoutOpen((open) => !open);
         if (mobileLayout) setMobileTab("map");
@@ -946,7 +981,7 @@ function CalculatorV3Content() {
               </>
             )}
             </div>
-            <div className="border-t border-brand-border bg-brand-card p-3 sm:p-5">
+            <div className="border-t border-brand-border bg-brand-card p-3 pb-24 sm:p-5 md:pb-5">
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
@@ -1170,18 +1205,20 @@ function CalculatorV3Content() {
 
         {layoutOpen && payload && (
           <div
-            className={`absolute bottom-0 top-0 z-20 border-l border-brand-border bg-brand-card shadow-2xl ${
-              layoutFullscreen || mobileLayout ? "left-0 right-0" : ""
+            className={`z-20 border-l border-brand-border bg-brand-card shadow-2xl ${
+              mobileLayout
+                ? "fixed inset-x-0 bottom-[4.5rem] top-[4.5rem] border-l-0"
+                : `absolute bottom-0 top-0 ${layoutFullscreen ? "left-0 right-0" : ""}`
             }`}
             style={layoutFullscreen || mobileLayout ? undefined : { left: runPaneWidth + 6, right: 0 }}
           >
             <div className="flex h-full min-h-0 flex-col">
-              <div className="flex items-center gap-3 border-b border-brand-border px-4 py-3">
+              <div className="flex items-center gap-2 border-b border-brand-border px-2 py-2 sm:gap-3 sm:px-4 sm:py-3">
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={() => setLayoutOpen(false)}
-                    className="rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
+                    className="rounded-lg border border-brand-border px-2 py-1.5 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm sm:px-3 sm:py-2 sm:text-sm"
                     title="Minimize map"
                   >
                     Minimize
@@ -1197,7 +1234,7 @@ function CalculatorV3Content() {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-brand-text">Layout map</p>
-                  <p className="text-xs text-brand-muted">
+                  <p className="hidden text-xs text-brand-muted sm:block">
                     Draw runs, gates, and map underlay
                   </p>
                 </div>
@@ -1212,7 +1249,7 @@ function CalculatorV3Content() {
                   </button>
                 </div>
               </div>
-              <div className="min-h-0 flex-1 overflow-y-auto p-4">
+              <div className="min-h-0 flex-1 overflow-y-auto p-2 pb-24 sm:p-4">
                 <LayoutCanvasV3 />
               </div>
             </div>
@@ -1231,7 +1268,15 @@ function CalculatorV3Content() {
               type="button"
               onClick={() => {
                 setMobileTab(id);
-                if (id === "map") setLayoutOpen(true);
+                if (id === "map") {
+                  if (!payload) {
+                    dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
+                  }
+                  setIntroDismissed(true);
+                  setLayoutOpen(true);
+                } else {
+                  setLayoutOpen(false);
+                }
               }}
               className={`rounded-lg px-3 py-2 text-sm font-extrabold transition-colors ${
                 mobileTab === id

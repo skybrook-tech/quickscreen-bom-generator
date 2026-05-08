@@ -15,6 +15,26 @@ Build a data-driven BOM (Bill of Materials) quoting configurator for Glass Outle
 
 ---
 
+## May 8, 2026 - Mobile mapper audit and phone workflow pass
+
+Mobile finding:
+- The phone layout needed to behave as three clear work panes: Run, BOM, and Map. Before this pass, opening the map from the intro could leave the user on an empty mobile pane, and switching back to Run or BOM did not reliably minimize the map overlay.
+- The canvas engine primarily listened for mouse events. On a phone, touch taps and drags need to feed the same placement, movement, double-tap finish, and gate-drag logic.
+- The satellite-address hint was useful on desktop but blocked the drawing surface on a mobile viewport.
+
+Changes applied:
+- Opening the map from the start screen now creates a QSHS fallback payload if no product has been selected yet.
+- The mobile bottom tabs now act as real panes: Map opens the mapper, while Run and BOM minimize it.
+- The canvas engine now converts single-touch start/move/end events into the existing draw, move, text, and gate workflows, with double-tap support for finishing drawn runs/buildings/boundaries.
+- The canvas element opts out of browser touch scrolling, and the toolbar scrolls horizontally on mobile instead of squeezing the drawing controls.
+- The phone map hides the satellite-address hint over the canvas and adds footer spacing so fixed mobile navigation does not cover job actions.
+
+Verification:
+- `npm run build` passed.
+- Chrome mobile emulation verified: start screen opens the map, touch taps draw a two-section run, Run/BOM/Map tabs are reachable, and the BOM pane remains visible on a phone viewport. The only console noise was expected local Supabase connection-refused messages plus a favicon 404 in the dev environment.
+
+---
+
 ## May 8, 2026 - Run defaults and double-gate correction
 
 Workflow finding:

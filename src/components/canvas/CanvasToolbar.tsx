@@ -72,19 +72,19 @@ export function CanvasToolbar({
   }, [confirmClear]);
 
   const btnCls = (active: boolean) =>
-    `flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${
+    `inline-flex shrink-0 items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
       active
         ? "border-brand-accent bg-brand-accent/20 text-brand-accent"
         : "border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50"
     }`;
 
   const iconBtn =
-    "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50 transition-colors";
+    "inline-flex shrink-0 items-center gap-1.5 rounded-md border border-brand-border px-3 py-1.5 text-xs font-medium text-brand-muted transition-colors hover:text-brand-text hover:border-brand-accent/50";
 
   return (
-    <div className="flex flex-wrap items-center gap-3 p-2 bg-brand-card">
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
-        <span className="text-[10px] font-black uppercase tracking-wide text-brand-muted">Draw</span>
+    <div className="flex flex-nowrap items-center gap-2 overflow-x-auto border-b border-brand-border/60 bg-brand-card p-2 [scrollbar-width:thin] md:flex-wrap md:gap-3 md:border-b-0">
+      <div className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
+        <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">Draw</span>
       <button
         type="button"
         title="Draw fence run"
@@ -111,8 +111,8 @@ export function CanvasToolbar({
       </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
-        <span className="text-[10px] font-black uppercase tracking-wide text-brand-muted">Site</span>
+      <div className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
+        <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">Site</span>
       <button
         type="button"
         title="Draw a non-product boundary line (existing fence, wall, property line)"
@@ -155,8 +155,8 @@ export function CanvasToolbar({
       </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
-        <span className="text-[10px] font-black uppercase tracking-wide text-brand-muted">Actions</span>
+      <div className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
+        <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">Actions</span>
       <button
         ref={clearButtonRef}
         type="button"
@@ -216,9 +216,9 @@ export function CanvasToolbar({
       </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
-        <span className="text-[10px] font-black uppercase tracking-wide text-brand-muted">View</span>
-      <label className="flex items-center gap-1.5 text-xs text-brand-muted cursor-pointer">
+      <div className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
+        <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">View</span>
+      <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
         <input
           type="checkbox"
           checked={snapEnabled}
@@ -231,7 +231,7 @@ export function CanvasToolbar({
         Angle/grid snap
       </label>
 
-      <label className="flex items-center gap-1.5 text-xs text-brand-muted cursor-pointer">
+      <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
         <input
           type="checkbox"
           checked={gateSnap100}
@@ -245,7 +245,7 @@ export function CanvasToolbar({
       </label>
 
       {/* Grid toggle */}
-      <label className="flex items-center gap-1.5 text-xs text-brand-muted cursor-pointer">
+      <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
         <input
           type="checkbox"
           checked={showGrid}
@@ -275,7 +275,7 @@ export function CanvasToolbar({
         onClick={onHelpOpen}
         title="Layout map help"
         aria-label="Layout map help"
-        className="ml-auto flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-brand-primary/50 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20 transition-colors"
+        className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-brand-primary/50 bg-brand-primary/10 px-3 py-1.5 text-xs font-semibold text-brand-primary transition-colors hover:bg-brand-primary/20"
       >
         <CircleHelp size={16} /> Help
       </button>

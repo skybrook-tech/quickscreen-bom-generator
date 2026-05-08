@@ -149,10 +149,12 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
   - Does not import React.
   - Recent behavior: gate markers can now anchor at `start`, `center`, or `end`, so a gate can sit flush at a segment end or corner while keeping the full opening width.
   - Loading a layout from typed sidebar dimensions now fits the canvas view to the imported run so it opens centered instead of at the top-left.
+  - Mobile behavior: single-touch taps and drags feed the same draw/move/gate/text workflows as mouse input; double-tap finishes an active drawn run, boundary, or building.
 
 - `src/components/canvas/FenceLayoutCanvas.tsx`
   - React wrapper around the engine.
   - Wires toolbar buttons, map controls, gate edit callbacks, and layout sync.
+  - The canvas opts out of browser touch scrolling so phone gestures place and move layout geometry instead of scrolling the page.
 
 - `src/components/calculator-v3/LayoutCanvasV3.tsx`
   - Bridges the calculator payload and `FenceLayoutCanvas`.
@@ -167,6 +169,7 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
 
 - `src/components/canvas/CanvasToolbar.tsx`, `MapControls.tsx`, `LayoutMinimap.tsx`
   - Supporting UI for drawing tools, Google Maps/satellite underlay settings, and map overview.
+  - The toolbar scrolls horizontally on phone widths so drawing, gate, move/edit, site, and view tools remain accessible without crushing the map.
 
 ## Calculator And Pricing Logic
 

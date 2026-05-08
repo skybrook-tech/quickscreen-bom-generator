@@ -102,6 +102,13 @@ interface Point {
   y: number;
 }
 
+interface CanvasPointerLike {
+  button: number;
+  clientX: number;
+  clientY: number;
+  preventDefault: () => void;
+}
+
 interface Segment {
   p1: Point;
   p2: Point;
@@ -575,6 +582,9 @@ export function initCanvasEngine(
     flatSegIdx: number;
     startScreenPt: Point;
   } | null = null;
+  let lastTouchPointer: CanvasPointerLike | null = null;
+  let lastTapTime = 0;
+  let lastTapScreen: Point | null = null;
   // Post positions from BOM result. In canvas world coordinates — the same
   // coordinate space as the drawn nodes (canvas pixels before pan/zoom transform).
   // null = nothing to render.
@@ -1899,13 +1909,13 @@ export function initCanvasEngine(
 
   // ── Coordinate helpers ─────────────────────────────────────────────────────
 
-  function eventToCanvas(e: MouseEvent): Point {
+  function eventToCanvas(e: Pick<MouseEvent, "clientX" | "clientY">): Point {
     const rect = canvas.getBoundingClientRect();
     const screen = { x: e.clientX - rect.left, y: e.clientY - rect.top };
     return screenToCanvas(screen, pan, zoom);
   }
 
-  function eventToScreen(e: MouseEvent): Point {
+  function eventToScreen(e: Pick<MouseEvent, "clientX" | "clientY">): Point {
     const rect = canvas.getBoundingClientRect();
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
@@ -2024,7 +2034,7 @@ export function initCanvasEngine(
 
   // ── Event handlers ─────────────────────────────────────────────────────────
 
-  function onMouseDown(e: MouseEvent) {
+  function onMouseDown(e: MouseEvent | CanvasPointerLike) {
     if (e.button === 2) {
       // Right button: start pan
       isPanning = true;
@@ -2258,7 +2268,7 @@ export function initCanvasEngine(
     }
   }
 
-  function onMouseMove(e: MouseEvent) {
+  function onMouseMove(e: MouseEvent | CanvasPointerLike) {
     const canvasPt = eventToCanvas(e);
     mouseCanvas = canvasPt;
 
@@ -2364,7 +2374,7 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
-  function onMouseUp(e: MouseEvent) {
+  function onMouseUp(e: MouseEvent | CanvasPointerLike) {
     if (pendingTextNote && e.button === 0) {
       pendingTextNote.current = eventToCanvas(e);
       const x = Math.min(pendingTextNote.start.x, pendingTextNote.current.x);
@@ -2434,6 +2444,61 @@ export function initCanvasEngine(
       draggingGate = null;
       canvas.style.cursor = tool === "draw" || tool === "building" || tool === "text" ? "crosshair" : "default";
       return;
+    }
+  }
+
+  function touchToPointer(touch: Touch, source: TouchEvent): CanvasPointerLike {
+    return {
+      button: 0,
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+      preventDefault: () => source.preventDefault(),
+    };
+  }
+
+  function onTouchStart(e: TouchEvent) {
+    if (e.touches.length !== 1 || editingLabel) return;
+    const pointer = touchToPointer(e.touches[0], e);
+    lastTouchPointer = pointer;
+    pointer.preventDefault();
+    onMouseDown(pointer);
+  }
+
+  function onTouchMove(e: TouchEvent) {
+    if (e.touches.length !== 1) return;
+    const pointer = touchToPointer(e.touches[0], e);
+    lastTouchPointer = pointer;
+    pointer.preventDefault();
+    onMouseMove(pointer);
+  }
+
+  function onTouchEnd(e: TouchEvent) {
+    const touch = e.changedTouches[0];
+    const pointer = touch ? touchToPointer(touch, e) : lastTouchPointer;
+    if (!pointer) return;
+
+    pointer.preventDefault();
+    onMouseUp(pointer);
+
+    const screenPt = eventToScreen(pointer);
+    const now = Date.now();
+    const isDoubleTap =
+      lastTapScreen !== null &&
+      now - lastTapTime < 350 &&
+      dist(screenPt, lastTapScreen) < 34;
+
+    lastTapTime = now;
+    lastTapScreen = screenPt;
+    lastTouchPointer = null;
+
+    if (
+      isDoubleTap &&
+      (tool === "draw" || tool === "building" || tool === "boundary") &&
+      activeRunIdx >= 0 &&
+      !runs[activeRunIdx]?.finished
+    ) {
+      stopChain(!isNearActiveLastPoint(screenPt));
+      scheduleRedraw();
     }
   }
 
@@ -3110,6 +3175,10 @@ export function initCanvasEngine(
     canvas.removeEventListener("mousedown", onMouseDown);
     canvas.removeEventListener("mousemove", onMouseMove);
     canvas.removeEventListener("mouseup", onMouseUp);
+    canvas.removeEventListener("touchstart", onTouchStart);
+    canvas.removeEventListener("touchmove", onTouchMove);
+    canvas.removeEventListener("touchend", onTouchEnd);
+    canvas.removeEventListener("touchcancel", onTouchEnd);
     canvas.removeEventListener("dblclick", onDblClick);
     canvas.removeEventListener("wheel", onWheel);
     canvas.removeEventListener("contextmenu", onContextMenu);
@@ -3123,9 +3192,14 @@ export function initCanvasEngine(
 
   // ── Register events ────────────────────────────────────────────────────────
 
+  canvas.style.touchAction = "none";
   canvas.addEventListener("mousedown", onMouseDown);
   canvas.addEventListener("mousemove", onMouseMove);
   canvas.addEventListener("mouseup", onMouseUp);
+  canvas.addEventListener("touchstart", onTouchStart, { passive: false });
+  canvas.addEventListener("touchmove", onTouchMove, { passive: false });
+  canvas.addEventListener("touchend", onTouchEnd, { passive: false });
+  canvas.addEventListener("touchcancel", onTouchEnd, { passive: false });
   canvas.addEventListener("dblclick", onDblClick);
   canvas.addEventListener("wheel", onWheel, { passive: false });
   canvas.addEventListener("contextmenu", onContextMenu);
