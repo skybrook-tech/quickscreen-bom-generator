@@ -66,6 +66,8 @@ Latest sidebar and mapper usability pass: run settings now collapse independentl
 
 Latest BAY-G and launch workflow pass: BAY-G is restored to the active system selector as an infill-screen workflow, BAY-G runs use width/height/quantity panel groups with no gate/post controls and no post BOM lines, the calculator now opens on a branded Glass Outlet start screen, the layout-map CTA uses a drawing-oriented treatment, gate settings are grouped into collapsible sections, and the mapper toolbar now groups drawing/site/action/view tools with existing-post and pillar markers.
 
+Latest run-default and gate-behaviour pass: Run Settings now actively reset section and gate defaults for the whole run, matching section codes stay green and can be clicked to revert an overridden section, number fields allow clearing before retyping, double swing gates calculate as two leaves with hinge/latch clearance and default drop bolt handling, failed hinge/latch options move under override sections, and sliding gates carry slide-side data through the sidebar, canvas, canonical payload, and local fallback BOM.
+
 ---
 
 ## Phases Overview

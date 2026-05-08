@@ -62,6 +62,7 @@ export const GATE_SEGMENT_STUB_KEYS = {
   lockBoxType: "lock_box_type",
   useGatePostsAsFenceTermination: "use_gate_posts_as_fence_termination",
   openingDirection: "opening_direction",
+  slidingSide: "sliding_side",
   hingeSide: "hinge_side",
   slidingTrackType: "sliding_track_type",
   slidingGuideType: "sliding_guide_type",

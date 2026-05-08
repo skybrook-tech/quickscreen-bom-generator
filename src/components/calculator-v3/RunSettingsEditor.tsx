@@ -169,6 +169,7 @@ export function RunSettingsEditor({ run }: Props) {
     const normalised = normaliseVariablesForSystem(nextProductCode, nextVariables);
     const syncKeys = new Set([
       "target_height_mm",
+      "finish_family",
       "slat_size_mm",
       "slat_gap_mm",
       "slat_gap_mode",
@@ -177,7 +178,32 @@ export function RunSettingsEditor({ run }: Props) {
       "post_colour_code",
       "post_size",
       "post_system",
+      "mounting_type",
+      "mounting_method",
+      "max_panel_width_mm",
+      "louvre_treatment",
     ]);
+    const resetSectionKeys = [
+      key,
+      ...(key === "target_height_mm" ? ["target_height_mm", "slat_count"] : []),
+      ...(key === "colour_code" ? ["colour_code", "post_colour_code"] : []),
+      ...(key === "post_system" ? ["post_system", "post_size"] : []),
+      ...(key === "mounting_type" || key === "mounting_method" ? ["mounting_type", "mounting_method"] : []),
+    ];
+    const clearKeys = (vars: Record<string, unknown> | undefined) => {
+      const next: Record<string, string | number | boolean> = {};
+      for (const [item, value] of Object.entries(vars ?? {})) {
+        if (
+          typeof value === "string" ||
+          typeof value === "number" ||
+          typeof value === "boolean"
+        ) {
+          next[item] = value;
+        }
+      }
+      for (const item of resetSectionKeys) delete next[item];
+      return Object.keys(next).length ? next : undefined;
+    };
 
     dispatch({
       type: "UPSERT_RUN",
@@ -193,7 +219,7 @@ export function RunSettingsEditor({ run }: Props) {
                   ...segment,
                   targetHeightMm: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
                   variables: {
-                    ...(segment.variables ?? {}),
+                    ...(clearKeys(segment.variables) ?? {}),
                     [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(movement, nextProductCode === "VS"),
                     [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
                     [GATE_SEGMENT_STUB_KEYS.colourCode]: String(normalised.colour_code ?? "B"),
@@ -203,10 +229,10 @@ export function RunSettingsEditor({ run }: Props) {
                   },
                 };
               }
-              if (segment.variables?.target_height_mm !== undefined) return segment;
               return {
                 ...segment,
                 targetHeightMm: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
+                variables: clearKeys(segment.variables),
               };
             })
           : run.segments,

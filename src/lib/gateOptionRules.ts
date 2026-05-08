@@ -182,6 +182,7 @@ export function defaultGateVariables(
     [GATE_SEGMENT_STUB_KEYS.lockBoxType]: "",
     [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]: true,
     [GATE_SEGMENT_STUB_KEYS.openingDirection]: "out",
+    [GATE_SEGMENT_STUB_KEYS.slidingSide]: "front",
     [GATE_SEGMENT_STUB_KEYS.slidingTrackType]: "XPSG-6000-TRACK-ST",
     [GATE_SEGMENT_STUB_KEYS.slidingGuideType]: "XPSG-GUIDE",
     [GATE_SEGMENT_STUB_KEYS.slidingCatchType]: "XPSG-CATCH-U",

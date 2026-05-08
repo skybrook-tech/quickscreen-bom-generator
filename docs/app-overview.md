@@ -1,6 +1,6 @@
 # QuickScreen BOM Generator - Living App Overview
 
-Last updated: 2026-05-02
+Last updated: 2026-05-08
 
 This file is the regular handoff overview for the app. Update it whenever a feature changes the app flow, calculator engine, seed model, canvas mapper, Supabase schema, or key file responsibilities.
 
@@ -91,12 +91,13 @@ Key shape:
 
 - `src/components/calculator-v3/RunCard.tsx`
   - Renders each run heading, master settings summary, segment list, gate list, and run-level actions.
-  - The first fence segment in a run acts as the master/default for following segments and gates.
+  - The directly editable Run Settings are the master/default source for following sections and gates.
   - Master setting summary pills render labels strongly and values in muted grey for readability.
 
 - `src/components/calculator-v3/SegmentRow.tsx`
   - Renders the compact row for a panel or gate-opening segment.
   - Handles length/height editing, segment confirmation, reset-to-master, removal, and expand/collapse.
+  - Section code buttons turn green when they match Run Settings and revert overridden sections back to Run Settings when clicked.
   - For gates, checks whether the gate matches the run master height and horizontal/vertical build type.
   - Closed fence segment rows show beginner-friendly titles such as `Run 1 Segment 1` and compact map labels such as `R1S1`.
   - Closed fence segment rows show the order summary: segment length, height, system, colour, slat, gap, post type, mounting, max post spacing, corner/end/total posts. Length and height edit controls live in the expanded options area. Remove uses a two-click red X confirmation.
@@ -111,7 +112,8 @@ Key shape:
 - `src/components/calculator-v3/GateSegmentDetails.tsx`
   - Expanded gate-opening controls.
   - Covers gate build, movement, hardware, gate post size, colour, slat size, gap, and termination-post behavior.
-  - Hardware controls use dropdown selectors with inventory search inside each selector, so preset hardware can be chosen quickly or replaced by a searched SKU.
+  - Gate movement supports single swing, double swing, and sliding. Sliding gates keep both travel direction and fence-side choice.
+  - Hardware controls rank fitted options first and keep failed-fit options under Other hinges / Other latches so installers can still override when needed.
 
 - `src/components/calculator-v3/GateListV3.tsx` and `GateFormV3.tsx`
   - Older/auxiliary v3 gate list/form components. Prefer checking actual usage before extending them because gate workflow has moved heavily into segment rows.

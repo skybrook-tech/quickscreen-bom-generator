@@ -100,6 +100,9 @@ export function LayoutCanvasV3() {
               segment.variables?.[GATE_SEGMENT_STUB_KEYS.openingDirection] ??
                 fallbackDirection,
             ) as CanvasGateVisual['swingDirection'],
+            slidingSide: String(
+              segment.variables?.[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? 'front',
+            ) as CanvasGateVisual['slidingSide'],
           },
         ]);
       }

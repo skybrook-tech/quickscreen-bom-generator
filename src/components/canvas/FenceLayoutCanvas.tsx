@@ -6,17 +6,25 @@ import { MapControls } from "./MapControls";
 import type { MapUiState } from "./MapControls";
 import { HelpCheatSheet } from "./HelpCheatSheet";
 import { GateModal } from "../gate/GateModal";
+import NumberInput from "../shared/NumberInput";
 import { useFenceConfig } from "../../context/FenceConfigContext";
 import { useGates } from "../../context/GateContext";
 import { useProducts } from "../../hooks/useProducts";
 import type { GateConfig } from "../../schemas/gate.schema";
-import type { CanvasGateType, CanvasGateVisual, CanvasLayout, CanvasRunSummary } from "./canvasEngine";
+import type {
+  CanvasGateSlidingSide,
+  CanvasGateType,
+  CanvasGateVisual,
+  CanvasLayout,
+  CanvasRunSummary,
+} from "./canvasEngine";
 import type { PostPosition } from "../../types/bom.types";
 
 interface PendingGate {
   stub: GateConfig;
   segIdx: number;
   gateIdx: number;
+  slidingSide: CanvasGateSlidingSide;
 }
 
 const DEFAULT_GATE_WIDTH_FALLBACK = 900;
@@ -95,6 +103,7 @@ export function FenceLayoutCanvas({
   const [gatePlacementOpen, setGatePlacementOpen] = useState(false);
   const [gatePlacementWidth, setGatePlacementWidth] = useState(DEFAULT_GATE_WIDTH_FALLBACK);
   const [gatePlacementType, setGatePlacementType] = useState<CanvasGateType>("single-swing");
+  const [gatePlacementSlideSide, setGatePlacementSlideSide] = useState<CanvasGateSlidingSide>("front");
 
   // Existing gate being edited (click on a placed gate marker)
   const [editingCanvasGate, setEditingCanvasGate] = useState<{
@@ -120,7 +129,13 @@ export function FenceLayoutCanvas({
   }, []);
 
   const handleGatePlaced = useCallback(
-    (segIdx: number, gateIdx: number, defaultWidthMM: number, gateType: CanvasGateType = "single-swing") => {
+    (
+      segIdx: number,
+      gateIdx: number,
+      defaultWidthMM: number,
+      gateType: CanvasGateType = "single-swing",
+      slidingSide: CanvasGateSlidingSide = "front",
+    ) => {
       const stub: GateConfig = {
         id: crypto.randomUUID(),
         qty: 1,
@@ -137,7 +152,7 @@ export function FenceLayoutCanvas({
       };
       setPendingGateWidth(defaultWidthMM);
       setUseGatePostsAsTermination(true);
-      setPendingGate({ stub, segIdx, gateIdx });
+      setPendingGate({ stub, segIdx, gateIdx, slidingSide });
     },
     [],
   );
@@ -186,6 +201,15 @@ export function FenceLayoutCanvas({
         pendingGate.gateIdx,
         gate.openingWidth,
       );
+      engineRef.current?.updateGateVisual(
+        pendingGate.segIdx,
+        pendingGate.gateIdx,
+        {
+          gateType: gate.gateType,
+          swingDirection: gate.swingDirection,
+          slidingSide: pendingGate.slidingSide,
+        },
+      );
       // Link canvas gate marker to GateConfig id so edit-by-click works later
       engineRef.current?.setGateId(
         pendingGate.segIdx,
@@ -213,6 +237,15 @@ export function FenceLayoutCanvas({
       pendingGate.segIdx,
       pendingGate.gateIdx,
       pendingGate.stub.id,
+    );
+    engineRef.current?.updateGateVisual(
+      pendingGate.segIdx,
+      pendingGate.gateIdx,
+      {
+        gateType: pendingGate.stub.gateType,
+        swingDirection: pendingGate.stub.swingDirection,
+        slidingSide: pendingGate.slidingSide,
+      },
     );
     gateDispatch({
       type: "ADD_GATE",
@@ -264,6 +297,7 @@ export function FenceLayoutCanvas({
             {
               gateType: gate.gateType,
               swingDirection: gate.swingDirection,
+              slidingSide: "front",
             },
           ]),
         ),
@@ -276,8 +310,9 @@ export function FenceLayoutCanvas({
       gateType: gatePlacementType,
       widthMM: gatePlacementWidth,
       swingDirection: gatePlacementType === "sliding" ? "right" : "out",
+      slidingSide: gatePlacementSlideSide,
     });
-  }, [gatePlacementType, gatePlacementWidth]);
+  }, [gatePlacementType, gatePlacementWidth, gatePlacementSlideSide]);
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -348,6 +383,15 @@ export function FenceLayoutCanvas({
         editingCanvasGate.flatSegIdx,
         editingCanvasGate.gateIdx,
         gate.openingWidth,
+      );
+      engineRef.current?.updateGateVisual(
+        editingCanvasGate.flatSegIdx,
+        editingCanvasGate.gateIdx,
+        {
+          gateType: gate.gateType,
+          swingDirection: gate.swingDirection,
+          slidingSide: "front",
+        },
       );
       gateDispatch({ type: "UPDATE_GATE", id: gate.id, updates: gate });
       setEditingCanvasGate(null);
@@ -526,18 +570,15 @@ export function FenceLayoutCanvas({
               Set the opening before placing the gate. The map preview will show this width before you drop it.
             </p>
             <div className="mt-4 space-y-4">
-              <label className="block text-sm font-semibold text-brand-text">
-                Gate width (mm)
-                <input
-                  type="number"
-                  min={400}
-                  max={6500}
-                  step={50}
-                  value={gatePlacementWidth}
-                  onChange={(event) => setGatePlacementWidth(Number(event.target.value))}
-                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
-                />
-              </label>
+              <NumberInput
+                label="Gate width (mm)"
+                min={400}
+                max={6500}
+                step={50}
+                value={gatePlacementWidth}
+                onChange={setGatePlacementWidth}
+                className="mt-1 w-full bg-brand-bg text-brand-text"
+              />
               <label className="block text-sm font-semibold text-brand-text">
                 Gate type
                 <select
@@ -550,6 +591,21 @@ export function FenceLayoutCanvas({
                   <option value="sliding">Sliding</option>
                 </select>
               </label>
+              {gatePlacementType === "sliding" && (
+                <label className="block text-sm font-semibold text-brand-text">
+                  Sliding side
+                  <select
+                    value={gatePlacementSlideSide}
+                    onChange={(event) =>
+                      setGatePlacementSlideSide(event.target.value as CanvasGateSlidingSide)
+                    }
+                    className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+                  >
+                    <option value="front">Front side of fence</option>
+                    <option value="back">Back side of fence</option>
+                  </select>
+                </label>
+              )}
             </div>
             <div className="mt-5 flex gap-2">
               <button
@@ -559,6 +615,7 @@ export function FenceLayoutCanvas({
                     gateType: gatePlacementType,
                     widthMM: gatePlacementWidth,
                     swingDirection: gatePlacementType === "sliding" ? "right" : "out",
+                    slidingSide: gatePlacementSlideSide,
                   });
                   engineRef.current?.setTool("gate");
                   setActiveTool("gate");
@@ -597,21 +654,15 @@ export function FenceLayoutCanvas({
               Place gate
             </h2>
             <div className="mt-4 space-y-4">
-              <label className="block text-sm text-brand-text">
-                Gate opening
-                <input
-                  type="number"
-                  min={400}
-                  max={6000}
-                  step={50}
-                  value={pendingGateWidth}
-                  onChange={(event) =>
-                    setPendingGateWidth(Number(event.target.value))
-                  }
-                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
-                />
-                <span className="mt-1 block text-xs text-brand-muted">mm</span>
-              </label>
+              <NumberInput
+                label="Gate opening (mm)"
+                min={400}
+                max={6000}
+                step={50}
+                value={pendingGateWidth}
+                onChange={setPendingGateWidth}
+                className="mt-1 w-full bg-brand-bg text-brand-text"
+              />
               <label className="flex items-start gap-2 text-sm text-brand-text">
                 <input
                   type="checkbox"
@@ -623,6 +674,24 @@ export function FenceLayoutCanvas({
                 />
                 <span>Use gate posts as fence termination post</span>
               </label>
+              {pendingGate.stub.gateType === "sliding" && (
+                <label className="block text-sm text-brand-text">
+                  Sliding side
+                  <select
+                    value={pendingGate.slidingSide}
+                    onChange={(event) =>
+                      setPendingGate({
+                        ...pendingGate,
+                        slidingSide: event.target.value as CanvasGateSlidingSide,
+                      })
+                    }
+                    className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+                  >
+                    <option value="front">Front side of fence</option>
+                    <option value="back">Back side of fence</option>
+                  </select>
+                </label>
+              )}
               <label className="block text-sm text-brand-text">
                 Opening direction
                 <select

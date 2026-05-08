@@ -172,6 +172,7 @@ interface GateInSegment {
   useGatePostsAsFenceTermination?: boolean;
   gateType?: CanvasGate['gateType'];
   swingDirection?: CanvasGate['swingDirection'];
+  slidingSide?: CanvasGate['slidingSide'];
 }
 
 function gateMovementFromCanvas(gateType: CanvasGate['gateType']) {
@@ -194,6 +195,9 @@ function gateVisualFromCanon(canonSeg: CanonicalSegment) {
       canonSeg.variables?.[GATE_SEGMENT_STUB_KEYS.openingDirection] ??
         (gateType === 'sliding' ? 'right' : 'out'),
     ) as CanvasGate['swingDirection'],
+    slidingSide: String(
+      canonSeg.variables?.[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? 'front',
+    ) as CanvasGate['slidingSide'],
   };
 }
 
@@ -313,6 +317,7 @@ function expandSegmentWithGates(
           gate.useGatePostsAsFenceTermination ?? true,
         [GATE_SEGMENT_STUB_KEYS.gateMovement]: gateMovementFromCanvas(gate.gateType),
         [GATE_SEGMENT_STUB_KEYS.openingDirection]: gate.swingDirection ?? (gate.gateType === 'sliding' ? 'right' : 'out'),
+        [GATE_SEGMENT_STUB_KEYS.slidingSide]: gate.slidingSide ?? 'front',
       },
     });
 
@@ -397,6 +402,7 @@ export function canvasLayoutToCanonical(
           gate.useGatePostsAsFenceTermination ?? true,
         gateType: gate.gateType,
         swingDirection: gate.swingDirection,
+        slidingSide: gate.slidingSide,
       });
     }
 
@@ -604,8 +610,8 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
           (segment) => segment.canvasSegmentIndex === i,
         );
         const lengthMM =
-          metadataSource?.segmentWidthMm ??
           metadataSource?.sourceSegmentLengthMm ??
+          metadataSource?.segmentWidthMm ??
           Math.round(Math.hypot(p1.x - p0.x, p1.y - p0.y) * 10);
         localFlatSegments.push({
           startX: p0.x,

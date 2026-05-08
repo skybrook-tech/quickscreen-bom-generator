@@ -22,6 +22,7 @@ export interface CanvasGate {
   useGatePostsAsFenceTermination?: boolean;
   gateType?: CanvasGateType;
   swingDirection?: CanvasGateSwingDirection;
+  slidingSide?: CanvasGateSlidingSide;
 }
 
 export interface CanvasRunSummary {
@@ -58,6 +59,7 @@ export interface CanvasEngineConfig {
     gateIdx: number,
     defaultWidthMM: number,
     gateType?: CanvasGateType,
+    slidingSide?: CanvasGateSlidingSide,
   ) => void;
   /** Called when the user clicks (not drags) an existing gate marker — open its editor */
   onGateEdit?: (
@@ -70,10 +72,12 @@ export interface CanvasEngineConfig {
 
 export type CanvasGateType = "single-swing" | "double-swing" | "sliding";
 export type CanvasGateSwingDirection = "in" | "out" | "left" | "right";
+export type CanvasGateSlidingSide = "front" | "back";
 
 export interface CanvasGateVisual {
   gateType: CanvasGateType;
   swingDirection?: CanvasGateSwingDirection;
+  slidingSide?: CanvasGateSlidingSide;
 }
 
 export interface CanvasTextNote {
@@ -121,6 +125,7 @@ interface GateMarker {
   useGatePostsAsFenceTermination?: boolean;
   gateType?: CanvasGateType;
   swingDirection?: CanvasGateSwingDirection;
+  slidingSide?: CanvasGateSlidingSide;
 }
 
 type Tool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar";
@@ -546,6 +551,7 @@ export function initCanvasEngine(
   let pendingGatePlacement: CanvasGateVisual & { widthMM: number } = {
     gateType: "single-swing",
     swingDirection: "out",
+    slidingSide: "front",
     widthMM: DEFAULT_GATE_WIDTH_MM,
   };
   let highlightedMapLabel: string | null = null;
@@ -668,10 +674,15 @@ export function initCanvasEngine(
 
   function gateVisualFor(gate: GateMarker): CanvasGateVisual {
     return gate.gateId && gateVisuals[gate.gateId]
-      ? gateVisuals[gate.gateId]
+      ? {
+          gateType: gateVisuals[gate.gateId].gateType,
+          swingDirection: gateVisuals[gate.gateId].swingDirection,
+          slidingSide: gateVisuals[gate.gateId].slidingSide ?? gate.slidingSide ?? "front",
+        }
       : {
           gateType: gate.gateType ?? "single-swing",
           swingDirection: gate.swingDirection ?? "out",
+          slidingSide: gate.slidingSide ?? "front",
         };
   }
 
@@ -777,6 +788,7 @@ export function initCanvasEngine(
             g.useGatePostsAsFenceTermination ?? true,
           gateType: g.gateType,
           swingDirection: g.swingDirection,
+          slidingSide: g.slidingSide,
         });
       });
     });
@@ -822,6 +834,7 @@ export function initCanvasEngine(
               g.useGatePostsAsFenceTermination ?? true,
             gateType: g.gateType,
             swingDirection: g.swingDirection,
+            slidingSide: g.slidingSide,
           });
         });
       });
@@ -1431,6 +1444,8 @@ export function initCanvasEngine(
     const width = Math.max(14 / zoom, dist(pStart, pEnd));
     const swing = Math.min(width * 0.55, 34 / zoom);
     const side = direction === "in" || direction === "left" ? -1 : 1;
+    const slideSide = visual.slidingSide === "back" ? -1 : 1;
+    const slideOffset = (300 / scale) * slideSide;
 
     ctx.save();
     ctx.translate(mid.x, mid.y);
@@ -1442,12 +1457,20 @@ export function initCanvasEngine(
 
     if (visual.gateType === "sliding") {
       const arrow = direction === "left" ? -1 : 1;
-      ctx.strokeRect(-width / 2, -5 / zoom, width, 10 / zoom);
-      drawArrow(-width * 0.25 * arrow, 0, width * 0.32 * arrow, 0);
+      ctx.strokeRect(-width / 2, slideOffset - 5 / zoom, width, 10 / zoom);
+      drawArrow(-width * 0.25 * arrow, slideOffset, width * 0.32 * arrow, slideOffset);
+      ctx.setLineDash([4 / zoom, 4 / zoom]);
+      ctx.beginPath();
+      ctx.moveTo(-width / 2, 0);
+      ctx.lineTo(-width / 2, slideOffset);
+      ctx.moveTo(width / 2, 0);
+      ctx.lineTo(width / 2, slideOffset);
+      ctx.stroke();
+      ctx.setLineDash([]);
       ctx.font = `bold ${Math.max(8, 10 / zoom)}px sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "bottom";
-      ctx.fillText("SL", 0, -8 / zoom);
+      ctx.fillText(direction === "left" ? "SLIDE LEFT" : "SLIDE RIGHT", 0, slideOffset - 8 / zoom);
       ctx.restore();
       return;
     }
@@ -1812,6 +1835,7 @@ export function initCanvasEngine(
       widthMM: pendingGatePlacement.widthMM,
       gateType: pendingGatePlacement.gateType,
       swingDirection: pendingGatePlacement.swingDirection,
+      slidingSide: pendingGatePlacement.slidingSide,
     };
     const range = gateRange(seg, previewGate);
     const pStart = lerp(seg.p1, seg.p2, range.tStart);
@@ -1833,13 +1857,24 @@ export function initCanvasEngine(
 
     if (pendingGatePlacement.gateType === "sliding") {
       const arrow = pendingGatePlacement.swingDirection === "left" ? -1 : 1;
-      drawArrow(-width * 0.3 * arrow, 0, width * 0.35 * arrow, 0);
+      const slideOffset = (300 / scale) * (pendingGatePlacement.slidingSide === "back" ? -1 : 1);
+      ctx.strokeRect(-width / 2, slideOffset - 5 / zoom, width, 10 / zoom);
+      drawArrow(-width * 0.3 * arrow, slideOffset, width * 0.35 * arrow, slideOffset);
     } else {
       const side = pendingGatePlacement.swingDirection === "in" ? -1 : 1;
       const swing = Math.min(width * 0.55, 34 / zoom);
-      ctx.beginPath();
-      ctx.arc(-width / 2, 0, swing, side > 0 ? 0 : -Math.PI / 2, side > 0 ? Math.PI / 2 : 0, side < 0);
-      ctx.stroke();
+      if (pendingGatePlacement.gateType === "double-swing") {
+        ctx.beginPath();
+        ctx.arc(-width / 2, 0, swing, side > 0 ? 0 : -Math.PI / 2, side > 0 ? Math.PI / 2 : 0, side < 0);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(width / 2, 0, swing, side > 0 ? Math.PI / 2 : Math.PI, side > 0 ? Math.PI : Math.PI / 2, side < 0);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.arc(-width / 2, 0, swing, side > 0 ? 0 : -Math.PI / 2, side > 0 ? Math.PI / 2 : 0, side < 0);
+        ctx.stroke();
+      }
     }
 
     ctx.font = `bold ${Math.max(9, 11 / zoom)}px sans-serif`;
@@ -2177,10 +2212,17 @@ export function initCanvasEngine(
           useGatePostsAsFenceTermination: true,
           gateType: pendingGatePlacement.gateType,
           swingDirection: pendingGatePlacement.swingDirection,
+          slidingSide: pendingGatePlacement.slidingSide,
         });
         notifyChange();
         scheduleRedraw();
-        config.onGatePlaced?.(flatIdx, gateIdx, pendingGatePlacement.widthMM, pendingGatePlacement.gateType);
+        config.onGatePlaced?.(
+          flatIdx,
+          gateIdx,
+          pendingGatePlacement.widthMM,
+          pendingGatePlacement.gateType,
+          pendingGatePlacement.slidingSide,
+        );
       }
       return;
     }
@@ -2871,6 +2913,32 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  function updateGateVisual(
+    segIdx: number,
+    gateIdx: number,
+    visual: Partial<CanvasGateVisual>,
+  ) {
+    const allSegs = allSegmentsFlat();
+    const info = allSegs[segIdx];
+    const gate = info?.seg.gates[gateIdx];
+    if (!gate) return;
+    gate.gateType = visual.gateType ?? gate.gateType;
+    gate.swingDirection = visual.swingDirection ?? gate.swingDirection;
+    gate.slidingSide = visual.slidingSide ?? gate.slidingSide ?? "front";
+    if (gate.gateId) {
+      gateVisuals = {
+        ...gateVisuals,
+        [gate.gateId]: {
+          gateType: gate.gateType ?? "single-swing",
+          swingDirection: gate.swingDirection,
+          slidingSide: gate.slidingSide,
+        },
+      };
+    }
+    notifyChange();
+    scheduleRedraw();
+  }
+
   function setGateVisuals(visuals: Record<string, CanvasGateVisual>) {
     gateVisuals = visuals;
     scheduleRedraw();
@@ -3018,6 +3086,7 @@ export function initCanvasEngine(
             g.useGatePostsAsFenceTermination ?? true,
           gateType: g.gateType,
           swingDirection: g.swingDirection,
+          slidingSide: g.slidingSide,
         }));
         flatIdx++;
       }
@@ -3083,6 +3152,7 @@ export function initCanvasEngine(
     setMapOpacity,
     loadMapTile,
     updateGateWidth,
+    updateGateVisual,
     setGateId,
     setGateTerminationPosts,
     setPostPositions,

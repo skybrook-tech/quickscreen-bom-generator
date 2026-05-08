@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
 import {
@@ -22,8 +22,10 @@ import {
 import {
   baseHardwareSku,
   estimateGateWeight,
+  hingeGapForSku,
   isWhiteHardwareFinish,
   kitForHardwareSelection,
+  latchGapForSku,
   rankHinges,
   rankLatches,
   type GateHardwareStatus,
@@ -67,6 +69,11 @@ const SWING_DIRECTION_OPTIONS: GateOption[] = [
 const SLIDING_DIRECTION_OPTIONS: GateOption[] = [
   { value: "left", label: "Slide left" },
   { value: "right", label: "Slide right" },
+];
+
+const SLIDING_SIDE_OPTIONS: GateOption[] = [
+  { value: "front", label: "Slide in front of fence" },
+  { value: "back", label: "Slide behind fence" },
 ];
 
 const SLAT_SIZE_OPTIONS: GateOption[] = [
@@ -269,9 +276,9 @@ function GateWeightCard({ estimate }: { estimate: GateWeightEstimate }) {
     <div className="rounded-lg border border-brand-border/70 bg-brand-card p-3 shadow-none">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-bold text-brand-text">Estimated gate weight</p>
+          <p className="text-sm font-bold text-brand-text">Estimated leaf weight</p>
           <p className="text-xs font-semibold text-brand-muted">
-            Includes frame, slats, hardware allowance and 30% hinge safety margin.
+            Used for hinge rating. It uses the finished leaf size, not stock off-cuts.
           </p>
         </div>
         <div className="text-right">
@@ -323,6 +330,43 @@ function HingePicker({
   onChange: (value: string) => void;
 }) {
   const baseValue = baseHardwareSku(value);
+  const primaryOptions = options.filter((option) => option.status !== "fail");
+  const otherOptions = options.filter((option) => option.status === "fail");
+  const renderOption = (option: RankedHardware<HingeHardware>) => {
+    const active = baseValue === option.sku || value === option.effectiveSku;
+    return (
+      <button
+        key={option.sku}
+        type="button"
+        onClick={() => onChange(option.effectiveSku)}
+        className={`rounded-lg border p-3 text-left shadow-none transition hover:shadow-sm ${
+          active
+            ? "border-brand-primary bg-brand-primary/10"
+            : "border-brand-border bg-brand-card hover:border-brand-primary"
+        }`}
+      >
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <p className="text-sm font-black text-brand-text">{option.label}</p>
+            <p className="text-xs font-bold text-brand-muted">
+              {option.effectiveSku} - {option.ratingKg}kg - gap {option.gapMinMm}-{option.gapMaxMm}mm
+            </p>
+          </div>
+          <div className="flex flex-col items-end gap-1">
+            {option.recommended && (
+              <span className="rounded-full bg-brand-success px-2 py-0.5 text-[11px] font-black text-white">
+                Recommended cheapest fit
+              </span>
+            )}
+            <span className={`rounded-full border px-2 py-0.5 text-[11px] font-black ${statusClasses(option.status)}`}>
+              {statusLabel(option.status)}
+            </span>
+          </div>
+        </div>
+        <HardwareReasonTags status={option.status} reasons={option.reasons} />
+      </button>
+    );
+  };
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
@@ -330,41 +374,17 @@ function HingePicker({
         <span className="text-xs font-bold text-brand-muted">{options.length} catalogue hinges</span>
       </div>
       <div className="grid gap-2">
-        {options.map((option) => {
-          const active = baseValue === option.sku || value === option.effectiveSku;
-          return (
-            <button
-              key={option.sku}
-              type="button"
-              onClick={() => onChange(option.effectiveSku)}
-              className={`rounded-lg border p-3 text-left shadow-none transition hover:shadow-sm ${
-                active
-                  ? "border-brand-primary bg-brand-primary/10"
-                  : "border-brand-border bg-brand-card hover:border-brand-primary"
-              } ${option.status === "fail" ? "opacity-60" : ""}`}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="text-sm font-black text-brand-text">{option.label}</p>
-                  <p className="text-xs font-bold text-brand-muted">
-                    {option.effectiveSku} - {option.ratingKg}kg - gap {option.gapMinMm}-{option.gapMaxMm}mm
-                  </p>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  {option.recommended && (
-                    <span className="rounded-full bg-brand-success px-2 py-0.5 text-[11px] font-black text-white">
-                      Recommended cheapest fit
-                    </span>
-                  )}
-                  <span className={`rounded-full border px-2 py-0.5 text-[11px] font-black ${statusClasses(option.status)}`}>
-                    {statusLabel(option.status)}
-                  </span>
-                </div>
-              </div>
-              <HardwareReasonTags status={option.status} reasons={option.reasons} />
-            </button>
-          );
-        })}
+        {primaryOptions.map(renderOption)}
+        {otherOptions.length > 0 && (
+          <details className="rounded-lg border border-brand-border bg-brand-card/70">
+            <summary className="cursor-pointer px-3 py-2 text-sm font-black text-brand-muted">
+              Other hinges
+            </summary>
+            <div className="grid gap-2 border-t border-brand-border/60 p-2">
+              {otherOptions.map(renderOption)}
+            </div>
+          </details>
+        )}
       </div>
     </div>
   );
@@ -380,6 +400,45 @@ function LatchPicker({
   onChange: (value: string) => void;
 }) {
   const baseValue = baseHardwareSku(value);
+  const primaryOptions = options.filter((option) => option.status !== "fail");
+  const otherOptions = options.filter((option) => option.status === "fail");
+  const renderOption = (option: RankedHardware<LatchHardware>) => {
+    const active = baseValue === option.sku || value === option.effectiveSku;
+    return (
+      <button
+        key={option.sku}
+        type="button"
+        onClick={() => onChange(option.effectiveSku)}
+        className={`rounded-lg border p-3 text-left shadow-none transition hover:shadow-sm ${
+          active
+            ? "border-brand-primary bg-brand-primary/10"
+            : "border-brand-border bg-brand-card hover:border-brand-primary"
+        }`}
+      >
+        <div className="flex items-start justify-between gap-2">
+          <div>
+            <p className="text-sm font-black text-brand-text">{option.label}</p>
+            <p className="text-xs font-bold text-brand-muted">
+              {option.effectiveSku}
+              {option.lockable ? " - lockable" : ""}
+              {option.poolSafe ? " - pool safe" : ""}
+            </p>
+          </div>
+          <div className="flex flex-col items-end gap-1">
+            {option.recommended && (
+              <span className="rounded-full bg-brand-success px-2 py-0.5 text-[11px] font-black text-white">
+                Recommended
+              </span>
+            )}
+            <span className={`rounded-full border px-2 py-0.5 text-[11px] font-black ${statusClasses(option.status)}`}>
+              {statusLabel(option.status)}
+            </span>
+          </div>
+        </div>
+        <HardwareReasonTags status={option.status} reasons={option.reasons} />
+      </button>
+    );
+  };
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
@@ -387,43 +446,17 @@ function LatchPicker({
         <span className="text-xs font-bold text-brand-muted">Filtered to gate movement</span>
       </div>
       <div className="grid gap-2">
-        {options.map((option) => {
-          const active = baseValue === option.sku || value === option.effectiveSku;
-          return (
-            <button
-              key={option.sku}
-              type="button"
-              onClick={() => onChange(option.effectiveSku)}
-              className={`rounded-lg border p-3 text-left shadow-none transition hover:shadow-sm ${
-                active
-                  ? "border-brand-primary bg-brand-primary/10"
-                  : "border-brand-border bg-brand-card hover:border-brand-primary"
-              } ${option.status === "fail" ? "opacity-60" : ""}`}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="text-sm font-black text-brand-text">{option.label}</p>
-                  <p className="text-xs font-bold text-brand-muted">
-                    {option.effectiveSku}
-                    {option.lockable ? " - lockable" : ""}
-                    {option.poolSafe ? " - pool safe" : ""}
-                  </p>
-                </div>
-                <div className="flex flex-col items-end gap-1">
-                  {option.recommended && (
-                    <span className="rounded-full bg-brand-success px-2 py-0.5 text-[11px] font-black text-white">
-                      Recommended
-                    </span>
-                  )}
-                  <span className={`rounded-full border px-2 py-0.5 text-[11px] font-black ${statusClasses(option.status)}`}>
-                    {statusLabel(option.status)}
-                  </span>
-                </div>
-              </div>
-              <HardwareReasonTags status={option.status} reasons={option.reasons} />
-            </button>
-          );
-        })}
+        {primaryOptions.map(renderOption)}
+        {otherOptions.length > 0 && (
+          <details className="rounded-lg border border-brand-border bg-brand-card/70">
+            <summary className="cursor-pointer px-3 py-2 text-sm font-black text-brand-muted">
+              Other latches
+            </summary>
+            <div className="grid gap-2 border-t border-brand-border/60 p-2">
+              {otherOptions.map(renderOption)}
+            </div>
+          </details>
+        )}
       </div>
     </div>
   );
@@ -463,10 +496,21 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   );
   const gateWidthMm = Number(seg.segmentWidthMm ?? 900);
   const whiteFinish = isWhiteHardwareFinish(gateColour);
+  const currentHingeValue = String(v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B");
+  const currentLatchValue = String(v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA");
+  const leafCount = movement === "double_swing" ? 2 : 1;
+  const hingeGapMm = isSwing ? hingeGapForSku(currentHingeValue) : 0;
+  const latchGapMm = isSwing ? latchGapForSku(currentLatchValue) : 0;
+  const leafWidthMm =
+    movement === "double_swing"
+      ? Math.max(1, (gateWidthMm - hingeGapMm * 2 - latchGapMm) / 2)
+      : movement === "single_swing"
+        ? Math.max(1, gateWidthMm - hingeGapMm - latchGapMm)
+        : gateWidthMm;
   const weightEstimate = useMemo(
     () =>
       estimateGateWeight({
-        widthMm: gateWidthMm,
+        widthMm: leafWidthMm,
         heightMm: gateHeightMm,
         slatSizeMm,
         slatGapMm,
@@ -474,7 +518,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         build,
         movement,
       }),
-    [build, gateHeightMm, gateWidthMm, movement, slatGapMm, slatSizeMm, masterVars.finish_family],
+    [build, gateHeightMm, leafWidthMm, movement, slatGapMm, slatSizeMm, masterVars.finish_family],
   );
   const rankedHinges = useMemo(
     () =>
@@ -494,24 +538,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
       }),
     [movement, whiteFinish],
   );
-  const currentHingeValue = String(v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B");
-  const currentLatchValue = String(v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA");
-  const currentHingeBase = baseHardwareSku(currentHingeValue);
   const currentLatchBase = baseHardwareSku(currentLatchValue);
-  const currentHingeStatus =
-    rankedHinges.find((option) => option.sku === currentHingeBase || option.effectiveSku === currentHingeValue)?.status ??
-    "fail";
-  const currentLatchStatus =
-    rankedLatches.find((option) => option.sku === currentLatchBase || option.effectiveSku === currentLatchValue)?.status ??
-    "fail";
-  const currentHingeEffectiveSku = rankedHinges.find(
-    (option) => option.sku === currentHingeBase || option.effectiveSku === currentHingeValue,
-  )?.effectiveSku;
-  const currentLatchEffectiveSku = rankedLatches.find(
-    (option) => option.sku === currentLatchBase || option.effectiveSku === currentLatchValue,
-  )?.effectiveSku;
-  const recommendedHingeSku = rankedHinges.find((option) => option.recommended)?.effectiveSku;
-  const recommendedLatchSku = rankedLatches.find((option) => option.recommended)?.effectiveSku;
   const matchingHardwareKit = kitForHardwareSelection(currentHingeValue, currentLatchValue);
   const selectedKitSku = String(v[GATE_SEGMENT_STUB_KEYS.hardwareKitSku] ?? "");
   const latchCanUseExternalAccessKit = currentLatchBase === "LLAA" || currentLatchBase.startsWith("LL-DL");
@@ -540,28 +567,6 @@ export function GateSegmentDetails({ runId, seg }: Props) {
     0,
   );
 
-  useEffect(() => {
-    if (!isSwing || !recommendedHingeSku || currentHingeStatus !== "fail") return;
-    upsertVariables({ [GATE_SEGMENT_STUB_KEYS.hingeType]: recommendedHingeSku });
-  }, [currentHingeStatus, isSwing, recommendedHingeSku]);
-
-  useEffect(() => {
-    if (!isSwing || !currentHingeEffectiveSku || currentHingeStatus === "fail") return;
-    if (currentHingeValue === currentHingeEffectiveSku) return;
-    upsertVariables({ [GATE_SEGMENT_STUB_KEYS.hingeType]: currentHingeEffectiveSku });
-  }, [currentHingeEffectiveSku, currentHingeStatus, currentHingeValue, isSwing]);
-
-  useEffect(() => {
-    if (!isSwing || !recommendedLatchSku || currentLatchStatus !== "fail") return;
-    upsertVariables({ [GATE_SEGMENT_STUB_KEYS.latchType]: recommendedLatchSku });
-  }, [currentLatchStatus, isSwing, recommendedLatchSku]);
-
-  useEffect(() => {
-    if (!isSwing || !currentLatchEffectiveSku || currentLatchStatus === "fail") return;
-    if (currentLatchValue === currentLatchEffectiveSku) return;
-    upsertVariables({ [GATE_SEGMENT_STUB_KEYS.latchType]: currentLatchEffectiveSku });
-  }, [currentLatchEffectiveSku, currentLatchStatus, currentLatchValue, isSwing]);
-
   function upsertVariables(patch: Record<string, string | number | boolean | null | undefined>) {
     dispatch({
       type: "UPSERT_SEGMENT",
@@ -578,6 +583,8 @@ export function GateSegmentDetails({ runId, seg }: Props) {
       [GATE_SEGMENT_STUB_KEYS.gateBuild]: nextBuild,
       [GATE_SEGMENT_STUB_KEYS.openingDirection]:
         nextMovement === "sliding" ? "right" : "out",
+      [GATE_SEGMENT_STUB_KEYS.slidingSide]:
+        nextMovement === "sliding" ? v[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? "front" : "front",
       [GATE_SEGMENT_STUB_KEYS.leafCount]: nextMovement === "double_swing" ? 2 : 1,
       [GATE_SEGMENT_STUB_KEYS.dropBoltType]:
         nextMovement === "double_swing" ? "SS-0300DB-B" : "none",
@@ -636,6 +643,16 @@ export function GateSegmentDetails({ runId, seg }: Props) {
             upsertVariables({ [GATE_SEGMENT_STUB_KEYS.openingDirection]: value })
           }
         />
+        {!isSwing && (
+          <OptionPills
+            label="Sliding side"
+            value={String(v[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? "front")}
+            options={SLIDING_SIDE_OPTIONS}
+            onChange={(value) =>
+              upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingSide]: value })
+            }
+          />
+        )}
       </GateSettingsSection>
 
       <GateSettingsSection
@@ -712,6 +729,12 @@ export function GateSegmentDetails({ runId, seg }: Props) {
           summary={`${rankedLabel(rankedHinges, currentHingeValue)} / ${rankedLabel(rankedLatches, currentLatchValue)}`}
         >
           <GateWeightCard estimate={weightEstimate} />
+          <div className="rounded-lg border border-brand-border/70 bg-brand-card p-3 text-xs font-bold text-brand-muted">
+            <span className="text-brand-text">{leafCount}</span> leaf{leafCount === 1 ? "" : "s"} from a{" "}
+            <span className="text-brand-text">{Math.round(gateWidthMm)}mm</span> opening. Leaf width after{" "}
+            {Math.round(hingeGapMm)}mm hinge gap{leafCount === 2 ? "s" : ""} and {Math.round(latchGapMm)}mm latch gap:{" "}
+            <span className="text-brand-text">{Math.round(leafWidthMm)}mm</span>.
+          </div>
           <HingePicker
             value={currentHingeValue}
             options={rankedHinges}

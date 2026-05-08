@@ -17,9 +17,11 @@ import {
 import { clampPostSpacing, maxPanelWidthForSystem } from "./productOptionRules";
 import {
   baseHardwareSku,
+  hingeGapForSku,
   isTruCloseHardware,
   isWhiteHardwareFinish,
   kitForHardwareSelection,
+  latchGapForSku,
 } from "./gateHardware";
 import { substrateFixingKitSku } from "./postFixingOptions";
 
@@ -770,12 +772,23 @@ function calculateGateSegment(
   const finishFamily = String(vars.finish_family ?? "standard");
   const economySlats = finishFamily === "economy";
   const openingWidthMm = toNumber(segment.segmentWidthMm, 900);
+  const whiteHardware = isWhiteHardwareFinish(colour);
+  const hingeValue = String(vars[GATE_SEGMENT_STUB_KEYS.hingeType] ?? (whiteHardware ? "TC-H-AT-HD-2L-W" : "TC-H-AT-HD-B"));
+  const latchValue = String(vars[GATE_SEGMENT_STUB_KEYS.latchType] ?? (whiteHardware ? "LL-DL-W" : "LL-DL-KA"));
   const gateHeightMm = toNumber(
     segment.targetHeightMm ?? vars[GATE_SEGMENT_STUB_KEYS.gateHeightMm],
     toNumber(mergedRunVars.target_height_mm, 1800),
   );
   const leafCount = movement === "double_swing" ? 2 : 1;
-  const leafWidthMm = Math.max(1, openingWidthMm / leafCount);
+  const hingeGapMm = movement === "sliding" ? 0 : hingeGapForSku(hingeValue);
+  const latchGapMm = movement === "sliding" ? 0 : latchGapForSku(latchValue);
+  const totalLeafClearanceMm =
+    movement === "double_swing"
+      ? hingeGapMm * 2 + latchGapMm
+      : movement === "single_swing"
+        ? hingeGapMm + latchGapMm
+        : 0;
+  const leafWidthMm = Math.max(1, (openingWidthMm - totalLeafClearanceMm) / leafCount);
   const base = { runId: run.runId, segmentId: segment.segmentId };
   const verticalBuild = build.includes("vertical");
 
@@ -786,6 +799,9 @@ function calculateGateSegment(
     gate_build: build,
     gate_leaf_count: leafCount,
     gate_leaf_width_mm: Math.round(leafWidthMm),
+    gate_clearance_mm: Math.round(totalLeafClearanceMm),
+    gate_hinge_gap_mm: Math.round(hingeGapMm),
+    gate_latch_gap_mm: Math.round(latchGapMm),
     gate_height_mm: Math.round(gateHeightMm),
   };
 
@@ -968,12 +984,9 @@ function calculateGateSegment(
   const stopSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.gateStopType]);
   if (stopSku) emit(lines, { ...base, sku: stopSku, category: "hardware", quantity: leafCount, unit: "each", notes: "Selected gate stop" });
 
-  const whiteHardware = isWhiteHardwareFinish(colour);
-  const hingeValue = String(vars[GATE_SEGMENT_STUB_KEYS.hingeType] ?? (whiteHardware ? "TC-H-AT-HD-2L-W" : "TC-H-AT-HD-B"));
-  const latchValue = String(vars[GATE_SEGMENT_STUB_KEYS.latchType] ?? (whiteHardware ? "LL-DL-W" : "LL-DL-KA"));
   const selectedKitSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.hardwareKitSku]);
   const matchingKit = kitForHardwareSelection(hingeValue, latchValue);
-  const kitSku = selectedKitSku && matchingKit?.kitSku === selectedKitSku ? selectedKitSku : undefined;
+  const kitSku = leafCount === 1 && selectedKitSku && matchingKit?.kitSku === selectedKitSku ? selectedKitSku : undefined;
   const hingeSku = knownSelectedSku(hingeValue);
   const latchSku = knownSelectedSku(latchValue);
   if (kitSku) {
@@ -981,7 +994,7 @@ function calculateGateSegment(
       ...base,
       sku: kitSku,
       category: "hardware",
-      quantity: leafCount,
+      quantity: 1,
       unit: "each",
       notes: "Selected hinge and latch kit",
     });

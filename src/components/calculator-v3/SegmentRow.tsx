@@ -93,6 +93,10 @@ function sameValue(left: unknown, right: unknown) {
   return String(left) === String(right ?? "");
 }
 
+function unsetOrSame(vars: Record<string, unknown>, key: string, defaultValue: unknown) {
+  return vars[key] === undefined || vars[key] === null || sameValue(vars[key], defaultValue);
+}
+
 export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, displayLabel }: Props) {
   const { state, dispatch } = useCalculator();
   const [confirmRemove, setConfirmRemove] = useState(false);
@@ -171,10 +175,16 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
   const matchesMaster = (() => {
     if (!run) return true;
     if (gate) {
+      const gateHeightMatches =
+        Number(seg.targetHeightMm ?? gateVars[GATE_SEGMENT_STUB_KEYS.gateHeightMm] ?? 0) ===
+        Number(masterVariables.target_height_mm ?? 0);
       return (
         expectedGateBuild &&
-        Number(seg.targetHeightMm ?? gateVars[GATE_SEGMENT_STUB_KEYS.gateHeightMm] ?? 0) ===
-          Number(masterVariables.target_height_mm ?? 0)
+        gateHeightMatches &&
+        unsetOrSame(gateVars, GATE_SEGMENT_STUB_KEYS.colourCode, masterVariables.colour_code ?? "B") &&
+        unsetOrSame(gateVars, GATE_SEGMENT_STUB_KEYS.slatSizeMm, masterVariables.slat_size_mm ?? 65) &&
+        unsetOrSame(gateVars, GATE_SEGMENT_STUB_KEYS.slatGapMm, masterVariables.slat_gap_mm ?? 9) &&
+        unsetOrSame(gateVars, GATE_SEGMENT_STUB_KEYS.gatePostSizeMm, masterVariables.post_size ?? 50)
       );
     }
     const vars = seg.variables ?? {};
@@ -200,7 +210,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
       SEGMENT_TERMINATION_KEYS.rightCornerDegrees,
       SEGMENT_TERMINATION_KEYS.rightNonSystemSubtype,
     ];
-    return keys.every((key) => vars[key] === undefined || sameValue(vars[key], masterVariables[key]));
+    return keys.every((key) => unsetOrSame(vars, key, masterVariables[key]));
   })();
   const masterFenceColour = String(masterVariables.colour_code ?? "B");
   const masterPostColour = String(masterVariables.post_colour_code ?? masterFenceColour);
@@ -501,10 +511,14 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
           <button
             type="button"
             onClick={matchesMaster ? undefined : resetToMaster}
-            disabled={matchesMaster}
-            className={`rounded-full px-3 py-2 text-center shadow-sm transition-colors disabled:cursor-default ${
+            title={
               matchesMaster
-                ? "bg-brand-success text-white"
+                ? "Matches the current Run Settings. Hover to highlight this section on the map."
+                : "Click to set to default run settings and match this section to the Run Settings."
+            }
+            className={`rounded-full px-3 py-2 text-center shadow-sm transition-colors ${
+              matchesMaster
+                ? "cursor-default bg-brand-success text-white"
                 : "bg-brand-warning/15 text-black hover:bg-brand-primary hover:text-white"
             }`}
           >
@@ -514,7 +528,7 @@ export function SegmentRow({ runId, seg, segIdx, runIdx, open, onToggle, display
               title={
                 matchesMaster
                   ? "Matches the current Run Settings. Hover to highlight this section on the map."
-                  : "This section has settings different from the Run Settings. Click to match the run settings."
+                  : "Click to set to default run settings and match this section to the Run Settings."
               }
               className="text-base font-black leading-none tracking-normal"
             >

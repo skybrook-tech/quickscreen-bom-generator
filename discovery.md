@@ -15,6 +15,29 @@ Build a data-driven BOM (Bill of Materials) quoting configurator for Glass Outle
 
 ---
 
+## May 8, 2026 - Run defaults and double-gate correction
+
+Workflow finding:
+- Users expect Run Settings to be the real default source for every section in that run, not a hidden first-section convention.
+- The green section code is more useful as an action: green means it matches the run, non-green means it can be clicked to restore the section to the current run defaults.
+- Double swing gates are one opening but two leaves. BOM and hinge rating need to use the finished leaf size after hinge/latch clearances, not the full opening width or stock off-cuts.
+- Sliding gates need two separate choices: travel direction and the side of the fence they slide along.
+
+Changes applied:
+- Run setting edits now clear matching section overrides and push the edited defaults into normal sections and gate-opening segments.
+- Section code buttons explain the default-matching behaviour on hover and restore section settings back to Run Settings when clicked.
+- Number inputs now keep a local text draft, allowing the user to delete all digits before entering a new measurement.
+- Double swing gate calculations now derive leaf width as `(opening - two hinge gaps - one latch gap) / 2`, emit two leaves worth of frame/slats/rails, use one latch, and default a drop bolt.
+- Gate hinge/closer and latch options that fail fit checks are hidden under `Other hinges` / `Other latches` but remain selectable for overrides.
+- Canvas gate markers now preserve gate type, swing/slide direction, and sliding side through placement, sidebar editing, canonical conversion, and reload.
+- Sidebar gate width edits now preserve the original drawn source section length so changing a gate opening does not collapse or distort the drawn run.
+
+Verification:
+- `npm run build` passed.
+- Browser smoke confirmed the calculator loads from the branded start screen, QSHS opens Run 1, section settings are visible, and Generate BOM controls render.
+
+---
+
 ## May 7, 2026 - Sidebar minimisation and map text-note pass
 
 UI finding:

@@ -343,6 +343,19 @@ export function estimateGateWeight(input: GateWeightInput): GateWeightEstimate {
   };
 }
 
+export function hingeGapForSku(value: unknown): number {
+  const sku = baseHardwareSku(value);
+  const hinge = HINGE_HARDWARE.find((item) => item.sku === sku || item.skuW === sku);
+  if (!hinge) return 20;
+  return Math.round((hinge.gapMinMm + hinge.gapMaxMm) / 2);
+}
+
+export function latchGapForSku(value: unknown): number {
+  const sku = baseHardwareSku(value);
+  if (!sku || sku === "none") return 0;
+  return 10;
+}
+
 export function isWhiteHardwareFinish(colour: unknown): boolean {
   const value = String(colour ?? "").toLowerCase();
   return value === "w" || value.includes("white");
