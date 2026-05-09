@@ -1,0 +1,4 @@
+interface:
+  display_name: "Glass Calc Project Manager"
+  short_description: "Plan and coordinate Glass Outlet calculator builds."
+  default_prompt: "Use this skill to plan, sequence, and coordinate Glass Outlet calculator work across catalogues, data, UI, BOM engine, QA, and discovery documentation."

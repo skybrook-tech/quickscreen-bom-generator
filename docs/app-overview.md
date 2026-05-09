@@ -314,9 +314,15 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
 
 ## Project Agent Skills
 
+- `.claude/skills/`
+  - Canonical repo location for Claude/Codex-compatible specialist skills.
+  - This is the folder most external developers/agents should look at first.
+
 - `.agents/skills/`
-  - Repo-local copies of the specialist Codex skills used on this calculator build.
-  - Use these when future developers or AI agents need the same project-manager, UI, QA, catalogue-extraction, QuickScreen BOM, or seed-mapping guidance.
+  - Mirrored repo-local copies of the same specialist skills for project-agent workflows.
+  - Keep this folder in sync with `.claude/skills/`.
+
+- Both skill folders contain the project-manager, UI, QA, catalogue-extraction, QuickScreen BOM, and seed-mapping guidance.
   - Start with `.agents/skills/README.md`, then load the relevant `SKILL.md` and only the reference files needed for the task.
 
 ## Testing And Verification

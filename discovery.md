@@ -1447,11 +1447,14 @@ Verification:
 
 Process finding:
 - The calculator specialist skills were useful but lived only in local user folders (`C:\Users\bbfen\.codex\skills` and `C:\Users\bbfen\.agents\skills`), so another developer or AI session working from the repository would not automatically have the same guidance.
+- Follow-up: the first repo copy was placed under `.agents/skills/`, but the developer workflow was already checking `.claude/skills/`.
 
 Changes applied:
 - Added repo-local skill copies under `.agents/skills/`.
+- Mirrored the same skill set into `.claude/skills/`, which is now the canonical repo location for Claude/Codex-compatible skill lookup.
+- Updated `.gitignore` so all `.claude/skills/**` and `.agents/skills/**` files can be tracked.
 - Included the Glass calculator project manager, UI designer, QA tester, catalogue extractor, QuickScreen BOM, and seed-mapper skills with their bundled reference files/scripts.
-- Added `.agents/skills/README.md` explaining when to use each skill and how to keep repo copies updated.
+- Added skill README files explaining when to use each skill and how to keep the mirrored folders updated.
 - Updated `docs/app-overview.md` so future contributors can find the project agent skills.
 
 Verification:

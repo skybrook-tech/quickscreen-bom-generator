@@ -1,0 +1,4 @@
+interface:
+  display_name: "Glass Calc Catalogue Extractor"
+  short_description: "Extract catalogue products, rules, and SKU matrices."
+  default_prompt: "Use this skill to read supplier catalogues page by page and turn them into product families, option matrices, accessory rules, SKU lists, and open questions for calculator builds."
