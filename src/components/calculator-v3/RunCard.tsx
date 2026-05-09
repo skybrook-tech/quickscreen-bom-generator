@@ -232,7 +232,9 @@ export function RunCard({ run, runIdx }: Props) {
         </div>
       </div>
 
-      {runSettingsOpen && <RunSettingsEditor run={run} />}
+      {runSettingsOpen && (
+        <RunSettingsEditor run={run} onCollapse={() => setRunSettingsOpen(false)} />
+      )}
 
 
       {!runSettingsOpen && (

@@ -26,6 +26,8 @@ Latest Codex PR brief pass: Tier 6 Brief AF is complete. The BOM now has a cut-l
 
 Latest double-gate correction: double swing gates now normalize legacy `double-swing` / `double` values to `double_swing`, calculate two equal gate leaves inside one opening, subtract hinge clearance on both leaves plus one shared latch gap, and multiply QSG gate frame/slat/rail/hinge materials by two leaves in the local fallback BOM.
 
+Latest opening-screen workflow pass: typing in the intro job-name box no longer opens the workspace by itself; the Open workspace button now opens the workspace and carries the typed job name through to the quote UI. Intro copy was simplified, and Run Settings now has a bottom save/collapse button.
+
 Latest Brief I pass: the `/calculator` BOM hero now uses an editorial summary layout with the scoped total as the main typographic element, BOM rows show the active quantity-break tier, and rows close to the next seeded quantity break show how many more units are needed for the next tier.
 
 Latest Brief J pass: fence segment settings now use progressive disclosure. Geometry stays immediately visible, deeper Style/Posts/Advanced settings sit behind a persisted "Show more settings" control, keeping the initial segment editor compact.

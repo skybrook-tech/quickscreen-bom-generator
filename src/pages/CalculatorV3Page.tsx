@@ -809,7 +809,7 @@ function CalculatorV3Content() {
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
-  const showIntro = !payload && !introDismissed && !layoutOpen && !jobName.trim();
+  const showIntro = !payload && !introDismissed && !layoutOpen;
 
   return (
     <AppShell>
@@ -829,7 +829,7 @@ function CalculatorV3Content() {
                 textClassName="text-5xl sm:text-7xl lg:text-8xl"
               />
               <p className="mx-auto max-w-2xl text-base font-semibold text-brand-muted sm:text-lg">
-                Start with a system, sketch the job, or name the quote. The calculator opens as soon as you make the first move.
+                Start with a system, sketch the job, or name the quote. Open the workspace when you are ready to build the BOM.
               </p>
             </div>
             <div className="grid w-full max-w-5xl gap-4 rounded-3xl border border-brand-border/70 bg-brand-card/80 p-5 text-left shadow-2xl backdrop-blur md:grid-cols-[1.2fr_0.9fr]">
@@ -845,15 +845,11 @@ function CalculatorV3Content() {
               </div>
               <div className="space-y-4 rounded-2xl border border-brand-border/70 bg-brand-bg/70 p-4">
                 <label className="block">
-                  <span className="mb-2 block text-sm font-black text-brand-muted">Job name</span>
                   <input
                     type="text"
                     value={jobName}
-                    onChange={(event) => {
-                      setJobName(event.target.value);
-                      if (event.target.value.trim()) setIntroDismissed(true);
-                    }}
-                    placeholder="12 Smith St screens"
+                    onChange={(event) => setJobName(event.target.value)}
+                    placeholder="Name Your Job Here"
                     className="w-full rounded-2xl border border-brand-border bg-brand-card px-4 py-3 text-lg font-black text-brand-text shadow-sm outline-none transition-colors focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
                   />
                 </label>
@@ -862,7 +858,7 @@ function CalculatorV3Content() {
                   onClick={() => setIntroDismissed(true)}
                   className="w-full rounded-2xl border border-brand-border px-4 py-3 text-sm font-black text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
                 >
-                  Open workspace without choosing yet
+                  Open workspace
                 </button>
               </div>
             </div>

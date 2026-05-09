@@ -1443,6 +1443,19 @@ Verification:
 - `npm run build` passed.
 - Browser smoke test confirmed the map overlay no longer overlaps the sidebar, the renamed section settings appear, and the gate details no longer show `Gate basics`.
 
+### May 10, 2026 - Opening screen job-name workflow
+
+UX finding:
+- The intro screen treated typing a job name as the first move and immediately opened the workspace. This made it hard to name a job before choosing when to start the calculator.
+
+Changes applied:
+- The intro screen now stays open while the user types the job name.
+- The `Open workspace` button is the explicit action that opens the workspace, with the typed job name preserved in the sidebar/BOM job-name state.
+- Removed the intro job-name label, changed the placeholder to `Name Your Job Here`, simplified the button text to `Open workspace`, and added a bottom `Save run settings` collapse button in the Run Settings dropdown.
+
+Verification:
+- `npm run build` passed after the changes.
+
 ### May 10, 2026 - Double swing gate clarification
 
 Calculation finding:

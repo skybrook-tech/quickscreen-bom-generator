@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check, ChevronUp } from "lucide-react";
 import { useEffect } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
@@ -22,6 +22,7 @@ import { colourName } from "./ColourPalette";
 
 interface Props {
   run: CanonicalRun;
+  onCollapse?: () => void;
 }
 
 const HIDDEN_FIELD_KEYS = new Set([
@@ -89,7 +90,7 @@ function fieldValueLabel(field: SchemaField, variables: Record<string, string | 
   return `${raw}${field.unit ? field.unit : ""}`;
 }
 
-export function RunSettingsEditor({ run }: Props) {
+export function RunSettingsEditor({ run, onCollapse }: Props) {
   const { state, dispatch } = useCalculator();
   const productCode = run.productCode;
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
@@ -397,6 +398,18 @@ export function RunSettingsEditor({ run }: Props) {
               </span>
             </label>
           )}
+        </div>
+      )}
+      {onCollapse && (
+        <div className="pt-2">
+          <button
+            type="button"
+            onClick={onCollapse}
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-brand-primary bg-brand-primary px-3 py-2 text-sm font-extrabold text-white transition-colors hover:bg-brand-primary/90"
+          >
+            <ChevronUp size={16} aria-hidden />
+            Save run settings
+          </button>
         </div>
       )}
     </div>
