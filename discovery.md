@@ -1443,6 +1443,20 @@ Verification:
 - `npm run build` passed.
 - Browser smoke test confirmed the map overlay no longer overlaps the sidebar, the renamed section settings appear, and the gate details no longer show `Gate basics`.
 
+### May 10, 2026 - Double swing gate clarification
+
+Calculation finding:
+- The local fallback gate BOM already had the right double-swing formula, but only when the movement value was exactly `double_swing`. Gate values coming from older UI/canvas paths could be `double-swing` or other aliases, which made the fallback treat the opening as a single gate.
+
+Changes applied:
+- Added shared gate movement normalization so `double`, `double-swing`, `double swing`, and `double_swing` all resolve to the same double-swing gate type.
+- Added a shared leaf-geometry helper used by both the sidebar summary and the local BOM calculator.
+- Locked the double-swing rule as two equal leaves in one opening: subtract one hinge clearance for each leaf plus one shared latch clearance, then split the remaining opening equally.
+- Local fallback BOM notes now state the opening, per-leaf width, hinge gap, and shared latch gap so double-gate material lines are easier to audit.
+
+Verification:
+- `npm run build` passed after the changes.
+
 ### May 7, 2026 - Brief AE suggested accessory expansion
 
 Catalogue/CSV finding:

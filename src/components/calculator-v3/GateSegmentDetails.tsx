@@ -14,6 +14,7 @@ import {
   SLIDING_TRACK_OPTIONS,
   defaultGateBuildForMovement,
   gateBuildsForMovement,
+  gateLeafGeometry,
   gateMovementOrDefault,
   isSwingGateMovement,
   optionLabel,
@@ -498,15 +499,15 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   const whiteFinish = isWhiteHardwareFinish(gateColour);
   const currentHingeValue = String(v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B");
   const currentLatchValue = String(v[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA");
-  const leafCount = movement === "double_swing" ? 2 : 1;
   const hingeGapMm = isSwing ? hingeGapForSku(currentHingeValue) : 0;
   const latchGapMm = isSwing ? latchGapForSku(currentLatchValue) : 0;
-  const leafWidthMm =
-    movement === "double_swing"
-      ? Math.max(1, (gateWidthMm - hingeGapMm * 2 - latchGapMm) / 2)
-      : movement === "single_swing"
-        ? Math.max(1, gateWidthMm - hingeGapMm - latchGapMm)
-        : gateWidthMm;
+  const gateGeometry = gateLeafGeometry({
+    movement,
+    openingWidthMm: gateWidthMm,
+    hingeGapMm,
+    latchGapMm,
+  });
+  const { leafCount, leafWidthMm } = gateGeometry;
   const weightEstimate = useMemo(
     () =>
       estimateGateWeight({
@@ -731,8 +732,10 @@ export function GateSegmentDetails({ runId, seg }: Props) {
           <GateWeightCard estimate={weightEstimate} />
           <div className="rounded-lg border border-brand-border/70 bg-brand-card p-3 text-xs font-bold text-brand-muted">
             <span className="text-brand-text">{leafCount}</span> leaf{leafCount === 1 ? "" : "s"} from a{" "}
-            <span className="text-brand-text">{Math.round(gateWidthMm)}mm</span> opening. Leaf width after{" "}
-            {Math.round(hingeGapMm)}mm hinge gap{leafCount === 2 ? "s" : ""} and {Math.round(latchGapMm)}mm latch gap:{" "}
+            <span className="text-brand-text">{Math.round(gateWidthMm)}mm</span> opening.{" "}
+            {leafCount === 2
+              ? `Each leaf is calculated after ${Math.round(hingeGapMm)}mm hinge gap on each side and ${Math.round(latchGapMm)}mm shared latch gap: `
+              : `Leaf width after ${Math.round(hingeGapMm)}mm hinge gap and ${Math.round(latchGapMm)}mm latch gap: `}
             <span className="text-brand-text">{Math.round(leafWidthMm)}mm</span>.
           </div>
           <HingePicker

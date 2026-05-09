@@ -7,6 +7,15 @@ export type GateBuild =
   | "qsg_sliding_horizontal"
   | "qsg_sliding_vertical";
 
+export type GateLeafGeometry = {
+  movement: GateMovement;
+  leafCount: number;
+  leafWidthMm: number;
+  totalClearanceMm: number;
+  hingeClearanceMm: number;
+  latchClearanceMm: number;
+};
+
 export type GateOption = {
   value: string;
   label: string;
@@ -127,16 +136,84 @@ export const SLIDING_MOTOR_OPTIONS: GateOption[] = [
   { value: "XPSG-FILO-400PRO-SP", label: "FILO 400 Pro split-pack motor kit", sku: "XPSG-FILO-400PRO-SP" },
 ];
 
+export function normalizeGateMovement(value: unknown): GateMovement | undefined {
+  if (typeof value !== "string") return undefined;
+  const normalised = value.trim().toLowerCase().replace(/[\s-]+/g, "_");
+  if (
+    normalised === "single_swing" ||
+    normalised === "single_gate" ||
+    normalised === "single" ||
+    normalised === "swing"
+  ) {
+    return "single_swing";
+  }
+  if (
+    normalised === "double_swing" ||
+    normalised === "double_gate" ||
+    normalised === "double" ||
+    normalised === "double_swing_gate"
+  ) {
+    return "double_swing";
+  }
+  if (
+    normalised === "sliding" ||
+    normalised === "slide" ||
+    normalised === "sliding_gate" ||
+    normalised === "slider"
+  ) {
+    return "sliding";
+  }
+  return undefined;
+}
+
 export function isGateMovement(value: unknown): value is GateMovement {
-  return GATE_MOVEMENTS.some((option) => option.value === value);
+  return normalizeGateMovement(value) !== undefined;
 }
 
 export function gateMovementOrDefault(value: unknown): GateMovement {
-  return isGateMovement(value) ? value : "single_swing";
+  return normalizeGateMovement(value) ?? "single_swing";
 }
 
 export function isSwingGateMovement(value: GateMovement) {
   return value === "single_swing" || value === "double_swing";
+}
+
+export function gateLeafGeometry({
+  movement,
+  openingWidthMm,
+  hingeGapMm,
+  latchGapMm,
+}: {
+  movement: unknown;
+  openingWidthMm: number;
+  hingeGapMm: number;
+  latchGapMm: number;
+}): GateLeafGeometry {
+  const normalisedMovement = gateMovementOrDefault(movement);
+  if (normalisedMovement === "sliding") {
+    return {
+      movement: normalisedMovement,
+      leafCount: 1,
+      leafWidthMm: Math.max(1, openingWidthMm),
+      totalClearanceMm: 0,
+      hingeClearanceMm: 0,
+      latchClearanceMm: 0,
+    };
+  }
+
+  const leafCount = normalisedMovement === "double_swing" ? 2 : 1;
+  const hingeClearanceMm = normalisedMovement === "double_swing" ? hingeGapMm * 2 : hingeGapMm;
+  const latchClearanceMm = latchGapMm;
+  const totalClearanceMm = hingeClearanceMm + latchClearanceMm;
+
+  return {
+    movement: normalisedMovement,
+    leafCount,
+    leafWidthMm: Math.max(1, (openingWidthMm - totalClearanceMm) / leafCount),
+    totalClearanceMm,
+    hingeClearanceMm,
+    latchClearanceMm,
+  };
 }
 
 export function gateBuildsForMovement(movement: GateMovement) {

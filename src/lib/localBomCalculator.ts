@@ -23,6 +23,7 @@ import {
   kitForHardwareSelection,
   latchGapForSku,
 } from "./gateHardware";
+import { gateLeafGeometry, gateMovementOrDefault } from "./gateOptionRules";
 import { substrateFixingKitSku } from "./postFixingOptions";
 
 type LocalBomResult = {
@@ -761,7 +762,7 @@ function calculateGateSegment(
 ): QtyLine[] {
   const lines: QtyLine[] = [];
   const vars = { ...mergedRunVars, ...(segment.variables ?? {}) };
-  const movement = String(vars[GATE_SEGMENT_STUB_KEYS.gateMovement] ?? "single_swing");
+  const movement = gateMovementOrDefault(vars[GATE_SEGMENT_STUB_KEYS.gateMovement]);
   const build = String(
     vars[GATE_SEGMENT_STUB_KEYS.gateBuild] ??
       (run.productCode === "VS" ? "qsg_hinged_vertical" : "qsg_hinged_horizontal"),
@@ -779,16 +780,16 @@ function calculateGateSegment(
     segment.targetHeightMm ?? vars[GATE_SEGMENT_STUB_KEYS.gateHeightMm],
     toNumber(mergedRunVars.target_height_mm, 1800),
   );
-  const leafCount = movement === "double_swing" ? 2 : 1;
   const hingeGapMm = movement === "sliding" ? 0 : hingeGapForSku(hingeValue);
   const latchGapMm = movement === "sliding" ? 0 : latchGapForSku(latchValue);
-  const totalLeafClearanceMm =
-    movement === "double_swing"
-      ? hingeGapMm * 2 + latchGapMm
-      : movement === "single_swing"
-        ? hingeGapMm + latchGapMm
-        : 0;
-  const leafWidthMm = Math.max(1, (openingWidthMm - totalLeafClearanceMm) / leafCount);
+  const gateGeometry = gateLeafGeometry({
+    movement,
+    openingWidthMm,
+    hingeGapMm,
+    latchGapMm,
+  });
+  const { leafCount, leafWidthMm } = gateGeometry;
+  const totalLeafClearanceMm = gateGeometry.totalClearanceMm;
   const base = { runId: run.runId, segmentId: segment.segmentId };
   const verticalBuild = build.includes("vertical");
 
@@ -800,6 +801,9 @@ function calculateGateSegment(
     gate_leaf_count: leafCount,
     gate_leaf_width_mm: Math.round(leafWidthMm),
     gate_clearance_mm: Math.round(totalLeafClearanceMm),
+    gate_hinge_clearance_mm: Math.round(gateGeometry.hingeClearanceMm),
+    gate_latch_clearance_mm: Math.round(gateGeometry.latchClearanceMm),
+    gate_opening_width_mm: Math.round(openingWidthMm),
     gate_hinge_gap_mm: Math.round(hingeGapMm),
     gate_latch_gap_mm: Math.round(latchGapMm),
     gate_height_mm: Math.round(gateHeightMm),
@@ -954,6 +958,10 @@ function calculateGateSegment(
   }
   const bladeCutMm = verticalBuild ? Math.max(1, gateHeightMm - 133) : Math.max(1, leafWidthMm - 86);
   const railCutMm = Math.max(1, leafWidthMm - 80);
+  const leafGeometryNote =
+    leafCount === 2
+      ? `2 equal swing leaves from ${Math.round(openingWidthMm)}mm opening; each leaf ${Math.round(leafWidthMm)}mm after ${Math.round(hingeGapMm)}mm hinge gap on each side and ${Math.round(latchGapMm)}mm shared latch gap`
+      : `1 swing leaf from ${Math.round(openingWidthMm)}mm opening; leaf ${Math.round(leafWidthMm)}mm after ${Math.round(hingeGapMm)}mm hinge gap and ${Math.round(latchGapMm)}mm latch gap`;
   const numGateBlades = Math.max(
     1,
     verticalBuild
@@ -969,7 +977,7 @@ function calculateGateSegment(
     category: "gate",
     quantity: Math.ceil((numGateBlades * leafCount) / bladesPerStock),
     unit: "length",
-    notes: `${numGateBlades} ${verticalBuild ? "vertical" : "horizontal"} gate blades/leaf, ${Math.round(bladeCutMm)}mm cuts from 6100mm stock`,
+    notes: `${numGateBlades} ${verticalBuild ? "vertical" : "horizontal"} gate blades/leaf, ${Math.round(bladeCutMm)}mm cuts from 6100mm stock. ${leafGeometryNote}`,
   });
   emit(lines, {
     ...base,
@@ -977,7 +985,7 @@ function calculateGateSegment(
     category: "gate",
     quantity: Math.ceil((2 * leafCount) / railsPerStock),
     unit: "length",
-    notes: `Top/bottom ${slatSize === 90 ? "90mm" : "65mm"} QSG gate rails, ${Math.round(railCutMm)}mm cuts from 4800mm stock`,
+    notes: `Top/bottom ${slatSize === 90 ? "90mm" : "65mm"} QSG gate rails, ${Math.round(railCutMm)}mm cuts from 4800mm stock. ${leafGeometryNote}`,
   });
   emitQsgGateFrameLines(lines, base, slatSize, colour, leafCount, Math.max(1, gateHeightMm), railCutMm, verticalBuild, numGateBlades, slatGap);
 
@@ -1007,8 +1015,8 @@ function calculateGateSegment(
         quantity: leafCount,
         unit: "each",
         notes: matchingKit
-          ? `Selected hinge hardware; kit available as ${matchingKit.kitSku}`
-          : "Selected hinge hardware",
+          ? `Selected hinge hardware; kit available as ${matchingKit.kitSku}${leafCount === 2 ? ". Two hinge pairs required for a double swing gate." : ""}`
+          : `Selected hinge hardware${leafCount === 2 ? "; two hinge pairs required for a double swing gate" : ""}`,
       });
     }
     if (latchSku) {

@@ -24,6 +24,8 @@ Latest segment clarity pass: segment and gate cards now show full beginner-frien
 
 Latest Codex PR brief pass: Tier 6 Brief AF is complete. The BOM now has a cut-list view, catalogue page chips, carton-proximity hints, and install-video QR cards in both run headers and BOM sections.
 
+Latest double-gate correction: double swing gates now normalize legacy `double-swing` / `double` values to `double_swing`, calculate two equal gate leaves inside one opening, subtract hinge clearance on both leaves plus one shared latch gap, and multiply QSG gate frame/slat/rail/hinge materials by two leaves in the local fallback BOM.
+
 Latest Brief I pass: the `/calculator` BOM hero now uses an editorial summary layout with the scoped total as the main typographic element, BOM rows show the active quantity-break tier, and rows close to the next seeded quantity break show how many more units are needed for the next tier.
 
 Latest Brief J pass: fence segment settings now use progressive disclosure. Geometry stays immediately visible, deeper Style/Posts/Advanced settings sit behind a persisted "Show more settings" control, keeping the initial segment editor compact.
