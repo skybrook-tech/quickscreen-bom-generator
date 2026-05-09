@@ -7,7 +7,7 @@ const seedDir = path.join(repoRoot, "supabase", "seeds", "glass-outlet", "produc
 const csvDir =
   process.env.GLASS_OUTLET_PRICE_CSV_DIR ??
   path.resolve(repoRoot, "..", "Glass Outlet csv pricelist");
-const verifiedDate = process.env.GLASS_OUTLET_PRICE_VERIFIED_DATE ?? "2026-04-19";
+const verifiedDate = process.env.GLASS_OUTLET_PRICE_VERIFIED_DATE ?? "2026-05-09";
 const tierCodes = ["tier1", "tier2", "tier3"];
 
 function isSku(value) {
@@ -234,6 +234,7 @@ const catalogueOnlySkus = [...csvPrices.keys()]
   .filter((sku) => !existingSeedSkus.has(sku))
   .sort();
 const priceCatalogue = {
+  org_slug: "glass-outlet",
   product_components: catalogueOnlySkus.map((sku) => {
     const priceInfo = csvPrices.get(sku);
     return {

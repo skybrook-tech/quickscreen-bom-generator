@@ -1,6 +1,7 @@
 import type { CanonicalPayload, CanonicalRun } from "../types/canonical.types";
 import type { BOMLineItem, ExtraItem } from "../types/bom.types";
 import { getComponent } from "./localSeedData";
+import { priceForSku } from "./localBomCalculator";
 import { clampPostSpacing, maxPanelWidthForSystem } from "./productOptionRules";
 import { GATE_SEGMENT_STUB_KEYS } from "./segmentTermination";
 
@@ -51,6 +52,13 @@ const DIAMOND_REVOLUTION_KIT_SKUS = [
 ] as const;
 
 const roundQty = (value: number) => Math.max(1, Math.ceil(value));
+
+function diamondRevolutionKitTotal() {
+  return DIAMOND_REVOLUTION_KIT_SKUS.reduce(
+    (sum, sku) => sum + priceForSku(sku, 1),
+    0,
+  );
+}
 
 function postCountForRun(run: CanonicalRun) {
   const runVars = run.variables ?? {};
@@ -242,13 +250,18 @@ export function suggestAccessories(
         ),
       );
       if (postCount > 5) {
+        const kitTotal = diamondRevolutionKitTotal();
+        const kitReason =
+          kitTotal > 0
+            ? `Need a core drill? Full Diamond Revolution kit totals about $${kitTotal.toFixed(2)} ex-GST from current SKU prices.`
+            : "Need a core drill? We sell a full Diamond Revolution kit for larger core-drilled jobs.";
         for (const sku of DIAMOND_REVOLUTION_KIT_SKUS) {
           suggestions.push(
             componentSuggestion(
               sku,
               1,
               "catalogue_gap",
-              "Need a core drill? We sell a full Diamond Revolution kit for larger core-drilled jobs.",
+              kitReason,
               "Diamond Revolution core drilling kit item",
             ),
           );

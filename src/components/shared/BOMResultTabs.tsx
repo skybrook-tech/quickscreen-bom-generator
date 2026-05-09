@@ -5,6 +5,7 @@ import { localPriceBreaks, tierForSkuQuantity } from "../../lib/localPriceBreaks
 import { priceForSku } from "../../lib/localBomCalculator";
 import { cataloguePageForSku, CATALOGUE_PDF_URL } from "../../lib/cataloguePages";
 import { cartonHintForLine } from "../../lib/cartonQuantities";
+import { bulkBuyVariantForSku } from "../../lib/bulkBuyVariants";
 import {
   PRICE_SOURCE_LABEL,
   PRICE_SOURCE_VERIFIED_DATE,
@@ -249,6 +250,12 @@ function ItemGroup({
         (() => {
           const hint = nextBreakHint(item);
           const cartonHint = cartonHintForLine(item);
+          const bulkBuySku = bulkBuyVariantForSku(item.sku);
+          const bulkBuyUnitPrice = bulkBuySku ? priceForSku(bulkBuySku, item.quantity) : 0;
+          const bulkBuySaving =
+            bulkBuySku && bulkBuyUnitPrice > 0 && item.unitPrice > bulkBuyUnitPrice
+              ? item.unitPrice - bulkBuyUnitPrice
+              : 0;
           const canSwitchEconomy =
             item.sku.startsWith("XP-6500-E65") &&
             item.notes?.includes("Switch to Standard slats?");
@@ -300,6 +307,21 @@ function ItemGroup({
               <p className="mt-1 inline-flex rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-0.5 text-[11px] font-bold text-brand-success">
                 {cartonHint.more} more for a carton ({cartonHint.cartonQty} {cartonHint.label})
                 {cartonHint.saving > 0 ? ` - save ~$${cartonHint.saving}` : ""}
+              </p>
+            )}
+            {bulkBuySku && (
+              <p
+                className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[11px] font-bold ${
+                  bulkBuySaving > 0
+                    ? "border-brand-success/30 bg-brand-success/10 text-brand-success"
+                    : "border-brand-border bg-brand-bg text-brand-muted"
+                }`}
+                title={`Bulk-buy variant: ${bulkBuySku}`}
+              >
+                Bulk buy {bulkBuySku}
+                {bulkBuySaving > 0
+                  ? ` saves $${formatMoney(bulkBuySaving)} each`
+                  : " available"}
               </p>
             )}
           </td>

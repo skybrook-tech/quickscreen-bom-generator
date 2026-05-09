@@ -72,6 +72,8 @@ Latest mobile mapper audit pass: the `/calculator` mobile workflow now opens the
 
 Latest pricing data pass: Brief AM is in progress. A repeatable `npm run prices:import` task now ingests the local Glass Outlet CSV price exports, updates seed pricing rows with per-SKU `qty >= minQty` quantity-break rules, creates a catalogue-only seed for additional priced supplier SKUs, refreshes local break hints, removes default-price fallback from the local BOM calculator, and adds BOM UI chips for verified prices and unpriced lines.
 
+Latest Brief AT pass: supplier-portal pricing captured on 2026-05-09 now has a repeatable `npm run prices:brief-at` staging flow, `pricing-2026-05-09.json`, and an idempotent pricing migration. Verified BB bulk-buy pairs are mapped in code, the BOM can show BB saving hints, Diamond Revolution kit suggestions compute their total from live SKU prices, and pricing anomalies/WHITE latch parity notes are documented in `docs/brief-at-pricing-notes.md`.
+
 ---
 
 ## Phases Overview
@@ -386,6 +388,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] RLS smoke test: authenticated user sees engine rows, denied on pricing/components
 - [x] Portable mapping spec at `docs/seed-data-mapping-spec.md`
 - [x] Claude skill at `.claude/skills/seed-mapper/` (SKILL.md + schema-catalogue + expression-syntax + worked examples for QSHS_GATE and a hypothetical VS system)
+- [x] Brief AT supplier portal price staging: generated `supabase/seeds/glass-outlet/pricing-2026-05-09.json`, added `npm run prices:brief-at`, refreshed local catalogue pricing rows, and documented excluded anomaly SKUs for supplier review.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---

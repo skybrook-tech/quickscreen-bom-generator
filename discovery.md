@@ -15,6 +15,26 @@ Build a data-driven BOM (Bill of Materials) quoting configurator for Glass Outle
 
 ---
 
+## May 9, 2026 - Brief AT supplier portal pricing seed
+
+Pricing finding:
+- The supplier portal companion catalogue contains 187 price rows after expanding POSTA character patterns into individual SKUs.
+- Five rows are pricing anomalies that should not be trusted until Glass Outlet confirms them: `TC-H-AT-B`, `TC-H-AT-2L-B`, `ENDURO-SSC-60`, `ENDURO-SSRES`, and `MR-FLGG-S`.
+- Bulk-buy `BB-` variants are real purchasable SKUs, but only 14 regular-to-BB pairs are verified enough to map automatically. Three BB rows remain unmapped pending supplier clarification.
+
+Changes applied:
+- Added `npm run prices:brief-at` to regenerate `supabase/seeds/glass-outlet/pricing-2026-05-09.json` from the companion markdown and refresh the local catalogue seed.
+- Added migration `024_seed_supplier_prices_2026_05_09.sql` so the staged supplier pricing can be applied idempotently to `product_components` and `pricing_rules`.
+- Added `src/lib/bulkBuyVariants.ts` and a BOM-row bulk-buy hint for verified BB pairs.
+- Updated Diamond Revolution suggested accessories so the kit total is computed from current `REV-*` SKU prices instead of hardcoding the bundle total.
+- Documented WHITE latch pricing parity, Diamond kit pricing, BB mapping gaps, and anomaly exclusions in `docs/brief-at-pricing-notes.md`.
+
+Verification:
+- `npm run prices:brief-at` generated 181 staged SKUs after de-duplicating one cross-listed SKU and excluding anomaly rows.
+- Full build verification was run after this pricing pass before commit.
+
+---
+
 ## May 9, 2026 - Brief AM pricing-data import checkpoint
 
 Pricing finding:
