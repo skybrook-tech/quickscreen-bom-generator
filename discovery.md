@@ -15,6 +15,24 @@ Build a data-driven BOM (Bill of Materials) quoting configurator for Glass Outle
 
 ---
 
+## May 9, 2026 - Brief AM pricing-data import checkpoint
+
+Pricing finding:
+- The local CSV exports under `Glass Outlet csv pricelist` contain real supplier quantity-break prices for thousands of SKUs, so pricing should be refreshed from those files rather than maintained as hand-entered constants.
+- The current seed model can express per-SKU quantity breaks with pricing rows such as `qty >= 40` and priority equal to the minimum quantity, letting the highest applicable break win.
+
+Changes applied:
+- Added `npm run prices:import`, which reads the local Glass Outlet CSV exports and updates product seed JSON pricing rows.
+- Imported 2,618 priced CSV SKUs, matched 333 existing seed components, added 2,285 catalogue-only priced components, and generated 17,787 pricing rows from the current CSV folder.
+- Added a verified-pricing chip to the BOM UI and a `Price not set` treatment for unpriced BOM lines.
+- Changed the local BOM price fallback so missing pricing now returns zero instead of silently using component `default_price`.
+
+Verification:
+- `npm run prices:import` completed.
+- `npm run build` passed. Vite reports the known large-bundle warning, now larger because the local fallback imports the expanded price catalogue seed.
+
+---
+
 ## May 8, 2026 - Mobile mapper audit and phone workflow pass
 
 Mobile finding:

@@ -5,6 +5,10 @@ import { localPriceBreaks, tierForSkuQuantity } from "../../lib/localPriceBreaks
 import { priceForSku } from "../../lib/localBomCalculator";
 import { cataloguePageForSku, CATALOGUE_PDF_URL } from "../../lib/cataloguePages";
 import { cartonHintForLine } from "../../lib/cartonQuantities";
+import {
+  PRICE_SOURCE_LABEL,
+  PRICE_SOURCE_VERIFIED_DATE,
+} from "../../lib/pricingMetadata";
 import { InstallVideoQR } from "../calculator-v3/InstallVideoQR";
 import type { InstallVideoKey } from "../../lib/installVideos";
 import { BomCutList } from "./BomCutList";
@@ -47,6 +51,7 @@ const formatMoney = (value: number) =>
   }).format(value);
 
 function tierLabel(item: BOMLineItem) {
+  if (item.unitPrice <= 0) return "Price not set";
   const pricingQty =
     item.sku.startsWith("XP-6500-E65") && item.unit === "pack"
       ? item.quantity * 96
@@ -261,7 +266,13 @@ function ItemGroup({
           <td className="py-2.5 px-3 text-sm text-brand-text">
             <div className="flex flex-wrap items-center gap-1.5">
               <span>{item.description}</span>
-              <span className="rounded-full border border-brand-primary/30 bg-brand-primary/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-primary">
+              <span
+                className={`rounded-full border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                  item.unitPrice > 0
+                    ? "border-brand-primary/30 bg-brand-primary/10 text-brand-primary"
+                    : "border-brand-warning/40 bg-brand-warning/10 text-brand-warning"
+                }`}
+              >
                 {tierLabel(item)}
               </span>
               {item.notes && (
@@ -313,10 +324,10 @@ function ItemGroup({
             )}
           </td>
           <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-right tabular-nums sm:table-cell">
-            ${formatMoney(item.unitPrice)}
+            {item.unitPrice > 0 ? `$${formatMoney(item.unitPrice)}` : "-"}
           </td>
           <td className="py-2.5 px-3 text-sm text-brand-text font-medium text-right tabular-nums">
-            ${formatMoney(item.lineTotal)}
+            {item.unitPrice > 0 ? `$${formatMoney(item.lineTotal)}` : "-"}
           </td>
           {editable && (
             <td className="py-2.5 px-3 text-right">
@@ -468,6 +479,9 @@ export function BOMResultTabs({
 
       {/* Summary */}
       <div className="mt-6 pt-4 border-t border-brand-border">
+        <div className="mb-3 inline-flex rounded-full border border-brand-success/30 bg-brand-success/10 px-3 py-1 text-xs font-bold text-brand-success">
+          {PRICE_SOURCE_LABEL} · {PRICE_SOURCE_VERIFIED_DATE}
+        </div>
         <div className="space-y-1 mb-3">
           <div className="flex justify-between items-center text-sm">
             <span className="text-brand-muted">Subtotal (ex-GST)</span>

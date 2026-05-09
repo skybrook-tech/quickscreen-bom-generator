@@ -70,6 +70,8 @@ Latest run-default and gate-behaviour pass: Run Settings now actively reset sect
 
 Latest mobile mapper audit pass: the `/calculator` mobile workflow now opens the layout map from the intro with a fallback QSHS payload, uses the bottom Run/BOM/Map tabs as true mobile panes, keeps Run/BOM reachable by minimizing the map when those tabs are selected, gives the mapper touch start/move/end support for phone drawing and gate dragging, switches the mapper toolbar to horizontal scrolling on narrow screens, hides the satellite hint over the phone canvas, and adds mobile footer clearance so action buttons are not covered by the bottom nav.
 
+Latest pricing data pass: Brief AM is in progress. A repeatable `npm run prices:import` task now ingests the local Glass Outlet CSV price exports, updates seed pricing rows with per-SKU `qty >= minQty` quantity-break rules, creates a catalogue-only seed for additional priced supplier SKUs, refreshes local break hints, removes default-price fallback from the local BOM calculator, and adds BOM UI chips for verified prices and unpriced lines.
+
 ---
 
 ## Phases Overview

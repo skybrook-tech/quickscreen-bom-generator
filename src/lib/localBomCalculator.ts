@@ -269,7 +269,7 @@ export function priceForSku(sku: string, qty: number): number {
   );
   if (tier1) return tier1.price;
 
-  return getComponent(sku)?.default_price ?? 0;
+  return 0;
 }
 
 function describeSku(sku: string, fallbackCategory: string): string {

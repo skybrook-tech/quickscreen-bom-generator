@@ -30,7 +30,6 @@ import {
   type DerivedHeight,
 } from "../../lib/heights";
 import { colourName } from "./ColourPalette";
-import { DerivationChip } from "../ui/DerivationChip";
 
 interface Props {
   runId: string;

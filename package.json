@@ -16,6 +16,7 @@
     "seed:auth": "node supabase/seeds/seed-auth.js",
     "seed:glass-outlet": "node supabase/seeds/glass-outlet/seed-images.js",
     "seed:products": "node supabase/seeds/tools/seed-products.js",
+    "prices:import": "node scripts/import-glassoutlet-prices.mjs",
     "seed:dump": "node supabase/seeds/tools/dump-to-json.js",
     "db:reset": "npx supabase@latest db reset && npm run seed:products && npm run seed:auth",
     "setup": "npx supabase@latest start && npm run db:reset"

@@ -5,15 +5,36 @@
       "system_type": "VS",
       "product_type": "fence",
       "name": "VS Vertical Slat Fence",
-      "description": "Vertical slat orientation using the same Quickscreen extrusions as QSHS. Vertical slats (XP-6100-S65 / QS-6100-S90) are held by horizontal QS-5000-HORIZ U-channel rails (top and bottom). QS-5800-SF is used as the outer horizontal frame enclosing the U-channel. QS-5800-F is installed vertically at each side of the panel as an edge frame. Same slat SKUs as QSHS \u2014 just oriented vertically (cut to height).",
+      "description": "Vertical slat orientation using the same Quickscreen extrusions as QSHS. Vertical slats (XP-6100-S65 / QS-6100-S90) are held by horizontal QS-5000-HORIZ U-channel rails (top and bottom). QS-5800-SF is used as the outer horizontal frame enclosing the U-channel. QS-5800-F is installed vertically at each side of the panel as an edge frame. Same slat SKUs as QSHS — just oriented vertically (cut to height).",
       "active": true,
       "sort_order": 2,
       "metadata": {
-        "allowedAngles": [90],
+        "allowedAngles": [
+          90
+        ],
         "options": {
-          "slatSize": ["65", "90"],
-          "slatGap": ["5", "9", "20"],
-          "colour": ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]
+          "slatSize": [
+            "65",
+            "90"
+          ],
+          "slatGap": [
+            "5",
+            "9",
+            "20"
+          ],
+          "colour": [
+            "B",
+            "MN",
+            "G",
+            "SM",
+            "W",
+            "BS",
+            "D",
+            "M",
+            "P",
+            "PB",
+            "S"
+          ]
         },
         "notes": "VS slats (XP-6100-S65, QS-6100-S90), side frames (QS-5800-SF), CFC covers (QS-5800-CFC), F-sections (QS-5800-F), QS-SFC-B caps, and all post components are seeded in qshs.json with system_types including 'VS'. vs.json seeds only QS-5000-HORIZ (VS-unique U-channel)."
       }
@@ -22,90 +43,138 @@
   "product_components": [
     {
       "sku": "QS-5000-HORIZ-B",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Black Satin",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Black Satin",
       "description": "32x32mm horizontal U-channel rail for vertical slat screening, 5000mm stock",
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": ["VS"],
-      "metadata": {},
+      "system_types": [
+        "VS"
+      ],
+      "metadata": {
+        "price_source": "glassoutletonline.com.au CSV export",
+        "price_verified_date": "2026-04-19",
+        "price_source_file": "Glass outlet aluminium slats prices.csv"
+      },
       "active": true
     },
     {
       "sku": "QS-5000-HORIZ-MN",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Monument Matt",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Monument Matt",
       "description": "32x32mm horizontal U-channel rail, 5000mm stock",
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": ["VS"],
-      "metadata": {},
+      "system_types": [
+        "VS"
+      ],
+      "metadata": {
+        "price_source": "glassoutletonline.com.au CSV export",
+        "price_verified_date": "2026-04-19",
+        "price_source_file": "Glass outlet aluminium slats prices.csv"
+      },
       "active": true
     },
     {
       "sku": "QS-5000-HORIZ-G",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Woodland Grey",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Woodland Grey",
       "description": "32x32mm horizontal U-channel rail, 5000mm stock",
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": ["VS"],
-      "metadata": {},
+      "system_types": [
+        "VS"
+      ],
+      "metadata": {
+        "price_source": "glassoutletonline.com.au CSV export",
+        "price_verified_date": "2026-04-19",
+        "price_source_file": "Glass outlet aluminium slats prices.csv"
+      },
       "active": true
     },
     {
       "sku": "QS-5000-HORIZ-SM",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Surfmist Matt",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Surfmist Matt",
       "description": "32x32mm horizontal U-channel rail, 5000mm stock",
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": ["VS"],
-      "metadata": {},
+      "system_types": [
+        "VS"
+      ],
+      "metadata": {
+        "price_source": "glassoutletonline.com.au CSV export",
+        "price_verified_date": "2026-04-19",
+        "price_source_file": "Glass outlet aluminium slats prices.csv"
+      },
       "active": true
     },
     {
       "sku": "QS-5000-HORIZ-W",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Pearl White",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Pearl White",
       "description": "32x32mm horizontal U-channel rail, 5000mm stock",
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": ["VS"],
-      "metadata": {},
+      "system_types": [
+        "VS"
+      ],
+      "metadata": {
+        "price_source": "glassoutletonline.com.au CSV export",
+        "price_verified_date": "2026-04-19",
+        "price_source_file": "Glass outlet aluminium slats prices.csv"
+      },
       "active": true
     },
     {
       "sku": "QS-5000-HORIZ-BS",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Basalt Satin",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Basalt Satin",
       "description": "32x32mm horizontal U-channel rail, 5000mm stock",
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": ["VS"],
-      "metadata": {},
+      "system_types": [
+        "VS"
+      ],
+      "metadata": {
+        "price_source": "glassoutletonline.com.au CSV export",
+        "price_verified_date": "2026-04-19",
+        "price_source_file": "Glass outlet aluminium slats prices.csv"
+      },
       "active": true
     },
     {
       "sku": "QS-5000-HORIZ-D",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Dune Satin",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Dune Satin",
       "description": "32x32mm horizontal U-channel rail, 5000mm stock",
       "category": "rail",
       "unit": "length",
       "default_price": 40.87,
-      "system_types": ["VS"],
-      "metadata": {},
+      "system_types": [
+        "VS"
+      ],
+      "metadata": {
+        "price_source": "glassoutletonline.com.au CSV export",
+        "price_verified_date": "2026-04-19",
+        "price_source_file": "Glass outlet aluminium slats prices.csv"
+      },
       "active": true
     },
     {
       "sku": "QS-5000-HORIZ-M",
-      "name": "Horizontal Rail (U-Channel) 5000mm \u2014 Mill",
+      "name": "Horizontal Rail (U-Channel) 5000mm — Mill",
       "description": "32x32mm horizontal U-channel rail, 5000mm stock",
       "category": "rail",
       "unit": "length",
       "default_price": 32.4,
-      "system_types": ["VS"],
-      "metadata": {},
+      "system_types": [
+        "VS"
+      ],
+      "metadata": {
+        "price_source": "glassoutletonline.com.au CSV export",
+        "price_verified_date": "2026-04-19",
+        "price_source_file": "Glass outlet aluminium slats prices.csv"
+      },
       "active": true
     }
   ],
@@ -231,7 +300,10 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 65,
-      "options_json": [65, 90],
+      "options_json": [
+        65,
+        90
+      ],
       "scope": "job",
       "sort_order": 20,
       "active": true
@@ -244,7 +316,11 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 5,
-      "options_json": [5, 9, 20],
+      "options_json": [
+        5,
+        9,
+        20
+      ],
       "scope": "job",
       "sort_order": 30,
       "active": true
@@ -257,7 +333,11 @@
       "unit": null,
       "required": true,
       "default_value_json": "in_ground",
-      "options_json": ["in_ground", "base_plate", "core_drill"],
+      "options_json": [
+        "in_ground",
+        "base_plate",
+        "core_drill"
+      ],
       "scope": "run",
       "sort_order": 40,
       "active": true
@@ -270,7 +350,10 @@
       "unit": null,
       "required": true,
       "default_value_json": "post",
-      "options_json": ["post", "wall"],
+      "options_json": [
+        "post",
+        "wall"
+      ],
       "scope": "run",
       "sort_order": 50,
       "active": true
@@ -283,7 +366,10 @@
       "unit": null,
       "required": true,
       "default_value_json": "post",
-      "options_json": ["post", "wall"],
+      "options_json": [
+        "post",
+        "wall"
+      ],
       "scope": "run",
       "sort_order": 60,
       "active": true
@@ -322,7 +408,10 @@
       "unit": "mm",
       "required": true,
       "default_value_json": "50",
-      "options_json": ["50", "65"],
+      "options_json": [
+        "50",
+        "65"
+      ],
       "scope": "run",
       "sort_order": 45,
       "active": true
@@ -342,7 +431,7 @@
       "name": "height_in_range",
       "expression": "target_height_mm >= 300 and target_height_mm <= 2400",
       "severity": "warning",
-      "message": "Height outside standard VS range (300\u20132400mm).",
+      "message": "Height outside standard VS range (300–2400mm).",
       "active": true
     }
   ],
@@ -509,7 +598,7 @@
       "output_key": "screw_packs",
       "priority": 20,
       "active": true,
-      "notes": "VS: ROUNDUP(ROUNDUP(slats*1.01, -1) / 50, 0) \u2014 nearest 10 then 50-packs"
+      "notes": "VS: ROUNDUP(ROUNDUP(slats*1.01, -1) / 50, 0) — nearest 10 then 50-packs"
     },
     {
       "product_system_type": "VS",
@@ -640,7 +729,7 @@
       "output_key": "qty_post_65_2400",
       "priority": 5,
       "active": true,
-      "notes": "65mm HD post 2400mm for screens up to 2400mm \u2014 not available in P/PB"
+      "notes": "65mm HD post 2400mm for screens up to 2400mm — not available in P/PB"
     },
     {
       "product_system_type": "VS",
@@ -652,7 +741,7 @@
       "output_key": "qty_post_65_6000",
       "priority": 5,
       "active": true,
-      "notes": "65mm HD post 6000mm (cut to size) for screens over 2400mm \u2014 not available in P/PB"
+      "notes": "65mm HD post 6000mm (cut to size) for screens over 2400mm — not available in P/PB"
     }
   ],
   "product_component_selectors": [
@@ -667,7 +756,7 @@
       "qty_key": "qty_slat_65",
       "sku_pattern": "XP-6100-S65-{colour}",
       "priority": 100,
-      "notes": "VS 65mm vertical slat \u2014 same XP-6100-S65 extrusion as QSHS, cut to height",
+      "notes": "VS 65mm vertical slat — same XP-6100-S65 extrusion as QSHS, cut to height",
       "active": true
     },
     {
@@ -681,7 +770,7 @@
       "qty_key": "qty_slat_90",
       "sku_pattern": "QS-6100-S90-{colour}",
       "priority": 100,
-      "notes": "VS 90mm vertical slat \u2014 same QS-6100-S90 extrusion as QSHS, cut to height",
+      "notes": "VS 90mm vertical slat — same QS-6100-S90 extrusion as QSHS, cut to height",
       "active": true
     },
     {
@@ -717,7 +806,7 @@
       "qty_key": "qty_fsec",
       "sku_pattern": "QS-5800-F-{colour}",
       "priority": 100,
-      "notes": "VS vertical edge frame \u2014 QS-5800-F installed vertically each side; slats/U-channels slot in",
+      "notes": "VS vertical edge frame — QS-5800-F installed vertically each side; slats/U-channels slot in",
       "active": true
     },
     {
@@ -729,7 +818,7 @@
       "qty_key": "qty_post_50_2400",
       "sku_pattern": "XP-2400-FP-{colour}",
       "priority": 100,
-      "notes": "50mm full post 2400mm \u2014 colour resolved at runtime",
+      "notes": "50mm full post 2400mm — colour resolved at runtime",
       "active": true
     },
     {
@@ -741,7 +830,7 @@
       "qty_key": "qty_post_50_6000",
       "sku_pattern": "XP-6000-FP-{colour}",
       "priority": 100,
-      "notes": "50mm full post 6000mm \u2014 colour resolved at runtime. Not available in P/PB.",
+      "notes": "50mm full post 6000mm — colour resolved at runtime. Not available in P/PB.",
       "active": true
     },
     {
@@ -753,7 +842,7 @@
       "qty_key": "qty_post_65_2400",
       "sku_pattern": "XP-2400-65HD-{colour}",
       "priority": 100,
-      "notes": "65mm HD post 2400mm \u2014 colour resolved at runtime. Not available in P/PB.",
+      "notes": "65mm HD post 2400mm — colour resolved at runtime. Not available in P/PB.",
       "active": true
     },
     {
@@ -765,7 +854,7 @@
       "qty_key": "qty_post_65_6000",
       "sku_pattern": "XP-6000-65HD-{colour}",
       "priority": 100,
-      "notes": "65mm HD post 6000mm \u2014 colour resolved at runtime. Not available in P/PB.",
+      "notes": "65mm HD post 6000mm — colour resolved at runtime. Not available in P/PB.",
       "active": true
     }
   ],
@@ -982,265 +1071,793 @@
     {
       "sku": "QS-5000-HORIZ-B",
       "tier_code": "tier1",
-      "rule": null,
-      "price": 40.87,
-      "priority": 0,
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-B",
+      "tier_code": "tier1",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-B",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
       "active": true
     },
     {
       "sku": "QS-5000-HORIZ-B",
       "tier_code": "tier2",
-      "rule": null,
-      "price": 38.4,
-      "priority": 0,
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-B",
+      "tier_code": "tier2",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-B",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
       "active": true
     },
     {
       "sku": "QS-5000-HORIZ-B",
       "tier_code": "tier3",
-      "rule": null,
+      "rule": "qty >= 30",
       "price": 35.95,
-      "priority": 0,
+      "priority": 30,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
       "active": true
     },
     {
-      "sku": "QS-5000-HORIZ-MN",
-      "tier_code": "tier1",
-      "rule": null,
-      "price": 40.87,
-      "priority": 0,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": null,
-      "active": true
-    },
-    {
-      "sku": "QS-5000-HORIZ-MN",
-      "tier_code": "tier2",
-      "rule": null,
-      "price": 38.4,
-      "priority": 0,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": null,
-      "active": true
-    },
-    {
-      "sku": "QS-5000-HORIZ-MN",
+      "sku": "QS-5000-HORIZ-B",
       "tier_code": "tier3",
-      "rule": null,
-      "price": 35.95,
-      "priority": 0,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": null,
-      "active": true
-    },
-    {
-      "sku": "QS-5000-HORIZ-G",
-      "tier_code": "tier1",
-      "rule": null,
-      "price": 40.87,
-      "priority": 0,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": null,
-      "active": true
-    },
-    {
-      "sku": "QS-5000-HORIZ-G",
-      "tier_code": "tier2",
-      "rule": null,
+      "rule": "qty >= 10",
       "price": 38.4,
-      "priority": 0,
+      "priority": 10,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
       "active": true
     },
     {
-      "sku": "QS-5000-HORIZ-G",
+      "sku": "QS-5000-HORIZ-B",
       "tier_code": "tier3",
-      "rule": null,
-      "price": 35.95,
-      "priority": 0,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": null,
-      "active": true
-    },
-    {
-      "sku": "QS-5000-HORIZ-SM",
-      "tier_code": "tier1",
-      "rule": null,
+      "rule": "qty >= 1",
       "price": 40.87,
-      "priority": 0,
+      "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
-      "active": true
-    },
-    {
-      "sku": "QS-5000-HORIZ-SM",
-      "tier_code": "tier2",
-      "rule": null,
-      "price": 38.4,
-      "priority": 0,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": null,
-      "active": true
-    },
-    {
-      "sku": "QS-5000-HORIZ-SM",
-      "tier_code": "tier3",
-      "rule": null,
-      "price": 35.95,
-      "priority": 0,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": null,
-      "active": true
-    },
-    {
-      "sku": "QS-5000-HORIZ-W",
-      "tier_code": "tier1",
-      "rule": null,
-      "price": 40.87,
-      "priority": 0,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": null,
-      "active": true
-    },
-    {
-      "sku": "QS-5000-HORIZ-W",
-      "tier_code": "tier2",
-      "rule": null,
-      "price": 38.4,
-      "priority": 0,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": null,
-      "active": true
-    },
-    {
-      "sku": "QS-5000-HORIZ-W",
-      "tier_code": "tier3",
-      "rule": null,
-      "price": 35.95,
-      "priority": 0,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
       "active": true
     },
     {
       "sku": "QS-5000-HORIZ-BS",
       "tier_code": "tier1",
-      "rule": null,
-      "price": 40.87,
-      "priority": 0,
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-BS",
+      "tier_code": "tier1",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-BS",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
       "active": true
     },
     {
       "sku": "QS-5000-HORIZ-BS",
       "tier_code": "tier2",
-      "rule": null,
-      "price": 38.4,
-      "priority": 0,
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-BS",
+      "tier_code": "tier2",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-BS",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
       "active": true
     },
     {
       "sku": "QS-5000-HORIZ-BS",
       "tier_code": "tier3",
-      "rule": null,
+      "rule": "qty >= 30",
       "price": 35.95,
-      "priority": 0,
+      "priority": 30,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
       "active": true
     },
     {
-      "sku": "QS-5000-HORIZ-D",
-      "tier_code": "tier1",
-      "rule": null,
-      "price": 40.87,
-      "priority": 0,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": null,
-      "active": true
-    },
-    {
-      "sku": "QS-5000-HORIZ-D",
-      "tier_code": "tier2",
-      "rule": null,
+      "sku": "QS-5000-HORIZ-BS",
+      "tier_code": "tier3",
+      "rule": "qty >= 10",
       "price": 38.4,
-      "priority": 0,
+      "priority": 10,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-BS",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-D",
+      "tier_code": "tier1",
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-D",
+      "tier_code": "tier1",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-D",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-D",
+      "tier_code": "tier2",
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-D",
+      "tier_code": "tier2",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-D",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
       "active": true
     },
     {
       "sku": "QS-5000-HORIZ-D",
       "tier_code": "tier3",
-      "rule": null,
+      "rule": "qty >= 30",
       "price": 35.95,
-      "priority": 0,
+      "priority": 30,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-D",
+      "tier_code": "tier3",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-D",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-G",
+      "tier_code": "tier1",
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-G",
+      "tier_code": "tier1",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-G",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-G",
+      "tier_code": "tier2",
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-G",
+      "tier_code": "tier2",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-G",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-G",
+      "tier_code": "tier3",
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-G",
+      "tier_code": "tier3",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-G",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
       "active": true
     },
     {
       "sku": "QS-5000-HORIZ-M",
       "tier_code": "tier1",
-      "rule": null,
-      "price": 32.4,
-      "priority": 0,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Mill finish",
-      "active": true
-    },
-    {
-      "sku": "QS-5000-HORIZ-M",
-      "tier_code": "tier2",
-      "rule": null,
-      "price": 30.45,
-      "priority": 0,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": null,
-      "active": true
-    },
-    {
-      "sku": "QS-5000-HORIZ-M",
-      "tier_code": "tier3",
-      "rule": null,
+      "rule": "qty >= 30",
       "price": 28.5,
-      "priority": 0,
+      "priority": 30,
       "valid_from": null,
       "valid_to": null,
-      "notes": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-M",
+      "tier_code": "tier1",
+      "rule": "qty >= 10",
+      "price": 30.45,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-M",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 32.4,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-M",
+      "tier_code": "tier2",
+      "rule": "qty >= 30",
+      "price": 28.5,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-M",
+      "tier_code": "tier2",
+      "rule": "qty >= 10",
+      "price": 30.45,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-M",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 32.4,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-M",
+      "tier_code": "tier3",
+      "rule": "qty >= 30",
+      "price": 28.5,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-M",
+      "tier_code": "tier3",
+      "rule": "qty >= 10",
+      "price": 30.45,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-M",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 32.4,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-MN",
+      "tier_code": "tier1",
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-MN",
+      "tier_code": "tier1",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-MN",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-MN",
+      "tier_code": "tier2",
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-MN",
+      "tier_code": "tier2",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-MN",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-MN",
+      "tier_code": "tier3",
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-MN",
+      "tier_code": "tier3",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-MN",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-SM",
+      "tier_code": "tier1",
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-SM",
+      "tier_code": "tier1",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-SM",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-SM",
+      "tier_code": "tier2",
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-SM",
+      "tier_code": "tier2",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-SM",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-SM",
+      "tier_code": "tier3",
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-SM",
+      "tier_code": "tier3",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-SM",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-W",
+      "tier_code": "tier1",
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-W",
+      "tier_code": "tier1",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-W",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-W",
+      "tier_code": "tier2",
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-W",
+      "tier_code": "tier2",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-W",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-W",
+      "tier_code": "tier3",
+      "rule": "qty >= 30",
+      "price": 35.95,
+      "priority": 30,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-W",
+      "tier_code": "tier3",
+      "rule": "qty >= 10",
+      "price": 38.4,
+      "priority": 10,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
+      "active": true
+    },
+    {
+      "sku": "QS-5000-HORIZ-W",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 40.87,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Glass Outlet CSV Glass outlet aluminium slats prices.csv; verified 2026-04-19",
       "active": true
     }
   ]
