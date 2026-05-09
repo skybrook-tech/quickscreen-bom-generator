@@ -1,10 +1,10 @@
 # Project Agent Skills
 
-Canonical Claude/Codex skill location in this repository:
+Canonical location for Claude/Codex-compatible skills in this repo:
 
 `./.claude/skills/`
 
-This `.agents/skills/` folder mirrors the same specialist skill set for project-agent workflows. Keep both folders in sync when a skill changes.
+The same skills are also mirrored in `./.agents/skills/` for Codex project-agent workflows. Keep both folders in sync when a skill changes.
 
 This folder stores the project-specific Codex skill files used to build and maintain the QuickScreen BOM Generator. Keeping them in the repository means future developers and AI agents can load the same specialist guidance instead of relying on one local machine profile.
 
