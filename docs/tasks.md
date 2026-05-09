@@ -28,6 +28,8 @@ Latest double-gate correction: double swing gates now normalize legacy `double-s
 
 Latest opening-screen workflow pass: typing in the intro job-name box no longer opens the workspace by itself; the Open workspace button now opens the workspace and carries the typed job name through to the quote UI. Intro copy was simplified, and Run Settings now has a bottom save/collapse button.
 
+Latest agent-skill portability pass: the specialist calculator skills are now stored in the repo under `.agents/skills/` with an index README, so future developers and AI agents can access the same project-manager, UI, QA, catalogue-extraction, QuickScreen BOM, and seed-mapping guidance.
+
 Latest Brief I pass: the `/calculator` BOM hero now uses an editorial summary layout with the scoped total as the main typographic element, BOM rows show the active quantity-break tier, and rows close to the next seeded quantity break show how many more units are needed for the next tier.
 
 Latest Brief J pass: fence segment settings now use progressive disclosure. Geometry stays immediately visible, deeper Style/Posts/Advanced settings sit behind a persisted "Show more settings" control, keeping the initial segment editor compact.

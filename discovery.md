@@ -1443,6 +1443,20 @@ Verification:
 - `npm run build` passed.
 - Browser smoke test confirmed the map overlay no longer overlaps the sidebar, the renamed section settings appear, and the gate details no longer show `Gate basics`.
 
+### May 10, 2026 - Repo-local specialist skill library
+
+Process finding:
+- The calculator specialist skills were useful but lived only in local user folders (`C:\Users\bbfen\.codex\skills` and `C:\Users\bbfen\.agents\skills`), so another developer or AI session working from the repository would not automatically have the same guidance.
+
+Changes applied:
+- Added repo-local skill copies under `.agents/skills/`.
+- Included the Glass calculator project manager, UI designer, QA tester, catalogue extractor, QuickScreen BOM, and seed-mapper skills with their bundled reference files/scripts.
+- Added `.agents/skills/README.md` explaining when to use each skill and how to keep repo copies updated.
+- Updated `docs/app-overview.md` so future contributors can find the project agent skills.
+
+Verification:
+- Scanned the copied skill folders for obvious secret patterns. The only hit was an instructional reference to an API header name, not a stored credential.
+
 ### May 10, 2026 - Opening screen job-name workflow
 
 UX finding:

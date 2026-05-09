@@ -312,6 +312,13 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
 - `npm run db:reset` resets local Supabase and reloads product/auth seeds.
 - `npm run setup` starts Supabase and resets/seeds local data.
 
+## Project Agent Skills
+
+- `.agents/skills/`
+  - Repo-local copies of the specialist Codex skills used on this calculator build.
+  - Use these when future developers or AI agents need the same project-manager, UI, QA, catalogue-extraction, QuickScreen BOM, or seed-mapping guidance.
+  - Start with `.agents/skills/README.md`, then load the relevant `SKILL.md` and only the reference files needed for the task.
+
 ## Testing And Verification
 
 Minimum checks after code changes:

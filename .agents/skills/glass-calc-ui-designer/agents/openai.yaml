@@ -1,0 +1,4 @@
+interface:
+  display_name: "Glass Calc UI Designer"
+  short_description: "Design clean calculator and mapper workflows."
+  default_prompt: "Use this skill to improve calculator UI, option flows, quote review, suggested accessories, and mapper usability for trade quoting workflows."
