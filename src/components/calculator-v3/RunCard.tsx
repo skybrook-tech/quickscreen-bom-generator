@@ -1,32 +1,130 @@
-import { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { CheckCircle2, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
-import type {
-  CanonicalRun,
-  CanonicalSegment,
-} from "../../types/canonical.types";
-import { calcRunStats } from "../../lib/runStats";
-import { Button } from "../ui/Button";
+import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
+import { defaultGateVariables } from "../../lib/gateOptionRules";
+import {
+  clampPostSpacing,
+  maxPanelWidthForSystem,
+} from "../../lib/productOptionRules";
+import { Button } from "../shared/Button";
 import { SegmentRow } from "./SegmentRow";
+import { colourName } from "./ColourPalette";
+import { RunSettingsEditor } from "./RunSettingsEditor";
+import { InstallVideoQR } from "./InstallVideoQR";
+import type { InstallVideoKey } from "../../lib/installVideos";
+import { calcRunStats } from "../../lib/runStats";
+import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
+import { ConfirmButton } from "../shared/ConfirmButton";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 
 interface Props {
   run: CanonicalRun;
   runIdx: number;
+  autoOpenFirstSection?: boolean;
+  onAutoOpenConsumed?: () => void;
 }
 
 const calcTotalLength = (run: CanonicalRun) =>
-  run.segments.reduce((acc, seg) => acc + (seg.segmentWidthMm ?? 0), 0);
+  run.segments.reduce((acc, seg) => {
+    const qty =
+      run.productCode === "BAYG" && seg.segmentKind !== "gate_opening"
+        ? Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1)))
+        : 1;
+    return acc + (seg.segmentWidthMm ?? 0) * qty;
+  }, 0);
 
-export function RunCard({ run, runIdx }: Props) {
+function firstFenceSegment(run: CanonicalRun) {
+  return run.segments.find((segment) => segment.segmentKind !== "gate_opening");
+}
+
+function runMasterVariables(
+  run: CanonicalRun,
+  jobVariables: Record<string, string | number | boolean> | undefined,
+) {
+  return {
+    ...(jobVariables ?? {}),
+    ...(run.variables ?? {}),
+  };
+}
+
+export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenConsumed }: Props) {
   const { state, dispatch } = useCalculator();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [runSettingsOpen, setRunSettingsOpen] = useState(false);
+  const [teachingDismissed, setTeachingDismissed] = useState(
+    () => typeof window !== "undefined" && window.localStorage.getItem(RUN_DEFAULTS_TEACHING_KEY) === "true",
+  );
+  const runCollapseRef = useRef<number | null>(null);
 
-  const jobMax = Number(state.payload?.variables.max_panel_width_mm ?? 2600);
-  const productCode = state.payload?.productCode ?? "QSHS";
+  const runVariables = useMemo(
+    () => runMasterVariables(run, state.payload?.variables),
+    [run, state.payload?.variables],
+  );
+  const jobMax = clampPostSpacing(
+    runVariables.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode),
+    maxPanelWidthForSystem(run.productCode),
+  );
+  const firstSegment = firstFenceSegment(run);
+  const runLengthM = (calcTotalLength(run) / 1000).toFixed(2);
+  const runStats = calcRunStats(run, jobMax);
+  const panelSummary = state.bomResult ? `${runStats.panels}P` : "\u2014 P";
+  const gateCount = run.segments.filter((segment) => segment.segmentKind === "gate_opening").length;
+  const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
+  const slatSize = Number(runVariables.slat_size_mm ?? 65);
+  const slatGap = Number(runVariables.slat_gap_mm ?? 5);
+  const installVideoKeys = useMemo(() => {
+    const keys = new Set<InstallVideoKey>();
+    if (run.productCode === "QSHS") keys.add("QSHS");
+    if (run.productCode === "VS") keys.add("VS");
+    if (
+      run.segments.some((segment) => {
+        const movement = String(segment.variables?.gate_movement ?? "");
+        return segment.segmentKind === "gate_opening" && movement === "sliding";
+      })
+    ) {
+      keys.add("QS_GATE_SLIDE");
+    }
+    if (
+      run.segments.some((segment) => {
+        const movement = String(segment.variables?.gate_movement ?? "single_swing");
+        return segment.segmentKind === "gate_opening" && movement !== "sliding";
+      })
+    ) {
+      keys.add("QS_GATE_PED");
+    }
+    return [...keys];
+  }, [run.productCode, run.segments]);
+  const isBayg = run.productCode === "BAYG";
 
-  const stats = calcRunStats(run, jobMax);
+  useEffect(
+    () => () => {
+      if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (!autoOpenFirstSection || !firstSegment) return;
+    setRunSettingsOpen(false);
+    setExpandedId(firstSegment.segmentId);
+    onAutoOpenConsumed?.();
+  }, [autoOpenFirstSection, firstSegment, onAutoOpenConsumed]);
+
+  function dismissRunDefaultsTeaching() {
+    setTeachingDismissed(true);
+    window.localStorage.setItem(RUN_DEFAULTS_TEACHING_KEY, "true");
+  }
+
+  function keepRunSettingsOpen() {
+    if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
+  }
+
+  function scheduleRunSettingsCollapse() {
+    if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
+    runCollapseRef.current = window.setTimeout(() => setRunSettingsOpen(false), 10000);
+  }
 
   function upsertSegment(segment: CanonicalSegment) {
     dispatch({ type: "UPSERT_SEGMENT", runId: run.runId, segment });
@@ -36,118 +134,182 @@ export function RunCard({ run, runIdx }: Props) {
     upsertSegment({
       segmentId: crypto.randomUUID(),
       sortOrder: run.segments.length + 1,
-      kind: "fence",
-      productCode,
-      segmentWidthMm: jobMax,
-      // targetHeightMm intentionally omitted — the UPSERT_SEGMENT reducer fills
-      // it from payload.variables.target_height_mm so canvas-drawn and
-      // form-created segments always get the same job-level default.
-      leftTermination: { kind: "system" },
-      rightTermination: { kind: "system" },
+      segmentKind: "panel",
+      segmentWidthMm: 0,
+      targetHeightMm: Number(runVariables.target_height_mm ?? 1800),
+      variables: isBayg ? { panel_quantity: 1 } : undefined,
     });
   }
 
   function addGateSegment() {
+    const masterVariables = runMasterVariables(run, state.payload?.variables);
+    const targetHeight = Number(masterVariables.target_height_mm ?? 1800);
+    const segmentId = crypto.randomUUID();
     upsertSegment({
-      segmentId: crypto.randomUUID(),
+      segmentId,
       sortOrder: run.segments.length + 1,
-      kind: "gate",
-      productCode: GATE_PRODUCT_CODE,
-      segmentWidthMm: 1000,
-      targetHeightMm: 1800,
-      leftTermination: { kind: "system" },
-      rightTermination: { kind: "system" },
-      variables: {
-        hinge_type: "dd-kwik-fit-fixed",
-        latch_type: "dd-magna-latch-top-pull",
-      },
+      segmentKind: "gate_opening",
+      segmentWidthMm: 900,
+      targetHeightMm: targetHeight,
+      gateProductCode: GATE_PRODUCT_CODE,
+      variables: defaultGateVariables({ ...masterVariables, productCode: run.productCode }, targetHeight),
     });
+    setExpandedId(segmentId);
   }
 
-  // Derive a label for the run's external ends from first/last fence segment
-  const fenceSegs = [...run.segments]
-    .filter((s) => s.kind === "fence")
-    .sort((a, b) => a.sortOrder - b.sortOrder);
-  const leftLabel =
-    fenceSegs[0]?.leftTermination.kind === "system"
-      ? "post"
-      : fenceSegs[0]?.leftTermination.kind === "non_system"
-        ? (fenceSegs[0].leftTermination as { kind: "non_system"; subtype: string }).subtype
-        : "—";
-  const rightLabel =
-    fenceSegs[fenceSegs.length - 1]?.rightTermination.kind === "system"
-      ? "post"
-      : fenceSegs[fenceSegs.length - 1]?.rightTermination.kind === "non_system"
-        ? (fenceSegs[fenceSegs.length - 1].rightTermination as { kind: "non_system"; subtype: string }).subtype
-        : "—";
-
   return (
-    <div className="border border-brand-border rounded-lg p-4 bg-brand-card">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-brand-text">
-          Run {runIdx + 1}
+    <div className="rounded-2xl border-2 border-brand-primary/20 bg-brand-card py-4 shadow-md">
+      <div className="px-4 mb-3 flex flex-wrap items-start justify-between gap-3">
+        <h3 className="grid gap-1 text-brand-text">
+          <span className="text-xl font-extrabold leading-tight tracking-normal">
+            Run {runIdx + 1} — {runLengthM}m
+          </span>
+          <span className="flex flex-wrap gap-x-2.5 gap-y-1 text-sm text-brand-muted">
+            <span>System Type: <strong className="text-brand-text">{run.productCode}</strong></span>
+            <span>{isBayg ? "Total panel width" : "Length"}: <strong className="text-brand-text">{runLengthM}m</strong></span>
+            {gateCount > 0 && <span>Gates: <strong className="font-mono tabular-nums text-brand-text">{gateCount}G</strong></span>}
+            <span>Panels: <strong className="font-mono tabular-nums text-brand-text">{panelSummary}</strong></span>
+            <span>Height: <strong className="text-brand-text">{runHeight}mm</strong></span>
+            <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
+            <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
+            <span>Gap size: <strong className="text-brand-text">{slatGap}mm</strong></span>
+          </span>
         </h3>
+        <div
+          className="mb-3"
+          onMouseEnter={keepRunSettingsOpen}
+          onMouseLeave={scheduleRunSettingsCollapse}
+        >
+          <div className="flex justify-end">
+
+            <button
+              type="button"
+              onClick={() => setRunSettingsOpen((value) => !value)}
+              className={`ml-auto mb-2 inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-extrabold transition-colors ${runSettingsOpen
+                ? "border-brand-primary bg-brand-primary text-white"
+                : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
+                }`}
+              title={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
+            >
+              <SlidersHorizontal size={16} />
+              {runSettingsOpen ? "Save run settings" : "Run settings"}
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="flex flex-wrap gap-3 mb-3 text-xs text-brand-muted">
-        <span>Left: {leftLabel}</span>
-        <span>Right: {rightLabel}</span>
-        <span>Corners: {stats.corners}</span>
-        <span>Segments: {run.segments.length}</span>
-        <span>Total length: {(calcTotalLength(run) / 1000).toFixed(2)}m</span>
-        {stats.panels > 0 && <span>Panels: {stats.panels}</span>}
-        {stats.posts > 0 && <span>Posts: {stats.posts}</span>}
-      </div>
-
-      {run.segments.length === 0 && (
-        <p className="text-xs text-brand-muted italic mb-3">
-          No segments yet. Draw on canvas or add manually.
-        </p>
+      {runSettingsOpen && (
+        <RunSettingsEditor run={run} onCollapse={() => setRunSettingsOpen(false)} />
       )}
 
-      <div className="space-y-2">
-        {run.segments.map((seg, segIdx) => (
-          <SegmentRow
-            key={seg.segmentId}
-            runId={run.runId}
-            seg={seg}
-            segIdx={segIdx}
-            open={expandedId === seg.segmentId}
-            onToggle={() =>
-              setExpandedId((id) =>
-                id === seg.segmentId ? null : seg.segmentId,
-              )
-            }
-          />
-        ))}
-      </div>
 
-      <div className="flex flex-wrap justify-end gap-2 mt-3">
-        <Button
-          onClick={addFenceSegment}
-          icon={Plus}
-          variant="ghost"
-          size="small"
-        >
-          Add segment
-        </Button>
-        <Button
-          onClick={addGateSegment}
-          icon={Plus}
-          variant="ghost"
-          size="small"
-        >
-          Add gate
-        </Button>
-        <Button
-          onClick={() => dispatch({ type: "REMOVE_RUN", runId: run.runId })}
-          icon={Trash2}
-          variant="ghost-danger"
-          size="small"
-        >
-          Remove run
-        </Button>
-      </div>
+      {!runSettingsOpen && (
+        <>
+
+
+          {
+            installVideoKeys.length > 0 && (
+              <div className="px-4">
+                <details className="mb-3 rounded-xl border border-brand-border/70 bg-brand-bg/40 p-3">
+                  <summary className="cursor-pointer text-xs font-extrabold uppercase tracking-wide text-brand-muted">
+                    Install videos
+                  </summary>
+                  <div className="mt-3 flex flex-wrap gap-3">
+                    {installVideoKeys.map((key) => (
+                      <InstallVideoQR key={key} videoKey={key} compact />
+                    ))}
+                  </div>
+                </details>
+              </div>
+            )
+          }
+
+          {run.segments.length === 0 && (
+            <p className="px-4 mb-3 text-xs italic text-brand-muted">
+              No sections yet. Draw on canvas or add manually.
+            </p>
+          )}
+
+          <div className="px-4 space-y-2">
+            {run.segments
+              .filter((segment) => segment.segmentKind !== "gate_opening")
+              .map((seg, segIdx) => (
+                <SegmentRow
+                  key={seg.segmentId}
+                  runId={run.runId}
+                  seg={seg}
+                  segIdx={segIdx}
+                  runIdx={runIdx}
+                  displayLabel={`R${runIdx + 1}S${segIdx + 1}`}
+                  open={expandedId === seg.segmentId}
+                  showRunDefaultsTeaching={
+                    expandedId === seg.segmentId &&
+                    seg.segmentId === firstSegment?.segmentId &&
+                    !teachingDismissed &&
+                    !state.bomResult
+                  }
+                  onDismissRunDefaultsTeaching={dismissRunDefaultsTeaching}
+                  onToggle={() =>
+                    setExpandedId((id) => {
+                      const next = id === seg.segmentId ? null : seg.segmentId;
+                      if (id === seg.segmentId && seg.segmentId === firstSegment?.segmentId) {
+                        dismissRunDefaultsTeaching();
+                      }
+                      return next;
+                    })
+                  }
+                />
+              ))}
+            {!isBayg && run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
+              <div className="pt-2">
+                <p className="mb-2 flex items-center gap-2 text-sm font-bold text-brand-muted">
+                  <CheckCircle2 size={16} />
+                  Gates
+                </p>
+                <div className="space-y-2">
+                  {run.segments
+                    .filter((segment) => segment.segmentKind === "gate_opening")
+                    .map((seg, gateIdx) => (
+                      <SegmentRow
+                        key={seg.segmentId}
+                        runId={run.runId}
+                        seg={seg}
+                        segIdx={gateIdx}
+                        runIdx={runIdx}
+                        displayLabel={`R${runIdx + 1}G${gateIdx + 1}`}
+                        open={expandedId === seg.segmentId}
+                        onToggle={() =>
+                          setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
+                        }
+                      />
+                    ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="px-4 mt-3 flex flex-wrap justify-end gap-2">
+            <Button onClick={addFenceSegment} icon={Plus} variant="ghost" size="small">
+              {isBayg ? "Add panel size" : "Add section"}
+            </Button>
+            {!isBayg && (
+              <Button onClick={addGateSegment} icon={Plus} variant="ghost" size="small">
+                Add gate
+              </Button>
+            )}
+            <ConfirmButton
+              onConfirm={() => dispatch({ type: "REMOVE_RUN", runId: run.runId })}
+              confirmLabel={<><Trash2 size={16} /> Click again to confirm</>}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-brand-danger/30 px-3 py-1.5 text-xs font-semibold text-brand-danger transition-colors hover:bg-brand-danger/10"
+            >
+              <Trash2 size={16} />
+              Remove run
+            </ConfirmButton>
+          </div>
+        </>
+      )}
+
+
     </div>
   );
 }

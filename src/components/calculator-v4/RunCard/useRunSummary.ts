@@ -49,8 +49,8 @@ export function useRunSummary(
 
     const cornerCount = run.segments.filter(
       (s) =>
-        s.leftTermination.kind === "system_corner" ||
-        s.rightTermination.kind === "system_corner",
+        s.leftTermination?.kind === "system_corner" ||
+        s.rightTermination?.kind === "system_corner",
     ).length;
 
     // Rough estimate: panels + 1 per fence segment for end-posts (engine wins).

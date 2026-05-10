@@ -1,8 +1,7 @@
-import { ColourSelect } from "../fence/ColourSelect";
 import { FormField } from "../shared/FormField";
-import { Select } from "../ui/Select";
-import { Input } from "../ui/Input";
-import { useColourOptions } from "../../hooks/useColourOptions";
+import { Check } from "lucide-react";
+import { ColourPalette, COLOUR_LABELS } from "./ColourPalette";
+import { DerivationChip } from "../ui/DerivationChip";
 
 export interface SchemaField {
   id: string;
@@ -14,9 +13,9 @@ export interface SchemaField {
   required: boolean;
   default_value_json?: unknown;
   options_json: unknown[];
-  options_group?: string | null;
   visible_when_json: Record<string, unknown>;
   sort_order: number;
+  options_group?: string;
 }
 
 interface SchemaDrivenFormProps {
@@ -39,64 +38,77 @@ export function isVisible(
   return true;
 }
 
-// Every field wraps in a 1/3-width flex item on desktop, full-width on mobile.
-// Extendable later with per-field `width` hints; intentionally simple for now.
-const FIELD_WRAPPER = "w-full md:w-[calc(33.333%-0.6667rem)]";
+const FIELD_WRAPPER = "w-full";
+
+const ENUM_LABELS: Record<string, string> = {
+  standard: "Standard slats",
+  economy: "Economy slats",
+  alumawood: "Alumawood timber-look",
+  spacer: "Preset spacer gaps",
+  custom: "Custom gap",
+  in_ground: "Concreted in ground",
+  base_plate: "Base-plated to slab",
+  core_drill: "Core-drilled into concrete",
+  xpl: "XPress Plus post",
+  standard_50: "50mm Post Standard",
+  standard_65: "65mm Post Standard HD",
+  "50": "50mm Post Standard",
+  "65": "65mm Post Standard HD",
+};
+
+function optionValue(option: unknown): string {
+  if (option && typeof option === "object" && "value" in option) {
+    return String((option as { value: unknown }).value);
+  }
+  return String(option);
+}
+
+function optionLabel(field: SchemaField, option: unknown): string {
+  if (option && typeof option === "object" && "label" in option) {
+    return String((option as { label: unknown }).label);
+  }
+  const value = optionValue(option);
+  if (field.field_key === "finish_family") return ENUM_LABELS[value] ?? value;
+  if (field.field_key === "colour_code" || field.field_key === "post_colour_code") {
+    const limited = value === "P" || value === "PB" ? " - limited" : "";
+    return `${COLOUR_LABELS[value] ?? value} (${value})${limited}`;
+  }
+  if (field.field_key === "slat_size_mm") return `${value}mm slat`;
+  if (field.field_key === "slat_gap_mm") {
+    if (value === "5") return "5mm - near privacy";
+    if (value === "9") return "9mm - standard";
+    if (value === "20") return "20mm - open";
+    return `${value}mm`;
+  }
+  if (field.field_key === "target_height_mm") return `${value}mm`;
+  return ENUM_LABELS[value] ?? value.replace(/_/g, " ");
+}
+
+function coerceValue(field: SchemaField, value: string): string | number | boolean {
+  if (field.data_type === "number" || field.data_type === "integer") {
+    return Number(value);
+  }
+  if (field.data_type === "boolean") return value === "true";
+  return value;
+}
 
 export function SchemaDrivenForm({
   fields,
   onChange,
   variables,
 }: SchemaDrivenFormProps) {
-  const { data: allColours = [] } = useColourOptions();
-
-  const finishType = variables["finish_type"] as string | undefined;
-  const allowedColours = allColours
-    .filter((c) =>
-      !finishType || finishType === "standard"
-        ? c.finish_group === "standard"
-        : c.finish_group === finishType,
-    );
-
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex flex-wrap gap-3">
       {fields.map((field) => {
         if (!isVisible(field.visible_when_json ?? {}, variables)) return null;
-
-        if (field.field_key === "colour_code") {
-          const opts = field.options_group === "colours"
-            ? allowedColours
-            : Array.isArray(field.options_json) && field.options_json.length > 0
-              ? (field.options_json as string[]).map((v) => {
-                  const found = allColours.find((c) => c.value === v);
-                  return found ?? { value: v, label: v, limited: false };
-                })
-              : allowedColours;
-          return (
-            <div
-              key={field.id}
-              data-testid={field.field_key}
-              className={FIELD_WRAPPER}
-            >
-              <FormField label={field.label}>
-                <ColourSelect
-                  value={String(variables[field.field_key] ?? "")}
-                  onChange={(e) => onChange(field.field_key, e.target.value)}
-                  options={opts}
-                  className="w-full bg-white border border-brand-border rounded px-3 py-2 text-sm text-brand-text"
-                />
-              </FormField>
-            </div>
-          );
-        }
 
         if (
           field.control_type === "select" &&
           Array.isArray(field.options_json) &&
           field.options_json.length > 0
         ) {
-          // Skip single-option selects (e.g. gates with finish_type=["standard"])
-          if (field.options_json.length === 1) return null;
+          const currentValue = String(variables[field.field_key] ?? "");
+          const isColourField = field.field_key === "colour_code" || field.field_key === "post_colour_code";
           return (
             <div
               key={field.id}
@@ -105,19 +117,53 @@ export function SchemaDrivenForm({
             >
               <FormField
                 label={field.label}
-                note={field.unit ? `Units: ${field.unit}` : undefined}
               >
-                <Select
-                  value={String(variables[field.field_key] ?? "")}
-                  onChange={(e) => onChange(field.field_key, e.target.value)}
-                  className="w-full"
-                >
-                  {field.options_json.map((opt) => (
-                    <option key={String(opt)} value={String(opt)}>
-                      {String(opt)}
-                    </option>
-                  ))}
-                </Select>
+                {field.field_key === "target_height_mm" && (
+                  <div className="mb-2">
+                    {field.options_json.length > 0 ? (
+                      <DerivationChip
+                        label="Heights for"
+                        value={`${variables.slat_size_mm ?? "?"}mm x ${variables.slat_gap_mm ?? "?"}mm gap`}
+                      />
+                    ) : (
+                      <DerivationChip label="Custom height" value="free input" tone="muted" />
+                    )}
+                  </div>
+                )}
+                {isColourField ? (
+                  <ColourPalette
+                    value={currentValue}
+                    options={field.options_json.map(String)}
+                    onChange={(value) =>
+                      onChange(field.field_key, coerceValue(field, value))
+                    }
+                  />
+                ) : (
+                <div className="flex flex-wrap gap-2">
+                  {field.options_json.map((opt) => {
+                    const value = optionValue(opt);
+                    const selected = value === currentValue;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() =>
+                          onChange(field.field_key, coerceValue(field, value))
+                        }
+                        aria-pressed={selected}
+                        className={`inline-flex min-h-9 items-center gap-2 rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${
+                          selected
+                            ? "border-brand-primary bg-brand-primary text-white shadow-sm"
+                            : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
+                        }`}
+                      >
+                        {selected && <Check size={16} aria-hidden />}
+                        {optionLabel(field, opt)}
+                      </button>
+                    );
+                  })}
+                </div>
+                )}
               </FormField>
             </div>
           );
@@ -132,10 +178,15 @@ export function SchemaDrivenForm({
             >
               <FormField
                 label={field.label}
-                note={field.unit ? `Units: ${field.unit}` : undefined}
               >
-                <Input
+                {field.field_key === "target_height_mm" && (
+                  <div className="mb-2">
+                    <DerivationChip label="Custom height" value="free input" tone="muted" />
+                  </div>
+                )}
+                <input
                   type="number"
+                  aria-label={`${field.label} ${field.unit ?? ""}`.trim()}
                   value={Number(
                     variables[field.field_key] ?? field.default_value_json ?? 0,
                   )}
@@ -147,7 +198,7 @@ export function SchemaDrivenForm({
                         : parseFloat(e.target.value),
                     )
                   }
-                  className="w-full"
+                  className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
                 />
               </FormField>
             </div>
@@ -165,7 +216,7 @@ export function SchemaDrivenForm({
                 type="checkbox"
                 checked={Boolean(variables[field.field_key])}
                 onChange={(e) => onChange(field.field_key, e.target.checked)}
-                className="rounded"
+                className="rounded border-brand-border bg-brand-card text-brand-accent"
               />
               <label className="text-sm font-medium text-brand-text">
                 {field.label}
@@ -182,13 +233,13 @@ export function SchemaDrivenForm({
           >
             <FormField
               label={field.label}
-              note={field.unit ? `Units: ${field.unit}` : undefined}
             >
-              <Input
+              <input
                 type="text"
+                aria-label={field.label}
                 value={String(variables[field.field_key] ?? "")}
                 onChange={(e) => onChange(field.field_key, e.target.value)}
-                className="w-full"
+                className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
               />
             </FormField>
           </div>

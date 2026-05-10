@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "pricing_rules.schema.json",
   "title": "pricing_rules",
-  "description": "Per-SKU, per-tier pricing. Each row is a single price point (not a multi-tier row). Non-null 'rule' is an optional math.js expression that must evaluate truthy for this price to apply (e.g. quantity-break: 'qty <= 50'). Null rule = always applies. For each SKU we expect one row per tier (tier1/tier2/tier3) at priority 0; additional priorities can layer quantity breaks.",
+  "description": "Per-SKU, per-tier pricing. Each row is a single price point. Non-null 'rule' is a math.js expression that must evaluate truthy for this price to apply (e.g. quantity-break: 'qty >= 40'). Null rule = always applies for legacy rows. Quantity break rows are sorted by priority so the highest applicable min-quantity rule wins.",
   "type": "array",
   "items": {
     "type": "object",
@@ -31,7 +31,7 @@
           "string",
           "null"
         ],
-        "description": "Optional math.js expression. Null = always applies. Variable 'qty' is available. Example: 'qty <= 50' for a quantity-break row."
+        "description": "Optional math.js expression. Null = always applies for legacy rows. Variable 'qty' is available. Example: 'qty >= 40' for a quantity-break row."
       },
       "price": {
         "type": "number",

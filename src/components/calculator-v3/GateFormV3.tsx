@@ -106,6 +106,7 @@ export function GateFormV3({
 
     const run: CanonicalRun = {
       runId: initialRun?.runId ?? crypto.randomUUID(),
+      productCode: initialRun?.productCode ?? GATE_PRODUCT_CODE,
       segments: [segment],
     };
 

@@ -1,32 +1,18 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Trash2, Plus, FileText, Search, ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Eye, Trash2, Plus, FileText, Search } from "lucide-react";
 import { AppShell } from "../components/layout/AppShell";
 import { useQuotes } from "../hooks/useQuotes";
-import type { SavedQuote } from "../types/quote.types";
-import type { CanonicalPayload } from "../types/canonical.types";
-
-/** Returns the v4 canonical payload if the quote was saved from Calculator B. */
-function extractV4Payload(quote: SavedQuote): CanonicalPayload | null {
-  try {
-    const notes = JSON.parse(quote.notes ?? "null");
-    if (notes && notes.v4_payload) return notes.v4_payload as CanonicalPayload;
-  } catch {
-    // not a v4 quote
-  }
-  return null;
-}
 
 const STATUS_COLOURS: Record<string, string> = {
   draft: "text-brand-muted bg-brand-border/30",
-  sent: "text-blue-400 bg-blue-400/10",
-  accepted: "text-green-400 bg-green-400/10",
-  expired: "text-red-400 bg-red-400/10",
+  sent: "text-brand-primary bg-brand-primary/10",
+  accepted: "text-brand-success bg-brand-success/10",
+  expired: "text-brand-danger bg-brand-danger/10",
 };
 
 export function QuotesHistoryPage() {
   const { quotesQuery, deleteQuote } = useQuotes();
-  const navigate = useNavigate();
   const [search, setSearch] = useState("");
 
   const quotes = quotesQuery.data ?? [];
@@ -52,10 +38,10 @@ export function QuotesHistoryPage() {
             </p>
           </div>
           <Link
-            to="/fence-calculator"
+            to="/new"
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-accent hover:bg-brand-accent-hover text-white text-sm font-semibold rounded-lg transition-colors shrink-0"
           >
-            <Plus size={15} />
+            <Plus size={16} />
             New Quote
           </Link>
         </div>
@@ -64,7 +50,7 @@ export function QuotesHistoryPage() {
         {quotes.length > 0 && (
           <div className="relative max-w-sm">
             <Search
-              size={13}
+              size={16}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-muted pointer-events-none"
             />
             <input
@@ -86,20 +72,20 @@ export function QuotesHistoryPage() {
           )}
 
           {quotesQuery.isError && (
-            <p className="px-5 py-10 text-sm text-red-400 text-center">
+            <p className="px-5 py-10 text-sm text-brand-danger text-center">
               Failed to load quotes.
             </p>
           )}
 
           {!quotesQuery.isLoading && quotes.length === 0 && (
             <div className="px-5 py-16 text-center space-y-3">
-              <FileText size={32} className="mx-auto text-brand-border" />
+              <FileText size={20} className="mx-auto text-brand-border" />
               <p className="text-sm text-brand-muted">No quotes saved yet.</p>
               <Link
-                to="/fence-calculator"
+                to="/new"
                 className="inline-flex items-center gap-1.5 text-sm text-brand-accent hover:underline"
               >
-                <Plus size={13} /> Create your first quote
+                <Plus size={16} /> Create your first quote
               </Link>
             </div>
           )}
@@ -157,9 +143,7 @@ export function QuotesHistoryPage() {
                       )}
                     </td>
                     <td className="px-4 py-3 text-brand-muted hidden sm:table-cell">
-                      {extractV4Payload(quote)
-                        ? <span className="text-xs px-1.5 py-0.5 bg-brand-accent/10 text-brand-accent rounded font-medium">Calc B</span>
-                        : (quote.fence_config?.systemType ?? "—")}
+                      {quote.fence_config?.systemType ?? "—"}
                     </td>
                     <td className="px-4 py-3 text-brand-muted hidden md:table-cell">
                       {quote.fence_config?.totalRunLength != null
@@ -186,31 +170,20 @@ export function QuotesHistoryPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
-                        {extractV4Payload(quote) && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              navigate("/fence-calculator-v4", {
-                                state: {
-                                  v4Payload: extractV4Payload(quote),
-                                  savedQuoteId: quote.id,
-                                },
-                              })
-                            }
-                            title="Open in Calculator B"
-                            className="flex items-center gap-1 px-2 py-1 text-xs text-brand-accent hover:bg-brand-accent/10 rounded transition-colors"
-                          >
-                            <ExternalLink size={12} />
-                            <span className="hidden sm:inline">Open in B</span>
-                          </button>
-                        )}
+                        <Link
+                          to={`/quote/${quote.id}`}
+                          title="View quote"
+                          className="p-1.5 text-brand-muted hover:text-brand-accent transition-colors"
+                        >
+                          <Eye size={16} />
+                        </Link>
                         <button
                           type="button"
                           onClick={() => deleteQuote.mutate(quote.id)}
                           title="Delete quote"
-                          className="p-1.5 text-brand-muted hover:text-red-400 transition-colors"
+                          className="p-1.5 text-brand-muted hover:text-brand-danger transition-colors"
                         >
-                          <Trash2 size={14} />
+                          <Trash2 size={16} />
                         </button>
                       </div>
                     </td>

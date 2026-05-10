@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { getLocalVariables } from '../lib/localSeedData';
 import type { SchemaField } from '../components/calculator-v3/SchemaDrivenForm';
 
 type Scope = 'job' | 'run' | 'segment';
@@ -14,13 +15,15 @@ export function useProductVariables(systemType: string | null, scope: Scope) {
     staleTime: 5 * 60_000,
     queryFn: async () => {
       if (!systemType) return [];
+      if (!isSupabaseConfigured) return getLocalVariables(systemType, scope);
+
       const { data: product, error: prodErr } = await supabase
         .from('products')
         .select('id')
         .eq('system_type', systemType)
         .maybeSingle();
-      if (prodErr) throw prodErr;
-      if (!product) return [];
+      if (prodErr) return getLocalVariables(systemType, scope);
+      if (!product) return getLocalVariables(systemType, scope);
 
       const { data, error } = await supabase
         .from('product_variables')
@@ -29,9 +32,11 @@ export function useProductVariables(systemType: string | null, scope: Scope) {
         .eq('scope', scope)
         .eq('active', true)
         .order('sort_order', { ascending: true });
-      if (error) throw error;
+      if (error) return getLocalVariables(systemType, scope);
 
-      return (data ?? []).map((v) => ({
+      if (!data || data.length === 0) return getLocalVariables(systemType, scope);
+
+      return data.map((v) => ({
         id: v.id as string,
         field_key: v.name as string,
         label: v.label as string,

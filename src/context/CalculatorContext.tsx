@@ -24,6 +24,8 @@ const initialState: CalculatorState = {
 export type CalculatorAction =
   | { type: "SET_PAYLOAD"; payload: CanonicalPayload }
   | { type: "SET_BOM_RESULT"; result: Record<string, unknown> }
+  | { type: "CLEAR_BOM_RESULT" }
+  | { type: "CLEAR_QUOTE" }
   | { type: "UPSERT_RUN"; run: CanonicalRun }
   | { type: "UPSERT_SEGMENT"; runId: string; segment: CanonicalSegment }
   | { type: "REMOVE_SEGMENT"; runId: string; segmentId: string }
@@ -40,6 +42,10 @@ function calculatorReducer(
       return { ...state, payload: action.payload };
     case "SET_BOM_RESULT":
       return { ...state, bomResult: action.result };
+    case "CLEAR_BOM_RESULT":
+      return { ...state, bomResult: null };
+    case "CLEAR_QUOTE":
+      return initialState;
     case "UPSERT_RUN": {
       if (!state.payload) return state;
       const runs = state.payload.runs;
@@ -100,7 +106,7 @@ function calculatorReducer(
 
           if (
             rightChanged &&
-            segment.rightTermination.kind !== "segment_join" &&
+            segment.rightTermination?.kind !== "segment_join" &&
             sortedIdx < sorted.length - 1
           ) {
             const nextSeg = sorted[sortedIdx + 1];
@@ -115,7 +121,7 @@ function calculatorReducer(
 
           if (
             leftChanged &&
-            segment.leftTermination.kind !== "segment_join" &&
+            segment.leftTermination?.kind !== "segment_join" &&
             sortedIdx > 0
           ) {
             const prevSeg = sorted[sortedIdx - 1];

@@ -40,13 +40,13 @@ function buildPayloadGeomKey(p: CanonicalPayload): string {
       r.segments
         .map((s) => {
           const lt =
-            s.leftTermination.kind === "system_corner"
-              ? String(s.leftTermination.angleDeg)
-              : s.leftTermination.kind;
+            s.leftTermination?.kind === "system_corner"
+              ? String((s.leftTermination as { kind: "system_corner"; angleDeg: number }).angleDeg)
+              : s.leftTermination?.kind ?? "system";
           const rt =
-            s.rightTermination.kind === "system_corner"
-              ? String(s.rightTermination.angleDeg)
-              : s.rightTermination.kind;
+            s.rightTermination?.kind === "system_corner"
+              ? String((s.rightTermination as { kind: "system_corner"; angleDeg: number }).angleDeg)
+              : s.rightTermination?.kind ?? "system";
           return `${s.segmentId}:${s.segmentWidthMm ?? 0}:${lt}:${rt}`;
         })
         .join(","),

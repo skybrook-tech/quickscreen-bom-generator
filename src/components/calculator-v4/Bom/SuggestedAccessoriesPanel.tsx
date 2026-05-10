@@ -1,8 +1,7 @@
 import { ChevronDown, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
-import { buildAccessorySuggestions } from "../../../lib/suggestedAccessories";
-import type { BOMLineItem } from "../../../types/bom.types";
+import { suggestAccessories } from "../../../lib/suggestedAccessories";
 
 const fmt = (n: number) =>
   new Intl.NumberFormat("en-AU", {
@@ -22,9 +21,9 @@ export function SuggestedAccessoriesPanel({ onAddedSuggestion }: Props) {
 
   const visible = useMemo(() => {
     if (!state.payload || !state.bomResult) return [];
-    const lines = (state.bomResult.lines as BOMLineItem[]) ?? [];
-    const all = buildAccessorySuggestions(state.payload, lines);
-    return all.filter((s) => !state.dismissedSuggestionSkus.has(s.sku));
+    const bomLines = (state.bomResult as { lines?: unknown[] } | null)?.lines ?? [];
+    const all = suggestAccessories(state.payload!, bomLines as import("../../../types/bom.types").BOMLineItem[]);
+    return all.filter((s) => !state.dismissedSuggestionSkus.has(s.sku ?? ''));
   }, [state.payload, state.bomResult, state.dismissedSuggestionSkus]);
 
   if (!state.bomResult || visible.length === 0) return null;
@@ -57,24 +56,24 @@ export function SuggestedAccessoriesPanel({ onAddedSuggestion }: Props) {
         <div className="space-y-1.5 max-h-[150px] overflow-y-auto mt-2">
           {visible.map((s) => (
             <div
-              key={s.sku}
+              key={s.sku ?? s.id}
               className="flex items-center gap-3 px-3 py-2 rounded-[var(--brand-radius-sm)] bg-brand-card border border-brand-border"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-xs font-medium text-brand-text">
-                    {s.name}
+                    {s.description}
                   </span>
                   <span className="font-mono text-[10px] text-brand-accent">
                     {s.sku}
                   </span>
                   <p className="text-[11px] text-brand-muted truncate">
-                    {s.desc}
+                    {s.reason}
                   </p>
                 </div>
               </div>
               <div className="text-right text-xs font-mono tabular-nums flex gap-1">
-                <div className="text-brand-text">×{s.qty}</div>
+                <div className="text-brand-text">×{s.quantity}</div>
                 <div className="text-[10px] text-brand-muted">
                   {fmt(s.unitPrice)}
                 </div>
@@ -84,9 +83,9 @@ export function SuggestedAccessoriesPanel({ onAddedSuggestion }: Props) {
                   dispatch({
                     type: "ADD_SUGGESTION",
                     suggestion: {
-                      sku: s.sku,
-                      name: s.name,
-                      qty: s.qty,
+                      sku: s.sku ?? s.id,
+                      name: s.description,
+                      qty: s.quantity,
                       unitPrice: s.unitPrice,
                     },
                   });

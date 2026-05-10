@@ -40,7 +40,7 @@ export function LayoutMinimap({ layout }: LayoutMinimapProps) {
     <div className="bg-brand-card border border-brand-border rounded-xl overflow-hidden">
       {/* Header */}
       <div className="px-3 py-2 border-b border-brand-border flex items-center gap-2">
-        <PenTool size={12} className="text-brand-muted" />
+        <PenTool size={16} className="text-brand-muted" />
         <span className="text-xs font-medium text-brand-muted">Layout</span>
       </div>
 

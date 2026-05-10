@@ -1,4 +1,5 @@
-import type { CanonicalRun } from "../types/canonical.types";
+import type { CanonicalRun } from '../types/canonical.types';
+import { clampPostSpacing } from './productOptionRules';
 
 export interface RunStats {
   panels: number;
@@ -9,68 +10,27 @@ export interface RunStats {
 
 /**
  * Compute panel, post, corner, and segment counts for a single canonical run.
- * Mirrors the walkRunForPosts logic in segmentTermination.ts (keep in sync).
  *
- * Used by RunCard (form display) and the canvas overlay so both surfaces always
- * show identical numbers.
+ * Post formula: (panels - 1) internal posts + end posts (0–2 by boundary type) + 1 per corner.
+ * Example: 4 panels, both ends post-terminated, 1 corner = 3 + 2 + 1 = 6 posts.
+ *
+ * Used by RunCard (form display) and the canvas overlay (via LayoutCanvasV3 push) so
+ * both surfaces always show identical numbers.
  */
-export function calcRunStats(
-  run: CanonicalRun,
-  jobMaxPanelWidth: number,
-): RunStats {
-  const sorted = [...run.segments].sort((a, b) => a.sortOrder - b.sortOrder);
-  const fenceSegs = sorted.filter((s) => s.kind === "fence");
+export function calcRunStats(run: CanonicalRun, jobMaxPanelWidth: number): RunStats {
+  const corners = (run.corners ?? []).length;
+  const fenceSegs = run.segments.filter((s) => s.segmentKind !== 'gate_opening');
 
-  // Panels per fence segment
-  const panelsBySegId = new Map<string, number>();
-  let totalPanels = 0;
+  let panels = 0;
   for (const seg of fenceSegs) {
-    const maxW = Number(seg.variables?.max_panel_width_mm ?? jobMaxPanelWidth);
-    const p = maxW > 0 ? Math.ceil((seg.segmentWidthMm ?? 0) / maxW) : 0;
-    panelsBySegId.set(seg.segmentId, p);
-    totalPanels += p;
+    const maxW = clampPostSpacing(seg.variables?.max_panel_width_mm, jobMaxPanelWidth);
+    if (maxW > 0) panels += Math.ceil((seg.segmentWidthMm ?? 0) / maxW);
   }
 
-  // Corners: fence segments with system_corner left termination
-  let corners = 0;
-  for (const seg of fenceSegs) {
-    if (seg.leftTermination.kind === "system_corner") {
-      corners++;
-    }
-  }
+  const leftWall  = run.leftBoundary?.type  === 'wall';
+  const rightWall = run.rightBoundary?.type === 'wall';
+  const endPosts  = (leftWall ? 0 : 1) + (rightWall ? 0 : 1);
+  const posts = panels > 0 ? panels - 1 + endPosts + corners : 0;
 
-  // Posts: replicate walkRunForPosts logic
-  let totalPosts = 0;
-  for (let i = 0; i < sorted.length; i++) {
-    const seg = sorted[i];
-    if (seg.kind !== "fence") continue;
-
-    const numPanels = panelsBySegId.get(seg.segmentId) ?? 1;
-    const next = sorted[i + 1];
-
-    let posts = numPanels - 1;
-
-    const lt = seg.leftTermination;
-    if (lt.kind === "system") posts += 1;
-    // segment_join / system_corner left → previous segment already counted the junction post
-    // non_system → no post
-
-    const rt = seg.rightTermination;
-    if (rt.kind === "system") {
-      posts += 1;
-    } else if (rt.kind === "segment_join" || rt.kind === "system_corner") {
-      // This segment owns the junction post unless next is a gate
-      if (!(next && next.kind === "gate")) posts += 1;
-    }
-    // non_system → no post
-
-    totalPosts += Math.max(0, posts);
-  }
-
-  return {
-    panels: totalPanels,
-    posts: totalPosts,
-    corners,
-    fenceSegments: fenceSegs.length,
-  };
+  return { panels, posts, corners, fenceSegments: fenceSegs.length };
 }

@@ -30,7 +30,41 @@
       },
       "category": {
         "type": "string",
-        "description": "Broad category the selector/companion system matches on. Examples: 'slat', 'side_frame', 'cfc_cover', 'centre_support_rail', 'f_section', 'accessory', 'mounting', 'gate_side_frame', 'joiner_block', 'hardware'."
+        "description": "Engine selector category the selector/companion system matches on. Examples: 'slat', 'side_frame', 'cfc_cover', 'centre_support_rail', 'f_section', 'accessory', 'mounting', 'gate_side_frame', 'joiner_block', 'hardware'. BOM presentation categories should be stored in metadata.bomCategory so selector categories remain stable."
+      },
+      "subCategory": {
+        "type": "string",
+        "description": "BOM presentation cluster within the rendered category, e.g. 'cover_strips', 'caps', 'slat_spacers'."
+      },
+      "companionOf": {
+        "type": "string",
+        "description": "SKU prefix or parent SKU that this item should render beneath in the BOM when the parent is present in the same scope."
+      },
+      "sortPriority": {
+        "type": "integer",
+        "description": "BOM display sort priority. Lower values render first within a sub-category."
+      },
+      "isOptionalAccessory": {
+        "type": "boolean",
+        "description": "When true, this SKU must never be auto-added. It only appears when the user opts in."
+      },
+      "optionalChildOf": {
+        "type": "array",
+        "description": "Parent SKU values or parent aliases that can offer this SKU as an optional add-on.",
+        "items": {
+          "type": "string"
+        }
+      },
+      "qtyPerParent": {
+        "type": "number",
+        "description": "Default optional add-on quantity per selected parent quantity."
+      },
+      "qtyFormula": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Optional math.js expression for add-on quantity when qtyPerParent is not enough."
       },
       "unit": {
         "type": "string",

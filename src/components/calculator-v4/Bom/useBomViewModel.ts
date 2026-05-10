@@ -82,8 +82,8 @@ function asLine(
   );
   return {
     sku: l.sku,
-    name: l.name,
-    description: l.description ?? l.name,
+    name: l.name ?? '',
+    description: l.description ?? l.name ?? '',
     unit: l.unit ?? "each",
     quantity,
     unitPrice: l.unitPrice,

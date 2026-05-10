@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import type { ReactNode } from 'react';
+import { Check } from 'lucide-react';
 
 export interface ButtonGroupOption<T extends string> {
   value: T;
@@ -46,11 +47,11 @@ function ButtonGroupInner<T extends string>({
             className={[
               'border rounded transition-colors',
               isSystemType
-                ? 'flex-1 py-2.5 px-3 text-left'
-                : 'py-1.5 px-3 text-sm',
+                ? 'flex-1 py-2.5 px-3 text-left rounded-lg'
+                : 'py-1.5 px-3 text-sm rounded-lg inline-flex items-center gap-1.5',
               isActive
-                ? 'border-brand-accent bg-brand-accent/10 text-brand-accent font-semibold'
-                : 'border-brand-border bg-brand-bg text-brand-text hover:border-brand-accent',
+                ? 'border-brand-primary bg-brand-primary text-white font-semibold shadow-sm'
+                : 'border-brand-border bg-brand-bg text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm',
               disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
             ].join(' ')}
           >
@@ -69,7 +70,10 @@ function ButtonGroupInner<T extends string>({
                 )}
               </>
             ) : (
-              opt.label
+              <>
+                {isActive && <Check size={16} aria-hidden />}
+                {opt.label}
+              </>
             )}
           </button>
         );

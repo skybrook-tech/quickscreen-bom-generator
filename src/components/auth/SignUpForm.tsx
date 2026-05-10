@@ -68,7 +68,7 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
           placeholder="Jane Smith"
         />
         {errors.fullName && (
-          <p className="mt-1 text-xs text-red-400">{errors.fullName.message}</p>
+          <p className="mt-1 text-xs text-brand-danger">{errors.fullName.message}</p>
         )}
       </div>
 
@@ -84,7 +84,7 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
           placeholder="you@example.com"
         />
         {errors.email && (
-          <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>
+          <p className="mt-1 text-xs text-brand-danger">{errors.email.message}</p>
         )}
       </div>
 
@@ -100,12 +100,12 @@ export function SignUpForm({ onSuccess }: SignUpFormProps) {
           placeholder="••••••••"
         />
         {errors.password && (
-          <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>
+          <p className="mt-1 text-xs text-brand-danger">{errors.password.message}</p>
         )}
       </div>
 
       {serverError && (
-        <p className="text-sm text-red-400">{serverError}</p>
+        <p className="text-sm text-brand-danger">{serverError}</p>
       )}
 
       <button

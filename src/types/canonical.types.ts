@@ -9,85 +9,93 @@
 // Never regenerate them in adapter or reducer code — doing so breaks
 // save/load and breaks the engine's per-run/segment tagging.
 
+export type CanonicalVariableValue = string | number | boolean;
+
+export type CanonicalVariables = Record<string, CanonicalVariableValue>;
+
 export interface CanonicalPayload {
   productCode: string;
-  schemaVersion: "v2";
-  variables: Record<string, string | number | boolean>;
+  schemaVersion: string;
+  job?: {
+    description?: string;
+    pendingGates?: Array<{
+      id: string;
+      kind: 'pedestrian' | 'sliding' | 'double_swing';
+      widthMm?: number;
+      runId: string;
+    }>;
+  };
+  variables: CanonicalVariables;
   runs: CanonicalRun[];
 }
 
 export interface CanonicalRun {
   runId: string;
-  /** User-facing label in lists and on canvas (defaults to "Run n" when absent). */
+  productCode: string;
+  /** User-facing label in lists and on canvas (defaults to "Run n" when absent). V4+. */
   displayName?: string;
-  /**
-   * Per-run fence system override (v4+). When set, this run uses a different
-   * fence product than payload.productCode. The engine loads engine data for
-   * this code and uses it for run-level validation and context. Segments in
-   * this run should set their productCode to match.
-   * Optional for backward compatibility — pre-v4 payloads do not set this.
-   */
-  productCode?: string;
-  /**
-   * Per-run variable defaults. Merged on top of payload.variables (job level)
-   * and below segment.variables. Engine precedence: segment > run > job.
-   * In v4, kept in sync with the first (master) fence segment’s `variables` for
-   * engine + gate context; not edited as its own surface in the UI.
-   * Optional for backward compatibility — pre-v4 payloads do not set this.
-   */
-  variables?: Record<string, string | number | boolean>;
+  variables?: CanonicalVariables;
+  /** V3: explicit boundary type at the start of the run. */
+  leftBoundary?: CanonicalBoundary;
+  /** V3: explicit boundary type at the end of the run. */
+  rightBoundary?: CanonicalBoundary;
   segments: CanonicalSegment[];
-  /**
-   * Canvas pixel coordinates of the run's endpoint chain: [start, seg0_end, seg1_end, …].
-   * Stored by the canvas adapter so the drawn angles and positions are preserved
-   * when the layout is reconstructed (e.g. quote save/load, structural form edits).
-   * Not used by the BOM engine — ignored by bom-calculator.
-   */
+  /** V3: corner fittings between segments. */
+  corners?: CanonicalCorner[];
   geometry?: {
     points: Array<{ x: number; y: number }>;
   };
 }
 
-// ─── Terminations ───────────────────────────────────────────────────────────
+export interface CanonicalBoundary {
+  type: 'product_post' | 'brick_post' | 'existing_post' | 'wall' | 'corner_90';
+  meta?: Record<string, unknown>;
+}
 
-/**
- * A segment termination describes what is on one end of a fence/gate segment.
- *
- * - `system`        — a product post (matching the fencing system, e.g. a QSHS post)
- * - `non_system`    — something outside the BOM scope: a brick wall, an existing post, etc.
- * - `segment_join`  — straight-through boundary between adjacent segments; no corner fitting.
- * - `system_corner` — structural corner fitting required. `angleDeg` is the SIGNED interior
- *                     angle in degrees: positive = CW (right turn), negative = CCW (left turn).
- *                     Magnitude must be in [1, 179]. Examples: +90, -90, +135, -135.
- *                     Adjacent segments MUST carry matching angleDeg on their shared boundary.
- */
+// V4: discriminates fence vs gate segments. V3 uses segmentKind instead.
+export type SegmentKind = 'fence' | 'gate' | 'panel' | 'bay_group' | 'gate_opening' | 'corner';
+
+// V4: termination descriptor at each end of a segment.
 export type SegmentTermination =
-  | { kind: "system" }
-  | { kind: "non_system"; subtype: "wall" | "post" | "other" }
-  | { kind: "segment_join" }
-  | { kind: "system_corner"; angleDeg: number };
-
-// ─── Segment ────────────────────────────────────────────────────────────────
-
-export type SegmentKind = "fence" | "gate";
+  | { kind: 'system' }
+  | { kind: 'non_system'; subtype: 'wall' | 'post' | 'other' }
+  | { kind: 'segment_join' }
+  | { kind: 'system_corner'; angleDeg: number };
 
 export interface CanonicalSegment {
   segmentId: string;
   sortOrder: number;
-  /** 'fence' for a fencing panel run; 'gate' for a gate opening within a run */
-  kind: SegmentKind;
-  /** Product code for this segment (e.g. 'QSHS', 'QS_GATE'). */
-  productCode: string;
-  /** Total run length of this segment in mm. */
-  segmentWidthMm?: number;
-  targetHeightMm?: number;
-  /** When true, segment row/details treat inputs as read-only (v4 UX). */
+
+  // V4 fields
+  /** V4: discriminates fence vs gate segments. */
+  kind?: 'fence' | 'gate';
+  /** V4: segment is locked for editing. */
   confirmed?: boolean;
-  leftTermination: SegmentTermination;
-  rightTermination: SegmentTermination;
-  /**
-   * Per-segment variable overrides (colour, slat_size, gate dimensions, etc.)
-   * merged on top of run-level variables by the engine.
-   */
-  variables?: Record<string, string | number | boolean>;
+  /** V4: product code override per segment. */
+  productCode?: string;
+  /** V4: termination at the left end of this segment. */
+  leftTermination?: SegmentTermination;
+  /** V4: termination at the right end of this segment. */
+  rightTermination?: SegmentTermination;
+
+  // V3 fields
+  /** V3: segment classification. */
+  segmentKind?: 'panel' | 'bay_group' | 'gate_opening' | 'corner';
+  bayCount?: number;
+  gateProductCode?: string;
+
+  // Shared fields
+  segmentWidthMm?: number;
+  positionOnSegment?: number;
+  gateAnchor?: 'start' | 'center' | 'end';
+  canvasSegmentIndex?: number;
+  sourceSegmentLengthMm?: number;
+  targetHeightMm?: number;
+  variables?: CanonicalVariables;
+}
+
+export interface CanonicalCorner {
+  cornerId: string;
+  afterSegmentId: string;
+  type: '90' | '135' | 'custom';
 }

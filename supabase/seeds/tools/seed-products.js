@@ -200,7 +200,16 @@ async function upsertProductComponents(orgId, rows) {
     unit: r.unit,
     default_price: r.default_price ?? null,
     system_types: r.system_types ?? ['QSHS'],
-    metadata: r.metadata ?? {},
+    metadata: {
+      ...(r.metadata ?? {}),
+      ...(r.subCategory ? { subCategory: r.subCategory } : {}),
+      ...(r.companionOf ? { companionOf: r.companionOf } : {}),
+      ...(Number.isFinite(r.sortPriority) ? { sortPriority: r.sortPriority } : {}),
+      ...(r.isOptionalAccessory === true ? { isOptionalAccessory: true } : {}),
+      ...(Array.isArray(r.optionalChildOf) ? { optionalChildOf: r.optionalChildOf } : {}),
+      ...(Number.isFinite(r.qtyPerParent) ? { qtyPerParent: r.qtyPerParent } : {}),
+      ...(r.qtyFormula !== undefined ? { qtyFormula: r.qtyFormula } : {}),
+    },
     active: r.active,
   }));
   const { error } = await supabase

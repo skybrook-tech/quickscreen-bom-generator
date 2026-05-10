@@ -1,0 +1,4 @@
+interface:
+  display_name: "Glass Calc QA Tester"
+  short_description: "Test BOM calculations against spreadsheets and catalogues."
+  default_prompt: "Use this skill to audit Glass Outlet BOM calculations against formulated Excel sheets, CSV price lists, seed JSON, catalogue rules, and browser output."

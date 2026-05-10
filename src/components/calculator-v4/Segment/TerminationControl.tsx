@@ -38,6 +38,8 @@ export function TerminationControl({
   const termination =
     side === "left" ? seg.leftTermination : seg.rightTermination;
 
+  if (!termination) return null;
+
   const allowedAngles: number[] = (() => {
     const product = products?.find((p) => p.system_type === seg.productCode);
     return product?.metadata?.allowedAngles ?? [...CORNER_DEGREE_OPTIONS];

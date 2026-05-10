@@ -11,49 +11,54 @@
 // in. Any segment that already has a known ID reuses it; new segments get a
 // freshly generated UUID.
 //
-// TERMINATION MODEL
-// -----------------
-// Adjacent canonical segments share either a `segment_join` (straight-through) or
-// a `system_corner` (structural corner fitting) termination. The `system_corner`
-// carries a SIGNED interior angle: positive = CW/right turn, negative = CCW/left turn
-// in Y-down canvas coordinates. Magnitude is in [1, 179].
-// The run's external ends default to `{ kind: "system" }` (product post) which
-// the user can override in the Run list form.
+// CORNER DETECTION
+// ----------------
+// The canvas engine reports `cornerCount` per run but does NOT expose which
+// specific segment pairs have corners between them. We detect corners by
+// examining the angle between consecutive segments: when the angle change
+// exceeds the threshold (interior angle < 175°), we insert a CanonicalCorner
+// after the first segment of the pair.
 //
 // GATE SEGMENTS
 // -------------
-// Each gate marker on a canvas segment produces a `kind: "gate"` segment.
-// Fence material on each side of the gate becomes a separate `kind: "fence"` segment.
+// Each gate marker on a segment produces a `gate_opening` segment with a
+// `segmentWidthMm` equal to the gate's widthMM. Gate segments are inserted in
+// order of `positionOnSegment` after the preceding fence `panel` segment. The
+// remaining fence length on the original segment is split into one or two
+// additional `panel` segments (before and after the gate opening).
 
 import type {
+  CanvasGate,
   CanvasLayout,
   CanvasSegment,
   CanvasRunSummary,
-} from "./canvasEngine";
+} from './canvasEngine';
 import type {
   CanonicalPayload,
   CanonicalRun,
   CanonicalSegment,
-  SegmentTermination,
-} from "../../types/canonical.types";
-
-export const DEFAULT_GATE_PRODUCT_CODE = "QS_GATE";
+  CanonicalBoundary,
+  CanonicalCorner,
+} from '../../types/canonical.types';
+import {
+  classifyCorner,
+  GATE_SEGMENT_STUB_KEYS,
+  SEGMENT_TERMINATION_KEYS,
+} from '../../lib/segmentTermination';
 
 // ---------------------------------------------------------------------------
 // Stable ID map — keyed by a deterministic descriptor so round-trips preserve
-// the same IDs.
+// the same IDs. The descriptor is "<runIndex>:<flatSegmentIndex>" for fence
+// segments and "<runIndex>:<flatSegmentIndex>:gate<gateIndex>" for gate openings.
 // ---------------------------------------------------------------------------
 export type StableIdMap = Record<string, string>; // descriptor → UUID
 
+// Corner detection threshold: if the absolute angle delta between two
+// consecutive segments exceeds this value (degrees), it is a corner.
 const CORNER_ANGLE_THRESHOLD_DEG = 5;
 
 function newId(): string {
   return crypto.randomUUID();
-}
-
-function stableId(map: StableIdMap, desc: string): string {
-  if (!map[desc]) map[desc] = newId();
-  return map[desc];
 }
 
 /** Normalise an angle to [0, 360). */
@@ -61,33 +66,45 @@ function normaliseAngle(deg: number): number {
   return ((deg % 360) + 360) % 360;
 }
 
-/**
- * Signed bearing change from bearing `a` to bearing `b`.
- * Positive = CW (right turn), negative = CCW (left turn). Range (-180, 180].
- */
-function signedAngleDelta(a: number, b: number): number {
-  let diff = normaliseAngle(b) - normaliseAngle(a);
-  if (diff > 180) diff -= 360;
-  if (diff <= -180) diff += 360;
-  return diff;
+/** Unsigned angle difference between two bearing angles, clamped to [0, 180]. */
+function angleDelta(a: number, b: number): number {
+  const diff = Math.abs(normaliseAngle(a) - normaliseAngle(b));
+  return diff > 180 ? 360 - diff : diff;
 }
 
-/**
- * Convert a signed bearing-change (turn angle) to a signed interior angle.
- * Positive turn → positive interior; negative turn → negative interior.
- * e.g. signedTurn=+90 → +90 interior, signedTurn=-45 → -135 interior.
- */
-function turnToInterior(signedTurn: number): number {
-  return Math.sign(signedTurn) * (180 - Math.abs(signedTurn));
+function cornerInfo(prev: CanvasSegment, next: CanvasSegment): {
+  measured: number;
+  type: 'right' | 'obtuse' | 'custom';
+  degrees: 90 | 135 | number;
+  canonicalType: '90' | '135' | 'custom';
+} {
+  const turn = angleDelta(prev.angleDeg, next.angleDeg);
+  const interior = 180 - turn;
+  const measured = Math.round(interior);
+  const type = classifyCorner(measured);
+  if (type === 'right') return { measured, type, degrees: 90, canonicalType: '90' };
+  if (type === 'obtuse') return { measured, type, degrees: 135, canonicalType: '135' };
+  return { measured, type, degrees: measured, canonicalType: 'custom' };
 }
 
 // ---------------------------------------------------------------------------
 // Reconstruct per-run segment ranges from the flat segment array.
+//
+// CanvasLayout gives us:
+//   - A flat `segments[]` list in run-order (run 0 first, then run 1, …)
+//   - A `runs[]` list of CanvasRunSummary — each has `totalLengthM`
+//
+// We reconstruct run membership by matching `totalLengthM` to the cumulative
+// sum of consecutive flat segment lengths. When a run's accumulated length
+// matches its declared totalLengthM (within floating-point tolerance), we close
+// the slice.
 // ---------------------------------------------------------------------------
 interface RunSlice {
   summary: CanvasRunSummary;
   runIdx: number;
+  /** inclusive flat index of the first segment in this run */
   flatStart: number;
+  /** exclusive flat index (flatStart + segmentCount) */
   flatEnd: number;
   segments: CanvasSegment[];
 }
@@ -99,6 +116,7 @@ function buildRunSlices(layout: CanvasLayout): RunSlice[] {
   for (let ri = 0; ri < layout.runs.length; ri++) {
     const summary = layout.runs[ri];
     const targetLengthMm = summary.totalLengthM * 1000;
+
     let accumulated = 0;
     const flatStart = flatCursor;
 
@@ -106,7 +124,11 @@ function buildRunSlices(layout: CanvasLayout): RunSlice[] {
       const seg = layout.segments[flatCursor];
       accumulated += seg.lengthMM;
       flatCursor++;
+
+      // Allow 1mm tolerance for floating-point accumulation
       if (Math.abs(accumulated - targetLengthMm) < 1) break;
+
+      // Safety: if we've overshot, stop before the next segment
       if (accumulated > targetLengthMm + 1) break;
     }
 
@@ -123,205 +145,300 @@ function buildRunSlices(layout: CanvasLayout): RunSlice[] {
 }
 
 // ---------------------------------------------------------------------------
-// Produce the ordered list of "proto-segments" (kind, productCode, widthMm,
-// but NO terminations yet) for one canvas segment, splitting it around any
-// gate markers.
+// Detect corners within a run's segment list.
+// A corner exists between segment[i] and segment[i+1] when their direction
+// (angleDeg) diverges by more than CORNER_ANGLE_THRESHOLD_DEG.
 // ---------------------------------------------------------------------------
-type ProtoSegment = Omit<
-  CanonicalSegment,
-  "leftTermination" | "rightTermination"
->;
-
-interface GateInSegment {
-  positionOnSegment: number;
-  widthMM: number;
-  gateIndex: number;
+function detectCornerIndices(segments: CanvasSegment[]): Set<number> {
+  const corners = new Set<number>();
+  for (let i = 0; i < segments.length - 1; i++) {
+    const delta = angleDelta(segments[i].angleDeg, segments[i + 1].angleDeg);
+    if (delta > CORNER_ANGLE_THRESHOLD_DEG) {
+      corners.add(i); // corner after segment[i]
+    }
+  }
+  return corners;
 }
 
-function expandCanvasSegment(
+// ---------------------------------------------------------------------------
+// Split a canvas segment that contains gate markers into an ordered list of
+// canonical segments: [panel?, gate_opening, panel?, gate_opening, …, panel?]
+// ---------------------------------------------------------------------------
+interface GateInSegment {
+  positionOnSegment: number; // 0-1 fraction
+  anchor?: CanvasGate['anchor'];
+  widthMM: number;
+  gateIndex: number; // index within this segment's gates
+  useGatePostsAsFenceTermination?: boolean;
+  gateType?: CanvasGate['gateType'];
+  swingDirection?: CanvasGate['swingDirection'];
+  slidingSide?: CanvasGate['slidingSide'];
+}
+
+function gateMovementFromCanvas(gateType: CanvasGate['gateType']) {
+  if (gateType === 'sliding') return 'sliding';
+  if (gateType === 'double-swing') return 'double_swing';
+  return 'single_swing';
+}
+
+function gateTypeFromMovement(value: unknown): CanvasGate['gateType'] {
+  if (value === 'sliding') return 'sliding';
+  if (value === 'double_swing') return 'double-swing';
+  return 'single-swing';
+}
+
+function gateVisualFromCanon(canonSeg: CanonicalSegment) {
+  const gateType = gateTypeFromMovement(canonSeg.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+  return {
+    gateType,
+    swingDirection: String(
+      canonSeg.variables?.[GATE_SEGMENT_STUB_KEYS.openingDirection] ??
+        (gateType === 'sliding' ? 'right' : 'out'),
+    ) as CanvasGate['swingDirection'],
+    slidingSide: String(
+      canonSeg.variables?.[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? 'front',
+    ) as CanvasGate['slidingSide'],
+  };
+}
+
+function gateFractions(totalMm: number, gate: Pick<GateInSegment, 'positionOnSegment' | 'widthMM' | 'anchor'>) {
+  if (totalMm <= 0) return { start: gate.positionOnSegment, end: gate.positionOnSegment };
+  const gateFraction = Math.min(1, gate.widthMM / totalMm);
+  if (gate.anchor === 'start') return { start: 0, end: gateFraction };
+  if (gate.anchor === 'end') return { start: 1 - gateFraction, end: 1 };
+  const half = gateFraction / 2;
+  return {
+    start: Math.max(0, gate.positionOnSegment - half),
+    end: Math.min(1, gate.positionOnSegment + half),
+  };
+}
+
+function mergeSegmentVariables(
+  previous: CanonicalSegment['variables'],
+  generated: CanonicalSegment['variables'],
+): CanonicalSegment['variables'] {
+  const merged = { ...(previous ?? {}), ...(generated ?? {}) };
+
+  for (const side of ['left', 'right'] as const) {
+    const manualKey =
+      side === 'left'
+        ? SEGMENT_TERMINATION_KEYS.leftCornerManual
+        : SEGMENT_TERMINATION_KEYS.rightCornerManual;
+    if (previous?.[manualKey] !== true) continue;
+
+    const keys =
+      side === 'left'
+        ? [
+            SEGMENT_TERMINATION_KEYS.leftKind,
+            SEGMENT_TERMINATION_KEYS.leftCornerDegrees,
+            SEGMENT_TERMINATION_KEYS.leftCornerMeasuredDegrees,
+            SEGMENT_TERMINATION_KEYS.leftCornerType,
+            SEGMENT_TERMINATION_KEYS.leftCornerManual,
+          ]
+        : [
+            SEGMENT_TERMINATION_KEYS.rightKind,
+            SEGMENT_TERMINATION_KEYS.rightCornerDegrees,
+            SEGMENT_TERMINATION_KEYS.rightCornerMeasuredDegrees,
+            SEGMENT_TERMINATION_KEYS.rightCornerType,
+            SEGMENT_TERMINATION_KEYS.rightCornerManual,
+          ];
+
+    for (const key of keys) {
+      if (previous[key] !== undefined) merged[key] = previous[key];
+    }
+  }
+
+  return Object.keys(merged).length ? merged : undefined;
+}
+
+function expandSegmentWithGates(
   seg: CanvasSegment,
   gates: GateInSegment[],
   flatSegIdx: number,
+  localSegIdx: number,
   runIdx: number,
-  fenceProductCode: string,
   stableIds: StableIdMap,
   sortOrderBase: number,
-): { protos: ProtoSegment[]; nextSortOrder: number } {
-  const sorted = [...gates].sort(
-    (a, b) => a.positionOnSegment - b.positionOnSegment,
-  );
+): { canonSegments: CanonicalSegment[]; nextSortOrder: number } {
+  // Sort gates left-to-right along the segment
+  const sorted = [...gates].sort((a, b) => a.positionOnSegment - b.positionOnSegment);
   const totalMm = seg.lengthMM;
-  const protos: ProtoSegment[] = [];
+  const canonSegments: CanonicalSegment[] = [];
   let sortOrder = sortOrderBase;
   let cursorFraction = 0;
 
   for (const gate of sorted) {
-    const gateStartFraction =
-      gate.positionOnSegment - gate.widthMM / totalMm / 2;
-    const gateEndFraction = gate.positionOnSegment + gate.widthMM / totalMm / 2;
-    const clampedStart = Math.max(0, gateStartFraction);
-    const clampedEnd = Math.min(1, gateEndFraction);
+    const { start: clampedStart, end: clampedEnd } = gateFractions(totalMm, gate);
 
+    // Fence panel before this gate opening
     const panelBeforeMm = (clampedStart - cursorFraction) * totalMm;
     if (panelBeforeMm > 1) {
-      protos.push({
-        segmentId: stableId(
-          stableIds,
-          `${runIdx}:${flatSegIdx}:before-gate${gate.gateIndex}`,
-        ),
+      const desc = `${runIdx}:${flatSegIdx}:before-gate${gate.gateIndex}`;
+      const segmentId = stableIds[desc] ?? (() => {
+        const id = newId();
+        stableIds[desc] = id;
+        return id;
+      })();
+      canonSegments.push({
+        segmentId,
         sortOrder: sortOrder++,
-        kind: "fence",
-        productCode: fenceProductCode,
+        segmentKind: 'panel',
         segmentWidthMm: Math.round(panelBeforeMm),
+        canvasSegmentIndex: localSegIdx,
+        sourceSegmentLengthMm: Math.round(totalMm),
+        variables:
+          gate.useGatePostsAsFenceTermination !== false
+            ? {
+                geometry_angle_deg: Math.round(seg.angleDeg),
+                [SEGMENT_TERMINATION_KEYS.rightKind]: 'system_post',
+              }
+            : { geometry_angle_deg: Math.round(seg.angleDeg) },
       });
     }
 
-    protos.push({
-      segmentId: stableId(
-        stableIds,
-        `${runIdx}:${flatSegIdx}:gate${gate.gateIndex}`,
-      ),
+    // Gate opening segment
+    const gateDesc = `${runIdx}:${flatSegIdx}:gate${gate.gateIndex}`;
+    const gateSegmentId = stableIds[gateDesc] ?? (() => {
+      const id = newId();
+      stableIds[gateDesc] = id;
+      return id;
+    })();
+    canonSegments.push({
+      segmentId: gateSegmentId,
       sortOrder: sortOrder++,
-      kind: "gate",
-      productCode: DEFAULT_GATE_PRODUCT_CODE,
+      segmentKind: 'gate_opening',
       segmentWidthMm: Math.round(gate.widthMM),
+      positionOnSegment: gate.positionOnSegment,
+      gateAnchor: gate.anchor,
+      canvasSegmentIndex: localSegIdx,
+      sourceSegmentLengthMm: Math.round(totalMm),
+      variables: {
+        [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]:
+          gate.useGatePostsAsFenceTermination ?? true,
+        [GATE_SEGMENT_STUB_KEYS.gateMovement]: gateMovementFromCanvas(gate.gateType),
+        [GATE_SEGMENT_STUB_KEYS.openingDirection]: gate.swingDirection ?? (gate.gateType === 'sliding' ? 'right' : 'out'),
+        [GATE_SEGMENT_STUB_KEYS.slidingSide]: gate.slidingSide ?? 'front',
+      },
     });
 
     cursorFraction = clampedEnd;
   }
 
+  // Trailing fence panel after all gates
   const trailingMm = (1 - cursorFraction) * totalMm;
   if (trailingMm > 1) {
-    protos.push({
-      segmentId: stableId(
-        stableIds,
-        `${runIdx}:${flatSegIdx}:trailing`,
-      ),
+    const desc = `${runIdx}:${flatSegIdx}:trailing`;
+    const segmentId = stableIds[desc] ?? (() => {
+      const id = newId();
+      stableIds[desc] = id;
+      return id;
+    })();
+    canonSegments.push({
+      segmentId,
       sortOrder: sortOrder++,
-      kind: "fence",
-      productCode: fenceProductCode,
+      segmentKind: 'panel',
       segmentWidthMm: Math.round(trailingMm),
+      canvasSegmentIndex: localSegIdx,
+      sourceSegmentLengthMm: Math.round(totalMm),
+      variables:
+        sorted.length > 0 &&
+        sorted[sorted.length - 1].useGatePostsAsFenceTermination !== false
+          ? {
+              geometry_angle_deg: Math.round(seg.angleDeg),
+              [SEGMENT_TERMINATION_KEYS.leftKind]: 'system_post',
+            }
+          : { geometry_angle_deg: Math.round(seg.angleDeg) },
     });
   }
 
-  return { protos, nextSortOrder: sortOrder };
+  return { canonSegments, nextSortOrder: sortOrder };
 }
 
-/** Descriptor strings for each `stableId(...)` segment call — order matches {@link expandCanvasSegment}. */
+// ---------------------------------------------------------------------------
+// Stable ID helpers (used by V4 canvas sync)
+// ---------------------------------------------------------------------------
+
 function listExpandStableDescriptors(
   runIdx: number,
   flatSegIdx: number,
   seg: CanvasSegment,
-  gates: GateInSegment[],
+  gates: Array<{ positionOnSegment: number; widthMM: number; gateIndex: number }>,
 ): string[] {
-  const sorted = [...gates].sort(
-    (a, b) => a.positionOnSegment - b.positionOnSegment,
-  );
+  const sorted = [...gates].sort((a, b) => a.positionOnSegment - b.positionOnSegment);
   const totalMm = seg.lengthMM;
   const out: string[] = [];
   let cursorFraction = 0;
-
   for (const gate of sorted) {
-    const gateStartFraction =
-      gate.positionOnSegment - gate.widthMM / totalMm / 2;
+    const gateStartFraction = gate.positionOnSegment - gate.widthMM / totalMm / 2;
     const gateEndFraction = gate.positionOnSegment + gate.widthMM / totalMm / 2;
     const clampedStart = Math.max(0, gateStartFraction);
     const clampedEnd = Math.min(1, gateEndFraction);
-
     const panelBeforeMm = (clampedStart - cursorFraction) * totalMm;
-    if (panelBeforeMm > 1) {
-      out.push(`${runIdx}:${flatSegIdx}:before-gate${gate.gateIndex}`);
-    }
-
+    if (panelBeforeMm > 1) out.push(`${runIdx}:${flatSegIdx}:before-gate${gate.gateIndex}`);
     out.push(`${runIdx}:${flatSegIdx}:gate${gate.gateIndex}`);
-
     cursorFraction = clampedEnd;
   }
-
   const trailingMm = (1 - cursorFraction) * totalMm;
-  if (trailingMm > 1) {
-    out.push(`${runIdx}:${flatSegIdx}:trailing`);
-  }
-
+  if (trailingMm > 1) out.push(`${runIdx}:${flatSegIdx}:trailing`);
   return out;
 }
 
-/** Same segment stable-id keys as `canvasLayoutToCanonical` for one run slice (order-preserving). */
 function collectSegmentStableDescriptors(slice: RunSlice): string[] {
   const descriptors: string[] = [];
-  const gatesPerFlatSeg = new Map<number, GateInSegment[]>();
+  const gatesPerFlatSeg = new Map<number, Array<{ positionOnSegment: number; widthMM: number; gateIndex: number }>>();
   for (let gi = 0; gi < slice.summary.gates.length; gi++) {
     const gate = slice.summary.gates[gi];
     const flatIdx = gate.segmentIndex;
     if (!gatesPerFlatSeg.has(flatIdx)) gatesPerFlatSeg.set(flatIdx, []);
-    gatesPerFlatSeg.get(flatIdx)!.push({
-      positionOnSegment: gate.positionOnSegment,
-      widthMM: gate.widthMM,
-      gateIndex: gi,
-    });
+    gatesPerFlatSeg.get(flatIdx)!.push({ positionOnSegment: gate.positionOnSegment, widthMM: gate.widthMM, gateIndex: gi });
   }
-
   for (let si = 0; si < slice.segments.length; si++) {
     const canvasSeg = slice.segments[si];
     const flatIdx = slice.flatStart + si;
     const gates = gatesPerFlatSeg.get(flatIdx);
     if (gates && gates.length > 0) {
-      descriptors.push(
-        ...listExpandStableDescriptors(
-          slice.runIdx,
-          flatIdx,
-          canvasSeg,
-          gates,
-        ),
-      );
+      descriptors.push(...listExpandStableDescriptors(slice.runIdx, flatIdx, canvasSeg, gates));
     } else {
       descriptors.push(`${slice.runIdx}:${flatIdx}`);
     }
   }
-
   return descriptors;
 }
 
-/**
- * Seeds `stableIds` so `canvasLayoutToCanonical` reuses existing run/segment
- * UUIDs from a prior payload. Call this on every live canvas → canonical sync
- * with the **current** `layout` and **previous** stored payload; otherwise each
- * sync invents new `run:n` ids and `mergeCanonicalPreservingSegmentMeta` cannot
- * match runs (e.g. custom `displayName` is lost).
- *
- * When the derived descriptor count for a run does not match the previous
- * segment count (structure changed), only the run id is prefilled and new
- * segment ids are allocated for that run.
- */
 export function buildStableIdMapForLayoutSync(
   layout: CanvasLayout,
   previous: CanonicalPayload | null | undefined,
 ): StableIdMap {
   const stableIds: StableIdMap = {};
   if (!previous?.runs?.length) return stableIds;
-
   const runSlices = buildRunSlices(layout);
   for (const slice of runSlices) {
     const prevRun = previous.runs[slice.runIdx];
-    if (prevRun) {
-      stableIds[`run:${slice.runIdx}`] = prevRun.runId;
-    }
+    if (prevRun) stableIds[`run:${slice.runIdx}`] = prevRun.runId;
     if (!prevRun?.segments?.length) continue;
-
     const descs = collectSegmentStableDescriptors(slice);
     if (descs.length !== prevRun.segments.length) continue;
-
     for (let i = 0; i < descs.length; i++) {
       stableIds[descs[i]] = prevRun.segments[i].segmentId;
     }
   }
-
   return stableIds;
 }
 
 // ---------------------------------------------------------------------------
 // canvasLayoutToCanonical
 // ---------------------------------------------------------------------------
+
+/**
+ * Convert a CanvasLayout (from canvasEngine.getLayout()) into a CanonicalPayload.
+ *
+ * @param layout        Result of canvasEngine.getLayout()
+ * @param productCode   Top-level product code (e.g. 'QSHS')
+ * @param variables     Job-level variables (colour, height, system settings)
+ * @param stableIds     Optional map of descriptor→UUID from a previous call.
+ *                      Pass the same map across calls to preserve stable IDs.
+ *                      Mutated in-place with any newly generated IDs.
+ */
 export function canvasLayoutToCanonical(
   layout: CanvasLayout,
   productCode: string,
@@ -331,274 +448,183 @@ export function canvasLayoutToCanonical(
   const runSlices = buildRunSlices(layout);
 
   const canonicalRuns: CanonicalRun[] = runSlices.map((slice) => {
-    const runId = stableId(stableIds, `run:${slice.runIdx}`);
+    // Stable runId keyed by run index
+    const runDesc = `run:${slice.runIdx}`;
+    const runId = stableIds[runDesc] ?? (() => {
+      const id = newId();
+      stableIds[runDesc] = id;
+      return id;
+    })();
+
+    const cornerIndices = detectCornerIndices(slice.segments);
 
     // Collect gate markers per flat segment index
-    const gatesPerFlatSeg = new Map<number, GateInSegment[]>();
+    const gatesPerFlatSeg: Map<number, GateInSegment[]> = new Map();
     for (let gi = 0; gi < slice.summary.gates.length; gi++) {
       const gate = slice.summary.gates[gi];
       const flatIdx = gate.segmentIndex;
       if (!gatesPerFlatSeg.has(flatIdx)) gatesPerFlatSeg.set(flatIdx, []);
       gatesPerFlatSeg.get(flatIdx)!.push({
         positionOnSegment: gate.positionOnSegment,
+        anchor: gate.anchor,
         widthMM: gate.widthMM,
         gateIndex: gi,
+        useGatePostsAsFenceTermination:
+          gate.useGatePostsAsFenceTermination ?? true,
+        gateType: gate.gateType,
+        swingDirection: gate.swingDirection,
+        slidingSide: gate.slidingSide,
       });
     }
 
-    // Build "spans": each canvas segment becomes a span of 1+ proto-segments.
-    // We also record the signed angleDelta to the NEXT canvas segment.
-    const spans: { protos: ProtoSegment[]; angleToNext?: number }[] = [];
+    const canonSegments: CanonicalSegment[] = [];
+    const canonCorners: CanonicalCorner[] = [];
     let sortOrder = 0;
 
     for (let si = 0; si < slice.segments.length; si++) {
-      const canvasSeg = slice.segments[si];
-      const nextCanvasSeg = slice.segments[si + 1];
-      const angleToNext = nextCanvasSeg
-        ? signedAngleDelta(canvasSeg.angleDeg, nextCanvasSeg.angleDeg)
-        : undefined;
-
       const flatIdx = slice.flatStart + si;
+      const seg = slice.segments[si];
       const gates = gatesPerFlatSeg.get(flatIdx);
 
-      let protos: ProtoSegment[];
       if (gates && gates.length > 0) {
-        const result = expandCanvasSegment(
-          canvasSeg,
+        // Segment has gate markers — expand into panel/gate_opening sub-segments
+        const { canonSegments: expanded, nextSortOrder } = expandSegmentWithGates(
+          seg,
           gates,
           flatIdx,
+          si,
           slice.runIdx,
-          productCode,
           stableIds,
           sortOrder,
         );
-        protos = result.protos;
-        sortOrder = result.nextSortOrder;
+        canonSegments.push(...expanded);
+        sortOrder = nextSortOrder;
       } else {
+        // Plain fence panel segment
         const segDesc = `${slice.runIdx}:${flatIdx}`;
-        protos = [
-          {
-            segmentId: stableId(stableIds, segDesc),
-            sortOrder: sortOrder++,
-            kind: "fence",
-            productCode,
-            segmentWidthMm: Math.round(canvasSeg.lengthMM),
+        const segmentId = stableIds[segDesc] ?? (() => {
+          const id = newId();
+          stableIds[segDesc] = id;
+          return id;
+        })();
+        canonSegments.push({
+          segmentId,
+          sortOrder: sortOrder++,
+          segmentKind: 'panel',
+          segmentWidthMm: Math.round(seg.lengthMM),
+          canvasSegmentIndex: si,
+          sourceSegmentLengthMm: Math.round(seg.lengthMM),
+          variables: {
+            geometry_angle_deg: Math.round(seg.angleDeg),
           },
-        ];
+        });
       }
 
-      spans.push({ protos, angleToNext });
-    }
-
-    // Assign terminations in a single pass.
-    // Rules:
-    //   • First segment of run: leftTermination = system
-    //   • Last segment of run: rightTermination = system
-    //   • First segment of span N>0: if |signedTurn| > threshold → system_corner(signed interior)
-    //                                else → segment_join
-    //   • Last segment of span 0..N-1: same logic for next span's turn angle
-    //   • All other junctions (within a span, e.g. gate splits): segment_join
-    const canonSegments: CanonicalSegment[] = [];
-    const totalProtos = spans.reduce((s, sp) => s + sp.protos.length, 0);
-    let globalIdx = 0;
-
-    function turnToTermination(signedTurn: number | undefined): SegmentTermination {
-      if (signedTurn !== undefined && Math.abs(signedTurn) > CORNER_ANGLE_THRESHOLD_DEG) {
-        return { kind: "system_corner", angleDeg: Math.round(turnToInterior(signedTurn)) };
-      }
-      return { kind: "segment_join" };
-    }
-
-    for (let si = 0; si < spans.length; si++) {
-      const { protos, angleToNext } = spans[si];
-      const prevAngle = spans[si - 1]?.angleToNext;
-
-      for (let ji = 0; ji < protos.length; ji++) {
-        const isFirstOfRun = globalIdx === 0;
-        const isLastOfRun = globalIdx === totalProtos - 1;
-        const isFirstOfSpan = ji === 0;
-        const isLastOfSpan = ji === protos.length - 1;
-
-        const leftTermination: SegmentTermination = isFirstOfRun
-          ? { kind: "system" }
-          : isFirstOfSpan
-            ? turnToTermination(prevAngle)
-            : { kind: "segment_join" };
-
-        const rightTermination: SegmentTermination = isLastOfRun
-          ? { kind: "system" }
-          : isLastOfSpan
-            ? turnToTermination(angleToNext)
-            : { kind: "segment_join" };
-
-        canonSegments.push({ ...protos[ji], leftTermination, rightTermination });
-        globalIdx++;
+      // If there is a corner after this segment, record it
+      if (cornerIndices.has(si) && canonSegments.length > 0) {
+        const prevSegmentId = canonSegments[canonSegments.length - 1].segmentId;
+        const corner = cornerInfo(
+          slice.segments[si],
+          slice.segments[si + 1],
+        );
+        const prevSegment = canonSegments[canonSegments.length - 1];
+        prevSegment.variables = {
+          ...(prevSegment.variables ?? {}),
+          right_termination_kind: 'corner',
+          right_corner_degrees: corner.degrees,
+          right_corner_measured_degrees: corner.measured,
+          right_corner_type: corner.type,
+          right_corner_manual: false,
+        };
+        const cornerDesc = `corner:${slice.runIdx}:after:${si}`;
+        const cornerId = stableIds[cornerDesc] ?? (() => {
+          const id = newId();
+          stableIds[cornerDesc] = id;
+          return id;
+        })();
+        canonCorners.push({
+          cornerId,
+          afterSegmentId: prevSegmentId,
+          type: corner.canonicalType,
+        });
       }
     }
 
-    // Store canvas pixel coordinates for faithful reconstruction.
-    const fenceCanvasSegs = slice.segments;
-    const geometry =
-      fenceCanvasSegs.length > 0
-        ? {
-            points: [
-              {
-                x: fenceCanvasSegs[0].startX,
-                y: fenceCanvasSegs[0].startY,
-              },
-              ...fenceCanvasSegs.map((s) => ({ x: s.endX, y: s.endY })),
-            ],
-          }
-        : undefined;
+    // Default boundaries: product_post on both ends.
+    // Callers can override these with wall/existing_post etc. via the form.
+    const leftBoundary: CanonicalBoundary = { type: 'product_post' };
+    const rightBoundary: CanonicalBoundary = { type: 'product_post' };
+
+    // Store the actual canvas pixel coordinates so the layout (angles, positions)
+    // can be faithfully reconstructed when the payload is pushed back to the canvas.
+    const geometry = slice.segments.length > 0
+      ? {
+          points: [
+            { x: slice.segments[0].startX, y: slice.segments[0].startY },
+            ...slice.segments.map((s) => ({ x: s.endX, y: s.endY })),
+          ],
+        }
+      : undefined;
 
     return {
       runId,
+      productCode,
+      leftBoundary,
+      rightBoundary,
       segments: canonSegments,
+      corners: canonCorners,
       geometry,
     };
   });
 
   return {
     productCode,
-    schemaVersion: "v2",
+    schemaVersion: 'v1',
     variables,
-    runs:
-      canonicalRuns.length > 0
-        ? canonicalRuns
-        : [
-            {
-              runId: stableId(stableIds, "run:0"),
-              segments: [],
-            },
-          ],
-  };
-}
-
-/** QS_GATE job-scope keys aligned with fence job/run vars — seed canvas gates for parity with GateForm. */
-const GATE_INHERIT_KEYS = [
-  "colour_code",
-  "finish_type",
-  "slat_size_mm",
-  "slat_gap_mm",
-] as const;
-
-function inheritFenceVarsForGateSegment(
-  fenceContext: Record<string, string | number | boolean>,
-  gs: CanonicalSegment,
-  ps: CanonicalSegment | undefined,
-): Record<string, string | number | boolean> {
-  const inherited: Record<string, string | number | boolean> = {};
-  for (const k of GATE_INHERIT_KEYS) {
-    if (fenceContext[k] === undefined) continue;
-    const inGs = gs.variables?.[k] !== undefined;
-    const inPs = ps?.variables?.[k] !== undefined;
-    if (!inGs && !inPs) inherited[k] = fenceContext[k]!;
-  }
-  return {
-    ...inherited,
-    ...(gs.variables ?? {}),
-    ...(ps?.variables ?? {}),
-  };
-}
-
-function mergeSegmentTerminations(
-  ps: CanonicalSegment,
-  gs: CanonicalSegment,
-): Pick<CanonicalSegment, "leftTermination" | "rightTermination"> {
-  return {
-    leftTermination:
-      ps.leftTermination.kind === "non_system"
-        ? ps.leftTermination
-        : ps.leftTermination.kind === "system_corner" &&
-            gs.leftTermination.kind === "system_corner"
-          ? ps.leftTermination
-          : gs.leftTermination,
-    rightTermination:
-      ps.rightTermination.kind === "non_system"
-        ? ps.rightTermination
-        : ps.rightTermination.kind === "system_corner" &&
-            gs.rightTermination.kind === "system_corner"
-          ? ps.rightTermination
-          : gs.rightTermination,
+    runs: canonicalRuns.length > 0 ? canonicalRuns : [
+      // Fallback: empty payload still needs at least one run to be valid.
+      // This branch is only hit if layout.runs is empty.
+      {
+        runId: stableIds['run:0'] ?? (stableIds['run:0'] = newId()),
+        productCode,
+        leftBoundary: { type: 'product_post' },
+        rightBoundary: { type: 'product_post' },
+        segments: [],
+        corners: [],
+      },
+    ],
   };
 }
 
 /**
- * After `canvasLayoutToCanonical`, merge run-level `variables` / `productCode`,
- * re-attach per-segment edits, and seed gate segments from fence context when
- * needed (canvas protos omit gate variables).
+ * After `canvasLayoutToCanonical`, re-attach manual per-segment `variables`,
+ * run-level boundaries, and run `variables` for matching `runId` / `segmentId`
+ * so layout redraw does not erase Run list segment edits.
  */
 export function mergeCanonicalPreservingSegmentMeta(
   previous: CanonicalPayload,
   generated: CanonicalPayload,
 ): CanonicalPayload {
   const prevRuns = new Map(previous.runs.map((r) => [r.runId, r]));
-  const lastPrevRun =
-    previous.runs.length > 0
-      ? previous.runs[previous.runs.length - 1]
-      : undefined;
-
   return {
     ...generated,
     runs: generated.runs.map((genRun) => {
       const prevRun = prevRuns.get(genRun.runId);
-      const templateRun = prevRun ?? lastPrevRun;
-
-      const mergedRunVars = {
-        ...(templateRun?.variables ?? {}),
-        ...(genRun.variables ?? {}),
-      };
-
-      const mergedProductCode =
-        genRun.productCode ??
-        prevRun?.productCode ??
-        templateRun?.productCode ??
-        previous.productCode;
-
-      const fenceContext: Record<string, string | number | boolean> = {
-        ...previous.variables,
-        ...mergedRunVars,
-      };
-
-      const prevSegMap = prevRun
-        ? new Map(prevRun.segments.map((s) => [s.segmentId, s]))
-        : new Map<string, CanonicalSegment>();
-
+      if (!prevRun) return genRun;
+      const prevSegMap = new Map(prevRun.segments.map((s) => [s.segmentId, s]));
       return {
         ...genRun,
-        variables: mergedRunVars,
-        productCode: mergedProductCode,
-        displayName: genRun.displayName ?? prevRun?.displayName,
+        variables: { ...(prevRun.variables ?? {}), ...(genRun.variables ?? {}) },
+        leftBoundary: prevRun.leftBoundary,
+        rightBoundary: prevRun.rightBoundary,
         segments: genRun.segments.map((gs) => {
           const ps = prevSegMap.get(gs.segmentId);
-
-          if (gs.kind === "gate") {
-            const variables = inheritFenceVarsForGateSegment(
-              fenceContext,
-              gs,
-              ps,
-            );
-            if (!ps) {
-              return {
-                ...gs,
-                variables,
-              };
-            }
-            return {
-              ...gs,
-              variables,
-              targetHeightMm: gs.targetHeightMm ?? ps.targetHeightMm,
-              ...mergeSegmentTerminations(ps, gs),
-            };
-          }
-
           if (!ps) return gs;
-
           return {
             ...gs,
-            variables: { ...(ps.variables ?? {}), ...(gs.variables ?? {}) },
+            variables: mergeSegmentVariables(ps.variables, gs.variables),
             targetHeightMm: gs.targetHeightMm ?? ps.targetHeightMm,
-            ...mergeSegmentTerminations(ps, gs),
+            gateProductCode: gs.gateProductCode ?? ps.gateProductCode,
           };
         }),
       };
@@ -608,159 +634,214 @@ export function mergeCanonicalPreservingSegmentMeta(
 
 // ---------------------------------------------------------------------------
 // canonicalToCanvasLayout
+//
+// Converts a saved CanonicalPayload back into a CanvasLayout so the canvas
+// engine can be restored (e.g. when loading a saved quote).
+//
+// If a run has stored `geometry.points`, those pixel coordinates are used
+// directly, preserving the actual drawn angles and positions. Otherwise it
+// falls back to a flat horizontal reconstruction.
 // ---------------------------------------------------------------------------
 
-/** Euclidean distance between two points. */
-function ptDist(
-  a: { x: number; y: number },
-  b: { x: number; y: number },
-): number {
-  return Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2);
-}
-
-export function canonicalToCanvasLayout(
-  payload: CanonicalPayload,
-): CanvasLayout {
+export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout {
   const allFlatSegments: CanvasSegment[] = [];
-  const allFlatGates: Array<{
-    segmentIndex: number;
-    positionOnSegment: number;
-    widthMM: number;
-  }> = [];
+  const allFlatGates: CanvasGate[] = [];
   const runSummaries: CanvasRunSummary[] = [];
 
   let globalFlatOffset = 0;
 
   for (let ri = 0; ri < payload.runs.length; ri++) {
     const run = payload.runs[ri];
-    const yOrigin = ri * 200;
+    const yOrigin = ri * 200; // fallback: runs stacked vertically
 
     let runTotalMm = 0;
     let runCornerCount = 0;
-    const runGates: Array<{
-      segmentIndex: number;
-      positionOnSegment: number;
-      widthMM: number;
-    }> = [];
+    const runGates: CanvasGate[] = [];
 
+    // Determine whether stored geometry is usable. Older payloads may have
+    // fewer geometry points than fence segments after a gate split; in that
+    // case per-segment geometry_angle_deg hints preserve turns instead of
+    // falling back to a flat straight line.
     const geomPts = run.geometry?.points;
-    /** ≥2 stored points give anchor + initial bearing + scale; segment list may
-     * have grown/shrunk on the sidebar without rewriting points — we still walk
-     * lengths + left/right corner terminations from canonical state. */
-    const useStoredAnchor = !!(geomPts && geomPts.length >= 2);
+    const useGeometry = !!(geomPts && geomPts.length >= 2);
 
-    const firstFenceSeg = run.segments.find((s) => s.kind === "fence");
-    const firstFenceMm = firstFenceSeg?.segmentWidthMm ?? 1000;
-
-    // Anchor + scale: from stored polyline when possible; else synthetic start
-    // (eastbound, 0.1 px/mm) so sidebar-only edits still reflect lengths +
-    // corner angles from terminations.
-    let curX = 0;
-    let curY = yOrigin;
-    let bearingRad = 0;
-    let scale = 0.1; // px per mm fallback (1px = 10mm)
-
-    if (useStoredAnchor) {
-      curX = geomPts![0].x;
-      curY = geomPts![0].y;
-      bearingRad = Math.atan2(
-        geomPts![1].y - geomPts![0].y,
-        geomPts![1].x - geomPts![0].x,
-      );
-      const firstPx = ptDist(geomPts![0], geomPts![1]);
-      scale =
-        firstFenceMm > 0 && firstPx > 1e-6 ? firstPx / firstFenceMm : 0.1;
-    }
-
+    let xCursor = 0;       // used only in flat-horizontal fallback
+    let fenceSegIdx = 0;   // index into fenceSegments for geometry path
     const localFlatSegments: CanvasSegment[] = [];
 
-    for (let ci = 0; ci < run.segments.length; ci++) {
-      const canonSeg = run.segments[ci];
+    const hasCanvasSegmentMetadata =
+      useGeometry &&
+      run.segments.some((segment) => segment.canvasSegmentIndex !== undefined);
 
-      if (canonSeg.kind === "gate") {
-        // Attach gate to the most recent canvas segment
-        const precedingFlatIdx =
-          globalFlatOffset + localFlatSegments.length - 1;
+    if (hasCanvasSegmentMetadata) {
+      for (let i = 0; i < geomPts!.length - 1; i++) {
+        const p0 = geomPts![i];
+        const p1 = geomPts![i + 1];
+        const metadataSource = run.segments.find(
+          (segment) => segment.canvasSegmentIndex === i,
+        );
+        const lengthMM =
+          metadataSource?.sourceSegmentLengthMm ??
+          metadataSource?.segmentWidthMm ??
+          Math.round(Math.hypot(p1.x - p0.x, p1.y - p0.y) * 10);
+        localFlatSegments.push({
+          startX: p0.x,
+          startY: p0.y,
+          endX: p1.x,
+          endY: p1.y,
+          lengthMM,
+          angleDeg: Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / Math.PI,
+        });
+        runTotalMm += lengthMM;
+      }
+
+      for (const canonSeg of run.segments) {
+        if (canonSeg.segmentKind !== 'gate_opening') continue;
+        const localSegIdx = canonSeg.canvasSegmentIndex ?? 0;
+        if (!localFlatSegments[localSegIdx]) continue;
+        const flatIdx = globalFlatOffset + localSegIdx;
+        const positionOnSegment =
+          typeof canonSeg.positionOnSegment === 'number'
+            ? Math.max(0, Math.min(1, canonSeg.positionOnSegment))
+            : 0.9;
+        const gate = {
+          segmentIndex: flatIdx,
+          positionOnSegment,
+          anchor: canonSeg.gateAnchor ?? 'center' as CanvasGate['anchor'],
+          widthMM: canonSeg.segmentWidthMm ?? 900,
+          gateId: canonSeg.segmentId,
+          useGatePostsAsFenceTermination:
+            canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
+          ...gateVisualFromCanon(canonSeg),
+        };
+        allFlatGates.push(gate);
+        runGates.push(gate);
+      }
+
+      runCornerCount = (run.corners ?? []).length;
+      allFlatSegments.push(...localFlatSegments);
+      globalFlatOffset += localFlatSegments.length;
+      runSummaries.push({
+        label: `Run ${ri + 1}`,
+        totalLengthM: runTotalMm / 1000,
+        cornerCount: runCornerCount,
+        gates: runGates,
+      });
+      continue;
+    }
+
+    for (const canonSeg of run.segments) {
+      if (canonSeg.segmentKind === 'gate_opening') {
+        // Attach this gate to the most recent canvas segment
+        const precedingFlatIdx = globalFlatOffset + localFlatSegments.length - 1;
         if (localFlatSegments.length > 0) {
-          const gateEntry = {
+          const positionOnSegment =
+            typeof canonSeg.positionOnSegment === 'number'
+              ? Math.max(0, Math.min(1, canonSeg.positionOnSegment))
+              : 0.9;
+          const gateAnchor = canonSeg.gateAnchor ?? 'end';
+          allFlatGates.push({
             segmentIndex: precedingFlatIdx,
-            positionOnSegment: 0.9,
+            positionOnSegment,
+            anchor: gateAnchor,
             widthMM: canonSeg.segmentWidthMm ?? 900,
-          };
-          allFlatGates.push(gateEntry);
-          runGates.push(gateEntry);
+            gateId: canonSeg.segmentId,
+            useGatePostsAsFenceTermination:
+              canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
+            ...gateVisualFromCanon(canonSeg),
+          });
+          runGates.push({
+            segmentIndex: precedingFlatIdx,
+            positionOnSegment,
+            anchor: gateAnchor,
+            widthMM: canonSeg.segmentWidthMm ?? 900,
+            gateId: canonSeg.segmentId,
+            useGatePostsAsFenceTermination:
+              canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
+            ...gateVisualFromCanon(canonSeg),
+          });
         } else {
-          // No preceding segment — stub
-          const startX = useStoredAnchor ? (geomPts![0]?.x ?? 0) : 0;
-          const startY = useStoredAnchor ? (geomPts![0]?.y ?? yOrigin) : yOrigin;
+          // No preceding segment — stub to hold the gate
+          const startX = useGeometry ? (geomPts![0]?.x ?? 0) : xCursor;
+          const startY = useGeometry ? (geomPts![0]?.y ?? yOrigin) : yOrigin;
           localFlatSegments.push({
-            startX,
-            startY,
-            endX: startX + 1,
-            endY: startY,
-            lengthMM: 1,
-            angleDeg: 0,
+            startX, startY,
+            endX: startX + 1, endY: startY,
+            lengthMM: 1, angleDeg: 0,
           });
           const gateIdx = globalFlatOffset + localFlatSegments.length - 1;
-          const gateEntry = {
-            segmentIndex: gateIdx,
-            positionOnSegment: 0.5,
-            widthMM: canonSeg.segmentWidthMm ?? 900,
-          };
-          allFlatGates.push(gateEntry);
-          runGates.push(gateEntry);
+          allFlatGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900, gateId: canonSeg.segmentId, ...gateVisualFromCanon(canonSeg) });
+          runGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900, gateId: canonSeg.segmentId, ...gateVisualFromCanon(canonSeg) });
+          if (!useGeometry) xCursor += 1;
         }
       } else {
-        // Fence segment — count corners from system_corner terminations
-        const leftT = canonSeg.leftTermination;
-        if (leftT.kind === "system_corner") {
-          runCornerCount++;
-        }
-
+        // Panel, bay_group, or corner
         const widthMm = canonSeg.segmentWidthMm ?? 1000;
-        // Walk polyline from current bearing; turn using rightTermination when
-        // it encodes a structural corner (sidebar terminations drive direction).
-        const pixLen = widthMm * scale;
-        const endX = curX + Math.cos(bearingRad) * pixLen;
-        const endY = curY + Math.sin(bearingRad) * pixLen;
-        localFlatSegments.push({
-          startX: curX,
-          startY: curY,
-          endX,
-          endY,
-          lengthMM: widthMm,
-          angleDeg: (bearingRad * 180) / Math.PI,
-        });
-        curX = endX;
-        curY = endY;
-        const rt = canonSeg.rightTermination;
-        if (rt.kind === "system_corner") {
-          const signedTurn =
-            Math.sign(rt.angleDeg) * (180 - Math.abs(rt.angleDeg));
-          bearingRad += (signedTurn * Math.PI) / 180;
+        if (widthMm <= 1) {
+          fenceSegIdx++;
+          continue;
+        }
+        if (useGeometry) {
+          const sourceIdx = Math.min(fenceSegIdx, geomPts!.length - 2);
+          const sourceP0 = geomPts![sourceIdx];
+          const sourceP1 = geomPts![sourceIdx + 1];
+          const p0 =
+            localFlatSegments.length > 0
+              ? {
+                  x: localFlatSegments[localFlatSegments.length - 1].endX,
+                  y: localFlatSegments[localFlatSegments.length - 1].endY,
+                }
+              : sourceP0;
+          const hintedAngle = Number(canonSeg.variables?.geometry_angle_deg);
+          const sourceAngle =
+            Number.isFinite(hintedAngle)
+              ? (hintedAngle * Math.PI) / 180
+              : Math.atan2(sourceP1.y - sourceP0.y, sourceP1.x - sourceP0.x);
+          const targetPx = widthMm / 10; // 100px/m = 10mm per px
+          const unitX = Math.cos(sourceAngle);
+          const unitY = Math.sin(sourceAngle);
+          const p1 = {
+            x: p0.x + unitX * targetPx,
+            y: p0.y + unitY * targetPx,
+          };
+          localFlatSegments.push({
+            startX: p0.x, startY: p0.y,
+            endX: p1.x, endY: p1.y,
+            lengthMM: widthMm,
+            angleDeg: Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / Math.PI,
+          });
+        } else {
+          const widthPx = widthMm / 10; // 100px/m = 10px/mm
+          const endX = xCursor + widthPx;
+          localFlatSegments.push({
+            startX: xCursor, startY: yOrigin,
+            endX, endY: yOrigin,
+            lengthMM: widthMm, angleDeg: 0,
+          });
+          xCursor = endX;
         }
         runTotalMm += widthMm;
+        fenceSegIdx++;
       }
     }
+
+    // Count corners from the corners array (already computed per-run)
+    runCornerCount = (run.corners ?? []).length;
 
     allFlatSegments.push(...localFlatSegments);
     globalFlatOffset += localFlatSegments.length;
 
-    const title =
-      run.displayName?.trim() || `Run ${ri + 1}`;
     runSummaries.push({
-      label: title,
+      label: `Run ${ri + 1}`,
       totalLengthM: runTotalMm / 1000,
       cornerCount: runCornerCount,
       gates: runGates,
     });
   }
 
+  // Add all flat gates to the main gates list
   const totalLengthM = runSummaries.reduce((sum, r) => sum + r.totalLengthM, 0);
-  const totalCornerCount = runSummaries.reduce(
-    (sum, r) => sum + r.cornerCount,
-    0,
-  );
+  const totalCornerCount = runSummaries.reduce((sum, r) => sum + r.cornerCount, 0);
 
   return {
     segments: allFlatSegments,
@@ -768,6 +849,7 @@ export function canonicalToCanvasLayout(
     totalLengthM,
     cornerCount: totalCornerCount,
     runs: runSummaries,
-    boundaries: [],
+    boundaries: [], // canonical payload has no boundary context lines
+    textNotes: [], // canonical payload has no text annotations
   };
 }

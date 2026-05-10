@@ -1,6 +1,129 @@
-import type { CanonicalRun, CanonicalSegment } from "../types/canonical.types";
+/**
+ * Per-segment junction terminations live in `segment.variables` with stable keys.
+ * Maps UI buckets to legacy `CanonicalBoundary.type` values consumed by QSHS rules.
+ */
+import type { CanonicalSegment } from "../types/canonical.types";
 
 export const CORNER_DEGREE_OPTIONS = [90, 135] as const;
+
+export type TerminationKindUi =
+  | "corner"
+  | "system_post"
+  | "non_system_termination";
+
+export type NonSystemSubtypeUi = "wall" | "pillar" | "void" | "non_system_post";
+
+/** Legacy engine / boundary enum (matches CanonicalBoundary.type). */
+export type LegacyBoundaryType =
+  | "product_post"
+  | "brick_post"
+  | "existing_post"
+  | "wall"
+  | "corner_90";
+
+export const SEGMENT_TERMINATION_KEYS = {
+  leftKind: "left_termination_kind",
+  leftCornerDegrees: "left_corner_degrees",
+  leftCornerMeasuredDegrees: "left_corner_measured_degrees",
+  leftCornerType: "left_corner_type",
+  leftCornerManual: "left_corner_manual",
+  leftNonSystemSubtype: "left_non_system_subtype",
+  rightKind: "right_termination_kind",
+  rightCornerDegrees: "right_corner_degrees",
+  rightCornerMeasuredDegrees: "right_corner_measured_degrees",
+  rightCornerType: "right_corner_type",
+  rightCornerManual: "right_corner_manual",
+  rightNonSystemSubtype: "right_non_system_subtype",
+} as const;
+
+/** Optional segment variables for fence geometry / posts (expand panel). */
+export const SEGMENT_OPTION_KEYS = {
+  postSize: "post_size",
+  postWidthMm: "post_width_mm",
+} as const;
+
+/** Gate segment variables used by the v3 run-embedded gate workflow. */
+export const GATE_SEGMENT_STUB_KEYS = {
+  gateMovement: "gate_movement",
+  gateBuild: "gate_build",
+  leafCount: "leaf_count",
+  matchRunHeight: "match_run_height",
+  gateHeightMm: "gate_height_mm",
+  colourCode: "colour_code",
+  slatSizeMm: "slat_size_mm",
+  slatGapMm: "slat_gap_mm",
+  hingeType: "hinge_type",
+  latchType: "latch_type",
+  dropBoltType: "drop_bolt_type",
+  gateStopType: "gate_stop_type",
+  hardwareKitSku: "hardware_kit_sku",
+  includeExternalAccessKit: "include_external_access_kit",
+  includeLockBox: "include_lock_box",
+  lockBoxType: "lock_box_type",
+  useGatePostsAsFenceTermination: "use_gate_posts_as_fence_termination",
+  openingDirection: "opening_direction",
+  slidingSide: "sliding_side",
+  hingeSide: "hinge_side",
+  slidingTrackType: "sliding_track_type",
+  slidingGuideType: "sliding_guide_type",
+  slidingCatchType: "sliding_catch_type",
+  slidingMotorType: "sliding_motor_type",
+  automationEnabled: "automation_enabled",
+  automationPowerSource: "automation_power_source",
+  automationCableDistanceM: "automation_cable_distance_m",
+  automationBattery: "automation_battery",
+  automationKeypad: "automation_keypad",
+  automationExtraRemotes: "automation_extra_remotes",
+  gatePostSizeMm: "gate_post_size_mm",
+} as const;
+
+export function parseTerminationKind(
+  raw: unknown,
+): TerminationKindUi | undefined {
+  if (
+    raw === "corner" ||
+    raw === "system_post" ||
+    raw === "non_system_termination"
+  )
+    return raw;
+  return undefined;
+}
+
+export function parseNonSystemSubtype(
+  raw: unknown,
+): NonSystemSubtypeUi | undefined {
+  if (raw === "wall" || raw === "pillar" || raw === "void" || raw === "non_system_post") return raw;
+  return undefined;
+}
+
+/**
+ * Resolve effective legacy boundary type for one side of a segment.
+ * Falls back to the run boundary when segment termination is not set.
+ */
+export function effectiveLegacyBoundaryType(
+  runBoundaryType: LegacyBoundaryType,
+  vars: Record<string, string | number | boolean> | undefined,
+  side: "left" | "right",
+): LegacyBoundaryType {
+  const kindKey =
+    side === "left"
+      ? SEGMENT_TERMINATION_KEYS.leftKind
+      : SEGMENT_TERMINATION_KEYS.rightKind;
+  const kind = parseTerminationKind(vars?.[kindKey]);
+
+  if (!kind) return runBoundaryType;
+
+  if (kind === "system_post") return "product_post";
+  if (kind === "corner") return "corner_90";
+
+  const subKey =
+    side === "left"
+      ? SEGMENT_TERMINATION_KEYS.leftNonSystemSubtype
+      : SEGMENT_TERMINATION_KEYS.rightNonSystemSubtype;
+  const sub = parseNonSystemSubtype(vars?.[subKey]);
+  if (sub === "wall" || sub === "pillar" || sub === "void") return "wall";
+  return "brick_post";
+}
 
 export function patchSegmentVariables(
   seg: CanonicalSegment,
@@ -16,66 +139,39 @@ export function patchSegmentVariables(
   return { ...seg, variables: Object.keys(next).length ? next : undefined };
 }
 
-/**
- * Walk a run and return the number of system (fence) posts attributed to each
- * fence segment, keyed by segmentId.
- *
- * Rules:
- *  - `system` end       → this segment owns the end post (+1)
- *  - `non_system`       → no BOM post on that side (wall or external post)
- *  - `segment_join` on the RIGHT → this segment owns the junction post, UNLESS
- *    the next segment is a gate (gate has its own posts)
- *  - `segment_join` on the LEFT  → the post at the junction was already counted
- *    by the previous segment (or belongs to a gate) → 0
- *  - `system_corner`    → same ownership rules as segment_join
- *
- * Gate segments are skipped; they manage their own post counts via product rules.
- */
-export function walkRunForPosts(
-  run: CanonicalRun,
-  numPanelsBySegmentId: Map<string, number>,
-): Map<string, number> {
-  const result = new Map<string, number>();
-  const segs = [...run.segments].sort((a, b) => a.sortOrder - b.sortOrder);
+export function cornerDegreesFromVars(
+  vars: Record<string, string | number | boolean> | undefined,
+  side: "left" | "right",
+): number | undefined {
+  const key =
+    side === "left"
+      ? SEGMENT_TERMINATION_KEYS.leftCornerDegrees
+      : SEGMENT_TERMINATION_KEYS.rightCornerDegrees;
+  const raw = vars?.[key];
+  if (raw === undefined || raw === null) return undefined;
+  const n = typeof raw === "number" ? raw : Number(raw);
+  return Number.isFinite(n) ? n : undefined;
+}
 
-  for (let i = 0; i < segs.length; i++) {
-    const seg = segs[i];
-    if (seg.kind !== "fence") continue;
+export type CornerType = "right" | "obtuse" | "custom";
 
-    const numPanels = numPanelsBySegmentId.get(seg.segmentId) ?? 1;
-    const next = segs[i + 1];
+export function classifyCorner(angleDeg: number): CornerType {
+  if (Math.abs(angleDeg - 90) <= 2) return "right";
+  if (Math.abs(angleDeg - 135) <= 5) return "obtuse";
+  return "custom";
+}
 
-    // Start with intermediate posts only (panels minus the two end slots)
-    let posts = numPanels - 1;
+export function cornerTypeFromVars(
+  vars: Record<string, string | number | boolean> | undefined,
+  side: "left" | "right",
+): CornerType | undefined {
+  const typeKey =
+    side === "left"
+      ? SEGMENT_TERMINATION_KEYS.leftCornerType
+      : SEGMENT_TERMINATION_KEYS.rightCornerType;
+  const rawType = vars?.[typeKey];
+  if (rawType === "right" || rawType === "obtuse" || rawType === "custom") return rawType;
 
-    // ── Left end ──────────────────────────────────────────────────────────
-    const lt = seg.leftTermination;
-    if (lt.kind === "system") {
-      posts += 1;
-    } else if (lt.kind === "segment_join" || lt.kind === "system_corner") {
-      // Previous segment (if fence) already owns this junction post → 0.
-      // Previous gate → gate owns it → 0 either way.
-      posts += 0;
-    }
-    // non_system (wall/external post) → 0
-
-    // ── Right end ─────────────────────────────────────────────────────────
-    const rt = seg.rightTermination;
-    if (rt.kind === "system") {
-      posts += 1;
-    } else if (rt.kind === "segment_join" || rt.kind === "system_corner") {
-      // This fence is to the LEFT of the junction. It owns the post UNLESS the
-      // next segment is a gate (which uses its own gate-post product).
-      if (next && next.kind === "gate") {
-        posts += 0;
-      } else {
-        posts += 1;
-      }
-    }
-    // non_system → 0
-
-    result.set(seg.segmentId, Math.max(0, posts));
-  }
-
-  return result;
+  const degrees = cornerDegreesFromVars(vars, side);
+  return degrees === undefined ? undefined : classifyCorner(degrees);
 }

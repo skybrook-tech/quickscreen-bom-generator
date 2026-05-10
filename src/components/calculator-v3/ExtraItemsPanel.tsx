@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { PlusCircle, Trash2, X } from 'lucide-react';
 import type { ExtraItem } from '../../types/bom.types';
 import { useProductSearch } from '../../hooks/useProductSearch';
-import { Input } from '../ui/Input';
-import { Button } from '../ui/Button';
 
 interface ExtraItemsPanelProps {
   items: ExtraItem[];
@@ -129,13 +127,14 @@ export function ExtraItemsPanel({ items, onAdd, onRemove }: ExtraItemsPanelProps
               <span className="tabular-nums font-medium text-brand-text not-italic">
                 ${(item.unitPrice * item.quantity).toFixed(2)}
               </span>
-              <Button
-                icon={Trash2}
-                variant="ghost-danger"
-                size="small"
+              <button
+                type="button"
                 onClick={() => onRemove(item.id)}
-                className="shrink-0"
-              />
+                aria-label="Remove extra item"
+                className="p-1 rounded text-brand-muted hover:text-brand-danger hover:bg-brand-danger/10 transition-colors"
+              >
+                <Trash2 size={16} />
+              </button>
             </li>
           ))}
         </ul>
@@ -147,7 +146,7 @@ export function ExtraItemsPanel({ items, onAdd, onRemove }: ExtraItemsPanelProps
           <label className="block text-xs text-brand-muted mb-1">
             {createMode ? 'Description (new item)' : 'Search SKU / description'}
           </label>
-          <Input
+          <input
             ref={inputRef}
             type="text"
             placeholder={createMode ? 'e.g. Site labour — 2 hours' : 'Type SKU or description…'}
@@ -166,7 +165,7 @@ export function ExtraItemsPanel({ items, onAdd, onRemove }: ExtraItemsPanelProps
             }}
             onKeyDown={handleKeyDown}
             data-testid="extra-items-search"
-            className="w-full bg-brand-bg rounded-md placeholder:text-brand-muted/60"
+            className="w-full px-2.5 py-1.5 bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text placeholder:text-brand-muted/60 focus:outline-none focus:ring-1 focus:ring-brand-accent/50 focus:border-brand-accent transition-colors"
           />
 
           {showDropdown && !createMode && (
@@ -227,32 +226,32 @@ export function ExtraItemsPanel({ items, onAdd, onRemove }: ExtraItemsPanelProps
         {createMode && (
           <div className="min-w-40">
             <label className="block text-xs text-brand-muted mb-1">SKU (optional)</label>
-            <Input
+            <input
               type="text"
               value={sku}
               onChange={(e) => setSku(e.target.value)}
               placeholder="EXTRA-…"
-              className="w-full bg-brand-bg rounded-md placeholder:text-brand-muted/60"
+              className="w-full px-2.5 py-1.5 bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text placeholder:text-brand-muted/60 focus:outline-none focus:ring-1 focus:ring-brand-accent/50 focus:border-brand-accent transition-colors"
             />
           </div>
         )}
 
         <div>
           <label className="block text-xs text-brand-muted mb-1">Qty</label>
-          <Input
+          <input
             type="number"
             min="1"
             step="1"
             value={qty}
             onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
             onKeyDown={handleKeyDown}
-            className="w-20 bg-brand-bg rounded-md text-right tabular-nums"
+            className="w-20 px-2.5 py-1.5 bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text text-right tabular-nums focus:outline-none focus:ring-1 focus:ring-brand-accent/50 focus:border-brand-accent transition-colors"
           />
         </div>
 
         <div>
           <label className="block text-xs text-brand-muted mb-1">Unit price ($)</label>
-          <Input
+          <input
             type="number"
             min="0"
             step="0.01"
@@ -262,33 +261,35 @@ export function ExtraItemsPanel({ items, onAdd, onRemove }: ExtraItemsPanelProps
               setUnitPrice(isNaN(n) ? '' : n);
             }}
             onKeyDown={handleKeyDown}
-            className="w-28 bg-brand-bg rounded-md text-right tabular-nums"
+            className="w-28 px-2.5 py-1.5 bg-brand-bg border border-brand-border rounded-md text-sm text-brand-text text-right tabular-nums focus:outline-none focus:ring-1 focus:ring-brand-accent/50 focus:border-brand-accent transition-colors"
           />
         </div>
 
-        <Button
-          icon={PlusCircle}
-          variant="primary"
+        <button
+          type="button"
           onClick={handleAdd}
           disabled={!canAdd}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-accent hover:bg-brand-accent/90 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-medium rounded-md transition-colors whitespace-nowrap"
           data-testid="extra-items-add"
-          className="whitespace-nowrap"
         >
+          <PlusCircle size={16} />
           Add
-        </Button>
+        </button>
 
         {createMode && (
-          <Button
-            icon={X}
-            variant="secondary"
-            size="small"
+          <button
+            type="button"
             onClick={() => {
               setCreateMode(false);
               setDesc('');
               setSku('');
               setUnitPrice('');
             }}
-          />
+            aria-label="Cancel new item"
+            className="p-1.5 text-brand-muted hover:text-brand-text transition-colors"
+          >
+            <X size={16} />
+          </button>
         )}
       </div>
     </div>

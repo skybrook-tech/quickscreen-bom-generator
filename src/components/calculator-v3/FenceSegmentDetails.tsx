@@ -1,39 +1,81 @@
-import { useMemo } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import type { SegmentDiagnostic } from "../../types/bom.types";
-import { patchSegmentVariables } from "../../lib/segmentTermination";
-import { BOMWarningsPanel } from "./BOMWarningsPanel";
-
-const POST_SIZE_KEY = "post_size";
-const POST_WIDTH_MM_KEY = "post_width_mm";
+import {
+  applyProductOptionRules,
+  clampPostSpacing,
+  MAX_POST_SPACING_MM,
+  maxPanelWidthForSystem,
+  MIN_POST_SPACING_MM,
+} from "../../lib/productOptionRules";
+import {
+  SEGMENT_TERMINATION_KEYS,
+  SEGMENT_OPTION_KEYS,
+  cornerTypeFromVars,
+  patchSegmentVariables,
+} from "../../lib/segmentTermination";
 import { SchemaDrivenForm } from "./SchemaDrivenForm";
+import NumberInput from "../shared/NumberInput";
 import { TerminationControl } from "./TerminationControl";
-import NumberInput from "../ui/NumberInput";
-import { Select } from "../ui/Select";
 
 const POST_SIZE_LABELS: Record<string, string> = {
-  "50": "50×50 System Post",
-  "65": "65×65 HD Post",
+  "50": "50mm Post Standard",
+  "65": "65mm Post Standard HD",
 };
+
+const CORNER_TYPE_OPTIONS = [
+  { value: "right", label: "90 degree" },
+  { value: "obtuse", label: "135 degree adapter" },
+  { value: "custom", label: "Custom - verify" },
+] as const;
 
 interface Props {
   runId: string;
   seg: CanonicalSegment;
-  diagnostics?: SegmentDiagnostic[];
 }
 
-export function FenceSegmentDetails({ runId, seg, diagnostics = [] }: Props) {
+function SettingsSection({
+  title,
+  summary,
+  children,
+  defaultOpen = false,
+}: {
+  title: string;
+  summary?: string;
+  children: ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <div className="rounded-2xl border border-brand-border/60 bg-brand-bg/60">
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm font-extrabold text-brand-text"
+      >
+        <span>{title}</span>
+        <span className="flex min-w-0 items-center gap-2 text-xs font-bold text-brand-primary">
+          {!open && summary ? (
+            <span className="max-w-[11rem] truncate rounded-full bg-brand-card px-2 py-0.5 text-brand-muted">
+              {summary}
+            </span>
+          ) : null}
+          <span>{open ? "Hide" : "Show"}</span>
+        </span>
+      </button>
+      {open && <div className="space-y-3 border-t border-brand-border/50 p-3">{children}</div>}
+    </div>
+  );
+}
+
+export function FenceSegmentDetails({ runId, seg }: Props) {
   const { state, dispatch } = useCalculator();
-  const productCode = state.payload?.productCode ?? null;
+  const run = state.payload?.runs.find((item) => item.runId === runId);
+  const productCode = run?.productCode ?? state.payload?.productCode ?? null;
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
   const { data: runFields = [] } = useProductVariables(productCode, "run");
-
-  const jobFieldKeys = useMemo(
-    () => new Set(jobFields.map((f) => f.field_key)),
-    [jobFields],
-  );
 
   // Post size options from the run-scoped post_size variable
   const postSizeOptions = useMemo(() => {
@@ -43,8 +85,58 @@ export function FenceSegmentDetails({ runId, seg, diagnostics = [] }: Props) {
   }, [runFields]);
 
   const v = seg.variables ?? {};
-  const postSize = (v[POST_SIZE_KEY] as string) ?? "";
+  const runVariables = {
+    ...(state.payload?.variables ?? {}),
+    ...(run?.variables ?? {}),
+  };
+  const displayVariables = {
+    ...runVariables,
+    ...v,
+  };
+  const fenceSegments = run?.segments.filter((segment) => segment.segmentKind !== "gate_opening") ?? [];
+  const segmentIndex = fenceSegments.findIndex((segment) => segment.segmentId === seg.segmentId);
+  const leftEndReadOnly = segmentIndex > 0 && !v.left_termination_kind;
+  const rightEndReadOnly = segmentIndex >= 0 && segmentIndex < fenceSegments.length - 1 && !v.right_termination_kind;
+  const postSize = (displayVariables[SEGMENT_OPTION_KEYS.postSize] as string) ?? "";
   const isCustomPost = postSize === "custom";
+  const isBayg = productCode === "BAYG";
+  const cornerControls = (["left", "right"] as const)
+    .map((side) => {
+      const kindKey =
+        side === "left"
+          ? SEGMENT_TERMINATION_KEYS.leftKind
+          : SEGMENT_TERMINATION_KEYS.rightKind;
+      const degreesKey =
+        side === "left"
+          ? SEGMENT_TERMINATION_KEYS.leftCornerDegrees
+          : SEGMENT_TERMINATION_KEYS.rightCornerDegrees;
+      const measuredKey =
+        side === "left"
+          ? SEGMENT_TERMINATION_KEYS.leftCornerMeasuredDegrees
+          : SEGMENT_TERMINATION_KEYS.rightCornerMeasuredDegrees;
+      const typeKey =
+        side === "left"
+          ? SEGMENT_TERMINATION_KEYS.leftCornerType
+          : SEGMENT_TERMINATION_KEYS.rightCornerType;
+      const manualKey =
+        side === "left"
+          ? SEGMENT_TERMINATION_KEYS.leftCornerManual
+          : SEGMENT_TERMINATION_KEYS.rightCornerManual;
+      const type = cornerTypeFromVars(v, side);
+      const degrees = Number(v[measuredKey] ?? v[degreesKey]);
+      if (v[kindKey] !== "corner" && !type) return null;
+      return { side, kindKey, degreesKey, measuredKey, typeKey, manualKey, type, degrees };
+    })
+    .filter(Boolean) as Array<{
+      side: "left" | "right";
+      kindKey: string;
+      degreesKey: string;
+      measuredKey: string;
+      typeKey: string;
+      manualKey: string;
+      type: "right" | "obtuse" | "custom" | undefined;
+      degrees: number;
+    }>;
 
   function upsertSegment(s: CanonicalSegment) {
     dispatch({ type: "UPSERT_SEGMENT", runId, segment: s });
@@ -55,104 +147,226 @@ export function FenceSegmentDetails({ runId, seg, diagnostics = [] }: Props) {
   }
 
   function onJobOverrideChange(key: string, value: string | number | boolean) {
-    const base = state.payload?.variables[key];
+    const base = runVariables[key];
     upsertSegment(
       patchSegmentVariables(seg, { [key]: value === base ? null : value }),
     );
   }
 
-  const jobMax = Number(state.payload?.variables.max_panel_width_mm ?? 2600);
-  const effectiveMax = Number(v.max_panel_width_mm ?? jobMax);
+  const jobMax = clampPostSpacing(
+    state.payload?.variables.max_panel_width_mm,
+    maxPanelWidthForSystem(productCode),
+  );
+  const effectiveMax = clampPostSpacing(v.max_panel_width_mm, jobMax);
+  const [maxSpacingDraft, setMaxSpacingDraft] = useState(String(effectiveMax));
+  useEffect(() => {
+    setMaxSpacingDraft(String(effectiveMax));
+  }, [effectiveMax]);
 
   function updateMaxPanelWidth(value: number | null) {
-    upsertSegment(patchSegmentVariables(seg, { max_panel_width_mm: value }));
+    const nextValue = value === null ? null : clampPostSpacing(value, jobMax);
+    upsertSegment(patchSegmentVariables(seg, { max_panel_width_mm: nextValue }));
+  }
+
+  function commitMaxPanelWidth(value = maxSpacingDraft) {
+    const nextValue = Number(value);
+    if (!Number.isFinite(nextValue)) {
+      setMaxSpacingDraft(String(effectiveMax));
+      return;
+    }
+    const clamped = clampPostSpacing(nextValue, jobMax);
+    setMaxSpacingDraft(String(clamped));
+    updateMaxPanelWidth(clamped);
   }
 
   const mergedJobDisplay: Record<string, string | number | boolean> = {
-    ...(state.payload?.variables ?? {}),
-    ...v,
+    ...displayVariables,
   };
+  const optionFields = useMemo(
+    () =>
+      productCode
+        ? applyProductOptionRules(
+            productCode,
+            jobFields.filter(
+              (field) =>
+                !field.field_key.endsWith("_stock_length_mm") &&
+                field.field_key !== "max_panel_width_mm" &&
+                field.field_key !== "louvre_treatment",
+            ),
+            mergedJobDisplay,
+          )
+        : [],
+    [jobFields, mergedJobDisplay, productCode],
+  );
+  const optionSummary = optionFields
+    .map((field) => {
+      const raw = mergedJobDisplay[field.field_key] ?? field.default_value_json;
+      if (raw === undefined || raw === null || raw === "") return null;
+      const label =
+        raw === true
+          ? "Yes"
+          : raw === false
+            ? "No"
+            : `${raw}${field.unit ?? ""}`;
+      return `${field.label}: ${label}`;
+    })
+    .filter(Boolean)
+    .slice(0, 2)
+    .join(" / ");
+  function handleOptionChange(key: string, value: string | number | boolean) {
+    onJobOverrideChange(key, value);
+  }
 
   return (
     <div className="space-y-4">
-      {diagnostics.length > 0 && (
-        <BOMWarningsPanel
-          errors={diagnostics.filter((d) => d.severity === "error").map((d) => d.message)}
-          warnings={diagnostics.filter((d) => d.severity === "warning").map((d) => d.message)}
-          assumptions={diagnostics.filter((d) => d.severity === "info").map((d) => d.message)}
-        />
+          {optionFields.length > 0 ? (
+            <SettingsSection title="Slats, colors, and spacings" summary={optionSummary || "Run defaults"}>
+              {optionFields.length > 0 && (
+                <SchemaDrivenForm
+                  fields={optionFields}
+                  variables={mergedJobDisplay}
+                  onChange={handleOptionChange}
+                />
+              )}
+            </SettingsSection>
+          ) : null}
+
+      {!isBayg && (
+      <SettingsSection title="End conditions" summary="Left / right ends">
+            <div className="grid gap-3 lg:grid-cols-2">
+              <TerminationControl
+                runId={runId}
+                seg={seg}
+                side="left"
+                readOnly={leftEndReadOnly}
+              />
+              <TerminationControl
+                runId={runId}
+                seg={seg}
+                side="right"
+                readOnly={rightEndReadOnly}
+              />
+            </div>
+      </SettingsSection>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {/* Max panel width override */}
-        <label className="flex flex-col gap-1">
-          <span className="text-brand-muted text-xs">Max panel width (mm)</span>
-          <NumberInput
-            value={effectiveMax}
-            onChange={(v) => updateMaxPanelWidth(v)}
-            min={300}
-            max={2600}
-            step={50}
-          />
-        </label>
 
-        {/* Post type — data-driven from run-scoped post_size variable */}
-        <label className="flex flex-col gap-1">
-          <span className="text-brand-muted text-xs">Post type</span>
-          <Select
-            value={postSize}
-            onChange={(e) =>
-              setScalar(POST_SIZE_KEY, e.target.value || null)
-            }
-            className="bg-brand-bg"
-          >
-            <option value="">— Job default —</option>
-            {postSizeOptions.map((opt) => (
-              <option key={opt} value={opt}>
-                {POST_SIZE_LABELS[opt] ?? `${opt}mm Post`}
-              </option>
-            ))}
-            <option value="custom">(Non-system post)</option>
-          </Select>
-        </label>
+          {cornerControls.length > 0 && (
+            <SettingsSection title="Corners" summary={`${cornerControls.length} corner${cornerControls.length === 1 ? "" : "s"}`}>
+              <div className="space-y-3">
+                {cornerControls.map((corner) => (
+                  <label key={corner.side} className="flex flex-col gap-1">
+                    <span className="text-sm font-bold capitalize text-brand-muted">
+                      {corner.side} corner
+                      {Number.isFinite(corner.degrees)
+                        ? ` (${Math.round(corner.degrees)} degrees detected)`
+                        : ""}
+                    </span>
+                    <select
+                      value={corner.type ?? "right"}
+                      onChange={(event) => {
+                        const nextType = event.target.value;
+                        const nextDegrees =
+                          nextType === "obtuse"
+                            ? 135
+                            : nextType === "right"
+                              ? 90
+                              : Number.isFinite(corner.degrees)
+                                ? Math.round(corner.degrees)
+                                : 100;
+                        upsertSegment(
+                          patchSegmentVariables(seg, {
+                            [corner.kindKey]: "corner",
+                            [corner.typeKey]: nextType,
+                            [corner.degreesKey]: nextDegrees,
+                            [corner.measuredKey]: Number.isFinite(corner.degrees)
+                              ? Math.round(corner.degrees)
+                              : nextDegrees,
+                            [corner.manualKey]: true,
+                          }),
+                        );
+                      }}
+                      className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+                    >
+                      {CORNER_TYPE_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                    <span className="text-xs font-semibold text-brand-muted">
+                      Manual selection stays in place until the layout is reset.
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </SettingsSection>
+          )}
 
-        {/* Post width — only unlocked for non-system posts */}
-        {isCustomPost && (
+      {!isBayg && (
+      <SettingsSection title="Posts" summary={POST_SIZE_LABELS[postSize] ?? (postSize ? `${postSize}mm Post` : "Run default")}>
+            <label className="flex flex-col gap-1">
+              <span className="text-sm font-bold text-brand-muted">Post type</span>
+              <select
+                value={postSize}
+                onChange={(e) =>
+                  setScalar(
+                    SEGMENT_OPTION_KEYS.postSize,
+                    e.target.value || null,
+                  )
+                }
+                className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+              >
+                <option value="">Job default</option>
+                {postSizeOptions.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {POST_SIZE_LABELS[opt] ?? `${opt}mm Post`}
+                  </option>
+                ))}
+                <option value="custom">Non-standard post</option>
+              </select>
+            </label>
+      </SettingsSection>
+      )}
+
+      {!isBayg && isCustomPost && (
+        <SettingsSection
+          title="Custom post width"
+          summary={`${v[SEGMENT_OPTION_KEYS.postWidthMm] ?? "Not set"}mm`}
+        >
           <label className="flex flex-col gap-1">
-            <span className="text-brand-muted text-xs">Post width (mm)</span>
+            <span className="text-sm font-bold text-brand-muted">Post width (mm)</span>
             <NumberInput
-              value={
-                (v[POST_WIDTH_MM_KEY] as number | null) ?? null
-              }
+              value={(v[SEGMENT_OPTION_KEYS.postWidthMm] as number | null) ?? null}
               onChange={(val) =>
-                setScalar(POST_WIDTH_MM_KEY, val)
+                setScalar(SEGMENT_OPTION_KEYS.postWidthMm, val)
               }
               min={1}
             />
           </label>
-        )}
-      </div>
-
-      {jobFields.length > 0 && (
-        <div>
-          <p className="text-xs text-brand-muted mb-2 font-medium">
-            Job settings override (this segment)
-          </p>
-          <SchemaDrivenForm
-            fields={jobFields}
-            variables={mergedJobDisplay}
-            onChange={(key, value) => {
-              if (!jobFieldKeys.has(key)) return;
-              onJobOverrideChange(key, value);
-            }}
-          />
-        </div>
+        </SettingsSection>
       )}
 
-      <div className="grid grid-cols-2 gap-3">
-        {(["left", "right"] as const).map((side) => (
-          <TerminationControl key={side} runId={runId} seg={seg} side={side} />
-        ))}
-      </div>
+      {!isBayg && (
+      <SettingsSection title="Post spacing" summary={`${effectiveMax}mm`}>
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
+          <input
+            type="number"
+            value={maxSpacingDraft}
+            onChange={(event) => setMaxSpacingDraft(event.target.value)}
+            onBlur={() => commitMaxPanelWidth()}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") event.currentTarget.blur();
+            }}
+            min={MIN_POST_SPACING_MM}
+            max={MAX_POST_SPACING_MM}
+            step={50}
+            className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+          />
+        </label>
+      </SettingsSection>
+      )}
+
     </div>
   );
 }

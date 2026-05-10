@@ -1,9 +1,20 @@
+import { GATE_SEGMENT_STUB_KEYS } from "./segmentTermination";
+
 export type GateMovement = "single_swing" | "double_swing" | "sliding";
 export type GateBuild =
   | "qsg_hinged_horizontal"
   | "qsg_hinged_vertical"
   | "qsg_sliding_horizontal"
   | "qsg_sliding_vertical";
+
+export type GateLeafGeometry = {
+  movement: GateMovement;
+  leafCount: number;
+  leafWidthMm: number;
+  totalClearanceMm: number;
+  hingeClearanceMm: number;
+  latchClearanceMm: number;
+};
 
 export type GateOption = {
   value: string;
@@ -14,9 +25,18 @@ export type GateOption = {
 };
 
 export const GATE_MOVEMENTS: GateOption[] = [
-  { value: "single_swing", label: "Single swing" },
-  { value: "double_swing", label: "Double swing" },
-  { value: "sliding", label: "Sliding" },
+  {
+    value: "single_swing",
+    label: "Single swing",
+  },
+  {
+    value: "double_swing",
+    label: "Double swing",
+  },
+  {
+    value: "sliding",
+    label: "Sliding",
+  },
 ];
 
 export const GATE_BUILDS: GateOption[] = [
@@ -116,16 +136,84 @@ export const SLIDING_MOTOR_OPTIONS: GateOption[] = [
   { value: "XPSG-FILO-400PRO-SP", label: "FILO 400 Pro split-pack motor kit", sku: "XPSG-FILO-400PRO-SP" },
 ];
 
+export function normalizeGateMovement(value: unknown): GateMovement | undefined {
+  if (typeof value !== "string") return undefined;
+  const normalised = value.trim().toLowerCase().replace(/[\s-]+/g, "_");
+  if (
+    normalised === "single_swing" ||
+    normalised === "single_gate" ||
+    normalised === "single" ||
+    normalised === "swing"
+  ) {
+    return "single_swing";
+  }
+  if (
+    normalised === "double_swing" ||
+    normalised === "double_gate" ||
+    normalised === "double" ||
+    normalised === "double_swing_gate"
+  ) {
+    return "double_swing";
+  }
+  if (
+    normalised === "sliding" ||
+    normalised === "slide" ||
+    normalised === "sliding_gate" ||
+    normalised === "slider"
+  ) {
+    return "sliding";
+  }
+  return undefined;
+}
+
 export function isGateMovement(value: unknown): value is GateMovement {
-  return GATE_MOVEMENTS.some((option) => option.value === value);
+  return normalizeGateMovement(value) !== undefined;
 }
 
 export function gateMovementOrDefault(value: unknown): GateMovement {
-  return isGateMovement(value) ? value : "single_swing";
+  return normalizeGateMovement(value) ?? "single_swing";
 }
 
 export function isSwingGateMovement(value: GateMovement) {
   return value === "single_swing" || value === "double_swing";
+}
+
+export function gateLeafGeometry({
+  movement,
+  openingWidthMm,
+  hingeGapMm,
+  latchGapMm,
+}: {
+  movement: unknown;
+  openingWidthMm: number;
+  hingeGapMm: number;
+  latchGapMm: number;
+}): GateLeafGeometry {
+  const normalisedMovement = gateMovementOrDefault(movement);
+  if (normalisedMovement === "sliding") {
+    return {
+      movement: normalisedMovement,
+      leafCount: 1,
+      leafWidthMm: Math.max(1, openingWidthMm),
+      totalClearanceMm: 0,
+      hingeClearanceMm: 0,
+      latchClearanceMm: 0,
+    };
+  }
+
+  const leafCount = normalisedMovement === "double_swing" ? 2 : 1;
+  const hingeClearanceMm = normalisedMovement === "double_swing" ? hingeGapMm * 2 : hingeGapMm;
+  const latchClearanceMm = latchGapMm;
+  const totalClearanceMm = hingeClearanceMm + latchClearanceMm;
+
+  return {
+    movement: normalisedMovement,
+    leafCount,
+    leafWidthMm: Math.max(1, (openingWidthMm - totalClearanceMm) / leafCount),
+    totalClearanceMm,
+    hingeClearanceMm,
+    latchClearanceMm,
+  };
 }
 
 export function gateBuildsForMovement(movement: GateMovement) {
@@ -144,9 +232,48 @@ export function defaultGateBuildForMovement(
   return vertical ? "qsg_hinged_vertical" : "qsg_hinged_horizontal";
 }
 
+export function defaultGateVariables(
+  runVariables: Record<string, unknown> = {},
+  targetHeightMm = 1800,
+) {
+  const colour = String(runVariables.colour_code ?? runVariables.colour ?? "B");
+  const slatGap = Number(runVariables.slat_gap_mm ?? 9);
+  const vertical = runVariables.productCode === "VS";
+  const postSize = Number(runVariables.post_size ?? 50);
+  return {
+    [GATE_SEGMENT_STUB_KEYS.gateMovement]: "single_swing",
+    [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement("single_swing", vertical),
+    [GATE_SEGMENT_STUB_KEYS.leafCount]: 1,
+    [GATE_SEGMENT_STUB_KEYS.matchRunHeight]: true,
+    [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: targetHeightMm,
+    [GATE_SEGMENT_STUB_KEYS.colourCode]: colour,
+    [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(runVariables.slat_size_mm ?? 65),
+    [GATE_SEGMENT_STUB_KEYS.slatGapMm]: slatGap,
+    [GATE_SEGMENT_STUB_KEYS.hingeType]: "TC-H-AT-HD-B",
+    [GATE_SEGMENT_STUB_KEYS.latchType]: "LL-DL-KA",
+    [GATE_SEGMENT_STUB_KEYS.dropBoltType]: "none",
+    [GATE_SEGMENT_STUB_KEYS.gateStopType]: "none",
+    [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
+    [GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit]: false,
+    [GATE_SEGMENT_STUB_KEYS.includeLockBox]: false,
+    [GATE_SEGMENT_STUB_KEYS.lockBoxType]: "",
+    [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]: true,
+    [GATE_SEGMENT_STUB_KEYS.openingDirection]: "out",
+    [GATE_SEGMENT_STUB_KEYS.slidingSide]: "front",
+    [GATE_SEGMENT_STUB_KEYS.slidingTrackType]: "XPSG-6000-TRACK-ST",
+    [GATE_SEGMENT_STUB_KEYS.slidingGuideType]: "XPSG-GUIDE",
+    [GATE_SEGMENT_STUB_KEYS.slidingCatchType]: "XPSG-CATCH-U",
+    [GATE_SEGMENT_STUB_KEYS.slidingMotorType]: "none",
+    [GATE_SEGMENT_STUB_KEYS.automationEnabled]: false,
+    [GATE_SEGMENT_STUB_KEYS.automationPowerSource]: "mains",
+    [GATE_SEGMENT_STUB_KEYS.automationCableDistanceM]: 0,
+    [GATE_SEGMENT_STUB_KEYS.automationBattery]: false,
+    [GATE_SEGMENT_STUB_KEYS.automationKeypad]: false,
+    [GATE_SEGMENT_STUB_KEYS.automationExtraRemotes]: 0,
+    [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: postSize,
+  };
+}
+
 export function optionLabel(options: GateOption[], value: unknown) {
-  return (
-    options.find((option) => option.value === value)?.label ??
-    String(value ?? "")
-  );
+  return options.find((option) => option.value === value)?.label ?? String(value ?? "");
 }

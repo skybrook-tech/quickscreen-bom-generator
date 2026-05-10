@@ -8,12 +8,21 @@ export interface CanvasSegment {
   endY: number;
   lengthMM: number; // real-world length in mm (user-editable)
   angleDeg: number; // angle from horizontal
+  contextType?: "boundary" | "building";
 }
+
+export type GateAnchor = "start" | "center" | "end";
 
 export interface CanvasGate {
   segmentIndex: number;
-  positionOnSegment: number; // 0–1 fraction along segment
+  positionOnSegment: number; // 0-1 fraction along segment
+  anchor?: GateAnchor;
   widthMM: number;
+  gateId?: string;
+  useGatePostsAsFenceTermination?: boolean;
+  gateType?: CanvasGateType;
+  swingDirection?: CanvasGateSwingDirection;
+  slidingSide?: CanvasGateSlidingSide;
 }
 
 export interface CanvasRunSummary {
@@ -21,6 +30,12 @@ export interface CanvasRunSummary {
   totalLengthM: number;
   cornerCount: number;
   gates: CanvasGate[];
+  sections?: Array<{
+    label: string;
+    lengthM: number;
+    panelCount: number;
+    gateCount: number;
+  }>;
 }
 
 export interface CanvasLayout {
@@ -31,6 +46,10 @@ export interface CanvasLayout {
   runs: CanvasRunSummary[];
   /** Non-product boundary lines (neighbouring fences, property lines, etc.). Ignored by canonicalAdapter. */
   boundaries: CanvasSegment[];
+  /** Free text notes placed by the user on the map. Ignored by canonicalAdapter. */
+  textNotes?: CanvasTextNote[];
+  /** Existing posts and pillars placed as site context. Ignored by canonicalAdapter. */
+  siteMarkers?: CanvasSiteMarker[];
 }
 
 export interface CanvasEngineConfig {
@@ -45,6 +64,8 @@ export interface CanvasEngineConfig {
     segIdx: number,
     gateIdx: number,
     defaultWidthMM: number,
+    gateType?: CanvasGateType,
+    slidingSide?: CanvasGateSlidingSide,
   ) => void;
   /** Called when the user clicks (not drags) an existing gate marker — open its editor */
   onGateEdit?: (
@@ -53,25 +74,31 @@ export interface CanvasEngineConfig {
     gateId: string | undefined,
     currentWidthMM: number,
   ) => void;
-  /**
-   * Called when the user right-clicks a fence/gate segment. Receives the flat
-   * segment index and screen-space coordinates so React can render a popover
-   * anchored at the cursor. Suppresses the canvas pan when a segment is hit.
-   */
-  onSegmentContextMenu?: (
-    flatSegIdx: number,
-    screenX: number,
-    screenY: number,
-  ) => void;
-  /** Fired after `loadLayout` replaces canvas state (form→canvas sync). Does not run on user edits — those use `onLayoutChange`. */
-  onRunSummariesRefresh?: (runs: CanvasRunSummary[]) => void;
-  /** Flat fence-segment index under cursor changed (-1 = none). For layout ↔ list hover sync. */
-  onFlatSegmentHoverChange?: (flatSegIdx: number) => void;
-  /**
-   * Left-click on an existing fence segment while draw tool is idle (not continuing a chain).
-   * Used to select/open the segment in the run list instead of starting a new run.
-   */
-  onFenceSegmentClick?: (flatSegIdx: number) => void;
+}
+
+export type CanvasGateType = "single-swing" | "double-swing" | "sliding";
+export type CanvasGateSwingDirection = "in" | "out" | "left" | "right";
+export type CanvasGateSlidingSide = "front" | "back";
+
+export interface CanvasGateVisual {
+  gateType: CanvasGateType;
+  swingDirection?: CanvasGateSwingDirection;
+  slidingSide?: CanvasGateSlidingSide;
+}
+
+export interface CanvasTextNote {
+  x: number;
+  y: number;
+  text: string;
+  width?: number;
+  height?: number;
+}
+
+export interface CanvasSiteMarker {
+  x: number;
+  y: number;
+  markerType: "post" | "pillar";
+  label?: string;
 }
 
 // ── Internal state types ──────────────────────────────────────────────────────
@@ -81,6 +108,13 @@ interface Point {
   y: number;
 }
 
+interface CanvasPointerLike {
+  button: number;
+  clientX: number;
+  clientY: number;
+  preventDefault: () => void;
+}
+
 interface Segment {
   p1: Point;
   p2: Point;
@@ -88,13 +122,26 @@ interface Segment {
   gates: GateMarker[];
 }
 
-interface GateMarker {
-  t: number; // 0–1 along segment
-  widthMM: number;
-  gateId?: string; // matches the GateConfig.id in GateContext once the gate is saved
+interface SegmentMapLabel {
+  text: string;
+  t: number;
+  tStart: number;
+  tEnd: number;
+  kind: "panel" | "gate";
 }
 
-type Tool = "draw" | "gate" | "move" | "boundary";
+interface GateMarker {
+  t: number; // 0-1 along segment
+  anchor?: GateAnchor;
+  widthMM: number;
+  gateId?: string; // matches the GateConfig.id in GateContext once the gate is saved
+  useGatePostsAsFenceTermination?: boolean;
+  gateType?: CanvasGateType;
+  swingDirection?: CanvasGateSwingDirection;
+  slidingSide?: CanvasGateSlidingSide;
+}
+
+type Tool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar";
 
 type UndoAction =
   | { type: "ADD_POINT"; runIdx: number }
@@ -105,13 +152,25 @@ type UndoAction =
   | { type: "CLEAR"; runs: Run[]; scale: number }
   | { type: "CHAIN_POINT"; prevRunIdx: number; newRunIdx: number };
 
+interface CanvasSnapshot {
+  runs: Run[];
+  scale: number;
+  activeRunIdx: number;
+  textNotes: CanvasTextNote[];
+  siteMarkers: CanvasSiteMarker[];
+}
+
+interface RedoEntry {
+  action: UndoAction;
+  snapshot: CanvasSnapshot;
+}
+
 interface Run {
   points: Point[];
   finished: boolean;
   segments: Segment[];
   isBoundary?: boolean;
-  /** Canvas/list title from canonical displayName or "Run n" — drives segment labels. */
-  displayLabel?: string;
+  boundaryType?: "boundary" | "building";
 }
 
 // ── Scale constant: pixels per metre ──────────────────────────────────────────
@@ -358,14 +417,45 @@ function closestPointOnSegment(
   return { point: proj, t, d: dist(p, proj) };
 }
 
-/** Gate centre parameter t along segment [0,1], staying inside so the gap fits on the segment. */
-function clampGateCenterT(t: number, widthMM: number, lengthMM: number): number {
-  if (lengthMM <= 0) return Math.max(0, Math.min(1, t));
-  const half = (widthMM / lengthMM) / 2;
-  if (half >= 0.5) return 0.5;
-  const lo = half;
-  const hi = 1 - half;
-  return Math.max(lo, Math.min(hi, t));
+function gateAnchorForPlacement(seg: Segment, t: number, gateWidthMM: number): GateAnchor {
+  if (seg.lengthMM <= 0) return "center";
+  const halfGateT = Math.min(0.5, gateWidthMM / seg.lengthMM / 2);
+  if (t <= halfGateT) return "start";
+  if (t >= 1 - halfGateT) return "end";
+  return "center";
+}
+
+function snapGatePositionTo100mm(seg: Segment, t: number, enabled: boolean): number {
+  const clamped = Math.max(0, Math.min(1, t));
+  if (!enabled || seg.lengthMM <= 0) return clamped;
+  const snappedMM = Math.round((clamped * seg.lengthMM) / 100) * 100;
+  return Math.max(0, Math.min(1, snappedMM / seg.lengthMM));
+}
+
+function gateRange(seg: Segment, gate: Pick<GateMarker, "t" | "widthMM" | "anchor">) {
+  if (seg.lengthMM <= 0) {
+    return { tStart: gate.t, tEnd: gate.t, tMid: gate.t };
+  }
+  const gateT = Math.min(1, gate.widthMM / seg.lengthMM);
+  if (gate.anchor === "start") {
+    return { tStart: 0, tEnd: gateT, tMid: gateT / 2 };
+  }
+  if (gate.anchor === "end") {
+    return { tStart: 1 - gateT, tEnd: 1, tMid: 1 - gateT / 2 };
+  }
+  const halfT = gateT / 2;
+  const tStart = Math.max(0, gate.t - halfT);
+  const tEnd = Math.min(1, gate.t + halfT);
+  return { tStart, tEnd, tMid: (tStart + tEnd) / 2 };
+}
+
+function offsetPointFromSegment(seg: Segment, t: number, offset: number): Point {
+  const base = lerp(seg.p1, seg.p2, t);
+  const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
+  return {
+    x: base.x - Math.sin(ang) * offset,
+    y: base.y + Math.cos(ang) * offset,
+  };
 }
 
 // ── Label editing overlay ─────────────────────────────────────────────────────
@@ -376,15 +466,16 @@ function createLabelInput(
   initialValue: string,
   onCommit: (v: string) => void,
   onCancel: () => void,
+  width = 80,
 ): HTMLInputElement {
   const inp = document.createElement("input");
   inp.type = "text";
   inp.value = initialValue;
   inp.style.cssText = `
     position: absolute;
-    left: ${screenPos.x - 40}px;
+    left: ${screenPos.x - width / 2}px;
     top: ${screenPos.y - 13}px;
-    width: 80px;
+    width: ${width}px;
     padding: 2px 6px;
     font-size: 12px;
     background: #1a1d2e;
@@ -445,6 +536,7 @@ export function initCanvasEngine(
   let pan: Point = { x: 0, y: 0 };
   let scale = DEFAULT_SCALE; // px per metre
   let snap = config.snapToGrid;
+  let gateSnap100 = true;
   let showGrid = config.showGrid;
   let gridSize = config.gridSize;
   let allowedAngles: number[] = config.allowedAngles ?? [];
@@ -452,23 +544,33 @@ export function initCanvasEngine(
 
   /**
    * Compute the effective snap angle set for the current context.
-   * - Shift held: only 180° (straight continuation).
-   * - Product supplies allowedAngles: only those interior angles + straight (180°).
-   * - Otherwise, snap toggle on: 5° increments for free-form layouts.
+   * - Shift held: only 180° (straight continuation) — locks to straight line.
+   * - Snap on: nearest 5° turn so the user can draw at any practical angle.
+   * - Snap off: product metadata can still constrain angles where supplied.
    */
   function effectiveSnapAngles(shiftHeld: boolean): number[] {
     if (shiftHeld) return [180];
-    if (allowedAngles.length > 0) {
-      return Array.from(new Set([...allowedAngles, 180]));
-    }
     if (snap) return fiveDegreeAngles();
-    return [];
+    if (allowedAngles.length === 0) return [];
+    return Array.from(new Set([...allowedAngles, 180]));
   }
   let mouseCanvas: Point = { x: 0, y: 0 };
   let isPanning = false;
   let panStart: Point = { x: 0, y: 0 };
   let panOrigin: Point = { x: 0, y: 0 };
   let undoStack: UndoAction[] = [];
+  let redoStack: RedoEntry[] = [];
+  let gateVisuals: Record<string, CanvasGateVisual> = {};
+  let pendingGatePlacement: CanvasGateVisual & { widthMM: number } = {
+    gateType: "single-swing",
+    swingDirection: "out",
+    slidingSide: "front",
+    widthMM: DEFAULT_GATE_WIDTH_MM,
+  };
+  let highlightedMapLabel: string | null = null;
+  let textNotes: CanvasTextNote[] = [];
+  let siteMarkers: CanvasSiteMarker[] = [];
+  let pendingTextNote: { start: Point; current: Point } | null = null;
   let mapImage: HTMLImageElement | null = null;
   let mapOpacity = 0.5;
   let mapWorldOriginX = 0; // world px — centre of the tile
@@ -477,14 +579,12 @@ export function initCanvasEngine(
   let mapWorldHeight = 0; // world px
   let editingLabel = false;
   let hoveredSegIdx = -1; // flat index into all segments across all runs
-  /** List-driven highlight when pointer is not over a segment (-1 = off). */
-  let uiHighlightFlat = -1;
   let animFrame = 0;
-  let draggingNode: { runIdx: number; ptIdx: number } | null = null;
-  let draggingRun: {
+  let draggingNode: {
     runIdx: number;
-    originPoints: Point[];
-    grabCanvas: Point;
+    ptIdx: number;
+    wholeSection: boolean;
+    lastCanvas: Point;
   } | null = null;
   let draggingGate: {
     runIdx: number;
@@ -493,6 +593,9 @@ export function initCanvasEngine(
     flatSegIdx: number;
     startScreenPt: Point;
   } | null = null;
+  let lastTouchPointer: CanvasPointerLike | null = null;
+  let lastTapTime = 0;
+  let lastTapScreen: Point | null = null;
   // Post positions from BOM result. In canvas world coordinates — the same
   // coordinate space as the drawn nodes (canvas pixels before pan/zoom transform).
   // null = nothing to render.
@@ -505,13 +608,32 @@ export function initCanvasEngine(
   let jobPanelWidthMm: number | null = null;
   // Pre-computed stats text pushed from the canonical payload (via LayoutCanvasV3 → FenceLayoutCanvas).
   // Using the canonical data ensures the overlay always matches the form's calcRunStats output.
+  let pushedStatsGlobal = '';
+  let pushedStatsPerRun: string[] = [];
+  let cssCanvasWidth = 0;
+  let cssCanvasHeight = 0;
+  let devicePixelRatioScale = 1;
 
   // Resize canvas to fill its CSS size
   function resizeCanvas() {
     const rect = canvas.getBoundingClientRect();
-    if (canvas.width !== rect.width || canvas.height !== rect.height) {
-      canvas.width = rect.width;
-      canvas.height = rect.height;
+    const nextDpr = Math.max(1, window.devicePixelRatio || 1);
+    const nextWidth = Math.max(1, Math.round(rect.width));
+    const nextHeight = Math.max(1, Math.round(rect.height));
+    const backingWidth = Math.round(nextWidth * nextDpr);
+    const backingHeight = Math.round(nextHeight * nextDpr);
+    if (
+      canvas.width !== backingWidth ||
+      canvas.height !== backingHeight ||
+      cssCanvasWidth !== nextWidth ||
+      cssCanvasHeight !== nextHeight ||
+      devicePixelRatioScale !== nextDpr
+    ) {
+      cssCanvasWidth = nextWidth;
+      cssCanvasHeight = nextHeight;
+      devicePixelRatioScale = nextDpr;
+      canvas.width = backingWidth;
+      canvas.height = backingHeight;
     }
   }
 
@@ -542,6 +664,67 @@ export function initCanvasEngine(
       }
     }
     return result;
+  }
+
+  function cloneRuns(): Run[] {
+    return JSON.parse(JSON.stringify(runs)) as Run[];
+  }
+
+  function snapshot(): CanvasSnapshot {
+    return {
+      runs: cloneRuns(),
+      scale,
+      activeRunIdx,
+      textNotes: JSON.parse(JSON.stringify(textNotes)) as CanvasTextNote[],
+      siteMarkers: JSON.parse(JSON.stringify(siteMarkers)) as CanvasSiteMarker[],
+    };
+  }
+
+  function restoreSnapshot(next: CanvasSnapshot) {
+    runs = JSON.parse(JSON.stringify(next.runs)) as Run[];
+    scale = next.scale;
+    activeRunIdx = next.activeRunIdx;
+    textNotes = JSON.parse(JSON.stringify(next.textNotes ?? [])) as CanvasTextNote[];
+    siteMarkers = JSON.parse(JSON.stringify(next.siteMarkers ?? [])) as CanvasSiteMarker[];
+  }
+
+  function pushUndo(action: UndoAction) {
+    undoStack.push(action);
+    redoStack = [];
+  }
+
+  function gateVisualFor(gate: GateMarker): CanvasGateVisual {
+    return gate.gateId && gateVisuals[gate.gateId]
+      ? {
+          gateType: gateVisuals[gate.gateId].gateType,
+          swingDirection: gateVisuals[gate.gateId].swingDirection,
+          slidingSide: gateVisuals[gate.gateId].slidingSide ?? gate.slidingSide ?? "front",
+        }
+      : {
+          gateType: gate.gateType ?? "single-swing",
+          swingDirection: gate.swingDirection ?? "out",
+          slidingSide: gate.slidingSide ?? "front",
+        };
+  }
+
+  function drawHighlightedMapLabel(seg: Segment, label: SegmentMapLabel) {
+    const start = lerp(seg.p1, seg.p2, label.tStart);
+    const end = lerp(seg.p1, seg.p2, label.tEnd);
+    ctx.save();
+    ctx.strokeStyle = "rgba(245,158,11,0.88)";
+    ctx.lineWidth = 9 / zoom;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(255,255,255,0.9)";
+    ctx.lineWidth = 3 / zoom;
+    ctx.beginPath();
+    ctx.moveTo(start.x, start.y);
+    ctx.lineTo(end.x, end.y);
+    ctx.stroke();
+    ctx.restore();
   }
 
   function setSegmentLength(flatIdx: number, lengthMM: number) {
@@ -594,13 +777,11 @@ export function initCanvasEngine(
       const prev = run.points[run.points.length - 2];
       return snapToAllowedAngle(prev, lastPt, snapped, [180]);
     }
+    if (snap) return snapBearingFrom(lastPt, snapped, 5);
     const angles = effectiveSnapAngles(false);
     if (run.points.length >= 2 && angles.length > 0) {
       const prev = run.points[run.points.length - 2];
-      return snapToAllowedAngle(prev, lastPt, snapped, angles);
-    }
-    if (run.points.length === 1 && snap) {
-      return snapBearingFrom(lastPt, snapped, 5);
+      snapped = snapToAllowedAngle(prev, lastPt, snapped, angles);
     }
     return snapped;
   }
@@ -621,7 +802,14 @@ export function initCanvasEngine(
         gates.push({
           segmentIndex: flatIdx,
           positionOnSegment: g.t,
+          anchor: g.anchor,
           widthMM: g.widthMM,
+          gateId: g.gateId,
+          useGatePostsAsFenceTermination:
+            g.useGatePostsAsFenceTermination ?? true,
+          gateType: g.gateType,
+          swingDirection: g.swingDirection,
+          slidingSide: g.slidingSide,
         });
       });
     });
@@ -638,6 +826,7 @@ export function initCanvasEngine(
           endY: seg.p2.y,
           lengthMM: seg.lengthMM,
           angleDeg: angleDeg(seg.p1, seg.p2),
+          contextType: run.boundaryType ?? "boundary",
         });
       }
     }
@@ -659,15 +848,28 @@ export function initCanvasEngine(
           runGates.push({
             segmentIndex: flatOffset + si,
             positionOnSegment: g.t,
+            anchor: g.anchor,
             widthMM: g.widthMM,
+            gateId: g.gateId,
+            useGatePostsAsFenceTermination:
+              g.useGatePostsAsFenceTermination ?? true,
+            gateType: g.gateType,
+            swingDirection: g.swingDirection,
+            slidingSide: g.slidingSide,
           });
         });
       });
       return {
-        label: run.displayLabel ?? `Run ${ri + 1}`,
+        label: `Run ${ri + 1}`,
         totalLengthM: runLengthM,
         cornerCount: runCorners,
         gates: runGates,
+        sections: run.segments.map((seg, si) => ({
+          label: `Section ${si + 1}`,
+          lengthM: seg.lengthMM / 1000,
+          panelCount: Math.max(1, Math.ceil(seg.lengthMM / 2600)),
+          gateCount: seg.gates.length,
+        })),
       };
     });
 
@@ -678,6 +880,8 @@ export function initCanvasEngine(
       cornerCount: countCorners(nonBoundaryRuns),
       runs: runSummaries,
       boundaries,
+      textNotes: [...textNotes],
+      siteMarkers: [...siteMarkers],
     };
   }
 
@@ -685,145 +889,23 @@ export function initCanvasEngine(
     config.onLayoutChange?.(getLayout());
   }
 
-  /** Fence run ordinal among non-boundary runs only (R1, R2, …). */
-  function fenceRunOrdinal1Based(runIdx: number): number {
-    let n = 0;
-    for (let i = 0; i < runIdx; i++) {
-      if (!runs[i].isBoundary) n++;
-    }
-    return n + 1;
-  }
-
-  function formatFenceSegmentLabel(
-    seg: Segment,
-    runOrdinal1Based: number,
-    segmentOrdinal1Based: number,
-  ): string {
-    const len =
-      seg.lengthMM >= 1000
-        ? `${(seg.lengthMM / 1000).toFixed(2)}m`
-        : `${Math.round(seg.lengthMM)}mm`;
-    return `R${runOrdinal1Based}S${segmentOrdinal1Based} - ${len}`;
-  }
-
-  /** Match {@link drawFenceSegmentLabel} typography for collision boxes. */
-  function fenceLabelFontSizePx(): number {
-    return Math.max(8, 9 / zoom);
-  }
-
-  /** Screen-space offsets (px) to separate overlapping fence length labels. */
-  function computeFenceLabelShifts(
-    allSegs: Array<{
-      seg: Segment;
-      flatIdx: number;
-      runIdx: number;
-      segIdx: number;
-    }>,
-  ): Map<number, { dx: number; dy: number }> {
-    const result = new Map<number, { dx: number; dy: number }>();
-    const fs = fenceLabelFontSizePx();
-    ctx.save();
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.font = `${fs}px sans-serif`;
-
-    type Placed = {
-      left: number;
-      right: number;
-      top: number;
-      bottom: number;
-    };
-    const placed: Placed[] = [];
-    const pad = 3 / zoom;
-    /** Extra clearance from the fence stroke — labels sit callout-style off the line. */
-    const MIN_OFFSET_FROM_LINE_SCREEN = 26;
-    const STEP_SCREEN = 20;
-
-    for (const { seg, flatIdx, runIdx, segIdx } of allSegs) {
-      const mid = lerp(seg.p1, seg.p2, 0.5);
-      const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
-      const labelText = formatFenceSegmentLabel(
-        seg,
-        fenceRunOrdinal1Based(runIdx),
-        segIdx + 1,
-      );
-      const tw = ctx.measureText(labelText).width;
-      const bh = fs + pad * 2;
-      const hw = (tw / 2 + pad) * zoom;
-      const hh = (bh / 2) * zoom;
-
-      let nx = -Math.sin(ang);
-      let ny = Math.cos(ang);
-      const nlen = Math.hypot(nx, ny) || 1;
-      nx /= nlen;
-      ny /= nlen;
-
-      const sx0 = pan.x + zoom * mid.x;
-      const sy0 = pan.y + zoom * mid.y;
-
-      let found = false;
-      for (let k = 0; k < 40; k++) {
-        const sign = k === 0 ? 1 : k % 2 === 1 ? 1 : -1;
-        const mag = Math.ceil(k / 2);
-        const offScreen =
-          sign * mag * STEP_SCREEN +
-          (sign >= 0 ? MIN_OFFSET_FROM_LINE_SCREEN : -MIN_OFFSET_FROM_LINE_SCREEN);
-        const dx = nx * offScreen;
-        const dy = ny * offScreen;
-        const cx = sx0 + dx;
-        const cy = sy0 + dy;
-        const rect: Placed = {
-          left: cx - hw,
-          right: cx + hw,
-          top: cy - hh,
-          bottom: cy + hh,
-        };
-        let hit = false;
-        for (const p of placed) {
-          if (
-            !(
-              rect.right < p.left ||
-              rect.left > p.right ||
-              rect.bottom < p.top ||
-              rect.top > p.bottom
-            )
-          ) {
-            hit = true;
-            break;
-          }
-        }
-        if (!hit) {
-          placed.push(rect);
-          result.set(flatIdx, { dx, dy });
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        result.set(flatIdx, { dx: 0, dy: 0 });
-        placed.push({
-          left: sx0 - hw,
-          right: sx0 + hw,
-          top: sy0 - hh,
-          bottom: sy0 + hh,
-        });
-      }
-    }
-
-    ctx.restore();
-    return result;
-  }
-
   // ── Drawing ────────────────────────────────────────────────────────────────
 
   function draw() {
     resizeCanvas();
-    const W = canvas.width;
-    const H = canvas.height;
+    const W = cssCanvasWidth || canvas.getBoundingClientRect().width || 800;
+    const H = cssCanvasHeight || canvas.getBoundingClientRect().height || 420;
 
-    ctx.clearRect(0, 0, W, H);
-
-    const allSegs = allSegmentsFlat();
-    const fenceLabelShift = computeFenceLabelShifts(allSegs);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.setTransform(
+      devicePixelRatioScale,
+      0,
+      0,
+      devicePixelRatioScale,
+      0,
+      0,
+    );
 
     ctx.save();
     ctx.translate(pan.x, pan.y);
@@ -849,7 +931,8 @@ export function initCanvasEngine(
       drawGrid(W, H);
     }
 
-    // All segments — coloured by run (allSegs computed before pan/zoom for label shifts)
+    // All segments — coloured by run
+    const allSegs = allSegmentsFlat();
     // Build runIdx → non-boundary run index (for color lookup)
     const runColorIdx = new Map<number, number>();
     {
@@ -858,27 +941,31 @@ export function initCanvasEngine(
         if (!runs[ri].isBoundary) runColorIdx.set(ri, nbIdx++);
       }
     }
-    for (const { seg, flatIdx, runIdx, segIdx } of allSegs) {
+    const segmentCounters = new Map<number, { panel: number; gate: number }>();
+    for (const { seg, flatIdx, runIdx } of allSegs) {
       const colorIdx = runColorIdx.get(runIdx) ?? 0;
-      let emphasis: "none" | "hover" | "linked" = "none";
-      if (flatIdx === uiHighlightFlat && uiHighlightFlat >= 0) emphasis = "linked";
-      else if (flatIdx === hoveredSegIdx && hoveredSegIdx >= 0)
-        emphasis = "hover";
+      const runNumber = colorIdx + 1;
+      const startNumbers = segmentCounters.get(runIdx) ?? { panel: 1, gate: 1 };
+      const { labels, nextPanelNumber, nextGateNumber } = segmentLabelsForMap(
+        seg,
+        runNumber,
+        startNumbers.panel,
+        startNumbers.gate,
+      );
+      segmentCounters.set(runIdx, { panel: nextPanelNumber, gate: nextGateNumber });
       drawSegment(
         seg,
-        emphasis,
+        flatIdx === hoveredSegIdx,
         getRunColor(colorIdx),
         getRunColorHover(colorIdx),
-        fenceLabelShift.get(flatIdx),
-        fenceRunOrdinal1Based(runIdx),
-        segIdx + 1,
+        labels,
       );
     }
 
     // Boundary runs — dashed gray lines (non-product context lines)
     {
       const hasActiveBoundary =
-        tool === "boundary" &&
+        (tool === "boundary" || tool === "building") &&
         activeRunIdx >= 0 &&
         runs[activeRunIdx]?.isBoundary &&
         !runs[activeRunIdx].finished;
@@ -886,9 +973,10 @@ export function initCanvasEngine(
         if (!run.isBoundary) continue;
         if (run.segments.length === 0) continue;
         ctx.save();
-        ctx.setLineDash([8 / zoom, 4 / zoom]);
-        ctx.strokeStyle = "#6b7280";
-        ctx.lineWidth = 2 / zoom;
+        const isBuilding = run.boundaryType === "building";
+        ctx.setLineDash(isBuilding ? [] : [8 / zoom, 4 / zoom]);
+        ctx.strokeStyle = isBuilding ? "rgba(30,64,175,0.88)" : "#6b7280";
+        ctx.lineWidth = isBuilding ? 3 / zoom : 2 / zoom;
         for (const seg of run.segments) {
           ctx.beginPath();
           ctx.moveTo(seg.p1.x, seg.p1.y);
@@ -903,9 +991,10 @@ export function initCanvasEngine(
         const run = runs[activeRunIdx];
         const lastPt = run.points[run.points.length - 1];
         ctx.save();
-        ctx.setLineDash([6 / zoom, 4 / zoom]);
-        ctx.strokeStyle = "rgba(107,114,128,0.5)";
-        ctx.lineWidth = 2 / zoom;
+        const isBuilding = run.boundaryType === "building";
+        ctx.setLineDash(isBuilding ? [] : [6 / zoom, 4 / zoom]);
+        ctx.strokeStyle = isBuilding ? "rgba(30,64,175,0.5)" : "rgba(107,114,128,0.5)";
+        ctx.lineWidth = isBuilding ? 3 / zoom : 2 / zoom;
         ctx.beginPath();
         ctx.moveTo(lastPt.x, lastPt.y);
         ctx.lineTo(mouseCanvas.x, mouseCanvas.y);
@@ -915,16 +1004,21 @@ export function initCanvasEngine(
       }
     }
 
+    drawTextNotes();
+    drawSiteMarkers();
+    drawPendingTextNote();
+
     // Preview line (while drawing)
-    if (tool === "draw" && activeRunIdx >= 0) {
+    if ((tool === "draw" || tool === "building") && activeRunIdx >= 0) {
       const run = runs[activeRunIdx];
       if (run && run.points.length > 0 && !run.finished) {
         const lastPt = run.points[run.points.length - 1];
         const target = snapDrawingPoint(mouseCanvas);
         ctx.save();
-        ctx.setLineDash([6, 4]);
-        ctx.strokeStyle = COLOR.preview;
-        ctx.lineWidth = 2 / zoom;
+        const isBuilding = run.boundaryType === "building";
+        ctx.setLineDash(isBuilding ? [] : [6, 4]);
+        ctx.strokeStyle = isBuilding ? "rgba(30,64,175,0.72)" : COLOR.preview;
+        ctx.lineWidth = isBuilding ? 3 / zoom : 2 / zoom;
         ctx.beginPath();
         ctx.moveTo(lastPt.x, lastPt.y);
         ctx.lineTo(target.x, target.y);
@@ -936,7 +1030,7 @@ export function initCanvasEngine(
 
         // Post position preview along the in-progress segment
         const segDist = dist(lastPt, target);
-        if (jobPanelWidthMm && jobPanelWidthMm > 0 && segDist > 0) {
+        if (!isBuilding && jobPanelWidthMm && jobPanelWidthMm > 0 && segDist > 0) {
           const previewLengthMm = pixelsToMM(segDist, scale);
           const numPanels = Math.ceil(previewLengthMm / jobPanelWidthMm);
           const sq = 5 / zoom;
@@ -955,34 +1049,35 @@ export function initCanvasEngine(
           ctx.restore();
         }
 
-        // Live length near cursor (in-progress segment)
+        // Distance label on active preview line
         if (segDist > 0) {
           const mm = pixelsToMM(segDist, scale);
           const label =
             mm >= 1000
               ? `${(mm / 1000).toFixed(2)}m`
               : `${Math.round(mm)}mm`;
-          const lx = mouseCanvas.x;
-          const ly = mouseCanvas.y - 16 / zoom;
+          const mid: Point = {
+            x: (lastPt.x + target.x) / 2,
+            y: (lastPt.y + target.y) / 2,
+          };
           ctx.save();
           ctx.font = `${12 / zoom}px sans-serif`;
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           const textW = ctx.measureText(label).width;
           const pad = 4 / zoom;
-          const bh = 16 / zoom;
           ctx.fillStyle = COLOR.labelBg;
           ctx.beginPath();
           ctx.roundRect(
-            lx - textW / 2 - pad,
-            ly - bh / 2,
+            mid.x - textW / 2 - pad,
+            mid.y - 8 / zoom,
             textW + pad * 2,
-            bh,
+            16 / zoom,
             4 / zoom,
           );
           ctx.fill();
           ctx.fillStyle = COLOR.label;
-          ctx.fillText(label, lx, ly);
+          ctx.fillText(label, mid.x, mid.y);
           ctx.restore();
         }
       }
@@ -998,16 +1093,14 @@ export function initCanvasEngine(
     }
 
     // Snap indicator
-    if (tool === "draw") {
+    if (tool === "draw" && activeRunIdx >= 0) {
       const snapped = snapDrawingPoint(mouseCanvas);
-      if (snap || activeRunIdx >= 0) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(snapped.x, snapped.y, 4 / zoom, 0, Math.PI * 2);
-        ctx.fillStyle = COLOR.snap;
-        ctx.fill();
-        ctx.restore();
-      }
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(snapped.x, snapped.y, 4 / zoom, 0, Math.PI * 2);
+      ctx.fillStyle = "#f59e0b";
+      ctx.fill();
+      ctx.restore();
     }
 
     // Node labels (A, B, C…) and corner angle annotations
@@ -1062,6 +1155,114 @@ export function initCanvasEngine(
     }
 
     ctx.restore();
+
+    // Stats overlay — drawn in screen space, independent of pan/zoom
+    drawStatsOverlay();
+  }
+
+  function drawStatsOverlay() {
+    const allSegs = allSegmentsFlat();
+    const nbRuns = runs.filter((r) => !r.isBoundary && r.finished);
+    if (nbRuns.length === 0 && allSegs.length === 0) return;
+    if (hoveredSegIdx < 0) return;
+
+    let line: string;
+    const detailLines: string[] = [];
+    const spacingText = (seg: Segment, flatIdx: number, label: string) => {
+      const maxW = segmentPanelWidths[flatIdx] ?? jobPanelWidthMm ?? 0;
+      if (maxW <= 0 || seg.lengthMM <= 0) return `${label} section length: max post spacing not set`;
+      const panels = Math.max(1, Math.ceil(Math.round(seg.lengthMM) / maxW));
+      const actualSpacing = Math.round(seg.lengthMM / panels);
+      return `${label} section length ${(seg.lengthMM / 1000).toFixed(2)}m: ${panels} panel${panels === 1 ? "" : "s"} @ ${actualSpacing}mm spacing`;
+    };
+
+    // Use pre-computed canonical stats if available (pushed from LayoutCanvasV3 via calcRunStats).
+    // Falls back to self-computed values when the overlay hasn't been populated yet.
+    if (hoveredSegIdx >= 0 && hoveredSegIdx < allSegs.length && pushedStatsPerRun.length > 0) {
+      // Hover mode — identify the non-boundary run index containing the hovered segment
+      const { runIdx } = allSegs[hoveredSegIdx];
+      let nbIdx = 0;
+      let flatStart = 0;
+      for (let ri = 0; ri < runs.length; ri++) {
+        if (runs[ri].isBoundary) continue;
+        if (ri === runIdx) break;
+        flatStart += runs[ri].segments.length;
+        nbIdx++;
+      }
+      line = pushedStatsPerRun[nbIdx] ?? pushedStatsGlobal;
+      const run = runs[runIdx];
+      run.segments.forEach((seg, si) => {
+        detailLines.push(spacingText(seg, flatStart + si, `S${si + 1}`));
+      });
+    } else if (hoveredSegIdx < 0 && pushedStatsGlobal) {
+      line = pushedStatsGlobal;
+      allSegs.slice(0, 3).forEach(({ seg }, i) => {
+        detailLines.push(spacingText(seg, i, `S${i + 1}`));
+      });
+      if (allSegs.length > 3) {
+        detailLines.push(`+ ${allSegs.length - 3} more section${allSegs.length - 3 === 1 ? "" : "s"}`);
+      }
+    } else if (hoveredSegIdx >= 0 && hoveredSegIdx < allSegs.length) {
+      // Fallback: self-compute (no pushed stats yet)
+      const { runIdx } = allSegs[hoveredSegIdx];
+      const run = runs[runIdx];
+      let nbIdx = 0;
+      let flatStart = 0;
+      for (let ri = 0; ri < runs.length; ri++) {
+        if (runs[ri].isBoundary) continue;
+        if (ri === runIdx) break;
+        flatStart += runs[ri].segments.length;
+        nbIdx++;
+      }
+      const segs = run.segments.length;
+      const corners = countCorners([run]);
+      let panels = 0;
+      for (let si = 0; si < segs; si++) {
+        const maxW = segmentPanelWidths[flatStart + si] ?? 0;
+        if (maxW > 0) panels += Math.ceil(Math.round(run.segments[si].lengthMM) / maxW);
+        detailLines.push(spacingText(run.segments[si], flatStart + si, `S${si + 1}`));
+      }
+      line = `Run ${nbIdx + 1}  ·  ${segs} ${segs === 1 ? "seg" : "segs"}  ·  ${panels} ${panels === 1 ? "panel" : "panels"}  ·  ${corners} ${corners === 1 ? "corner" : "corners"}`;
+    } else {
+      // Fallback: self-compute global totals (no pushed stats yet)
+      const totalSegs = allSegs.length;
+      const totalCorners = countCorners(nbRuns);
+      let totalPanels = 0;
+      for (let i = 0; i < allSegs.length; i++) {
+        const maxW = segmentPanelWidths[i] ?? 0;
+        if (maxW > 0)
+          totalPanels += Math.ceil(Math.round(allSegs[i].seg.lengthMM) / maxW);
+        if (i < 3) detailLines.push(spacingText(allSegs[i].seg, i, `S${i + 1}`));
+      }
+      line = `${nbRuns.length} ${nbRuns.length === 1 ? "run" : "runs"}  ·  ${totalSegs} ${totalSegs === 1 ? "seg" : "segs"}  ·  ${totalPanels} ${totalPanels === 1 ? "panel" : "panels"}  ·  ${totalCorners} ${totalCorners === 1 ? "corner" : "corners"}`;
+      if (allSegs.length > 3) {
+        detailLines.push(`+ ${allSegs.length - 3} more section${allSegs.length - 3 === 1 ? "" : "s"}`);
+      }
+    }
+
+    const lines = [line, ...detailLines];
+    const pad = 8;
+    const fs = 12;
+    ctx.save();
+    ctx.font = `${fs}px sans-serif`;
+    const w = Math.max(...lines.map((text) => ctx.measureText(text).width)) + pad * 2;
+    const h = lines.length * (fs + 3) + pad * 2;
+    const anchor = canvasToScreen(mouseCanvas, pan, zoom);
+    const screenW = cssCanvasWidth || canvas.getBoundingClientRect().width || 800;
+    const screenH = cssCanvasHeight || canvas.getBoundingClientRect().height || 420;
+    const x = Math.min(screenW - w - 10, Math.max(10, anchor.x + 18));
+    const y = Math.min(screenH - h - 10, Math.max(10, anchor.y + 18));
+    ctx.fillStyle = "rgba(15,23,42,0.78)";
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, h, 4);
+    ctx.fill();
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    lines.forEach((text, idx) => {
+      ctx.fillStyle = idx === 0 ? "#e5e7eb" : "#cbd5e1";
+      ctx.fillText(text, x + pad, y + pad + idx * (fs + 3));
+    });
+    ctx.restore();
   }
 
   function drawPostPositions() {
@@ -1096,33 +1297,57 @@ export function initCanvasEngine(
   }
 
   function drawComputedPosts() {
-    const fallbackW = jobPanelWidthMm && jobPanelWidthMm > 0 ? jobPanelWidthMm : 2600;
+    if (segmentPanelWidths.length === 0) return;
     const squareSize = 6 / zoom;
     const half = squareSize / 2;
     const borderWidth = 1.5 / zoom;
+    const drawPost = (px: number, py: number) => {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(
+        px - half - borderWidth,
+        py - half - borderWidth,
+        squareSize + borderWidth * 2,
+        squareSize + borderWidth * 2,
+      );
+      ctx.fillStyle = "#f59e0b";
+      ctx.fillRect(px - half, py - half, squareSize, squareSize);
+    };
+    const drawPostRange = (seg: Segment, tStart: number, tEnd: number, maxW: number) => {
+      const lengthMm = (tEnd - tStart) * seg.lengthMM;
+      if (maxW <= 0 || lengthMm <= 0) return;
+      const numPanels = Math.max(1, Math.ceil(lengthMm / maxW));
+      for (let i = 0; i <= numPanels; i++) {
+        const localT = i / numPanels;
+        const t = tStart + (tEnd - tStart) * localT;
+        const px = seg.p1.x + t * (seg.p2.x - seg.p1.x);
+        const py = seg.p1.y + t * (seg.p2.y - seg.p1.y);
+        drawPost(px, py);
+      }
+    };
     ctx.save();
     let flatIdx = 0;
     for (const run of runs) {
       if (run.isBoundary || !run.finished) continue;
       for (const seg of run.segments) {
-        const maxW = segmentPanelWidths[flatIdx] ?? fallbackW;
-        flatIdx++;
-        if (maxW <= 0 || seg.lengthMM <= 0) continue;
-        const numPanels = Math.ceil(seg.lengthMM / maxW);
-        const panelWidthMm = seg.lengthMM / numPanels;
-        for (let i = 0; i <= numPanels; i++) {
-          const t = (i * panelWidthMm) / seg.lengthMM;
-          const px = seg.p1.x + t * (seg.p2.x - seg.p1.x);
-          const py = seg.p1.y + t * (seg.p2.y - seg.p1.y);
-          ctx.fillStyle = "#ffffff";
-          ctx.fillRect(
-            px - half - borderWidth,
-            py - half - borderWidth,
-            squareSize + borderWidth * 2,
-            squareSize + borderWidth * 2,
-          );
-          ctx.fillStyle = "#f59e0b";
-          ctx.fillRect(px - half, py - half, squareSize, squareSize);
+        if (seg.gates.length === 0) {
+          drawPostRange(seg, 0, 1, segmentPanelWidths[flatIdx] ?? 0);
+          flatIdx++;
+          continue;
+        }
+        let cursor = 0;
+        const gates = seg.gates
+          .map((g) => gateRange(seg, g))
+          .sort((a, b) => a.tStart - b.tStart);
+        for (const gate of gates) {
+          if ((gate.tStart - cursor) * seg.lengthMM > 1) {
+            drawPostRange(seg, cursor, gate.tStart, segmentPanelWidths[flatIdx] ?? 0);
+            flatIdx++;
+          }
+          cursor = gate.tEnd;
+        }
+        if ((1 - cursor) * seg.lengthMM > 1) {
+          drawPostRange(seg, cursor, 1, segmentPanelWidths[flatIdx] ?? 0);
+          flatIdx++;
         }
       }
     }
@@ -1167,54 +1392,254 @@ export function initCanvasEngine(
     ctx.restore();
   }
 
-  function drawSegment(
+  function segmentLabelsForMap(
     seg: Segment,
-    emphasis: "none" | "hover" | "linked",
-    runColor = COLOR.segment,
-    runColorHover = COLOR.segmentHover,
-    labelShiftPx?: { dx: number; dy: number },
-    labelRunOrdinal?: number,
-    labelSegOrdinal?: number,
-  ) {
-    const lw = 3 / zoom;
-    const segColor = emphasis === "none" ? runColor : runColorHover;
-    const segLw =
-      emphasis === "linked"
-        ? lw * 2.6
-        : emphasis === "hover"
-          ? lw * 1.5
-          : lw;
+    runNumber: number,
+    startPanelNumber: number,
+    startGateNumber: number,
+  ): { labels: SegmentMapLabel[]; nextPanelNumber: number; nextGateNumber: number } {
+    const labels: SegmentMapLabel[] = [];
+    let panelNumber = startPanelNumber;
+    let gateNumber = startGateNumber;
+    const gates = seg.gates
+      .map((g) => gateRange(seg, g))
+      .sort((a, b) => a.tStart - b.tStart);
 
-    // List ↔ canvas selection: high-contrast halo on the full span (behind gate gaps)
-    if (emphasis === "linked") {
-      ctx.save();
-      ctx.lineCap = "round";
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
-      ctx.lineWidth = (lw * 6.5) / zoom;
-      ctx.beginPath();
-      ctx.moveTo(seg.p1.x, seg.p1.y);
-      ctx.lineTo(seg.p2.x, seg.p2.y);
-      ctx.stroke();
-      ctx.strokeStyle = "rgba(250, 204, 21, 0.85)";
-      ctx.lineWidth = (lw * 3.8) / zoom;
-      ctx.stroke();
-      ctx.restore();
+    if (gates.length === 0) {
+      labels.push({ text: `R${runNumber}S${panelNumber++}`, t: 0.5, tStart: 0, tEnd: 1, kind: "panel" });
+      return { labels, nextPanelNumber: panelNumber, nextGateNumber: gateNumber };
     }
 
+    let cursor = 0;
+    for (const gate of gates) {
+      if ((gate.tStart - cursor) * seg.lengthMM > 1) {
+        labels.push({
+          text: `R${runNumber}S${panelNumber++}`,
+          t: (cursor + gate.tStart) / 2,
+          tStart: cursor,
+          tEnd: gate.tStart,
+          kind: "panel",
+        });
+      }
+      labels.push({
+        text: `R${runNumber}G${gateNumber++}`,
+        t: gate.tMid,
+        tStart: gate.tStart,
+        tEnd: gate.tEnd,
+        kind: "gate",
+      });
+      cursor = gate.tEnd;
+    }
+    if ((1 - cursor) * seg.lengthMM > 1) {
+      labels.push({
+        text: `R${runNumber}S${panelNumber++}`,
+        t: (cursor + 1) / 2,
+        tStart: cursor,
+        tEnd: 1,
+        kind: "panel",
+      });
+    }
+    return { labels, nextPanelNumber: panelNumber, nextGateNumber: gateNumber };
+  }
+
+  function drawArrow(fromX: number, fromY: number, toX: number, toY: number) {
+    const head = 5 / zoom;
+    const angle = Math.atan2(toY - fromY, toX - fromX);
+    ctx.beginPath();
+    ctx.moveTo(fromX, fromY);
+    ctx.lineTo(toX, toY);
+    ctx.lineTo(
+      toX - Math.cos(angle - Math.PI / 6) * head,
+      toY - Math.sin(angle - Math.PI / 6) * head,
+    );
+    ctx.moveTo(toX, toY);
+    ctx.lineTo(
+      toX - Math.cos(angle + Math.PI / 6) * head,
+      toY - Math.sin(angle + Math.PI / 6) * head,
+    );
+    ctx.stroke();
+  }
+
+  function drawPlacedGateVisual(seg: Segment, gate: GateMarker) {
+    const range = gateRange(seg, gate);
+    const pStart = lerp(seg.p1, seg.p2, range.tStart);
+    const pEnd = lerp(seg.p1, seg.p2, range.tEnd);
+    const mid = lerp(pStart, pEnd, 0.5);
+    const visual = gateVisualFor(gate);
+    const direction = visual.swingDirection ?? (visual.gateType === "sliding" ? "right" : "out");
+    const angle = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
+    const width = Math.max(14 / zoom, dist(pStart, pEnd));
+    const swing = Math.min(width * 0.55, 34 / zoom);
+    const side = direction === "in" || direction === "left" ? -1 : 1;
+    const slideSide = visual.slidingSide === "back" ? -1 : 1;
+    const slideOffset = (300 / scale) * slideSide;
+
+    ctx.save();
+    ctx.translate(mid.x, mid.y);
+    ctx.rotate(angle);
+    ctx.strokeStyle = COLOR.gate;
+    ctx.fillStyle = COLOR.gate;
+    ctx.lineWidth = 1.6 / zoom;
+    ctx.setLineDash([]);
+
+    if (visual.gateType === "sliding") {
+      const arrow = direction === "left" ? -1 : 1;
+      ctx.strokeRect(-width / 2, slideOffset - 5 / zoom, width, 10 / zoom);
+      drawArrow(-width * 0.25 * arrow, slideOffset, width * 0.32 * arrow, slideOffset);
+      ctx.setLineDash([4 / zoom, 4 / zoom]);
+      ctx.beginPath();
+      ctx.moveTo(-width / 2, 0);
+      ctx.lineTo(-width / 2, slideOffset);
+      ctx.moveTo(width / 2, 0);
+      ctx.lineTo(width / 2, slideOffset);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.font = `bold ${Math.max(8, 10 / zoom)}px sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.fillText(direction === "left" ? "SLIDE LEFT" : "SLIDE RIGHT", 0, slideOffset - 8 / zoom);
+      ctx.restore();
+      return;
+    }
+
+    if (visual.gateType === "double-swing") {
+      ctx.beginPath();
+      ctx.arc(-width / 2, 0, swing, side > 0 ? 0 : -Math.PI / 2, side > 0 ? Math.PI / 2 : 0, side < 0);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(width / 2, 0, swing, side > 0 ? Math.PI / 2 : Math.PI, side > 0 ? Math.PI : Math.PI / 2, side < 0);
+      ctx.stroke();
+      drawArrow(-width / 2, 0, -width / 2 + swing * 0.55, side * swing * 0.55);
+      drawArrow(width / 2, 0, width / 2 - swing * 0.55, side * swing * 0.55);
+      ctx.font = `bold ${Math.max(8, 10 / zoom)}px sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("DBL", 0, -8 / zoom);
+      ctx.restore();
+      return;
+    }
+
+    const hingeX = gate.anchor === "end" ? width / 2 : -width / 2;
+    const leafEndX = gate.anchor === "end" ? hingeX - swing : hingeX + swing;
+    ctx.beginPath();
+    ctx.moveTo(hingeX, 0);
+    ctx.lineTo(leafEndX, side * swing);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(hingeX, 0, swing, 0, side * Math.PI / 2, side < 0);
+    ctx.stroke();
+    drawArrow(hingeX, 0, leafEndX, side * swing);
+    ctx.font = `bold ${Math.max(8, 10 / zoom)}px sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("SG", 0, -8 / zoom);
+    ctx.restore();
+  }
+
+  function drawTextNotes() {
+    if (textNotes.length === 0) return;
+    ctx.save();
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    for (const note of textNotes) {
+      const text = note.text.trim();
+      if (!text) continue;
+      const fs = Math.max(10, 13 / zoom);
+      ctx.font = `bold ${fs}px sans-serif`;
+      const padX = 7 / zoom;
+      const padY = 5 / zoom;
+      const textW = ctx.measureText(text).width;
+      const boxW = Math.max(note.width ?? 0, textW + padX * 2);
+      const h = Math.max(note.height ?? 0, fs + padY * 2);
+      ctx.fillStyle = "rgba(26,29,46,0.9)";
+      ctx.strokeStyle = "rgba(59,130,246,0.9)";
+      ctx.lineWidth = 1.4 / zoom;
+      ctx.beginPath();
+      ctx.roundRect(note.x, note.y, boxW, h, 5 / zoom);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = COLOR.label;
+      ctx.fillText(text, note.x + padX, note.y + h / 2);
+    }
+    ctx.restore();
+  }
+
+  function drawPendingTextNote() {
+    if (!pendingTextNote) return;
+    const x = Math.min(pendingTextNote.start.x, pendingTextNote.current.x);
+    const y = Math.min(pendingTextNote.start.y, pendingTextNote.current.y);
+    const width = Math.abs(pendingTextNote.current.x - pendingTextNote.start.x);
+    const height = Math.abs(pendingTextNote.current.y - pendingTextNote.start.y);
+    if (width < 2 || height < 2) return;
+    ctx.save();
+    ctx.setLineDash([6 / zoom, 4 / zoom]);
+    ctx.fillStyle = "rgba(59,130,246,0.12)";
+    ctx.strokeStyle = "rgba(59,130,246,0.95)";
+    ctx.lineWidth = 1.4 / zoom;
+    ctx.beginPath();
+    ctx.roundRect(x, y, width, height, 5 / zoom);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawSiteMarkers() {
+    if (siteMarkers.length === 0) return;
+    ctx.save();
+    ctx.font = `900 ${13 / zoom}px Inter, system-ui, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    for (const marker of siteMarkers) {
+      const size = marker.markerType === "pillar" ? 18 / zoom : 14 / zoom;
+      ctx.lineWidth = 2 / zoom;
+      ctx.fillStyle =
+        marker.markerType === "pillar"
+          ? "rgba(245,158,11,0.22)"
+          : "rgba(16,185,129,0.22)";
+      ctx.strokeStyle = marker.markerType === "pillar" ? "#f59e0b" : "#10b981";
+      if (marker.markerType === "pillar") {
+        ctx.beginPath();
+        ctx.roundRect(marker.x - size / 2, marker.y - size / 2, size, size, 3 / zoom);
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.arc(marker.x, marker.y, size / 2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      }
+      ctx.fillStyle = COLOR.label;
+      ctx.fillText(marker.markerType === "pillar" ? "P" : "EP", marker.x, marker.y);
+      if (marker.label) {
+        ctx.font = `800 ${11 / zoom}px Inter, system-ui, sans-serif`;
+        ctx.fillText(marker.label, marker.x, marker.y - size);
+        ctx.font = `900 ${13 / zoom}px Inter, system-ui, sans-serif`;
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawSegment(
+    seg: Segment,
+    hovered: boolean,
+    runColor = COLOR.segment,
+    runColorHover = COLOR.segmentHover,
+    mapLabels: SegmentMapLabel[] = [],
+  ) {
+    const lw = 3 / zoom;
+    const segColor = hovered ? runColorHover : runColor;
+    const segLw = hovered ? lw * 1.5 : lw;
+    const highlightedLabel = mapLabels.find((label) => label.text === highlightedMapLabel);
+
     // Build sorted list of gate gaps as (tStart, tEnd) pairs
-    type GateGap = { tStart: number; tEnd: number; widthMM: number };
+    type GateGap = { tStart: number; tEnd: number; widthMM: number; gate: GateMarker };
     const gaps: GateGap[] = seg.gates
-      .map((g) => {
-        const halfT = seg.lengthMM > 0 ? g.widthMM / seg.lengthMM / 2 : 0;
-        return {
-          tStart: Math.max(0, g.t - halfT),
-          tEnd: Math.min(1, g.t + halfT),
-          widthMM: g.widthMM,
-        };
-      })
+      .map((g) => ({ ...gateRange(seg, g), widthMM: g.widthMM, gate: g }))
       .sort((a, b) => a.tStart - b.tStart);
 
     // Draw fence line as sections between/around gate gaps
+    if (highlightedLabel) drawHighlightedMapLabel(seg, highlightedLabel);
+
     ctx.save();
     ctx.strokeStyle = segColor;
     ctx.lineWidth = segLw;
@@ -1247,6 +1672,7 @@ export function initCanvasEngine(
     for (const gap of gaps) {
       const pStart = lerp(seg.p1, seg.p2, gap.tStart);
       const pEnd = lerp(seg.p1, seg.p2, gap.tEnd);
+      drawPlacedGateVisual(seg, gap.gate);
 
       // Dashed amber gap line
       ctx.save();
@@ -1339,110 +1765,76 @@ export function initCanvasEngine(
     ctx.restore();
 
     // Length label
-    drawLabel(
-      seg,
-      labelShiftPx,
-      labelRunOrdinal !== undefined && labelSegOrdinal !== undefined
-        ? formatFenceSegmentLabel(seg, labelRunOrdinal, labelSegOrdinal)
-        : formatFenceSegmentLabel(seg, 1, 1),
-    );
+    drawLabel(seg);
+    drawMapSegmentLabels(seg, mapLabels);
   }
 
-  function drawFenceSegmentLabel(
-    seg: Segment,
-    labelShiftPx: { dx: number; dy: number } | undefined,
-    labelText: string,
-  ) {
-    const midFence = lerp(seg.p1, seg.p2, 0.5);
-    const midBox = labelShiftPx
-      ? {
-          x: midFence.x + labelShiftPx.dx / zoom,
-          y: midFence.y + labelShiftPx.dy / zoom,
-        }
-      : midFence;
+  function drawLabel(seg: Segment) {
     const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
-    const text = labelText;
+    const mid = offsetPointFromSegment(seg, 0.5, 18 / zoom);
+    const labelText =
+      seg.lengthMM >= 1000
+        ? `${(seg.lengthMM / 1000).toFixed(2)}m`
+        : `${Math.round(seg.lengthMM)}mm`;
 
-    const fs = fenceLabelFontSizePx();
-    const pad = 3 / zoom;
     ctx.save();
-    ctx.font = `${fs}px sans-serif`;
-    const tw = ctx.measureText(text).width;
-    const bh = fs + pad * 2;
-    const corner = 2.5 / zoom;
-
-    const vx = midFence.x - midBox.x;
-    const vy = midFence.y - midBox.y;
-    const dist = Math.hypot(vx, vy);
-    if (dist > 4 / zoom) {
-      const tStem0 = 0.34;
-      const tStem1 = 0.88;
-      const stemStart = {
-        x: midBox.x + vx * tStem0,
-        y: midBox.y + vy * tStem0,
-      };
-      const stemEnd = {
-        x: midBox.x + vx * tStem1,
-        y: midBox.y + vy * tStem1,
-      };
-      const ux = vx / dist;
-      const uy = vy / dist;
-      const perpX = -uy;
-      const perpY = ux;
-      const aw = 3.5 / zoom;
-
-      ctx.strokeStyle = "rgba(148, 163, 184, 0.55)";
-      ctx.lineWidth = 1.15 / zoom;
-      ctx.beginPath();
-      ctx.moveTo(stemStart.x, stemStart.y);
-      ctx.lineTo(stemEnd.x, stemEnd.y);
-      ctx.stroke();
-
-      ctx.fillStyle = "rgba(148, 163, 184, 0.65)";
-      ctx.beginPath();
-      ctx.moveTo(midFence.x, midFence.y);
-      ctx.lineTo(stemEnd.x + perpX * aw, stemEnd.y + perpY * aw);
-      ctx.lineTo(stemEnd.x - perpX * aw, stemEnd.y - perpY * aw);
-      ctx.closePath();
-      ctx.fill();
-    }
-
-    ctx.translate(midBox.x, midBox.y);
+    ctx.translate(mid.x, mid.y);
+    // Keep label readable (flip if upside-down)
     const flip = ang > Math.PI / 2 || ang < -Math.PI / 2;
     ctx.rotate(flip ? ang + Math.PI : ang);
 
+    const fs = Math.max(10, 12 / zoom);
+    ctx.font = `${fs}px sans-serif`;
+    const tw = ctx.measureText(labelText).width;
+    const pad = 4 / zoom;
+    const bh = fs + pad * 2;
+
     ctx.fillStyle = COLOR.labelBg;
     ctx.beginPath();
-    ctx.roundRect(-tw / 2 - pad, -bh / 2, tw + pad * 2, bh, corner);
+    ctx.roundRect(-tw / 2 - pad, -bh / 2, tw + pad * 2, bh, 3 / zoom);
     ctx.fill();
 
-    ctx.strokeStyle = "rgba(148, 163, 184, 0.35)";
-    ctx.lineWidth = 1 / zoom;
-    ctx.stroke();
-
     ctx.fillStyle = COLOR.label;
-    ctx.font = `${fs}px sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(text, 0, 0);
+    ctx.fillText(labelText, 0, 0);
 
     ctx.restore();
   }
 
-  function drawLabel(
-    seg: Segment,
-    labelShiftPx?: { dx: number; dy: number },
-    labelText?: string,
-  ) {
-    const text =
-      labelText ?? formatFenceSegmentLabel(seg, 1, 1);
-    drawFenceSegmentLabel(seg, labelShiftPx, text);
+  function drawMapSegmentLabels(seg: Segment, labels: SegmentMapLabel[]) {
+    if (zoom <= 0.18 || labels.length === 0) return;
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    for (const label of labels) {
+      const pt = offsetPointFromSegment(seg, label.t, -18 / zoom);
+      const fs = Math.max(8, 10 / zoom);
+      ctx.font = `bold ${fs}px sans-serif`;
+      const tw = ctx.measureText(label.text).width;
+      const padX = 4 / zoom;
+      const padY = 3 / zoom;
+      const bg = label.kind === "gate" ? "rgba(245,158,11,0.92)" : "rgba(15,23,42,0.9)";
+      ctx.fillStyle = bg;
+      ctx.beginPath();
+      ctx.roundRect(
+        pt.x - tw / 2 - padX,
+        pt.y - fs / 2 - padY,
+        tw + padX * 2,
+        fs + padY * 2,
+        4 / zoom,
+      );
+      ctx.fill();
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(label.text, pt.x, pt.y);
+    }
+    ctx.restore();
   }
 
   function drawActiveEndpoint(pt: Point, label: string, ghost = false) {
     const radius = ghost ? 8 / zoom : 10 / zoom;
-    const ring = ghost ? "rgba(245,158,11,0.35)" : "rgba(96,165,250,0.35)";
-    const stroke = ghost ? "#f59e0b" : COLOR.activePoint;
+    const ring = ghost ? "rgba(245,158,11,0.35)" : "rgba(15,23,42,0.18)";
+    const stroke = ghost ? "#f59e0b" : "#0f172a";
     ctx.save();
     ctx.beginPath();
     ctx.arc(pt.x, pt.y, radius * 1.8, 0, Math.PI * 2);
@@ -1450,7 +1842,7 @@ export function initCanvasEngine(
     ctx.fill();
     ctx.beginPath();
     ctx.arc(pt.x, pt.y, radius, 0, Math.PI * 2);
-    ctx.fillStyle = ghost ? "rgba(245,158,11,0.18)" : COLOR.pointFill;
+    ctx.fillStyle = ghost ? "rgba(245,158,11,0.18)" : "rgba(255,255,255,0.92)";
     ctx.fill();
     ctx.strokeStyle = stroke;
     ctx.lineWidth = 2.5 / zoom;
@@ -1464,24 +1856,64 @@ export function initCanvasEngine(
   }
 
   function drawGatePreview(seg: Segment, t: number) {
-    const gp = lerp(seg.p1, seg.p2, t);
-    const size = 10 / zoom;
+    const previewGate: GateMarker = {
+      t,
+      anchor: gateAnchorForPlacement(seg, t, pendingGatePlacement.widthMM),
+      widthMM: pendingGatePlacement.widthMM,
+      gateType: pendingGatePlacement.gateType,
+      swingDirection: pendingGatePlacement.swingDirection,
+      slidingSide: pendingGatePlacement.slidingSide,
+    };
+    const range = gateRange(seg, previewGate);
+    const pStart = lerp(seg.p1, seg.p2, range.tStart);
+    const pEnd = lerp(seg.p1, seg.p2, range.tEnd);
+    const gp = lerp(pStart, pEnd, 0.5);
     const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
+    const width = Math.max(14 / zoom, dist(pStart, pEnd));
 
     ctx.save();
     ctx.translate(gp.x, gp.y);
     ctx.rotate(ang);
-    ctx.globalAlpha = 0.6;
+    ctx.globalAlpha = 0.72;
 
-    ctx.beginPath();
-    ctx.arc(0, 0, size, 0, Math.PI);
+    ctx.fillStyle = "rgba(245,158,11,0.14)";
     ctx.strokeStyle = COLOR.gate;
     ctx.lineWidth = 2 / zoom;
-    ctx.stroke();
+    ctx.strokeRect(-width / 2, -7 / zoom, width, 14 / zoom);
+    ctx.fillRect(-width / 2, -7 / zoom, width, 14 / zoom);
+
+    if (pendingGatePlacement.gateType === "sliding") {
+      const arrow = pendingGatePlacement.swingDirection === "left" ? -1 : 1;
+      const slideOffset = (300 / scale) * (pendingGatePlacement.slidingSide === "back" ? -1 : 1);
+      ctx.strokeRect(-width / 2, slideOffset - 5 / zoom, width, 10 / zoom);
+      drawArrow(-width * 0.3 * arrow, slideOffset, width * 0.35 * arrow, slideOffset);
+    } else {
+      const side = pendingGatePlacement.swingDirection === "in" ? -1 : 1;
+      const swing = Math.min(width * 0.55, 34 / zoom);
+      if (pendingGatePlacement.gateType === "double-swing") {
+        ctx.beginPath();
+        ctx.arc(-width / 2, 0, swing, side > 0 ? 0 : -Math.PI / 2, side > 0 ? Math.PI / 2 : 0, side < 0);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(width / 2, 0, swing, side > 0 ? Math.PI / 2 : Math.PI, side > 0 ? Math.PI : Math.PI / 2, side < 0);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.arc(-width / 2, 0, swing, side > 0 ? 0 : -Math.PI / 2, side > 0 ? Math.PI / 2 : 0, side < 0);
+        ctx.stroke();
+      }
+    }
+
+    ctx.font = `bold ${Math.max(9, 11 / zoom)}px sans-serif`;
+    ctx.fillStyle = COLOR.gate;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(`${pendingGatePlacement.widthMM}mm`, 0, -10 / zoom);
 
     ctx.beginPath();
-    ctx.moveTo(-size, 0);
-    ctx.lineTo(size, 0);
+    ctx.moveTo(-width / 2, 0);
+    ctx.lineTo(width / 2, 0);
+    ctx.strokeStyle = COLOR.gate;
     ctx.stroke();
 
     ctx.restore();
@@ -1494,13 +1926,13 @@ export function initCanvasEngine(
 
   // ── Coordinate helpers ─────────────────────────────────────────────────────
 
-  function eventToCanvas(e: MouseEvent): Point {
+  function eventToCanvas(e: Pick<MouseEvent, "clientX" | "clientY">): Point {
     const rect = canvas.getBoundingClientRect();
     const screen = { x: e.clientX - rect.left, y: e.clientY - rect.top };
     return screenToCanvas(screen, pan, zoom);
   }
 
-  function eventToScreen(e: MouseEvent): Point {
+  function eventToScreen(e: Pick<MouseEvent, "clientX" | "clientY">): Point {
     const rect = canvas.getBoundingClientRect();
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
@@ -1523,32 +1955,12 @@ export function initCanvasEngine(
   }
 
   function hitTestLabel(pt: Point): number {
+    // Returns flat segment index if pt is near its midpoint label
     const allSegs = allSegmentsFlat();
-    const shifts = computeFenceLabelShifts(allSegs);
-    const fs = fenceLabelFontSizePx();
-    const pad = 3 / zoom;
-    ctx.save();
-    ctx.font = `${fs}px sans-serif`;
-    for (const { seg, flatIdx, runIdx, segIdx } of allSegs) {
-      const mid0 = lerp(seg.p1, seg.p2, 0.5);
-      const sh = shifts.get(flatIdx);
-      const center = sh
-        ? { x: mid0.x + sh.dx / zoom, y: mid0.y + sh.dy / zoom }
-        : mid0;
-      const labelText = formatFenceSegmentLabel(
-        seg,
-        fenceRunOrdinal1Based(runIdx),
-        segIdx + 1,
-      );
-      const tw = ctx.measureText(labelText).width;
-      const bh = fs + pad * 2;
-      const hitR = Math.hypot(tw / 2 + pad, bh / 2) / zoom + 6 / zoom;
-      if (dist(pt, center) <= hitR) {
-        ctx.restore();
-        return flatIdx;
-      }
+    for (const { seg, flatIdx } of allSegs) {
+      const mid = offsetPointFromSegment(seg, 0.5, 18 / zoom);
+      if (dist(pt, mid) < 30 / zoom) return flatIdx;
     }
-    ctx.restore();
     return -1;
   }
 
@@ -1582,7 +1994,7 @@ export function initCanvasEngine(
         const seg = run.segments[si];
         for (let gi = 0; gi < seg.gates.length; gi++) {
           const gate = seg.gates[gi];
-          const midWorld = lerp(seg.p1, seg.p2, gate.t);
+          const midWorld = lerp(seg.p1, seg.p2, gateRange(seg, gate).tMid);
           result.push({
             screenPt: canvasToScreen(midWorld, pan, zoom),
             runIdx: ri,
@@ -1629,7 +2041,7 @@ export function initCanvasEngine(
     } else {
       // Finish the run with its accumulated points
       run.finished = true;
-      undoStack.push({ type: "FINISH_RUN", runIdx: activeRunIdx });
+      pushUndo({ type: "FINISH_RUN", runIdx: activeRunIdx });
       notifyChange();
     }
 
@@ -1637,87 +2049,11 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
-  /** Undo one placed vertex while drawing (Escape). Returns true if layout changed. */
-  function popLastDrawPoint(): boolean {
-    if (tool !== "draw") return false;
-    if (activeRunIdx < 0 || runs[activeRunIdx]?.finished) return false;
-    const run = runs[activeRunIdx];
-    if (!run || run.points.length === 0) return false;
-
-    if (run.points.length === 1) {
-      runs.splice(activeRunIdx, 1);
-      if (undoStack[undoStack.length - 1]?.type === "ADD_RUN") {
-        undoStack.pop();
-      }
-      activeRunIdx = -1;
-      notifyChange();
-      return true;
-    }
-
-    run.points.pop();
-    rebuildSegmentsPreservingGates(run, scale);
-    if (undoStack[undoStack.length - 1]?.type === "ADD_POINT") {
-      undoStack.pop();
-    }
-    notifyChange();
-    return true;
-  }
-
-  function onDocumentEscapeCapture(e: KeyboardEvent) {
-    if (e.key !== "Escape") return;
-    const el = e.target as HTMLElement | null;
-    if (
-      el?.closest?.(
-        "input, textarea, select, option, [contenteditable=true]",
-      )
-    ) {
-      return;
-    }
-    if (document.querySelector('[data-testid="v4-segment-context-menu"]')) {
-      return;
-    }
-    if (!popLastDrawPoint()) return;
-    e.preventDefault();
-    e.stopPropagation();
-    scheduleRedraw();
-  }
-
-  /** Screen px tolerance — segment body is thin at zoom. */
-  const FENCE_SEGMENT_PICK_PX = 16;
-
-  /**
-   * Open segment in UI (v4). Hit along the line or on the callout label — never
-   * mutates geometry (no vertex splits).
-   */
-  function tryPickFenceSegmentForUi(canvasPt: Point): boolean {
-    if (!config.onFenceSegmentClick) return false;
-
-    let flat = hitTestSegments(canvasPt, FENCE_SEGMENT_PICK_PX);
-    if (flat < 0) {
-      const labelFlat = hitTestLabel(canvasPt);
-      if (labelFlat >= 0) flat = labelFlat;
-    }
-    if (flat < 0) return false;
-
-    config.onFenceSegmentClick(flat);
-    scheduleRedraw();
-    return true;
-  }
-
   // ── Event handlers ─────────────────────────────────────────────────────────
 
-  function onMouseDown(e: MouseEvent) {
+  function onMouseDown(e: MouseEvent | CanvasPointerLike) {
     if (e.button === 2) {
-      // Right button: segment context menu takes priority; else start pan
-      if (config.onSegmentContextMenu) {
-        const ctxCanvasPt = eventToCanvas(e);
-        const flatIdx = hitTestSegments(ctxCanvasPt, FENCE_SEGMENT_PICK_PX);
-        if (flatIdx >= 0) {
-          config.onSegmentContextMenu(flatIdx, e.clientX, e.clientY);
-          e.preventDefault();
-          return;
-        }
-      }
+      // Right button: start pan
       isPanning = true;
       panStart = eventToScreen(e);
       panOrigin = { ...pan };
@@ -1752,47 +2088,6 @@ export function initCanvasEngine(
       }
     }
 
-    if (tool === "draw") {
-      if (isNearActiveLastPoint(screenPtDown)) {
-        stopChain(false);
-        scheduleRedraw();
-        return;
-      }
-
-      // Resume from a finished run's endpoint — must beat segment pick (endpoint sits on the line).
-      if (activeRunIdx === -1 || runs[activeRunIdx]?.finished) {
-        let resumedIdx = -1;
-        for (let ri = 0; ri < runs.length; ri++) {
-          const run = runs[ri];
-          if (!run.finished || run.isBoundary || run.points.length === 0)
-            continue;
-          const endPtScreen = canvasToScreen(
-            run.points[run.points.length - 1],
-            pan,
-            zoom,
-          );
-          const dx = screenPtDown.x - endPtScreen.x;
-          const dy = screenPtDown.y - endPtScreen.y;
-          if (Math.sqrt(dx * dx + dy * dy) < 12) {
-            resumedIdx = ri;
-            break;
-          }
-        }
-
-        if (resumedIdx >= 0) {
-          runs[resumedIdx].finished = false;
-          activeRunIdx = resumedIdx;
-          undoStack.push({ type: "RESUME_RUN", runIdx: resumedIdx });
-          scheduleRedraw();
-          return;
-        }
-      }
-
-      if (tryPickFenceSegmentForUi(canvasPt)) {
-        return;
-      }
-    }
-
     if (!editingLabel && (tool === "draw" || tool === "move")) {
       const labelIdx = hitTestLabel(canvasPt);
       if (labelIdx >= 0 && !(tool === "draw" && activeRunIdx >= 0)) {
@@ -1801,23 +2096,85 @@ export function initCanvasEngine(
       }
     }
 
-    if (tool === "draw") {
+    if (tool === "text") {
+      pendingTextNote = { start: canvasPt, current: canvasPt };
+      scheduleRedraw();
+      return;
+    }
+
+    if (tool === "post" || tool === "pillar") {
+      const markerType = tool;
+      createLabelInput(
+        container,
+        screenPtDown,
+        markerType === "pillar" ? "Pillar" : "Existing post",
+        (value) => {
+          siteMarkers.push({
+            x: canvasPt.x,
+            y: canvasPt.y,
+            markerType,
+            label: value.trim() || (markerType === "pillar" ? "Pillar" : "Existing post"),
+          });
+          notifyChange();
+          scheduleRedraw();
+        },
+        () => scheduleRedraw(),
+        180,
+      );
+      return;
+    }
+
+    if (tool === "draw" || tool === "building") {
+      if (isNearActiveLastPoint(screenPtDown)) {
+        stopChain(false);
+        return;
+      }
+
       if (activeRunIdx === -1 || runs[activeRunIdx]?.finished) {
-        const newRun: Run = {
-          points: [worldPt],
-          finished: false,
-          segments: [],
-        };
-        undoStack.push({ type: "ADD_RUN" });
-        runs.push(newRun);
-        activeRunIdx = runs.length - 1;
+        // Check if click is on the end-point of a finished run — resume it
+        let resumedIdx = -1;
+        for (let ri = 0; ri < runs.length; ri++) {
+          const run = runs[ri];
+          if (!run.finished || run.isBoundary || run.points.length === 0) continue;
+          const endPtScreen = canvasToScreen(
+            run.points[run.points.length - 1],
+            pan,
+            zoom,
+          );
+          const dx = screenPtDown.x - endPtScreen.x;
+          const dy = screenPtDown.y - endPtScreen.y;
+          if (Math.sqrt(dx * dx + dy * dy) < 10) {
+            resumedIdx = ri;
+            break;
+          }
+        }
+
+        if (resumedIdx >= 0 && tool === "draw") {
+          // Resume the existing run — un-finish it so new points can be appended
+          runs[resumedIdx].finished = false;
+          activeRunIdx = resumedIdx;
+          pushUndo({ type: "RESUME_RUN", runIdx: resumedIdx }); // undo will re-finish it
+        } else {
+          // Start a new run with this as the first point
+          const newRun: Run = {
+            points: [worldPt],
+            finished: false,
+            segments: [],
+            isBoundary: tool === "building",
+            boundaryType: tool === "building" ? "building" : undefined,
+          };
+          pushUndo({ type: "ADD_RUN" });
+          runs.push(newRun);
+          activeRunIdx = runs.length - 1;
+        }
       } else {
+        // Append point to the current run (multi-point polyline)
         const run = runs[activeRunIdx];
         worldPt = snapDrawingPoint(canvasPt);
         run.points.push(worldPt);
         rebuildSegmentsPreservingGates(run, scale);
         notifyChange();
-        undoStack.push({ type: "ADD_POINT", runIdx: activeRunIdx });
+        pushUndo({ type: "ADD_POINT", runIdx: activeRunIdx });
       }
       scheduleRedraw();
       return;
@@ -1831,7 +2188,7 @@ export function initCanvasEngine(
           segments: [],
           isBoundary: true,
         };
-        undoStack.push({ type: "ADD_RUN" });
+        pushUndo({ type: "ADD_RUN" });
         runs.push(newRun);
         activeRunIdx = runs.length - 1;
       } else {
@@ -1851,7 +2208,7 @@ export function initCanvasEngine(
         runs.push(newRun);
         const newRunIdx = runs.length - 1;
         activeRunIdx = newRunIdx;
-        undoStack.push({ type: "CHAIN_POINT", prevRunIdx, newRunIdx });
+        pushUndo({ type: "CHAIN_POINT", prevRunIdx, newRunIdx });
       }
       scheduleRedraw();
       return;
@@ -1863,17 +2220,36 @@ export function initCanvasEngine(
         const allSegs = allSegmentsFlat();
         const info = allSegs[flatIdx];
         const proj = closestPointOnSegment(canvasPt, info.seg);
-        const gateIdx = info.seg.gates.length;
-        undoStack.push({ type: "ADD_GATE", segIdx: flatIdx, gateIdx });
-        const gt = clampGateCenterT(
+        const snappedGateT = snapGatePositionTo100mm(
+          info.seg,
           proj.t,
-          DEFAULT_GATE_WIDTH_MM,
-          info.seg.lengthMM,
+          gateSnap100,
         );
-        info.seg.gates.push({ t: gt, widthMM: DEFAULT_GATE_WIDTH_MM });
+        const gateAnchor = gateAnchorForPlacement(
+          info.seg,
+          snappedGateT,
+          pendingGatePlacement.widthMM,
+        );
+        const gateIdx = info.seg.gates.length;
+        pushUndo({ type: "ADD_GATE", segIdx: flatIdx, gateIdx });
+        info.seg.gates.push({
+          t: snappedGateT,
+          anchor: gateAnchor,
+          widthMM: pendingGatePlacement.widthMM,
+          useGatePostsAsFenceTermination: true,
+          gateType: pendingGatePlacement.gateType,
+          swingDirection: pendingGatePlacement.swingDirection,
+          slidingSide: pendingGatePlacement.slidingSide,
+        });
         notifyChange();
         scheduleRedraw();
-        config.onGatePlaced?.(flatIdx, gateIdx, DEFAULT_GATE_WIDTH_MM);
+        config.onGatePlaced?.(
+          flatIdx,
+          gateIdx,
+          pendingGatePlacement.widthMM,
+          pendingGatePlacement.gateType,
+          pendingGatePlacement.slidingSide,
+        );
       }
       return;
     }
@@ -1887,7 +2263,13 @@ export function initCanvasEngine(
           const dx = screenPtDown.x - nodePtScreen.x;
           const dy = screenPtDown.y - nodePtScreen.y;
           if (Math.sqrt(dx * dx + dy * dy) < 8) {
-            draggingNode = { runIdx: ri, ptIdx: pi };
+            const altHeld = "altKey" in e && Boolean(e.altKey);
+            draggingNode = {
+              runIdx: ri,
+              ptIdx: pi,
+              wholeSection: !altHeld,
+              lastCanvas: canvasPt,
+            };
             return;
           }
         }
@@ -1901,26 +2283,15 @@ export function initCanvasEngine(
           return;
         }
       }
-
-      // Run body grab — translate the whole polyline
-      const bodyFlatIdx = hitTestSegments(canvasPt, 10);
-      if (bodyFlatIdx >= 0) {
-        const info = allSegmentsFlat()[bodyFlatIdx];
-        if (info) {
-          const run = runs[info.runIdx];
-          draggingRun = {
-            runIdx: info.runIdx,
-            originPoints: run.points.map((p) => ({ ...p })),
-            grabCanvas: { ...canvasPt },
-          };
-          canvas.style.cursor = "grabbing";
-        }
-      }
+      isPanning = true;
+      panStart = screenPtDown;
+      panOrigin = { ...pan };
+      canvas.style.cursor = "grabbing";
       return;
     }
   }
 
-  function onMouseMove(e: MouseEvent) {
+  function onMouseMove(e: MouseEvent | CanvasPointerLike) {
     const canvasPt = eventToCanvas(e);
     mouseCanvas = canvasPt;
 
@@ -1938,36 +2309,29 @@ export function initCanvasEngine(
     if (draggingNode !== null) {
       const snapped = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
       const run = runs[draggingNode.runIdx];
-      run.points[draggingNode.ptIdx] = snapped;
+      if (draggingNode.wholeSection && run.points.length > 1) {
+        const delta = {
+          x: snapped.x - draggingNode.lastCanvas.x,
+          y: snapped.y - draggingNode.lastCanvas.y,
+        };
+        const sectionIdx =
+          draggingNode.ptIdx === 0 ? 0 : Math.min(draggingNode.ptIdx - 1, run.points.length - 2);
+        const startIdx = sectionIdx;
+        const endIdx = sectionIdx + 1;
+        run.points[startIdx] = {
+          x: run.points[startIdx].x + delta.x,
+          y: run.points[startIdx].y + delta.y,
+        };
+        run.points[endIdx] = {
+          x: run.points[endIdx].x + delta.x,
+          y: run.points[endIdx].y + delta.y,
+        };
+        draggingNode.lastCanvas = snapped;
+      } else {
+        run.points[draggingNode.ptIdx] = snapped;
+      }
       rebuildSegmentsPreservingGates(run, scale);
       scheduleRedraw();
-      return;
-    }
-
-    // Run-body dragging — translate every point in the run by the drag delta
-    if (draggingRun !== null) {
-      const dx = canvasPt.x - draggingRun.grabCanvas.x;
-      const dy = canvasPt.y - draggingRun.grabCanvas.y;
-      const run = runs[draggingRun.runIdx];
-      if (run) {
-        const translated: Point[] = draggingRun.originPoints.map((p) => ({
-          x: p.x + dx,
-          y: p.y + dy,
-        }));
-        // Snap the anchor only (first point) to keep relative shape intact
-        if (snap && translated.length > 0) {
-          const snappedAnchor = snapToGrid(translated[0], gridSize);
-          const adx = snappedAnchor.x - translated[0].x;
-          const ady = snappedAnchor.y - translated[0].y;
-          for (const p of translated) {
-            p.x += adx;
-            p.y += ady;
-          }
-        }
-        run.points = translated;
-        rebuildSegmentsPreservingGates(run, scale);
-        scheduleRedraw();
-      }
       return;
     }
 
@@ -1983,19 +2347,24 @@ export function initCanvasEngine(
             ((canvasPt.x - seg.p1.x) * dx + (canvasPt.y - seg.p1.y) * dy) /
             len2;
           const gate = seg.gates[draggingGate.gateIdx];
-          gate.t = clampGateCenterT(t, gate.widthMM, seg.lengthMM);
+          gate.t = snapGatePositionTo100mm(seg, t, gateSnap100);
+          gate.anchor = gateAnchorForPlacement(seg, gate.t, gate.widthMM);
         }
         scheduleRedraw();
       }
       return;
     }
 
+    if (pendingTextNote) {
+      pendingTextNote.current = canvasPt;
+      canvas.style.cursor = "crosshair";
+      scheduleRedraw();
+      return;
+    }
+
     // Update hover state
     const prevHover = hoveredSegIdx;
-    hoveredSegIdx = hitTestSegments(canvasPt, FENCE_SEGMENT_PICK_PX);
-    if (hoveredSegIdx !== prevHover) {
-      config.onFlatSegmentHoverChange?.(hoveredSegIdx);
-    }
+    hoveredSegIdx = hitTestSegments(canvasPt, 10);
 
     // Gate hover cursor works in all modes
     const screenPt = eventToScreen(e);
@@ -2010,7 +2379,7 @@ export function initCanvasEngine(
       }
     }
 
-    if (draggingGate !== null || draggingRun !== null) {
+    if (draggingGate !== null) {
       canvas.style.cursor = "grabbing";
     } else if (overGate) {
       canvas.style.cursor = "grab";
@@ -2032,15 +2401,15 @@ export function initCanvasEngine(
       canvas.style.cursor = overNode
         ? "grab"
         : hoveredSegIdx >= 0
-          ? "grab"
-          : "default";
+          ? "pointer"
+          : "grab";
     } else if (hoveredSegIdx !== prevHover) {
       canvas.style.cursor =
         hoveredSegIdx >= 0
           ? tool === "gate"
             ? "crosshair"
             : "pointer"
-          : tool === "draw"
+          : tool === "draw" || tool === "building" || tool === "text"
             ? "crosshair"
             : "default";
     }
@@ -2048,21 +2417,49 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
-  function onMouseUp(e: MouseEvent) {
-    if (e.button === 2) {
+  function onMouseUp(e: MouseEvent | CanvasPointerLike) {
+    if (pendingTextNote && e.button === 0) {
+      pendingTextNote.current = eventToCanvas(e);
+      const x = Math.min(pendingTextNote.start.x, pendingTextNote.current.x);
+      const y = Math.min(pendingTextNote.start.y, pendingTextNote.current.y);
+      const width = Math.max(90 / zoom, Math.abs(pendingTextNote.current.x - pendingTextNote.start.x));
+      const height = Math.max(34 / zoom, Math.abs(pendingTextNote.current.y - pendingTextNote.start.y));
+      const screenCenter = canvasToScreen(
+        { x: x + width / 2, y: y + height / 2 },
+        pan,
+        zoom,
+      );
+      const inputWidth = Math.max(160, Math.min(420, width * zoom));
+      pendingTextNote = null;
+      createLabelInput(
+        container,
+        screenCenter,
+        "",
+        (value) => {
+          const text = value.trim();
+          if (!text) {
+            scheduleRedraw();
+            return;
+          }
+          textNotes.push({ x, y, width, height, text });
+          notifyChange();
+          scheduleRedraw();
+        },
+        () => scheduleRedraw(),
+        inputWidth,
+      );
+      scheduleRedraw();
+      return;
+    }
+
+    if (e.button === 2 || (e.button === 0 && isPanning)) {
       isPanning = false;
+      canvas.style.cursor = tool === "move" ? "grab" : "default";
     }
 
     if (draggingNode !== null) {
       notifyChange();
       draggingNode = null;
-      canvas.style.cursor = "default";
-      return;
-    }
-
-    if (draggingRun !== null) {
-      notifyChange();
-      draggingRun = null;
       canvas.style.cursor = "default";
       return;
     }
@@ -2088,15 +2485,70 @@ export function initCanvasEngine(
         );
       }
       draggingGate = null;
-      canvas.style.cursor = tool === "draw" ? "crosshair" : "default";
+      canvas.style.cursor = tool === "draw" || tool === "building" || tool === "text" ? "crosshair" : "default";
       return;
+    }
+  }
+
+  function touchToPointer(touch: Touch, source: TouchEvent): CanvasPointerLike {
+    return {
+      button: 0,
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+      preventDefault: () => source.preventDefault(),
+    };
+  }
+
+  function onTouchStart(e: TouchEvent) {
+    if (e.touches.length !== 1 || editingLabel) return;
+    const pointer = touchToPointer(e.touches[0], e);
+    lastTouchPointer = pointer;
+    pointer.preventDefault();
+    onMouseDown(pointer);
+  }
+
+  function onTouchMove(e: TouchEvent) {
+    if (e.touches.length !== 1) return;
+    const pointer = touchToPointer(e.touches[0], e);
+    lastTouchPointer = pointer;
+    pointer.preventDefault();
+    onMouseMove(pointer);
+  }
+
+  function onTouchEnd(e: TouchEvent) {
+    const touch = e.changedTouches[0];
+    const pointer = touch ? touchToPointer(touch, e) : lastTouchPointer;
+    if (!pointer) return;
+
+    pointer.preventDefault();
+    onMouseUp(pointer);
+
+    const screenPt = eventToScreen(pointer);
+    const now = Date.now();
+    const isDoubleTap =
+      lastTapScreen !== null &&
+      now - lastTapTime < 350 &&
+      dist(screenPt, lastTapScreen) < 34;
+
+    lastTapTime = now;
+    lastTapScreen = screenPt;
+    lastTouchPointer = null;
+
+    if (
+      isDoubleTap &&
+      (tool === "draw" || tool === "building" || tool === "boundary") &&
+      activeRunIdx >= 0 &&
+      !runs[activeRunIdx]?.finished
+    ) {
+      stopChain(!isNearActiveLastPoint(screenPt));
+      scheduleRedraw();
     }
   }
 
   function onDblClick(e: MouseEvent) {
     if (editingLabel) return;
 
-    if (tool === "draw" && activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
+    if ((tool === "draw" || tool === "building" || tool === "boundary") && activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
       const screenPt = eventToScreen(e);
       stopChain(!isNearActiveLastPoint(screenPt));
       scheduleRedraw();
@@ -2125,7 +2577,7 @@ export function initCanvasEngine(
       );
       if (segLengthWorld === 0) return;
       const response = prompt(
-        "Enter real-world length for this segment (e.g. 2500 for 2500mm or 2.5 for 2.5m):",
+        "Enter real-world length for this section (e.g. 2500 for 2500mm or 2.5 for 2.5m):",
       );
       if (response === null) return;
       const parsed = parseFloat(response.replace(",", "."));
@@ -2170,8 +2622,20 @@ export function initCanvasEngine(
         scheduleRedraw();
       }
     }
-    // Escape while drawing: pop last point — handled in capture phase (onDocumentEscapeCapture)
-    // so slide-out panels don't receive Escape first.
+    if (e.key === "Escape" && tool === "draw") {
+      if (activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
+        stopChain(false); // keyboard — no extra mousedown point to pop
+        scheduleRedraw();
+      }
+    }
+    if (
+      ((e.key === "y" || e.key === "Y") && (e.ctrlKey || e.metaKey)) ||
+      ((e.key === "z" || e.key === "Z") && e.shiftKey && (e.ctrlKey || e.metaKey))
+    ) {
+      e.preventDefault();
+      redoLast();
+      return;
+    }
     if ((e.key === "z" || e.key === "Z") && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       undoLast();
@@ -2224,6 +2688,7 @@ export function initCanvasEngine(
   function undoLast() {
     if (undoStack.length === 0) return;
     const action = undoStack.pop()!;
+    redoStack.push({ action, snapshot: snapshot() });
 
     switch (action.type) {
       case "ADD_RUN": {
@@ -2296,20 +2761,34 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  function redoLast() {
+    const entry = redoStack.pop();
+    if (!entry) return;
+    restoreSnapshot(entry.snapshot);
+    undoStack.push(entry.action);
+    notifyChange();
+    scheduleRedraw();
+  }
+
   // ── Public API ─────────────────────────────────────────────────────────────
 
   function setTool(t: Tool) {
     tool = t;
-    if (t === "draw" || t === "boundary") {
+    if (t !== "text") pendingTextNote = null;
+    if (t === "draw" || t === "boundary" || t === "building" || t === "text" || t === "post" || t === "pillar") {
       canvas.style.cursor = "crosshair";
+    } else if (t === "move") {
+      canvas.style.cursor = "grab";
     } else {
       canvas.style.cursor = "default";
+    }
+    if (t !== "draw" && t !== "boundary" && t !== "building") {
       // Finish any active drawing run
       if (activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
         const run = runs[activeRunIdx];
         if (run.points.length >= 2) {
           run.finished = true;
-          undoStack.push({ type: "FINISH_RUN", runIdx: activeRunIdx });
+          pushUndo({ type: "FINISH_RUN", runIdx: activeRunIdx });
           notifyChange();
         } else {
           runs.splice(activeRunIdx, 1);
@@ -2324,13 +2803,19 @@ export function initCanvasEngine(
     undoLast();
   }
 
+  function redo() {
+    redoLast();
+  }
+
   function clear() {
-    undoStack.push({
+    pushUndo({
       type: "CLEAR",
       runs: JSON.parse(JSON.stringify(runs)),
       scale,
     });
     runs = [];
+    textNotes = [];
+    siteMarkers = [];
     activeRunIdx = -1;
     notifyChange();
     scheduleRedraw();
@@ -2377,6 +2862,11 @@ export function initCanvasEngine(
 
   function setSnapToGrid(s: boolean) {
     snap = s;
+    scheduleRedraw();
+  }
+
+  function setGateSnapTo100mm(enabled: boolean) {
+    gateSnap100 = enabled;
     scheduleRedraw();
   }
 
@@ -2437,8 +2927,8 @@ export function initCanvasEngine(
       mapWorldHeight = img.height * metersPerPixel * scale;
       // Anchor the tile centre to the current view centre so the map appears
       // immediately beneath the visible canvas area when loaded.
-      const cw = canvas.width || canvas.getBoundingClientRect().width || 800;
-      const ch = canvas.height || canvas.getBoundingClientRect().height || 400;
+      const cw = cssCanvasWidth || canvas.getBoundingClientRect().width || 800;
+      const ch = cssCanvasHeight || canvas.getBoundingClientRect().height || 400;
       mapWorldOriginX = (cw / 2 - pan.x) / zoom;
       mapWorldOriginY = (ch / 2 - pan.y) / zoom;
       scheduleRedraw();
@@ -2461,6 +2951,12 @@ export function initCanvasEngine(
     const info = allSegs[segIdx];
     if (info && info.seg.gates[gateIdx] !== undefined) {
       info.seg.gates[gateIdx].widthMM = widthMM;
+      info.seg.gates[gateIdx].anchor = gateAnchorForPlacement(
+        info.seg,
+        info.seg.gates[gateIdx].t,
+        widthMM,
+      );
+      notifyChange();
       scheduleRedraw();
     }
   }
@@ -2471,6 +2967,21 @@ export function initCanvasEngine(
     const info = allSegs[flatSegIdx];
     if (info && info.seg.gates[gateIdx] !== undefined) {
       info.seg.gates[gateIdx].gateId = id;
+    }
+  }
+
+  function setGateTerminationPosts(
+    flatSegIdx: number,
+    gateIdx: number,
+    useTerminationPosts: boolean,
+  ) {
+    const allSegs = allSegmentsFlat();
+    const info = allSegs[flatSegIdx];
+    if (info && info.seg.gates[gateIdx] !== undefined) {
+      info.seg.gates[gateIdx].useGatePostsAsFenceTermination =
+        useTerminationPosts;
+      notifyChange();
+      scheduleRedraw();
     }
   }
 
@@ -2499,8 +3010,118 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
-  /** Legacy hook — stats overlay removed in favour of React panels (v4). No-op. */
-  function setRunStatsTexts(_global: string, _perRun: string[]) {}
+  /**
+   * Push pre-computed stats text from the canonical payload.
+   * `global` is shown when no segment is hovered. `perRun[i]` is shown when the
+   * user hovers over a segment in run i (non-boundary run index).
+   */
+  function setRunStatsTexts(global: string, perRun: string[]) {
+    pushedStatsGlobal = global;
+    pushedStatsPerRun = perRun;
+    scheduleRedraw();
+  }
+
+  function updateGateVisual(
+    segIdx: number,
+    gateIdx: number,
+    visual: Partial<CanvasGateVisual>,
+  ) {
+    const allSegs = allSegmentsFlat();
+    const info = allSegs[segIdx];
+    const gate = info?.seg.gates[gateIdx];
+    if (!gate) return;
+    gate.gateType = visual.gateType ?? gate.gateType;
+    gate.swingDirection = visual.swingDirection ?? gate.swingDirection;
+    gate.slidingSide = visual.slidingSide ?? gate.slidingSide ?? "front";
+    if (gate.gateId) {
+      gateVisuals = {
+        ...gateVisuals,
+        [gate.gateId]: {
+          gateType: gate.gateType ?? "single-swing",
+          swingDirection: gate.swingDirection,
+          slidingSide: gate.slidingSide,
+        },
+      };
+    }
+    notifyChange();
+    scheduleRedraw();
+  }
+
+  function setGateVisuals(visuals: Record<string, CanvasGateVisual>) {
+    gateVisuals = visuals;
+    scheduleRedraw();
+  }
+
+  function setPendingGatePlacement(config: Partial<CanvasGateVisual & { widthMM: number }>) {
+    pendingGatePlacement = {
+      ...pendingGatePlacement,
+      ...config,
+      widthMM: Math.max(100, Number(config.widthMM ?? pendingGatePlacement.widthMM)),
+    };
+    scheduleRedraw();
+  }
+
+  function hasSatelliteUnderlay() {
+    return mapImage !== null;
+  }
+
+  function printMap(options: { includeSatellite?: boolean } = {}) {
+    const originalOpacity = mapOpacity;
+    if (!options.includeSatellite) mapOpacity = 0;
+    draw();
+    const dataUrl = canvas.toDataURL("image/png");
+    const layout = getLayout();
+    const summaryHtml = layout.runs
+      .map((run) => {
+        const gatePart = run.gates.length ? ` · ${run.gates.length} gate${run.gates.length === 1 ? "" : "s"}` : "";
+        const sectionRows = (run.sections ?? [])
+          .map((section) => {
+            const sectionGatePart = section.gateCount
+              ? `${section.gateCount} gate${section.gateCount === 1 ? "" : "s"}`
+              : "—";
+            return `<li>${section.label} · ${section.lengthM.toFixed(2)}m · ${section.panelCount} panel${section.panelCount === 1 ? "" : "s"} · ${sectionGatePart}</li>`;
+          })
+          .join("");
+        return `<div class="run-summary"><strong>${run.label} · ${run.totalLengthM.toFixed(2)}m${gatePart}</strong><ul>${sectionRows}</ul></div>`;
+      })
+      .join("");
+    mapOpacity = originalOpacity;
+    draw();
+
+    const printWindow = window.open("", "_blank", "noopener,noreferrer");
+    if (!printWindow) return;
+    printWindow.document.write(`
+      <!doctype html>
+      <html>
+        <head>
+          <title>Fence Layout Map</title>
+          <style>
+            body { margin: 0; padding: 18px; font-family: Arial, sans-serif; color: #111827; }
+            h1 { margin: 0 0 10px; font-size: 18px; }
+            p { margin: 0 0 12px; font-size: 12px; color: #4b5563; }
+            img { width: 100%; height: auto; border: 1px solid #d1d5db; }
+            .run-summary { margin-top: 10px; font-size: 12px; }
+            ul { margin: 4px 0 0 18px; padding: 0; color: #374151; }
+            li { margin: 2px 0; }
+            @media print { body { padding: 10mm; } }
+          </style>
+        </head>
+        <body>
+          <h1>Fence Layout Map</h1>
+          <p>Installer guide showing section lengths, gate openings, run measurements, notes, and drawn context lines.</p>
+          <img src="${dataUrl}" alt="Fence layout map" />
+          ${summaryHtml}
+          <script>window.onload = () => window.print();</script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  }
+
+  function setHighlightedMapLabel(label: string | null) {
+    highlightedMapLabel = label;
+    scheduleRedraw();
+  }
 
   /**
    * Replace the current canvas state with the runs described by `layout`.
@@ -2509,6 +3130,29 @@ export function initCanvasEngine(
    */
   function loadLayout(layout: CanvasLayout) {
     const newRuns: Run[] = [];
+    const preservedBoundaries: CanvasSegment[] = [];
+    for (const run of runs) {
+      if (!run.isBoundary) continue;
+      for (const seg of run.segments) {
+        preservedBoundaries.push({
+          startX: seg.p1.x,
+          startY: seg.p1.y,
+          endX: seg.p2.x,
+          endY: seg.p2.y,
+          lengthMM: seg.lengthMM,
+          angleDeg: angleDeg(seg.p1, seg.p2),
+          contextType: run.boundaryType ?? "boundary",
+        });
+      }
+    }
+    const nextBoundaries =
+      layout.boundaries && layout.boundaries.length > 0
+        ? layout.boundaries
+        : preservedBoundaries;
+    const nextTextNotes =
+      layout.textNotes && layout.textNotes.length > 0 ? layout.textNotes : textNotes;
+    const nextSiteMarkers =
+      layout.siteMarkers && layout.siteMarkers.length > 0 ? layout.siteMarkers : siteMarkers;
 
     // Group flat segments into runs using totalLengthM as slice boundaries
     let segIdx = 0;
@@ -2536,16 +3180,11 @@ export function initCanvasEngine(
       });
       // Remove duplicated intermediate points (each segment pushed its p2)
       // points is [run start, seg0.end, seg1.end, ...] which is correct as-is
-      newRuns.push({
-        points,
-        segments,
-        finished: true,
-        displayLabel: runSummary.label,
-      });
+      newRuns.push({ points, segments, finished: true });
     }
 
     // Restore boundary runs
-    for (const cseg of layout.boundaries ?? []) {
+    for (const cseg of nextBoundaries) {
       const p1 = { x: cseg.startX, y: cseg.startY };
       const p2 = { x: cseg.endX, y: cseg.endY };
       newRuns.push({
@@ -2553,6 +3192,7 @@ export function initCanvasEngine(
         segments: [{ p1, p2, lengthMM: cseg.lengthMM, gates: [] }],
         finished: true,
         isBoundary: true,
+        boundaryType: cseg.contextType ?? "boundary",
       });
     }
 
@@ -2566,21 +3206,30 @@ export function initCanvasEngine(
         );
         seg.gates = segsGates.map((g) => ({
           t: g.positionOnSegment,
+          anchor: g.anchor,
           widthMM: g.widthMM,
+          gateId: g.gateId,
+          useGatePostsAsFenceTermination:
+            g.useGatePostsAsFenceTermination ?? true,
+          gateType: g.gateType,
+          swingDirection: g.swingDirection,
+          slidingSide: g.slidingSide,
         }));
         flatIdx++;
       }
     }
 
     runs = newRuns;
+    textNotes = [...nextTextNotes];
+    siteMarkers = [...nextSiteMarkers];
     activeRunIdx = -1;
     undoStack = [];
+    redoStack = [];
     // Do NOT call notifyChange() here — this is a form→canvas push.
     // The caller already has the latest data in context; firing onLayoutChange
     // would trigger handleLiveSync which dispatches SET_PAYLOAD with fresh IDs,
     // causing all RunCard components to remount and lose their expanded state.
-    scheduleRedraw();
-    config.onRunSummariesRefresh?.(getLayout().runs);
+    fitToContent();
   }
 
   function destroy() {
@@ -2588,10 +3237,13 @@ export function initCanvasEngine(
     canvas.removeEventListener("mousedown", onMouseDown);
     canvas.removeEventListener("mousemove", onMouseMove);
     canvas.removeEventListener("mouseup", onMouseUp);
+    canvas.removeEventListener("touchstart", onTouchStart);
+    canvas.removeEventListener("touchmove", onTouchMove);
+    canvas.removeEventListener("touchend", onTouchEnd);
+    canvas.removeEventListener("touchcancel", onTouchEnd);
     canvas.removeEventListener("dblclick", onDblClick);
     canvas.removeEventListener("wheel", onWheel);
     canvas.removeEventListener("contextmenu", onContextMenu);
-    document.removeEventListener("keydown", onDocumentEscapeCapture, true);
     window.removeEventListener("keydown", onKeyDown);
     window.removeEventListener("keyup", onKeyUp);
     window.removeEventListener("resize", onResize);
@@ -2602,47 +3254,55 @@ export function initCanvasEngine(
 
   // ── Register events ────────────────────────────────────────────────────────
 
+  canvas.style.touchAction = "none";
   canvas.addEventListener("mousedown", onMouseDown);
   canvas.addEventListener("mousemove", onMouseMove);
   canvas.addEventListener("mouseup", onMouseUp);
+  canvas.addEventListener("touchstart", onTouchStart, { passive: false });
+  canvas.addEventListener("touchmove", onTouchMove, { passive: false });
+  canvas.addEventListener("touchend", onTouchEnd, { passive: false });
+  canvas.addEventListener("touchcancel", onTouchEnd, { passive: false });
   canvas.addEventListener("dblclick", onDblClick);
   canvas.addEventListener("wheel", onWheel, { passive: false });
   canvas.addEventListener("contextmenu", onContextMenu);
-  document.addEventListener("keydown", onDocumentEscapeCapture, true);
   window.addEventListener("keydown", onKeyDown);
   window.addEventListener("keyup", onKeyUp);
   window.addEventListener("resize", onResize);
 
-  // Initial framing — centre/zoom to drawn content (empty canvas → fitToWidth inside fitToContent)
-  fitToContent();
-
-  function setUiHighlightFlatSeg(idx: number | null) {
-    uiHighlightFlat = idx === null || idx < 0 ? -1 : idx;
-    scheduleRedraw();
-  }
+  // Initial draw — fit to 50m wide view
+  fitToWidth(50);
 
   return {
     destroy,
     getLayout,
     setTool,
     undo,
+    redo,
     clear,
     resetView,
     setSnapToGrid,
+    setGateSnapTo100mm,
     setAllowedAngles,
     setShowGrid,
     setScale,
     setMapOpacity,
     loadMapTile,
     updateGateWidth,
+    updateGateVisual,
     setGateId,
+    setGateTerminationPosts,
     setPostPositions,
     setSegmentPanelWidths,
     setJobPanelWidth,
     setRunStatsTexts,
+    setGateVisuals,
+    setPendingGatePlacement,
+    hasSatelliteUnderlay,
+    printMap,
+    setHighlightedMapLabel,
     loadLayout,
     fitToWidth,
     fitToContent,
-    setUiHighlightFlatSeg,
+    setUiHighlightFlatSeg: (_idx: number | null) => { /* no-op in V3 canvas */ },
   };
 }

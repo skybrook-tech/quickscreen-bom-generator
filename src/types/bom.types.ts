@@ -1,18 +1,61 @@
-export type BOMCategory = 'post' | 'rail' | 'slat' | 'bracket' | 'screw' | 'gate' | 'hardware' | 'accessory';
-export type BOMUnit = 'each' | 'length' | 'pack' | 'box';
+export type BOMCategory =
+  | 'screening'
+  | 'frames_and_covers'
+  | 'posts_and_mounting'
+  | 'gate_components'
+  | 'gate_hardware'
+  | 'sliding_gate_running_gear'
+  | 'caps_and_plugs'
+  | 'fasteners_and_screws'
+  | 'spacers'
+  | 'fixings'
+  | 'tools_and_consumables'
+  | 'post'
+  | 'post_accessory'
+  | 'rail'
+  | 'rail_insert'
+  | 'slat'
+  | 'side_frame'
+  | 'cfc_cover'
+  | 'centre_support_rail'
+  | 'f_section'
+  | 'bracket'
+  | 'screw'
+  | 'gate'
+  | 'hardware'
+  | 'automation'
+  | 'accessory';
+export type BOMUnit = 'each' | 'length' | 'pack' | 'box' | 'bag';
+
+export interface BOMSource {
+  scopeKind: 'fence_run' | 'gate' | 'enclosure' | 'global';
+  scopeId: string;
+  scopeLabel: string;
+  qty: number;
+}
 
 export interface BOMLineItem {
   category: BOMCategory;
+  subCategory?: string;
+  companionOf?: string;
+  optionalChildOf?: string[];
+  isOptionalAccessory?: boolean;
+  sortPriority?: number;
   sku: string;
   /** Short component name from product_components.name */
-  name: string;
+  name?: string;
   /** Longer description from product_components.description */
   description: string;
   quantity: number;
+  totalQty?: number;
+  sources?: BOMSource[];
   unit: BOMUnit;
   unitPrice: number;    // ex-GST
   lineTotal: number;    // quantity × unitPrice
   notes?: string;
+  runId?: string;
+  segmentId?: string;
+  productCode?: string;
 }
 
 export interface PostPosition {
@@ -45,6 +88,7 @@ export interface SegmentDiagnostic {
 
 export interface CalculatorBOMResult {
   runResults: Array<{ runId: string; items: BOMLineItem[] }>;
+  gateResults?: Array<{ id: string; label: string; items: BOMLineItem[] }>;
   gateItems: BOMLineItem[];
   allItems: BOMLineItem[];
   total: number;
@@ -52,7 +96,7 @@ export interface CalculatorBOMResult {
   grandTotal: number;
   pricingTier: PricingTier;
   generatedAt: string;
-  segmentDiagnostics: SegmentDiagnostic[];
+  segmentDiagnostics?: SegmentDiagnostic[];
 }
 
 /** Ad-hoc line item added manually by staff — not from the BOM calculation */

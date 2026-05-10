@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { localProducts } from '../lib/localSeedData';
 
 export interface Product {
   id: string;
@@ -28,13 +29,15 @@ export function useProducts() {
   return useQuery({
     queryKey: ['products'],
     queryFn: async () => {
+      if (!isSupabaseConfigured) return localProducts;
+
       const { data, error } = await supabase
         .from('products')
         .select('id, name, system_type, description, image_url, active, sort_order, metadata')
         .order('active', { ascending: false })
         .order('sort_order', { ascending: true });
-      if (error) throw error;
-      return data as Product[];
+      if (error) return localProducts;
+      return data && data.length > 0 ? (data as Product[]) : localProducts;
     },
   });
 }

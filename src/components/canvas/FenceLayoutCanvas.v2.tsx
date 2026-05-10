@@ -1,5 +1,5 @@
 import { useRef, useEffect, useCallback, useState, useMemo } from "react";
-import { ArrowRight, Map } from "lucide-react";
+import { Map } from "lucide-react";
 import { cn } from "../../lib";
 import { initCanvasEngine } from "./canvasEngine";
 import { CanvasToolbar } from "./CanvasToolbar";
@@ -43,7 +43,7 @@ interface FenceLayoutCanvasProps {
 }
 
 export function FenceLayoutCanvas({
-  onApplied,
+  onApplied: _onApplied,
   onLayoutChange,
   onEngineReady,
   postPositions,
@@ -57,7 +57,7 @@ export function FenceLayoutCanvas({
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
-  const { state: fenceState, dispatch: fenceDispatch } = useFenceConfig();
+  const { state: fenceState } = useFenceConfig();
   const { data: products } = useProducts();
   const { gates, dispatch: gateDispatch } = useGates();
 
@@ -97,12 +97,12 @@ export function FenceLayoutCanvas({
   gatesRef.current = gates;
 
   const [activeTool, setActiveTool] = useState<
-    "draw" | "gate" | "move" | "boundary"
+    "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar"
   >("draw");
   const [snapEnabled, setSnapEnabled] = useState(true);
+  const [gateSnap100, setGateSnap100] = useState(false);
   const [showGrid, setShowGrid] = useState(true);
   const [expanded, setExpanded] = useState(false);
-  const [applied, setApplied] = useState(false);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
   const [satelliteOpen, setSatelliteOpen] = useState(false);
   const [satelliteActive, setSatelliteActive] = useState(false);
@@ -131,6 +131,7 @@ export function FenceLayoutCanvas({
         gatePostSize: "65x65",
         hingeType: "dd-kwik-fit-adjustable",
         latchType: "dd-magna-latch-top-pull",
+        swingDirection: "out",
       };
       setPendingGate({ stub, segIdx, gateIdx });
     },
@@ -157,18 +158,6 @@ export function FenceLayoutCanvas({
           : undefined;
         if (!existing) return; // gate not yet saved (e.g. modal still open) — ignore
         setEditingCanvasGate({ flatSegIdx, gateIdx, gate: existing });
-      },
-      onSegmentContextMenu: (flatSegIdx, sx, sy) => {
-        onSegmentContextMenuRef.current?.(flatSegIdx, sx, sy);
-      },
-      onRunSummariesRefresh: (summaryRuns) => {
-        setRunSummaries(summaryRuns);
-      },
-      onFlatSegmentHoverChange: (flatSegIdx) => {
-        onFlatSegmentHoverChangeRef.current?.(flatSegIdx);
-      },
-      onFenceSegmentClick: (flatSegIdx) => {
-        onFenceSegmentClickRef.current?.(flatSegIdx);
       },
     });
     engineRef.current = engine;
@@ -246,54 +235,6 @@ export function FenceLayoutCanvas({
     window.dispatchEvent(new Event("resize"));
   }, [expanded]);
 
-  const handleUseLayout = useCallback(() => {
-    const layout = engineRef.current?.getLayout();
-    if (!layout || layout.segments.length === 0) return;
-
-    fenceDispatch({
-      type: "SET_FIELD",
-      field: "totalRunLength",
-      value: Math.round(layout.totalLengthM * 100) / 100,
-    });
-
-    fenceDispatch({
-      type: "SET_FIELD",
-      field: "corners",
-      value: layout.cornerCount,
-    });
-
-    // Sync canvas gates to GateContext
-    if (layout.gates.length > 0) {
-      gateDispatch({ type: "CLEAR_ALL" });
-      for (const gate of layout.gates) {
-        gateDispatch({
-          type: "ADD_GATE",
-          gate: {
-            id: crypto.randomUUID(),
-            gateType: "single-swing" as const,
-            openingWidth: gate.widthMM,
-            gateHeight: "match-fence" as const,
-            colour: "match-fence" as const,
-            slatGap: "match-fence" as const,
-            slatSize: "match-fence" as const,
-            gatePostSize: "65x65" as const,
-            hingeType: "dd-kwik-fit-adjustable" as const,
-            latchType: "dd-magna-latch-top-pull" as const,
-            qty: 1,
-          },
-        });
-      }
-    }
-
-    setApplied(true);
-    setTimeout(() => {
-      setApplied(false);
-      onApplied?.(layout);
-    }, 300);
-  }, [fenceDispatch, gateDispatch, onApplied]);
-
-  const layoutValid = runSummaries.length > 0;
-
   const handleEditCanvasGateSave = useCallback(
     (gate: GateConfig) => {
       if (!editingCanvasGate) return;
@@ -316,33 +257,37 @@ export function FenceLayoutCanvas({
         onToolChange={setActiveTool}
         snapEnabled={snapEnabled}
         onSnapToggle={setSnapEnabled}
+        gateSnap100={gateSnap100}
+        onGateSnap100Toggle={setGateSnap100}
         showGrid={showGrid}
         onToggleGrid={setShowGrid}
         expanded={expanded}
         onToggleExpand={setExpanded}
-        trailingSlot={
-          <button
-            type="button"
-            onClick={() => setSatelliteOpen((o) => !o)}
-            className={cn(
-              "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border transition-colors",
-              satelliteActive
-                ? "border-brand-accent bg-brand-accent/25 text-brand-accent"
-                : satelliteOpen
-                  ? "border-brand-accent/60 bg-brand-accent/10 text-brand-text"
-                  : "border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50",
-            )}
-            title="Satellite map underlay — address, opacity, and scale"
-          >
-            <Map size={13} aria-hidden /> Satellite
-          </button>
-        }
+        onHelpOpen={() => {}}
+        onPrintMap={() => engineRef.current?.printMap?.()}
       />
+      <div className="flex items-center gap-2 border-b border-brand-border/60 bg-brand-card px-2 py-1.5">
+        <button
+          type="button"
+          onClick={() => setSatelliteOpen((o) => !o)}
+          className={cn(
+            "flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border transition-colors",
+            satelliteActive
+              ? "border-brand-accent bg-brand-accent/25 text-brand-accent"
+              : satelliteOpen
+                ? "border-brand-accent/60 bg-brand-accent/10 text-brand-text"
+                : "border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50",
+          )}
+          title="Satellite map underlay — address, opacity, and scale"
+        >
+          <Map size={13} aria-hidden /> Satellite
+        </button>
+      </div>
 
       {satelliteOpen ? (
         <MapControls
           engineRef={engineRef}
-          onUnderlayActiveChange={setSatelliteActive}
+          onMapUiStateChange={(s) => setSatelliteActive(s.hasLoadedMap)}
         />
       ) : null}
 

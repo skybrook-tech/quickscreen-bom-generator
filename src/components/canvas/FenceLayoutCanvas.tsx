@@ -1,21 +1,33 @@
 import { useRef, useEffect, useCallback, useState, useMemo } from "react";
-import { ArrowRight } from "lucide-react";
 import { initCanvasEngine } from "./canvasEngine";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { MapControls } from "./MapControls";
+import type { MapUiState } from "./MapControls";
+import { HelpCheatSheet } from "./HelpCheatSheet";
 import { GateModal } from "../gate/GateModal";
+import NumberInput from "../shared/NumberInput";
 import { useFenceConfig } from "../../context/FenceConfigContext";
 import { useGates } from "../../context/GateContext";
 import { useProducts } from "../../hooks/useProducts";
 import type { GateConfig } from "../../schemas/gate.schema";
-import type { CanvasLayout, CanvasRunSummary } from "./canvasEngine";
+import type {
+  CanvasGateSlidingSide,
+  CanvasGateType,
+  CanvasGateVisual,
+  CanvasLayout,
+  CanvasRunSummary,
+} from "./canvasEngine";
 import type { PostPosition } from "../../types/bom.types";
 
 interface PendingGate {
   stub: GateConfig;
   segIdx: number;
   gateIdx: number;
+  slidingSide: CanvasGateSlidingSide;
 }
+
+const DEFAULT_GATE_WIDTH_FALLBACK = 900;
+type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar";
 
 interface FenceLayoutCanvasProps {
   onApplied?: (layout: CanvasLayout) => void;
@@ -29,10 +41,10 @@ interface FenceLayoutCanvasProps {
   allowedAngles?: number[];
   /** Pre-computed stats text from calcRunStats — keeps canvas overlay in sync with form. */
   runStatsTexts?: { global: string; perRun: string[] };
+  gateVisuals?: Record<string, CanvasGateVisual>;
 }
 
 export function FenceLayoutCanvas({
-  onApplied,
   onLayoutChange,
   onEngineReady,
   postPositions,
@@ -40,10 +52,11 @@ export function FenceLayoutCanvas({
   jobPanelWidth,
   allowedAngles: allowedAnglesProp,
   runStatsTexts,
+  gateVisuals = {},
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
-  const { state: fenceState, dispatch: fenceDispatch } = useFenceConfig();
+  const { state: fenceState } = useFenceConfig();
   const { data: products } = useProducts();
   const { gates, dispatch: gateDispatch } = useGates();
 
@@ -65,17 +78,29 @@ export function FenceLayoutCanvas({
   const gatesRef = useRef(gates);
   gatesRef.current = gates;
 
-  const [activeTool, setActiveTool] = useState<"draw" | "gate" | "move" | "boundary">(
+  const [activeTool, setActiveTool] = useState<CanvasTool>(
     "draw",
   );
   const [snapEnabled, setSnapEnabled] = useState(true);
+  const [gateSnap100, setGateSnap100] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
   const [expanded, setExpanded] = useState(false);
-  const [applied, setApplied] = useState(false);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [boundaryHintVisible, setBoundaryHintVisible] = useState(false);
+  const [mapUiState, setMapUiState] = useState<MapUiState>({
+    mapType: "satellite",
+    hasAddress: false,
+    hasLoadedMap: false,
+    calibrationLabel: "",
+  });
 
   // Gate placed on canvas but not yet configured by user
   const [pendingGate, setPendingGate] = useState<PendingGate | null>(null);
+  const [gatePlacementOpen, setGatePlacementOpen] = useState(false);
+  const [gatePlacementWidth, setGatePlacementWidth] = useState(DEFAULT_GATE_WIDTH_FALLBACK);
+  const [gatePlacementType, setGatePlacementType] = useState<CanvasGateType>("single-swing");
+  const [gatePlacementSlideSide, setGatePlacementSlideSide] = useState<CanvasGateSlidingSide>("front");
 
   // Existing gate being edited (click on a placed gate marker)
   const [editingCanvasGate, setEditingCanvasGate] = useState<{
@@ -83,13 +108,35 @@ export function FenceLayoutCanvas({
     gateIdx: number;
     gate: GateConfig;
   } | null>(null);
+  const [pendingGateWidth, setPendingGateWidth] = useState(DEFAULT_GATE_WIDTH_FALLBACK);
+  const [useGatePostsAsTermination, setUseGatePostsAsTermination] = useState(true);
+
+  const handleToolChange = useCallback((tool: CanvasTool) => {
+    setActiveTool(tool);
+    if (tool === "gate") {
+      setGatePlacementOpen(true);
+    }
+    if (
+      tool === "boundary" &&
+      window.localStorage.getItem("qsbom.boundaryHintSeen") !== "true"
+    ) {
+      setBoundaryHintVisible(true);
+      window.localStorage.setItem("qsbom.boundaryHintSeen", "true");
+    }
+  }, []);
 
   const handleGatePlaced = useCallback(
-    (segIdx: number, gateIdx: number, defaultWidthMM: number) => {
+    (
+      segIdx: number,
+      gateIdx: number,
+      defaultWidthMM: number,
+      gateType: CanvasGateType = "single-swing",
+      slidingSide: CanvasGateSlidingSide = "front",
+    ) => {
       const stub: GateConfig = {
         id: crypto.randomUUID(),
         qty: 1,
-        gateType: "single-swing",
+        gateType,
         openingWidth: defaultWidthMM,
         gateHeight: "match-fence",
         colour: "match-fence",
@@ -98,8 +145,11 @@ export function FenceLayoutCanvas({
         gatePostSize: "65x65",
         hingeType: "dd-kwik-fit-adjustable",
         latchType: "dd-magna-latch-top-pull",
+        swingDirection: gateType === "sliding" ? "right" : "out",
       };
-      setPendingGate({ stub, segIdx, gateIdx });
+      setPendingGateWidth(defaultWidthMM);
+      setUseGatePostsAsTermination(true);
+      setPendingGate({ stub, segIdx, gateIdx, slidingSide });
     },
     [],
   );
@@ -141,12 +191,21 @@ export function FenceLayoutCanvas({
   }, [allowedAngles]);
 
   const handleGateSave = useCallback(
-    (gate: GateConfig) => {
+    (gate: GateConfig, useTerminationPosts = true) => {
       if (!pendingGate) return;
       engineRef.current?.updateGateWidth(
         pendingGate.segIdx,
         pendingGate.gateIdx,
         gate.openingWidth,
+      );
+      engineRef.current?.updateGateVisual(
+        pendingGate.segIdx,
+        pendingGate.gateIdx,
+        {
+          gateType: gate.gateType,
+          swingDirection: gate.swingDirection,
+          slidingSide: pendingGate.slidingSide,
+        },
       );
       // Link canvas gate marker to GateConfig id so edit-by-click works later
       engineRef.current?.setGateId(
@@ -154,7 +213,15 @@ export function FenceLayoutCanvas({
         pendingGate.gateIdx,
         gate.id,
       );
-      gateDispatch({ type: "ADD_GATE", gate });
+      engineRef.current?.setGateTerminationPosts(
+        pendingGate.segIdx,
+        pendingGate.gateIdx,
+        useTerminationPosts,
+      );
+      gateDispatch({
+        type: "ADD_GATE",
+        gate: { ...gate, useGatePostsAsFenceTermination: useTerminationPosts } as GateConfig,
+      });
       setPendingGate(null);
     },
     [pendingGate, gateDispatch],
@@ -168,7 +235,22 @@ export function FenceLayoutCanvas({
       pendingGate.gateIdx,
       pendingGate.stub.id,
     );
-    gateDispatch({ type: "ADD_GATE", gate: pendingGate.stub });
+    engineRef.current?.updateGateVisual(
+      pendingGate.segIdx,
+      pendingGate.gateIdx,
+      {
+        gateType: pendingGate.stub.gateType,
+        swingDirection: pendingGate.stub.swingDirection,
+        slidingSide: pendingGate.slidingSide,
+      },
+    );
+    gateDispatch({
+      type: "ADD_GATE",
+      gate: {
+        ...pendingGate.stub,
+        useGatePostsAsFenceTermination: true,
+      } as GateConfig,
+    });
     setPendingGate(null);
   }, [pendingGate, gateDispatch]);
 
@@ -176,6 +258,10 @@ export function FenceLayoutCanvas({
   useEffect(() => {
     engineRef.current?.setShowGrid(showGrid);
   }, [showGrid]);
+
+  useEffect(() => {
+    engineRef.current?.setGateSnapTo100mm(gateSnap100);
+  }, [gateSnap100]);
 
   // Sync postPositions prop into the canvas engine
   useEffect(() => {
@@ -198,57 +284,47 @@ export function FenceLayoutCanvas({
     engineRef.current?.setRunStatsTexts(runStatsTexts.global, runStatsTexts.perRun);
   }, [runStatsTexts]);
 
+  useEffect(() => {
+    engineRef.current?.setGateVisuals(
+      {
+        ...gateVisuals,
+        ...Object.fromEntries(
+          gates.map((gate) => [
+            gate.id,
+            {
+              gateType: gate.gateType,
+              swingDirection: gate.swingDirection,
+              slidingSide: "front",
+            },
+          ]),
+        ),
+      },
+    );
+  }, [gateVisuals, gates]);
+
+  useEffect(() => {
+    engineRef.current?.setPendingGatePlacement({
+      gateType: gatePlacementType,
+      widthMM: gatePlacementWidth,
+      swingDirection: gatePlacementType === "sliding" ? "right" : "out",
+      slidingSide: gatePlacementSlideSide,
+    });
+  }, [gatePlacementType, gatePlacementWidth, gatePlacementSlideSide]);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const label = (event as CustomEvent<string | null>).detail ?? null;
+      engineRef.current?.setHighlightedMapLabel(label);
+    };
+    window.addEventListener("qsbom:hover-map-label", handler);
+    return () => window.removeEventListener("qsbom:hover-map-label", handler);
+  }, []);
+
   // When expanded changes, trigger a window resize event so the engine's
   // internal onResize handler picks up the new canvas CSS height.
   useEffect(() => {
     window.dispatchEvent(new Event("resize"));
   }, [expanded]);
-
-  const handleUseLayout = useCallback(() => {
-    const layout = engineRef.current?.getLayout();
-    if (!layout || layout.segments.length === 0) return;
-
-    fenceDispatch({
-      type: "SET_FIELD",
-      field: "totalRunLength",
-      value: Math.round(layout.totalLengthM * 100) / 100,
-    });
-
-    fenceDispatch({
-      type: "SET_FIELD",
-      field: "corners",
-      value: layout.cornerCount,
-    });
-
-    // Sync canvas gates to GateContext
-    if (layout.gates.length > 0) {
-      gateDispatch({ type: "CLEAR_ALL" });
-      for (const gate of layout.gates) {
-        gateDispatch({
-          type: "ADD_GATE",
-          gate: {
-            id: crypto.randomUUID(),
-            gateType: "single-swing" as const,
-            openingWidth: gate.widthMM,
-            gateHeight: "match-fence" as const,
-            colour: "match-fence" as const,
-            slatGap: "match-fence" as const,
-            slatSize: "match-fence" as const,
-            gatePostSize: "65x65" as const,
-            hingeType: "dd-kwik-fit-adjustable" as const,
-            latchType: "dd-magna-latch-top-pull" as const,
-            qty: 1,
-          },
-        });
-      }
-    }
-
-    setApplied(true);
-    setTimeout(() => {
-      setApplied(false);
-      onApplied?.(layout);
-    }, 300);
-  }, [fenceDispatch, gateDispatch, onApplied]);
 
   const handleEditCanvasGateSave = useCallback(
     (gate: GateConfig) => {
@@ -258,11 +334,27 @@ export function FenceLayoutCanvas({
         editingCanvasGate.gateIdx,
         gate.openingWidth,
       );
+      engineRef.current?.updateGateVisual(
+        editingCanvasGate.flatSegIdx,
+        editingCanvasGate.gateIdx,
+        {
+          gateType: gate.gateType,
+          swingDirection: gate.swingDirection,
+          slidingSide: "front",
+        },
+      );
       gateDispatch({ type: "UPDATE_GATE", id: gate.id, updates: gate });
       setEditingCanvasGate(null);
     },
     [editingCanvasGate, gateDispatch],
   );
+
+  const handlePrintMap = useCallback(() => {
+    const includeSatellite = engineRef.current?.hasSatelliteUnderlay()
+      ? window.confirm("Include the satellite underlay on the printed map?")
+      : false;
+    engineRef.current?.printMap({ includeSatellite });
+  }, []);
 
   // Totals across all runs
   const totalLengthM = runSummaries.reduce((s, r) => s + r.totalLengthM, 0);
@@ -271,124 +363,295 @@ export function FenceLayoutCanvas({
 
   return (
     <div className="space-y-0">
-      <CanvasToolbar
-        engineRef={engineRef}
-        activeTool={activeTool}
-        onToolChange={setActiveTool}
-        snapEnabled={snapEnabled}
-        onSnapToggle={setSnapEnabled}
-        showGrid={showGrid}
-        onToggleGrid={setShowGrid}
-        expanded={expanded}
-        onToggleExpand={setExpanded}
-      />
+      <div data-print-hide>
+        <CanvasToolbar
+          engineRef={engineRef}
+          activeTool={activeTool}
+          onToolChange={handleToolChange}
+          snapEnabled={snapEnabled}
+          onSnapToggle={setSnapEnabled}
+          gateSnap100={gateSnap100}
+          onGateSnap100Toggle={setGateSnap100}
+          showGrid={showGrid}
+          onToggleGrid={setShowGrid}
+          expanded={expanded}
+          onToggleExpand={setExpanded}
+          onHelpOpen={() => setHelpOpen(true)}
+          onPrintMap={handlePrintMap}
+        />
+      </div>
 
       <div className="relative">
         <canvas
           ref={canvasRef}
-          className="w-full bg-brand-bg block"
-          style={{ height: expanded ? "700px" : "420px", cursor: "crosshair" }}
+          className="block w-full touch-none bg-brand-bg"
+          style={{ height: expanded ? "700px" : "504px", cursor: "crosshair" }}
         />
 
-        <div className="absolute bottom-2 left-2 right-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-brand-muted pointer-events-none select-none">
-          <span>
-            {activeTool === "draw" &&
-              "Click to place points · Double-click or Enter to finish · Esc to cancel"}
-            {activeTool === "gate" &&
-              "Click on a fence segment to place a gate marker"}
-            {activeTool === "move" &&
-              "Drag nodes or gates to reposition · Click a label to edit length"}
-            {activeTool === "boundary" &&
-              "Draw non-product context lines (existing fences, walls, property lines) — not included in BOM"}
-          </span>
-          <span className="hidden sm:inline text-brand-border" aria-hidden>
-            |
-          </span>
-          <span className="text-brand-muted/90">
-            Scroll = zoom · Right-drag = pan · Ctrl+Z = undo
-          </span>
+        {/* Hint overlay */}
+        <div className="hidden">
+          {activeTool === "draw" &&
+            "Click to place points - double-click near the last point to finish - click a length label to edit"}
+          {activeTool === "gate" &&
+            "Click on a fence section to place a gate marker, then drag it along the line to fine-tune"}
+          {activeTool === "move" &&
+            "Drag nodes or gates to reposition · Click a label to edit length"}
+          {activeTool === "boundary" &&
+            "Draw non-product context lines (existing fences, walls, property lines) — not included in BOM"}
         </div>
+
+        {/* Zoom hint */}
+        <div className="hidden">
+          Scroll = zoom · Right-drag = pan · Ctrl+Z = undo
+        </div>
+        {boundaryHintVisible && (
+          <div className="absolute left-4 top-4 max-w-xs rounded-lg border border-brand-warning/40 bg-brand-card/95 p-3 text-xs text-brand-text shadow-md">
+            <div className="font-semibold text-brand-warning">Boundary tool</div>
+            <p className="mt-1 text-brand-muted">
+              Draw existing fences, walls, or property lines for context. These
+              do not appear in your BOM.
+            </p>
+            <button
+              type="button"
+              onClick={() => setBoundaryHintVisible(false)}
+              className="mt-2 rounded-lg border border-brand-border px-2 py-1 font-semibold text-brand-muted hover:border-brand-primary hover:text-brand-text"
+            >
+              Got it
+            </button>
+          </div>
+        )}
+
+        {mapUiState.calibrationLabel && (
+          <div className="absolute right-2 top-2 rounded-full border border-brand-success/40 bg-brand-card/95 px-3 py-1 text-xs font-semibold text-brand-success shadow-md pointer-events-none">
+            Calibrated: {mapUiState.calibrationLabel}
+          </div>
+        )}
       </div>
 
-      <MapControls engineRef={engineRef} />
+      <div data-print-hide>
+        <MapControls
+          engineRef={engineRef}
+          onMapUiStateChange={setMapUiState}
+        />
+      </div>
 
       {/* Run summary table */}
       {runSummaries.length > 0 && (
         <div className="border-t border-brand-border">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="bg-brand-bg/60 text-brand-muted uppercase tracking-wider">
-                <th className="text-left px-3 py-2 font-semibold">Run</th>
-                <th className="text-right px-3 py-2 font-semibold">Length</th>
-                <th className="text-right px-3 py-2 font-semibold">Corners</th>
-                <th className="text-right px-3 py-2 font-semibold">Gates</th>
-              </tr>
-            </thead>
-            <tbody>
-              {runSummaries.map((run) => (
-                <tr
-                  key={run.label}
-                  className="border-t border-brand-border/50 text-brand-text"
-                >
-                  <td className="px-3 py-1.5 text-brand-muted">{run.label}</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">
-                    {run.totalLengthM.toFixed(2)}m
-                  </td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">
-                    {run.cornerCount}
-                  </td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">
-                    {run.gates.length}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+          <div className="space-y-2 bg-brand-card px-3 py-2 text-xs text-brand-text">
+            {runSummaries.map((run) => (
+              <div key={run.label} className="space-y-1">
+                <div className="font-bold tabular-nums">
+                  {run.label} · {run.totalLengthM.toFixed(2)}m
+                  {run.gates.length > 0
+                    ? ` · ${run.gates.length} gate${run.gates.length === 1 ? "" : "s"}`
+                    : ""}
+                </div>
+                <div className="ml-5 space-y-0.5 text-brand-muted">
+                  {(run.sections ?? []).map((section) => (
+                    <div key={`${run.label}-${section.label}`} className="tabular-nums">
+                      {section.label} · {section.lengthM.toFixed(2)}m · {section.panelCount} panel{section.panelCount === 1 ? "" : "s"} · {section.gateCount > 0 ? `${section.gateCount} gate${section.gateCount === 1 ? "" : "s"}` : "—"}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
             {runSummaries.length > 1 && (
-              <tfoot>
-                <tr className="border-t border-brand-border font-semibold text-brand-text bg-brand-bg/40">
-                  <td className="px-3 py-1.5 text-brand-muted">Total</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">
-                    {totalLengthM.toFixed(2)}m
-                  </td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">
-                    {totalCorners}
-                  </td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">
-                    {totalGates}
-                  </td>
-                </tr>
-              </tfoot>
+              <div className="border-t border-brand-border/60 pt-1 font-bold tabular-nums">
+                Total · {totalLengthM.toFixed(2)}m · {totalGates} gate{totalGates === 1 ? "" : "s"} · {totalCorners} corner{totalCorners === 1 ? "" : "s"}
+              </div>
             )}
-          </table>
+          </div>
         </div>
       )}
 
-      {/* Apply button */}
-      <div className="flex items-center justify-between p-3 bg-brand-card border-t border-brand-border">
-        <p className="text-xs text-brand-muted">
-          Draw your fence layout above, then click{" "}
-          <strong className="text-brand-text">Use This Layout</strong> to
-          populate the run length and corners in the form below.
-        </p>
-        <button
-          type="button"
-          onClick={handleUseLayout}
-          className="flex items-center gap-1.5 px-4 py-2 bg-brand-accent text-white text-sm font-medium rounded hover:bg-brand-accent-hover transition-colors shrink-0 ml-4"
+      {gatePlacementOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Gate placement setup"
         >
-          {applied ? "Applied!" : "Use This Layout"}
-          {!applied && <ArrowRight size={14} />}
-        </button>
-      </div>
+          <div className="w-full max-w-sm rounded-lg border border-brand-border bg-brand-card p-5 shadow-2xl">
+            <h2 className="text-base font-semibold text-brand-text">Gate placement</h2>
+            <p className="mt-1 text-xs font-semibold text-brand-muted">
+              Set the opening before placing the gate. The map preview will show this width before you drop it.
+            </p>
+            <div className="mt-4 space-y-4">
+              <NumberInput
+                label="Gate width (mm)"
+                min={400}
+                max={6500}
+                step={50}
+                value={gatePlacementWidth}
+                onChange={setGatePlacementWidth}
+                className="mt-1 w-full bg-brand-bg text-brand-text"
+              />
+              <label className="block text-sm font-semibold text-brand-text">
+                Gate type
+                <select
+                  value={gatePlacementType}
+                  onChange={(event) => setGatePlacementType(event.target.value as CanvasGateType)}
+                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+                >
+                  <option value="single-swing">Single swing</option>
+                  <option value="double-swing">Double swing</option>
+                  <option value="sliding">Sliding</option>
+                </select>
+              </label>
+              {gatePlacementType === "sliding" && (
+                <label className="block text-sm font-semibold text-brand-text">
+                  Sliding side
+                  <select
+                    value={gatePlacementSlideSide}
+                    onChange={(event) =>
+                      setGatePlacementSlideSide(event.target.value as CanvasGateSlidingSide)
+                    }
+                    className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+                  >
+                    <option value="front">Front side of fence</option>
+                    <option value="back">Back side of fence</option>
+                  </select>
+                </label>
+              )}
+            </div>
+            <div className="mt-5 flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  engineRef.current?.setPendingGatePlacement({
+                    gateType: gatePlacementType,
+                    widthMM: gatePlacementWidth,
+                    swingDirection: gatePlacementType === "sliding" ? "right" : "out",
+                    slidingSide: gatePlacementSlideSide,
+                  });
+                  engineRef.current?.setTool("gate");
+                  setActiveTool("gate");
+                  setGatePlacementOpen(false);
+                }}
+                className="flex-1 rounded-md bg-brand-accent px-4 py-2 text-sm font-semibold text-white hover:bg-brand-accent-hover"
+              >
+                Place gate
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setGatePlacementOpen(false);
+                  engineRef.current?.setTool("move");
+                  setActiveTool("move");
+                }}
+                className="rounded-md border border-brand-border px-4 py-2 text-sm font-medium text-brand-muted hover:text-brand-text"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-      {/* Gate modal — opens immediately when a gate marker is placed on the canvas */}
+      {/* Gate placement modal: detailed gate options live in the run settings. */}
       {pendingGate && (
-        <GateModal
-          mode="adding"
-          gateId={pendingGate.stub.id}
-          initialValues={pendingGate.stub}
-          onSave={handleGateSave}
-          onClose={handleGateSkip}
-        />
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Place gate"
+        >
+          <div className="w-full max-w-sm rounded-lg border border-brand-border bg-brand-card p-5 shadow-2xl">
+            <h2 className="text-base font-semibold text-brand-text">
+              Place gate
+            </h2>
+            <div className="mt-4 space-y-4">
+              <NumberInput
+                label="Gate opening (mm)"
+                min={400}
+                max={6000}
+                step={50}
+                value={pendingGateWidth}
+                onChange={setPendingGateWidth}
+                className="mt-1 w-full bg-brand-bg text-brand-text"
+              />
+              <label className="flex items-start gap-2 text-sm text-brand-text">
+                <input
+                  type="checkbox"
+                  checked={useGatePostsAsTermination}
+                  onChange={(event) =>
+                    setUseGatePostsAsTermination(event.target.checked)
+                  }
+                  className="mt-0.5 accent-brand-accent"
+                />
+                <span>Use gate posts as fence termination post</span>
+              </label>
+              {pendingGate.stub.gateType === "sliding" && (
+                <label className="block text-sm text-brand-text">
+                  Sliding side
+                  <select
+                    value={pendingGate.slidingSide}
+                    onChange={(event) =>
+                      setPendingGate({
+                        ...pendingGate,
+                        slidingSide: event.target.value as CanvasGateSlidingSide,
+                      })
+                    }
+                    className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+                  >
+                    <option value="front">Front side of fence</option>
+                    <option value="back">Back side of fence</option>
+                  </select>
+                </label>
+              )}
+              <label className="block text-sm text-brand-text">
+                Opening direction
+                <select
+                  value={pendingGate.stub.swingDirection}
+                  onChange={(event) =>
+                    setPendingGate({
+                      ...pendingGate,
+                      stub: {
+                        ...pendingGate.stub,
+                        swingDirection: event.target.value as GateConfig["swingDirection"],
+                      },
+                    })
+                  }
+                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+                >
+                  {pendingGate.stub.gateType === "sliding" ? (
+                    <>
+                      <option value="left">Slide left</option>
+                      <option value="right">Slide right</option>
+                    </>
+                  ) : (
+                    <>
+                      <option value="out">Swing out</option>
+                      <option value="in">Swing in</option>
+                    </>
+                  )}
+                </select>
+              </label>
+            </div>
+            <div className="mt-5 flex gap-2">
+              <button
+                type="button"
+                onClick={() =>
+                  handleGateSave(
+                    { ...pendingGate.stub, openingWidth: pendingGateWidth },
+                    useGatePostsAsTermination,
+                  )
+                }
+                className="flex-1 rounded-md bg-brand-accent px-4 py-2 text-sm font-semibold text-white hover:bg-brand-accent-hover"
+              >
+                Add gate
+              </button>
+              <button
+                type="button"
+                onClick={handleGateSkip}
+                className="rounded-md border border-brand-border px-4 py-2 text-sm font-medium text-brand-muted hover:text-brand-text"
+              >
+                Keep default
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Gate edit modal — opened by clicking an existing gate marker */}
@@ -401,6 +664,8 @@ export function FenceLayoutCanvas({
           onClose={() => setEditingCanvasGate(null)}
         />
       )}
+
+      <HelpCheatSheet open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   );
 }

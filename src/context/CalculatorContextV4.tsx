@@ -332,7 +332,7 @@ function reducer(
 
           if (
             rightChanged &&
-            segment.rightTermination.kind !== "segment_join" &&
+            segment.rightTermination?.kind !== "segment_join" &&
             sortedIdx < sorted.length - 1
           ) {
             const nextSeg = sorted[sortedIdx + 1];
@@ -347,7 +347,7 @@ function reducer(
 
           if (
             leftChanged &&
-            segment.leftTermination.kind !== "segment_join" &&
+            segment.leftTermination?.kind !== "segment_join" &&
             sortedIdx > 0
           ) {
             const prevSeg = sorted[sortedIdx - 1];

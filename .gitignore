@@ -23,8 +23,10 @@ Desktop/Claude Glass Outlet Project/archive/*
 # Skill folder
 !.claude/
 !.claude/skills/
-!.claude/skills/quickscreen-bom/
-!.claude/skills/quickscreen-bom/**
+!.claude/skills/**
+!.agents/
+!.agents/skills/
+!.agents/skills/**
 
 node_modules/
 dist/
@@ -36,5 +38,7 @@ screenshots/
 .tmp
 
 .env*
+
+vite-dev*.log
 
 .claude/worktrees/*

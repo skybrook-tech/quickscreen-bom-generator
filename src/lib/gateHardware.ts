@@ -311,14 +311,11 @@ export const HARDWARE_KITS = [
 export function estimateGateWeight(input: GateWeightInput): GateWeightEstimate {
   const widthM = Math.max(0.1, input.widthMm / 1000);
   const heightM = Math.max(0.1, input.heightMm / 1000);
-  const finish =
-    input.finishFamily === "economy" || input.finishFamily === "alumawood"
-      ? input.finishFamily
-      : "standard";
+  const finish = input.finishFamily === "economy" || input.finishFamily === "alumawood"
+    ? input.finishFamily
+    : "standard";
   const slatSize = input.slatSizeMm === 90 ? 90 : 65;
-  const slatKgM =
-    KG_PER_M_BY_SLAT[`${slatSize}-${finish}`] ??
-    KG_PER_M_BY_SLAT[`${slatSize}-standard`];
+  const slatKgM = KG_PER_M_BY_SLAT[`${slatSize}-${finish}`] ?? KG_PER_M_BY_SLAT[`${slatSize}-standard`];
   const gap = Math.max(0, input.slatGapMm);
   const vertical = String(input.build ?? "").includes("vertical");
   const slatCount = Math.max(
@@ -346,6 +343,19 @@ export function estimateGateWeight(input: GateWeightInput): GateWeightEstimate {
   };
 }
 
+export function hingeGapForSku(value: unknown): number {
+  const sku = baseHardwareSku(value);
+  const hinge = HINGE_HARDWARE.find((item) => item.sku === sku || item.skuW === sku);
+  if (!hinge) return 20;
+  return Math.round((hinge.gapMinMm + hinge.gapMaxMm) / 2);
+}
+
+export function latchGapForSku(value: unknown): number {
+  const sku = baseHardwareSku(value);
+  if (!sku || sku === "none") return 0;
+  return 10;
+}
+
 export function isWhiteHardwareFinish(colour: unknown): boolean {
   const value = String(colour ?? "").toLowerCase();
   return value === "w" || value.includes("white");
@@ -360,9 +370,10 @@ export function baseHardwareSku(value: unknown): string {
   );
 }
 
-export function effectiveHardwareSku<
-  T extends { sku: string; skuW?: string; hasWhite: boolean },
->(item: T, whiteFinish: boolean): string {
+export function effectiveHardwareSku<T extends { sku: string; skuW?: string; hasWhite: boolean }>(
+  item: T,
+  whiteFinish: boolean,
+): string {
   return whiteFinish && item.hasWhite && item.skuW ? item.skuW : item.sku;
 }
 
@@ -379,8 +390,7 @@ export function rankHinges({
 }): RankedHardware<HingeHardware>[] {
   const ranked: RankedHardware<HingeHardware>[] = HINGE_HARDWARE.map((hinge) => {
     const reasons: string[] = [];
-    if (hinge.ratingKg < requiredRatingKg)
-      reasons.push(`Rated ${hinge.ratingKg}kg, needs ${requiredRatingKg}kg`);
+    if (hinge.ratingKg < requiredRatingKg) reasons.push(`Rated ${hinge.ratingKg}kg, needs ${requiredRatingKg}kg`);
     if (gateGapMm < hinge.gapMinMm || gateGapMm > hinge.gapMaxMm) {
       reasons.push(`Suits ${hinge.gapMinMm}-${hinge.gapMaxMm}mm hinge gap`);
     }
@@ -404,11 +414,10 @@ export function rankHinges({
 
   const recommended = [...ranked]
     .filter((hinge) => hinge.status !== "fail")
-    .sort(
-      (a, b) =>
-        a.ratingKg - b.ratingKg ||
-        preferredHingeOrder(a.sku) - preferredHingeOrder(b.sku) ||
-        a.label.localeCompare(b.label),
+    .sort((a, b) =>
+      a.ratingKg - b.ratingKg ||
+      preferredHingeOrder(a.sku) - preferredHingeOrder(b.sku) ||
+      a.label.localeCompare(b.label),
     )[0];
   if (recommended) recommended.recommended = true;
   return ranked;
@@ -423,47 +432,33 @@ export function rankLatches({
   whiteFinish: boolean;
   poolSafePreferred?: boolean;
 }): RankedHardware<LatchHardware>[] {
-  const ranked: RankedHardware<LatchHardware>[] = LATCH_HARDWARE.map(
-    (latch) => {
-      const reasons: string[] = [];
-      if (movement === "sliding" && latch.swingOnly && latch.sku !== "none") {
-        reasons.push("Swing gates only");
-      }
-      if (whiteFinish && !latch.hasWhite && latch.sku !== "none")
-        reasons.push("No white finish");
-      if (poolSafePreferred && !latch.poolSafe && latch.sku !== "none")
-        reasons.push("Not pool-safe");
-      const status: GateHardwareStatus = reasons.length > 0 ? "fail" : "fit";
-      return {
-        ...latch,
-        effectiveSku: effectiveHardwareSku(latch, whiteFinish),
-        status,
-        reasons,
-      };
-    },
-  ).sort(
-    (a, b) =>
-      hardwareStatusRank(a.status) - hardwareStatusRank(b.status) ||
-      a.label.localeCompare(b.label),
-  );
+  const ranked: RankedHardware<LatchHardware>[] = LATCH_HARDWARE.map((latch) => {
+    const reasons: string[] = [];
+    if (movement === "sliding" && latch.swingOnly && latch.sku !== "none") {
+      reasons.push("Swing gates only");
+    }
+    if (whiteFinish && !latch.hasWhite && latch.sku !== "none") reasons.push("No white finish");
+    if (poolSafePreferred && !latch.poolSafe && latch.sku !== "none") reasons.push("Not pool-safe");
+    const status: GateHardwareStatus = reasons.length > 0 ? "fail" : "fit";
+    return {
+      ...latch,
+      effectiveSku: effectiveHardwareSku(latch, whiteFinish),
+      status,
+      reasons,
+    };
+  }).sort((a, b) => hardwareStatusRank(a.status) - hardwareStatusRank(b.status) || a.label.localeCompare(b.label));
 
-  const recommended = ranked.find(
-    (latch) => latch.status !== "fail" && latch.sku !== "none",
-  );
+  const recommended = ranked.find((latch) => latch.status !== "fail" && latch.sku !== "none");
   if (recommended) recommended.recommended = true;
   return ranked;
 }
 
-export function kitForHardwareSelection(
-  hingeValue: unknown,
-  latchValue: unknown,
-) {
+export function kitForHardwareSelection(hingeValue: unknown, latchValue: unknown) {
   const hingeSku = baseHardwareSku(hingeValue);
   const latchSku = String(latchValue ?? "");
   const latchBase = baseHardwareSku(latchSku);
   return HARDWARE_KITS.find((kit) => {
-    const hingeMatches =
-      kit.hingeSku === hingeSku || kit.hingeSku === String(hingeValue ?? "");
+    const hingeMatches = kit.hingeSku === hingeSku || kit.hingeSku === String(hingeValue ?? "");
     const latchMatches =
       kit.latchSku === latchBase ||
       kit.latchSku === latchSku ||
@@ -474,9 +469,7 @@ export function kitForHardwareSelection(
 
 export function isTruCloseHardware(value: unknown): boolean {
   const sku = String(value ?? "");
-  return (
-    sku.includes("TC-H-AT") || sku.includes("TCHD") || sku === "ML-TL-TC-H-AT"
-  );
+  return sku.includes("TC-H-AT") || sku.includes("TCHD") || sku === "ML-TL-TC-H-AT";
 }
 
 function hardwareStatusRank(status: GateHardwareStatus): number {

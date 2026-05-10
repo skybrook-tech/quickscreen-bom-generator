@@ -1,132 +1,312 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Map, Loader2 } from "lucide-react";
+import { Info, Map, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import type { RefObject, KeyboardEvent } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
 
 type Engine = ReturnType<typeof initCanvasEngine>;
-type MapType = "satellite" | "roadmap" | "terrain" | "hybrid";
+export type MapType = "satellite" | "roadmap" | "terrain" | "hybrid";
 
-interface PhotonFeature {
-  type: "Feature";
-  properties: {
-    name?: string;
-    street?: string;
-    housenumber?: string;
-    city?: string;
-    state?: string;
-    postcode?: string;
-    country?: string;
+export interface MapUiState {
+  mapType: MapType;
+  hasAddress: boolean;
+  hasLoadedMap: boolean;
+  calibrationLabel: string;
+}
+
+interface GooglePrediction {
+  description: string;
+  place_id: string;
+  structured_formatting?: {
+    main_text?: string;
+    secondary_text?: string;
   };
-  geometry: {
-    type: "Point";
-    coordinates: [number, number];
+}
+
+interface GooglePlaceDetails {
+  formatted_address?: string;
+  geometry?: {
+    location?: {
+      lat: () => number;
+      lng: () => number;
+    };
   };
 }
 
 interface MapControlsProps {
   engineRef: RefObject<Engine | null>;
-  /** Fires when a map tile has been loaded onto the canvas (underlay active). */
-  onUnderlayActiveChange?: (active: boolean) => void;
+  onMapUiStateChange?: (state: MapUiState) => void;
 }
 
-function formatSuggestion(f: PhotonFeature): { line1: string; line2: string } {
-  const p = f.properties;
-  let line1 = "";
-  if (p.housenumber && p.street) {
-    line1 = `${p.housenumber} ${p.street}`;
-  } else if (p.street) {
-    line1 = p.street;
-  } else if (p.name) {
-    line1 = p.name;
+declare global {
+  interface Window {
+    __quickScreenGoogleMapsPromise?: Promise<void>;
+    google?: {
+      maps?: {
+        places?: {
+          AutocompleteService: new () => {
+            getPlacePredictions: (
+              request: Record<string, unknown>,
+              callback: (
+                predictions: GooglePrediction[] | null,
+                status: string,
+              ) => void,
+            ) => void;
+          };
+          PlacesService: new (attributionContainer: HTMLDivElement) => {
+            getDetails: (
+              request: Record<string, unknown>,
+              callback: (
+                place: GooglePlaceDetails | null,
+                status: string,
+              ) => void,
+            ) => void;
+          };
+          PlacesServiceStatus: { OK: string };
+        };
+      };
+    };
+  }
+}
+
+const TILE_ZOOM = 20;
+const STATIC_MAP_SIZE = "640x400";
+
+function googleMapsKey() {
+  return import.meta.env.VITE_GOOGLE_MAPS_KEY ?? "";
+}
+
+function metersPerPixelAt(latitude: number, zoom: number) {
+  return (
+    (156543.03392 * Math.cos((latitude * Math.PI) / 180)) /
+    Math.pow(2, zoom)
+  );
+}
+
+function loadGooglePlaces(key: string) {
+  if (window.google?.maps?.places) return Promise.resolve();
+  if (window.__quickScreenGoogleMapsPromise) {
+    return window.__quickScreenGoogleMapsPromise;
   }
 
-  const line2Parts: string[] = [];
-  if (p.city) line2Parts.push(p.city);
-  if (p.state) line2Parts.push(p.state);
-  if (p.postcode) line2Parts.push(p.postcode);
-  if (p.country && p.country !== "Australia") line2Parts.push(p.country);
+  window.__quickScreenGoogleMapsPromise = new Promise<void>((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(
+      key,
+    )}&libraries=places`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Failed to load Google Maps"));
+    document.head.appendChild(script);
+  });
 
-  return { line1, line2: line2Parts.join(", ") };
+  return window.__quickScreenGoogleMapsPromise;
 }
 
-function suggestionText(f: PhotonFeature): string {
-  const { line1, line2 } = formatSuggestion(f);
-  return [line1, line2].filter(Boolean).join(", ");
+function predictionLines(prediction: GooglePrediction) {
+  return {
+    line1:
+      prediction.structured_formatting?.main_text ?? prediction.description,
+    line2: prediction.structured_formatting?.secondary_text ?? "",
+  };
 }
 
 export function MapControls({
   engineRef,
-  onUnderlayActiveChange,
+  onMapUiStateChange,
 }: MapControlsProps) {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
   const [opacity, setOpacity] = useState(0.5);
-  const [scaleInput, setScaleInput] = useState("1"); // px per metre
+  const [scaleInput, setScaleInput] = useState("100");
   const [mapType, setMapType] = useState<MapType>("satellite");
   const [error, setError] = useState("");
-  const mapLoadedRef = useRef(false);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [calibrationLabel, setCalibrationLabel] = useState("");
 
-  // Autocomplete state
-  const [suggestions, setSuggestions] = useState<PhotonFeature[]>([]);
+  const [suggestions, setSuggestions] = useState<GooglePrediction[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
-  const [fetchingAC, setFetchingAC] = useState(false);
+  const [fetchingAutocomplete, setFetchingAutocomplete] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const placesAttributionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    onMapUiStateChange?.({
+      mapType,
+      hasAddress: address.trim().length > 0,
+      hasLoadedMap: mapLoaded,
+      calibrationLabel,
+    });
+  }, [address, calibrationLabel, mapLoaded, mapType, onMapUiStateChange]);
 
   const fetchSuggestions = useCallback(async (query: string) => {
-    if (query.trim().length < 3) {
+    const key = googleMapsKey();
+    if (!key || query.trim().length < 3) {
       setSuggestions([]);
       setShowDropdown(false);
       return;
     }
-    setFetchingAC(true);
+
+    setFetchingAutocomplete(true);
     try {
-      // Photon/OSM — Australian bounding box: west=112, south=-44, east=154, north=-10
-      const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=5&bbox=112,-44,154,-10`;
-      const resp = await fetch(url);
-      if (!resp.ok) throw new Error("autocomplete fetch failed");
-      const data = await resp.json();
-      const features: PhotonFeature[] = (data.features ?? []).filter(
-        (f: PhotonFeature) =>
-          f.geometry?.type === "Point" &&
-          (f.properties?.country === "Australia" ||
-            f.properties?.country === "AU"),
+      await loadGooglePlaces(key);
+      const service = new window.google!.maps!.places!.AutocompleteService();
+      service.getPlacePredictions(
+        {
+          input: query,
+          componentRestrictions: { country: "au" },
+          types: ["address"],
+        },
+        (predictions, status) => {
+          const ok = window.google?.maps?.places?.PlacesServiceStatus.OK;
+          if (status !== ok || !predictions?.length) {
+            setSuggestions([]);
+            setShowDropdown(false);
+            setActiveIndex(-1);
+            return;
+          }
+          setSuggestions(predictions);
+          setShowDropdown(true);
+          setActiveIndex(-1);
+        },
       );
-      setSuggestions(features);
-      setShowDropdown(features.length > 0);
-      setActiveIndex(-1);
     } catch {
-      // Silently fail — user can still type and press Enter/Load
       setSuggestions([]);
       setShowDropdown(false);
     } finally {
-      setFetchingAC(false);
+      setFetchingAutocomplete(false);
     }
   }, []);
 
   const handleAddressChange = (value: string) => {
     setAddress(value);
+    setMapLoaded(false);
+    setCalibrationLabel("");
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       void fetchSuggestions(value);
-    }, 300);
+    }, 250);
   };
 
-  const selectSuggestion = (feature: PhotonFeature) => {
-    const text = suggestionText(feature);
-    setAddress(text);
-    setSuggestions([]);
-    setShowDropdown(false);
-    setActiveIndex(-1);
-    // Trigger map load with the selected address
-    void handleLoadMapWithAddress(text);
+  const loadMapAtLocation = useCallback(
+    (lat: number, lng: number, label: string, overrideMapType?: MapType) => {
+      const key = googleMapsKey();
+      const activeMapType = overrideMapType ?? mapType;
+      const metersPerPixel = metersPerPixelAt(lat, TILE_ZOOM);
+      const autoScale = 1 / metersPerPixel;
+      const scaleLabel = `${autoScale.toFixed(1)} px/m · zoom ${TILE_ZOOM}`;
+      const staticUrl =
+        `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}` +
+        `&zoom=${TILE_ZOOM}&size=${STATIC_MAP_SIZE}&maptype=${activeMapType}` +
+        `&key=${encodeURIComponent(key)}`;
+
+      engineRef.current?.setScale(autoScale);
+      setScaleInput(autoScale.toFixed(1));
+      setCalibrationLabel(scaleLabel);
+      engineRef.current?.loadMapTile(staticUrl, opacity, lat, TILE_ZOOM);
+      setMapLoaded(true);
+      toast.success(`Auto-calibrated to ${autoScale.toFixed(1)} px/m`, {
+        description: label,
+      });
+    },
+    [engineRef, mapType, opacity],
+  );
+
+  const loadAddressViaGeocode = useCallback(
+    async (addr: string, overrideMapType?: MapType) => {
+      const key = googleMapsKey();
+      if (!key) {
+        setError(
+          "Google Maps API key not configured. Set VITE_GOOGLE_MAPS_KEY in .env.local.",
+        );
+        return;
+      }
+      const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+        addr,
+      )}&key=${encodeURIComponent(key)}`;
+      const response = await fetch(geocodeUrl);
+      const data = await response.json();
+      if (data.status !== "OK" || !data.results?.[0]) {
+        throw new Error("Address not found.");
+      }
+      const loc = data.results[0].geometry.location;
+      loadMapAtLocation(
+        loc.lat,
+        loc.lng,
+        data.results[0].formatted_address ?? addr,
+        overrideMapType,
+      );
+    },
+    [loadMapAtLocation],
+  );
+
+  const selectSuggestion = async (
+    prediction: GooglePrediction,
+    overrideMapType?: MapType,
+  ) => {
+    const key = googleMapsKey();
+    if (!key) return;
+    setError("");
+    setLoading(true);
+    try {
+      await loadGooglePlaces(key);
+      const attribution =
+        placesAttributionRef.current ?? document.createElement("div");
+      const service = new window.google!.maps!.places!.PlacesService(
+        attribution,
+      );
+      service.getDetails(
+        {
+          placeId: prediction.place_id,
+          fields: ["formatted_address", "geometry"],
+        },
+        (place, status) => {
+          const ok = window.google?.maps?.places?.PlacesServiceStatus.OK;
+          if (status !== ok || !place?.geometry?.location) {
+            setError("Address not found.");
+            setLoading(false);
+            return;
+          }
+          const label = place.formatted_address ?? prediction.description;
+          setAddress(label);
+          setSuggestions([]);
+          setShowDropdown(false);
+          setActiveIndex(-1);
+          loadMapAtLocation(
+            place.geometry.location.lat(),
+            place.geometry.location.lng(),
+            label,
+            overrideMapType,
+          );
+          setLoading(false);
+        },
+      );
+    } catch {
+      setError("Failed to load Google Places autocomplete.");
+      setLoading(false);
+    }
+  };
+
+  const handleLoadMap = async (overrideMapType?: MapType) => {
+    if (!address.trim()) return;
+    setError("");
+    setLoading(true);
+    try {
+      await loadAddressViaGeocode(address, overrideMapType);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load map tile.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (!showDropdown) {
-      if (e.key === "Enter") handleLoadMap();
+      if (e.key === "Enter") void handleLoadMap();
       return;
     }
     if (e.key === "ArrowDown") {
@@ -138,10 +318,10 @@ export function MapControls({
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (activeIndex >= 0 && activeIndex < suggestions.length) {
-        selectSuggestion(suggestions[activeIndex]);
+        void selectSuggestion(suggestions[activeIndex]);
       } else {
         setShowDropdown(false);
-        handleLoadMap();
+        void handleLoadMap();
       }
     } else if (e.key === "Escape") {
       setShowDropdown(false);
@@ -149,7 +329,6 @@ export function MapControls({
     }
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -166,76 +345,32 @@ export function MapControls({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLoadMapWithAddress = async (
-    addr: string,
-    overrideMapType?: MapType,
-  ) => {
-    if (!addr.trim()) return;
-    setError("");
-    setLoading(true);
-    try {
-      const key = import.meta.env.VITE_GOOGLE_MAPS_KEY ?? "";
-      if (!key) {
-        setError(
-          "Google Maps API key not configured. Set VITE_GOOGLE_MAPS_KEY in .env.local.",
-        );
-        setLoading(false);
-        return;
-      }
-
-      const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(addr)}&key=${key}`;
-      const geoResp = await fetch(geocodeUrl);
-      const geoData = await geoResp.json();
-      if (geoData.status !== "OK" || !geoData.results?.[0]) {
-        setError("Address not found.");
-        setLoading(false);
-        return;
-      }
-
-      const loc = geoData.results[0].geometry.location;
-      const activeMapType = overrideMapType ?? mapType;
-      const TILE_ZOOM = 20;
-      const staticUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${loc.lat},${loc.lng}&zoom=${TILE_ZOOM}&size=640x400&maptype=${activeMapType}&key=${key}`;
-      engineRef.current?.loadMapTile(staticUrl, opacity, loc.lat, TILE_ZOOM);
-      mapLoadedRef.current = true;
-      onUnderlayActiveChange?.(true);
-    } catch {
-      setError("Failed to load map tile.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLoadMap = async (overrideMapType?: MapType) => {
-    await handleLoadMapWithAddress(address, overrideMapType);
-  };
-
-  // Auto-reload the map when the map type changes (if a map is already loaded)
   useEffect(() => {
-    if (mapLoadedRef.current) {
+    if (mapLoaded && address.trim()) {
       void handleLoadMap(mapType);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapType]);
 
-  const handleOpacityChange = (v: number) => {
-    setOpacity(v);
-    engineRef.current?.setMapOpacity(v);
+  const handleOpacityChange = (value: number) => {
+    setOpacity(value);
+    engineRef.current?.setMapOpacity(value);
   };
 
   const handleScaleBlur = () => {
     const val = parseFloat(scaleInput);
-    if (!isNaN(val) && val > 0) {
-      engineRef.current?.setScale(val * 100); // convert to px per metre at base zoom
+    if (!Number.isNaN(val) && val > 0) {
+      engineRef.current?.setScale(val);
+      setCalibrationLabel(`Manual: ${val.toFixed(1)} px/m`);
     }
   };
 
   return (
     <div className="flex flex-wrap items-start gap-4 p-3 bg-brand-card border-b border-t border-brand-border text-xs">
-      {/* Address search + map type */}
+      <div ref={placesAttributionRef} className="hidden" />
       <div className="flex flex-col gap-2 flex-1 min-w-[260px]">
         <div className="flex items-center gap-2">
-          <Map size={13} className="text-brand-muted shrink-0" />
+          <Map size={16} className="text-brand-muted shrink-0" />
           <div className="relative flex-1">
             <input
               ref={inputRef}
@@ -246,13 +381,13 @@ export function MapControls({
               onFocus={() => {
                 if (suggestions.length > 0) setShowDropdown(true);
               }}
-              placeholder="Enter address for satellite underlay…"
+              placeholder="Enter address for satellite underlay..."
               className="w-full px-2 py-1.5 bg-brand-bg border border-brand-border rounded-md text-brand-text placeholder:text-brand-muted focus:outline-none focus:border-brand-accent text-xs"
               autoComplete="off"
             />
-            {fetchingAC && (
+            {fetchingAutocomplete && (
               <Loader2
-                size={10}
+                size={16}
                 className="absolute right-2 top-1/2 -translate-y-1/2 animate-spin text-brand-muted pointer-events-none"
               />
             )}
@@ -261,16 +396,15 @@ export function MapControls({
                 ref={dropdownRef}
                 className="absolute z-50 top-full left-0 right-0 mt-0.5 bg-brand-card border border-brand-border rounded-md shadow-lg overflow-hidden"
               >
-                {suggestions.map((feature, idx) => {
-                  const { line1, line2 } = formatSuggestion(feature);
+                {suggestions.map((prediction, idx) => {
+                  const { line1, line2 } = predictionLines(prediction);
                   return (
                     <button
-                      key={idx}
+                      key={prediction.place_id}
                       type="button"
                       onMouseDown={(e) => {
-                        // Prevent input blur before click registers
                         e.preventDefault();
-                        selectSuggestion(feature);
+                        void selectSuggestion(prediction);
                       }}
                       className={`w-full text-left px-3 py-2 transition-colors ${
                         idx === activeIndex
@@ -278,10 +412,16 @@ export function MapControls({
                           : "hover:bg-brand-border/50"
                       }`}
                     >
-                      <div className={`text-xs truncate ${idx === activeIndex ? "text-brand-accent" : "text-brand-text"}`}>
-                        {line1 || line2}
+                      <div
+                        className={`text-xs truncate ${
+                          idx === activeIndex
+                            ? "text-brand-accent"
+                            : "text-brand-text"
+                        }`}
+                      >
+                        {line1}
                       </div>
-                      {line1 && line2 && (
+                      {line2 && (
                         <div className="text-xs truncate text-brand-muted mt-0.5">
                           {line2}
                         </div>
@@ -294,19 +434,19 @@ export function MapControls({
           </div>
           <button
             type="button"
-            onClick={() => handleLoadMap()}
+            onClick={() => void handleLoadMap()}
             disabled={loading || !address.trim()}
             className="flex items-center gap-1.5 px-2.5 py-1.5 bg-brand-accent/20 border border-brand-accent text-brand-accent rounded-md hover:bg-brand-accent/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
-              <Loader2 size={12} className="animate-spin" />
+              <Loader2 size={16} className="animate-spin" />
             ) : (
-              <Map size={12} />
+              <Map size={16} />
             )}
             Load
           </button>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs text-brand-muted">Map type</span>
           <select
             value={mapType}
@@ -318,10 +458,14 @@ export function MapControls({
             <option value="terrain">Terrain</option>
             <option value="hybrid">Hybrid</option>
           </select>
+          {calibrationLabel && (
+            <span className="rounded-full border border-brand-success/40 bg-brand-success/10 px-2 py-1 text-brand-success">
+              Calibrated: {calibrationLabel}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Opacity slider */}
       <div className="flex items-center gap-2">
         <span className="text-brand-muted">Opacity:</span>
         <input
@@ -338,22 +482,34 @@ export function MapControls({
         </span>
       </div>
 
-      {/* Scale */}
       <div className="flex items-center gap-2">
-        <span className="text-xs text-brand-muted">Scale</span>
+        <span className="flex items-center gap-1 text-xs text-brand-muted">
+          Scale
+          <Info
+            size={14}
+            className="text-brand-muted"
+            aria-label="Scale help"
+          />
+        </span>
         <input
           type="number"
           value={scaleInput}
           onChange={(e) => setScaleInput(e.target.value)}
           onBlur={handleScaleBlur}
           className="w-20 text-xs bg-brand-bg border border-brand-border rounded px-2 py-1 text-brand-text"
-          title="Scale: px per metre"
+          title="px per metre - the canvas distance for 1m of real fence. Auto-calibrates when you load a satellite address."
           min="0.01"
           step="any"
         />
+        <span className="text-brand-muted">px/m</span>
       </div>
 
-      {error && <p className="w-full text-red-400 text-xs mt-1">{error}</p>}
+      {!googleMapsKey() && (
+        <p className="w-full text-brand-warning text-xs">
+          Google Maps is ready, but `VITE_GOOGLE_MAPS_KEY` is not configured.
+        </p>
+      )}
+      {error && <p className="w-full text-brand-danger text-xs mt-1">{error}</p>}
     </div>
   );
 }

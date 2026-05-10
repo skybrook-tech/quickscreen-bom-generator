@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { searchLocalProducts } from '../lib/localSeedData';
 
 export interface ProductSearchItem {
   sku: string;
@@ -22,15 +23,17 @@ export function useProductSearch(query: string) {
   return useQuery<ProductSearchItem[]>({
     queryKey: ['product-search', trimmed],
     queryFn: async () => {
+      if (!isSupabaseConfigured) return searchLocalProducts(trimmed, 10);
+
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return [];
+      if (!session) return searchLocalProducts(trimmed, 10);
 
       const response = await supabase.functions.invoke('search-products', {
         body: { query: trimmed, limit: 10 },
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
 
-      if (response.error) throw response.error;
+      if (response.error) return searchLocalProducts(trimmed, 10);
       // Map default_price from the edge function response to unitPrice
       return ((response.data?.items ?? []) as Array<Record<string, unknown>>).map((item) => ({
         sku: item.sku as string,

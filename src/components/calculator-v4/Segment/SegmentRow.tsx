@@ -3,11 +3,7 @@ import { cn } from "../../../lib";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
 import { useProducts } from "../../../hooks/useProducts";
 import type { CanonicalSegment } from "../../../types/canonical.types";
-import {
-  CANVAS_GATE_STROKE,
-  RUN_LINE_COLORS,
-  hexWithAlpha,
-} from "../../../lib/runLineColors";
+import { RUN_LINE_COLORS } from "../../../lib/runLineColors";
 import {
   buildPitchLadderHeightOptions,
   isFreeformHeightUi,
@@ -16,8 +12,6 @@ import {
 } from "../../../lib/targetHeightOptions";
 import { useLayoutSegmentHighlight } from "../LayoutMap/LayoutSegmentHighlightContext";
 import { useProductVariables } from "../../../hooks/useProductVariables";
-import { buildCollapsedSegmentSpecs } from "../../../lib/segmentCollapsedSpecs";
-import { SegmentCollapsedSpecRow } from "./SegmentCollapsedSpecRow";
 import { SegmentDetails } from "./SegmentDetails";
 import { SegmentHeader } from "./SegmentHeader";
 
@@ -69,11 +63,8 @@ export function SegmentRow({
   const run = state.payload?.runs.find((r) => r.runId === runId);
   const productCode = run?.productCode ?? state.payload?.productCode ?? null;
 
-  const { data: jobFields = [] } = useProductVariables(productCode, "job");
-  const { data: segmentFields = [] } = useProductVariables(
-    productCode,
-    "segment",
-  );
+  useProductVariables(productCode, "job");
+  useProductVariables(productCode, "segment");
 
   const fenceAccentHex =
     RUN_LINE_COLORS[runColorIndex % RUN_LINE_COLORS.length] ??

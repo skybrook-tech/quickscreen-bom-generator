@@ -1,4 +1,5 @@
 import { cn } from "../../lib";
+import { useEffect, useState } from "react";
 
 interface NumberInputProps {
   value: number | null;
@@ -21,21 +22,38 @@ const NumberInput = ({
   label,
   onBlur,
 }: NumberInputProps) => {
+  const [draft, setDraft] = useState(value === null ? "" : String(value));
+
+  useEffect(() => {
+    setDraft(value === null ? "" : String(value));
+  }, [value]);
+
   return (
     <label className="flex flex-col gap-1">
-      {label && <span className="text-brand-muted">{label}</span>}
+      {label && <span className="text-sm font-semibold text-brand-muted">{label}</span>}
       <input
         type="number"
         min={min}
         max={max}
         step={step}
-        value={Number(value).toString()}
-        onChange={(e) => onChange(Number(e.target.value))}
+        value={draft}
+        onChange={(e) => {
+          const next = e.target.value;
+          setDraft(next);
+          if (next === "" || next === "-" || next === "." || next === "-.") return;
+          const parsed = Number(next);
+          if (Number.isFinite(parsed)) onChange(parsed);
+        }}
         className={cn(
-          "bg-white border border-brand-border rounded px-3 py-2 text-brand-text",
+          "rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20",
           className,
         )}
-        onBlur={onBlur}
+        onBlur={(event) => {
+          if (draft === "" || !Number.isFinite(Number(draft))) {
+            setDraft(value === null ? "" : String(value));
+          }
+          onBlur?.(event);
+        }}
       />
     </label>
   );

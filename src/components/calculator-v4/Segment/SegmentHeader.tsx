@@ -123,8 +123,8 @@ export function SegmentHeader({
     const w = seg.segmentWidthMm ?? 0;
     const panels = Math.max(1, Math.ceil(w / maxPanelMm));
     let corners = 0;
-    if (seg.leftTermination.kind === "system_corner") corners++;
-    if (seg.rightTermination.kind === "system_corner") corners++;
+    if (seg.leftTermination?.kind === "system_corner") corners++;
+    if (seg.rightTermination?.kind === "system_corner") corners++;
     const posts = panels + 1;
     return { panels, corners, posts };
   }, [seg, mergedVars]);
