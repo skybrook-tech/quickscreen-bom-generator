@@ -391,7 +391,6 @@ function CalculatorV3Content() {
   );
 
   function startWorkspaceFromLanding() {
-    if (!jobName.trim()) return;
     setIntroDismissed(true);
   }
 
@@ -1175,13 +1174,19 @@ function CalculatorV3Content() {
                         setJobName("");
                       }
                     }}
-                    placeholder="Enter job details"
+                    placeholder="Enter job name"
                     className="w-full rounded-2xl border border-brand-border bg-brand-card px-4 py-3 text-lg font-black text-brand-text shadow-sm outline-none transition-colors focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
                   />
                   <span className="block text-center text-xs font-bold text-brand-muted">
                     press Enter to start
                   </span>
                 </label>
+                <button
+                  type="submit"
+                  className="mt-4 w-full rounded-lg bg-brand-primary px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm"
+                >
+                  Enter
+                </button>
               </form>
             </div>
           </div>
