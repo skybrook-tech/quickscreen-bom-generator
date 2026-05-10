@@ -41,6 +41,15 @@ export const canonicalRunSchema = z.object({
 export const canonicalPayloadSchema = z.object({
   productCode: z.string(),
   schemaVersion: z.literal('v1'),
+  job: z.object({
+    description: z.string().optional(),
+    pendingGates: z.array(z.object({
+      id: z.string(),
+      kind: z.enum(['pedestrian', 'sliding', 'double_swing']),
+      widthMm: z.number().positive().optional(),
+      runId: z.string().uuid(),
+    })).optional(),
+  }).optional(),
   variables: z.record(z.string(), canonicalVariableValueSchema),
   runs: z.array(canonicalRunSchema).min(1),
 });

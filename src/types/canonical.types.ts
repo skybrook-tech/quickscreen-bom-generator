@@ -16,6 +16,15 @@ export type CanonicalVariables = Record<string, CanonicalVariableValue>;
 export interface CanonicalPayload {
   productCode: string;
   schemaVersion: string;
+  job?: {
+    description?: string;
+    pendingGates?: Array<{
+      id: string;
+      kind: 'pedestrian' | 'sliding' | 'double_swing';
+      widthMm?: number;
+      runId: string;
+    }>;
+  };
   variables: CanonicalVariables;
   runs: CanonicalRun[];
 }

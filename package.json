@@ -13,6 +13,7 @@
     "cy:run:html": "CYPRESS_IS_HTML_APP=true CYPRESS_BASE_URL=http://localhost:3124 cypress run",
     "cy:run:react": "CYPRESS_BASE_URL=http://localhost:5173 cypress run",
     "test": "npm run cy:run",
+    "test:describe-fence": "node scripts/run-describe-fence-parser-tests.mjs",
     "seed:auth": "node supabase/seeds/seed-auth.js",
     "seed:glass-outlet": "node supabase/seeds/glass-outlet/seed-images.js",
     "seed:products": "node supabase/seeds/tools/seed-products.js",

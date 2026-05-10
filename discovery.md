@@ -1495,6 +1495,25 @@ Catalogue/CSV finding:
 
 Changes applied:
 - Suggested accessories now show `LL-GH` once per gate, `DB-PH3` when QSG joiner blocks are in the BOM, and `DB-SQ3.4` when gate rail screws are in the BOM.
+### May 10, 2026 - Brief AV Describe Your Fence v1
+
+Workflow finding:
+- The natural-language entry point should be deterministic for v1, with no external AI calls, so common prose can pre-fill the calculator while ambiguous or missing details remain visible to the user.
+- The companion corpus (`describe-fence-test-corpus.md`) is the parser contract; TC-01 through TC-12 now run via `npm run test:describe-fence`.
+
+Changes applied:
+- Added `parseDescription()` in `src/lib/describeFenceParser.ts`, plus shared filler-word stripping and a small Web Speech API wrapper for dictation.
+- Added `DescribeFenceBox`, `ParsePreviewCard`, and `GatePositionModal` under `src/components/calculator/`.
+- Added the describe box to the opening screen as a fourth entry path and to the calculator sidebar as a collapsed "Describe more attributes" card.
+- Parsed attributes apply to the canonical payload: system, length, height, slat size, gap, colour, mounting, terminations, corner hints, pending gates, and `job.description` metadata.
+- Parsed gates appear as "Position not set" badges; confirming a gate position splits the run into a panel, gate opening, and panel.
+- Job description metadata now appears in the BOM header and CSV export.
+
+Verification:
+- `npm run test:describe-fence` passed for TC-01 through TC-12.
+- `npm run build` passed after the changes.
+- Static source check found no `fetch`, Supabase, OpenAI, Anthropic, or API calls inside the parser/voice/describe components.
+
 - Base-plated and core-drilled jobs now suggest nearest-colour post plugs in B / MN / W at one 4-pack per four posts.
 - Base-plated jobs suggest `ULTRALOC-3242`; core-drilled jobs suggest `SOUD-EPOFIX`; every job suggests `FB-V60`.
 - Larger core-drilled jobs with more than five posts now surface the Diamond Revolution drill kit and bit SKUs as optional suggestions only.

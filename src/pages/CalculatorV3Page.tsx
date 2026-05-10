@@ -12,12 +12,19 @@ import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
+import { DescribeFenceBox } from "../components/calculator/DescribeFenceBox";
+import { GatePositionModal } from "../components/calculator/GatePositionModal";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { suggestAccessories } from "../lib/suggestedAccessories";
 import { priceForSku } from "../lib/localBomCalculator";
 import { initialVariablesForSystem } from "../lib/productOptionRules";
 import { GATE_SEGMENT_STUB_KEYS } from "../lib/segmentTermination";
-import { GATE_MOVEMENTS, optionLabel as gateOptionLabel } from "../lib/gateOptionRules";
+import {
+  defaultGateBuildForMovement,
+  defaultGateVariables,
+  GATE_MOVEMENTS,
+  optionLabel as gateOptionLabel,
+} from "../lib/gateOptionRules";
 import { gateTypeLabel, validateGateWidth } from "../lib/gateConstraints";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
@@ -46,7 +53,8 @@ import type {
   BOMSource,
   ExtraItem,
 } from "../types/bom.types";
-import type { CanonicalPayload } from "../types/canonical.types";
+import type { CanonicalPayload, CanonicalRun, CanonicalSegment } from "../types/canonical.types";
+import type { ParseResult, ParsedSystemType } from "../lib/describeFenceParser";
 
 const roundMoney = (value: number) =>
   Math.round((value + Number.EPSILON) * 100) / 100;
@@ -220,6 +228,36 @@ function createInitialPayload(systemType = "QSHS"): CanonicalPayload {
   };
 }
 
+type PendingParsedGate = NonNullable<NonNullable<CanonicalPayload["job"]>["pendingGates"]>[number];
+
+function productCodeFromParsedSystem(systemType: ParsedSystemType | undefined) {
+  if (systemType === "VS" || systemType === "XPL" || systemType === "BAYG") return systemType;
+  return "QSHS";
+}
+
+function mountingMethodToVariables(value: string | undefined) {
+  if (value === "base_plated") return "base_plate";
+  if (value === "core_drilled") return "core_drill";
+  return "in_ground";
+}
+
+function boundariesFromTermination(value: string | undefined) {
+  if (value === "wall_wall") return { left: "wall", right: "wall" } as const;
+  if (value === "post_wall") return { left: "product_post", right: "wall" } as const;
+  return { left: "product_post", right: "product_post" } as const;
+}
+
+function runLengthMm(run: CanonicalRun) {
+  return run.segments.reduce((sum, segment) => {
+    if (segment.segmentKind === "gate_opening") return sum;
+    const qty =
+      run.productCode === "BAYG"
+        ? Math.max(1, Math.round(Number(segment.variables?.panel_quantity ?? 1)))
+        : 1;
+    return sum + Number(segment.segmentWidthMm ?? 0) * qty;
+  }, 0);
+}
+
 function useAnimatedNumber(target: number) {
   const [value, setValue] = useState(target);
   const previous = useRef(target);
@@ -276,6 +314,7 @@ function CalculatorV3Content() {
   const [includeMapInBomPrint, setIncludeMapInBomPrint] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [confirmClearJob, setConfirmClearJob] = useState(false);
+  const [gatePositionTarget, setGatePositionTarget] = useState<PendingParsedGate | null>(null);
   const clearJobButtonRef = useRef<HTMLButtonElement | null>(null);
   const handleActiveBomSummaryChange = useCallback(
     (summary: { label: string; grandTotal: number }) => {
@@ -343,6 +382,166 @@ function CalculatorV3Content() {
       <span className="relative">{layoutOpen ? "Minimize layout map" : "Use layout tool"}</span>
     </button>
   );
+
+  function handleApplyDescription(result: ParseResult) {
+    const parsedSystem = result.attributes.systemType?.value;
+    const productCode = productCodeFromParsedSystem(parsedSystem);
+    const base = payload ?? createInitialPayload(productCode);
+    const baseRun = base.runs[0] ?? createInitialPayload(productCode).runs[0];
+    const runId = baseRun.runId;
+    const initialVariables = initialVariablesForSystem(productCode);
+    const variables = {
+      ...initialVariables,
+      ...(base.variables ?? {}),
+      ...(baseRun.variables ?? {}),
+      ...(result.attributes.heightMm?.value
+        ? { target_height_mm: result.attributes.heightMm.value }
+        : {}),
+      ...(result.attributes.slatSizeMm?.value
+        ? { slat_size_mm: result.attributes.slatSizeMm.value }
+        : {}),
+      ...(result.attributes.gapMm?.value ? { slat_gap_mm: result.attributes.gapMm.value } : {}),
+      ...(result.attributes.colourCode?.value
+        ? {
+          colour_code: result.attributes.colourCode.value,
+          post_colour_code: result.attributes.colourCode.value,
+        }
+        : {}),
+      ...(result.attributes.mountingMethod?.value
+        ? {
+          mounting_type: mountingMethodToVariables(result.attributes.mountingMethod.value),
+          mounting_method: mountingMethodToVariables(result.attributes.mountingMethod.value),
+        }
+        : {}),
+    };
+    const boundaries = boundariesFromTermination(result.attributes.termination?.value);
+    const firstSegment = baseRun.segments.find((segment) => segment.segmentKind !== "gate_opening");
+    const targetHeightMm =
+      result.attributes.heightMm?.value ?? firstSegment?.targetHeightMm ?? Number(variables.target_height_mm ?? 1800);
+    const runLength = result.attributes.runLengthMm?.value;
+    const segment: CanonicalSegment = {
+      ...(firstSegment ?? {
+        segmentId: crypto.randomUUID(),
+        sortOrder: 1,
+        segmentKind: "panel" as const,
+      }),
+      sortOrder: 1,
+      segmentKind: "panel",
+      segmentWidthMm: runLength ?? firstSegment?.segmentWidthMm ?? 0,
+      targetHeightMm,
+      variables: productCode === "BAYG" ? { ...(firstSegment?.variables ?? {}), panel_quantity: 1 } : firstSegment?.variables,
+    };
+    const cornerCount = Math.max(0, Math.round(Number(result.attributes.cornerCount?.value ?? 0)));
+    const corners = Array.from({ length: cornerCount }, () => ({
+      cornerId: crypto.randomUUID(),
+      afterSegmentId: segment.segmentId,
+      type: "90" as const,
+    }));
+    const pendingGates = result.attributes.gates?.value.map((gate, index) => ({
+      id: crypto.randomUUID(),
+      kind: gate.kind,
+      widthMm: gate.widthMm,
+      runId,
+      label: `Parsed gate ${index + 1}`,
+    })) ?? [];
+    const nextRun: CanonicalRun = {
+      ...baseRun,
+      runId,
+      productCode,
+      variables,
+      leftBoundary: { type: boundaries.left },
+      rightBoundary: { type: boundaries.right },
+      segments: [segment],
+      corners,
+    };
+    const nextPayload: CanonicalPayload = {
+      ...base,
+      productCode,
+      variables,
+      job: {
+        ...(base.job ?? {}),
+        description: result.description,
+        pendingGates,
+      },
+      runs: [nextRun, ...base.runs.slice(1)],
+    };
+    dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
+    dispatch({ type: "CLEAR_BOM_RESULT" });
+    setIntroDismissed(true);
+    setMobileTab("run");
+    toast.success("Description applied to the calculator");
+  }
+
+  function handleConfirmGatePosition(gate: PendingParsedGate, distanceFromStartMm: number) {
+    if (!payload) return;
+    const nextRuns = payload.runs.map((run) => {
+      if (run.runId !== gate.runId) return run;
+      const fenceSegments = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
+      const firstSegment = fenceSegments[0];
+      const totalLength = runLengthMm(run);
+      const gateWidth = gate.widthMm ?? 1000;
+      if (!firstSegment || totalLength <= gateWidth) return run;
+      const leftWidth = Math.max(1, Math.round(distanceFromStartMm - gateWidth / 2));
+      const rightWidth = Math.max(1, Math.round(totalLength - distanceFromStartMm - gateWidth / 2));
+      const baseVars = {
+        ...(payload.variables ?? {}),
+        ...(run.variables ?? {}),
+        productCode: run.productCode,
+      };
+      const movement =
+        gate.kind === "sliding" ? "sliding" : gate.kind === "double_swing" ? "double_swing" : "single_swing";
+      const targetHeightMm =
+        firstSegment.targetHeightMm ?? Number(run.variables?.target_height_mm ?? payload.variables.target_height_mm ?? 1800);
+      const gateVariables = {
+        ...defaultGateVariables(baseVars, targetHeightMm),
+        [GATE_SEGMENT_STUB_KEYS.gateMovement]: movement,
+        [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
+          movement,
+          run.productCode === "VS",
+        ),
+        [GATE_SEGMENT_STUB_KEYS.leafCount]: movement === "double_swing" ? 2 : 1,
+        [GATE_SEGMENT_STUB_KEYS.dropBoltType]: movement === "double_swing" ? "SS-0300DB-B" : "none",
+      };
+      const leftSegment: CanonicalSegment = {
+        ...firstSegment,
+        sortOrder: 1,
+        segmentWidthMm: leftWidth,
+      };
+      const gateSegment: CanonicalSegment = {
+        segmentId: gate.id,
+        sortOrder: 2,
+        segmentKind: "gate_opening",
+        segmentWidthMm: gateWidth,
+        targetHeightMm,
+        gateProductCode: "QS_GATE",
+        variables: gateVariables,
+      };
+      const rightSegment: CanonicalSegment = {
+        ...firstSegment,
+        segmentId: crypto.randomUUID(),
+        sortOrder: 3,
+        segmentWidthMm: rightWidth,
+      };
+      return {
+        ...run,
+        segments: [leftSegment, gateSegment, rightSegment],
+      };
+    });
+    dispatch({
+      type: "SET_PAYLOAD",
+      payload: {
+        ...payload,
+        job: {
+          ...(payload.job ?? {}),
+          pendingGates: payload.job?.pendingGates?.filter((item) => item.id !== gate.id) ?? [],
+        },
+        runs: nextRuns,
+      },
+    });
+    dispatch({ type: "CLEAR_BOM_RESULT" });
+    setGatePositionTarget(null);
+    toast.success("Gate position confirmed");
+  }
 
   async function handleGenerateBOM() {
     if (!payload) return;
@@ -764,7 +963,19 @@ function CalculatorV3Content() {
       "Unit Price": string;
       "Line Total": string;
     };
-    const rows: CsvRow[] = bomResultForTabs.allItems.map((line) => ({
+    const rows: CsvRow[] = [];
+    if (payload?.job?.description) {
+      rows.push({
+        SKU: "",
+        Description: `Original description: ${payload.job.description}`,
+        Category: "job",
+        Unit: "",
+        Qty: "",
+        "Unit Price": "",
+        "Line Total": "",
+      });
+    }
+    rows.push(...bomResultForTabs.allItems.map((line) => ({
       SKU: line.sku,
       Description: line.description,
       Category: line.category,
@@ -772,7 +983,7 @@ function CalculatorV3Content() {
       Qty: line.quantity,
       "Unit Price": line.unitPrice.toFixed(2),
       "Line Total": line.lineTotal.toFixed(2),
-    }));
+    })));
     rows.push(
       {
         SKU: "",
@@ -893,9 +1104,22 @@ function CalculatorV3Content() {
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
   const showIntro = !payload && !introDismissed && !layoutOpen;
+  const gateTargetRun = gatePositionTarget
+    ? payload?.runs.find((run) => run.runId === gatePositionTarget.runId)
+    : undefined;
+  const gateTargetRunLength = gateTargetRun ? runLengthMm(gateTargetRun) : 0;
 
   return (
     <AppShell>
+      {gatePositionTarget && gateTargetRunLength > 0 && (
+        <GatePositionModal
+          gateLabel={gatePositionTarget.kind.replace("_", " ")}
+          runLengthMm={gateTargetRunLength}
+          widthMm={gatePositionTarget.widthMm ?? 1000}
+          onClose={() => setGatePositionTarget(null)}
+          onConfirm={(distance) => handleConfirmGatePosition(gatePositionTarget, distance)}
+        />
+      )}
       {showIntro ? (
         <div className="relative min-h-full overflow-hidden bg-brand-bg text-brand-text">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.35),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(16,185,129,0.28),transparent_24%),radial-gradient(circle_at_50%_80%,rgba(245,158,11,0.18),transparent_30%)]" />
@@ -944,6 +1168,12 @@ function CalculatorV3Content() {
                   Open workspace
                 </button>
               </div>
+              <div className="md:col-span-2">
+                <DescribeFenceBox
+                  title="Describe your fence"
+                  onApply={handleApplyDescription}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -971,6 +1201,11 @@ function CalculatorV3Content() {
                       placeholder="Enter job name"
                       className="mb-4 w-full rounded-xl border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
                     />
+                    <DescribeFenceBox
+                      compact
+                      initialDescription={payload?.job?.description ?? ""}
+                      onApply={handleApplyDescription}
+                    />
                     {!payload ? (
                       <ProductSelectV3
                         mapAction={(selectDefaultProduct) =>
@@ -986,6 +1221,34 @@ function CalculatorV3Content() {
                       <section>
                         <RunListV3 />
                       </section>
+
+                      {payload.job?.pendingGates?.length ? (
+                        <section className="space-y-2 rounded-2xl border border-brand-warning/35 bg-brand-warning/10 p-3">
+                          <p className="text-xs font-black uppercase tracking-wide text-brand-warning">
+                            Parsed gates need positions
+                          </p>
+                          {payload.job.pendingGates.map((gate, index) => {
+                            const run = payload.runs.find((item) => item.runId === gate.runId);
+                            const length = run ? runLengthMm(run) : 0;
+                            return (
+                              <button
+                                key={gate.id}
+                                type="button"
+                                onClick={() => setGatePositionTarget(gate)}
+                                disabled={length <= 0}
+                                className="flex w-full items-center justify-between gap-3 rounded-lg border border-brand-warning/40 bg-brand-card px-3 py-2 text-left text-xs font-bold text-brand-warning transition-colors hover:border-brand-primary hover:text-brand-primary disabled:cursor-not-allowed disabled:opacity-60"
+                                title={length <= 0 ? "Add a run length before positioning this gate." : "Position this parsed gate in the run"}
+                              >
+                                <span>Position not set - drag in run</span>
+                                <span>
+                                  Gate {index + 1}: {gate.kind.replace("_", " ")}
+                                  {gate.widthMm ? `, ${gate.widthMm}mm` : ""}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </section>
+                      ) : null}
 
                       {(errors.length > 0 || warnings.length > 0) && (
                         <div className="space-y-2">
@@ -1133,6 +1396,11 @@ function CalculatorV3Content() {
                       {summaryText && (
                         <p className="mt-2 max-w-3xl text-sm font-semibold text-brand-text">
                           {summaryText}
+                        </p>
+                      )}
+                      {payload?.job?.description && (
+                        <p className="mt-1 max-w-3xl text-xs font-semibold text-brand-muted">
+                          Original description: {payload.job.description}
                         </p>
                       )}
                     </div>
