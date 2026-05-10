@@ -43,6 +43,7 @@ import Papa from "papaparse";
 import type {
   CalculatorBOMResult,
   BOMLineItem,
+  BOMSource,
   ExtraItem,
 } from "../types/bom.types";
 import type { CanonicalPayload } from "../types/canonical.types";
@@ -81,6 +82,10 @@ function aggregateBomItems(items: BOMLineItem[]): BOMLineItem[] {
       continue;
     }
     const quantity = existing.quantity + item.quantity;
+    const sources = mergeBomSources([
+      ...(existing.sources ?? sourceFromLine(existing)),
+      ...(item.sources ?? sourceFromLine(item)),
+    ]);
     const lineTotalBeforeReprice = existing.lineTotal + item.lineTotal;
     const unitPrice = priceForBomLine(item, quantity);
     const lineTotal =
@@ -88,6 +93,8 @@ function aggregateBomItems(items: BOMLineItem[]): BOMLineItem[] {
     grouped.set(key, {
       ...existing,
       quantity,
+      totalQty: quantity,
+      sources,
       unitPrice: unitPrice > 0 ? unitPrice : roundMoney(lineTotal / Math.max(1, quantity)),
       lineTotal,
       notes:
@@ -97,6 +104,58 @@ function aggregateBomItems(items: BOMLineItem[]): BOMLineItem[] {
     });
   }
   return [...grouped.values()];
+}
+
+function sourceFromLine(line: BOMLineItem): BOMSource[] {
+  return [
+    {
+      scopeKind: line.productCode === "QS_GATE" || line.segmentId?.includes("gate") ? "gate" : "fence_run",
+      scopeId: line.segmentId ?? line.runId ?? "global",
+      scopeLabel: line.productCode === "QS_GATE" ? "Gate" : line.runId ? "Run" : "Global",
+      qty: line.quantity,
+    },
+  ];
+}
+
+function mergeBomSources(sources: BOMSource[]): BOMSource[] {
+  const merged = new Map<string, BOMSource>();
+  for (const source of sources) {
+    const key = `${source.scopeKind}|${source.scopeId}|${source.scopeLabel}`;
+    const existing = merged.get(key);
+    if (existing) {
+      existing.qty += source.qty;
+    } else {
+      merged.set(key, { ...source });
+    }
+  }
+  return [...merged.values()];
+}
+
+function deriveLineForSources(
+  line: BOMLineItem,
+  predicate: (source: BOMSource) => boolean,
+): BOMLineItem | null {
+  const sources = (line.sources ?? sourceFromLine(line)).filter(predicate);
+  if (sources.length === 0) return null;
+  const quantity = sources.reduce((sum, source) => sum + source.qty, 0);
+  const unitPrice = priceForBomLine(line, quantity);
+  return {
+    ...line,
+    quantity,
+    totalQty: quantity,
+    sources,
+    unitPrice,
+    lineTotal: roundMoney(unitPrice * quantity),
+  };
+}
+
+function filterLinesForScope(
+  items: BOMLineItem[],
+  predicate: (source: BOMSource) => boolean,
+): BOMLineItem[] {
+  return items
+    .map((item) => deriveLineForSources(item, predicate))
+    .filter(Boolean) as BOMLineItem[];
 }
 
 function gateLabel(runIndex: number, gateIndex: number) {
@@ -421,36 +480,46 @@ function CalculatorV3Content() {
         unitPrice: e.unitPrice,
         lineTotal: roundMoney(e.unitPrice * e.quantity),
         notes: "added manually",
-      }));
-      const runResults = (
-        (lastBom.runResults as Array<{
-          runId: string;
-          items: BOMLineItem[];
-        }>) ?? []
-      ).map((r) => ({
-        runId: r.runId,
-        items: applyLineEdits(aggregateBomItems(r.items)),
+        sources: [
+          {
+            scopeKind: "global",
+            scopeId: "manual-extras",
+            scopeLabel: "Manual extras",
+            qty: e.quantity,
+          },
+        ],
+        totalQty: e.quantity,
       }));
       const rawRunResults =
         (lastBom.runResults as Array<{
           runId: string;
           items: BOMLineItem[];
         }>) ?? [];
+      const runResults = payload?.runs.map((run) => ({
+        runId: run.runId,
+        items: applyLineEdits(
+          filterLinesForScope(baseAllItems, (source) =>
+            source.scopeKind === "fence_run" && source.scopeId === run.runId,
+          ),
+        ),
+      })) ?? rawRunResults.map((r) => ({
+        runId: r.runId,
+        items: applyLineEdits(aggregateBomItems(r.items)),
+      }));
       const gateResults =
         payload?.runs.flatMap((run, runIndex) => {
           let gateIndex = 0;
           return run.segments.flatMap((segment) => {
             if (segment.segmentKind !== "gate_opening") return [];
             const label = gateLabel(runIndex, gateIndex++);
-            const runItems =
-              rawRunResults.find((result) => result.runId === run.runId)?.items ?? [];
             return [
               {
                 id: segment.segmentId,
                 label,
                 items: applyLineEdits(
-                  aggregateBomItems(
-                    runItems.filter((item) => item.segmentId === segment.segmentId),
+                  filterLinesForScope(
+                    baseAllItems,
+                    (source) => source.scopeKind === "gate" && source.scopeId === segment.segmentId,
                   ),
                 ),
               },
@@ -462,15 +531,17 @@ function CalculatorV3Content() {
           run.segments.filter((segment) => segment.segmentKind === "gate_opening"),
         ) ?? [];
       const runScopedGateItems = rawRunResults.flatMap((runResult) =>
-        runResult.items.filter(
-          (item) =>
-            item.productCode === "QS_GATE" ||
-            gateSegments.some((segment) => segment.segmentId === item.segmentId),
+        runResult.items.filter((item) =>
+          item.sources?.some((source) => source.scopeKind === "gate") ||
+          item.productCode === "QS_GATE" ||
+          gateSegments.some((segment) => segment.segmentId === item.segmentId),
         ),
       );
       const rawGateItems =
-        runScopedGateItems.length > 0
-          ? runScopedGateItems
+        baseAllItems.some((item) => item.sources?.some((source) => source.scopeKind === "gate"))
+          ? filterLinesForScope(baseAllItems, (source) => source.scopeKind === "gate")
+          : runScopedGateItems.length > 0
+            ? runScopedGateItems
           : ((lastBom.gateItems as BOMLineItem[]) ?? []);
       const gateItems = applyLineEdits(aggregateBomItems(rawGateItems));
       const allItems = aggregateBomItems([...baseAllItems, ...extraLineItems]);

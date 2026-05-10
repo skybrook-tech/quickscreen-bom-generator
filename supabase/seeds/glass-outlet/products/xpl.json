@@ -61,9 +61,12 @@
         "post_way": "1W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-1W-MN",
@@ -79,9 +82,12 @@
         "post_way": "1W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-1W-G",
@@ -97,9 +103,12 @@
         "post_way": "1W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-1W-SM",
@@ -115,9 +124,12 @@
         "post_way": "1W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-1W-W",
@@ -133,9 +145,12 @@
         "post_way": "1W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-1W-BS",
@@ -151,9 +166,12 @@
         "post_way": "1W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-1W-D",
@@ -169,9 +187,12 @@
         "post_way": "1W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-1W-M",
@@ -187,9 +208,12 @@
         "post_way": "1W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-1W-P",
@@ -205,9 +229,12 @@
         "post_way": "1W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-1W-PB",
@@ -223,9 +250,12 @@
         "post_way": "1W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-1W-S",
@@ -241,9 +271,12 @@
         "post_way": "1W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-2W-B",
@@ -259,9 +292,12 @@
         "post_way": "2W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-2W-MN",
@@ -277,9 +313,12 @@
         "post_way": "2W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-2W-G",
@@ -295,9 +334,12 @@
         "post_way": "2W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-2W-SM",
@@ -313,9 +355,12 @@
         "post_way": "2W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-2W-W",
@@ -331,9 +376,12 @@
         "post_way": "2W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-2W-BS",
@@ -349,9 +397,12 @@
         "post_way": "2W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-2W-D",
@@ -367,9 +418,12 @@
         "post_way": "2W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-2W-M",
@@ -385,9 +439,12 @@
         "post_way": "2W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-2W-S",
@@ -403,9 +460,12 @@
         "post_way": "2W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-90-B",
@@ -421,9 +481,12 @@
         "post_way": "90",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-90-MN",
@@ -439,9 +502,12 @@
         "post_way": "90",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-90-G",
@@ -457,9 +523,12 @@
         "post_way": "90",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-90-SM",
@@ -475,9 +544,12 @@
         "post_way": "90",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-90-W",
@@ -493,9 +565,12 @@
         "post_way": "90",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-90-BS",
@@ -511,9 +586,12 @@
         "post_way": "90",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-90-D",
@@ -529,9 +607,12 @@
         "post_way": "90",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-90-M",
@@ -547,9 +628,12 @@
         "post_way": "90",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-6000-90-S",
@@ -565,9 +649,12 @@
         "post_way": "90",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fixings"
       },
-      "active": true
+      "active": true,
+      "subCategory": "grout_concrete_and_anchors",
+      "sortPriority": 50
     },
     {
       "sku": "XPL-SB-50PK-05MM",
@@ -583,9 +670,12 @@
         "gap_mm": 5,
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "spacers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "slat_spacers",
+      "sortPriority": 10
     },
     {
       "sku": "XPL-SB-50PK-09MM",
@@ -601,9 +691,12 @@
         "gap_mm": 9,
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "spacers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "slat_spacers",
+      "sortPriority": 10
     },
     {
       "sku": "XPL-SB-50PK-20MM",
@@ -619,9 +712,12 @@
         "gap_mm": 20,
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "spacers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "slat_spacers",
+      "sortPriority": 10
     },
     {
       "sku": "XPL-SLATCLIP-10PK",
@@ -636,9 +732,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XPL-BLOCK-5PK",
@@ -653,9 +752,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "spacers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "slat_spacers",
+      "sortPriority": 10
     },
     {
       "sku": "XPL-EP-B-2PK",
@@ -670,9 +772,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "XPL-EP-MN-2PK",
@@ -687,9 +792,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "XPL-EP-G-2PK",
@@ -704,9 +812,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "XPL-EP-SM-2PK",
@@ -721,9 +832,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "XPL-EP-W-2PK",
@@ -738,9 +852,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "XPL-EP-BS-2PK",
@@ -755,9 +872,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "XPL-EP-D-2PK",
@@ -772,9 +892,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "XPL-EP-M-2PK",
@@ -789,9 +912,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "XPL-EP-P-2PK",
@@ -806,9 +932,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "XPL-EP-PB-2PK",
@@ -823,9 +952,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "XPL-EP-S-2PK",
@@ -840,9 +972,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "XPL-6000-SF-B",
@@ -858,9 +993,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "side_frames",
+      "sortPriority": 10
     },
     {
       "sku": "XPL-6000-SF-MN",
@@ -876,9 +1014,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "side_frames",
+      "sortPriority": 10
     },
     {
       "sku": "XPL-6000-SF-G",
@@ -894,9 +1035,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "side_frames",
+      "sortPriority": 10
     },
     {
       "sku": "XPL-6000-SF-SM",
@@ -912,9 +1056,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "side_frames",
+      "sortPriority": 10
     },
     {
       "sku": "XPL-6000-SF-W",
@@ -930,9 +1077,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "side_frames",
+      "sortPriority": 10
     },
     {
       "sku": "XPL-6000-SF-BS",
@@ -948,9 +1098,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "side_frames",
+      "sortPriority": 10
     },
     {
       "sku": "XPL-6000-SF-D",
@@ -966,9 +1119,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "side_frames",
+      "sortPriority": 10
     },
     {
       "sku": "XPL-6000-SF-M",
@@ -984,9 +1140,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "side_frames",
+      "sortPriority": 10
     },
     {
       "sku": "XPL-6000-SF-P",
@@ -1002,9 +1161,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "side_frames",
+      "sortPriority": 10
     },
     {
       "sku": "XPL-6000-SF-PB",
@@ -1020,9 +1182,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "side_frames",
+      "sortPriority": 10
     },
     {
       "sku": "XPL-6000-SF-S",
@@ -1038,9 +1203,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "side_frames",
+      "sortPriority": 10
     }
   ],
   "rule_sets": [

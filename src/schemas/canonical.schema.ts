@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+const canonicalVariableValueSchema = z.union([z.string(), z.number(), z.boolean()]);
+
 export const canonicalBoundarySchema = z.object({
   type: z.enum(['product_post', 'brick_post', 'existing_post', 'wall', 'corner_90']),
   meta: z.record(z.string(), z.unknown()).optional(),
@@ -17,7 +19,7 @@ export const canonicalSegmentSchema = z.object({
   targetHeightMm: z.number().positive().optional(),
   bayCount: z.number().int().positive().optional(),
   gateProductCode: z.string().optional(),
-  variables: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+  variables: z.record(z.string(), canonicalVariableValueSchema).optional(),
 });
 
 export const canonicalCornerSchema = z.object({
@@ -29,7 +31,7 @@ export const canonicalCornerSchema = z.object({
 export const canonicalRunSchema = z.object({
   runId: z.string().uuid(),
   productCode: z.string(),
-  variables: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])).optional(),
+  variables: z.record(z.string(), canonicalVariableValueSchema).optional(),
   leftBoundary: canonicalBoundarySchema,
   rightBoundary: canonicalBoundarySchema,
   segments: z.array(canonicalSegmentSchema),
@@ -39,7 +41,7 @@ export const canonicalRunSchema = z.object({
 export const canonicalPayloadSchema = z.object({
   productCode: z.string(),
   schemaVersion: z.literal('v1'),
-  variables: z.record(z.string(), z.union([z.string(), z.number(), z.boolean()])),
+  variables: z.record(z.string(), canonicalVariableValueSchema),
   runs: z.array(canonicalRunSchema).min(1),
 });
 

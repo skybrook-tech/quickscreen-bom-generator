@@ -39,6 +39,11 @@ import NumberInput from "../shared/NumberInput";
 import { useProductSearch } from "../../hooks/useProductSearch";
 import { ColourPalette } from "./ColourPalette";
 import { priceForSku } from "../../lib/localBomCalculator";
+import {
+  OPTIONAL_ACCESSORY_KEY,
+  optionalAccessoriesForParent,
+  selectedOptionalAddOns,
+} from "../../lib/bomMetadata";
 import type { ReactNode } from "react";
 
 const GATE_POST_SIZE_OPTIONS: GateOption[] = [
@@ -298,6 +303,61 @@ function GateWeightCard({ estimate }: { estimate: GateWeightEstimate }) {
   );
 }
 
+function OptionalAddOns({
+  parentSku,
+  selected,
+  onChange,
+}: {
+  parentSku: string;
+  selected: string[];
+  onChange: (selected: string[]) => void;
+}) {
+  const options = optionalAccessoriesForParent(parentSku);
+  if (options.length === 0) return null;
+
+  return (
+    <div className="rounded-lg border border-brand-border/70 bg-brand-card p-3">
+      <p className="text-sm font-black text-brand-text">Optional add-ons</p>
+      <p className="mb-2 text-xs font-semibold text-brand-muted">
+        These are offered with {parentSku} and only appear on the BOM when ticked.
+      </p>
+      <div className="space-y-2">
+        {options.map((option) => {
+          const checked = selected.includes(option.sku);
+          return (
+            <label
+              key={`${parentSku}-${option.sku}`}
+              className="flex items-start gap-2 rounded-lg border border-brand-border/60 bg-brand-bg/50 p-2"
+            >
+              <input
+                type="checkbox"
+                className="mt-1"
+                checked={checked}
+                onChange={(event) => {
+                  onChange(
+                    event.target.checked
+                      ? [...selected, option.sku]
+                      : selected.filter((sku) => sku !== option.sku),
+                  );
+                }}
+              />
+              <span>
+                <span className="block text-sm font-bold text-brand-text">
+                  + {option.label}
+                </span>
+                <span className="block text-xs font-semibold text-brand-muted">
+                  {option.sku}
+                  {option.unitPrice > 0 ? ` - $${option.unitPrice.toFixed(2)} ex GST` : " - price not set"}
+                </span>
+              </span>
+            </label>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function HardwareReasonTags({
   status,
   reasons,
@@ -542,6 +602,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   const currentLatchBase = baseHardwareSku(currentLatchValue);
   const matchingHardwareKit = kitForHardwareSelection(currentHingeValue, currentLatchValue);
   const selectedKitSku = String(v[GATE_SEGMENT_STUB_KEYS.hardwareKitSku] ?? "");
+  const optionalAddOns = selectedOptionalAddOns(v);
   const latchCanUseExternalAccessKit = currentLatchBase === "LLAA" || currentLatchBase.startsWith("LL-DL");
   const automationEnabled = v[GATE_SEGMENT_STUB_KEYS.automationEnabled] === true;
   const automationPower = String(v[GATE_SEGMENT_STUB_KEYS.automationPowerSource] ?? "mains");
@@ -604,6 +665,35 @@ export function GateSegmentDetails({ runId, seg }: Props) {
       [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
       [GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit]: false,
     });
+  }
+
+  function setOptionalAddOns(parentSku: string, selected: string[]) {
+    const next = { ...optionalAddOns };
+    if (selected.length > 0) {
+      next[parentSku] = selected;
+    } else {
+      delete next[parentSku];
+    }
+    dispatch({
+      type: "UPSERT_SEGMENT",
+      runId,
+      segment: patchSegmentVariables(seg, {
+        [OPTIONAL_ACCESSORY_KEY]: Object.keys(next).length
+          ? JSON.stringify(next)
+          : null,
+      }),
+    });
+  }
+
+  function clearOptionalAddOnsFor(parentSku: string) {
+    if (!optionalAddOns[parentSku]) return {};
+    const next = { ...optionalAddOns };
+    delete next[parentSku];
+    return {
+      [OPTIONAL_ACCESSORY_KEY]: Object.keys(next).length
+        ? JSON.stringify(next)
+        : null,
+    };
   }
 
   return (
@@ -745,8 +835,14 @@ export function GateSegmentDetails({ runId, seg }: Props) {
               upsertVariables({
                 [GATE_SEGMENT_STUB_KEYS.hingeType]: value,
                 [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
+                ...clearOptionalAddOnsFor(baseHardwareSku(currentHingeValue)),
               })
             }
+          />
+          <OptionalAddOns
+            parentSku={baseHardwareSku(currentHingeValue)}
+            selected={optionalAddOns[baseHardwareSku(currentHingeValue)] ?? []}
+            onChange={(selected) => setOptionalAddOns(baseHardwareSku(currentHingeValue), selected)}
           />
           <LatchPicker
             value={currentLatchValue}
@@ -755,6 +851,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
               upsertVariables({
                 [GATE_SEGMENT_STUB_KEYS.latchType]: value,
                 [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
+                ...clearOptionalAddOnsFor(baseHardwareSku(currentLatchValue)),
               })
             }
           />

@@ -1,4 +1,15 @@
 export type BOMCategory =
+  | 'screening'
+  | 'frames_and_covers'
+  | 'posts_and_mounting'
+  | 'gate_components'
+  | 'gate_hardware'
+  | 'sliding_gate_running_gear'
+  | 'caps_and_plugs'
+  | 'fasteners_and_screws'
+  | 'spacers'
+  | 'fixings'
+  | 'tools_and_consumables'
   | 'post'
   | 'post_accessory'
   | 'rail'
@@ -16,11 +27,25 @@ export type BOMCategory =
   | 'accessory';
 export type BOMUnit = 'each' | 'length' | 'pack' | 'box' | 'bag';
 
+export interface BOMSource {
+  scopeKind: 'fence_run' | 'gate' | 'enclosure' | 'global';
+  scopeId: string;
+  scopeLabel: string;
+  qty: number;
+}
+
 export interface BOMLineItem {
   category: BOMCategory;
+  subCategory?: string;
+  companionOf?: string;
+  optionalChildOf?: string[];
+  isOptionalAccessory?: boolean;
+  sortPriority?: number;
   sku: string;
   description: string;
   quantity: number;
+  totalQty?: number;
+  sources?: BOMSource[];
   unit: BOMUnit;
   unitPrice: number;    // ex-GST
   lineTotal: number;    // quantity × unitPrice

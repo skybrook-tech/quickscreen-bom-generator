@@ -1,5 +1,5 @@
 import type { CanonicalPayload, CanonicalRun } from "../types/canonical.types";
-import type { BOMLineItem, PricingTier } from "../types/bom.types";
+import type { BOMLineItem, BOMSource, PricingTier } from "../types/bom.types";
 import {
   getComponent,
   localPricingRules,
@@ -25,6 +25,11 @@ import {
 } from "./gateHardware";
 import { gateLeafGeometry, gateMovementOrDefault } from "./gateOptionRules";
 import { substrateFixingKitSku } from "./postFixingOptions";
+import {
+  optionalAccessoriesForParent,
+  selectedOptionalAddOns,
+  withBomMetadata,
+} from "./bomMetadata";
 
 type LocalBomResult = {
   lines: BOMLineItem[];
@@ -47,6 +52,10 @@ type QtyLine = {
   notes?: string;
   runId: string;
   segmentId: string;
+};
+
+type ScopeInfo = Omit<BOMSource, "qty"> & {
+  productCode?: string;
 };
 
 const SUPPORTED_PRODUCTS = new Set(["QSHS", "BAYG", "VS", "XPL"]);
@@ -144,21 +153,95 @@ function priceQtyLine(line: QtyLine): number {
   return priceForSku(line.sku, line.quantity);
 }
 
-function aggregateQtyLines(lines: QtyLine[], keyForLine: (line: QtyLine) => string): QtyLine[] {
-  const aggregated = new Map<string, QtyLine>();
-  for (const line of lines) {
-    const key = keyForLine(line);
-    const existing = aggregated.get(key);
+function mergeSources(sources: BOMSource[]): BOMSource[] {
+  const merged = new Map<string, BOMSource>();
+  for (const source of sources) {
+    const key = `${source.scopeKind}|${source.scopeId}|${source.scopeLabel}`;
+    const existing = merged.get(key);
     if (existing) {
-      existing.quantity += line.quantity;
-      if (line.notes && !existing.notes?.includes(line.notes)) {
-        existing.notes = existing.notes ? `${existing.notes}; ${line.notes}` : line.notes;
-      }
+      existing.qty += source.qty;
     } else {
-      aggregated.set(key, { ...line });
+      merged.set(key, { ...source });
     }
   }
-  return [...aggregated.values()].map(applyEconomySlatPackRule);
+  return [...merged.values()];
+}
+
+function sourceForLine(line: QtyLine, scopeBySegmentId: Map<string, ScopeInfo>): BOMSource {
+  const scope = scopeBySegmentId.get(line.segmentId) ?? {
+    scopeKind: "fence_run" as const,
+    scopeId: line.runId,
+    scopeLabel: "Fence run",
+  };
+  return {
+    scopeKind: scope.scopeKind,
+    scopeId: scope.scopeId,
+    scopeLabel: scope.scopeLabel,
+    qty: line.quantity,
+  };
+}
+
+function toBomLine(line: QtyLine, sources: BOMSource[], productCode?: string): BOMLineItem {
+  const sourcedQty = sources.reduce((sum, source) => sum + source.qty, 0);
+  const pricedLine = applyEconomySlatPackRule({ ...line, quantity: sourcedQty });
+  const unitPrice = priceQtyLine(pricedLine);
+  return withBomMetadata({
+    category: line.category,
+    sku: line.sku,
+    description: describeSku(line.sku, line.category),
+    quantity: pricedLine.quantity,
+    totalQty: pricedLine.quantity,
+    sources: mergeSources(sources),
+    unit: (pricedLine.unit ?? getComponent(line.sku)?.unit ?? "each") as BOMLineItem["unit"],
+    unitPrice,
+    lineTotal: roundMoney(unitPrice * pricedLine.quantity),
+    notes: line.notes,
+    runId: line.runId,
+    segmentId: line.segmentId,
+    productCode,
+  });
+}
+
+function aggregateBomLinesWithSources(
+  lines: QtyLine[],
+  scopeBySegmentId: Map<string, ScopeInfo>,
+  keyForLine: (line: QtyLine) => string,
+): BOMLineItem[] {
+  const aggregated = new Map<
+    string,
+    { line: QtyLine; sources: BOMSource[]; productCodes: Set<string>; notes: Set<string> }
+  >();
+  for (const line of lines) {
+    if (!Number.isFinite(line.quantity) || line.quantity <= 0) continue;
+    const pricedLine = applyEconomySlatPackRule(line);
+    const key = keyForLine(pricedLine);
+    const existing = aggregated.get(key);
+    const source = sourceForLine(pricedLine, scopeBySegmentId);
+    const productCode = scopeBySegmentId.get(line.segmentId)?.productCode;
+    if (existing) {
+      existing.sources.push(source);
+      if (productCode) existing.productCodes.add(productCode);
+      if (pricedLine.notes) existing.notes.add(pricedLine.notes);
+    } else {
+      aggregated.set(key, {
+        line: { ...pricedLine },
+        sources: [source],
+        productCodes: new Set(productCode ? [productCode] : []),
+        notes: new Set(pricedLine.notes ? [pricedLine.notes] : []),
+      });
+    }
+  }
+
+  return [...aggregated.values()].map(({ line, sources, productCodes, notes }) =>
+    toBomLine(
+      {
+        ...line,
+        notes: notes.size ? [...notes].join("; ") : line.notes,
+      },
+      sources,
+      productCodes.size === 1 ? [...productCodes][0] : undefined,
+    ),
+  );
 }
 
 function quickscreenSkuFor(finishFamily: string, family: "SF" | "CFC" | "F", colour: string): string {
@@ -296,6 +379,30 @@ function emit(
 ): void {
   if (!Number.isFinite(line.quantity) || line.quantity <= 0) return;
   lines.push({ ...line, quantity: Math.ceil(line.quantity) });
+}
+
+function emitSelectedOptionalAddOns(
+  lines: QtyLine[],
+  base: { runId: string; segmentId: string },
+  variables: Record<string, unknown>,
+  parentSku: string,
+  parentQty: number,
+) {
+  const selected = selectedOptionalAddOns(variables)[parentSku] ?? [];
+  if (selected.length === 0) return;
+  const accessoryOptions = optionalAccessoriesForParent(parentSku);
+  for (const accessorySku of selected) {
+    const option = accessoryOptions.find((item) => item.sku === accessorySku);
+    if (!option) continue;
+    emit(lines, {
+      ...base,
+      sku: accessorySku,
+      category: "hardware",
+      quantity: Math.max(1, parentQty * option.qtyPerParent),
+      unit: (getComponent(accessorySku)?.unit ?? "each") as QtyLine["unit"],
+      notes: `Optional add-on selected for ${parentSku}`,
+    });
+  }
 }
 
 function cornerLabel(side: "left" | "right", segmentId: string) {
@@ -1006,6 +1113,7 @@ function calculateGateSegment(
       unit: "each",
       notes: "Selected hinge and latch kit",
     });
+    emitSelectedOptionalAddOns(lines, base, vars, kitSku, 1);
   } else {
     if (hingeSku) {
       emit(lines, {
@@ -1018,6 +1126,7 @@ function calculateGateSegment(
           ? `Selected hinge hardware; kit available as ${matchingKit.kitSku}${leafCount === 2 ? ". Two hinge pairs required for a double swing gate." : ""}`
           : `Selected hinge hardware${leafCount === 2 ? "; two hinge pairs required for a double swing gate" : ""}`,
       });
+      emitSelectedOptionalAddOns(lines, base, vars, hingeSku, leafCount);
     }
     if (latchSku) {
       emit(lines, {
@@ -1030,18 +1139,12 @@ function calculateGateSegment(
           ? `Selected latch / lock hardware; kit available as ${matchingKit.kitSku}`
           : "Selected latch / lock hardware",
       });
+      emitSelectedOptionalAddOns(lines, base, vars, latchSku, 1);
     }
   }
   const hardwareForCaps = kitSku ?? hingeSku ?? baseHardwareSku(hingeValue);
   if (isTruCloseHardware(hardwareForCaps)) {
-    emit(lines, {
-      ...base,
-      sku: "TC-CAPS3",
-      category: "hardware",
-      quantity: leafCount,
-      unit: "each",
-      notes: "Auto-added for selected TruClose hinges",
-    });
+    emitSelectedOptionalAddOns(lines, base, vars, "TRUCLOSE_HINGE", leafCount);
   }
   if (vars[GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit] === true) {
     emit(lines, {
@@ -1511,6 +1614,29 @@ export function calculateLocalBom(
   const errors: string[] = [];
   const assumptions: string[] = [];
   const computed: LocalBomResult["computed"] = {};
+  const scopeBySegmentId = new Map<string, ScopeInfo>();
+
+  payload.runs.forEach((run, runIndex) => {
+    let gateIndex = 0;
+    run.segments.forEach((segment) => {
+      if (segment.segmentKind === "gate_opening") {
+        gateIndex += 1;
+        scopeBySegmentId.set(segment.segmentId, {
+          scopeKind: "gate",
+          scopeId: segment.segmentId,
+          scopeLabel: `R${runIndex + 1} G${gateIndex}`,
+          productCode: "QS_GATE",
+        });
+        return;
+      }
+      scopeBySegmentId.set(segment.segmentId, {
+        scopeKind: "fence_run",
+        scopeId: run.runId,
+        scopeLabel: `Run ${runIndex + 1}`,
+        productCode: run.productCode,
+      });
+    });
+  });
 
   const runResults = payload.runs.map((run, index) => {
     const items = calculateScreenRun(payload, run, warnings, computed);
@@ -1522,58 +1648,29 @@ export function calculateLocalBom(
     };
   });
 
-  const aggregated = aggregateQtyLines(
+  const lines = aggregateBomLinesWithSources(
     runResults.flatMap((run) => run.items),
-    (line) => `${line.sku}__${line.runId}`,
+    scopeBySegmentId,
+    (line) => `${line.sku}__${line.unit ?? getComponent(line.sku)?.unit ?? "each"}`,
   );
-
-  const lines: BOMLineItem[] = aggregated.map((line) => {
-    const unitPrice = priceQtyLine(line);
-    if (unitPrice === 0) {
-      assumptions.push(`No local price found for SKU ${line.sku}.`);
-    }
-    return {
-      category: line.category as BOMLineItem["category"],
-      sku: line.sku,
-      description: describeSku(line.sku, line.category),
-      quantity: line.quantity,
-      unit: (line.unit ?? getComponent(line.sku)?.unit ?? "each") as BOMLineItem["unit"],
-      unitPrice,
-      lineTotal: roundMoney(unitPrice * line.quantity),
-      notes: line.notes,
-      runId: line.runId,
-      segmentId: line.segmentId,
-    };
+  lines.forEach((line) => {
+    if (line.unitPrice === 0) assumptions.push(`No local price found for SKU ${line.sku}.`);
   });
 
   const pricedRunResults = runResults.map((run) => ({
     runId: run.runId,
-    items: aggregateQtyLines(run.items, (line) => `${line.sku}__${line.runId}`).map((line) => {
-      const unitPrice = priceQtyLine(line);
-      return {
-        category: line.category as BOMLineItem["category"],
-        sku: line.sku,
-        description: describeSku(line.sku, line.category),
-        quantity: line.quantity,
-        unit: (line.unit ?? getComponent(line.sku)?.unit ?? "each") as BOMLineItem["unit"],
-        unitPrice,
-        lineTotal: roundMoney(unitPrice * line.quantity),
-        notes: line.notes,
-        runId: line.runId,
-        segmentId: line.segmentId,
-        productCode: run.productCode,
-      };
-    }),
+    items: aggregateBomLinesWithSources(
+      run.items,
+      scopeBySegmentId,
+      (line) => `${line.sku}__${line.runId}`,
+    ),
   }));
 
   const subtotal = roundMoney(lines.reduce((sum, line) => sum + line.lineTotal, 0));
   const gst = roundMoney(subtotal * 0.1);
   const grandTotal = roundMoney(subtotal + gst);
-  const gateItems = lines.filter(
-    (line) =>
-      line.category === "gate" ||
-      line.category === "hardware" ||
-      line.sku.startsWith("QSG-"),
+  const gateItems = lines.filter((line) =>
+    line.sources?.some((source) => source.scopeKind === "gate"),
   );
 
   return {

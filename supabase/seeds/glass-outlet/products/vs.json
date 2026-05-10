@@ -54,9 +54,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QS-5000-HORIZ-MN",
@@ -71,9 +74,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QS-5000-HORIZ-G",
@@ -88,9 +94,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QS-5000-HORIZ-SM",
@@ -105,9 +114,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QS-5000-HORIZ-W",
@@ -122,9 +134,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QS-5000-HORIZ-BS",
@@ -139,9 +154,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QS-5000-HORIZ-D",
@@ -156,9 +174,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QS-5000-HORIZ-M",
@@ -173,9 +194,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     }
   ],
   "rule_sets": [

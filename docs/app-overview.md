@@ -1,6 +1,6 @@
 # QuickScreen BOM Generator - Living App Overview
 
-Last updated: 2026-05-08
+Last updated: 2026-05-10
 
 This file is the regular handoff overview for the app. Update it whenever a feature changes the app flow, calculator engine, seed model, canvas mapper, Supabase schema, or key file responsibilities.
 
@@ -114,6 +114,7 @@ Key shape:
   - Covers gate build, movement, hardware, gate post size, colour, slat size, gap, and termination-post behavior.
   - Gate movement supports single swing, double swing, and sliding. Sliding gates keep both travel direction and fence-side choice.
   - Hardware controls rank fitted options first and keep failed-fit options under Other hinges / Other latches so installers can still override when needed.
+  - Optional parent-tied add-ons render inline under the chosen parent control. TruClose safety caps (`TC-CAPS3`) are optional and only enter the BOM when selected.
 
 - `src/components/calculator-v3/GateListV3.tsx` and `GateFormV3.tsx`
   - Older/auxiliary v3 gate list/form components. Prefer checking actual usage before extending them because gate workflow has moved heavily into segment rows.
@@ -124,6 +125,8 @@ Key shape:
   - Displays BOM tabs, scoped totals, editable line quantities, and removable line items.
   - Tabs include all items, each run, all gates, and individual labelled gate tabs when gate segment data is available.
   - Rows are expected to be aggregated by matching SKU/category/description/unit before display so repeated segment-level quantities read as one order line.
+  - Source breakdowns preserve which run/gate contributed each quantity. Filtered tabs derive their scoped quantities from those sources and re-price the line at that scoped quantity.
+  - BOM display grouping uses display category, subcategory, companion relationship, and sort priority instead of the raw engine selector category alone.
 
 - `src/components/calculator-v3/ExtraItemsPanel.tsx`
   - Lets the user add product search/manual extras to the generated BOM.
@@ -203,6 +206,7 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
   - Frontend fallback BOM calculator.
   - Supports the current sandbox systems and enough logic to keep the calculator testable locally.
   - Uses local seed data and local price breaks.
+  - Emits grouped BOM lines with source metadata so the All view can aggregate to one SKU line while run/gate tabs still show accurate scoped quantities and totals.
   - VS vertical slat fallback rule: slats and F sections are cut to fence height; each panel gets two height-cut side F sections, while the U-channel and QuickScreen frame inserts are cut to panel length.
   - QSG pedestrian swing gate fallback rule: horizontal and vertical pedestrian gates use `QSG-4200-GSF50-*` side frames, `QSG-4800-RAIL65/90-*` gate rails, gate/channel infill, screw cover, joiner blocks, spacers, `AR-SCR-BR-50PK`, `QS-SCREWS-50PK`, and `QSG-GFC-50X50-*`.
   - QSG sliding gate fallback rule: horizontal and vertical sliding gates use QSG sliding top/bottom rail SKUs (`QSG-S-6100-TR65/90-*`, `QSG-S-6100-BR-*`), QSG side frames, gate/channel infill, screw cover, joiner blocks, spacers, screws, top caps, wheel set/clamps, track, and horizontal-only centre support rails/plates.
@@ -211,6 +215,10 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
 
 - `src/lib/localSeedData.ts`
   - Bundled local products, components, and pricing rules used by the fallback calculator and UI fallbacks.
+
+- `src/lib/bomMetadata.ts`
+  - Maps engine component categories into the display taxonomy: screening, frames and covers, posts and mounting, gate components, gate hardware, sliding gate running gear, caps and plugs, fasteners and screws, spacers, fixings, tools and consumables, and automation.
+  - Resolves component subcategories, companion ordering, sort priority, and optional accessory relationships.
 
 - `src/lib/localPriceBreaks.ts`
   - Quantity-break tier logic for local fallback pricing.

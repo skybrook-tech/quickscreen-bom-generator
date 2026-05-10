@@ -222,6 +222,14 @@ Key auto-adds:
 - Gates → add hardware (hinges, latch, lock box if needed)
 - Sliding gates → add wheels, track, guides, stops, catches
 
+#### 3C.1 Optional Add-ons
+
+Some catalogue accessories are optional even though they belong next to a parent
+item. Do not auto-add these unless the user selects them. Present them inline
+under the selected parent control and include them in the BOM only after
+selection. Current example: TruClose safety caps use SKU `TC-CAPS3` and are an
+optional add-on for TruClose hinge selections.
+
 #### 3D. Stock Length Optimisation
 
 All extrusions are sold in fixed stock lengths. Calculate how many stock lengths to order:
@@ -274,25 +282,26 @@ Flag these if detected:
 
 #### 4C. Final BOM Presentation
 
-Display the complete BOM grouped by category:
+Display the complete BOM grouped by display category, subcategory, and companion
+relationship. The required category order is:
 
-**1. Screening Materials**
-| Qty | Code | Description | Unit $ | Line $ |
+1. Screening
+2. Frames and covers
+3. Posts and mounting
+4. Gate components
+5. Gate hardware
+6. Sliding gate running gear
+7. Caps and plugs
+8. Fasteners and screws
+9. Spacers
+10. Fixings
+11. Tools and consumables
+12. Automation
 
-**2. Frames & Fixings**
-| Qty | Code | Description | Unit $ | Line $ |
-
-**3. Posts & Mounting**
-| Qty | Code | Description | Unit $ | Line $ |
-
-**4. Gate Components** (if applicable)
-| Qty | Code | Description | Unit $ | Line $ |
-
-**5. Gate Hardware** (if applicable)
-| Qty | Code | Description | Unit $ | Line $ |
-
-**6. Accessories & Consumables**
-| Qty | Code | Description | Unit $ | Line $ |
+Rows should aggregate to one line per SKU in the All view, but gate/run tabs must
+derive their quantities from the source breakdown so each gate can still be
+reviewed independently. Show source details when a grouped row contains material
+from more than one run or gate.
 
 **TOTAL: $X,XXX.XX**
 

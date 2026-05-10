@@ -55,9 +55,12 @@
         "slat_size_mm": 65,
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "screening"
       },
-      "active": false
+      "active": false,
+      "subCategory": "slats",
+      "sortPriority": 10
     },
     {
       "sku": "XP-6100-GB65-MN",
@@ -75,9 +78,12 @@
         "slat_size_mm": 65,
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "screening"
       },
-      "active": false
+      "active": false,
+      "subCategory": "slats",
+      "sortPriority": 10
     },
     {
       "sku": "XP-6100-GB65-G",
@@ -95,9 +101,12 @@
         "slat_size_mm": 65,
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "screening"
       },
-      "active": false
+      "active": false,
+      "subCategory": "slats",
+      "sortPriority": 10
     },
     {
       "sku": "XP-6100-GB65-SM",
@@ -115,9 +124,12 @@
         "slat_size_mm": 65,
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "screening"
       },
-      "active": false
+      "active": false,
+      "subCategory": "slats",
+      "sortPriority": 10
     },
     {
       "sku": "XP-6100-GB65-W",
@@ -135,9 +147,12 @@
         "slat_size_mm": 65,
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "screening"
       },
-      "active": false
+      "active": false,
+      "subCategory": "slats",
+      "sortPriority": 10
     },
     {
       "sku": "XP-6100-GB65-BS",
@@ -155,9 +170,12 @@
         "slat_size_mm": 65,
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "screening"
       },
-      "active": false
+      "active": false,
+      "subCategory": "slats",
+      "sortPriority": 10
     },
     {
       "sku": "XP-6100-GB65-D",
@@ -175,9 +193,12 @@
         "slat_size_mm": 65,
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "screening"
       },
-      "active": false
+      "active": false,
+      "subCategory": "slats",
+      "sortPriority": 10
     },
     {
       "sku": "XP-6100-GB65-M",
@@ -195,9 +216,12 @@
         "slat_size_mm": 65,
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "screening"
       },
-      "active": false
+      "active": false,
+      "subCategory": "slats",
+      "sortPriority": 10
     },
     {
       "sku": "XP-6100-GB65-P",
@@ -212,9 +236,12 @@
       "metadata": {
         "colour": "primrose",
         "colour_code": "P",
-        "slat_size_mm": 65
+        "slat_size_mm": 65,
+        "bomCategory": "screening"
       },
-      "active": false
+      "active": false,
+      "subCategory": "slats",
+      "sortPriority": 10
     },
     {
       "sku": "XP-6100-GB65-PB",
@@ -232,9 +259,12 @@
         "slat_size_mm": 65,
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "screening"
       },
-      "active": false
+      "active": false,
+      "subCategory": "slats",
+      "sortPriority": 10
     },
     {
       "sku": "XP-6100-GB65-S",
@@ -252,9 +282,12 @@
         "slat_size_mm": 65,
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "screening"
       },
-      "active": false
+      "active": false,
+      "subCategory": "slats",
+      "sortPriority": 10
     },
     {
       "sku": "QSG-4800-RAIL65-B",
@@ -268,9 +301,12 @@
       ],
       "metadata": {
         "colour": "black-satin",
-        "colour_code": "B"
+        "colour_code": "B",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QSG-4800-RAIL65-MN",
@@ -284,9 +320,12 @@
       ],
       "metadata": {
         "colour": "monument-matt",
-        "colour_code": "MN"
+        "colour_code": "MN",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QSG-4800-RAIL65-G",
@@ -300,9 +339,12 @@
       ],
       "metadata": {
         "colour": "woodland-grey-matt",
-        "colour_code": "G"
+        "colour_code": "G",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QSG-4800-RAIL65-SM",
@@ -316,9 +358,12 @@
       ],
       "metadata": {
         "colour": "surfmist-matt",
-        "colour_code": "SM"
+        "colour_code": "SM",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QSG-4800-RAIL65-W",
@@ -332,9 +377,12 @@
       ],
       "metadata": {
         "colour": "pearl-white-gloss",
-        "colour_code": "W"
+        "colour_code": "W",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QSG-4800-RAIL65-BS",
@@ -348,9 +396,12 @@
       ],
       "metadata": {
         "colour": "basalt-satin",
-        "colour_code": "BS"
+        "colour_code": "BS",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QSG-4800-RAIL65-D",
@@ -364,9 +415,12 @@
       ],
       "metadata": {
         "colour": "dune-satin",
-        "colour_code": "D"
+        "colour_code": "D",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QSG-4800-RAIL65-M",
@@ -380,9 +434,12 @@
       ],
       "metadata": {
         "colour": "mill",
-        "colour_code": "M"
+        "colour_code": "M",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QSG-4800-RAIL65-P",
@@ -396,9 +453,12 @@
       ],
       "metadata": {
         "colour": "primrose",
-        "colour_code": "P"
+        "colour_code": "P",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QSG-4800-RAIL65-PB",
@@ -412,9 +472,12 @@
       ],
       "metadata": {
         "colour": "paperbark",
-        "colour_code": "PB"
+        "colour_code": "PB",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "QSG-4800-RAIL65-S",
@@ -428,9 +491,12 @@
       ],
       "metadata": {
         "colour": "palladium-silver-pearl",
-        "colour_code": "S"
+        "colour_code": "S",
+        "bomCategory": "frames_and_covers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
     },
     {
       "sku": "XP-4200-GSTOP-B",
@@ -447,9 +513,12 @@
         "colour_code": "B",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "sliding_gate_running_gear"
       },
-      "active": false
+      "active": false,
+      "subCategory": "guides_catches_and_stops",
+      "sortPriority": 50
     },
     {
       "sku": "XP-4200-GSTOP-MN",
@@ -466,9 +535,12 @@
         "colour_code": "MN",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "sliding_gate_running_gear"
       },
-      "active": false
+      "active": false,
+      "subCategory": "guides_catches_and_stops",
+      "sortPriority": 50
     },
     {
       "sku": "XP-4200-GSTOP-G",
@@ -485,9 +557,12 @@
         "colour_code": "G",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "sliding_gate_running_gear"
       },
-      "active": false
+      "active": false,
+      "subCategory": "guides_catches_and_stops",
+      "sortPriority": 50
     },
     {
       "sku": "XP-4200-GSTOP-SM",
@@ -504,9 +579,12 @@
         "colour_code": "SM",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "sliding_gate_running_gear"
       },
-      "active": false
+      "active": false,
+      "subCategory": "guides_catches_and_stops",
+      "sortPriority": 50
     },
     {
       "sku": "XP-4200-GSTOP-W",
@@ -523,9 +601,12 @@
         "colour_code": "W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "sliding_gate_running_gear"
       },
-      "active": false
+      "active": false,
+      "subCategory": "guides_catches_and_stops",
+      "sortPriority": 50
     },
     {
       "sku": "XP-4200-GSTOP-BS",
@@ -542,9 +623,12 @@
         "colour_code": "BS",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "sliding_gate_running_gear"
       },
-      "active": false
+      "active": false,
+      "subCategory": "guides_catches_and_stops",
+      "sortPriority": 50
     },
     {
       "sku": "XP-4200-GSTOP-D",
@@ -561,9 +645,12 @@
         "colour_code": "D",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "sliding_gate_running_gear"
       },
-      "active": false
+      "active": false,
+      "subCategory": "guides_catches_and_stops",
+      "sortPriority": 50
     },
     {
       "sku": "XP-4200-GSTOP-M",
@@ -580,9 +667,12 @@
         "colour_code": "M",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "sliding_gate_running_gear"
       },
-      "active": false
+      "active": false,
+      "subCategory": "guides_catches_and_stops",
+      "sortPriority": 50
     },
     {
       "sku": "XP-4200-GSTOP-P",
@@ -599,9 +689,12 @@
         "colour_code": "P",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "sliding_gate_running_gear"
       },
-      "active": false
+      "active": false,
+      "subCategory": "guides_catches_and_stops",
+      "sortPriority": 50
     },
     {
       "sku": "XP-4200-GSTOP-PB",
@@ -618,9 +711,12 @@
         "colour_code": "PB",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "sliding_gate_running_gear"
       },
-      "active": false
+      "active": false,
+      "subCategory": "guides_catches_and_stops",
+      "sortPriority": 50
     },
     {
       "sku": "XP-4200-GSTOP-S",
@@ -637,9 +733,12 @@
         "colour_code": "S",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "sliding_gate_running_gear"
       },
-      "active": false
+      "active": false,
+      "subCategory": "guides_catches_and_stops",
+      "sortPriority": 50
     },
     {
       "sku": "ML-TL",
@@ -654,9 +753,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "ML-TL-KF-H-FT",
@@ -671,9 +773,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "ML-TL-TC-H-AT",
@@ -688,9 +793,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "ML-TL-W",
@@ -705,9 +813,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-DL-B",
@@ -724,9 +835,12 @@
         "colour_code": "B",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-DL-MN",
@@ -743,9 +857,12 @@
         "colour_code": "MN",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-DL-G",
@@ -762,9 +879,12 @@
         "colour_code": "G",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-DL-SM",
@@ -781,9 +901,12 @@
         "colour_code": "SM",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-DL-W",
@@ -800,9 +923,12 @@
         "colour_code": "W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-DL-BS",
@@ -819,9 +945,12 @@
         "colour_code": "BS",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-DL-D",
@@ -838,9 +967,12 @@
         "colour_code": "D",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-DL-M",
@@ -857,9 +989,12 @@
         "colour_code": "M",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-DL-P",
@@ -873,9 +1008,12 @@
       ],
       "metadata": {
         "colour": "primrose",
-        "colour_code": "P"
+        "colour_code": "P",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-DL-PB",
@@ -889,9 +1027,12 @@
       ],
       "metadata": {
         "colour": "paperbark",
-        "colour_code": "PB"
+        "colour_code": "PB",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-DL-S",
@@ -908,9 +1049,12 @@
         "colour_code": "S",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-LSET-B",
@@ -927,9 +1071,12 @@
         "colour_code": "B",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-LSET-MN",
@@ -946,9 +1093,12 @@
         "colour_code": "MN",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-LSET-G",
@@ -965,9 +1115,12 @@
         "colour_code": "G",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-LSET-SM",
@@ -984,9 +1137,12 @@
         "colour_code": "SM",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-LSET-W",
@@ -1003,9 +1159,12 @@
         "colour_code": "W",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-LSET-BS",
@@ -1022,9 +1181,12 @@
         "colour_code": "BS",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-LSET-D",
@@ -1041,9 +1203,12 @@
         "colour_code": "D",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-LSET-M",
@@ -1060,9 +1225,12 @@
         "colour_code": "M",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-LSET-P",
@@ -1079,9 +1247,12 @@
         "colour_code": "P",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-LSET-PB",
@@ -1098,9 +1269,12 @@
         "colour_code": "PB",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "XP-LBOX-LSET-S",
@@ -1117,9 +1291,12 @@
         "colour_code": "S",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "QSG-4200-GSF50-B",
@@ -1135,9 +1312,13 @@
         "colour": "black-satin",
         "colour_code": "B",
         "slat_size_mm": 65,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "gate_components"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_side_frames",
+      "sortPriority": 12,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-GSF50-MN",
@@ -1153,9 +1334,13 @@
         "colour": "monument-matt",
         "colour_code": "MN",
         "slat_size_mm": 65,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "gate_components"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_side_frames",
+      "sortPriority": 12,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-GSF50-G",
@@ -1171,9 +1356,13 @@
         "colour": "woodland-grey-matt",
         "colour_code": "G",
         "slat_size_mm": 65,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "gate_components"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_side_frames",
+      "sortPriority": 12,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-GSF50-SM",
@@ -1189,9 +1378,13 @@
         "colour": "surfmist-matt",
         "colour_code": "SM",
         "slat_size_mm": 65,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "gate_components"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_side_frames",
+      "sortPriority": 12,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-GSF50-W",
@@ -1207,9 +1400,13 @@
         "colour": "pearl-white-gloss",
         "colour_code": "W",
         "slat_size_mm": 65,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "gate_components"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_side_frames",
+      "sortPriority": 12,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-GSF50-BS",
@@ -1225,9 +1422,13 @@
         "colour": "basalt-satin",
         "colour_code": "BS",
         "slat_size_mm": 65,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "gate_components"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_side_frames",
+      "sortPriority": 12,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-GSF50-D",
@@ -1243,9 +1444,13 @@
         "colour": "dune-satin",
         "colour_code": "D",
         "slat_size_mm": 65,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "gate_components"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_side_frames",
+      "sortPriority": 12,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-GSF50-M",
@@ -1261,9 +1466,13 @@
         "colour": "mill",
         "colour_code": "M",
         "slat_size_mm": 65,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "gate_components"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_side_frames",
+      "sortPriority": 12,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-GSF50-P",
@@ -1279,9 +1488,13 @@
         "colour": "primrose",
         "colour_code": "P",
         "slat_size_mm": 65,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "gate_components"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_side_frames",
+      "sortPriority": 12,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-GSF50-PB",
@@ -1297,9 +1510,13 @@
         "colour": "paperbark",
         "colour_code": "PB",
         "slat_size_mm": 65,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "gate_components"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_side_frames",
+      "sortPriority": 12,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-GSF50-S",
@@ -1316,9 +1533,13 @@
         "colour_code": "S",
         "slat_size_mm": 65,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation."
+        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation.",
+        "bomCategory": "gate_components"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_side_frames",
+      "sortPriority": 12,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-JOINER65-4PK",
@@ -1333,9 +1554,13 @@
       "metadata": {
         "slat_size_mm": 65,
         "pack_qty": 4,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-JOINER90-4PK",
@@ -1350,9 +1575,13 @@
       "metadata": {
         "slat_size_mm": 90,
         "pack_qty": 4,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-SC-10PK",
@@ -1368,9 +1597,12 @@
         "pack_qty": 10,
         "pricing_status": "legacy_placeholder_inactive",
         "replaced_by": "QSG-4200-COVER-{colour}",
-        "pricing_note": "Supplier site returned no product; current QSG gate seed uses replacement SKU."
+        "pricing_note": "Supplier site returned no product; current QSG gate seed uses replacement SKU.",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": false
+      "active": false,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "QSG-RS-10PK",
@@ -1386,9 +1618,12 @@
         "pack_qty": 10,
         "pricing_status": "legacy_placeholder_inactive",
         "replaced_by": "AR-SCR-BR-50PK",
-        "pricing_note": "Supplier site returned no product; current QSG gate seed uses replacement SKU."
+        "pricing_note": "Supplier site returned no product; current QSG gate seed uses replacement SKU.",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": false
+      "active": false,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "QSG-FTC-50",
@@ -1404,9 +1639,12 @@
         "frame_cap_size": "50",
         "pricing_status": "legacy_placeholder_inactive",
         "replaced_by": "QSG-GFC-50X50-{colour}",
-        "pricing_note": "Supplier site returned no product; current QSG gate seed uses replacement SKU."
+        "pricing_note": "Supplier site returned no product; current QSG gate seed uses replacement SKU.",
+        "bomCategory": "caps_and_plugs"
       },
-      "active": false
+      "active": false,
+      "subCategory": "caps",
+      "sortPriority": 10
     },
     {
       "sku": "QSG-FTC-65",
@@ -1422,9 +1660,12 @@
         "frame_cap_size": "65",
         "pricing_status": "legacy_placeholder_inactive",
         "replaced_by": "QSG-GFC-50X50-{colour}",
-        "pricing_note": "Supplier site returned no product; current QSG gate seed uses replacement SKU."
+        "pricing_note": "Supplier site returned no product; current QSG gate seed uses replacement SKU.",
+        "bomCategory": "caps_and_plugs"
       },
-      "active": false
+      "active": false,
+      "subCategory": "caps",
+      "sortPriority": 10
     },
     {
       "sku": "QSG-4800-INF-B",
@@ -1438,9 +1679,13 @@
       ],
       "metadata": {
         "colour_code": "B",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-CINF-B",
@@ -1454,9 +1699,12 @@
       ],
       "metadata": {
         "colour_code": "B",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-4200-COVER-B",
@@ -1470,9 +1718,13 @@
       ],
       "metadata": {
         "colour_code": "B",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-GFC-50X50-B",
@@ -1486,9 +1738,12 @@
       ],
       "metadata": {
         "colour_code": "B",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "caps_and_plugs"
       },
-      "active": true
+      "active": true,
+      "subCategory": "caps",
+      "sortPriority": 10
     },
     {
       "sku": "QSG-4800-INF-MN",
@@ -1502,9 +1757,13 @@
       ],
       "metadata": {
         "colour_code": "MN",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-CINF-MN",
@@ -1518,9 +1777,12 @@
       ],
       "metadata": {
         "colour_code": "MN",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-4200-COVER-MN",
@@ -1534,9 +1796,13 @@
       ],
       "metadata": {
         "colour_code": "MN",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-GFC-50X50-MN",
@@ -1550,9 +1816,12 @@
       ],
       "metadata": {
         "colour_code": "MN",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "caps_and_plugs"
       },
-      "active": true
+      "active": true,
+      "subCategory": "caps",
+      "sortPriority": 10
     },
     {
       "sku": "QSG-4800-INF-G",
@@ -1566,9 +1835,13 @@
       ],
       "metadata": {
         "colour_code": "G",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-CINF-G",
@@ -1582,9 +1855,12 @@
       ],
       "metadata": {
         "colour_code": "G",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-4200-COVER-G",
@@ -1598,9 +1874,13 @@
       ],
       "metadata": {
         "colour_code": "G",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-GFC-50X50-G",
@@ -1614,9 +1894,12 @@
       ],
       "metadata": {
         "colour_code": "G",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "caps_and_plugs"
       },
-      "active": true
+      "active": true,
+      "subCategory": "caps",
+      "sortPriority": 10
     },
     {
       "sku": "QSG-4800-INF-SM",
@@ -1630,9 +1913,13 @@
       ],
       "metadata": {
         "colour_code": "SM",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-CINF-SM",
@@ -1646,9 +1933,12 @@
       ],
       "metadata": {
         "colour_code": "SM",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-4200-COVER-SM",
@@ -1662,9 +1952,13 @@
       ],
       "metadata": {
         "colour_code": "SM",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-GFC-50X50-SM",
@@ -1678,9 +1972,12 @@
       ],
       "metadata": {
         "colour_code": "SM",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "caps_and_plugs"
       },
-      "active": true
+      "active": true,
+      "subCategory": "caps",
+      "sortPriority": 10
     },
     {
       "sku": "QSG-4800-INF-W",
@@ -1694,9 +1991,13 @@
       ],
       "metadata": {
         "colour_code": "W",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-CINF-W",
@@ -1710,9 +2011,12 @@
       ],
       "metadata": {
         "colour_code": "W",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-4200-COVER-W",
@@ -1726,9 +2030,13 @@
       ],
       "metadata": {
         "colour_code": "W",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-GFC-50X50-W",
@@ -1742,9 +2050,12 @@
       ],
       "metadata": {
         "colour_code": "W",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "caps_and_plugs"
       },
-      "active": true
+      "active": true,
+      "subCategory": "caps",
+      "sortPriority": 10
     },
     {
       "sku": "QSG-4800-INF-BS",
@@ -1758,9 +2069,13 @@
       ],
       "metadata": {
         "colour_code": "BS",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-CINF-BS",
@@ -1774,9 +2089,12 @@
       ],
       "metadata": {
         "colour_code": "BS",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-4200-COVER-BS",
@@ -1790,9 +2108,13 @@
       ],
       "metadata": {
         "colour_code": "BS",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-GFC-50X50-BS",
@@ -1806,9 +2128,12 @@
       ],
       "metadata": {
         "colour_code": "BS",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "caps_and_plugs"
       },
-      "active": true
+      "active": true,
+      "subCategory": "caps",
+      "sortPriority": 10
     },
     {
       "sku": "QSG-4800-INF-D",
@@ -1822,9 +2147,13 @@
       ],
       "metadata": {
         "colour_code": "D",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-CINF-D",
@@ -1838,9 +2167,12 @@
       ],
       "metadata": {
         "colour_code": "D",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-4200-COVER-D",
@@ -1854,9 +2186,13 @@
       ],
       "metadata": {
         "colour_code": "D",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-GFC-50X50-D",
@@ -1870,9 +2206,12 @@
       ],
       "metadata": {
         "colour_code": "D",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "caps_and_plugs"
       },
-      "active": true
+      "active": true,
+      "subCategory": "caps",
+      "sortPriority": 10
     },
     {
       "sku": "QSG-4800-INF-M",
@@ -1886,9 +2225,13 @@
       ],
       "metadata": {
         "colour_code": "M",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-CINF-M",
@@ -1902,9 +2245,12 @@
       ],
       "metadata": {
         "colour_code": "M",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-4200-COVER-M",
@@ -1918,9 +2264,13 @@
       ],
       "metadata": {
         "colour_code": "M",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-GFC-50X50-M",
@@ -1934,9 +2284,12 @@
       ],
       "metadata": {
         "colour_code": "M",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "caps_and_plugs"
       },
-      "active": true
+      "active": true,
+      "subCategory": "caps",
+      "sortPriority": 10
     },
     {
       "sku": "QSG-4800-INF-P",
@@ -1950,9 +2303,13 @@
       ],
       "metadata": {
         "colour_code": "P",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-CINF-P",
@@ -1966,9 +2323,12 @@
       ],
       "metadata": {
         "colour_code": "P",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-4200-COVER-P",
@@ -1982,9 +2342,13 @@
       ],
       "metadata": {
         "colour_code": "P",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-GFC-50X50-P",
@@ -1998,9 +2362,12 @@
       ],
       "metadata": {
         "colour_code": "P",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "caps_and_plugs"
       },
-      "active": true
+      "active": true,
+      "subCategory": "caps",
+      "sortPriority": 10
     },
     {
       "sku": "QSG-4800-INF-PB",
@@ -2014,9 +2381,13 @@
       ],
       "metadata": {
         "colour_code": "PB",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-CINF-PB",
@@ -2030,9 +2401,12 @@
       ],
       "metadata": {
         "colour_code": "PB",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-4200-COVER-PB",
@@ -2046,9 +2420,13 @@
       ],
       "metadata": {
         "colour_code": "PB",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-GFC-50X50-PB",
@@ -2062,9 +2440,12 @@
       ],
       "metadata": {
         "colour_code": "PB",
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "caps_and_plugs"
       },
-      "active": true
+      "active": true,
+      "subCategory": "caps",
+      "sortPriority": 10
     },
     {
       "sku": "QSG-4800-INF-S",
@@ -2079,9 +2460,13 @@
       "metadata": {
         "colour_code": "S",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation."
+        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation.",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-4200-CINF-S",
@@ -2096,9 +2481,12 @@
       "metadata": {
         "colour_code": "S",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation."
+        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation.",
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_infill",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-4200-COVER-S",
@@ -2113,9 +2501,13 @@
       "metadata": {
         "colour_code": "S",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation."
+        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation.",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20,
+      "companionOf": "QSG-4800-RAIL"
     },
     {
       "sku": "QSG-GFC-50X50-S",
@@ -2130,9 +2522,12 @@
       "metadata": {
         "colour_code": "S",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation."
+        "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation.",
+        "bomCategory": "caps_and_plugs"
       },
-      "active": true
+      "active": true,
+      "subCategory": "caps",
+      "sortPriority": 10
     },
     {
       "sku": "AR-SCR-BR-50PK",
@@ -2145,9 +2540,12 @@
         "GATE"
       ],
       "metadata": {
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "QS-SCREWS-50PK",
@@ -2160,9 +2558,12 @@
         "GATE"
       ],
       "metadata": {
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "fasteners_and_screws"
       },
-      "active": true
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 20
     },
     {
       "sku": "QS-SPACER-05MM-50PK",
@@ -2176,9 +2577,12 @@
       ],
       "metadata": {
         "slat_gap_mm": 5,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "spacers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "slat_spacers",
+      "sortPriority": 10
     },
     {
       "sku": "QS-SPACER-09MM-50PK",
@@ -2192,9 +2596,12 @@
       ],
       "metadata": {
         "slat_gap_mm": 9,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "spacers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "slat_spacers",
+      "sortPriority": 10
     },
     {
       "sku": "QS-SPACER-20MM-50PK",
@@ -2208,9 +2615,12 @@
       ],
       "metadata": {
         "slat_gap_mm": 20,
-        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02"
+        "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
+        "bomCategory": "spacers"
       },
-      "active": true
+      "active": true,
+      "subCategory": "slat_spacers",
+      "sortPriority": 10
     },
     {
       "sku": "XP-HDL-KNOB",
@@ -2227,9 +2637,12 @@
         "handle_type": "stanley_round_knob",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "hinges_latches_and_hardware",
+      "sortPriority": 50
     },
     {
       "sku": "XP-HDL-LEVER",
@@ -2246,9 +2659,12 @@
         "handle_type": "stanley_lever",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "hinges_latches_and_hardware",
+      "sortPriority": 50
     },
     {
       "sku": "XP-HDL-LW534",
@@ -2265,9 +2681,12 @@
         "handle_type": "lockwood_534_round_knob",
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet aluminium slats prices.csv"
+        "price_source_file": "Glass outlet aluminium slats prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": false
+      "active": false,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "QSG-S-6100-TR65-B",
@@ -2281,9 +2700,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR90-B",
@@ -2297,9 +2719,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-BR-B",
@@ -2313,9 +2738,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR65-BS",
@@ -2329,9 +2757,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR90-BS",
@@ -2345,9 +2776,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-BR-BS",
@@ -2361,9 +2795,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR65-D",
@@ -2377,9 +2814,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR90-D",
@@ -2393,9 +2833,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-BR-D",
@@ -2409,9 +2852,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR65-G",
@@ -2425,9 +2871,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR90-G",
@@ -2441,9 +2890,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-BR-G",
@@ -2457,9 +2909,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR65-M",
@@ -2473,9 +2928,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR90-M",
@@ -2489,9 +2947,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-BR-M",
@@ -2505,9 +2966,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR65-MN",
@@ -2521,9 +2985,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR90-MN",
@@ -2537,9 +3004,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-BR-MN",
@@ -2553,9 +3023,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR65-P",
@@ -2569,9 +3042,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR90-P",
@@ -2585,9 +3061,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-BR-P",
@@ -2601,9 +3080,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR65-PB",
@@ -2617,9 +3099,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR90-PB",
@@ -2633,9 +3118,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-BR-PB",
@@ -2649,9 +3137,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR65-S",
@@ -2665,9 +3156,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR90-S",
@@ -2681,9 +3175,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-BR-S",
@@ -2697,9 +3194,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR65-SM",
@@ -2713,9 +3213,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR90-SM",
@@ -2729,9 +3232,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-BR-SM",
@@ -2745,9 +3251,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR65-W",
@@ -2761,9 +3270,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-TR90-W",
@@ -2777,9 +3289,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-6100-BR-W",
@@ -2793,9 +3308,12 @@
       ],
       "metadata": {
         "gate_type": "sliding",
-        "stock_length_mm": 6100
+        "stock_length_mm": 6100,
+        "bomCategory": "tools_and_consumables"
       },
-      "active": true
+      "active": true,
+      "subCategory": "gate_rail",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-WHEEL",
@@ -2808,9 +3326,12 @@
         "GATE"
       ],
       "metadata": {
-        "gate_type": "sliding"
+        "gate_type": "sliding",
+        "bomCategory": "sliding_gate_running_gear"
       },
-      "active": true
+      "active": true,
+      "subCategory": "wheels",
+      "sortPriority": 50
     },
     {
       "sku": "QSG-S-WHEEL-CS-2PK",
@@ -2823,9 +3344,12 @@
         "GATE"
       ],
       "metadata": {
-        "gate_type": "sliding"
+        "gate_type": "sliding",
+        "bomCategory": "sliding_gate_running_gear"
       },
-      "active": true
+      "active": true,
+      "subCategory": "wheels",
+      "sortPriority": 50
     },
     {
       "sku": "KF-AH-AT",
@@ -2840,9 +3364,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "KF-H-FT",
@@ -2857,9 +3384,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "KF-H-NT",
@@ -2874,9 +3404,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "TC-H-AT-B",
@@ -2891,9 +3424,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "TC-H-AT-2L-B",
@@ -2908,9 +3444,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "TC-H-AT-HD-B",
@@ -2925,9 +3464,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "TC-H-AT-HD-2L-B",
@@ -2942,9 +3484,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "TC-CAPS3",
@@ -2959,9 +3504,25 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "caps_and_plugs"
       },
-      "active": true
+      "active": true,
+      "subCategory": "caps",
+      "sortPriority": 10,
+      "isOptionalAccessory": true,
+      "optionalChildOf": [
+        "TRUCLOSE_HINGE",
+        "TC-H-AT-B",
+        "TC-H-AT-2L-B",
+        "TC-H-AT-HD-B",
+        "TC-H-AT-HD-2L-B",
+        "TC-H-AT-2L-W",
+        "TC-H-AT-HD-2L-W",
+        "ML-TL-TC-H-AT"
+      ],
+      "qtyPerParent": 1,
+      "qtyFormula": null
     },
     {
       "sku": "SURECLOSE-HH",
@@ -2976,9 +3537,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "SURECLOSE-NSC",
@@ -2993,9 +3557,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "SS-BH10075-B",
@@ -3010,9 +3577,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "ZF-BBH-L",
@@ -3027,9 +3597,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet Zues, hamptons and pic pricing.csv"
+        "price_source_file": "Glass outlet Zues, hamptons and pic pricing.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "ZF-BBH-R",
@@ -3044,9 +3617,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass outlet Zues, hamptons and pic pricing.csv"
+        "price_source_file": "Glass outlet Zues, hamptons and pic pricing.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "CB-HINGE-B-2PK",
@@ -3061,9 +3637,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "LL-DL-KA",
@@ -3078,9 +3657,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "LL-DL",
@@ -3095,9 +3677,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "LL-DL-W",
@@ -3112,9 +3697,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "LLAA",
@@ -3126,8 +3714,12 @@
       "system_types": [
         "GATE"
       ],
-      "metadata": {},
-      "active": true
+      "metadata": {
+        "bomCategory": "gate_hardware"
+      },
+      "active": true,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "LLAA-W",
@@ -3142,9 +3734,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "LLB",
@@ -3156,8 +3751,12 @@
       "system_types": [
         "GATE"
       ],
-      "metadata": {},
-      "active": true
+      "metadata": {
+        "bomCategory": "gate_hardware"
+      },
+      "active": true,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "T-L",
@@ -3172,9 +3771,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "SS-DL-B",
@@ -3189,9 +3791,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "MR-FMLSL",
@@ -3206,9 +3811,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "LL-GH",
@@ -3223,9 +3831,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "latches_and_locks",
+      "sortPriority": 20
     },
     {
       "sku": "KF-AH-AT-W",
@@ -3240,9 +3851,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "TC-H-AT-2L-W",
@@ -3257,9 +3871,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     },
     {
       "sku": "TC-H-AT-HD-2L-W",
@@ -3274,9 +3891,12 @@
       "metadata": {
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
-        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv"
+        "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
+        "bomCategory": "gate_hardware"
       },
-      "active": true
+      "active": true,
+      "subCategory": "hinges",
+      "sortPriority": 10
     }
   ],
   "rule_sets": [

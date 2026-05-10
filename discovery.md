@@ -1540,6 +1540,26 @@ Verification:
 - `npm run build` passed after the changes.
 - Source review confirmed the existing stock-length branch already uses 6500mm for economy and 6100mm for standard slats.
 
+### May 10, 2026 - Brief AU gate-scoped BOM aggregation and optional accessories
+
+Catalogue / workflow finding:
+- The All BOM view needs to order one line per SKU for purchasing, but installers still need to inspect each run and each gate independently.
+- The old raw `category` field is used by engine selectors, so changing it for nicer UI grouping would risk breaking component selection.
+- TruClose safety caps (`TC-CAPS3`) belong near TruClose hinges, but they are optional and should not be auto-added.
+
+Changes applied:
+- Added BOM source breakdowns so each aggregated line records which run or gate contributed each quantity.
+- The All BOM view groups matching SKUs into one row while run/gate tabs derive and re-price their quantities from the source breakdown.
+- Added display taxonomy metadata (`metadata.bomCategory`, `subCategory`, `companionOf`, `sortPriority`) to seeded product components without changing the engine selector `category`.
+- Added `src/lib/bomMetadata.ts` and a reusable annotation script at `scripts/annotate-bom-metadata.mjs`.
+- Added inline optional add-ons under gate hardware. TruClose safety caps are now only emitted when the user selects them.
+- Updated QuickScreen BOM and seed-mapper skill files in both `.claude/skills/` and `.agents/skills/` so future agents keep the same category and optional-accessory conventions.
+
+Verification:
+- `npm run build` passed after the changes.
+- Local JSON schema validation passed for every file in `supabase/seeds/glass-outlet/products/`.
+- `npm run seed:products` could not run because `.env.local` is missing `SUPABASE_SERVICE_ROLE_KEY`; the seed files validate locally but were not upserted into Supabase in this pass.
+
 ### May 7, 2026 - Brief AB 135-degree angle adapter
 
 Catalogue finding:

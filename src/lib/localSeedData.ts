@@ -15,9 +15,17 @@ type SeedComponent = {
   name?: string;
   description?: string;
   category?: string;
+  subCategory?: string;
+  companionOf?: string;
+  sortPriority?: number;
+  isOptionalAccessory?: boolean;
+  optionalChildOf?: string[];
+  qtyPerParent?: number;
+  qtyFormula?: string | null;
   unit?: string;
   default_price?: number;
   system_types?: string[];
+  metadata?: Record<string, unknown>;
   active?: boolean;
 };
 

@@ -10,6 +10,7 @@ import {
   PRICE_SOURCE_LABEL,
   PRICE_SOURCE_VERIFIED_DATE,
 } from "../../lib/pricingMetadata";
+import { BOM_CATEGORY_ORDER } from "../../lib/bomMetadata";
 import { InstallVideoQR } from "../calculator-v3/InstallVideoQR";
 import type { InstallVideoKey } from "../../lib/installVideos";
 import { BomCutList } from "./BomCutList";
@@ -28,22 +29,7 @@ interface BOMResultTabsProps {
   }) => void;
 }
 
-const CATEGORY_ORDER = [
-  "post",
-  "post_accessory",
-  "slat",
-  "side_frame",
-  "cfc_cover",
-  "centre_support_rail",
-  "f_section",
-  "rail",
-  "bracket",
-  "gate",
-  "automation",
-  "hardware",
-  "accessory",
-  "screw",
-] as const;
+const CATEGORY_ORDER = BOM_CATEGORY_ORDER;
 
 const formatMoney = (value: number) =>
   new Intl.NumberFormat("en-AU", {
@@ -98,7 +84,13 @@ function sortItems(items: BOMLineItem[]): BOMLineItem[] {
     const bi = CATEGORY_ORDER.indexOf(
       b.category as (typeof CATEGORY_ORDER)[number],
     );
-    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    const category = (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    if (category !== 0) return category;
+    const subCategory = String(a.subCategory ?? "").localeCompare(String(b.subCategory ?? ""));
+    if (subCategory !== 0) return subCategory;
+    const priority = (a.sortPriority ?? 50) - (b.sortPriority ?? 50);
+    if (priority !== 0) return priority;
+    return a.sku.localeCompare(b.sku);
   });
 }
 
@@ -109,6 +101,47 @@ function groupByCategory(items: BOMLineItem[]): [string, BOMLineItem[]][] {
     map.get(item.category)!.push(item);
   }
   return Array.from(map.entries());
+}
+
+function orderCompanions(items: BOMLineItem[]): BOMLineItem[] {
+  const baseItems = [...items].sort((a, b) => {
+    const subCategory = String(a.subCategory ?? "").localeCompare(String(b.subCategory ?? ""));
+    if (subCategory !== 0) return subCategory;
+    const priority = (a.sortPriority ?? 50) - (b.sortPriority ?? 50);
+    if (priority !== 0) return priority;
+    return a.sku.localeCompare(b.sku);
+  });
+  const companions = new Map<string, BOMLineItem[]>();
+  const roots: BOMLineItem[] = [];
+  for (const item of baseItems) {
+    if (item.companionOf && baseItems.some((candidate) => item.sku !== candidate.sku && candidate.sku.startsWith(item.companionOf!))) {
+      const parentSku = baseItems.find((candidate) => item.sku !== candidate.sku && candidate.sku.startsWith(item.companionOf!))?.sku;
+      if (parentSku) {
+        const list = companions.get(parentSku) ?? [];
+        list.push(item);
+        companions.set(parentSku, list);
+        continue;
+      }
+    }
+    roots.push(item);
+  }
+  return roots.flatMap((item) => [item, ...(companions.get(item.sku) ?? [])]);
+}
+
+function sourceBreakdown(item: BOMLineItem) {
+  const sources = item.sources ?? [];
+  if (sources.length === 0) return "";
+  return sources
+    .map((source) => `${source.scopeLabel}: ${source.qty}`)
+    .join(" · ");
+}
+
+function humanizeCategory(value: string) {
+  return pluralize(value.replace(/_/g, " "));
+}
+
+function humanizeSubCategory(value: string | undefined) {
+  return value ? value.replace(/_/g, " ") : "Items";
 }
 
 function PageChip({ sku }: { sku: string }) {
@@ -236,6 +269,8 @@ function ItemGroup({
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
 }) {
+  const orderedItems = orderCompanions(items);
+  let lastSubCategory = "";
   return (
     <>
       <tr className="border-t border-brand-border">
@@ -243,11 +278,10 @@ function ItemGroup({
           colSpan={editable ? 7 : 6}
           className="px-3 py-1.5 bg-slate-300/15 border-b border-brand-border capitalize text-xs font-semibold text-brand-muted tracking-wider"
         >
-          {pluralize(category)}
+          {humanizeCategory(category)}
         </td>
       </tr>
-      {items.map((item, itemIndex) => (
-        (() => {
+      {orderedItems.flatMap((item, itemIndex) => {
           const hint = nextBreakHint(item);
           const cartonHint = cartonHintForLine(item);
           const bulkBuySku = bulkBuyVariantForSku(item.sku);
@@ -259,9 +293,27 @@ function ItemGroup({
           const canSwitchEconomy =
             item.sku.startsWith("XP-6500-E65") &&
             item.notes?.includes("Switch to Standard slats?");
-          return (
+          const sourceText = sourceBreakdown(item);
+          const subCategory = item.subCategory ?? "";
+          const showSubCategory = subCategory && subCategory !== lastSubCategory && !item.companionOf;
+          if (subCategory) lastSubCategory = subCategory;
+          const rows = [];
+          if (showSubCategory) {
+            rows.push(
+              <tr key={`${category}-${subCategory}-heading`}>
+                <td
+                  colSpan={editable ? 7 : 6}
+                  className="px-3 pt-3 pb-1 text-[11px] font-extrabold uppercase tracking-wide text-brand-muted"
+                >
+                  {humanizeSubCategory(subCategory)}
+                </td>
+              </tr>,
+            );
+          }
+          rows.push(
         <tr
           key={`${category}-${item.sku}-${item.category}-${item.description}-${itemIndex}`}
+          title={sourceText ? `Source breakdown: ${sourceText}` : undefined}
           className="border-b border-brand-border last:border-0 hover:bg-brand-accent/5 transition-colors"
         >
           <td className="py-2.5 px-3 text-xs font-mono text-brand-accent whitespace-nowrap">
@@ -324,6 +376,11 @@ function ItemGroup({
                   : " available"}
               </p>
             )}
+            {sourceText && item.sources && item.sources.length > 1 && (
+              <p className="mt-1 text-[11px] font-semibold text-brand-muted">
+                Sources: {sourceText}
+              </p>
+            )}
           </td>
           <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-center sm:table-cell">
             {unitLabel(item)}
@@ -364,8 +421,8 @@ function ItemGroup({
           )}
         </tr>
           );
-        })()
-      ))}
+          return rows;
+      })}
     </>
   );
 }

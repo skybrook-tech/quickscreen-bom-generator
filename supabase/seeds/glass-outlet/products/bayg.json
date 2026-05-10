@@ -5,15 +5,36 @@
       "system_type": "BAYG",
       "product_type": "fence",
       "name": "Buy As You Go Fence",
-      "description": "Same extrusions as QSHS \u2014 spacers sold individually per-run rather than in pre-packs. Uses dedicated BAYG height lookup table. F-Channel (not F-Section) for void fixing.",
+      "description": "Same extrusions as QSHS — spacers sold individually per-run rather than in pre-packs. Uses dedicated BAYG height lookup table. F-Channel (not F-Section) for void fixing.",
       "active": true,
       "sort_order": 4,
       "metadata": {
-        "allowedAngles": [90],
+        "allowedAngles": [
+          90
+        ],
         "options": {
-          "slatSize": ["65", "90"],
-          "slatGap": ["5", "9", "20"],
-          "colour": ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]
+          "slatSize": [
+            "65",
+            "90"
+          ],
+          "slatGap": [
+            "5",
+            "9",
+            "20"
+          ],
+          "colour": [
+            "B",
+            "MN",
+            "G",
+            "SM",
+            "W",
+            "BS",
+            "D",
+            "M",
+            "P",
+            "PB",
+            "S"
+          ]
         },
         "notes": "BAYG uses BAYG_ScrHts height table (not XPL_Ht) to determine slat count. Spacers sold individually per run, not in 50-packs."
       }
@@ -106,7 +127,10 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 65,
-      "options_json": [65, 90],
+      "options_json": [
+        65,
+        90
+      ],
       "scope": "job",
       "sort_order": 20,
       "active": true
@@ -119,7 +143,11 @@
       "unit": "mm",
       "required": true,
       "default_value_json": 5,
-      "options_json": [5, 9, 20],
+      "options_json": [
+        5,
+        9,
+        20
+      ],
       "scope": "job",
       "sort_order": 30,
       "active": true
@@ -132,7 +160,11 @@
       "unit": null,
       "required": true,
       "default_value_json": "in_ground",
-      "options_json": ["in_ground", "base_plate", "core_drill"],
+      "options_json": [
+        "in_ground",
+        "base_plate",
+        "core_drill"
+      ],
       "scope": "run",
       "sort_order": 40,
       "active": true
@@ -145,7 +177,10 @@
       "unit": null,
       "required": true,
       "default_value_json": "post",
-      "options_json": ["post", "wall"],
+      "options_json": [
+        "post",
+        "wall"
+      ],
       "scope": "run",
       "sort_order": 50,
       "active": true
@@ -158,7 +193,10 @@
       "unit": null,
       "required": true,
       "default_value_json": "post",
-      "options_json": ["post", "wall"],
+      "options_json": [
+        "post",
+        "wall"
+      ],
       "scope": "run",
       "sort_order": 60,
       "active": true
@@ -197,7 +235,10 @@
       "unit": "mm",
       "required": true,
       "default_value_json": "50",
-      "options_json": ["50", "65"],
+      "options_json": [
+        "50",
+        "65"
+      ],
       "scope": "run",
       "sort_order": 60,
       "active": true
@@ -210,7 +251,11 @@
       "unit": null,
       "required": true,
       "default_value_json": "in_ground",
-      "options_json": ["in_ground", "base_plate", "core_drill"],
+      "options_json": [
+        "in_ground",
+        "base_plate",
+        "core_drill"
+      ],
       "scope": "run",
       "sort_order": 70,
       "active": true
@@ -483,7 +528,7 @@
       "output_key": "qty_post_50_2400",
       "priority": 110,
       "active": true,
-      "notes": "2400mm FP post suits heights \u22642100mm (min 300mm in-ground)"
+      "notes": "2400mm FP post suits heights ≤2100mm (min 300mm in-ground)"
     },
     {
       "product_system_type": "BAYG",
@@ -624,7 +669,9 @@
       "selector_key": "bayg_slat_65",
       "component_category": "slat",
       "selector_type": "exact",
-      "match_json": { "slat_size_mm": 65 },
+      "match_json": {
+        "slat_size_mm": 65
+      },
       "qty_key": "qty_slat_65",
       "sku_pattern": "XP-6100-S65-{colour}",
       "priority": 100,
@@ -636,7 +683,9 @@
       "selector_key": "bayg_slat_90",
       "component_category": "slat",
       "selector_type": "exact",
-      "match_json": { "slat_size_mm": 90 },
+      "match_json": {
+        "slat_size_mm": 90
+      },
       "qty_key": "qty_slat_90",
       "sku_pattern": "QS-6100-S90-{colour}",
       "priority": 100,
@@ -685,7 +734,7 @@
       "qty_key": "qty_post_50_2400",
       "sku_pattern": "XP-2400-FP-{colour}",
       "priority": 100,
-      "notes": "50mm FP post 2400mm \u2014 shared component in qshs.json",
+      "notes": "50mm FP post 2400mm — shared component in qshs.json",
       "active": true
     },
     {
@@ -697,7 +746,7 @@
       "qty_key": "qty_post_50_6000",
       "sku_pattern": "XP-6000-FP-{colour}",
       "priority": 100,
-      "notes": "50mm FP post 6000mm \u2014 shared component in qshs.json",
+      "notes": "50mm FP post 6000mm — shared component in qshs.json",
       "active": true
     },
     {
@@ -709,7 +758,7 @@
       "qty_key": "qty_post_65_2400",
       "sku_pattern": "XP-2400-65HD-{colour}",
       "priority": 100,
-      "notes": "65mm HD post 2400mm \u2014 shared component in qshs.json",
+      "notes": "65mm HD post 2400mm — shared component in qshs.json",
       "active": true
     },
     {
@@ -721,7 +770,7 @@
       "qty_key": "qty_post_65_6000",
       "sku_pattern": "XP-6000-65HD-{colour}",
       "priority": 100,
-      "notes": "65mm HD post 6000mm \u2014 shared component in qshs.json",
+      "notes": "65mm HD post 6000mm — shared component in qshs.json",
       "active": true
     },
     {
@@ -733,7 +782,7 @@
       "qty_key": "qty_top_plate_50",
       "sku_pattern": "XP-TP-{colour}",
       "priority": 100,
-      "notes": "50mm post top plate \u2014 shared in qshs.json",
+      "notes": "50mm post top plate — shared in qshs.json",
       "active": true
     },
     {
@@ -745,7 +794,7 @@
       "qty_key": "qty_base_plate_50",
       "sku_pattern": "XP-BP-SET-{colour}",
       "priority": 100,
-      "notes": "50mm post base plate set \u2014 shared in qshs.json",
+      "notes": "50mm post base plate set — shared in qshs.json",
       "active": true
     },
     {
@@ -757,7 +806,7 @@
       "qty_key": "qty_domical_cover_50",
       "sku_pattern": "XP-DC-2P-{colour}",
       "priority": 100,
-      "notes": "50mm post domical cover \u2014 shared in qshs.json",
+      "notes": "50mm post domical cover — shared in qshs.json",
       "active": true
     },
     {
@@ -769,7 +818,7 @@
       "qty_key": "qty_dress_ring_50",
       "sku_pattern": "XP-DR-{colour}",
       "priority": 100,
-      "notes": "50mm post dress ring \u2014 shared in qshs.json",
+      "notes": "50mm post dress ring — shared in qshs.json",
       "active": true
     },
     {
@@ -781,7 +830,7 @@
       "qty_key": "qty_top_plate_65",
       "sku_pattern": "XP-65TP-{colour}",
       "priority": 100,
-      "notes": "65mm HD post top plate \u2014 shared in qshs.json",
+      "notes": "65mm HD post top plate — shared in qshs.json",
       "active": true
     },
     {
@@ -793,7 +842,7 @@
       "qty_key": "qty_base_plate_65",
       "sku_pattern": "XP-65BP-SET-{colour}",
       "priority": 100,
-      "notes": "65mm HD post base plate set \u2014 shared in qshs.json",
+      "notes": "65mm HD post base plate set — shared in qshs.json",
       "active": true
     },
     {
@@ -805,7 +854,7 @@
       "qty_key": "qty_domical_cover_65",
       "sku_pattern": "XP-65DC-2P-{colour}",
       "priority": 100,
-      "notes": "65mm HD post domical cover \u2014 shared in qshs.json",
+      "notes": "65mm HD post domical cover — shared in qshs.json",
       "active": true
     },
     {
@@ -817,7 +866,7 @@
       "qty_key": "qty_dress_ring_65",
       "sku_pattern": "XP-65DR-{colour}",
       "priority": 100,
-      "notes": "65mm HD post dress ring \u2014 shared in qshs.json",
+      "notes": "65mm HD post dress ring — shared in qshs.json",
       "active": true
     }
   ],
@@ -915,7 +964,7 @@
       "warning_key": "bayg_spacer_individual",
       "severity": "info",
       "condition_json": {},
-      "message": "BAYG spacers are snap-in type, sold individually per-run \u2014 not in pre-packs like QSHS.",
+      "message": "BAYG spacers are snap-in type, sold individually per-run — not in pre-packs like QSHS.",
       "active": true
     },
     {
@@ -933,7 +982,10 @@
       "condition_json": {
         "post_size": "65",
         "colour_code": {
-          "in": ["P", "PB"]
+          "in": [
+            "P",
+            "PB"
+          ]
         }
       },
       "message": "65mm HD posts are not available in Primrose (P) or Paperbark (PB). Please select a different colour for HD posts, or switch to 50mm FP posts.",

@@ -94,6 +94,22 @@ Extras specific to this repo (not in the portable spec):
 - **Colour codes**: use the short code form everywhere in seeds (`"B"`, `"MN"`, …).
   Long names like `"black-satin"` are only for UI display and get normalised by
   the engine.
+- **Component category vs BOM display category:** keep `product_components[].category`
+  as the engine selector category. Do not rename it just to improve the BOM UI.
+  For BOM grouping, set `metadata.bomCategory` to one of:
+  `screening`, `frames_and_covers`, `posts_and_mounting`, `gate_components`,
+  `gate_hardware`, `sliding_gate_running_gear`, `caps_and_plugs`,
+  `fasteners_and_screws`, `spacers`, `fixings`, `tools_and_consumables`,
+  `automation`.
+- **Every component should carry display ordering metadata:** add `subCategory`
+  and `sortPriority` on each `product_components` row. Use `companionOf` to keep
+  required companion lines beside the parent line in the BOM (for example CFC
+  cover beside side frame, gate screw cover beside gate rail).
+- **Optional accessories:** never auto-add an optional item just because the
+  parent appears. Mark it with `isOptionalAccessory: true`, `optionalChildOf:
+  ["PARENT-SKU"]`, and `qtyPerParent` or `qtyFormula`. The UI presents these as
+  inline add-ons under the selected parent; the BOM only includes them when the
+  user explicitly selects them. TruClose safety caps use SKU `TC-CAPS3`.
 - **`active: true`** by default on every row. Only set `false` if you explicitly
   want a row disabled.
 - **`allowedAngles` in product metadata** drives canvas corner-snap for the draw

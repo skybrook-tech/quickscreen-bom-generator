@@ -9,17 +9,21 @@
 // Never regenerate them in adapter or reducer code — doing so breaks
 // save/load and breaks the engine's per-run/segment tagging.
 
+export type CanonicalVariableValue = string | number | boolean;
+
+export type CanonicalVariables = Record<string, CanonicalVariableValue>;
+
 export interface CanonicalPayload {
   productCode: string;
   schemaVersion: string;
-  variables: Record<string, string | number | boolean>;
+  variables: CanonicalVariables;
   runs: CanonicalRun[];
 }
 
 export interface CanonicalRun {
   runId: string;
   productCode: string;
-  variables?: Record<string, string | number | boolean>;
+  variables?: CanonicalVariables;
   leftBoundary: CanonicalBoundary;
   rightBoundary: CanonicalBoundary;
   segments: CanonicalSegment[];
@@ -59,7 +63,7 @@ export interface CanonicalSegment {
    * Per-segment overrides. Termination keys: see `src/lib/segmentTermination.ts`
    * (`left_termination_kind`, `right_termination_kind`, corner degrees, non-system subtype).
    */
-  variables?: Record<string, string | number | boolean>;
+  variables?: CanonicalVariables;
 }
 
 export interface CanonicalCorner {
