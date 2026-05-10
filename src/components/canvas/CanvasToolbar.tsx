@@ -17,8 +17,9 @@ import {
   Crosshair,
   CircleHelp,
 } from "lucide-react";
-import { useEffect, useRef, useState, type RefObject } from "react";
+import type { RefObject } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
+import { ConfirmButton } from "../shared/ConfirmButton";
 
 type Engine = ReturnType<typeof initCanvasEngine>;
 type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar";
@@ -54,22 +55,10 @@ export function CanvasToolbar({
   onHelpOpen,
   onPrintMap,
 }: CanvasToolbarProps) {
-  const [confirmClear, setConfirmClear] = useState(false);
-  const clearButtonRef = useRef<HTMLButtonElement | null>(null);
   const handleTool = (t: CanvasTool) => {
     engineRef.current?.setTool(t);
     onToolChange(t);
   };
-
-  useEffect(() => {
-    if (!confirmClear) return;
-    const resetOnOutsideClick = (event: PointerEvent) => {
-      if (clearButtonRef.current?.contains(event.target as Node)) return;
-      setConfirmClear(false);
-    };
-    window.addEventListener("pointerdown", resetOnOutsideClick, true);
-    return () => window.removeEventListener("pointerdown", resetOnOutsideClick, true);
-  }, [confirmClear]);
 
   const btnCls = (active: boolean) =>
     `inline-flex shrink-0 items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
@@ -109,6 +98,11 @@ export function CanvasToolbar({
       >
         <Move size={16} /> Move / Edit
       </button>
+      {activeTool === "move" && (
+        <span className="rounded-full border border-brand-primary/30 bg-brand-primary/10 px-2 py-1 text-[10px] font-bold text-brand-primary">
+          Drag whole section · Alt-drag point only
+        </span>
+      )}
       </div>
 
       <div className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
@@ -158,7 +152,6 @@ export function CanvasToolbar({
       <div className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
         <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">Actions</span>
       <button
-        ref={clearButtonRef}
         type="button"
         title="Undo (Ctrl+Z)"
         className={iconBtn}
@@ -174,22 +167,17 @@ export function CanvasToolbar({
       >
         <Redo2 size={16} /> Redo
       </button>
-      <button
-        type="button"
-        title={confirmClear ? "Click again to clear map" : "Clear map"}
-        className={`${iconBtn} ${confirmClear ? "border-brand-danger text-brand-danger" : ""}`}
-        onClick={() => {
-          if (!confirmClear) {
-            setConfirmClear(true);
-            return;
-          }
+      <ConfirmButton
+        title="Clear map"
+        className={iconBtn}
+        confirmLabel={<><Trash2 size={16} /> Click again to confirm</>}
+        onConfirm={() => {
           engineRef.current?.clear();
-          setConfirmClear(false);
+          handleTool("draw");
         }}
-        onBlur={() => setConfirmClear(false)}
       >
-        <Trash2 size={16} /> {confirmClear ? "Click again" : "Clear map"}
-      </button>
+        <Trash2 size={16} /> Clear map
+      </ConfirmButton>
       <button
         type="button"
         title="Centre view on drawn fence"

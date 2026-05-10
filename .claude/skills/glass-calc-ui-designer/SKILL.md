@@ -21,6 +21,8 @@ Use this skill when improving how users configure, draw, review, and test quotes
 - Group choices by job, run, segment, gate, fixing, and add-ons.
 - Prefer compact controls over long explanatory copy.
 - Treat the first workspace state as a real quoting decision point: Draw, Describe, and Select should appear as equal numbered choice cards when no run exists, then collapse once the user chooses a path.
+- Use a shared two-click confirm pattern for destructive actions: first click enters a danger confirm state, second click within about 3 seconds commits, and outside click cancels.
+- Treat "matches run defaults" indicators as signal, not noise: ignore structural geometry differences like corner/end-post conditions and only flag substantive setting overrides.
 - Put derived values near the inputs they depend on: panels, post spacing, cut length, achieved height.
 - Use product-code search for expert users and friendly labels for less technical users.
 - After Generate BOM, keep the user in one place: BOM lines, warnings, suggested extras, manual extras, GST, grand total.

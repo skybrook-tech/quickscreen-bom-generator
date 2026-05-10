@@ -14,7 +14,9 @@ import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
 import { DescribeFenceBox } from "../components/calculator/DescribeFenceBox";
 import { EntryChoiceCard } from "../components/calculator/EntryChoiceCard";
+import { JobNameEditor } from "../components/calculator/JobNameEditor";
 import { GatePositionModal } from "../components/calculator/GatePositionModal";
+import { ConfirmButton } from "../components/shared/ConfirmButton";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { suggestAccessories } from "../lib/suggestedAccessories";
 import { priceForSku } from "../lib/localBomCalculator";
@@ -32,12 +34,10 @@ import { useAuth } from "../hooks/useAuth";
 import {
   Download,
   FileX2,
-  Grid2x2,
   HelpCircle,
   Keyboard,
   Loader2,
   Maximize2,
-  MessageSquareQuote,
   Minimize2,
   PencilRuler,
   Printer,
@@ -318,9 +318,8 @@ function CalculatorV3Content() {
   const [autoOpenFirstSectionRunId, setAutoOpenFirstSectionRunId] = useState<string | null>(null);
   const [includeMapInBomPrint, setIncludeMapInBomPrint] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
-  const [confirmClearJob, setConfirmClearJob] = useState(false);
+  const [clearJobDialogOpen, setClearJobDialogOpen] = useState(false);
   const [gatePositionTarget, setGatePositionTarget] = useState<PendingParsedGate | null>(null);
-  const clearJobButtonRef = useRef<HTMLButtonElement | null>(null);
   const handleActiveBomSummaryChange = useCallback(
     (summary: { label: string; grandTotal: number }) => {
       setActiveBomSummary({
@@ -338,16 +337,6 @@ function CalculatorV3Content() {
     return () => window.removeEventListener("resize", updateLayout);
   }, []);
 
-  useEffect(() => {
-    if (!confirmClearJob) return;
-    const resetOnOutsideClick = (event: PointerEvent) => {
-      if (clearJobButtonRef.current?.contains(event.target as Node)) return;
-      setConfirmClearJob(false);
-    };
-    window.addEventListener("pointerdown", resetOnOutsideClick, true);
-    return () => window.removeEventListener("pointerdown", resetOnOutsideClick, true);
-  }, [confirmClearJob]);
-
   function handleResizeStart() {
     let latestWidth = runPaneWidth;
     const onMove = (event: MouseEvent) => {
@@ -364,31 +353,6 @@ function CalculatorV3Content() {
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
   }
-
-  const layoutMapButton = (onBeforeOpen?: () => void) => (
-    <button
-      type="button"
-      onClick={() => {
-        if (!layoutOpen) onBeforeOpen?.();
-        if (!payload) {
-          dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
-        }
-        setIntroDismissed(true);
-        setEntryCardsOpen(false);
-        setEntryMode(null);
-        setLayoutOpen((open) => !open);
-        if (mobileLayout) setMobileTab("map");
-      }}
-      className={`group relative inline-flex items-center gap-3 overflow-hidden rounded-full border px-4 py-2.5 text-sm font-black transition-all hover:-translate-y-0.5 hover:shadow-md ${layoutOpen
-        ? "border-brand-primary bg-brand-primary text-white hover:bg-brand-primary/90"
-        : "border-brand-primary/50 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white"
-        }`}
-      title={layoutOpen ? "Minimize layout map" : DRAW_FENCE_LABEL}
-    >
-      <PencilRuler size={24} strokeWidth={2.5} />
-      <span className="relative">{layoutOpen ? "Minimize layout map" : DRAW_FENCE_LABEL}</span>
-    </button>
-  );
 
   function startWorkspaceFromLanding() {
     setIntroDismissed(true);
@@ -953,6 +917,37 @@ function CalculatorV3Content() {
     }
   }
 
+  function clearToFreshWorkspace() {
+    dispatch({ type: "CLEAR_QUOTE" });
+    setExtraItems([]);
+    setLineEdits({});
+    setActiveBomSummary(null);
+    setJobName("");
+    setEntryCardsOpen(true);
+    setEntryMode(null);
+    setIntroDismissed(true);
+    setLayoutOpen(false);
+    setLayoutFullscreen(false);
+    setAutoOpenFirstSectionRunId(null);
+    setMobileTab("run");
+    setClearJobDialogOpen(false);
+  }
+
+  function saveCurrentJobLocallyBeforeClear() {
+    if (!payload) return;
+    localStorage.setItem(
+      `glass-calc-cleared-job-${Date.now()}`,
+      JSON.stringify({
+        jobName: jobName.trim() || "Untitled Glass Outlet Job",
+        payload,
+        bom: bomResultForTabs,
+        savedAt: new Date().toISOString(),
+        source: "clear-job-dialog",
+      }),
+    );
+    toast.success("Job saved locally before clearing");
+  }
+
   function handlePrintBom() {
     const cleanupPrintMode = () => {
       document.body.removeAttribute("data-print-bom");
@@ -1163,24 +1158,13 @@ function CalculatorV3Content() {
                   startWorkspaceFromLanding();
                 }}
               >
-                <label className="block space-y-2">
-                  <input
-                    type="text"
-                    value={jobName}
-                    onChange={(event) => setJobName(event.target.value)}
-                    onKeyDown={(event) => {
-                      if (event.key === "Escape") {
-                        event.preventDefault();
-                        setJobName("");
-                      }
-                    }}
-                    placeholder="Enter job name"
-                    className="w-full rounded-2xl border border-brand-border bg-brand-card px-4 py-3 text-lg font-black text-brand-text shadow-sm outline-none transition-colors focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-                  />
-                  <span className="block text-center text-xs font-bold text-brand-muted">
-                    press Enter to start
-                  </span>
-                </label>
+                <JobNameEditor
+                  value={jobName}
+                  onChange={setJobName}
+                  autoFocus
+                  inputClassName="rounded-2xl px-4 py-3 text-center text-xl font-semibold"
+                  textClassName="mx-auto text-center text-xl font-semibold"
+                />
                 <button
                   type="submit"
                   className="mt-4 w-full rounded-lg bg-brand-primary px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm"
@@ -1206,9 +1190,14 @@ function CalculatorV3Content() {
                 <div className="flex-1 space-y-4 overflow-y-auto p-3 sm:p-5">
                   <section>
                     <div className="mb-3 flex items-center justify-between gap-3">
-                      <p className="text-xs font-semibold uppercase tracking-[0.08em] text-brand-muted">
-                        Job Name
-                      </p>
+                      <div className="min-w-0 flex-1">
+                        <JobNameEditor
+                          value={jobName}
+                          onChange={setJobName}
+                          inputClassName="mb-1"
+                          textClassName="mb-1"
+                        />
+                      </div>
                       {payload && !layoutOpen && (
                         <button
                           type="button"
@@ -1224,13 +1213,6 @@ function CalculatorV3Content() {
                         </button>
                       )}
                     </div>
-                    <input
-                      type="text"
-                      value={jobName}
-                      onChange={(event) => setJobName(event.target.value)}
-                      placeholder="Enter job name"
-                      className="mb-4 w-full rounded-xl border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-                    />
                     {!payload && (
                       <div className="space-y-3">
                         {entryCardsOpen && !entryMode && (
@@ -1239,7 +1221,7 @@ function CalculatorV3Content() {
                               number={1}
                               title={DRAW_FENCE_LABEL}
                               description="Open the layout map and sketch the run from above."
-                              icon={PencilRuler}
+                              variant="draw"
                               onClick={() => {
                                 const nextPayload = createInitialPayload("QSHS");
                                 dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
@@ -1255,7 +1237,7 @@ function CalculatorV3Content() {
                               number={2}
                               title="Describe your fence"
                               description="Paste or dictate the job details and preview what the app understood."
-                              icon={MessageSquareQuote}
+                              variant="describe"
                               onClick={() => {
                                 setEntryMode("describe");
                                 setEntryCardsOpen(false);
@@ -1265,7 +1247,7 @@ function CalculatorV3Content() {
                               number={3}
                               title="Select your fence"
                               description="Choose QSHS, VS, XPL, or BAY-G and edit section settings."
-                              icon={Grid2x2}
+                              variant="select"
                               onClick={() => {
                                 setEntryMode("select");
                                 setEntryCardsOpen(false);
@@ -1414,28 +1396,15 @@ function CalculatorV3Content() {
                       {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                       {saveJobLabel}
                     </button>
-                    <button
-                      ref={clearJobButtonRef}
-                      type="button"
-                      onClick={() => {
-                        if (!confirmClearJob) {
-                          setConfirmClearJob(true);
-                          return;
-                        }
-                        dispatch({ type: "CLEAR_QUOTE" });
-                        setExtraItems([]);
-                        setLineEdits({});
-                        setActiveBomSummary(null);
-                        setJobName("");
-                        setConfirmClearJob(false);
-                      }}
-                      onBlur={() => setConfirmClearJob(false)}
+                    <ConfirmButton
+                      onConfirm={() => setClearJobDialogOpen(true)}
                       disabled={!payload && !jobName}
+                      confirmLabel={<><Trash2 size={16} /> Click again to confirm</>}
                       className="inline-flex items-center gap-2 rounded-lg border border-brand-danger/30 px-3 py-2 text-sm font-bold text-brand-danger transition-colors hover:bg-brand-danger/10 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       <Trash2 size={16} />
-                      {confirmClearJob ? "Click again" : "Clear Job"}
-                    </button>
+                      Clear Job
+                    </ConfirmButton>
                     <button
                       type="button"
                       onClick={handleGenerateBOMFromFooter}
@@ -1479,6 +1448,15 @@ function CalculatorV3Content() {
                           Bill of Materials
                         </p>
                       </div>
+                      {jobName.trim() && (
+                        <JobNameEditor
+                          value={jobName}
+                          onChange={setJobName}
+                          className="mt-2"
+                          textClassName="px-0 text-2xl font-black leading-tight"
+                          inputClassName="max-w-xl"
+                        />
+                      )}
                       {summaryText && (
                         <p className="mt-2 max-w-3xl text-sm font-semibold text-brand-text">
                           {summaryText}
@@ -1490,7 +1468,7 @@ function CalculatorV3Content() {
                         </p>
                       )}
                     </div>
-                    <div className="text-left sm:text-right">
+                    <div className="text-left sm:text-right" data-print-hide>
                       <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
                         {activeBomSummary?.label ?? "Auto quantity breaks"}
                       </p>
@@ -1500,7 +1478,6 @@ function CalculatorV3Content() {
                     </div>
                   </div>
                   <div className="mb-4 flex flex-wrap items-center gap-2" data-print-hide>
-                    {payload && <div className="mr-2">{layoutMapButton()}</div>}
                     <button
                       type="button"
                       onClick={handleGenerateBOM}
@@ -1718,6 +1695,53 @@ function CalculatorV3Content() {
                 </button>
               ))}
             </nav>
+          )}
+          {clearJobDialogOpen && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Save current job before clearing"
+              onClick={() => setClearJobDialogOpen(false)}
+            >
+              <div
+                className="w-full max-w-md rounded-2xl border border-brand-border bg-brand-card p-5 shadow-2xl"
+                onClick={(event) => event.stopPropagation()}
+              >
+                <h2 className="text-lg font-black text-brand-text">
+                  Save the current job before clearing?
+                </h2>
+                <p className="mt-2 text-sm font-semibold leading-relaxed text-brand-muted">
+                  Save a local browser copy, clear without saving, or cancel and keep working.
+                </p>
+                <div className="mt-5 grid gap-2 sm:grid-cols-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      saveCurrentJobLocallyBeforeClear();
+                      clearToFreshWorkspace();
+                    }}
+                    className="rounded-lg bg-brand-primary px-3 py-2 text-sm font-black text-white transition-colors hover:bg-brand-primary/90"
+                  >
+                    Save & clear
+                  </button>
+                  <button
+                    type="button"
+                    onClick={clearToFreshWorkspace}
+                    className="rounded-lg border border-brand-danger/40 px-3 py-2 text-sm font-black text-brand-danger transition-colors hover:bg-brand-danger/10"
+                  >
+                    Clear without saving
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setClearJobDialogOpen(false)}
+                    className="rounded-lg border border-brand-border px-3 py-2 text-sm font-black text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
           )}
           {shortcutsOpen && (
             <div

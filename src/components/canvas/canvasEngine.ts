@@ -30,6 +30,12 @@ export interface CanvasRunSummary {
   totalLengthM: number;
   cornerCount: number;
   gates: CanvasGate[];
+  sections?: Array<{
+    label: string;
+    lengthM: number;
+    panelCount: number;
+    gateCount: number;
+  }>;
 }
 
 export interface CanvasLayout {
@@ -574,7 +580,12 @@ export function initCanvasEngine(
   let editingLabel = false;
   let hoveredSegIdx = -1; // flat index into all segments across all runs
   let animFrame = 0;
-  let draggingNode: { runIdx: number; ptIdx: number } | null = null;
+  let draggingNode: {
+    runIdx: number;
+    ptIdx: number;
+    wholeSection: boolean;
+    lastCanvas: Point;
+  } | null = null;
   let draggingGate: {
     runIdx: number;
     segIdx: number;
@@ -853,6 +864,12 @@ export function initCanvasEngine(
         totalLengthM: runLengthM,
         cornerCount: runCorners,
         gates: runGates,
+        sections: run.segments.map((seg, si) => ({
+          label: `Section ${si + 1}`,
+          lengthM: seg.lengthMM / 1000,
+          panelCount: Math.max(1, Math.ceil(seg.lengthMM / 2600)),
+          gateCount: seg.gates.length,
+        })),
       };
     });
 
@@ -2246,7 +2263,13 @@ export function initCanvasEngine(
           const dx = screenPtDown.x - nodePtScreen.x;
           const dy = screenPtDown.y - nodePtScreen.y;
           if (Math.sqrt(dx * dx + dy * dy) < 8) {
-            draggingNode = { runIdx: ri, ptIdx: pi };
+            const altHeld = "altKey" in e && Boolean(e.altKey);
+            draggingNode = {
+              runIdx: ri,
+              ptIdx: pi,
+              wholeSection: !altHeld,
+              lastCanvas: canvasPt,
+            };
             return;
           }
         }
@@ -2286,7 +2309,27 @@ export function initCanvasEngine(
     if (draggingNode !== null) {
       const snapped = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
       const run = runs[draggingNode.runIdx];
-      run.points[draggingNode.ptIdx] = snapped;
+      if (draggingNode.wholeSection && run.points.length > 1) {
+        const delta = {
+          x: snapped.x - draggingNode.lastCanvas.x,
+          y: snapped.y - draggingNode.lastCanvas.y,
+        };
+        const sectionIdx =
+          draggingNode.ptIdx === 0 ? 0 : Math.min(draggingNode.ptIdx - 1, run.points.length - 2);
+        const startIdx = sectionIdx;
+        const endIdx = sectionIdx + 1;
+        run.points[startIdx] = {
+          x: run.points[startIdx].x + delta.x,
+          y: run.points[startIdx].y + delta.y,
+        };
+        run.points[endIdx] = {
+          x: run.points[endIdx].x + delta.x,
+          y: run.points[endIdx].y + delta.y,
+        };
+        draggingNode.lastCanvas = snapped;
+      } else {
+        run.points[draggingNode.ptIdx] = snapped;
+      }
       rebuildSegmentsPreservingGates(run, scale);
       scheduleRedraw();
       return;
@@ -3027,6 +3070,21 @@ export function initCanvasEngine(
     if (!options.includeSatellite) mapOpacity = 0;
     draw();
     const dataUrl = canvas.toDataURL("image/png");
+    const layout = getLayout();
+    const summaryHtml = layout.runs
+      .map((run) => {
+        const gatePart = run.gates.length ? ` · ${run.gates.length} gate${run.gates.length === 1 ? "" : "s"}` : "";
+        const sectionRows = (run.sections ?? [])
+          .map((section) => {
+            const sectionGatePart = section.gateCount
+              ? `${section.gateCount} gate${section.gateCount === 1 ? "" : "s"}`
+              : "—";
+            return `<li>${section.label} · ${section.lengthM.toFixed(2)}m · ${section.panelCount} panel${section.panelCount === 1 ? "" : "s"} · ${sectionGatePart}</li>`;
+          })
+          .join("");
+        return `<div class="run-summary"><strong>${run.label} · ${run.totalLengthM.toFixed(2)}m${gatePart}</strong><ul>${sectionRows}</ul></div>`;
+      })
+      .join("");
     mapOpacity = originalOpacity;
     draw();
 
@@ -3042,6 +3100,9 @@ export function initCanvasEngine(
             h1 { margin: 0 0 10px; font-size: 18px; }
             p { margin: 0 0 12px; font-size: 12px; color: #4b5563; }
             img { width: 100%; height: auto; border: 1px solid #d1d5db; }
+            .run-summary { margin-top: 10px; font-size: 12px; }
+            ul { margin: 4px 0 0 18px; padding: 0; color: #374151; }
+            li { margin: 2px 0; }
             @media print { body { padding: 10mm; } }
           </style>
         </head>
@@ -3049,6 +3110,7 @@ export function initCanvasEngine(
           <h1>Fence Layout Map</h1>
           <p>Installer guide showing section lengths, gate openings, run measurements, notes, and drawn context lines.</p>
           <img src="${dataUrl}" alt="Fence layout map" />
+          ${summaryHtml}
           <script>window.onload = () => window.print();</script>
         </body>
       </html>

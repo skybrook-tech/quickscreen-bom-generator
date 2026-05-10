@@ -1613,3 +1613,20 @@ Changes applied:
 
 Verification:
 - `npm run build` passed after the changes.
+
+### May 10, 2026 - Brief BA sidebar polish, map cleanup, and BOM print
+
+Workflow finding:
+- The post-AY entry/sidebar flow had the right structure but still felt cluttered: the job-name input behaved like a normal form field, the three entry cards did not match the prototype, destructive actions used inconsistent confirmation patterns, and the map/BOM print surfaces still showed unnecessary chrome.
+
+Changes applied:
+- Added a reusable `ConfirmButton` and wired it into Clear Map, Clear Job, Remove Run, and section remove actions so the first click enters a danger confirm state and outside click or timeout cancels.
+- Added a reusable `JobNameEditor` so landing, sidebar, and BOM header share the same commit-on-Enter/Tab/blur and click-to-reedit behavior.
+- Reworked entry cards with prototype-style number badges, custom draw/describe/select icons, hover motion, and a shared paper-card treatment.
+- Defaulted new sections to 0m, removed the Match Run 1 control, collapsed run settings by default, and made section match state ignore structural post/corner differences.
+- Cleaned the map by removing the satellite hint and dead Use This Layout button, increasing default canvas height by 20%, indenting section summaries under runs, and adding canvas-only run/section details to print output.
+- Cleaned the BOM print header by showing job name and logo while hiding the top price and layout controls from print.
+
+Verification:
+- `npm run build` passed after the changes.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.

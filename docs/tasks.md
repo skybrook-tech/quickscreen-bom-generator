@@ -404,6 +404,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Claude skill at `.claude/skills/seed-mapper/` (SKILL.md + schema-catalogue + expression-syntax + worked examples for QSHS_GATE and a hypothetical VS system)
 - [x] Brief AT supplier portal price staging: generated `supabase/seeds/glass-outlet/pricing-2026-05-09.json`, added `npm run prices:brief-at`, refreshed local catalogue pricing rows, and documented excluded anomaly SKUs for supplier review.
 - [x] Brief AV Describe Your Fence v1: added deterministic no-AI natural-language parsing, landing/sidebar describe-entry UI, confidence preview chips with inline edits, Web Speech API dictation fallback, parsed-gate position badges/modal, job description metadata persistence, CSV/print summary inclusion, and a TC-01 through TC-12 parser corpus runner.
+- [x] Brief BA sidebar polish/map/BOM cleanup: job names now commit into bold inline text, the three-entry cards match the darker prototype style, sections default to 0m and nest visually under runs, Clear Map/Clear Job/Remove Run use one shared two-click confirm pattern, the map summary lists sections under runs, BOM print hides top price/UI chrome, and Move/Edit defaults to dragging whole sections with Alt-drag as the point-only override.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---

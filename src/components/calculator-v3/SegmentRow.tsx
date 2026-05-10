@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
 import { SlidersHorizontal, X } from "lucide-react";
+import { ConfirmButton } from "../shared/ConfirmButton";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
 import NumberInput from "../shared/NumberInput";
@@ -110,7 +111,6 @@ export function SegmentRow({
   onDismissRunDefaultsTeaching,
 }: Props) {
   const { state, dispatch } = useCalculator();
-  const [confirmRemove, setConfirmRemove] = useState(false);
   const collapseTimerRef = useRef<number | null>(null);
   const gate = seg.segmentKind === "gate_opening";
 
@@ -179,10 +179,10 @@ export function SegmentRow({
     displayLabel?.replace(/\s+/g, "") ??
     `R${runIdx + 1}${gate ? "G" : "S"}${segIdx + 1}`;
   const titleLabel = gate
-    ? `Gate ${segIdx + 1}`
+    ? `Gate ${segIdx + 1} — ${Math.round(segmentLength)}mm`
     : isBayg
-      ? `Panel ${segIdx + 1}`
-      : `Section ${segIdx + 1}`;
+      ? `Panel ${segIdx + 1} — ${Math.round(segmentLength)}mm`
+      : `Section ${segIdx + 1} — ${(segmentLength / 1000).toFixed(2)}m`;
   const matchesMaster = (() => {
     if (!run) return true;
     if (gate) {
@@ -202,6 +202,14 @@ export function SegmentRow({
     const segmentHeight = Number(seg.targetHeightMm ?? vars.target_height_mm ?? 0);
     const masterSegmentHeight = Number(masterVariables.target_height_mm ?? 0);
     if (segmentHeight !== masterSegmentHeight) return false;
+    const settingsKindMatches = (key: string) => {
+      const value = vars[key];
+      const master = masterVariables[key];
+      const structural = value === undefined || value === null || value === "" || value === "system_post" || value === "corner";
+      const masterStructural = master === undefined || master === null || master === "" || master === "system_post" || master === "corner";
+      if (structural && masterStructural) return true;
+      return sameValue(value, master);
+    };
     const keys = [
       "target_height_mm",
       "colour_code",
@@ -214,14 +222,14 @@ export function SegmentRow({
       "mounting_type",
       "mounting_method",
       "max_panel_width_mm",
-      SEGMENT_TERMINATION_KEYS.leftKind,
-      SEGMENT_TERMINATION_KEYS.leftCornerDegrees,
       SEGMENT_TERMINATION_KEYS.leftNonSystemSubtype,
-      SEGMENT_TERMINATION_KEYS.rightKind,
-      SEGMENT_TERMINATION_KEYS.rightCornerDegrees,
       SEGMENT_TERMINATION_KEYS.rightNonSystemSubtype,
     ];
-    return keys.every((key) => unsetOrSame(vars, key, masterVariables[key]));
+    return (
+      settingsKindMatches(SEGMENT_TERMINATION_KEYS.leftKind) &&
+      settingsKindMatches(SEGMENT_TERMINATION_KEYS.rightKind) &&
+      keys.every((key) => unsetOrSame(vars, key, masterVariables[key]))
+    );
   })();
   const masterFenceColour = String(masterVariables.colour_code ?? "B");
   const masterPostColour = String(masterVariables.post_colour_code ?? masterFenceColour);
@@ -512,8 +520,11 @@ export function SegmentRow({
         <div className="p-2">
 
           <div className="min-w-0 space-y-3 w-full">
-            <div className="gap-2 flex items-center">
-              <div className="flex flex-col items-center justify-center gap-2">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto] items-center gap-2">
+              <p className="min-w-0 text-left text-lg font-black text-brand-text">
+                {titleLabel}
+              </p>
+              <div className="flex items-center justify-center">
                 <button
                   type="button"
                   onClick={matchesMaster ? undefined : resetToMaster}
@@ -541,9 +552,6 @@ export function SegmentRow({
                   </span>
                 </button>
               </div>
-              <p className="min-w-0 text-center text-xl">
-                {titleLabel}
-              </p>
               <div className="flex items-center justify-center gap-1 ml-auto">
                 <button
                   type="button"
@@ -560,29 +568,21 @@ export function SegmentRow({
                 </button>
               </div>
               <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (!confirmRemove) {
-                      setConfirmRemove(true);
-                      return;
-                    }
+                <ConfirmButton
+                  onConfirm={() =>
                     dispatch({
                       type: "REMOVE_SEGMENT",
                       runId,
                       segmentId: seg.segmentId,
-                    });
-                  }}
-                  onBlur={() => setConfirmRemove(false)}
-                  className={`inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors ${confirmRemove
-                    ? "bg-brand-danger text-white hover:bg-brand-danger/90"
-                    : "text-brand-danger hover:bg-brand-danger/10 hover:text-brand-danger/90"
-                    }`}
-                  aria-label={confirmRemove ? "Click again to remove section" : "Remove section"}
-                  title={confirmRemove ? "Click again to remove section" : "Remove section"}
+                    })
+                  }
+                  confirmLabel={<X size={16} strokeWidth={3} />}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full text-brand-danger transition-colors hover:bg-brand-danger/10 hover:text-brand-danger/90"
+                  aria-label="Remove section"
+                  title="Remove section"
                 >
                   <X size={16} strokeWidth={3} />
-                </button>
+                </ConfirmButton>
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] leading-tight">

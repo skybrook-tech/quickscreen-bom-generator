@@ -43,6 +43,65 @@ body {
   color: var(--brand-text);
 }
 
+.entry-card-blueprint {
+  background-image:
+    linear-gradient(to right, rgba(74, 114, 152, 0.18) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(74, 114, 152, 0.18) 1px, transparent 1px);
+  background-size: 7px 7px;
+}
+
+.entry-card-pencil,
+.entry-card-speech {
+  transition: transform 220ms ease;
+}
+
+.entry-card-draw-line {
+  stroke-dasharray: 24;
+  transition: stroke-dashoffset 600ms ease;
+}
+
+.group:hover .entry-card-pencil {
+  transform: translate(2px, -2px) rotate(-4deg);
+}
+
+.group:hover .entry-card-draw-line {
+  stroke-dashoffset: -8;
+}
+
+.group:hover .entry-card-speech {
+  transform: scale(1.06);
+}
+
+.entry-card-mic {
+  animation: entryMicIdle 4s ease-in-out infinite;
+}
+
+.group:hover .entry-card-mic {
+  animation: entryMicActive 1.5s ease-in-out infinite;
+}
+
+.entry-card-grid-cell {
+  transition: fill 220ms ease, stroke 220ms ease;
+}
+
+.group:hover .entry-card-grid-cell {
+  fill: rgba(124, 152, 133, 0.16);
+}
+
+.entry-choice-card:hover {
+  box-shadow: 0 4px 14px rgba(45, 63, 70, 0.08), 0 1px 3px rgba(45, 63, 70, 0.06);
+}
+
+@keyframes entryMicIdle {
+  0%, 100% { opacity: 0.78; }
+  50% { opacity: 1; }
+}
+
+@keyframes entryMicActive {
+  0%, 100% { transform: scale(1); opacity: 0.82; }
+  50% { transform: scale(1.22); opacity: 1; }
+}
+
 @media print {
   @page {
     size: A4;

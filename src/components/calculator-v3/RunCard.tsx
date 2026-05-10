@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CheckCircle2, Copy, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
+import { CheckCircle2, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
 import { defaultGateVariables } from "../../lib/gateOptionRules";
 import {
   clampPostSpacing,
-  initialVariablesForSystem,
   maxPanelWidthForSystem,
-  normaliseVariablesForSystem,
 } from "../../lib/productOptionRules";
 import { Button } from "../shared/Button";
 import { SegmentRow } from "./SegmentRow";
@@ -17,6 +15,7 @@ import { InstallVideoQR } from "./InstallVideoQR";
 import type { InstallVideoKey } from "../../lib/installVideos";
 import { calcRunStats } from "../../lib/runStats";
 import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
+import { ConfirmButton } from "../shared/ConfirmButton";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 
@@ -53,12 +52,10 @@ function runMasterVariables(
 export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenConsumed }: Props) {
   const { state, dispatch } = useCalculator();
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [confirmRemoveRun, setConfirmRemoveRun] = useState(false);
-  const [runSettingsOpen, setRunSettingsOpen] = useState(true);
+  const [runSettingsOpen, setRunSettingsOpen] = useState(false);
   const [teachingDismissed, setTeachingDismissed] = useState(
     () => typeof window !== "undefined" && window.localStorage.getItem(RUN_DEFAULTS_TEACHING_KEY) === "true",
   );
-  const removeRunRef = useRef<HTMLDivElement | null>(null);
   const runCollapseRef = useRef<number | null>(null);
 
   const runVariables = useMemo(
@@ -69,7 +66,6 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
     runVariables.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode),
     maxPanelWidthForSystem(run.productCode),
   );
-  const matchesRunOne = run.variables?.settings_mode === "match_run_1";
   const firstSegment = firstFenceSegment(run);
   const runLengthM = (calcTotalLength(run) / 1000).toFixed(2);
   const runStats = calcRunStats(run, jobMax);
@@ -102,16 +98,6 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   }, [run.productCode, run.segments]);
   const isBayg = run.productCode === "BAYG";
 
-  useEffect(() => {
-    if (!confirmRemoveRun) return;
-    const resetOnOutsideClick = (event: PointerEvent) => {
-      if (removeRunRef.current?.contains(event.target as Node)) return;
-      setConfirmRemoveRun(false);
-    };
-    window.addEventListener("pointerdown", resetOnOutsideClick, true);
-    return () => window.removeEventListener("pointerdown", resetOnOutsideClick, true);
-  }, [confirmRemoveRun]);
-
   useEffect(
     () => () => {
       if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
@@ -140,37 +126,6 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
     runCollapseRef.current = window.setTimeout(() => setRunSettingsOpen(false), 10000);
   }
 
-  function toggleRunOneSettings() {
-    const runOne = state.payload?.runs[0];
-    if (!runOne || runOne.runId === run.runId) return;
-    if (matchesRunOne) {
-      dispatch({
-        type: "UPSERT_RUN",
-        run: {
-          ...run,
-          variables: normaliseVariablesForSystem(run.productCode, {
-            ...initialVariablesForSystem(run.productCode),
-            settings_mode: "default",
-          }),
-        },
-      });
-      return;
-    }
-    dispatch({
-      type: "UPSERT_RUN",
-      run: {
-        ...run,
-        productCode: runOne.productCode,
-        variables: normaliseVariablesForSystem(runOne.productCode, {
-          ...(runOne.variables ?? {}),
-          settings_mode: "match_run_1",
-        }),
-        leftBoundary: runOne.leftBoundary,
-        rightBoundary: runOne.rightBoundary,
-      },
-    });
-  }
-
   function upsertSegment(segment: CanonicalSegment) {
     dispatch({ type: "UPSERT_SEGMENT", runId: run.runId, segment });
   }
@@ -180,7 +135,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
       segmentId: crypto.randomUUID(),
       sortOrder: run.segments.length + 1,
       segmentKind: "panel",
-      segmentWidthMm: isBayg ? 1000 : jobMax,
+      segmentWidthMm: 0,
       targetHeightMm: Number(runVariables.target_height_mm ?? 1800),
       variables: isBayg ? { panel_quantity: 1 } : undefined,
     });
@@ -203,7 +158,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   }
 
   return (
-    <div className="rounded-2xl border border-brand-border bg-brand-card py-4 shadow-md">
+    <div className="rounded-2xl border-2 border-brand-primary/20 bg-brand-card py-4 shadow-md">
       <div className="px-4 mb-3 flex flex-wrap items-start justify-between gap-3">
         <h3 className="grid gap-1 text-brand-text">
           <span className="text-xl font-extrabold leading-tight tracking-normal">
@@ -220,19 +175,6 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
             <span>Gap size: <strong className="text-brand-text">{slatGap}mm</strong></span>
           </span>
         </h3>
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          {runIdx > 0 && (
-            <Button
-              onClick={toggleRunOneSettings}
-              icon={Copy}
-              variant={matchesRunOne ? "primary" : "ghost"}
-              size="small"
-            >
-              {matchesRunOne ? "Default settings" : "Match run 1"}
-            </Button>
-          )}
-        </div>
-
         <div
           className="mb-3"
           onMouseEnter={keepRunSettingsOpen}
@@ -355,22 +297,14 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
                 Add gate
               </Button>
             )}
-            <div ref={removeRunRef}>
-              <Button
-                onClick={() => {
-                  if (!confirmRemoveRun) {
-                    setConfirmRemoveRun(true);
-                    return;
-                  }
-                  dispatch({ type: "REMOVE_RUN", runId: run.runId });
-                }}
-                icon={Trash2}
-                variant="ghost-danger"
-                size="small"
-              >
-                {confirmRemoveRun ? "Click again" : "Remove run"}
-              </Button>
-            </div>
+            <ConfirmButton
+              onConfirm={() => dispatch({ type: "REMOVE_RUN", runId: run.runId })}
+              confirmLabel={<><Trash2 size={16} /> Click again to confirm</>}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-brand-danger/30 px-3 py-1.5 text-xs font-semibold text-brand-danger transition-colors hover:bg-brand-danger/10"
+            >
+              <Trash2 size={16} />
+              Remove run
+            </ConfirmButton>
           </div>
         </>
       )}

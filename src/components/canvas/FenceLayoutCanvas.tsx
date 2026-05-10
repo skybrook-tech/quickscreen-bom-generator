@@ -1,5 +1,4 @@
 import { useRef, useEffect, useCallback, useState, useMemo } from "react";
-import { ArrowRight } from "lucide-react";
 import { initCanvasEngine } from "./canvasEngine";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { MapControls } from "./MapControls";
@@ -46,7 +45,6 @@ interface FenceLayoutCanvasProps {
 }
 
 export function FenceLayoutCanvas({
-  onApplied,
   onLayoutChange,
   onEngineReady,
   postPositions,
@@ -58,7 +56,7 @@ export function FenceLayoutCanvas({
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
-  const { state: fenceState, dispatch: fenceDispatch } = useFenceConfig();
+  const { state: fenceState } = useFenceConfig();
   const { data: products } = useProducts();
   const { gates, dispatch: gateDispatch } = useGates();
 
@@ -87,7 +85,6 @@ export function FenceLayoutCanvas({
   const [gateSnap100, setGateSnap100] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
   const [expanded, setExpanded] = useState(false);
-  const [applied, setApplied] = useState(false);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
   const [helpOpen, setHelpOpen] = useState(false);
   const [boundaryHintVisible, setBoundaryHintVisible] = useState(false);
@@ -329,53 +326,6 @@ export function FenceLayoutCanvas({
     window.dispatchEvent(new Event("resize"));
   }, [expanded]);
 
-  const handleUseLayout = useCallback(() => {
-    const layout = engineRef.current?.getLayout();
-    if (!layout || layout.segments.length === 0) return;
-
-    fenceDispatch({
-      type: "SET_FIELD",
-      field: "totalRunLength",
-      value: Math.round(layout.totalLengthM * 100) / 100,
-    });
-
-    fenceDispatch({
-      type: "SET_FIELD",
-      field: "corners",
-      value: layout.cornerCount,
-    });
-
-    // Sync canvas gates to GateContext
-    if (layout.gates.length > 0) {
-      gateDispatch({ type: "CLEAR_ALL" });
-      for (const gate of layout.gates) {
-        gateDispatch({
-          type: "ADD_GATE",
-          gate: {
-            id: crypto.randomUUID(),
-            gateType: "single-swing" as const,
-            openingWidth: gate.widthMM,
-            gateHeight: "match-fence" as const,
-            colour: "match-fence" as const,
-            slatGap: "match-fence" as const,
-            slatSize: "match-fence" as const,
-            gatePostSize: "65x65" as const,
-            hingeType: "dd-kwik-fit-adjustable" as const,
-            latchType: "dd-magna-latch-top-pull" as const,
-            swingDirection: "out" as const,
-            qty: 1,
-          },
-        });
-      }
-    }
-
-    setApplied(true);
-    setTimeout(() => {
-      setApplied(false);
-      onApplied?.(layout);
-    }, 300);
-  }, [fenceDispatch, gateDispatch, onApplied]);
-
   const handleEditCanvasGateSave = useCallback(
     (gate: GateConfig) => {
       if (!editingCanvasGate) return;
@@ -413,27 +363,29 @@ export function FenceLayoutCanvas({
 
   return (
     <div className="space-y-0">
-      <CanvasToolbar
-        engineRef={engineRef}
-        activeTool={activeTool}
-        onToolChange={handleToolChange}
-        snapEnabled={snapEnabled}
-        onSnapToggle={setSnapEnabled}
-        gateSnap100={gateSnap100}
-        onGateSnap100Toggle={setGateSnap100}
-        showGrid={showGrid}
-        onToggleGrid={setShowGrid}
-        expanded={expanded}
-        onToggleExpand={setExpanded}
-        onHelpOpen={() => setHelpOpen(true)}
-        onPrintMap={handlePrintMap}
-      />
+      <div data-print-hide>
+        <CanvasToolbar
+          engineRef={engineRef}
+          activeTool={activeTool}
+          onToolChange={handleToolChange}
+          snapEnabled={snapEnabled}
+          onSnapToggle={setSnapEnabled}
+          gateSnap100={gateSnap100}
+          onGateSnap100Toggle={setGateSnap100}
+          showGrid={showGrid}
+          onToggleGrid={setShowGrid}
+          expanded={expanded}
+          onToggleExpand={setExpanded}
+          onHelpOpen={() => setHelpOpen(true)}
+          onPrintMap={handlePrintMap}
+        />
+      </div>
 
       <div className="relative">
         <canvas
           ref={canvasRef}
           className="block w-full touch-none bg-brand-bg"
-          style={{ height: expanded ? "700px" : "420px", cursor: "crosshair" }}
+          style={{ height: expanded ? "700px" : "504px", cursor: "crosshair" }}
         />
 
         {/* Hint overlay */}
@@ -469,14 +421,6 @@ export function FenceLayoutCanvas({
           </div>
         )}
 
-        {mapUiState.mapType === "satellite" &&
-          !mapUiState.hasLoadedMap &&
-          !mapUiState.hasAddress && (
-            <div className="pointer-events-none absolute left-1/2 top-4 hidden -translate-x-1/2 rounded-lg border border-brand-accent/40 bg-brand-card/90 px-3 py-2 text-xs font-medium text-brand-text shadow-md sm:block">
-              Enter a job address above to load the satellite underlay
-            </div>
-          )}
-
         {mapUiState.calibrationLabel && (
           <div className="absolute right-2 top-2 rounded-full border border-brand-success/40 bg-brand-card/95 px-3 py-1 text-xs font-semibold text-brand-success shadow-md pointer-events-none">
             Calibrated: {mapUiState.calibrationLabel}
@@ -484,78 +428,42 @@ export function FenceLayoutCanvas({
         )}
       </div>
 
-      <MapControls
-        engineRef={engineRef}
-        onMapUiStateChange={setMapUiState}
-      />
+      <div data-print-hide>
+        <MapControls
+          engineRef={engineRef}
+          onMapUiStateChange={setMapUiState}
+        />
+      </div>
 
       {/* Run summary table */}
       {runSummaries.length > 0 && (
         <div className="border-t border-brand-border">
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="bg-brand-bg/60 text-brand-muted uppercase tracking-wider">
-                <th className="text-left px-3 py-2 font-semibold">Run</th>
-                <th className="text-right px-3 py-2 font-semibold">Length</th>
-                <th className="text-right px-3 py-2 font-semibold">Corners</th>
-                <th className="text-right px-3 py-2 font-semibold">Gates</th>
-              </tr>
-            </thead>
-            <tbody>
-              {runSummaries.map((run) => (
-                <tr
-                  key={run.label}
-                  className="border-t border-brand-border/50 text-brand-text"
-                >
-                  <td className="px-3 py-1.5 text-brand-muted">{run.label}</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">
-                    {run.totalLengthM.toFixed(2)}m
-                  </td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">
-                    {run.cornerCount}
-                  </td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">
-                    {run.gates.length}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+          <div className="space-y-2 bg-brand-card px-3 py-2 text-xs text-brand-text">
+            {runSummaries.map((run) => (
+              <div key={run.label} className="space-y-1">
+                <div className="font-bold tabular-nums">
+                  {run.label} · {run.totalLengthM.toFixed(2)}m
+                  {run.gates.length > 0
+                    ? ` · ${run.gates.length} gate${run.gates.length === 1 ? "" : "s"}`
+                    : ""}
+                </div>
+                <div className="ml-5 space-y-0.5 text-brand-muted">
+                  {(run.sections ?? []).map((section) => (
+                    <div key={`${run.label}-${section.label}`} className="tabular-nums">
+                      {section.label} · {section.lengthM.toFixed(2)}m · {section.panelCount} panel{section.panelCount === 1 ? "" : "s"} · {section.gateCount > 0 ? `${section.gateCount} gate${section.gateCount === 1 ? "" : "s"}` : "—"}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
             {runSummaries.length > 1 && (
-              <tfoot>
-                <tr className="border-t border-brand-border font-semibold text-brand-text bg-brand-bg/40">
-                  <td className="px-3 py-1.5 text-brand-muted">Total</td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">
-                    {totalLengthM.toFixed(2)}m
-                  </td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">
-                    {totalCorners}
-                  </td>
-                  <td className="px-3 py-1.5 text-right tabular-nums">
-                    {totalGates}
-                  </td>
-                </tr>
-              </tfoot>
+              <div className="border-t border-brand-border/60 pt-1 font-bold tabular-nums">
+                Total · {totalLengthM.toFixed(2)}m · {totalGates} gate{totalGates === 1 ? "" : "s"} · {totalCorners} corner{totalCorners === 1 ? "" : "s"}
+              </div>
             )}
-          </table>
+          </div>
         </div>
       )}
-
-      {/* Apply button */}
-      <div className="flex items-center justify-between p-3 bg-brand-card border-t border-brand-border">
-        <p className="text-xs text-brand-muted">
-          Draw your fence layout above, then click{" "}
-          <strong className="text-brand-text">Use This Layout</strong> to
-          populate the run length and corners in the form below.
-        </p>
-        <button
-          type="button"
-          onClick={handleUseLayout}
-          className="flex items-center gap-1.5 px-4 py-2 bg-brand-primary text-white text-sm font-medium rounded-lg hover:bg-brand-accent-hover transition-colors shrink-0 ml-4"
-        >
-          {applied ? "Applied!" : "Use This Layout"}
-          {!applied && <ArrowRight size={16} />}
-        </button>
-      </div>
 
       {gatePlacementOpen && (
         <div
