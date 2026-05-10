@@ -86,6 +86,8 @@ Latest pricing data pass: Brief AM is in progress. A repeatable `npm run prices:
 
 Latest Brief AT pass: supplier-portal pricing captured on 2026-05-09 now has a repeatable `npm run prices:brief-at` staging flow, `pricing-2026-05-09.json`, and an idempotent pricing migration. Verified BB bulk-buy pairs are mapped in code, the BOM can show BB saving hints, Diamond Revolution kit suggestions compute their total from live SKU prices, and pricing anomalies/WHITE latch parity notes are documented in `docs/brief-at-pricing-notes.md`.
 
+Latest Brief AY pass: the landing screen is simplified to a single job-details entry, the empty workspace sidebar now offers three equal numbered choices (Draw, Describe, Select), the map entry copy is standardised as `Draw your fence`, run/BOM summaries surface post-BOM panel counts with an em-dash placeholder before generation, and first-section settings auto-open with a one-time run-defaults teaching card.
+
 ---
 
 ## Phases Overview

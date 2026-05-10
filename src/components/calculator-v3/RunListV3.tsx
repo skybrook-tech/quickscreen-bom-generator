@@ -2,7 +2,13 @@ import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun } from "../../types/canonical.types";
 import { RunCard } from "./RunCard";
 
-export function RunListV3() {
+export function RunListV3({
+  autoOpenFirstRunId,
+  onAutoOpenConsumed,
+}: {
+  autoOpenFirstRunId?: string | null;
+  onAutoOpenConsumed?: () => void;
+}) {
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
 
@@ -40,7 +46,13 @@ export function RunListV3() {
   return (
     <div className="space-y-4">
       {payload.runs.map((run, runIdx) => (
-        <RunCard key={run.runId} run={run} runIdx={runIdx} />
+        <RunCard
+          key={run.runId}
+          run={run}
+          runIdx={runIdx}
+          autoOpenFirstSection={autoOpenFirstRunId === run.runId}
+          onAutoOpenConsumed={onAutoOpenConsumed}
+        />
       ))}
       <button
         type="button"

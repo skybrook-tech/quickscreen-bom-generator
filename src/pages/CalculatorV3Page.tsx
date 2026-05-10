@@ -13,17 +13,18 @@ import { SuggestedAccessoriesPanel } from "../components/calculator-v3/Suggested
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
 import { DescribeFenceBox } from "../components/calculator/DescribeFenceBox";
+import { EntryChoiceCard } from "../components/calculator/EntryChoiceCard";
 import { GatePositionModal } from "../components/calculator/GatePositionModal";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { suggestAccessories } from "../lib/suggestedAccessories";
 import { priceForSku } from "../lib/localBomCalculator";
-import { initialVariablesForSystem } from "../lib/productOptionRules";
+import { initialVariablesForSystem, maxPanelWidthForSystem } from "../lib/productOptionRules";
 import { GATE_SEGMENT_STUB_KEYS } from "../lib/segmentTermination";
+import { calcRunStats } from "../lib/runStats";
+import { DRAW_FENCE_LABEL } from "../lib/uiCopy";
 import {
   defaultGateBuildForMovement,
   defaultGateVariables,
-  GATE_MOVEMENTS,
-  optionLabel as gateOptionLabel,
 } from "../lib/gateOptionRules";
 import { gateTypeLabel, validateGateWidth } from "../lib/gateConstraints";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
@@ -31,15 +32,16 @@ import { useAuth } from "../hooks/useAuth";
 import {
   Download,
   FileX2,
-  Globe2,
+  Grid2x2,
   HelpCircle,
   Keyboard,
   Loader2,
   Maximize2,
+  MessageSquareQuote,
   Minimize2,
+  PencilRuler,
   Printer,
   Save,
-  Sparkles,
   Trash2,
   X,
 } from "lucide-react";
@@ -311,6 +313,9 @@ function CalculatorV3Content() {
   const [layoutOpen, setLayoutOpen] = useState(false);
   const [layoutFullscreen, setLayoutFullscreen] = useState(false);
   const [introDismissed, setIntroDismissed] = useState(false);
+  const [entryCardsOpen, setEntryCardsOpen] = useState(true);
+  const [entryMode, setEntryMode] = useState<"describe" | "select" | null>(null);
+  const [autoOpenFirstSectionRunId, setAutoOpenFirstSectionRunId] = useState<string | null>(null);
   const [includeMapInBomPrint, setIncludeMapInBomPrint] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [confirmClearJob, setConfirmClearJob] = useState(false);
@@ -369,6 +374,8 @@ function CalculatorV3Content() {
           dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
         }
         setIntroDismissed(true);
+        setEntryCardsOpen(false);
+        setEntryMode(null);
         setLayoutOpen((open) => !open);
         if (mobileLayout) setMobileTab("map");
       }}
@@ -376,12 +383,17 @@ function CalculatorV3Content() {
         ? "border-brand-primary bg-brand-primary text-white hover:bg-brand-primary/90"
         : "border-brand-primary/50 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-white"
         }`}
-      title={layoutOpen ? "Minimize layout map" : "Open layout map"}
+      title={layoutOpen ? "Minimize layout map" : DRAW_FENCE_LABEL}
     >
-      <Globe2 size={24} strokeWidth={2.5} />
-      <span className="relative">{layoutOpen ? "Minimize layout map" : "Use layout tool"}</span>
+      <PencilRuler size={24} strokeWidth={2.5} />
+      <span className="relative">{layoutOpen ? "Minimize layout map" : DRAW_FENCE_LABEL}</span>
     </button>
   );
+
+  function startWorkspaceFromLanding() {
+    if (!jobName.trim()) return;
+    setIntroDismissed(true);
+  }
 
   function handleApplyDescription(result: ParseResult) {
     const parsedSystem = result.attributes.systemType?.value;
@@ -468,8 +480,19 @@ function CalculatorV3Content() {
     dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
     dispatch({ type: "CLEAR_BOM_RESULT" });
     setIntroDismissed(true);
+    setEntryCardsOpen(false);
+    setEntryMode(null);
+    setAutoOpenFirstSectionRunId(nextRun.runId);
     setMobileTab("run");
     toast.success("Description applied to the calculator");
+  }
+
+  function handleProductSelected(nextPayload: CanonicalPayload) {
+    setEntryCardsOpen(false);
+    setEntryMode(null);
+    setIntroDismissed(true);
+    setAutoOpenFirstSectionRunId(nextPayload.runs[0]?.runId ?? null);
+    setMobileTab("run");
   }
 
   function handleConfirmGatePosition(gate: PendingParsedGate, distanceFromStartMm: number) {
@@ -1053,24 +1076,19 @@ function CalculatorV3Content() {
   const gateWidthWarnings = gateWidthValidations.filter((item) => item.status === "warning");
   const hasBlockingErrors = hasErrors || gateWidthErrors.length > 0 || economySlatErrors.length > 0;
 
-  const gateSegments = payload?.runs
-    .flatMap((run) => run.segments)
-    .filter((segment) => segment.segmentKind === "gate_opening") ?? [];
   const cleanJobName = jobName.trim();
-  const gateTypes = [
-    ...new Set(
-      gateSegments.map((segment) =>
-        gateOptionLabel(
-          GATE_MOVEMENTS,
-          segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement] ?? "single_swing",
-        ),
-      ),
-    ),
-  ].filter(Boolean);
-  const gateSummary =
-    gateSegments.length === 0
-      ? "No gates"
-      : `${gateSegments.length} ${gateSegments.length === 1 ? "gate" : "gates"} - ${gateTypes.join(", ")}`;
+  const gateSummaryForRun = (run: CanonicalRun) => {
+    const counts = new Map<string, number>();
+    for (const segment of run.segments) {
+      if (segment.segmentKind !== "gate_opening") continue;
+      const movement = String(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement] ?? "single_swing");
+      const label = movement === "sliding" ? "sliding" : movement === "double_swing" ? "double" : "ped";
+      counts.set(label, (counts.get(label) ?? 0) + 1);
+    }
+    return [...counts.entries()]
+      .map(([label, count]) => `${count} ${label}`)
+      .join(" + ");
+  };
   const runBomSummaries = payload?.runs.map((run, index) => {
     const vars = {
       ...(payload.variables ?? {}),
@@ -1086,19 +1104,27 @@ function CalculatorV3Content() {
       },
       0,
     ) / 1000;
+    const stats = calcRunStats(
+      run,
+      Number(vars.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode)),
+    );
+    const gatePart = gateSummaryForRun(run);
+    const panelPart = state.bomResult
+      ? `${stats.panels} ${stats.panels === 1 ? "panel" : "panels"}`
+      : "\u2014 panels";
     return [
       `Run ${index + 1}`,
       `${lengthM.toFixed(2)}m`,
+      gatePart || null,
+      panelPart,
       run.productCode,
       `${Number(vars.target_height_mm ?? 1800)}mm`,
       colourName(vars.colour_code),
       `${Number(vars.slat_size_mm ?? 65)}mm slat`,
       `${Number(vars.slat_gap_mm ?? 5)}mm gap`,
-    ].join(" - ");
+    ].filter(Boolean).join(" - ");
   }) ?? [];
-  const summaryText = payload
-    ? `${runBomSummaries.join(" | ")} - ${gateSummary}`
-    : cleanJobName;
+  const summaryText = payload ? runBomSummaries.join(" | ") : cleanJobName;
   const saveJobLabel = jobName.trim() ? `Save ${jobName.trim()}` : "Save Job";
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
@@ -1124,56 +1150,39 @@ function CalculatorV3Content() {
         <div className="relative min-h-full overflow-hidden bg-brand-bg text-brand-text">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.35),transparent_28%),radial-gradient(circle_at_80%_10%,rgba(16,185,129,0.28),transparent_24%),radial-gradient(circle_at_50%_80%,rgba(245,158,11,0.18),transparent_30%)]" />
           <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:44px_44px]" />
-          <div className="relative mx-auto flex min-h-full max-w-6xl flex-col items-center justify-center gap-8 px-5 py-12 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-brand-primary/40 bg-brand-card/80 px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-brand-primary shadow-md">
-              <Sparkles size={16} />
-              Powered by SkybrookAI
-            </div>
-            <div className="space-y-5">
+          <div className="relative mx-auto flex min-h-full max-w-5xl flex-col items-center justify-center gap-8 px-5 py-12 text-center">
+            <div className="space-y-8">
               <GlassOutletLogo
                 className="justify-center text-brand-primary"
                 iconClassName="h-20 w-24 sm:h-24 sm:w-28 lg:h-28 lg:w-32"
                 textClassName="text-5xl sm:text-7xl lg:text-8xl"
               />
-              <p className="mx-auto max-w-2xl text-base font-semibold text-brand-muted sm:text-lg">
-                Start with a system, sketch the job, or name the quote. Open the workspace when you are ready to build the BOM.
-              </p>
-            </div>
-            <div className="grid w-full max-w-5xl gap-4 rounded-3xl border border-brand-border/70 bg-brand-card/80 p-5 text-left shadow-2xl backdrop-blur md:grid-cols-[1.2fr_0.9fr]">
-              <div className="rounded-2xl border border-brand-border/70 bg-brand-bg/70 p-4">
-                <ProductSelectV3
-                  mapAction={(selectDefaultProduct) =>
-                    layoutMapButton(() => {
-                      setIntroDismissed(true);
-                      selectDefaultProduct();
-                    })
-                  }
-                />
-              </div>
-              <div className="space-y-4 rounded-2xl border border-brand-border/70 bg-brand-bg/70 p-4">
-                <label className="block">
+              <form
+                className="mx-auto w-full max-w-xl rounded-3xl border border-brand-border/70 bg-brand-card/80 p-5 text-left shadow-2xl backdrop-blur"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  startWorkspaceFromLanding();
+                }}
+              >
+                <label className="block space-y-2">
                   <input
                     type="text"
                     value={jobName}
                     onChange={(event) => setJobName(event.target.value)}
-                    placeholder="Name Your Job Here"
+                    onKeyDown={(event) => {
+                      if (event.key === "Escape") {
+                        event.preventDefault();
+                        setJobName("");
+                      }
+                    }}
+                    placeholder="Enter job details"
                     className="w-full rounded-2xl border border-brand-border bg-brand-card px-4 py-3 text-lg font-black text-brand-text shadow-sm outline-none transition-colors focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
                   />
+                  <span className="block text-center text-xs font-bold text-brand-muted">
+                    press Enter to start
+                  </span>
                 </label>
-                <button
-                  type="button"
-                  onClick={() => setIntroDismissed(true)}
-                  className="w-full rounded-2xl border border-brand-border px-4 py-3 text-sm font-black text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-                >
-                  Open workspace
-                </button>
-              </div>
-              <div className="md:col-span-2">
-                <DescribeFenceBox
-                  title="Describe your fence"
-                  onApply={handleApplyDescription}
-                />
-              </div>
+              </form>
             </div>
           </div>
         </div>
@@ -1191,9 +1200,25 @@ function CalculatorV3Content() {
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="flex-1 space-y-4 overflow-y-auto p-3 sm:p-5">
                   <section>
-                    <p className="mb-3 text-xs font-semibold uppercase tracking-[0.08em] text-brand-muted">
-                      Job Name
-                    </p>
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <p className="text-xs font-semibold uppercase tracking-[0.08em] text-brand-muted">
+                        Job Name
+                      </p>
+                      {payload && !layoutOpen && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setLayoutOpen(true);
+                            if (mobileLayout) setMobileTab("map");
+                          }}
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-brand-border text-brand-primary transition-colors hover:border-brand-primary hover:shadow-sm"
+                          title="Reopen drawing layout"
+                          aria-label="Reopen drawing layout"
+                        >
+                          <PencilRuler size={20} />
+                        </button>
+                      )}
+                    </div>
                     <input
                       type="text"
                       value={jobName}
@@ -1201,25 +1226,81 @@ function CalculatorV3Content() {
                       placeholder="Enter job name"
                       className="mb-4 w-full rounded-xl border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
                     />
-                    <DescribeFenceBox
-                      compact
-                      initialDescription={payload?.job?.description ?? ""}
-                      onApply={handleApplyDescription}
-                    />
-                    {!payload ? (
-                      <ProductSelectV3
-                        mapAction={(selectDefaultProduct) =>
-                          layoutMapButton(selectDefaultProduct)
-                        }
-                      />
-                    ) : null}
+                    {!payload && (
+                      <div className="space-y-3">
+                        {entryCardsOpen && !entryMode && (
+                          <>
+                            <EntryChoiceCard
+                              number={1}
+                              title={DRAW_FENCE_LABEL}
+                              description="Open the layout map and sketch the run from above."
+                              icon={PencilRuler}
+                              onClick={() => {
+                                const nextPayload = createInitialPayload("QSHS");
+                                dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
+                                setIntroDismissed(true);
+                                setEntryCardsOpen(false);
+                                setEntryMode(null);
+                                setAutoOpenFirstSectionRunId(nextPayload.runs[0]?.runId ?? null);
+                                setLayoutOpen(true);
+                                if (mobileLayout) setMobileTab("map");
+                              }}
+                            />
+                            <EntryChoiceCard
+                              number={2}
+                              title="Describe your fence"
+                              description="Paste or dictate the job details and preview what the app understood."
+                              icon={MessageSquareQuote}
+                              onClick={() => {
+                                setEntryMode("describe");
+                                setEntryCardsOpen(false);
+                              }}
+                            />
+                            <EntryChoiceCard
+                              number={3}
+                              title="Select your fence"
+                              description="Choose QSHS, VS, XPL, or BAY-G and edit section settings."
+                              icon={Grid2x2}
+                              onClick={() => {
+                                setEntryMode("select");
+                                setEntryCardsOpen(false);
+                              }}
+                            />
+                          </>
+                        )}
+                        {!entryCardsOpen && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEntryCardsOpen(true);
+                              setEntryMode(null);
+                            }}
+                            className="text-xs font-black text-brand-muted transition-colors hover:text-brand-primary"
+                          >
+                            Change entry method ▸
+                          </button>
+                        )}
+                        {entryMode === "describe" && (
+                          <DescribeFenceBox
+                            title="Describe your fence"
+                            onApply={handleApplyDescription}
+                          />
+                        )}
+                        {entryMode === "select" && (
+                          <ProductSelectV3 onProductSelected={handleProductSelected} />
+                        )}
+                      </div>
+                    )}
                   </section>
 
                   {payload && (
                     <>
                       <hr className="border-brand-border/60" />
                       <section>
-                        <RunListV3 />
+                        <RunListV3
+                          autoOpenFirstRunId={autoOpenFirstSectionRunId}
+                          onAutoOpenConsumed={() => setAutoOpenFirstSectionRunId(null)}
+                        />
                       </section>
 
                       {payload.job?.pendingGates?.length ? (

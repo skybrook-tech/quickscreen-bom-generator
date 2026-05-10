@@ -15,12 +15,16 @@ import { colourName } from "./ColourPalette";
 import { RunSettingsEditor } from "./RunSettingsEditor";
 import { InstallVideoQR } from "./InstallVideoQR";
 import type { InstallVideoKey } from "../../lib/installVideos";
+import { calcRunStats } from "../../lib/runStats";
+import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 
 interface Props {
   run: CanonicalRun;
   runIdx: number;
+  autoOpenFirstSection?: boolean;
+  onAutoOpenConsumed?: () => void;
 }
 
 const calcTotalLength = (run: CanonicalRun) =>
@@ -46,11 +50,14 @@ function runMasterVariables(
   };
 }
 
-export function RunCard({ run, runIdx }: Props) {
+export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenConsumed }: Props) {
   const { state, dispatch } = useCalculator();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [confirmRemoveRun, setConfirmRemoveRun] = useState(false);
   const [runSettingsOpen, setRunSettingsOpen] = useState(true);
+  const [teachingDismissed, setTeachingDismissed] = useState(
+    () => typeof window !== "undefined" && window.localStorage.getItem(RUN_DEFAULTS_TEACHING_KEY) === "true",
+  );
   const removeRunRef = useRef<HTMLDivElement | null>(null);
   const runCollapseRef = useRef<number | null>(null);
 
@@ -65,6 +72,9 @@ export function RunCard({ run, runIdx }: Props) {
   const matchesRunOne = run.variables?.settings_mode === "match_run_1";
   const firstSegment = firstFenceSegment(run);
   const runLengthM = (calcTotalLength(run) / 1000).toFixed(2);
+  const runStats = calcRunStats(run, jobMax);
+  const panelSummary = state.bomResult ? `${runStats.panels}P` : "\u2014 P";
+  const gateCount = run.segments.filter((segment) => segment.segmentKind === "gate_opening").length;
   const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
   const slatSize = Number(runVariables.slat_size_mm ?? 65);
   const slatGap = Number(runVariables.slat_gap_mm ?? 5);
@@ -108,6 +118,18 @@ export function RunCard({ run, runIdx }: Props) {
     },
     [],
   );
+
+  useEffect(() => {
+    if (!autoOpenFirstSection || !firstSegment) return;
+    setRunSettingsOpen(false);
+    setExpandedId(firstSegment.segmentId);
+    onAutoOpenConsumed?.();
+  }, [autoOpenFirstSection, firstSegment, onAutoOpenConsumed]);
+
+  function dismissRunDefaultsTeaching() {
+    setTeachingDismissed(true);
+    window.localStorage.setItem(RUN_DEFAULTS_TEACHING_KEY, "true");
+  }
 
   function keepRunSettingsOpen() {
     if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
@@ -181,7 +203,7 @@ export function RunCard({ run, runIdx }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-brand-brand bg-brand-card py-4 shadow-md">
+    <div className="rounded-2xl border border-brand-border bg-brand-card py-4 shadow-md">
       <div className="px-4 mb-3 flex flex-wrap items-start justify-between gap-3">
         <h3 className="grid gap-1 text-brand-text">
           <span className="text-xl font-extrabold leading-tight tracking-normal">
@@ -190,6 +212,8 @@ export function RunCard({ run, runIdx }: Props) {
           <span className="flex flex-wrap gap-x-2.5 gap-y-1 text-sm text-brand-muted">
             <span>System Type: <strong className="text-brand-text">{run.productCode}</strong></span>
             <span>{isBayg ? "Total panel width" : "Length"}: <strong className="text-brand-text">{runLengthM}m</strong></span>
+            {gateCount > 0 && <span>Gates: <strong className="font-mono tabular-nums text-brand-text">{gateCount}G</strong></span>}
+            <span>Panels: <strong className="font-mono tabular-nums text-brand-text">{panelSummary}</strong></span>
             <span>Height: <strong className="text-brand-text">{runHeight}mm</strong></span>
             <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
             <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
@@ -276,8 +300,21 @@ export function RunCard({ run, runIdx }: Props) {
                   runIdx={runIdx}
                   displayLabel={`R${runIdx + 1}S${segIdx + 1}`}
                   open={expandedId === seg.segmentId}
+                  showRunDefaultsTeaching={
+                    expandedId === seg.segmentId &&
+                    seg.segmentId === firstSegment?.segmentId &&
+                    !teachingDismissed &&
+                    !state.bomResult
+                  }
+                  onDismissRunDefaultsTeaching={dismissRunDefaultsTeaching}
                   onToggle={() =>
-                    setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
+                    setExpandedId((id) => {
+                      const next = id === seg.segmentId ? null : seg.segmentId;
+                      if (id === seg.segmentId && seg.segmentId === firstSegment?.segmentId) {
+                        dismissRunDefaultsTeaching();
+                      }
+                      return next;
+                    })
                   }
                 />
               ))}

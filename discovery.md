@@ -15,6 +15,25 @@ Build a data-driven BOM (Bill of Materials) quoting configurator for Glass Outle
 
 ---
 
+## May 10, 2026 - Brief AY entry simplification and run-defaults teaching
+
+UX finding:
+- The launch page works best as a single, fast job-details entry point; the real choice between drawing, describing, or selecting a system belongs inside the calculator sidebar.
+- The first generated section is the right moment to teach users that Run Settings become defaults for the rest of the run.
+
+Changes applied:
+- Simplified the opening screen to the Glass Outlet title/logo, one `Enter job details` input, and the exact `press Enter to start` hint.
+- Replaced scattered empty-workspace controls with three equal numbered sidebar cards: `Draw your fence`, `Describe your fence`, and `Select your fence`.
+- Standardised layout-map copy through a shared `DRAW_FENCE_LABEL` constant and added a right-side sidebar affordance to reopen the map after minimising.
+- Added panel-count display to run/BOM summaries after a BOM exists, while showing an em-dash placeholder before generation.
+- Auto-opened Section 1 after selecting/applying a system and added a one-time `RUN DEFAULTS` teaching card using the existing page/run state rather than a parallel onboarding subsystem.
+- Updated the UI-designer skill in both repo skill mirrors with the numbered entry-card pattern.
+
+Verification plan:
+- Run the describe-fence corpus, build the app, then browser-smoke the landing entry, three-card sidebar, Select path auto-open, teaching-card dismiss, map reopen button, and BOM panel-count summary.
+
+---
+
 ## May 9, 2026 - Brief AT supplier portal pricing seed
 
 Pricing finding:

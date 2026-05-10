@@ -40,8 +40,10 @@ function mergeFenceProducts(products: FenceProduct[]): FenceProduct[] {
 
 export function ProductSelectV3({
   mapAction,
+  onProductSelected,
 }: {
   mapAction?: (selectDefaultProduct: () => void) => ReactNode;
+  onProductSelected?: (payload: CanonicalPayload) => void;
 }) {
   const { state, dispatch } = useCalculator();
 
@@ -98,17 +100,13 @@ export function ProductSelectV3({
       ],
     };
     dispatch({ type: "SET_PAYLOAD", payload: initialPayload });
+    onProductSelected?.(initialPayload);
   }
 
   return (
     <div data-testid="product-select">
-      {!currentCode && (
-        <p className="mb-2 text-sm font-semibold text-brand-success">
-          Select fence style or open layout map
-        </p>
-      )}
       <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
-        <div className="flex flex-col items-start gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {products.map((product) => {
             const selected = product.system_type === currentCode;
             return (
@@ -117,7 +115,7 @@ export function ProductSelectV3({
                 type="button"
                 onClick={() => selectProduct(product)}
                 aria-pressed={selected}
-                className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-bold transition-all ${
+                className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-3 py-2 text-center text-sm font-bold transition-all ${
                   selected
                     ? "border-brand-primary bg-brand-primary text-white shadow-sm"
                     : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
