@@ -148,7 +148,7 @@ function PageChip({ sku }: { sku: string }) {
   const page = cataloguePageForSku(sku);
   if (!page) return null;
   const className =
-    "inline-flex rounded-full border border-brand-border bg-brand-bg px-1.5 py-0.5 text-[10px] font-extrabold text-brand-muted hover:border-brand-primary hover:text-brand-primary";
+    "inline-flex rounded-full border border-brand-border bg-brand-bg px-1.5 py-0.5 text-[10px] font-extrabold text-brand-muted hover:border-brand-primary hover:text-brand-primary print:hidden";
   if (CATALOGUE_PDF_URL) {
     return (
       <a
@@ -230,7 +230,7 @@ function BOMTable({
               Line $
             </th>
             {editable && (
-              <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
+              <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right print:hidden">
                 Edit
               </th>
             )}
@@ -326,7 +326,7 @@ function ItemGroup({
             <div className="flex flex-wrap items-center gap-1.5">
               <span>{item.description}</span>
               <span
-                className={`rounded-full border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+                className={`rounded-full border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide print:hidden ${
                   item.unitPrice > 0
                     ? "border-brand-primary/30 bg-brand-primary/10 text-brand-primary"
                     : "border-brand-warning/40 bg-brand-warning/10 text-brand-warning"
@@ -335,7 +335,7 @@ function ItemGroup({
                 {tierLabel(item)}
               </span>
               {item.notes && (
-                <span className="text-xs text-brand-warning">
+                <span className="text-xs text-brand-warning print:hidden">
                   {item.notes}
                 </span>
               )}
@@ -350,20 +350,20 @@ function ItemGroup({
               )}
             </div>
             {hint && (
-              <p className="mt-1 text-[11px] font-semibold text-brand-success">
+              <p className="mt-1 text-[11px] font-semibold text-brand-success print:hidden">
                 {hint.more} more for {hint.tier}
                 {hint.savingPct ? ` (save ${hint.savingPct}%)` : ""}
               </p>
             )}
             {cartonHint && (
-              <p className="mt-1 inline-flex rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-0.5 text-[11px] font-bold text-brand-success">
+              <p className="mt-1 inline-flex rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-0.5 text-[11px] font-bold text-brand-success print:hidden">
                 {cartonHint.more} more for a carton ({cartonHint.cartonQty} {cartonHint.label})
                 {cartonHint.saving > 0 ? ` - save ~$${cartonHint.saving}` : ""}
               </p>
             )}
             {bulkBuySku && (
               <p
-                className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[11px] font-bold ${
+                className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[11px] font-bold print:hidden ${
                   bulkBuySaving > 0
                     ? "border-brand-success/30 bg-brand-success/10 text-brand-success"
                     : "border-brand-border bg-brand-bg text-brand-muted"
@@ -377,7 +377,7 @@ function ItemGroup({
               </p>
             )}
             {sourceText && item.sources && item.sources.length > 1 && (
-              <p className="mt-1 text-[11px] font-semibold text-brand-muted">
+              <p className="mt-1 text-[11px] font-semibold text-brand-muted print:hidden">
                 Sources: {sourceText}
               </p>
             )}
@@ -387,17 +387,20 @@ function ItemGroup({
           </td>
           <td className="py-2.5 px-3 text-sm text-brand-text text-right tabular-nums">
             {editable ? (
-              <input
-                type="number"
-                min="0"
-                step="1"
-                value={item.quantity}
-                onChange={(event) =>
-                  onQuantityChange?.(item, Number(event.target.value))
-                }
-                className="w-20 rounded-lg border border-brand-border bg-brand-card px-2 py-1 text-right text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-                aria-label={`Quantity for ${item.sku}`}
-              />
+              <>
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={item.quantity}
+                  onChange={(event) =>
+                    onQuantityChange?.(item, Number(event.target.value))
+                  }
+                  className="w-20 rounded-lg border border-brand-border bg-brand-card px-2 py-1 text-right text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 print:hidden"
+                  aria-label={`Quantity for ${item.sku}`}
+                />
+                <span className="hidden print:inline">{item.quantity}</span>
+              </>
             ) : (
               item.quantity
             )}
@@ -409,7 +412,7 @@ function ItemGroup({
             {item.unitPrice > 0 ? `$${formatMoney(item.lineTotal)}` : "-"}
           </td>
           {editable && (
-            <td className="py-2.5 px-3 text-right">
+            <td className="py-2.5 px-3 text-right print:hidden">
               <button
                 type="button"
                 onClick={() => onRemoveLine?.(item)}
@@ -483,7 +486,7 @@ export function BOMResultTabs({
   return (
     <div>
       {/* Tab bar */}
-      <div className="flex border-b border-brand-border mb-4 overflow-x-auto">
+      <div className="flex border-b border-brand-border mb-4 overflow-x-auto print:hidden">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -509,7 +512,7 @@ export function BOMResultTabs({
         ))}
       </div>
 
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3 print:hidden">
         <div>
           <p className="text-xs font-extrabold uppercase tracking-wide text-brand-muted">
             {viewMode === "cut_list" ? "What you'll receive" : "Line items"}
@@ -544,7 +547,7 @@ export function BOMResultTabs({
       )}
 
       {activeInstallVideoKeys.length > 0 && (
-        <div className="mt-5 rounded-2xl border border-brand-border/70 bg-brand-bg/50 p-3">
+        <div className="mt-5 rounded-2xl border border-brand-border/70 bg-brand-bg/50 p-3 print:hidden">
           <p className="mb-3 text-xs font-extrabold uppercase tracking-wide text-brand-muted">
             Install video QR codes
           </p>
@@ -558,7 +561,7 @@ export function BOMResultTabs({
 
       {/* Summary */}
       <div className="mt-6 pt-4 border-t border-brand-border">
-        <div className="mb-3 inline-flex rounded-full border border-brand-success/30 bg-brand-success/10 px-3 py-1 text-xs font-bold text-brand-success">
+        <div className="mb-3 inline-flex rounded-full border border-brand-success/30 bg-brand-success/10 px-3 py-1 text-xs font-bold text-brand-success print:hidden">
           {PRICE_SOURCE_LABEL} · {PRICE_SOURCE_VERIFIED_DATE}
         </div>
         <div className="space-y-1 mb-3">

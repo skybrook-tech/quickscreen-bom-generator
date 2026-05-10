@@ -733,12 +733,24 @@ function CalculatorV3Content() {
   }
 
   function handlePrintBom() {
+    const cleanupPrintMode = () => {
+      document.body.removeAttribute("data-print-bom");
+      document.body.removeAttribute("data-print-bom-map");
+      window.removeEventListener("afterprint", cleanupPrintMode);
+    };
+    document.body.setAttribute("data-print-bom", "true");
+    if (includeMapInBomPrint) {
+      document.body.setAttribute("data-print-bom-map", "true");
+    } else {
+      document.body.removeAttribute("data-print-bom-map");
+    }
+    window.addEventListener("afterprint", cleanupPrintMode);
     if (includeMapInBomPrint) {
       setLayoutOpen(true);
-      window.setTimeout(() => window.print(), 120);
+      window.setTimeout(() => window.print(), 300);
       return;
     }
-    window.print();
+    window.setTimeout(() => window.print(), 0);
   }
 
   function handleExportCsv() {
@@ -1099,11 +1111,12 @@ function CalculatorV3Content() {
             />
 
             <main
+              data-print-bom-main
               className={`min-h-0 min-w-0 flex-1 overflow-y-auto p-3 pb-24 sm:p-5 lg:p-8 ${mobileLayout && mobileTab !== "bom" ? "hidden" : ""
                 }`}
             >
               <div className="mx-auto max-w-6xl space-y-4 sm:space-y-5">
-                <section className="rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5">
+                <section data-print-bom-section className="rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5">
                   <div className="mb-4 flex flex-col gap-4 border-b border-brand-border pb-5 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <div className="mb-3 flex flex-wrap items-center gap-3">
@@ -1132,7 +1145,7 @@ function CalculatorV3Content() {
                       </p>
                     </div>
                   </div>
-                  <div className="mb-4 flex flex-wrap items-center gap-2">
+                  <div className="mb-4 flex flex-wrap items-center gap-2" data-print-hide>
                     {payload && <div className="mr-2">{layoutMapButton()}</div>}
                     <button
                       type="button"
@@ -1231,27 +1244,31 @@ function CalculatorV3Content() {
                         onSwitchEconomyToStandard={handleSwitchEconomyToStandard}
                         onActiveSummaryChange={handleActiveBomSummaryChange}
                       />
-                      <ExtraItemsPanel
-                        items={extraItems}
-                        onAdd={(item) => setExtraItems((prev) => [...prev, item])}
-                        onRemove={(id) =>
-                          setExtraItems((prev) => prev.filter((i) => i.id !== id))
-                        }
-                      />
-                      <SuggestedAccessoriesPanel
-                        suggestions={suggestedAccessories}
-                        addedItems={extraItems}
-                        onAdd={(item) =>
-                          setExtraItems((prev) =>
-                            prev.some((existing) => (existing.sku ?? existing.id) === (item.sku ?? item.id))
-                              ? prev
-                              : [...prev, item],
-                          )
-                        }
-                        onRemove={(id) =>
-                          setExtraItems((prev) => prev.filter((item) => item.id !== id))
-                        }
-                      />
+                      <div data-print-hide>
+                        <ExtraItemsPanel
+                          items={extraItems}
+                          onAdd={(item) => setExtraItems((prev) => [...prev, item])}
+                          onRemove={(id) =>
+                            setExtraItems((prev) => prev.filter((i) => i.id !== id))
+                          }
+                        />
+                      </div>
+                      <div data-print-hide>
+                        <SuggestedAccessoriesPanel
+                          suggestions={suggestedAccessories}
+                          addedItems={extraItems}
+                          onAdd={(item) =>
+                            setExtraItems((prev) =>
+                              prev.some((existing) => (existing.sku ?? existing.id) === (item.sku ?? item.id))
+                                ? prev
+                                : [...prev, item],
+                            )
+                          }
+                          onRemove={(id) =>
+                            setExtraItems((prev) => prev.filter((item) => item.id !== id))
+                          }
+                        />
+                      </div>
                     </>
                   ) : (
                     <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/60 px-5 py-10 text-center text-sm font-semibold text-brand-muted">
@@ -1265,6 +1282,7 @@ function CalculatorV3Content() {
 
             {layoutOpen && payload && (
               <div
+                data-print-map-panel
                 className={`z-20 border-l border-brand-border bg-brand-card shadow-2xl ${mobileLayout
                   ? "fixed inset-x-0 bottom-[4.5rem] top-[4.5rem] border-l-0"
                   : `absolute bottom-0 top-0 ${layoutFullscreen ? "left-0 right-0" : ""}`
@@ -1272,7 +1290,7 @@ function CalculatorV3Content() {
                 style={layoutFullscreen || mobileLayout ? undefined : { left: runPaneWidth + 6, right: 0 }}
               >
                 <div className="flex h-full min-h-0 flex-col">
-                  <div className="flex items-center gap-2 border-b border-brand-border px-2 py-2 sm:gap-3 sm:px-4 sm:py-3">
+                  <div className="flex items-center gap-2 border-b border-brand-border px-2 py-2 sm:gap-3 sm:px-4 sm:py-3" data-print-hide>
                     <div className="flex items-center gap-2">
                       <button
                         type="button"

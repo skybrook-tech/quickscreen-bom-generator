@@ -44,22 +44,123 @@ body {
 }
 
 @media print {
-  /* Hide everything except the BOM table and summary */
-  body > * { display: none !important; }
-  body > #root { display: block !important; }
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+
+  html,
+  body,
+  #root,
+  #root *,
+  [data-print-bom-main],
+  [data-print-bom-section] {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  body[data-print-bom="true"] header,
+  body[data-print-bom="true"] nav,
+  body[data-print-bom="true"] aside,
+  body[data-print-bom="true"] [data-print-hide],
+  body[data-print-bom="true"] button,
+  body[data-print-bom="true"] form,
+  body[data-print-bom="true"] .accordion-trigger {
+    display: none !important;
+  }
+
+  body[data-print-bom="true"] [data-print-bom-main] {
+    display: block !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  body[data-print-bom="true"] [data-print-bom-section] {
+    display: block !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  body[data-print-bom="true"] [data-print-map-panel] {
+    display: none !important;
+  }
+
+  body[data-print-bom="true"][data-print-bom-map="true"] [data-print-map-panel] {
+    display: block !important;
+    position: static !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    margin-top: 12mm !important;
+    padding-top: 8mm !important;
+    border: 0 !important;
+    border-top: 1px solid #d1d5db !important;
+    box-shadow: none !important;
+    background: white !important;
+    break-before: auto;
+    page-break-before: auto;
+  }
+
+  body[data-print-bom="true"][data-print-bom-map="true"] canvas {
+    max-width: 100% !important;
+    height: auto !important;
+    border: 1px solid #d1d5db !important;
+  }
+
+  [data-testid="bom-table"],
+  [data-testid="bom-grand-total"],
+  .print\:block {
+    display: block !important;
+  }
+
+  .overflow-x-auto {
+    overflow: visible !important;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 9.5pt;
+    page-break-inside: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  th,
+  td {
+    border: 1px solid #ccc;
+    padding: 4px 6px;
+    color: black !important;
+  }
+
+  th {
+    background: #f0f0f0 !important;
+    font-weight: bold;
+  }
 
   header, nav, aside,
   [data-print-hide],
   button,
   form,
   .accordion-trigger { display: none !important; }
-
-  [data-testid="bom-table"],
-  [data-testid="bom-grand-total"],
-  .print\:block { display: block !important; }
-
-  body { background: white !important; color: black !important; }
-  table { border-collapse: collapse; width: 100%; font-size: 11pt; }
-  th, td { border: 1px solid #ccc; padding: 4px 8px; }
-  th { background: #f0f0f0; font-weight: bold; }
 }
