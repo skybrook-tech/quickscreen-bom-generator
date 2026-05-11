@@ -23,6 +23,7 @@ Use this skill when improving how users configure, draw, review, and test quotes
 - Treat the first workspace state as a real quoting decision point: Draw, Describe, and Select should appear as equal numbered choice cards when no run exists, then collapse once the user chooses a path.
 - Use a shared two-click confirm pattern for destructive actions: first click enters a danger confirm state, second click within about 3 seconds commits, and outside click cancels.
 - Treat "matches run defaults" indicators as signal, not noise: ignore structural geometry differences like corner/end-post conditions and only flag substantive setting overrides.
+- For describe/parse previews, avoid a blocking "missing" state. Apply sensible defaults, visually highlight defaulted chips, and let the user override only what needs changing.
 - Put derived values near the inputs they depend on: panels, post spacing, cut length, achieved height.
 - Use product-code search for expert users and friendly labels for less technical users.
 - After Generate BOM, keep the user in one place: BOM lines, warnings, suggested extras, manual extras, GST, grand total.
@@ -32,6 +33,7 @@ Use this skill when improving how users configure, draw, review, and test quotes
 - Drawing geometry is the source of layout truth.
 - Exact typed measurements are the source of dimension truth.
 - Keep connected segments connected when editing lengths.
+- Endpoint drag should pivot around the opposite end of the section: the dragged post moves freely, the far end stays planted, and adjacent sections deform only when they share that dragged post.
 - Show the active endpoint clearly.
 - Allow finish-run gestures that do not require pixel-perfect clicks.
 - Surface segment details without forcing the user to hunt through nested panels.

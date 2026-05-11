@@ -98,11 +98,6 @@ export function CanvasToolbar({
       >
         <Move size={16} /> Move / Edit
       </button>
-      {activeTool === "move" && (
-        <span className="rounded-full border border-brand-primary/30 bg-brand-primary/10 px-2 py-1 text-[10px] font-bold text-brand-primary">
-          Drag whole section · Alt-drag point only
-        </span>
-      )}
       </div>
 
       <div className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">

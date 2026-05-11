@@ -1,6 +1,6 @@
 import { stripVoiceFillers } from "./voiceFillers";
 
-export type Confidence = "stated" | "inferred" | "default" | "missing";
+export type Confidence = "stated" | "inferred" | "default";
 export type ColourCode = "B" | "MN" | "G" | "SM" | "W" | "BS" | "D" | "M" | "P" | "PB" | "S";
 export type ParsedSystemType = "QSHS" | "VS" | "XPL" | "BAYG" | "SLIDING" | "PEDESTRIAN";
 
@@ -55,6 +55,19 @@ const COLOUR_ALIASES: Array<[RegExp, ColourCode, Confidence]> = [
 
 function attr<T>(value: T, confidence: Confidence, note?: string): ParsedAttribute<T> {
   return note ? { value, confidence, note } : { value, confidence };
+}
+
+function applyDefaults(attributes: ParseResult["attributes"]) {
+  attributes.systemType ??= attr("QSHS", "default");
+  attributes.runLengthMm ??= attr(0, "default");
+  attributes.heightMm ??= attr(1800, "default");
+  attributes.slatSizeMm ??= attr(65, "default");
+  attributes.gapMm ??= attr(9, "default");
+  attributes.colourCode ??= attr("B", "default");
+  attributes.mountingMethod ??= attr("concreted", "default");
+  attributes.termination ??= attr("post_post", "default");
+  attributes.cornerCount ??= attr(0, "default");
+  attributes.gates ??= attr([], "default");
 }
 
 function mmFromLength(value: number, unit: string) {
@@ -176,10 +189,6 @@ export function parseDescription(input: string): ParseResult {
     }
   }
 
-  if (!attributes.heightMm && attributes.systemType?.value === "QSHS" && /\bpool\b/i.test(cleaned)) {
-    attributes.heightMm = attr(undefined as unknown as number, "missing", "Pool fence usually 1200mm; confirm.");
-  }
-
   const slat = lower.match(/\b(65|90)\s*(?:mm|mil|mils)?\s*slats?\b/) ?? lower.match(/\b(65|90)\s*(?:mm|mil)\b/);
   if (slat) {
     const explicit = /\bslats?\b/i.test(slat[0]);
@@ -214,6 +223,7 @@ export function parseDescription(input: string): ParseResult {
   attributes.cornerCount = parseCornerCount(cleaned);
   const gates = parseGateCount(cleaned);
   if (gates.length > 0) attributes.gates = attr(gates, "stated");
+  applyDefaults(attributes);
 
   return {
     description: input,

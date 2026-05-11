@@ -1161,6 +1161,7 @@ function CalculatorV3Content() {
                 <JobNameEditor
                   value={jobName}
                   onChange={setJobName}
+                  onCommit={startWorkspaceFromLanding}
                   autoFocus
                   inputClassName="rounded-2xl px-4 py-3 text-center text-xl font-semibold"
                   textClassName="mx-auto text-center text-xl font-semibold"
@@ -1189,7 +1190,7 @@ function CalculatorV3Content() {
             >
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="flex-1 space-y-4 overflow-y-auto p-3 sm:p-5">
-                  <section>
+                  <section className="sticky top-0 z-30 -mx-3 border-b border-brand-border/70 bg-brand-card/95 px-3 pb-3 pt-3 shadow-sm backdrop-blur sm:-mx-5 sm:px-5">
                     <div className="mb-3 flex items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <JobNameEditor
@@ -1199,21 +1200,27 @@ function CalculatorV3Content() {
                           textClassName="mb-1"
                         />
                       </div>
-                      {payload && !layoutOpen && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setLayoutOpen(true);
-                            if (mobileLayout) setMobileTab("map");
-                          }}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-brand-border text-brand-primary transition-colors hover:border-brand-primary hover:shadow-sm"
-                          title="Reopen drawing layout"
-                          aria-label="Reopen drawing layout"
-                        >
-                          <PencilRuler size={20} />
-                        </button>
-                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!payload) {
+                            dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
+                            setIntroDismissed(true);
+                            setEntryCardsOpen(false);
+                            setEntryMode(null);
+                          }
+                          setLayoutOpen((open) => !open);
+                          if (mobileLayout) setMobileTab("map");
+                        }}
+                        className={`inline-flex h-10 w-10 items-center justify-center rounded-lg border transition-colors hover:shadow-sm ${layoutOpen ? "border-brand-primary bg-brand-primary text-white" : "border-brand-border text-brand-primary hover:border-brand-primary"}`}
+                        title={layoutOpen ? "Close map" : "Open map"}
+                        aria-label={layoutOpen ? "Close map" : "Open map"}
+                      >
+                        <PencilRuler size={20} />
+                      </button>
                     </div>
+                  </section>
+                  <section>
                     {!payload && (
                       <div className="space-y-3">
                         {entryCardsOpen && !entryMode && (

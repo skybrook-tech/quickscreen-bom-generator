@@ -8,6 +8,7 @@ interface JobNameEditorProps {
   inputClassName?: string;
   textClassName?: string;
   editOnly?: boolean;
+  onCommit?: (value: string) => void;
 }
 
 export function JobNameEditor({
@@ -18,6 +19,7 @@ export function JobNameEditor({
   inputClassName = "",
   textClassName = "",
   editOnly = false,
+  onCommit,
 }: JobNameEditorProps) {
   const [editing, setEditing] = useState(() => !value.trim());
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -25,7 +27,7 @@ export function JobNameEditor({
 
   useEffect(() => {
     if (!committedName && !editOnly) setEditing(true);
-  }, [committedName]);
+  }, [committedName, editOnly]);
 
   useEffect(() => {
     if (!editing) return;
@@ -35,7 +37,9 @@ export function JobNameEditor({
   }, [editing]);
 
   function commit() {
-    if (committedName && !editOnly) setEditing(false);
+    if (!committedName) return;
+    if (!editOnly) setEditing(false);
+    onCommit?.(committedName);
   }
 
   if (!editing && committedName) {
@@ -61,6 +65,7 @@ export function JobNameEditor({
       onBlur={commit}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === "Tab") {
+          event.preventDefault();
           commit();
           return;
         }

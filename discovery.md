@@ -1630,3 +1630,25 @@ Changes applied:
 Verification:
 - `npm run build` passed after the changes.
 - Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+### May 11, 2026 - Brief BB calculator flow refinements and tactile fixes
+
+Workflow finding:
+- BA's sidebar and map polish made the workspace cleaner, but deploy-preview testing showed several tactile issues: gate diagrams needed clearer physical swing/slide communication, the describe-fence preview still treated unknowns as blockers, the map toggle could disappear while scrolling, install videos were too buried in run cards, and BA's whole-section drag mode did not match installer expectations.
+
+Changes applied:
+- Removed the parser `missing` confidence state. Every describe-fence attribute now receives a value from the BB defaults table, default chips are warning-highlighted, and a 0m run length is communicated as a footer note instead of a blocking chip.
+- Restyled the parse preview to use the same compact bordered card language as the section settings panels.
+- Moved install videos from run cards into a top-right header button beside the theme toggle, opening the existing QR-card video UI.
+- Made the sidebar job/map header sticky and turned the map affordance into a persistent open/close toggle.
+- Made landing-page job-name Enter/Tab/blur commit a non-empty name and open the workspace in one action while preserving normal rename behavior inside the calculator.
+- Increased the default canvas height from 504px to 630px and replaced BA's translate-whole-section drag behavior with pivot-around-opposite-end endpoint dragging.
+- Cleaned gate canvas visuals so single swing, double swing, and sliding gates render clearer direction-specific indicators.
+
+Deferred:
+- The brief requested PR screenshots and auto-merge after CI, but this sandbox pass was kept to commit/push for deploy-preview testing.
+
+Verification:
+- `npm run test:describe-fence` passed for TC-01 through TC-12.
+- `npm run build` passed after rerunning with a longer timeout.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.

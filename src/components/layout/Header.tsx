@@ -1,10 +1,13 @@
-import { LogOut, Sun, Moon, Plus } from 'lucide-react';
+import { LogOut, Sun, Moon, Plus, PlayCircle, X } from 'lucide-react';
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../context/ThemeContext';
 import type { TenantBranding } from '../../lib/tenantThemes';
+import { INSTALL_VIDEOS, type InstallVideoKey } from '../../lib/installVideos';
+import { InstallVideoQR } from '../calculator-v3/InstallVideoQR';
 
 interface HeaderProps {
   branding?: TenantBranding;
@@ -13,6 +16,7 @@ interface HeaderProps {
 export function Header({ branding }: HeaderProps = {}) {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
+  const [installVideosOpen, setInstallVideosOpen] = useState(false);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -69,6 +73,14 @@ export function Header({ branding }: HeaderProps = {}) {
       {/* ── Controls ──────────────────────────────────────────────── */}
       <div className="flex items-center gap-1">
         <button
+          type="button"
+          onClick={() => setInstallVideosOpen(true)}
+          title="Install videos"
+          className="p-2 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/30 transition-colors"
+        >
+          <PlayCircle size={16} />
+        </button>
+        <button
           onClick={toggle}
           title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
           className="p-2 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/30 transition-colors"
@@ -95,6 +107,44 @@ export function Header({ branding }: HeaderProps = {}) {
           </>
         )}
       </div>
+      {installVideosOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Install videos"
+          onClick={() => setInstallVideosOpen(false)}
+        >
+          <div
+            className="w-full max-w-xl rounded-2xl border border-brand-border bg-brand-card p-5 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-4 flex items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-brand-muted">
+                  Install videos
+                </p>
+                <h2 className="mt-1 text-lg font-black text-brand-text">
+                  Glass Outlet installation help
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setInstallVideosOpen(false)}
+                className="rounded-lg border border-brand-border p-2 text-brand-muted hover:border-brand-danger hover:text-brand-danger"
+                title="Close install videos"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {(Object.keys(INSTALL_VIDEOS) as InstallVideoKey[]).map((key) => (
+                <InstallVideoQR key={key} videoKey={key} />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

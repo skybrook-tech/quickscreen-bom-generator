@@ -580,12 +580,7 @@ export function initCanvasEngine(
   let editingLabel = false;
   let hoveredSegIdx = -1; // flat index into all segments across all runs
   let animFrame = 0;
-  let draggingNode: {
-    runIdx: number;
-    ptIdx: number;
-    wholeSection: boolean;
-    lastCanvas: Point;
-  } | null = null;
+  let draggingNode: { runIdx: number; ptIdx: number } | null = null;
   let draggingGate: {
     runIdx: number;
     segIdx: number;
@@ -1469,7 +1464,6 @@ export function initCanvasEngine(
     const direction = visual.swingDirection ?? (visual.gateType === "sliding" ? "right" : "out");
     const angle = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
     const width = Math.max(14 / zoom, dist(pStart, pEnd));
-    const swing = Math.min(width * 0.55, 34 / zoom);
     const side = direction === "in" || direction === "left" ? -1 : 1;
     const slideSide = visual.slidingSide === "back" ? -1 : 1;
     const slideOffset = (300 / scale) * slideSide;
@@ -1484,8 +1478,10 @@ export function initCanvasEngine(
 
     if (visual.gateType === "sliding") {
       const arrow = direction === "left" ? -1 : 1;
+      const pocket = Math.max(width * 0.35, 450 / scale);
+      const slideLength = width + pocket;
       ctx.strokeRect(-width / 2, slideOffset - 5 / zoom, width, 10 / zoom);
-      drawArrow(-width * 0.25 * arrow, slideOffset, width * 0.32 * arrow, slideOffset);
+      drawArrow(-slideLength * 0.25 * arrow, slideOffset, slideLength * 0.5 * arrow, slideOffset);
       ctx.setLineDash([4 / zoom, 4 / zoom]);
       ctx.beginPath();
       ctx.moveTo(-width / 2, 0);
@@ -1503,36 +1499,41 @@ export function initCanvasEngine(
     }
 
     if (visual.gateType === "double-swing") {
+      const leafRadius = width / 2;
+      const labelY = side > 0 ? -8 / zoom : 14 / zoom;
       ctx.beginPath();
-      ctx.arc(-width / 2, 0, swing, side > 0 ? 0 : -Math.PI / 2, side > 0 ? Math.PI / 2 : 0, side < 0);
+      ctx.arc(-width / 2, 0, leafRadius, 0, side * Math.PI / 2, side < 0);
       ctx.stroke();
       ctx.beginPath();
-      ctx.arc(width / 2, 0, swing, side > 0 ? Math.PI / 2 : Math.PI, side > 0 ? Math.PI : Math.PI / 2, side < 0);
+      ctx.arc(width / 2, 0, leafRadius, Math.PI, side * Math.PI / 2, side > 0);
       ctx.stroke();
-      drawArrow(-width / 2, 0, -width / 2 + swing * 0.55, side * swing * 0.55);
-      drawArrow(width / 2, 0, width / 2 - swing * 0.55, side * swing * 0.55);
+      drawArrow(-width / 2, 0, -width / 2 + leafRadius * 0.68, side * leafRadius * 0.68);
+      drawArrow(width / 2, 0, width / 2 - leafRadius * 0.68, side * leafRadius * 0.68);
       ctx.font = `bold ${Math.max(8, 10 / zoom)}px sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "bottom";
-      ctx.fillText("DBL", 0, -8 / zoom);
+      ctx.fillText(direction === "in" ? "DBL IN" : "DBL OUT", 0, labelY);
       ctx.restore();
       return;
     }
 
     const hingeX = gate.anchor === "end" ? width / 2 : -width / 2;
-    const leafEndX = gate.anchor === "end" ? hingeX - swing : hingeX + swing;
+    const radius = width;
+    const closedAngle = gate.anchor === "end" ? Math.PI : 0;
+    const openAngle = side * Math.PI / 2;
+    const leafEndX = gate.anchor === "end" ? hingeX - radius * 0.7 : hingeX + radius * 0.7;
     ctx.beginPath();
     ctx.moveTo(hingeX, 0);
-    ctx.lineTo(leafEndX, side * swing);
+    ctx.lineTo(leafEndX, side * radius * 0.7);
     ctx.stroke();
     ctx.beginPath();
-    ctx.arc(hingeX, 0, swing, 0, side * Math.PI / 2, side < 0);
+    ctx.arc(hingeX, 0, radius, closedAngle, openAngle, gate.anchor === "end" ? side > 0 : side < 0);
     ctx.stroke();
-    drawArrow(hingeX, 0, leafEndX, side * swing);
+    drawArrow(hingeX, 0, leafEndX, side * radius * 0.7);
     ctx.font = `bold ${Math.max(8, 10 / zoom)}px sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "bottom";
-    ctx.fillText("SG", 0, -8 / zoom);
+    ctx.fillText(direction === "in" ? "SG IN" : "SG OUT", 0, side > 0 ? -8 / zoom : 14 / zoom);
     ctx.restore();
   }
 
@@ -2263,13 +2264,7 @@ export function initCanvasEngine(
           const dx = screenPtDown.x - nodePtScreen.x;
           const dy = screenPtDown.y - nodePtScreen.y;
           if (Math.sqrt(dx * dx + dy * dy) < 8) {
-            const altHeld = "altKey" in e && Boolean(e.altKey);
-            draggingNode = {
-              runIdx: ri,
-              ptIdx: pi,
-              wholeSection: !altHeld,
-              lastCanvas: canvasPt,
-            };
+            draggingNode = { runIdx: ri, ptIdx: pi };
             return;
           }
         }
@@ -2309,27 +2304,7 @@ export function initCanvasEngine(
     if (draggingNode !== null) {
       const snapped = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
       const run = runs[draggingNode.runIdx];
-      if (draggingNode.wholeSection && run.points.length > 1) {
-        const delta = {
-          x: snapped.x - draggingNode.lastCanvas.x,
-          y: snapped.y - draggingNode.lastCanvas.y,
-        };
-        const sectionIdx =
-          draggingNode.ptIdx === 0 ? 0 : Math.min(draggingNode.ptIdx - 1, run.points.length - 2);
-        const startIdx = sectionIdx;
-        const endIdx = sectionIdx + 1;
-        run.points[startIdx] = {
-          x: run.points[startIdx].x + delta.x,
-          y: run.points[startIdx].y + delta.y,
-        };
-        run.points[endIdx] = {
-          x: run.points[endIdx].x + delta.x,
-          y: run.points[endIdx].y + delta.y,
-        };
-        draggingNode.lastCanvas = snapped;
-      } else {
-        run.points[draggingNode.ptIdx] = snapped;
-      }
+      run.points[draggingNode.ptIdx] = snapped;
       rebuildSegmentsPreservingGates(run, scale);
       scheduleRedraw();
       return;

@@ -88,6 +88,8 @@ Latest Brief AT pass: supplier-portal pricing captured on 2026-05-09 now has a r
 
 Latest Brief AY pass: the landing screen is simplified to a single job-details entry, the empty workspace sidebar now offers three equal numbered choices (Draw, Describe, Select), the map entry copy is standardised as `Draw your fence`, run/BOM summaries surface post-BOM panel counts with an em-dash placeholder before generation, and first-section settings auto-open with a one-time run-defaults teaching card.
 
+Latest Brief BB pass: gate diagrams now use clearer single/double swing arcs and sliding direction indicators, Describe Your Fence previews no longer block on missing values and instead highlight sensible defaults, the sidebar map toggle is sticky and always reachable, install videos moved to the top-right header icon, landing Enter/Tab/blur commits a non-empty job name and opens the workspace, the default canvas height is now 630px, and endpoint dragging pivots around the opposite end with BA's whole-section/Alt-drag mode removed.
+
 ---
 
 ## Phases Overview
@@ -389,7 +391,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Claude skill at `.claude/skills/seed-mapper/` (SKILL.md + schema-catalogue + expression-syntax + worked examples for QSHS_GATE and a hypothetical VS system)
 - [x] Brief AT supplier portal price staging: generated `supabase/seeds/glass-outlet/pricing-2026-05-09.json`, added `npm run prices:brief-at`, refreshed local catalogue pricing rows, and documented excluded anomaly SKUs for supplier review.
 - [x] Brief AV Describe Your Fence v1: added deterministic no-AI natural-language parsing, landing/sidebar describe-entry UI, confidence preview chips with inline edits, Web Speech API dictation fallback, parsed-gate position badges/modal, job description metadata persistence, CSV/print summary inclusion, and a TC-01 through TC-12 parser corpus runner.
-- [x] Brief BA sidebar polish/map/BOM cleanup: job names now commit into bold inline text, the three-entry cards match the darker prototype style, sections default to 0m and nest visually under runs, Clear Map/Clear Job/Remove Run use one shared two-click confirm pattern, the map summary lists sections under runs, BOM print hides top price/UI chrome, and Move/Edit defaults to dragging whole sections with Alt-drag as the point-only override.
+- [x] Brief BA sidebar polish/map/BOM cleanup: job names now commit into bold inline text, the three-entry cards match the darker prototype style, sections default to 0m and nest visually under runs, Clear Map/Clear Job/Remove Run use one shared two-click confirm pattern, the map summary lists sections under runs, and BOM print hides top price/UI chrome. Brief BB later replaced BA's Move/Edit drag behavior with pivot-around-opposite-end endpoint editing.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---
