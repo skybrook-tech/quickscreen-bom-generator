@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CheckCircle2, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
+import { Plus, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
 import { defaultGateVariables } from "../../lib/gateOptionRules";
@@ -16,6 +16,7 @@ import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
 import { ConfirmButton } from "../shared/ConfirmButton";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
+const PARENT_SECTION_KEY = "parent_section_id";
 
 interface Props {
   run: CanonicalRun;
@@ -45,6 +46,27 @@ function runMasterVariables(
     ...(jobVariables ?? {}),
     ...(run.variables ?? {}),
   };
+}
+
+function assignGateParents(segments: CanonicalSegment[]) {
+  let lastSectionId: string | null = null;
+  let changed = false;
+  const next = segments.map((segment) => {
+    if (segment.segmentKind !== "gate_opening") {
+      lastSectionId = segment.segmentId;
+      return segment;
+    }
+    if (segment.variables?.[PARENT_SECTION_KEY] || !lastSectionId) return segment;
+    changed = true;
+    return {
+      ...segment,
+      variables: {
+        ...(segment.variables ?? {}),
+        [PARENT_SECTION_KEY]: lastSectionId,
+      },
+    };
+  });
+  return changed ? next : segments;
 }
 
 export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenConsumed }: Props) {
@@ -88,6 +110,19 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
     onAutoOpenConsumed?.();
   }, [autoOpenFirstSection, firstSegment, onAutoOpenConsumed]);
 
+  useEffect(() => {
+    const nextSegments = assignGateParents(run.segments);
+    const changed = nextSegments.some((segment, index) => segment !== run.segments[index]);
+    if (!changed) return;
+    dispatch({
+      type: "UPSERT_RUN",
+      run: {
+        ...run,
+        segments: nextSegments,
+      },
+    });
+  }, [dispatch, run]);
+
   function dismissRunDefaultsTeaching() {
     setTeachingDismissed(true);
     window.localStorage.setItem(RUN_DEFAULTS_TEACHING_KEY, "true");
@@ -117,7 +152,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
     });
   }
 
-  function addGateSegment() {
+  function addGateSegment(parentSectionId?: string) {
     const masterVariables = runMasterVariables(run, state.payload?.variables);
     const targetHeight = Number(masterVariables.target_height_mm ?? 1800);
     const segmentId = crypto.randomUUID();
@@ -128,9 +163,20 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
       segmentWidthMm: 900,
       targetHeightMm: targetHeight,
       gateProductCode: GATE_PRODUCT_CODE,
-      variables: defaultGateVariables({ ...masterVariables, productCode: run.productCode }, targetHeight),
+      variables: {
+        ...defaultGateVariables({ ...masterVariables, productCode: run.productCode }, targetHeight),
+        ...(parentSectionId ? { [PARENT_SECTION_KEY]: parentSectionId } : {}),
+      },
     });
     setExpandedId(segmentId);
+  }
+
+  function gatesForSection(sectionId: string) {
+    return assignGateParents(run.segments).filter(
+      (segment) =>
+        segment.segmentKind === "gate_opening" &&
+        segment.variables?.[PARENT_SECTION_KEY] === sectionId,
+    );
   }
 
   return (
@@ -191,70 +237,64 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           <div className="px-4 space-y-2">
             {run.segments
               .filter((segment) => segment.segmentKind !== "gate_opening")
-              .map((seg, segIdx) => (
-                <SegmentRow
-                  key={seg.segmentId}
-                  runId={run.runId}
-                  seg={seg}
-                  segIdx={segIdx}
-                  runIdx={runIdx}
-                  displayLabel={`R${runIdx + 1}S${segIdx + 1}`}
-                  open={expandedId === seg.segmentId}
-                  showRunDefaultsTeaching={
-                    expandedId === seg.segmentId &&
-                    seg.segmentId === firstSegment?.segmentId &&
-                    !teachingDismissed &&
-                    !state.bomResult
-                  }
-                  onDismissRunDefaultsTeaching={dismissRunDefaultsTeaching}
-                  onToggle={() =>
-                    setExpandedId((id) => {
-                      const next = id === seg.segmentId ? null : seg.segmentId;
-                      if (id === seg.segmentId && seg.segmentId === firstSegment?.segmentId) {
-                        dismissRunDefaultsTeaching();
+              .map((seg, segIdx) => {
+                const linkedGates = gatesForSection(seg.segmentId);
+                return (
+                  <div key={seg.segmentId} className="space-y-2">
+                    <SegmentRow
+                      runId={run.runId}
+                      seg={seg}
+                      segIdx={segIdx}
+                      runIdx={runIdx}
+                      displayLabel={`R${runIdx + 1}S${segIdx + 1}`}
+                      linkedGates={linkedGates}
+                      onAddGate={(sectionId) => addGateSegment(sectionId)}
+                      onEditGate={(gateId) => setExpandedId(gateId)}
+                      onRemoveGate={(gateId) =>
+                        dispatch({ type: "REMOVE_SEGMENT", runId: run.runId, segmentId: gateId })
                       }
-                      return next;
-                    })
-                  }
-                />
-              ))}
-            {!isBayg && run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
-              <div className="pt-2">
-                <p className="mb-2 flex items-center gap-2 text-sm font-bold text-brand-muted">
-                  <CheckCircle2 size={16} />
-                  Gates
-                </p>
-                <div className="space-y-2">
-                  {run.segments
-                    .filter((segment) => segment.segmentKind === "gate_opening")
-                    .map((seg, gateIdx) => (
-                      <SegmentRow
-                        key={seg.segmentId}
-                        runId={run.runId}
-                        seg={seg}
-                        segIdx={gateIdx}
-                        runIdx={runIdx}
-                        displayLabel={`R${runIdx + 1}G${gateIdx + 1}`}
-                        open={expandedId === seg.segmentId}
-                        onToggle={() =>
-                          setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
-                        }
-                      />
-                    ))}
-                </div>
-              </div>
-            )}
+                      open={expandedId === seg.segmentId}
+                      showRunDefaultsTeaching={
+                        expandedId === seg.segmentId &&
+                        seg.segmentId === firstSegment?.segmentId &&
+                        !teachingDismissed &&
+                        !state.bomResult
+                      }
+                      onDismissRunDefaultsTeaching={dismissRunDefaultsTeaching}
+                      onToggle={() =>
+                        setExpandedId((id) => {
+                          const next = id === seg.segmentId ? null : seg.segmentId;
+                          if (id === seg.segmentId && seg.segmentId === firstSegment?.segmentId) {
+                            dismissRunDefaultsTeaching();
+                          }
+                          return next;
+                        })
+                      }
+                    />
+                    {linkedGates.map((gateSeg, gateIdx) =>
+                      expandedId === gateSeg.segmentId ? (
+                        <div key={gateSeg.segmentId} className="ml-4 border-l-2 border-brand-warning/40 pl-3">
+                          <SegmentRow
+                            runId={run.runId}
+                            seg={gateSeg}
+                            segIdx={gateIdx}
+                            runIdx={runIdx}
+                            displayLabel={`R${runIdx + 1}G${run.segments.filter((segment) => segment.segmentKind === "gate_opening").findIndex((item) => item.segmentId === gateSeg.segmentId) + 1}`}
+                            open
+                            onToggle={() => setExpandedId(null)}
+                          />
+                        </div>
+                      ) : null,
+                    )}
+                  </div>
+                );
+              })}
           </div>
 
           <div className="px-4 mt-3 flex flex-wrap justify-end gap-2">
             <Button onClick={addFenceSegment} icon={Plus} variant="ghost" size="small">
               {isBayg ? "Add panel size" : "Add section"}
             </Button>
-            {!isBayg && (
-              <Button onClick={addGateSegment} icon={Plus} variant="ghost" size="small">
-                Add gate
-              </Button>
-            )}
             <ConfirmButton
               onConfirm={() => dispatch({ type: "REMOVE_RUN", runId: run.runId })}
               confirmLabel={<><Trash2 size={16} /> Click again to confirm</>}

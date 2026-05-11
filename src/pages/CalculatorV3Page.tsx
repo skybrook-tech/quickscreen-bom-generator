@@ -8,6 +8,8 @@ import { GateProvider } from "../context/GateContext";
 import { ProductSelectV3 } from "../components/calculator-v3/ProductSelectV3";
 import { RunListV3 } from "../components/calculator-v3/RunListV3";
 import { LayoutCanvasV3 } from "../components/calculator-v3/LayoutCanvasV3";
+import { PlanView } from "../components/calculator-v3/PlanView";
+import { RightPaneTabs, type RightPaneView } from "../components/calculator-v3/RightPaneTabs";
 import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
@@ -37,9 +39,6 @@ import {
   HelpCircle,
   Keyboard,
   Loader2,
-  Maximize2,
-  Minimize2,
-  PencilRuler,
   Printer,
   Save,
   Trash2,
@@ -310,8 +309,7 @@ function CalculatorV3Content() {
   const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
   const [mobileLayout, setMobileLayout] = useState(false);
   const [mobileTab, setMobileTab] = useState<"run" | "bom" | "map">("run");
-  const [layoutOpen, setLayoutOpen] = useState(false);
-  const [layoutFullscreen, setLayoutFullscreen] = useState(false);
+  const [rightPaneView, setRightPaneView] = useState<RightPaneView>("plan");
   const [introDismissed, setIntroDismissed] = useState(false);
   const [entryCardsOpen, setEntryCardsOpen] = useState(true);
   const [entryMode, setEntryMode] = useState<"describe" | "select" | null>(null);
@@ -336,6 +334,11 @@ function CalculatorV3Content() {
     window.addEventListener("resize", updateLayout);
     return () => window.removeEventListener("resize", updateLayout);
   }, []);
+
+  useEffect(() => {
+    if (rightPaneView !== "map") return;
+    window.setTimeout(() => window.dispatchEvent(new Event("resize")), 0);
+  }, [rightPaneView]);
 
   function handleResizeStart() {
     let latestWidth = runPaneWidth;
@@ -441,20 +444,24 @@ function CalculatorV3Content() {
       runs: [nextRun, ...base.runs.slice(1)],
     };
     dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
+    dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "describe" });
     dispatch({ type: "CLEAR_BOM_RESULT" });
     setIntroDismissed(true);
     setEntryCardsOpen(false);
     setEntryMode(null);
     setAutoOpenFirstSectionRunId(nextRun.runId);
+    setRightPaneView("plan");
     setMobileTab("run");
     toast.success("Description applied to the calculator");
   }
 
   function handleProductSelected(nextPayload: CanonicalPayload) {
+    dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "select" });
     setEntryCardsOpen(false);
     setEntryMode(null);
     setIntroDismissed(true);
     setAutoOpenFirstSectionRunId(nextPayload.runs[0]?.runId ?? null);
+    setRightPaneView("plan");
     setMobileTab("run");
   }
 
@@ -552,7 +559,7 @@ function CalculatorV3Content() {
   }
 
   async function handleGenerateBOMFromFooter() {
-    setLayoutOpen(false);
+    setRightPaneView("plan");
     await handleGenerateBOM();
   }
 
@@ -926,8 +933,7 @@ function CalculatorV3Content() {
     setEntryCardsOpen(true);
     setEntryMode(null);
     setIntroDismissed(true);
-    setLayoutOpen(false);
-    setLayoutFullscreen(false);
+    setRightPaneView("plan");
     setAutoOpenFirstSectionRunId(null);
     setMobileTab("run");
     setClearJobDialogOpen(false);
@@ -962,7 +968,7 @@ function CalculatorV3Content() {
     }
     window.addEventListener("afterprint", cleanupPrintMode);
     if (includeMapInBomPrint) {
-      setLayoutOpen(true);
+      setRightPaneView("map");
       window.setTimeout(() => window.print(), 300);
       return;
     }
@@ -1123,7 +1129,7 @@ function CalculatorV3Content() {
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
-  const showIntro = !payload && !introDismissed && !layoutOpen;
+  const showIntro = !payload && !introDismissed;
   const gateTargetRun = gatePositionTarget
     ? payload?.runs.find((run) => run.runId === gatePositionTarget.runId)
     : undefined;
@@ -1199,24 +1205,6 @@ function CalculatorV3Content() {
                           textClassName="mb-1"
                         />
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (!payload) {
-                            dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
-                            setIntroDismissed(true);
-                            setEntryCardsOpen(false);
-                            setEntryMode(null);
-                          }
-                          setLayoutOpen((open) => !open);
-                          if (mobileLayout) setMobileTab("map");
-                        }}
-                        className={`inline-flex h-10 w-10 items-center justify-center rounded-lg border transition-colors hover:shadow-sm ${layoutOpen ? "border-brand-primary bg-brand-primary text-white" : "border-brand-border text-brand-primary hover:border-brand-primary"}`}
-                        title={layoutOpen ? "Close map" : "Open map"}
-                        aria-label={layoutOpen ? "Close map" : "Open map"}
-                      >
-                        <PencilRuler size={20} />
-                      </button>
                     </div>
                   </section>
                   <section>
@@ -1232,11 +1220,12 @@ function CalculatorV3Content() {
                               onClick={() => {
                                 const nextPayload = createInitialPayload("QSHS");
                                 dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
+                                dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "draw" });
                                 setIntroDismissed(true);
                                 setEntryCardsOpen(false);
                                 setEntryMode(null);
                                 setAutoOpenFirstSectionRunId(nextPayload.runs[0]?.runId ?? null);
-                                setLayoutOpen(true);
+                                setRightPaneView("map");
                                 if (mobileLayout) setMobileTab("map");
                               }}
                             />
@@ -1437,10 +1426,30 @@ function CalculatorV3Content() {
 
             <main
               data-print-bom-main
-              className={`min-h-0 min-w-0 flex-1 overflow-y-auto p-3 pb-24 sm:p-5 lg:p-8 ${mobileLayout && mobileTab !== "bom" ? "hidden" : ""
+              className={`min-h-0 min-w-0 flex-1 overflow-y-auto p-3 pb-24 sm:p-5 lg:p-8 ${mobileLayout && mobileTab === "run" ? "hidden" : ""
                 }`}
             >
               <div className="mx-auto max-w-6xl space-y-4 sm:space-y-5">
+                <section className="overflow-hidden rounded-2xl border border-brand-border/60 bg-brand-card">
+                  <RightPaneTabs activeView={rightPaneView} onChange={setRightPaneView} />
+                  <div className="p-3 sm:p-4">
+                    <div
+                      data-print-map-panel
+                      className={rightPaneView === "map" ? "block" : "hidden"}
+                    >
+                      {payload ? (
+                        <LayoutCanvasV3 />
+                      ) : (
+                        <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/50 p-6 text-center text-sm font-bold text-brand-muted">
+                          Start from the sidebar, then draw the layout here.
+                        </div>
+                      )}
+                    </div>
+                    <div className={rightPaneView === "plan" ? "block" : "hidden"}>
+                      <PlanView payload={payload} />
+                    </div>
+                  </div>
+                </section>
                 <section data-print-bom-section className="rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5">
                   <div className="mb-4 flex flex-col gap-4 border-b border-brand-border pb-5 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
@@ -1618,58 +1627,6 @@ function CalculatorV3Content() {
               </div>
             </main>
 
-            {layoutOpen && payload && (
-              <div
-                data-print-map-panel
-                className={`z-20 border-l border-brand-border bg-brand-card shadow-2xl ${mobileLayout
-                  ? "fixed inset-x-0 bottom-[4.5rem] top-[4.5rem] border-l-0"
-                  : `absolute bottom-0 top-0 ${layoutFullscreen ? "left-0 right-0" : ""}`
-                  }`}
-                style={layoutFullscreen || mobileLayout ? undefined : { left: runPaneWidth + 6, right: 0 }}
-              >
-                <div className="flex h-full min-h-0 flex-col">
-                  <div className="flex items-center gap-2 border-b border-brand-border px-2 py-2 sm:gap-3 sm:px-4 sm:py-3" data-print-hide>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setLayoutOpen(false)}
-                        className="rounded-lg border border-brand-border px-2 py-1.5 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm sm:px-3 sm:py-2 sm:text-sm"
-                        title="Minimize map"
-                      >
-                        Minimize
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setLayoutFullscreen((value) => !value)}
-                        className="rounded-lg border border-brand-border p-2 text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-                        title={layoutFullscreen ? "Restore map" : "Expand map"}
-                      >
-                        {layoutFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-                      </button>
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-brand-text">Layout map</p>
-                      <p className="hidden text-xs text-brand-muted sm:block">
-                        Draw runs, gates, and map underlay
-                      </p>
-                    </div>
-                    <div className="ml-auto">
-                      <button
-                        type="button"
-                        onClick={() => setLayoutOpen(false)}
-                        className="rounded-lg border border-brand-border p-2 text-brand-muted transition-colors hover:border-brand-danger hover:text-brand-danger hover:shadow-sm"
-                        title="Close map"
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="min-h-0 flex-1 overflow-y-auto p-2 pb-24 sm:p-4">
-                    <LayoutCanvasV3 />
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
           {mobileLayout && (
             <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-brand-border bg-brand-card/95 p-2 shadow-2xl backdrop-blur md:hidden">
@@ -1686,11 +1643,14 @@ function CalculatorV3Content() {
                     if (id === "map") {
                       if (!payload) {
                         dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
+                        dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "draw" });
                       }
                       setIntroDismissed(true);
-                      setLayoutOpen(true);
+                      setRightPaneView("map");
+                    } else if (id === "bom") {
+                      setRightPaneView("plan");
                     } else {
-                      setLayoutOpen(false);
+                      setRightPaneView("plan");
                     }
                   }}
                   className={`rounded-lg px-3 py-2 text-sm font-extrabold transition-colors ${mobileTab === id

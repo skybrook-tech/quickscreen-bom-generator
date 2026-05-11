@@ -407,6 +407,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Brief AT supplier portal price staging: generated `supabase/seeds/glass-outlet/pricing-2026-05-09.json`, added `npm run prices:brief-at`, refreshed local catalogue pricing rows, and documented excluded anomaly SKUs for supplier review.
 - [x] Brief AV Describe Your Fence v1: added deterministic no-AI natural-language parsing, landing/sidebar describe-entry UI, confidence preview chips with inline edits, Web Speech API dictation fallback, parsed-gate position badges/modal, job description metadata persistence, CSV/print summary inclusion, and a TC-01 through TC-12 parser corpus runner.
 - [x] Brief BA sidebar polish/map/BOM cleanup: job names now commit into bold inline text, the three-entry cards match the darker prototype style, sections default to 0m and nest visually under runs, Clear Map/Clear Job/Remove Run use one shared two-click confirm pattern, the map summary lists sections under runs, and BOM print hides top price/UI chrome. Brief BB later replaced BA's Move/Edit drag behavior with pivot-around-opposite-end endpoint editing.
+- [x] Brief BC unified calculator experience: entry methods now use the same workspace state, Draw opens the Map tab while Describe/Select open Plan, the sticky map overlay was replaced by persistent Map/Plan tabs, Plan renders a schematic run/section/gate strip, typed/canvas length edits continue to sync through the canonical payload, and gate openings are attributed to parent sections with inline section chips/Add Gate actions while preserving the flat BOM-compatible `gate_opening` segments.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---
@@ -427,3 +428,4 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - All prices and BOM logic must live in Supabase Edge Functions — never in the client bundle
 - Currency: AUD, GST: 10%, measurements: metric (mm / m)
 - **v3 scope is fencing-only.** QSHS fence + QSHS_GATE in MVP. Post-MVP phases add VS/XPL/BAYG via new seed rows, then QSVS/QSGH/HSSG gate families, then patios-as-fences. All fencing systems share one hand-coded form and canvas toolbar; per-product differences live in the BOM engine seed data. Non-fence products (balustrades, pool fencing that isn't slat-based, etc.) are out of scope.
+

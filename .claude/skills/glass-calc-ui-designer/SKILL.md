@@ -32,11 +32,18 @@ Use this skill when improving how users configure, draw, review, and test quotes
 
 - Drawing geometry is the source of layout truth.
 - Exact typed measurements are the source of dimension truth.
+- Use persistent Map / Plan tabs for the right pane. The two tabs are views into the same calculator state; neither tab owns separate layout data, and switching views must not remount or lose the drawing.
 - Keep connected segments connected when editing lengths.
 - Endpoint drag should pivot around the opposite end of the section: the dragged post moves freely, the far end stays planted, and adjacent sections deform only when they share that dragged post.
 - Show the active endpoint clearly.
 - Allow finish-run gestures that do not require pixel-perfect clicks.
 - Surface segment details without forcing the user to hunt through nested panels.
+
+## Section-Owned Gate UX
+
+- Gates belong to the section they interrupt. In this repo's v3 canonical payload, represent that as a flat `gate_opening` segment with a `parent_section_id` variable so the BOM engine keeps its existing run/segment scope.
+- Show gate chips inside the parent section card and let users edit or two-click remove them from there.
+- Plan view should render gates in the section strip; Map view should render the same gate at its drawn canvas position.
 
 ## Review Checklist
 

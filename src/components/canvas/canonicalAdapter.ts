@@ -297,6 +297,9 @@ function expandSegmentWithGates(
     }
 
     // Gate opening segment
+    const parentSectionId = [...canonSegments]
+      .reverse()
+      .find((segment) => segment.segmentKind !== 'gate_opening')?.segmentId;
     const gateDesc = `${runIdx}:${flatSegIdx}:gate${gate.gateIndex}`;
     const gateSegmentId = stableIds[gateDesc] ?? (() => {
       const id = newId();
@@ -313,6 +316,7 @@ function expandSegmentWithGates(
       canvasSegmentIndex: localSegIdx,
       sourceSegmentLengthMm: Math.round(totalMm),
       variables: {
+        ...(parentSectionId ? { parent_section_id: parentSectionId } : {}),
         [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]:
           gate.useGatePostsAsFenceTermination ?? true,
         [GATE_SEGMENT_STUB_KEYS.gateMovement]: gateMovementFromCanvas(gate.gateType),

@@ -1652,3 +1652,25 @@ Verification:
 - `npm run test:describe-fence` passed for TC-01 through TC-12.
 - `npm run build` passed after rerunning with a longer timeout.
 - Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+### May 11, 2026 - Brief BC unified calculator experience
+
+Workflow finding:
+- The post-BB workspace still treated map entry differently from select/describe entry because the map lived in a separate overlay. That made it too easy for map state to be remounted or hidden from the rest of the calculator workflow.
+- The existing canonical payload already models gates as `gate_opening` segments for BOM scope, so a true nested `section.gates[]` migration would be risky without a matching engine/schema migration. The safe BC implementation stores section ownership on gate segments with `parent_section_id` while keeping the flat engine-compatible shape.
+
+Changes applied:
+- Added a persistent right-pane `Map` / `Plan` tab system. Draw entry opens Map; Describe and Select open Plan. Both views stay available after entry.
+- Added a schematic Plan view that renders runs as horizontal strips with section and gate blocks, including gate type and opening width.
+- Removed the old sticky/open map overlay from the sidebar. The map canvas now lives in the right pane and remains mounted while switching tabs, which keeps drawings intact through BOM generation.
+- Added entry-method tracking to `CalculatorContext` for future analytics without using it to gate behaviour.
+- Added section-owned gate UX: each section can show linked gate chips, edit a gate from the chip, two-click remove the gate, and add a gate from the section settings panel.
+- Added a lightweight runtime migration that assigns legacy/unowned `gate_opening` segments to the preceding section when clear. Canvas-created gate openings now carry `parent_section_id` when a preceding panel exists.
+
+Deferred:
+- The brief asked for true `section.gates: Gate[]`; this pass intentionally preserved the flat canonical `gate_opening` model because the BOM engine, save shape, and canvas adapter already rely on it. `parent_section_id` gives the UI section ownership without breaking existing calculations.
+- Side-by-side PR screenshots and auto-merge were not performed in this sandbox workflow; changes were committed for local/deploy-preview testing instead.
+
+Verification:
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
