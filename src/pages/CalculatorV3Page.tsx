@@ -8,7 +8,6 @@ import { GateProvider } from "../context/GateContext";
 import { ProductSelectV3 } from "../components/calculator-v3/ProductSelectV3";
 import { RunListV3 } from "../components/calculator-v3/RunListV3";
 import { LayoutCanvasV3 } from "../components/calculator-v3/LayoutCanvasV3";
-import { PlanView } from "../components/calculator-v3/PlanView";
 import { RightPaneTabs, type RightPaneView } from "../components/calculator-v3/RightPaneTabs";
 import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
@@ -309,7 +308,8 @@ function CalculatorV3Content() {
   const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
   const [mobileLayout, setMobileLayout] = useState(false);
   const [mobileTab, setMobileTab] = useState<"run" | "bom" | "map">("run");
-  const [rightPaneView, setRightPaneView] = useState<RightPaneView>("plan");
+  const [rightPaneView, setRightPaneView] = useState<RightPaneView>("bom");
+  const [mapExpanded, setMapExpanded] = useState(false);
   const [introDismissed, setIntroDismissed] = useState(false);
   const [entryCardsOpen, setEntryCardsOpen] = useState(true);
   const [entryMode, setEntryMode] = useState<"describe" | "select" | null>(null);
@@ -339,6 +339,31 @@ function CalculatorV3Content() {
     if (rightPaneView !== "map") return;
     window.setTimeout(() => window.dispatchEvent(new Event("resize")), 0);
   }, [rightPaneView]);
+
+  useEffect(() => {
+    if (!mapExpanded) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMapExpanded(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [mapExpanded]);
+
+  const handleRightPaneChange = useCallback((view: RightPaneView) => {
+    setRightPaneView(view);
+    if (view !== "map") setMapExpanded(false);
+  }, []);
+
+  const handleExpandMap = useCallback(() => {
+    if (!payload) {
+      dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
+      dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "draw" });
+    }
+    setIntroDismissed(true);
+    setRightPaneView("map");
+    setMapExpanded(true);
+    if (mobileLayout) setMobileTab("map");
+  }, [dispatch, mobileLayout, payload]);
 
   function handleResizeStart() {
     let latestWidth = runPaneWidth;
@@ -450,7 +475,8 @@ function CalculatorV3Content() {
     setEntryCardsOpen(false);
     setEntryMode(null);
     setAutoOpenFirstSectionRunId(nextRun.runId);
-    setRightPaneView("plan");
+    setRightPaneView("bom");
+    setMapExpanded(false);
     setMobileTab("run");
     toast.success("Description applied to the calculator");
   }
@@ -461,7 +487,8 @@ function CalculatorV3Content() {
     setEntryMode(null);
     setIntroDismissed(true);
     setAutoOpenFirstSectionRunId(nextPayload.runs[0]?.runId ?? null);
-    setRightPaneView("plan");
+    setRightPaneView("bom");
+    setMapExpanded(false);
     setMobileTab("run");
   }
 
@@ -559,7 +586,8 @@ function CalculatorV3Content() {
   }
 
   async function handleGenerateBOMFromFooter() {
-    setRightPaneView("plan");
+    setRightPaneView("bom");
+    setMapExpanded(false);
     await handleGenerateBOM();
   }
 
@@ -933,7 +961,8 @@ function CalculatorV3Content() {
     setEntryCardsOpen(true);
     setEntryMode(null);
     setIntroDismissed(true);
-    setRightPaneView("plan");
+    setRightPaneView("bom");
+    setMapExpanded(false);
     setAutoOpenFirstSectionRunId(null);
     setMobileTab("run");
     setClearJobDialogOpen(false);
@@ -1426,31 +1455,38 @@ function CalculatorV3Content() {
 
             <main
               data-print-bom-main
-              className={`min-h-0 min-w-0 flex-1 overflow-y-auto p-3 pb-24 sm:p-5 lg:p-8 ${mobileLayout && mobileTab === "run" ? "hidden" : ""
+              className={`min-h-0 min-w-0 flex-1 overflow-y-auto ${mapExpanded ? "p-2 pb-24" : "p-3 pb-24 sm:p-5 lg:p-8"} ${mobileLayout && mobileTab === "run" ? "hidden" : ""
                 }`}
             >
-              <div className="mx-auto max-w-6xl space-y-4 sm:space-y-5">
-                <section className="overflow-hidden rounded-2xl border border-brand-border/60 bg-brand-card">
-                  <RightPaneTabs activeView={rightPaneView} onChange={setRightPaneView} />
-                  <div className="p-3 sm:p-4">
+              <div className={`${mapExpanded ? "mx-0 max-w-none space-y-2" : "mx-auto max-w-6xl space-y-4 sm:space-y-5"}`}>
+                <section className={`overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"}`}>
+                  {!mapExpanded && (
+                    <RightPaneTabs
+                      activeView={rightPaneView}
+                      onChange={handleRightPaneChange}
+                      onExpandMap={handleExpandMap}
+                    />
+                  )}
+                  <div className={`${rightPaneView === "map" ? "block" : "hidden"} ${mapExpanded ? "p-2" : "p-3 sm:p-4"}`}>
                     <div
                       data-print-map-panel
-                      className={rightPaneView === "map" ? "block" : "hidden"}
+                      className="block"
                     >
                       {payload ? (
-                        <LayoutCanvasV3 />
+                        <LayoutCanvasV3
+                          mapExpanded={mapExpanded}
+                          onMapExpandedChange={setMapExpanded}
+                          showRunDetails={!mapExpanded}
+                        />
                       ) : (
                         <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/50 p-6 text-center text-sm font-bold text-brand-muted">
                           Start from the sidebar, then draw the layout here.
                         </div>
                       )}
                     </div>
-                    <div className={rightPaneView === "plan" ? "block" : "hidden"}>
-                      <PlanView payload={payload} />
-                    </div>
                   </div>
                 </section>
-                <section data-print-bom-section className="rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5">
+                <section data-print-bom-section className={`rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5 ${rightPaneView === "bom" && !mapExpanded ? "block" : "hidden"}`}>
                   <div className="mb-4 flex flex-col gap-4 border-b border-brand-border pb-5 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <div className="mb-3 flex flex-wrap items-center gap-3">
@@ -1648,9 +1684,11 @@ function CalculatorV3Content() {
                       setIntroDismissed(true);
                       setRightPaneView("map");
                     } else if (id === "bom") {
-                      setRightPaneView("plan");
+                      setRightPaneView("bom");
+                      setMapExpanded(false);
                     } else {
-                      setRightPaneView("plan");
+                      setRightPaneView("bom");
+                      setMapExpanded(false);
                     }
                   }}
                   className={`rounded-lg px-3 py-2 text-sm font-extrabold transition-colors ${mobileTab === id

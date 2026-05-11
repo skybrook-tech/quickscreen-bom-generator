@@ -111,6 +111,33 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   }, [autoOpenFirstSection, firstSegment, onAutoOpenConsumed]);
 
   useEffect(() => {
+    const openRun = (event: Event) => {
+      if ((event as CustomEvent<string>).detail !== run.runId) return;
+      setRunSettingsOpen(true);
+      document
+        .querySelector(`[data-run-id="${run.runId}"]`)
+        ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    };
+    const openSegment = (event: Event) => {
+      const segmentId = (event as CustomEvent<string>).detail;
+      if (!run.segments.some((segment) => segment.segmentId === segmentId)) return;
+      setRunSettingsOpen(false);
+      setExpandedId(segmentId);
+      window.setTimeout(() => {
+        document
+          .querySelector(`[data-segment-id="${segmentId}"]`)
+          ?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }, 0);
+    };
+    window.addEventListener("qsbom:open-run", openRun);
+    window.addEventListener("qsbom:open-segment", openSegment);
+    return () => {
+      window.removeEventListener("qsbom:open-run", openRun);
+      window.removeEventListener("qsbom:open-segment", openSegment);
+    };
+  }, [run.runId, run.segments]);
+
+  useEffect(() => {
     const nextSegments = assignGateParents(run.segments);
     const changed = nextSegments.some((segment, index) => segment !== run.segments[index]);
     if (!changed) return;
@@ -180,7 +207,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   }
 
   return (
-    <div className="rounded-2xl border-2 border-brand-primary/20 bg-brand-card py-4 shadow-md">
+    <div data-run-id={run.runId} className="rounded-2xl border-2 border-brand-primary/20 bg-brand-card py-4 shadow-md">
       <div className="px-4 mb-3 flex flex-wrap items-start justify-between gap-3">
         <h3 className="grid gap-1 text-brand-text">
           <span className="text-xl font-extrabold leading-tight tracking-normal">
@@ -240,7 +267,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
               .map((seg, segIdx) => {
                 const linkedGates = gatesForSection(seg.segmentId);
                 return (
-                  <div key={seg.segmentId} className="space-y-2">
+                  <div key={seg.segmentId} data-segment-id={seg.segmentId} className="space-y-2">
                     <SegmentRow
                       runId={run.runId}
                       seg={seg}
@@ -273,7 +300,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
                     />
                     {linkedGates.map((gateSeg, gateIdx) =>
                       expandedId === gateSeg.segmentId ? (
-                        <div key={gateSeg.segmentId} className="ml-4 border-l-2 border-brand-warning/40 pl-3">
+                        <div key={gateSeg.segmentId} data-segment-id={gateSeg.segmentId} className="ml-4 border-l-2 border-brand-warning/40 pl-3">
                           <SegmentRow
                             runId={run.runId}
                             seg={gateSeg}

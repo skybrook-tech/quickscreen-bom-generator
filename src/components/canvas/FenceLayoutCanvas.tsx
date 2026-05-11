@@ -42,6 +42,8 @@ interface FenceLayoutCanvasProps {
   /** Pre-computed stats text from calcRunStats — keeps canvas overlay in sync with form. */
   runStatsTexts?: { global: string; perRun: string[] };
   gateVisuals?: Record<string, CanvasGateVisual>;
+  expanded?: boolean;
+  onExpandedChange?: (expanded: boolean) => void;
 }
 
 export function FenceLayoutCanvas({
@@ -53,6 +55,8 @@ export function FenceLayoutCanvas({
   allowedAngles: allowedAnglesProp,
   runStatsTexts,
   gateVisuals = {},
+  expanded: expandedProp,
+  onExpandedChange,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
@@ -84,7 +88,9 @@ export function FenceLayoutCanvas({
   const [snapEnabled, setSnapEnabled] = useState(true);
   const [gateSnap100, setGateSnap100] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
-  const [expanded, setExpanded] = useState(false);
+  const [internalExpanded, setInternalExpanded] = useState(false);
+  const expanded = expandedProp ?? internalExpanded;
+  const setExpanded = onExpandedChange ?? setInternalExpanded;
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
   const [helpOpen, setHelpOpen] = useState(false);
   const [boundaryHintVisible, setBoundaryHintVisible] = useState(false);
@@ -124,6 +130,45 @@ export function FenceLayoutCanvas({
       window.localStorage.setItem("qsbom.boundaryHintSeen", "true");
     }
   }, []);
+
+  useEffect(() => {
+    const isTypingTarget = (target: EventTarget | null) => {
+      const el = target as HTMLElement | null;
+      return Boolean(
+        el &&
+        (el.isContentEditable ||
+          el.tagName === "INPUT" ||
+          el.tagName === "TEXTAREA" ||
+          el.tagName === "SELECT"),
+      );
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (isTypingTarget(event.target) || event.ctrlKey || event.metaKey || event.altKey) return;
+      if (event.key === "?") {
+        event.preventDefault();
+        setHelpOpen(true);
+        return;
+      }
+      const key = event.key.toLowerCase();
+      const keyTools: Partial<Record<string, CanvasTool>> = {
+        d: "draw",
+        e: "move",
+        g: "gate",
+        b: "boundary",
+        u: "building",
+        p: "post",
+        i: "pillar",
+        t: "text",
+      };
+      const nextTool = keyTools[key];
+      if (!nextTool) return;
+      event.preventDefault();
+      engineRef.current?.setTool(nextTool);
+      handleToolChange(nextTool);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [handleToolChange]);
 
   const handleGatePlaced = useCallback(
     (
@@ -385,7 +430,11 @@ export function FenceLayoutCanvas({
         <canvas
           ref={canvasRef}
           className="block w-full touch-none bg-brand-bg"
-          style={{ height: expanded ? "700px" : "630px", cursor: "crosshair" }}
+          style={{
+            height: expanded ? "calc(100vh - 8.5rem)" : "630px",
+            minHeight: expanded ? "620px" : undefined,
+            cursor: "crosshair",
+          }}
         />
 
         {/* Hint overlay */}

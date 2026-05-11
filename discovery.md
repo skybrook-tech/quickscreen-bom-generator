@@ -1660,15 +1660,20 @@ Workflow finding:
 - The existing canonical payload already models gates as `gate_opening` segments for BOM scope, so a true nested `section.gates[]` migration would be risky without a matching engine/schema migration. The safe BC implementation stores section ownership on gate segments with `parent_section_id` while keeping the flat engine-compatible shape.
 
 Changes applied:
-- Added a persistent right-pane `Map` / `Plan` tab system. Draw entry opens Map; Describe and Select open Plan. Both views stay available after entry.
-- Added a schematic Plan view that renders runs as horizontal strips with section and gate blocks, including gate type and opening width.
+- Added a persistent right-pane `Map` / `BOM` tab system. Draw entry opens Map; Describe and Select open BOM. Both views stay available after entry.
+- Removed the schematic Plan tab from the right pane and made the existing BOM panel the peer view of the Map.
 - Removed the old sticky/open map overlay from the sidebar. The map canvas now lives in the right pane and remains mounted while switching tabs, which keeps drawings intact through BOM generation.
 - Added entry-method tracking to `CalculatorContext` for future analytics without using it to gate behaviour.
 - Added section-owned gate UX: each section can show linked gate chips, edit a gate from the chip, two-click remove the gate, and add a gate from the section settings panel.
 - Added a lightweight runtime migration that assigns legacy/unowned `gate_opening` segments to the preceding section when clear. Canvas-created gate openings now carry `parent_section_id` when a preceding panel exists.
+- Added expanded map mode that fills the workspace to the right of the sidebar, hides the tab chrome while expanded, and exits with Escape or the map toolbar collapse button.
+- Added installer-oriented run details below the map: each run lists defaults, lengths, panels, linked gates, and any section overrides. Clicking a run or section in that detail panel opens the matching item in the sidebar.
+- Added shared map shortcut metadata, visible shortcut badges, an updated help sheet, keyboard switching for Draw/Gate/Move/Site/Text tools, zoom keys, and spacebar temporary pan.
+- Existing posts and pillars are now rendered as grey site context markers so they read as non-product structures. BOM auto-adds for wall brackets/wrap saddles remain deferred until supplier SKUs and rules are confirmed.
 
 Deferred:
 - The brief asked for true `section.gates: Gate[]`; this pass intentionally preserved the flat canonical `gate_opening` model because the BOM engine, save shape, and canvas adapter already rely on it. `parent_section_id` gives the UI section ownership without breaking existing calculations.
+- Existing structures can be drawn and marked on the map, but they are not yet converted into BOM-affecting hardware because the v3 seed data does not define verified SKUs/rules for wall brackets, pillar wrap saddles, or equivalent termination accessories.
 - Side-by-side PR screenshots and auto-merge were not performed in this sandbox workflow; changes were committed for local/deploy-preview testing instead.
 
 Verification:

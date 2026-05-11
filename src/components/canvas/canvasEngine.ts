@@ -541,6 +541,7 @@ export function initCanvasEngine(
   let gridSize = config.gridSize;
   let allowedAngles: number[] = config.allowedAngles ?? [];
   let shiftDown = false;
+  let spacePanPreviousTool: Tool | null = null;
 
   /**
    * Compute the effective snap angle set for the current context.
@@ -1595,9 +1596,9 @@ export function initCanvasEngine(
       ctx.lineWidth = 2 / zoom;
       ctx.fillStyle =
         marker.markerType === "pillar"
-          ? "rgba(245,158,11,0.22)"
-          : "rgba(16,185,129,0.22)";
-      ctx.strokeStyle = marker.markerType === "pillar" ? "#f59e0b" : "#10b981";
+          ? "rgba(148,163,184,0.24)"
+          : "rgba(100,116,139,0.22)";
+      ctx.strokeStyle = marker.markerType === "pillar" ? "#94a3b8" : "#64748b";
       if (marker.markerType === "pillar") {
         ctx.beginPath();
         ctx.roundRect(marker.x - size / 2, marker.y - size / 2, size, size, 3 / zoom);
@@ -1708,9 +1709,6 @@ export function initCanvasEngine(
         const distBeforeM = (gap.tStart * seg.lengthMM) / 1000;
         // Distance after gate (gap end → p2)
         const distAfterM = ((1 - gap.tEnd) * seg.lengthMM) / 1000;
-        // Gate opening width
-        const gateWidthM = gap.widthMM / 1000;
-
         ctx.save();
         ctx.font = `${fs}px sans-serif`;
         ctx.fillStyle = COLOR.gate;
@@ -1728,14 +1726,28 @@ export function initCanvasEngine(
         }
         // Gate opening label (centred on the gap)
         const midGate = lerp(pStart, pEnd, 0.5);
-        ctx.fillStyle = COLOR.gate;
         ctx.font = `bold ${fs}px sans-serif`;
-        ctx.fillText(
-          `${Math.round(gap.widthMM)}mm`,
-          midGate.x + perpX * offset,
-          midGate.y + perpY * offset,
+        const gateText = `${Math.round(gap.widthMM)}mm gate`;
+        const gateX = midGate.x + perpX * (offset * 2.2);
+        const gateY = midGate.y + perpY * (offset * 2.2);
+        const gateTextWidth = ctx.measureText(gateText).width;
+        const padX = 5 / zoom;
+        const padY = 3 / zoom;
+        ctx.fillStyle = "rgba(15,23,42,0.9)";
+        ctx.strokeStyle = COLOR.gate;
+        ctx.lineWidth = 1 / zoom;
+        ctx.beginPath();
+        ctx.roundRect(
+          gateX - gateTextWidth / 2 - padX,
+          gateY - fs / 2 - padY,
+          gateTextWidth + padX * 2,
+          fs + padY * 2,
+          4 / zoom,
         );
-        void gateWidthM;
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = COLOR.gate;
+        ctx.fillText(gateText, gateX, gateY);
         ctx.font = `${fs}px sans-serif`;
 
         // Mid-after label
@@ -2251,6 +2263,7 @@ export function initCanvasEngine(
           pendingGatePlacement.gateType,
           pendingGatePlacement.slidingSide,
         );
+        setTool("move");
       }
       return;
     }
@@ -2588,9 +2601,95 @@ export function initCanvasEngine(
     e.preventDefault();
   }
 
+  function isTypingTarget(target: EventTarget | null) {
+    const el = target as HTMLElement | null;
+    if (!el) return false;
+    return (
+      el.isContentEditable ||
+      el.tagName === "INPUT" ||
+      el.tagName === "TEXTAREA" ||
+      el.tagName === "SELECT"
+    );
+  }
+
+  function zoomAtScreenPoint(screen: Point, factor: number) {
+    const newZoom = Math.max(0.1, Math.min(10, zoom * factor));
+    pan = {
+      x: screen.x - (screen.x - pan.x) * (newZoom / zoom),
+      y: screen.y - (screen.y - pan.y) * (newZoom / zoom),
+    };
+    zoom = newZoom;
+    scheduleRedraw();
+  }
+
   function onKeyDown(e: KeyboardEvent) {
+    if (isTypingTarget(e.target)) return;
     if (editingLabel) return;
     if (e.key === 'Shift') { shiftDown = true; scheduleRedraw(); }
+    if (e.key === " " && !e.repeat) {
+      e.preventDefault();
+      spacePanPreviousTool = tool;
+      setTool("move");
+      return;
+    }
+    if (!e.ctrlKey && !e.metaKey && !e.altKey) {
+      const key = e.key.toLowerCase();
+      if (key === "d") {
+        e.preventDefault();
+        setTool("draw");
+        return;
+      }
+      if (key === "e") {
+        e.preventDefault();
+        setTool("move");
+        return;
+      }
+      if (key === "g") {
+        e.preventDefault();
+        setTool("gate");
+        return;
+      }
+      if (key === "b") {
+        e.preventDefault();
+        setTool("boundary");
+        return;
+      }
+      if (key === "u") {
+        e.preventDefault();
+        setTool("building");
+        return;
+      }
+      if (key === "p") {
+        e.preventDefault();
+        setTool("post");
+        return;
+      }
+      if (key === "i") {
+        e.preventDefault();
+        setTool("pillar");
+        return;
+      }
+      if (key === "t") {
+        e.preventDefault();
+        setTool("text");
+        return;
+      }
+      if (e.key === "+" || e.key === "=") {
+        e.preventDefault();
+        zoomAtScreenPoint({ x: canvas.width / 2, y: canvas.height / 2 }, 1.15);
+        return;
+      }
+      if (e.key === "-" || e.key === "_") {
+        e.preventDefault();
+        zoomAtScreenPoint({ x: canvas.width / 2, y: canvas.height / 2 }, 0.85);
+        return;
+      }
+      if (e.key === "0") {
+        e.preventDefault();
+        fitToContent();
+        return;
+      }
+    }
     if (e.key === "Enter" && tool === "draw") {
       if (activeRunIdx >= 0 && !runs[activeRunIdx]?.finished) {
         stopChain(false); // keyboard — no extra mousedown point to pop
@@ -2618,7 +2717,12 @@ export function initCanvasEngine(
   }
 
   function onKeyUp(e: KeyboardEvent) {
+    if (isTypingTarget(e.target)) return;
     if (e.key === 'Shift') { shiftDown = false; scheduleRedraw(); }
+    if (e.key === " " && spacePanPreviousTool) {
+      setTool(spacePanPreviousTool);
+      spacePanPreviousTool = null;
+    }
   }
 
   function onResize() {
