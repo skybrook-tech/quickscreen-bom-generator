@@ -431,11 +431,21 @@ export function FenceLayoutCanvas({
           ref={canvasRef}
           className="block w-full touch-none bg-brand-bg"
           style={{
-            height: expanded ? "calc(100vh - 8.5rem)" : "630px",
-            minHeight: expanded ? "620px" : undefined,
+            height: expanded ? "calc(100vh - 3.75rem)" : "630px",
             cursor: "crosshair",
           }}
         />
+        {expanded && (
+          <button
+            type="button"
+            onClick={() => setExpanded(false)}
+            className="absolute right-3 top-3 z-20 rounded-lg border border-white/40 bg-brand-bg/90 px-3 py-2 text-xs font-black text-white shadow-2xl backdrop-blur transition-colors hover:bg-brand-primary"
+            title="Minimize map"
+            aria-label="Minimize map"
+          >
+            Minimize map
+          </button>
+        )}
 
         {/* Hint overlay */}
         <div className="hidden">
@@ -446,7 +456,7 @@ export function FenceLayoutCanvas({
           {activeTool === "move" &&
             "Drag nodes or gates to reposition · Click a label to edit length"}
           {activeTool === "boundary" &&
-            "Draw non-product context lines (existing fences, walls, property lines) — not included in BOM"}
+            "Draw non-product existing wall or boundary lines - not included in BOM"}
         </div>
 
         {/* Zoom hint */}
@@ -455,9 +465,9 @@ export function FenceLayoutCanvas({
         </div>
         {boundaryHintVisible && (
           <div className="absolute left-4 top-4 max-w-xs rounded-lg border border-brand-warning/40 bg-brand-card/95 p-3 text-xs text-brand-text shadow-md">
-            <div className="font-semibold text-brand-warning">Boundary tool</div>
+            <div className="font-semibold text-brand-warning">Existing wall tool</div>
             <p className="mt-1 text-brand-muted">
-              Draw existing fences, walls, or property lines for context. These
+              Draw existing walls, fences, or property lines for context. These
               do not appear in your BOM.
             </p>
             <button

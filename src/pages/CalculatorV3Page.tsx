@@ -5,7 +5,6 @@ import {
 } from "../context/CalculatorContext";
 import { FenceConfigProvider } from "../context/FenceConfigContext";
 import { GateProvider } from "../context/GateContext";
-import { ProductSelectV3 } from "../components/calculator-v3/ProductSelectV3";
 import { RunListV3 } from "../components/calculator-v3/RunListV3";
 import { LayoutCanvasV3 } from "../components/calculator-v3/LayoutCanvasV3";
 import { RightPaneTabs, type RightPaneView } from "../components/calculator-v3/RightPaneTabs";
@@ -14,7 +13,6 @@ import { SuggestedAccessoriesPanel } from "../components/calculator-v3/Suggested
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
 import { DescribeFenceBox } from "../components/calculator/DescribeFenceBox";
-import { EntryChoiceCard } from "../components/calculator/EntryChoiceCard";
 import { JobNameEditor } from "../components/calculator/JobNameEditor";
 import { GatePositionModal } from "../components/calculator/GatePositionModal";
 import { ConfirmButton } from "../components/shared/ConfirmButton";
@@ -24,7 +22,6 @@ import { priceForSku } from "../lib/localBomCalculator";
 import { initialVariablesForSystem, maxPanelWidthForSystem } from "../lib/productOptionRules";
 import { GATE_SEGMENT_STUB_KEYS } from "../lib/segmentTermination";
 import { calcRunStats } from "../lib/runStats";
-import { DRAW_FENCE_LABEL } from "../lib/uiCopy";
 import {
   defaultGateBuildForMovement,
   defaultGateVariables,
@@ -228,6 +225,15 @@ function createInitialPayload(systemType = "QSHS"): CanonicalPayload {
   };
 }
 
+function createEmptyPayload(systemType = "QSHS"): CanonicalPayload {
+  return {
+    productCode: systemType,
+    schemaVersion: "v1",
+    variables: initialVariablesForSystem(systemType),
+    runs: [],
+  };
+}
+
 type PendingParsedGate = NonNullable<NonNullable<CanonicalPayload["job"]>["pendingGates"]>[number];
 
 function productCodeFromParsedSystem(systemType: ParsedSystemType | undefined) {
@@ -311,8 +317,6 @@ function CalculatorV3Content() {
   const [rightPaneView, setRightPaneView] = useState<RightPaneView>("bom");
   const [mapExpanded, setMapExpanded] = useState(false);
   const [introDismissed, setIntroDismissed] = useState(false);
-  const [entryCardsOpen, setEntryCardsOpen] = useState(true);
-  const [entryMode, setEntryMode] = useState<"describe" | "select" | null>(null);
   const [autoOpenFirstSectionRunId, setAutoOpenFirstSectionRunId] = useState<string | null>(null);
   const [includeMapInBomPrint, setIncludeMapInBomPrint] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -383,7 +387,13 @@ function CalculatorV3Content() {
   }
 
   function startWorkspaceFromLanding() {
+    if (!payload) {
+      dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
+      dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "select" });
+    }
     setIntroDismissed(true);
+    setRightPaneView("bom");
+    setMapExpanded(false);
   }
 
   function handleApplyDescription(result: ParseResult) {
@@ -472,24 +482,11 @@ function CalculatorV3Content() {
     dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "describe" });
     dispatch({ type: "CLEAR_BOM_RESULT" });
     setIntroDismissed(true);
-    setEntryCardsOpen(false);
-    setEntryMode(null);
     setAutoOpenFirstSectionRunId(nextRun.runId);
     setRightPaneView("bom");
     setMapExpanded(false);
     setMobileTab("run");
     toast.success("Description applied to the calculator");
-  }
-
-  function handleProductSelected(nextPayload: CanonicalPayload) {
-    dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "select" });
-    setEntryCardsOpen(false);
-    setEntryMode(null);
-    setIntroDismissed(true);
-    setAutoOpenFirstSectionRunId(nextPayload.runs[0]?.runId ?? null);
-    setRightPaneView("bom");
-    setMapExpanded(false);
-    setMobileTab("run");
   }
 
   function handleConfirmGatePosition(gate: PendingParsedGate, distanceFromStartMm: number) {
@@ -958,8 +955,7 @@ function CalculatorV3Content() {
     setLineEdits({});
     setActiveBomSummary(null);
     setJobName("");
-    setEntryCardsOpen(true);
-    setEntryMode(null);
+    dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
     setIntroDismissed(true);
     setRightPaneView("bom");
     setMapExpanded(false);
@@ -1214,17 +1210,17 @@ function CalculatorV3Content() {
       ) : (
         <>
           <div
-            className="relative flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row"
+            className={`${mapExpanded ? "fixed inset-0 z-50" : "relative"} flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row`}
           >
             <aside
-              className={`relative w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${mobileLayout && mobileTab !== "run" ? "hidden" : "flex"
+              className={`relative w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${mapExpanded || (mobileLayout && mobileTab !== "run") ? "hidden" : "flex"
                 } ${bomResultForTabs ? "max-h-[32vh]" : "min-h-[46vh]"
                 }`}
               style={mobileLayout ? undefined : { width: runPaneWidth }}
             >
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="flex-1 space-y-4 overflow-y-auto p-3 sm:p-5">
-                  <section className="sticky top-0 z-30 -mx-3 border-b border-brand-border/70 bg-brand-card/95 px-3 pb-3 pt-3 shadow-sm backdrop-blur sm:-mx-5 sm:px-5">
+                  <section className="-mx-3 border-b border-brand-border/70 bg-brand-card/95 px-3 pb-3 pt-3 shadow-sm sm:-mx-5 sm:px-5">
                     <div className="mb-3 flex items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <JobNameEditor
@@ -1235,76 +1231,13 @@ function CalculatorV3Content() {
                         />
                       </div>
                     </div>
+                    <DescribeFenceBox
+                      title="Describe your fence"
+                      compact
+                      initialDescription={payload?.job?.description ?? ""}
+                      onApply={handleApplyDescription}
+                    />
                   </section>
-                  <section>
-                    {!payload && (
-                      <div className="space-y-3">
-                        {entryCardsOpen && !entryMode && (
-                          <>
-                            <EntryChoiceCard
-                              number={1}
-                              title={DRAW_FENCE_LABEL}
-                              description="Open the layout map and sketch the run from above."
-                              variant="draw"
-                              onClick={() => {
-                                const nextPayload = createInitialPayload("QSHS");
-                                dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
-                                dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "draw" });
-                                setIntroDismissed(true);
-                                setEntryCardsOpen(false);
-                                setEntryMode(null);
-                                setAutoOpenFirstSectionRunId(nextPayload.runs[0]?.runId ?? null);
-                                setRightPaneView("map");
-                                if (mobileLayout) setMobileTab("map");
-                              }}
-                            />
-                            <EntryChoiceCard
-                              number={2}
-                              title="Describe your fence"
-                              description="Paste or dictate the job details and preview what the app understood."
-                              variant="describe"
-                              onClick={() => {
-                                setEntryMode("describe");
-                                setEntryCardsOpen(false);
-                              }}
-                            />
-                            <EntryChoiceCard
-                              number={3}
-                              title="Select your fence"
-                              description="Choose QSHS, VS, XPL, or BAY-G and edit section settings."
-                              variant="select"
-                              onClick={() => {
-                                setEntryMode("select");
-                                setEntryCardsOpen(false);
-                              }}
-                            />
-                          </>
-                        )}
-                        {!entryCardsOpen && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEntryCardsOpen(true);
-                              setEntryMode(null);
-                            }}
-                            className="text-xs font-black text-brand-muted transition-colors hover:text-brand-primary"
-                          >
-                            Change entry method ▸
-                          </button>
-                        )}
-                        {entryMode === "describe" && (
-                          <DescribeFenceBox
-                            title="Describe your fence"
-                            onApply={handleApplyDescription}
-                          />
-                        )}
-                        {entryMode === "select" && (
-                          <ProductSelectV3 onProductSelected={handleProductSelected} />
-                        )}
-                      </div>
-                    )}
-                  </section>
-
                   {payload && (
                     <>
                       <hr className="border-brand-border/60" />
@@ -1455,10 +1388,10 @@ function CalculatorV3Content() {
 
             <main
               data-print-bom-main
-              className={`min-h-0 min-w-0 flex-1 overflow-y-auto ${mapExpanded ? "p-2 pb-24" : "p-3 pb-24 sm:p-5 lg:p-8"} ${mobileLayout && mobileTab === "run" ? "hidden" : ""
+              className={`min-h-0 min-w-0 flex-1 overflow-y-auto ${mapExpanded ? "p-0" : "p-3 pb-24 sm:p-5 lg:p-8"} ${mobileLayout && mobileTab === "run" ? "hidden" : ""
                 }`}
             >
-              <div className={`${mapExpanded ? "mx-0 max-w-none space-y-2" : "mx-auto max-w-6xl space-y-4 sm:space-y-5"}`}>
+              <div className={`${mapExpanded ? "mx-0 max-w-none space-y-0" : "w-full space-y-4 sm:space-y-5"}`}>
                 <section className={`overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"}`}>
                   {!mapExpanded && (
                     <RightPaneTabs
@@ -1664,7 +1597,7 @@ function CalculatorV3Content() {
             </main>
 
           </div>
-          {mobileLayout && (
+          {mobileLayout && !mapExpanded && (
             <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-brand-border bg-brand-card/95 p-2 shadow-2xl backdrop-blur md:hidden">
               {([
                 ["run", "Run"],

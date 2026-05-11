@@ -1679,3 +1679,24 @@ Deferred:
 Verification:
 - `npm run build` passed.
 - Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+### May 12, 2026 - Brief BC reversal completion
+
+Workflow finding:
+- The later BC brief reversed three pieces of the earlier BC implementation: the AY three-card entry flow needed to be removed, expanded map needed to cover the sidebar too, and gates needed to be listed in a run-bottom group rather than inline under each section.
+
+Changes applied:
+- Deleted `EntryChoiceCard.tsx` and removed the sidebar Draw/Describe/Select card flow. Landing now creates an empty calculator payload and opens the BOM tab; the sidebar starts with the job name, then a compact `DescribeFenceBox`, then the run list/Add run controls.
+- Kept Describe Your Fence as the same parser/preview/apply flow, but anchored it directly below the job name. The collapsed state now shows a chevron, text icon, and the first part of the last description.
+- Changed map expanded mode from "right pane only" to a fixed full-viewport workspace. The sidebar, tabs, BOM panel, mobile nav, and run details are hidden while expanded; Escape or the high-contrast Minimize button returns to docked mode.
+- Moved Add Gate into each section header next to the section code chip. Gates remain stored as flat `gate_opening` segments with `parent_section_id` for engine compatibility, but render in a `Gates` group at the bottom of each run.
+- Removed inline gate chips under section cards. The bottom Gates group labels each gate by parent section, type, and width; clicking a chip opens the gate settings panel and the delete control uses the existing two-click confirm pattern.
+
+Verification:
+- `npm run test:describe-fence` passed all TC-01 through TC-12 parser corpus cases.
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+Deferred:
+- BC.7 BOM-affecting existing-structure rules remain deferred until verified Glass Outlet SKUs/rules are seeded for wall brackets, pillar/post terminations, and related fasteners.
+- The brief's true `section.gates[]` data-shape checkbox remains intentionally implemented as `gate_opening` plus `parent_section_id`; this keeps the current v3 BOM engine/save/canvas adapter contract intact while delivering section-owned UI behavior.

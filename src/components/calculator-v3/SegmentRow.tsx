@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import { DoorOpen, Plus, SlidersHorizontal, X } from "lucide-react";
+import { Plus, SlidersHorizontal, X } from "lucide-react";
 import { ConfirmButton } from "../shared/ConfirmButton";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
@@ -40,10 +40,7 @@ interface Props {
   open: boolean;
   onToggle: () => void;
   displayLabel?: string;
-  linkedGates?: CanonicalSegment[];
   onAddGate?: (sectionId: string) => void;
-  onEditGate?: (gateId: string) => void;
-  onRemoveGate?: (gateId: string) => void;
   showRunDefaultsTeaching?: boolean;
   onDismissRunDefaultsTeaching?: () => void;
 }
@@ -111,10 +108,7 @@ export function SegmentRow({
   open,
   onToggle,
   displayLabel,
-  linkedGates = [],
   onAddGate,
-  onEditGate,
-  onRemoveGate,
   showRunDefaultsTeaching = false,
   onDismissRunDefaultsTeaching,
 }: Props) {
@@ -499,17 +493,6 @@ export function SegmentRow({
     });
   }
 
-  function gateChipLabel(gateSegment: CanonicalSegment) {
-    const movement = gateMovementOrDefault(gateSegment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
-    const label =
-      movement === "double_swing"
-        ? "Double gate"
-        : movement === "sliding"
-          ? "Sliding gate"
-          : "Pedestrian gate";
-    return `${label} · ${Math.round(Number(gateSegment.segmentWidthMm ?? 0))}mm`;
-  }
-
   function setMapHover(value: string | null) {
     if (typeof window === "undefined") return;
     window.dispatchEvent(
@@ -539,7 +522,7 @@ export function SegmentRow({
         <div className="p-2">
 
           <div className="min-w-0 space-y-3 w-full">
-            <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto] items-center gap-2">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2">
               <p className="min-w-0 text-left text-lg font-black text-brand-text">
                 {titleLabel}
               </p>
@@ -571,6 +554,21 @@ export function SegmentRow({
                   </span>
                 </button>
               </div>
+              {!gate && !isBayg && onAddGate && (
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onAddGate(seg.segmentId);
+                  }}
+                  className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-brand-border px-2 text-xs font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+                  title="Add gate to this section"
+                  aria-label="Add gate to this section"
+                >
+                  <Plus size={15} />
+                  Gate
+                </button>
+              )}
               <div className="flex items-center justify-center gap-1 ml-auto">
                 <button
                   type="button"
@@ -614,38 +612,6 @@ export function SegmentRow({
                 />
               ))}
             </div>
-            {!gate && linkedGates.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                {linkedGates.map((gateSegment) => (
-                  <span
-                    key={gateSegment.segmentId}
-                    className="inline-flex items-center gap-1 rounded-full border border-brand-warning/40 bg-brand-warning/10 px-2 py-1 text-[11px] font-black text-brand-warning"
-                  >
-                    <button
-                      type="button"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onEditGate?.(gateSegment.segmentId);
-                      }}
-                      className="inline-flex items-center gap-1 hover:text-brand-primary"
-                      title="Edit gate settings"
-                    >
-                      <DoorOpen size={13} />
-                      {gateChipLabel(gateSegment)}
-                    </button>
-                    <ConfirmButton
-                      onConfirm={() => onRemoveGate?.(gateSegment.segmentId)}
-                      confirmLabel={<X size={12} strokeWidth={3} />}
-                      className="inline-flex h-5 w-5 items-center justify-center rounded-full text-brand-danger transition-colors hover:bg-brand-danger/10"
-                      title="Remove gate"
-                      aria-label="Remove gate"
-                    >
-                      <X size={12} strokeWidth={3} />
-                    </ConfirmButton>
-                  </span>
-                ))}
-              </div>
-            )}
 
           </div>
 
@@ -785,16 +751,6 @@ export function SegmentRow({
               <GateSegmentDetails runId={runId} seg={seg} />
             ) : (
               <FenceSegmentDetails runId={runId} seg={seg} />
-            )}
-            {!gate && !isBayg && onAddGate && (
-              <button
-                type="button"
-                onClick={() => onAddGate(seg.segmentId)}
-                className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-black text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-              >
-                <Plus size={16} />
-                Add Gate
-              </button>
             )}
           </div>
         )}

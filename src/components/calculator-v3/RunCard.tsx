@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Plus, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
-import { defaultGateVariables } from "../../lib/gateOptionRules";
+import { defaultGateVariables, gateMovementOrDefault } from "../../lib/gateOptionRules";
 import {
   clampPostSpacing,
   maxPanelWidthForSystem,
@@ -95,6 +95,9 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   const slatSize = Number(runVariables.slat_size_mm ?? 65);
   const slatGap = Number(runVariables.slat_gap_mm ?? 5);
   const isBayg = run.productCode === "BAYG";
+  const displaySegments = useMemo(() => assignGateParents(run.segments), [run.segments]);
+  const fenceSections = displaySegments.filter((segment) => segment.segmentKind !== "gate_opening");
+  const gateSegments = displaySegments.filter((segment) => segment.segmentKind === "gate_opening");
 
   useEffect(
     () => () => {
@@ -198,12 +201,21 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
     setExpandedId(segmentId);
   }
 
-  function gatesForSection(sectionId: string) {
-    return assignGateParents(run.segments).filter(
-      (segment) =>
-        segment.segmentKind === "gate_opening" &&
-        segment.variables?.[PARENT_SECTION_KEY] === sectionId,
-    );
+  function sectionNumberForGate(gate: CanonicalSegment) {
+    const parentId = gate.variables?.[PARENT_SECTION_KEY];
+    const index = fenceSections.findIndex((section) => section.segmentId === parentId);
+    return index >= 0 ? index + 1 : 1;
+  }
+
+  function gateChipLabel(gate: CanonicalSegment) {
+    const movement = gateMovementOrDefault(gate.variables?.gate_movement);
+    const label =
+      movement === "double_swing"
+        ? "Double gate"
+        : movement === "sliding"
+          ? "Sliding gate"
+          : "Pedestrian gate";
+    return `S${sectionNumberForGate(gate)} - ${label} - ${Math.round(Number(gate.segmentWidthMm ?? 0))}mm`;
   }
 
   return (
@@ -262,10 +274,8 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           )}
 
           <div className="px-4 space-y-2">
-            {run.segments
-              .filter((segment) => segment.segmentKind !== "gate_opening")
+            {fenceSections
               .map((seg, segIdx) => {
-                const linkedGates = gatesForSection(seg.segmentId);
                 return (
                   <div key={seg.segmentId} data-segment-id={seg.segmentId} className="space-y-2">
                     <SegmentRow
@@ -274,12 +284,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
                       segIdx={segIdx}
                       runIdx={runIdx}
                       displayLabel={`R${runIdx + 1}S${segIdx + 1}`}
-                      linkedGates={linkedGates}
                       onAddGate={(sectionId) => addGateSegment(sectionId)}
-                      onEditGate={(gateId) => setExpandedId(gateId)}
-                      onRemoveGate={(gateId) =>
-                        dispatch({ type: "REMOVE_SEGMENT", runId: run.runId, segmentId: gateId })
-                      }
                       open={expandedId === seg.segmentId}
                       showRunDefaultsTeaching={
                         expandedId === seg.segmentId &&
@@ -298,25 +303,62 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
                         })
                       }
                     />
-                    {linkedGates.map((gateSeg, gateIdx) =>
-                      expandedId === gateSeg.segmentId ? (
-                        <div key={gateSeg.segmentId} data-segment-id={gateSeg.segmentId} className="ml-4 border-l-2 border-brand-warning/40 pl-3">
-                          <SegmentRow
-                            runId={run.runId}
-                            seg={gateSeg}
-                            segIdx={gateIdx}
-                            runIdx={runIdx}
-                            displayLabel={`R${runIdx + 1}G${run.segments.filter((segment) => segment.segmentKind === "gate_opening").findIndex((item) => item.segmentId === gateSeg.segmentId) + 1}`}
-                            open
-                            onToggle={() => setExpandedId(null)}
-                          />
-                        </div>
-                      ) : null,
-                    )}
                   </div>
                 );
               })}
           </div>
+
+          {gateSegments.length > 0 && (
+            <section className="mx-4 mt-3 rounded-xl border border-brand-warning/35 bg-brand-warning/10 p-3">
+              <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-brand-warning">
+                Gates
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {gateSegments.map((gateSeg) => (
+                  <div
+                    key={gateSeg.segmentId}
+                    data-segment-id={gateSeg.segmentId}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-brand-warning/40 bg-brand-card px-2.5 py-1 text-xs font-black text-brand-warning"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setExpandedId(gateSeg.segmentId)}
+                      className="hover:text-brand-primary"
+                      title="Edit gate settings"
+                    >
+                      {gateChipLabel(gateSeg)}
+                    </button>
+                    <ConfirmButton
+                      onConfirm={() =>
+                        dispatch({ type: "REMOVE_SEGMENT", runId: run.runId, segmentId: gateSeg.segmentId })
+                      }
+                      confirmLabel={<Trash2 size={12} />}
+                      className="inline-flex h-5 w-5 items-center justify-center rounded-full text-brand-danger transition-colors hover:bg-brand-danger/10"
+                      title="Remove gate"
+                      aria-label="Remove gate"
+                    >
+                      <Trash2 size={12} />
+                    </ConfirmButton>
+                  </div>
+                ))}
+              </div>
+              {gateSegments.map((gateSeg, gateIdx) =>
+                expandedId === gateSeg.segmentId ? (
+                  <div key={`${gateSeg.segmentId}-editor`} className="mt-3 rounded-xl border border-brand-warning/40 bg-brand-card p-2" data-segment-id={gateSeg.segmentId}>
+                    <SegmentRow
+                      runId={run.runId}
+                      seg={gateSeg}
+                      segIdx={gateIdx}
+                      runIdx={runIdx}
+                      displayLabel={`R${runIdx + 1}G${gateIdx + 1}`}
+                      open
+                      onToggle={() => setExpandedId(null)}
+                    />
+                  </div>
+                ) : null,
+              )}
+            </section>
+          )}
 
           <div className="px-4 mt-3 flex flex-wrap justify-end gap-2">
             <Button onClick={addFenceSegment} icon={Plus} variant="ghost" size="small">

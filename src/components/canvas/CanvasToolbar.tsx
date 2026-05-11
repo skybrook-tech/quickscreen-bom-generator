@@ -111,11 +111,11 @@ export function CanvasToolbar({
         <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">Site</span>
       <button
         type="button"
-        title={`Draw a non-product boundary line (existing fence, wall, property line) (${TOOL_HOTKEYS.boundary})`}
+        title={`Draw an existing wall or boundary line (${TOOL_HOTKEYS.boundary})`}
         className={btnCls(activeTool === "boundary")}
         onClick={() => handleTool("boundary")}
       >
-        <Minus size={16} /> Boundary {keyBadge(TOOL_HOTKEYS.boundary)}
+        <Minus size={16} /> Existing wall {keyBadge(TOOL_HOTKEYS.boundary)}
       </button>
       <button
         type="button"

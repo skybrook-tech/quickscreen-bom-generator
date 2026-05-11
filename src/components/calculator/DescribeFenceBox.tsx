@@ -1,4 +1,4 @@
-import { Mic, MicOff } from "lucide-react";
+import { ChevronDown, MessageSquareText, Mic, MicOff } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { parseDescription, type ParseResult } from "../../lib/describeFenceParser";
@@ -61,13 +61,15 @@ export function DescribeFenceBox({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="w-full rounded-2xl border border-brand-border bg-brand-card px-3 py-2 text-left text-xs font-semibold text-brand-muted hover:border-brand-primary hover:text-brand-primary"
+        className="flex w-full items-center gap-2 rounded-2xl border border-brand-border bg-brand-card px-3 py-2 text-left text-xs font-semibold text-brand-muted hover:border-brand-primary hover:text-brand-primary"
       >
+        <ChevronDown size={15} className="-rotate-90" />
+        <MessageSquareText size={15} />
         {initialDescription ? (
-          <>
-            Original description: {initialDescription.slice(0, 60)}{initialDescription.length > 60 ? "..." : ""}{" "}
+          <span className="min-w-0 flex-1 truncate">
+            {initialDescription.slice(0, 40)}{initialDescription.length > 40 ? "..." : ""}{" "}
             <span className="font-black">View full</span>
-          </>
+          </span>
         ) : (
           <span className="font-black">{title}</span>
         )}

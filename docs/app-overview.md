@@ -41,15 +41,15 @@ Older docs may mention `/fence-calculator`; in this branch the locally tested ro
 
 ## Main Data Flow
 
-1. `ProductSelectV3` chooses the fence product and creates the first canonical payload.
-2. `CalculatorContext` stores the canonical payload and the latest BOM result.
-3. `RunListV3`, `RunCard`, and `SegmentRow` edit runs, segments, and gate-opening segments.
+1. The landing screen captures a job name, then `CalculatorV3Page` creates an empty canonical payload and opens the calculator on the BOM tab.
+2. The sidebar `DescribeFenceBox`, manual Add run flow, and canvas map all write to the same `CalculatorContext` payload.
+3. `RunListV3`, `RunCard`, and `SegmentRow` edit runs, sections, and section-owned gate-opening segments.
 4. `LayoutCanvasV3` and `FenceLayoutCanvas` allow drawing and editing map geometry.
 5. `canonicalAdapter.ts` converts canvas layouts into the canonical payload shape and back again.
 6. `useBomCalculator` sends the payload to the Supabase `bom-calculator` edge function when possible.
 7. If Supabase or auth is unavailable, `useBomCalculator` uses `calculateLocalBom`.
-8. `BOMResultTabs` renders per-run, gate, and all-item BOM views.
-9. `CalculatorV3Page` handles job-level actions: generate BOM, clear BOM, print/export, save job, and layout/map drawer state.
+8. `BOMResultTabs` renders per-run, gate, and all-item BOM views inside the BOM tab.
+9. `CalculatorV3Page` handles job-level actions: generate BOM, clear BOM, print/export, save job, and Map/BOM tab state.
 
 ## Canonical Payload
 
@@ -79,10 +79,8 @@ Key shape:
 ### Product And Run Setup
 
 - `src/components/calculator-v3/ProductSelectV3.tsx`
-  - Loads active fence products from Supabase `products`.
-  - Falls back to `localFenceProducts`.
-  - Starts a new payload with one run and one first segment.
-  - Current first segment default length is `0m`, so the user enters the real measured length.
+  - Legacy searchable product selector retained for reuse, but no longer shown as a three-card entry path.
+  - Loads active fence products from Supabase `products` and falls back to `localFenceProducts`.
 
 - `src/components/calculator-v3/RunListV3.tsx`
   - Renders all runs.
