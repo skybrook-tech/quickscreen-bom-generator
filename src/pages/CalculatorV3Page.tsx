@@ -727,7 +727,7 @@ function CalculatorV3Content() {
           ? filterLinesForScope(baseAllItems, (source) => source.scopeKind === "gate")
           : runScopedGateItems.length > 0
             ? runScopedGateItems
-          : ((lastBom.gateItems as BOMLineItem[]) ?? []);
+            : ((lastBom.gateItems as BOMLineItem[]) ?? []);
       const gateItems = applyLineEdits(aggregateBomItems(rawGateItems));
       const allItems = aggregateBomItems([...baseAllItems, ...extraLineItems]);
       const baseTotal = roundMoney(
@@ -1119,7 +1119,7 @@ function CalculatorV3Content() {
     ].filter(Boolean).join(" - ");
   }) ?? [];
   const summaryText = payload ? runBomSummaries.join(" | ") : cleanJobName;
-  const saveJobLabel = jobName.trim() ? `Save ${jobName.trim()}` : "Save Job";
+  const saveJobLabel = "Save Job";
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
@@ -1148,8 +1148,8 @@ function CalculatorV3Content() {
             <div className="space-y-8">
               <GlassOutletLogo
                 className="justify-center text-brand-primary"
-                iconClassName="h-20 w-24 sm:h-24 sm:w-28 lg:h-28 lg:w-32"
-                textClassName="text-5xl sm:text-7xl lg:text-8xl"
+                iconClassName="h-20 w-24 sm:h-24 sm:w-24 lg:h-28 lg:w-24"
+                textClassName="text-5xl sm:text-5xl lg:text-5xl"
               />
               <form
                 className="mx-auto w-full max-w-xl rounded-3xl border border-brand-border/70 bg-brand-card/80 p-5 text-left shadow-2xl backdrop-blur"
@@ -1164,6 +1164,7 @@ function CalculatorV3Content() {
                   autoFocus
                   inputClassName="rounded-2xl px-4 py-3 text-center text-xl font-semibold"
                   textClassName="mx-auto text-center text-xl font-semibold"
+                  editOnly
                 />
                 <button
                   type="submit"
@@ -1472,7 +1473,7 @@ function CalculatorV3Content() {
                       <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
                         {activeBomSummary?.label ?? "Auto quantity breaks"}
                       </p>
-                      <p className="font-mono text-4xl font-black tabular-nums text-brand-primary sm:text-5xl">
+                      <p className="font-mono text-3xl font-black tabular-nums text-brand-primary sm:text-3xl">
                         ${formatMoney(animatedGrandTotal)}
                       </p>
                     </div>

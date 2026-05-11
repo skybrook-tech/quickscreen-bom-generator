@@ -7,6 +7,7 @@ interface JobNameEditorProps {
   className?: string;
   inputClassName?: string;
   textClassName?: string;
+  editOnly?: boolean;
 }
 
 export function JobNameEditor({
@@ -16,13 +17,14 @@ export function JobNameEditor({
   className = "",
   inputClassName = "",
   textClassName = "",
+  editOnly = false,
 }: JobNameEditorProps) {
   const [editing, setEditing] = useState(() => !value.trim());
   const inputRef = useRef<HTMLInputElement | null>(null);
   const committedName = value.trim();
 
   useEffect(() => {
-    if (!committedName) setEditing(true);
+    if (!committedName && !editOnly) setEditing(true);
   }, [committedName]);
 
   useEffect(() => {
@@ -33,7 +35,7 @@ export function JobNameEditor({
   }, [editing]);
 
   function commit() {
-    if (committedName) setEditing(false);
+    if (committedName && !editOnly) setEditing(false);
   }
 
   if (!editing && committedName) {
