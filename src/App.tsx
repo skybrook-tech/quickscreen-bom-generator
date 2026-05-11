@@ -31,6 +31,10 @@ const router = createBrowserRouter([
     element: <CalculatorV3Page />,
   },
   {
+    path: "/fence-calculator",
+    element: <CalculatorV3Page />,
+  },
+  {
     path: "/quotes",
     element: (
       <AuthGuard>
