@@ -385,7 +385,7 @@ export function FenceLayoutCanvas({
         <canvas
           ref={canvasRef}
           className="block w-full touch-none bg-brand-bg"
-          style={{ height: expanded ? "700px" : "504px", cursor: "crosshair" }}
+          style={{ height: expanded ? "700px" : "630px", cursor: "crosshair" }}
         />
 
         {/* Hint overlay */}

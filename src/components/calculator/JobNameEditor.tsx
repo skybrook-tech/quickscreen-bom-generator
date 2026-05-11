@@ -7,6 +7,7 @@ interface JobNameEditorProps {
   className?: string;
   inputClassName?: string;
   textClassName?: string;
+  onCommit?: (value: string) => void;
 }
 
 export function JobNameEditor({
@@ -16,6 +17,7 @@ export function JobNameEditor({
   className = "",
   inputClassName = "",
   textClassName = "",
+  onCommit,
 }: JobNameEditorProps) {
   const [editing, setEditing] = useState(() => !value.trim());
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -33,7 +35,9 @@ export function JobNameEditor({
   }, [editing]);
 
   function commit() {
-    if (committedName) setEditing(false);
+    if (!committedName) return;
+    setEditing(false);
+    onCommit?.(committedName);
   }
 
   if (!editing && committedName) {
@@ -59,6 +63,7 @@ export function JobNameEditor({
       onBlur={commit}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === "Tab") {
+          event.preventDefault();
           commit();
           return;
         }

@@ -29,20 +29,17 @@ const SYSTEMS: ParsedSystemType[] = ["QSHS", "VS", "XPL", "BAYG", "SLIDING", "PE
 const COLOURS = ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"] as const;
 
 function chipClass(confidence: Confidence) {
-  if (confidence === "missing") {
-    return "border-brand-warning text-brand-warning bg-transparent";
-  }
   if (confidence === "default") {
-    return "border-transparent bg-brand-bg text-brand-muted italic";
+    return "border-brand-warning bg-brand-warning/10 text-brand-text shadow-[0_0_0_1px_rgba(245,158,11,0.18)]";
   }
   if (confidence === "inferred") {
-    return "border-brand-border bg-brand-bg text-brand-text";
+    return "border-brand-border bg-brand-bg/80 text-brand-text";
   }
   return "border-brand-border bg-brand-card text-brand-text";
 }
 
 function valueLabel(key: EditableKey | "gates", value: unknown) {
-  if (value === undefined || value === null || value === "") return "Missing";
+  if (value === undefined || value === null || value === "") return "Default";
   if (key === "runLengthMm") return `${(Number(value) / 1000).toFixed(2)}m`;
   if (key === "heightMm" || key === "slatSizeMm" || key === "gapMm") return `${value}mm`;
   if (key === "gates") {
@@ -100,7 +97,6 @@ export function ParsePreviewCard({
   const [editing, setEditing] = useState<EditableKey | null>(null);
   const rows: EditableKey[] = [
     "systemType",
-    "runLengthMm",
     "heightMm",
     "slatSizeMm",
     "gapMm",
@@ -109,13 +105,24 @@ export function ParsePreviewCard({
     "termination",
     "cornerCount",
   ];
+  if (result.attributes.runLengthMm?.value) rows.splice(1, 0, "runLengthMm");
+  const lengthIsDefaultZero = Number(result.attributes.runLengthMm?.value ?? 0) === 0;
 
   return (
-    <div className="space-y-3 rounded-2xl border border-brand-border bg-brand-card p-3 text-sm shadow-sm">
+    <div className="space-y-3 rounded-lg border border-brand-border bg-brand-card p-3 text-sm">
+      <div className="flex items-start justify-between gap-3 border-b border-brand-border/60 pb-2">
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-[0.16em] text-brand-muted">Parsed settings</p>
+          <p className="mt-0.5 text-sm font-black text-brand-text">Review before applying</p>
+        </div>
+        <button type="button" onClick={onClear} className="text-xs font-bold text-brand-muted hover:text-brand-danger">
+          Clear
+        </button>
+      </div>
       <div className="grid gap-2">
         {rows.map((key) => {
           const item = result.attributes[key];
-          const confidence = item?.confidence ?? "missing";
+          const confidence = item?.confidence ?? "default";
           const options = optionsFor(key);
           return (
             <div key={key} className="grid gap-2 sm:grid-cols-[7rem_1fr] sm:items-center">
@@ -126,7 +133,7 @@ export function ParsePreviewCard({
                 className={`inline-flex min-h-9 items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-xs font-bold ${chipClass(confidence)}`}
               >
                 <span>{confidence === "inferred" ? "~ " : ""}{valueLabel(key, item?.value)}</span>
-                <span className="text-[10px] uppercase">{confidence === "missing" ? "+ pick" : confidence}</span>
+                <span className="text-[10px] uppercase">{confidence}</span>
               </button>
               {editing === key && (
                 <div className="sm:col-start-2">
@@ -139,7 +146,6 @@ export function ParsePreviewCard({
                       }}
                       className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-bold text-brand-text"
                     >
-                      <option value="">Choose...</option>
                       {options.map((option) => (
                         <option key={option} value={option}>{String(option).replace(/_/g, " ")}</option>
                       ))}
@@ -167,7 +173,7 @@ export function ParsePreviewCard({
             </div>
           );
         })}
-        {result.attributes.gates?.value.length ? (
+        {result.attributes.gates ? (
           <div className="grid gap-2 sm:grid-cols-[7rem_1fr] sm:items-center">
             <span className="text-xs font-extrabold uppercase tracking-wide text-brand-muted">{LABELS.gates}</span>
             <span className={`rounded-lg border px-3 py-2 text-xs font-bold ${chipClass(result.attributes.gates.confidence)}`}>
@@ -179,6 +185,11 @@ export function ParsePreviewCard({
       {result.unparsed.length > 0 && (
         <p className="text-xs font-semibold text-brand-muted">Unparsed: {result.unparsed.join(", ")}</p>
       )}
+      {lengthIsDefaultZero && (
+        <p className="rounded-lg border border-brand-warning/40 bg-brand-warning/10 px-3 py-2 text-xs font-bold text-brand-text">
+          Length not specified - set it in the section row after Apply.
+        </p>
+      )}
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
@@ -189,9 +200,6 @@ export function ParsePreviewCard({
         </button>
         <button type="button" onClick={onEdit} className="rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted hover:text-brand-primary">
           Edit description
-        </button>
-        <button type="button" onClick={onClear} className="text-xs font-bold text-brand-muted hover:text-brand-danger">
-          Clear
         </button>
       </div>
     </div>
