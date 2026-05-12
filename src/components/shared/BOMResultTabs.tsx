@@ -11,6 +11,12 @@ import {
   PRICE_SOURCE_VERIFIED_DATE,
 } from "../../lib/pricingMetadata";
 import { BOM_CATEGORY_ORDER } from "../../lib/bomMetadata";
+import {
+  gateDiagramNumbersForSku,
+  gateDiagramTitle,
+  type GateDiagramNumber,
+} from "../../lib/gateDiagramMapping";
+import { setGateDiagramHover, useGateDiagramHover } from "../../lib/gateDiagramHover";
 import { InstallVideoQR } from "../calculator-v3/InstallVideoQR";
 import type { InstallVideoKey } from "../../lib/installVideos";
 import { BomCutList } from "./BomCutList";
@@ -182,6 +188,38 @@ function installVideoKeysForItems(items: BOMLineItem[]): InstallVideoKey[] {
   return [...keys];
 }
 
+function isGateDiagramLine(item: BOMLineItem) {
+  return (
+    item.productCode === "QS_GATE" ||
+    item.category === "gate" ||
+    item.category === "gate_components" ||
+    item.category === "gate_hardware" ||
+    item.sources?.some((source) => source.scopeKind === "gate") === true
+  );
+}
+
+function GateDiagramBadges({ numbers }: { numbers: GateDiagramNumber[] }) {
+  if (numbers.length === 0) return null;
+  return (
+    <span className="inline-flex items-center gap-1 print:hidden" aria-label="Gate diagram references">
+      {numbers.map((number) => (
+        <button
+          key={number}
+          type="button"
+          onMouseEnter={() => setGateDiagramHover(number)}
+          onMouseLeave={() => setGateDiagramHover(null)}
+          onFocus={() => setGateDiagramHover(number)}
+          onBlur={() => setGateDiagramHover(null)}
+          className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-brand-warning bg-brand-warning text-[11px] font-black leading-none text-brand-text shadow-sm transition hover:scale-105 hover:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/40"
+          title={gateDiagramTitle(number)}
+        >
+          {number}
+        </button>
+      ))}
+    </span>
+  );
+}
+
 function BOMTable({
   items,
   editable,
@@ -197,6 +235,7 @@ function BOMTable({
 }) {
   const sorted = sortItems(items);
   const groups = groupByCategory(sorted);
+  const hoveredGateDiagramNumber = useGateDiagramHover();
 
   if (items.length === 0) {
     return (
@@ -246,6 +285,7 @@ function BOMTable({
               onQuantityChange={onQuantityChange}
               onRemoveLine={onRemoveLine}
               onSwitchEconomyToStandard={onSwitchEconomyToStandard}
+              hoveredGateDiagramNumber={hoveredGateDiagramNumber}
             />
           ))}
         </tbody>
@@ -261,6 +301,7 @@ function ItemGroup({
   onQuantityChange,
   onRemoveLine,
   onSwitchEconomyToStandard,
+  hoveredGateDiagramNumber,
 }: {
   category: string;
   items: BOMLineItem[];
@@ -268,6 +309,7 @@ function ItemGroup({
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
+  hoveredGateDiagramNumber: GateDiagramNumber | null;
 }) {
   const orderedItems = orderCompanions(items);
   let lastSubCategory = "";
@@ -294,6 +336,9 @@ function ItemGroup({
             item.sku.startsWith("XP-6500-E65") &&
             item.notes?.includes("Switch to Standard slats?");
           const sourceText = sourceBreakdown(item);
+          const diagramNumbers = isGateDiagramLine(item) ? gateDiagramNumbersForSku(item.sku) : [];
+          const diagramHighlighted =
+            hoveredGateDiagramNumber !== null && diagramNumbers.includes(hoveredGateDiagramNumber);
           const subCategory = item.subCategory ?? "";
           const showSubCategory = subCategory && subCategory !== lastSubCategory && !item.companionOf;
           if (subCategory) lastSubCategory = subCategory;
@@ -314,10 +359,21 @@ function ItemGroup({
         <tr
           key={`${category}-${item.sku}-${item.category}-${item.description}-${itemIndex}`}
           title={sourceText ? `Source breakdown: ${sourceText}` : undefined}
-          className="border-b border-brand-border last:border-0 hover:bg-brand-accent/5 transition-colors"
+          onMouseEnter={() => {
+            if (diagramNumbers[0]) setGateDiagramHover(diagramNumbers[0]);
+          }}
+          onMouseLeave={() => {
+            if (diagramNumbers.length > 0) setGateDiagramHover(null);
+          }}
+          className={`border-b border-brand-border last:border-0 transition-colors ${
+            diagramHighlighted
+              ? "bg-brand-warning/15 ring-1 ring-inset ring-brand-warning/50"
+              : "hover:bg-brand-accent/5"
+          }`}
         >
           <td className="py-2.5 px-3 text-xs font-mono text-brand-accent whitespace-nowrap">
             <span className="inline-flex flex-wrap items-center gap-1.5">
+              <GateDiagramBadges numbers={diagramNumbers} />
               {item.sku}
               <PageChip sku={item.sku} />
             </span>

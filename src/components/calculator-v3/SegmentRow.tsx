@@ -12,9 +12,11 @@ import {
   patchSegmentVariables,
 } from "../../lib/segmentTermination";
 import {
+  clearGateOpeningWidthMm,
   defaultGateBuildForMovement,
   gateMovementOrDefault,
 } from "../../lib/gateOptionRules";
+import { hingeGapForSku, latchGapForSku } from "../../lib/gateHardware";
 import {
   gatePatchForAlternative,
   gateTypeLabel,
@@ -381,18 +383,49 @@ export function SegmentRow({
     key: "segmentWidthMm" | "targetHeightMm",
     value: number,
   ) {
+    const nextSegment =
+      gate && key === "segmentWidthMm"
+        ? (() => {
+          const movement = gateMovementOrDefault(seg.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+          if (movement === "sliding") {
+            return { ...seg, [key]: value, leaves: [{ widthMm: Math.max(1, Math.round(value)) }] };
+          }
+          const hingeGapMm = hingeGapForSku(String(seg.variables?.[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B"));
+          const latchGapMm = latchGapForSku(String(seg.variables?.[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA"));
+          const clearOpeningMm = clearGateOpeningWidthMm({
+            openingWidthMm: value,
+            movement,
+            hingeGapMm,
+            latchGapMm,
+          });
+          if (movement === "double_swing") {
+            const existing = seg.leaves?.map((leaf) => Number(leaf.widthMm)).filter((width) => Number.isFinite(width) && width > 0) ?? [];
+            const oldTotal = existing.reduce((sum, width) => sum + width, 0);
+            const firstRatio = existing.length === 2 && oldTotal > 0 ? existing[0] / oldTotal : 0.5;
+            const first = Math.max(1, Math.min(Math.round(clearOpeningMm) - 1, Math.round(clearOpeningMm * firstRatio)));
+            return {
+              ...seg,
+              [key]: value,
+              leaves: [{ widthMm: first }, { widthMm: Math.max(1, Math.round(clearOpeningMm) - first) }],
+            };
+          }
+          return { ...seg, [key]: value, leaves: [{ widthMm: Math.max(1, Math.round(clearOpeningMm)) }] };
+        })()
+        : null;
+
     dispatch({
       type: "UPSERT_SEGMENT",
       runId,
       segment:
-        gate && key === "targetHeightMm"
+        nextSegment ??
+        (gate && key === "targetHeightMm"
           ? {
             ...patchSegmentVariables(seg, {
               [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: value,
             }),
             targetHeightMm: value,
           }
-          : { ...seg, [key]: value },
+          : { ...seg, [key]: value }),
     });
   }
 

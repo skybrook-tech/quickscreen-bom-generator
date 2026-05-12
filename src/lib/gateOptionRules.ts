@@ -11,6 +11,7 @@ export type GateLeafGeometry = {
   movement: GateMovement;
   leafCount: number;
   leafWidthMm: number;
+  leafWidthsMm: number[];
   totalClearanceMm: number;
   hingeClearanceMm: number;
   latchClearanceMm: number;
@@ -183,11 +184,13 @@ export function gateLeafGeometry({
   openingWidthMm,
   hingeGapMm,
   latchGapMm,
+  leafWidthsMm,
 }: {
   movement: unknown;
   openingWidthMm: number;
   hingeGapMm: number;
   latchGapMm: number;
+  leafWidthsMm?: number[];
 }): GateLeafGeometry {
   const normalisedMovement = gateMovementOrDefault(movement);
   if (normalisedMovement === "sliding") {
@@ -195,6 +198,7 @@ export function gateLeafGeometry({
       movement: normalisedMovement,
       leafCount: 1,
       leafWidthMm: Math.max(1, openingWidthMm),
+      leafWidthsMm: [Math.max(1, openingWidthMm)],
       totalClearanceMm: 0,
       hingeClearanceMm: 0,
       latchClearanceMm: 0,
@@ -205,15 +209,56 @@ export function gateLeafGeometry({
   const hingeClearanceMm = normalisedMovement === "double_swing" ? hingeGapMm * 2 : hingeGapMm;
   const latchClearanceMm = latchGapMm;
   const totalClearanceMm = hingeClearanceMm + latchClearanceMm;
+  const clearOpeningMm = Math.max(1, openingWidthMm - totalClearanceMm);
+  const cleanedWidths = (leafWidthsMm ?? [])
+    .map((value) => Math.round(Number(value)))
+    .filter((value) => Number.isFinite(value) && value > 0);
+  const widths =
+    leafCount === 2 && cleanedWidths.length >= 2
+      ? normaliseLeafPair(cleanedWidths[0], cleanedWidths[1], clearOpeningMm)
+      : [Math.max(1, clearOpeningMm / leafCount)];
 
   return {
     movement: normalisedMovement,
     leafCount,
-    leafWidthMm: Math.max(1, (openingWidthMm - totalClearanceMm) / leafCount),
+    leafWidthMm: Math.max(...widths),
+    leafWidthsMm: widths,
     totalClearanceMm,
     hingeClearanceMm,
     latchClearanceMm,
   };
+}
+
+export function clearGateOpeningWidthMm({
+  movement,
+  openingWidthMm,
+  hingeGapMm,
+  latchGapMm,
+}: {
+  movement: unknown;
+  openingWidthMm: number;
+  hingeGapMm: number;
+  latchGapMm: number;
+}) {
+  const normalisedMovement = gateMovementOrDefault(movement);
+  if (normalisedMovement === "sliding") return Math.max(1, openingWidthMm);
+  const hingeClearanceMm = normalisedMovement === "double_swing" ? hingeGapMm * 2 : hingeGapMm;
+  return Math.max(1, openingWidthMm - hingeClearanceMm - latchGapMm);
+}
+
+export function normaliseLeafPair(
+  leaf1Mm: number,
+  leaf2Mm: number,
+  clearOpeningMm: number,
+): number[] {
+  const clear = Math.max(2, Math.round(clearOpeningMm));
+  const first = Math.min(clear - 1, Math.max(1, Math.round(Number(leaf1Mm) || clear / 2)));
+  const secondRaw = Math.round(Number(leaf2Mm) || clear - first);
+  const second = Math.min(clear - 1, Math.max(1, secondRaw));
+  const total = first + second;
+  if (total === clear) return [first, second];
+  const adjustedFirst = Math.min(clear - 1, Math.max(1, first + (clear - total)));
+  return [adjustedFirst, clear - adjustedFirst];
 }
 
 export function gateBuildsForMovement(movement: GateMovement) {

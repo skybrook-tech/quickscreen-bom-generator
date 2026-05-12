@@ -69,6 +69,11 @@ export interface CanonicalSegment {
   bayCount?: number;
   gateProductCode?: string;
   /**
+   * Gate-only finished leaves after hinge/latch clearances.
+   * Single/sliding gates use one leaf; double swing gates use two.
+   */
+  leaves?: Array<{ widthMm: number }>;
+  /**
    * Per-segment overrides. Termination keys: see `src/lib/segmentTermination.ts`
    * (`left_termination_kind`, `right_termination_kind`, corner degrees, non-system subtype).
    */

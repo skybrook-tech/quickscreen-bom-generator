@@ -114,6 +114,7 @@ export function LayoutCanvasV3({
             slidingSide: String(
               segment.variables?.[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? 'front',
             ) as CanvasGateVisual['slidingSide'],
+            leafWidthsMM: segment.leaves?.map((leaf) => leaf.widthMm),
           },
         ]);
       }

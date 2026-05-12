@@ -84,6 +84,7 @@ export interface CanvasGateVisual {
   gateType: CanvasGateType;
   swingDirection?: CanvasGateSwingDirection;
   slidingSide?: CanvasGateSlidingSide;
+  leafWidthsMM?: number[];
 }
 
 export interface CanvasTextNote {
@@ -695,6 +696,7 @@ export function initCanvasEngine(
           gateType: gateVisuals[gate.gateId].gateType,
           swingDirection: gateVisuals[gate.gateId].swingDirection,
           slidingSide: gateVisuals[gate.gateId].slidingSide ?? gate.slidingSide ?? "front",
+          leafWidthsMM: gateVisuals[gate.gateId].leafWidthsMM,
         }
       : {
           gateType: gate.gateType ?? "single-swing",
@@ -1500,16 +1502,20 @@ export function initCanvasEngine(
     }
 
     if (visual.gateType === "double-swing") {
-      const leafRadius = width / 2;
+      const leaf1Mm = Math.max(1, Number(visual.leafWidthsMM?.[0] ?? 0));
+      const leaf2Mm = Math.max(1, Number(visual.leafWidthsMM?.[1] ?? 0));
+      const totalLeafMm = leaf1Mm + leaf2Mm;
+      const leaf1Radius = totalLeafMm > 0 ? width * (leaf1Mm / totalLeafMm) : width / 2;
+      const leaf2Radius = totalLeafMm > 0 ? width * (leaf2Mm / totalLeafMm) : width / 2;
       const labelY = side > 0 ? -8 / zoom : 14 / zoom;
       ctx.beginPath();
-      ctx.arc(-width / 2, 0, leafRadius, 0, side * Math.PI / 2, side < 0);
+      ctx.arc(-width / 2, 0, leaf1Radius, 0, side * Math.PI / 2, side < 0);
       ctx.stroke();
       ctx.beginPath();
-      ctx.arc(width / 2, 0, leafRadius, Math.PI, side * Math.PI / 2, side > 0);
+      ctx.arc(width / 2, 0, leaf2Radius, Math.PI, side * Math.PI / 2, side > 0);
       ctx.stroke();
-      drawArrow(-width / 2, 0, -width / 2 + leafRadius * 0.68, side * leafRadius * 0.68);
-      drawArrow(width / 2, 0, width / 2 - leafRadius * 0.68, side * leafRadius * 0.68);
+      drawArrow(-width / 2, 0, -width / 2 + leaf1Radius * 0.68, side * leaf1Radius * 0.68);
+      drawArrow(width / 2, 0, width / 2 - leaf2Radius * 0.68, side * leaf2Radius * 0.68);
       ctx.font = `bold ${Math.max(8, 10 / zoom)}px sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "bottom";
@@ -3119,6 +3125,7 @@ export function initCanvasEngine(
           gateType: gate.gateType ?? "single-swing",
           swingDirection: gate.swingDirection,
           slidingSide: gate.slidingSide,
+          leafWidthsMM: visual.leafWidthsMM,
         },
       };
     }

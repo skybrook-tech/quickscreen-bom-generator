@@ -67,6 +67,11 @@ export interface CanonicalSegment {
   targetHeightMm?: number;
   bayCount?: number;
   gateProductCode?: string;
+  /**
+   * Gate-only finished leaves after hinge/latch clearances.
+   * Single/sliding gates use one leaf; double swing gates use two.
+   */
+  leaves?: Array<{ widthMm: number }>;
   /** Per-segment overrides (terminations, bay/post fields, job overrides). */
   variables?: CanonicalVariables;
 }

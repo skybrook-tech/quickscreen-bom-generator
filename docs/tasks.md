@@ -90,6 +90,8 @@ Latest Brief AY pass: the landing screen is simplified to a single job-details e
 
 Latest Brief BB pass: gate diagrams now use clearer single/double swing arcs and sliding direction indicators, Describe Your Fence previews no longer block on missing values and instead highlight sensible defaults, the sidebar map toggle is sticky and always reachable, install videos moved to the top-right header icon, landing Enter/Tab/blur commits a non-empty job name and opens the workspace, the default canvas height is now 630px, and endpoint dragging pivots around the opposite end with BA's whole-section/Alt-drag mode removed.
 
+Latest Brief BD pass: gate settings now include numbered QSG component diagrams for horizontal and vertical gates, BOM rows show matching numbered badges with hover cross-highlighting, QS gate seed component metadata mirrors the same diagram references, and double-swing gate openings now carry editable finished leaf widths so the local BOM, canvas arcs, and gate summaries treat a double gate as two leaves in one opening.
+
 ---
 
 ## Phases Overview

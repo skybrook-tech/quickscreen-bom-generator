@@ -13,6 +13,7 @@ import {
   SLIDING_GUIDE_OPTIONS,
   SLIDING_TRACK_OPTIONS,
   defaultGateBuildForMovement,
+  clearGateOpeningWidthMm,
   gateBuildsForMovement,
   gateLeafGeometry,
   gateMovementOrDefault,
@@ -20,6 +21,7 @@ import {
   optionLabel,
   type GateOption,
 } from "../../lib/gateOptionRules";
+import { GateComponentDiagram } from "./GateComponentDiagram";
 import {
   baseHardwareSku,
   estimateGateWeight,
@@ -566,8 +568,15 @@ export function GateSegmentDetails({ runId, seg }: Props) {
     openingWidthMm: gateWidthMm,
     hingeGapMm,
     latchGapMm,
+    leafWidthsMm: seg.leaves?.map((leaf) => leaf.widthMm),
   });
-  const { leafCount, leafWidthMm } = gateGeometry;
+  const { leafCount, leafWidthMm, leafWidthsMm } = gateGeometry;
+  const clearOpeningMm = clearGateOpeningWidthMm({
+    movement,
+    openingWidthMm: gateWidthMm,
+    hingeGapMm,
+    latchGapMm,
+  });
   const weightEstimate = useMemo(
     () =>
       estimateGateWeight({
@@ -629,18 +638,46 @@ export function GateSegmentDetails({ runId, seg }: Props) {
     0,
   );
 
-  function upsertVariables(patch: Record<string, string | number | boolean | null | undefined>) {
+  function upsertSegmentPatch({
+    patch,
+    leaves,
+  }: {
+    patch?: Record<string, string | number | boolean | null | undefined>;
+    leaves?: Array<{ widthMm: number }>;
+  }) {
     dispatch({
       type: "UPSERT_SEGMENT",
       runId,
-      segment: patchSegmentVariables(seg, patch),
+      segment: {
+        ...(patch ? patchSegmentVariables(seg, patch) : seg),
+        ...(leaves ? { leaves } : {}),
+      },
     });
+  }
+
+  function upsertVariables(patch: Record<string, string | number | boolean | null | undefined>) {
+    upsertSegmentPatch({ patch });
   }
 
   function setMovement(value: string) {
     const nextMovement = gateMovementOrDefault(value);
     const nextBuild = defaultGateBuildForMovement(nextMovement, prefersVerticalGate);
-    upsertVariables({
+    const nextClearOpening = clearGateOpeningWidthMm({
+      movement: nextMovement,
+      openingWidthMm: gateWidthMm,
+      hingeGapMm,
+      latchGapMm,
+    });
+    const nextLeaves =
+      nextMovement === "double_swing"
+        ? [
+            { widthMm: Math.round(nextClearOpening / 2) },
+            { widthMm: Math.round(nextClearOpening - Math.round(nextClearOpening / 2)) },
+          ]
+        : [{ widthMm: Math.round(nextClearOpening) }];
+    upsertSegmentPatch({
+      leaves: nextLeaves,
+      patch: {
       [GATE_SEGMENT_STUB_KEYS.gateMovement]: nextMovement,
       [GATE_SEGMENT_STUB_KEYS.gateBuild]: nextBuild,
       [GATE_SEGMENT_STUB_KEYS.openingDirection]:
@@ -664,6 +701,17 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         nextMovement === "sliding" ? v[GATE_SEGMENT_STUB_KEYS.slidingCatchType] ?? "XPSG-CATCH-U" : "XPSG-CATCH-U",
       [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
       [GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit]: false,
+      },
+    });
+  }
+
+  function updateLeafWidth(leafIndex: 0 | 1, widthMm: number) {
+    const total = Math.max(2, Math.round(clearOpeningMm));
+    const clamped = Math.min(total - 1, Math.max(1, Math.round(widthMm)));
+    const nextLeaf1 = leafIndex === 0 ? clamped : total - clamped;
+    const nextLeaf2 = total - nextLeaf1;
+    upsertSegmentPatch({
+      leaves: [{ widthMm: nextLeaf1 }, { widthMm: nextLeaf2 }],
     });
   }
 
@@ -721,6 +769,45 @@ export function GateSegmentDetails({ runId, seg }: Props) {
           onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gateBuild]: value })}
         />
       </GateSettingsSection>
+
+      {isSwing && movement === "double_swing" && (
+        <GateSettingsSection
+          title="Double gate leaves"
+          summary={`${Math.round(leafWidthsMm[0] ?? 0)}mm + ${Math.round(leafWidthsMm[1] ?? 0)}mm`}
+          defaultOpen
+        >
+          <div className="rounded-lg border border-brand-border/70 bg-brand-card p-3 text-xs font-bold text-brand-muted">
+            Finished leaves are calculated after hinge gaps and the shared latch gap. Changing one leaf automatically adjusts the other.
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {[0, 1].map((index) => {
+              const leafWidth = Math.round(leafWidthsMm[index] ?? clearOpeningMm / 2);
+              return (
+                <label key={index} className="flex flex-col gap-1">
+                  <span className="text-sm font-bold text-brand-muted">Leaf {index + 1} finished width (mm)</span>
+                  <NumberInput
+                    value={leafWidth}
+                    min={1}
+                    max={Math.max(1, Math.round(clearOpeningMm) - 1)}
+                    step={10}
+                    className="w-28 px-2 py-1.5 text-center tabular-nums"
+                    onChange={(value) => updateLeafWidth(index as 0 | 1, Number(value))}
+                  />
+                  {leafWidth < 800 && (
+                    <span className="text-xs font-bold text-brand-warning">
+                      Soft warning: leaf is under 800mm.
+                    </span>
+                  )}
+                </label>
+              );
+            })}
+          </div>
+          <p className="text-xs font-semibold text-brand-muted">
+            Clear leaf total: <b className="text-brand-text">{Math.round(clearOpeningMm)}mm</b> from a{" "}
+            <b className="text-brand-text">{Math.round(gateWidthMm)}mm</b> opening.
+          </p>
+        </GateSettingsSection>
+      )}
 
       <GateSettingsSection
         title={isSwing ? "Opening direction" : "Slide direction"}
@@ -826,7 +913,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
             {leafCount === 2
               ? `Each leaf is calculated after ${Math.round(hingeGapMm)}mm hinge gap on each side and ${Math.round(latchGapMm)}mm shared latch gap: `
               : `Leaf width after ${Math.round(hingeGapMm)}mm hinge gap and ${Math.round(latchGapMm)}mm latch gap: `}
-            <span className="text-brand-text">{Math.round(leafWidthMm)}mm</span>.
+            <span className="text-brand-text">{leafWidthsMm.map((width) => `${Math.round(width)}mm`).join(" + ")}</span>.
           </div>
           <HingePicker
             value={currentHingeValue}
@@ -1038,6 +1125,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         </GateSettingsSection>
       )}
 
+      <GateComponentDiagram orientation={build.includes("vertical") ? "vertical" : "horizontal"} />
     </div>
   );
 }

@@ -1700,3 +1700,22 @@ Verification:
 Deferred:
 - BC.7 BOM-affecting existing-structure rules remain deferred until verified Glass Outlet SKUs/rules are seeded for wall brackets, pillar/post terminations, and related fasteners.
 - The brief's true `section.gates[]` data-shape checkbox remains intentionally implemented as `gate_opening` plus `parent_section_id`; this keeps the current v3 BOM engine/save/canvas adapter contract intact while delivering section-owned UI behavior.
+
+### May 12, 2026 - Brief BD gate experience polish
+
+Catalogue / workflow finding:
+- Installers need a quick way to connect the QSG gate settings diagram to the BOM lines, especially because a finished double swing gate is two leaves inside one gate opening rather than a single oversized leaf.
+- The existing local fallback had enough QSG pedestrian and sliding gate components to calculate the line items, but the UI did not explain which catalogue component each row represented.
+
+Changes applied:
+- Added `GateComponentDiagram.tsx` plus horizontal and vertical SVG assets as QSG component diagrams with twelve numbered callouts: side frame, rail, slat, infill, screw cover, joiner block, spacers, rail screws, wafer screws, top cap, hinges, and latch.
+- Added `src/lib/gateDiagramMapping.ts` and `src/lib/gateDiagramHover.ts` so gate BOM rows can show numbered badges and cross-highlight against the diagram.
+- Mirrored the same diagram numbers into `supabase/seeds/glass-outlet/products/qs_gate.json` component metadata so future backend/seed work has the same mapping.
+- Extended the canonical gate-opening segment shape with `leaves: [{ widthMm }]`. Single swing stores one finished leaf; double swing stores two leaves after hinge/latch clearances; sliding uses the opening width.
+- Added a double-gate leaf editor in gate settings. Editing one leaf width automatically adjusts the other, keeps the total equal to the clear opening, and shows a soft warning when a leaf is under 800mm.
+- Updated the local fallback BOM so swing-gate frame/slat/rail quantities are calculated across all leaves while keeping one latch and defaulting double gates to one drop bolt. Canvas double-gate arcs now render from the leaf widths when available.
+
+Verification:
+- `npm run build` passed.
+- `npm run test:describe-fence` passed for TC-01 through TC-12.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.

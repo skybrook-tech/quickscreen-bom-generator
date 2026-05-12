@@ -47,6 +47,8 @@ export const GATE_SEGMENT_STUB_KEYS = {
   gateMovement: "gate_movement",
   gateBuild: "gate_build",
   leafCount: "leaf_count",
+  leaf1WidthMm: "leaf_1_width_mm",
+  leaf2WidthMm: "leaf_2_width_mm",
   matchRunHeight: "match_run_height",
   gateHeightMm: "gate_height_mm",
   colourCode: "colour_code",

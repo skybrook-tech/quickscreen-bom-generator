@@ -677,6 +677,8 @@ function emitQsgGateFrameLines(
   verticalBuild: boolean,
   numGateBlades: number,
   slatGap: number,
+  totalGateBladesOverride?: number,
+  totalSpacerGapsOverride?: number,
 ): void {
   const sideFramesPerStock = Math.max(1, Math.floor(4200 / frameCutMm));
   const sideFramePieces = 2 * leafCount;
@@ -686,8 +688,10 @@ function emitQsgGateFrameLines(
   const infillsPerStock = Math.max(1, Math.floor(infillStockLength / infillCutMm));
   const coverPieces = 2 * leafCount;
   const coversPerStock = Math.max(1, Math.floor(4200 / frameCutMm));
-  const spacerPacks = Math.ceil((Math.max(0, numGateBlades - 1) * 2 * leafCount) / 50);
-  const waferScrewPacks = Math.ceil((numGateBlades * 2 * leafCount) / 50);
+  const totalGateBlades = totalGateBladesOverride ?? numGateBlades * leafCount;
+  const totalSpacerGaps = totalSpacerGapsOverride ?? Math.max(0, numGateBlades - 1) * leafCount;
+  const spacerPacks = Math.ceil((totalSpacerGaps * 2) / 50);
+  const waferScrewPacks = Math.ceil((totalGateBlades * 2) / 50);
   emit(lines, {
     ...base,
     sku: gateSideFrameSkuFor(colour),
@@ -742,7 +746,7 @@ function emitQsgGateFrameLines(
     category: "spacer",
     quantity: spacerPacks,
     unit: "pack",
-    notes: `${Math.max(0, numGateBlades - 1)} gaps/leaf, one spacer at each end of each gap`,
+    notes: `${totalSpacerGaps} total gate gaps, one spacer at each end of each gap`,
   });
   emit(lines, {
     ...base,
@@ -894,8 +898,9 @@ function calculateGateSegment(
     openingWidthMm,
     hingeGapMm,
     latchGapMm,
+    leafWidthsMm: segment.leaves?.map((leaf) => leaf.widthMm),
   });
-  const { leafCount, leafWidthMm } = gateGeometry;
+  const { leafCount, leafWidthMm, leafWidthsMm } = gateGeometry;
   const totalLeafClearanceMm = gateGeometry.totalClearanceMm;
   const base = { runId: run.runId, segmentId: segment.segmentId };
   const verticalBuild = build.includes("vertical");
@@ -907,6 +912,7 @@ function calculateGateSegment(
     gate_build: build,
     gate_leaf_count: leafCount,
     gate_leaf_width_mm: Math.round(leafWidthMm),
+    gate_leaf_widths_mm: leafWidthsMm.map((width) => Math.round(width)).join(", "),
     gate_clearance_mm: Math.round(totalLeafClearanceMm),
     gate_hinge_clearance_mm: Math.round(gateGeometry.hingeClearanceMm),
     gate_latch_clearance_mm: Math.round(gateGeometry.latchClearanceMm),
@@ -1063,38 +1069,67 @@ function calculateGateSegment(
       `${build} gate build is selectable for workflow testing, but full frame kit rules still need QSG workbook verification.`,
     );
   }
-  const bladeCutMm = verticalBuild ? Math.max(1, gateHeightMm - 133) : Math.max(1, leafWidthMm - 86);
-  const railCutMm = Math.max(1, leafWidthMm - 80);
+  const maxLeafWidthMm = Math.max(...leafWidthsMm);
+  const bladeCutMm = verticalBuild ? Math.max(1, gateHeightMm - 133) : Math.max(1, maxLeafWidthMm - 86);
+  const railCutMm = Math.max(1, maxLeafWidthMm - 80);
   const leafGeometryNote =
     leafCount === 2
-      ? `2 equal swing leaves from ${Math.round(openingWidthMm)}mm opening; each leaf ${Math.round(leafWidthMm)}mm after ${Math.round(hingeGapMm)}mm hinge gap on each side and ${Math.round(latchGapMm)}mm shared latch gap`
+      ? `2 swing leaves from ${Math.round(openingWidthMm)}mm opening; finished leaves ${leafWidthsMm.map((width) => `${Math.round(width)}mm`).join(" + ")} after ${Math.round(hingeGapMm)}mm hinge gap on each side and ${Math.round(latchGapMm)}mm shared latch gap`
       : `1 swing leaf from ${Math.round(openingWidthMm)}mm opening; leaf ${Math.round(leafWidthMm)}mm after ${Math.round(hingeGapMm)}mm hinge gap and ${Math.round(latchGapMm)}mm latch gap`;
-  const numGateBlades = Math.max(
-    1,
-    verticalBuild
-      ? Math.floor((leafWidthMm - 86 + slatGap) / (slatSize + slatGap))
-      : Math.floor((gateHeightMm - 133 + slatGap) / (slatSize + slatGap)),
+  const gateBladesPerLeaf = leafWidthsMm.map((width) =>
+    Math.max(
+      1,
+      verticalBuild
+        ? Math.floor((width - 86 + slatGap) / (slatSize + slatGap))
+        : Math.floor((gateHeightMm - 133 + slatGap) / (slatSize + slatGap)),
+    ),
   );
-  const bladesPerStock = Math.max(1, Math.floor(6100 / bladeCutMm));
-  const railsPerStock = Math.max(1, Math.floor(4800 / railCutMm));
+  const numGateBlades = Math.max(...gateBladesPerLeaf);
+  const totalGateBlades = gateBladesPerLeaf.reduce((sum, qty) => sum + qty, 0);
+  const totalSpacerGaps = gateBladesPerLeaf.reduce((sum, qty) => sum + Math.max(0, qty - 1), 0);
+  const bladeStocks = verticalBuild
+    ? Math.ceil(totalGateBlades / Math.max(1, Math.floor(6100 / bladeCutMm)))
+    : leafWidthsMm.reduce((sum, width, idx) => {
+        const cut = Math.max(1, width - 86);
+        const perStock = Math.max(1, Math.floor(6100 / cut));
+        return sum + Math.ceil(gateBladesPerLeaf[idx] / perStock);
+      }, 0);
+  const railStocks = leafWidthsMm.reduce((sum, width) => {
+    const cut = Math.max(1, width - 80);
+    const perStock = Math.max(1, Math.floor(4800 / cut));
+    return sum + Math.ceil(2 / perStock);
+  }, 0);
 
   emit(lines, {
     ...base,
     sku: gateBladeSkuFor(finishFamily, economySlats, slatSize, colour, verticalBuild),
     category: "gate",
-    quantity: Math.ceil((numGateBlades * leafCount) / bladesPerStock),
+    quantity: bladeStocks,
     unit: "length",
-    notes: `${numGateBlades} ${verticalBuild ? "vertical" : "horizontal"} gate blades/leaf, ${Math.round(bladeCutMm)}mm cuts from 6100mm stock. ${leafGeometryNote}`,
+    notes: `${gateBladesPerLeaf.map((qty, idx) => `${qty} on leaf ${idx + 1}`).join(", ")} ${verticalBuild ? "vertical" : "horizontal"} gate blades, max ${Math.round(bladeCutMm)}mm cuts from 6100mm stock. ${leafGeometryNote}`,
   });
   emit(lines, {
     ...base,
     sku: gateRailSkuFor(slatSize, colour),
     category: "gate",
-    quantity: Math.ceil((2 * leafCount) / railsPerStock),
+    quantity: railStocks,
     unit: "length",
     notes: `Top/bottom ${slatSize === 90 ? "90mm" : "65mm"} QSG gate rails, ${Math.round(railCutMm)}mm cuts from 4800mm stock. ${leafGeometryNote}`,
   });
-  emitQsgGateFrameLines(lines, base, slatSize, colour, leafCount, Math.max(1, gateHeightMm), railCutMm, verticalBuild, numGateBlades, slatGap);
+  emitQsgGateFrameLines(
+    lines,
+    base,
+    slatSize,
+    colour,
+    leafCount,
+    Math.max(1, gateHeightMm),
+    railCutMm,
+    verticalBuild,
+    numGateBlades,
+    slatGap,
+    totalGateBlades,
+    totalSpacerGaps,
+  );
 
   const stopSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.gateStopType]);
   if (stopSku) emit(lines, { ...base, sku: stopSku, category: "hardware", quantity: leafCount, unit: "each", notes: "Selected gate stop" });

@@ -2,7 +2,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Plus, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
-import { defaultGateVariables, gateMovementOrDefault } from "../../lib/gateOptionRules";
+import {
+  clearGateOpeningWidthMm,
+  defaultGateVariables,
+  gateMovementOrDefault,
+} from "../../lib/gateOptionRules";
+import { hingeGapForSku, latchGapForSku } from "../../lib/gateHardware";
 import {
   clampPostSpacing,
   maxPanelWidthForSystem,
@@ -186,13 +191,21 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
     const masterVariables = runMasterVariables(run, state.payload?.variables);
     const targetHeight = Number(masterVariables.target_height_mm ?? 1800);
     const segmentId = crypto.randomUUID();
+    const defaultGateWidth = 900;
+    const defaultLeafWidth = clearGateOpeningWidthMm({
+      movement: "single_swing",
+      openingWidthMm: defaultGateWidth,
+      hingeGapMm: hingeGapForSku("TC-H-AT-HD-B"),
+      latchGapMm: latchGapForSku("LL-DL-KA"),
+    });
     upsertSegment({
       segmentId,
       sortOrder: run.segments.length + 1,
       segmentKind: "gate_opening",
-      segmentWidthMm: 900,
+      segmentWidthMm: defaultGateWidth,
       targetHeightMm: targetHeight,
       gateProductCode: GATE_PRODUCT_CODE,
+      leaves: [{ widthMm: Math.round(defaultLeafWidth) }],
       variables: {
         ...defaultGateVariables({ ...masterVariables, productCode: run.productCode }, targetHeight),
         ...(parentSectionId ? { [PARENT_SECTION_KEY]: parentSectionId } : {}),

@@ -558,6 +558,7 @@ export function mergeCanonicalPreservingSegmentMeta(
             variables: mergeSegmentVariables(ps.variables, gs.variables),
             targetHeightMm: gs.targetHeightMm ?? ps.targetHeightMm,
             gateProductCode: gs.gateProductCode ?? ps.gateProductCode,
+            leaves: ps.leaves ?? gs.leaves,
           };
         }),
       };

@@ -19,6 +19,9 @@ export const canonicalSegmentSchema = z.object({
   targetHeightMm: z.number().positive().optional(),
   bayCount: z.number().int().positive().optional(),
   gateProductCode: z.string().optional(),
+  leaves: z.array(z.object({
+    widthMm: z.number().positive(),
+  })).optional(),
   variables: z.record(z.string(), canonicalVariableValueSchema).optional(),
 });
 
