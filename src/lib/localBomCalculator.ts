@@ -1139,6 +1139,7 @@ function calculateGateSegment(
   const kitSku = leafCount === 1 && selectedKitSku && matchingKit?.kitSku === selectedKitSku ? selectedKitSku : undefined;
   const hingeSku = knownSelectedSku(hingeValue);
   const latchSku = knownSelectedSku(latchValue);
+  const hingeQty = leafCount * 2;
   if (kitSku) {
     emit(lines, {
       ...base,
@@ -1146,7 +1147,7 @@ function calculateGateSegment(
       category: "hardware",
       quantity: 1,
       unit: "each",
-      notes: "Selected hinge and latch kit",
+      notes: "Selected hinge and latch kit for a single leaf; includes the required 2 hinges and one latch.",
     });
     emitSelectedOptionalAddOns(lines, base, vars, kitSku, 1);
   } else {
@@ -1155,13 +1156,13 @@ function calculateGateSegment(
         ...base,
         sku: hingeSku,
         category: "hardware",
-        quantity: leafCount,
+        quantity: hingeQty,
         unit: "each",
         notes: matchingKit
-          ? `Selected hinge hardware; kit available as ${matchingKit.kitSku}${leafCount === 2 ? ". Two hinge pairs required for a double swing gate." : ""}`
-          : `Selected hinge hardware${leafCount === 2 ? "; two hinge pairs required for a double swing gate" : ""}`,
+          ? `Selected hinge hardware; kit available as ${matchingKit.kitSku}. Always 2 hinges per leaf.`
+          : "Selected hinge hardware; always 2 hinges per leaf.",
       });
-      emitSelectedOptionalAddOns(lines, base, vars, hingeSku, leafCount);
+      emitSelectedOptionalAddOns(lines, base, vars, hingeSku, hingeQty);
     }
     if (latchSku) {
       emit(lines, {
@@ -1179,7 +1180,7 @@ function calculateGateSegment(
   }
   const hardwareForCaps = kitSku ?? hingeSku ?? baseHardwareSku(hingeValue);
   if (isTruCloseHardware(hardwareForCaps)) {
-    emitSelectedOptionalAddOns(lines, base, vars, "TRUCLOSE_HINGE", leafCount);
+    emitSelectedOptionalAddOns(lines, base, vars, "TRUCLOSE_HINGE", hingeQty);
   }
   if (vars[GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit] === true) {
     emit(lines, {

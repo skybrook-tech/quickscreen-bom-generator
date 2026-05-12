@@ -1719,3 +1719,19 @@ Verification:
 - `npm run build` passed.
 - `npm run test:describe-fence` passed for TC-01 through TC-12.
 - Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+### May 12, 2026 - Brief BD hinge and tier-label correction
+
+Workflow / calculation finding:
+- The user clarified that hinge quantity is uniform: every swing gate leaf uses exactly two hinges. There is no heavy-gate or tall-gate exception in this calculator.
+- The BOM row still displayed per-line pricing tier labels, which exposed the internal quantity-break tier mechanism instead of just showing the applied price.
+
+Changes applied:
+- Updated the local QSG swing-gate fallback so selected hinge hardware emits `leafCount * 2` units. Single swing therefore emits 2 hinges and double swing emits 4 hinges.
+- Updated the QS_GATE seed companion metadata to add `leaf_count` and emit selected hinge hardware with `leaf_count * 2`; the older single `qty_hinge_latch` component rule is disabled to avoid variable hinge-count ambiguity.
+- Removed visible per-line Tier 1 / Tier 2 / Tier 3 chips from `BOMResultTabs`. Unpriced rows still show `Price not set`, and quantity-break hints now say the user is close to a lower unit price without naming an internal tier.
+
+Verification:
+- `npm run build` passed.
+- `npm run test:describe-fence` passed for TC-01 through TC-12.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.

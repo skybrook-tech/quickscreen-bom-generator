@@ -114,6 +114,7 @@ Key shape:
   - Gate movement supports single swing, double swing, and sliding. Sliding gates keep both travel direction and fence-side choice.
   - Double swing gates expose two editable finished leaf widths. Editing one leaf automatically adjusts the other inside the same clear opening and warns softly below 800mm.
   - Hardware controls rank fitted options first and keep failed-fit options under Other hinges / Other latches so installers can still override when needed.
+  - Swing-gate hinge quantity is fixed at exactly two hinges per leaf. Single swing emits 2 hinges; double swing emits 4 hinges. Do not add heavy-gate or tall-gate hinge-count exceptions.
   - Optional parent-tied add-ons render inline under the chosen parent control. TruClose safety caps (`TC-CAPS3`) are optional and only enter the BOM when selected.
   - `GateComponentDiagram.tsx` renders horizontal/vertical QSG assembly diagrams with numbered component callouts. The callouts cross-highlight matching BOM rows via `src/lib/gateDiagramHover.ts`.
 
@@ -129,6 +130,7 @@ Key shape:
   - Source breakdowns preserve which run/gate contributed each quantity. Filtered tabs derive their scoped quantities from those sources and re-price the line at that scoped quantity.
   - BOM display grouping uses display category, subcategory, companion relationship, and sort priority instead of the raw engine selector category alone.
   - Gate BOM rows use `src/lib/gateDiagramMapping.ts` to show numbered diagram badges beside mapped SKUs. Hovering a badge or row highlights the matching gate diagram component.
+  - BOM rows show applied unit price and line total only; per-line Tier 1 / Tier 2 / Tier 3 labels are intentionally hidden. Quantity-break prompts can mention lower unit prices, but not internal tier names.
 
 - `src/components/calculator-v3/ExtraItemsPanel.tsx`
   - Lets the user add product search/manual extras to the generated BOM.

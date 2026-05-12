@@ -92,6 +92,8 @@ Latest Brief BB pass: gate diagrams now use clearer single/double swing arcs and
 
 Latest Brief BD pass: gate settings now include numbered QSG component diagrams for horizontal and vertical gates, BOM rows show matching numbered badges with hover cross-highlighting, QS gate seed component metadata mirrors the same diagram references, and double-swing gate openings now carry editable finished leaf widths so the local BOM, canvas arcs, and gate summaries treat a double gate as two leaves in one opening.
 
+Latest Brief BD follow-up: BOM rows no longer expose per-line Tier 1/2/3 labels, quantity-break hints remain user-facing as lower-unit-price prompts, and QSG swing-gate hinge quantities are harmonised to exactly 2 hinges per leaf in both local fallback emission and QS_GATE seed companion metadata.
+
 ---
 
 ## Phases Overview

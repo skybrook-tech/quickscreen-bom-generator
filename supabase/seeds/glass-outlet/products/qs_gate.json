@@ -4269,6 +4269,19 @@
       "scope": "segment",
       "sort_order": 80,
       "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "leaf_count",
+      "label": "Gate leaf count",
+      "data_type": "number",
+      "unit": null,
+      "required": true,
+      "default_value_json": 1,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 90,
+      "active": false
     }
   ],
   "product_validations": [
@@ -4496,11 +4509,11 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_hinge_latch_combo",
-      "expression": "1",
+      "expression": "0",
       "output_key": "qty_hinge_latch",
       "priority": 330,
-      "active": true,
-      "notes": "1 hinge/latch unit per gate — SKU resolved via hinge_type variable"
+      "active": false,
+      "notes": "Disabled: hinge quantity is emitted by gate_add_hinge_latch companion as exactly 2 hinges per leaf."
     },
     {
       "product_system_type": "QS_GATE",
@@ -4837,10 +4850,10 @@
       "trigger_match_json": {},
       "add_category": "hardware",
       "add_sku_pattern": "{selected_hinge_sku}",
-      "qty_formula": "1",
+      "qty_formula": "leaf_count * 2",
       "is_pack": false,
       "priority": 10,
-      "notes": "Any gate → add 1x hinge/latch combo (user-selected type)",
+      "notes": "Any swing gate -> add exactly 2 hinges per leaf (single = 2 total, double = 4 total).",
       "active": true
     },
     {

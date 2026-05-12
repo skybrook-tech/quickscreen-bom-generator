@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import pluralize from "pluralize";
 import type { CalculatorBOMResult, BOMLineItem } from "../../types/bom.types";
-import { localPriceBreaks, tierForSkuQuantity } from "../../lib/localPriceBreaks";
+import { localPriceBreaks } from "../../lib/localPriceBreaks";
 import { priceForSku } from "../../lib/localBomCalculator";
 import { cataloguePageForSku, CATALOGUE_PDF_URL } from "../../lib/cataloguePages";
 import { cartonHintForLine } from "../../lib/cartonQuantities";
@@ -43,15 +43,6 @@ const formatMoney = (value: number) =>
     maximumFractionDigits: 2,
   }).format(value);
 
-function tierLabel(item: BOMLineItem) {
-  if (item.unitPrice <= 0) return "Price not set";
-  const pricingQty =
-    item.sku.startsWith("XP-6500-E65") && item.unit === "pack"
-      ? item.quantity * 96
-      : item.quantity;
-  return tierForSkuQuantity(item.sku, pricingQty).replace(/^tier/i, "Tier ");
-}
-
 function nextBreakHint(item: BOMLineItem) {
   if (item.sku.startsWith("XP-6500-E65") && item.unit === "pack") return null;
   const breaks = (localPriceBreaks as Record<string, readonly number[] | undefined>)[
@@ -64,14 +55,12 @@ function nextBreakHint(item: BOMLineItem) {
   if (nextUnitPrice <= 0 || item.unitPrice <= 0 || nextUnitPrice >= item.unitPrice) {
     return {
       more: nextBreak - item.quantity,
-      tier: tierForSkuQuantity(item.sku, nextBreak).replace(/^tier/i, "Tier "),
       savingPct: null as number | null,
     };
   }
 
   return {
     more: nextBreak - item.quantity,
-    tier: tierForSkuQuantity(item.sku, nextBreak).replace(/^tier/i, "Tier "),
     savingPct: Math.round(((item.unitPrice - nextUnitPrice) / item.unitPrice) * 100),
   };
 }
@@ -381,15 +370,11 @@ function ItemGroup({
           <td className="py-2.5 px-3 text-sm text-brand-text">
             <div className="flex flex-wrap items-center gap-1.5">
               <span>{item.description}</span>
-              <span
-                className={`rounded-full border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide print:hidden ${
-                  item.unitPrice > 0
-                    ? "border-brand-primary/30 bg-brand-primary/10 text-brand-primary"
-                    : "border-brand-warning/40 bg-brand-warning/10 text-brand-warning"
-                }`}
-              >
-                {tierLabel(item)}
-              </span>
+              {item.unitPrice <= 0 && (
+                <span className="rounded-full border border-brand-warning/40 bg-brand-warning/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-warning print:hidden">
+                  Price not set
+                </span>
+              )}
               {item.notes && (
                 <span className="text-xs text-brand-warning print:hidden">
                   {item.notes}
@@ -407,7 +392,7 @@ function ItemGroup({
             </div>
             {hint && (
               <p className="mt-1 text-[11px] font-semibold text-brand-success print:hidden">
-                {hint.more} more for {hint.tier}
+                {hint.more} more to unlock a lower unit price
                 {hint.savingPct ? ` (save ${hint.savingPct}%)` : ""}
               </p>
             )}
