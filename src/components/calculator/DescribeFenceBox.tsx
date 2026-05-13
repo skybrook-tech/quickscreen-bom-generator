@@ -3,7 +3,16 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { parseDescription, type ParseResult } from "../../lib/describeFenceParser";
 import { createVoiceInput, supportsVoiceInput } from "../../lib/voiceInput";
-import { ParsePreviewCard } from "./ParsePreviewCard";
+
+function hasUsableParseResult(result: ParseResult) {
+  const attrs = result.attributes;
+  if (Number(attrs.runLengthMm?.value ?? 0) > 0) return true;
+  if ((attrs.gates?.value ?? []).length > 0) return true;
+  return Object.entries(attrs).some(([key, attr]) => {
+    if (!attr || key === "runLengthMm" || key === "gates") return false;
+    return attr.confidence !== "default";
+  });
+}
 
 export function DescribeFenceBox({
   title = "Describe more attributes",
@@ -18,7 +27,7 @@ export function DescribeFenceBox({
 }) {
   const [open, setOpen] = useState(!compact);
   const [text, setText] = useState(initialDescription);
-  const [result, setResult] = useState<ParseResult | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [listening, setListening] = useState(false);
   const voiceRef = useRef<ReturnType<typeof createVoiceInput> | null>(null);
   const canUseVoice = useMemo(() => supportsVoiceInput(), []);
@@ -29,10 +38,18 @@ export function DescribeFenceBox({
 
   function parseNow() {
     if (!text.trim()) {
-      toast.error("Add a short fence description first.");
+      const nextMessage = "Add a short fence description first.";
+      setMessage(nextMessage);
+      toast.error(nextMessage);
       return;
     }
-    setResult(parseDescription(text));
+    const parsed = parseDescription(text);
+    if (!hasUsableParseResult(parsed)) {
+      setMessage("I could not find a usable fence length, gate, system, or setting in that description.");
+      return;
+    }
+    setMessage("Applied to the calculator. You can edit this text and parse again.");
+    onApply(parsed);
   }
 
   function toggleMic() {
@@ -99,9 +116,6 @@ export function DescribeFenceBox({
             <textarea
               value={text}
               onChange={(event) => setText(event.target.value)}
-              onBlur={() => {
-                if (text.trim()) window.setTimeout(parseNow, 800);
-              }}
               placeholder="e.g. 30m of 1.8m slat fence in Monument with one gate"
               className="min-h-28 w-full resize-y rounded-xl border border-brand-border bg-brand-bg px-3 py-3 pr-11 text-sm font-semibold text-brand-text outline-none transition-colors focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
             />
@@ -123,18 +137,10 @@ export function DescribeFenceBox({
           >
             Parse
           </button>
-          {result && (
-            <ParsePreviewCard
-              result={result}
-              onChange={setResult}
-              onApply={(next) => {
-                onApply(next);
-                setResult(next);
-                if (compact) setOpen(false);
-              }}
-              onEdit={() => setOpen(true)}
-              onClear={() => setResult(null)}
-            />
+          {message && (
+            <p className="rounded-lg border border-brand-border/70 bg-brand-bg px-3 py-2 text-xs font-bold text-brand-muted">
+              {message}
+            </p>
           )}
         </div>
       )}

@@ -1751,3 +1751,22 @@ Changes applied:
 Verification notes:
 - The gate settings panel currently has one visible height selector in the main section/gate geometry area; `GateSegmentDetails` does not render a second height dropdown.
 - Earlier BB items verified in source: gates still render in the run-bottom Gates group, expanded map mode covers the whole viewport, BOM tier labels remain hidden, and QSG hinge quantity remains two hinges per leaf.
+
+### May 13, 2026 - Brief BF post-BE polish
+
+Workflow / UX finding:
+- The Describe Your Fence preview step added friction for deterministic parsing. Users can get to the right outcome faster if parsing writes directly to the calculator and opens the map with the generated layout visible.
+- Split gate openings still need BOM-accurate left/right panel sections, but the map should see the original straight fence line so the gate can sit visually in the centre instead of being drawn on the end of a split panel.
+
+Changes applied:
+- `DescribeFenceBox` now validates for usable parser output, applies directly, keeps the description text visible for re-parsing, and shows a small inline message for empty or unusable descriptions. The preview card no longer renders in this path.
+- `CalculatorV3Page` now normalises parsed variables through the product option rules, so parsed heights snap to the nearest catalogue height. Parsed gates create gate-opening segments immediately, with double gates split into two leaves after hinge/latch clearance.
+- Parsed gate layouts now add canvas-only geometry metadata: BOM sections remain split around the gate, while the canvas reconstructs one straight source section and centers the gate on that section.
+- Committed job names render at the larger read-only size with truncation, including the BOM header.
+- The first Add run button now uses the primary-brand background/ring treatment.
+- Run-bottom gates now render as full gate cards using the section-card pattern: R1G1/R1G2 code chips, inline gate type/opening/direction/hinge side/hardware summaries, Gate settings expander, and the same two-click remove affordance.
+
+Verification:
+- `npm run test:describe-fence` passed for TC-01 through TC-12.
+- `npm run build` passed.
+- Playwright/Chrome smoke test passed at `http://127.0.0.1:5175/fence-calculator`: entered a job name, opened Describe Your Fence, parsed a 30m fence with a 900mm single gate, saw the direct-apply message, canvas present, and R1G1 gate inline settings visible.

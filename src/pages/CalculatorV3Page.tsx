@@ -19,12 +19,17 @@ import { ConfirmButton } from "../components/shared/ConfirmButton";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { suggestAccessories } from "../lib/suggestedAccessories";
 import { priceForSku } from "../lib/localBomCalculator";
-import { initialVariablesForSystem } from "../lib/productOptionRules";
+import {
+  initialVariablesForSystem,
+  normaliseVariablesForSystem,
+} from "../lib/productOptionRules";
 import { GATE_SEGMENT_STUB_KEYS } from "../lib/segmentTermination";
 import {
+  clearGateOpeningWidthMm,
   defaultGateBuildForMovement,
   defaultGateVariables,
 } from "../lib/gateOptionRules";
+import { hingeGapForSku, latchGapForSku } from "../lib/gateHardware";
 import { gateTypeLabel, validateGateWidth } from "../lib/gateConstraints";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
@@ -252,6 +257,32 @@ function boundariesFromTermination(value: string | undefined) {
   return { left: "product_post", right: "product_post" } as const;
 }
 
+function gateMovementFromParsedGate(gate: NonNullable<ParseResult["attributes"]["gates"]>["value"][number]) {
+  if (gate.kind === "sliding") return "sliding" as const;
+  if (gate.kind === "double_swing") return "double_swing" as const;
+  return "single_swing" as const;
+}
+
+function gateLeavesForOpening(movement: ReturnType<typeof gateMovementFromParsedGate>, openingWidthMm: number) {
+  if (movement === "sliding") return [{ widthMm: Math.max(1, Math.round(openingWidthMm)) }];
+  const hingeGapMm = hingeGapForSku("TC-H-AT-HD-B");
+  const latchGapMm = latchGapForSku("LL-DL-KA");
+  const clearOpeningMm = clearGateOpeningWidthMm({
+    movement,
+    openingWidthMm,
+    hingeGapMm,
+    latchGapMm,
+  });
+  if (movement === "double_swing") {
+    const first = Math.round(clearOpeningMm / 2);
+    return [
+      { widthMm: Math.max(1, first) },
+      { widthMm: Math.max(1, Math.round(clearOpeningMm) - first) },
+    ];
+  }
+  return [{ widthMm: Math.max(1, Math.round(clearOpeningMm)) }];
+}
+
 function runLengthMm(run: CanonicalRun) {
   return run.segments.reduce((sum, segment) => {
     if (segment.segmentKind === "gate_opening") return sum;
@@ -399,11 +430,11 @@ function CalculatorV3Content() {
   function handleApplyDescription(result: ParseResult) {
     const parsedSystem = result.attributes.systemType?.value;
     const productCode = productCodeFromParsedSystem(parsedSystem);
-    const base = payload ?? createInitialPayload(productCode);
+    const base = payload ?? createEmptyPayload(productCode);
     const baseRun = base.runs[0] ?? createInitialPayload(productCode).runs[0];
     const runId = baseRun.runId;
     const initialVariables = initialVariablesForSystem(productCode);
-    const variables = {
+    const variables = normaliseVariablesForSystem(productCode, {
       ...initialVariables,
       ...(base.variables ?? {}),
       ...(baseRun.variables ?? {}),
@@ -426,37 +457,112 @@ function CalculatorV3Content() {
           mounting_method: mountingMethodToVariables(result.attributes.mountingMethod.value),
         }
         : {}),
-    };
+    });
     const boundaries = boundariesFromTermination(result.attributes.termination?.value);
     const firstSegment = baseRun.segments.find((segment) => segment.segmentKind !== "gate_opening");
-    const targetHeightMm =
-      result.attributes.heightMm?.value ?? firstSegment?.targetHeightMm ?? Number(variables.target_height_mm ?? 1800);
-    const runLength = result.attributes.runLengthMm?.value;
-    const segment: CanonicalSegment = {
-      ...(firstSegment ?? {
-        segmentId: crypto.randomUUID(),
-        sortOrder: 1,
-        segmentKind: "panel" as const,
-      }),
-      sortOrder: 1,
-      segmentKind: "panel",
-      segmentWidthMm: runLength ?? firstSegment?.segmentWidthMm ?? 0,
-      targetHeightMm,
-      variables: productCode === "BAYG" ? { ...(firstSegment?.variables ?? {}), panel_quantity: 1 } : firstSegment?.variables,
+    const targetHeightMm = Number(
+      variables.target_height_mm ??
+      firstSegment?.targetHeightMm ??
+      1800,
+    );
+    const parsedGates = result.attributes.gates?.value ?? [];
+    const gateWidths = parsedGates.map((gate) => {
+      if (gate.widthMm && gate.widthMm > 0) return Math.round(gate.widthMm);
+      if (gate.kind === "double_swing") return 1800;
+      if (gate.kind === "sliding") return 3000;
+      return 900;
+    });
+    const totalGateWidth = gateWidths.reduce((sum, width) => sum + width, 0);
+    const parsedRunLength = Number(result.attributes.runLengthMm?.value ?? 0);
+    const fallbackRunLength =
+      parsedGates.length > 0 ? totalGateWidth + (parsedGates.length + 1) * 1000 : 0;
+    const runLength = Math.max(
+      parsedRunLength,
+      Number(firstSegment?.segmentWidthMm ?? 0),
+      fallbackRunLength,
+    );
+    const panelTotal = Math.max(0, runLength - totalGateWidth);
+    const panelCount = parsedGates.length > 0 ? parsedGates.length + 1 : 1;
+    const panelWidths =
+      parsedGates.length > 0
+        ? Array.from({ length: panelCount }, () => Math.max(1, Math.round(panelTotal / panelCount)))
+        : [Math.max(0, Math.round(runLength))];
+    if (parsedGates.length > 0 && panelWidths.length > 1) {
+      const used = panelWidths.reduce((sum, width) => sum + width, 0);
+      panelWidths[panelWidths.length - 1] = Math.max(1, panelWidths[panelWidths.length - 1] + Math.round(panelTotal - used));
+    }
+    const newSegments: CanonicalSegment[] = [];
+    let sortOrder = 1;
+    const useSingleCanvasSection = parsedGates.length > 0 && runLength > 0;
+    const straightGeometry = {
+      points: [
+        { x: 0, y: 0 },
+        { x: Math.max(1, runLength / 10), y: 0 },
+      ],
     };
+    const canvasMeta = useSingleCanvasSection
+      ? {
+        canvasSegmentIndex: 0,
+        sourceSegmentLengthMm: Math.max(1, Math.round(runLength)),
+      }
+      : {};
+    const makePanelSegment = (widthMm: number): CanonicalSegment => ({
+      segmentId: crypto.randomUUID(),
+      sortOrder: sortOrder++,
+      segmentKind: "panel",
+      segmentWidthMm: Math.max(0, Math.round(widthMm)),
+      targetHeightMm,
+      ...canvasMeta,
+      variables: productCode === "BAYG" ? { panel_quantity: 1 } : undefined,
+    });
+
+    if (parsedGates.length === 0) {
+      newSegments.push(makePanelSegment(panelWidths[0] ?? 0));
+    } else {
+      let distanceCursorMm = 0;
+      for (let index = 0; index < parsedGates.length; index++) {
+        const precedingPanel = makePanelSegment(panelWidths[index] ?? 1);
+        newSegments.push(precedingPanel);
+        distanceCursorMm += precedingPanel.segmentWidthMm ?? 0;
+        const gate = parsedGates[index];
+        const gateWidth = gateWidths[index] ?? 900;
+        const movement = gateMovementFromParsedGate(gate);
+        const gateCenterFraction =
+          runLength > 0 ? Math.max(0, Math.min(1, (distanceCursorMm + gateWidth / 2) / runLength)) : 0.5;
+        const gateVariables = {
+          ...defaultGateVariables({ ...variables, productCode }, targetHeightMm),
+          [GATE_SEGMENT_STUB_KEYS.gateMovement]: movement,
+          [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
+            movement,
+            productCode === "VS",
+          ),
+          [GATE_SEGMENT_STUB_KEYS.leafCount]: movement === "double_swing" ? 2 : 1,
+          [GATE_SEGMENT_STUB_KEYS.dropBoltType]: movement === "double_swing" ? "SS-0300DB-B" : "none",
+          parent_section_id: precedingPanel.segmentId,
+        };
+        newSegments.push({
+          segmentId: crypto.randomUUID(),
+          sortOrder: sortOrder++,
+          segmentKind: "gate_opening",
+          segmentWidthMm: gateWidth,
+          targetHeightMm,
+          gateProductCode: "QS_GATE",
+          positionOnSegment: gateCenterFraction,
+          gateAnchor: "center",
+          ...canvasMeta,
+          variables: gateVariables,
+          leaves: gateLeavesForOpening(movement, gateWidth),
+        });
+        distanceCursorMm += gateWidth;
+      }
+      newSegments.push(makePanelSegment(panelWidths[panelWidths.length - 1] ?? 1));
+    }
     const cornerCount = Math.max(0, Math.round(Number(result.attributes.cornerCount?.value ?? 0)));
     const corners = Array.from({ length: cornerCount }, () => ({
       cornerId: crypto.randomUUID(),
-      afterSegmentId: segment.segmentId,
+      afterSegmentId: newSegments.find((segment) => segment.segmentKind !== "gate_opening")?.segmentId ?? crypto.randomUUID(),
       type: "90" as const,
     }));
-    const pendingGates = result.attributes.gates?.value.map((gate, index) => ({
-      id: crypto.randomUUID(),
-      kind: gate.kind,
-      widthMm: gate.widthMm,
-      runId,
-      label: `Parsed gate ${index + 1}`,
-    })) ?? [];
     const nextRun: CanonicalRun = {
       ...baseRun,
       runId,
@@ -464,8 +570,9 @@ function CalculatorV3Content() {
       variables,
       leftBoundary: { type: boundaries.left },
       rightBoundary: { type: boundaries.right },
-      segments: [segment],
+      segments: newSegments,
       corners,
+      geometry: straightGeometry,
     };
     const nextPayload: CanonicalPayload = {
       ...base,
@@ -474,7 +581,7 @@ function CalculatorV3Content() {
       job: {
         ...(base.job ?? {}),
         description: result.description,
-        pendingGates,
+        pendingGates: [],
       },
       runs: [nextRun, ...base.runs.slice(1)],
     };
@@ -483,10 +590,10 @@ function CalculatorV3Content() {
     dispatch({ type: "CLEAR_BOM_RESULT" });
     setIntroDismissed(true);
     setAutoOpenFirstSectionRunId(nextRun.runId);
-    setRightPaneView("bom");
+    setRightPaneView("map");
     setMapExpanded(false);
-    setMobileTab("run");
-    toast.success("Description applied to the calculator");
+    setMobileTab("map");
+    toast.success("Description applied and drawn on the map");
   }
 
   function handleConfirmGatePosition(gate: PendingParsedGate, distanceFromStartMm: number) {
@@ -1443,7 +1550,7 @@ function CalculatorV3Content() {
                           value={jobName}
                           onChange={setJobName}
                           className="mt-2"
-                          textClassName="px-0 text-2xl font-black leading-tight"
+                          textClassName="px-0 text-4xl font-black leading-tight"
                           inputClassName="max-w-xl"
                         />
                       )}

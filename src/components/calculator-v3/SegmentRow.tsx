@@ -74,6 +74,50 @@ function boolLabel(value: boolean) {
   return value ? "Yes" : "No";
 }
 
+function gateMovementLabel(value: unknown) {
+  const movement = gateMovementOrDefault(value);
+  if (movement === "double_swing") return "Double swing";
+  if (movement === "sliding") return "Sliding";
+  return "Single swing";
+}
+
+function gateDirectionLabel(variables: Record<string, unknown>) {
+  const movement = gateMovementOrDefault(variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+  const direction = String(variables[GATE_SEGMENT_STUB_KEYS.openingDirection] ?? (movement === "sliding" ? "right" : "out"));
+  const slidingSide = String(variables[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? "front");
+  if (movement === "sliding") {
+    return `${direction === "left" ? "Slides left" : "Slides right"} / ${slidingSide === "back" ? "behind fence" : "front of fence"}`;
+  }
+  if (direction === "in") return "Swings in";
+  if (direction === "left") return "Left hand swing";
+  if (direction === "right") return "Right hand swing";
+  return "Swings out";
+}
+
+function gateHingeSideLabel(variables: Record<string, unknown>) {
+  const movement = gateMovementOrDefault(variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+  if (movement === "sliding") return "N/A";
+  const side = String(variables[GATE_SEGMENT_STUB_KEYS.hingeSide] ?? "default");
+  if (side === "left") return "Left";
+  if (side === "right") return "Right";
+  return "Default";
+}
+
+function gateHardwareSummary(variables: Record<string, unknown>) {
+  const movement = gateMovementOrDefault(variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+  const kit = String(variables[GATE_SEGMENT_STUB_KEYS.hardwareKitSku] ?? "");
+  if (kit) return kit;
+  if (movement === "sliding") {
+    const track = String(variables[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST");
+    const guide = String(variables[GATE_SEGMENT_STUB_KEYS.slidingGuideType] ?? "XPSG-GUIDE");
+    return `${track} / ${guide}`;
+  }
+  const hinge = String(variables[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B");
+  const latch = String(variables[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA");
+  const dropBolt = String(variables[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? "none");
+  return dropBolt !== "none" ? `${hinge} / ${latch} / ${dropBolt}` : `${hinge} / ${latch}`;
+}
+
 function SummaryBit({
   label,
   value,
@@ -84,9 +128,9 @@ function SummaryBit({
   emphasis?: boolean;
 }) {
   return (
-    <span className={`inline-flex items-baseline gap-1 whitespace-nowrap ${emphasis ? "text-[13px]" : ""}`}>
-      <span className="font-semibold text-brand-muted">{label}:</span>
-      <strong className={`font-extrabold text-brand-text ${emphasis ? "text-sm" : ""}`}>{value}</strong>
+    <span className={`inline-flex max-w-full items-baseline gap-1 whitespace-nowrap ${emphasis ? "text-[13px]" : ""}`}>
+      <span className="shrink-0 font-semibold text-brand-muted">{label}:</span>
+      <strong className={`min-w-0 truncate font-extrabold text-brand-text ${emphasis ? "text-sm" : ""}`}>{value}</strong>
     </span>
   );
 }
@@ -254,10 +298,18 @@ export function SegmentRow({
 
   const summaryBitsBase = [
     gate
-      ? { label: "Width", value: `${segmentLength}mm`, emphasis: true }
+      ? { label: "Type", value: gateMovementLabel(gateVars[GATE_SEGMENT_STUB_KEYS.gateMovement]), emphasis: true }
       : isBayg
         ? { label: "Width", value: `${segmentLength}mm`, emphasis: true }
         : { label: "Length", value: `${(segmentLength / 1000).toFixed(2)}m`, emphasis: true },
+    ...(gate
+      ? [
+        { label: "Opening width", value: `${segmentLength}mm`, emphasis: true },
+        { label: "Direction", value: gateDirectionLabel(gateVars) },
+        { label: "Hinge side", value: gateHingeSideLabel(gateVars) },
+        { label: "Hardware", value: gateHardwareSummary(gateVars) },
+      ]
+      : []),
     ...(isBayg && !gate
       ? [{ label: "Qty", value: Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1))), emphasis: true }]
       : []),
@@ -628,8 +680,8 @@ export function SegmentRow({
                   }
                   confirmLabel={<X size={16} strokeWidth={3} />}
                   className="inline-flex h-8 w-8 items-center justify-center rounded-full text-brand-danger transition-colors hover:bg-brand-danger/10 hover:text-brand-danger/90"
-                  aria-label="Remove section"
-                  title="Remove section"
+                  aria-label={gate ? "Remove gate" : "Remove section"}
+                  title={gate ? "Remove gate" : "Remove section"}
                 >
                   <X size={16} strokeWidth={3} />
                 </ConfirmButton>

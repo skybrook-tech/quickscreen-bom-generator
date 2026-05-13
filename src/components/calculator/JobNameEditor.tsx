@@ -45,7 +45,7 @@ export function JobNameEditor({
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className={`${className} block max-w-full truncate rounded-lg px-1 text-left text-lg font-semibold text-brand-text hover:text-brand-primary ${textClassName}`}
+        className={`${className} block max-w-full truncate rounded-lg px-1 text-left text-3xl font-black text-brand-text hover:text-brand-primary ${textClassName}`}
         title="Click to edit job name"
       >
         {committedName}

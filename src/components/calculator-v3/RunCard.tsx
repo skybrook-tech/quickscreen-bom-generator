@@ -5,7 +5,6 @@ import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types
 import {
   clearGateOpeningWidthMm,
   defaultGateVariables,
-  gateMovementOrDefault,
 } from "../../lib/gateOptionRules";
 import { hingeGapForSku, latchGapForSku } from "../../lib/gateHardware";
 import { Button } from "../shared/Button";
@@ -202,23 +201,6 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
     setExpandedId(segmentId);
   }
 
-  function sectionNumberForGate(gate: CanonicalSegment) {
-    const parentId = gate.variables?.[PARENT_SECTION_KEY];
-    const index = fenceSections.findIndex((section) => section.segmentId === parentId);
-    return index >= 0 ? index + 1 : 1;
-  }
-
-  function gateChipLabel(gate: CanonicalSegment) {
-    const movement = gateMovementOrDefault(gate.variables?.gate_movement);
-    const label =
-      movement === "double_swing"
-        ? "Double gate"
-        : movement === "sliding"
-          ? "Sliding gate"
-          : "Pedestrian gate";
-    return `S${sectionNumberForGate(gate)} - ${label} - ${Math.round(Number(gate.segmentWidthMm ?? 0))}mm`;
-  }
-
   return (
     <div data-run-id={run.runId} className="rounded-2xl border-2 border-brand-primary/20 bg-brand-card py-4 shadow-md">
       <div className="px-4 mb-3 flex flex-wrap items-start justify-between gap-3">
@@ -308,54 +290,27 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           </div>
 
           {gateSegments.length > 0 && (
-            <section className="mx-4 mt-3 rounded-xl border border-brand-warning/35 bg-brand-warning/10 p-3">
+            <section className="mx-4 mt-3 space-y-2 rounded-xl border border-brand-warning/35 bg-brand-warning/10 p-3">
               <p className="mb-2 text-xs font-black uppercase tracking-[0.16em] text-brand-warning">
                 Gates
               </p>
-              <div className="flex flex-wrap gap-2">
-                {gateSegments.map((gateSeg) => (
-                  <div
-                    key={gateSeg.segmentId}
-                    data-segment-id={gateSeg.segmentId}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-brand-warning/40 bg-brand-card px-2.5 py-1 text-xs font-black text-brand-warning"
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setExpandedId(gateSeg.segmentId)}
-                      className="hover:text-brand-primary"
-                      title="Edit gate settings"
-                    >
-                      {gateChipLabel(gateSeg)}
-                    </button>
-                    <ConfirmButton
-                      onConfirm={() =>
-                        dispatch({ type: "REMOVE_SEGMENT", runId: run.runId, segmentId: gateSeg.segmentId })
-                      }
-                      confirmLabel={<Trash2 size={12} />}
-                      className="inline-flex h-5 w-5 items-center justify-center rounded-full text-brand-danger transition-colors hover:bg-brand-danger/10"
-                      title="Remove gate"
-                      aria-label="Remove gate"
-                    >
-                      <Trash2 size={12} />
-                    </ConfirmButton>
-                  </div>
-                ))}
-              </div>
-              {gateSegments.map((gateSeg, gateIdx) =>
-                expandedId === gateSeg.segmentId ? (
-                  <div key={`${gateSeg.segmentId}-editor`} className="mt-3 rounded-xl border border-brand-warning/40 bg-brand-card p-2" data-segment-id={gateSeg.segmentId}>
+              <div className="space-y-2">
+                {gateSegments.map((gateSeg, gateIdx) => (
+                  <div key={gateSeg.segmentId} data-segment-id={gateSeg.segmentId}>
                     <SegmentRow
                       runId={run.runId}
                       seg={gateSeg}
                       segIdx={gateIdx}
                       runIdx={runIdx}
                       displayLabel={`R${runIdx + 1}G${gateIdx + 1}`}
-                      open
-                      onToggle={() => setExpandedId(null)}
+                      open={expandedId === gateSeg.segmentId}
+                      onToggle={() =>
+                        setExpandedId((id) => (id === gateSeg.segmentId ? null : gateSeg.segmentId))
+                      }
                     />
                   </div>
-                ) : null,
-              )}
+                ))}
+              </div>
             </section>
           )}
 
