@@ -1791,3 +1791,23 @@ Verification:
 
 Deferred:
 - Deploy-preview visual screenshots and CI/PR auto-merge were not performed in this sandbox branch workflow; changes were committed and pushed to `codex/qshs-calculator-sandbox` for preview testing.
+
+### May 14, 2026 - Brief BH run grouping, gate component list, and existing-structure terminations
+
+Workflow / UX finding:
+- Run groups needed a subtle surface so installers can see which sections and gate cards belong to each run.
+- The numbered gate component SVG took too much sidebar space. A compact numbered list gives the same BOM cross-reference value with less visual weight.
+- Existing posts and pillars on the map were drawn as site markers only. The user clarified that terminating into an existing post, wall, or concrete pillar uses the same F-section attachment path instead of a new post.
+
+Changes applied:
+- Added light/dark run-surface tokens and wrapped each run card in a very light blue run bubble with increased spacing between runs.
+- Replaced `GateComponentDiagram.tsx` with `GateComponentList.tsx`, using a shared `NumberedBadge` component for both the list rows and BOM row badges. Hovering either side keeps the existing cross-highlight behaviour.
+- Canvas existing-post/pillar placement now must land on a fence section. Endpoint placement marks that end as an F-section termination; mid-section placement inserts a split point, recalculates both section lengths, and marks the shared point as the existing structure.
+- Canonical conversion now carries canvas structure terminations into segment variables. The fallback BOM treats `wall`, `pillar`, and `non_system_post` as F-section terminations, and end-post counts now respect first/last section overrides.
+
+Verification:
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+Deferred:
+- Full visual screenshot capture and deploy-preview/CI merge flow were not performed in this direct sandbox-branch workflow.

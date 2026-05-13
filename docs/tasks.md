@@ -96,6 +96,8 @@ Latest Brief BD follow-up: BOM rows no longer expose per-line Tier 1/2/3 labels,
 
 Latest Brief BE sandbox consolidation: gate width validation now treats single swing as max 2100mm and double swing as two leaves up to a 4200mm opening, switching single to double doubles the opening before splitting leaves, switching double to single combines the leaves back into one opening, all active seed/UI defaults now start on 9mm gaps and 1800mm height, the map default canvas height increased by 25%, the Glass Outlet header no longer shows the SkyBrookAI powered subtitle, run cards remove flat panel/gate count clutter, and the BOM header uses full system/gate wording.
 
+Latest Brief BH pass: run cards now sit on a very light blue run surface with clearer spacing between runs, the QSG gate component diagram has been replaced by a compact numbered Gate components list with the same BOM badge cross-highlighting, and canvas-placed existing posts/pillars now snap onto fence sections, split a section when placed mid-run, and use the F-section termination BOM path.
+
 ---
 
 ## Phases Overview

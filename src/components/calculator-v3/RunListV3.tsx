@@ -45,7 +45,7 @@ export function RunListV3({
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {payload.runs.map((run, runIdx) => (
         <RunCard
           key={run.runId}

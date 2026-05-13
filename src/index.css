@@ -17,6 +17,8 @@
   --brand-accent-hover: #2563eb;
   --brand-muted:        #64748b;
   --brand-text:         #0f172a;
+  --brand-run-bg:       #eff6ff;
+  --brand-run-border:   #bfdbfe;
   color-scheme: light;
 }
 
@@ -32,6 +34,8 @@
   --brand-accent-hover: #2563eb;
   --brand-muted:        #cbd5e1;
   --brand-text:         #f8fafc;
+  --brand-run-bg:       #172036;
+  --brand-run-border:   #315085;
   color-scheme: dark;
 }
 

@@ -202,7 +202,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   }
 
   return (
-    <div data-run-id={run.runId} className="rounded-2xl border-2 border-brand-primary/20 bg-brand-card py-4 shadow-md">
+    <div data-run-id={run.runId} className="rounded-lg border border-brand-run-border bg-brand-run-bg py-4 shadow-sm">
       <div className="px-4 mb-3 flex flex-wrap items-start justify-between gap-3">
         <h3 className="grid gap-1 text-brand-text">
           <span className="text-xl font-extrabold leading-tight tracking-normal">

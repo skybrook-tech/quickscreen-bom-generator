@@ -20,6 +20,7 @@ import { setGateDiagramHover, useGateDiagramHover } from "../../lib/gateDiagramH
 import { InstallVideoQR } from "../calculator-v3/InstallVideoQR";
 import type { InstallVideoKey } from "../../lib/installVideos";
 import { BomCutList } from "./BomCutList";
+import { NumberedBadge } from "./NumberedBadge";
 
 interface BOMResultTabsProps {
   result: CalculatorBOMResult;
@@ -199,10 +200,10 @@ function GateDiagramBadges({ numbers }: { numbers: GateDiagramNumber[] }) {
           onMouseLeave={() => setGateDiagramHover(null)}
           onFocus={() => setGateDiagramHover(number)}
           onBlur={() => setGateDiagramHover(null)}
-          className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-brand-warning bg-brand-warning text-[11px] font-black leading-none text-brand-text shadow-sm transition hover:scale-105 hover:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/40"
+          className="focus:outline-none"
           title={gateDiagramTitle(number)}
         >
-          {number}
+          <NumberedBadge interactive>{number}</NumberedBadge>
         </button>
       ))}
     </span>

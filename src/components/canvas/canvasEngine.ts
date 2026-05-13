@@ -9,6 +9,8 @@ export interface CanvasSegment {
   lengthMM: number; // real-world length in mm (user-editable)
   angleDeg: number; // angle from horizontal
   contextType?: "boundary" | "building";
+  startTermination?: CanvasStructureTermination;
+  endTermination?: CanvasStructureTermination;
 }
 
 export type GateAnchor = "start" | "center" | "end";
@@ -101,6 +103,8 @@ export interface CanvasSiteMarker {
   markerType: "post" | "pillar";
   label?: string;
 }
+
+export type CanvasStructureTermination = "existing_post" | "pillar";
 
 // ── Internal state types ──────────────────────────────────────────────────────
 
@@ -663,6 +667,104 @@ export function initCanvasEngine(
     return result;
   }
 
+  function siteTerminationAtPoint(point: Point): CanvasStructureTermination | undefined {
+    const tolerance = Math.max(2, scale * 0.01);
+    const marker = siteMarkers.find((item) => dist(item, point) <= tolerance);
+    if (!marker) return undefined;
+    return marker.markerType === "pillar" ? "pillar" : "existing_post";
+  }
+
+  function segmentWithSiteTerminations(seg: Segment): CanvasSegment {
+    return {
+      startX: seg.p1.x,
+      startY: seg.p1.y,
+      endX: seg.p2.x,
+      endY: seg.p2.y,
+      lengthMM: seg.lengthMM,
+      angleDeg: angleDeg(seg.p1, seg.p2),
+      startTermination: siteTerminationAtPoint(seg.p1),
+      endTermination: siteTerminationAtPoint(seg.p2),
+    };
+  }
+
+  function closestFenceSegment(point: Point) {
+    let best:
+      | {
+          seg: Segment;
+          runIdx: number;
+          segIdx: number;
+          point: Point;
+          t: number;
+          d: number;
+        }
+      | undefined;
+    for (const item of allSegmentsFlat()) {
+      const hit = closestPointOnSegment(point, item.seg);
+      if (!best || hit.d < best.d) {
+        best = { ...item, point: hit.point, t: hit.t, d: hit.d };
+      }
+    }
+    return best;
+  }
+
+  function addIntegratedSiteMarker(
+    markerType: CanvasSiteMarker["markerType"],
+    point: Point,
+    label: string,
+  ) {
+    const exists = siteMarkers.some(
+      (marker) => marker.markerType === markerType && dist(marker, point) <= Math.max(2, scale * 0.01),
+    );
+    if (exists) return;
+    siteMarkers.push({ x: point.x, y: point.y, markerType, label });
+  }
+
+  function placeSiteMarkerOnFence(
+    markerType: CanvasSiteMarker["markerType"],
+    clickPoint: Point,
+    label: string,
+  ): boolean {
+    const target = closestFenceSegment(clickPoint);
+    const snapDistance = Math.max(scale * 0.1, 16 / zoom);
+    if (!target || target.d > snapDistance) {
+      window.alert("Place the existing post or pillar directly on a fence section so it can become a termination point.");
+      return false;
+    }
+
+    const run = runs[target.runIdx];
+    const endpointTolerance = Math.max(0.02, Math.min(0.08, 100 / Math.max(1, target.seg.lengthMM)));
+    if (target.t <= endpointTolerance || target.t >= 1 - endpointTolerance) {
+      const snapPoint = target.t <= endpointTolerance ? target.seg.p1 : target.seg.p2;
+      addIntegratedSiteMarker(markerType, snapPoint, label);
+      return true;
+    }
+
+    const splitPoint = target.point;
+    const oldSegment = run.segments[target.segIdx];
+    const oldLength = oldSegment.lengthMM;
+    const oldGates = oldSegment.gates.map((gate) => ({ ...gate }));
+    run.points.splice(target.segIdx + 1, 0, splitPoint);
+    run.segments = buildSegmentsFromPoints(run.points, scale);
+    const left = run.segments[target.segIdx];
+    const right = run.segments[target.segIdx + 1];
+    left.lengthMM = Math.round(oldLength * target.t);
+    right.lengthMM = Math.round(oldLength * (1 - target.t));
+    left.gates = [];
+    right.gates = [];
+    for (const gate of oldGates) {
+      if (gate.t < target.t) {
+        left.gates.push({ ...gate, t: Math.max(0, Math.min(1, gate.t / target.t)) });
+      } else {
+        right.gates.push({
+          ...gate,
+          t: Math.max(0, Math.min(1, (gate.t - target.t) / (1 - target.t))),
+        });
+      }
+    }
+    addIntegratedSiteMarker(markerType, splitPoint, label);
+    return true;
+  }
+
   function cloneRuns(): Run[] {
     return JSON.parse(JSON.stringify(runs)) as Run[];
   }
@@ -786,14 +888,7 @@ export function initCanvasEngine(
 
   function getLayout(): CanvasLayout {
     const allSegs = allSegmentsFlat(); // excludes boundary runs
-    const segments: CanvasSegment[] = allSegs.map(({ seg }) => ({
-      startX: seg.p1.x,
-      startY: seg.p1.y,
-      endX: seg.p2.x,
-      endY: seg.p2.y,
-      lengthMM: seg.lengthMM,
-      angleDeg: angleDeg(seg.p1, seg.p2),
-    }));
+    const segments: CanvasSegment[] = allSegs.map(({ seg }) => segmentWithSiteTerminations(seg));
     const gates: CanvasGate[] = [];
     allSegs.forEach(({ seg, flatIdx }) => {
       seg.gates.forEach((g) => {
@@ -2123,19 +2218,27 @@ export function initCanvasEngine(
 
     if (tool === "post" || tool === "pillar") {
       const markerType = tool;
+      const defaultLabel = markerType === "pillar" ? "Pillar" : "Existing post";
+      const target = closestFenceSegment(canvasPt);
+      const snapDistance = Math.max(scale * 0.1, 16 / zoom);
+      if (!target || target.d > snapDistance) {
+        window.alert("Place the existing post or pillar directly on a fence section so it can become a termination point.");
+        return;
+      }
       createLabelInput(
         container,
         screenPtDown,
-        markerType === "pillar" ? "Pillar" : "Existing post",
+        defaultLabel,
         (value) => {
-          siteMarkers.push({
-            x: canvasPt.x,
-            y: canvasPt.y,
+          const placed = placeSiteMarkerOnFence(
             markerType,
-            label: value.trim() || (markerType === "pillar" ? "Pillar" : "Existing post"),
-          });
-          notifyChange();
-          scheduleRedraw();
+            canvasPt,
+            value.trim() || defaultLabel,
+          );
+          if (placed) {
+            notifyChange();
+            scheduleRedraw();
+          }
         },
         () => scheduleRedraw(),
         180,

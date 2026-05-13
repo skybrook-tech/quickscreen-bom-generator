@@ -21,7 +21,7 @@ import {
   optionLabel,
   type GateOption,
 } from "../../lib/gateOptionRules";
-import { GateComponentDiagram } from "./GateComponentDiagram";
+import { GateComponentList } from "./GateComponentList";
 import {
   baseHardwareSku,
   estimateGateWeight,
@@ -1137,7 +1137,15 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         </GateSettingsSection>
       )}
 
-      <GateComponentDiagram orientation={build.includes("vertical") ? "vertical" : "horizontal"} />
+      <GateComponentList
+        orientation={build.includes("vertical") ? "vertical" : "horizontal"}
+        movement={movement}
+        slatSizeMm={slatSizeMm}
+        slatGapMm={slatGapMm}
+        colourCode={gateColour}
+        hingeSku={currentHingeValue}
+        latchSku={currentLatchValue}
+      />
     </div>
   );
 }

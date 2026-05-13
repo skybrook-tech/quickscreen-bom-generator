@@ -33,6 +33,8 @@ export default {
           "accent-hover": "var(--brand-accent-hover)",
           muted: "var(--brand-muted)",
           text: "var(--brand-text)",
+          "run-bg": "var(--brand-run-bg)",
+          "run-border": "var(--brand-run-border)",
         },
       },
     },

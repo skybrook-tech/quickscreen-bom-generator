@@ -466,9 +466,26 @@ function emitCornerLines(
 }
 
 function runPostBoundaryCount(run: CanonicalRun): number {
+  const fenceSegments = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
+  const firstFenceSegment = fenceSegments[0];
+  const lastFenceSegment = fenceSegments[fenceSegments.length - 1];
+  const leftBoundaryType = firstFenceSegment
+    ? effectiveLegacyBoundaryType(
+        run.leftBoundary.type as LegacyBoundaryType,
+        firstFenceSegment.variables,
+        "left",
+      )
+    : run.leftBoundary.type;
+  const rightBoundaryType = lastFenceSegment
+    ? effectiveLegacyBoundaryType(
+        run.rightBoundary.type as LegacyBoundaryType,
+        lastFenceSegment.variables,
+        "right",
+      )
+    : run.rightBoundary.type;
   return (
-    (run.leftBoundary.type === "product_post" ? 1 : 0) +
-    (run.rightBoundary.type === "product_post" ? 1 : 0) +
+    (leftBoundaryType === "product_post" ? 1 : 0) +
+    (rightBoundaryType === "product_post" ? 1 : 0) +
     run.corners.length
   );
 }
