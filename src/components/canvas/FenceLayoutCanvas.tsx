@@ -217,6 +217,10 @@ export function FenceLayoutCanvas({
         const existing = gateId
           ? gatesRef.current.find((g) => g.id === gateId)
           : undefined;
+        if (!existing && gateId) {
+          window.dispatchEvent(new CustomEvent("qsbom:edit-gate-from-map", { detail: gateId }));
+          return;
+        }
         if (!existing) return; // gate not yet saved (e.g. modal still open) — ignore
         setEditingCanvasGate({ flatSegIdx, gateIdx, gate: existing });
       },

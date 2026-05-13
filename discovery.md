@@ -1770,3 +1770,24 @@ Verification:
 - `npm run test:describe-fence` passed for TC-01 through TC-12.
 - `npm run build` passed.
 - Playwright/Chrome smoke test passed at `http://127.0.0.1:5175/fence-calculator`: entered a job name, opened Describe Your Fence, parsed a 30m fence with a 900mm single gate, saw the direct-apply message, canvas present, and R1G1 gate inline settings visible.
+
+### May 13, 2026 - Brief BG post-BF cleanup
+
+Workflow / UX finding:
+- BF made Describe Your Fence land on the Map tab, but the normal landing-entry and Clear Job paths still opened the BOM panel. That made the workflow feel output-first instead of drawing-first.
+- The canvas already had a 50m fit helper, but when the map initialized while hidden, later resize events only redrew the canvas. The hidden 1px sizing could survive into the visible map and make the viewport feel far too zoomed out.
+- Gate marker clicks still tried the older GateContext modal path first, so v3 canonical gate rows did not reliably open from the map.
+
+Changes applied:
+- Fresh entry now starts with `rightPaneView="map"` and mobile map state. Typing a job name and pressing Enter, Clear Job reset, and Describe direct-apply all land on the Map tab.
+- Canvas resize now refits an empty hidden-to-visible map to 50m across. Saved/drawn layouts still use `fitToContent`, and zoom/pinch/calibration behavior remains unchanged.
+- Removed section-level corner editing controls from `FenceSegmentDetails`. Added a run-level `Corner posts` details row in `RunSettingsEditor` that edits `run.corners`.
+- Added a v3 gate-edit event path: clicking a gate marker with a canonical `gateId` dispatches `qsbom:edit-gate-from-map`; `CalculatorV3Page` keeps the Map tab active, exits expanded map mode if needed, and opens/scrolls to the matching gate settings row.
+
+Verification:
+- `npm run test:describe-fence` passed for TC-01 through TC-12.
+- `npm run build` passed after removing an unused import from the section settings cleanup.
+- Playwright/Chrome smoke test passed at `http://127.0.0.1:5175/fence-calculator`: job-name entry showed the map/canvas instead of BOM placeholder, Describe direct-apply still showed R1G1 inline settings, run settings displayed Corner posts, section settings had no corner-control UI, and the map gate-edit event opened the gate settings row.
+
+Deferred:
+- Deploy-preview visual screenshots and CI/PR auto-merge were not performed in this sandbox branch workflow; changes were committed and pushed to `codex/qshs-calculator-sandbox` for preview testing.

@@ -343,8 +343,8 @@ function CalculatorV3Content() {
   } | null>(null);
   const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
   const [mobileLayout, setMobileLayout] = useState(false);
-  const [mobileTab, setMobileTab] = useState<"run" | "bom" | "map">("run");
-  const [rightPaneView, setRightPaneView] = useState<RightPaneView>("bom");
+  const [mobileTab, setMobileTab] = useState<"run" | "bom" | "map">("map");
+  const [rightPaneView, setRightPaneView] = useState<RightPaneView>("map");
   const [mapExpanded, setMapExpanded] = useState(false);
   const [introDismissed, setIntroDismissed] = useState(false);
   const [autoOpenFirstSectionRunId, setAutoOpenFirstSectionRunId] = useState<string | null>(null);
@@ -382,6 +382,21 @@ function CalculatorV3Content() {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [mapExpanded]);
+
+  useEffect(() => {
+    const openGateFromMap = (event: Event) => {
+      const gateId = (event as CustomEvent<string>).detail;
+      if (!gateId) return;
+      setRightPaneView("map");
+      setMapExpanded(false);
+      if (mobileLayout) setMobileTab("run");
+      window.setTimeout(() => {
+        window.dispatchEvent(new CustomEvent("qsbom:open-segment", { detail: gateId }));
+      }, 80);
+    };
+    window.addEventListener("qsbom:edit-gate-from-map", openGateFromMap);
+    return () => window.removeEventListener("qsbom:edit-gate-from-map", openGateFromMap);
+  }, [mobileLayout]);
 
   const handleRightPaneChange = useCallback((view: RightPaneView) => {
     setRightPaneView(view);
@@ -423,8 +438,9 @@ function CalculatorV3Content() {
       dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "select" });
     }
     setIntroDismissed(true);
-    setRightPaneView("bom");
+    setRightPaneView("map");
     setMapExpanded(false);
+    setMobileTab("map");
   }
 
   function handleApplyDescription(result: ParseResult) {
@@ -1064,10 +1080,10 @@ function CalculatorV3Content() {
     setJobName("");
     dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
     setIntroDismissed(true);
-    setRightPaneView("bom");
+    setRightPaneView("map");
     setMapExpanded(false);
     setAutoOpenFirstSectionRunId(null);
-    setMobileTab("run");
+    setMobileTab("map");
     setClearJobDialogOpen(false);
   }
 

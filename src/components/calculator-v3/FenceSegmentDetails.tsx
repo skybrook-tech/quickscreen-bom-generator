@@ -10,9 +10,7 @@ import {
   MIN_POST_SPACING_MM,
 } from "../../lib/productOptionRules";
 import {
-  SEGMENT_TERMINATION_KEYS,
   SEGMENT_OPTION_KEYS,
-  cornerTypeFromVars,
   patchSegmentVariables,
 } from "../../lib/segmentTermination";
 import { SchemaDrivenForm } from "./SchemaDrivenForm";
@@ -23,12 +21,6 @@ const POST_SIZE_LABELS: Record<string, string> = {
   "50": "50mm Post Standard",
   "65": "65mm Post Standard HD",
 };
-
-const CORNER_TYPE_OPTIONS = [
-  { value: "right", label: "90 degree" },
-  { value: "obtuse", label: "135 degree adapter" },
-  { value: "custom", label: "Custom - verify" },
-] as const;
 
 interface Props {
   runId: string;
@@ -100,44 +92,6 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   const postSize = (displayVariables[SEGMENT_OPTION_KEYS.postSize] as string) ?? "";
   const isCustomPost = postSize === "custom";
   const isBayg = productCode === "BAYG";
-  const cornerControls = (["left", "right"] as const)
-    .map((side) => {
-      const kindKey =
-        side === "left"
-          ? SEGMENT_TERMINATION_KEYS.leftKind
-          : SEGMENT_TERMINATION_KEYS.rightKind;
-      const degreesKey =
-        side === "left"
-          ? SEGMENT_TERMINATION_KEYS.leftCornerDegrees
-          : SEGMENT_TERMINATION_KEYS.rightCornerDegrees;
-      const measuredKey =
-        side === "left"
-          ? SEGMENT_TERMINATION_KEYS.leftCornerMeasuredDegrees
-          : SEGMENT_TERMINATION_KEYS.rightCornerMeasuredDegrees;
-      const typeKey =
-        side === "left"
-          ? SEGMENT_TERMINATION_KEYS.leftCornerType
-          : SEGMENT_TERMINATION_KEYS.rightCornerType;
-      const manualKey =
-        side === "left"
-          ? SEGMENT_TERMINATION_KEYS.leftCornerManual
-          : SEGMENT_TERMINATION_KEYS.rightCornerManual;
-      const type = cornerTypeFromVars(v, side);
-      const degrees = Number(v[measuredKey] ?? v[degreesKey]);
-      if (v[kindKey] !== "corner" && !type) return null;
-      return { side, kindKey, degreesKey, measuredKey, typeKey, manualKey, type, degrees };
-    })
-    .filter(Boolean) as Array<{
-      side: "left" | "right";
-      kindKey: string;
-      degreesKey: string;
-      measuredKey: string;
-      typeKey: string;
-      manualKey: string;
-      type: "right" | "obtuse" | "custom" | undefined;
-      degrees: number;
-    }>;
-
   function upsertSegment(s: CanonicalSegment) {
     dispatch({ type: "UPSERT_SEGMENT", runId, segment: s });
   }
@@ -249,58 +203,6 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
             </div>
       </SettingsSection>
       )}
-
-          {cornerControls.length > 0 && (
-            <SettingsSection title="Corners" summary={`${cornerControls.length} corner${cornerControls.length === 1 ? "" : "s"}`}>
-              <div className="space-y-3">
-                {cornerControls.map((corner) => (
-                  <label key={corner.side} className="flex flex-col gap-1">
-                    <span className="text-sm font-bold capitalize text-brand-muted">
-                      {corner.side} corner
-                      {Number.isFinite(corner.degrees)
-                        ? ` (${Math.round(corner.degrees)} degrees detected)`
-                        : ""}
-                    </span>
-                    <select
-                      value={corner.type ?? "right"}
-                      onChange={(event) => {
-                        const nextType = event.target.value;
-                        const nextDegrees =
-                          nextType === "obtuse"
-                            ? 135
-                            : nextType === "right"
-                              ? 90
-                              : Number.isFinite(corner.degrees)
-                                ? Math.round(corner.degrees)
-                                : 100;
-                        upsertSegment(
-                          patchSegmentVariables(seg, {
-                            [corner.kindKey]: "corner",
-                            [corner.typeKey]: nextType,
-                            [corner.degreesKey]: nextDegrees,
-                            [corner.measuredKey]: Number.isFinite(corner.degrees)
-                              ? Math.round(corner.degrees)
-                              : nextDegrees,
-                            [corner.manualKey]: true,
-                          }),
-                        );
-                      }}
-                      className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-                    >
-                      {CORNER_TYPE_OPTIONS.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="text-xs font-semibold text-brand-muted">
-                      Manual selection stays in place until the layout is reset.
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </SettingsSection>
-          )}
 
       {!isBayg && (
       <SettingsSection title="Posts" summary={POST_SIZE_LABELS[postSize] ?? (postSize ? `${postSize}mm Post` : "Run default")}>

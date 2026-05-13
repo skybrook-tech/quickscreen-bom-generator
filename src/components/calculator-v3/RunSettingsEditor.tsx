@@ -19,6 +19,7 @@ import {
 import { getPreferredGroutSku, setPreferredGroutSku } from "../../lib/userPrefs";
 import { SchemaDrivenForm, type SchemaField } from "./SchemaDrivenForm";
 import { colourName } from "./ColourPalette";
+import NumberInput from "../shared/NumberInput";
 
 interface Props {
   run: CanonicalRun;
@@ -283,6 +284,30 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
     });
   }
 
+  function updateCornerCount(value: number | null) {
+    const count = Math.max(0, Math.min(20, Math.round(Number(value) || 0)));
+    const fenceSegments = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
+    const fallbackSegmentId = fenceSegments[0]?.segmentId ?? run.segments[0]?.segmentId ?? crypto.randomUUID();
+    const corners = run.corners.slice(0, count);
+    while (corners.length < count) {
+      const afterSegment =
+        fenceSegments[Math.min(corners.length, Math.max(0, fenceSegments.length - 1))]?.segmentId ??
+        fallbackSegmentId;
+      corners.push({
+        cornerId: crypto.randomUUID(),
+        afterSegmentId: afterSegment,
+        type: "90",
+      });
+    }
+    dispatch({
+      type: "UPSERT_RUN",
+      run: {
+        ...run,
+        corners,
+      },
+    });
+  }
+
   return (
     <div className="mb-3 space-y-2 border-t border-brand-border/70 bg-brand-bg/55 p-3">
       <p className="text-xs font-semibold text-brand-muted">
@@ -331,6 +356,31 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
           </details>
         ))}
       </div>
+      {productCode !== "BAYG" && (
+        <details className="rounded-xl border border-brand-border/60 bg-brand-card/70">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3 py-2 text-sm font-extrabold text-brand-text">
+            <span>Corner posts</span>
+            <span className="rounded-full bg-brand-bg px-3 py-1 text-xs font-bold text-brand-muted">
+              {run.corners.length}
+            </span>
+          </summary>
+          <div className="space-y-2 border-t border-brand-border/50 p-3">
+            <label className="flex max-w-xs flex-col gap-1">
+              <span className="text-sm font-bold text-brand-muted">Run corner count</span>
+              <NumberInput
+                value={run.corners.length}
+                min={0}
+                max={20}
+                step={1}
+                onChange={updateCornerCount}
+              />
+            </label>
+            <p className="text-xs font-semibold text-brand-muted">
+              Corners are a run-level setting because they sit between sections. Drawn layouts still update this automatically.
+            </p>
+          </div>
+        </details>
+      )}
       {productCode !== "BAYG" && (
         <div className="mt-3 grid gap-3 rounded-2xl border border-brand-border/60 bg-brand-card/70 p-3 md:grid-cols-2">
           <label className="flex flex-col gap-1">

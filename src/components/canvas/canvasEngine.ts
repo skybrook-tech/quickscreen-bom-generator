@@ -2732,6 +2732,13 @@ export function initCanvasEngine(
   }
 
   function onResize() {
+    const previousWidth = cssCanvasWidth;
+    resizeCanvas();
+    const hasDrawnRuns = runs.some((run) => !run.isBoundary && run.points.length > 1);
+    if (!hasDrawnRuns && previousWidth <= 4 && cssCanvasWidth > 4) {
+      fitToWidth(50);
+      return;
+    }
     scheduleRedraw();
   }
 
