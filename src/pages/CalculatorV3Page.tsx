@@ -19,9 +19,8 @@ import { ConfirmButton } from "../components/shared/ConfirmButton";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { suggestAccessories } from "../lib/suggestedAccessories";
 import { priceForSku } from "../lib/localBomCalculator";
-import { initialVariablesForSystem, maxPanelWidthForSystem } from "../lib/productOptionRules";
+import { initialVariablesForSystem } from "../lib/productOptionRules";
 import { GATE_SEGMENT_STUB_KEYS } from "../lib/segmentTermination";
-import { calcRunStats } from "../lib/runStats";
 import {
   defaultGateBuildForMovement,
   defaultGateVariables,
@@ -386,7 +385,8 @@ function CalculatorV3Content() {
     window.addEventListener("mouseup", onUp);
   }
 
-  function startWorkspaceFromLanding() {
+  function startWorkspaceFromLanding(nextJobName = jobName) {
+    if (!nextJobName.trim()) return;
     if (!payload) {
       dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
       dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "select" });
@@ -1102,16 +1102,28 @@ function CalculatorV3Content() {
   const hasBlockingErrors = hasErrors || gateWidthErrors.length > 0 || economySlatErrors.length > 0;
 
   const cleanJobName = jobName.trim();
+  const systemLabel = (productCode: string) => {
+    if (productCode === "QSHS") return "QuickScreen Horizontal Slat";
+    if (productCode === "VS") return "QuickScreen Vertical Slat";
+    if (productCode === "XPL") return "XPress Plus Fence";
+    if (productCode === "BAYG") return "BAY-G Infill Screens";
+    return productCode;
+  };
   const gateSummaryForRun = (run: CanonicalRun) => {
     const counts = new Map<string, number>();
     for (const segment of run.segments) {
       if (segment.segmentKind !== "gate_opening") continue;
       const movement = String(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement] ?? "single_swing");
-      const label = movement === "sliding" ? "sliding" : movement === "double_swing" ? "double" : "ped";
+      const label =
+        movement === "sliding"
+          ? "sliding gate"
+          : movement === "double_swing"
+            ? "double swing gate"
+            : "pedestrian gate";
       counts.set(label, (counts.get(label) ?? 0) + 1);
     }
     return [...counts.entries()]
-      .map(([label, count]) => `${count} ${label}`)
+      .map(([label, count]) => `${count} ${label}${count === 1 ? "" : "s"}`)
       .join(" + ");
   };
   const runBomSummaries = payload?.runs.map((run, index) => {
@@ -1129,24 +1141,16 @@ function CalculatorV3Content() {
       },
       0,
     ) / 1000;
-    const stats = calcRunStats(
-      run,
-      Number(vars.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode)),
-    );
     const gatePart = gateSummaryForRun(run);
-    const panelPart = state.bomResult
-      ? `${stats.panels} ${stats.panels === 1 ? "panel" : "panels"}`
-      : "\u2014 panels";
     return [
       `Run ${index + 1}`,
       `${lengthM.toFixed(2)}m`,
-      gatePart || null,
-      panelPart,
-      run.productCode,
+      systemLabel(run.productCode),
       `${Number(vars.target_height_mm ?? 1800)}mm`,
       colourName(vars.colour_code),
       `${Number(vars.slat_size_mm ?? 65)}mm slat`,
-      `${Number(vars.slat_gap_mm ?? 5)}mm gap`,
+      `${Number(vars.slat_gap_mm ?? 9)}mm gap`,
+      gatePart || null,
     ].filter(Boolean).join(" - ");
   }) ?? [];
   const summaryText = payload ? runBomSummaries.join(" | ") : cleanJobName;
@@ -1199,7 +1203,8 @@ function CalculatorV3Content() {
                 />
                 <button
                   type="submit"
-                  className="mt-4 w-full rounded-lg bg-brand-primary px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm"
+                  disabled={!jobName.trim()}
+                  className="mt-4 w-full rounded-lg bg-brand-primary px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-45"
                 >
                   Enter
                 </button>

@@ -1735,3 +1735,19 @@ Verification:
 - `npm run build` passed.
 - `npm run test:describe-fence` passed for TC-01 through TC-12.
 - Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+### May 13, 2026 - Brief BE sandbox consolidation
+
+Workflow / calculation finding:
+- The BB/BD gate workflow correctly modelled double swing gates as two leaves, but the width validator still used a single pedestrian maximum in places and could block a valid double gate opening.
+- Several entry/default surfaces still carried the older 5mm gap default even though the current testing baseline expects 9mm gaps and 1800mm height.
+
+Changes applied:
+- Gate width validation now accepts single swing gates up to 2100mm, double swing gates up to a 4200mm opening (2100mm per leaf), and sliding gates on their existing sliding limits.
+- Switching a 900mm single swing gate to double swing now changes the opening to 1800mm and splits the clear opening into two leaves. Switching back to single uses the current two leaf widths as the new single opening basis.
+- Updated product option defaults, local fallback defaults, and Glass Outlet seed JSON defaults so new QSHS, VS, XPL, BAYG, and QS_GATE setups start with 9mm gaps and 1800mm heights.
+- Increased the docked layout canvas height from 630px to 788px, removed the visible `Powered by SkyBrookAI` header subtitle, simplified run-card summary clutter, and made the BOM header summary use full system and gate wording.
+
+Verification notes:
+- The gate settings panel currently has one visible height selector in the main section/gate geometry area; `GateSegmentDetails` does not render a second height dropdown.
+- Earlier BB items verified in source: gates still render in the run-bottom Gates group, expanded map mode covers the whole viewport, BOM tier labels remain hidden, and QSG hinge quantity remains two hinges per leaf.

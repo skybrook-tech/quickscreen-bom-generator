@@ -8,15 +8,10 @@ import {
   gateMovementOrDefault,
 } from "../../lib/gateOptionRules";
 import { hingeGapForSku, latchGapForSku } from "../../lib/gateHardware";
-import {
-  clampPostSpacing,
-  maxPanelWidthForSystem,
-} from "../../lib/productOptionRules";
 import { Button } from "../shared/Button";
 import { SegmentRow } from "./SegmentRow";
 import { colourName } from "./ColourPalette";
 import { RunSettingsEditor } from "./RunSettingsEditor";
-import { calcRunStats } from "../../lib/runStats";
 import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
 import { ConfirmButton } from "../shared/ConfirmButton";
 
@@ -87,18 +82,11 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
     () => runMasterVariables(run, state.payload?.variables),
     [run, state.payload?.variables],
   );
-  const jobMax = clampPostSpacing(
-    runVariables.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode),
-    maxPanelWidthForSystem(run.productCode),
-  );
   const firstSegment = firstFenceSegment(run);
   const runLengthM = (calcTotalLength(run) / 1000).toFixed(2);
-  const runStats = calcRunStats(run, jobMax);
-  const panelSummary = state.bomResult ? `${runStats.panels}P` : "\u2014 P";
-  const gateCount = run.segments.filter((segment) => segment.segmentKind === "gate_opening").length;
   const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
   const slatSize = Number(runVariables.slat_size_mm ?? 65);
-  const slatGap = Number(runVariables.slat_gap_mm ?? 5);
+  const slatGap = Number(runVariables.slat_gap_mm ?? 9);
   const isBayg = run.productCode === "BAYG";
   const displaySegments = useMemo(() => assignGateParents(run.segments), [run.segments]);
   const fenceSections = displaySegments.filter((segment) => segment.segmentKind !== "gate_opening");
@@ -241,8 +229,6 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           <span className="flex flex-wrap gap-x-2.5 gap-y-1 text-sm text-brand-muted">
             <span>System Type: <strong className="text-brand-text">{run.productCode}</strong></span>
             <span>{isBayg ? "Total panel width" : "Length"}: <strong className="text-brand-text">{runLengthM}m</strong></span>
-            {gateCount > 0 && <span>Gates: <strong className="font-mono tabular-nums text-brand-text">{gateCount}G</strong></span>}
-            <span>Panels: <strong className="font-mono tabular-nums text-brand-text">{panelSummary}</strong></span>
             <span>Height: <strong className="text-brand-text">{runHeight}mm</strong></span>
             <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
             <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>

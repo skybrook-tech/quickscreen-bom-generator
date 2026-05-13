@@ -340,8 +340,8 @@ export function SegmentRow({
       },
       {
         label: "Gap",
-        value: `${segmentVariables.slat_gap_mm ?? 5}mm`,
-        changed: !sameValue(segmentVariables.slat_gap_mm ?? 5, masterVariables.slat_gap_mm ?? 5),
+        value: `${segmentVariables.slat_gap_mm ?? 9}mm`,
+        changed: !sameValue(segmentVariables.slat_gap_mm ?? 9, masterVariables.slat_gap_mm ?? 9),
       },
       {
         label: "Post",

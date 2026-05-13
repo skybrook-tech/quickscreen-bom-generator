@@ -1223,7 +1223,7 @@ function calculateVerticalSlatRun(
   );
   const postColour = String(mergedRunVars.post_colour_code ?? colour);
   const slatSize = toNumber(mergedRunVars.slat_size_mm, 65);
-  const slatGap = toNumber(mergedRunVars.slat_gap_mm, 5);
+  const slatGap = toNumber(mergedRunVars.slat_gap_mm, 9);
   const finishFamily = String(mergedRunVars.finish_family ?? "standard");
   const economySlats = finishFamily === "economy";
   const slatStockLengthMm = economySlats ? 6500 : finishFamily === "alumawood" ? 5800 : 6100;
@@ -1387,7 +1387,7 @@ function calculateScreenRun(
   );
   const postColour = String(mergedRunVars.post_colour_code ?? colour);
   const slatSize = toNumber(mergedRunVars.slat_size_mm, 65);
-  const slatGap = toNumber(mergedRunVars.slat_gap_mm, 5);
+  const slatGap = toNumber(mergedRunVars.slat_gap_mm, 9);
   const finishFamily = String(mergedRunVars.finish_family ?? "standard");
   const economySlats = finishFamily === "economy";
   const slatStockLengthMm = economySlats ? 6500 : finishFamily === "alumawood" ? 5800 : 6100;

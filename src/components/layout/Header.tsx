@@ -44,7 +44,6 @@ export function Header() {
             </p>
             <p className="text-xs font-semibold text-brand-muted">
               QuickScreen BOM Generator
-              <span className="hidden sm:inline"> · Powered by SkyBrookAI</span>
             </p>
           </div>
         </div>

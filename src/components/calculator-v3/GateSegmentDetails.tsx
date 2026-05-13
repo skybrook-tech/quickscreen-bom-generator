@@ -641,9 +641,11 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   function upsertSegmentPatch({
     patch,
     leaves,
+    segmentPatch,
   }: {
     patch?: Record<string, string | number | boolean | null | undefined>;
     leaves?: Array<{ widthMm: number }>;
+    segmentPatch?: Partial<CanonicalSegment>;
   }) {
     dispatch({
       type: "UPSERT_SEGMENT",
@@ -651,6 +653,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
       segment: {
         ...(patch ? patchSegmentVariables(seg, patch) : seg),
         ...(leaves ? { leaves } : {}),
+        ...(segmentPatch ?? {}),
       },
     });
   }
@@ -661,10 +664,18 @@ export function GateSegmentDetails({ runId, seg }: Props) {
 
   function setMovement(value: string) {
     const nextMovement = gateMovementOrDefault(value);
+    const currentMovement = movement;
     const nextBuild = defaultGateBuildForMovement(nextMovement, prefersVerticalGate);
+    const currentLeafTotal = leafWidthsMm.reduce((sum, width) => sum + width, 0);
+    const nextOpeningWidthMm =
+      currentMovement !== "double_swing" && nextMovement === "double_swing"
+        ? Math.max(1800, Math.min(4200, Math.round(gateWidthMm * 2)))
+        : currentMovement === "double_swing" && nextMovement === "single_swing"
+          ? Math.max(1, Math.round(currentLeafTotal || clearOpeningMm))
+          : gateWidthMm;
     const nextClearOpening = clearGateOpeningWidthMm({
       movement: nextMovement,
-      openingWidthMm: gateWidthMm,
+      openingWidthMm: nextOpeningWidthMm,
       hingeGapMm,
       latchGapMm,
     });
@@ -677,6 +688,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         : [{ widthMm: Math.round(nextClearOpening) }];
     upsertSegmentPatch({
       leaves: nextLeaves,
+      segmentPatch: { segmentWidthMm: nextOpeningWidthMm },
       patch: {
       [GATE_SEGMENT_STUB_KEYS.gateMovement]: nextMovement,
       [GATE_SEGMENT_STUB_KEYS.gateBuild]: nextBuild,

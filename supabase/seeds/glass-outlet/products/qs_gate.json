@@ -4161,7 +4161,7 @@
       "data_type": "enum",
       "unit": "mm",
       "required": true,
-      "default_value_json": 5,
+      "default_value_json": 9,
       "options_json": [
         5,
         9,

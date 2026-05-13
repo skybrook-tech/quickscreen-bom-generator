@@ -94,6 +94,8 @@ Latest Brief BD pass: gate settings now include numbered QSG component diagrams 
 
 Latest Brief BD follow-up: BOM rows no longer expose per-line Tier 1/2/3 labels, quantity-break hints remain user-facing as lower-unit-price prompts, and QSG swing-gate hinge quantities are harmonised to exactly 2 hinges per leaf in both local fallback emission and QS_GATE seed companion metadata.
 
+Latest Brief BE sandbox consolidation: gate width validation now treats single swing as max 2100mm and double swing as two leaves up to a 4200mm opening, switching single to double doubles the opening before splitting leaves, switching double to single combines the leaves back into one opening, all active seed/UI defaults now start on 9mm gaps and 1800mm height, the map default canvas height increased by 25%, the Glass Outlet header no longer shows the SkyBrookAI powered subtitle, run cards remove flat panel/gate count clutter, and the BOM header uses full system/gate wording.
+
 ---
 
 ## Phases Overview
