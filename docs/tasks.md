@@ -100,6 +100,8 @@ Latest Brief BH pass: run cards now sit on a very light blue run surface with cl
 
 Latest Brief BI pass: empty-run workspaces now show four primary fence-system buttons (QSHS, VS, XPL, BAYG), run/section/gate settings share the same selected-value disclosure row with one-open/60-second idle collapse, run settings are grouped into Color, Slat size, Gap size, and Post size/mounting/spacings, section/gate cards keep editable length/width and height visible, End conditions UI was removed without changing termination data, and the BOM includes a printable run/section breakdown above line items.
 
+Latest skill sync pass: the BI sidebar conventions were added to the repo skill mirrors under `.claude/skills/` and `.agents/skills/`, including `finish_family` as Slat range, the shared `SettingsDisclosureRow` pattern, hidden End Conditions UI with preserved termination data, and the printable BOM run/section summary convention.
+
 ---
 
 ## Phases Overview

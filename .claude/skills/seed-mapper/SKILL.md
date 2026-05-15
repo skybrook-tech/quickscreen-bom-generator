@@ -94,6 +94,14 @@ Extras specific to this repo (not in the portable spec):
 - **Colour codes**: use the short code form everywhere in seeds (`"B"`, `"MN"`, …).
   Long names like `"black-satin"` are only for UI display and get normalised by
   the engine.
+- **Slat range / SKU-series convention:** the app's user-facing "Slat range"
+  control is stored as `finish_family`, not a separate `slat_range` field.
+  Current values are:
+  - `standard` - normal powder-coated slats (`XP-6100-S65-*`, `QS-6100-S90-*`)
+  - `economy` - economy 65mm packs (`XP-6500-E65-*`)
+  - `alumawood` - timber-look slats (`AW-5800-S65-*`, `AWQS-5800-S90-*`)
+  When adding a new product, extend `finish_family` options/normalisation before
+  inventing any parallel selector.
 - **Component category vs BOM display category:** keep `product_components[].category`
   as the engine selector category. Do not rename it just to improve the BOM UI.
   For BOM grouping, set `metadata.bomCategory` to one of:

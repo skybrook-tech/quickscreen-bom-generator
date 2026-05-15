@@ -20,13 +20,25 @@ Use this skill when improving how users configure, draw, review, and test quotes
 
 - Group choices by job, run, segment, gate, fixing, and add-ons.
 - Prefer compact controls over long explanatory copy.
+- Use the shared settings-row pattern for run, section, and gate settings: label on the left, selected value on the right, blue `show`/`hide` affordance, one open dropdown at a time, and a 60-second idle collapse. This pattern lives in `src/components/calculator-v3/SettingsDisclosureRow.tsx`.
+- Keep setting groups semantically consistent across levels:
+  - Run settings: `System type`, `Fence height`, `Color`, `Slat size`, `Gap size`, `Post size, mounting and spacings`.
+  - Section settings: show only overrides from run settings unless expanded.
+  - Gate settings: mirror section settings, with gate-specific rows for type, opening direction, and hardware.
+- Treat `finish_family` as the app's "Slat range" field. Current values are `standard`, `economy`, and `alumawood`; it controls valid colours, slat sizes, and SKU-series selection.
+- Hide alternate post colour unless the user asks for it. Default post colour follows fence colour.
+- Show colour tiles as swatches with the 1-2 letter catalogue code overlaid; the full colour name belongs in hover/title text or selected-value summaries.
 - Treat the first workspace state as a real quoting decision point: Draw, Describe, and Select should appear as equal numbered choice cards when no run exists, then collapse once the user chooses a path.
+- If the workspace exists but has no runs, show the four prominent system buttons in this order: QSHS, VS, XPL, BAYG. Clicking a button creates Run 1 and opens Run Settings.
 - Use a shared two-click confirm pattern for destructive actions: first click enters a danger confirm state, second click within about 3 seconds commits, and outside click cancels.
 - Treat "matches run defaults" indicators as signal, not noise: ignore structural geometry differences like corner/end-post conditions and only flag substantive setting overrides.
+- Matching run settings should be visible through the section/gate code indicator. If settings differ, list only the differing settings under `Settings that differ from run settings`; if matching, show `Settings match run settings`.
+- End-condition controls should not be shown in the sidebar unless explicitly reintroduced. Keep underlying termination data intact because BOM dispatch and canvas geometry still use it.
 - For describe/parse previews, avoid a blocking "missing" state. Apply sensible defaults, visually highlight defaulted chips, and let the user override only what needs changing.
 - Put derived values near the inputs they depend on: panels, post spacing, cut length, achieved height.
 - Use product-code search for expert users and friendly labels for less technical users.
 - After Generate BOM, keep the user in one place: BOM lines, warnings, suggested extras, manual extras, GST, grand total.
+- BOM headers should include a printable run/section summary above line items: bold run hero line, compact settings, post/corner/end-post summary, indented sections with panel count/post spacing, overrides, and gate sub-items.
 
 ## Mapper UI Principles
 

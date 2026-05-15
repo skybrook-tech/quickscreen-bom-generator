@@ -1832,3 +1832,15 @@ Verification:
 
 Deferred:
 - Full browser screenshot capture, draft PR creation, CI wait, and squash merge were not performed because this thread is working directly on `codex/qshs-calculator-sandbox` and the user requested commit/push to that branch.
+
+### May 15, 2026 - Skill and agent file sync after Brief BI
+
+Process finding:
+- Brief BI created reusable conventions that future agents need: `finish_family` is Slat range, run/section/gate settings share `SettingsDisclosureRow`, End Conditions UI stays hidden while termination data remains active, and BOM summaries should include printable run/section context.
+
+Changes applied:
+- Updated both repo skill mirrors under `.claude/skills/` and `.agents/skills/` for project management, UI design, QuickScreen BOM, seed mapping, and the shared skills README.
+- Synced matching local skill copies under `C:\Users\bbfen\.codex\skills\` and `C:\Users\bbfen\.agents\skills\` so this machine's active Codex/agent profile matches the repo guidance.
+
+Verification:
+- `git status` shows the expected skill/docs files modified. The local Vite sandbox log files remain untracked and were not included.
