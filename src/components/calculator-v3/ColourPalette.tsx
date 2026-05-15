@@ -88,13 +88,20 @@ export function ColourPalette({
             title={colourName(option)}
             aria-label={colourName(option)}
             aria-pressed={selected}
-            className={`${buttonSize} rounded-full border transition-all ${
+            className={`${buttonSize} relative inline-flex items-center justify-center rounded-full border text-[10px] font-black uppercase tabular-nums transition-all ${
               selected
                 ? "border-brand-primary ring-2 ring-brand-primary/45 ring-offset-2 ring-offset-brand-card"
                 : "border-brand-border hover:border-brand-primary hover:ring-2 hover:ring-brand-primary/20"
             }`}
             style={{ background: COLOUR_SWATCHES[option] ?? "#ddd" }}
-          />
+          >
+            <span
+              className="select-none text-white"
+              style={{ textShadow: "0 1px 2px rgba(0,0,0,.95), 0 0 2px rgba(0,0,0,.75)" }}
+            >
+              {option}
+            </span>
+          </button>
         );
       })}
     </div>

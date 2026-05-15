@@ -1277,6 +1277,53 @@ function CalculatorV3Content() {
     ].filter(Boolean).join(" - ");
   }) ?? [];
   const summaryText = payload ? runBomSummaries.join(" | ") : cleanJobName;
+  const bomRunDetails = payload?.runs.map((run, runIndex) => {
+    const vars = { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
+    const gates = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
+    const sections = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
+    const lengthMm = run.segments.reduce((sum, segment) => sum + Number(segment.segmentWidthMm ?? 0), 0);
+    const maxPanelWidth = Number(vars.max_panel_width_mm ?? 2600);
+    const sectionRows = sections.map((section, sectionIndex) => {
+      const sectionVars = section.variables ?? {};
+      const width = Number(section.segmentWidthMm ?? 0);
+      const panelCount = width > 0 ? Math.max(1, Math.ceil(width / Number(sectionVars.max_panel_width_mm ?? maxPanelWidth))) : 0;
+      const postSpacing = panelCount > 0 ? Math.round(width / panelCount) : 0;
+      const overrides = [
+        ["Colour", sectionVars.colour_code, vars.colour_code],
+        ["Slat", sectionVars.slat_size_mm, vars.slat_size_mm],
+        ["Gap", sectionVars.slat_gap_mm, vars.slat_gap_mm],
+        ["Height", section.targetHeightMm, vars.target_height_mm],
+      ]
+        .filter(([, value]) => value !== undefined && value !== null && value !== "")
+        .filter(([, value, master]) => String(value) !== String(master ?? ""))
+        .map(([label, value]) => `${label}: ${value}${label === "Slat" || label === "Gap" || label === "Height" ? "mm" : ""}`);
+      const linkedGates = gates.filter((gate) => gate.variables?.parent_section_id === section.segmentId);
+      return {
+        label: `Section ${sectionIndex + 1} - ${(width / 1000).toFixed(2)}m x ${Number(section.targetHeightMm ?? vars.target_height_mm ?? 1800)}mm - ${panelCount} panel${panelCount === 1 ? "" : "s"} - post spacing ${postSpacing}mm`,
+        overrides,
+        gates: linkedGates.map((gate) => {
+          const movement = String(gate.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement] ?? "single_swing");
+          const hardware = String(gate.variables?.[GATE_SEGMENT_STUB_KEYS.hardwareKitSku] ?? gate.variables?.[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "default hardware");
+          return `${movement.replace("_", " ")} - ${Number(gate.segmentWidthMm ?? 0)}mm - ${hardware}`;
+        }),
+      };
+    });
+    return {
+      hero: `Run ${runIndex + 1} - ${(lengthMm / 1000).toFixed(2)}m - ${systemLabel(run.productCode)} - ${gateSummaryForRun(run) || "no gates"}`,
+      settings: [
+        `Slat size: ${Number(vars.slat_size_mm ?? 65)}mm`,
+        `Gap: ${Number(vars.slat_gap_mm ?? 9)}mm`,
+        `Height: ${Number(vars.target_height_mm ?? 1800)}mm`,
+        `Colour: ${colourName(vars.colour_code)}`,
+        `Mounting: ${String(vars.mounting_method ?? vars.mounting_type ?? "in_ground").replace(/_/g, " ")}`,
+        `Termination L: ${run.leftBoundary?.type ?? "Post"}`,
+        `Termination R: ${run.rightBoundary?.type ?? "Post"}`,
+        `Corners: ${run.corners.length}`,
+      ],
+      posts: `Posts: ${sections.length + 1} standard + ${run.corners.length} corner + derived end posts`,
+      sections: sectionRows,
+    };
+  }) ?? [];
   const saveJobLabel = jobName.trim() ? `Save ${jobName.trim()}` : "Save Job";
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
@@ -1670,6 +1717,38 @@ function CalculatorV3Content() {
                     </div>
                   ) : bomResultForTabs && !hasBlockingErrors ? (
                     <>
+                      {bomRunDetails.length > 0 && (
+                        <div className="mb-5 space-y-3 rounded-2xl border border-brand-border/70 bg-brand-bg/45 p-3 print:border-slate-300 print:bg-white">
+                          {bomRunDetails.map((runDetail) => (
+                            <section key={runDetail.hero} className="space-y-2">
+                              <p className="text-sm font-black text-brand-text print:text-black">
+                                {runDetail.hero}
+                              </p>
+                              <div className="grid gap-x-4 gap-y-1 text-xs font-semibold text-brand-muted sm:grid-cols-2 print:text-slate-700">
+                                {runDetail.settings.map((setting) => (
+                                  <span key={setting}>{setting}</span>
+                                ))}
+                                <span className="font-bold text-brand-text print:text-black">{runDetail.posts}</span>
+                              </div>
+                              <div className="space-y-1 pl-3 text-xs font-semibold text-brand-muted print:text-slate-700">
+                                {runDetail.sections.map((section) => (
+                                  <div key={section.label}>
+                                    <p className="font-bold text-brand-text print:text-black">{section.label}</p>
+                                    {section.overrides.length > 0 && (
+                                      <p>overrides: {section.overrides.join(", ")}</p>
+                                    )}
+                                    {section.gates.map((gate) => (
+                                      <p key={gate} className="pl-3 text-brand-warning print:text-slate-700">
+                                        {gate}
+                                      </p>
+                                    ))}
+                                  </div>
+                                ))}
+                              </div>
+                            </section>
+                          ))}
+                        </div>
+                      )}
                       <BOMResultTabs
                         result={bomResultForTabs}
                         editable

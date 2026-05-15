@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
 import {
@@ -47,6 +47,7 @@ import {
   selectedOptionalAddOns,
 } from "../../lib/bomMetadata";
 import type { ReactNode } from "react";
+import { SettingsDisclosureRow } from "./SettingsDisclosureRow";
 
 const GATE_POST_SIZE_OPTIONS: GateOption[] = [
   { value: "50", label: "50mm Post Standard" },
@@ -255,27 +256,16 @@ function GateSettingsSection({
   children: ReactNode;
   defaultOpen?: boolean;
 }) {
-  const [open, setOpen] = useState(defaultOpen);
-
+  const componentId = useId();
   return (
-    <div className="rounded-2xl border border-brand-border/50 bg-brand-bg/60">
-      <button
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm font-extrabold text-brand-text"
-      >
-        <span>{title}</span>
-        <span className="flex min-w-0 items-center gap-2 text-xs font-bold text-brand-primary">
-          {!open && summary ? (
-            <span className="max-w-[12rem] truncate rounded-full bg-brand-card px-2 py-0.5 text-brand-muted">
-              {summary}
-            </span>
-          ) : null}
-          <span>{open ? "Hide" : "Show"}</span>
-        </span>
-      </button>
-      {open && <div className="space-y-3 border-t border-brand-border/50 p-3">{children}</div>}
-    </div>
+    <SettingsDisclosureRow
+      id={`${componentId}-gate-settings-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
+      label={title}
+      value={summary}
+      defaultOpen={defaultOpen}
+    >
+      {children}
+    </SettingsDisclosureRow>
   );
 }
 
@@ -915,7 +905,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
 
       {isSwing ? (
         <GateSettingsSection
-          title="Swing hardware"
+          title="Gate hardware"
           summary={`${rankedLabel(rankedHinges, currentHingeValue)} / ${rankedLabel(rankedLatches, currentLatchValue)}`}
         >
           <GateWeightCard estimate={weightEstimate} />
@@ -1009,7 +999,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         </GateSettingsSection>
       ) : (
         <GateSettingsSection
-          title="Sliding hardware"
+          title="Gate hardware"
           summary={`${String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")} / ${automationEnabled ? "Automation on" : "Manual"}`}
         >
           <HardwareDropdown

@@ -378,7 +378,7 @@ export function applyProductOptionRules(
     if (field.field_key === "post_system") {
       result.push(
         cloneField(field, {
-          label: "Post type",
+          label: "Post size",
           default_value_json: productCode === "XPL" ? "xpl" : "standard_50",
         }),
       );

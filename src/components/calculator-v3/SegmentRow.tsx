@@ -135,6 +135,12 @@ function SummaryBit({
   );
 }
 
+type SummaryItem = {
+  label: string;
+  value: string | number;
+  emphasis?: boolean;
+};
+
 function sameValue(left: unknown, right: unknown) {
   if (left === undefined || left === null || left === "") {
     return right === undefined || right === null || right === "";
@@ -299,12 +305,9 @@ export function SegmentRow({
   const summaryBitsBase = [
     gate
       ? { label: "Type", value: gateMovementLabel(gateVars[GATE_SEGMENT_STUB_KEYS.gateMovement]), emphasis: true }
-      : isBayg
-        ? { label: "Width", value: `${segmentLength}mm`, emphasis: true }
-        : { label: "Length", value: `${(segmentLength / 1000).toFixed(2)}m`, emphasis: true },
+      : null,
     ...(gate
       ? [
-        { label: "Opening width", value: `${segmentLength}mm`, emphasis: true },
         { label: "Direction", value: gateDirectionLabel(gateVars) },
         { label: "Hinge side", value: gateHingeSideLabel(gateVars) },
         { label: "Hardware", value: gateHardwareSummary(gateVars) },
@@ -313,7 +316,7 @@ export function SegmentRow({
     ...(isBayg && !gate
       ? [{ label: "Qty", value: Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1))), emphasis: true }]
       : []),
-  ];
+  ].filter(Boolean) as SummaryItem[];
 
   const rawDifferenceBits = gate
     ? [
@@ -687,6 +690,36 @@ export function SegmentRow({
                 </ConfirmButton>
               </div>
             </div>
+            <div className="flex flex-wrap items-end gap-3 rounded-xl border border-brand-border/50 bg-brand-bg/45 p-2">
+              <label className="flex flex-col gap-1">
+                <span className="text-[11px] font-bold text-brand-muted">
+                  {gate || isBayg ? "Width (mm)" : "Length (m)"}
+                </span>
+                <NumberInput
+                  value={gate || isBayg ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
+                  step={gate || isBayg ? 50 : 0.01}
+                  min={0}
+                  className="w-24 px-2 py-1.5 text-center text-sm tabular-nums"
+                  onChange={(v) =>
+                    updateGeometry(
+                      "segmentWidthMm",
+                      gate || isBayg ? Math.round(Number(v)) : Math.round(Number(v) * 1000),
+                    )
+                  }
+                />
+              </label>
+              <label className="flex flex-col gap-1">
+                <span className="text-[11px] font-bold text-brand-muted">Height (mm)</span>
+                <NumberInput
+                  value={selectedHeight}
+                  min={0}
+                  step={10}
+                  className="w-24 px-2 py-1.5 text-center text-sm tabular-nums"
+                  onChange={(v) => updateGeometry("targetHeightMm", Number(v))}
+                />
+              </label>
+            </div>
+            {summaryBits.length > 0 && (
             <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] leading-tight">
               {summaryBits.map((item) => (
                 <SummaryBit
@@ -697,6 +730,7 @@ export function SegmentRow({
                 />
               ))}
             </div>
+            )}
 
           </div>
 
@@ -824,13 +858,15 @@ export function SegmentRow({
             )}
             <div className="rounded-lg border border-brand-border/60 bg-brand-card/70 p-3">
               <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
-                Current settings
+                {matchesMaster ? "Settings match run settings" : "Settings that differ from run settings"}
               </p>
-              <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] leading-tight">
-                {visibleSettings.map((item) => (
-                  <SummaryBit key={item.label} label={item.label} value={item.value} />
-                ))}
-              </div>
+              {!matchesMaster && (
+                <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] leading-tight">
+                  {visibleSettings.filter((item) => item.changed).map((item) => (
+                    <SummaryBit key={item.label} label={item.label} value={item.value} />
+                  ))}
+                </div>
+              )}
             </div>
             {gate ? (
               <GateSegmentDetails runId={runId} seg={seg} />

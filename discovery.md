@@ -1811,3 +1811,24 @@ Verification:
 
 Deferred:
 - Full visual screenshot capture and deploy-preview/CI merge flow were not performed in this direct sandbox-branch workflow.
+
+### May 15, 2026 - Brief BI sidebar uniformity and BOM summary cleanup
+
+Workflow / UX finding:
+- The product rules already use `finish_family` as the calculator's slat-range concept, covering Standard, Economy, and Alumawood timber-look SKU families. This satisfies the brief's "Slat range" requirement without adding a new data field.
+- Run, section, and gate settings had similar behavior but different visual patterns, which made the sidebar feel harder to scan.
+
+Changes applied:
+- Added a shared `SettingsDisclosureRow` for label-left/value-right rows with a blue show/hide affordance, one-open dropdown behavior, a 60-second idle collapse timer, and 220ms transitions.
+- Empty workspaces now show four prominent fence-system buttons in order: QSHS, VS, XPL, and BAYG. Choosing one creates Run 1 and opens its run settings.
+- Run settings were reorganized into System type, Fence height, Color, Slat size, Gap size, and Post size/mounting/spacings, with post fixings hidden behind a Choose fixings button and post colour hidden unless Alternate post color is used.
+- Section and gate cards now keep editable length/width and height visible in the collapsed card. The old Current settings block now reports either settings match the run settings or only the settings that differ.
+- Removed the End conditions UI from section settings while leaving the underlying termination model and BOM termination handling intact.
+- BOM output now includes a printable run/section summary block above line items, including run hero lines, settings, post summary, section panel/post-spacing summaries, overrides, and gate sub-items.
+
+Verification:
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+Deferred:
+- Full browser screenshot capture, draft PR creation, CI wait, and squash merge were not performed because this thread is working directly on `codex/qshs-calculator-sandbox` and the user requested commit/push to that branch.

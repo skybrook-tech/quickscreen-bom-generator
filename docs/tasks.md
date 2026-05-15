@@ -98,6 +98,8 @@ Latest Brief BE sandbox consolidation: gate width validation now treats single s
 
 Latest Brief BH pass: run cards now sit on a very light blue run surface with clearer spacing between runs, the QSG gate component diagram has been replaced by a compact numbered Gate components list with the same BOM badge cross-highlighting, and canvas-placed existing posts/pillars now snap onto fence sections, split a section when placed mid-run, and use the F-section termination BOM path.
 
+Latest Brief BI pass: empty-run workspaces now show four primary fence-system buttons (QSHS, VS, XPL, BAYG), run/section/gate settings share the same selected-value disclosure row with one-open/60-second idle collapse, run settings are grouped into Color, Slat size, Gap size, and Post size/mounting/spacings, section/gate cards keep editable length/width and height visible, End conditions UI was removed without changing termination data, and the BOM includes a printable run/section breakdown above line items.
+
 ---
 
 ## Phases Overview
@@ -418,6 +420,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Brief BC unified calculator experience: landing now goes straight to the calculator with a sidebar Describe Your Fence component instead of AY's three entry cards, Map/BOM tabs host the right pane, typed/canvas length edits continue to sync through the canonical payload, gate openings remain section-owned but render in a run-bottom Gates group, expanded map mode covers the whole viewport including the sidebar, map shortcuts/help were surfaced, and run details render below the docked map while preserving the flat BOM-compatible `gate_opening` segments.
 - [x] Brief BF post-BE polish: committed job names now render larger with truncation, the map retains the 50m default view and centers parsed layouts, Describe Your Fence now direct-applies deterministic parser results without the preview card, parsed gates are auto-added/centered with catalogue-height normalization, Add run has primary-brand prominence, and gate cards now mirror section cards with R1G1 codes plus inline gate settings.
 - [x] Brief BG post-BF cleanup: fresh calculator entry and Clear Job now default to the Map tab, hidden-to-visible canvas resize recalibrates empty maps back to the 50m default view, corner-post editing has moved out of section settings into run settings, and clicking a v3 gate marker on the map now opens the matching sidebar gate settings row.
+- [x] Brief BI sidebar uniformity: empty-run landing now offers QSHS, VS, XPL, and BAYG system buttons; run, section, and gate settings use one selected-value disclosure pattern; run settings are reorganized into Color, Slat size, Gap size, and Post size/mounting/spacings; color tiles show catalogue abbreviations; section/gate cards show inline editable dimensions; End conditions controls are hidden while termination data remains intact; and the BOM has a printable run/section information block.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---

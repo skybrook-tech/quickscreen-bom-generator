@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../types/canonical.types";
@@ -15,7 +15,7 @@ import {
 } from "../../lib/segmentTermination";
 import { SchemaDrivenForm } from "./SchemaDrivenForm";
 import NumberInput from "../shared/NumberInput";
-import { TerminationControl } from "./TerminationControl";
+import { SettingsDisclosureRow } from "./SettingsDisclosureRow";
 
 const POST_SIZE_LABELS: Record<string, string> = {
   "50": "50mm Post Standard",
@@ -25,41 +25,6 @@ const POST_SIZE_LABELS: Record<string, string> = {
 interface Props {
   runId: string;
   seg: CanonicalSegment;
-}
-
-function SettingsSection({
-  title,
-  summary,
-  children,
-  defaultOpen = false,
-}: {
-  title: string;
-  summary?: string;
-  children: ReactNode;
-  defaultOpen?: boolean;
-}) {
-  const [open, setOpen] = useState(defaultOpen);
-
-  return (
-    <div className="rounded-2xl border border-brand-border/60 bg-brand-bg/60">
-      <button
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm font-extrabold text-brand-text"
-      >
-        <span>{title}</span>
-        <span className="flex min-w-0 items-center gap-2 text-xs font-bold text-brand-primary">
-          {!open && summary ? (
-            <span className="max-w-[11rem] truncate rounded-full bg-brand-card px-2 py-0.5 text-brand-muted">
-              {summary}
-            </span>
-          ) : null}
-          <span>{open ? "Hide" : "Show"}</span>
-        </span>
-      </button>
-      {open && <div className="space-y-3 border-t border-brand-border/50 p-3">{children}</div>}
-    </div>
-  );
 }
 
 export function FenceSegmentDetails({ runId, seg }: Props) {
@@ -85,10 +50,6 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     ...runVariables,
     ...v,
   };
-  const fenceSegments = run?.segments.filter((segment) => segment.segmentKind !== "gate_opening") ?? [];
-  const segmentIndex = fenceSegments.findIndex((segment) => segment.segmentId === seg.segmentId);
-  const leftEndReadOnly = segmentIndex > 0 && !v.left_termination_kind;
-  const rightEndReadOnly = segmentIndex >= 0 && segmentIndex < fenceSegments.length - 1 && !v.right_termination_kind;
   const postSize = (displayVariables[SEGMENT_OPTION_KEYS.postSize] as string) ?? "";
   const isCustomPost = postSize === "custom";
   const isBayg = productCode === "BAYG";
@@ -174,7 +135,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   return (
     <div className="space-y-4">
           {optionFields.length > 0 ? (
-            <SettingsSection title="Slats, colors, and spacings" summary={optionSummary || "Run defaults"}>
+            <SettingsDisclosureRow id={`${seg.segmentId}-section-style`} label="Slats, colors, and spacings" value={optionSummary || "Run defaults"}>
               {optionFields.length > 0 && (
                 <SchemaDrivenForm
                   fields={optionFields}
@@ -182,32 +143,13 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                   onChange={handleOptionChange}
                 />
               )}
-            </SettingsSection>
+            </SettingsDisclosureRow>
           ) : null}
 
       {!isBayg && (
-      <SettingsSection title="End conditions" summary="Left / right ends">
-            <div className="grid gap-3 lg:grid-cols-2">
-              <TerminationControl
-                runId={runId}
-                seg={seg}
-                side="left"
-                readOnly={leftEndReadOnly}
-              />
-              <TerminationControl
-                runId={runId}
-                seg={seg}
-                side="right"
-                readOnly={rightEndReadOnly}
-              />
-            </div>
-      </SettingsSection>
-      )}
-
-      {!isBayg && (
-      <SettingsSection title="Posts" summary={POST_SIZE_LABELS[postSize] ?? (postSize ? `${postSize}mm Post` : "Run default")}>
+      <SettingsDisclosureRow id={`${seg.segmentId}-section-posts`} label="Posts" value={POST_SIZE_LABELS[postSize] ?? (postSize ? `${postSize}mm Post` : "Run default")}>
             <label className="flex flex-col gap-1">
-              <span className="text-sm font-bold text-brand-muted">Post type</span>
+              <span className="text-sm font-bold text-brand-muted">Post size</span>
               <select
                 value={postSize}
                 onChange={(e) =>
@@ -227,13 +169,14 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                 <option value="custom">Non-standard post</option>
               </select>
             </label>
-      </SettingsSection>
+      </SettingsDisclosureRow>
       )}
 
       {!isBayg && isCustomPost && (
-        <SettingsSection
-          title="Custom post width"
-          summary={`${v[SEGMENT_OPTION_KEYS.postWidthMm] ?? "Not set"}mm`}
+        <SettingsDisclosureRow
+          id={`${seg.segmentId}-section-custom-post`}
+          label="Custom post width"
+          value={`${v[SEGMENT_OPTION_KEYS.postWidthMm] ?? "Not set"}mm`}
         >
           <label className="flex flex-col gap-1">
             <span className="text-sm font-bold text-brand-muted">Post width (mm)</span>
@@ -245,11 +188,11 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
               min={1}
             />
           </label>
-        </SettingsSection>
+        </SettingsDisclosureRow>
       )}
 
       {!isBayg && (
-      <SettingsSection title="Post spacing" summary={`${effectiveMax}mm`}>
+      <SettingsDisclosureRow id={`${seg.segmentId}-section-spacing`} label="Max post spacing" value={`${effectiveMax}mm`}>
         <label className="flex flex-col gap-1">
           <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
           <input
@@ -266,7 +209,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
             className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
           />
         </label>
-      </SettingsSection>
+      </SettingsDisclosureRow>
       )}
 
     </div>
