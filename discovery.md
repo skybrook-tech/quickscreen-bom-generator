@@ -1844,3 +1844,25 @@ Changes applied:
 
 Verification:
 - `git status` shows the expected skill/docs files modified. The local Vite sandbox log files remain untracked and were not included.
+
+### May 16, 2026 - Brief BJ run/section settings parity completion
+
+Workflow / UX finding:
+- BI shipped the shared disclosure-row component, but run and section settings still used different groupings. That made the same setting feel like a different workflow depending on whether it was edited at run or section level.
+- Height should be treated as a section attribute, not as a run default. The green match indicator should therefore ignore height differences and only flag non-height setting overrides.
+
+Changes applied:
+- Enlarged the empty-workspace QSHS / VS / XPL / BAYG buttons so the system choice reads as the primary action.
+- Removed collapsed-card length/height inputs from section cards. Length and height now display in the section header and are edited only inside the expanded section settings panel.
+- Reworked run and section settings into matching groups: System type, Slats/colors/spacings, and Post size/mounting/spacing. Run-only corner count remains its own row.
+- Moved louvre treatment into the Slats/colors/spacings group and absorbed Max post spacing into the combined post group.
+- Added section-level system type override by storing `product_code` on the section; the BOM hook expands mixed-system sections into product-specific calculation runs before local fallback or Supabase dispatch.
+- Removed run-level height display from run cards, map run details, and BOM hero/settings summaries. Section breakdowns still show each section's height.
+- Updated repo skill mirrors so future agents treat height as section-level and keep the run/section settings groupings aligned.
+
+Verification:
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+Deferred:
+- Deploy-preview screenshots, CI wait, PR auto-merge, and browser visual confirmation of the deploy preview were not performed in this direct sandbox-branch workflow.

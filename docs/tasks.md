@@ -100,6 +100,8 @@ Latest Brief BH pass: run cards now sit on a very light blue run surface with cl
 
 Latest Brief BI pass: empty-run workspaces now show four primary fence-system buttons (QSHS, VS, XPL, BAYG), run/section/gate settings share the same selected-value disclosure row with one-open/60-second idle collapse, run settings are grouped into Color, Slat size, Gap size, and Post size/mounting/spacings, section/gate cards keep editable length/width and height visible, End conditions UI was removed without changing termination data, and the BOM includes a printable run/section breakdown above line items.
 
+Latest Brief BJ pass: BI's run/section parity gaps were closed. Run and section settings now share the same grouped disclosure pattern, section system overrides are supported without adding a parallel data model, section height is edited only in the expanded section panel, run-level height display was removed, and BOM summaries no longer show height as a run-level attribute.
+
 Latest skill sync pass: the BI sidebar conventions were added to the repo skill mirrors under `.claude/skills/` and `.agents/skills/`, including `finish_family` as Slat range, the shared `SettingsDisclosureRow` pattern, hidden End Conditions UI with preserved termination data, and the printable BOM run/section summary convention.
 
 ---
@@ -423,6 +425,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Brief BF post-BE polish: committed job names now render larger with truncation, the map retains the 50m default view and centers parsed layouts, Describe Your Fence now direct-applies deterministic parser results without the preview card, parsed gates are auto-added/centered with catalogue-height normalization, Add run has primary-brand prominence, and gate cards now mirror section cards with R1G1 codes plus inline gate settings.
 - [x] Brief BG post-BF cleanup: fresh calculator entry and Clear Job now default to the Map tab, hidden-to-visible canvas resize recalibrates empty maps back to the 50m default view, corner-post editing has moved out of section settings into run settings, and clicking a v3 gate marker on the map now opens the matching sidebar gate settings row.
 - [x] Brief BI sidebar uniformity: empty-run landing now offers QSHS, VS, XPL, and BAYG system buttons; run, section, and gate settings use one selected-value disclosure pattern; run settings are reorganized into Color, Slat size, Gap size, and Post size/mounting/spacings; color tiles show catalogue abbreviations; section/gate cards show inline editable dimensions; End conditions controls are hidden while termination data remains intact; and the BOM has a printable run/section information block.
+- [x] Brief BJ run/section parity completion: fence-system buttons now have larger primary text, run and section settings share the same System type / Slats-colors-spacings / Post size-mounting-spacing disclosure groups, section length/height edits live only inside the expanded panel, section headers show length plus bold height, run-level height was removed, section match indicators ignore height, section system overrides dispatch through their own BOM system path, and BOM summaries no longer show a run-level height.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---

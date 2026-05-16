@@ -180,10 +180,11 @@ export function SegmentRow({
     ...runVariables,
     ...(seg.variables ?? {}),
   };
-  const productCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
+  const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
+  const productCode = String(seg.variables?.product_code ?? runProductCode);
   const isBayg = productCode === "BAYG";
   const heightEntries = run
-    ? heightEntriesForSystem(run.productCode, segmentVariables)
+    ? heightEntriesForSystem(productCode, segmentVariables)
     : [];
   const heightInputsReady =
     productCode === "VS" ||
@@ -236,7 +237,7 @@ export function SegmentRow({
     ? `Gate ${segIdx + 1} — ${Math.round(segmentLength)}mm`
     : isBayg
       ? `Panel ${segIdx + 1} — ${Math.round(segmentLength)}mm`
-      : `Section ${segIdx + 1} — ${(segmentLength / 1000).toFixed(2)}m`;
+      : `Section ${segIdx + 1} — ${(segmentLength / 1000).toFixed(2)}m(L) — `;
   const matchesMaster = (() => {
     if (!run) return true;
     if (gate) {
@@ -253,9 +254,6 @@ export function SegmentRow({
       );
     }
     const vars = seg.variables ?? {};
-    const segmentHeight = Number(seg.targetHeightMm ?? vars.target_height_mm ?? 0);
-    const masterSegmentHeight = Number(masterVariables.target_height_mm ?? 0);
-    if (segmentHeight !== masterSegmentHeight) return false;
     const settingsKindMatches = (key: string) => {
       const value = vars[key];
       const master = masterVariables[key];
@@ -265,7 +263,7 @@ export function SegmentRow({
       return sameValue(value, master);
     };
     const keys = [
-      "target_height_mm",
+      "product_code",
       "colour_code",
       "post_colour_code",
       "slat_size_mm",
@@ -376,7 +374,7 @@ export function SegmentRow({
       {
         label: "System",
         value: productCode,
-        changed: !sameValue(productCode, run?.productCode ?? state.payload?.productCode ?? "QSHS"),
+        changed: !sameValue(productCode, runProductCode),
       },
       { label: "Colour", value: colourName(fenceColour), changed: !sameValue(fenceColour, masterFenceColour) },
       ...(postColour !== fenceColour
@@ -424,7 +422,7 @@ export function SegmentRow({
       { label: "End post", value: endPostCount, changed: !isBayg && !sameValue(endPostCount, masterEndPostCount) },
     ];
   const differenceBits =
-    matchesMaster ? [] : rawDifferenceBits.filter((item) => item.changed);
+    matchesMaster ? [] : rawDifferenceBits.filter((item) => item.changed && item.label !== "Height");
   const summaryBits = [...summaryBitsBase, ...differenceBits];
   const visibleSettings = rawDifferenceBits.filter((item) => {
     if (item.label === "Height") return false;
@@ -563,8 +561,8 @@ export function SegmentRow({
       runId,
       segment: {
         ...patchSegmentVariables(seg, {
-          target_height_mm: null,
           slat_count: null,
+          product_code: null,
           colour_code: null,
           post_colour_code: null,
           slat_size_mm: null,
@@ -576,7 +574,6 @@ export function SegmentRow({
           mounting_method: null,
           max_panel_width_mm: null,
         }),
-        targetHeightMm: masterHeight,
       },
     });
   }
@@ -613,6 +610,7 @@ export function SegmentRow({
             <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2">
               <p className="min-w-0 text-left text-lg font-black text-brand-text">
                 {titleLabel}
+                {!gate && !isBayg && <strong>{selectedHeight}mm(H)</strong>}
               </p>
               <div className="flex items-center justify-center">
                 <button
@@ -689,35 +687,6 @@ export function SegmentRow({
                   <X size={16} strokeWidth={3} />
                 </ConfirmButton>
               </div>
-            </div>
-            <div className="flex flex-wrap items-end gap-3 rounded-xl border border-brand-border/50 bg-brand-bg/45 p-2">
-              <label className="flex flex-col gap-1">
-                <span className="text-[11px] font-bold text-brand-muted">
-                  {gate || isBayg ? "Width (mm)" : "Length (m)"}
-                </span>
-                <NumberInput
-                  value={gate || isBayg ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
-                  step={gate || isBayg ? 50 : 0.01}
-                  min={0}
-                  className="w-24 px-2 py-1.5 text-center text-sm tabular-nums"
-                  onChange={(v) =>
-                    updateGeometry(
-                      "segmentWidthMm",
-                      gate || isBayg ? Math.round(Number(v)) : Math.round(Number(v) * 1000),
-                    )
-                  }
-                />
-              </label>
-              <label className="flex flex-col gap-1">
-                <span className="text-[11px] font-bold text-brand-muted">Height (mm)</span>
-                <NumberInput
-                  value={selectedHeight}
-                  min={0}
-                  step={10}
-                  className="w-24 px-2 py-1.5 text-center text-sm tabular-nums"
-                  onChange={(v) => updateGeometry("targetHeightMm", Number(v))}
-                />
-              </label>
             </div>
             {summaryBits.length > 0 && (
             <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] leading-tight">

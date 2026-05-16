@@ -30,6 +30,7 @@ interface Props {
 const HIDDEN_FIELD_KEYS = new Set([
   "left_boundary_type",
   "right_boundary_type",
+  "target_height_mm",
   "slat_stock_length_mm",
   "rail_stock_length_mm",
   "side_frame_stock_length_mm",
@@ -212,12 +213,8 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
     if (key === "colour_code" && (!run.variables?.post_colour_code || previousPostColour === previousColour)) {
       nextVariables.post_colour_code = value;
     }
-    if (key === "target_height_mm") {
-      delete nextVariables.slat_count;
-    }
     const normalised = normaliseVariablesForSystem(nextProductCode, nextVariables);
     const syncKeys = new Set([
-      "target_height_mm",
       "finish_family",
       "slat_size_mm",
       "slat_gap_mm",
@@ -234,7 +231,6 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
     ]);
     const resetSectionKeys = [
       key,
-      ...(key === "target_height_mm" ? ["target_height_mm", "slat_count"] : []),
       ...(key === "colour_code" ? ["colour_code", "post_colour_code"] : []),
       ...(key === "post_system" ? ["post_system", "post_size"] : []),
       ...(key === "mounting_type" || key === "mounting_method" ? ["mounting_type", "mounting_method"] : []),
@@ -266,11 +262,9 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
               const movement = gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
               return {
                 ...segment,
-                targetHeightMm: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
                 variables: {
                   ...(clearKeys(segment.variables) ?? {}),
                   [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(movement, nextProductCode === "VS"),
-                  [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
                   [GATE_SEGMENT_STUB_KEYS.colourCode]: String(normalised.colour_code ?? "B"),
                   [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(normalised.slat_size_mm ?? 65),
                   [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(normalised.slat_gap_mm ?? 9),
@@ -280,7 +274,6 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
             }
             return {
               ...segment,
-              targetHeightMm: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
               variables: clearKeys(segment.variables),
             };
           })
@@ -305,7 +298,6 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
           .filter((segment) => nextProductCode !== "BAYG" || segment.segmentKind !== "gate_opening")
           .map((segment) => ({
             ...segment,
-            targetHeightMm: Number(nextVariables.target_height_mm ?? segment.targetHeightMm ?? 1800),
             variables:
               segment.segmentKind === "gate_opening"
                 ? {
@@ -314,7 +306,6 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
                     gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]),
                     nextProductCode === "VS",
                   ),
-                  [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(nextVariables.target_height_mm ?? segment.targetHeightMm ?? 1800),
                   [GATE_SEGMENT_STUB_KEYS.colourCode]: String(nextVariables.colour_code ?? "B"),
                   [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(nextVariables.slat_size_mm ?? 65),
                   [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(nextVariables.slat_gap_mm ?? 9),
@@ -383,23 +374,17 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
           ))}
         </div>
       </SettingsDisclosureRow>
-      {fieldMap.has("target_height_mm") && (
-        <SettingsDisclosureRow
-          id={`${run.runId}-height`}
-          label="Fence height"
-          value={valueFor("target_height_mm")}
-        >
-          {renderField("target_height_mm")}
-        </SettingsDisclosureRow>
-      )}
       <SettingsDisclosureRow
-        id={`${run.runId}-colour`}
-        label="Color"
-        value={`${valueFor("finish_family")} / ${colourName(variables.colour_code)}`}
+        id={`${run.runId}-slats-colours-spacings`}
+        label="Slats, colors, and spacings"
+        value={`${valueFor("finish_family")} / ${colourName(variables.colour_code)} / ${valueFor("slat_size_mm")} / ${valueFor("slat_gap_mm")}`}
       >
         <div className="space-y-4">
           {renderField("finish_family")}
           {renderField("colour_code")}
+          {renderField("slat_size_mm")}
+          {renderField("slat_gap_mode")}
+          {renderField("slat_gap_mm")}
           <button
             type="button"
             onClick={() => setPostColourOpen((value) => !value)}
@@ -408,29 +393,38 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
             {postColourOpen ? "Hide alternate post color" : "Alternate post color"}
           </button>
           {postColourOpen && renderField("post_colour_code")}
-        </div>
-      </SettingsDisclosureRow>
-      <SettingsDisclosureRow
-        id={`${run.runId}-slat-size`}
-        label="Slat size"
-        value={valueFor("slat_size_mm")}
-      >
-        {renderField("slat_size_mm")}
-      </SettingsDisclosureRow>
-      <SettingsDisclosureRow
-        id={`${run.runId}-gap-size`}
-        label="Gap size"
-        value={`${valueFor("slat_gap_mode")} / ${valueFor("slat_gap_mm")}`}
-      >
-        <div className="space-y-3">
-          {renderField("slat_gap_mode")}
-          {renderField("slat_gap_mm")}
+          {productCode === "QSHS" && (
+            <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
+              <input
+                type="checkbox"
+                checked={louvreEnabled && slatSize === 65}
+                disabled={slatSize !== 65}
+                onChange={(event) =>
+                  updateRunVariables("louvre_treatment", event.target.checked)
+                }
+                className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
+              />
+              <span>
+                <span className="block text-sm font-extrabold text-brand-text">
+                  Louvre treatment
+                </span>
+                <span className="mt-1 block text-xs font-semibold text-brand-muted">
+                  40 degree slat angle. Available with 65mm slats.
+                </span>
+                {slatSize !== 65 && (
+                  <span className="mt-1 block text-xs font-bold text-brand-warning">
+                    Switch run slats to 65mm to use louvre brackets.
+                  </span>
+                )}
+              </span>
+            </label>
+          )}
         </div>
       </SettingsDisclosureRow>
       {productCode !== "BAYG" && (
         <SettingsDisclosureRow
           id={`${run.runId}-post-mounting`}
-          label="Post size, mounting and spacings"
+          label="Post size, mounting and spacing"
           value={`${valueFor("post_system", postLabel(productCode, variables))} / ${valueFor("max_panel_width_mm", "2600mm")}`}
         >
           <div className="space-y-4">
@@ -489,52 +483,28 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
               </div>
             )}
             {renderField("max_panel_width_mm")}
-            <label className="flex max-w-xs flex-col gap-1">
-              <span className="text-sm font-bold text-brand-muted">Run corner count</span>
-              <NumberInput
-                value={run.corners.length}
-                min={0}
-                max={20}
-                step={1}
-                onChange={updateCornerCount}
-              />
-            </label>
-            <p className="text-xs font-semibold text-brand-muted">
-              Corners are a run-level setting because they sit between sections. Drawn layouts still update this automatically.
-            </p>
           </div>
         </SettingsDisclosureRow>
       )}
-      {productCode !== "BAYG" && (
-        <div className="mt-3 grid gap-3 rounded-2xl border border-brand-border/60 bg-brand-card/70 p-3">
-          {productCode === "QSHS" && (
-            <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
-              <input
-                type="checkbox"
-                checked={louvreEnabled && slatSize === 65}
-                disabled={slatSize !== 65}
-                onChange={(event) =>
-                  updateRunVariables("louvre_treatment", event.target.checked)
-                }
-                className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
-              />
-              <span>
-                <span className="block text-sm font-extrabold text-brand-text">
-                  Louvre treatment
-                </span>
-                <span className="mt-1 block text-xs font-semibold text-brand-muted">
-                  40 degree slat angle. Available with 65mm slats.
-                </span>
-                {slatSize !== 65 && (
-                  <span className="mt-1 block text-xs font-bold text-brand-warning">
-                    Switch run slats to 65mm to use louvre brackets.
-                  </span>
-                )}
-              </span>
-            </label>
-          )}
-        </div>
-      )}
+      <SettingsDisclosureRow
+        id={`${run.runId}-corner-count`}
+        label="Run corner count"
+        value={`${run.corners.length} corner${run.corners.length === 1 ? "" : "s"}`}
+      >
+        <label className="flex max-w-xs flex-col gap-1">
+          <span className="text-sm font-bold text-brand-muted">Run corner count</span>
+          <NumberInput
+            value={run.corners.length}
+            min={0}
+            max={20}
+            step={1}
+            onChange={updateCornerCount}
+          />
+        </label>
+        <p className="text-xs font-semibold text-brand-muted">
+          Corners are a run-level setting because they sit between sections. Drawn layouts still update this automatically.
+        </p>
+      </SettingsDisclosureRow>
       {onCollapse && (
         <div className="pt-2">
           <button

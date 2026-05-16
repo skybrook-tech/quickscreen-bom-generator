@@ -1259,6 +1259,23 @@ function calculateVerticalSlatRun(
       lines.push(...calculateGateSegment(run, segment, mergedRunVars, warnings, computed));
       continue;
     }
+    const segmentProductCode = String(segment.variables?.product_code ?? run.productCode);
+    if (segmentProductCode !== run.productCode) {
+      lines.push(
+        ...calculateScreenRun(
+          payload,
+          {
+            ...run,
+            productCode: segmentProductCode,
+            segments: [segment],
+            corners: [],
+          },
+          warnings,
+          computed,
+        ),
+      );
+      continue;
+    }
 
     const vars = { ...mergedRunVars, ...(segment.variables ?? {}) };
     const segmentWidthMm = toNumber(segment.segmentWidthMm, 0);
@@ -1433,6 +1450,23 @@ function calculateScreenRun(
   for (const segment of run.segments) {
     if (segment.segmentKind === "gate_opening") {
       lines.push(...calculateGateSegment(run, segment, mergedRunVars, warnings, computed));
+      continue;
+    }
+    const segmentProductCode = String(segment.variables?.product_code ?? run.productCode);
+    if (segmentProductCode !== run.productCode) {
+      lines.push(
+        ...calculateScreenRun(
+          payload,
+          {
+            ...run,
+            productCode: segmentProductCode,
+            segments: [segment],
+            corners: [],
+          },
+          warnings,
+          computed,
+        ),
+      );
       continue;
     }
 

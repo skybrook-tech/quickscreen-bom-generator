@@ -83,9 +83,10 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   );
   const firstSegment = firstFenceSegment(run);
   const runLengthM = (calcTotalLength(run) / 1000).toFixed(2);
-  const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
   const slatSize = Number(runVariables.slat_size_mm ?? 65);
   const slatGap = Number(runVariables.slat_gap_mm ?? 9);
+  const maxPostSpacing = Number(runVariables.max_panel_width_mm ?? 2600);
+  const mountingType = String(runVariables.mounting_method ?? runVariables.mounting_type ?? "in_ground").replace(/_/g, " ");
   const isBayg = run.productCode === "BAYG";
   const displaySegments = useMemo(() => assignGateParents(run.segments), [run.segments]);
   const fenceSections = displaySegments.filter((segment) => segment.segmentKind !== "gate_opening");
@@ -169,7 +170,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
       sortOrder: run.segments.length + 1,
       segmentKind: "panel",
       segmentWidthMm: 0,
-      targetHeightMm: Number(runVariables.target_height_mm ?? 1800),
+      targetHeightMm: 1800,
       variables: isBayg ? { panel_quantity: 1 } : undefined,
     });
   }
@@ -211,10 +212,12 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           <span className="flex flex-wrap gap-x-2.5 gap-y-1 text-sm text-brand-muted">
             <span>System Type: <strong className="text-brand-text">{run.productCode}</strong></span>
             <span>{isBayg ? "Total panel width" : "Length"}: <strong className="text-brand-text">{runLengthM}m</strong></span>
-            <span>Height: <strong className="text-brand-text">{runHeight}mm</strong></span>
             <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
             <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
             <span>Gap size: <strong className="text-brand-text">{slatGap}mm</strong></span>
+            {!isBayg && <span>Post mounting: <strong className="text-brand-text capitalize">{mountingType}</strong></span>}
+            {!isBayg && <span>Max post spacing: <strong className="text-brand-text">{maxPostSpacing}mm</strong></span>}
+            <span>Corners: <strong className="text-brand-text">{run.corners.length}</strong></span>
           </span>
         </h3>
         <div

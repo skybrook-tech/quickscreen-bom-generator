@@ -1269,7 +1269,6 @@ function CalculatorV3Content() {
       `Run ${index + 1}`,
       `${lengthM.toFixed(2)}m`,
       systemLabel(run.productCode),
-      `${Number(vars.target_height_mm ?? 1800)}mm`,
       colourName(vars.colour_code),
       `${Number(vars.slat_size_mm ?? 65)}mm slat`,
       `${Number(vars.slat_gap_mm ?? 9)}mm gap`,
@@ -1292,7 +1291,6 @@ function CalculatorV3Content() {
         ["Colour", sectionVars.colour_code, vars.colour_code],
         ["Slat", sectionVars.slat_size_mm, vars.slat_size_mm],
         ["Gap", sectionVars.slat_gap_mm, vars.slat_gap_mm],
-        ["Height", section.targetHeightMm, vars.target_height_mm],
       ]
         .filter(([, value]) => value !== undefined && value !== null && value !== "")
         .filter(([, value, master]) => String(value) !== String(master ?? ""))
@@ -1313,7 +1311,6 @@ function CalculatorV3Content() {
       settings: [
         `Slat size: ${Number(vars.slat_size_mm ?? 65)}mm`,
         `Gap: ${Number(vars.slat_gap_mm ?? 9)}mm`,
-        `Height: ${Number(vars.target_height_mm ?? 1800)}mm`,
         `Colour: ${colourName(vars.colour_code)}`,
         `Mounting: ${String(vars.mounting_method ?? vars.mounting_type ?? "in_ground").replace(/_/g, " ")}`,
         `Termination L: ${run.leftBoundary?.type ?? "Post"}`,

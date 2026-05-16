@@ -20,7 +20,6 @@ export function RunListV3({
   function createPayloadForSystem(productCode: string): CanonicalPayload {
     const variables = initialVariablesForSystem(productCode);
     const runId = crypto.randomUUID();
-    const targetHeight = Number(variables.target_height_mm ?? 1800);
     return {
       productCode,
       schemaVersion: "v1",
@@ -38,7 +37,7 @@ export function RunListV3({
               sortOrder: 1,
               segmentKind: "panel",
               segmentWidthMm: 0,
-              targetHeightMm: targetHeight,
+              targetHeightMm: 1800,
               variables: productCode === "BAYG" ? { panel_quantity: 1 } : undefined,
             },
           ],
@@ -63,7 +62,6 @@ export function RunListV3({
       ...(payload!.variables ?? {}),
       ...(firstRun?.variables ?? {}),
     };
-    const initialHeight = Number(variables.target_height_mm ?? 1800);
     const newRun: CanonicalRun = {
       runId: crypto.randomUUID(),
       productCode,
@@ -76,7 +74,7 @@ export function RunListV3({
           sortOrder: 1,
           segmentKind: "panel",
           segmentWidthMm: 0,
-          targetHeightMm: initialHeight,
+          targetHeightMm: 1800,
           variables: productCode === "BAYG" ? { panel_quantity: 1 } : undefined,
         },
       ],
@@ -96,7 +94,7 @@ export function RunListV3({
                 key={product.system_type}
                 type="button"
                 onClick={() => startFirstRun(product.system_type)}
-                className="flex items-center justify-between gap-3 rounded-lg border border-brand-primary bg-brand-primary px-3 py-3 text-left text-sm font-black text-white shadow-sm transition hover:bg-brand-primary/90 hover:shadow-md"
+                className="flex items-center justify-between gap-3 rounded-lg border border-brand-primary bg-brand-primary px-3 py-4 text-left text-xl font-black text-white shadow-sm transition hover:bg-brand-primary/90 hover:shadow-md"
                 data-testid={`landing-system-${product.system_type}`}
               >
                 <span>

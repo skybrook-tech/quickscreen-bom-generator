@@ -54,7 +54,7 @@ function gateLabel(segment: CanonicalSegment) {
 function segmentOverrides(segment: CanonicalSegment, runVariables: Record<string, unknown>) {
   const vars = segment.variables ?? {};
   const checks = [
-    ["height", segment.targetHeightMm, runVariables.target_height_mm],
+    ["system", segment.variables?.product_code, undefined],
     ["colour", vars.colour_code, runVariables.colour_code],
     ["slat size", vars.slat_size_mm, runVariables.slat_size_mm],
     ["gap", vars.slat_gap_mm, runVariables.slat_gap_mm],
@@ -63,7 +63,7 @@ function segmentOverrides(segment: CanonicalSegment, runVariables: Record<string
   return checks
     .filter(([, value]) => value !== undefined && value !== null && value !== "")
     .filter(([, value, master]) => String(value) !== String(master ?? ""))
-    .map(([label, value]) => `${label} ${value}${label.includes("size") || label === "gap" || label === "height" ? "mm" : ""}`);
+    .map(([label, value]) => `${label} ${value}${label.includes("size") || label === "gap" ? "mm" : ""}`);
 }
 
 function openRun(runId: string) {
@@ -104,7 +104,6 @@ export function RunDetailsPanel({ payload }: RunDetailsPanelProps) {
               <div><dt className="inline">System: </dt><dd className="inline text-brand-text">{displayName(SYSTEM_NAMES, run.productCode)}</dd></div>
               <div><dt className="inline">Slat size: </dt><dd className="inline text-brand-text">{Number(runVariables.slat_size_mm ?? 65)}mm</dd></div>
               <div><dt className="inline">Gap: </dt><dd className="inline text-brand-text">{Number(runVariables.slat_gap_mm ?? 9)}mm</dd></div>
-              <div><dt className="inline">Height: </dt><dd className="inline text-brand-text">{Number(runVariables.target_height_mm ?? 1800)}mm</dd></div>
               <div><dt className="inline">Colour: </dt><dd className="inline text-brand-text">{displayName(COLOUR_DISPLAY_NAMES, runVariables.colour_code, "Black")}</dd></div>
               <div><dt className="inline">Mounting: </dt><dd className="inline text-brand-text">{displayName(MOUNTING_DISPLAY_NAMES, runVariables.mounting_type ?? runVariables.mounting_method, "Concreted in ground")}</dd></div>
               <div><dt className="inline">Termination L: </dt><dd className="inline text-brand-text">{displayName(TERMINATION_DISPLAY_NAMES, run.leftBoundary?.type, "Post")}</dd></div>
@@ -124,7 +123,7 @@ export function RunDetailsPanel({ payload }: RunDetailsPanelProps) {
                       className="text-left text-xs font-black text-brand-text hover:text-brand-primary"
                       onClick={() => openSegment(segment.segmentId)}
                     >
-                      Section {sectionIdx + 1} - {(mm(segment) / 1000).toFixed(2)}m - {panelCount} panel{panelCount === 1 ? "" : "s"} - {gateCountLabel(linkedGates.length)}
+                      Section {sectionIdx + 1} - {(mm(segment) / 1000).toFixed(2)}m - {Number(segment.targetHeightMm ?? 1800)}mm high - {panelCount} panel{panelCount === 1 ? "" : "s"} - {gateCountLabel(linkedGates.length)}
                     </button>
                     <p className="mt-1 text-xs font-semibold text-brand-muted">
                       {overrides.length ? `Overrides: ${overrides.join(", ")}` : "Same settings as run defaults"}
