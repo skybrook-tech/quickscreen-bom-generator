@@ -237,20 +237,15 @@ export function SegmentRow({
     ? `Gate ${segIdx + 1} — ${Math.round(segmentLength)}mm`
     : isBayg
       ? `Panel ${segIdx + 1} — ${Math.round(segmentLength)}mm`
-      : `Section ${segIdx + 1} — ${(segmentLength / 1000).toFixed(2)}m(L) — `;
+      : `Section ${segIdx + 1}`;
   const matchesMaster = (() => {
     if (!run) return true;
     if (gate) {
-      const gateHeightMatches =
-        Number(seg.targetHeightMm ?? gateVars[GATE_SEGMENT_STUB_KEYS.gateHeightMm] ?? 0) ===
-        Number(masterVariables.target_height_mm ?? 0);
       return (
         expectedGateBuild &&
-        gateHeightMatches &&
         unsetOrSame(gateVars, GATE_SEGMENT_STUB_KEYS.colourCode, masterVariables.colour_code ?? "B") &&
         unsetOrSame(gateVars, GATE_SEGMENT_STUB_KEYS.slatSizeMm, masterVariables.slat_size_mm ?? 65) &&
-        unsetOrSame(gateVars, GATE_SEGMENT_STUB_KEYS.slatGapMm, masterVariables.slat_gap_mm ?? 9) &&
-        unsetOrSame(gateVars, GATE_SEGMENT_STUB_KEYS.gatePostSizeMm, masterVariables.post_size ?? 50)
+        unsetOrSame(gateVars, GATE_SEGMENT_STUB_KEYS.slatGapMm, masterVariables.slat_gap_mm ?? 9)
       );
     }
     const vars = seg.variables ?? {};
@@ -610,7 +605,12 @@ export function SegmentRow({
             <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2">
               <p className="min-w-0 text-left text-lg font-black text-brand-text">
                 {titleLabel}
-                {!gate && !isBayg && <strong>{selectedHeight}mm(H)</strong>}
+                {!gate && !isBayg && (
+                  <span className="ml-1 text-sm font-semibold text-brand-muted">
+                    — {(segmentLength / 1000).toFixed(2)}m(L) —{" "}
+                    <strong className="font-extrabold text-brand-text">{selectedHeight}mm(H)</strong>
+                  </span>
+                )}
               </p>
               <div className="flex items-center justify-center">
                 <button

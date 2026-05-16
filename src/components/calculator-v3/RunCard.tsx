@@ -16,6 +16,7 @@ import { ConfirmButton } from "../shared/ConfirmButton";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 const PARENT_SECTION_KEY = "parent_section_id";
+const RUN_SETTINGS_COLLAPSE_DELAY_MS = 60000;
 
 interface Props {
   run: CanonicalRun;
@@ -157,7 +158,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
 
   function scheduleRunSettingsCollapse() {
     if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
-    runCollapseRef.current = window.setTimeout(() => setRunSettingsOpen(false), 10000);
+    runCollapseRef.current = window.setTimeout(() => setRunSettingsOpen(false), RUN_SETTINGS_COLLAPSE_DELAY_MS);
   }
 
   function upsertSegment(segment: CanonicalSegment) {
@@ -211,7 +212,6 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           </span>
           <span className="flex flex-wrap gap-x-2.5 gap-y-1 text-sm text-brand-muted">
             <span>System Type: <strong className="text-brand-text">{run.productCode}</strong></span>
-            <span>{isBayg ? "Total panel width" : "Length"}: <strong className="text-brand-text">{runLengthM}m</strong></span>
             <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
             <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
             <span>Gap size: <strong className="text-brand-text">{slatGap}mm</strong></span>
@@ -247,6 +247,11 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
         <RunSettingsEditor run={run} onCollapse={() => setRunSettingsOpen(false)} />
       )}
 
+      {run.segments.length > 0 && (
+        <p className="px-4 pb-3 text-xs font-semibold text-brand-muted">
+          Green section or gate code = same settings as the run.
+        </p>
+      )}
 
       {!runSettingsOpen && (
         <>

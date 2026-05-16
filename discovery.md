@@ -1866,3 +1866,25 @@ Verification:
 
 Deferred:
 - Deploy-preview screenshots, CI wait, PR auto-merge, and browser visual confirmation of the deploy preview were not performed in this direct sandbox-branch workflow.
+
+### May 16, 2026 - Brief BK section heading, gate matching, and collapse-timer polish
+
+Workflow / UX finding:
+- The BJ section heading format was correct but visually too heavy because length and height were the same size as the section name.
+- Gates needed the same green default-matching cue as sections, but only for run-derived style settings. Gate movement, direction, hinge side, hardware, and height are intentional gate-specific choices.
+- A 10-second run-settings wrapper timer still existed even though the shared disclosure rows used the intended 60-second timing.
+
+Changes applied:
+- Section headings now keep `Section N` as the primary large text while the `X.XXm(L) - YYYYmm(H)` metadata renders smaller on the same line.
+- Gate green-match logic now compares only system/build, colour, slat size, and gap size against the run. New gates therefore show green by default when inherited settings match.
+- Run settings auto-collapse was changed from 10 seconds to 60 seconds, matching the shared settings disclosure rows, and the disclosure timer value was extracted to a named constant.
+- Added a small muted helper line above the section/gate cards: green section or gate code means the settings match the run.
+- Removed the duplicate run length from the run subheading while leaving it in the main run title.
+- Updated repo skill mirrors to capture the gate-match subset and 60-second disclosure timing standard.
+
+Verification:
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+Deferred:
+- Deploy-preview screenshots, CI wait, PR auto-merge, and visual 60-second timer observation were not performed in this direct sandbox-branch workflow.

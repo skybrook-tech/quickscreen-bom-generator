@@ -1,6 +1,7 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
 const SETTINGS_ROW_OPEN_EVENT = "qsbom:settings-row-open";
+const SETTINGS_ROW_AUTO_COLLAPSE_MS = 60000;
 
 interface SettingsDisclosureRowProps {
   id: string;
@@ -36,7 +37,7 @@ export function SettingsDisclosureRow({
   useEffect(() => {
     if (timerRef.current) window.clearTimeout(timerRef.current);
     if (!open) return;
-    timerRef.current = window.setTimeout(() => setOpen(false), 60000);
+    timerRef.current = window.setTimeout(() => setOpen(false), SETTINGS_ROW_AUTO_COLLAPSE_MS);
   }, [open]);
 
   function toggle() {
@@ -52,7 +53,7 @@ export function SettingsDisclosureRow({
   function resetTimer() {
     if (!open) return;
     if (timerRef.current) window.clearTimeout(timerRef.current);
-    timerRef.current = window.setTimeout(() => setOpen(false), 60000);
+    timerRef.current = window.setTimeout(() => setOpen(false), SETTINGS_ROW_AUTO_COLLAPSE_MS);
   }
 
   return (
