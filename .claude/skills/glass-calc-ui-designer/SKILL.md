@@ -55,6 +55,10 @@ Use this skill when improving how users configure, draw, review, and test quotes
 - Show the active endpoint clearly.
 - Allow finish-run gestures that do not require pixel-perfect clicks.
 - Surface segment details without forcing the user to hunt through nested panels.
+- Keep map address search above the canvas. Satellite/roadmap type, opacity, and px/m scale belong in a collapsed map-settings popover beside the address input.
+- Use plain installer language in map tools: `Draw Fence` for product fence runs, `Dotted line` for non-product context lines, `Building` for click-drag rectangles, `Free Draw` for hand sketches, and dimensioned `Existing post` / `Pillar` markers for termination context.
+- Print Map should fit the drawn bounds into the output, optionally include the satellite underlay, and include a compact installer summary with job name, total metres, run count, gate count, and date.
+- Canvas annotations such as dotted lines, buildings, freehand strokes, text notes, and existing post/pillar markers are site context only. They must persist through form/canvas sync but must not create BOM product lines unless termination logic explicitly consumes them.
 
 ## Section-Owned Gate UX
 

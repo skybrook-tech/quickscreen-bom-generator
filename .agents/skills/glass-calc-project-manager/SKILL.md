@@ -46,6 +46,7 @@ Important local folders:
 - Current data convention: `finish_family` is the slat-range field. Do not add a parallel `slat_range` field unless the seed model changes deliberately.
 - Current scope convention: run settings hold defaults that truly span a run; height is section-level and must not be treated as a run default. Section system overrides are allowed, but must be called out and tested because they affect BOM dispatch.
 - Current termination convention: hide End Conditions UI from the sidebar, but preserve underlying termination data because canvas and BOM dispatch use it.
+- Current mapper convention: map address search sits above the canvas; map type/opacity/scale live in a collapsed popover; `Draw Fence` is the product run tool; `Dotted line`, building rectangles, freehand strokes, text notes, and existing post/pillar markers are site-context annotations that must persist through layout reloads without becoming BOM lines.
 
 ## Handoff Template
 

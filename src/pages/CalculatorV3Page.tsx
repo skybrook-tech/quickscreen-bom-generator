@@ -402,17 +402,6 @@ function CalculatorV3Content() {
     if (view !== "map") setMapExpanded(false);
   }, []);
 
-  const handleExpandMap = useCallback(() => {
-    if (!payload) {
-      dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
-      dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "draw" });
-    }
-    setIntroDismissed(true);
-    setRightPaneView("map");
-    setMapExpanded(true);
-    if (mobileLayout) setMobileTab("map");
-  }, [dispatch, mobileLayout, payload]);
-
   function handleResizeStart() {
     let latestWidth = runPaneWidth;
     const onMove = (event: MouseEvent) => {
@@ -1570,7 +1559,6 @@ function CalculatorV3Content() {
                     <RightPaneTabs
                       activeView={rightPaneView}
                       onChange={handleRightPaneChange}
-                      onExpandMap={handleExpandMap}
                     />
                   )}
                   <div className={`${rightPaneView === "map" ? "block" : "hidden"} ${mapExpanded ? "p-2" : "p-3 sm:p-4"}`}>
@@ -1583,6 +1571,7 @@ function CalculatorV3Content() {
                           mapExpanded={mapExpanded}
                           onMapExpandedChange={setMapExpanded}
                           showRunDetails={!mapExpanded}
+                          jobName={jobName}
                         />
                       ) : (
                         <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/50 p-6 text-center text-sm font-bold text-brand-muted">

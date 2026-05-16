@@ -1680,6 +1680,26 @@ Verification:
 - `npm run build` passed.
 - Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
 
+### May 16, 2026 - Brief BM map canvas overhaul foundation
+
+Workflow / UX finding:
+- The mapper is now important enough that its address/search workflow, toolbar naming, print output, and context tools need to feel like a site-plan app rather than a basic canvas.
+- The full BM brief is intentionally XL. This pass ships the foundation and explicitly leaves the heavier editor behaviours for a follow-up rather than destabilising the fence/BOM sync.
+
+Changes applied:
+- Moved address search above the canvas and collapsed map type, opacity, and scale into a `Map` settings popover.
+- Removed the duplicate `Expand map` button from the Map/BOM tab bar while leaving the toolbar expand/collapse and expanded-overlay minimize controls.
+- Renamed the primary drawing tool to `Draw Fence` and the boundary/site line tool to `Dotted line`.
+- Added click-drag building rectangles with shaded fill, a free-draw sketch tool, dimension prompts for existing posts and pillars, transparent text-note rendering, and cursor-following tool hints.
+- Updated Print Map so it fits the drawn bounds into the canvas before capture, can include/exclude the satellite underlay, and prints a summary block for job name, total metres, run count, gate count, and date.
+- Preserved freehand strokes, text notes, and site markers through layout reloads so form/canvas sync does not wipe site annotations.
+
+Verification:
+- `npm run build` passed.
+
+Deferred:
+- Rich text formatting toolbar, drag/resize/delete handles for every annotation, right-click context menu, stamp palette, and full building resize/move handles were not completed in this foundation pass.
+
 ### May 12, 2026 - Brief BC reversal completion
 
 Workflow finding:

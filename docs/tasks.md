@@ -106,6 +106,8 @@ Latest Brief BK pass: section headers now keep Section as the primary heading wh
 
 Latest Brief BL pass: calculator entry and Clear Job now default to the BOM tab, the BOM empty state has one bold italic instruction line, Describe Your Fence is a centered message-icon flow under the system buttons, Add Run is hidden until the first run exists, section settings can override alternate post colour below the colour picker, run corner editing is removed while geometry-derived corner counts still display, section headings now show bold length and height without `(L)/(H)`, and code-chip hover copy now says `Click to restore to run settings`.
 
+Latest Brief BM pass: the map toolbar/search workflow now has address search above the canvas with a compact Map settings popover, the duplicate tab-bar expand button is removed, Draw is labelled Draw Fence, Existing wall is labelled Dotted line, buildings are drawn as click-drag rectangles, free-draw strokes and dimensioned post/pillar markers are supported, text notes render transparently, cursor hints guide each tool, and Print Map fits the drawn content with a job/run/gate/date summary.
+
 Latest skill sync pass: the BI sidebar conventions were added to the repo skill mirrors under `.claude/skills/` and `.agents/skills/`, including `finish_family` as Slat range, the shared `SettingsDisclosureRow` pattern, hidden End Conditions UI with preserved termination data, and the printable BOM run/section summary convention.
 
 ---
@@ -432,6 +434,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Brief BJ run/section parity completion: fence-system buttons now have larger primary text, run and section settings share the same System type / Slats-colors-spacings / Post size-mounting-spacing disclosure groups, section length/height edits live only inside the expanded panel, section headers show length plus bold height, run-level height was removed, section match indicators ignore height, section system overrides dispatch through their own BOM system path, and BOM summaries no longer show a run-level height.
 - [x] Brief BK post-BJ polish: section length/height metadata now uses a lighter heading hierarchy, gate green-match checks ignore gate-only hardware/direction choices, settings collapse timing is consistently 60 seconds, a green-code helper note explains matching run settings, and the run subheading no longer repeats length.
 - [x] Brief BL post-BK polish: BOM-first entry/default reset, simplified BOM empty-state guidance, message-icon Describe flow with Apply/collapse, section-level alternate post colour, read-only corner-count display, refined section heading format, and restore-to-run tooltip copy.
+- [x] Brief BM map canvas overhaul foundation: moved address search above the canvas with a collapsed map-settings popover, removed the duplicate right-pane expand button, renamed Draw to Draw Fence and Existing wall to Dotted line, added click-drag building rectangles, free-draw strokes, post/pillar dimensions, transparent text notes, cursor hints, fitted print-map output with job/run/gate/date summary, and preserved map annotations through layout reloads.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---

@@ -8,7 +8,7 @@ export const CANVAS_SHORTCUTS: CanvasShortcut[] = [
   { key: "Ctrl/Cmd+Z", action: "Undo", description: "Undo the last drawing action" },
   { key: "Ctrl/Cmd+Shift+Z", action: "Redo", description: "Redo the last undone action" },
   { key: "Esc", action: "Cancel", description: "Cancel drawing or return to Move / Edit" },
-  { key: "D", action: "Draw", description: "Switch to fence drawing mode" },
+  { key: "D", action: "Draw Fence", description: "Switch to fence drawing mode" },
   { key: "E", action: "Edit", description: "Switch to Move / Edit mode" },
   { key: "G", action: "Gate", description: "Open gate placement mode" },
   { key: "+ / =", action: "Zoom in", description: "Zoom the map in" },
@@ -26,4 +26,5 @@ export const TOOL_HOTKEYS = {
   post: "P",
   pillar: "I",
   text: "T",
+  freehand: "F",
 } as const;
