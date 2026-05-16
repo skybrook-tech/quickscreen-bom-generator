@@ -419,7 +419,10 @@ function CalculatorV3Content() {
     window.addEventListener("mouseup", onUp);
   }
 
-  function startWorkspaceFromLanding() {
+  function startWorkspaceFromLanding(nextJobName = jobName) {
+    const cleanJobName = nextJobName.trim();
+    if (!cleanJobName) return;
+    setJobName(cleanJobName);
     if (!payload) {
       dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
       dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "select" });
@@ -1357,7 +1360,8 @@ function CalculatorV3Content() {
                 />
                 <button
                   type="submit"
-                  className="mt-4 w-full rounded-lg bg-brand-primary px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm"
+                  disabled={!jobName.trim()}
+                  className="mt-4 w-full rounded-lg bg-brand-primary px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Enter
                 </button>
@@ -1389,7 +1393,7 @@ function CalculatorV3Content() {
                         />
                       </div>
                     </div>
-                    {payload?.runs.length ? (
+                    {payload ? (
                       <DescribeFenceBox
                         title="Describe your fence"
                         compact
@@ -1405,8 +1409,6 @@ function CalculatorV3Content() {
                         <RunListV3
                           autoOpenFirstRunId={autoOpenFirstSectionRunId}
                           onAutoOpenConsumed={() => setAutoOpenFirstSectionRunId(null)}
-                          initialDescription={payload?.job?.description ?? ""}
-                          onDescribeApply={handleApplyDescription}
                         />
                       </section>
 
