@@ -2,14 +2,20 @@ import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalPayload, CanonicalRun } from "../../types/canonical.types";
 import { initialVariablesForSystem } from "../../lib/productOptionRules";
 import { localFenceProducts } from "../../lib/localSeedData";
+import type { ParseResult } from "../../lib/describeFenceParser";
+import { DescribeFenceBox } from "../calculator/DescribeFenceBox";
 import { RunCard } from "./RunCard";
 
 export function RunListV3({
   autoOpenFirstRunId,
   onAutoOpenConsumed,
+  onDescribeApply,
+  initialDescription = "",
 }: {
   autoOpenFirstRunId?: string | null;
   onAutoOpenConsumed?: () => void;
+  onDescribeApply?: (result: ParseResult) => void;
+  initialDescription?: string;
 }) {
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
@@ -111,6 +117,16 @@ export function RunListV3({
               </button>
             ))}
           </div>
+          {onDescribeApply && (
+            <div className="pt-2 text-center">
+              <DescribeFenceBox
+                title="Describe your fence"
+                compact
+                initialDescription={initialDescription}
+                onApply={onDescribeApply}
+              />
+            </div>
+          )}
         </section>
       )}
       {payload.runs.map((run, runIdx) => (
@@ -122,17 +138,15 @@ export function RunListV3({
           onAutoOpenConsumed={onAutoOpenConsumed}
         />
       ))}
-      <button
-        type="button"
-        onClick={addRun}
-        className={`w-full rounded-lg py-3 text-sm font-black transition-all ${
-          hasRuns
-            ? "border border-brand-primary/50 bg-brand-primary px-4 text-white shadow-sm hover:bg-brand-primary/90 hover:shadow-md"
-            : "border border-brand-primary bg-brand-primary px-4 text-white shadow-md ring-2 ring-brand-primary ring-offset-2 ring-offset-brand-card hover:bg-brand-primary/90 hover:shadow-lg"
-        }`}
-      >
-        + Add run
-      </button>
+      {hasRuns && (
+        <button
+          type="button"
+          onClick={addRun}
+          className="w-full rounded-lg border border-brand-primary/50 bg-brand-primary px-4 py-3 text-sm font-black text-white shadow-sm transition-all hover:bg-brand-primary/90 hover:shadow-md"
+        >
+          + Add run
+        </button>
+      )}
     </div>
   );
 }

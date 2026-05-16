@@ -45,9 +45,6 @@ export function RightPaneTabs({ activeView, onChange, onExpandMap }: RightPaneTa
           </span>
         </button>
       )}
-      <p className="ml-auto hidden text-xs font-bold text-brand-muted sm:block">
-        Switch views without losing the layout or BOM
-      </p>
     </div>
   );
 }

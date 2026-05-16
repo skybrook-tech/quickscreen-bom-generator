@@ -63,6 +63,10 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   const postSize = String((displayVariables[SEGMENT_OPTION_KEYS.postSize] as string | number) ?? "");
   const isCustomPost = postSize === "custom";
   const isBayg = productCode === "BAYG";
+  const [postColourOpen, setPostColourOpen] = useState(() => {
+    const colour = String(displayVariables.colour_code ?? "B");
+    return Boolean(v.post_colour_code && String(v.post_colour_code) !== colour);
+  });
   function upsertSegment(s: CanonicalSegment) {
     dispatch({ type: "UPSERT_SEGMENT", runId, segment: s });
   }
@@ -171,6 +175,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                 !field.field_key.endsWith("_stock_length_mm") &&
                 field.field_key !== "max_panel_width_mm" &&
                 field.field_key !== "target_height_mm" &&
+                field.field_key !== "post_colour_code" &&
                 field.field_key !== "louvre_treatment",
             ),
             mergedJobDisplay,
@@ -206,6 +211,13 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     .filter(Boolean)
     .slice(0, 2)
     .join(" / ");
+  const colourField = optionFields.find((field) => field.field_key === "colour_code");
+  const postColourField = applyProductOptionRules(
+    productCode,
+    jobFields.filter((field) => field.field_key === "post_colour_code"),
+    mergedJobDisplay,
+  )[0];
+  const remainingOptionFields = optionFields.filter((field) => field.field_key !== "colour_code");
   function handleOptionChange(key: string, value: string | number | boolean) {
     onJobOverrideChange(key, value);
   }
@@ -235,11 +247,40 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
       {optionFields.length > 0 ? (
         <SettingsDisclosureRow id={`${seg.segmentId}-section-style`} label="Slats, colors, and spacings" value={optionSummary || "Run defaults"}>
-          <SchemaDrivenForm
-            fields={optionFields}
-            variables={mergedJobDisplay}
-            onChange={handleOptionChange}
-          />
+          <div className="space-y-4">
+            {colourField && (
+              <SchemaDrivenForm
+                fields={[colourField]}
+                variables={mergedJobDisplay}
+                onChange={handleOptionChange}
+              />
+            )}
+            {postColourField && (
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={() => setPostColourOpen((value) => !value)}
+                  className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+                >
+                  {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
+                </button>
+                {postColourOpen && (
+                  <SchemaDrivenForm
+                    fields={[postColourField]}
+                    variables={mergedJobDisplay}
+                    onChange={handleOptionChange}
+                  />
+                )}
+              </div>
+            )}
+            {remainingOptionFields.length > 0 && (
+              <SchemaDrivenForm
+                fields={remainingOptionFields}
+                variables={mergedJobDisplay}
+                onChange={handleOptionChange}
+              />
+            )}
+          </div>
           {productCode === "QSHS" && (
             <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
               <input

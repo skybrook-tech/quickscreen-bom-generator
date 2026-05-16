@@ -104,6 +104,8 @@ Latest Brief BJ pass: BI's run/section parity gaps were closed. Run and section 
 
 Latest Brief BK pass: section headers now keep Section as the primary heading while length/height render as smaller metadata, new gates show the same green match indicator when their run-derived style settings match, run settings no longer auto-collapse at 10 seconds, a muted green-code helper note appears above section cards, and the run subheading no longer repeats the run length.
 
+Latest Brief BL pass: calculator entry and Clear Job now default to the BOM tab, the BOM empty state has one bold italic instruction line, Describe Your Fence is a centered message-icon flow under the system buttons, Add Run is hidden until the first run exists, section settings can override alternate post colour below the colour picker, run corner editing is removed while geometry-derived corner counts still display, section headings now show bold length and height without `(L)/(H)`, and code-chip hover copy now says `Click to restore to run settings`.
+
 Latest skill sync pass: the BI sidebar conventions were added to the repo skill mirrors under `.claude/skills/` and `.agents/skills/`, including `finish_family` as Slat range, the shared `SettingsDisclosureRow` pattern, hidden End Conditions UI with preserved termination data, and the printable BOM run/section summary convention.
 
 ---
@@ -429,6 +431,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Brief BI sidebar uniformity: empty-run landing now offers QSHS, VS, XPL, and BAYG system buttons; run, section, and gate settings use one selected-value disclosure pattern; run settings are reorganized into Color, Slat size, Gap size, and Post size/mounting/spacings; color tiles show catalogue abbreviations; section/gate cards show inline editable dimensions; End conditions controls are hidden while termination data remains intact; and the BOM has a printable run/section information block.
 - [x] Brief BJ run/section parity completion: fence-system buttons now have larger primary text, run and section settings share the same System type / Slats-colors-spacings / Post size-mounting-spacing disclosure groups, section length/height edits live only inside the expanded panel, section headers show length plus bold height, run-level height was removed, section match indicators ignore height, section system overrides dispatch through their own BOM system path, and BOM summaries no longer show a run-level height.
 - [x] Brief BK post-BJ polish: section length/height metadata now uses a lighter heading hierarchy, gate green-match checks ignore gate-only hardware/direction choices, settings collapse timing is consistently 60 seconds, a green-code helper note explains matching run settings, and the run subheading no longer repeats length.
+- [x] Brief BL post-BK polish: BOM-first entry/default reset, simplified BOM empty-state guidance, message-icon Describe flow with Apply/collapse, section-level alternate post colour, read-only corner-count display, refined section heading format, and restore-to-run tooltip copy.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---
