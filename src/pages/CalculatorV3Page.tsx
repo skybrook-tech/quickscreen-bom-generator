@@ -309,7 +309,7 @@ function CalculatorV3Content() {
   } | null>(null);
   const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
   const [mobileLayout, setMobileLayout] = useState(false);
-  const [mobileTab, setMobileTab] = useState<"run" | "bom" | "map">("run");
+  const [mobileTab, setMobileTab] = useState<"run" | "bom" | "map">("bom");
   const [layoutOpen, setLayoutOpen] = useState(false);
   const [layoutFullscreen, setLayoutFullscreen] = useState(false);
   const [introDismissed, setIntroDismissed] = useState(false);
@@ -446,7 +446,7 @@ function CalculatorV3Content() {
     setEntryCardsOpen(false);
     setEntryMode(null);
     setAutoOpenFirstSectionRunId(nextRun.runId);
-    setMobileTab("run");
+    setMobileTab("bom");
     toast.success("Description applied to the calculator");
   }
 
@@ -455,7 +455,7 @@ function CalculatorV3Content() {
     setEntryMode(null);
     setIntroDismissed(true);
     setAutoOpenFirstSectionRunId(nextPayload.runs[0]?.runId ?? null);
-    setMobileTab("run");
+    setMobileTab("bom");
   }
 
   function handleConfirmGatePosition(gate: PendingParsedGate, distanceFromStartMm: number) {
@@ -929,7 +929,7 @@ function CalculatorV3Content() {
     setLayoutOpen(false);
     setLayoutFullscreen(false);
     setAutoOpenFirstSectionRunId(null);
-    setMobileTab("run");
+    setMobileTab("bom");
     setClearJobDialogOpen(false);
   }
 

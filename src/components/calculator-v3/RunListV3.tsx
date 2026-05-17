@@ -2,14 +2,20 @@ import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalPayload, CanonicalRun } from "../../types/canonical.types";
 import { initialVariablesForSystem } from "../../lib/productOptionRules";
 import { localFenceProducts } from "../../lib/localSeedData";
+import type { ParseResult } from "../../lib/describeFenceParser";
+import { DescribeFenceBox } from "../calculator/DescribeFenceBox";
 import { RunCard } from "./RunCard";
 
 export function RunListV3({
   autoOpenFirstRunId,
   onAutoOpenConsumed,
+  onDescribeApply,
+  initialDescription = "",
 }: {
   autoOpenFirstRunId?: string | null;
   onAutoOpenConsumed?: () => void;
+  onDescribeApply?: (result: ParseResult) => void;
+  initialDescription?: string;
 }) {
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
@@ -111,6 +117,16 @@ export function RunListV3({
               </button>
             ))}
           </div>
+          {onDescribeApply && (
+            <div className="pt-2 text-center">
+              <DescribeFenceBox
+                title="Describe your fence"
+                compact
+                initialDescription={initialDescription}
+                onApply={onDescribeApply}
+              />
+            </div>
+          )}
         </section>
       )}
       {payload.runs.map((run, runIdx) => (
