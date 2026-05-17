@@ -528,7 +528,6 @@ export function SegmentRow({
 
   function resetToMaster() {
     if (!run) return;
-    const masterHeight = Number(masterVariables.target_height_mm ?? 1800);
     if (gate) {
       const movement = gateMovementOrDefault(seg.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
       dispatch({
@@ -540,13 +539,11 @@ export function SegmentRow({
               movement,
               run.productCode === "VS",
             ),
-            [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: masterHeight,
             [GATE_SEGMENT_STUB_KEYS.colourCode]: String(masterVariables.colour_code ?? "B"),
             [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(masterVariables.slat_size_mm ?? 65),
             [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(masterVariables.slat_gap_mm ?? 9),
             [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(masterVariables.post_size ?? 50),
           }),
-          targetHeightMm: masterHeight,
         },
       });
       return;
@@ -607,33 +604,25 @@ export function SegmentRow({
                 {titleLabel}
                 {!gate && !isBayg && (
                   <span className="ml-1 text-sm font-semibold text-brand-muted">
-                    — {(segmentLength / 1000).toFixed(2)}m(L) —{" "}
-                    <strong className="font-extrabold text-brand-text">{selectedHeight}mm(H)</strong>
+                    — <strong className="font-extrabold text-brand-text">{(segmentLength / 1000).toFixed(2)}m</strong> —{" "}
+                    <strong className="font-extrabold text-brand-text">{selectedHeight}mm</strong>
                   </span>
                 )}
               </p>
               <div className="flex items-center justify-center">
                 <button
                   type="button"
-                  onClick={matchesMaster ? undefined : resetToMaster}
-                  title={
-                    matchesMaster
-                      ? "Matches the current Run Settings. Hover to highlight this section on the map."
-                      : "Click to set to default run settings and match this section to the Run Settings."
-                  }
+                  onClick={resetToMaster}
+                  title="Click to restore to run settings"
                   className={`rounded-full px-2 py-1 text-center shadow-sm transition-colors ${matchesMaster
-                    ? "cursor-default bg-brand-success text-white"
+                    ? "bg-brand-success text-white"
                     : "bg-brand-warning/15 text-black hover:bg-brand-primary hover:text-white"
                     }`}
                 >
                   <span
                     onMouseEnter={() => setMapHover(compactLabel)}
                     onMouseLeave={() => setMapHover(null)}
-                    title={
-                      matchesMaster
-                        ? "Matches the current Run Settings. Hover to highlight this section on the map."
-                        : "Click to set to default run settings and match this section to the Run Settings."
-                    }
+                    title="Click to restore to run settings"
                     className="text-base font-black leading-none tracking-normal"
                   >
                     {compactLabel}

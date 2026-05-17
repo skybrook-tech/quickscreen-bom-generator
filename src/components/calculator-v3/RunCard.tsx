@@ -247,12 +247,6 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
         <RunSettingsEditor run={run} onCollapse={() => setRunSettingsOpen(false)} />
       )}
 
-      {run.segments.length > 0 && (
-        <p className="px-4 pb-3 text-xs font-semibold text-brand-muted">
-          Green section or gate code = same settings as the run.
-        </p>
-      )}
-
       {!runSettingsOpen && (
         <>
 

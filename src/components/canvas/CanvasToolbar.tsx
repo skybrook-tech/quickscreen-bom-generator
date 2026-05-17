@@ -3,6 +3,7 @@ import {
   Building2,
   CircleDot,
   Type,
+  PenLine,
   GitMerge,
   Landmark,
   Move,
@@ -23,7 +24,7 @@ import { ConfirmButton } from "../shared/ConfirmButton";
 import { TOOL_HOTKEYS } from "../../lib/canvasShortcuts";
 
 type Engine = ReturnType<typeof initCanvasEngine>;
-type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar";
+type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand";
 
 interface CanvasToolbarProps {
   engineRef: RefObject<Engine | null>;
@@ -87,7 +88,7 @@ export function CanvasToolbar({
         className={btnCls(activeTool === "draw")}
         onClick={() => handleTool("draw")}
       >
-        <Pencil size={16} /> Draw {keyBadge(TOOL_HOTKEYS.draw)}
+        <Pencil size={16} /> Draw Fence {keyBadge(TOOL_HOTKEYS.draw)}
       </button>
       <button
         type="button"
@@ -111,11 +112,11 @@ export function CanvasToolbar({
         <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">Site</span>
       <button
         type="button"
-        title={`Draw an existing wall or boundary line (${TOOL_HOTKEYS.boundary})`}
+        title={`Draw a dotted context line (${TOOL_HOTKEYS.boundary})`}
         className={btnCls(activeTool === "boundary")}
         onClick={() => handleTool("boundary")}
       >
-        <Minus size={16} /> Existing wall {keyBadge(TOOL_HOTKEYS.boundary)}
+        <Minus size={16} /> Dotted line {keyBadge(TOOL_HOTKEYS.boundary)}
       </button>
       <button
         type="button"
@@ -124,6 +125,14 @@ export function CanvasToolbar({
         onClick={() => handleTool("building")}
       >
         <Building2 size={16} /> Building {keyBadge(TOOL_HOTKEYS.building)}
+      </button>
+      <button
+        type="button"
+        title={`Free draw site notes (${TOOL_HOTKEYS.freehand})`}
+        className={btnCls(activeTool === "freehand")}
+        onClick={() => handleTool("freehand")}
+      >
+        <PenLine size={16} /> Free Draw {keyBadge(TOOL_HOTKEYS.freehand)}
       </button>
       <button
         type="button"

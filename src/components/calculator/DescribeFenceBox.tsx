@@ -1,4 +1,4 @@
-import { ChevronDown, MessageSquareText, Mic, MicOff } from "lucide-react";
+import { MessageSquareText, Mic, MicOff } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { parseDescription, type ParseResult } from "../../lib/describeFenceParser";
@@ -48,8 +48,9 @@ export function DescribeFenceBox({
       setMessage("I could not find a usable fence length, gate, system, or setting in that description.");
       return;
     }
-    setMessage("Applied to the calculator. You can edit this text and parse again.");
     onApply(parsed);
+    setMessage(null);
+    if (compact) setOpen(false);
   }
 
   function toggleMic() {
@@ -78,18 +79,11 @@ export function DescribeFenceBox({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex w-full items-center gap-2 rounded-2xl border border-brand-border bg-brand-card px-3 py-2 text-left text-xs font-semibold text-brand-muted hover:border-brand-primary hover:text-brand-primary"
+        className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-brand-primary/35 bg-brand-primary/10 text-brand-primary shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-primary hover:bg-brand-primary hover:text-white hover:shadow-md"
+        title={title}
+        aria-label={title}
       >
-        <ChevronDown size={15} className="-rotate-90" />
-        <MessageSquareText size={15} />
-        {initialDescription ? (
-          <span className="min-w-0 flex-1 truncate">
-            {initialDescription.slice(0, 40)}{initialDescription.length > 40 ? "..." : ""}{" "}
-            <span className="font-black">View full</span>
-          </span>
-        ) : (
-          <span className="font-black">{title}</span>
-        )}
+        <MessageSquareText size={32} strokeWidth={2.4} />
       </button>
     );
   }
@@ -135,7 +129,7 @@ export function DescribeFenceBox({
             onClick={parseNow}
             className="rounded-lg bg-brand-primary px-3 py-2 text-sm font-black text-white hover:bg-brand-primary/90"
           >
-            Parse
+            Apply
           </button>
           {message && (
             <p className="rounded-lg border border-brand-border/70 bg-brand-bg px-3 py-2 text-xs font-bold text-brand-muted">

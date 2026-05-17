@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Info, Map, Loader2 } from "lucide-react";
+import { Info, Map, Loader2, Settings2 } from "lucide-react";
 import { toast } from "sonner";
 import type { RefObject, KeyboardEvent } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
@@ -124,6 +124,7 @@ export function MapControls({
   const [error, setError] = useState("");
   const [mapLoaded, setMapLoaded] = useState(false);
   const [calibrationLabel, setCalibrationLabel] = useState("");
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const [suggestions, setSuggestions] = useState<GooglePrediction[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -366,10 +367,11 @@ export function MapControls({
   };
 
   return (
-    <div className="flex flex-wrap items-start gap-4 p-3 bg-brand-card border-b border-t border-brand-border text-xs">
+    <div className="relative border-b border-brand-border bg-brand-card p-3 text-xs">
       <div ref={placesAttributionRef} className="hidden" />
-      <div className="flex flex-col gap-2 flex-1 min-w-[260px]">
-        <div className="flex items-center gap-2">
+      <div className="flex items-start gap-2">
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          <div className="flex items-center gap-2">
           <Map size={16} className="text-brand-muted shrink-0" />
           <div className="relative flex-1">
             <input
@@ -446,70 +448,87 @@ export function MapControls({
             Load
           </button>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs text-brand-muted">Map type</span>
-          <select
-            value={mapType}
-            onChange={(e) => setMapType(e.target.value as MapType)}
-            className="text-xs bg-brand-bg border border-brand-border rounded px-2 py-1 text-brand-text"
-          >
-            <option value="satellite">Satellite</option>
-            <option value="roadmap">Roadmap</option>
-            <option value="terrain">Terrain</option>
-            <option value="hybrid">Hybrid</option>
-          </select>
           {calibrationLabel && (
             <span className="rounded-full border border-brand-success/40 bg-brand-success/10 px-2 py-1 text-brand-success">
               Calibrated: {calibrationLabel}
             </span>
           )}
         </div>
+        <button
+          type="button"
+          onClick={() => setSettingsOpen((open) => !open)}
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-brand-border px-3 py-1.5 font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+          aria-expanded={settingsOpen}
+          title="Map settings"
+        >
+          <Settings2 size={16} />
+          Map
+        </button>
       </div>
 
-      <div className="flex items-center gap-2">
-        <span className="text-brand-muted">Opacity:</span>
-        <input
-          type="range"
-          min={0.1}
-          max={1}
-          step={0.05}
-          value={opacity}
-          onChange={(e) => handleOpacityChange(parseFloat(e.target.value))}
-          className="w-20 accent-brand-accent"
-        />
-        <span className="text-brand-muted w-8">
-          {Math.round(opacity * 100)}%
-        </span>
-      </div>
+      {settingsOpen && (
+        <div className="absolute right-3 top-[calc(100%-0.25rem)] z-40 w-72 rounded-xl border border-brand-border bg-brand-card p-3 text-xs shadow-xl">
+          <label className="block">
+            <span className="text-xs font-bold text-brand-muted">Map type</span>
+            <select
+              value={mapType}
+              onChange={(e) => setMapType(e.target.value as MapType)}
+              className="mt-1 w-full rounded border border-brand-border bg-brand-bg px-2 py-1.5 text-xs text-brand-text"
+            >
+              <option value="satellite">Satellite</option>
+              <option value="roadmap">Roadmap</option>
+              <option value="terrain">Terrain</option>
+              <option value="hybrid">Hybrid</option>
+            </select>
+          </label>
 
-      <div className="flex items-center gap-2">
-        <span className="flex items-center gap-1 text-xs text-brand-muted">
-          Scale
-          <Info
-            size={14}
-            className="text-brand-muted"
-            aria-label="Scale help"
-          />
-        </span>
-        <input
-          type="number"
-          value={scaleInput}
-          onChange={(e) => setScaleInput(e.target.value)}
-          onBlur={handleScaleBlur}
-          className="w-20 text-xs bg-brand-bg border border-brand-border rounded px-2 py-1 text-brand-text"
-          title="px per metre - the canvas distance for 1m of real fence. Auto-calibrates when you load a satellite address."
-          min="0.01"
-          step="any"
-        />
-        <span className="text-brand-muted">px/m</span>
-      </div>
+          <label className="mt-3 block">
+            <span className="text-xs font-bold text-brand-muted">
+              Opacity: {Math.round(opacity * 100)}%
+            </span>
+            <input
+              type="range"
+              min={0.1}
+              max={1}
+              step={0.05}
+              value={opacity}
+              onChange={(e) => handleOpacityChange(parseFloat(e.target.value))}
+              className="mt-1 w-full accent-brand-accent"
+            />
+          </label>
+
+          <label className="mt-3 block">
+            <span className="flex items-center gap-1 text-xs font-bold text-brand-muted">
+              Scale
+              <Info
+                size={14}
+                className="text-brand-muted"
+                aria-label="Scale help"
+              />
+            </span>
+            <div className="mt-1 flex items-center gap-2">
+              <input
+                type="number"
+                value={scaleInput}
+                onChange={(e) => setScaleInput(e.target.value)}
+                onBlur={handleScaleBlur}
+                className="w-24 rounded border border-brand-border bg-brand-bg px-2 py-1.5 text-xs text-brand-text"
+                title="px per metre - the canvas distance for 1m of real fence. Auto-calibrates when you load a satellite address."
+                min="0.01"
+                step="any"
+              />
+              <span className="text-brand-muted">px/m</span>
+            </div>
+          </label>
+        </div>
+      )}
 
       {!googleMapsKey() && (
-        <p className="w-full text-brand-warning text-xs">
+        <p className="mt-2 text-brand-warning text-xs">
           Google Maps is ready, but `VITE_GOOGLE_MAPS_KEY` is not configured.
         </p>
       )}
-      {error && <p className="w-full text-brand-danger text-xs mt-1">{error}</p>}
+      {error && <p className="mt-1 text-brand-danger text-xs">{error}</p>}
     </div>
   );
 }

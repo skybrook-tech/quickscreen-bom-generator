@@ -27,7 +27,7 @@ interface PendingGate {
 }
 
 const DEFAULT_GATE_WIDTH_FALLBACK = 900;
-type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar";
+type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand";
 
 interface FenceLayoutCanvasProps {
   onApplied?: (layout: CanvasLayout) => void;
@@ -42,6 +42,7 @@ interface FenceLayoutCanvasProps {
   /** Pre-computed stats text from calcRunStats — keeps canvas overlay in sync with form. */
   runStatsTexts?: { global: string; perRun: string[] };
   gateVisuals?: Record<string, CanvasGateVisual>;
+  jobName?: string;
   expanded?: boolean;
   onExpandedChange?: (expanded: boolean) => void;
 }
@@ -55,6 +56,7 @@ export function FenceLayoutCanvas({
   allowedAngles: allowedAnglesProp,
   runStatsTexts,
   gateVisuals = {},
+  jobName,
   expanded: expandedProp,
   onExpandedChange,
 }: FenceLayoutCanvasProps = {}) {
@@ -159,6 +161,7 @@ export function FenceLayoutCanvas({
         p: "post",
         i: "pillar",
         t: "text",
+        f: "freehand",
       };
       const nextTool = keyTools[key];
       if (!nextTool) return;
@@ -402,8 +405,8 @@ export function FenceLayoutCanvas({
     const includeSatellite = engineRef.current?.hasSatelliteUnderlay()
       ? window.confirm("Include the satellite underlay on the printed map?")
       : false;
-    engineRef.current?.printMap({ includeSatellite });
-  }, []);
+    engineRef.current?.printMap({ includeSatellite, jobName });
+  }, [jobName]);
 
   // Totals across all runs
   const totalLengthM = runSummaries.reduce((s, r) => s + r.totalLengthM, 0);
@@ -427,6 +430,12 @@ export function FenceLayoutCanvas({
           onToggleExpand={setExpanded}
           onHelpOpen={() => setHelpOpen(true)}
           onPrintMap={handlePrintMap}
+        />
+      </div>
+      <div data-print-hide>
+        <MapControls
+          engineRef={engineRef}
+          onMapUiStateChange={setMapUiState}
         />
       </div>
 
@@ -460,7 +469,9 @@ export function FenceLayoutCanvas({
           {activeTool === "move" &&
             "Drag nodes or gates to reposition · Click a label to edit length"}
           {activeTool === "boundary" &&
-            "Draw non-product existing wall or boundary lines - not included in BOM"}
+            "Draw non-product dotted context lines - not included in BOM"}
+          {activeTool === "freehand" &&
+            "Drag to sketch freehand site notes and features - not included in BOM"}
         </div>
 
         {/* Zoom hint */}
@@ -469,9 +480,9 @@ export function FenceLayoutCanvas({
         </div>
         {boundaryHintVisible && (
           <div className="absolute left-4 top-4 max-w-xs rounded-lg border border-brand-warning/40 bg-brand-card/95 p-3 text-xs text-brand-text shadow-md">
-            <div className="font-semibold text-brand-warning">Existing wall tool</div>
+            <div className="font-semibold text-brand-warning">Dotted line tool</div>
             <p className="mt-1 text-brand-muted">
-              Draw existing walls, fences, or property lines for context. These
+              Draw dotted existing walls, fences, or property lines for context. These
               do not appear in your BOM.
             </p>
             <button
@@ -489,13 +500,6 @@ export function FenceLayoutCanvas({
             Calibrated: {mapUiState.calibrationLabel}
           </div>
         )}
-      </div>
-
-      <div data-print-hide>
-        <MapControls
-          engineRef={engineRef}
-          onMapUiStateChange={setMapUiState}
-        />
       </div>
 
       {/* Run summary table */}

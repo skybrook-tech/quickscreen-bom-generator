@@ -19,7 +19,6 @@ import {
 import { getPreferredGroutSku, setPreferredGroutSku } from "../../lib/userPrefs";
 import { SchemaDrivenForm, type SchemaField } from "./SchemaDrivenForm";
 import { colourName } from "./ColourPalette";
-import NumberInput from "../shared/NumberInput";
 import { SettingsDisclosureRow } from "./SettingsDisclosureRow";
 
 interface Props {
@@ -322,30 +321,6 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
     });
   }
 
-  function updateCornerCount(value: number | null) {
-    const count = Math.max(0, Math.min(20, Math.round(Number(value) || 0)));
-    const fenceSegments = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
-    const fallbackSegmentId = fenceSegments[0]?.segmentId ?? run.segments[0]?.segmentId ?? crypto.randomUUID();
-    const corners = run.corners.slice(0, count);
-    while (corners.length < count) {
-      const afterSegment =
-        fenceSegments[Math.min(corners.length, Math.max(0, fenceSegments.length - 1))]?.segmentId ??
-        fallbackSegmentId;
-      corners.push({
-        cornerId: crypto.randomUUID(),
-        afterSegmentId: afterSegment,
-        type: "90",
-      });
-    }
-    dispatch({
-      type: "UPSERT_RUN",
-      run: {
-        ...run,
-        corners,
-      },
-    });
-  }
-
   return (
     <div className="mb-3 space-y-2 border-t border-brand-border/70 bg-brand-bg/55 p-3">
       <p className="text-xs font-semibold text-brand-muted">
@@ -382,17 +357,17 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
         <div className="space-y-4">
           {renderField("finish_family")}
           {renderField("colour_code")}
-          {renderField("slat_size_mm")}
-          {renderField("slat_gap_mode")}
-          {renderField("slat_gap_mm")}
           <button
             type="button"
             onClick={() => setPostColourOpen((value) => !value)}
             className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
           >
-            {postColourOpen ? "Hide alternate post color" : "Alternate post color"}
+            {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
           </button>
           {postColourOpen && renderField("post_colour_code")}
+          {renderField("slat_size_mm")}
+          {renderField("slat_gap_mode")}
+          {renderField("slat_gap_mm")}
           {productCode === "QSHS" && (
             <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
               <input
@@ -486,25 +461,6 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
           </div>
         </SettingsDisclosureRow>
       )}
-      <SettingsDisclosureRow
-        id={`${run.runId}-corner-count`}
-        label="Run corner count"
-        value={`${run.corners.length} corner${run.corners.length === 1 ? "" : "s"}`}
-      >
-        <label className="flex max-w-xs flex-col gap-1">
-          <span className="text-sm font-bold text-brand-muted">Run corner count</span>
-          <NumberInput
-            value={run.corners.length}
-            min={0}
-            max={20}
-            step={1}
-            onChange={updateCornerCount}
-          />
-        </label>
-        <p className="text-xs font-semibold text-brand-muted">
-          Corners are a run-level setting because they sit between sections. Drawn layouts still update this automatically.
-        </p>
-      </SettingsDisclosureRow>
       {onCollapse && (
         <div className="pt-2">
           <button

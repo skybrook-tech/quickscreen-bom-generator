@@ -122,17 +122,15 @@ export function RunListV3({
           onAutoOpenConsumed={onAutoOpenConsumed}
         />
       ))}
-      <button
-        type="button"
-        onClick={addRun}
-        className={`w-full rounded-lg py-3 text-sm font-black transition-all ${
-          hasRuns
-            ? "border border-brand-primary/50 bg-brand-primary px-4 text-white shadow-sm hover:bg-brand-primary/90 hover:shadow-md"
-            : "border border-brand-primary bg-brand-primary px-4 text-white shadow-md ring-2 ring-brand-primary ring-offset-2 ring-offset-brand-card hover:bg-brand-primary/90 hover:shadow-lg"
-        }`}
-      >
-        + Add run
-      </button>
+      {hasRuns && (
+        <button
+          type="button"
+          onClick={addRun}
+          className="w-full rounded-lg border border-brand-primary/50 bg-brand-primary px-4 py-3 text-sm font-black text-white shadow-sm transition-all hover:bg-brand-primary/90 hover:shadow-md"
+        >
+          + Add run
+        </button>
+      )}
     </div>
   );
 }

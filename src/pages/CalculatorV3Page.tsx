@@ -36,7 +36,6 @@ import { useAuth } from "../hooks/useAuth";
 import {
   Download,
   FileX2,
-  HelpCircle,
   Keyboard,
   Loader2,
   Printer,
@@ -343,8 +342,8 @@ function CalculatorV3Content() {
   } | null>(null);
   const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
   const [mobileLayout, setMobileLayout] = useState(false);
-  const [mobileTab, setMobileTab] = useState<"run" | "bom" | "map">("map");
-  const [rightPaneView, setRightPaneView] = useState<RightPaneView>("map");
+  const [mobileTab, setMobileTab] = useState<"run" | "bom" | "map">("bom");
+  const [rightPaneView, setRightPaneView] = useState<RightPaneView>("bom");
   const [mapExpanded, setMapExpanded] = useState(false);
   const [introDismissed, setIntroDismissed] = useState(false);
   const [autoOpenFirstSectionRunId, setAutoOpenFirstSectionRunId] = useState<string | null>(null);
@@ -403,17 +402,6 @@ function CalculatorV3Content() {
     if (view !== "map") setMapExpanded(false);
   }, []);
 
-  const handleExpandMap = useCallback(() => {
-    if (!payload) {
-      dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
-      dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "draw" });
-    }
-    setIntroDismissed(true);
-    setRightPaneView("map");
-    setMapExpanded(true);
-    if (mobileLayout) setMobileTab("map");
-  }, [dispatch, mobileLayout, payload]);
-
   function handleResizeStart() {
     let latestWidth = runPaneWidth;
     const onMove = (event: MouseEvent) => {
@@ -432,15 +420,17 @@ function CalculatorV3Content() {
   }
 
   function startWorkspaceFromLanding(nextJobName = jobName) {
-    if (!nextJobName.trim()) return;
+    const cleanJobName = nextJobName.trim();
+    if (!cleanJobName) return;
+    setJobName(cleanJobName);
     if (!payload) {
       dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
       dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "select" });
     }
     setIntroDismissed(true);
-    setRightPaneView("map");
+    setRightPaneView("bom");
     setMapExpanded(false);
-    setMobileTab("map");
+    setMobileTab("bom");
   }
 
   function handleApplyDescription(result: ParseResult) {
@@ -606,10 +596,10 @@ function CalculatorV3Content() {
     dispatch({ type: "CLEAR_BOM_RESULT" });
     setIntroDismissed(true);
     setAutoOpenFirstSectionRunId(nextRun.runId);
-    setRightPaneView("map");
+    setRightPaneView("bom");
     setMapExpanded(false);
-    setMobileTab("map");
-    toast.success("Description applied and drawn on the map");
+    setMobileTab("bom");
+    toast.success("Description applied");
   }
 
   function handleConfirmGatePosition(gate: PendingParsedGate, distanceFromStartMm: number) {
@@ -1080,10 +1070,10 @@ function CalculatorV3Content() {
     setJobName("");
     dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
     setIntroDismissed(true);
-    setRightPaneView("map");
+    setRightPaneView("bom");
     setMapExpanded(false);
     setAutoOpenFirstSectionRunId(null);
-    setMobileTab("map");
+    setMobileTab("bom");
     setClearJobDialogOpen(false);
   }
 
@@ -1371,7 +1361,7 @@ function CalculatorV3Content() {
                 <button
                   type="submit"
                   disabled={!jobName.trim()}
-                  className="mt-4 w-full rounded-lg bg-brand-primary px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-45"
+                  className="mt-4 w-full rounded-lg bg-brand-primary px-4 py-3 text-sm font-black uppercase tracking-[0.12em] text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Enter
                 </button>
@@ -1403,12 +1393,14 @@ function CalculatorV3Content() {
                         />
                       </div>
                     </div>
-                    <DescribeFenceBox
-                      title="Describe your fence"
-                      compact
-                      initialDescription={payload?.job?.description ?? ""}
-                      onApply={handleApplyDescription}
-                    />
+                    {payload ? (
+                      <DescribeFenceBox
+                        title="Describe your fence"
+                        compact
+                        initialDescription={payload?.job?.description ?? ""}
+                        onApply={handleApplyDescription}
+                      />
+                    ) : null}
                   </section>
                   {payload && (
                     <>
@@ -1569,7 +1561,6 @@ function CalculatorV3Content() {
                     <RightPaneTabs
                       activeView={rightPaneView}
                       onChange={handleRightPaneChange}
-                      onExpandMap={handleExpandMap}
                     />
                   )}
                   <div className={`${rightPaneView === "map" ? "block" : "hidden"} ${mapExpanded ? "p-2" : "p-3 sm:p-4"}`}>
@@ -1582,6 +1573,7 @@ function CalculatorV3Content() {
                           mapExpanded={mapExpanded}
                           onMapExpandedChange={setMapExpanded}
                           showRunDetails={!mapExpanded}
+                          jobName={jobName}
                         />
                       ) : (
                         <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/50 p-6 text-center text-sm font-bold text-brand-muted">
@@ -1627,7 +1619,7 @@ function CalculatorV3Content() {
                     </div>
                     <div className="text-left sm:text-right" data-print-hide>
                       <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
-                        {activeBomSummary?.label ?? "Auto quantity breaks"}
+                        {activeBomSummary?.label ?? (bomResultForTabs ? "Auto quantity breaks" : "Estimated total")}
                       </p>
                       <p className="font-mono text-4xl font-black tabular-nums text-brand-primary sm:text-5xl">
                         ${formatMoney(animatedGrandTotal)}
@@ -1791,9 +1783,10 @@ function CalculatorV3Content() {
                       </div>
                     </>
                   ) : (
-                    <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/60 px-5 py-10 text-center text-sm font-semibold text-brand-muted">
-                      <HelpCircle className="mx-auto mb-3 text-brand-primary" size={32} />
-                      Configure a run on the left, then generate the BOM to see selected products, quantities, GST, and grand total.
+                    <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/60 px-5 py-12 text-center">
+                      <p className="mx-auto max-w-xl text-base font-black italic text-brand-muted sm:text-lg">
+                        Choose fence type on left or click the map button above to draw your fence in plan view
+                      </p>
                     </div>
                   )}
                 </section>

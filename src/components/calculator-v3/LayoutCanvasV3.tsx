@@ -24,12 +24,14 @@ interface LayoutCanvasV3Props {
   mapExpanded?: boolean;
   onMapExpandedChange?: (expanded: boolean) => void;
   showRunDetails?: boolean;
+  jobName?: string;
 }
 
 export function LayoutCanvasV3({
   mapExpanded = false,
   onMapExpandedChange,
   showRunDetails = true,
+  jobName,
 }: LayoutCanvasV3Props) {
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
@@ -226,6 +228,7 @@ export function LayoutCanvasV3({
         jobPanelWidth={clampPostSpacing(payload?.variables.max_panel_width_mm, 2600)}
         runStatsTexts={runStatsTexts}
         gateVisuals={gateVisuals}
+        jobName={jobName}
         expanded={mapExpanded}
         onExpandedChange={onMapExpandedChange}
       />
