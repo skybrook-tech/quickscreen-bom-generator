@@ -125,6 +125,9 @@ export function RunListV3({
                 initialDescription={initialDescription}
                 onApply={onDescribeApply}
               />
+              <p className="mt-1 text-xs font-semibold text-brand-muted">
+                (Click to describe)
+              </p>
             </div>
           )}
         </section>

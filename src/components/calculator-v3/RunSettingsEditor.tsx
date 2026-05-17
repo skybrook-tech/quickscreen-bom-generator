@@ -466,10 +466,11 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
           <button
             type="button"
             onClick={onCollapse}
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-brand-primary bg-brand-primary px-3 py-2 text-sm font-extrabold text-white transition-colors hover:bg-brand-primary/90"
+            className="ml-auto flex h-9 w-9 items-center justify-center rounded-lg border border-brand-primary bg-brand-primary text-sm font-extrabold text-white transition-colors hover:bg-brand-primary/90"
+            aria-label="Collapse run settings"
+            title="Collapse run settings"
           >
             <ChevronUp size={16} aria-hidden />
-            Save run settings
           </button>
         </div>
       )}

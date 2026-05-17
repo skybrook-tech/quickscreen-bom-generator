@@ -1,3 +1,4 @@
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 
 const SETTINGS_ROW_OPEN_EVENT = "qsbom:settings-row-open";
@@ -70,7 +71,9 @@ export function SettingsDisclosureRow({
               {value ?? <span className="font-semibold text-brand-muted">{placeholder}</span>}
             </span>
           )}
-          <span className="text-brand-primary">{open ? "hide" : "show"}</span>
+          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full text-brand-primary" aria-hidden>
+            {open ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+          </span>
         </span>
       </button>
       <div

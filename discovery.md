@@ -1952,3 +1952,25 @@ Changes applied:
 Verification:
 - `npm run build` passed.
 - Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+### May 18, 2026 - Brief BN sidebar icon and gate settings reorganisation
+
+Workflow / UX finding:
+- Text labels on sidebar settings buttons consumed too much horizontal space and made compact run/section/gate cards feel cluttered.
+- Gate settings had drifted into many small dropdowns while run and section settings had converged around grouped disclosure rows.
+- The BOM still surfaced the original free-text description even though that input is now an entry helper rather than quote-facing output.
+
+Changes applied:
+- Changed run, section, and gate settings buttons to icon-only controls and changed expanded settings collapse buttons to up-chevron-only controls.
+- Updated `SettingsDisclosureRow` so rows use blue chevron-down / chevron-up icons instead of `show` / `hide` text while keeping the shared one-open-row and 60-second idle behavior.
+- Added `(Click to describe)` under the initial compact Describe button and kept the Describe entry hidden once a fence system/run exists.
+- Removed the original description row from BOM CSV export and the BOM header display while leaving `payload.job.description` untouched.
+- Fixed section-level alternate post colour so it renders the colour palette directly instead of delegating to the schema form that could duplicate another field.
+- Cleaned gate collapsed summaries by removing swing direction and hinge side, and by showing hardware as type plus human-readable product name/label.
+- Reworked gate settings into four dropdowns: Gate Type & Direction, Slat/Post/Colour, Hardware & Weight, and Gate Components.
+
+Verification:
+- `npm run build` passed.
+
+Deferred:
+- CI wait, deploy preview screenshots, PR ready/merge, and branch cleanup were not performed in this commit/push-only workflow.

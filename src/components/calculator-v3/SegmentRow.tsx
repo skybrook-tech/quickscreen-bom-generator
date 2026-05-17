@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import { Plus, SlidersHorizontal, X } from "lucide-react";
+import { ChevronUp, Plus, SlidersHorizontal, X } from "lucide-react";
 import { ConfirmButton } from "../shared/ConfirmButton";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
@@ -12,11 +12,17 @@ import {
   patchSegmentVariables,
 } from "../../lib/segmentTermination";
 import {
+  DROP_BOLT_OPTIONS,
+  GATE_STOP_OPTIONS,
+  SLIDING_CATCH_OPTIONS,
+  SLIDING_GUIDE_OPTIONS,
+  SLIDING_TRACK_OPTIONS,
   clearGateOpeningWidthMm,
   defaultGateBuildForMovement,
   gateMovementOrDefault,
+  optionLabel,
 } from "../../lib/gateOptionRules";
-import { hingeGapForSku, latchGapForSku } from "../../lib/gateHardware";
+import { HINGE_HARDWARE, LATCH_HARDWARE, baseHardwareSku, hingeGapForSku, latchGapForSku } from "../../lib/gateHardware";
 import {
   gatePatchForAlternative,
   gateTypeLabel,
@@ -77,41 +83,34 @@ function gateMovementLabel(value: unknown) {
   return "Single swing";
 }
 
-function gateDirectionLabel(variables: Record<string, unknown>) {
-  const movement = gateMovementOrDefault(variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
-  const direction = String(variables[GATE_SEGMENT_STUB_KEYS.openingDirection] ?? (movement === "sliding" ? "right" : "out"));
-  const slidingSide = String(variables[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? "front");
-  if (movement === "sliding") {
-    return `${direction === "left" ? "Slides left" : "Slides right"} / ${slidingSide === "back" ? "behind fence" : "front of fence"}`;
-  }
-  if (direction === "in") return "Swings in";
-  if (direction === "left") return "Left hand swing";
-  if (direction === "right") return "Right hand swing";
-  return "Swings out";
+function hardwareProductName(kind: "hinge" | "latch", value: unknown) {
+  const base = baseHardwareSku(value);
+  const catalogue = kind === "hinge" ? HINGE_HARDWARE : LATCH_HARDWARE;
+  return catalogue.find((item) => item.sku === base || item.skuW === String(value))?.label ?? String(value ?? "");
 }
 
-function gateHingeSideLabel(variables: Record<string, unknown>) {
+function gateHardwareSummaryItems(variables: Record<string, unknown>): SummaryItem[] {
   const movement = gateMovementOrDefault(variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
-  if (movement === "sliding") return "N/A";
-  const side = String(variables[GATE_SEGMENT_STUB_KEYS.hingeSide] ?? "default");
-  if (side === "left") return "Left";
-  if (side === "right") return "Right";
-  return "Default";
-}
-
-function gateHardwareSummary(variables: Record<string, unknown>) {
-  const movement = gateMovementOrDefault(variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
-  const kit = String(variables[GATE_SEGMENT_STUB_KEYS.hardwareKitSku] ?? "");
-  if (kit) return kit;
   if (movement === "sliding") {
     const track = String(variables[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST");
     const guide = String(variables[GATE_SEGMENT_STUB_KEYS.slidingGuideType] ?? "XPSG-GUIDE");
-    return `${track} / ${guide}`;
+    const catchType = String(variables[GATE_SEGMENT_STUB_KEYS.slidingCatchType] ?? "XPSG-CATCH-U");
+    return [
+      { label: "Track", value: optionLabel(SLIDING_TRACK_OPTIONS, track) },
+      { label: "Guide", value: optionLabel(SLIDING_GUIDE_OPTIONS, guide) },
+      { label: "Catch", value: optionLabel(SLIDING_CATCH_OPTIONS, catchType) },
+    ];
   }
   const hinge = String(variables[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B");
   const latch = String(variables[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA");
   const dropBolt = String(variables[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? "none");
-  return dropBolt !== "none" ? `${hinge} / ${latch} / ${dropBolt}` : `${hinge} / ${latch}`;
+  const gateStop = String(variables[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "none");
+  return [
+    hinge !== "none" ? { label: "Hinge", value: hardwareProductName("hinge", hinge) } : null,
+    latch !== "none" ? { label: "Latch", value: hardwareProductName("latch", latch) } : null,
+    dropBolt !== "none" ? { label: "Drop bolt", value: optionLabel(DROP_BOLT_OPTIONS, dropBolt) } : null,
+    gateStop !== "none" ? { label: "Gate stop", value: optionLabel(GATE_STOP_OPTIONS, gateStop) } : null,
+  ].filter(Boolean) as SummaryItem[];
 }
 
 function SummaryBit({
@@ -276,13 +275,7 @@ export function SegmentRow({
     gate
       ? { label: "Type", value: gateMovementLabel(gateVars[GATE_SEGMENT_STUB_KEYS.gateMovement]), emphasis: true }
       : null,
-    ...(gate
-      ? [
-        { label: "Direction", value: gateDirectionLabel(gateVars) },
-        { label: "Hinge side", value: gateHingeSideLabel(gateVars) },
-        { label: "Hardware", value: gateHardwareSummary(gateVars) },
-      ]
-      : []),
+    ...(gate ? gateHardwareSummaryItems(gateVars) : []),
     ...(isBayg && !gate
       ? [{ label: "Qty", value: Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1))), emphasis: true }]
       : []),
@@ -623,15 +616,14 @@ export function SegmentRow({
                 <button
                   type="button"
                   onClick={onToggle}
-                  className={`inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border px-3 text-xs font-extrabold transition-colors ${open
+                  className={`inline-flex h-8 w-8 items-center justify-center rounded-lg border text-xs font-extrabold transition-colors ${open
                     ? "border-brand-primary bg-brand-primary text-white"
                     : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
                     }`}
                   aria-label={open ? (gate ? "Collapse gate settings" : "Collapse section settings") : (gate ? "Expand gate settings" : "Expand section settings")}
                   title={open ? "Save settings and collapse" : (gate ? "Open gate settings" : "Open section settings")}
                 >
-                  <SlidersHorizontal size={16} />
-                  <span>{open ? "Save settings" : gate ? "Gate settings" : "Section settings"}</span>
+                  {open ? <ChevronUp size={16} /> : <SlidersHorizontal size={16} />}
                 </button>
               </div>
               <div className="flex justify-end">

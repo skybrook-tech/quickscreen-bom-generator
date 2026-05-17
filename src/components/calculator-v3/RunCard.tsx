@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CheckCircle2, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
+import { CheckCircle2, ChevronUp, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
 import { defaultGateVariables } from "../../lib/gateOptionRules";
@@ -176,14 +176,14 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
             <button
               type="button"
               onClick={() => setRunSettingsOpen((value) => !value)}
-              className={`ml-auto mb-2 inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-extrabold transition-colors ${runSettingsOpen
+              className={`ml-auto mb-2 inline-flex h-9 w-9 items-center justify-center rounded-lg border text-sm font-extrabold transition-colors ${runSettingsOpen
                 ? "border-brand-primary bg-brand-primary text-white"
                 : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
                 }`}
+              aria-label={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
               title={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
             >
-              <SlidersHorizontal size={16} />
-              {runSettingsOpen ? "Save run settings" : "Run settings"}
+              {runSettingsOpen ? <ChevronUp size={16} /> : <SlidersHorizontal size={16} />}
             </button>
           </div>
         </div>
