@@ -14,6 +14,7 @@ import { RunSettingsEditor } from "./RunSettingsEditor";
 import { calcRunStats } from "../../lib/runStats";
 import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
 import { ConfirmButton } from "../shared/ConfirmButton";
+import { SEGMENT_TERMINATION_KEYS } from "../../lib/segmentTermination";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 
@@ -73,6 +74,18 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   const slatSize = Number(runVariables.slat_size_mm ?? 65);
   const slatGap = Number(runVariables.slat_gap_mm ?? 5);
   const isBayg = run.productCode === "BAYG";
+  const fenceSections = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
+  const endPostCount = (() => {
+    if (isBayg || fenceSections.length === 0) return 0;
+    const first = fenceSections[0];
+    const last = fenceSections[fenceSections.length - 1];
+    const leftKind = String(first.variables?.[SEGMENT_TERMINATION_KEYS.leftKind] ?? "");
+    const rightKind = String(last.variables?.[SEGMENT_TERMINATION_KEYS.rightKind] ?? "");
+    return (
+      (leftKind === "" || leftKind === "system_post" ? 1 : 0) +
+      (rightKind === "" || rightKind === "system_post" ? 1 : 0)
+    );
+  })();
 
   useEffect(
     () => () => {
@@ -149,6 +162,8 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
             <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
             <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
             <span>Gap size: <strong className="text-brand-text">{slatGap}mm</strong></span>
+            {!isBayg && <span>Corner posts: <strong className="text-brand-text">{run.corners?.length ?? 0}</strong></span>}
+            {!isBayg && <span>End posts: <strong className="text-brand-text">{endPostCount}</strong></span>}
           </span>
         </h3>
         <div

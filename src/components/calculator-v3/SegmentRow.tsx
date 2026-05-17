@@ -70,10 +70,6 @@ function postLabel(productCode: string, variables: Record<string, unknown>) {
   return postSize === "65" ? "65mm Post Standard HD" : "50mm Post Standard";
 }
 
-function boolLabel(value: boolean) {
-  return value ? "Yes" : "No";
-}
-
 function gateMovementLabel(value: unknown) {
   const movement = gateMovementOrDefault(value);
   if (movement === "double_swing") return "Double swing";
@@ -212,15 +208,6 @@ export function SegmentRow({
       : panelCount === 1
         ? `${Math.round(segmentLength)}mm`
         : `${panelCount} x ${Math.round(segmentLength / panelCount)}mm`;
-  const leftKind = String(segmentVariables[SEGMENT_TERMINATION_KEYS.leftKind] ?? "");
-  const rightKind = String(segmentVariables[SEGMENT_TERMINATION_KEYS.rightKind] ?? "");
-  const hasCornerPost =
-    leftKind === "corner" ||
-    rightKind === "corner" ||
-    Number.isFinite(Number(segmentVariables.geometry_angle_deg));
-  const endPostCount =
-    (leftKind === "system_post" || leftKind === "" ? 1 : 0) +
-    (rightKind === "system_post" || rightKind === "" ? 1 : 0);
   const gateVars = seg.variables ?? {};
   const gateWidthValidation = gate ? validateGateWidth(seg) : null;
   const gateBuild = String(
@@ -285,16 +272,6 @@ export function SegmentRow({
     maxPanelWidthForSystem(productCode),
   );
   const masterPanelCount = segmentLength > 0 ? Math.max(1, Math.ceil(segmentLength / masterMaxSpacing)) : 0;
-  const masterLeftKind = String(masterVariables[SEGMENT_TERMINATION_KEYS.leftKind] ?? "");
-  const masterRightKind = String(masterVariables[SEGMENT_TERMINATION_KEYS.rightKind] ?? "");
-  const masterHasCornerPost =
-    masterLeftKind === "corner" ||
-    masterRightKind === "corner" ||
-    Number.isFinite(Number(masterVariables.geometry_angle_deg));
-  const masterEndPostCount =
-    (masterLeftKind === "system_post" || masterLeftKind === "" ? 1 : 0) +
-    (masterRightKind === "system_post" || masterRightKind === "" ? 1 : 0);
-
   const summaryBitsBase = [
     gate
       ? { label: "Type", value: gateMovementLabel(gateVars[GATE_SEGMENT_STUB_KEYS.gateMovement]), emphasis: true }
@@ -413,15 +390,13 @@ export function SegmentRow({
       },
       { label: "Panel Count", value: panelCount, changed: !isBayg && !sameValue(panelCount, masterPanelCount) },
       { label: "Panel width", value: panelWidthSummary, changed: !isBayg && !sameValue(maxSpacing, masterMaxSpacing) },
-      { label: "Corner post", value: boolLabel(hasCornerPost), changed: !isBayg && hasCornerPost !== masterHasCornerPost },
-      { label: "End post", value: endPostCount, changed: !isBayg && !sameValue(endPostCount, masterEndPostCount) },
     ];
   const differenceBits =
     matchesMaster ? [] : rawDifferenceBits.filter((item) => item.changed && item.label !== "Height");
   const summaryBits = [...summaryBitsBase, ...differenceBits];
   const visibleSettings = rawDifferenceBits.filter((item) => {
     if (item.label === "Height") return false;
-    if (isBayg && ["Post", "Mounting", "Panel Count", "Panel width", "Corner post", "End post"].includes(item.label)) {
+    if (isBayg && ["Post", "Mounting", "Panel Count", "Panel width"].includes(item.label)) {
       return false;
     }
     return true;
