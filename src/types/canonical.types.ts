@@ -91,6 +91,8 @@ export interface CanonicalSegment {
   canvasSegmentIndex?: number;
   sourceSegmentLengthMm?: number;
   targetHeightMm?: number;
+  /** Gate-only finished leaves after hinge/latch clearances. Single/sliding: one leaf; double swing: two. */
+  leaves?: Array<{ widthMm: number }>;
   variables?: CanonicalVariables;
 }
 

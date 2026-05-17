@@ -10,10 +10,12 @@ export type GateConstraintType =
 
 export const GATE_MAX_WIDTH_MM = {
   "pedestrian-horizontal": 2100,
-  "pedestrian-vertical": 1200,
+  "pedestrian-vertical": 2100,
   "sliding-horizontal": 6150,
   "sliding-vertical": 6166,
 } as const;
+
+const DOUBLE_SWING_MAX_LEAF_WIDTH_MM = 2100;
 
 export type GateWidthValidation = {
   gateType: GateConstraintType;
@@ -56,7 +58,11 @@ export function getGateWidthAlternative(
 
 export function validateGateWidth(segment: CanonicalSegment): GateWidthValidation {
   const gateType = gateConstraintTypeFromSegment(segment);
-  const maxWidthMm = getMaxGateWidth(gateType);
+  const movement = gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+  const maxWidthMm =
+    movement === "double_swing"
+      ? DOUBLE_SWING_MAX_LEAF_WIDTH_MM * 2
+      : getMaxGateWidth(gateType);
   const widthMm = Number(segment.segmentWidthMm ?? 0);
   const alternative = getGateWidthAlternative(gateType, widthMm);
   if (!Number.isFinite(widthMm) || widthMm <= maxWidthMm) {
@@ -73,14 +79,14 @@ export function validateGateWidth(segment: CanonicalSegment): GateWidthValidatio
       message: `Cannot exceed ${maxWidthMm}mm for ${typeLabel}.`,
     };
   }
-  if (widthMm <= maxWidthMm * 1.1) {
+  if (movement === "double_swing") {
     return {
       gateType,
       maxWidthMm,
       widthMm,
-      status: "warning",
+      status: "error",
       alternative,
-      message: `This is over the ${typeLabel} maximum of ${maxWidthMm}mm.${alternative ? ` The closest catalogue match is a ${gateTypeLabel(alternative)} gate.` : ""}`,
+      message: "Each leaf must be <= 2100mm. Reduce the opening or switch to Sliding.",
     };
   }
   return {
@@ -89,7 +95,7 @@ export function validateGateWidth(segment: CanonicalSegment): GateWidthValidatio
     widthMm,
     status: "error",
     alternative,
-    message: `Cannot exceed ${maxWidthMm}mm for ${typeLabel}.${alternative ? ` Did you mean ${gateTypeLabel(alternative)}?` : ""}`,
+    message: "Pedestrian gate width above 2100mm - try Double swing (2 leaves) or Sliding.",
   };
 }
 

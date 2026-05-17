@@ -32,6 +32,7 @@ import type {
   CanvasLayout,
   CanvasSegment,
   CanvasRunSummary,
+  CanvasStructureTermination,
 } from './canvasEngine';
 import type {
   CanonicalPayload,
@@ -251,6 +252,27 @@ function mergeSegmentVariables(
   return Object.keys(merged).length ? merged : undefined;
 }
 
+function nonSystemSubtypeForCanvasTermination(termination: CanvasStructureTermination) {
+  return termination === 'pillar' ? 'pillar' : 'non_system_post';
+}
+
+function terminationVariablesForSegment(
+  seg: CanvasSegment,
+): CanonicalSegment['variables'] {
+  const variables: NonNullable<CanonicalSegment['variables']> = {};
+  if (seg.startTermination) {
+    variables[SEGMENT_TERMINATION_KEYS.leftKind] = 'non_system_termination';
+    variables[SEGMENT_TERMINATION_KEYS.leftNonSystemSubtype] =
+      nonSystemSubtypeForCanvasTermination(seg.startTermination);
+  }
+  if (seg.endTermination) {
+    variables[SEGMENT_TERMINATION_KEYS.rightKind] = 'non_system_termination';
+    variables[SEGMENT_TERMINATION_KEYS.rightNonSystemSubtype] =
+      nonSystemSubtypeForCanvasTermination(seg.endTermination);
+  }
+  return Object.keys(variables).length ? variables : undefined;
+}
+
 function expandSegmentWithGates(
   seg: CanvasSegment,
   gates: GateInSegment[],
@@ -279,6 +301,19 @@ function expandSegmentWithGates(
         stableIds[desc] = id;
         return id;
       })();
+      const variables: NonNullable<CanonicalSegment['variables']> = {
+        ...(cursorFraction === 0 && seg.startTermination
+          ? {
+              [SEGMENT_TERMINATION_KEYS.leftKind]: 'non_system_termination',
+              [SEGMENT_TERMINATION_KEYS.leftNonSystemSubtype]:
+                nonSystemSubtypeForCanvasTermination(seg.startTermination),
+            }
+          : {}),
+        geometry_angle_deg: Math.round(seg.angleDeg),
+      };
+      if (gate.useGatePostsAsFenceTermination !== false) {
+        variables[SEGMENT_TERMINATION_KEYS.rightKind] = 'system_post';
+      }
       canonSegments.push({
         segmentId,
         sortOrder: sortOrder++,
@@ -286,17 +321,14 @@ function expandSegmentWithGates(
         segmentWidthMm: Math.round(panelBeforeMm),
         canvasSegmentIndex: localSegIdx,
         sourceSegmentLengthMm: Math.round(totalMm),
-        variables:
-          gate.useGatePostsAsFenceTermination !== false
-            ? {
-                geometry_angle_deg: Math.round(seg.angleDeg),
-                [SEGMENT_TERMINATION_KEYS.rightKind]: 'system_post',
-              }
-            : { geometry_angle_deg: Math.round(seg.angleDeg) },
+        variables,
       });
     }
 
     // Gate opening segment
+    const parentSectionId = [...canonSegments]
+      .reverse()
+      .find((segment) => segment.segmentKind !== 'gate_opening')?.segmentId;
     const gateDesc = `${runIdx}:${flatSegIdx}:gate${gate.gateIndex}`;
     const gateSegmentId = stableIds[gateDesc] ?? (() => {
       const id = newId();
@@ -313,6 +345,7 @@ function expandSegmentWithGates(
       canvasSegmentIndex: localSegIdx,
       sourceSegmentLengthMm: Math.round(totalMm),
       variables: {
+        ...(parentSectionId ? { parent_section_id: parentSectionId } : {}),
         [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]:
           gate.useGatePostsAsFenceTermination ?? true,
         [GATE_SEGMENT_STUB_KEYS.gateMovement]: gateMovementFromCanvas(gate.gateType),
@@ -333,6 +366,19 @@ function expandSegmentWithGates(
       stableIds[desc] = id;
       return id;
     })();
+    const variables: NonNullable<CanonicalSegment['variables']> = {
+      geometry_angle_deg: Math.round(seg.angleDeg),
+      ...(seg.endTermination
+        ? {
+            [SEGMENT_TERMINATION_KEYS.rightKind]: 'non_system_termination',
+            [SEGMENT_TERMINATION_KEYS.rightNonSystemSubtype]:
+              nonSystemSubtypeForCanvasTermination(seg.endTermination),
+          }
+        : {}),
+    };
+    if (sorted.length > 0 && sorted[sorted.length - 1].useGatePostsAsFenceTermination !== false) {
+      variables[SEGMENT_TERMINATION_KEYS.leftKind] = 'system_post';
+    }
     canonSegments.push({
       segmentId,
       sortOrder: sortOrder++,
@@ -340,14 +386,7 @@ function expandSegmentWithGates(
       segmentWidthMm: Math.round(trailingMm),
       canvasSegmentIndex: localSegIdx,
       sourceSegmentLengthMm: Math.round(totalMm),
-      variables:
-        sorted.length > 0 &&
-        sorted[sorted.length - 1].useGatePostsAsFenceTermination !== false
-          ? {
-              geometry_angle_deg: Math.round(seg.angleDeg),
-              [SEGMENT_TERMINATION_KEYS.leftKind]: 'system_post',
-            }
-          : { geometry_angle_deg: Math.round(seg.angleDeg) },
+      variables,
     });
   }
 
@@ -515,6 +554,7 @@ export function canvasLayoutToCanonical(
           canvasSegmentIndex: si,
           sourceSegmentLengthMm: Math.round(seg.lengthMM),
           variables: {
+            ...(terminationVariablesForSegment(seg) ?? {}),
             geometry_angle_deg: Math.round(seg.angleDeg),
           },
         });
@@ -625,6 +665,7 @@ export function mergeCanonicalPreservingSegmentMeta(
             variables: mergeSegmentVariables(ps.variables, gs.variables),
             targetHeightMm: gs.targetHeightMm ?? ps.targetHeightMm,
             gateProductCode: gs.gateProductCode ?? ps.gateProductCode,
+            leaves: ps.leaves ?? gs.leaves,
           };
         }),
       };

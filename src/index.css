@@ -21,6 +21,8 @@
   --brand-radius-sm:       0.5rem;
   --brand-header-bg:       transparent;
   --brand-header-text:     inherit;
+  --brand-run-bg:       #eff6ff;
+  --brand-run-border:   #bfdbfe;
   color-scheme: light;
 }
 
@@ -36,6 +38,8 @@
   --brand-accent-hover: #2563eb;
   --brand-muted:        #cbd5e1;
   --brand-text:         #f8fafc;
+  --brand-run-bg:       #172036;
+  --brand-run-border:   #315085;
   color-scheme: dark;
 }
 

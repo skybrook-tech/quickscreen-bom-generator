@@ -302,7 +302,8 @@
       "metadata": {
         "colour": "black-satin",
         "colour_code": "B",
-        "bomCategory": "frames_and_covers"
+        "bomCategory": "frames_and_covers",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "rails",
@@ -321,7 +322,8 @@
       "metadata": {
         "colour": "monument-matt",
         "colour_code": "MN",
-        "bomCategory": "frames_and_covers"
+        "bomCategory": "frames_and_covers",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "rails",
@@ -340,7 +342,8 @@
       "metadata": {
         "colour": "woodland-grey-matt",
         "colour_code": "G",
-        "bomCategory": "frames_and_covers"
+        "bomCategory": "frames_and_covers",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "rails",
@@ -359,7 +362,8 @@
       "metadata": {
         "colour": "surfmist-matt",
         "colour_code": "SM",
-        "bomCategory": "frames_and_covers"
+        "bomCategory": "frames_and_covers",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "rails",
@@ -378,7 +382,8 @@
       "metadata": {
         "colour": "pearl-white-gloss",
         "colour_code": "W",
-        "bomCategory": "frames_and_covers"
+        "bomCategory": "frames_and_covers",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "rails",
@@ -397,7 +402,8 @@
       "metadata": {
         "colour": "basalt-satin",
         "colour_code": "BS",
-        "bomCategory": "frames_and_covers"
+        "bomCategory": "frames_and_covers",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "rails",
@@ -416,7 +422,8 @@
       "metadata": {
         "colour": "dune-satin",
         "colour_code": "D",
-        "bomCategory": "frames_and_covers"
+        "bomCategory": "frames_and_covers",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "rails",
@@ -435,7 +442,8 @@
       "metadata": {
         "colour": "mill",
         "colour_code": "M",
-        "bomCategory": "frames_and_covers"
+        "bomCategory": "frames_and_covers",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "rails",
@@ -454,7 +462,8 @@
       "metadata": {
         "colour": "primrose",
         "colour_code": "P",
-        "bomCategory": "frames_and_covers"
+        "bomCategory": "frames_and_covers",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "rails",
@@ -473,7 +482,8 @@
       "metadata": {
         "colour": "paperbark",
         "colour_code": "PB",
-        "bomCategory": "frames_and_covers"
+        "bomCategory": "frames_and_covers",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "rails",
@@ -492,7 +502,8 @@
       "metadata": {
         "colour": "palladium-silver-pearl",
         "colour_code": "S",
-        "bomCategory": "frames_and_covers"
+        "bomCategory": "frames_and_covers",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "rails",
@@ -754,7 +765,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 12
       },
       "active": true,
       "subCategory": "hinges",
@@ -774,7 +786,11 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumbers": [
+          11,
+          12
+        ]
       },
       "active": true,
       "subCategory": "hinges",
@@ -794,7 +810,11 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumbers": [
+          11,
+          12
+        ]
       },
       "active": true,
       "subCategory": "hinges",
@@ -814,7 +834,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 12
       },
       "active": true,
       "subCategory": "latches_and_locks",
@@ -1313,7 +1334,8 @@
         "colour_code": "B",
         "slat_size_mm": 65,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "gate_components"
+        "bomCategory": "gate_components",
+        "gateDiagramNumber": 1
       },
       "active": true,
       "subCategory": "gate_side_frames",
@@ -1335,7 +1357,8 @@
         "colour_code": "MN",
         "slat_size_mm": 65,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "gate_components"
+        "bomCategory": "gate_components",
+        "gateDiagramNumber": 1
       },
       "active": true,
       "subCategory": "gate_side_frames",
@@ -1357,7 +1380,8 @@
         "colour_code": "G",
         "slat_size_mm": 65,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "gate_components"
+        "bomCategory": "gate_components",
+        "gateDiagramNumber": 1
       },
       "active": true,
       "subCategory": "gate_side_frames",
@@ -1379,7 +1403,8 @@
         "colour_code": "SM",
         "slat_size_mm": 65,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "gate_components"
+        "bomCategory": "gate_components",
+        "gateDiagramNumber": 1
       },
       "active": true,
       "subCategory": "gate_side_frames",
@@ -1401,7 +1426,8 @@
         "colour_code": "W",
         "slat_size_mm": 65,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "gate_components"
+        "bomCategory": "gate_components",
+        "gateDiagramNumber": 1
       },
       "active": true,
       "subCategory": "gate_side_frames",
@@ -1423,7 +1449,8 @@
         "colour_code": "BS",
         "slat_size_mm": 65,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "gate_components"
+        "bomCategory": "gate_components",
+        "gateDiagramNumber": 1
       },
       "active": true,
       "subCategory": "gate_side_frames",
@@ -1445,7 +1472,8 @@
         "colour_code": "D",
         "slat_size_mm": 65,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "gate_components"
+        "bomCategory": "gate_components",
+        "gateDiagramNumber": 1
       },
       "active": true,
       "subCategory": "gate_side_frames",
@@ -1467,7 +1495,8 @@
         "colour_code": "M",
         "slat_size_mm": 65,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "gate_components"
+        "bomCategory": "gate_components",
+        "gateDiagramNumber": 1
       },
       "active": true,
       "subCategory": "gate_side_frames",
@@ -1489,7 +1518,8 @@
         "colour_code": "P",
         "slat_size_mm": 65,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "gate_components"
+        "bomCategory": "gate_components",
+        "gateDiagramNumber": 1
       },
       "active": true,
       "subCategory": "gate_side_frames",
@@ -1511,7 +1541,8 @@
         "colour_code": "PB",
         "slat_size_mm": 65,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "gate_components"
+        "bomCategory": "gate_components",
+        "gateDiagramNumber": 1
       },
       "active": true,
       "subCategory": "gate_side_frames",
@@ -1534,7 +1565,8 @@
         "slat_size_mm": 65,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
         "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation.",
-        "bomCategory": "gate_components"
+        "bomCategory": "gate_components",
+        "gateDiagramNumber": 1
       },
       "active": true,
       "subCategory": "gate_side_frames",
@@ -1555,7 +1587,8 @@
         "slat_size_mm": 65,
         "pack_qty": 4,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 6
       },
       "active": true,
       "subCategory": "latches_and_locks",
@@ -1576,7 +1609,8 @@
         "slat_size_mm": 90,
         "pack_qty": 4,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 6
       },
       "active": true,
       "subCategory": "latches_and_locks",
@@ -1680,7 +1714,8 @@
       "metadata": {
         "colour_code": "B",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -1700,7 +1735,8 @@
       "metadata": {
         "colour_code": "B",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -1719,7 +1755,8 @@
       "metadata": {
         "colour_code": "B",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "fasteners_and_screws"
+        "bomCategory": "fasteners_and_screws",
+        "gateDiagramNumber": 5
       },
       "active": true,
       "subCategory": "screws",
@@ -1739,7 +1776,8 @@
       "metadata": {
         "colour_code": "B",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "caps_and_plugs"
+        "bomCategory": "caps_and_plugs",
+        "gateDiagramNumber": 10
       },
       "active": true,
       "subCategory": "caps",
@@ -1758,7 +1796,8 @@
       "metadata": {
         "colour_code": "MN",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -1778,7 +1817,8 @@
       "metadata": {
         "colour_code": "MN",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -1797,7 +1837,8 @@
       "metadata": {
         "colour_code": "MN",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "fasteners_and_screws"
+        "bomCategory": "fasteners_and_screws",
+        "gateDiagramNumber": 5
       },
       "active": true,
       "subCategory": "screws",
@@ -1817,7 +1858,8 @@
       "metadata": {
         "colour_code": "MN",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "caps_and_plugs"
+        "bomCategory": "caps_and_plugs",
+        "gateDiagramNumber": 10
       },
       "active": true,
       "subCategory": "caps",
@@ -1836,7 +1878,8 @@
       "metadata": {
         "colour_code": "G",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -1856,7 +1899,8 @@
       "metadata": {
         "colour_code": "G",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -1875,7 +1919,8 @@
       "metadata": {
         "colour_code": "G",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "fasteners_and_screws"
+        "bomCategory": "fasteners_and_screws",
+        "gateDiagramNumber": 5
       },
       "active": true,
       "subCategory": "screws",
@@ -1895,7 +1940,8 @@
       "metadata": {
         "colour_code": "G",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "caps_and_plugs"
+        "bomCategory": "caps_and_plugs",
+        "gateDiagramNumber": 10
       },
       "active": true,
       "subCategory": "caps",
@@ -1914,7 +1960,8 @@
       "metadata": {
         "colour_code": "SM",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -1934,7 +1981,8 @@
       "metadata": {
         "colour_code": "SM",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -1953,7 +2001,8 @@
       "metadata": {
         "colour_code": "SM",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "fasteners_and_screws"
+        "bomCategory": "fasteners_and_screws",
+        "gateDiagramNumber": 5
       },
       "active": true,
       "subCategory": "screws",
@@ -1973,7 +2022,8 @@
       "metadata": {
         "colour_code": "SM",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "caps_and_plugs"
+        "bomCategory": "caps_and_plugs",
+        "gateDiagramNumber": 10
       },
       "active": true,
       "subCategory": "caps",
@@ -1992,7 +2042,8 @@
       "metadata": {
         "colour_code": "W",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -2012,7 +2063,8 @@
       "metadata": {
         "colour_code": "W",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -2031,7 +2083,8 @@
       "metadata": {
         "colour_code": "W",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "fasteners_and_screws"
+        "bomCategory": "fasteners_and_screws",
+        "gateDiagramNumber": 5
       },
       "active": true,
       "subCategory": "screws",
@@ -2051,7 +2104,8 @@
       "metadata": {
         "colour_code": "W",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "caps_and_plugs"
+        "bomCategory": "caps_and_plugs",
+        "gateDiagramNumber": 10
       },
       "active": true,
       "subCategory": "caps",
@@ -2070,7 +2124,8 @@
       "metadata": {
         "colour_code": "BS",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -2090,7 +2145,8 @@
       "metadata": {
         "colour_code": "BS",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -2109,7 +2165,8 @@
       "metadata": {
         "colour_code": "BS",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "fasteners_and_screws"
+        "bomCategory": "fasteners_and_screws",
+        "gateDiagramNumber": 5
       },
       "active": true,
       "subCategory": "screws",
@@ -2129,7 +2186,8 @@
       "metadata": {
         "colour_code": "BS",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "caps_and_plugs"
+        "bomCategory": "caps_and_plugs",
+        "gateDiagramNumber": 10
       },
       "active": true,
       "subCategory": "caps",
@@ -2148,7 +2206,8 @@
       "metadata": {
         "colour_code": "D",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -2168,7 +2227,8 @@
       "metadata": {
         "colour_code": "D",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -2187,7 +2247,8 @@
       "metadata": {
         "colour_code": "D",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "fasteners_and_screws"
+        "bomCategory": "fasteners_and_screws",
+        "gateDiagramNumber": 5
       },
       "active": true,
       "subCategory": "screws",
@@ -2207,7 +2268,8 @@
       "metadata": {
         "colour_code": "D",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "caps_and_plugs"
+        "bomCategory": "caps_and_plugs",
+        "gateDiagramNumber": 10
       },
       "active": true,
       "subCategory": "caps",
@@ -2226,7 +2288,8 @@
       "metadata": {
         "colour_code": "M",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -2246,7 +2309,8 @@
       "metadata": {
         "colour_code": "M",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -2265,7 +2329,8 @@
       "metadata": {
         "colour_code": "M",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "fasteners_and_screws"
+        "bomCategory": "fasteners_and_screws",
+        "gateDiagramNumber": 5
       },
       "active": true,
       "subCategory": "screws",
@@ -2285,7 +2350,8 @@
       "metadata": {
         "colour_code": "M",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "caps_and_plugs"
+        "bomCategory": "caps_and_plugs",
+        "gateDiagramNumber": 10
       },
       "active": true,
       "subCategory": "caps",
@@ -2304,7 +2370,8 @@
       "metadata": {
         "colour_code": "P",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -2324,7 +2391,8 @@
       "metadata": {
         "colour_code": "P",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -2343,7 +2411,8 @@
       "metadata": {
         "colour_code": "P",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "fasteners_and_screws"
+        "bomCategory": "fasteners_and_screws",
+        "gateDiagramNumber": 5
       },
       "active": true,
       "subCategory": "screws",
@@ -2363,7 +2432,8 @@
       "metadata": {
         "colour_code": "P",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "caps_and_plugs"
+        "bomCategory": "caps_and_plugs",
+        "gateDiagramNumber": 10
       },
       "active": true,
       "subCategory": "caps",
@@ -2382,7 +2452,8 @@
       "metadata": {
         "colour_code": "PB",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -2402,7 +2473,8 @@
       "metadata": {
         "colour_code": "PB",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -2421,7 +2493,8 @@
       "metadata": {
         "colour_code": "PB",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "fasteners_and_screws"
+        "bomCategory": "fasteners_and_screws",
+        "gateDiagramNumber": 5
       },
       "active": true,
       "subCategory": "screws",
@@ -2441,7 +2514,8 @@
       "metadata": {
         "colour_code": "PB",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "caps_and_plugs"
+        "bomCategory": "caps_and_plugs",
+        "gateDiagramNumber": 10
       },
       "active": true,
       "subCategory": "caps",
@@ -2461,7 +2535,8 @@
         "colour_code": "S",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
         "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation.",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -2482,7 +2557,8 @@
         "colour_code": "S",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
         "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation.",
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 4
       },
       "active": true,
       "subCategory": "gate_infill",
@@ -2502,7 +2578,8 @@
         "colour_code": "S",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
         "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation.",
-        "bomCategory": "fasteners_and_screws"
+        "bomCategory": "fasteners_and_screws",
+        "gateDiagramNumber": 5
       },
       "active": true,
       "subCategory": "screws",
@@ -2523,7 +2600,8 @@
         "colour_code": "S",
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
         "pricing_note": "Supplier lookup returned no Palladium Silver gate SKU; standard coated price used pending supplier confirmation.",
-        "bomCategory": "caps_and_plugs"
+        "bomCategory": "caps_and_plugs",
+        "gateDiagramNumber": 10
       },
       "active": true,
       "subCategory": "caps",
@@ -2541,7 +2619,8 @@
       ],
       "metadata": {
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "fasteners_and_screws"
+        "bomCategory": "fasteners_and_screws",
+        "gateDiagramNumber": 8
       },
       "active": true,
       "subCategory": "screws",
@@ -2559,7 +2638,8 @@
       ],
       "metadata": {
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "fasteners_and_screws"
+        "bomCategory": "fasteners_and_screws",
+        "gateDiagramNumber": 9
       },
       "active": true,
       "subCategory": "screws",
@@ -2578,7 +2658,8 @@
       "metadata": {
         "slat_gap_mm": 5,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "spacers"
+        "bomCategory": "spacers",
+        "gateDiagramNumber": 7
       },
       "active": true,
       "subCategory": "slat_spacers",
@@ -2597,7 +2678,8 @@
       "metadata": {
         "slat_gap_mm": 9,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "spacers"
+        "bomCategory": "spacers",
+        "gateDiagramNumber": 7
       },
       "active": true,
       "subCategory": "slat_spacers",
@@ -2616,7 +2698,8 @@
       "metadata": {
         "slat_gap_mm": 20,
         "pricing_source": "glassoutletonline.com.au GetProductDetails, 2026-05-02",
-        "bomCategory": "spacers"
+        "bomCategory": "spacers",
+        "gateDiagramNumber": 7
       },
       "active": true,
       "subCategory": "slat_spacers",
@@ -2701,7 +2784,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2720,7 +2804,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2739,7 +2824,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2758,7 +2844,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2777,7 +2864,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2796,7 +2884,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2815,7 +2904,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2834,7 +2924,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2853,7 +2944,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2872,7 +2964,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2891,7 +2984,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2910,7 +3004,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2929,7 +3024,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2948,7 +3044,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2967,7 +3064,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -2986,7 +3084,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3005,7 +3104,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3024,7 +3124,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3043,7 +3144,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3062,7 +3164,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3081,7 +3184,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3100,7 +3204,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3119,7 +3224,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3138,7 +3244,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3157,7 +3264,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3176,7 +3284,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3195,7 +3304,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3214,7 +3324,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3233,7 +3344,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3252,7 +3364,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3271,7 +3384,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3290,7 +3404,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3309,7 +3424,8 @@
       "metadata": {
         "gate_type": "sliding",
         "stock_length_mm": 6100,
-        "bomCategory": "tools_and_consumables"
+        "bomCategory": "tools_and_consumables",
+        "gateDiagramNumber": 2
       },
       "active": true,
       "subCategory": "gate_rail",
@@ -3365,7 +3481,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3385,7 +3502,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3405,7 +3523,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3425,7 +3544,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3445,7 +3565,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3465,7 +3586,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3485,7 +3607,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3538,7 +3661,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3558,7 +3682,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3578,7 +3703,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3598,7 +3724,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass outlet Zues, hamptons and pic pricing.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3618,7 +3745,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass outlet Zues, hamptons and pic pricing.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3638,7 +3766,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3658,7 +3787,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 12
       },
       "active": true,
       "subCategory": "latches_and_locks",
@@ -3678,7 +3808,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 12
       },
       "active": true,
       "subCategory": "latches_and_locks",
@@ -3698,7 +3829,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 12
       },
       "active": true,
       "subCategory": "latches_and_locks",
@@ -3772,7 +3904,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 12
       },
       "active": true,
       "subCategory": "latches_and_locks",
@@ -3792,7 +3925,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 12
       },
       "active": true,
       "subCategory": "latches_and_locks",
@@ -3812,7 +3946,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 12
       },
       "active": true,
       "subCategory": "latches_and_locks",
@@ -3832,7 +3967,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 12
       },
       "active": true,
       "subCategory": "latches_and_locks",
@@ -3852,7 +3988,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3872,7 +4009,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -3892,7 +4030,8 @@
         "price_source": "glassoutletonline.com.au CSV export",
         "price_verified_date": "2026-04-19",
         "price_source_file": "Glass Outlet Aluminium Pool Fence Prices.csv",
-        "bomCategory": "gate_hardware"
+        "bomCategory": "gate_hardware",
+        "gateDiagramNumber": 11
       },
       "active": true,
       "subCategory": "hinges",
@@ -4022,7 +4161,7 @@
       "data_type": "enum",
       "unit": "mm",
       "required": true,
-      "default_value_json": 5,
+      "default_value_json": 9,
       "options_json": [
         5,
         9,
@@ -4130,6 +4269,19 @@
       "scope": "segment",
       "sort_order": 80,
       "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "leaf_count",
+      "label": "Gate leaf count",
+      "data_type": "number",
+      "unit": null,
+      "required": true,
+      "default_value_json": 1,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 90,
+      "active": false
     }
   ],
   "product_validations": [
@@ -4357,11 +4509,11 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_hinge_latch_combo",
-      "expression": "1",
+      "expression": "0",
       "output_key": "qty_hinge_latch",
       "priority": 330,
-      "active": true,
-      "notes": "1 hinge/latch unit per gate — SKU resolved via hinge_type variable"
+      "active": false,
+      "notes": "Disabled: hinge quantity is emitted by gate_add_hinge_latch companion as exactly 2 hinges per leaf."
     },
     {
       "product_system_type": "QS_GATE",
@@ -4698,10 +4850,10 @@
       "trigger_match_json": {},
       "add_category": "hardware",
       "add_sku_pattern": "{selected_hinge_sku}",
-      "qty_formula": "1",
+      "qty_formula": "leaf_count * 2",
       "is_pack": false,
       "priority": 10,
-      "notes": "Any gate → add 1x hinge/latch combo (user-selected type)",
+      "notes": "Any swing gate -> add exactly 2 hinges per leaf (single = 2 total, double = 4 total).",
       "active": true
     },
     {

@@ -1,4 +1,5 @@
 import { X } from "lucide-react";
+import { CANVAS_SHORTCUTS } from "../../lib/canvasShortcuts";
 
 interface HelpCheatSheetProps {
   open: boolean;
@@ -32,11 +33,9 @@ const sections = [
   },
   {
     title: "Keyboard shortcuts",
-    items: [
-      "Ctrl+Z undo. Ctrl+Y or Ctrl+Shift+Z redo.",
-      "Scroll to zoom. Right-drag to pan the canvas.",
-      "Escape finishes or cancels the active drawing action.",
-    ],
+    items: CANVAS_SHORTCUTS.map(
+      (shortcut) => `${shortcut.key}: ${shortcut.action} - ${shortcut.description}`,
+    ),
   },
 ];
 

@@ -27,7 +27,7 @@ interface PendingGate {
 }
 
 const DEFAULT_GATE_WIDTH_FALLBACK = 900;
-type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar";
+type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand";
 
 interface FenceLayoutCanvasProps {
   onApplied?: (layout: CanvasLayout) => void;
@@ -42,6 +42,12 @@ interface FenceLayoutCanvasProps {
   /** Pre-computed stats text from calcRunStats — keeps canvas overlay in sync with form. */
   runStatsTexts?: { global: string; perRun: string[] };
   gateVisuals?: Record<string, CanvasGateVisual>;
+  /** Job name shown in printed map header. */
+  jobName?: string;
+  /** Controlled expanded state. When provided, the parent drives expansion. */
+  expanded?: boolean;
+  /** Called when the expand toggle is triggered internally. */
+  onExpandedChange?: (expanded: boolean) => void;
 }
 
 export function FenceLayoutCanvas({
@@ -53,6 +59,9 @@ export function FenceLayoutCanvas({
   allowedAngles: allowedAnglesProp,
   runStatsTexts,
   gateVisuals = {},
+  jobName,
+  expanded: expandedProp,
+  onExpandedChange,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
@@ -84,7 +93,28 @@ export function FenceLayoutCanvas({
   const [snapEnabled, setSnapEnabled] = useState(true);
   const [gateSnap100, setGateSnap100] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
-  const [expanded, setExpanded] = useState(false);
+  const [expandedInternal, setExpandedInternal] = useState(false);
+  const expanded = expandedProp !== undefined ? expandedProp : expandedInternal;
+  const setExpanded = useCallback((v: boolean | ((prev: boolean) => boolean)) => {
+    const next = typeof v === "function" ? v(expanded) : v;
+    setExpandedInternal(next);
+    onExpandedChange?.(next);
+  }, [expanded, onExpandedChange]);
+  const [orthoEnabled, setOrthoEnabled] = useState(false);
+  const [freehandStyle, setFreehandStyleState] = useState({
+    color: "rgba(14,165,233,0.9)",
+    width: 3,
+    lineStyle: "solid" as "solid" | "dashed" | "dotted",
+    opacity: 0.95,
+    arrow: false,
+  });
+  const handleFreehandStyleChange = useCallback((style: Partial<typeof freehandStyle>) => {
+    setFreehandStyleState((prev) => {
+      const next = { ...prev, ...style };
+      engineRef.current?.setFreehandStyle(next);
+      return next;
+    });
+  }, []);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
   const [helpOpen, setHelpOpen] = useState(false);
   const [boundaryHintVisible, setBoundaryHintVisible] = useState(false);
@@ -353,7 +383,7 @@ export function FenceLayoutCanvas({
     const includeSatellite = engineRef.current?.hasSatelliteUnderlay()
       ? window.confirm("Include the satellite underlay on the printed map?")
       : false;
-    engineRef.current?.printMap({ includeSatellite });
+    engineRef.current?.printMap({ includeSatellite, jobName });
   }, []);
 
   // Totals across all runs
@@ -376,6 +406,10 @@ export function FenceLayoutCanvas({
           onToggleGrid={setShowGrid}
           expanded={expanded}
           onToggleExpand={setExpanded}
+          orthoEnabled={orthoEnabled}
+          onOrthoToggle={setOrthoEnabled}
+          freehandStyle={freehandStyle}
+          onFreehandStyleChange={handleFreehandStyleChange}
           onHelpOpen={() => setHelpOpen(true)}
           onPrintMap={handlePrintMap}
         />

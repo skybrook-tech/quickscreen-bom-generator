@@ -47,6 +47,8 @@ export const GATE_SEGMENT_STUB_KEYS = {
   gateMovement: "gate_movement",
   gateBuild: "gate_build",
   leafCount: "leaf_count",
+  leaf1WidthMm: "leaf_1_width_mm",
+  leaf2WidthMm: "leaf_2_width_mm",
   matchRunHeight: "match_run_height",
   gateHeightMm: "gate_height_mm",
   colourCode: "colour_code",
@@ -116,13 +118,9 @@ export function effectiveLegacyBoundaryType(
   if (kind === "system_post") return "product_post";
   if (kind === "corner") return "corner_90";
 
-  const subKey =
-    side === "left"
-      ? SEGMENT_TERMINATION_KEYS.leftNonSystemSubtype
-      : SEGMENT_TERMINATION_KEYS.rightNonSystemSubtype;
-  const sub = parseNonSystemSubtype(vars?.[subKey]);
-  if (sub === "wall" || sub === "pillar" || sub === "void") return "wall";
-  return "brick_post";
+  // Wall, existing post, pillar, and void all use the same F-section
+  // attachment path in the BOM rather than emitting a product post.
+  return "wall";
 }
 
 export function patchSegmentVariables(

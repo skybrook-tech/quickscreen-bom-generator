@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import { SlidersHorizontal, X } from "lucide-react";
+import { Plus, SlidersHorizontal, X } from "lucide-react";
 import { ConfirmButton } from "../shared/ConfirmButton";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
@@ -12,9 +12,11 @@ import {
   patchSegmentVariables,
 } from "../../lib/segmentTermination";
 import {
+  clearGateOpeningWidthMm,
   defaultGateBuildForMovement,
   gateMovementOrDefault,
 } from "../../lib/gateOptionRules";
+import { hingeGapForSku, latchGapForSku } from "../../lib/gateHardware";
 import {
   gatePatchForAlternative,
   gateTypeLabel,
@@ -40,6 +42,7 @@ interface Props {
   open: boolean;
   onToggle: () => void;
   displayLabel?: string;
+  onAddGate?: (sectionId: string) => void;
   showRunDefaultsTeaching?: boolean;
   onDismissRunDefaultsTeaching?: () => void;
 }
@@ -71,6 +74,50 @@ function boolLabel(value: boolean) {
   return value ? "Yes" : "No";
 }
 
+function gateMovementLabel(value: unknown) {
+  const movement = gateMovementOrDefault(value);
+  if (movement === "double_swing") return "Double swing";
+  if (movement === "sliding") return "Sliding";
+  return "Single swing";
+}
+
+function gateDirectionLabel(variables: Record<string, unknown>) {
+  const movement = gateMovementOrDefault(variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+  const direction = String(variables[GATE_SEGMENT_STUB_KEYS.openingDirection] ?? (movement === "sliding" ? "right" : "out"));
+  const slidingSide = String(variables[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? "front");
+  if (movement === "sliding") {
+    return `${direction === "left" ? "Slides left" : "Slides right"} / ${slidingSide === "back" ? "behind fence" : "front of fence"}`;
+  }
+  if (direction === "in") return "Swings in";
+  if (direction === "left") return "Left hand swing";
+  if (direction === "right") return "Right hand swing";
+  return "Swings out";
+}
+
+function gateHingeSideLabel(variables: Record<string, unknown>) {
+  const movement = gateMovementOrDefault(variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+  if (movement === "sliding") return "N/A";
+  const side = String(variables[GATE_SEGMENT_STUB_KEYS.hingeSide] ?? "default");
+  if (side === "left") return "Left";
+  if (side === "right") return "Right";
+  return "Default";
+}
+
+function gateHardwareSummary(variables: Record<string, unknown>) {
+  const movement = gateMovementOrDefault(variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+  const kit = String(variables[GATE_SEGMENT_STUB_KEYS.hardwareKitSku] ?? "");
+  if (kit) return kit;
+  if (movement === "sliding") {
+    const track = String(variables[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST");
+    const guide = String(variables[GATE_SEGMENT_STUB_KEYS.slidingGuideType] ?? "XPSG-GUIDE");
+    return `${track} / ${guide}`;
+  }
+  const hinge = String(variables[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B");
+  const latch = String(variables[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA");
+  const dropBolt = String(variables[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? "none");
+  return dropBolt !== "none" ? `${hinge} / ${latch} / ${dropBolt}` : `${hinge} / ${latch}`;
+}
+
 function SummaryBit({
   label,
   value,
@@ -81,12 +128,18 @@ function SummaryBit({
   emphasis?: boolean;
 }) {
   return (
-    <span className={`inline-flex items-baseline gap-1 whitespace-nowrap ${emphasis ? "text-[13px]" : ""}`}>
-      <span className="font-semibold text-brand-muted">{label}:</span>
-      <strong className={`font-extrabold text-brand-text ${emphasis ? "text-sm" : ""}`}>{value}</strong>
+    <span className={`inline-flex max-w-full items-baseline gap-1 whitespace-nowrap ${emphasis ? "text-[13px]" : ""}`}>
+      <span className="shrink-0 font-semibold text-brand-muted">{label}:</span>
+      <strong className={`min-w-0 truncate font-extrabold text-brand-text ${emphasis ? "text-sm" : ""}`}>{value}</strong>
     </span>
   );
 }
+
+type SummaryItem = {
+  label: string;
+  value: string | number;
+  emphasis?: boolean;
+};
 
 function sameValue(left: unknown, right: unknown) {
   if (left === undefined || left === null || left === "") {
@@ -107,6 +160,7 @@ export function SegmentRow({
   open,
   onToggle,
   displayLabel,
+  onAddGate,
   showRunDefaultsTeaching = false,
   onDismissRunDefaultsTeaching,
 }: Props) {
@@ -126,10 +180,11 @@ export function SegmentRow({
     ...runVariables,
     ...(seg.variables ?? {}),
   };
-  const productCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
+  const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
+  const productCode = String(seg.variables?.product_code ?? runProductCode);
   const isBayg = productCode === "BAYG";
   const heightEntries = run
-    ? heightEntriesForSystem(run.productCode, segmentVariables)
+    ? heightEntriesForSystem(productCode, segmentVariables)
     : [];
   const heightInputsReady =
     productCode === "VS" ||
@@ -182,26 +237,18 @@ export function SegmentRow({
     ? `Gate ${segIdx + 1} — ${Math.round(segmentLength)}mm`
     : isBayg
       ? `Panel ${segIdx + 1} — ${Math.round(segmentLength)}mm`
-      : `Section ${segIdx + 1} — ${(segmentLength / 1000).toFixed(2)}m`;
+      : `Section ${segIdx + 1}`;
   const matchesMaster = (() => {
     if (!run) return true;
     if (gate) {
-      const gateHeightMatches =
-        Number(seg.targetHeightMm ?? gateVars[GATE_SEGMENT_STUB_KEYS.gateHeightMm] ?? 0) ===
-        Number(masterVariables.target_height_mm ?? 0);
       return (
         expectedGateBuild &&
-        gateHeightMatches &&
         unsetOrSame(gateVars, GATE_SEGMENT_STUB_KEYS.colourCode, masterVariables.colour_code ?? "B") &&
         unsetOrSame(gateVars, GATE_SEGMENT_STUB_KEYS.slatSizeMm, masterVariables.slat_size_mm ?? 65) &&
-        unsetOrSame(gateVars, GATE_SEGMENT_STUB_KEYS.slatGapMm, masterVariables.slat_gap_mm ?? 9) &&
-        unsetOrSame(gateVars, GATE_SEGMENT_STUB_KEYS.gatePostSizeMm, masterVariables.post_size ?? 50)
+        unsetOrSame(gateVars, GATE_SEGMENT_STUB_KEYS.slatGapMm, masterVariables.slat_gap_mm ?? 9)
       );
     }
     const vars = seg.variables ?? {};
-    const segmentHeight = Number(seg.targetHeightMm ?? vars.target_height_mm ?? 0);
-    const masterSegmentHeight = Number(masterVariables.target_height_mm ?? 0);
-    if (segmentHeight !== masterSegmentHeight) return false;
     const settingsKindMatches = (key: string) => {
       const value = vars[key];
       const master = masterVariables[key];
@@ -211,7 +258,7 @@ export function SegmentRow({
       return sameValue(value, master);
     };
     const keys = [
-      "target_height_mm",
+      "product_code",
       "colour_code",
       "post_colour_code",
       "slat_size_mm",
@@ -250,14 +297,19 @@ export function SegmentRow({
 
   const summaryBitsBase = [
     gate
-      ? { label: "Width", value: `${segmentLength}mm`, emphasis: true }
-      : isBayg
-        ? { label: "Width", value: `${segmentLength}mm`, emphasis: true }
-        : { label: "Length", value: `${(segmentLength / 1000).toFixed(2)}m`, emphasis: true },
+      ? { label: "Type", value: gateMovementLabel(gateVars[GATE_SEGMENT_STUB_KEYS.gateMovement]), emphasis: true }
+      : null,
+    ...(gate
+      ? [
+        { label: "Direction", value: gateDirectionLabel(gateVars) },
+        { label: "Hinge side", value: gateHingeSideLabel(gateVars) },
+        { label: "Hardware", value: gateHardwareSummary(gateVars) },
+      ]
+      : []),
     ...(isBayg && !gate
       ? [{ label: "Qty", value: Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1))), emphasis: true }]
       : []),
-  ];
+  ].filter(Boolean) as SummaryItem[];
 
   const rawDifferenceBits = gate
     ? [
@@ -317,7 +369,7 @@ export function SegmentRow({
       {
         label: "System",
         value: productCode,
-        changed: !sameValue(productCode, run?.productCode ?? state.payload?.productCode ?? "QSHS"),
+        changed: !sameValue(productCode, runProductCode),
       },
       { label: "Colour", value: colourName(fenceColour), changed: !sameValue(fenceColour, masterFenceColour) },
       ...(postColour !== fenceColour
@@ -336,8 +388,8 @@ export function SegmentRow({
       },
       {
         label: "Gap",
-        value: `${segmentVariables.slat_gap_mm ?? 5}mm`,
-        changed: !sameValue(segmentVariables.slat_gap_mm ?? 5, masterVariables.slat_gap_mm ?? 5),
+        value: `${segmentVariables.slat_gap_mm ?? 9}mm`,
+        changed: !sameValue(segmentVariables.slat_gap_mm ?? 9, masterVariables.slat_gap_mm ?? 9),
       },
       {
         label: "Post",
@@ -365,7 +417,7 @@ export function SegmentRow({
       { label: "End post", value: endPostCount, changed: !isBayg && !sameValue(endPostCount, masterEndPostCount) },
     ];
   const differenceBits =
-    matchesMaster ? [] : rawDifferenceBits.filter((item) => item.changed);
+    matchesMaster ? [] : rawDifferenceBits.filter((item) => item.changed && item.label !== "Height");
   const summaryBits = [...summaryBitsBase, ...differenceBits];
   const visibleSettings = rawDifferenceBits.filter((item) => {
     if (item.label === "Height") return false;
@@ -379,18 +431,49 @@ export function SegmentRow({
     key: "segmentWidthMm" | "targetHeightMm",
     value: number,
   ) {
+    const nextSegment =
+      gate && key === "segmentWidthMm"
+        ? (() => {
+          const movement = gateMovementOrDefault(seg.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+          if (movement === "sliding") {
+            return { ...seg, [key]: value, leaves: [{ widthMm: Math.max(1, Math.round(value)) }] };
+          }
+          const hingeGapMm = hingeGapForSku(String(seg.variables?.[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B"));
+          const latchGapMm = latchGapForSku(String(seg.variables?.[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA"));
+          const clearOpeningMm = clearGateOpeningWidthMm({
+            openingWidthMm: value,
+            movement,
+            hingeGapMm,
+            latchGapMm,
+          });
+          if (movement === "double_swing") {
+            const existing = seg.leaves?.map((leaf) => Number(leaf.widthMm)).filter((width) => Number.isFinite(width) && width > 0) ?? [];
+            const oldTotal = existing.reduce((sum, width) => sum + width, 0);
+            const firstRatio = existing.length === 2 && oldTotal > 0 ? existing[0] / oldTotal : 0.5;
+            const first = Math.max(1, Math.min(Math.round(clearOpeningMm) - 1, Math.round(clearOpeningMm * firstRatio)));
+            return {
+              ...seg,
+              [key]: value,
+              leaves: [{ widthMm: first }, { widthMm: Math.max(1, Math.round(clearOpeningMm) - first) }],
+            };
+          }
+          return { ...seg, [key]: value, leaves: [{ widthMm: Math.max(1, Math.round(clearOpeningMm)) }] };
+        })()
+        : null;
+
     dispatch({
       type: "UPSERT_SEGMENT",
       runId,
       segment:
-        gate && key === "targetHeightMm"
+        nextSegment ??
+        (gate && key === "targetHeightMm"
           ? {
             ...patchSegmentVariables(seg, {
               [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: value,
             }),
             targetHeightMm: value,
           }
-          : { ...seg, [key]: value },
+          : { ...seg, [key]: value }),
     });
   }
 
@@ -445,7 +528,6 @@ export function SegmentRow({
 
   function resetToMaster() {
     if (!run) return;
-    const masterHeight = Number(masterVariables.target_height_mm ?? 1800);
     if (gate) {
       const movement = gateMovementOrDefault(seg.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
       dispatch({
@@ -457,13 +539,11 @@ export function SegmentRow({
               movement,
               run.productCode === "VS",
             ),
-            [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: masterHeight,
             [GATE_SEGMENT_STUB_KEYS.colourCode]: String(masterVariables.colour_code ?? "B"),
             [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(masterVariables.slat_size_mm ?? 65),
             [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(masterVariables.slat_gap_mm ?? 9),
             [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(masterVariables.post_size ?? 50),
           }),
-          targetHeightMm: masterHeight,
         },
       });
       return;
@@ -473,8 +553,8 @@ export function SegmentRow({
       runId,
       segment: {
         ...patchSegmentVariables(seg, {
-          target_height_mm: null,
           slat_count: null,
+          product_code: null,
           colour_code: null,
           post_colour_code: null,
           slat_size_mm: null,
@@ -486,7 +566,6 @@ export function SegmentRow({
           mounting_method: null,
           max_panel_width_mm: null,
         }),
-        targetHeightMm: masterHeight,
       },
     });
   }
@@ -520,38 +599,51 @@ export function SegmentRow({
         <div className="p-2">
 
           <div className="min-w-0 space-y-3 w-full">
-            <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto] items-center gap-2">
+            <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2">
               <p className="min-w-0 text-left text-lg font-black text-brand-text">
                 {titleLabel}
+                {!gate && !isBayg && (
+                  <span className="ml-1 text-sm font-semibold text-brand-muted">
+                    — <strong className="font-extrabold text-brand-text">{(segmentLength / 1000).toFixed(2)}m</strong> —{" "}
+                    <strong className="font-extrabold text-brand-text">{selectedHeight}mm</strong>
+                  </span>
+                )}
               </p>
               <div className="flex items-center justify-center">
                 <button
                   type="button"
-                  onClick={matchesMaster ? undefined : resetToMaster}
-                  title={
-                    matchesMaster
-                      ? "Matches the current Run Settings. Hover to highlight this section on the map."
-                      : "Click to set to default run settings and match this section to the Run Settings."
-                  }
+                  onClick={resetToMaster}
+                  title="Click to restore to run settings"
                   className={`rounded-full px-2 py-1 text-center shadow-sm transition-colors ${matchesMaster
-                    ? "cursor-default bg-brand-success text-white"
+                    ? "bg-brand-success text-white"
                     : "bg-brand-warning/15 text-black hover:bg-brand-primary hover:text-white"
                     }`}
                 >
                   <span
                     onMouseEnter={() => setMapHover(compactLabel)}
                     onMouseLeave={() => setMapHover(null)}
-                    title={
-                      matchesMaster
-                        ? "Matches the current Run Settings. Hover to highlight this section on the map."
-                        : "Click to set to default run settings and match this section to the Run Settings."
-                    }
+                    title="Click to restore to run settings"
                     className="text-base font-black leading-none tracking-normal"
                   >
                     {compactLabel}
                   </span>
                 </button>
               </div>
+              {!gate && !isBayg && onAddGate && (
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onAddGate(seg.segmentId);
+                  }}
+                  className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-brand-border px-2 text-xs font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+                  title="Add gate to this section"
+                  aria-label="Add gate to this section"
+                >
+                  <Plus size={15} />
+                  Gate
+                </button>
+              )}
               <div className="flex items-center justify-center gap-1 ml-auto">
                 <button
                   type="button"
@@ -578,13 +670,14 @@ export function SegmentRow({
                   }
                   confirmLabel={<X size={16} strokeWidth={3} />}
                   className="inline-flex h-8 w-8 items-center justify-center rounded-full text-brand-danger transition-colors hover:bg-brand-danger/10 hover:text-brand-danger/90"
-                  aria-label="Remove section"
-                  title="Remove section"
+                  aria-label={gate ? "Remove gate" : "Remove section"}
+                  title={gate ? "Remove gate" : "Remove section"}
                 >
                   <X size={16} strokeWidth={3} />
                 </ConfirmButton>
               </div>
             </div>
+            {summaryBits.length > 0 && (
             <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] leading-tight">
               {summaryBits.map((item) => (
                 <SummaryBit
@@ -595,6 +688,7 @@ export function SegmentRow({
                 />
               ))}
             </div>
+            )}
 
           </div>
 
@@ -722,13 +816,15 @@ export function SegmentRow({
             )}
             <div className="rounded-lg border border-brand-border/60 bg-brand-card/70 p-3">
               <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
-                Current settings
+                {matchesMaster ? "Settings match run settings" : "Settings that differ from run settings"}
               </p>
-              <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] leading-tight">
-                {visibleSettings.map((item) => (
-                  <SummaryBit key={item.label} label={item.label} value={item.value} />
-                ))}
-              </div>
+              {!matchesMaster && (
+                <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] leading-tight">
+                  {visibleSettings.filter((item) => item.changed).map((item) => (
+                    <SummaryBit key={item.label} label={item.label} value={item.value} />
+                  ))}
+                </div>
+              )}
             </div>
             {gate ? (
               <GateSegmentDetails runId={runId} seg={seg} />

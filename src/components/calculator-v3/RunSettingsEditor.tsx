@@ -1,5 +1,5 @@
 import { Check, ChevronUp } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalRun } from "../../types/canonical.types";
@@ -19,6 +19,7 @@ import {
 import { getPreferredGroutSku, setPreferredGroutSku } from "../../lib/userPrefs";
 import { SchemaDrivenForm, type SchemaField } from "./SchemaDrivenForm";
 import { colourName } from "./ColourPalette";
+import { SettingsDisclosureRow } from "./SettingsDisclosureRow";
 
 interface Props {
   run: CanonicalRun;
@@ -28,11 +29,26 @@ interface Props {
 const HIDDEN_FIELD_KEYS = new Set([
   "left_boundary_type",
   "right_boundary_type",
+  "target_height_mm",
   "slat_stock_length_mm",
   "rail_stock_length_mm",
   "side_frame_stock_length_mm",
   "louvre_treatment",
 ]);
+
+const VALUE_LABELS: Record<string, string> = {
+  standard: "Standard slats",
+  economy: "Economy slats",
+  alumawood: "Alumawood timber-look",
+  spacer: "Preset spacer gaps",
+  custom: "Custom gap",
+  in_ground: "Concreted in ground",
+  base_plate: "Base plated",
+  core_drill: "Core drilled",
+  xpl: "XPress Plus post",
+  standard_50: "50mm Post Standard",
+  standard_65: "65mm Post Standard HD",
+};
 
 function shapeRunField(field: SchemaField, productCode: string): SchemaField | null {
   if (HIDDEN_FIELD_KEYS.has(field.field_key)) return null;
@@ -58,7 +74,7 @@ function shapeRunField(field: SchemaField, productCode: string): SchemaField | n
   if (field.field_key === "post_system") {
     return {
       ...field,
-      label: "Post type",
+      label: "Post size",
       default_value_json: productCode === "XPL" ? "xpl" : "standard_50",
     };
   }
@@ -87,11 +103,24 @@ function fieldValueLabel(field: SchemaField, variables: Record<string, string | 
   if (raw === true) return "Yes";
   if (raw === false) return "No";
   if (raw === undefined || raw === null || raw === "") return "Default";
+  if (VALUE_LABELS[String(raw)]) return VALUE_LABELS[String(raw)];
   return `${raw}${field.unit ? field.unit : ""}`;
+}
+
+function postLabel(productCode: string, variables: Record<string, string | number | boolean>) {
+  const postSystem = String(variables.post_system ?? (productCode === "XPL" ? "xpl" : "standard_50"));
+  if (postSystem === "xpl") return "XPress Plus post";
+  if (postSystem === "standard_65" || Number(variables.post_size ?? 50) === 65) return "65mm Post Standard HD";
+  return "50mm Post Standard";
 }
 
 export function RunSettingsEditor({ run, onCollapse }: Props) {
   const { state, dispatch } = useCalculator();
+  const [postColourOpen, setPostColourOpen] = useState(() => {
+    const colour = String(run.variables?.colour_code ?? "B");
+    return Boolean(run.variables?.post_colour_code && run.variables.post_colour_code !== colour);
+  });
+  const [fixingsOpen, setFixingsOpen] = useState(false);
   const productCode = run.productCode;
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
   const { data: runFields = [] } = useProductVariables(productCode, "run");
@@ -119,6 +148,25 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
   const substrate = String(variables.base_plate_substrate ?? "concrete");
   const slatSize = Number(variables.slat_size_mm ?? 65);
   const louvreEnabled = variables.louvre_treatment === true || variables.louvre_treatment === "true";
+  const fieldMap = useMemo(() => new Map(fields.map((field) => [field.field_key, field])), [fields]);
+  const mountingField = fieldMap.get("mounting_method") ?? fieldMap.get("mounting_type");
+
+  function renderField(key: string) {
+    const field = fieldMap.get(key);
+    if (!field) return null;
+    return (
+      <SchemaDrivenForm
+        fields={[field]}
+        variables={variables}
+        onChange={updateRunVariables}
+      />
+    );
+  }
+
+  function valueFor(key: string, fallback = "Default") {
+    const field = fieldMap.get(key);
+    return field ? fieldValueLabel(field, variables) : fallback;
+  }
 
   useEffect(() => {
     if (run.variables?.post_fixing_material_sku) return;
@@ -164,12 +212,8 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
     if (key === "colour_code" && (!run.variables?.post_colour_code || previousPostColour === previousColour)) {
       nextVariables.post_colour_code = value;
     }
-    if (key === "target_height_mm") {
-      delete nextVariables.slat_count;
-    }
     const normalised = normaliseVariablesForSystem(nextProductCode, nextVariables);
     const syncKeys = new Set([
-      "target_height_mm",
       "finish_family",
       "slat_size_mm",
       "slat_gap_mm",
@@ -186,7 +230,6 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
     ]);
     const resetSectionKeys = [
       key,
-      ...(key === "target_height_mm" ? ["target_height_mm", "slat_count"] : []),
       ...(key === "colour_code" ? ["colour_code", "post_colour_code"] : []),
       ...(key === "post_system" ? ["post_system", "post_size"] : []),
       ...(key === "mounting_type" || key === "mounting_method" ? ["mounting_type", "mounting_method"] : []),
@@ -218,11 +261,9 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
               const movement = gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
               return {
                 ...segment,
-                targetHeightMm: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
                 variables: {
                   ...(clearKeys(segment.variables) ?? {}),
                   [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(movement, nextProductCode === "VS"),
-                  [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
                   [GATE_SEGMENT_STUB_KEYS.colourCode]: String(normalised.colour_code ?? "B"),
                   [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(normalised.slat_size_mm ?? 65),
                   [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(normalised.slat_gap_mm ?? 9),
@@ -232,7 +273,6 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
             }
             return {
               ...segment,
-              targetHeightMm: Number(normalised.target_height_mm ?? segment.targetHeightMm ?? 1800),
               variables: clearKeys(segment.variables),
             };
           })
@@ -257,7 +297,6 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
           .filter((segment) => nextProductCode !== "BAYG" || segment.segmentKind !== "gate_opening")
           .map((segment) => ({
             ...segment,
-            targetHeightMm: Number(nextVariables.target_height_mm ?? segment.targetHeightMm ?? 1800),
             variables:
               segment.segmentKind === "gate_opening"
                 ? {
@@ -266,7 +305,6 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
                     gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]),
                     nextProductCode === "VS",
                   ),
-                  [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: Number(nextVariables.target_height_mm ?? segment.targetHeightMm ?? 1800),
                   [GATE_SEGMENT_STUB_KEYS.colourCode]: String(nextVariables.colour_code ?? "B"),
                   [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(nextVariables.slat_size_mm ?? 65),
                   [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(nextVariables.slat_gap_mm ?? 9),
@@ -288,13 +326,11 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
       <p className="text-xs font-semibold text-brand-muted">
         Sections inherit these settings unless overridden.
       </p>
-      <details className="rounded-xl border border-brand-border/60 bg-brand-card/70">
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3 py-2 text-sm font-extrabold text-brand-text">
-          <span>System type</span>
-          <span className="rounded-full bg-brand-primary px-3 py-1 text-xs text-white">
-            {run.productCode}
-          </span>
-        </summary>
+      <SettingsDisclosureRow
+        id={`${run.runId}-system-type`}
+        label="System type"
+        value={run.productCode}
+      >
         <div className="flex flex-wrap gap-2 border-t border-brand-border/50 p-3">
           {localFenceProducts.map((product) => (
             <button
@@ -312,47 +348,26 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
             </button>
           ))}
         </div>
-      </details>
-      <div className="grid gap-2">
-        {fields.map((field) => (
-          <details
-            key={`${field.id}-${field.field_key}`}
-            className="rounded-xl border border-brand-border/60 bg-brand-card/70"
+      </SettingsDisclosureRow>
+      <SettingsDisclosureRow
+        id={`${run.runId}-slats-colours-spacings`}
+        label="Slats, colors, and spacings"
+        value={`${valueFor("finish_family")} / ${colourName(variables.colour_code)} / ${valueFor("slat_size_mm")} / ${valueFor("slat_gap_mm")}`}
+      >
+        <div className="space-y-4">
+          {renderField("finish_family")}
+          {renderField("colour_code")}
+          <button
+            type="button"
+            onClick={() => setPostColourOpen((value) => !value)}
+            className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
           >
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3 py-2 text-sm font-extrabold text-brand-text">
-              <span>{field.label}</span>
-              <span className="max-w-[12rem] truncate rounded-full bg-brand-bg px-3 py-1 text-xs font-bold text-brand-muted">
-                {fieldValueLabel(field, variables)}
-              </span>
-            </summary>
-            <div className="border-t border-brand-border/50 p-3">
-              <SchemaDrivenForm fields={[field]} variables={variables} onChange={updateRunVariables} />
-            </div>
-          </details>
-        ))}
-      </div>
-      {productCode !== "BAYG" && (
-        <div className="mt-3 grid gap-3 rounded-2xl border border-brand-border/60 bg-brand-card/70 p-3 md:grid-cols-2">
-          <label className="flex flex-col gap-1">
-            <span className="text-sm font-bold text-brand-muted">Post-fixing material</span>
-            <select
-              value={postFixingSku}
-              onChange={(event) =>
-                updateRunVariables("post_fixing_material_sku", event.target.value)
-              }
-              className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-            >
-              {POST_FIXING_MATERIALS.map((item) => (
-                <option key={item.sku} value={item.sku}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
-            <span className="text-xs font-semibold text-brand-muted">
-              Used for concreted-in posts at 1.5 bags per post.
-            </span>
-          </label>
-
+            {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
+          </button>
+          {postColourOpen && renderField("post_colour_code")}
+          {renderField("slat_size_mm")}
+          {renderField("slat_gap_mode")}
+          {renderField("slat_gap_mm")}
           {productCode === "QSHS" && (
             <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
               <input
@@ -379,26 +394,72 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
               </span>
             </label>
           )}
-
-          {mountingType === "base_plate" && (
-            <label className="flex flex-col gap-1">
-              <span className="text-sm font-bold text-brand-muted">Substrate</span>
-              <select
-                value={substrate}
-                onChange={(event) =>
-                  updateRunVariables("base_plate_substrate", event.target.value)
-                }
-                className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-              >
-                <option value="concrete">Concrete</option>
-                <option value="timber">Timber</option>
-              </select>
-              <span className="text-xs font-semibold text-brand-muted">
-                Selects the fixing kit for each base-plated post.
-              </span>
-            </label>
-          )}
         </div>
+      </SettingsDisclosureRow>
+      {productCode !== "BAYG" && (
+        <SettingsDisclosureRow
+          id={`${run.runId}-post-mounting`}
+          label="Post size, mounting and spacing"
+          value={`${valueFor("post_system", postLabel(productCode, variables))} / ${valueFor("max_panel_width_mm", "2600mm")}`}
+        >
+          <div className="space-y-4">
+            {renderField("post_system")}
+            {renderField("post_size")}
+            {mountingField && (
+              <SchemaDrivenForm
+                fields={[mountingField]}
+                variables={variables}
+                onChange={updateRunVariables}
+              />
+            )}
+            <button
+              type="button"
+              onClick={() => setFixingsOpen((value) => !value)}
+              className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+            >
+              Choose fixings
+            </button>
+            {fixingsOpen && (
+              <div className="grid gap-3 rounded-xl border border-brand-border/60 bg-brand-card/70 p-3 md:grid-cols-2">
+                <label className="flex flex-col gap-1">
+                  <span className="text-sm font-bold text-brand-muted">Post-fixing material</span>
+                  <select
+                    value={postFixingSku}
+                    onChange={(event) =>
+                      updateRunVariables("post_fixing_material_sku", event.target.value)
+                    }
+                    className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+                  >
+                    {POST_FIXING_MATERIALS.map((item) => (
+                      <option key={item.sku} value={item.sku}>
+                        {item.label}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="text-xs font-semibold text-brand-muted">
+                    Defaults apply automatically per mounting method unless changed here.
+                  </span>
+                </label>
+                {mountingType === "base_plate" && (
+                  <label className="flex flex-col gap-1">
+                    <span className="text-sm font-bold text-brand-muted">Substrate</span>
+                    <select
+                      value={substrate}
+                      onChange={(event) =>
+                        updateRunVariables("base_plate_substrate", event.target.value)
+                      }
+                      className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+                    >
+                      <option value="concrete">Concrete</option>
+                      <option value="timber">Timber</option>
+                    </select>
+                  </label>
+                )}
+              </div>
+            )}
+            {renderField("max_panel_width_mm")}
+          </div>
+        </SettingsDisclosureRow>
       )}
       {onCollapse && (
         <div className="pt-2">

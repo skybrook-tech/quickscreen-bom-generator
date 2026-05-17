@@ -10,12 +10,15 @@ import type {
 export interface CalculatorState {
   /** Canonical BOM engine payload (canvas, runs, gates, job variables). */
   payload: CanonicalPayload | null;
+  /** How the user entered the workspace. Recorded for future analytics only. */
+  entryMethod: "draw" | "describe" | "select" | null;
   /** Last `bom-calculator` edge response JSON. */
   bomResult: Record<string, unknown> | null;
 }
 
 const initialState: CalculatorState = {
   payload: null,
+  entryMethod: null,
   bomResult: null,
 };
 
@@ -23,6 +26,7 @@ const initialState: CalculatorState = {
 
 export type CalculatorAction =
   | { type: "SET_PAYLOAD"; payload: CanonicalPayload }
+  | { type: "SET_ENTRY_METHOD"; entryMethod: CalculatorState["entryMethod"] }
   | { type: "SET_BOM_RESULT"; result: Record<string, unknown> }
   | { type: "CLEAR_BOM_RESULT" }
   | { type: "CLEAR_QUOTE" }
@@ -40,6 +44,8 @@ function calculatorReducer(
   switch (action.type) {
     case "SET_PAYLOAD":
       return { ...state, payload: action.payload };
+    case "SET_ENTRY_METHOD":
+      return { ...state, entryMethod: action.entryMethod };
     case "SET_BOM_RESULT":
       return { ...state, bomResult: action.result };
     case "CLEAR_BOM_RESULT":

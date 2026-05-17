@@ -47,6 +47,21 @@ There are multiple QuickScreen systems:
 | 8 | Equipment Enclosure | AC units, pool pumps, bins | Custom to equipment size | |
 | 9 | POSTA Letterbox | Fence-mounted letterbox | Between 50mm posts at 600mm centres | |
 
+## Current V3 App Conventions
+
+- The active calculator route is `/fence-calculator`.
+- Empty workspaces expose four system buttons in order: QSHS, VS, XPL, BAYG.
+- XPL and BAYG are active in the v3 app. BAYG is an infill-panel workflow without posts or gates.
+- The user-facing "Slat range" control maps to `finish_family`: `standard`, `economy`, or `alumawood`.
+- Run, section, and gate settings use one shared disclosure-row pattern: label on the left, selected value on the right, blue `show`/`hide`, one open dropdown at a time, and 60-second idle collapse.
+- Height is section-level. Run settings do not expose a single fence height; each section header shows length and height, and section "matches run" indicators ignore height differences.
+- Sections can override the run system type for mixed-system runs. The override is stored as a section variable and the calculator expands it at BOM time so that the section is dispatched through its own system rules.
+- Gate "matches run" indicators are intentionally narrower than section matching: system/build, colour, slat size, and gap size count; gate movement, direction, hinge side, hardware, and height do not.
+- Alternate post colour is hidden unless the user chooses it. Default post colour equals fence colour. The control belongs directly below the main colour picker in both run and section settings, and section-level alternate post colour can override the run value.
+- Run corner counts are read-only in the sidebar and come from drawn geometry/canonical corner data, not a manual run-settings input.
+- End Conditions UI is hidden in the sidebar. Termination data still exists and remains important for canvas and BOM logic.
+- BOM output should include a printable run/section summary before line items: run hero, run settings, post counts, section panel/post-spacing summary, overrides, and gate sub-items.
+
 ## Instructions
 
 ### Phase 1: Greeting & Project Discovery

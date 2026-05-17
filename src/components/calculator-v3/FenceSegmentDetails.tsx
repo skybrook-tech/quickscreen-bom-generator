@@ -1,79 +1,43 @@
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../types/canonical.types";
 import {
   applyProductOptionRules,
   clampPostSpacing,
+  initialVariablesForSystem,
   MAX_POST_SPACING_MM,
   maxPanelWidthForSystem,
   MIN_POST_SPACING_MM,
+  normaliseVariablesForSystem,
 } from "../../lib/productOptionRules";
+import { localFenceProducts } from "../../lib/localSeedData";
 import {
-  SEGMENT_TERMINATION_KEYS,
   SEGMENT_OPTION_KEYS,
-  cornerTypeFromVars,
   patchSegmentVariables,
 } from "../../lib/segmentTermination";
-import { SchemaDrivenForm } from "./SchemaDrivenForm";
+import { SchemaDrivenForm, type SchemaField } from "./SchemaDrivenForm";
 import NumberInput from "../shared/NumberInput";
-import { TerminationControl } from "./TerminationControl";
+import { SettingsDisclosureRow } from "./SettingsDisclosureRow";
 
 const POST_SIZE_LABELS: Record<string, string> = {
   "50": "50mm Post Standard",
   "65": "65mm Post Standard HD",
+  standard_50: "50mm Post Standard",
+  standard_65: "65mm Post Standard HD",
+  xpl: "XPress Plus post",
 };
-
-const CORNER_TYPE_OPTIONS = [
-  { value: "right", label: "90 degree" },
-  { value: "obtuse", label: "135 degree adapter" },
-  { value: "custom", label: "Custom - verify" },
-] as const;
 
 interface Props {
   runId: string;
   seg: CanonicalSegment;
 }
 
-function SettingsSection({
-  title,
-  summary,
-  children,
-  defaultOpen = false,
-}: {
-  title: string;
-  summary?: string;
-  children: ReactNode;
-  defaultOpen?: boolean;
-}) {
-  const [open, setOpen] = useState(defaultOpen);
-
-  return (
-    <div className="rounded-2xl border border-brand-border/60 bg-brand-bg/60">
-      <button
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm font-extrabold text-brand-text"
-      >
-        <span>{title}</span>
-        <span className="flex min-w-0 items-center gap-2 text-xs font-bold text-brand-primary">
-          {!open && summary ? (
-            <span className="max-w-[11rem] truncate rounded-full bg-brand-card px-2 py-0.5 text-brand-muted">
-              {summary}
-            </span>
-          ) : null}
-          <span>{open ? "Hide" : "Show"}</span>
-        </span>
-      </button>
-      {open && <div className="space-y-3 border-t border-brand-border/50 p-3">{children}</div>}
-    </div>
-  );
-}
-
 export function FenceSegmentDetails({ runId, seg }: Props) {
   const { state, dispatch } = useCalculator();
   const run = state.payload?.runs.find((item) => item.runId === runId);
-  const productCode = run?.productCode ?? state.payload?.productCode ?? null;
+  const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
+  const productCode = String(seg.variables?.product_code ?? runProductCode);
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
   const { data: runFields = [] } = useProductVariables(productCode, "run");
 
@@ -86,58 +50,23 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
   const v = seg.variables ?? {};
   const runVariables = {
+    ...initialVariablesForSystem(productCode),
     ...(state.payload?.variables ?? {}),
     ...(run?.variables ?? {}),
   };
-  const displayVariables = {
+  const displayVariables = normaliseVariablesForSystem(productCode, {
     ...runVariables,
     ...v,
-  };
-  const fenceSegments = run?.segments.filter((segment) => segment.segmentKind !== "gate_opening") ?? [];
-  const segmentIndex = fenceSegments.findIndex((segment) => segment.segmentId === seg.segmentId);
-  const leftEndReadOnly = segmentIndex > 0 && !v.left_termination_kind;
-  const rightEndReadOnly = segmentIndex >= 0 && segmentIndex < fenceSegments.length - 1 && !v.right_termination_kind;
-  const postSize = (displayVariables[SEGMENT_OPTION_KEYS.postSize] as string) ?? "";
+    product_code: productCode,
+  });
+  const postSystem = String(displayVariables.post_system ?? (productCode === "XPL" ? "xpl" : "standard_50"));
+  const postSize = String((displayVariables[SEGMENT_OPTION_KEYS.postSize] as string | number) ?? "");
   const isCustomPost = postSize === "custom";
   const isBayg = productCode === "BAYG";
-  const cornerControls = (["left", "right"] as const)
-    .map((side) => {
-      const kindKey =
-        side === "left"
-          ? SEGMENT_TERMINATION_KEYS.leftKind
-          : SEGMENT_TERMINATION_KEYS.rightKind;
-      const degreesKey =
-        side === "left"
-          ? SEGMENT_TERMINATION_KEYS.leftCornerDegrees
-          : SEGMENT_TERMINATION_KEYS.rightCornerDegrees;
-      const measuredKey =
-        side === "left"
-          ? SEGMENT_TERMINATION_KEYS.leftCornerMeasuredDegrees
-          : SEGMENT_TERMINATION_KEYS.rightCornerMeasuredDegrees;
-      const typeKey =
-        side === "left"
-          ? SEGMENT_TERMINATION_KEYS.leftCornerType
-          : SEGMENT_TERMINATION_KEYS.rightCornerType;
-      const manualKey =
-        side === "left"
-          ? SEGMENT_TERMINATION_KEYS.leftCornerManual
-          : SEGMENT_TERMINATION_KEYS.rightCornerManual;
-      const type = cornerTypeFromVars(v, side);
-      const degrees = Number(v[measuredKey] ?? v[degreesKey]);
-      if (v[kindKey] !== "corner" && !type) return null;
-      return { side, kindKey, degreesKey, measuredKey, typeKey, manualKey, type, degrees };
-    })
-    .filter(Boolean) as Array<{
-      side: "left" | "right";
-      kindKey: string;
-      degreesKey: string;
-      measuredKey: string;
-      typeKey: string;
-      manualKey: string;
-      type: "right" | "obtuse" | "custom" | undefined;
-      degrees: number;
-    }>;
-
+  const [postColourOpen, setPostColourOpen] = useState(() => {
+    const colour = String(displayVariables.colour_code ?? "B");
+    return Boolean(v.post_colour_code && String(v.post_colour_code) !== colour);
+  });
   function upsertSegment(s: CanonicalSegment) {
     dispatch({ type: "UPSERT_SEGMENT", runId, segment: s });
   }
@@ -153,8 +82,33 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     );
   }
 
+  function onSystemTypeChange(nextProductCode: string) {
+    const normalised = normaliseVariablesForSystem(nextProductCode, {
+      ...initialVariablesForSystem(nextProductCode),
+      ...runVariables,
+      ...v,
+      product_code: nextProductCode,
+    });
+    upsertSegment(
+      patchSegmentVariables(seg, {
+        product_code: nextProductCode === runProductCode ? null : nextProductCode,
+        finish_family: normalised.finish_family,
+        colour_code: normalised.colour_code,
+        post_colour_code: normalised.post_colour_code,
+        slat_size_mm: normalised.slat_size_mm,
+        slat_gap_mode: normalised.slat_gap_mode,
+        slat_gap_mm: normalised.slat_gap_mm,
+        post_system: normalised.post_system,
+        post_size: normalised.post_size,
+        mounting_type: normalised.mounting_type,
+        mounting_method: normalised.mounting_method,
+        max_panel_width_mm: normalised.max_panel_width_mm,
+      }),
+    );
+  }
+
   const jobMax = clampPostSpacing(
-    state.payload?.variables.max_panel_width_mm,
+    runVariables.max_panel_width_mm,
     maxPanelWidthForSystem(productCode),
   );
   const effectiveMax = clampPostSpacing(v.max_panel_width_mm, jobMax);
@@ -182,6 +136,35 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   const mergedJobDisplay: Record<string, string | number | boolean> = {
     ...displayVariables,
   };
+  function shapePostField(field: SchemaField): SchemaField | null {
+    if (
+      field.field_key === "mounting_method" ||
+      field.field_key === "mounting_type"
+    ) {
+      return {
+        ...field,
+        label: "Post mounting type",
+        default_value_json: "in_ground",
+        options_json: ["in_ground", "base_plate", "core_drill"],
+      };
+    }
+    if (field.field_key === "post_system") {
+      return {
+        ...field,
+        label: "Post size",
+        default_value_json: productCode === "XPL" ? "xpl" : "standard_50",
+      };
+    }
+    if (field.field_key === "post_size") {
+      return {
+        ...field,
+        label: "Standard post size",
+        default_value_json: 50,
+      };
+    }
+    return null;
+  }
+
   const optionFields = useMemo(
     () =>
       productCode
@@ -191,12 +174,27 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
               (field) =>
                 !field.field_key.endsWith("_stock_length_mm") &&
                 field.field_key !== "max_panel_width_mm" &&
+                field.field_key !== "target_height_mm" &&
+                field.field_key !== "post_colour_code" &&
                 field.field_key !== "louvre_treatment",
             ),
             mergedJobDisplay,
           )
         : [],
     [jobFields, mergedJobDisplay, productCode],
+  );
+  const postFields = useMemo(
+    () =>
+      productCode
+        ? applyProductOptionRules(
+          productCode,
+          runFields
+            .map(shapePostField)
+            .filter((field): field is SchemaField => Boolean(field)),
+          mergedJobDisplay,
+        )
+        : [],
+    [mergedJobDisplay, productCode, runFields],
   );
   const optionSummary = optionFields
     .map((field) => {
@@ -213,99 +211,107 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     .filter(Boolean)
     .slice(0, 2)
     .join(" / ");
+  const colourField = optionFields.find((field) => field.field_key === "colour_code");
+  const postColourField = applyProductOptionRules(
+    productCode,
+    jobFields.filter((field) => field.field_key === "post_colour_code"),
+    mergedJobDisplay,
+  )[0];
+  const remainingOptionFields = optionFields.filter((field) => field.field_key !== "colour_code");
   function handleOptionChange(key: string, value: string | number | boolean) {
     onJobOverrideChange(key, value);
   }
+  const postSummary = `${POST_SIZE_LABELS[postSystem] ?? POST_SIZE_LABELS[postSize] ?? (postSize ? `${postSize}mm Post` : "Run default")} / ${effectiveMax}mm`;
 
   return (
     <div className="space-y-4">
-          {optionFields.length > 0 ? (
-            <SettingsSection title="Slats, colors, and spacings" summary={optionSummary || "Run defaults"}>
-              {optionFields.length > 0 && (
-                <SchemaDrivenForm
-                  fields={optionFields}
-                  variables={mergedJobDisplay}
-                  onChange={handleOptionChange}
-                />
-              )}
-            </SettingsSection>
-          ) : null}
+      <SettingsDisclosureRow id={`${seg.segmentId}-section-system-type`} label="System type" value={productCode}>
+        <div className="flex flex-wrap gap-2">
+          {localFenceProducts.map((product) => (
+            <button
+              key={product.system_type}
+              type="button"
+              onClick={() => onSystemTypeChange(product.system_type)}
+              aria-pressed={product.system_type === productCode}
+              className={`inline-flex items-center rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${
+                product.system_type === productCode
+                  ? "border-brand-primary bg-brand-primary text-white shadow-sm"
+                  : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
+              }`}
+            >
+              {product.system_type}
+            </button>
+          ))}
+        </div>
+      </SettingsDisclosureRow>
 
-      {!isBayg && (
-      <SettingsSection title="End conditions" summary="Left / right ends">
-            <div className="grid gap-3 lg:grid-cols-2">
-              <TerminationControl
-                runId={runId}
-                seg={seg}
-                side="left"
-                readOnly={leftEndReadOnly}
+      {optionFields.length > 0 ? (
+        <SettingsDisclosureRow id={`${seg.segmentId}-section-style`} label="Slats, colors, and spacings" value={optionSummary || "Run defaults"}>
+          <div className="space-y-4">
+            {colourField && (
+              <SchemaDrivenForm
+                fields={[colourField]}
+                variables={mergedJobDisplay}
+                onChange={handleOptionChange}
               />
-              <TerminationControl
-                runId={runId}
-                seg={seg}
-                side="right"
-                readOnly={rightEndReadOnly}
-              />
-            </div>
-      </SettingsSection>
-      )}
-
-          {cornerControls.length > 0 && (
-            <SettingsSection title="Corners" summary={`${cornerControls.length} corner${cornerControls.length === 1 ? "" : "s"}`}>
+            )}
+            {postColourField && (
               <div className="space-y-3">
-                {cornerControls.map((corner) => (
-                  <label key={corner.side} className="flex flex-col gap-1">
-                    <span className="text-sm font-bold capitalize text-brand-muted">
-                      {corner.side} corner
-                      {Number.isFinite(corner.degrees)
-                        ? ` (${Math.round(corner.degrees)} degrees detected)`
-                        : ""}
-                    </span>
-                    <select
-                      value={corner.type ?? "right"}
-                      onChange={(event) => {
-                        const nextType = event.target.value;
-                        const nextDegrees =
-                          nextType === "obtuse"
-                            ? 135
-                            : nextType === "right"
-                              ? 90
-                              : Number.isFinite(corner.degrees)
-                                ? Math.round(corner.degrees)
-                                : 100;
-                        upsertSegment(
-                          patchSegmentVariables(seg, {
-                            [corner.kindKey]: "corner",
-                            [corner.typeKey]: nextType,
-                            [corner.degreesKey]: nextDegrees,
-                            [corner.measuredKey]: Number.isFinite(corner.degrees)
-                              ? Math.round(corner.degrees)
-                              : nextDegrees,
-                            [corner.manualKey]: true,
-                          }),
-                        );
-                      }}
-                      className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-                    >
-                      {CORNER_TYPE_OPTIONS.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="text-xs font-semibold text-brand-muted">
-                      Manual selection stays in place until the layout is reset.
-                    </span>
-                  </label>
-                ))}
+                <button
+                  type="button"
+                  onClick={() => setPostColourOpen((value) => !value)}
+                  className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+                >
+                  {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
+                </button>
+                {postColourOpen && (
+                  <SchemaDrivenForm
+                    fields={[postColourField]}
+                    variables={mergedJobDisplay}
+                    onChange={handleOptionChange}
+                  />
+                )}
               </div>
-            </SettingsSection>
+            )}
+            {remainingOptionFields.length > 0 && (
+              <SchemaDrivenForm
+                fields={remainingOptionFields}
+                variables={mergedJobDisplay}
+                onChange={handleOptionChange}
+              />
+            )}
+          </div>
+          {productCode === "QSHS" && (
+            <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
+              <input
+                type="checkbox"
+                checked={mergedJobDisplay.louvre_treatment === true || mergedJobDisplay.louvre_treatment === "true"}
+                disabled={Number(mergedJobDisplay.slat_size_mm ?? 65) !== 65}
+                onChange={(event) => onJobOverrideChange("louvre_treatment", event.target.checked)}
+                className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
+              />
+              <span>
+                <span className="block text-sm font-extrabold text-brand-text">Louvre treatment</span>
+                <span className="mt-1 block text-xs font-semibold text-brand-muted">
+                  40 degree slat angle. Available with 65mm slats.
+                </span>
+              </span>
+            </label>
           )}
+        </SettingsDisclosureRow>
+      ) : null}
 
       {!isBayg && (
-      <SettingsSection title="Posts" summary={POST_SIZE_LABELS[postSize] ?? (postSize ? `${postSize}mm Post` : "Run default")}>
+        <SettingsDisclosureRow id={`${seg.segmentId}-section-posts`} label="Post size, mounting and spacing" value={postSummary}>
+          {postFields.length > 0 && (
+            <SchemaDrivenForm
+              fields={postFields}
+              variables={mergedJobDisplay}
+              onChange={handleOptionChange}
+            />
+          )}
             <label className="flex flex-col gap-1">
-              <span className="text-sm font-bold text-brand-muted">Post type</span>
+              <span className="text-sm font-bold text-brand-muted">Post size override</span>
               <select
                 value={postSize}
                 onChange={(e) =>
@@ -325,13 +331,30 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                 <option value="custom">Non-standard post</option>
               </select>
             </label>
-      </SettingsSection>
+          <label className="flex flex-col gap-1">
+            <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
+            <input
+              type="number"
+              value={maxSpacingDraft}
+              onChange={(event) => setMaxSpacingDraft(event.target.value)}
+              onBlur={() => commitMaxPanelWidth()}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") event.currentTarget.blur();
+              }}
+              min={MIN_POST_SPACING_MM}
+              max={MAX_POST_SPACING_MM}
+              step={50}
+              className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+            />
+          </label>
+        </SettingsDisclosureRow>
       )}
 
       {!isBayg && isCustomPost && (
-        <SettingsSection
-          title="Custom post width"
-          summary={`${v[SEGMENT_OPTION_KEYS.postWidthMm] ?? "Not set"}mm`}
+        <SettingsDisclosureRow
+          id={`${seg.segmentId}-section-custom-post`}
+          label="Custom post width"
+          value={`${v[SEGMENT_OPTION_KEYS.postWidthMm] ?? "Not set"}mm`}
         >
           <label className="flex flex-col gap-1">
             <span className="text-sm font-bold text-brand-muted">Post width (mm)</span>
@@ -343,28 +366,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
               min={1}
             />
           </label>
-        </SettingsSection>
-      )}
-
-      {!isBayg && (
-      <SettingsSection title="Post spacing" summary={`${effectiveMax}mm`}>
-        <label className="flex flex-col gap-1">
-          <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
-          <input
-            type="number"
-            value={maxSpacingDraft}
-            onChange={(event) => setMaxSpacingDraft(event.target.value)}
-            onBlur={() => commitMaxPanelWidth()}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") event.currentTarget.blur();
-            }}
-            min={MIN_POST_SPACING_MM}
-            max={MAX_POST_SPACING_MM}
-            step={50}
-            className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-          />
-        </label>
-      </SettingsSection>
+        </SettingsDisclosureRow>
       )}
 
     </div>

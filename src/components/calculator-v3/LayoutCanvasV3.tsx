@@ -18,8 +18,21 @@ import {
 } from '../../lib/gateOptionRules';
 import type { CanvasGateVisual, CanvasLayout } from '../canvas/canvasEngine';
 import type { initCanvasEngine } from '../canvas/canvasEngine';
+import { RunDetailsPanel } from './RunDetailsPanel';
 
-export function LayoutCanvasV3() {
+interface LayoutCanvasV3Props {
+  mapExpanded?: boolean;
+  onMapExpandedChange?: (expanded: boolean) => void;
+  showRunDetails?: boolean;
+  jobName?: string;
+}
+
+export function LayoutCanvasV3({
+  mapExpanded = false,
+  onMapExpandedChange,
+  showRunDetails = true,
+  jobName,
+}: LayoutCanvasV3Props) {
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
   const { data: products } = useProducts();
@@ -103,6 +116,7 @@ export function LayoutCanvasV3() {
             slidingSide: String(
               segment.variables?.[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? 'front',
             ) as CanvasGateVisual['slidingSide'],
+            leafWidthsMM: segment.leaves?.map((leaf) => leaf.widthMm),
           },
         ]);
       }
@@ -214,7 +228,11 @@ export function LayoutCanvasV3() {
         jobPanelWidth={clampPostSpacing(payload?.variables.max_panel_width_mm, 2600)}
         runStatsTexts={runStatsTexts}
         gateVisuals={gateVisuals}
+        jobName={jobName}
+        expanded={mapExpanded}
+        onExpandedChange={onMapExpandedChange}
       />
+      {showRunDetails && !mapExpanded && <RunDetailsPanel payload={payload} />}
     </div>
   );
 }

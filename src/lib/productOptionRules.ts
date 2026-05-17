@@ -13,6 +13,7 @@ const ALUMAWOOD_COLOURS = ["KWI", "WRC"];
 const ECONOMY_COLOURS = ["B", "MN", "SM"];
 export const MIN_POST_SPACING_MM = 100;
 export const MAX_POST_SPACING_MM = 3000;
+const DEFAULT_SLAT_GAP_MM = 9;
 
 const SYSTEM_MAX_PANEL_WIDTH: Record<string, number> = {
   QSHS: 2600,
@@ -87,7 +88,7 @@ export function heightOptionsForSystem(productCode: string, variables: Variables
 export function heightEntriesForSystem(productCode: string, variables: Variables): DerivedHeight[] {
   if (productCode === "VS") return [];
   const slatSize = Number(variables.slat_size_mm ?? 65);
-  const slatGap = Number(variables.slat_gap_mm ?? 5);
+  const slatGap = Number(variables.slat_gap_mm ?? DEFAULT_SLAT_GAP_MM);
   if ((slatSize !== 65 && slatSize !== 90) || !Number.isFinite(slatGap) || slatGap < 0) return [];
   return deriveHeights(slatSize, slatGap, {
     minN: 5,
@@ -122,7 +123,7 @@ export function initialVariablesForSystem(productCode: string): Variables {
     post_colour_code: "B",
     slat_size_mm: 65,
     slat_gap_mode: "spacer",
-    slat_gap_mm: 5,
+    slat_gap_mm: DEFAULT_SLAT_GAP_MM,
     post_size: 50,
     post_system: productCode === "XPL" ? "xpl" : "standard_50",
     mounting_type: "in_ground",
@@ -212,12 +213,17 @@ export function normaliseVariablesForSystem(
     next = {
       ...next,
       slat_gap_mode: "custom",
-      slat_gap_mm: Number.isFinite(gap) && gap >= 0 ? Math.round(gap) : 5,
+      slat_gap_mm: Number.isFinite(gap) && gap >= 0 ? Math.round(gap) : DEFAULT_SLAT_GAP_MM,
     };
   } else if (gapOptions.length > 0) {
     next = { ...next, slat_gap_mode: "spacer" };
     if (!gapOptions.map(String).includes(String(next.slat_gap_mm))) {
-      next = { ...next, slat_gap_mm: gapOptions[0] };
+      next = {
+        ...next,
+        slat_gap_mm: gapOptions.includes(DEFAULT_SLAT_GAP_MM)
+          ? DEFAULT_SLAT_GAP_MM
+          : gapOptions[0],
+      };
     }
   } else {
     const gap = Number(next.slat_gap_mm);
@@ -372,7 +378,7 @@ export function applyProductOptionRules(
     if (field.field_key === "post_system") {
       result.push(
         cloneField(field, {
-          label: "Post type",
+          label: "Post size",
           default_value_json: productCode === "XPL" ? "xpl" : "standard_50",
         }),
       );

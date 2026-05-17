@@ -1652,3 +1652,303 @@ Verification:
 - `npm run test:describe-fence` passed for TC-01 through TC-12.
 - `npm run build` passed after rerunning with a longer timeout.
 - Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+### May 11, 2026 - Brief BC unified calculator experience
+
+Workflow finding:
+- The post-BB workspace still treated map entry differently from select/describe entry because the map lived in a separate overlay. That made it too easy for map state to be remounted or hidden from the rest of the calculator workflow.
+- The existing canonical payload already models gates as `gate_opening` segments for BOM scope, so a true nested `section.gates[]` migration would be risky without a matching engine/schema migration. The safe BC implementation stores section ownership on gate segments with `parent_section_id` while keeping the flat engine-compatible shape.
+
+Changes applied:
+- Added a persistent right-pane `Map` / `BOM` tab system. Draw entry opens Map; Describe and Select open BOM. Both views stay available after entry.
+- Removed the schematic Plan tab from the right pane and made the existing BOM panel the peer view of the Map.
+- Removed the old sticky/open map overlay from the sidebar. The map canvas now lives in the right pane and remains mounted while switching tabs, which keeps drawings intact through BOM generation.
+- Added entry-method tracking to `CalculatorContext` for future analytics without using it to gate behaviour.
+- Added section-owned gate UX: each section can show linked gate chips, edit a gate from the chip, two-click remove the gate, and add a gate from the section settings panel.
+- Added a lightweight runtime migration that assigns legacy/unowned `gate_opening` segments to the preceding section when clear. Canvas-created gate openings now carry `parent_section_id` when a preceding panel exists.
+- Added expanded map mode that fills the workspace to the right of the sidebar, hides the tab chrome while expanded, and exits with Escape or the map toolbar collapse button.
+- Added installer-oriented run details below the map: each run lists defaults, lengths, panels, linked gates, and any section overrides. Clicking a run or section in that detail panel opens the matching item in the sidebar.
+- Added shared map shortcut metadata, visible shortcut badges, an updated help sheet, keyboard switching for Draw/Gate/Move/Site/Text tools, zoom keys, and spacebar temporary pan.
+- Existing posts and pillars are now rendered as grey site context markers so they read as non-product structures. BOM auto-adds for wall brackets/wrap saddles remain deferred until supplier SKUs and rules are confirmed.
+
+Deferred:
+- The brief asked for true `section.gates: Gate[]`; this pass intentionally preserved the flat canonical `gate_opening` model because the BOM engine, save shape, and canvas adapter already rely on it. `parent_section_id` gives the UI section ownership without breaking existing calculations.
+- Existing structures can be drawn and marked on the map, but they are not yet converted into BOM-affecting hardware because the v3 seed data does not define verified SKUs/rules for wall brackets, pillar wrap saddles, or equivalent termination accessories.
+- Side-by-side PR screenshots and auto-merge were not performed in this sandbox workflow; changes were committed for local/deploy-preview testing instead.
+
+Verification:
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+### May 17, 2026 - Brief BM completion pass on canvas editing
+
+Workflow / UX finding:
+- The first BM pass shipped the map toolbar/search/print foundation, but the attached BM brief still had professional-editor behaviours outstanding: Ortho snapping, free-draw styling, right-click actions, per-item deletion, and direct movement/resizing of annotations.
+- These behaviours should stay on the canvas annotation/editing layer. They must not create BOM product lines unless the existing fence/gate/termination data explicitly consumes them.
+
+Changes applied:
+- Added an `Ortho` toolbar toggle. Draw Fence and Dotted line snap to 90 degree bearings, and holding Shift while Ortho is active allows 45 degree diagonals.
+- Added free-draw controls for colour, line width, line style, opacity, and arrowheads. The selected style is passed into the canvas engine for new freehand strokes.
+- Added canvas selection, Delete/Backspace removal, and a right-click context menu for map elements. Text notes, existing post/pillar markers, buildings, dotted lines, freehand strokes, gates, and fence sections can now be acted on from the map.
+- Text notes are now transparent/dark by default, support multiline rendering, basic edit prompts for text/font/colour/style/alignment, and can be dragged or resized in Move/Edit mode.
+- Building rectangles can be moved or resized with handles in Move/Edit mode. Placed buildings also get a default editable `Building` text label.
+- Existing post/pillar markers can be moved after placement and their dimensions can be edited from the context menu.
+
+Verification:
+- `npm run build` passed.
+- Local route smoke was blocked because no dev server was listening on `http://127.0.0.1:5173/fence-calculator` during this run.
+
+Deferred:
+- Full rich HTML floating text toolbar and the complete Road/Pool/Deck/Tree stamp palette from BM.9 were not implemented in this pass. The current patch delivers freehand styling and editor-style item actions without introducing a large new canvas subsystem.
+
+### May 16, 2026 - Brief BM map canvas overhaul foundation
+
+Workflow / UX finding:
+- The mapper is now important enough that its address/search workflow, toolbar naming, print output, and context tools need to feel like a site-plan app rather than a basic canvas.
+- The full BM brief is intentionally XL. This pass ships the foundation and explicitly leaves the heavier editor behaviours for a follow-up rather than destabilising the fence/BOM sync.
+
+Changes applied:
+- Moved address search above the canvas and collapsed map type, opacity, and scale into a `Map` settings popover.
+- Removed the duplicate `Expand map` button from the Map/BOM tab bar while leaving the toolbar expand/collapse and expanded-overlay minimize controls.
+- Renamed the primary drawing tool to `Draw Fence` and the boundary/site line tool to `Dotted line`.
+- Added click-drag building rectangles with shaded fill, a free-draw sketch tool, dimension prompts for existing posts and pillars, transparent text-note rendering, and cursor-following tool hints.
+- Updated Print Map so it fits the drawn bounds into the canvas before capture, can include/exclude the satellite underlay, and prints a summary block for job name, total metres, run count, gate count, and date.
+- Preserved freehand strokes, text notes, and site markers through layout reloads so form/canvas sync does not wipe site annotations.
+
+Verification:
+- `npm run build` passed.
+
+Deferred:
+- Rich text formatting toolbar, drag/resize/delete handles for every annotation, right-click context menu, stamp palette, and full building resize/move handles were not completed in this foundation pass.
+
+### May 12, 2026 - Brief BC reversal completion
+
+Workflow finding:
+- The later BC brief reversed three pieces of the earlier BC implementation: the AY three-card entry flow needed to be removed, expanded map needed to cover the sidebar too, and gates needed to be listed in a run-bottom group rather than inline under each section.
+
+Changes applied:
+- Deleted `EntryChoiceCard.tsx` and removed the sidebar Draw/Describe/Select card flow. Landing now creates an empty calculator payload and opens the BOM tab; the sidebar starts with the job name, then a compact `DescribeFenceBox`, then the run list/Add run controls.
+- Kept Describe Your Fence as the same parser/preview/apply flow, but anchored it directly below the job name. The collapsed state now shows a chevron, text icon, and the first part of the last description.
+- Changed map expanded mode from "right pane only" to a fixed full-viewport workspace. The sidebar, tabs, BOM panel, mobile nav, and run details are hidden while expanded; Escape or the high-contrast Minimize button returns to docked mode.
+- Moved Add Gate into each section header next to the section code chip. Gates remain stored as flat `gate_opening` segments with `parent_section_id` for engine compatibility, but render in a `Gates` group at the bottom of each run.
+- Removed inline gate chips under section cards. The bottom Gates group labels each gate by parent section, type, and width; clicking a chip opens the gate settings panel and the delete control uses the existing two-click confirm pattern.
+
+Verification:
+- `npm run test:describe-fence` passed all TC-01 through TC-12 parser corpus cases.
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+Deferred:
+- BC.7 BOM-affecting existing-structure rules remain deferred until verified Glass Outlet SKUs/rules are seeded for wall brackets, pillar/post terminations, and related fasteners.
+- The brief's true `section.gates[]` data-shape checkbox remains intentionally implemented as `gate_opening` plus `parent_section_id`; this keeps the current v3 BOM engine/save/canvas adapter contract intact while delivering section-owned UI behavior.
+
+### May 12, 2026 - Brief BD gate experience polish
+
+Catalogue / workflow finding:
+- Installers need a quick way to connect the QSG gate settings diagram to the BOM lines, especially because a finished double swing gate is two leaves inside one gate opening rather than a single oversized leaf.
+- The existing local fallback had enough QSG pedestrian and sliding gate components to calculate the line items, but the UI did not explain which catalogue component each row represented.
+
+Changes applied:
+- Added `GateComponentDiagram.tsx` plus horizontal and vertical SVG assets as QSG component diagrams with twelve numbered callouts: side frame, rail, slat, infill, screw cover, joiner block, spacers, rail screws, wafer screws, top cap, hinges, and latch.
+- Added `src/lib/gateDiagramMapping.ts` and `src/lib/gateDiagramHover.ts` so gate BOM rows can show numbered badges and cross-highlight against the diagram.
+- Mirrored the same diagram numbers into `supabase/seeds/glass-outlet/products/qs_gate.json` component metadata so future backend/seed work has the same mapping.
+- Extended the canonical gate-opening segment shape with `leaves: [{ widthMm }]`. Single swing stores one finished leaf; double swing stores two leaves after hinge/latch clearances; sliding uses the opening width.
+- Added a double-gate leaf editor in gate settings. Editing one leaf width automatically adjusts the other, keeps the total equal to the clear opening, and shows a soft warning when a leaf is under 800mm.
+- Updated the local fallback BOM so swing-gate frame/slat/rail quantities are calculated across all leaves while keeping one latch and defaulting double gates to one drop bolt. Canvas double-gate arcs now render from the leaf widths when available.
+
+Verification:
+- `npm run build` passed.
+- `npm run test:describe-fence` passed for TC-01 through TC-12.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+### May 12, 2026 - Brief BD hinge and tier-label correction
+
+Workflow / calculation finding:
+- The user clarified that hinge quantity is uniform: every swing gate leaf uses exactly two hinges. There is no heavy-gate or tall-gate exception in this calculator.
+- The BOM row still displayed per-line pricing tier labels, which exposed the internal quantity-break tier mechanism instead of just showing the applied price.
+
+Changes applied:
+- Updated the local QSG swing-gate fallback so selected hinge hardware emits `leafCount * 2` units. Single swing therefore emits 2 hinges and double swing emits 4 hinges.
+- Updated the QS_GATE seed companion metadata to add `leaf_count` and emit selected hinge hardware with `leaf_count * 2`; the older single `qty_hinge_latch` component rule is disabled to avoid variable hinge-count ambiguity.
+- Removed visible per-line Tier 1 / Tier 2 / Tier 3 chips from `BOMResultTabs`. Unpriced rows still show `Price not set`, and quantity-break hints now say the user is close to a lower unit price without naming an internal tier.
+
+Verification:
+- `npm run build` passed.
+- `npm run test:describe-fence` passed for TC-01 through TC-12.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+### May 13, 2026 - Brief BE sandbox consolidation
+
+Workflow / calculation finding:
+- The BB/BD gate workflow correctly modelled double swing gates as two leaves, but the width validator still used a single pedestrian maximum in places and could block a valid double gate opening.
+- Several entry/default surfaces still carried the older 5mm gap default even though the current testing baseline expects 9mm gaps and 1800mm height.
+
+Changes applied:
+- Gate width validation now accepts single swing gates up to 2100mm, double swing gates up to a 4200mm opening (2100mm per leaf), and sliding gates on their existing sliding limits.
+- Switching a 900mm single swing gate to double swing now changes the opening to 1800mm and splits the clear opening into two leaves. Switching back to single uses the current two leaf widths as the new single opening basis.
+- Updated product option defaults, local fallback defaults, and Glass Outlet seed JSON defaults so new QSHS, VS, XPL, BAYG, and QS_GATE setups start with 9mm gaps and 1800mm heights.
+- Increased the docked layout canvas height from 630px to 788px, removed the visible `Powered by SkyBrookAI` header subtitle, simplified run-card summary clutter, and made the BOM header summary use full system and gate wording.
+
+Verification notes:
+- The gate settings panel currently has one visible height selector in the main section/gate geometry area; `GateSegmentDetails` does not render a second height dropdown.
+- Earlier BB items verified in source: gates still render in the run-bottom Gates group, expanded map mode covers the whole viewport, BOM tier labels remain hidden, and QSG hinge quantity remains two hinges per leaf.
+
+### May 13, 2026 - Brief BF post-BE polish
+
+Workflow / UX finding:
+- The Describe Your Fence preview step added friction for deterministic parsing. Users can get to the right outcome faster if parsing writes directly to the calculator and opens the map with the generated layout visible.
+- Split gate openings still need BOM-accurate left/right panel sections, but the map should see the original straight fence line so the gate can sit visually in the centre instead of being drawn on the end of a split panel.
+
+Changes applied:
+- `DescribeFenceBox` now validates for usable parser output, applies directly, keeps the description text visible for re-parsing, and shows a small inline message for empty or unusable descriptions. The preview card no longer renders in this path.
+- `CalculatorV3Page` now normalises parsed variables through the product option rules, so parsed heights snap to the nearest catalogue height. Parsed gates create gate-opening segments immediately, with double gates split into two leaves after hinge/latch clearance.
+- Parsed gate layouts now add canvas-only geometry metadata: BOM sections remain split around the gate, while the canvas reconstructs one straight source section and centers the gate on that section.
+- Committed job names render at the larger read-only size with truncation, including the BOM header.
+- The first Add run button now uses the primary-brand background/ring treatment.
+- Run-bottom gates now render as full gate cards using the section-card pattern: R1G1/R1G2 code chips, inline gate type/opening/direction/hinge side/hardware summaries, Gate settings expander, and the same two-click remove affordance.
+
+Verification:
+- `npm run test:describe-fence` passed for TC-01 through TC-12.
+- `npm run build` passed.
+- Playwright/Chrome smoke test passed at `http://127.0.0.1:5175/fence-calculator`: entered a job name, opened Describe Your Fence, parsed a 30m fence with a 900mm single gate, saw the direct-apply message, canvas present, and R1G1 gate inline settings visible.
+
+### May 13, 2026 - Brief BG post-BF cleanup
+
+Workflow / UX finding:
+- BF made Describe Your Fence land on the Map tab, but the normal landing-entry and Clear Job paths still opened the BOM panel. That made the workflow feel output-first instead of drawing-first.
+- The canvas already had a 50m fit helper, but when the map initialized while hidden, later resize events only redrew the canvas. The hidden 1px sizing could survive into the visible map and make the viewport feel far too zoomed out.
+- Gate marker clicks still tried the older GateContext modal path first, so v3 canonical gate rows did not reliably open from the map.
+
+Changes applied:
+- Fresh entry now starts with `rightPaneView="map"` and mobile map state. Typing a job name and pressing Enter, Clear Job reset, and Describe direct-apply all land on the Map tab.
+- Canvas resize now refits an empty hidden-to-visible map to 50m across. Saved/drawn layouts still use `fitToContent`, and zoom/pinch/calibration behavior remains unchanged.
+- Removed section-level corner editing controls from `FenceSegmentDetails`. Added a run-level `Corner posts` details row in `RunSettingsEditor` that edits `run.corners`.
+- Added a v3 gate-edit event path: clicking a gate marker with a canonical `gateId` dispatches `qsbom:edit-gate-from-map`; `CalculatorV3Page` keeps the Map tab active, exits expanded map mode if needed, and opens/scrolls to the matching gate settings row.
+
+Verification:
+- `npm run test:describe-fence` passed for TC-01 through TC-12.
+- `npm run build` passed after removing an unused import from the section settings cleanup.
+- Playwright/Chrome smoke test passed at `http://127.0.0.1:5175/fence-calculator`: job-name entry showed the map/canvas instead of BOM placeholder, Describe direct-apply still showed R1G1 inline settings, run settings displayed Corner posts, section settings had no corner-control UI, and the map gate-edit event opened the gate settings row.
+
+Deferred:
+- Deploy-preview visual screenshots and CI/PR auto-merge were not performed in this sandbox branch workflow; changes were committed and pushed to `codex/qshs-calculator-sandbox` for preview testing.
+
+### May 14, 2026 - Brief BH run grouping, gate component list, and existing-structure terminations
+
+Workflow / UX finding:
+- Run groups needed a subtle surface so installers can see which sections and gate cards belong to each run.
+- The numbered gate component SVG took too much sidebar space. A compact numbered list gives the same BOM cross-reference value with less visual weight.
+- Existing posts and pillars on the map were drawn as site markers only. The user clarified that terminating into an existing post, wall, or concrete pillar uses the same F-section attachment path instead of a new post.
+
+Changes applied:
+- Added light/dark run-surface tokens and wrapped each run card in a very light blue run bubble with increased spacing between runs.
+- Replaced `GateComponentDiagram.tsx` with `GateComponentList.tsx`, using a shared `NumberedBadge` component for both the list rows and BOM row badges. Hovering either side keeps the existing cross-highlight behaviour.
+- Canvas existing-post/pillar placement now must land on a fence section. Endpoint placement marks that end as an F-section termination; mid-section placement inserts a split point, recalculates both section lengths, and marks the shared point as the existing structure.
+- Canonical conversion now carries canvas structure terminations into segment variables. The fallback BOM treats `wall`, `pillar`, and `non_system_post` as F-section terminations, and end-post counts now respect first/last section overrides.
+
+Verification:
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+Deferred:
+- Full visual screenshot capture and deploy-preview/CI merge flow were not performed in this direct sandbox-branch workflow.
+
+### May 15, 2026 - Brief BI sidebar uniformity and BOM summary cleanup
+
+Workflow / UX finding:
+- The product rules already use `finish_family` as the calculator's slat-range concept, covering Standard, Economy, and Alumawood timber-look SKU families. This satisfies the brief's "Slat range" requirement without adding a new data field.
+- Run, section, and gate settings had similar behavior but different visual patterns, which made the sidebar feel harder to scan.
+
+Changes applied:
+- Added a shared `SettingsDisclosureRow` for label-left/value-right rows with a blue show/hide affordance, one-open dropdown behavior, a 60-second idle collapse timer, and 220ms transitions.
+- Empty workspaces now show four prominent fence-system buttons in order: QSHS, VS, XPL, and BAYG. Choosing one creates Run 1 and opens its run settings.
+- Run settings were reorganized into System type, Fence height, Color, Slat size, Gap size, and Post size/mounting/spacings, with post fixings hidden behind a Choose fixings button and post colour hidden unless Alternate post color is used.
+- Section and gate cards now keep editable length/width and height visible in the collapsed card. The old Current settings block now reports either settings match the run settings or only the settings that differ.
+- Removed the End conditions UI from section settings while leaving the underlying termination model and BOM termination handling intact.
+- BOM output now includes a printable run/section summary block above line items, including run hero lines, settings, post summary, section panel/post-spacing summaries, overrides, and gate sub-items.
+
+Verification:
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+Deferred:
+- Full browser screenshot capture, draft PR creation, CI wait, and squash merge were not performed because this thread is working directly on `codex/qshs-calculator-sandbox` and the user requested commit/push to that branch.
+
+### May 15, 2026 - Skill and agent file sync after Brief BI
+
+Process finding:
+- Brief BI created reusable conventions that future agents need: `finish_family` is Slat range, run/section/gate settings share `SettingsDisclosureRow`, End Conditions UI stays hidden while termination data remains active, and BOM summaries should include printable run/section context.
+
+Changes applied:
+- Updated both repo skill mirrors under `.claude/skills/` and `.agents/skills/` for project management, UI design, QuickScreen BOM, seed mapping, and the shared skills README.
+- Synced matching local skill copies under `C:\Users\bbfen\.codex\skills\` and `C:\Users\bbfen\.agents\skills\` so this machine's active Codex/agent profile matches the repo guidance.
+
+Verification:
+- `git status` shows the expected skill/docs files modified. The local Vite sandbox log files remain untracked and were not included.
+
+### May 16, 2026 - Brief BJ run/section settings parity completion
+
+Workflow / UX finding:
+- BI shipped the shared disclosure-row component, but run and section settings still used different groupings. That made the same setting feel like a different workflow depending on whether it was edited at run or section level.
+- Height should be treated as a section attribute, not as a run default. The green match indicator should therefore ignore height differences and only flag non-height setting overrides.
+
+Changes applied:
+- Enlarged the empty-workspace QSHS / VS / XPL / BAYG buttons so the system choice reads as the primary action.
+- Removed collapsed-card length/height inputs from section cards. Length and height now display in the section header and are edited only inside the expanded section settings panel.
+- Reworked run and section settings into matching groups: System type, Slats/colors/spacings, and Post size/mounting/spacing. Run-only corner count remains its own row.
+- Moved louvre treatment into the Slats/colors/spacings group and absorbed Max post spacing into the combined post group.
+- Added section-level system type override by storing `product_code` on the section; the BOM hook expands mixed-system sections into product-specific calculation runs before local fallback or Supabase dispatch.
+- Removed run-level height display from run cards, map run details, and BOM hero/settings summaries. Section breakdowns still show each section's height.
+- Updated repo skill mirrors so future agents treat height as section-level and keep the run/section settings groupings aligned.
+
+Verification:
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+Deferred:
+- Deploy-preview screenshots, CI wait, PR auto-merge, and browser visual confirmation of the deploy preview were not performed in this direct sandbox-branch workflow.
+
+### May 16, 2026 - Brief BK section heading, gate matching, and collapse-timer polish
+
+Workflow / UX finding:
+- The BJ section heading format was correct but visually too heavy because length and height were the same size as the section name.
+- Gates needed the same green default-matching cue as sections, but only for run-derived style settings. Gate movement, direction, hinge side, hardware, and height are intentional gate-specific choices.
+- A 10-second run-settings wrapper timer still existed even though the shared disclosure rows used the intended 60-second timing.
+
+Changes applied:
+- Section headings now keep `Section N` as the primary large text while the `X.XXm(L) - YYYYmm(H)` metadata renders smaller on the same line.
+- Gate green-match logic now compares only system/build, colour, slat size, and gap size against the run. New gates therefore show green by default when inherited settings match.
+- Run settings auto-collapse was changed from 10 seconds to 60 seconds, matching the shared settings disclosure rows, and the disclosure timer value was extracted to a named constant.
+- Added a small muted helper line above the section/gate cards: green section or gate code means the settings match the run.
+- Removed the duplicate run length from the run subheading while leaving it in the main run title.
+- Updated repo skill mirrors to capture the gate-match subset and 60-second disclosure timing standard.
+
+Verification:
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+Deferred:
+- Deploy-preview screenshots, CI wait, PR auto-merge, and visual 60-second timer observation were not performed in this direct sandbox-branch workflow.
+
+### May 16, 2026 - Brief BL BOM-first entry, post-colour overrides, and entry-flow cleanup
+
+Workflow / UX finding:
+- User testing reversed the previous map-first direction. The BOM tab should be the first right-pane view after job entry and Clear Job, with the map still one click away.
+- The BOM empty state needed to be a single strong instruction rather than a set of helper fragments.
+- Alternate post colour needed the same override power at section level that it already had at run level.
+- Manual corner count editing in run settings was clutter. Corner counts should be read-only UI derived from map/canonical geometry.
+- The green-code explanation is better as hover copy on the actionable code chip than persistent sidebar text.
+
+Changes applied:
+- Calculator entry, Describe direct-apply, and Clear Job now land on the BOM tab; map expansion and map tab controls still open the map explicitly.
+- The BOM empty state now shows: `Choose fence type on left or click the map button above to draw your fence in plan view`.
+- The empty workspace hides `+ Add run`; it shows QSHS, VS, XPL, and BAYG buttons followed by a centered message icon for Describe Your Fence. The describe flow now uses `Apply` and collapses after successful application.
+- Run and section settings both place `Alternate post colour` directly below the main colour picker. Section post colour changes are stored as section variables and fall back to the run value when they match.
+- Removed the run-settings corner input. Run headings still display `Corners: N`, and the map details panel continues to show read-only corners from canonical geometry.
+- Section headings now render as `Section N - X.XXm - YYYYmm`, with length and height bold and no `(L)` / `(H)` suffixes.
+- Section and gate code chips now use the hover title `Click to restore to run settings`, and the persistent green-code helper note was removed.
+- Updated repo skill mirrors for the BOM-first entry pattern, section-level alternate post colour, read-only corner counts, and no persistent green-code helper copy.
+
+Verification:
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.

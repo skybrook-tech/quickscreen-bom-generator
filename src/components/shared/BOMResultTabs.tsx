@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import pluralize from "pluralize";
 import type { CalculatorBOMResult, BOMLineItem } from "../../types/bom.types";
-import { localPriceBreaks, tierForSkuQuantity } from "../../lib/localPriceBreaks";
+import { localPriceBreaks } from "../../lib/localPriceBreaks";
 import { priceForSku } from "../../lib/localBomCalculator";
 import { cataloguePageForSku, CATALOGUE_PDF_URL } from "../../lib/cataloguePages";
 import { cartonHintForLine } from "../../lib/cartonQuantities";
@@ -11,9 +11,16 @@ import {
   PRICE_SOURCE_VERIFIED_DATE,
 } from "../../lib/pricingMetadata";
 import { BOM_CATEGORY_ORDER } from "../../lib/bomMetadata";
+import {
+  gateDiagramNumbersForSku,
+  gateDiagramTitle,
+  type GateDiagramNumber,
+} from "../../lib/gateDiagramMapping";
+import { setGateDiagramHover, useGateDiagramHover } from "../../lib/gateDiagramHover";
 import { InstallVideoQR } from "../calculator-v3/InstallVideoQR";
 import type { InstallVideoKey } from "../../lib/installVideos";
 import { BomCutList } from "./BomCutList";
+import { NumberedBadge } from "./NumberedBadge";
 
 interface BOMResultTabsProps {
   result: CalculatorBOMResult;
@@ -37,15 +44,6 @@ const formatMoney = (value: number) =>
     maximumFractionDigits: 2,
   }).format(value);
 
-function tierLabel(item: BOMLineItem) {
-  if (item.unitPrice <= 0) return "Price not set";
-  const pricingQty =
-    item.sku.startsWith("XP-6500-E65") && item.unit === "pack"
-      ? item.quantity * 96
-      : item.quantity;
-  return tierForSkuQuantity(item.sku, pricingQty).replace(/^tier/i, "Tier ");
-}
-
 function nextBreakHint(item: BOMLineItem) {
   if (item.sku.startsWith("XP-6500-E65") && item.unit === "pack") return null;
   const breaks = (localPriceBreaks as Record<string, readonly number[] | undefined>)[
@@ -58,14 +56,12 @@ function nextBreakHint(item: BOMLineItem) {
   if (nextUnitPrice <= 0 || item.unitPrice <= 0 || nextUnitPrice >= item.unitPrice) {
     return {
       more: nextBreak - item.quantity,
-      tier: tierForSkuQuantity(item.sku, nextBreak).replace(/^tier/i, "Tier "),
       savingPct: null as number | null,
     };
   }
 
   return {
     more: nextBreak - item.quantity,
-    tier: tierForSkuQuantity(item.sku, nextBreak).replace(/^tier/i, "Tier "),
     savingPct: Math.round(((item.unitPrice - nextUnitPrice) / item.unitPrice) * 100),
   };
 }
@@ -182,6 +178,38 @@ function installVideoKeysForItems(items: BOMLineItem[]): InstallVideoKey[] {
   return [...keys];
 }
 
+function isGateDiagramLine(item: BOMLineItem) {
+  return (
+    item.productCode === "QS_GATE" ||
+    item.category === "gate" ||
+    item.category === "gate_components" ||
+    item.category === "gate_hardware" ||
+    item.sources?.some((source) => source.scopeKind === "gate") === true
+  );
+}
+
+function GateDiagramBadges({ numbers }: { numbers: GateDiagramNumber[] }) {
+  if (numbers.length === 0) return null;
+  return (
+    <span className="inline-flex items-center gap-1 print:hidden" aria-label="Gate diagram references">
+      {numbers.map((number) => (
+        <button
+          key={number}
+          type="button"
+          onMouseEnter={() => setGateDiagramHover(number)}
+          onMouseLeave={() => setGateDiagramHover(null)}
+          onFocus={() => setGateDiagramHover(number)}
+          onBlur={() => setGateDiagramHover(null)}
+          className="focus:outline-none"
+          title={gateDiagramTitle(number)}
+        >
+          <NumberedBadge interactive>{number}</NumberedBadge>
+        </button>
+      ))}
+    </span>
+  );
+}
+
 function BOMTable({
   items,
   editable,
@@ -197,6 +225,7 @@ function BOMTable({
 }) {
   const sorted = sortItems(items);
   const groups = groupByCategory(sorted);
+  const hoveredGateDiagramNumber = useGateDiagramHover();
 
   if (items.length === 0) {
     return (
@@ -246,6 +275,7 @@ function BOMTable({
               onQuantityChange={onQuantityChange}
               onRemoveLine={onRemoveLine}
               onSwitchEconomyToStandard={onSwitchEconomyToStandard}
+              hoveredGateDiagramNumber={hoveredGateDiagramNumber}
             />
           ))}
         </tbody>
@@ -261,6 +291,7 @@ function ItemGroup({
   onQuantityChange,
   onRemoveLine,
   onSwitchEconomyToStandard,
+  hoveredGateDiagramNumber,
 }: {
   category: string;
   items: BOMLineItem[];
@@ -268,6 +299,7 @@ function ItemGroup({
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
+  hoveredGateDiagramNumber: GateDiagramNumber | null;
 }) {
   const orderedItems = orderCompanions(items);
   let lastSubCategory = "";
@@ -294,6 +326,9 @@ function ItemGroup({
             item.sku.startsWith("XP-6500-E65") &&
             item.notes?.includes("Switch to Standard slats?");
           const sourceText = sourceBreakdown(item);
+          const diagramNumbers = isGateDiagramLine(item) ? gateDiagramNumbersForSku(item.sku) : [];
+          const diagramHighlighted =
+            hoveredGateDiagramNumber !== null && diagramNumbers.includes(hoveredGateDiagramNumber);
           const subCategory = item.subCategory ?? "";
           const showSubCategory = subCategory && subCategory !== lastSubCategory && !item.companionOf;
           if (subCategory) lastSubCategory = subCategory;
@@ -314,10 +349,21 @@ function ItemGroup({
         <tr
           key={`${category}-${item.sku}-${item.category}-${item.description}-${itemIndex}`}
           title={sourceText ? `Source breakdown: ${sourceText}` : undefined}
-          className="border-b border-brand-border last:border-0 hover:bg-brand-accent/5 transition-colors"
+          onMouseEnter={() => {
+            if (diagramNumbers[0]) setGateDiagramHover(diagramNumbers[0]);
+          }}
+          onMouseLeave={() => {
+            if (diagramNumbers.length > 0) setGateDiagramHover(null);
+          }}
+          className={`border-b border-brand-border last:border-0 transition-colors ${
+            diagramHighlighted
+              ? "bg-brand-warning/15 ring-1 ring-inset ring-brand-warning/50"
+              : "hover:bg-brand-accent/5"
+          }`}
         >
           <td className="py-2.5 px-3 text-xs font-mono text-brand-accent whitespace-nowrap">
             <span className="inline-flex flex-wrap items-center gap-1.5">
+              <GateDiagramBadges numbers={diagramNumbers} />
               {item.sku}
               <PageChip sku={item.sku} />
             </span>
@@ -325,15 +371,11 @@ function ItemGroup({
           <td className="py-2.5 px-3 text-sm text-brand-text">
             <div className="flex flex-wrap items-center gap-1.5">
               <span>{item.description}</span>
-              <span
-                className={`rounded-full border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide print:hidden ${
-                  item.unitPrice > 0
-                    ? "border-brand-primary/30 bg-brand-primary/10 text-brand-primary"
-                    : "border-brand-warning/40 bg-brand-warning/10 text-brand-warning"
-                }`}
-              >
-                {tierLabel(item)}
-              </span>
+              {item.unitPrice <= 0 && (
+                <span className="rounded-full border border-brand-warning/40 bg-brand-warning/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-warning print:hidden">
+                  Price not set
+                </span>
+              )}
               {item.notes && (
                 <span className="text-xs text-brand-warning print:hidden">
                   {item.notes}
@@ -351,7 +393,7 @@ function ItemGroup({
             </div>
             {hint && (
               <p className="mt-1 text-[11px] font-semibold text-brand-success print:hidden">
-                {hint.more} more for {hint.tier}
+                {hint.more} more to unlock a lower unit price
                 {hint.savingPct ? ` (save ${hint.savingPct}%)` : ""}
               </p>
             )}

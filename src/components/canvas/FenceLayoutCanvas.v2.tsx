@@ -97,12 +97,27 @@ export function FenceLayoutCanvas({
   gatesRef.current = gates;
 
   const [activeTool, setActiveTool] = useState<
-    "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar"
+    "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand"
   >("draw");
   const [snapEnabled, setSnapEnabled] = useState(true);
   const [gateSnap100, setGateSnap100] = useState(false);
   const [showGrid, setShowGrid] = useState(true);
   const [expanded, setExpanded] = useState(false);
+  const [orthoEnabled, setOrthoEnabled] = useState(false);
+  const [freehandStyle, setFreehandStyleState] = useState({
+    color: "rgba(14,165,233,0.9)",
+    width: 3,
+    lineStyle: "solid" as "solid" | "dashed" | "dotted",
+    opacity: 0.95,
+    arrow: false,
+  });
+  const handleFreehandStyleChange = useCallback((style: Partial<typeof freehandStyle>) => {
+    setFreehandStyleState((prev) => {
+      const next = { ...prev, ...style };
+      engineRef.current?.setFreehandStyle(next);
+      return next;
+    });
+  }, []);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
   const [satelliteOpen, setSatelliteOpen] = useState(false);
   const [satelliteActive, setSatelliteActive] = useState(false);
@@ -263,6 +278,10 @@ export function FenceLayoutCanvas({
         onToggleGrid={setShowGrid}
         expanded={expanded}
         onToggleExpand={setExpanded}
+        orthoEnabled={orthoEnabled}
+        onOrthoToggle={setOrthoEnabled}
+        freehandStyle={freehandStyle}
+        onFreehandStyleChange={handleFreehandStyleChange}
         onHelpOpen={() => {}}
         onPrintMap={() => engineRef.current?.printMap?.()}
       />

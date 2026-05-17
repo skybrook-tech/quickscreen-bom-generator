@@ -22,3 +22,9 @@ This folder stores the project-specific Codex skill files used to build and main
 When starting work on this repo, ask Codex to use the relevant skill from `.agents/skills/<skill-name>/SKILL.md`. Load reference files only when the skill says they are needed.
 
 When a local skill is improved, copy the updated skill folder back here and commit the change so the team has the same version.
+
+## Current Shared Patterns To Preserve
+
+- Sidebar settings use the `SettingsDisclosureRow` pattern across run, section, and gate settings: label-left, value-right, blue `show`/`hide`, one open dropdown, and 60-second idle collapse.
+- The calculator's "Slat range" is `finish_family` (`standard`, `economy`, `alumawood`).
+- End-condition data remains in the model for canvas/BOM terminations, but the End Conditions sidebar UI is intentionally hidden.

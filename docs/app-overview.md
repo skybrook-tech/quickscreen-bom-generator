@@ -1,6 +1,6 @@
 # QuickScreen BOM Generator - Living App Overview
 
-Last updated: 2026-05-10
+Last updated: 2026-05-12
 
 This file is the regular handoff overview for the app. Update it whenever a feature changes the app flow, calculator engine, seed model, canvas mapper, Supabase schema, or key file responsibilities.
 
@@ -41,15 +41,15 @@ Older docs may mention `/fence-calculator`; in this branch the locally tested ro
 
 ## Main Data Flow
 
-1. `ProductSelectV3` chooses the fence product and creates the first canonical payload.
-2. `CalculatorContext` stores the canonical payload and the latest BOM result.
-3. `RunListV3`, `RunCard`, and `SegmentRow` edit runs, segments, and gate-opening segments.
+1. The landing screen captures a job name, then `CalculatorV3Page` creates an empty canonical payload and opens the calculator on the BOM tab.
+2. The sidebar `DescribeFenceBox`, manual Add run flow, and canvas map all write to the same `CalculatorContext` payload.
+3. `RunListV3`, `RunCard`, and `SegmentRow` edit runs, sections, and section-owned gate-opening segments.
 4. `LayoutCanvasV3` and `FenceLayoutCanvas` allow drawing and editing map geometry.
 5. `canonicalAdapter.ts` converts canvas layouts into the canonical payload shape and back again.
 6. `useBomCalculator` sends the payload to the Supabase `bom-calculator` edge function when possible.
 7. If Supabase or auth is unavailable, `useBomCalculator` uses `calculateLocalBom`.
-8. `BOMResultTabs` renders per-run, gate, and all-item BOM views.
-9. `CalculatorV3Page` handles job-level actions: generate BOM, clear BOM, print/export, save job, and layout/map drawer state.
+8. `BOMResultTabs` renders per-run, gate, and all-item BOM views inside the BOM tab.
+9. `CalculatorV3Page` handles job-level actions: generate BOM, clear BOM, print/export, save job, and Map/BOM tab state.
 
 ## Canonical Payload
 
@@ -64,6 +64,7 @@ Key shape:
 - `CanonicalPayload` has `productCode`, `schemaVersion`, job `variables`, and `runs`.
 - `CanonicalRun` has `runId`, `productCode`, run `variables`, `segments`, `corners`, and optional geometry.
 - `CanonicalSegment` can be a fence `panel`, `gate_opening`, or other supported segment kind.
+- Gate-opening segments can include `leaves: [{ widthMm }]`. Single swing stores one finished leaf, double swing stores two finished leaves after hinge/latch clearances, and sliding gates use the opening width as the single moving leaf.
 - Stable IDs matter. Do not regenerate `runId` or `segmentId` during canvas/form sync unless creating a genuinely new run or segment.
 
 ## Current Calculator UI Files
@@ -79,10 +80,8 @@ Key shape:
 ### Product And Run Setup
 
 - `src/components/calculator-v3/ProductSelectV3.tsx`
-  - Loads active fence products from Supabase `products`.
-  - Falls back to `localFenceProducts`.
-  - Starts a new payload with one run and one first segment.
-  - Current first segment default length is `0m`, so the user enters the real measured length.
+  - Legacy searchable product selector retained for reuse, but no longer shown as a three-card entry path.
+  - Loads active fence products from Supabase `products` and falls back to `localFenceProducts`.
 
 - `src/components/calculator-v3/RunListV3.tsx`
   - Renders all runs.
@@ -113,8 +112,11 @@ Key shape:
   - Expanded gate-opening controls.
   - Covers gate build, movement, hardware, gate post size, colour, slat size, gap, and termination-post behavior.
   - Gate movement supports single swing, double swing, and sliding. Sliding gates keep both travel direction and fence-side choice.
+  - Double swing gates expose two editable finished leaf widths. Editing one leaf automatically adjusts the other inside the same clear opening and warns softly below 800mm.
   - Hardware controls rank fitted options first and keep failed-fit options under Other hinges / Other latches so installers can still override when needed.
+  - Swing-gate hinge quantity is fixed at exactly two hinges per leaf. Single swing emits 2 hinges; double swing emits 4 hinges. Do not add heavy-gate or tall-gate hinge-count exceptions.
   - Optional parent-tied add-ons render inline under the chosen parent control. TruClose safety caps (`TC-CAPS3`) are optional and only enter the BOM when selected.
+  - `GateComponentDiagram.tsx` renders horizontal/vertical QSG assembly diagrams with numbered component callouts. The callouts cross-highlight matching BOM rows via `src/lib/gateDiagramHover.ts`.
 
 - `src/components/calculator-v3/GateListV3.tsx` and `GateFormV3.tsx`
   - Older/auxiliary v3 gate list/form components. Prefer checking actual usage before extending them because gate workflow has moved heavily into segment rows.
@@ -127,6 +129,8 @@ Key shape:
   - Rows are expected to be aggregated by matching SKU/category/description/unit before display so repeated segment-level quantities read as one order line.
   - Source breakdowns preserve which run/gate contributed each quantity. Filtered tabs derive their scoped quantities from those sources and re-price the line at that scoped quantity.
   - BOM display grouping uses display category, subcategory, companion relationship, and sort priority instead of the raw engine selector category alone.
+  - Gate BOM rows use `src/lib/gateDiagramMapping.ts` to show numbered diagram badges beside mapped SKUs. Hovering a badge or row highlights the matching gate diagram component.
+  - BOM rows show applied unit price and line total only; per-line Tier 1 / Tier 2 / Tier 3 labels are intentionally hidden. Quantity-break prompts can mention lower unit prices, but not internal tier names.
 
 - `src/components/calculator-v3/ExtraItemsPanel.tsx`
   - Lets the user add product search/manual extras to the generated BOM.
@@ -153,6 +157,7 @@ The mapper is intentionally split between a vanilla engine and a React wrapper.
   - Recent behavior: gate markers can now anchor at `start`, `center`, or `end`, so a gate can sit flush at a segment end or corner while keeping the full opening width.
   - Loading a layout from typed sidebar dimensions now fits the canvas view to the imported run so it opens centered instead of at the top-left.
   - Mobile behavior: single-touch taps and drags feed the same draw/move/gate/text workflows as mouse input; double-tap finishes an active drawn run, boundary, or building.
+  - Double swing gate previews draw two arcs sized from the canonical gate `leaves` array when available, so asymmetric edited leaves are visible on the map.
 
 - `src/components/canvas/FenceLayoutCanvas.tsx`
   - React wrapper around the engine.
