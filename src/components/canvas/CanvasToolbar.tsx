@@ -25,6 +25,13 @@ import { TOOL_HOTKEYS } from "../../lib/canvasShortcuts";
 
 type Engine = ReturnType<typeof initCanvasEngine>;
 type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand";
+type FreehandStyle = {
+  color: string;
+  width: number;
+  lineStyle: "solid" | "dashed" | "dotted";
+  opacity: number;
+  arrow: boolean;
+};
 
 interface CanvasToolbarProps {
   engineRef: RefObject<Engine | null>;
@@ -32,6 +39,8 @@ interface CanvasToolbarProps {
   onToolChange: (t: CanvasTool) => void;
   snapEnabled: boolean;
   onSnapToggle: (v: boolean) => void;
+  orthoEnabled: boolean;
+  onOrthoToggle: (v: boolean) => void;
   gateSnap100: boolean;
   onGateSnap100Toggle: (v: boolean) => void;
   showGrid: boolean;
@@ -40,6 +49,8 @@ interface CanvasToolbarProps {
   onToggleExpand: (v: boolean) => void;
   onHelpOpen: () => void;
   onPrintMap: () => void;
+  freehandStyle: FreehandStyle;
+  onFreehandStyleChange: (style: Partial<FreehandStyle>) => void;
 }
 
 export function CanvasToolbar({
@@ -48,6 +59,8 @@ export function CanvasToolbar({
   onToolChange,
   snapEnabled,
   onSnapToggle,
+  orthoEnabled,
+  onOrthoToggle,
   gateSnap100,
   onGateSnap100Toggle,
   showGrid,
@@ -56,6 +69,8 @@ export function CanvasToolbar({
   onToggleExpand,
   onHelpOpen,
   onPrintMap,
+  freehandStyle,
+  onFreehandStyleChange,
 }: CanvasToolbarProps) {
   const handleTool = (t: CanvasTool) => {
     engineRef.current?.setTool(t);
@@ -134,6 +149,58 @@ export function CanvasToolbar({
       >
         <PenLine size={16} /> Free Draw {keyBadge(TOOL_HOTKEYS.freehand)}
       </button>
+      {activeTool === "freehand" && (
+        <div className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-brand-border/70 bg-brand-card px-2 py-1 text-xs text-brand-muted">
+          <input
+            type="color"
+            value={freehandStyle.color}
+            title="Free draw colour"
+            onChange={(event) => onFreehandStyleChange({ color: event.target.value })}
+            className="h-6 w-7 rounded border border-brand-border bg-transparent"
+          />
+          <select
+            value={freehandStyle.width}
+            title="Free draw line width"
+            onChange={(event) => onFreehandStyleChange({ width: Number(event.target.value) })}
+            className="rounded border border-brand-border bg-brand-bg px-1 py-1"
+          >
+            <option value={1}>1px</option>
+            <option value={2}>2px</option>
+            <option value={4}>4px</option>
+            <option value={8}>8px</option>
+          </select>
+          <select
+            value={freehandStyle.lineStyle}
+            title="Free draw line style"
+            onChange={(event) => onFreehandStyleChange({ lineStyle: event.target.value as "solid" | "dashed" | "dotted" })}
+            className="rounded border border-brand-border bg-brand-bg px-1 py-1"
+          >
+            <option value="solid">Solid</option>
+            <option value="dashed">Dashed</option>
+            <option value="dotted">Dotted</option>
+          </select>
+          <select
+            value={freehandStyle.opacity}
+            title="Free draw opacity"
+            onChange={(event) => onFreehandStyleChange({ opacity: Number(event.target.value) })}
+            className="rounded border border-brand-border bg-brand-bg px-1 py-1"
+          >
+            <option value={0.25}>25%</option>
+            <option value={0.5}>50%</option>
+            <option value={0.75}>75%</option>
+            <option value={1}>100%</option>
+          </select>
+          <label className="inline-flex items-center gap-1">
+            <input
+              type="checkbox"
+              checked={freehandStyle.arrow}
+              onChange={(event) => onFreehandStyleChange({ arrow: event.target.checked })}
+              className="accent-brand-accent"
+            />
+            Arrow
+          </label>
+        </div>
+      )}
       <button
         type="button"
         title={`Place an existing post marker (${TOOL_HOTKEYS.post})`}
@@ -228,6 +295,19 @@ export function CanvasToolbar({
           className="accent-brand-accent"
         />
         Angle/grid snap
+      </label>
+
+      <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
+        <input
+          type="checkbox"
+          checked={orthoEnabled}
+          onChange={(e) => {
+            onOrthoToggle(e.target.checked);
+            engineRef.current?.setOrthoMode(e.target.checked);
+          }}
+          className="accent-brand-accent"
+        />
+        Ortho
       </label>
 
       <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">

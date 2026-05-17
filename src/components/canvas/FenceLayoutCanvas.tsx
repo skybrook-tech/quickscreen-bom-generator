@@ -88,8 +88,16 @@ export function FenceLayoutCanvas({
     "draw",
   );
   const [snapEnabled, setSnapEnabled] = useState(true);
+  const [orthoEnabled, setOrthoEnabled] = useState(false);
   const [gateSnap100, setGateSnap100] = useState(true);
   const [showGrid, setShowGrid] = useState(true);
+  const [freehandStyle, setFreehandStyle] = useState({
+    color: "#0ea5e9",
+    width: 4,
+    lineStyle: "solid" as "solid" | "dashed" | "dotted",
+    opacity: 0.95,
+    arrow: false,
+  });
   const [internalExpanded, setInternalExpanded] = useState(false);
   const expanded = expandedProp ?? internalExpanded;
   const setExpanded = onExpandedChange ?? setInternalExpanded;
@@ -315,6 +323,14 @@ export function FenceLayoutCanvas({
     engineRef.current?.setGateSnapTo100mm(gateSnap100);
   }, [gateSnap100]);
 
+  useEffect(() => {
+    engineRef.current?.setOrthoMode(orthoEnabled);
+  }, [orthoEnabled]);
+
+  useEffect(() => {
+    engineRef.current?.setFreehandStyle(freehandStyle);
+  }, [freehandStyle]);
+
   // Sync postPositions prop into the canvas engine
   useEffect(() => {
     engineRef.current?.setPostPositions(postPositions ?? null);
@@ -422,6 +438,8 @@ export function FenceLayoutCanvas({
           onToolChange={handleToolChange}
           snapEnabled={snapEnabled}
           onSnapToggle={setSnapEnabled}
+          orthoEnabled={orthoEnabled}
+          onOrthoToggle={setOrthoEnabled}
           gateSnap100={gateSnap100}
           onGateSnap100Toggle={setGateSnap100}
           showGrid={showGrid}
@@ -430,6 +448,10 @@ export function FenceLayoutCanvas({
           onToggleExpand={setExpanded}
           onHelpOpen={() => setHelpOpen(true)}
           onPrintMap={handlePrintMap}
+          freehandStyle={freehandStyle}
+          onFreehandStyleChange={(style) =>
+            setFreehandStyle((current) => ({ ...current, ...style }))
+          }
         />
       </div>
       <div data-print-hide>

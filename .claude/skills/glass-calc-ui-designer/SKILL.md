@@ -59,6 +59,7 @@ Use this skill when improving how users configure, draw, review, and test quotes
 - Use plain installer language in map tools: `Draw Fence` for product fence runs, `Dotted line` for non-product context lines, `Building` for click-drag rectangles, `Free Draw` for hand sketches, and dimensioned `Existing post` / `Pillar` markers for termination context.
 - Print Map should fit the drawn bounds into the output, optionally include the satellite underlay, and include a compact installer summary with job name, total metres, run count, gate count, and date.
 - Canvas annotations such as dotted lines, buildings, freehand strokes, text notes, and existing post/pillar markers are site context only. They must persist through form/canvas sync but must not create BOM product lines unless termination logic explicitly consumes them.
+- Professional map-editing controls should stay discoverable but compact: Ortho is a persistent snapping toggle, free-draw exposes colour/width/style/opacity/arrow controls only while active, and map items should support Move/Edit selection, Delete/Backspace removal, and a right-click menu for edit/duplicate/delete/z-order actions.
 
 ## Section-Owned Gate UX
 

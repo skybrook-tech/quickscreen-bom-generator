@@ -101,6 +101,8 @@ export interface CanvasTextNote {
   color?: string;
   bold?: boolean;
   italic?: boolean;
+  bullets?: boolean;
+  align?: "left" | "center" | "right";
 }
 
 export interface CanvasSiteMarker {
@@ -118,6 +120,9 @@ export interface CanvasFreehandStroke {
   points: Point[];
   color?: string;
   width?: number;
+  lineStyle?: "solid" | "dashed" | "dotted";
+  opacity?: number;
+  arrow?: boolean;
 }
 
 // ── Internal state types ──────────────────────────────────────────────────────
@@ -161,6 +166,23 @@ interface GateMarker {
 }
 
 type Tool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand";
+
+type SelectedCanvasItem =
+  | { kind: "segment"; runIdx: number; segIdx: number; flatIdx: number }
+  | { kind: "gate"; runIdx: number; segIdx: number; gateIdx: number; flatSegIdx: number }
+  | { kind: "building" | "boundary"; runIdx: number }
+  | { kind: "text"; index: number }
+  | { kind: "marker"; index: number }
+  | { kind: "freehand"; index: number }
+  | null;
+
+type DragAction =
+  | { kind: "move-building"; runIdx: number; start: Point; original: Point[] }
+  | { kind: "resize-building"; runIdx: number; handle: number; original: Point[] }
+  | { kind: "move-text"; index: number; start: Point; original: CanvasTextNote }
+  | { kind: "resize-text"; index: number; start: Point; original: CanvasTextNote }
+  | { kind: "move-marker"; index: number; start: Point; original: CanvasSiteMarker }
+  | null;
 
 type UndoAction =
   | { type: "ADD_POINT"; runIdx: number }
@@ -557,6 +579,7 @@ export function initCanvasEngine(
   let pan: Point = { x: 0, y: 0 };
   let scale = DEFAULT_SCALE; // px per metre
   let snap = config.snapToGrid;
+  let orthoMode = false;
   let gateSnap100 = true;
   let showGrid = config.showGrid;
   let gridSize = config.gridSize;
@@ -613,6 +636,17 @@ export function initCanvasEngine(
     flatSegIdx: number;
     startScreenPt: Point;
   } | null = null;
+  let selectedItem: SelectedCanvasItem = null;
+  let dragAction: DragAction = null;
+  let clipboardItem: SelectedCanvasItem = null;
+  let contextMenuEl: HTMLDivElement | null = null;
+  let currentFreehandStyle: Required<Pick<CanvasFreehandStroke, "color" | "width" | "lineStyle" | "opacity" | "arrow">> = {
+    color: "#0ea5e9",
+    width: 3,
+    lineStyle: "solid",
+    opacity: 0.95,
+    arrow: false,
+  };
   let lastTouchPointer: CanvasPointerLike | null = null;
   let lastTapTime = 0;
   let lastTapScreen: Point | null = null;
@@ -902,6 +936,9 @@ export function initCanvasEngine(
     if (run.points.length === 0) return candidate;
     const lastPt = run.points[run.points.length - 1];
     let snapped = snap ? snapToGrid(candidate, gridSize) : candidate;
+    if (orthoMode) {
+      return snapBearingFrom(lastPt, snapped, shiftDown ? 45 : 90);
+    }
     if (shiftDown && run.points.length >= 2) {
       const prev = run.points[run.points.length - 2];
       return snapToAllowedAngle(prev, lastPt, snapped, [180]);
@@ -1116,6 +1153,18 @@ export function initCanvasEngine(
           ctx.lineTo(seg.p2.x, seg.p2.y);
           ctx.stroke();
         }
+        if (
+          isBuilding &&
+          selectedItem?.kind === "building" &&
+          selectedItem.runIdx === runs.indexOf(run)
+        ) {
+          ctx.fillStyle = "#f59e0b";
+          const handles = buildingHandles(run);
+          for (const handle of handles) {
+            const size = 7 / zoom;
+            ctx.fillRect(handle.x - size / 2, handle.y - size / 2, size, size);
+          }
+        }
         ctx.setLineDash([]);
         ctx.restore();
       }
@@ -1307,6 +1356,9 @@ export function initCanvasEngine(
     if (tool === "freehand") text = "Drag to free draw";
     if (tool === "post") text = "Click a fence section for existing post";
     if (tool === "pillar") text = "Click a fence section for pillar";
+    if (orthoMode && (tool === "draw" || tool === "boundary")) {
+      text = `${text} - ORTHO ${shiftDown ? "45deg" : "90deg"}`;
+    }
     if (!text) return;
     const screen = canvasToScreen(mouseCanvas, pan, zoom);
     const padX = 8;
@@ -1724,15 +1776,30 @@ export function initCanvasEngine(
     ctx.lineJoin = "round";
     for (const stroke of freehandStrokes) {
       if (stroke.points.length < 2) continue;
+      ctx.globalAlpha = stroke.opacity ?? 0.95;
       ctx.strokeStyle = stroke.color ?? "rgba(14,165,233,0.9)";
       ctx.lineWidth = (stroke.width ?? 3) / zoom;
+      ctx.setLineDash(
+        stroke.lineStyle === "dashed"
+          ? [12 / zoom, 8 / zoom]
+          : stroke.lineStyle === "dotted"
+            ? [2 / zoom, 7 / zoom]
+            : [],
+      );
       ctx.beginPath();
       ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
       for (const point of stroke.points.slice(1)) {
         ctx.lineTo(point.x, point.y);
       }
       ctx.stroke();
+      ctx.setLineDash([]);
+      if (stroke.arrow && stroke.points.length >= 2) {
+        const from = stroke.points[stroke.points.length - 2];
+        const to = stroke.points[stroke.points.length - 1];
+        drawArrow(from.x, from.y, to.x, to.y);
+      }
     }
+    ctx.globalAlpha = 1;
     ctx.restore();
   }
 
@@ -1741,41 +1808,68 @@ export function initCanvasEngine(
     ctx.save();
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
+    ctx.globalAlpha = pendingFreehandStroke.opacity ?? 0.95;
     ctx.strokeStyle = pendingFreehandStroke.color ?? "rgba(14,165,233,0.9)";
     ctx.lineWidth = (pendingFreehandStroke.width ?? 3) / zoom;
+    ctx.setLineDash(
+      pendingFreehandStroke.lineStyle === "dashed"
+        ? [12 / zoom, 8 / zoom]
+        : pendingFreehandStroke.lineStyle === "dotted"
+          ? [2 / zoom, 7 / zoom]
+          : [],
+    );
     ctx.beginPath();
     ctx.moveTo(pendingFreehandStroke.points[0].x, pendingFreehandStroke.points[0].y);
     for (const point of pendingFreehandStroke.points.slice(1)) {
       ctx.lineTo(point.x, point.y);
     }
     ctx.stroke();
+    ctx.setLineDash([]);
     ctx.restore();
   }
 
   function drawTextNotes() {
     if (textNotes.length === 0) return;
     ctx.save();
-    ctx.textAlign = "left";
-    ctx.textBaseline = "middle";
-    for (const note of textNotes) {
+    ctx.textBaseline = "top";
+    for (let idx = 0; idx < textNotes.length; idx++) {
+      const note = textNotes[idx];
       const text = note.text.trim();
       if (!text) continue;
       const fs = Math.max(10, (note.fontSize ?? 13) / zoom);
       ctx.font = `${note.italic ? "italic " : ""}${note.bold !== false ? "bold " : ""}${fs}px sans-serif`;
       const padX = 7 / zoom;
       const padY = 5 / zoom;
-      const textW = ctx.measureText(text).width;
+      const lines = text.split(/\r?\n/).map((line) => note.bullets ? `• ${line}` : line);
+      const textW = Math.max(...lines.map((line) => ctx.measureText(line).width));
       const boxW = Math.max(note.width ?? 0, textW + padX * 2);
-      const h = Math.max(note.height ?? 0, fs + padY * 2);
+      const h = Math.max(note.height ?? 0, lines.length * (fs + 3 / zoom) + padY * 2);
       ctx.fillStyle = "rgba(255,255,255,0.02)";
-      ctx.strokeStyle = "rgba(59,130,246,0.45)";
+      ctx.strokeStyle =
+        selectedItem?.kind === "text" && selectedItem.index === idx
+          ? "rgba(245,158,11,0.9)"
+          : "rgba(59,130,246,0.45)";
       ctx.lineWidth = 1 / zoom;
       ctx.beginPath();
       ctx.roundRect(note.x, note.y, boxW, h, 5 / zoom);
       ctx.fill();
       ctx.stroke();
       ctx.fillStyle = note.color ?? COLOR.label;
-      ctx.fillText(text, note.x + padX, note.y + h / 2);
+      ctx.textAlign = note.align ?? "left";
+      const textX =
+        note.align === "center"
+          ? note.x + boxW / 2
+          : note.align === "right"
+            ? note.x + boxW - padX
+            : note.x + padX;
+      lines.forEach((line, lineIdx) => {
+        ctx.fillText(line, textX, note.y + padY + lineIdx * (fs + 3 / zoom));
+      });
+      if (selectedItem?.kind === "text" && selectedItem.index === idx) {
+        const handle = 7 / zoom;
+        ctx.fillStyle = "#f59e0b";
+        ctx.fillRect(note.x + boxW - handle, note.y + h - handle, handle, handle);
+      }
     }
     ctx.restore();
   }
@@ -2197,6 +2291,127 @@ export function initCanvasEngine(
     return -1;
   }
 
+  function textNoteBounds(note: CanvasTextNote) {
+    ctx.save();
+    const fs = Math.max(10, (note.fontSize ?? 13) / zoom);
+    ctx.font = `${note.italic ? "italic " : ""}${note.bold !== false ? "bold " : ""}${fs}px sans-serif`;
+    const lines = note.text.split(/\r?\n/).map((line) => note.bullets ? `• ${line}` : line);
+    const padX = 7 / zoom;
+    const padY = 5 / zoom;
+    const textW = Math.max(...lines.map((line) => ctx.measureText(line).width), 80 / zoom);
+    ctx.restore();
+    return {
+      x: note.x,
+      y: note.y,
+      width: Math.max(note.width ?? 0, textW + padX * 2),
+      height: Math.max(note.height ?? 0, lines.length * (fs + 3 / zoom) + padY * 2),
+    };
+  }
+
+  function hitTestText(pt: Point): { index: number; resize: boolean } | null {
+    for (let i = textNotes.length - 1; i >= 0; i--) {
+      const b = textNoteBounds(textNotes[i]);
+      const inBox = pt.x >= b.x && pt.x <= b.x + b.width && pt.y >= b.y && pt.y <= b.y + b.height;
+      if (!inBox) continue;
+      const resize =
+        pt.x >= b.x + b.width - 12 / zoom &&
+        pt.y >= b.y + b.height - 12 / zoom;
+      return { index: i, resize };
+    }
+    return null;
+  }
+
+  function buildingHandles(run: Run): Point[] {
+    if (!run.boundaryType || run.boundaryType !== "building" || run.points.length < 4) return [];
+    const pts = run.points.slice(0, 4);
+    return [
+      pts[0],
+      pts[1],
+      pts[2],
+      pts[3],
+      lerp(pts[0], pts[1], 0.5),
+      lerp(pts[1], pts[2], 0.5),
+      lerp(pts[2], pts[3], 0.5),
+      lerp(pts[3], pts[0], 0.5),
+    ];
+  }
+
+  function hitTestBuilding(pt: Point): { runIdx: number; handle?: number } | null {
+    for (let i = runs.length - 1; i >= 0; i--) {
+      const run = runs[i];
+      if (!run.isBoundary || run.boundaryType !== "building" || run.points.length < 4) continue;
+      const handles = buildingHandles(run);
+      const handleIdx = handles.findIndex((handle) => dist(handle, pt) <= 10 / zoom);
+      if (handleIdx >= 0) return { runIdx: i, handle: handleIdx };
+      const xs = run.points.slice(0, 4).map((p) => p.x);
+      const ys = run.points.slice(0, 4).map((p) => p.y);
+      const minX = Math.min(...xs);
+      const maxX = Math.max(...xs);
+      const minY = Math.min(...ys);
+      const maxY = Math.max(...ys);
+      if (pt.x >= minX && pt.x <= maxX && pt.y >= minY && pt.y <= maxY) return { runIdx: i };
+    }
+    return null;
+  }
+
+  function hitTestBoundaryRun(pt: Point): number | null {
+    for (let i = runs.length - 1; i >= 0; i--) {
+      const run = runs[i];
+      if (!run.isBoundary || run.boundaryType === "building") continue;
+      for (const seg of run.segments) {
+        if (closestPointOnSegment(pt, seg).d <= 8 / zoom) return i;
+      }
+    }
+    return null;
+  }
+
+  function hitTestMarker(pt: Point): number | null {
+    for (let i = siteMarkers.length - 1; i >= 0; i--) {
+      const marker = siteMarkers[i];
+      const w = marker.widthMM ? (marker.widthMM / 1000) * scale : 18 / zoom;
+      const h = marker.depthMM ? (marker.depthMM / 1000) * scale : w;
+      if (Math.abs(pt.x - marker.x) <= Math.max(w / 2, 10 / zoom) && Math.abs(pt.y - marker.y) <= Math.max(h / 2, 10 / zoom)) {
+        return i;
+      }
+    }
+    return null;
+  }
+
+  function hitTestFreehand(pt: Point): number | null {
+    for (let i = freehandStrokes.length - 1; i >= 0; i--) {
+      const stroke = freehandStrokes[i];
+      for (let j = 0; j < stroke.points.length - 1; j++) {
+        const seg: Segment = { p1: stroke.points[j], p2: stroke.points[j + 1], lengthMM: 0, gates: [] };
+        if (closestPointOnSegment(pt, seg).d <= 8 / zoom) return i;
+      }
+    }
+    return null;
+  }
+
+  function hitTestCanvasItem(pt: Point, screenPt: Point): SelectedCanvasItem {
+    const textHit = hitTestText(pt);
+    if (textHit) return { kind: "text", index: textHit.index };
+    const markerIdx = hitTestMarker(pt);
+    if (markerIdx !== null) return { kind: "marker", index: markerIdx };
+    const buildingHit = hitTestBuilding(pt);
+    if (buildingHit) return { kind: "building", runIdx: buildingHit.runIdx };
+    const boundaryRunIdx = hitTestBoundaryRun(pt);
+    if (boundaryRunIdx !== null) return { kind: "boundary", runIdx: boundaryRunIdx };
+    const freehandIdx = hitTestFreehand(pt);
+    if (freehandIdx !== null) return { kind: "freehand", index: freehandIdx };
+    for (const gm of getAllGateMidpoints()) {
+      if (dist(screenPt, gm.screenPt) < 12) {
+        return { kind: "gate", runIdx: gm.runIdx, segIdx: gm.segIdx, gateIdx: gm.gateIdx, flatSegIdx: gm.flatSegIdx };
+      }
+    }
+    const flatIdx = hitTestSegments(pt, 10);
+    if (flatIdx >= 0) {
+      const info = allSegmentsFlat()[flatIdx];
+      if (info) return { kind: "segment", runIdx: info.runIdx, segIdx: info.segIdx, flatIdx };
+    }
+    return null;
+  }
+
   function isNearActiveLastPoint(screenPt: Point, thresholdPx = 34): boolean {
     if (activeRunIdx < 0 || runs[activeRunIdx]?.finished) return false;
     const run = runs[activeRunIdx];
@@ -2282,6 +2497,203 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  function clearContextMenu() {
+    if (contextMenuEl?.parentNode) contextMenuEl.parentNode.removeChild(contextMenuEl);
+    contextMenuEl = null;
+  }
+
+  function deleteSelectedItem(item = selectedItem) {
+    if (!item) return;
+    const destructive =
+      item.kind === "segment" ||
+      (item.kind === "gate" && runs[item.runIdx]?.segments[item.segIdx]?.gates[item.gateIdx]);
+    if (destructive && item.kind === "segment") {
+      const seg = runs[item.runIdx]?.segments[item.segIdx];
+      if (seg?.gates.length && !window.confirm("Delete this fence section and its gates?")) return;
+    }
+    pushSnapshotUndo();
+    switch (item.kind) {
+      case "gate":
+        runs[item.runIdx]?.segments[item.segIdx]?.gates.splice(item.gateIdx, 1);
+        break;
+      case "segment": {
+        const run = runs[item.runIdx];
+        if (!run) break;
+        if (run.segments.length <= 1) {
+          runs.splice(item.runIdx, 1);
+        } else {
+          run.points.splice(item.segIdx + 1, 1);
+          rebuildSegmentsPreservingGates(run, scale);
+        }
+        break;
+      }
+      case "building":
+      case "boundary":
+        runs.splice(item.runIdx, 1);
+        break;
+      case "text":
+        textNotes.splice(item.index, 1);
+        break;
+      case "marker":
+        siteMarkers.splice(item.index, 1);
+        break;
+      case "freehand":
+        freehandStrokes.splice(item.index, 1);
+        break;
+    }
+    selectedItem = null;
+    notifyChange();
+    scheduleRedraw();
+  }
+
+  function duplicateSelectedItem(item = selectedItem) {
+    if (!item) return;
+    pushSnapshotUndo();
+    const offset = 20 / zoom;
+    if (item.kind === "text") {
+      const note = textNotes[item.index];
+      if (note) textNotes.push({ ...note, x: note.x + offset, y: note.y + offset });
+    } else if (item.kind === "marker") {
+      const marker = siteMarkers[item.index];
+      if (marker) siteMarkers.push({ ...marker, x: marker.x + offset, y: marker.y + offset });
+    } else if (item.kind === "freehand") {
+      const stroke = freehandStrokes[item.index];
+      if (stroke) freehandStrokes.push({ ...stroke, points: stroke.points.map((p) => ({ x: p.x + offset, y: p.y + offset })) });
+    } else if (item.kind === "building" || item.kind === "boundary") {
+      const run = runs[item.runIdx];
+      if (run) {
+        const points = run.points.map((p) => ({ x: p.x + offset, y: p.y + offset }));
+        const duplicated: Run = {
+          ...JSON.parse(JSON.stringify(run)),
+          points,
+          segments: buildSegmentsFromPoints(points, scale),
+        };
+        runs.push(duplicated);
+      }
+    }
+    notifyChange();
+    scheduleRedraw();
+  }
+
+  function moveSelectedZ(item: SelectedCanvasItem, direction: "front" | "back") {
+    if (!item) return;
+    pushSnapshotUndo();
+    if (item.kind === "text") {
+      const [note] = textNotes.splice(item.index, 1);
+      if (note) direction === "front" ? textNotes.push(note) : textNotes.unshift(note);
+    } else if (item.kind === "marker") {
+      const [marker] = siteMarkers.splice(item.index, 1);
+      if (marker) direction === "front" ? siteMarkers.push(marker) : siteMarkers.unshift(marker);
+    } else if (item.kind === "freehand") {
+      const [stroke] = freehandStrokes.splice(item.index, 1);
+      if (stroke) direction === "front" ? freehandStrokes.push(stroke) : freehandStrokes.unshift(stroke);
+    } else if (item.kind === "building" || item.kind === "boundary") {
+      const [run] = runs.splice(item.runIdx, 1);
+      if (run) direction === "front" ? runs.push(run) : runs.unshift(run);
+    }
+    notifyChange();
+    scheduleRedraw();
+  }
+
+  function editSelectedItem(item = selectedItem) {
+    if (!item) return;
+    if (item.kind === "text") {
+      const note = textNotes[item.index];
+      if (!note) return;
+      const nextText = window.prompt("Text note", note.text);
+      if (nextText === null) return;
+      const fontSize = window.prompt("Font size", String(note.fontSize ?? 14));
+      const color = window.prompt("Text colour (CSS value)", note.color ?? "#111827");
+      const style = window.prompt("Style: normal, bold, italic, bold italic", `${note.bold === false ? "" : "bold"}${note.italic ? " italic" : ""}`.trim() || "normal");
+      const align = window.prompt("Align: left, center, right", note.align ?? "left");
+      pushSnapshotUndo();
+      textNotes[item.index] = {
+        ...note,
+        text: nextText,
+        fontSize: Math.max(8, Number(fontSize) || note.fontSize || 14),
+        color: color || note.color,
+        bold: /bold/i.test(style ?? ""),
+        italic: /italic/i.test(style ?? ""),
+        align: align === "center" || align === "right" ? align : "left",
+      };
+      notifyChange();
+      scheduleRedraw();
+    } else if (item.kind === "marker") {
+      const marker = siteMarkers[item.index];
+      if (!marker) return;
+      const width = window.prompt("Width in mm", String(marker.widthMM ?? (marker.markerType === "pillar" ? 350 : 90)));
+      if (width === null) return;
+      const depth = window.prompt("Depth in mm", String(marker.depthMM ?? Number(width)));
+      if (depth === null) return;
+      pushSnapshotUndo();
+      siteMarkers[item.index] = {
+        ...marker,
+        widthMM: Math.max(1, Number(width) || marker.widthMM || 90),
+        depthMM: Math.max(1, Number(depth) || marker.depthMM || 90),
+      };
+      notifyChange();
+      scheduleRedraw();
+    } else if (item.kind === "gate") {
+      const gate = runs[item.runIdx]?.segments[item.segIdx]?.gates[item.gateIdx];
+      config.onGateEdit?.(item.flatSegIdx, item.gateIdx, gate?.gateId, gate?.widthMM ?? DEFAULT_GATE_WIDTH_MM);
+    }
+  }
+
+  function showContextMenu(screenPt: Point, item: SelectedCanvasItem) {
+    clearContextMenu();
+    selectedItem = item;
+    const menu = document.createElement("div");
+    contextMenuEl = menu;
+    menu.style.cssText = `
+      position:absolute; left:${screenPt.x}px; top:${screenPt.y}px; z-index:500;
+      min-width:160px; padding:6px; border:1px solid #334155; border-radius:10px;
+      background:rgba(15,23,42,0.96); color:#e5e7eb; box-shadow:0 16px 40px rgba(0,0,0,0.35);
+      font:600 12px Inter, system-ui, sans-serif;
+    `;
+    const add = (label: string, fn: () => void, disabled = false) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = label;
+      btn.disabled = disabled;
+      btn.style.cssText = `
+        display:block; width:100%; text-align:left; padding:7px 9px; border:0; border-radius:7px;
+        color:${disabled ? "#64748b" : "#e5e7eb"}; background:transparent; cursor:${disabled ? "not-allowed" : "pointer"};
+      `;
+      btn.onmouseenter = () => { if (!disabled) btn.style.background = "rgba(59,130,246,0.22)"; };
+      btn.onmouseleave = () => { btn.style.background = "transparent"; };
+      btn.onclick = () => {
+        if (!disabled) fn();
+        clearContextMenu();
+      };
+      menu.appendChild(btn);
+    };
+    if (item) {
+      add("Edit", () => editSelectedItem(item), item.kind === "segment" || item.kind === "freehand" || item.kind === "boundary" || item.kind === "building");
+      add("Copy", () => { clipboardItem = item; });
+      add("Duplicate", () => duplicateSelectedItem(item), item.kind === "segment" || item.kind === "gate");
+      add("Delete", () => deleteSelectedItem(item));
+      add("Bring to front", () => moveSelectedZ(item, "front"), item.kind === "segment" || item.kind === "gate");
+      add("Send to back", () => moveSelectedZ(item, "back"), item.kind === "segment" || item.kind === "gate");
+    } else {
+      add("Paste", () => duplicateSelectedItem(clipboardItem), !clipboardItem);
+      add("Reset view", () => resetView());
+      add(showGrid ? "Hide grid" : "Show grid", () => setShowGrid(!showGrid));
+    }
+    container.appendChild(menu);
+    const close = (event: MouseEvent | KeyboardEvent) => {
+      if (event instanceof KeyboardEvent && event.key !== "Escape") return;
+      if (event instanceof MouseEvent && menu.contains(event.target as Node)) return;
+      clearContextMenu();
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", close);
+    };
+    setTimeout(() => {
+      document.addEventListener("mousedown", close);
+      document.addEventListener("keydown", close);
+    }, 0);
+    scheduleRedraw();
+  }
+
   // ── Event handlers ─────────────────────────────────────────────────────────
 
   function onMouseDown(e: MouseEvent | CanvasPointerLike) {
@@ -2299,6 +2711,41 @@ export function initCanvasEngine(
     const canvasPt = eventToCanvas(e);
     let worldPt = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
     const screenPtDown = eventToScreen(e);
+    clearContextMenu();
+
+    if (tool === "move") {
+      const textHit = hitTestText(canvasPt);
+      if (textHit) {
+        selectedItem = { kind: "text", index: textHit.index };
+        pushSnapshotUndo();
+        dragAction = textHit.resize
+          ? { kind: "resize-text", index: textHit.index, start: canvasPt, original: { ...textNotes[textHit.index] } }
+          : { kind: "move-text", index: textHit.index, start: canvasPt, original: { ...textNotes[textHit.index] } };
+        scheduleRedraw();
+        return;
+      }
+
+      const buildingHit = hitTestBuilding(canvasPt);
+      if (buildingHit) {
+        selectedItem = { kind: "building", runIdx: buildingHit.runIdx };
+        pushSnapshotUndo();
+        dragAction =
+          buildingHit.handle !== undefined
+            ? { kind: "resize-building", runIdx: buildingHit.runIdx, handle: buildingHit.handle, original: runs[buildingHit.runIdx].points.map((p) => ({ ...p })) }
+            : { kind: "move-building", runIdx: buildingHit.runIdx, start: canvasPt, original: runs[buildingHit.runIdx].points.map((p) => ({ ...p })) };
+        scheduleRedraw();
+        return;
+      }
+
+      const markerIdx = hitTestMarker(canvasPt);
+      if (markerIdx !== null) {
+        selectedItem = { kind: "marker", index: markerIdx };
+        pushSnapshotUndo();
+        dragAction = { kind: "move-marker", index: markerIdx, start: canvasPt, original: { ...siteMarkers[markerIdx] } };
+        scheduleRedraw();
+        return;
+      }
+    }
 
     // ── Gate hit-test (all modes) ────────────────────────────────────────────
     // Check for an existing gate click/drag before any tool-specific handling.
@@ -2340,8 +2787,11 @@ export function initCanvasEngine(
       pushSnapshotUndo();
       pendingFreehandStroke = {
         points: [canvasPt],
-        color: "rgba(14,165,233,0.95)",
-        width: 3,
+        color: currentFreehandStyle.color,
+        width: currentFreehandStyle.width,
+        lineStyle: currentFreehandStyle.lineStyle,
+        opacity: currentFreehandStyle.opacity,
+        arrow: currentFreehandStyle.arrow,
       };
       scheduleRedraw();
       return;
@@ -2549,6 +2999,11 @@ export function initCanvasEngine(
           return;
         }
       }
+      selectedItem = hitTestCanvasItem(canvasPt, screenPtDown);
+      if (selectedItem) {
+        scheduleRedraw();
+        return;
+      }
       isPanning = true;
       panStart = screenPtDown;
       panOrigin = { ...pan };
@@ -2560,6 +3015,63 @@ export function initCanvasEngine(
   function onMouseMove(e: MouseEvent | CanvasPointerLike) {
     const canvasPt = eventToCanvas(e);
     mouseCanvas = canvasPt;
+
+    if (dragAction) {
+      if (dragAction.kind === "move-text") {
+        textNotes[dragAction.index] = {
+          ...dragAction.original,
+          x: dragAction.original.x + (canvasPt.x - dragAction.start.x),
+          y: dragAction.original.y + (canvasPt.y - dragAction.start.y),
+        };
+      } else if (dragAction.kind === "resize-text") {
+        textNotes[dragAction.index] = {
+          ...dragAction.original,
+          width: Math.max(80 / zoom, (dragAction.original.width ?? 160 / zoom) + (canvasPt.x - dragAction.start.x)),
+          height: Math.max(28 / zoom, (dragAction.original.height ?? 38 / zoom) + (canvasPt.y - dragAction.start.y)),
+        };
+      } else if (dragAction.kind === "move-marker") {
+        siteMarkers[dragAction.index] = {
+          ...dragAction.original,
+          x: dragAction.original.x + (canvasPt.x - dragAction.start.x),
+          y: dragAction.original.y + (canvasPt.y - dragAction.start.y),
+        };
+      } else if (dragAction.kind === "move-building") {
+        const dx = canvasPt.x - dragAction.start.x;
+        const dy = canvasPt.y - dragAction.start.y;
+        const run = runs[dragAction.runIdx];
+        if (run) {
+          run.points = dragAction.original.map((p) => ({ x: p.x + dx, y: p.y + dy }));
+          rebuildSegmentsPreservingGates(run, scale);
+        }
+      } else if (dragAction.kind === "resize-building") {
+        const run = runs[dragAction.runIdx];
+        if (run && dragAction.original.length >= 4) {
+          const xs = dragAction.original.slice(0, 4).map((p) => p.x);
+          const ys = dragAction.original.slice(0, 4).map((p) => p.y);
+          let minX = Math.min(...xs);
+          let maxX = Math.max(...xs);
+          let minY = Math.min(...ys);
+          let maxY = Math.max(...ys);
+          if ([0, 3, 7].includes(dragAction.handle)) minX = canvasPt.x;
+          if ([1, 2, 5].includes(dragAction.handle)) maxX = canvasPt.x;
+          if ([0, 1, 4].includes(dragAction.handle)) minY = canvasPt.y;
+          if ([2, 3, 6].includes(dragAction.handle)) maxY = canvasPt.y;
+          if (Math.abs(maxX - minX) > 4 / zoom && Math.abs(maxY - minY) > 4 / zoom) {
+            run.points = [
+              { x: minX, y: minY },
+              { x: maxX, y: minY },
+              { x: maxX, y: maxY },
+              { x: minX, y: maxY },
+              { x: minX, y: minY },
+            ];
+            rebuildSegmentsPreservingGates(run, scale);
+          }
+        }
+      }
+      canvas.style.cursor = "grabbing";
+      scheduleRedraw();
+      return;
+    }
 
     if (isPanning) {
       const screen = eventToScreen(e);
@@ -2678,6 +3190,14 @@ export function initCanvasEngine(
   }
 
   function onMouseUp(e: MouseEvent | CanvasPointerLike) {
+    if (dragAction && e.button === 0) {
+      dragAction = null;
+      notifyChange();
+      canvas.style.cursor = tool === "move" ? "grab" : "default";
+      scheduleRedraw();
+      return;
+    }
+
     if (pendingBuildingRect && e.button === 0) {
       pendingBuildingRect.current = snap ? snapToGrid(eventToCanvas(e), gridSize) : eventToCanvas(e);
       const x1 = pendingBuildingRect.start.x;
@@ -2703,6 +3223,17 @@ export function initCanvasEngine(
           boundaryType: "building",
         };
         runs.push(newRun);
+        textNotes.push({
+          x: Math.min(x1, x2) + width / 2 - 40 / zoom,
+          y: Math.min(y1, y2) + height / 2 - 12 / zoom,
+          width: 80 / zoom,
+          height: 24 / zoom,
+          text: "Building",
+          fontSize: 13,
+          color: "#0f2f6f",
+          bold: true,
+          align: "center",
+        });
         activeRunIdx = -1;
         notifyChange();
       }
@@ -2744,7 +3275,7 @@ export function initCanvasEngine(
             scheduleRedraw();
             return;
           }
-          textNotes.push({ x, y, width, height, text, bold: true, fontSize: 14, color: "#e5e7eb" });
+          textNotes.push({ x, y, width, height, text, bold: true, fontSize: 14, color: "#111827", align: "left" });
           notifyChange();
           scheduleRedraw();
         },
@@ -2859,6 +3390,13 @@ export function initCanvasEngine(
     }
 
     const canvasPt = eventToCanvas(e);
+    const textHit = hitTestText(canvasPt);
+    if (textHit) {
+      selectedItem = { kind: "text", index: textHit.index };
+      editSelectedItem(selectedItem);
+      return;
+    }
+
     const labelIdx = hitTestLabel(canvasPt);
     if (labelIdx >= 0) {
       startLabelEdit(labelIdx, eventToScreen(e));
@@ -2914,6 +3452,9 @@ export function initCanvasEngine(
 
   function onContextMenu(e: MouseEvent) {
     e.preventDefault();
+    const canvasPt = eventToCanvas(e);
+    const screenPt = eventToScreen(e);
+    showContextMenu(screenPt, hitTestCanvasItem(canvasPt, screenPt));
   }
 
   function drawPendingBuildingRect() {
@@ -2959,6 +3500,11 @@ export function initCanvasEngine(
     if (isTypingTarget(e.target)) return;
     if (editingLabel) return;
     if (e.key === 'Shift') { shiftDown = true; scheduleRedraw(); }
+    if ((e.key === "Delete" || e.key === "Backspace") && selectedItem) {
+      e.preventDefault();
+      deleteSelectedItem();
+      return;
+    }
     if (e.key === " " && !e.repeat) {
       e.preventDefault();
       spacePanPreviousTool = tool;
@@ -3289,6 +3835,23 @@ export function initCanvasEngine(
 
   function setSnapToGrid(s: boolean) {
     snap = s;
+    scheduleRedraw();
+  }
+
+  function setOrthoMode(enabled: boolean) {
+    orthoMode = enabled;
+    scheduleRedraw();
+  }
+
+  function setFreehandStyle(style: Partial<CanvasFreehandStroke>) {
+    currentFreehandStyle = {
+      ...currentFreehandStyle,
+      color: style.color ?? currentFreehandStyle.color,
+      width: Math.max(1, Number(style.width ?? currentFreehandStyle.width)),
+      lineStyle: style.lineStyle ?? currentFreehandStyle.lineStyle,
+      opacity: Math.max(0.1, Math.min(1, Number(style.opacity ?? currentFreehandStyle.opacity))),
+      arrow: Boolean(style.arrow ?? currentFreehandStyle.arrow),
+    };
     scheduleRedraw();
   }
 
@@ -3736,6 +4299,7 @@ export function initCanvasEngine(
 
   function destroy() {
     cancelAnimationFrame(animFrame);
+    clearContextMenu();
     canvas.removeEventListener("mousedown", onMouseDown);
     canvas.removeEventListener("mousemove", onMouseMove);
     canvas.removeEventListener("mouseup", onMouseUp);
@@ -3783,7 +4347,9 @@ export function initCanvasEngine(
     clear,
     resetView,
     setSnapToGrid,
+    setOrthoMode,
     setGateSnapTo100mm,
+    setFreehandStyle,
     setAllowedAngles,
     setShowGrid,
     setScale,

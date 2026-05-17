@@ -1680,6 +1680,27 @@ Verification:
 - `npm run build` passed.
 - Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
 
+### May 17, 2026 - Brief BM completion pass on canvas editing
+
+Workflow / UX finding:
+- The first BM pass shipped the map toolbar/search/print foundation, but the attached BM brief still had professional-editor behaviours outstanding: Ortho snapping, free-draw styling, right-click actions, per-item deletion, and direct movement/resizing of annotations.
+- These behaviours should stay on the canvas annotation/editing layer. They must not create BOM product lines unless the existing fence/gate/termination data explicitly consumes them.
+
+Changes applied:
+- Added an `Ortho` toolbar toggle. Draw Fence and Dotted line snap to 90 degree bearings, and holding Shift while Ortho is active allows 45 degree diagonals.
+- Added free-draw controls for colour, line width, line style, opacity, and arrowheads. The selected style is passed into the canvas engine for new freehand strokes.
+- Added canvas selection, Delete/Backspace removal, and a right-click context menu for map elements. Text notes, existing post/pillar markers, buildings, dotted lines, freehand strokes, gates, and fence sections can now be acted on from the map.
+- Text notes are now transparent/dark by default, support multiline rendering, basic edit prompts for text/font/colour/style/alignment, and can be dragged or resized in Move/Edit mode.
+- Building rectangles can be moved or resized with handles in Move/Edit mode. Placed buildings also get a default editable `Building` text label.
+- Existing post/pillar markers can be moved after placement and their dimensions can be edited from the context menu.
+
+Verification:
+- `npm run build` passed.
+- Local route smoke was blocked because no dev server was listening on `http://127.0.0.1:5173/fence-calculator` during this run.
+
+Deferred:
+- Full rich HTML floating text toolbar and the complete Road/Pool/Deck/Tree stamp palette from BM.9 were not implemented in this pass. The current patch delivers freehand styling and editor-style item actions without introducing a large new canvas subsystem.
+
 ### May 16, 2026 - Brief BM map canvas overhaul foundation
 
 Workflow / UX finding:

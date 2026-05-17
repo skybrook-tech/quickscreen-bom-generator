@@ -47,6 +47,7 @@ Important local folders:
 - Current scope convention: run settings hold defaults that truly span a run; height is section-level and must not be treated as a run default. Section system overrides are allowed, but must be called out and tested because they affect BOM dispatch.
 - Current termination convention: hide End Conditions UI from the sidebar, but preserve underlying termination data because canvas and BOM dispatch use it.
 - Current mapper convention: map address search sits above the canvas; map type/opacity/scale live in a collapsed popover; `Draw Fence` is the product run tool; `Dotted line`, building rectangles, freehand strokes, text notes, and existing post/pillar markers are site-context annotations that must persist through layout reloads without becoming BOM lines.
+- Current canvas-editor convention: Ortho, free-draw styling, right-click context actions, per-item Delete/Backspace removal, and annotation drag/resize are UI/editor behaviours. Keep them out of BOM rules unless a fence/gate/termination field explicitly consumes the data.
 
 ## Handoff Template
 
