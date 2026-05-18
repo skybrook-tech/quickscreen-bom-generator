@@ -5,41 +5,39 @@ import {
 } from "../context/CalculatorContext";
 import { FenceConfigProvider } from "../context/FenceConfigContext";
 import { GateProvider } from "../context/GateContext";
-import { ProductSelectV3 } from "../components/calculator-v3/ProductSelectV3";
 import { RunListV3 } from "../components/calculator-v3/RunListV3";
 import { LayoutCanvasV3 } from "../components/calculator-v3/LayoutCanvasV3";
+import { RightPaneTabs, type RightPaneView } from "../components/calculator-v3/RightPaneTabs";
 import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
 import { DescribeFenceBox } from "../components/calculator/DescribeFenceBox";
-import { EntryChoiceCard } from "../components/calculator/EntryChoiceCard";
 import { JobNameEditor } from "../components/calculator/JobNameEditor";
 import { GatePositionModal } from "../components/calculator/GatePositionModal";
 import { ConfirmButton } from "../components/shared/ConfirmButton";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { suggestAccessories } from "../lib/suggestedAccessories";
 import { priceForSku } from "../lib/localBomCalculator";
-import { initialVariablesForSystem, maxPanelWidthForSystem } from "../lib/productOptionRules";
-import { GATE_SEGMENT_STUB_KEYS } from "../lib/segmentTermination";
-import { calcRunStats } from "../lib/runStats";
-import { DRAW_FENCE_LABEL } from "../lib/uiCopy";
 import {
+  initialVariablesForSystem,
+  normaliseVariablesForSystem,
+} from "../lib/productOptionRules";
+import { GATE_SEGMENT_STUB_KEYS } from "../lib/segmentTermination";
+import {
+  clearGateOpeningWidthMm,
   defaultGateBuildForMovement,
   defaultGateVariables,
 } from "../lib/gateOptionRules";
+import { hingeGapForSku, latchGapForSku } from "../lib/gateHardware";
 import { gateTypeLabel, validateGateWidth } from "../lib/gateConstraints";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
 import {
   Download,
   FileX2,
-  HelpCircle,
   Keyboard,
   Loader2,
-  Maximize2,
-  Minimize2,
-  PencilRuler,
   Printer,
   Save,
   Trash2,
@@ -230,6 +228,15 @@ function createInitialPayload(systemType = "QSHS"): CanonicalPayload {
   };
 }
 
+function createEmptyPayload(systemType = "QSHS"): CanonicalPayload {
+  return {
+    productCode: systemType,
+    schemaVersion: "v1",
+    variables: initialVariablesForSystem(systemType),
+    runs: [],
+  };
+}
+
 type PendingParsedGate = NonNullable<NonNullable<CanonicalPayload["job"]>["pendingGates"]>[number];
 
 function productCodeFromParsedSystem(systemType: ParsedSystemType | undefined) {
@@ -247,6 +254,32 @@ function boundariesFromTermination(value: string | undefined) {
   if (value === "wall_wall") return { left: "wall", right: "wall" } as const;
   if (value === "post_wall") return { left: "product_post", right: "wall" } as const;
   return { left: "product_post", right: "product_post" } as const;
+}
+
+function gateMovementFromParsedGate(gate: NonNullable<ParseResult["attributes"]["gates"]>["value"][number]) {
+  if (gate.kind === "sliding") return "sliding" as const;
+  if (gate.kind === "double_swing") return "double_swing" as const;
+  return "single_swing" as const;
+}
+
+function gateLeavesForOpening(movement: ReturnType<typeof gateMovementFromParsedGate>, openingWidthMm: number) {
+  if (movement === "sliding") return [{ widthMm: Math.max(1, Math.round(openingWidthMm)) }];
+  const hingeGapMm = hingeGapForSku("TC-H-AT-HD-B");
+  const latchGapMm = latchGapForSku("LL-DL-KA");
+  const clearOpeningMm = clearGateOpeningWidthMm({
+    movement,
+    openingWidthMm,
+    hingeGapMm,
+    latchGapMm,
+  });
+  if (movement === "double_swing") {
+    const first = Math.round(clearOpeningMm / 2);
+    return [
+      { widthMm: Math.max(1, first) },
+      { widthMm: Math.max(1, Math.round(clearOpeningMm) - first) },
+    ];
+  }
+  return [{ widthMm: Math.max(1, Math.round(clearOpeningMm)) }];
 }
 
 function runLengthMm(run: CanonicalRun) {
@@ -310,11 +343,9 @@ function CalculatorV3Content() {
   const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
   const [mobileLayout, setMobileLayout] = useState(false);
   const [mobileTab, setMobileTab] = useState<"run" | "bom" | "map">("bom");
-  const [layoutOpen, setLayoutOpen] = useState(false);
-  const [layoutFullscreen, setLayoutFullscreen] = useState(false);
+  const [rightPaneView, setRightPaneView] = useState<RightPaneView>("bom");
+  const [mapExpanded, setMapExpanded] = useState(false);
   const [introDismissed, setIntroDismissed] = useState(false);
-  const [entryCardsOpen, setEntryCardsOpen] = useState(true);
-  const [entryMode, setEntryMode] = useState<"describe" | "select" | null>(null);
   const [autoOpenFirstSectionRunId, setAutoOpenFirstSectionRunId] = useState<string | null>(null);
   const [includeMapInBomPrint, setIncludeMapInBomPrint] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -337,6 +368,51 @@ function CalculatorV3Content() {
     return () => window.removeEventListener("resize", updateLayout);
   }, []);
 
+  useEffect(() => {
+    if (rightPaneView !== "map") return;
+    window.setTimeout(() => window.dispatchEvent(new Event("resize")), 0);
+  }, [rightPaneView]);
+
+  useEffect(() => {
+    if (!mapExpanded) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMapExpanded(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [mapExpanded]);
+
+  useEffect(() => {
+    const openGateFromMap = (event: Event) => {
+      const gateId = (event as CustomEvent<string>).detail;
+      if (!gateId) return;
+      setRightPaneView("map");
+      setMapExpanded(false);
+      if (mobileLayout) setMobileTab("run");
+      window.setTimeout(() => {
+        window.dispatchEvent(new CustomEvent("qsbom:open-segment", { detail: gateId }));
+      }, 80);
+    };
+    window.addEventListener("qsbom:edit-gate-from-map", openGateFromMap);
+    return () => window.removeEventListener("qsbom:edit-gate-from-map", openGateFromMap);
+  }, [mobileLayout]);
+
+  const handleRightPaneChange = useCallback((view: RightPaneView) => {
+    setRightPaneView(view);
+    if (view !== "map") setMapExpanded(false);
+  }, []);
+
+  const handleExpandMap = useCallback(() => {
+    if (!payload) {
+      dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
+      dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "draw" });
+    }
+    setIntroDismissed(true);
+    setRightPaneView("map");
+    setMapExpanded(true);
+    if (mobileLayout) setMobileTab("map");
+  }, [dispatch, mobileLayout, payload]);
+
   function handleResizeStart() {
     let latestWidth = runPaneWidth;
     const onMove = (event: MouseEvent) => {
@@ -355,17 +431,24 @@ function CalculatorV3Content() {
   }
 
   function startWorkspaceFromLanding() {
+    if (!payload) {
+      dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
+      dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "select" });
+    }
     setIntroDismissed(true);
+    setRightPaneView("bom");
+    setMapExpanded(false);
+    setMobileTab("bom");
   }
 
   function handleApplyDescription(result: ParseResult) {
     const parsedSystem = result.attributes.systemType?.value;
     const productCode = productCodeFromParsedSystem(parsedSystem);
-    const base = payload ?? createInitialPayload(productCode);
+    const base = payload ?? createEmptyPayload(productCode);
     const baseRun = base.runs[0] ?? createInitialPayload(productCode).runs[0];
     const runId = baseRun.runId;
     const initialVariables = initialVariablesForSystem(productCode);
-    const variables = {
+    const variables = normaliseVariablesForSystem(productCode, {
       ...initialVariables,
       ...(base.variables ?? {}),
       ...(baseRun.variables ?? {}),
@@ -388,37 +471,112 @@ function CalculatorV3Content() {
           mounting_method: mountingMethodToVariables(result.attributes.mountingMethod.value),
         }
         : {}),
-    };
+    });
     const boundaries = boundariesFromTermination(result.attributes.termination?.value);
     const firstSegment = baseRun.segments.find((segment) => segment.segmentKind !== "gate_opening");
-    const targetHeightMm =
-      result.attributes.heightMm?.value ?? firstSegment?.targetHeightMm ?? Number(variables.target_height_mm ?? 1800);
-    const runLength = result.attributes.runLengthMm?.value;
-    const segment: CanonicalSegment = {
-      ...(firstSegment ?? {
-        segmentId: crypto.randomUUID(),
-        sortOrder: 1,
-        segmentKind: "panel" as const,
-      }),
-      sortOrder: 1,
-      segmentKind: "panel",
-      segmentWidthMm: runLength ?? firstSegment?.segmentWidthMm ?? 0,
-      targetHeightMm,
-      variables: productCode === "BAYG" ? { ...(firstSegment?.variables ?? {}), panel_quantity: 1 } : firstSegment?.variables,
+    const targetHeightMm = Number(
+      variables.target_height_mm ??
+      firstSegment?.targetHeightMm ??
+      1800,
+    );
+    const parsedGates = result.attributes.gates?.value ?? [];
+    const gateWidths = parsedGates.map((gate) => {
+      if (gate.widthMm && gate.widthMm > 0) return Math.round(gate.widthMm);
+      if (gate.kind === "double_swing") return 1800;
+      if (gate.kind === "sliding") return 3000;
+      return 900;
+    });
+    const totalGateWidth = gateWidths.reduce((sum, width) => sum + width, 0);
+    const parsedRunLength = Number(result.attributes.runLengthMm?.value ?? 0);
+    const fallbackRunLength =
+      parsedGates.length > 0 ? totalGateWidth + (parsedGates.length + 1) * 1000 : 0;
+    const runLength = Math.max(
+      parsedRunLength,
+      Number(firstSegment?.segmentWidthMm ?? 0),
+      fallbackRunLength,
+    );
+    const panelTotal = Math.max(0, runLength - totalGateWidth);
+    const panelCount = parsedGates.length > 0 ? parsedGates.length + 1 : 1;
+    const panelWidths =
+      parsedGates.length > 0
+        ? Array.from({ length: panelCount }, () => Math.max(1, Math.round(panelTotal / panelCount)))
+        : [Math.max(0, Math.round(runLength))];
+    if (parsedGates.length > 0 && panelWidths.length > 1) {
+      const used = panelWidths.reduce((sum, width) => sum + width, 0);
+      panelWidths[panelWidths.length - 1] = Math.max(1, panelWidths[panelWidths.length - 1] + Math.round(panelTotal - used));
+    }
+    const newSegments: CanonicalSegment[] = [];
+    let sortOrder = 1;
+    const useSingleCanvasSection = parsedGates.length > 0 && runLength > 0;
+    const straightGeometry = {
+      points: [
+        { x: 0, y: 0 },
+        { x: Math.max(1, runLength / 10), y: 0 },
+      ],
     };
+    const canvasMeta = useSingleCanvasSection
+      ? {
+        canvasSegmentIndex: 0,
+        sourceSegmentLengthMm: Math.max(1, Math.round(runLength)),
+      }
+      : {};
+    const makePanelSegment = (widthMm: number): CanonicalSegment => ({
+      segmentId: crypto.randomUUID(),
+      sortOrder: sortOrder++,
+      segmentKind: "panel",
+      segmentWidthMm: Math.max(0, Math.round(widthMm)),
+      targetHeightMm,
+      ...canvasMeta,
+      variables: productCode === "BAYG" ? { panel_quantity: 1 } : undefined,
+    });
+
+    if (parsedGates.length === 0) {
+      newSegments.push(makePanelSegment(panelWidths[0] ?? 0));
+    } else {
+      let distanceCursorMm = 0;
+      for (let index = 0; index < parsedGates.length; index++) {
+        const precedingPanel = makePanelSegment(panelWidths[index] ?? 1);
+        newSegments.push(precedingPanel);
+        distanceCursorMm += precedingPanel.segmentWidthMm ?? 0;
+        const gate = parsedGates[index];
+        const gateWidth = gateWidths[index] ?? 900;
+        const movement = gateMovementFromParsedGate(gate);
+        const gateCenterFraction =
+          runLength > 0 ? Math.max(0, Math.min(1, (distanceCursorMm + gateWidth / 2) / runLength)) : 0.5;
+        const gateVariables = {
+          ...defaultGateVariables({ ...variables, productCode }, targetHeightMm),
+          [GATE_SEGMENT_STUB_KEYS.gateMovement]: movement,
+          [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
+            movement,
+            productCode === "VS",
+          ),
+          [GATE_SEGMENT_STUB_KEYS.leafCount]: movement === "double_swing" ? 2 : 1,
+          [GATE_SEGMENT_STUB_KEYS.dropBoltType]: movement === "double_swing" ? "SS-0300DB-B" : "none",
+          parent_section_id: precedingPanel.segmentId,
+        };
+        newSegments.push({
+          segmentId: crypto.randomUUID(),
+          sortOrder: sortOrder++,
+          segmentKind: "gate_opening",
+          segmentWidthMm: gateWidth,
+          targetHeightMm,
+          gateProductCode: "QS_GATE",
+          positionOnSegment: gateCenterFraction,
+          gateAnchor: "center",
+          ...canvasMeta,
+          variables: gateVariables,
+          leaves: gateLeavesForOpening(movement, gateWidth),
+        });
+        distanceCursorMm += gateWidth;
+      }
+      newSegments.push(makePanelSegment(panelWidths[panelWidths.length - 1] ?? 1));
+    }
     const cornerCount = Math.max(0, Math.round(Number(result.attributes.cornerCount?.value ?? 0)));
     const corners = Array.from({ length: cornerCount }, () => ({
       cornerId: crypto.randomUUID(),
-      afterSegmentId: segment.segmentId,
+      afterSegmentId: newSegments.find((segment) => segment.segmentKind !== "gate_opening")?.segmentId ?? crypto.randomUUID(),
       type: "90" as const,
     }));
-    const pendingGates = result.attributes.gates?.value.map((gate, index) => ({
-      id: crypto.randomUUID(),
-      kind: gate.kind,
-      widthMm: gate.widthMm,
-      runId,
-      label: `Parsed gate ${index + 1}`,
-    })) ?? [];
     const nextRun: CanonicalRun = {
       ...baseRun,
       runId,
@@ -426,8 +584,9 @@ function CalculatorV3Content() {
       variables,
       leftBoundary: { type: boundaries.left },
       rightBoundary: { type: boundaries.right },
-      segments: [segment],
+      segments: newSegments,
       corners,
+      geometry: straightGeometry,
     };
     const nextPayload: CanonicalPayload = {
       ...base,
@@ -436,26 +595,19 @@ function CalculatorV3Content() {
       job: {
         ...(base.job ?? {}),
         description: result.description,
-        pendingGates,
+        pendingGates: [],
       },
       runs: [nextRun, ...base.runs.slice(1)],
     };
     dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
+    dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "describe" });
     dispatch({ type: "CLEAR_BOM_RESULT" });
     setIntroDismissed(true);
-    setEntryCardsOpen(false);
-    setEntryMode(null);
     setAutoOpenFirstSectionRunId(nextRun.runId);
+    setRightPaneView("bom");
+    setMapExpanded(false);
     setMobileTab("bom");
-    toast.success("Description applied to the calculator");
-  }
-
-  function handleProductSelected(nextPayload: CanonicalPayload) {
-    setEntryCardsOpen(false);
-    setEntryMode(null);
-    setIntroDismissed(true);
-    setAutoOpenFirstSectionRunId(nextPayload.runs[0]?.runId ?? null);
-    setMobileTab("bom");
+    toast.success("Description applied");
   }
 
   function handleConfirmGatePosition(gate: PendingParsedGate, distanceFromStartMm: number) {
@@ -552,7 +704,8 @@ function CalculatorV3Content() {
   }
 
   async function handleGenerateBOMFromFooter() {
-    setLayoutOpen(false);
+    setRightPaneView("bom");
+    setMapExpanded(false);
     await handleGenerateBOM();
   }
 
@@ -727,7 +880,7 @@ function CalculatorV3Content() {
           ? filterLinesForScope(baseAllItems, (source) => source.scopeKind === "gate")
           : runScopedGateItems.length > 0
             ? runScopedGateItems
-            : ((lastBom.gateItems as BOMLineItem[]) ?? []);
+          : ((lastBom.gateItems as BOMLineItem[]) ?? []);
       const gateItems = applyLineEdits(aggregateBomItems(rawGateItems));
       const allItems = aggregateBomItems([...baseAllItems, ...extraLineItems]);
       const baseTotal = roundMoney(
@@ -923,11 +1076,10 @@ function CalculatorV3Content() {
     setLineEdits({});
     setActiveBomSummary(null);
     setJobName("");
-    setEntryCardsOpen(true);
-    setEntryMode(null);
+    dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
     setIntroDismissed(true);
-    setLayoutOpen(false);
-    setLayoutFullscreen(false);
+    setRightPaneView("bom");
+    setMapExpanded(false);
     setAutoOpenFirstSectionRunId(null);
     setMobileTab("bom");
     setClearJobDialogOpen(false);
@@ -962,7 +1114,7 @@ function CalculatorV3Content() {
     }
     window.addEventListener("afterprint", cleanupPrintMode);
     if (includeMapInBomPrint) {
-      setLayoutOpen(true);
+      setRightPaneView("map");
       window.setTimeout(() => window.print(), 300);
       return;
     }
@@ -981,6 +1133,17 @@ function CalculatorV3Content() {
       "Line Total": string;
     };
     const rows: CsvRow[] = [];
+    if (payload?.job?.description) {
+      rows.push({
+        SKU: "",
+        Description: `Original description: ${payload.job.description}`,
+        Category: "job",
+        Unit: "",
+        Qty: "",
+        "Unit Price": "",
+        "Line Total": "",
+      });
+    }
     rows.push(...bomResultForTabs.allItems.map((line) => ({
       SKU: line.sku,
       Description: line.description,
@@ -1060,16 +1223,28 @@ function CalculatorV3Content() {
   const hasBlockingErrors = hasErrors || gateWidthErrors.length > 0 || economySlatErrors.length > 0;
 
   const cleanJobName = jobName.trim();
+  const systemLabel = (productCode: string) => {
+    if (productCode === "QSHS") return "QuickScreen Horizontal Slat";
+    if (productCode === "VS") return "QuickScreen Vertical Slat";
+    if (productCode === "XPL") return "XPress Plus Fence";
+    if (productCode === "BAYG") return "BAY-G Infill Screens";
+    return productCode;
+  };
   const gateSummaryForRun = (run: CanonicalRun) => {
     const counts = new Map<string, number>();
     for (const segment of run.segments) {
       if (segment.segmentKind !== "gate_opening") continue;
       const movement = String(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement] ?? "single_swing");
-      const label = movement === "sliding" ? "sliding" : movement === "double_swing" ? "double" : "ped";
+      const label =
+        movement === "sliding"
+          ? "sliding gate"
+          : movement === "double_swing"
+            ? "double swing gate"
+            : "pedestrian gate";
       counts.set(label, (counts.get(label) ?? 0) + 1);
     }
     return [...counts.entries()]
-      .map(([label, count]) => `${count} ${label}`)
+      .map(([label, count]) => `${count} ${label}${count === 1 ? "" : "s"}`)
       .join(" + ");
   };
   const runBomSummaries = payload?.runs.map((run, index) => {
@@ -1087,32 +1262,68 @@ function CalculatorV3Content() {
       },
       0,
     ) / 1000;
-    const stats = calcRunStats(
-      run,
-      Number(vars.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode)),
-    );
     const gatePart = gateSummaryForRun(run);
-    const panelPart = state.bomResult
-      ? `${stats.panels} ${stats.panels === 1 ? "panel" : "panels"}`
-      : "\u2014 panels";
     return [
       `Run ${index + 1}`,
       `${lengthM.toFixed(2)}m`,
-      gatePart || null,
-      panelPart,
-      run.productCode,
-      `${Number(vars.target_height_mm ?? 1800)}mm`,
+      systemLabel(run.productCode),
       colourName(vars.colour_code),
       `${Number(vars.slat_size_mm ?? 65)}mm slat`,
-      `${Number(vars.slat_gap_mm ?? 5)}mm gap`,
+      `${Number(vars.slat_gap_mm ?? 9)}mm gap`,
+      gatePart || null,
     ].filter(Boolean).join(" - ");
   }) ?? [];
   const summaryText = payload ? runBomSummaries.join(" | ") : cleanJobName;
-  const saveJobLabel = "Save Job";
+  const bomRunDetails = payload?.runs.map((run, runIndex) => {
+    const vars = { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
+    const gates = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
+    const sections = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
+    const lengthMm = run.segments.reduce((sum, segment) => sum + Number(segment.segmentWidthMm ?? 0), 0);
+    const maxPanelWidth = Number(vars.max_panel_width_mm ?? 2600);
+    const sectionRows = sections.map((section, sectionIndex) => {
+      const sectionVars = section.variables ?? {};
+      const width = Number(section.segmentWidthMm ?? 0);
+      const panelCount = width > 0 ? Math.max(1, Math.ceil(width / Number(sectionVars.max_panel_width_mm ?? maxPanelWidth))) : 0;
+      const postSpacing = panelCount > 0 ? Math.round(width / panelCount) : 0;
+      const overrides = [
+        ["Colour", sectionVars.colour_code, vars.colour_code],
+        ["Slat", sectionVars.slat_size_mm, vars.slat_size_mm],
+        ["Gap", sectionVars.slat_gap_mm, vars.slat_gap_mm],
+      ]
+        .filter(([, value]) => value !== undefined && value !== null && value !== "")
+        .filter(([, value, master]) => String(value) !== String(master ?? ""))
+        .map(([label, value]) => `${label}: ${value}${label === "Slat" || label === "Gap" || label === "Height" ? "mm" : ""}`);
+      const linkedGates = gates.filter((gate) => gate.variables?.parent_section_id === section.segmentId);
+      return {
+        label: `Section ${sectionIndex + 1} - ${(width / 1000).toFixed(2)}m x ${Number(section.targetHeightMm ?? vars.target_height_mm ?? 1800)}mm - ${panelCount} panel${panelCount === 1 ? "" : "s"} - post spacing ${postSpacing}mm`,
+        overrides,
+        gates: linkedGates.map((gate) => {
+          const movement = String(gate.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement] ?? "single_swing");
+          const hardware = String(gate.variables?.[GATE_SEGMENT_STUB_KEYS.hardwareKitSku] ?? gate.variables?.[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "default hardware");
+          return `${movement.replace("_", " ")} - ${Number(gate.segmentWidthMm ?? 0)}mm - ${hardware}`;
+        }),
+      };
+    });
+    return {
+      hero: `Run ${runIndex + 1} - ${(lengthMm / 1000).toFixed(2)}m - ${systemLabel(run.productCode)} - ${gateSummaryForRun(run) || "no gates"}`,
+      settings: [
+        `Slat size: ${Number(vars.slat_size_mm ?? 65)}mm`,
+        `Gap: ${Number(vars.slat_gap_mm ?? 9)}mm`,
+        `Colour: ${colourName(vars.colour_code)}`,
+        `Mounting: ${String(vars.mounting_method ?? vars.mounting_type ?? "in_ground").replace(/_/g, " ")}`,
+        `Termination L: ${run.leftBoundary?.type ?? "Post"}`,
+        `Termination R: ${run.rightBoundary?.type ?? "Post"}`,
+        `Corners: ${run.corners?.length ?? 0}`,
+      ],
+      posts: `Posts: ${sections.length + 1} standard + ${run.corners?.length ?? 0} corner + derived end posts`,
+      sections: sectionRows,
+    };
+  }) ?? [];
+  const saveJobLabel = jobName.trim() ? `Save ${jobName.trim()}` : "Save Job";
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
-  const showIntro = !payload && !introDismissed && !layoutOpen;
+  const showIntro = !payload && !introDismissed;
   const gateTargetRun = gatePositionTarget
     ? payload?.runs.find((run) => run.runId === gatePositionTarget.runId)
     : undefined;
@@ -1137,8 +1348,8 @@ function CalculatorV3Content() {
             <div className="space-y-8">
               <GlassOutletLogo
                 className="justify-center text-brand-primary"
-                iconClassName="h-20 w-24 sm:h-24 sm:w-24 lg:h-28 lg:w-24"
-                textClassName="text-5xl sm:text-5xl lg:text-5xl"
+                iconClassName="h-20 w-24 sm:h-24 sm:w-28 lg:h-28 lg:w-32"
+                textClassName="text-5xl sm:text-7xl lg:text-8xl"
               />
               <form
                 className="mx-auto w-full max-w-xl rounded-3xl border border-brand-border/70 bg-brand-card/80 p-5 text-left shadow-2xl backdrop-blur"
@@ -1154,7 +1365,6 @@ function CalculatorV3Content() {
                   autoFocus
                   inputClassName="rounded-2xl px-4 py-3 text-center text-xl font-semibold"
                   textClassName="mx-auto text-center text-xl font-semibold"
-                  editOnly
                 />
                 <button
                   type="submit"
@@ -1169,17 +1379,17 @@ function CalculatorV3Content() {
       ) : (
         <>
           <div
-            className="relative flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row"
+            className={`${mapExpanded ? "fixed inset-0 z-50" : "relative"} flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row`}
           >
             <aside
-              className={`relative w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${mobileLayout && mobileTab !== "run" ? "hidden" : "flex"
+              className={`relative w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${mapExpanded || (mobileLayout && mobileTab !== "run") ? "hidden" : "flex"
                 } ${bomResultForTabs ? "max-h-[32vh]" : "min-h-[46vh]"
                 }`}
               style={mobileLayout ? undefined : { width: runPaneWidth }}
             >
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="flex-1 space-y-4 overflow-y-auto p-3 sm:p-5">
-                  <section className="sticky top-0 z-30 -mx-3 border-b border-brand-border/70 bg-brand-card/95 px-3 pb-3 pt-3 shadow-sm backdrop-blur sm:-mx-5 sm:px-5">
+                  <section className="-mx-3 border-b border-brand-border/70 bg-brand-card/95 px-3 pb-3 pt-3 shadow-sm sm:-mx-5 sm:px-5">
                     <div className="mb-3 flex items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <JobNameEditor
@@ -1189,94 +1399,16 @@ function CalculatorV3Content() {
                           textClassName="mb-1"
                         />
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (!payload) {
-                            dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
-                            setIntroDismissed(true);
-                            setEntryCardsOpen(false);
-                            setEntryMode(null);
-                          }
-                          setLayoutOpen((open) => !open);
-                          if (mobileLayout) setMobileTab("map");
-                        }}
-                        className={`inline-flex h-10 w-10 items-center justify-center rounded-lg border transition-colors hover:shadow-sm ${layoutOpen ? "border-brand-primary bg-brand-primary text-white" : "border-brand-border text-brand-primary hover:border-brand-primary"}`}
-                        title={layoutOpen ? "Close map" : "Open map"}
-                        aria-label={layoutOpen ? "Close map" : "Open map"}
-                      >
-                        <PencilRuler size={20} />
-                      </button>
                     </div>
+                    {payload?.runs.length ? (
+                      <DescribeFenceBox
+                        title="Describe your fence"
+                        compact
+                        initialDescription={payload?.job?.description ?? ""}
+                        onApply={handleApplyDescription}
+                      />
+                    ) : null}
                   </section>
-                  <section>
-                    {!payload && (
-                      <div className="space-y-3">
-                        {entryCardsOpen && !entryMode && (
-                          <>
-                            <EntryChoiceCard
-                              number={1}
-                              title={DRAW_FENCE_LABEL}
-                              description="Open the layout map and sketch the run from above."
-                              variant="draw"
-                              onClick={() => {
-                                const nextPayload = createInitialPayload("QSHS");
-                                dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
-                                setIntroDismissed(true);
-                                setEntryCardsOpen(false);
-                                setEntryMode(null);
-                                setAutoOpenFirstSectionRunId(nextPayload.runs[0]?.runId ?? null);
-                                setLayoutOpen(true);
-                                if (mobileLayout) setMobileTab("map");
-                              }}
-                            />
-                            <EntryChoiceCard
-                              number={2}
-                              title="Describe your fence"
-                              description="Paste or dictate the job details and preview what the app understood."
-                              variant="describe"
-                              onClick={() => {
-                                setEntryMode("describe");
-                                setEntryCardsOpen(false);
-                              }}
-                            />
-                            <EntryChoiceCard
-                              number={3}
-                              title="Select your fence"
-                              description="Choose QSHS, VS, XPL, or BAY-G and edit section settings."
-                              variant="select"
-                              onClick={() => {
-                                setEntryMode("select");
-                                setEntryCardsOpen(false);
-                              }}
-                            />
-                          </>
-                        )}
-                        {!entryCardsOpen && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEntryCardsOpen(true);
-                              setEntryMode(null);
-                            }}
-                            className="text-xs font-black text-brand-muted transition-colors hover:text-brand-primary"
-                          >
-                            Change entry method ▸
-                          </button>
-                        )}
-                        {entryMode === "describe" && (
-                          <DescribeFenceBox
-                            title="Describe your fence"
-                            onApply={handleApplyDescription}
-                          />
-                        )}
-                        {entryMode === "select" && (
-                          <ProductSelectV3 onProductSelected={handleProductSelected} />
-                        )}
-                      </div>
-                    )}
-                  </section>
-
                   {payload && (
                     <>
                       <hr className="border-brand-border/60" />
@@ -1284,6 +1416,8 @@ function CalculatorV3Content() {
                         <RunListV3
                           autoOpenFirstRunId={autoOpenFirstSectionRunId}
                           onAutoOpenConsumed={() => setAutoOpenFirstSectionRunId(null)}
+                          initialDescription={payload?.job?.description ?? ""}
+                          onDescribeApply={handleApplyDescription}
                         />
                       </section>
 
@@ -1427,11 +1561,38 @@ function CalculatorV3Content() {
 
             <main
               data-print-bom-main
-              className={`min-h-0 min-w-0 flex-1 overflow-y-auto p-3 pb-24 sm:p-5 lg:p-8 ${mobileLayout && mobileTab !== "bom" ? "hidden" : ""
+              className={`min-h-0 min-w-0 flex-1 overflow-y-auto ${mapExpanded ? "p-0" : "p-3 pb-24 sm:p-5 lg:p-8"} ${mobileLayout && mobileTab === "run" ? "hidden" : ""
                 }`}
             >
-              <div className="mx-auto max-w-6xl space-y-4 sm:space-y-5">
-                <section data-print-bom-section className="rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5">
+              <div className={`${mapExpanded ? "mx-0 max-w-none space-y-0" : "w-full space-y-4 sm:space-y-5"}`}>
+                <section className={`overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"}`}>
+                  {!mapExpanded && (
+                    <RightPaneTabs
+                      activeView={rightPaneView}
+                      onChange={handleRightPaneChange}
+                      onExpandMap={handleExpandMap}
+                    />
+                  )}
+                  <div className={`${rightPaneView === "map" ? "block" : "hidden"} ${mapExpanded ? "p-2" : "p-3 sm:p-4"}`}>
+                    <div
+                      data-print-map-panel
+                      className="block"
+                    >
+                      {payload ? (
+                        <LayoutCanvasV3
+                          mapExpanded={mapExpanded}
+                          onMapExpandedChange={setMapExpanded}
+                          showRunDetails={!mapExpanded}
+                        />
+                      ) : (
+                        <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/50 p-6 text-center text-sm font-bold text-brand-muted">
+                          Start from the sidebar, then draw the layout here.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </section>
+                <section data-print-bom-section className={`rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5 ${rightPaneView === "bom" && !mapExpanded ? "block" : "hidden"}`}>
                   <div className="mb-4 flex flex-col gap-4 border-b border-brand-border pb-5 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <div className="mb-3 flex flex-wrap items-center gap-3">
@@ -1450,7 +1611,7 @@ function CalculatorV3Content() {
                           value={jobName}
                           onChange={setJobName}
                           className="mt-2"
-                          textClassName="px-0 text-2xl font-black leading-tight"
+                          textClassName="px-0 text-4xl font-black leading-tight"
                           inputClassName="max-w-xl"
                         />
                       )}
@@ -1459,12 +1620,17 @@ function CalculatorV3Content() {
                           {summaryText}
                         </p>
                       )}
+                      {payload?.job?.description && (
+                        <p className="mt-1 max-w-3xl text-xs font-semibold text-brand-muted">
+                          Original description: {payload.job.description}
+                        </p>
+                      )}
                     </div>
                     <div className="text-left sm:text-right" data-print-hide>
                       <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
-                        {activeBomSummary?.label ?? "Auto quantity breaks"}
+                        {activeBomSummary?.label ?? (bomResultForTabs ? "Auto quantity breaks" : "Estimated total")}
                       </p>
-                      <p className="font-mono text-3xl font-black tabular-nums text-brand-primary sm:text-3xl">
+                      <p className="font-mono text-4xl font-black tabular-nums text-brand-primary sm:text-5xl">
                         ${formatMoney(animatedGrandTotal)}
                       </p>
                     </div>
@@ -1549,6 +1715,38 @@ function CalculatorV3Content() {
                     </div>
                   ) : bomResultForTabs && !hasBlockingErrors ? (
                     <>
+                      {bomRunDetails.length > 0 && (
+                        <div className="mb-5 space-y-3 rounded-2xl border border-brand-border/70 bg-brand-bg/45 p-3 print:border-slate-300 print:bg-white">
+                          {bomRunDetails.map((runDetail) => (
+                            <section key={runDetail.hero} className="space-y-2">
+                              <p className="text-sm font-black text-brand-text print:text-black">
+                                {runDetail.hero}
+                              </p>
+                              <div className="grid gap-x-4 gap-y-1 text-xs font-semibold text-brand-muted sm:grid-cols-2 print:text-slate-700">
+                                {runDetail.settings.map((setting) => (
+                                  <span key={setting}>{setting}</span>
+                                ))}
+                                <span className="font-bold text-brand-text print:text-black">{runDetail.posts}</span>
+                              </div>
+                              <div className="space-y-1 pl-3 text-xs font-semibold text-brand-muted print:text-slate-700">
+                                {runDetail.sections.map((section) => (
+                                  <div key={section.label}>
+                                    <p className="font-bold text-brand-text print:text-black">{section.label}</p>
+                                    {section.overrides.length > 0 && (
+                                      <p>overrides: {section.overrides.join(", ")}</p>
+                                    )}
+                                    {section.gates.map((gate) => (
+                                      <p key={gate} className="pl-3 text-brand-warning print:text-slate-700">
+                                        {gate}
+                                      </p>
+                                    ))}
+                                  </div>
+                                ))}
+                              </div>
+                            </section>
+                          ))}
+                        </div>
+                      )}
                       <BOMResultTabs
                         result={bomResultForTabs}
                         editable
@@ -1594,69 +1792,18 @@ function CalculatorV3Content() {
                       </div>
                     </>
                   ) : (
-                    <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/60 px-5 py-10 text-center text-sm font-semibold text-brand-muted">
-                      <HelpCircle className="mx-auto mb-3 text-brand-primary" size={32} />
-                      Configure a run on the left, then generate the BOM to see selected products, quantities, GST, and grand total.
+                    <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/60 px-5 py-12 text-center">
+                      <p className="mx-auto max-w-xl text-base font-black italic text-brand-muted sm:text-lg">
+                        Choose fence type on left or click the map button above to draw your fence in plan view
+                      </p>
                     </div>
                   )}
                 </section>
               </div>
             </main>
 
-            {layoutOpen && payload && (
-              <div
-                data-print-map-panel
-                className={`z-20 border-l border-brand-border bg-brand-card shadow-2xl ${mobileLayout
-                  ? "fixed inset-x-0 bottom-[4.5rem] top-[4.5rem] border-l-0"
-                  : `absolute bottom-0 top-0 ${layoutFullscreen ? "left-0 right-0" : ""}`
-                  }`}
-                style={layoutFullscreen || mobileLayout ? undefined : { left: runPaneWidth + 6, right: 0 }}
-              >
-                <div className="flex h-full min-h-0 flex-col">
-                  <div className="flex items-center gap-2 border-b border-brand-border px-2 py-2 sm:gap-3 sm:px-4 sm:py-3" data-print-hide>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setLayoutOpen(false)}
-                        className="rounded-lg border border-brand-border px-2 py-1.5 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm sm:px-3 sm:py-2 sm:text-sm"
-                        title="Minimize map"
-                      >
-                        Minimize
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setLayoutFullscreen((value) => !value)}
-                        className="rounded-lg border border-brand-border p-2 text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-                        title={layoutFullscreen ? "Restore map" : "Expand map"}
-                      >
-                        {layoutFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-                      </button>
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-brand-text">Layout map</p>
-                      <p className="hidden text-xs text-brand-muted sm:block">
-                        Draw runs, gates, and map underlay
-                      </p>
-                    </div>
-                    <div className="ml-auto">
-                      <button
-                        type="button"
-                        onClick={() => setLayoutOpen(false)}
-                        className="rounded-lg border border-brand-border p-2 text-brand-muted transition-colors hover:border-brand-danger hover:text-brand-danger hover:shadow-sm"
-                        title="Close map"
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="min-h-0 flex-1 overflow-y-auto p-2 pb-24 sm:p-4">
-                    <LayoutCanvasV3 />
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
-          {mobileLayout && (
+          {mobileLayout && !mapExpanded && (
             <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-brand-border bg-brand-card/95 p-2 shadow-2xl backdrop-blur md:hidden">
               {([
                 ["run", "Run"],
@@ -1671,11 +1818,16 @@ function CalculatorV3Content() {
                     if (id === "map") {
                       if (!payload) {
                         dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
+                        dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "draw" });
                       }
                       setIntroDismissed(true);
-                      setLayoutOpen(true);
+                      setRightPaneView("map");
+                    } else if (id === "bom") {
+                      setRightPaneView("bom");
+                      setMapExpanded(false);
                     } else {
-                      setLayoutOpen(false);
+                      setRightPaneView("bom");
+                      setMapExpanded(false);
                     }
                   }}
                   className={`rounded-lg px-3 py-2 text-sm font-extrabold transition-colors ${mobileTab === id
