@@ -110,6 +110,8 @@ Latest Brief BM pass: the map toolbar/search workflow now has address search abo
 
 Latest skill sync pass: the BI sidebar conventions were added to the repo skill mirrors under `.claude/skills/` and `.agents/skills/`, including `finish_family` as Slat range, the shared `SettingsDisclosureRow` pattern, hidden End Conditions UI with preserved termination data, and the printable BOM run/section summary convention.
 
+Latest Google Maps plumbing pass: `codex/google-maps-plumbing` adds the `@googlemaps/js-api-loader` dependency, env examples, a lazy singleton Maps JavaScript API loader with geometry library support, a `useGoogleMaps` hook, setup documentation, and a focused missing-key unit test without touching canvas or calculator UI.
+
 
 ---
 
