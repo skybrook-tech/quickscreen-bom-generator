@@ -43,7 +43,7 @@ Use this skill when improving how users configure, draw, review, and test quotes
 - Put derived values near the inputs they depend on: panels, post spacing, cut length, achieved height.
 - Use product-code search for expert users and friendly labels for less technical users.
 - After Generate BOM, keep the user in one place: BOM lines, warnings, suggested extras, manual extras, GST, grand total.
-- BOM headers should include a printable run/section summary above line items: bold run hero line, compact settings, post/corner/end-post summary, indented sections with panel count/post spacing, overrides, and gate sub-items.
+- Print BOM should lead with materials, quantities, pricing, and totals. Put `Run & Section Details` after the line items using the same run-setting labels as the sidebar, include section length x height, panels/post spacing, overrides, and gate sub-items, and place the optional map last.
 
 ## Mapper UI Principles
 

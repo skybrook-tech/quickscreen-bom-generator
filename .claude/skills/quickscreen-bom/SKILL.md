@@ -61,7 +61,7 @@ There are multiple QuickScreen systems:
 - Gate settings are grouped into four disclosure rows: Gate Type & Direction, Slat/Post/Colour, Hardware & Weight, and Gate Components. Collapsed gate summaries should show width/height plus concise hardware labels, not swing direction or hinge side.
 - Run corner counts are read-only in the sidebar and come from drawn geometry/canonical corner data, not a manual run-settings input.
 - End Conditions UI is hidden in the sidebar. Termination data still exists and remains important for canvas and BOM logic.
-- BOM output should include a printable run/section summary before line items: run hero, run settings, post counts, section panel/post-spacing summary, overrides, and gate sub-items.
+- Print BOM output should put materials and totals first, then a `Run & Section Details` reference block, then the optional map at the bottom. Run settings in print use the sidebar labels: System Type, Color, Slat size, Gap size, Post mounting, Max post spacing, and Corners. Height stays section-level.
 
 ## Instructions
 

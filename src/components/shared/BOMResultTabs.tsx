@@ -44,6 +44,9 @@ const formatMoney = (value: number) =>
     maximumFractionDigits: 2,
   }).format(value);
 
+const stripDisplayCodes = (value: unknown) =>
+  String(value ?? "").replace(/\s*\([A-Z]{1,4}\)(?=$|\s|,|-)/g, "");
+
 function nextBreakHint(item: BOMLineItem) {
   if (item.sku.startsWith("XP-6500-E65") && item.unit === "pack") return null;
   const breaks = (localPriceBreaks as Record<string, readonly number[] | undefined>)[
@@ -370,7 +373,7 @@ function ItemGroup({
           </td>
           <td className="py-2.5 px-3 text-sm text-brand-text">
             <div className="flex flex-wrap items-center gap-1.5">
-              <span>{item.description}</span>
+              <span>{stripDisplayCodes(item.description)}</span>
               {item.unitPrice <= 0 && (
                 <span className="rounded-full border border-brand-warning/40 bg-brand-warning/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-warning print:hidden">
                   Price not set
