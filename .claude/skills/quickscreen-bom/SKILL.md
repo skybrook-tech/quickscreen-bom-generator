@@ -62,6 +62,7 @@ There are multiple QuickScreen systems:
 - Run corner counts are read-only in the sidebar and come from drawn geometry/canonical corner data, not a manual run-settings input.
 - End Conditions UI is hidden in the sidebar. Termination data still exists and remains important for canvas and BOM logic.
 - BOM output should include a printable run/section summary before line items: run hero, run settings, post counts, section panel/post-spacing summary, overrides, and gate sub-items.
+- The Map/BOM switcher belongs in the top header as a segmented control. BOM actions live in that same top-bar area only while the BOM view is active, not inside the BOM panel body.
 
 ## Instructions
 

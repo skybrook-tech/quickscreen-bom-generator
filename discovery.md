@@ -1974,3 +1974,22 @@ Verification:
 
 Deferred:
 - CI wait, deploy preview screenshots, PR ready/merge, and branch cleanup were not performed in this commit/push-only workflow.
+
+### May 19, 2026 - Brief BN v2 sidebar/top-bar completion
+
+Workflow / UX finding:
+- The first BN follow-up only removed the post-run Describe box and BOM original-description output; the full BN v2 brief also required the top-bar Map/BOM/action reorganisation and refreshed skill guidance.
+- Run, section, and gate setting controls were already mostly icon-only and gate settings were already grouped into the four required disclosure rows, so this pass focused on verified sandbox gaps rather than duplicating existing component work.
+
+Changes applied:
+- Moved the Map/BOM switcher into the app header as a segmented control and removed the old in-content `RightPaneTabs` row.
+- Lifted BOM actions (`Generate BOM`, `Clear BOM`, `Print BOM`, `Include map`, `Export CSV`, and shortcuts) into the header action area and render them only when BOM is active.
+- Removed the repeated BOM action row from the BOM panel body so the content area starts with quote/BOM content instead of duplicated controls.
+- Re-applied BN.3 cleanup on the sandbox base: original free-text descriptions are no longer rendered in the BOM header or CSV export, while the internal job description remains stored.
+- Removed the post-run Describe box from the job header; the compact `(Click to describe)` affordance remains only in the empty system-choice state.
+- Changed visible sidebar settings icons to gear icons and kept expanded collapse controls as chevron-up-only buttons.
+- Updated QuickScreen/UI skill mirrors under `.claude/skills/` and `.agents/skills/` so future agents know the Map/BOM segmented control and BOM actions live in the top header.
+
+Verification:
+- `npm run build` passed with the existing large chunk warning only.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
