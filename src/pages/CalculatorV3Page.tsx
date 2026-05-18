@@ -981,17 +981,6 @@ function CalculatorV3Content() {
       "Line Total": string;
     };
     const rows: CsvRow[] = [];
-    if (payload?.job?.description) {
-      rows.push({
-        SKU: "",
-        Description: `Original description: ${payload.job.description}`,
-        Category: "job",
-        Unit: "",
-        Qty: "",
-        "Unit Price": "",
-        "Line Total": "",
-      });
-    }
     rows.push(...bomResultForTabs.allItems.map((line) => ({
       SKU: line.sku,
       Description: line.description,
@@ -1468,11 +1457,6 @@ function CalculatorV3Content() {
                       {summaryText && (
                         <p className="mt-2 max-w-3xl text-sm font-semibold text-brand-text">
                           {summaryText}
-                        </p>
-                      )}
-                      {payload?.job?.description && (
-                        <p className="mt-1 max-w-3xl text-xs font-semibold text-brand-muted">
-                          Original description: {payload.job.description}
                         </p>
                       )}
                     </div>

@@ -20,11 +20,11 @@ Use this skill when improving how users configure, draw, review, and test quotes
 
 - Group choices by job, run, segment, gate, fixing, and add-ons.
 - Prefer compact controls over long explanatory copy.
-- Use the shared settings-row pattern for run, section, and gate settings: label on the left, selected value on the right, blue `show`/`hide` affordance, one open dropdown at a time, and a 60-second idle collapse. This pattern lives in `src/components/calculator-v3/SettingsDisclosureRow.tsx`.
+- Use the shared settings-row pattern for run, section, and gate settings: label on the left, selected value on the right, blue chevron affordance, one open dropdown at a time, and a 60-second idle collapse. This pattern lives in `src/components/calculator-v3/SettingsDisclosureRow.tsx`.
 - Keep setting groups semantically consistent across levels:
   - Run settings: `System type`, `Slats, colors, and spacings`, `Post size, mounting and spacing`; corner count is read-only in the run heading/details and comes from geometry.
   - Section settings: `System type`, `Slats, colors, and spacings`, `Post size, mounting and spacing`; show only non-height overrides from run settings unless expanded.
-  - Gate settings: mirror section settings, with gate-specific rows for type, opening direction, and hardware.
+  - Gate settings: exactly four groups: `Gate Type & Direction`, `Slat, Post & Colour`, `Hardware & Weight`, and `Gate Components`.
 - Treat height as a section-level attribute, not a run-level default. Section headers should keep the install-critical format `Section N - X.XXm - YYYYmm`; length and height are bold on the same line, and matching-run indicators ignore height differences.
 - Per-section system overrides are advanced but supported: store the override on the section and keep the section green only when the non-height settings, including system type, match the run.
 - Gate green-match indicators compare only system/build, colour, slat size, and gap size against the run. Swing type, opening direction, hinge side, hardware, and gate height are gate-specific choices and must not turn the match indicator off.
@@ -34,7 +34,7 @@ Use this skill when improving how users configure, draw, review, and test quotes
 - Hide alternate post colour unless the user asks for it. Default post colour follows fence colour. Place alternate post colour directly below the main colour picker in both run and section settings.
 - Show colour tiles as swatches with the 1-2 letter catalogue code overlaid; the full colour name belongs in hover/title text or selected-value summaries.
 - Treat the first workspace state as BOM-first: after job entry, the right pane opens on BOM instructions, while the sidebar shows the four prominent system buttons in this order: QSHS, VS, XPL, BAYG.
-- Use a compact message-icon affordance below the four system buttons for Describe Your Fence. It expands into the description input, uses `Apply`, and collapses back to the icon after a successful apply.
+- Use a compact message-icon affordance below the four system buttons for Describe Your Fence with `(Click to describe)` underneath. It expands into the description input, uses `Apply`, and disappears once the user selects a system or applies a description until the job is cleared.
 - Use a shared two-click confirm pattern for destructive actions: first click enters a danger confirm state, second click within about 3 seconds commits, and outside click cancels.
 - Treat "matches run defaults" indicators as signal, not noise: ignore structural geometry differences like corner/end-post conditions and only flag substantive setting overrides.
 - Matching run settings should be visible through the section/gate code indicator. If settings differ, list only the differing settings under `Settings that differ from run settings`; if matching, show `Settings match run settings`.
