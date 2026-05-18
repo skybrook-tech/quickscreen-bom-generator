@@ -1974,3 +1974,18 @@ Verification:
 
 Deferred:
 - CI wait, deploy preview screenshots, PR ready/merge, and branch cleanup were not performed in this commit/push-only workflow.
+
+### May 19, 2026 - Brief BN follow-up after sandbox drift
+
+Workflow / UX finding:
+- The BN component work was already present in the sandbox codebase, including icon-only settings controls, chevron disclosure rows, section alternate post colour palettes, human-readable gate hardware summaries, and the four grouped gate settings dropdowns.
+- The later sandbox page architecture had reintroduced two BN regressions: a persistent post-run Describe box below the job name, and `Original description` output in the BOM header plus CSV export.
+
+Changes applied:
+- Removed the post-run `DescribeFenceBox` from `CalculatorV3Page`, leaving the Describe affordance only in the empty system-choice state where `RunListV3` shows the message icon and `(Click to describe)` label.
+- Removed the `Original description` row from the page-level CSV export and removed the original-description paragraph from the BOM header display.
+- Kept `payload.job.description` unchanged so the original natural-language text remains stored internally for reload/parser workflows.
+
+Verification:
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.

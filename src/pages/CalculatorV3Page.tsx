@@ -12,7 +12,6 @@ import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
-import { DescribeFenceBox } from "../components/calculator/DescribeFenceBox";
 import { JobNameEditor } from "../components/calculator/JobNameEditor";
 import { GatePositionModal } from "../components/calculator/GatePositionModal";
 import { ConfirmButton } from "../components/shared/ConfirmButton";
@@ -1133,17 +1132,6 @@ function CalculatorV3Content() {
       "Line Total": string;
     };
     const rows: CsvRow[] = [];
-    if (payload?.job?.description) {
-      rows.push({
-        SKU: "",
-        Description: `Original description: ${payload.job.description}`,
-        Category: "job",
-        Unit: "",
-        Qty: "",
-        "Unit Price": "",
-        "Line Total": "",
-      });
-    }
     rows.push(...bomResultForTabs.allItems.map((line) => ({
       SKU: line.sku,
       Description: line.description,
@@ -1400,14 +1388,6 @@ function CalculatorV3Content() {
                         />
                       </div>
                     </div>
-                    {payload?.runs.length ? (
-                      <DescribeFenceBox
-                        title="Describe your fence"
-                        compact
-                        initialDescription={payload?.job?.description ?? ""}
-                        onApply={handleApplyDescription}
-                      />
-                    ) : null}
                   </section>
                   {payload && (
                     <>
@@ -1618,11 +1598,6 @@ function CalculatorV3Content() {
                       {summaryText && (
                         <p className="mt-2 max-w-3xl text-sm font-semibold text-brand-text">
                           {summaryText}
-                        </p>
-                      )}
-                      {payload?.job?.description && (
-                        <p className="mt-1 max-w-3xl text-xs font-semibold text-brand-muted">
-                          Original description: {payload.job.description}
                         </p>
                       )}
                     </div>

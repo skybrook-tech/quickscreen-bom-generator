@@ -114,6 +114,8 @@ Latest skill sync pass: the BI sidebar conventions were added to the repo skill 
 
 Latest Google Maps plumbing pass: `codex/google-maps-plumbing` adds the `@googlemaps/js-api-loader` dependency, env examples, a lazy singleton Maps JavaScript API loader with geometry library support, a `useGoogleMaps` hook, setup documentation, and a focused missing-key unit test without touching canvas or calculator UI.
 
+Latest Brief BN follow-up: sandbox drift reintroduced the post-run Describe box and BOM original-description output; the Describe affordance now only appears in the empty system-choice state, and BOM display/CSV export no longer include the user's original free-text description while keeping it stored in job metadata.
+
 
 ---
 
