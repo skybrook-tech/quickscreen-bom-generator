@@ -35,6 +35,7 @@ Use this skill when improving how users configure, draw, review, and test quotes
 - Show colour tiles as swatches with the 1-2 letter catalogue code overlaid; the full colour name belongs in hover/title text or selected-value summaries.
 - Treat the first workspace state as BOM-first: after job entry, the right pane opens on BOM instructions, while the sidebar shows the four prominent system buttons in this order: QSHS, VS, XPL, BAYG.
 - Use a compact message-icon affordance below the four system buttons for Describe Your Fence with `(Click to describe)` underneath. It expands into the description input, uses `Apply`, and disappears once the user selects a system or applies a description until the job is cleared.
+- Keep the primary Map/BOM view switcher in the top header as a segmented control. BOM actions (`Generate BOM`, `Clear BOM`, `Print BOM`, `Include map`, `Export CSV`, and shortcuts) live beside it only while BOM is active; they should not be repeated inside the BOM panel body.
 - Use a shared two-click confirm pattern for destructive actions: first click enters a danger confirm state, second click within about 3 seconds commits, and outside click cancels.
 - Treat "matches run defaults" indicators as signal, not noise: ignore structural geometry differences like corner/end-post conditions and only flag substantive setting overrides.
 - Matching run settings should be visible through the section/gate code indicator. If settings differ, list only the differing settings under `Settings that differ from run settings`; if matching, show `Settings match run settings`.
@@ -49,7 +50,7 @@ Use this skill when improving how users configure, draw, review, and test quotes
 
 - Drawing geometry is the source of layout truth.
 - Exact typed measurements are the source of dimension truth.
-- Use persistent Map / Plan tabs for the right pane. The two tabs are views into the same calculator state; neither tab owns separate layout data, and switching views must not remount or lose the drawing.
+- Use persistent Map/BOM tabs for the right pane. The two tabs are views into the same calculator state; neither tab owns separate layout data, and switching views must not remount or lose the drawing.
 - Keep connected segments connected when editing lengths.
 - Endpoint drag should pivot around the opposite end of the section: the dragged post moves freely, the far end stays planted, and adjacent sections deform only when they share that dragged post.
 - Show the active endpoint clearly.

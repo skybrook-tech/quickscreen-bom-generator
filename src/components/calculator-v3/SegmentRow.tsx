@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import { ChevronUp, Plus, SlidersHorizontal, X } from "lucide-react";
+import { ChevronUp, Plus, Settings, X } from "lucide-react";
 import { ConfirmButton } from "../shared/ConfirmButton";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
@@ -623,7 +623,7 @@ export function SegmentRow({
                   aria-label={open ? (gate ? "Collapse gate settings" : "Collapse section settings") : (gate ? "Expand gate settings" : "Expand section settings")}
                   title={open ? "Save settings and collapse" : (gate ? "Open gate settings" : "Open section settings")}
                 >
-                  {open ? <ChevronUp size={16} /> : <SlidersHorizontal size={16} />}
+                  {open ? <ChevronUp size={16} /> : <Settings size={16} />}
                 </button>
               </div>
               <div className="flex justify-end">

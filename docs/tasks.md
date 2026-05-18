@@ -114,6 +114,8 @@ Latest skill sync pass: the BI sidebar conventions were added to the repo skill 
 
 Latest Google Maps plumbing pass: `codex/google-maps-plumbing` adds the `@googlemaps/js-api-loader` dependency, env examples, a lazy singleton Maps JavaScript API loader with geometry library support, a `useGoogleMaps` hook, setup documentation, and a focused missing-key unit test without touching canvas or calculator UI.
 
+Latest Brief BN v2 pass: the sandbox BN work now completes the top-bar reorganisation by moving Map/BOM tabs into the app header as a segmented control, moving BOM actions beside them only while BOM is active, removing the duplicate in-panel action row, and preserving the icon-only settings/Describe/gate-settings conventions in the repo skill mirrors.
+
 
 ---
 

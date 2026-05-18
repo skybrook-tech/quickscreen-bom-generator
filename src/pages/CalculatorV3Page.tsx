@@ -12,7 +12,6 @@ import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
-import { DescribeFenceBox } from "../components/calculator/DescribeFenceBox";
 import { JobNameEditor } from "../components/calculator/JobNameEditor";
 import { GatePositionModal } from "../components/calculator/GatePositionModal";
 import { ConfirmButton } from "../components/shared/ConfirmButton";
@@ -401,17 +400,6 @@ function CalculatorV3Content() {
     setRightPaneView(view);
     if (view !== "map") setMapExpanded(false);
   }, []);
-
-  const handleExpandMap = useCallback(() => {
-    if (!payload) {
-      dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
-      dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "draw" });
-    }
-    setIntroDismissed(true);
-    setRightPaneView("map");
-    setMapExpanded(true);
-    if (mobileLayout) setMobileTab("map");
-  }, [dispatch, mobileLayout, payload]);
 
   function handleResizeStart() {
     let latestWidth = runPaneWidth;
@@ -1133,17 +1121,6 @@ function CalculatorV3Content() {
       "Line Total": string;
     };
     const rows: CsvRow[] = [];
-    if (payload?.job?.description) {
-      rows.push({
-        SKU: "",
-        Description: `Original description: ${payload.job.description}`,
-        Category: "job",
-        Unit: "",
-        Qty: "",
-        "Unit Price": "",
-        "Line Total": "",
-      });
-    }
     rows.push(...bomResultForTabs.allItems.map((line) => ({
       SKU: line.sku,
       Description: line.description,
@@ -1328,9 +1305,78 @@ function CalculatorV3Content() {
     ? payload?.runs.find((run) => run.runId === gatePositionTarget.runId)
     : undefined;
   const gateTargetRunLength = gateTargetRun ? runLengthMm(gateTargetRun) : 0;
+  const headerActions = showIntro ? undefined : (
+    <div className="flex w-full flex-wrap items-center justify-end gap-2">
+      {rightPaneView === "bom" && (
+        <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
+          <button
+            type="button"
+            onClick={handleGenerateBOM}
+            disabled={bomMutation.isPending || hasBlockingErrors || noSegments}
+            title="Generate BOM (Ctrl+Enter)"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-brand-primary px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {bomMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            Generate BOM
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setActiveBomSummary(null);
+              dispatch({ type: "CLEAR_BOM_RESULT" });
+            }}
+            disabled={!bomResultForTabs}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted transition-colors hover:border-brand-danger/50 hover:text-brand-danger hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <FileX2 size={16} />
+            Clear BOM
+          </button>
+          <button
+            type="button"
+            onClick={handlePrintBom}
+            disabled={!bomResultForTabs}
+            title="Print BOM"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <Printer size={16} />
+            Print BOM
+          </button>
+          <label className="inline-flex items-center gap-1.5 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted">
+            <input
+              type="checkbox"
+              checked={includeMapInBomPrint}
+              onChange={(event) => setIncludeMapInBomPrint(event.target.checked)}
+              className="accent-brand-primary"
+            />
+            Include map
+          </label>
+          <button
+            type="button"
+            onClick={handleExportCsv}
+            disabled={!bomResultForTabs}
+            title="Export CSV (Ctrl+E)"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <Download size={16} />
+            Export CSV
+          </button>
+          <button
+            type="button"
+            onClick={() => setShortcutsOpen(true)}
+            title="Keyboard shortcuts (?)"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
+          >
+            <Keyboard size={16} />
+            Shortcuts
+          </button>
+        </div>
+      )}
+      <RightPaneTabs activeView={rightPaneView} onChange={handleRightPaneChange} />
+    </div>
+  );
 
   return (
-    <AppShell>
+    <AppShell headerActions={headerActions}>
       {gatePositionTarget && gateTargetRunLength > 0 && (
         <GatePositionModal
           gateLabel={gatePositionTarget.kind.replace("_", " ")}
@@ -1400,14 +1446,6 @@ function CalculatorV3Content() {
                         />
                       </div>
                     </div>
-                    {payload?.runs.length ? (
-                      <DescribeFenceBox
-                        title="Describe your fence"
-                        compact
-                        initialDescription={payload?.job?.description ?? ""}
-                        onApply={handleApplyDescription}
-                      />
-                    ) : null}
                   </section>
                   {payload && (
                     <>
@@ -1566,13 +1604,6 @@ function CalculatorV3Content() {
             >
               <div className={`${mapExpanded ? "mx-0 max-w-none space-y-0" : "w-full space-y-4 sm:space-y-5"}`}>
                 <section className={`overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"}`}>
-                  {!mapExpanded && (
-                    <RightPaneTabs
-                      activeView={rightPaneView}
-                      onChange={handleRightPaneChange}
-                      onExpandMap={handleExpandMap}
-                    />
-                  )}
                   <div className={`${rightPaneView === "map" ? "block" : "hidden"} ${mapExpanded ? "p-2" : "p-3 sm:p-4"}`}>
                     <div
                       data-print-map-panel
@@ -1620,11 +1651,6 @@ function CalculatorV3Content() {
                           {summaryText}
                         </p>
                       )}
-                      {payload?.job?.description && (
-                        <p className="mt-1 max-w-3xl text-xs font-semibold text-brand-muted">
-                          Original description: {payload.job.description}
-                        </p>
-                      )}
                     </div>
                     <div className="text-left sm:text-right" data-print-hide>
                       <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
@@ -1635,70 +1661,6 @@ function CalculatorV3Content() {
                       </p>
                     </div>
                   </div>
-                  <div className="mb-4 flex flex-wrap items-center gap-2" data-print-hide>
-                    <button
-                      type="button"
-                      onClick={handleGenerateBOM}
-                      disabled={bomMutation.isPending || hasBlockingErrors || noSegments}
-                      title="Generate BOM (Ctrl+Enter)"
-                      className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      {bomMutation.isPending && (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      )}
-                      Generate BOM
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActiveBomSummary(null);
-                        dispatch({ type: "CLEAR_BOM_RESULT" });
-                      }}
-                      disabled={!bomResultForTabs}
-                      className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-danger/50 hover:text-brand-danger hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      <FileX2 size={16} />
-                      Clear BOM
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handlePrintBom}
-                      disabled={!bomResultForTabs}
-                      title="Export CSV (Ctrl+E)"
-                      className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      <Printer size={16} />
-                      Print BOM
-                    </button>
-                    <label className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted">
-                      <input
-                        type="checkbox"
-                        checked={includeMapInBomPrint}
-                        onChange={(event) => setIncludeMapInBomPrint(event.target.checked)}
-                        className="accent-brand-primary"
-                      />
-                      Include map
-                    </label>
-                    <button
-                      type="button"
-                      onClick={handleExportCsv}
-                      disabled={!bomResultForTabs}
-                      className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      <Download size={16} />
-                      Export CSV
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setShortcutsOpen(true)}
-                      title="Keyboard shortcuts (?)"
-                      className="inline-flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-                    >
-                      <Keyboard size={16} />
-                      Shortcuts
-                    </button>
-                  </div>
-
                   {bomMutation.isPending ? (
                     <div className="space-y-3" aria-label="Generating BOM">
                       {Array.from({ length: 7 }).map((_, index) => (
