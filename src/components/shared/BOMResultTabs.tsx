@@ -21,6 +21,7 @@ import { InstallVideoQR } from "../calculator-v3/InstallVideoQR";
 import type { InstallVideoKey } from "../../lib/installVideos";
 import { BomCutList } from "./BomCutList";
 import { NumberedBadge } from "./NumberedBadge";
+import { stripParentheticalDispatchCode } from "../../lib/displayText";
 
 interface BOMResultTabsProps {
   result: CalculatorBOMResult;
@@ -370,7 +371,7 @@ function ItemGroup({
           </td>
           <td className="py-2.5 px-3 text-sm text-brand-text">
             <div className="flex flex-wrap items-center gap-1.5">
-              <span>{item.description}</span>
+              <span>{stripParentheticalDispatchCode(item.description)}</span>
               {item.unitPrice <= 0 && (
                 <span className="rounded-full border border-brand-warning/40 bg-brand-warning/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-warning print:hidden">
                   Price not set

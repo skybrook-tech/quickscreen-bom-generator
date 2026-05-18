@@ -31,6 +31,7 @@ import {
 } from "../lib/gateOptionRules";
 import { hingeGapForSku, latchGapForSku } from "../lib/gateHardware";
 import { gateTypeLabel, validateGateWidth } from "../lib/gateConstraints";
+import { stripParentheticalDispatchCode } from "../lib/displayText";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
 import {
@@ -188,7 +189,7 @@ const COLOUR_NAMES: Record<string, string> = {
 
 function colourName(code: unknown) {
   const value = String(code ?? "B");
-  return COLOUR_NAMES[value] ? `${COLOUR_NAMES[value]} (${value})` : value;
+  return stripParentheticalDispatchCode(COLOUR_NAMES[value] ?? value);
 }
 
 function initialRunPaneWidth() {
