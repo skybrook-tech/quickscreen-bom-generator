@@ -63,6 +63,7 @@ There are multiple QuickScreen systems:
 - End Conditions UI is hidden in the sidebar. Termination data still exists and remains important for canvas and BOM logic.
 - BOM output should include a printable run/section summary before line items: run hero, run settings, post counts, section panel/post-spacing summary, overrides, and gate sub-items.
 - The Map/BOM switcher belongs in the top header as a segmented control. BOM actions live in that same top-bar area only while the BOM view is active, not inside the BOM panel body.
+- Print BOM output should put materials and totals first, then a `Run & Section Details` reference block, then the optional map at the bottom. Run settings in print use the sidebar labels: System Type, Color, Slat size, Gap size, Post mounting, Max post spacing, and Corners. Height stays section-level.
 
 ## Instructions
 

@@ -16,6 +16,12 @@ import { ConfirmButton } from "../shared/ConfirmButton";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 
+const MOUNTING_LABELS: Record<string, string> = {
+  in_ground: "Concreted in ground",
+  base_plate: "Base plated",
+  core_drill: "Core drilled",
+};
+
 interface Props {
   run: CanonicalRun;
   runIdx: number;
@@ -67,8 +73,8 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   const runLengthM = (calcTotalLength(run) / 1000).toFixed(2);
   const slatSize = Number(runVariables.slat_size_mm ?? 65);
   const slatGap = Number(runVariables.slat_gap_mm ?? 5);
-  const isBayg = run.productCode === "BAYG";
   const mounting = String(runVariables.mounting_method ?? runVariables.mounting_type ?? "in_ground").replace(/_/g, " ");
+  const isBayg = run.productCode === "BAYG";
 
   useEffect(
     () => () => {
@@ -141,9 +147,9 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
             <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
             <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
             <span>Gap size: <strong className="text-brand-text">{slatGap}mm</strong></span>
-            {!isBayg && <span>Post mounting: <strong className="capitalize text-brand-text">{mounting}</strong></span>}
-            {!isBayg && <span>Max post spacing: <strong className="text-brand-text">{jobMax}mm</strong></span>}
-            {!isBayg && <span>Corners: <strong className="text-brand-text">{run.corners?.length ?? 0}</strong></span>}
+            <span>Post mounting: <strong className="text-brand-text">{isBayg ? "Not required" : MOUNTING_LABELS[mounting] ?? mounting}</strong></span>
+            <span>Max post spacing: <strong className="text-brand-text">{jobMax}mm</strong></span>
+            <span>Corners: <strong className="text-brand-text">{run.corners?.length ?? 0}</strong></span>
           </span>
         </h3>
         <div

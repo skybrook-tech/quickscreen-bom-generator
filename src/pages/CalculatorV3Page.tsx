@@ -27,6 +27,15 @@ import {
   clearGateOpeningWidthMm,
   defaultGateBuildForMovement,
   defaultGateVariables,
+  gateMovementOrDefault,
+  optionLabel,
+  HINGE_OPTIONS,
+  LATCH_OPTIONS,
+  DROP_BOLT_OPTIONS,
+  GATE_STOP_OPTIONS,
+  SLIDING_TRACK_OPTIONS,
+  SLIDING_CATCH_OPTIONS,
+  SLIDING_GUIDE_OPTIONS,
 } from "../lib/gateOptionRules";
 import { hingeGapForSku, latchGapForSku } from "../lib/gateHardware";
 import { gateTypeLabel, validateGateWidth } from "../lib/gateConstraints";
@@ -189,6 +198,37 @@ const COLOUR_NAMES: Record<string, string> = {
 function colourName(code: unknown) {
   const value = String(code ?? "B");
   return stripParentheticalDispatchCode(COLOUR_NAMES[value] ?? value);
+}
+
+const MOUNTING_LABELS: Record<string, string> = {
+  in_ground: "Concreted in ground",
+  base_plate: "Base plated",
+  core_drill: "Core drilled",
+};
+
+function mountingLabel(value: unknown) {
+  const key = String(value ?? "in_ground");
+  return MOUNTING_LABELS[key] ?? key.replace(/_/g, " ");
+}
+
+function gateHardwareLabel(gate: CanonicalSegment) {
+  const vars = gate.variables ?? {};
+  const movement = gateMovementOrDefault(vars[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+  if (movement === "sliding") {
+    return [
+      optionLabel(SLIDING_TRACK_OPTIONS, vars[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST"),
+      optionLabel(SLIDING_GUIDE_OPTIONS, vars[GATE_SEGMENT_STUB_KEYS.slidingGuideType] ?? "XPSG-GUIDE"),
+      optionLabel(SLIDING_CATCH_OPTIONS, vars[GATE_SEGMENT_STUB_KEYS.slidingCatchType] ?? "XPSG-CATCH-U"),
+    ].join(" / ");
+  }
+  return [
+    optionLabel(HINGE_OPTIONS, vars[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B"),
+    optionLabel(LATCH_OPTIONS, vars[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA"),
+    optionLabel(DROP_BOLT_OPTIONS, vars[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? "none"),
+    optionLabel(GATE_STOP_OPTIONS, vars[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "none"),
+  ]
+    .filter((label) => label && !/^No /.test(label))
+    .join(" / ");
 }
 
 function initialRunPaneWidth() {
@@ -1090,10 +1130,12 @@ function CalculatorV3Content() {
   }
 
   function handlePrintBom() {
+    const previousRightPaneView = rightPaneView;
     const cleanupPrintMode = () => {
       document.body.removeAttribute("data-print-bom");
       document.body.removeAttribute("data-print-bom-map");
       window.removeEventListener("afterprint", cleanupPrintMode);
+      setRightPaneView(previousRightPaneView);
     };
     document.body.setAttribute("data-print-bom", "true");
     if (includeMapInBomPrint) {
@@ -1256,44 +1298,72 @@ function CalculatorV3Content() {
     const vars = { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
     const gates = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
     const sections = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
-    const lengthMm = run.segments.reduce((sum, segment) => sum + Number(segment.segmentWidthMm ?? 0), 0);
+    const lengthMm = run.segments.reduce((sum, segment) => {
+      const qty =
+        run.productCode === "BAYG" && segment.segmentKind !== "gate_opening"
+          ? Math.max(1, Math.round(Number(segment.variables?.panel_quantity ?? 1)))
+          : 1;
+      return sum + Number(segment.segmentWidthMm ?? 0) * qty;
+    }, 0);
     const maxPanelWidth = Number(vars.max_panel_width_mm ?? 2600);
+    const runSettings = [
+      `System Type: ${systemLabel(run.productCode)}`,
+      `Color: ${colourName(vars.colour_code)}`,
+      `Slat size: ${Number(vars.slat_size_mm ?? 65)}mm`,
+      `Gap size: ${Number(vars.slat_gap_mm ?? 9)}mm`,
+      `Post mounting: ${run.productCode === "BAYG" ? "Not required" : mountingLabel(vars.mounting_method ?? vars.mounting_type)}`,
+      `Max post spacing: ${maxPanelWidth}mm`,
+      `Corners: ${run.corners?.length ?? 0}`,
+    ];
     const sectionRows = sections.map((section, sectionIndex) => {
       const sectionVars = section.variables ?? {};
       const width = Number(section.segmentWidthMm ?? 0);
       const panelCount = width > 0 ? Math.max(1, Math.ceil(width / Number(sectionVars.max_panel_width_mm ?? maxPanelWidth))) : 0;
       const postSpacing = panelCount > 0 ? Math.round(width / panelCount) : 0;
       const overrides = [
-        ["Colour", sectionVars.colour_code, vars.colour_code],
-        ["Slat", sectionVars.slat_size_mm, vars.slat_size_mm],
-        ["Gap", sectionVars.slat_gap_mm, vars.slat_gap_mm],
+        ["System Type", sectionVars.product_code, run.productCode],
+        ["Color", sectionVars.colour_code, vars.colour_code],
+        ["Slat size", sectionVars.slat_size_mm, vars.slat_size_mm],
+        ["Gap size", sectionVars.slat_gap_mm, vars.slat_gap_mm],
+        ["Post mounting", sectionVars.mounting_method ?? sectionVars.mounting_type, vars.mounting_method ?? vars.mounting_type],
+        ["Max post spacing", sectionVars.max_panel_width_mm, vars.max_panel_width_mm],
       ]
         .filter(([, value]) => value !== undefined && value !== null && value !== "")
         .filter(([, value, master]) => String(value) !== String(master ?? ""))
-        .map(([label, value]) => `${label}: ${value}${label === "Slat" || label === "Gap" || label === "Height" ? "mm" : ""}`);
-      const linkedGates = gates.filter((gate) => gate.variables?.parent_section_id === section.segmentId);
+        .map(([label, value]) => {
+          if (label === "Color") return `${label}: ${colourName(value)}`;
+          if (label === "Post mounting") return `${label}: ${mountingLabel(value)}`;
+          if (label === "Slat size" || label === "Gap size" || label === "Max post spacing") {
+            return `${label}: ${value}mm`;
+          }
+          if (label === "System Type") return `${label}: ${systemLabel(String(value))}`;
+          return `${label}: ${value}`;
+        });
+      const linkedGates = gates.filter((gate) => {
+        const parentSectionId = gate.variables?.parent_section_id;
+        return parentSectionId === section.segmentId || (!parentSectionId && sectionIndex === 0);
+      });
       return {
-        label: `Section ${sectionIndex + 1} - ${(width / 1000).toFixed(2)}m x ${Number(section.targetHeightMm ?? vars.target_height_mm ?? 1800)}mm - ${panelCount} panel${panelCount === 1 ? "" : "s"} - post spacing ${postSpacing}mm`,
+        label: `Section ${sectionIndex + 1} \u2014 ${(width / 1000).toFixed(2)}m \u00d7 ${Number(section.targetHeightMm ?? vars.target_height_mm ?? 1800)}mm`,
+        panelLine: `${panelCount} panel${panelCount === 1 ? "" : "s"} \u2014 post spacing ${postSpacing}mm`,
         overrides,
         gates: linkedGates.map((gate) => {
-          const movement = String(gate.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement] ?? "single_swing");
-          const hardware = String(gate.variables?.[GATE_SEGMENT_STUB_KEYS.hardwareKitSku] ?? gate.variables?.[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "default hardware");
-          return `${movement.replace("_", " ")} - ${Number(gate.segmentWidthMm ?? 0)}mm - ${hardware}`;
+          const gateIndex = gates.findIndex((candidate) => candidate.segmentId === gate.segmentId);
+          const movement = gateMovementOrDefault(gate.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+          const movementLabel =
+            movement === "double_swing"
+              ? "Double swing"
+              : movement === "sliding"
+                ? "Sliding"
+                : "Single swing";
+          return `Gate ${gateIndex + 1} \u2014 ${movementLabel} \u2014 ${Number(gate.segmentWidthMm ?? 0)}mm \u2014 ${gateHardwareLabel(gate) || "default hardware"}`;
         }),
       };
     });
     return {
       hero: `Run ${runIndex + 1} - ${(lengthMm / 1000).toFixed(2)}m - ${systemLabel(run.productCode)} - ${gateSummaryForRun(run) || "no gates"}`,
-      settings: [
-        `Slat size: ${Number(vars.slat_size_mm ?? 65)}mm`,
-        `Gap: ${Number(vars.slat_gap_mm ?? 9)}mm`,
-        `Colour: ${colourName(vars.colour_code)}`,
-        `Mounting: ${String(vars.mounting_method ?? vars.mounting_type ?? "in_ground").replace(/_/g, " ")}`,
-        `Termination L: ${run.leftBoundary?.type ?? "Post"}`,
-        `Termination R: ${run.rightBoundary?.type ?? "Post"}`,
-        `Corners: ${run.corners?.length ?? 0}`,
-      ],
-      posts: `Posts: ${sections.length + 1} standard + ${run.corners?.length ?? 0} corner + derived end posts`,
+      printHeading: `Run ${runIndex + 1}`,
+      settings: runSettings,
       sections: sectionRows,
     };
   }) ?? [];
@@ -1603,8 +1673,14 @@ function CalculatorV3Content() {
               className={`min-h-0 min-w-0 flex-1 overflow-y-auto ${mapExpanded ? "p-0" : "p-3 pb-24 sm:p-5 lg:p-8"} ${mobileLayout && mobileTab === "run" ? "hidden" : ""
                 }`}
             >
-              <div className={`${mapExpanded ? "mx-0 max-w-none space-y-0" : "w-full space-y-4 sm:space-y-5"}`}>
-                <section className={`overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"}`}>
+              <div
+                data-print-right-pane
+                className={`${mapExpanded ? "mx-0 max-w-none space-y-0" : "w-full space-y-4 sm:space-y-5"}`}
+              >
+                <section
+                  data-print-map-section
+                  className={`overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"}`}
+                >
                   <div className={`${rightPaneView === "map" ? "block" : "hidden"} ${mapExpanded ? "p-2" : "p-3 sm:p-4"}`}>
                     <div
                       data-print-map-panel
@@ -1679,7 +1755,7 @@ function CalculatorV3Content() {
                   ) : bomResultForTabs && !hasBlockingErrors ? (
                     <>
                       {bomRunDetails.length > 0 && (
-                        <div className="mb-5 space-y-3 rounded-2xl border border-brand-border/70 bg-brand-bg/45 p-3 print:border-slate-300 print:bg-white">
+                        <div className="mb-5 space-y-3 rounded-2xl border border-brand-border/70 bg-brand-bg/45 p-3 print:hidden">
                           {bomRunDetails.map((runDetail) => (
                             <section key={runDetail.hero} className="space-y-2">
                               <p className="text-sm font-black text-brand-text print:text-black">
@@ -1689,12 +1765,12 @@ function CalculatorV3Content() {
                                 {runDetail.settings.map((setting) => (
                                   <span key={setting}>{setting}</span>
                                 ))}
-                                <span className="font-bold text-brand-text print:text-black">{runDetail.posts}</span>
                               </div>
                               <div className="space-y-1 pl-3 text-xs font-semibold text-brand-muted print:text-slate-700">
                                 {runDetail.sections.map((section) => (
                                   <div key={section.label}>
                                     <p className="font-bold text-brand-text print:text-black">{section.label}</p>
+                                    <p>{section.panelLine}</p>
                                     {section.overrides.length > 0 && (
                                       <p>overrides: {section.overrides.join(", ")}</p>
                                     )}
@@ -1728,6 +1804,42 @@ function CalculatorV3Content() {
                         onSwitchEconomyToStandard={handleSwitchEconomyToStandard}
                         onActiveSummaryChange={handleActiveBomSummaryChange}
                       />
+                      {bomRunDetails.length > 0 && (
+                        <div
+                          data-print-run-details
+                          className="mt-8 hidden space-y-4 border-t border-slate-300 pt-5 print:block"
+                        >
+                          <h2 className="text-base font-black uppercase tracking-wide text-black">
+                            Run &amp; Section Details
+                          </h2>
+                          {bomRunDetails.map((runDetail) => (
+                            <section key={runDetail.hero} className="break-inside-avoid space-y-2">
+                              <h3 className="text-sm font-black text-black">{runDetail.printHeading}</h3>
+                              <div className="grid gap-x-6 gap-y-1 text-xs font-semibold text-slate-700 sm:grid-cols-2">
+                                {runDetail.settings.map((setting) => (
+                                  <span key={setting}>{setting}</span>
+                                ))}
+                              </div>
+                              <div className="space-y-2 pl-3 text-xs font-semibold text-slate-700">
+                                {runDetail.sections.map((section) => (
+                                  <div key={section.label} className="break-inside-avoid">
+                                    <p className="font-bold text-black">{section.label}</p>
+                                    <p>{section.panelLine}</p>
+                                    {section.overrides.length > 0 && (
+                                      <p>Overrides: {section.overrides.join(", ")}</p>
+                                    )}
+                                    {section.gates.map((gate) => (
+                                      <p key={gate} className="pl-3 text-slate-700">
+                                        {gate}
+                                      </p>
+                                    ))}
+                                  </div>
+                                ))}
+                              </div>
+                            </section>
+                          ))}
+                        </div>
+                      )}
                       <div data-print-hide>
                         <ExtraItemsPanel
                           items={extraItems}

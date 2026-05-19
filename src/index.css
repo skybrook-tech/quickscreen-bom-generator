@@ -150,12 +150,32 @@ body {
     width: 100% !important;
   }
 
+  body[data-print-bom="true"] [data-print-right-pane] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+  }
+
   body[data-print-bom="true"] [data-print-bom-section] {
     display: block !important;
+    order: 1 !important;
     border: 0 !important;
     box-shadow: none !important;
     padding: 0 !important;
     background: white !important;
+  }
+
+  body[data-print-bom="true"] [data-print-map-section] {
+    display: none !important;
+    order: 3 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    background: white !important;
+  }
+
+  body[data-print-bom="true"][data-print-bom-map="true"] [data-print-map-section] {
+    display: block !important;
+    margin-top: 10mm !important;
   }
 
   body[data-print-bom="true"] [data-print-map-panel] {

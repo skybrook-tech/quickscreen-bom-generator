@@ -1993,6 +1993,25 @@ Changes applied:
 Verification:
 - `npm run build` passed with the existing large chunk warning only.
 
+### May 19, 2026 - Brief BO punch-list and Print BOM redesign
+
+Workflow / UX finding:
+- QA on the BJ/BK/BL work found that the app still repeated run-level height/length in the wrong places, exposed colour dispatch suffixes like `(B)` in BOM-facing copy, and printed installer reference details above the materials list.
+- The match indicator pattern was already present on section/gate code chips, but BO confirms the intended scope: section and gate code chips are the green visual signal when style settings match the run; gate matching ignores gate-only choices like movement, direction, hardware, and height.
+
+Changes applied:
+- Trimmed run card subheadings to the accepted run-default summary: System Type, Color, Slat size, Gap size, Post mounting, Max post spacing, and Corners. Height stays only in section settings and the main run title keeps the run length.
+- Changed the BOM display colour helper so internal colour-code suffixes are stripped from the BOM hero and run/section details without touching underlying dispatch data.
+- Added a BOM table display sanitizer for parenthetical uppercase dispatch codes in descriptions so print and screen line-item descriptions do not show supplier shorthand like `(B)`.
+- Reworked Print BOM ordering so materials and totals print first, followed by a `Run & Section Details` reference block with run settings, section length x height, panel count/post spacing, overrides, and gate sub-items. Optional map printing is forced to the bottom by print CSS ordering.
+- Synced the repo skill mirrors so future agents know the print BOM convention is materials first, details second, map last.
+
+Verification:
+- `npm run build` passed.
+
+Deferred:
+- Local browser screenshot and print-preview capture were not performed in this tool session. PR CI/deploy-preview verification still needs to happen after pushing.
+
 ### May 18, 2026 - Brief BO residual BJ/BK/BL punch-list
 
 Workflow / UX finding:

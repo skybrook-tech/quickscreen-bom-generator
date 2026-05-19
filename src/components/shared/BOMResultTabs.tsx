@@ -45,6 +45,7 @@ const formatMoney = (value: number) =>
     maximumFractionDigits: 2,
   }).format(value);
 
+
 function nextBreakHint(item: BOMLineItem) {
   if (item.sku.startsWith("XP-6500-E65") && item.unit === "pack") return null;
   const breaks = (localPriceBreaks as Record<string, readonly number[] | undefined>)[
