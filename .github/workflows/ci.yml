@@ -44,19 +44,19 @@ jobs:
       - name: Start Supabase
         run: supabase start
 
+      - name: Export Supabase keys
+        run: |
+          STATUS=$(supabase status --output json)
+          echo "VITE_SUPABASE_URL=http://localhost:54321"           >> $GITHUB_ENV
+          echo "SUPABASE_URL=http://localhost:54321"                >> $GITHUB_ENV
+          echo "VITE_SUPABASE_ANON_KEY=$(echo "$STATUS" | jq -r '.ANON_KEY')"          >> $GITHUB_ENV
+          echo "SUPABASE_SERVICE_ROLE_KEY=$(echo "$STATUS" | jq -r '.SERVICE_ROLE_KEY')" >> $GITHUB_ENV
+
       - name: Reset DB + seed
         run: npm run db:reset
-        env:
-          # These are the well-known fixed keys for every local Supabase instance.
-          # They are not secrets — the local stack is ephemeral and never exposed.
-          VITE_SUPABASE_URL: http://localhost:54321
-          SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hj04zWl196z2-SBc0
 
       - name: Serve edge functions
         run: supabase functions serve --no-verify-jwt &
-        # Give the edge runtime a moment to start before running tests
-        env:
-          SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hj04zWl196z2-SBc0
 
       - name: Wait for edge runtime
         run: sleep 5
@@ -64,8 +64,6 @@ jobs:
       - name: Run Deno tests
         run: npm run test:integration
         env:
-          SUPABASE_URL: http://localhost:54321
-          SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hj04zWl196z2-SBc0
           TEST_USER_EMAIL: test@glass-outlet.com
           TEST_USER_PASSWORD: "123456"
 
