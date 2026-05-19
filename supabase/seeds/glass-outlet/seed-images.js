@@ -13,7 +13,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-dotenv.config({ path: `.env.${process.env.NODE_ENV || "local"}` });
+dotenv.config({ path: `.env.${process.env.NODE_ENV || "local"}`, override: true });
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
