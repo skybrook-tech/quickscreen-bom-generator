@@ -21,7 +21,7 @@
     "test": "vitest run --environment jsdom src/hooks/useGoogleMaps.test.tsx",
     "test:e2e": "npm run cy:run",
     "test:unit": "npx deno test --allow-read --allow-env supabase/functions/bom-calculator/index_test.ts",
-    "test:integration": "npx deno test --allow-net --allow-env --allow-read --env-file=.env.local supabase/functions/bom-calculator/integration_tests.ts",
+    "test:integration": "scripts/test-integration.sh",
     "test:describe-fence": "node scripts/run-describe-fence-parser-tests.mjs",
     "seed:auth": "node supabase/seeds/seed-auth.js",
     "seed:glass-outlet": "node supabase/seeds/glass-outlet/seed-images.js",
