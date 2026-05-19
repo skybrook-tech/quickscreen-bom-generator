@@ -213,9 +213,12 @@ export function SegmentRow({
     gateVars[GATE_SEGMENT_STUB_KEYS.gateBuild] ??
     (productCode === "VS" ? "qsg_hinged_vertical" : "qsg_hinged_horizontal"),
   );
-  const expectedGateBuild = productCode === "VS"
-    ? gateBuild.includes("vertical")
-    : !gateBuild.includes("vertical");
+  const expectedGateBuild =
+    gateBuild ===
+    defaultGateBuildForMovement(
+      gateMovementOrDefault(gateVars[GATE_SEGMENT_STUB_KEYS.gateMovement]),
+      runProductCode === "VS",
+    );
   const compactLabel =
     displayLabel?.replace(/\s+/g, "") ??
     `R${runIdx + 1}${gate ? "G" : "S"}${segIdx + 1}`;
@@ -581,16 +584,17 @@ export function SegmentRow({
                 <button
                   type="button"
                   onClick={resetToMaster}
-                  title="Click to restore to run settings"
-                  className={`rounded-full px-2 py-1 text-center shadow-sm transition-colors ${matchesMaster
-                    ? "bg-brand-success text-white"
-                    : "bg-brand-warning/15 text-black hover:bg-brand-primary hover:text-white"
+                  title={matchesMaster ? "Settings match run settings" : "Click to restore to run settings"}
+                  aria-label={matchesMaster ? `${compactLabel} settings match run settings` : `${compactLabel} differs from run settings. Click to restore.`}
+                  className={`rounded-full px-2 py-1 text-center shadow-sm ring-1 ring-inset transition-colors ${matchesMaster
+                    ? "bg-brand-success text-white ring-brand-success"
+                    : "bg-brand-warning/15 text-black ring-brand-warning/30 hover:bg-brand-primary hover:text-white"
                     }`}
                 >
                   <span
                     onMouseEnter={() => setMapHover(compactLabel)}
                     onMouseLeave={() => setMapHover(null)}
-                    title="Click to restore to run settings"
+                    title={matchesMaster ? "Settings match run settings" : "Click to restore to run settings"}
                     className="text-base font-black leading-none tracking-normal"
                   >
                     {compactLabel}

@@ -1992,4 +1992,20 @@ Changes applied:
 
 Verification:
 - `npm run build` passed with the existing large chunk warning only.
+
+### May 18, 2026 - Brief BO residual BJ/BK/BL punch-list
+
+Workflow / UX finding:
+- The current sandbox already had several BO entry-flow fixes in place, but run subheadings still repeated length and height, and BOM colour display still exposed internal catalogue dispatch codes such as `(B)`.
+- Gate and section match chips were present; they needed clearer visible styling and accessibility copy so the green match state is unmistakable during QA.
+
+Changes applied:
+- Removed length and height from the run subheading while keeping the main run title length (`Run N — X.XXm`) and the section-level height editor intact.
+- Adjusted the run subheading to focus on run defaults: system type, colour, slat size, gap size, post mounting, max post spacing, and corners.
+- Added a display-only text helper that strips parenthetical uppercase dispatch codes from BOM hero summaries, BOM table descriptions, CSV/copy export text, and PDF descriptions without changing the underlying BOM data.
+- Tightened the gate green-match comparison to use the expected run-derived gate build plus colour, slat size, and gap size, while continuing to ignore height, movement, direction, hinge side, and hardware choices.
+- Confirmed the collapsed Describe control is icon-based and the Add Run button is hidden until the first run exists on the current sandbox branch.
+
+Verification:
+- `npm run build` passed.
 - Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.

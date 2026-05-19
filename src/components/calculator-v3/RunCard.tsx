@@ -11,10 +11,8 @@ import { Button } from "../shared/Button";
 import { SegmentRow } from "./SegmentRow";
 import { colourName } from "./ColourPalette";
 import { RunSettingsEditor } from "./RunSettingsEditor";
-import { calcRunStats } from "../../lib/runStats";
 import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
 import { ConfirmButton } from "../shared/ConfirmButton";
-import { SEGMENT_TERMINATION_KEYS } from "../../lib/segmentTermination";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 
@@ -67,25 +65,10 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   );
   const firstSegment = firstFenceSegment(run);
   const runLengthM = (calcTotalLength(run) / 1000).toFixed(2);
-  const runStats = calcRunStats(run, jobMax);
-  const panelSummary = state.bomResult ? `${runStats.panels}P` : "\u2014 P";
-  const gateCount = run.segments.filter((segment) => segment.segmentKind === "gate_opening").length;
-  const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
   const slatSize = Number(runVariables.slat_size_mm ?? 65);
   const slatGap = Number(runVariables.slat_gap_mm ?? 5);
   const isBayg = run.productCode === "BAYG";
-  const fenceSections = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
-  const endPostCount = (() => {
-    if (isBayg || fenceSections.length === 0) return 0;
-    const first = fenceSections[0];
-    const last = fenceSections[fenceSections.length - 1];
-    const leftKind = String(first.variables?.[SEGMENT_TERMINATION_KEYS.leftKind] ?? "");
-    const rightKind = String(last.variables?.[SEGMENT_TERMINATION_KEYS.rightKind] ?? "");
-    return (
-      (leftKind === "" || leftKind === "system_post" ? 1 : 0) +
-      (rightKind === "" || rightKind === "system_post" ? 1 : 0)
-    );
-  })();
+  const mounting = String(runVariables.mounting_method ?? runVariables.mounting_type ?? "in_ground").replace(/_/g, " ");
 
   useEffect(
     () => () => {
@@ -155,15 +138,12 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           </span>
           <span className="flex flex-wrap gap-x-2.5 gap-y-1 text-sm text-brand-muted">
             <span>System Type: <strong className="text-brand-text">{run.productCode}</strong></span>
-            <span>{isBayg ? "Total panel width" : "Length"}: <strong className="text-brand-text">{runLengthM}m</strong></span>
-            {gateCount > 0 && <span>Gates: <strong className="font-mono tabular-nums text-brand-text">{gateCount}G</strong></span>}
-            <span>Panels: <strong className="font-mono tabular-nums text-brand-text">{panelSummary}</strong></span>
-            <span>Height: <strong className="text-brand-text">{runHeight}mm</strong></span>
             <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
             <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
             <span>Gap size: <strong className="text-brand-text">{slatGap}mm</strong></span>
-            {!isBayg && <span>Corner posts: <strong className="text-brand-text">{run.corners?.length ?? 0}</strong></span>}
-            {!isBayg && <span>End posts: <strong className="text-brand-text">{endPostCount}</strong></span>}
+            {!isBayg && <span>Post mounting: <strong className="capitalize text-brand-text">{mounting}</strong></span>}
+            {!isBayg && <span>Max post spacing: <strong className="text-brand-text">{jobMax}mm</strong></span>}
+            {!isBayg && <span>Corners: <strong className="text-brand-text">{run.corners?.length ?? 0}</strong></span>}
           </span>
         </h3>
         <div

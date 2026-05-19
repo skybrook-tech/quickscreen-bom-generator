@@ -6,6 +6,7 @@ import {
   StyleSheet,
 } from "@react-pdf/renderer";
 import type { BOMLineItem } from "../../types/bom.types";
+import { stripParentheticalDispatchCode } from "../../lib/displayText";
 
 const s = StyleSheet.create({
   page: { padding: 40, fontFamily: "Helvetica", fontSize: 9, color: "#1a1a2e" },
@@ -173,7 +174,7 @@ export function BomV3PDFTemplate({
             {catItems.map((item) => (
               <View key={`${item.sku}-${item.category}`} style={s.tableRow}>
                 <Text style={s.colCode}>{item.sku}</Text>
-                <Text style={s.colDesc}>{item.name || item.description}</Text>
+                <Text style={s.colDesc}>{stripParentheticalDispatchCode(item.name || item.description)}</Text>
                 <Text style={s.colUnit}>{item.unit}</Text>
                 <Text style={s.colQty}>{item.quantity}</Text>
                 <Text style={s.colPrice}>
