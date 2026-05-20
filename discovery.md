@@ -2028,3 +2028,25 @@ Changes applied:
 Verification:
 - `npm run build` passed.
 - Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+### May 19, 2026 - Brief BN completion re-run
+
+Workflow / UX finding:
+- The prior BN entry overstated completion: the active calculator still showed the free-text original description in the BOM header/CSV, kept a post-selection Describe box in the sidebar, and left Map/BOM tabs plus BOM actions in the content pane.
+- Local Supabase was not available in this environment, so the focused Cypress smoke test seeded a local auth session in browser storage and exercised the UI against the running Vite app.
+
+Changes applied:
+- Removed the lingering Describe box after a run exists; the initial message icon plus `(Click to describe)` now only appears before a system or description is applied.
+- Removed `Original description` from BOM display and CSV export while keeping `payload.job.description` available internally.
+- Lifted the Map/BOM segmented control and BOM actions into the app header via `AppShell`/`Header` actions. Generate, Clear, Print, Include map, Export CSV, and Shortcuts only render with the BOM tab active; Map view shows only the view switcher.
+- Removed the duplicate sidebar Generate BOM action so BOM actions are not visible on Map view.
+- Standardised run settings idle collapse to 60 seconds to match the shared disclosure-row convention.
+- Added a focused Cypress smoke spec covering Describe disappearance, header tab/action visibility, gate four-dropdown grouping, estimated leaf weight, and human-readable gate hardware summary.
+
+Verification:
+- `npm run build` passed.
+- HTTP smoke check for `http://127.0.0.1:5173/fence-calculator` returned 200.
+- `npx cypress run --browser chrome --headless --spec cypress/e2e/bn_brief_smoke.cy.js --config baseUrl=http://127.0.0.1:5173` passed.
+
+Deferred:
+- PR creation, CI/deploy-preview screenshots, ready/merge, branch cleanup, and sandbox pull were not performed in this local completion pass.
