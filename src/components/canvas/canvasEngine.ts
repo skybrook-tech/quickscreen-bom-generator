@@ -14,6 +14,8 @@ export interface CanvasSegment {
 }
 
 export type GateAnchor = "start" | "center" | "end";
+export type CanvasGateVariableValue = string | number | boolean;
+export type CanvasGateVariables = Record<string, CanvasGateVariableValue>;
 
 export interface CanvasGate {
   segmentIndex: number;
@@ -25,6 +27,7 @@ export interface CanvasGate {
   gateType?: CanvasGateType;
   swingDirection?: CanvasGateSwingDirection;
   slidingSide?: CanvasGateSlidingSide;
+  variables?: CanvasGateVariables;
 }
 
 export interface CanvasRunSummary {
@@ -77,6 +80,7 @@ export interface CanvasEngineConfig {
     gateIdx: number,
     gateId: string | undefined,
     currentWidthMM: number,
+    gate?: CanvasGate,
   ) => void;
 }
 
@@ -89,6 +93,7 @@ export interface CanvasGateVisual {
   swingDirection?: CanvasGateSwingDirection;
   slidingSide?: CanvasGateSlidingSide;
   leafWidthsMM?: number[];
+  variables?: CanvasGateVariables;
 }
 
 export interface CanvasTextNote {
@@ -163,6 +168,7 @@ interface GateMarker {
   gateType?: CanvasGateType;
   swingDirection?: CanvasGateSwingDirection;
   slidingSide?: CanvasGateSlidingSide;
+  variables?: CanvasGateVariables;
 }
 
 type Tool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand";
@@ -612,6 +618,7 @@ export function initCanvasEngine(
     slidingSide: "front",
     widthMM: DEFAULT_GATE_WIDTH_MM,
   };
+  let drawStartHintDismissed = false;
   let highlightedMapLabel: string | null = null;
   let textNotes: CanvasTextNote[] = [];
   let siteMarkers: CanvasSiteMarker[] = [];
@@ -662,8 +669,6 @@ export function initCanvasEngine(
   let jobPanelWidthMm: number | null = null;
   // Pre-computed stats text pushed from the canonical payload (via LayoutCanvasV3 → FenceLayoutCanvas).
   // Using the canonical data ensures the overlay always matches the form's calcRunStats output.
-  let pushedStatsGlobal = '';
-  let pushedStatsPerRun: string[] = [];
   let cssCanvasWidth = 0;
   let cssCanvasHeight = 0;
   let devicePixelRatioScale = 1;
@@ -969,6 +974,7 @@ export function initCanvasEngine(
           gateType: g.gateType,
           swingDirection: g.swingDirection,
           slidingSide: g.slidingSide,
+          variables: g.variables,
         });
       });
     });
@@ -1015,6 +1021,7 @@ export function initCanvasEngine(
             gateType: g.gateType,
             swingDirection: g.swingDirection,
             slidingSide: g.slidingSide,
+            variables: g.variables,
           });
         });
       });
@@ -1340,15 +1347,18 @@ export function initCanvasEngine(
     }
 
     ctx.restore();
-
-    // Stats overlay — drawn in screen space, independent of pan/zoom
-    drawStatsOverlay();
     drawCursorHint();
   }
 
   function drawCursorHint() {
     let text = "";
-    if (tool === "draw") text = activeRunIdx >= 0 ? "Click next point - double-click to finish" : "Click to start fence";
+    if (tool === "draw") {
+      text = activeRunIdx >= 0
+        ? "Click next point - double-click to finish"
+        : drawStartHintDismissed
+          ? ""
+          : "Click to start fence";
+    }
     if (tool === "gate") text = "Click a fence section to place gate";
     if (tool === "building") text = "Drag a building rectangle";
     if (tool === "boundary") text = activeRunIdx >= 0 ? "Click next point - double-click to finish" : "Click to start dotted line";
@@ -1380,111 +1390,6 @@ export function initCanvasEngine(
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
     ctx.fillText(text, x + padX, y + h / 2);
-    ctx.restore();
-  }
-
-  function drawStatsOverlay() {
-    const allSegs = allSegmentsFlat();
-    const nbRuns = runs.filter((r) => !r.isBoundary && r.finished);
-    if (nbRuns.length === 0 && allSegs.length === 0) return;
-    if (hoveredSegIdx < 0) return;
-
-    let line: string;
-    const detailLines: string[] = [];
-    const spacingText = (seg: Segment, flatIdx: number, label: string) => {
-      const maxW = segmentPanelWidths[flatIdx] ?? jobPanelWidthMm ?? 0;
-      if (maxW <= 0 || seg.lengthMM <= 0) return `${label} section length: max post spacing not set`;
-      const panels = Math.max(1, Math.ceil(Math.round(seg.lengthMM) / maxW));
-      const actualSpacing = Math.round(seg.lengthMM / panels);
-      return `${label} section length ${(seg.lengthMM / 1000).toFixed(2)}m: ${panels} panel${panels === 1 ? "" : "s"} @ ${actualSpacing}mm spacing`;
-    };
-
-    // Use pre-computed canonical stats if available (pushed from LayoutCanvasV3 via calcRunStats).
-    // Falls back to self-computed values when the overlay hasn't been populated yet.
-    if (hoveredSegIdx >= 0 && hoveredSegIdx < allSegs.length && pushedStatsPerRun.length > 0) {
-      // Hover mode — identify the non-boundary run index containing the hovered segment
-      const { runIdx } = allSegs[hoveredSegIdx];
-      let nbIdx = 0;
-      let flatStart = 0;
-      for (let ri = 0; ri < runs.length; ri++) {
-        if (runs[ri].isBoundary) continue;
-        if (ri === runIdx) break;
-        flatStart += runs[ri].segments.length;
-        nbIdx++;
-      }
-      line = pushedStatsPerRun[nbIdx] ?? pushedStatsGlobal;
-      const run = runs[runIdx];
-      run.segments.forEach((seg, si) => {
-        detailLines.push(spacingText(seg, flatStart + si, `S${si + 1}`));
-      });
-    } else if (hoveredSegIdx < 0 && pushedStatsGlobal) {
-      line = pushedStatsGlobal;
-      allSegs.slice(0, 3).forEach(({ seg }, i) => {
-        detailLines.push(spacingText(seg, i, `S${i + 1}`));
-      });
-      if (allSegs.length > 3) {
-        detailLines.push(`+ ${allSegs.length - 3} more section${allSegs.length - 3 === 1 ? "" : "s"}`);
-      }
-    } else if (hoveredSegIdx >= 0 && hoveredSegIdx < allSegs.length) {
-      // Fallback: self-compute (no pushed stats yet)
-      const { runIdx } = allSegs[hoveredSegIdx];
-      const run = runs[runIdx];
-      let nbIdx = 0;
-      let flatStart = 0;
-      for (let ri = 0; ri < runs.length; ri++) {
-        if (runs[ri].isBoundary) continue;
-        if (ri === runIdx) break;
-        flatStart += runs[ri].segments.length;
-        nbIdx++;
-      }
-      const segs = run.segments.length;
-      const corners = countCorners([run]);
-      let panels = 0;
-      for (let si = 0; si < segs; si++) {
-        const maxW = segmentPanelWidths[flatStart + si] ?? 0;
-        if (maxW > 0) panels += Math.ceil(Math.round(run.segments[si].lengthMM) / maxW);
-        detailLines.push(spacingText(run.segments[si], flatStart + si, `S${si + 1}`));
-      }
-      line = `Run ${nbIdx + 1}  ·  ${segs} ${segs === 1 ? "seg" : "segs"}  ·  ${panels} ${panels === 1 ? "panel" : "panels"}  ·  ${corners} ${corners === 1 ? "corner" : "corners"}`;
-    } else {
-      // Fallback: self-compute global totals (no pushed stats yet)
-      const totalSegs = allSegs.length;
-      const totalCorners = countCorners(nbRuns);
-      let totalPanels = 0;
-      for (let i = 0; i < allSegs.length; i++) {
-        const maxW = segmentPanelWidths[i] ?? 0;
-        if (maxW > 0)
-          totalPanels += Math.ceil(Math.round(allSegs[i].seg.lengthMM) / maxW);
-        if (i < 3) detailLines.push(spacingText(allSegs[i].seg, i, `S${i + 1}`));
-      }
-      line = `${nbRuns.length} ${nbRuns.length === 1 ? "run" : "runs"}  ·  ${totalSegs} ${totalSegs === 1 ? "seg" : "segs"}  ·  ${totalPanels} ${totalPanels === 1 ? "panel" : "panels"}  ·  ${totalCorners} ${totalCorners === 1 ? "corner" : "corners"}`;
-      if (allSegs.length > 3) {
-        detailLines.push(`+ ${allSegs.length - 3} more section${allSegs.length - 3 === 1 ? "" : "s"}`);
-      }
-    }
-
-    const lines = [line, ...detailLines];
-    const pad = 8;
-    const fs = 12;
-    ctx.save();
-    ctx.font = `${fs}px sans-serif`;
-    const w = Math.max(...lines.map((text) => ctx.measureText(text).width)) + pad * 2;
-    const h = lines.length * (fs + 3) + pad * 2;
-    const anchor = canvasToScreen(mouseCanvas, pan, zoom);
-    const screenW = cssCanvasWidth || canvas.getBoundingClientRect().width || 800;
-    const screenH = cssCanvasHeight || canvas.getBoundingClientRect().height || 420;
-    const x = Math.min(screenW - w - 10, Math.max(10, anchor.x + 18));
-    const y = Math.min(screenH - h - 10, Math.max(10, anchor.y + 18));
-    ctx.fillStyle = "rgba(15,23,42,0.78)";
-    ctx.beginPath();
-    ctx.roundRect(x, y, w, h, 4);
-    ctx.fill();
-    ctx.textAlign = "left";
-    ctx.textBaseline = "top";
-    lines.forEach((text, idx) => {
-      ctx.fillStyle = idx === 0 ? "#e5e7eb" : "#cbd5e1";
-      ctx.fillText(text, x + pad, y + pad + idx * (fs + 3));
-    });
     ctx.restore();
   }
 
@@ -2635,7 +2540,26 @@ export function initCanvasEngine(
       scheduleRedraw();
     } else if (item.kind === "gate") {
       const gate = runs[item.runIdx]?.segments[item.segIdx]?.gates[item.gateIdx];
-      config.onGateEdit?.(item.flatSegIdx, item.gateIdx, gate?.gateId, gate?.widthMM ?? DEFAULT_GATE_WIDTH_MM);
+      config.onGateEdit?.(
+        item.flatSegIdx,
+        item.gateIdx,
+        gate?.gateId,
+        gate?.widthMM ?? DEFAULT_GATE_WIDTH_MM,
+        gate
+          ? {
+              segmentIndex: item.flatSegIdx,
+              positionOnSegment: gate.t,
+              anchor: gate.anchor,
+              widthMM: gate.widthMM,
+              gateId: gate.gateId,
+              useGatePostsAsFenceTermination: gate.useGatePostsAsFenceTermination ?? true,
+              gateType: gate.gateType,
+              swingDirection: gate.swingDirection,
+              slidingSide: gate.slidingSide,
+              variables: gate.variables,
+            }
+          : undefined,
+      );
     }
   }
 
@@ -2848,6 +2772,7 @@ export function initCanvasEngine(
     }
 
     if (tool === "draw") {
+      drawStartHintDismissed = true;
       if (isNearActiveLastPoint(screenPtDown)) {
         stopChain(false);
         return;
@@ -2961,6 +2886,7 @@ export function initCanvasEngine(
           gateType: pendingGatePlacement.gateType,
           swingDirection: pendingGatePlacement.swingDirection,
           slidingSide: pendingGatePlacement.slidingSide,
+          variables: pendingGatePlacement.variables,
         });
         notifyChange();
         scheduleRedraw();
@@ -2971,7 +2897,6 @@ export function initCanvasEngine(
           pendingGatePlacement.gateType,
           pendingGatePlacement.slidingSide,
         );
-        setTool("move");
       }
       return;
     }
@@ -3316,6 +3241,21 @@ export function initCanvasEngine(
           gateIdx,
           gate?.gateId,
           gate?.widthMM ?? DEFAULT_GATE_WIDTH_MM,
+          gate
+            ? {
+                segmentIndex: flatSegIdx,
+                positionOnSegment: gate.t,
+                anchor: gate.anchor,
+                widthMM: gate.widthMM,
+                gateId: gate.gateId,
+                useGatePostsAsFenceTermination:
+                  gate.useGatePostsAsFenceTermination ?? true,
+                gateType: gate.gateType,
+                swingDirection: gate.swingDirection,
+                slidingSide: gate.slidingSide,
+                variables: gate.variables,
+              }
+            : undefined,
         );
       }
       draggingGate = null;
@@ -3790,6 +3730,7 @@ export function initCanvasEngine(
     siteMarkers = [];
     freehandStrokes = [];
     activeRunIdx = -1;
+    drawStartHintDismissed = false;
     notifyChange();
     scheduleRedraw();
   }
@@ -4005,9 +3946,7 @@ export function initCanvasEngine(
    * `global` is shown when no segment is hovered. `perRun[i]` is shown when the
    * user hovers over a segment in run i (non-boundary run index).
    */
-  function setRunStatsTexts(global: string, perRun: string[]) {
-    pushedStatsGlobal = global;
-    pushedStatsPerRun = perRun;
+  function setRunStatsTexts(_global: string, _perRun: string[]) {
     scheduleRedraw();
   }
 
@@ -4034,6 +3973,38 @@ export function initCanvasEngine(
         },
       };
     }
+    notifyChange();
+    scheduleRedraw();
+  }
+
+  function setGateVariables(
+    flatSegIdx: number,
+    gateIdx: number,
+    variables: CanvasGateVariables,
+  ) {
+    const allSegs = allSegmentsFlat();
+    const info = allSegs[flatSegIdx];
+    const gate = info?.seg.gates[gateIdx];
+    if (!gate) return;
+    gate.variables = { ...variables };
+    notifyChange();
+    scheduleRedraw();
+  }
+
+  function removeGatesById(gateIds: string[]) {
+    if (gateIds.length === 0) return;
+    const ids = new Set(gateIds);
+    let removed = false;
+    for (const run of runs) {
+      for (const seg of run.segments) {
+        const next = seg.gates.filter((gate) => !gate.gateId || !ids.has(gate.gateId));
+        if (next.length !== seg.gates.length) {
+          seg.gates = next;
+          removed = true;
+        }
+      }
+    }
+    if (!removed) return;
     notifyChange();
     scheduleRedraw();
   }
@@ -4278,6 +4249,7 @@ export function initCanvasEngine(
           gateType: g.gateType,
           swingDirection: g.swingDirection,
           slidingSide: g.slidingSide,
+          variables: g.variables,
         }));
         flatIdx++;
       }
@@ -4357,6 +4329,8 @@ export function initCanvasEngine(
     loadMapTile,
     updateGateWidth,
     updateGateVisual,
+    setGateVariables,
+    removeGatesById,
     setGateId,
     setGateTerminationPosts,
     setPostPositions,
