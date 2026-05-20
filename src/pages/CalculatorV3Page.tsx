@@ -43,9 +43,18 @@ import { gateTypeLabel, validateGateWidth } from "../lib/gateConstraints";
 import { stripParentheticalDispatchCode } from "../lib/displayText";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
+import { useQuote } from "../hooks/useQuote";
+import { savedBomToEngineResult } from "../lib/savedBomToEngineResult";
+import { jobNameFromQuote } from "../lib/quotePayload";
+import {
+  buildV3FenceConfig,
+  buildV3QuoteBom,
+  replaceV3QuoteRuns,
+} from "../lib/persistV3Quote";
+import { queryClient } from "../lib/queryClient";
+import { LegacyQuoteError } from "../types/quote.types";
 import {
   Download,
-  FileX2,
   Keyboard,
   Loader2,
   Printer,
@@ -54,7 +63,7 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import Papa from "papaparse";
 import type {
@@ -68,6 +77,14 @@ import type { ParseResult, ParsedSystemType } from "../lib/describeFenceParser";
 
 const roundMoney = (value: number) =>
   Math.round((value + Number.EPSILON) * 100) / 100;
+
+/** Debounce window for auto BOM recalculation after payload edits. */
+const BOM_RECALC_DEBOUNCE_MS = 500;
+
+/** Stable key for BOM inputs — avoids recalc loops from new object references. */
+function payloadBomKey(payload: CanonicalPayload): string {
+  return JSON.stringify(payload);
+}
 
 const formatMoney = (value: number) =>
   new Intl.NumberFormat("en-AU", {
@@ -367,12 +384,19 @@ function useAnimatedNumber(target: number) {
   return value;
 }
 
-function CalculatorV3Content() {
+function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
   const bomMutation = useBomCalculator();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const quoteQuery = useQuote(quoteId);
+  const hydratedQuoteIdRef = useRef<string | null>(null);
+  const skipAutoBomRef = useRef(false);
+  const bomRequestIdRef = useRef(0);
+  const lastCalcPayloadKeyRef = useRef<string | null>(null);
+  const bomMutateAsyncRef = useRef(bomMutation.mutateAsync);
+  bomMutateAsyncRef.current = bomMutation.mutateAsync;
   const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
   const [lineEdits, setLineEdits] = useState<Record<string, number | null>>({});
   const [saving, setSaving] = useState(false);
@@ -401,6 +425,24 @@ function CalculatorV3Content() {
     },
     [],
   );
+
+  useEffect(() => {
+    if (!quoteId || !quoteQuery.data) return;
+    if (hydratedQuoteIdRef.current === quoteId) return;
+    hydratedQuoteIdRef.current = quoteId;
+    const { quote, payload: loadedPayload } = quoteQuery.data;
+    dispatch({ type: "SET_PAYLOAD", payload: loadedPayload });
+    setJobName(jobNameFromQuote(quote.fence_config, quote.customer_ref));
+    const bomResult = savedBomToEngineResult(quote.bom, quote.updated_at);
+    if (bomResult) {
+      dispatch({ type: "SET_BOM_RESULT", result: bomResult });
+      skipAutoBomRef.current = true;
+      lastCalcPayloadKeyRef.current = payloadBomKey(loadedPayload);
+    }
+    setIntroDismissed(true);
+    setRightPaneView("bom");
+    setMobileTab("bom");
+  }, [quoteId, quoteQuery.data, dispatch]);
 
   useEffect(() => {
     const updateLayout = () => setMobileLayout(window.innerWidth < 768);
@@ -631,7 +673,6 @@ function CalculatorV3Content() {
     };
     dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
     dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "describe" });
-    dispatch({ type: "CLEAR_BOM_RESULT" });
     setIntroDismissed(true);
     setAutoOpenFirstSectionRunId(nextRun.runId);
     setRightPaneView("bom");
@@ -706,36 +747,8 @@ function CalculatorV3Content() {
         runs: nextRuns,
       },
     });
-    dispatch({ type: "CLEAR_BOM_RESULT" });
     setGatePositionTarget(null);
     toast.success("Gate position confirmed");
-  }
-
-  async function handleGenerateBOM() {
-    if (!payload) return;
-    if (economySlatErrors.length > 0) {
-      toast.error("Economy slats are only available in 65mm. Fix the slat size or range first.");
-      return;
-    }
-    if (gateWidthErrors.length > 0) {
-      toast.error("Fix gate width errors before generating the BOM.");
-      return;
-    }
-    setExtraItems([]);
-    setLineEdits({});
-    setActiveBomSummary(null);
-    dispatch({ type: "CLEAR_BOM_RESULT" });
-    try {
-      const result = await bomMutation.mutateAsync({ payload });
-      dispatch({ type: "SET_BOM_RESULT", result });
-    } catch {
-      // Error is available via bomMutation.error.
-    }
-  }
-
-  function handleClearBom() {
-    setActiveBomSummary(null);
-    dispatch({ type: "CLEAR_BOM_RESULT" });
   }
 
   function handlePropertyAnchorConfirmed(anchor: {
@@ -787,46 +800,9 @@ function CalculatorV3Content() {
       }),
     };
 
-    setExtraItems([]);
-    setLineEdits({});
-    setActiveBomSummary(null);
     dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
-    dispatch({ type: "CLEAR_BOM_RESULT" });
-    try {
-      const result = await bomMutation.mutateAsync({ payload: nextPayload });
-      dispatch({ type: "SET_BOM_RESULT", result });
-      toast.success("Switched Economy slats to Standard and regenerated the BOM.");
-    } catch {
-      toast.error("Switched to Standard, but BOM regeneration failed.");
-    }
+    toast.success("Switched Economy slats to Standard.");
   }
-
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      const target = event.target as HTMLElement | null;
-      const typing =
-        target?.tagName === "INPUT" ||
-        target?.tagName === "TEXTAREA" ||
-        target?.tagName === "SELECT" ||
-        target?.isContentEditable;
-      if (typing) return;
-      const mod = event.ctrlKey || event.metaKey;
-      if (event.key === "?") {
-        event.preventDefault();
-        setShortcutsOpen((open) => !open);
-      }
-      if (mod && event.key === "Enter") {
-        event.preventDefault();
-        void handleGenerateBOM();
-      }
-      if (mod && event.key.toLowerCase() === "e") {
-        event.preventDefault();
-        handleExportCsv();
-      }
-    }
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  });
 
   const lastBom = state.bomResult;
   const baseBomLines = ((lastBom?.lines as BOMLineItem[]) ?? []);
@@ -929,7 +905,7 @@ function CalculatorV3Content() {
           ? filterLinesForScope(baseAllItems, (source) => source.scopeKind === "gate")
           : runScopedGateItems.length > 0
             ? runScopedGateItems
-          : ((lastBom.gateItems as BOMLineItem[]) ?? []);
+            : ((lastBom.gateItems as BOMLineItem[]) ?? []);
       const gateItems = applyLineEdits(aggregateBomItems(rawGateItems));
       const allItems = aggregateBomItems([...baseAllItems, ...extraLineItems]);
       const baseTotal = roundMoney(
@@ -960,26 +936,8 @@ function CalculatorV3Content() {
     const cleanJobName = jobName.trim();
     const customerRef =
       cleanJobName || `Glass Outlet Job ${new Date().toLocaleDateString("en-AU")}`;
-    const emptyBom = {
-      fenceItems: [],
-      gateItems: [],
-      total: 0,
-      gst: 0,
-      grandTotal: 0,
-      pricingTier: "tier1" as const,
-      generatedAt: null,
-    };
-    const quoteBom = bomResultForTabs
-      ? {
-        fenceItems: bomResultForTabs.allItems,
-        gateItems: bomResultForTabs.gateItems,
-        total: bomResultForTabs.total,
-        gst: bomResultForTabs.gst,
-        grandTotal: bomResultForTabs.grandTotal,
-        pricingTier: bomResultForTabs.pricingTier,
-        generatedAt: bomResultForTabs.generatedAt,
-      }
-      : emptyBom;
+    const quoteBom = buildV3QuoteBom(bomResultForTabs);
+    const fenceConfig = buildV3FenceConfig(customerRef, payload);
 
     if (!isSupabaseConfigured) {
       localStorage.setItem(
@@ -1019,106 +977,59 @@ function CalculatorV3Content() {
       const orgId = profile?.org_id;
       if (!orgId) throw new Error("No organisation found for this user.");
 
-      const { data: quote, error: quoteError } = await supabase
-        .from("quotes")
-        .insert({
-          org_id: orgId,
-          user_id: user.id,
-          customer_ref: customerRef,
-          property_anchor: payload.propertyAnchor
-            ? {
-                lat: payload.propertyAnchor.lat,
-                lng: payload.propertyAnchor.lng,
-                address: payload.propertyAnchor.address,
-              }
-            : null,
-          fence_config: {
-            calculator: "v3",
-            jobName: customerRef,
-            payload,
-            layoutGeometry: payload.runs.map((run) => ({
-              runId: run.runId,
-              geometry: run.geometry,
-              segments: run.segments.map((segment) => ({
-                segmentId: segment.segmentId,
-                widthMm: segment.segmentWidthMm,
-                targetHeightMm: segment.targetHeightMm,
-                variables: segment.variables ?? {},
-              })),
-            })),
-          },
-          gates: [],
-          bom: quoteBom,
-          contact: {},
-          notes: "Saved from v3 job calculator",
-          status: "draft",
-        })
-        .select("id")
-        .single();
-      if (quoteError) throw quoteError;
+      const isUpdate = !!quoteId;
+      const propertyAnchor = payload.propertyAnchor
+        ? {
+            lat: payload.propertyAnchor.lat,
+            lng: payload.propertyAnchor.lng,
+            address: payload.propertyAnchor.address,
+          }
+        : null;
 
-      const systems = [...new Set(payload.runs.map((run) => run.productCode))];
-      const { data: products, error: productsError } = await supabase
-        .from("products")
-        .select("id, system_type")
-        .in("system_type", systems);
-      if (productsError) throw productsError;
-      const productIdByCode = new globalThis.Map(
-        (products ?? []).map((product) => [product.system_type, product.id]),
-      );
+      if (isUpdate) {
+        const { error: updateError } = await supabase
+          .from("quotes")
+          .update({
+            customer_ref: customerRef,
+            property_anchor: propertyAnchor,
+            fence_config: fenceConfig,
+            gates: [],
+            bom: quoteBom,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", quoteId);
+        if (updateError) throw updateError;
 
-      for (const [runIndex, run] of payload.runs.entries()) {
-        const productId = productIdByCode.get(run.productCode);
-        if (!productId) continue;
-        const { data: savedRun, error: runError } = await supabase
-          .from("quote_runs")
+        await replaceV3QuoteRuns(supabase, orgId, quoteId, payload);
+
+        await queryClient.invalidateQueries({ queryKey: ["quote", quoteId] });
+        await queryClient.invalidateQueries({ queryKey: ["quotes"] });
+        toast.success("Job updated");
+      } else {
+        const { data: quote, error: quoteError } = await supabase
+          .from("quotes")
           .insert({
             org_id: orgId,
-            quote_id: quote.id,
-            product_id: productId,
-            sort_order: runIndex + 1,
-            description: `Run ${runIndex + 1} - ${run.productCode}`,
-            variables_json: {
-              runId: run.runId,
-              productCode: run.productCode,
-              variables: run.variables ?? {},
-              leftBoundary: run.leftBoundary,
-              rightBoundary: run.rightBoundary,
-              corners: run.corners,
-              geometry: run.geometry,
-            },
+            user_id: user.id,
+            customer_ref: customerRef,
+            property_anchor: propertyAnchor,
+            fence_config: fenceConfig,
+            gates: [],
+            bom: quoteBom,
+            contact: {},
+            notes: "Saved from v3 job calculator",
+            status: "draft",
           })
           .select("id")
           .single();
-        if (runError) throw runError;
+        if (quoteError) throw quoteError;
 
-        if (run.segments.length > 0) {
-          const { error: segmentError } = await supabase
-            .from("quote_run_segments")
-            .insert(
-              run.segments.map((segment) => ({
-                org_id: orgId,
-                quote_run_id: savedRun.id,
-                sort_order: segment.sortOrder,
-                segment_type: segment.segmentKind,
-                segment_kind: segment.segmentKind,
-                length_mm: segment.segmentWidthMm ?? null,
-                panel_width_mm: segment.variables?.max_panel_width_mm ?? null,
-                target_height_mm: segment.targetHeightMm ?? null,
-                bay_count: segment.bayCount ?? null,
-                variables_json: {
-                  segmentId: segment.segmentId,
-                  variables: segment.variables ?? {},
-                  gateProductCode: segment.gateProductCode,
-                },
-              })),
-            );
-          if (segmentError) throw segmentError;
-        }
+        await replaceV3QuoteRuns(supabase, orgId, quote.id, payload);
+
+        await queryClient.invalidateQueries({ queryKey: ["quotes"] });
+        toast.success("Job saved");
+        navigate(`/quote/${quote.id}`);
       }
-
-      toast.success("Job saved");
-      navigate(`/quote/${quote.id}`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to save job");
     } finally {
@@ -1243,8 +1154,6 @@ function CalculatorV3Content() {
   const warnings = (lastBom?.warnings as string[]) ?? [];
   const errors = (lastBom?.errors as string[]) ?? [];
   const hasErrors = errors.length > 0;
-  const noSegments =
-    !payload || payload.runs.every((r) => r.segments.length === 0);
   const economySlatErrors =
     payload?.runs.flatMap((run, runIndex) => {
       const runVars = { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
@@ -1268,6 +1177,91 @@ function CalculatorV3Content() {
   const gateWidthErrors = gateWidthValidations.filter((item) => item.status === "error");
   const gateWidthWarnings = gateWidthValidations.filter((item) => item.status === "warning");
   const hasBlockingErrors = hasErrors || gateWidthErrors.length > 0 || economySlatErrors.length > 0;
+
+  const payloadCalcKey = useMemo(
+    () => (payload ? payloadBomKey(payload) : null),
+    [payload],
+  );
+
+  const runBomRecalculation = useCallback(async () => {
+    if (!payload || !payloadCalcKey) {
+      lastCalcPayloadKeyRef.current = null;
+      dispatch({ type: "CLEAR_BOM_RESULT" });
+      return;
+    }
+    const emptyRuns = payload.runs.every((run) => run.segments.length === 0);
+    const economyErrors = payload.runs.flatMap((run, runIndex) => {
+      const runVars = { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
+      return run.segments
+        .filter((segment) => segment.segmentKind !== "gate_opening")
+        .flatMap((segment, segmentIndex) => {
+          const vars = { ...runVars, ...(segment.variables ?? {}) };
+          return vars.finish_family === "economy" && Number(vars.slat_size_mm ?? 65) === 90
+            ? [`Run ${runIndex + 1} Section ${segmentIndex + 1}`]
+            : [];
+        });
+    });
+    const gateErrors = payload.runs.flatMap((run) =>
+      run.segments
+        .filter((segment) => segment.segmentKind === "gate_opening")
+        .map((segment) => validateGateWidth(segment))
+        .filter((result) => result.status === "error"),
+    );
+    if (emptyRuns || economyErrors.length > 0 || gateErrors.length > 0) {
+      lastCalcPayloadKeyRef.current = payloadCalcKey;
+      dispatch({ type: "CLEAR_BOM_RESULT" });
+      return;
+    }
+    const requestId = ++bomRequestIdRef.current;
+    try {
+      const result = await bomMutateAsyncRef.current({ payload });
+      if (requestId !== bomRequestIdRef.current) return;
+      dispatch({ type: "SET_BOM_RESULT", result });
+      lastCalcPayloadKeyRef.current = payloadCalcKey;
+    } catch {
+      // Error is available via bomMutation.error.
+    }
+  }, [payload, payloadCalcKey, dispatch]);
+
+  const runBomRecalcRef = useRef(runBomRecalculation);
+  runBomRecalcRef.current = runBomRecalculation;
+
+  useEffect(() => {
+    if (!introDismissed && !quoteId) return;
+    if (!payload || !payloadCalcKey) return;
+    if (skipAutoBomRef.current) {
+      skipAutoBomRef.current = false;
+      return;
+    }
+    if (payloadCalcKey === lastCalcPayloadKeyRef.current) return;
+    const timer = window.setTimeout(() => {
+      void runBomRecalcRef.current();
+    }, BOM_RECALC_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [payloadCalcKey, introDismissed, quoteId]);
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      const target = event.target as HTMLElement | null;
+      const typing =
+        target?.tagName === "INPUT" ||
+        target?.tagName === "TEXTAREA" ||
+        target?.tagName === "SELECT" ||
+        target?.isContentEditable;
+      if (typing) return;
+      const mod = event.ctrlKey || event.metaKey;
+      if (event.key === "?") {
+        event.preventDefault();
+        setShortcutsOpen((open) => !open);
+      }
+      if (mod && event.key.toLowerCase() === "e") {
+        event.preventDefault();
+        handleExportCsv();
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  });
 
   const cleanJobName = jobName.trim();
   const systemLabel = (productCode: string) => {
@@ -1394,11 +1388,51 @@ function CalculatorV3Content() {
       sections: sectionRows,
     };
   }) ?? [];
-  const saveJobLabel = jobName.trim() ? `Save ${jobName.trim()}` : "Save Job";
+  const saveJobLabel = quoteId
+    ? jobName.trim()
+      ? `Update ${jobName.trim()}`
+      : "Update Job"
+    : jobName.trim()
+      ? `Save ${jobName.trim()}`
+      : "Save Job";
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
-  const showIntro = !payload && !introDismissed;
+  const showIntro = !quoteId && !payload && !introDismissed;
+
+  if (quoteId && quoteQuery.isLoading) {
+    return (
+      <AppShell>
+        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 text-brand-muted">
+          <Loader2 className="h-8 w-8 animate-spin text-brand-primary" />
+          <p className="text-sm">Loading quote…</p>
+        </div>
+      </AppShell>
+    );
+  }
+
+  if (quoteId && quoteQuery.isError) {
+    const legacy = quoteQuery.error instanceof LegacyQuoteError;
+    return (
+      <AppShell>
+        <div className="mx-auto flex max-w-lg flex-col items-center gap-4 px-4 py-16 text-center">
+          <p className="text-sm text-brand-danger">
+            {legacy
+              ? quoteQuery.error.message
+              : quoteQuery.error instanceof Error
+                ? quoteQuery.error.message
+                : "Failed to load quote."}
+          </p>
+          <Link
+            to="/quotes"
+            className="text-sm font-semibold text-brand-accent hover:underline"
+          >
+            Back to quotes
+          </Link>
+        </div>
+      </AppShell>
+    );
+  }
   const gateTargetRun = gatePositionTarget
     ? payload?.runs.find((run) => run.runId === gatePositionTarget.runId)
     : undefined;
@@ -1411,25 +1445,6 @@ function CalculatorV3Content() {
     <div className="flex w-full flex-wrap items-center justify-end gap-2">
       {rightPaneView === "bom" && (
         <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
-          <button
-            type="button"
-            onClick={handleGenerateBOM}
-            disabled={bomMutation.isPending || hasBlockingErrors || noSegments}
-            title="Generate BOM (Ctrl+Enter)"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-brand-primary px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            {bomMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-            Generate BOM
-          </button>
-          <button
-            type="button"
-            onClick={handleClearBom}
-            disabled={!bomResultForTabs}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted transition-colors hover:border-brand-danger/50 hover:text-brand-danger hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            <FileX2 size={16} />
-            Clear BOM
-          </button>
           <button
             type="button"
             onClick={handlePrintBom}
@@ -1698,13 +1713,13 @@ function CalculatorV3Content() {
             >
               <div
                 data-print-right-pane
-                className={`${mapExpanded ? "mx-0 max-w-none space-y-0" : "w-full space-y-4 sm:space-y-5"}`}
+                className={`${mapExpanded ? "mx-0 max-w-none" : "w-full"}`}
               >
                 <section
                   data-print-map-section
-                  className={`overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"}`}
+                  className={`${rightPaneView === "map" ? "block" : "hidden"} overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"}`}
                 >
-                  <div className={`${rightPaneView === "map" ? "block" : "hidden"} ${mapExpanded ? "p-2" : "p-3 sm:p-4"}`}>
+                  <div className={`${mapExpanded ? "p-2" : "p-3 sm:p-4"}`}>
                     <div
                       data-print-map-panel
                       className="block"
@@ -1754,14 +1769,16 @@ function CalculatorV3Content() {
                     </div>
                     <div className="text-left sm:text-right" data-print-hide>
                       <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
-                        {activeBomSummary?.label ?? (bomResultForTabs ? "Auto quantity breaks" : "Estimated total")}
+                        {bomMutation.isPending
+                          ? "Recalculating…"
+                          : activeBomSummary?.label ?? (bomResultForTabs ? "Auto quantity breaks" : "Estimated total")}
                       </p>
                       <p className="font-mono text-4xl font-black tabular-nums text-brand-primary sm:text-5xl">
                         ${formatMoney(animatedGrandTotal)}
                       </p>
                     </div>
                   </div>
-                  {bomMutation.isPending ? (
+                  {bomMutation.isPending && !bomResultForTabs ? (
                     <div className="space-y-3" aria-label="Generating BOM">
                       {Array.from({ length: 7 }).map((_, index) => (
                         <div
@@ -2012,12 +2029,6 @@ function CalculatorV3Content() {
                 </div>
                 <dl className="space-y-3 text-sm">
                   <div className="flex items-center justify-between gap-4">
-                    <dt className="text-brand-muted">Generate BOM</dt>
-                    <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
-                      Ctrl + Enter
-                    </dd>
-                  </div>
-                  <div className="flex items-center justify-between gap-4">
                     <dt className="text-brand-muted">Export CSV</dt>
                     <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
                       Ctrl + E
@@ -2046,11 +2057,12 @@ function CalculatorV3Content() {
 }
 
 export function CalculatorV3Page() {
+  const { quoteId } = useParams<{ quoteId: string }>();
   return (
-    <CalculatorProvider>
+    <CalculatorProvider key={quoteId ?? "new"}>
       <FenceConfigProvider>
         <GateProvider>
-          <CalculatorV3Content />
+          <CalculatorV3Content quoteId={quoteId} />
         </GateProvider>
       </FenceConfigProvider>
     </CalculatorProvider>
