@@ -53,6 +53,25 @@ export interface SavedQuote {
 /** Shape sent to Supabase on insert — server assigns id, quote_number, and timestamps */
 export type NewQuote = Omit<SavedQuote, 'id' | 'quote_number' | 'created_at' | 'updated_at'>;
 
+/** Enriched row for the quotes index table */
+export interface QuoteListItem extends SavedQuote {
+  jobName: string;
+  creatorName: string | null;
+  runCount: number;
+  segmentCount: number;
+  gateCount: number;
+  systemLabel: string;
+  displayTotal: number | null;
+  quote_runs?: {
+    id: string;
+    quote_run_segments: {
+      id: string;
+      segment_kind: string | null;
+      segment_type: string | null;
+    }[];
+  }[];
+}
+
 export class LegacyQuoteError extends Error {
   constructor(message = 'This quote was created in the legacy calculator and cannot be opened here.') {
     super(message);

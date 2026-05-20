@@ -384,7 +384,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const { user } = useAuth();
   const quoteQuery = useQuote(quoteId);
   const hydratedQuoteIdRef = useRef<string | null>(null);
-  const loadedQuote = quoteQuery.data?.quote;
   const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
   const [lineEdits, setLineEdits] = useState<Record<string, number | null>>({});
   const [saving, setSaving] = useState(false);
@@ -1662,13 +1661,13 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             >
               <div
                 data-print-right-pane
-                className={`${mapExpanded ? "mx-0 max-w-none space-y-0" : "w-full space-y-4 sm:space-y-5"}`}
+                className={`${mapExpanded ? "mx-0 max-w-none" : "w-full"}`}
               >
                 <section
                   data-print-map-section
-                  className={`overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"}`}
+                  className={`${rightPaneView === "map" ? "block" : "hidden"} overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"}`}
                 >
-                  <div className={`${rightPaneView === "map" ? "block" : "hidden"} ${mapExpanded ? "p-2" : "p-3 sm:p-4"}`}>
+                  <div className={`${mapExpanded ? "p-2" : "p-3 sm:p-4"}`}>
                     <div
                       data-print-map-panel
                       className="block"

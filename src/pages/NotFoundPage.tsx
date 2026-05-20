@@ -53,7 +53,7 @@ export function NotFoundPage({ asNotFound }: Props) {
 
         {/* CTA */}
         <Link
-          to="/fence-calculator-v4"
+          to="/fence-calculator"
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-accent hover:bg-brand-accent-hover text-white text-sm font-semibold rounded-lg transition-colors"
         >
           Take me to the calculator
