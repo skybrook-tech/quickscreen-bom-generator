@@ -4,6 +4,11 @@
 export interface CanonicalPayload {
   productCode: string;
   schemaVersion: "v2";
+  propertyAnchor?: {
+    lat: number;
+    lng: number;
+    address: string;
+  };
   variables: Record<string, string | number | boolean>;
   runs: CanonicalRun[];
 }
