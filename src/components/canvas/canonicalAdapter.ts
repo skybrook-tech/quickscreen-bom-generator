@@ -648,6 +648,7 @@ export function mergeCanonicalPreservingSegmentMeta(
   const prevRuns = new Map(previous.runs.map((r) => [r.runId, r]));
   return {
     ...generated,
+    propertyAnchor: generated.propertyAnchor ?? previous.propertyAnchor,
     runs: generated.runs.map((genRun) => {
       const prevRun = prevRuns.get(genRun.runId);
       if (!prevRun) return genRun;

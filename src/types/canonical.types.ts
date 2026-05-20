@@ -16,6 +16,11 @@ export type CanonicalVariables = Record<string, CanonicalVariableValue>;
 export interface CanonicalPayload {
   productCode: string;
   schemaVersion: string;
+  propertyAnchor?: {
+    lat: number;
+    lng: number;
+    address: string;
+  };
   job?: {
     description?: string;
     pendingGates?: Array<{
