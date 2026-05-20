@@ -625,7 +625,7 @@ export function SegmentRow({
                     : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
                     }`}
                   aria-label={open ? (gate ? "Collapse gate settings" : "Collapse section settings") : (gate ? "Expand gate settings" : "Expand section settings")}
-                  title={open ? "Save settings and collapse" : (gate ? "Open gate settings" : "Open section settings")}
+                  title={open ? "Collapse settings" : (gate ? "Open gate settings" : "Open section settings")}
                 >
                   {open ? <ChevronUp size={16} /> : <Settings size={16} />}
                 </button>

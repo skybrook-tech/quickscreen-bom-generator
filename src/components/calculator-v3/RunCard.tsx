@@ -15,6 +15,7 @@ import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
 import { ConfirmButton } from "../shared/ConfirmButton";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
+const RUN_SETTINGS_AUTO_COLLAPSE_MS = 60000;
 
 const MOUNTING_LABELS: Record<string, string> = {
   in_ground: "Concreted in ground",
@@ -101,7 +102,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
 
   function scheduleRunSettingsCollapse() {
     if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
-    runCollapseRef.current = window.setTimeout(() => setRunSettingsOpen(false), 10000);
+    runCollapseRef.current = window.setTimeout(() => setRunSettingsOpen(false), RUN_SETTINGS_AUTO_COLLAPSE_MS);
   }
 
   function upsertSegment(segment: CanonicalSegment) {
