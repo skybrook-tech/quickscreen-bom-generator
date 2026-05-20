@@ -3880,6 +3880,28 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  function setViewportTransform(next: {
+    pan: Point;
+    zoom: number;
+    scale?: number;
+  }) {
+    const nextScale = next.scale;
+    if (
+      typeof nextScale === "number" &&
+      Number.isFinite(nextScale) &&
+      Math.abs(nextScale - scale) > 1e-6
+    ) {
+      scale = nextScale;
+      for (const run of runs) {
+        rebuildSegmentsPreservingGates(run, scale);
+      }
+      notifyChange();
+    }
+    pan = { ...next.pan };
+    zoom = Math.max(0.000001, next.zoom);
+    scheduleRedraw();
+  }
+
   /**
    * Load a Google Static Maps tile and register its geo-scale so the image is
    * drawn at the correct real-world size inside the canvas coordinate system.
@@ -4353,6 +4375,7 @@ export function initCanvasEngine(
     setAllowedAngles,
     setShowGrid,
     setScale,
+    setViewportTransform,
     setMapOpacity,
     loadMapTile,
     updateGateWidth,

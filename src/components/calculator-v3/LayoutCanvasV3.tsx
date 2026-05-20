@@ -25,6 +25,7 @@ interface LayoutCanvasV3Props {
   onMapExpandedChange?: (expanded: boolean) => void;
   showRunDetails?: boolean;
   jobName?: string;
+  propertyAnchor?: { lat: number; lng: number; address: string } | null;
 }
 
 export function LayoutCanvasV3({
@@ -32,6 +33,7 @@ export function LayoutCanvasV3({
   onMapExpandedChange,
   showRunDetails = true,
   jobName,
+  propertyAnchor,
 }: LayoutCanvasV3Props) {
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
@@ -231,6 +233,7 @@ export function LayoutCanvasV3({
         jobName={jobName}
         expanded={mapExpanded}
         onExpandedChange={onMapExpandedChange}
+        propertyAnchor={propertyAnchor}
       />
       {showRunDetails && !mapExpanded && <RunDetailsPanel payload={payload} />}
     </div>

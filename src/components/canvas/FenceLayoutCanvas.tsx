@@ -3,6 +3,7 @@ import { initCanvasEngine } from "./canvasEngine";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { MapControls } from "./MapControls";
 import type { MapUiState } from "./MapControls";
+import { MapOverlayCanvasFrame } from "./MapOverlayCanvasFrame";
 import { HelpCheatSheet } from "./HelpCheatSheet";
 import { GateModal } from "../gate/GateModal";
 import NumberInput from "../shared/NumberInput";
@@ -48,6 +49,7 @@ interface FenceLayoutCanvasProps {
   expanded?: boolean;
   /** Called when the expand toggle is triggered internally. */
   onExpandedChange?: (expanded: boolean) => void;
+  propertyAnchor?: { lat: number; lng: number; address: string } | null;
 }
 
 export function FenceLayoutCanvas({
@@ -62,8 +64,10 @@ export function FenceLayoutCanvas({
   jobName,
   expanded: expandedProp,
   onExpandedChange,
+  propertyAnchor,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasHostRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
   const { state: fenceState } = useFenceConfig();
   const { data: products } = useProducts();
@@ -116,6 +120,7 @@ export function FenceLayoutCanvas({
     });
   }, []);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
+  const [engineVersion, setEngineVersion] = useState(0);
   const [helpOpen, setHelpOpen] = useState(false);
   const [boundaryHintVisible, setBoundaryHintVisible] = useState(false);
   const [mapUiState, setMapUiState] = useState<MapUiState>({
@@ -207,11 +212,13 @@ export function FenceLayoutCanvas({
       },
     });
     engineRef.current = engine;
+    setEngineVersion((value) => value + 1);
     onEngineReady?.(engine);
 
     return () => {
       engineRef.current?.destroy();
       engineRef.current = null;
+      setEngineVersion((value) => value + 1);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleGatePlaced]);
@@ -415,11 +422,19 @@ export function FenceLayoutCanvas({
         />
       </div>
 
-      <div className="relative">
+      <MapOverlayCanvasFrame
+        propertyAnchor={propertyAnchor}
+        canvasRef={canvasRef}
+        canvasHostRef={canvasHostRef}
+        engine={engineRef.current}
+        engineVersion={engineVersion}
+        className="relative overflow-hidden"
+        style={{ height: expanded ? "700px" : "630px" }}
+      >
         <canvas
           ref={canvasRef}
-          className="block w-full touch-none bg-brand-bg"
-          style={{ height: expanded ? "700px" : "630px", cursor: "crosshair" }}
+          className={`block h-full w-full touch-none ${propertyAnchor ? "bg-transparent" : "bg-brand-bg"}`}
+          style={{ cursor: "crosshair" }}
         />
 
         {/* Hint overlay */}
@@ -460,14 +475,16 @@ export function FenceLayoutCanvas({
             Calibrated: {mapUiState.calibrationLabel}
           </div>
         )}
-      </div>
+      </MapOverlayCanvasFrame>
 
-      <div data-print-hide>
-        <MapControls
-          engineRef={engineRef}
-          onMapUiStateChange={setMapUiState}
-        />
-      </div>
+      {!propertyAnchor ? (
+        <div data-print-hide>
+          <MapControls
+            engineRef={engineRef}
+            onMapUiStateChange={setMapUiState}
+          />
+        </div>
+      ) : null}
 
       {/* Run summary table */}
       {runSummaries.length > 0 && (

@@ -31,6 +31,7 @@ export interface CanonicalRun {
   segments: CanonicalSegment[];
   geometry?: {
     points: Array<{ x: number; y: number }>;
+    metrePoints?: Array<{ dxMetres: number; dyMetres: number }>;
   };
 }
 

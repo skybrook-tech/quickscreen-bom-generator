@@ -116,6 +116,8 @@ Latest Google Maps plumbing pass: `codex/google-maps-plumbing` adds the `@google
 
 Latest property-map UI pass: `codex/calculator-property-map` adds the V3 calculator property map surface above the run/form controls, Australian address geocoding, satellite/hybrid map toggle, draggable/confirmable property pins, nullable quote `property_anchor` storage, top-level canonical `propertyAnchor`, `.nvmrc`, and focused unit coverage for geocoding, anchor gating, and canonical anchor persistence without changing canvas drawing or BOM calculation logic.
 
+Latest canvas map overlay pass: `codex/canvas-engine-map-overlay` adds opt-in map-overlay rendering for anchored canonical payloads, metre-offset geometry helpers, a Google Maps `OverlayView` canvas mount, Lock map/Draw mode controls, V4 route smoke coverage, and a BOM regression test confirming anchored geometry does not change local fallback output.
+
 Latest Brief BN v2 pass: the sandbox BN work now completes the top-bar reorganisation by moving Map/BOM tabs into the app header as a segmented control, moving BOM actions beside them only while BOM is active, removing the duplicate in-panel action row, and preserving the icon-only settings/Describe/gate-settings conventions in the repo skill mirrors.
 
 Latest Brief BO pass: run summaries now show only accepted run-default fields with height/length removed from the subheading, BOM colour display strips internal dispatch-code suffixes, section and gate match codes stay green when their run-derived settings match, and Print BOM now prints materials and totals first, then Run & Section Details, then the optional map at the bottom.

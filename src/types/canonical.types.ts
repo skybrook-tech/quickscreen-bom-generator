@@ -49,6 +49,7 @@ export interface CanonicalRun {
   corners?: CanonicalCorner[];
   geometry?: {
     points: Array<{ x: number; y: number }>;
+    metrePoints?: Array<{ dxMetres: number; dyMetres: number }>;
   };
 }
 

@@ -6,6 +6,9 @@ import type { GoogleMapsState } from "./useGoogleMaps";
 import "../components/calculator/AddressInput.test";
 import "../components/calculator/PropertyAnchorFormGate.test";
 import "../components/canvas/canonicalAdapter.propertyAnchor.test";
+import "../components/canvas/mapOverlayIntegration.test";
+import "../lib/geo/coordinates.test";
+import "../pages/CalculatorV4Page.smoke.test";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 

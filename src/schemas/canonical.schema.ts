@@ -60,7 +60,12 @@ export const canonicalRunSchema = z.object({
   corners: z.array(canonicalCornerSchema).optional(),
   segments: z.array(canonicalSegmentSchema),
   geometry: z
-    .object({ points: z.array(z.object({ x: z.number(), y: z.number() })) })
+    .object({
+      points: z.array(z.object({ x: z.number(), y: z.number() })),
+      metrePoints: z
+        .array(z.object({ dxMetres: z.number(), dyMetres: z.number() }))
+        .optional(),
+    })
     .optional(),
 });
 

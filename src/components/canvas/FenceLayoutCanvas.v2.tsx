@@ -4,6 +4,7 @@ import { cn } from "../../lib";
 import { initCanvasEngine } from "./canvasEngine";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { MapControls } from "./MapControls";
+import { MapOverlayCanvasFrame } from "./MapOverlayCanvasFrame";
 import { GateModal } from "../gate/GateModal";
 import { useFenceConfig } from "../../context/FenceConfigContext";
 import { useGates } from "../../context/GateContext";
@@ -40,6 +41,7 @@ interface FenceLayoutCanvasProps {
   onFlatSegmentHoverChange?: (flatSegIdx: number) => void;
   /** Draw tool idle: click existing segment — select in run list (v4), do not start a new run. */
   onFenceSegmentClick?: (flatSegIdx: number) => void;
+  propertyAnchor?: { lat: number; lng: number; address: string } | null;
 }
 
 export function FenceLayoutCanvas({
@@ -54,8 +56,10 @@ export function FenceLayoutCanvas({
   renderOverlay,
   onFlatSegmentHoverChange,
   onFenceSegmentClick,
+  propertyAnchor,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasHostRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
   const { state: fenceState } = useFenceConfig();
   const { data: products } = useProducts();
@@ -119,6 +123,7 @@ export function FenceLayoutCanvas({
     });
   }, []);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
+  const [engineVersion, setEngineVersion] = useState(0);
   const [satelliteOpen, setSatelliteOpen] = useState(false);
   const [satelliteActive, setSatelliteActive] = useState(false);
 
@@ -176,6 +181,7 @@ export function FenceLayoutCanvas({
       },
     });
     engineRef.current = engine;
+    setEngineVersion((value) => value + 1);
     onEngineReady?.(engine);
     requestAnimationFrame(() => {
       engine.fitToContent();
@@ -184,6 +190,7 @@ export function FenceLayoutCanvas({
     return () => {
       engineRef.current?.destroy();
       engineRef.current = null;
+      setEngineVersion((value) => value + 1);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleGatePlaced]);
@@ -285,6 +292,7 @@ export function FenceLayoutCanvas({
         onHelpOpen={() => {}}
         onPrintMap={() => engineRef.current?.printMap?.()}
       />
+      {!propertyAnchor ? (
       <div className="flex items-center gap-2 border-b border-brand-border/60 bg-brand-card px-2 py-1.5">
         <button
           type="button"
@@ -302,18 +310,27 @@ export function FenceLayoutCanvas({
           <Map size={13} aria-hidden /> Satellite
         </button>
       </div>
+      ) : null}
 
-      {satelliteOpen ? (
+      {satelliteOpen && !propertyAnchor ? (
         <MapControls
           engineRef={engineRef}
           onMapUiStateChange={(s) => setSatelliteActive(s.hasLoadedMap)}
         />
       ) : null}
 
-      <div className="relative min-h-0 flex-1">
+      <MapOverlayCanvasFrame
+        propertyAnchor={propertyAnchor}
+        canvasRef={canvasRef}
+        canvasHostRef={canvasHostRef}
+        engine={engineRef.current}
+        engineVersion={engineVersion}
+        className="relative min-h-0 flex-1 overflow-hidden"
+        overlay={renderOverlay?.(runSummaries)}
+      >
         <canvas
           ref={canvasRef}
-          className="w-full bg-brand-bg block h-full"
+          className={`block h-full w-full ${propertyAnchor ? "bg-transparent" : "bg-brand-bg"}`}
           style={{ cursor: "crosshair" }}
         />
 
@@ -338,8 +355,7 @@ export function FenceLayoutCanvas({
           </span>
         </div>
 
-        {renderOverlay?.(runSummaries)}
-      </div>
+      </MapOverlayCanvasFrame>
 
 
 

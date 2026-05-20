@@ -1438,7 +1438,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     : undefined;
   const gateTargetRunLength = gateTargetRun ? runLengthMm(gateTargetRun) : 0;
   const hasLegacyConfiguredPayload = Boolean(
-    payload && !payload.propertyAnchor && payload.runs.some((run) => run.segments.length > 0),
+    quoteId && payload && !payload.propertyAnchor && payload.runs.some((run) => run.segments.length > 0),
   );
   const propertyAnchorConfirmed = Boolean(payload?.propertyAnchor) || hasLegacyConfiguredPayload;
   const headerActions = !showIntro && !mapExpanded ? (
@@ -1563,10 +1563,12 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                   </section>
                   {payload && (
                     <>
-                      <PropertyMap
-                        initialAnchor={payload.propertyAnchor ?? null}
-                        onAnchorConfirmed={handlePropertyAnchorConfirmed}
-                      />
+                      {!hasLegacyConfiguredPayload ? (
+                        <PropertyMap
+                          initialAnchor={payload.propertyAnchor ?? null}
+                          onAnchorConfirmed={handlePropertyAnchorConfirmed}
+                        />
+                      ) : null}
                       <PropertyAnchorFormGate anchorConfirmed={propertyAnchorConfirmed}>
                         <hr className="border-brand-border/60" />
                         <section>
@@ -1729,6 +1731,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                           mapExpanded={mapExpanded}
                           onMapExpandedChange={setMapExpanded}
                           showRunDetails={!mapExpanded}
+                          propertyAnchor={payload.propertyAnchor ?? null}
                         />
                       ) : (
                         <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/50 p-6 text-center text-sm font-bold text-brand-muted">
