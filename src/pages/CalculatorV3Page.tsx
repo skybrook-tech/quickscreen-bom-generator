@@ -1265,10 +1265,10 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
   const cleanJobName = jobName.trim();
   const systemLabel = (productCode: string) => {
-    if (productCode === "QSHS") return "QuickScreen Horizontal Slat";
-    if (productCode === "VS") return "QuickScreen Vertical Slat";
-    if (productCode === "XPL") return "XPress Plus Fence";
-    if (productCode === "BAYG") return "BAY-G Infill Screens";
+    if (productCode === "QSHS") return "Horizontal Slats";
+    if (productCode === "VS") return "Vertical Slats";
+    if (productCode === "XPL") return "XPress Plus";
+    if (productCode === "BAYG") return "BAY-G Infill";
     return productCode;
   };
   const gateSummaryForRun = (run: CanonicalRun) => {
@@ -1288,33 +1288,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
       .map(([label, count]) => `${count} ${label}${count === 1 ? "" : "s"}`)
       .join(" + ");
   };
-  const runBomSummaries = payload?.runs.map((run, index) => {
-    const vars = {
-      ...(payload.variables ?? {}),
-      ...(run.variables ?? {}),
-    };
-    const lengthM = run.segments.reduce(
-      (sum, segment) => {
-        const qty =
-          run.productCode === "BAYG" && segment.segmentKind !== "gate_opening"
-            ? Math.max(1, Math.round(Number(segment.variables?.panel_quantity ?? 1)))
-            : 1;
-        return sum + Number(segment.segmentWidthMm ?? 0) * qty;
-      },
-      0,
-    ) / 1000;
-    const gatePart = gateSummaryForRun(run);
-    return [
-      `Run ${index + 1}`,
-      `${lengthM.toFixed(2)}m`,
-      systemLabel(run.productCode),
-      colourName(vars.colour_code),
-      `${Number(vars.slat_size_mm ?? 65)}mm slat`,
-      `${Number(vars.slat_gap_mm ?? 9)}mm gap`,
-      gatePart || null,
-    ].filter(Boolean).join(" - ");
-  }) ?? [];
-  const summaryText = payload ? runBomSummaries.join(" | ") : cleanJobName;
+  const summaryText = cleanJobName;
   const bomRunDetails = payload?.runs.map((run, runIndex) => {
     const vars = { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
     const gates = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
@@ -1328,14 +1302,16 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     }, 0);
     const maxPanelWidth = Number(vars.max_panel_width_mm ?? 2600);
     const runSettings = [
-      `System Type: ${systemLabel(run.productCode)}`,
-      `Color: ${colourName(vars.colour_code)}`,
-      `Slat size: ${Number(vars.slat_size_mm ?? 65)}mm`,
-      `Gap size: ${Number(vars.slat_gap_mm ?? 9)}mm`,
-      `Post mounting: ${run.productCode === "BAYG" ? "Not required" : mountingLabel(vars.mounting_method ?? vars.mounting_type)}`,
-      `Max post spacing: ${maxPanelWidth}mm`,
-      `Corners: ${run.corners?.length ?? 0}`,
-    ];
+      systemLabel(run.productCode),
+      colourName(vars.colour_code),
+      `${Number(vars.slat_size_mm ?? 65)}mm slat`,
+      `${Number(vars.slat_gap_mm ?? 9)}mm gap`,
+      run.productCode === "BAYG" ? null : mountingLabel(vars.mounting_method ?? vars.mounting_type),
+      `${maxPanelWidth}mm spacing`,
+      (run.corners?.length ?? 0) > 0
+        ? `${run.corners?.length} corner${run.corners?.length === 1 ? "" : "s"}`
+        : null,
+    ].filter(Boolean) as string[];
     const sectionRows = sections.map((section, sectionIndex) => {
       const sectionVars = section.variables ?? {};
       const width = Number(section.segmentWidthMm ?? 0);
@@ -1384,7 +1360,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     return {
       hero: `Run ${runIndex + 1} - ${(lengthMm / 1000).toFixed(2)}m - ${systemLabel(run.productCode)} - ${gateSummaryForRun(run) || "no gates"}`,
       printHeading: `Run ${runIndex + 1}`,
-      settings: runSettings,
+      settings: runSettings.join(" · "),
       sections: sectionRows,
     };
   }) ?? [];
@@ -1801,11 +1777,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                               <p className="text-sm font-black text-brand-text print:text-black">
                                 {runDetail.hero}
                               </p>
-                              <div className="grid gap-x-4 gap-y-1 text-xs font-semibold text-brand-muted sm:grid-cols-2 print:text-slate-700">
-                                {runDetail.settings.map((setting) => (
-                                  <span key={setting}>{setting}</span>
-                                ))}
-                              </div>
+                              <p className="text-xs font-semibold text-brand-muted print:text-slate-700">
+                                {runDetail.settings}
+                              </p>
                               <div className="space-y-1 pl-3 text-xs font-semibold text-brand-muted print:text-slate-700">
                                 {runDetail.sections.map((section) => (
                                   <div key={section.label}>
@@ -1855,11 +1829,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                           {bomRunDetails.map((runDetail) => (
                             <section key={runDetail.hero} className="break-inside-avoid space-y-2">
                               <h3 className="text-sm font-black text-black">{runDetail.printHeading}</h3>
-                              <div className="grid gap-x-6 gap-y-1 text-xs font-semibold text-slate-700 sm:grid-cols-2">
-                                {runDetail.settings.map((setting) => (
-                                  <span key={setting}>{setting}</span>
-                                ))}
-                              </div>
+                              <p className="text-xs font-semibold text-slate-700">
+                                {runDetail.settings}
+                              </p>
                               <div className="space-y-2 pl-3 text-xs font-semibold text-slate-700">
                                 {runDetail.sections.map((section) => (
                                   <div key={section.label} className="break-inside-avoid">

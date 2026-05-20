@@ -85,6 +85,12 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   );
 
   useEffect(() => {
+    if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
+    if (!runSettingsOpen) return;
+    runCollapseRef.current = window.setTimeout(() => setRunSettingsOpen(false), RUN_SETTINGS_AUTO_COLLAPSE_MS);
+  }, [runSettingsOpen]);
+
+  useEffect(() => {
     if (!autoOpenFirstSection || !firstSegment) return;
     setRunSettingsOpen(false);
     setExpandedId(firstSegment.segmentId);
@@ -103,6 +109,11 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   function scheduleRunSettingsCollapse() {
     if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
     runCollapseRef.current = window.setTimeout(() => setRunSettingsOpen(false), RUN_SETTINGS_AUTO_COLLAPSE_MS);
+  }
+
+  function resetRunSettingsCollapse() {
+    if (!runSettingsOpen) return;
+    scheduleRunSettingsCollapse();
   }
 
   function upsertSegment(segment: CanonicalSegment) {
@@ -162,7 +173,13 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
 
             <button
               type="button"
-              onClick={() => setRunSettingsOpen((value) => !value)}
+              onClick={() =>
+                setRunSettingsOpen((value) => {
+                  const next = !value;
+                  if (next) setExpandedId(null);
+                  return next;
+                })
+              }
               className={`ml-auto mb-2 inline-flex h-9 w-9 items-center justify-center rounded-lg border text-sm font-extrabold transition-colors ${runSettingsOpen
                 ? "border-brand-primary bg-brand-primary text-white"
                 : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
@@ -177,7 +194,15 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
       </div>
 
       {runSettingsOpen && (
-        <RunSettingsEditor run={run} onCollapse={() => setRunSettingsOpen(false)} />
+        <div
+          onPointerDown={resetRunSettingsCollapse}
+          onKeyDown={resetRunSettingsCollapse}
+          onScroll={resetRunSettingsCollapse}
+          onInput={resetRunSettingsCollapse}
+          onChange={resetRunSettingsCollapse}
+        >
+          <RunSettingsEditor run={run} onCollapse={() => setRunSettingsOpen(false)} />
+        </div>
       )}
 
 
