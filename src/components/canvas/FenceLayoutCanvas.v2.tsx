@@ -2,7 +2,7 @@ import { useRef, useEffect, useCallback, useState, useMemo } from "react";
 import { Map } from "lucide-react";
 import { cn } from "../../lib";
 import { initCanvasEngine } from "./canvasEngine";
-import { CanvasToolbar } from "./CanvasToolbar";
+import { CanvasToolbar, type CanvasMapInteractionMode } from "./CanvasToolbar";
 import { MapControls } from "./MapControls";
 import { MapOverlayCanvasFrame } from "./MapOverlayCanvasFrame";
 import { GateModal } from "../gate/GateModal";
@@ -124,6 +124,7 @@ export function FenceLayoutCanvas({
   }, []);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
   const [engineVersion, setEngineVersion] = useState(0);
+  const [mapInteractionMode, setMapInteractionMode] = useState<CanvasMapInteractionMode>("pan");
   const [satelliteOpen, setSatelliteOpen] = useState(false);
   const [satelliteActive, setSatelliteActive] = useState(false);
 
@@ -291,6 +292,9 @@ export function FenceLayoutCanvas({
         onFreehandStyleChange={handleFreehandStyleChange}
         onHelpOpen={() => {}}
         onPrintMap={() => engineRef.current?.printMap?.()}
+        mapOverlayEnabled={Boolean(propertyAnchor)}
+        mapInteractionMode={mapInteractionMode}
+        onMapInteractionModeChange={setMapInteractionMode}
       />
       {!propertyAnchor ? (
       <div className="flex items-center gap-2 border-b border-brand-border/60 bg-brand-card px-2 py-1.5">
@@ -325,6 +329,7 @@ export function FenceLayoutCanvas({
         canvasHostRef={canvasHostRef}
         engine={engineRef.current}
         engineVersion={engineVersion}
+        mapInteractionMode={mapInteractionMode}
         className="relative min-h-0 flex-1 overflow-hidden"
         overlay={renderOverlay?.(runSummaries)}
       >

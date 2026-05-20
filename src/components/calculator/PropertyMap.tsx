@@ -47,11 +47,6 @@ export function PropertyAnchorFormGate({ anchorConfirmed, children }: PropertyAn
 }
 
 export function PropertyMap({ initialAnchor, onAnchorConfirmed }: PropertyMapProps) {
-  const googleMaps = useGoogleMaps();
-  const mapNodeRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<google.maps.Map | null>(null);
-  const markerRef = useRef<google.maps.Marker | null>(null);
-  const [mapType, setMapType] = useState<MapType>("satellite");
   const [located, setLocated] = useState<LocatedAddress | null>(
     initialAnchor
       ? {
@@ -66,6 +61,7 @@ export function PropertyMap({ initialAnchor, onAnchorConfirmed }: PropertyMapPro
     initialAnchor ? { lat: initialAnchor.lat, lng: initialAnchor.lng } : null,
   );
   const [confirmed, setConfirmed] = useState(Boolean(initialAnchor));
+  const [editing, setEditing] = useState(!initialAnchor);
 
   useEffect(() => {
     if (!initialAnchor) return;
@@ -77,7 +73,89 @@ export function PropertyMap({ initialAnchor, onAnchorConfirmed }: PropertyMapPro
     });
     setPin({ lat: initialAnchor.lat, lng: initialAnchor.lng });
     setConfirmed(true);
+    setEditing(false);
   }, [initialAnchor]);
+
+  function handleConfirmFromExpanded() {
+    if (!pin || !located) return;
+    setConfirmed(true);
+    setEditing(false);
+    onAnchorConfirmed({
+      anchorLat: pin.lat,
+      anchorLng: pin.lng,
+      formattedAddress: located.formattedAddress,
+    });
+  }
+
+  if (confirmed && located && !editing) {
+    return (
+      <section
+        data-testid="property-map-collapsed"
+        className="rounded-xl border border-brand-border/70 bg-brand-card px-3 py-2 shadow-sm"
+      >
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-[10px] font-black uppercase tracking-[0.14em] text-brand-muted">
+              Confirmed property
+            </p>
+            <p className="truncate text-sm font-bold text-brand-text">
+              {located.formattedAddress}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setEditing(true)}
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+          >
+            <MapPin size={15} />
+            Change property
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <ExpandedPropertyMap
+      located={located}
+      pin={pin}
+      confirmed={confirmed}
+      onLocated={(location) => {
+        setLocated(location);
+        setPin({ lat: location.lat, lng: location.lng });
+        setConfirmed(false);
+      }}
+      onPinChange={(nextPin) => {
+        setPin(nextPin);
+        setConfirmed(false);
+      }}
+      onConfirm={handleConfirmFromExpanded}
+    />
+  );
+}
+
+interface ExpandedPropertyMapProps {
+  located: LocatedAddress | null;
+  pin: { lat: number; lng: number } | null;
+  confirmed: boolean;
+  onLocated: (location: LocatedAddress) => void;
+  onPinChange: (pin: { lat: number; lng: number }) => void;
+  onConfirm: () => void;
+}
+
+function ExpandedPropertyMap({
+  located,
+  pin,
+  confirmed,
+  onLocated,
+  onPinChange,
+  onConfirm,
+}: ExpandedPropertyMapProps) {
+  const googleMaps = useGoogleMaps();
+  const mapNodeRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const markerRef = useRef<google.maps.Marker | null>(null);
+  const [mapType, setMapType] = useState<MapType>("satellite");
 
   useEffect(() => {
     if (!googleMaps.ready || !mapNodeRef.current || mapRef.current) return;
@@ -114,30 +192,13 @@ export function PropertyMap({ initialAnchor, onAnchorConfirmed }: PropertyMapPro
       markerRef.current.addListener("dragend", () => {
         const markerPosition = markerRef.current?.getPosition();
         if (!markerPosition) return;
-        setPin({ lat: markerPosition.lat(), lng: markerPosition.lng() });
-        setConfirmed(false);
+        onPinChange({ lat: markerPosition.lat(), lng: markerPosition.lng() });
       });
     } else {
       markerRef.current.setPosition(position);
       markerRef.current.setMap(mapRef.current);
     }
-  }, [googleMaps.ready, pin]);
-
-  function handleLocated(location: LocatedAddress) {
-    setLocated(location);
-    setPin({ lat: location.lat, lng: location.lng });
-    setConfirmed(false);
-  }
-
-  function handleConfirm() {
-    if (!pin || !located) return;
-    setConfirmed(true);
-    onAnchorConfirmed({
-      anchorLat: pin.lat,
-      anchorLng: pin.lng,
-      formattedAddress: located.formattedAddress,
-    });
-  }
+  }, [googleMaps.ready, onPinChange, pin]);
 
   const mapStatus = googleMaps.error
     ? googleMaps.error.message
@@ -167,7 +228,7 @@ export function PropertyMap({ initialAnchor, onAnchorConfirmed }: PropertyMapPro
         </button>
       </div>
 
-      <AddressInput onLocated={handleLocated} />
+      <AddressInput onLocated={onLocated} />
 
       <div className="relative min-h-[300px] overflow-hidden rounded-xl border border-brand-border bg-brand-bg aspect-[4/3] md:aspect-video">
         {!googleMaps.ready ? (
@@ -192,7 +253,7 @@ export function PropertyMap({ initialAnchor, onAnchorConfirmed }: PropertyMapPro
           </div>
           <button
             type="button"
-            onClick={handleConfirm}
+            onClick={onConfirm}
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90"
           >
             {confirmed ? <CheckCircle2 size={16} /> : <MapPin size={16} />}

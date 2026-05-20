@@ -1,6 +1,6 @@
 /// <reference types="google.maps" />
 
-import { Layers, Lock, Pencil, Unlock, Loader2 } from "lucide-react";
+import { Layers, Lock, Map as MapIcon, Loader2 } from "lucide-react";
 import {
   type CSSProperties,
   type ReactNode,
@@ -13,6 +13,7 @@ import {
 import { useGoogleMaps } from "../../hooks/useGoogleMaps";
 import type { initCanvasEngine } from "./canvasEngine";
 import type { CanvasOverlay } from "../../lib/googleMaps/CanvasOverlay";
+import type { CanvasMapInteractionMode } from "./CanvasToolbar";
 
 interface PropertyAnchor {
   lat: number;
@@ -30,6 +31,7 @@ interface MapOverlayCanvasFrameProps {
   style?: CSSProperties;
   children: ReactNode;
   overlay?: ReactNode;
+  mapInteractionMode?: CanvasMapInteractionMode;
 }
 
 type MapType = "satellite" | "hybrid";
@@ -46,6 +48,7 @@ export function MapOverlayCanvasFrame({
   style,
   children,
   overlay,
+  mapInteractionMode = "pan",
 }: MapOverlayCanvasFrameProps) {
   const anchor = useMemo(
     () =>
@@ -78,6 +81,7 @@ export function MapOverlayCanvasFrame({
       className={className}
       style={style}
       overlay={overlay}
+      mapInteractionMode={mapInteractionMode}
     >
       {children}
     </AnchoredMapOverlay>
@@ -95,6 +99,7 @@ interface AnchoredMapOverlayProps {
   style?: CSSProperties;
   children: ReactNode;
   overlay?: ReactNode;
+  mapInteractionMode: CanvasMapInteractionMode;
 }
 
 function AnchoredMapOverlay({
@@ -108,13 +113,14 @@ function AnchoredMapOverlay({
   style,
   children,
   overlay,
+  mapInteractionMode,
 }: AnchoredMapOverlayProps) {
   const googleMaps = useGoogleMaps();
   const mapNodeRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const overlayRef = useRef<CanvasOverlay | null>(null);
-  const [drawMode, setDrawMode] = useState(false);
   const [mapType, setMapType] = useState<MapType>("satellite");
+  const drawMode = mapInteractionMode === "draw";
 
   useEffect(() => {
     if (!googleMaps.ready || !mapNodeRef.current) return;
@@ -132,12 +138,13 @@ function AnchoredMapOverlay({
         draggable: !drawMode,
         scrollwheel: !drawMode,
         disableDoubleClickZoom: drawMode,
+        keyboardShortcuts: !drawMode,
       });
       return;
     }
     mapRef.current.setCenter(anchor);
     mapRef.current.setZoom(PROPERTY_ZOOM);
-  }, [anchor, drawMode, googleMaps.ready, mapType]);
+  }, [anchor, googleMaps.ready]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -211,8 +218,17 @@ function AnchoredMapOverlay({
       ? address
       : "Loading live map...";
 
+  const frameClassName = `${className ?? ""} ${
+    drawMode ? "ring-2 ring-brand-warning/40" : "ring-2 ring-brand-primary/40"
+  }`;
+
   return (
-    <div className={className} style={style} data-testid="canvas-map-overlay">
+    <div
+      className={frameClassName}
+      style={style}
+      data-testid="canvas-map-overlay"
+      data-map-interaction-mode={mapInteractionMode}
+    >
       <div ref={mapNodeRef} className="absolute inset-0 bg-brand-bg" />
       {!googleMaps.ready ? (
         <div className="absolute inset-0 flex items-center justify-center bg-brand-bg">
@@ -223,20 +239,13 @@ function AnchoredMapOverlay({
           </div>
         </div>
       ) : null}
-      <div ref={canvasHostRef} className="absolute inset-0 z-10">
+      <div
+        ref={canvasHostRef}
+        className={`absolute inset-0 z-10 ${drawMode ? "pointer-events-auto" : "pointer-events-none"}`}
+      >
         {children}
       </div>
       <div className="absolute left-3 top-3 z-20 flex flex-wrap gap-2" data-print-hide>
-        <button
-          type="button"
-          onClick={() => setDrawMode((value) => !value)}
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-brand-border bg-brand-card/95 px-3 py-2 text-xs font-bold text-brand-text shadow-sm transition-colors hover:border-brand-primary hover:text-brand-primary"
-          aria-pressed={drawMode}
-          title={drawMode ? "Switch to lock map mode" : "Switch to draw mode"}
-        >
-          {drawMode ? <Pencil size={15} /> : <Lock size={15} />}
-          {drawMode ? "Draw" : "Lock map"}
-        </button>
         <button
           type="button"
           onClick={() =>
@@ -252,8 +261,8 @@ function AnchoredMapOverlay({
       <div className="absolute bottom-3 left-3 right-3 z-20 flex items-center justify-between gap-3 rounded-lg border border-brand-border bg-brand-card/95 px-3 py-2 text-xs font-bold text-brand-muted shadow-sm pointer-events-none">
         <span className="min-w-0 truncate">{status}</span>
         <span className="inline-flex shrink-0 items-center gap-1 text-brand-text">
-          {drawMode ? <Unlock size={13} /> : <Lock size={13} />}
-          {drawMode ? "Map locked" : "Map movable"}
+          {drawMode ? <Lock size={13} /> : <MapIcon size={13} />}
+          {drawMode ? "Draw mode: map locked" : "Pan map mode: map live"}
         </span>
       </div>
       {overlay}

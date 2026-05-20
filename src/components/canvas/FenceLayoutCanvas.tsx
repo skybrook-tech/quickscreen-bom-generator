@@ -1,6 +1,6 @@
 import { useRef, useEffect, useCallback, useState, useMemo } from "react";
 import { initCanvasEngine } from "./canvasEngine";
-import { CanvasToolbar } from "./CanvasToolbar";
+import { CanvasToolbar, type CanvasMapInteractionMode } from "./CanvasToolbar";
 import { MapControls } from "./MapControls";
 import type { MapUiState } from "./MapControls";
 import { MapOverlayCanvasFrame } from "./MapOverlayCanvasFrame";
@@ -121,6 +121,7 @@ export function FenceLayoutCanvas({
   }, []);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
   const [engineVersion, setEngineVersion] = useState(0);
+  const [mapInteractionMode, setMapInteractionMode] = useState<CanvasMapInteractionMode>("pan");
   const [helpOpen, setHelpOpen] = useState(false);
   const [boundaryHintVisible, setBoundaryHintVisible] = useState(false);
   const [mapUiState, setMapUiState] = useState<MapUiState>({
@@ -419,6 +420,9 @@ export function FenceLayoutCanvas({
           onFreehandStyleChange={handleFreehandStyleChange}
           onHelpOpen={() => setHelpOpen(true)}
           onPrintMap={handlePrintMap}
+          mapOverlayEnabled={Boolean(propertyAnchor)}
+          mapInteractionMode={mapInteractionMode}
+          onMapInteractionModeChange={setMapInteractionMode}
         />
       </div>
 
@@ -428,6 +432,7 @@ export function FenceLayoutCanvas({
         canvasHostRef={canvasHostRef}
         engine={engineRef.current}
         engineVersion={engineVersion}
+        mapInteractionMode={mapInteractionMode}
         className="relative overflow-hidden"
         style={{ height: expanded ? "700px" : "630px" }}
       >

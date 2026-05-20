@@ -118,6 +118,8 @@ Latest property-map UI pass: `codex/calculator-property-map` adds the V3 calcula
 
 Latest canvas map overlay pass: `codex/canvas-engine-map-overlay` adds opt-in map-overlay rendering for anchored canonical payloads, metre-offset geometry helpers, a Google Maps `OverlayView` canvas mount, Lock map/Draw mode controls, V4 route smoke coverage, and a BOM regression test confirming anchored geometry does not change local fallback output.
 
+Latest canvas overlay follow-up pass: the confirmed sidebar property map now collapses to a slim address row with Change property, and anchored canvases expose a toolbar Pan map / Draw toggle so map gestures pass through by default before locking the map for fence drawing.
+
 Latest Brief BN v2 pass: the sandbox BN work now completes the top-bar reorganisation by moving Map/BOM tabs into the app header as a segmented control, moving BOM actions beside them only while BOM is active, removing the duplicate in-panel action row, and preserving the icon-only settings/Describe/gate-settings conventions in the repo skill mirrors.
 
 Latest Brief BO pass: run summaries now show only accepted run-default fields with height/length removed from the subheading, BOM colour display strips internal dispatch-code suffixes, section and gate match codes stay green when their run-derived settings match, and Print BOM now prints materials and totals first, then Run & Section Details, then the optional map at the bottom.
