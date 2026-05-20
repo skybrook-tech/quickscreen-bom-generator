@@ -749,20 +749,8 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   return (
     <div className="space-y-4 text-sm font-semibold">
       <GateSettingsSection
-        title="Gate type"
-        summary={`${optionLabel(GATE_MOVEMENTS, movement)} / ${Number(seg.segmentWidthMm ?? 0)}mm wide`}
-      >
-        <OptionPills
-          label="Gate type"
-          value={movement}
-          options={GATE_MOVEMENTS}
-          onChange={setMovement}
-        />
-      </GateSettingsSection>
-
-      <GateSettingsSection
-        title="QSG gate system"
-        summary={optionLabel(buildOptions, build)}
+        title="Gate Type & Direction"
+        summary={`${optionLabel(buildOptions, build)} / ${optionLabel(GATE_MOVEMENTS, movement)}`}
       >
         <OptionPills
           label="QSG gate system"
@@ -770,100 +758,80 @@ export function GateSegmentDetails({ runId, seg }: Props) {
           options={buildOptions}
           onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gateBuild]: value })}
         />
-      </GateSettingsSection>
-
-      {isSwing && movement === "double_swing" && (
-        <GateSettingsSection
-          title="Double gate leaves"
-          summary={`${Math.round(leafWidthsMm[0] ?? 0)}mm + ${Math.round(leafWidthsMm[1] ?? 0)}mm`}
-          defaultOpen
-        >
-          <div className="rounded-lg border border-brand-border/70 bg-brand-card p-3 text-xs font-bold text-brand-muted">
-            Finished leaves are calculated after hinge gaps and the shared latch gap. Changing one leaf automatically adjusts the other.
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {[0, 1].map((index) => {
-              const leafWidth = Math.round(leafWidthsMm[index] ?? clearOpeningMm / 2);
-              return (
-                <label key={index} className="flex flex-col gap-1">
-                  <span className="text-sm font-bold text-brand-muted">Leaf {index + 1} finished width (mm)</span>
-                  <NumberInput
-                    value={leafWidth}
-                    min={1}
-                    max={Math.max(1, Math.round(clearOpeningMm) - 1)}
-                    step={10}
-                    className="w-28 px-2 py-1.5 text-center tabular-nums"
-                    onChange={(value) => updateLeafWidth(index as 0 | 1, Number(value))}
-                  />
-                  {leafWidth < 800 && (
-                    <span className="text-xs font-bold text-brand-warning">
-                      Soft warning: leaf is under 800mm.
-                    </span>
-                  )}
-                </label>
-              );
-            })}
-          </div>
-          <p className="text-xs font-semibold text-brand-muted">
-            Clear leaf total: <b className="text-brand-text">{Math.round(clearOpeningMm)}mm</b> from a{" "}
-            <b className="text-brand-text">{Math.round(gateWidthMm)}mm</b> opening.
-          </p>
-        </GateSettingsSection>
-      )}
-
-      <GateSettingsSection
-        title={isSwing ? "Opening direction" : "Slide direction"}
-        summary={optionLabel(directionOptions, currentDirection)}
-      >
         <OptionPills
-          label={isSwing ? "Opening direction" : "Slide direction"}
-          value={currentDirection}
-          options={directionOptions}
-          onChange={(value) =>
-            upsertVariables({ [GATE_SEGMENT_STUB_KEYS.openingDirection]: value })
-          }
+          label="Gate type"
+          value={movement}
+          options={GATE_MOVEMENTS}
+          onChange={setMovement}
         />
-        {!isSwing && (
+        {isSwing ? (
           <OptionPills
-            label="Sliding side"
-            value={String(v[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? "front")}
-            options={SLIDING_SIDE_OPTIONS}
+            label="Opening direction"
+            value={currentDirection}
+            options={directionOptions}
             onChange={(value) =>
-              upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingSide]: value })
+              upsertVariables({ [GATE_SEGMENT_STUB_KEYS.openingDirection]: value })
             }
           />
+        ) : (
+          <>
+            <OptionPills
+              label="Slide direction"
+              value={currentDirection}
+              options={directionOptions}
+              onChange={(value) =>
+                upsertVariables({ [GATE_SEGMENT_STUB_KEYS.openingDirection]: value })
+              }
+            />
+            <OptionPills
+              label="Sliding side"
+              value={String(v[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? "front")}
+              options={SLIDING_SIDE_OPTIONS}
+              onChange={(value) =>
+                upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingSide]: value })
+              }
+            />
+          </>
+        )}
+        {isSwing && movement === "double_swing" && (
+          <div className="space-y-3">
+            <div className="rounded-lg border border-brand-border/70 bg-brand-card p-3 text-xs font-bold text-brand-muted">
+              Finished leaves are calculated after hinge gaps and the shared latch gap. Changing one leaf automatically adjusts the other.
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[0, 1].map((index) => {
+                const leafWidth = Math.round(leafWidthsMm[index] ?? clearOpeningMm / 2);
+                return (
+                  <label key={index} className="flex flex-col gap-1">
+                    <span className="text-sm font-bold text-brand-muted">Leaf {index + 1} finished width (mm)</span>
+                    <NumberInput
+                      value={leafWidth}
+                      min={1}
+                      max={Math.max(1, Math.round(clearOpeningMm) - 1)}
+                      step={10}
+                      className="w-28 px-2 py-1.5 text-center tabular-nums"
+                      onChange={(value) => updateLeafWidth(index as 0 | 1, Number(value))}
+                    />
+                    {leafWidth < 800 && (
+                      <span className="text-xs font-bold text-brand-warning">
+                        Soft warning: leaf is under 800mm.
+                      </span>
+                    )}
+                  </label>
+                );
+              })}
+            </div>
+            <p className="text-xs font-semibold text-brand-muted">
+              Clear leaf total: <b className="text-brand-text">{Math.round(clearOpeningMm)}mm</b> from a{" "}
+              <b className="text-brand-text">{Math.round(gateWidthMm)}mm</b> opening.
+            </p>
+          </div>
         )}
       </GateSettingsSection>
 
       <GateSettingsSection
-        title="Gate post"
-        summary={`${String(v[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm] ?? masterVars.post_size ?? masterPostSize)}mm`}
-      >
-        <OptionPills
-          label="Gate post"
-          value={String(v[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm] ?? masterVars.post_size ?? masterPostSize)}
-          options={GATE_POST_SIZE_OPTIONS}
-          onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(value) })}
-        />
-      </GateSettingsSection>
-
-      <GateSettingsSection
-        title="Gate colour"
-        summary={String(v[GATE_SEGMENT_STUB_KEYS.colourCode] ?? masterVars.colour_code ?? "B")}
-      >
-        <div className="space-y-1">
-          <p className="text-sm font-bold text-brand-muted">Gate colour</p>
-          <ColourPalette
-            value={String(v[GATE_SEGMENT_STUB_KEYS.colourCode] ?? masterVars.colour_code ?? "B")}
-            options={COLOUR_OPTIONS.map((option) => option.value)}
-            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.colourCode]: value })}
-          />
-        </div>
-      </GateSettingsSection>
-
-      <GateSettingsSection
-        title="Gate slat size"
-        summary={`${String(v[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVars.slat_size_mm ?? 65)}mm`}
+        title="Slat, Post & Colour"
+        summary={`${slatSizeMm}mm / ${slatGapMm}mm / ${gateColour}`}
       >
         <OptionPills
           label="Gate slat size"
@@ -871,24 +839,26 @@ export function GateSegmentDetails({ runId, seg }: Props) {
           options={SLAT_SIZE_OPTIONS}
           onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(value) })}
         />
-      </GateSettingsSection>
-
-      <GateSettingsSection
-        title="Gate slat gap"
-        summary={`${String(v[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVars.slat_gap_mm ?? 9)}mm`}
-      >
         <OptionPills
           label="Gate slat gap"
           value={String(v[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVars.slat_gap_mm ?? 9)}
           options={SLAT_GAP_OPTIONS}
           onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(value) })}
         />
-      </GateSettingsSection>
-
-      <GateSettingsSection
-        title="Gate termination posts"
-        summary={v[GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination] === false ? "Fence posts separate" : "Use gate posts"}
-      >
+        <OptionPills
+          label="Gate post"
+          value={String(v[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm] ?? masterVars.post_size ?? masterPostSize)}
+          options={GATE_POST_SIZE_OPTIONS}
+          onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(value) })}
+        />
+        <div className="space-y-1">
+          <p className="text-sm font-bold text-brand-muted">Gate colour</p>
+          <ColourPalette
+            value={gateColour}
+            options={COLOUR_OPTIONS.map((option) => option.value)}
+            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.colourCode]: value })}
+          />
+        </div>
         <label className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -903,12 +873,17 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         </label>
       </GateSettingsSection>
 
-      {isSwing ? (
-        <GateSettingsSection
-          title="Gate hardware"
-          summary={`${rankedLabel(rankedHinges, currentHingeValue)} / ${rankedLabel(rankedLatches, currentLatchValue)}`}
-        >
-          <GateWeightCard estimate={weightEstimate} />
+      <GateSettingsSection
+        title="Hardware & Weight"
+        summary={
+          isSwing
+            ? `${rankedLabel(rankedHinges, currentHingeValue)} / ${rankedLabel(rankedLatches, currentLatchValue)}`
+            : `${String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")} / ${automationEnabled ? "Automation on" : "Manual"}`
+        }
+      >
+        <GateWeightCard estimate={weightEstimate} />
+        {isSwing ? (
+          <>
           <div className="rounded-lg border border-brand-border/70 bg-brand-card p-3 text-xs font-bold text-brand-muted">
             <span className="text-brand-text">{leafCount}</span> leaf{leafCount === 1 ? "" : "s"} from a{" "}
             <span className="text-brand-text">{Math.round(gateWidthMm)}mm</span> opening.{" "}
@@ -996,12 +971,9 @@ export function GateSegmentDetails({ runId, seg }: Props) {
             options={GATE_STOP_OPTIONS}
             onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gateStopType]: value })}
           />
-        </GateSettingsSection>
-      ) : (
-        <GateSettingsSection
-          title="Gate hardware"
-          summary={`${String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")} / ${automationEnabled ? "Automation on" : "Manual"}`}
-        >
+          </>
+        ) : (
+          <>
           <HardwareDropdown
             label="Track"
             value={String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")}
@@ -1124,18 +1096,21 @@ export function GateSegmentDetails({ runId, seg }: Props) {
               </div>
               )}
           </div>
-        </GateSettingsSection>
-      )}
+          </>
+        )}
+      </GateSettingsSection>
 
-      <GateComponentList
-        orientation={build.includes("vertical") ? "vertical" : "horizontal"}
-        movement={movement}
-        slatSizeMm={slatSizeMm}
-        slatGapMm={slatGapMm}
-        colourCode={gateColour}
-        hingeSku={currentHingeValue}
-        latchSku={currentLatchValue}
-      />
+      <GateSettingsSection title="Gate Components" summary="Checklist">
+        <GateComponentList
+          orientation={build.includes("vertical") ? "vertical" : "horizontal"}
+          movement={movement}
+          slatSizeMm={slatSizeMm}
+          slatGapMm={slatGapMm}
+          colourCode={gateColour}
+          hingeSku={currentHingeValue}
+          latchSku={currentLatchValue}
+        />
+      </GateSettingsSection>
     </div>
   );
 }

@@ -4521,7 +4521,10 @@ BEGIN
   WHERE slug = 'glass-outlet';
 
   IF org_id_value IS NULL THEN
-    RAISE EXCEPTION 'glass-outlet organisation not found';
+    -- Organisation not yet seeded (fresh migration run before seeds). Skip gracefully.
+    -- In production the org already exists, so this branch is never taken.
+    RAISE NOTICE 'glass-outlet organisation not found – skipping supplier price seed';
+    RETURN;
   END IF;
 
   FOR item IN SELECT * FROM jsonb_array_elements(price_catalogue)

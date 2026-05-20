@@ -6,6 +6,7 @@ import Papa from "papaparse";
 import { BomV3PDFTemplate } from "./BomV3PDFTemplate";
 import { SlideOutPane } from "../calculator-v4/shared/SlideOutPane";
 import type { CalculatorBOMResult, BOMLineItem } from "../../types/bom.types";
+import { stripParentheticalDispatchCode } from "../../lib/displayText";
 
 interface BOMExportActionsProps {
   result: CalculatorBOMResult;
@@ -62,7 +63,7 @@ export function BOMExportActions({
     setCopying(true);
     const lines = effectiveItems.map(
       (i) =>
-        `${i.sku}\t${i.name || i.description}\t×${i.quantity}\t$${i.lineTotal.toFixed(2)}`,
+        `${i.sku}\t${stripParentheticalDispatchCode(i.name || i.description)}\t×${i.quantity}\t$${i.lineTotal.toFixed(2)}`,
     );
     lines.push("");
     lines.push(`Subtotal (ex-GST)\t\t\t$${subtotal.toFixed(2)}`);
@@ -87,8 +88,8 @@ export function BOMExportActions({
     };
     const rows: CSVRow[] = effectiveItems.map((i) => ({
       SKU: i.sku,
-      Name: i.name || i.description,
-      Description: i.description,
+      Name: stripParentheticalDispatchCode(i.name || i.description),
+      Description: stripParentheticalDispatchCode(i.description),
       Category: i.category,
       Unit: i.unit,
       Qty: i.quantity,

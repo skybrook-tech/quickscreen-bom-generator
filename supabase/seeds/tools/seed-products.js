@@ -19,7 +19,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, basename } from 'node:path';
 
-dotenv.config({ path: `.env.${process.env.NODE_ENV || 'local'}` });
+dotenv.config({ path: `.env.${process.env.NODE_ENV || 'local'}`, override: true });
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

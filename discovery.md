@@ -1952,3 +1952,79 @@ Changes applied:
 Verification:
 - `npm run build` passed.
 - Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.
+
+### May 18, 2026 - Brief BN sidebar icon and gate settings reorganisation
+
+Workflow / UX finding:
+- Text labels on sidebar settings buttons consumed too much horizontal space and made compact run/section/gate cards feel cluttered.
+- Gate settings had drifted into many small dropdowns while run and section settings had converged around grouped disclosure rows.
+- The BOM still surfaced the original free-text description even though that input is now an entry helper rather than quote-facing output.
+
+Changes applied:
+- Changed run, section, and gate settings buttons to icon-only controls and changed expanded settings collapse buttons to up-chevron-only controls.
+- Updated `SettingsDisclosureRow` so rows use blue chevron-down / chevron-up icons instead of `show` / `hide` text while keeping the shared one-open-row and 60-second idle behavior.
+- Added `(Click to describe)` under the initial compact Describe button and kept the Describe entry hidden once a fence system/run exists.
+- Removed the original description row from BOM CSV export and the BOM header display while leaving `payload.job.description` untouched.
+- Fixed section-level alternate post colour so it renders the colour palette directly instead of delegating to the schema form that could duplicate another field.
+- Cleaned gate collapsed summaries by removing swing direction and hinge side, and by showing hardware as type plus human-readable product name/label.
+- Reworked gate settings into four dropdowns: Gate Type & Direction, Slat/Post/Colour, Hardware & Weight, and Gate Components.
+
+Verification:
+- `npm run build` passed.
+
+Deferred:
+- CI wait, deploy preview screenshots, PR ready/merge, and branch cleanup were not performed in this commit/push-only workflow.
+
+### May 19, 2026 - Brief BN v2 sidebar/top-bar completion
+
+Workflow / UX finding:
+- The first BN follow-up only removed the post-run Describe box and BOM original-description output; the full BN v2 brief also required the top-bar Map/BOM/action reorganisation and refreshed skill guidance.
+- Run, section, and gate setting controls were already mostly icon-only and gate settings were already grouped into the four required disclosure rows, so this pass focused on verified sandbox gaps rather than duplicating existing component work.
+
+Changes applied:
+- Moved the Map/BOM switcher into the app header as a segmented control and removed the old in-content `RightPaneTabs` row.
+- Lifted BOM actions (`Generate BOM`, `Clear BOM`, `Print BOM`, `Include map`, `Export CSV`, and shortcuts) into the header action area and render them only when BOM is active.
+- Removed the repeated BOM action row from the BOM panel body so the content area starts with quote/BOM content instead of duplicated controls.
+- Re-applied BN.3 cleanup on the sandbox base: original free-text descriptions are no longer rendered in the BOM header or CSV export, while the internal job description remains stored.
+- Removed the post-run Describe box from the job header; the compact `(Click to describe)` affordance remains only in the empty system-choice state.
+- Changed visible sidebar settings icons to gear icons and kept expanded collapse controls as chevron-up-only buttons.
+- Updated QuickScreen/UI skill mirrors under `.claude/skills/` and `.agents/skills/` so future agents know the Map/BOM segmented control and BOM actions live in the top header.
+
+Verification:
+- `npm run build` passed with the existing large chunk warning only.
+
+### May 19, 2026 - Brief BO punch-list and Print BOM redesign
+
+Workflow / UX finding:
+- QA on the BJ/BK/BL work found that the app still repeated run-level height/length in the wrong places, exposed colour dispatch suffixes like `(B)` in BOM-facing copy, and printed installer reference details above the materials list.
+- The match indicator pattern was already present on section/gate code chips, but BO confirms the intended scope: section and gate code chips are the green visual signal when style settings match the run; gate matching ignores gate-only choices like movement, direction, hardware, and height.
+
+Changes applied:
+- Trimmed run card subheadings to the accepted run-default summary: System Type, Color, Slat size, Gap size, Post mounting, Max post spacing, and Corners. Height stays only in section settings and the main run title keeps the run length.
+- Changed the BOM display colour helper so internal colour-code suffixes are stripped from the BOM hero and run/section details without touching underlying dispatch data.
+- Added a BOM table display sanitizer for parenthetical uppercase dispatch codes in descriptions so print and screen line-item descriptions do not show supplier shorthand like `(B)`.
+- Reworked Print BOM ordering so materials and totals print first, followed by a `Run & Section Details` reference block with run settings, section length x height, panel count/post spacing, overrides, and gate sub-items. Optional map printing is forced to the bottom by print CSS ordering.
+- Synced the repo skill mirrors so future agents know the print BOM convention is materials first, details second, map last.
+
+Verification:
+- `npm run build` passed.
+
+Deferred:
+- Local browser screenshot and print-preview capture were not performed in this tool session. PR CI/deploy-preview verification still needs to happen after pushing.
+
+### May 18, 2026 - Brief BO residual BJ/BK/BL punch-list
+
+Workflow / UX finding:
+- The current sandbox already had several BO entry-flow fixes in place, but run subheadings still repeated length and height, and BOM colour display still exposed internal catalogue dispatch codes such as `(B)`.
+- Gate and section match chips were present; they needed clearer visible styling and accessibility copy so the green match state is unmistakable during QA.
+
+Changes applied:
+- Removed length and height from the run subheading while keeping the main run title length (`Run N — X.XXm`) and the section-level height editor intact.
+- Adjusted the run subheading to focus on run defaults: system type, colour, slat size, gap size, post mounting, max post spacing, and corners.
+- Added a display-only text helper that strips parenthetical uppercase dispatch codes from BOM hero summaries, BOM table descriptions, CSV/copy export text, and PDF descriptions without changing the underlying BOM data.
+- Tightened the gate green-match comparison to use the expected run-derived gate build plus colour, slat size, and gap size, while continuing to ignore height, movement, direction, hinge side, and hardware choices.
+- Confirmed the collapsed Describe control is icon-based and the Add Run button is hidden until the first run exists on the current sandbox branch.
+
+Verification:
+- `npm run build` passed.
+- Local HTTP smoke check returned 200 for `http://127.0.0.1:5173/fence-calculator`.

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import { Plus, SlidersHorizontal, X } from "lucide-react";
+import { ChevronUp, Plus, Settings, X } from "lucide-react";
 import { ConfirmButton } from "../shared/ConfirmButton";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
@@ -12,11 +12,17 @@ import {
   patchSegmentVariables,
 } from "../../lib/segmentTermination";
 import {
+  DROP_BOLT_OPTIONS,
+  GATE_STOP_OPTIONS,
+  SLIDING_CATCH_OPTIONS,
+  SLIDING_GUIDE_OPTIONS,
+  SLIDING_TRACK_OPTIONS,
   clearGateOpeningWidthMm,
   defaultGateBuildForMovement,
   gateMovementOrDefault,
+  optionLabel,
 } from "../../lib/gateOptionRules";
-import { hingeGapForSku, latchGapForSku } from "../../lib/gateHardware";
+import { HINGE_HARDWARE, LATCH_HARDWARE, baseHardwareSku, hingeGapForSku, latchGapForSku } from "../../lib/gateHardware";
 import {
   gatePatchForAlternative,
   gateTypeLabel,
@@ -70,10 +76,6 @@ function postLabel(productCode: string, variables: Record<string, unknown>) {
   return postSize === "65" ? "65mm Post Standard HD" : "50mm Post Standard";
 }
 
-function boolLabel(value: boolean) {
-  return value ? "Yes" : "No";
-}
-
 function gateMovementLabel(value: unknown) {
   const movement = gateMovementOrDefault(value);
   if (movement === "double_swing") return "Double swing";
@@ -81,41 +83,34 @@ function gateMovementLabel(value: unknown) {
   return "Single swing";
 }
 
-function gateDirectionLabel(variables: Record<string, unknown>) {
-  const movement = gateMovementOrDefault(variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
-  const direction = String(variables[GATE_SEGMENT_STUB_KEYS.openingDirection] ?? (movement === "sliding" ? "right" : "out"));
-  const slidingSide = String(variables[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? "front");
-  if (movement === "sliding") {
-    return `${direction === "left" ? "Slides left" : "Slides right"} / ${slidingSide === "back" ? "behind fence" : "front of fence"}`;
-  }
-  if (direction === "in") return "Swings in";
-  if (direction === "left") return "Left hand swing";
-  if (direction === "right") return "Right hand swing";
-  return "Swings out";
+function hardwareProductName(kind: "hinge" | "latch", value: unknown) {
+  const base = baseHardwareSku(value);
+  const catalogue = kind === "hinge" ? HINGE_HARDWARE : LATCH_HARDWARE;
+  return catalogue.find((item) => item.sku === base || item.skuW === String(value))?.label ?? String(value ?? "");
 }
 
-function gateHingeSideLabel(variables: Record<string, unknown>) {
+function gateHardwareSummaryItems(variables: Record<string, unknown>): SummaryItem[] {
   const movement = gateMovementOrDefault(variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
-  if (movement === "sliding") return "N/A";
-  const side = String(variables[GATE_SEGMENT_STUB_KEYS.hingeSide] ?? "default");
-  if (side === "left") return "Left";
-  if (side === "right") return "Right";
-  return "Default";
-}
-
-function gateHardwareSummary(variables: Record<string, unknown>) {
-  const movement = gateMovementOrDefault(variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
-  const kit = String(variables[GATE_SEGMENT_STUB_KEYS.hardwareKitSku] ?? "");
-  if (kit) return kit;
   if (movement === "sliding") {
     const track = String(variables[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST");
     const guide = String(variables[GATE_SEGMENT_STUB_KEYS.slidingGuideType] ?? "XPSG-GUIDE");
-    return `${track} / ${guide}`;
+    const catchType = String(variables[GATE_SEGMENT_STUB_KEYS.slidingCatchType] ?? "XPSG-CATCH-U");
+    return [
+      { label: "Track", value: optionLabel(SLIDING_TRACK_OPTIONS, track) },
+      { label: "Guide", value: optionLabel(SLIDING_GUIDE_OPTIONS, guide) },
+      { label: "Catch", value: optionLabel(SLIDING_CATCH_OPTIONS, catchType) },
+    ];
   }
   const hinge = String(variables[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B");
   const latch = String(variables[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA");
   const dropBolt = String(variables[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? "none");
-  return dropBolt !== "none" ? `${hinge} / ${latch} / ${dropBolt}` : `${hinge} / ${latch}`;
+  const gateStop = String(variables[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "none");
+  return [
+    hinge !== "none" ? { label: "Hinge", value: hardwareProductName("hinge", hinge) } : null,
+    latch !== "none" ? { label: "Latch", value: hardwareProductName("latch", latch) } : null,
+    dropBolt !== "none" ? { label: "Drop bolt", value: optionLabel(DROP_BOLT_OPTIONS, dropBolt) } : null,
+    gateStop !== "none" ? { label: "Gate stop", value: optionLabel(GATE_STOP_OPTIONS, gateStop) } : null,
+  ].filter(Boolean) as SummaryItem[];
 }
 
 function SummaryBit({
@@ -212,24 +207,18 @@ export function SegmentRow({
       : panelCount === 1
         ? `${Math.round(segmentLength)}mm`
         : `${panelCount} x ${Math.round(segmentLength / panelCount)}mm`;
-  const leftKind = String(segmentVariables[SEGMENT_TERMINATION_KEYS.leftKind] ?? "");
-  const rightKind = String(segmentVariables[SEGMENT_TERMINATION_KEYS.rightKind] ?? "");
-  const hasCornerPost =
-    leftKind === "corner" ||
-    rightKind === "corner" ||
-    Number.isFinite(Number(segmentVariables.geometry_angle_deg));
-  const endPostCount =
-    (leftKind === "system_post" || leftKind === "" ? 1 : 0) +
-    (rightKind === "system_post" || rightKind === "" ? 1 : 0);
   const gateVars = seg.variables ?? {};
   const gateWidthValidation = gate ? validateGateWidth(seg) : null;
   const gateBuild = String(
     gateVars[GATE_SEGMENT_STUB_KEYS.gateBuild] ??
     (productCode === "VS" ? "qsg_hinged_vertical" : "qsg_hinged_horizontal"),
   );
-  const expectedGateBuild = productCode === "VS"
-    ? gateBuild.includes("vertical")
-    : !gateBuild.includes("vertical");
+  const expectedGateBuild =
+    gateBuild ===
+    defaultGateBuildForMovement(
+      gateMovementOrDefault(gateVars[GATE_SEGMENT_STUB_KEYS.gateMovement]),
+      runProductCode === "VS",
+    );
   const compactLabel =
     displayLabel?.replace(/\s+/g, "") ??
     `R${runIdx + 1}${gate ? "G" : "S"}${segIdx + 1}`;
@@ -285,27 +274,11 @@ export function SegmentRow({
     maxPanelWidthForSystem(productCode),
   );
   const masterPanelCount = segmentLength > 0 ? Math.max(1, Math.ceil(segmentLength / masterMaxSpacing)) : 0;
-  const masterLeftKind = String(masterVariables[SEGMENT_TERMINATION_KEYS.leftKind] ?? "");
-  const masterRightKind = String(masterVariables[SEGMENT_TERMINATION_KEYS.rightKind] ?? "");
-  const masterHasCornerPost =
-    masterLeftKind === "corner" ||
-    masterRightKind === "corner" ||
-    Number.isFinite(Number(masterVariables.geometry_angle_deg));
-  const masterEndPostCount =
-    (masterLeftKind === "system_post" || masterLeftKind === "" ? 1 : 0) +
-    (masterRightKind === "system_post" || masterRightKind === "" ? 1 : 0);
-
   const summaryBitsBase = [
     gate
       ? { label: "Type", value: gateMovementLabel(gateVars[GATE_SEGMENT_STUB_KEYS.gateMovement]), emphasis: true }
       : null,
-    ...(gate
-      ? [
-        { label: "Direction", value: gateDirectionLabel(gateVars) },
-        { label: "Hinge side", value: gateHingeSideLabel(gateVars) },
-        { label: "Hardware", value: gateHardwareSummary(gateVars) },
-      ]
-      : []),
+    ...(gate ? gateHardwareSummaryItems(gateVars) : []),
     ...(isBayg && !gate
       ? [{ label: "Qty", value: Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1))), emphasis: true }]
       : []),
@@ -413,15 +386,13 @@ export function SegmentRow({
       },
       { label: "Panel Count", value: panelCount, changed: !isBayg && !sameValue(panelCount, masterPanelCount) },
       { label: "Panel width", value: panelWidthSummary, changed: !isBayg && !sameValue(maxSpacing, masterMaxSpacing) },
-      { label: "Corner post", value: boolLabel(hasCornerPost), changed: !isBayg && hasCornerPost !== masterHasCornerPost },
-      { label: "End post", value: endPostCount, changed: !isBayg && !sameValue(endPostCount, masterEndPostCount) },
     ];
   const differenceBits =
     matchesMaster ? [] : rawDifferenceBits.filter((item) => item.changed && item.label !== "Height");
   const summaryBits = [...summaryBitsBase, ...differenceBits];
   const visibleSettings = rawDifferenceBits.filter((item) => {
     if (item.label === "Height") return false;
-    if (isBayg && ["Post", "Mounting", "Panel Count", "Panel width", "Corner post", "End post"].includes(item.label)) {
+    if (isBayg && ["Post", "Mounting", "Panel Count", "Panel width"].includes(item.label)) {
       return false;
     }
     return true;
@@ -613,16 +584,17 @@ export function SegmentRow({
                 <button
                   type="button"
                   onClick={resetToMaster}
-                  title="Click to restore to run settings"
-                  className={`rounded-full px-2 py-1 text-center shadow-sm transition-colors ${matchesMaster
-                    ? "bg-brand-success text-white"
-                    : "bg-brand-warning/15 text-black hover:bg-brand-primary hover:text-white"
+                  title={matchesMaster ? "Settings match run settings" : "Click to restore to run settings"}
+                  aria-label={matchesMaster ? `${compactLabel} settings match run settings` : `${compactLabel} differs from run settings. Click to restore.`}
+                  className={`rounded-full px-2 py-1 text-center shadow-sm ring-1 ring-inset transition-colors ${matchesMaster
+                    ? "bg-brand-success text-white ring-brand-success"
+                    : "bg-brand-warning/15 text-black ring-brand-warning/30 hover:bg-brand-primary hover:text-white"
                     }`}
                 >
                   <span
                     onMouseEnter={() => setMapHover(compactLabel)}
                     onMouseLeave={() => setMapHover(null)}
-                    title="Click to restore to run settings"
+                    title={matchesMaster ? "Settings match run settings" : "Click to restore to run settings"}
                     className="text-base font-black leading-none tracking-normal"
                   >
                     {compactLabel}
@@ -648,15 +620,14 @@ export function SegmentRow({
                 <button
                   type="button"
                   onClick={onToggle}
-                  className={`inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border px-3 text-xs font-extrabold transition-colors ${open
+                  className={`inline-flex h-8 w-8 items-center justify-center rounded-lg border text-xs font-extrabold transition-colors ${open
                     ? "border-brand-primary bg-brand-primary text-white"
                     : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
                     }`}
                   aria-label={open ? (gate ? "Collapse gate settings" : "Collapse section settings") : (gate ? "Expand gate settings" : "Expand section settings")}
                   title={open ? "Save settings and collapse" : (gate ? "Open gate settings" : "Open section settings")}
                 >
-                  <SlidersHorizontal size={16} />
-                  <span>{open ? "Save settings" : gate ? "Gate settings" : "Section settings"}</span>
+                  {open ? <ChevronUp size={16} /> : <Settings size={16} />}
                 </button>
               </div>
               <div className="flex justify-end">

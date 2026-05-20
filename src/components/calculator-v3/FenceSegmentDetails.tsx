@@ -19,6 +19,7 @@ import {
 import { SchemaDrivenForm, type SchemaField } from "./SchemaDrivenForm";
 import NumberInput from "../shared/NumberInput";
 import { SettingsDisclosureRow } from "./SettingsDisclosureRow";
+import { ColourPalette } from "./ColourPalette";
 
 const POST_SIZE_LABELS: Record<string, string> = {
   "50": "50mm Post Standard",
@@ -265,11 +266,14 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                   {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
                 </button>
                 {postColourOpen && (
-                  <SchemaDrivenForm
-                    fields={[postColourField]}
-                    variables={mergedJobDisplay}
-                    onChange={handleOptionChange}
-                  />
+                  <div className="space-y-1">
+                    <p className="text-sm font-bold text-brand-muted">Post colour</p>
+                    <ColourPalette
+                      value={String(mergedJobDisplay.post_colour_code ?? mergedJobDisplay.colour_code ?? "B")}
+                      options={(postColourField.options_json ?? colourField?.options_json ?? ["B", "MN", "G", "SM", "W", "BS", "D", "M"]).map(String)}
+                      onChange={(value) => handleOptionChange("post_colour_code", value)}
+                    />
+                  </div>
                 )}
               </div>
             )}

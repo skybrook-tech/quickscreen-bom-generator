@@ -25,6 +25,6 @@ When a local skill is improved, copy the updated skill folder back here and comm
 
 ## Current Shared Patterns To Preserve
 
-- Sidebar settings use the `SettingsDisclosureRow` pattern across run, section, and gate settings: label-left, value-right, blue `show`/`hide`, one open dropdown, and 60-second idle collapse.
+- Sidebar settings use the `SettingsDisclosureRow` pattern across run, section, and gate settings: label-left, value-right, blue chevron expand/collapse icons, one open dropdown, and 60-second idle collapse.
 - The calculator's "Slat range" is `finish_family` (`standard`, `economy`, `alumawood`).
 - End-condition data remains in the model for canvas/BOM terminations, but the End Conditions sidebar UI is intentionally hidden.

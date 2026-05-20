@@ -20,11 +20,11 @@ Use this skill when improving how users configure, draw, review, and test quotes
 
 - Group choices by job, run, segment, gate, fixing, and add-ons.
 - Prefer compact controls over long explanatory copy.
-- Use the shared settings-row pattern for run, section, and gate settings: label on the left, selected value on the right, blue `show`/`hide` affordance, one open dropdown at a time, and a 60-second idle collapse. This pattern lives in `src/components/calculator-v3/SettingsDisclosureRow.tsx`.
+- Use the shared settings-row pattern for run, section, and gate settings: label on the left, selected value on the right, blue chevron affordance, one open dropdown at a time, and a 60-second idle collapse. This pattern lives in `src/components/calculator-v3/SettingsDisclosureRow.tsx`.
 - Keep setting groups semantically consistent across levels:
   - Run settings: `System type`, `Slats, colors, and spacings`, `Post size, mounting and spacing`; corner count is read-only in the run heading/details and comes from geometry.
   - Section settings: `System type`, `Slats, colors, and spacings`, `Post size, mounting and spacing`; show only non-height overrides from run settings unless expanded.
-  - Gate settings: mirror section settings, with gate-specific rows for type, opening direction, and hardware.
+  - Gate settings: exactly four groups: `Gate Type & Direction`, `Slat, Post & Colour`, `Hardware & Weight`, and `Gate Components`.
 - Treat height as a section-level attribute, not a run-level default. Section headers should keep the install-critical format `Section N - X.XXm - YYYYmm`; length and height are bold on the same line, and matching-run indicators ignore height differences.
 - Per-section system overrides are advanced but supported: store the override on the section and keep the section green only when the non-height settings, including system type, match the run.
 - Gate green-match indicators compare only system/build, colour, slat size, and gap size against the run. Swing type, opening direction, hinge side, hardware, and gate height are gate-specific choices and must not turn the match indicator off.
@@ -34,7 +34,8 @@ Use this skill when improving how users configure, draw, review, and test quotes
 - Hide alternate post colour unless the user asks for it. Default post colour follows fence colour. Place alternate post colour directly below the main colour picker in both run and section settings.
 - Show colour tiles as swatches with the 1-2 letter catalogue code overlaid; the full colour name belongs in hover/title text or selected-value summaries.
 - Treat the first workspace state as BOM-first: after job entry, the right pane opens on BOM instructions, while the sidebar shows the four prominent system buttons in this order: QSHS, VS, XPL, BAYG.
-- Use a compact message-icon affordance below the four system buttons for Describe Your Fence. It expands into the description input, uses `Apply`, and collapses back to the icon after a successful apply.
+- Use a compact message-icon affordance below the four system buttons for Describe Your Fence with `(Click to describe)` underneath. It expands into the description input, uses `Apply`, and disappears once the user selects a system or applies a description until the job is cleared.
+- Keep the primary Map/BOM view switcher in the top header as a segmented control. BOM actions (`Generate BOM`, `Clear BOM`, `Print BOM`, `Include map`, `Export CSV`, and shortcuts) live beside it only while BOM is active; they should not be repeated inside the BOM panel body.
 - Use a shared two-click confirm pattern for destructive actions: first click enters a danger confirm state, second click within about 3 seconds commits, and outside click cancels.
 - Treat "matches run defaults" indicators as signal, not noise: ignore structural geometry differences like corner/end-post conditions and only flag substantive setting overrides.
 - Matching run settings should be visible through the section/gate code indicator. If settings differ, list only the differing settings under `Settings that differ from run settings`; if matching, show `Settings match run settings`.
@@ -43,13 +44,13 @@ Use this skill when improving how users configure, draw, review, and test quotes
 - Put derived values near the inputs they depend on: panels, post spacing, cut length, achieved height.
 - Use product-code search for expert users and friendly labels for less technical users.
 - After Generate BOM, keep the user in one place: BOM lines, warnings, suggested extras, manual extras, GST, grand total.
-- BOM headers should include a printable run/section summary above line items: bold run hero line, compact settings, post/corner/end-post summary, indented sections with panel count/post spacing, overrides, and gate sub-items.
+- Print BOM should lead with materials, quantities, pricing, and totals. Put `Run & Section Details` after the line items using the same run-setting labels as the sidebar, include section length x height, panels/post spacing, overrides, and gate sub-items, and place the optional map last.
 
 ## Mapper UI Principles
 
 - Drawing geometry is the source of layout truth.
 - Exact typed measurements are the source of dimension truth.
-- Use persistent Map / Plan tabs for the right pane. The two tabs are views into the same calculator state; neither tab owns separate layout data, and switching views must not remount or lose the drawing.
+- Use persistent Map/BOM tabs for the right pane. The two tabs are views into the same calculator state; neither tab owns separate layout data, and switching views must not remount or lose the drawing.
 - Keep connected segments connected when editing lengths.
 - Endpoint drag should pivot around the opposite end of the section: the dragged post moves freely, the far end stays planted, and adjacent sections deform only when they share that dragged post.
 - Show the active endpoint clearly.

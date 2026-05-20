@@ -38,6 +38,8 @@ screenshots/
 .tmp
 
 .env*
+!.env.example
+!.env.local.example
 
 vite-dev*.log
 

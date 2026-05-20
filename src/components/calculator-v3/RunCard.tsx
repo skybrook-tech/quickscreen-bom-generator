@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CheckCircle2, Plus, SlidersHorizontal, Trash2 } from "lucide-react";
+import { CheckCircle2, ChevronUp, Plus, Settings, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
 import { defaultGateVariables } from "../../lib/gateOptionRules";
@@ -11,11 +11,16 @@ import { Button } from "../shared/Button";
 import { SegmentRow } from "./SegmentRow";
 import { colourName } from "./ColourPalette";
 import { RunSettingsEditor } from "./RunSettingsEditor";
-import { calcRunStats } from "../../lib/runStats";
 import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
 import { ConfirmButton } from "../shared/ConfirmButton";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
+
+const MOUNTING_LABELS: Record<string, string> = {
+  in_ground: "Concreted in ground",
+  base_plate: "Base plated",
+  core_drill: "Core drilled",
+};
 
 interface Props {
   run: CanonicalRun;
@@ -66,12 +71,9 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   );
   const firstSegment = firstFenceSegment(run);
   const runLengthM = (calcTotalLength(run) / 1000).toFixed(2);
-  const runStats = calcRunStats(run, jobMax);
-  const panelSummary = state.bomResult ? `${runStats.panels}P` : "\u2014 P";
-  const gateCount = run.segments.filter((segment) => segment.segmentKind === "gate_opening").length;
-  const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
   const slatSize = Number(runVariables.slat_size_mm ?? 65);
   const slatGap = Number(runVariables.slat_gap_mm ?? 5);
+  const mounting = String(runVariables.mounting_method ?? runVariables.mounting_type ?? "in_ground").replace(/_/g, " ");
   const isBayg = run.productCode === "BAYG";
 
   useEffect(
@@ -142,13 +144,12 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           </span>
           <span className="flex flex-wrap gap-x-2.5 gap-y-1 text-sm text-brand-muted">
             <span>System Type: <strong className="text-brand-text">{run.productCode}</strong></span>
-            <span>{isBayg ? "Total panel width" : "Length"}: <strong className="text-brand-text">{runLengthM}m</strong></span>
-            {gateCount > 0 && <span>Gates: <strong className="font-mono tabular-nums text-brand-text">{gateCount}G</strong></span>}
-            <span>Panels: <strong className="font-mono tabular-nums text-brand-text">{panelSummary}</strong></span>
-            <span>Height: <strong className="text-brand-text">{runHeight}mm</strong></span>
             <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
             <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
             <span>Gap size: <strong className="text-brand-text">{slatGap}mm</strong></span>
+            <span>Post mounting: <strong className="text-brand-text">{isBayg ? "Not required" : MOUNTING_LABELS[mounting] ?? mounting}</strong></span>
+            <span>Max post spacing: <strong className="text-brand-text">{jobMax}mm</strong></span>
+            <span>Corners: <strong className="text-brand-text">{run.corners?.length ?? 0}</strong></span>
           </span>
         </h3>
         <div
@@ -161,14 +162,14 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
             <button
               type="button"
               onClick={() => setRunSettingsOpen((value) => !value)}
-              className={`ml-auto mb-2 inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-extrabold transition-colors ${runSettingsOpen
+              className={`ml-auto mb-2 inline-flex h-9 w-9 items-center justify-center rounded-lg border text-sm font-extrabold transition-colors ${runSettingsOpen
                 ? "border-brand-primary bg-brand-primary text-white"
                 : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
                 }`}
+              aria-label={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
               title={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
             >
-              <SlidersHorizontal size={16} />
-              {runSettingsOpen ? "Save run settings" : "Run settings"}
+              {runSettingsOpen ? <ChevronUp size={16} /> : <Settings size={16} />}
             </button>
           </div>
         </div>

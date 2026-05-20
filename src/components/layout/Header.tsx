@@ -1,5 +1,5 @@
 import { LogOut, Sun, Moon, Plus, PlayCircle, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { supabase } from '../../lib/supabase';
@@ -11,9 +11,10 @@ import { InstallVideoQR } from '../calculator-v3/InstallVideoQR';
 
 interface HeaderProps {
   branding?: TenantBranding;
+  actions?: ReactNode;
 }
 
-export function Header({ branding }: HeaderProps = {}) {
+export function Header({ branding, actions }: HeaderProps = {}) {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
   const [installVideosOpen, setInstallVideosOpen] = useState(false);
@@ -39,7 +40,7 @@ export function Header({ branding }: HeaderProps = {}) {
     }`;
 
   return (
-    <header className="bg-brand-card border-b border-brand-border px-4 sm:px-6 py-0 flex items-stretch justify-between">
+    <header className="relative bg-brand-card border-b border-brand-border px-4 sm:px-6 py-0 flex flex-wrap items-stretch justify-between">
       {/* ── Brand + Nav ───────────────────────────────────────────── */}
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-3 py-3">
@@ -71,7 +72,12 @@ export function Header({ branding }: HeaderProps = {}) {
       </div>
 
       {/* ── Controls ──────────────────────────────────────────────── */}
-      <div className="flex items-center gap-1">
+      <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
+        {actions && (
+          <div className="hidden min-w-0 flex-1 items-center justify-end gap-2 lg:flex" data-print-hide>
+            {actions}
+          </div>
+        )}
         <button
           type="button"
           onClick={() => setInstallVideosOpen(true)}
@@ -107,6 +113,11 @@ export function Header({ branding }: HeaderProps = {}) {
           </>
         )}
       </div>
+      {actions && (
+        <div className="w-full border-t border-brand-border py-2 lg:hidden" data-print-hide>
+          {actions}
+        </div>
+      )}
       {installVideosOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
