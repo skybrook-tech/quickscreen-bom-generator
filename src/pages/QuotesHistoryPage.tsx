@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Eye, Trash2, Plus, FileText, Search } from "lucide-react";
 import { AppShell } from "../components/layout/AppShell";
 import { useQuotes } from "../hooks/useQuotes";
+import { isLegacyFenceConfig, isV3FenceConfig } from "../types/quote.types";
 
 const STATUS_COLOURS: Record<string, string> = {
   draft: "text-brand-muted bg-brand-border/30",
@@ -38,7 +39,7 @@ export function QuotesHistoryPage() {
             </p>
           </div>
           <Link
-            to="/new"
+            to="/fence-calculator"
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-brand-accent hover:bg-brand-accent-hover text-white text-sm font-semibold rounded-lg transition-colors shrink-0"
           >
             <Plus size={16} />
@@ -82,7 +83,7 @@ export function QuotesHistoryPage() {
               <FileText size={20} className="mx-auto text-brand-border" />
               <p className="text-sm text-brand-muted">No quotes saved yet.</p>
               <Link
-                to="/new"
+                to="/fence-calculator"
                 className="inline-flex items-center gap-1.5 text-sm text-brand-accent hover:underline"
               >
                 <Plus size={16} /> Create your first quote
@@ -143,15 +144,23 @@ export function QuotesHistoryPage() {
                       )}
                     </td>
                     <td className="px-4 py-3 text-brand-muted hidden sm:table-cell">
-                      {quote.fence_config?.systemType ?? "—"}
+                      {isLegacyFenceConfig(quote.fence_config)
+                        ? quote.fence_config.systemType
+                        : isV3FenceConfig(quote.fence_config)
+                          ? (quote.fence_config.payload?.productCode ??
+                            quote.fence_config.payload?.runs?.[0]?.productCode ??
+                            "v3")
+                          : "—"}
                     </td>
                     <td className="px-4 py-3 text-brand-muted hidden md:table-cell">
-                      {quote.fence_config?.totalRunLength != null
+                      {isLegacyFenceConfig(quote.fence_config) &&
+                      quote.fence_config.totalRunLength != null
                         ? `${quote.fence_config.totalRunLength}m`
                         : "—"}
                     </td>
                     <td className="px-4 py-3 text-brand-muted hidden lg:table-cell">
-                      {quote.fence_config?.targetHeight != null
+                      {isLegacyFenceConfig(quote.fence_config) &&
+                      quote.fence_config.targetHeight != null
                         ? `${quote.fence_config.targetHeight}mm`
                         : "—"}
                     </td>

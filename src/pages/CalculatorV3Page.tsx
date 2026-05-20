@@ -42,6 +42,16 @@ import { gateTypeLabel, validateGateWidth } from "../lib/gateConstraints";
 import { stripParentheticalDispatchCode } from "../lib/displayText";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
+import { useQuote } from "../hooks/useQuote";
+import { savedBomToEngineResult } from "../lib/savedBomToEngineResult";
+import { jobNameFromQuote } from "../lib/quotePayload";
+import {
+  buildV3FenceConfig,
+  buildV3QuoteBom,
+  replaceV3QuoteRuns,
+} from "../lib/persistV3Quote";
+import { queryClient } from "../lib/queryClient";
+import { LegacyQuoteError } from "../types/quote.types";
 import {
   Download,
   FileX2,
@@ -53,7 +63,7 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import Papa from "papaparse";
 import type {
@@ -366,12 +376,15 @@ function useAnimatedNumber(target: number) {
   return value;
 }
 
-function CalculatorV3Content() {
+function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
   const bomMutation = useBomCalculator();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const quoteQuery = useQuote(quoteId);
+  const hydratedQuoteIdRef = useRef<string | null>(null);
+  const loadedQuote = quoteQuery.data?.quote;
   const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
   const [lineEdits, setLineEdits] = useState<Record<string, number | null>>({});
   const [saving, setSaving] = useState(false);
@@ -400,6 +413,22 @@ function CalculatorV3Content() {
     },
     [],
   );
+
+  useEffect(() => {
+    if (!quoteId || !quoteQuery.data) return;
+    if (hydratedQuoteIdRef.current === quoteId) return;
+    hydratedQuoteIdRef.current = quoteId;
+    const { quote, payload: loadedPayload } = quoteQuery.data;
+    dispatch({ type: "SET_PAYLOAD", payload: loadedPayload });
+    setJobName(jobNameFromQuote(quote.fence_config, quote.customer_ref));
+    const bomResult = savedBomToEngineResult(quote.bom, quote.updated_at);
+    if (bomResult) {
+      dispatch({ type: "SET_BOM_RESULT", result: bomResult });
+    }
+    setIntroDismissed(true);
+    setRightPaneView("bom");
+    setMobileTab("bom");
+  }, [quoteId, quoteQuery.data, dispatch]);
 
   useEffect(() => {
     const updateLayout = () => setMobileLayout(window.innerWidth < 768);
@@ -908,7 +937,7 @@ function CalculatorV3Content() {
           ? filterLinesForScope(baseAllItems, (source) => source.scopeKind === "gate")
           : runScopedGateItems.length > 0
             ? runScopedGateItems
-          : ((lastBom.gateItems as BOMLineItem[]) ?? []);
+            : ((lastBom.gateItems as BOMLineItem[]) ?? []);
       const gateItems = applyLineEdits(aggregateBomItems(rawGateItems));
       const allItems = aggregateBomItems([...baseAllItems, ...extraLineItems]);
       const baseTotal = roundMoney(
@@ -939,26 +968,8 @@ function CalculatorV3Content() {
     const cleanJobName = jobName.trim();
     const customerRef =
       cleanJobName || `Glass Outlet Job ${new Date().toLocaleDateString("en-AU")}`;
-    const emptyBom = {
-      fenceItems: [],
-      gateItems: [],
-      total: 0,
-      gst: 0,
-      grandTotal: 0,
-      pricingTier: "tier1" as const,
-      generatedAt: null,
-    };
-    const quoteBom = bomResultForTabs
-      ? {
-        fenceItems: bomResultForTabs.allItems,
-        gateItems: bomResultForTabs.gateItems,
-        total: bomResultForTabs.total,
-        gst: bomResultForTabs.gst,
-        grandTotal: bomResultForTabs.grandTotal,
-        pricingTier: bomResultForTabs.pricingTier,
-        generatedAt: bomResultForTabs.generatedAt,
-      }
-      : emptyBom;
+    const quoteBom = buildV3QuoteBom(bomResultForTabs);
+    const fenceConfig = buildV3FenceConfig(customerRef, payload);
 
     if (!isSupabaseConfigured) {
       localStorage.setItem(
@@ -998,99 +1009,50 @@ function CalculatorV3Content() {
       const orgId = profile?.org_id;
       if (!orgId) throw new Error("No organisation found for this user.");
 
-      const { data: quote, error: quoteError } = await supabase
-        .from("quotes")
-        .insert({
-          org_id: orgId,
-          user_id: user.id,
-          customer_ref: customerRef,
-          fence_config: {
-            calculator: "v3",
-            jobName: customerRef,
-            payload,
-            layoutGeometry: payload.runs.map((run) => ({
-              runId: run.runId,
-              geometry: run.geometry,
-              segments: run.segments.map((segment) => ({
-                segmentId: segment.segmentId,
-                widthMm: segment.segmentWidthMm,
-                targetHeightMm: segment.targetHeightMm,
-                variables: segment.variables ?? {},
-              })),
-            })),
-          },
-          gates: [],
-          bom: quoteBom,
-          contact: {},
-          notes: "Saved from v3 job calculator",
-          status: "draft",
-        })
-        .select("id")
-        .single();
-      if (quoteError) throw quoteError;
+      const isUpdate = !!quoteId;
 
-      const systems = [...new Set(payload.runs.map((run) => run.productCode))];
-      const { data: products, error: productsError } = await supabase
-        .from("products")
-        .select("id, system_type")
-        .in("system_type", systems);
-      if (productsError) throw productsError;
-      const productIdByCode = new globalThis.Map(
-        (products ?? []).map((product) => [product.system_type, product.id]),
-      );
+      if (isUpdate) {
+        const { error: updateError } = await supabase
+          .from("quotes")
+          .update({
+            customer_ref: customerRef,
+            fence_config: fenceConfig,
+            gates: [],
+            bom: quoteBom,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", quoteId);
+        if (updateError) throw updateError;
 
-      for (const [runIndex, run] of payload.runs.entries()) {
-        const productId = productIdByCode.get(run.productCode);
-        if (!productId) continue;
-        const { data: savedRun, error: runError } = await supabase
-          .from("quote_runs")
+        await replaceV3QuoteRuns(supabase, orgId, quoteId, payload);
+
+        await queryClient.invalidateQueries({ queryKey: ["quote", quoteId] });
+        await queryClient.invalidateQueries({ queryKey: ["quotes"] });
+        toast.success("Job updated");
+      } else {
+        const { data: quote, error: quoteError } = await supabase
+          .from("quotes")
           .insert({
             org_id: orgId,
-            quote_id: quote.id,
-            product_id: productId,
-            sort_order: runIndex + 1,
-            description: `Run ${runIndex + 1} - ${run.productCode}`,
-            variables_json: {
-              runId: run.runId,
-              productCode: run.productCode,
-              variables: run.variables ?? {},
-              leftBoundary: run.leftBoundary,
-              rightBoundary: run.rightBoundary,
-              corners: run.corners,
-              geometry: run.geometry,
-            },
+            user_id: user.id,
+            customer_ref: customerRef,
+            fence_config: fenceConfig,
+            gates: [],
+            bom: quoteBom,
+            contact: {},
+            notes: "Saved from v3 job calculator",
+            status: "draft",
           })
           .select("id")
           .single();
-        if (runError) throw runError;
+        if (quoteError) throw quoteError;
 
-        if (run.segments.length > 0) {
-          const { error: segmentError } = await supabase
-            .from("quote_run_segments")
-            .insert(
-              run.segments.map((segment) => ({
-                org_id: orgId,
-                quote_run_id: savedRun.id,
-                sort_order: segment.sortOrder,
-                segment_type: segment.segmentKind,
-                segment_kind: segment.segmentKind,
-                length_mm: segment.segmentWidthMm ?? null,
-                panel_width_mm: segment.variables?.max_panel_width_mm ?? null,
-                target_height_mm: segment.targetHeightMm ?? null,
-                bay_count: segment.bayCount ?? null,
-                variables_json: {
-                  segmentId: segment.segmentId,
-                  variables: segment.variables ?? {},
-                  gateProductCode: segment.gateProductCode,
-                },
-              })),
-            );
-          if (segmentError) throw segmentError;
-        }
+        await replaceV3QuoteRuns(supabase, orgId, quote.id, payload);
+
+        await queryClient.invalidateQueries({ queryKey: ["quotes"] });
+        toast.success("Job saved");
+        navigate(`/quote/${quote.id}`);
       }
-
-      toast.success("Job saved");
-      navigate(`/quote/${quote.id}`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to save job");
     } finally {
@@ -1366,11 +1328,51 @@ function CalculatorV3Content() {
       sections: sectionRows,
     };
   }) ?? [];
-  const saveJobLabel = jobName.trim() ? `Save ${jobName.trim()}` : "Save Job";
+  const saveJobLabel = quoteId
+    ? jobName.trim()
+      ? `Update ${jobName.trim()}`
+      : "Update Job"
+    : jobName.trim()
+      ? `Save ${jobName.trim()}`
+      : "Save Job";
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
-  const showIntro = !payload && !introDismissed;
+  const showIntro = !quoteId && !payload && !introDismissed;
+
+  if (quoteId && quoteQuery.isLoading) {
+    return (
+      <AppShell>
+        <div className="flex min-h-[50vh] flex-col items-center justify-center gap-3 text-brand-muted">
+          <Loader2 className="h-8 w-8 animate-spin text-brand-primary" />
+          <p className="text-sm">Loading quote…</p>
+        </div>
+      </AppShell>
+    );
+  }
+
+  if (quoteId && quoteQuery.isError) {
+    const legacy = quoteQuery.error instanceof LegacyQuoteError;
+    return (
+      <AppShell>
+        <div className="mx-auto flex max-w-lg flex-col items-center gap-4 px-4 py-16 text-center">
+          <p className="text-sm text-brand-danger">
+            {legacy
+              ? quoteQuery.error.message
+              : quoteQuery.error instanceof Error
+                ? quoteQuery.error.message
+                : "Failed to load quote."}
+          </p>
+          <Link
+            to="/quotes"
+            className="text-sm font-semibold text-brand-accent hover:underline"
+          >
+            Back to quotes
+          </Link>
+        </div>
+      </AppShell>
+    );
+  }
   const gateTargetRun = gatePositionTarget
     ? payload?.runs.find((run) => run.runId === gatePositionTarget.runId)
     : undefined;
@@ -2008,11 +2010,12 @@ function CalculatorV3Content() {
 }
 
 export function CalculatorV3Page() {
+  const { quoteId } = useParams<{ quoteId: string }>();
   return (
-    <CalculatorProvider>
+    <CalculatorProvider key={quoteId ?? "new"}>
       <FenceConfigProvider>
         <GateProvider>
-          <CalculatorV3Content />
+          <CalculatorV3Content quoteId={quoteId} />
         </GateProvider>
       </FenceConfigProvider>
     </CalculatorProvider>

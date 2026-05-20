@@ -64,6 +64,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "/quote/:quoteId",
+        element: (
+          <AuthGuard>
+            <CalculatorV3Page />
+          </AuthGuard>
+        ),
+      },
+      {
         path: "/admin/products",
         element: (
           <AdminGuard>
