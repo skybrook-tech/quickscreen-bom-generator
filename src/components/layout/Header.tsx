@@ -26,17 +26,15 @@ export function Header({ branding, actions }: HeaderProps = {}) {
   const initials = user?.email?.[0].toUpperCase() ?? '?';
 
   const navLinkCls = ({ isActive }: { isActive: boolean }) =>
-    `text-xs font-medium px-3 py-1.5 rounded-md transition-colors ${
-      isActive
-        ? 'text-brand-text bg-brand-border/40'
-        : 'text-brand-muted hover:text-brand-text hover:bg-brand-border/20'
+    `text-xs font-medium px-3 py-1.5 rounded-md transition-colors ${isActive
+      ? 'text-brand-text bg-brand-border/40'
+      : 'text-brand-muted hover:text-brand-text hover:bg-brand-border/20'
     }`;
 
   const newQuoteLinkCls = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-md transition-colors ml-1 ${
-      isActive
-        ? 'text-brand-accent bg-brand-accent/15'
-        : 'text-brand-accent hover:bg-brand-accent/10'
+    `flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-md transition-colors ml-1 ${isActive
+      ? 'text-brand-accent bg-brand-accent/15'
+      : 'text-brand-accent hover:bg-brand-accent/10'
     }`;
 
   return (
@@ -63,7 +61,7 @@ export function Header({ branding, actions }: HeaderProps = {}) {
             <NavLink to="/quotes" className={navLinkCls}>
               Quotes
             </NavLink>
-            <NavLink to="/new" className={newQuoteLinkCls}>
+            <NavLink to="/fence-calculator" className={newQuoteLinkCls}>
               <Plus size={16} />
               New Quote
             </NavLink>
