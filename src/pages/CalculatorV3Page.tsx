@@ -54,7 +54,6 @@ import { queryClient } from "../lib/queryClient";
 import { LegacyQuoteError } from "../types/quote.types";
 import {
   Download,
-  FileX2,
   Keyboard,
   Loader2,
   Printer,
@@ -77,6 +76,14 @@ import type { ParseResult, ParsedSystemType } from "../lib/describeFenceParser";
 
 const roundMoney = (value: number) =>
   Math.round((value + Number.EPSILON) * 100) / 100;
+
+/** Debounce window for auto BOM recalculation after payload edits. */
+const BOM_RECALC_DEBOUNCE_MS = 500;
+
+/** Stable key for BOM inputs — avoids recalc loops from new object references. */
+function payloadBomKey(payload: CanonicalPayload): string {
+  return JSON.stringify(payload);
+}
 
 const formatMoney = (value: number) =>
   new Intl.NumberFormat("en-AU", {
@@ -384,6 +391,11 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const { user } = useAuth();
   const quoteQuery = useQuote(quoteId);
   const hydratedQuoteIdRef = useRef<string | null>(null);
+  const skipAutoBomRef = useRef(false);
+  const bomRequestIdRef = useRef(0);
+  const lastCalcPayloadKeyRef = useRef<string | null>(null);
+  const bomMutateAsyncRef = useRef(bomMutation.mutateAsync);
+  bomMutateAsyncRef.current = bomMutation.mutateAsync;
   const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
   const [lineEdits, setLineEdits] = useState<Record<string, number | null>>({});
   const [saving, setSaving] = useState(false);
@@ -423,6 +435,8 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     const bomResult = savedBomToEngineResult(quote.bom, quote.updated_at);
     if (bomResult) {
       dispatch({ type: "SET_BOM_RESULT", result: bomResult });
+      skipAutoBomRef.current = true;
+      lastCalcPayloadKeyRef.current = payloadBomKey(loadedPayload);
     }
     setIntroDismissed(true);
     setRightPaneView("bom");
@@ -658,7 +672,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     };
     dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
     dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "describe" });
-    dispatch({ type: "CLEAR_BOM_RESULT" });
     setIntroDismissed(true);
     setAutoOpenFirstSectionRunId(nextRun.runId);
     setRightPaneView("bom");
@@ -733,36 +746,8 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
         runs: nextRuns,
       },
     });
-    dispatch({ type: "CLEAR_BOM_RESULT" });
     setGatePositionTarget(null);
     toast.success("Gate position confirmed");
-  }
-
-  async function handleGenerateBOM() {
-    if (!payload) return;
-    if (economySlatErrors.length > 0) {
-      toast.error("Economy slats are only available in 65mm. Fix the slat size or range first.");
-      return;
-    }
-    if (gateWidthErrors.length > 0) {
-      toast.error("Fix gate width errors before generating the BOM.");
-      return;
-    }
-    setExtraItems([]);
-    setLineEdits({});
-    setActiveBomSummary(null);
-    dispatch({ type: "CLEAR_BOM_RESULT" });
-    try {
-      const result = await bomMutation.mutateAsync({ payload });
-      dispatch({ type: "SET_BOM_RESULT", result });
-    } catch {
-      // Error is available via bomMutation.error.
-    }
-  }
-
-  function handleClearBom() {
-    setActiveBomSummary(null);
-    dispatch({ type: "CLEAR_BOM_RESULT" });
   }
 
   async function handleSwitchEconomyToStandard(item: BOMLineItem) {
@@ -794,46 +779,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
       }),
     };
 
-    setExtraItems([]);
-    setLineEdits({});
-    setActiveBomSummary(null);
     dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
-    dispatch({ type: "CLEAR_BOM_RESULT" });
-    try {
-      const result = await bomMutation.mutateAsync({ payload: nextPayload });
-      dispatch({ type: "SET_BOM_RESULT", result });
-      toast.success("Switched Economy slats to Standard and regenerated the BOM.");
-    } catch {
-      toast.error("Switched to Standard, but BOM regeneration failed.");
-    }
+    toast.success("Switched Economy slats to Standard.");
   }
-
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      const target = event.target as HTMLElement | null;
-      const typing =
-        target?.tagName === "INPUT" ||
-        target?.tagName === "TEXTAREA" ||
-        target?.tagName === "SELECT" ||
-        target?.isContentEditable;
-      if (typing) return;
-      const mod = event.ctrlKey || event.metaKey;
-      if (event.key === "?") {
-        event.preventDefault();
-        setShortcutsOpen((open) => !open);
-      }
-      if (mod && event.key === "Enter") {
-        event.preventDefault();
-        void handleGenerateBOM();
-      }
-      if (mod && event.key.toLowerCase() === "e") {
-        event.preventDefault();
-        handleExportCsv();
-      }
-    }
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  });
 
   const lastBom = state.bomResult;
   const baseBomLines = ((lastBom?.lines as BOMLineItem[]) ?? []);
@@ -1176,8 +1124,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const warnings = (lastBom?.warnings as string[]) ?? [];
   const errors = (lastBom?.errors as string[]) ?? [];
   const hasErrors = errors.length > 0;
-  const noSegments =
-    !payload || payload.runs.every((r) => r.segments.length === 0);
   const economySlatErrors =
     payload?.runs.flatMap((run, runIndex) => {
       const runVars = { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
@@ -1201,6 +1147,91 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const gateWidthErrors = gateWidthValidations.filter((item) => item.status === "error");
   const gateWidthWarnings = gateWidthValidations.filter((item) => item.status === "warning");
   const hasBlockingErrors = hasErrors || gateWidthErrors.length > 0 || economySlatErrors.length > 0;
+
+  const payloadCalcKey = useMemo(
+    () => (payload ? payloadBomKey(payload) : null),
+    [payload],
+  );
+
+  const runBomRecalculation = useCallback(async () => {
+    if (!payload || !payloadCalcKey) {
+      lastCalcPayloadKeyRef.current = null;
+      dispatch({ type: "CLEAR_BOM_RESULT" });
+      return;
+    }
+    const emptyRuns = payload.runs.every((run) => run.segments.length === 0);
+    const economyErrors = payload.runs.flatMap((run, runIndex) => {
+      const runVars = { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
+      return run.segments
+        .filter((segment) => segment.segmentKind !== "gate_opening")
+        .flatMap((segment, segmentIndex) => {
+          const vars = { ...runVars, ...(segment.variables ?? {}) };
+          return vars.finish_family === "economy" && Number(vars.slat_size_mm ?? 65) === 90
+            ? [`Run ${runIndex + 1} Section ${segmentIndex + 1}`]
+            : [];
+        });
+    });
+    const gateErrors = payload.runs.flatMap((run) =>
+      run.segments
+        .filter((segment) => segment.segmentKind === "gate_opening")
+        .map((segment) => validateGateWidth(segment))
+        .filter((result) => result.status === "error"),
+    );
+    if (emptyRuns || economyErrors.length > 0 || gateErrors.length > 0) {
+      lastCalcPayloadKeyRef.current = payloadCalcKey;
+      dispatch({ type: "CLEAR_BOM_RESULT" });
+      return;
+    }
+    const requestId = ++bomRequestIdRef.current;
+    try {
+      const result = await bomMutateAsyncRef.current({ payload });
+      if (requestId !== bomRequestIdRef.current) return;
+      dispatch({ type: "SET_BOM_RESULT", result });
+      lastCalcPayloadKeyRef.current = payloadCalcKey;
+    } catch {
+      // Error is available via bomMutation.error.
+    }
+  }, [payload, payloadCalcKey, dispatch]);
+
+  const runBomRecalcRef = useRef(runBomRecalculation);
+  runBomRecalcRef.current = runBomRecalculation;
+
+  useEffect(() => {
+    if (!introDismissed && !quoteId) return;
+    if (!payload || !payloadCalcKey) return;
+    if (skipAutoBomRef.current) {
+      skipAutoBomRef.current = false;
+      return;
+    }
+    if (payloadCalcKey === lastCalcPayloadKeyRef.current) return;
+    const timer = window.setTimeout(() => {
+      void runBomRecalcRef.current();
+    }, BOM_RECALC_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
+  }, [payloadCalcKey, introDismissed, quoteId]);
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      const target = event.target as HTMLElement | null;
+      const typing =
+        target?.tagName === "INPUT" ||
+        target?.tagName === "TEXTAREA" ||
+        target?.tagName === "SELECT" ||
+        target?.isContentEditable;
+      if (typing) return;
+      const mod = event.ctrlKey || event.metaKey;
+      if (event.key === "?") {
+        event.preventDefault();
+        setShortcutsOpen((open) => !open);
+      }
+      if (mod && event.key.toLowerCase() === "e") {
+        event.preventDefault();
+        handleExportCsv();
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  });
 
   const cleanJobName = jobName.trim();
   const systemLabel = (productCode: string) => {
@@ -1380,25 +1411,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     <div className="flex w-full flex-wrap items-center justify-end gap-2">
       {rightPaneView === "bom" && (
         <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
-          <button
-            type="button"
-            onClick={handleGenerateBOM}
-            disabled={bomMutation.isPending || hasBlockingErrors || noSegments}
-            title="Generate BOM (Ctrl+Enter)"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-brand-primary px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            {bomMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-            Generate BOM
-          </button>
-          <button
-            type="button"
-            onClick={handleClearBom}
-            disabled={!bomResultForTabs}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted transition-colors hover:border-brand-danger/50 hover:text-brand-danger hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            <FileX2 size={16} />
-            Clear BOM
-          </button>
           <button
             type="button"
             onClick={handlePrintBom}
@@ -1717,14 +1729,16 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                     </div>
                     <div className="text-left sm:text-right" data-print-hide>
                       <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
-                        {activeBomSummary?.label ?? (bomResultForTabs ? "Auto quantity breaks" : "Estimated total")}
+                        {bomMutation.isPending
+                          ? "Recalculating…"
+                          : activeBomSummary?.label ?? (bomResultForTabs ? "Auto quantity breaks" : "Estimated total")}
                       </p>
                       <p className="font-mono text-4xl font-black tabular-nums text-brand-primary sm:text-5xl">
                         ${formatMoney(animatedGrandTotal)}
                       </p>
                     </div>
                   </div>
-                  {bomMutation.isPending ? (
+                  {bomMutation.isPending && !bomResultForTabs ? (
                     <div className="space-y-3" aria-label="Generating BOM">
                       {Array.from({ length: 7 }).map((_, index) => (
                         <div
@@ -1974,12 +1988,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                   </button>
                 </div>
                 <dl className="space-y-3 text-sm">
-                  <div className="flex items-center justify-between gap-4">
-                    <dt className="text-brand-muted">Generate BOM</dt>
-                    <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
-                      Ctrl + Enter
-                    </dd>
-                  </div>
                   <div className="flex items-center justify-between gap-4">
                     <dt className="text-brand-muted">Export CSV</dt>
                     <dd className="rounded-lg bg-brand-bg px-2 py-1 font-mono text-brand-text">
