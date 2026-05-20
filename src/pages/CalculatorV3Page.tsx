@@ -732,10 +732,9 @@ function CalculatorV3Content() {
     }
   }
 
-  async function handleGenerateBOMFromFooter() {
-    setRightPaneView("bom");
-    setMapExpanded(false);
-    await handleGenerateBOM();
+  function handleClearBom() {
+    setActiveBomSummary(null);
+    dispatch({ type: "CLEAR_BOM_RESULT" });
   }
 
   async function handleSwitchEconomyToStandard(item: BOMLineItem) {
@@ -1376,7 +1375,7 @@ function CalculatorV3Content() {
     ? payload?.runs.find((run) => run.runId === gatePositionTarget.runId)
     : undefined;
   const gateTargetRunLength = gateTargetRun ? runLengthMm(gateTargetRun) : 0;
-  const headerActions = showIntro ? undefined : (
+  const headerActions = !showIntro && !mapExpanded ? (
     <div className="flex w-full flex-wrap items-center justify-end gap-2">
       {rightPaneView === "bom" && (
         <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
@@ -1392,10 +1391,7 @@ function CalculatorV3Content() {
           </button>
           <button
             type="button"
-            onClick={() => {
-              setActiveBomSummary(null);
-              dispatch({ type: "CLEAR_BOM_RESULT" });
-            }}
+            onClick={handleClearBom}
             disabled={!bomResultForTabs}
             className="inline-flex items-center gap-1.5 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted transition-colors hover:border-brand-danger/50 hover:text-brand-danger hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
           >
@@ -1444,7 +1440,7 @@ function CalculatorV3Content() {
       )}
       <RightPaneTabs activeView={rightPaneView} onChange={handleRightPaneChange} />
     </div>
-  );
+  ) : null;
 
   return (
     <AppShell headerActions={headerActions}>
@@ -1645,17 +1641,6 @@ function CalculatorV3Content() {
                       <Trash2 size={16} />
                       Clear Job
                     </ConfirmButton>
-                    <button
-                      type="button"
-                      onClick={handleGenerateBOMFromFooter}
-                      disabled={bomMutation.isPending || hasBlockingErrors || noSegments}
-                      className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      {bomMutation.isPending && (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      )}
-                      Generate BOM
-                    </button>
                   </div>
                 </div>
               </div>
