@@ -2050,3 +2050,18 @@ Verification:
 
 Deferred:
 - PR creation, CI/deploy-preview screenshots, ready/merge, branch cleanup, and sandbox pull were not performed in this local completion pass.
+
+### May 20, 2026 - V3 property map UI foundation
+
+Workflow / UX finding:
+- The Google Maps loader and hook were already on `master`, but the V3 calculator did not yet have a property-map UI before canvas integration.
+- The active V3 schema-driven controls are embedded in the run/sidebar flow, so the property map now sits above that existing configuration surface and gates new empty jobs until a property pin is confirmed. Older configured payloads without anchors remain editable for backward compatibility.
+
+Changes applied:
+- Added `AddressInput` with Australian geocoding via the Google Geocoding API using `region=au` and `components=country:au`, including missing-key, no-result, ambiguous, and API-error messaging.
+- Added `PropertyMap` with lazy `useGoogleMaps()` loading, reserved 4:3/mobile and 16:9/desktop map space, satellite default, hybrid toggle, draggable pin, and confirm-location callback.
+- Added top-level canonical `propertyAnchor`, preserved it through canvas canonical metadata merges, and saved it to a nullable `quotes.property_anchor` JSONB column.
+- Added `.nvmrc` with Node 20 and focused unit coverage for geocoding, inert form gating, and canonical property-anchor persistence.
+
+Deferred:
+- `canvasEngine.ts` overlay integration remains explicitly out of scope for the next PR.

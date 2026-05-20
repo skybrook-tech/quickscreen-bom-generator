@@ -67,6 +67,13 @@ export const canonicalRunSchema = z.object({
 export const canonicalPayloadSchema = z.object({
   productCode: z.string(),
   schemaVersion: z.string(),
+  propertyAnchor: z
+    .object({
+      lat: z.number(),
+      lng: z.number(),
+      address: z.string(),
+    })
+    .optional(),
   job: z
     .object({
       description: z.string().optional(),

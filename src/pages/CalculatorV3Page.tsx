@@ -14,6 +14,7 @@ import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
 import { JobNameEditor } from "../components/calculator/JobNameEditor";
 import { GatePositionModal } from "../components/calculator/GatePositionModal";
+import { PropertyAnchorFormGate, PropertyMap } from "../components/calculator/PropertyMap";
 import { ConfirmButton } from "../components/shared/ConfirmButton";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { suggestAccessories } from "../lib/suggestedAccessories";
@@ -737,6 +738,26 @@ function CalculatorV3Content() {
     dispatch({ type: "CLEAR_BOM_RESULT" });
   }
 
+  function handlePropertyAnchorConfirmed(anchor: {
+    anchorLat: number;
+    anchorLng: number;
+    formattedAddress: string;
+  }) {
+    if (!payload) return;
+    dispatch({
+      type: "SET_PAYLOAD",
+      payload: {
+        ...payload,
+        propertyAnchor: {
+          lat: anchor.anchorLat,
+          lng: anchor.anchorLng,
+          address: anchor.formattedAddress,
+        },
+      },
+    });
+    toast.success("Property location confirmed");
+  }
+
   async function handleSwitchEconomyToStandard(item: BOMLineItem) {
     if (!payload) return;
     const nextPayload = {
@@ -1004,6 +1025,13 @@ function CalculatorV3Content() {
           org_id: orgId,
           user_id: user.id,
           customer_ref: customerRef,
+          property_anchor: payload.propertyAnchor
+            ? {
+                lat: payload.propertyAnchor.lat,
+                lng: payload.propertyAnchor.lng,
+                address: payload.propertyAnchor.address,
+              }
+            : null,
           fence_config: {
             calculator: "v3",
             jobName: customerRef,
@@ -1375,6 +1403,10 @@ function CalculatorV3Content() {
     ? payload?.runs.find((run) => run.runId === gatePositionTarget.runId)
     : undefined;
   const gateTargetRunLength = gateTargetRun ? runLengthMm(gateTargetRun) : 0;
+  const hasLegacyConfiguredPayload = Boolean(
+    payload && !payload.propertyAnchor && payload.runs.some((run) => run.segments.length > 0),
+  );
+  const propertyAnchorConfirmed = Boolean(payload?.propertyAnchor) || hasLegacyConfiguredPayload;
   const headerActions = !showIntro && !mapExpanded ? (
     <div className="flex w-full flex-wrap items-center justify-end gap-2">
       {rightPaneView === "bom" && (
@@ -1516,64 +1548,69 @@ function CalculatorV3Content() {
                   </section>
                   {payload && (
                     <>
-                      <hr className="border-brand-border/60" />
-                      <section>
-                        <RunListV3
-                          autoOpenFirstRunId={autoOpenFirstSectionRunId}
-                          onAutoOpenConsumed={() => setAutoOpenFirstSectionRunId(null)}
-                          initialDescription={payload?.job?.description ?? ""}
-                          onDescribeApply={handleApplyDescription}
-                        />
-                      </section>
-
-                      {payload.job?.pendingGates?.length ? (
-                        <section className="space-y-2 rounded-2xl border border-brand-warning/35 bg-brand-warning/10 p-3">
-                          <p className="text-xs font-black uppercase tracking-wide text-brand-warning">
-                            Parsed gates need positions
-                          </p>
-                          {payload.job.pendingGates.map((gate, index) => {
-                            const run = payload.runs.find((item) => item.runId === gate.runId);
-                            const length = run ? runLengthMm(run) : 0;
-                            return (
-                              <button
-                                key={gate.id}
-                                type="button"
-                                onClick={() => setGatePositionTarget(gate)}
-                                disabled={length <= 0}
-                                className="flex w-full items-center justify-between gap-3 rounded-lg border border-brand-warning/40 bg-brand-card px-3 py-2 text-left text-xs font-bold text-brand-warning transition-colors hover:border-brand-primary hover:text-brand-primary disabled:cursor-not-allowed disabled:opacity-60"
-                                title={length <= 0 ? "Add a run length before positioning this gate." : "Position this parsed gate in the run"}
-                              >
-                                <span>Position not set - drag in run</span>
-                                <span>
-                                  Gate {index + 1}: {gate.kind.replace("_", " ")}
-                                  {gate.widthMm ? `, ${gate.widthMm}mm` : ""}
-                                </span>
-                              </button>
-                            );
-                          })}
+                      <PropertyMap
+                        initialAnchor={payload.propertyAnchor ?? null}
+                        onAnchorConfirmed={handlePropertyAnchorConfirmed}
+                      />
+                      <PropertyAnchorFormGate anchorConfirmed={propertyAnchorConfirmed}>
+                        <hr className="border-brand-border/60" />
+                        <section>
+                          <RunListV3
+                            autoOpenFirstRunId={autoOpenFirstSectionRunId}
+                            onAutoOpenConsumed={() => setAutoOpenFirstSectionRunId(null)}
+                            initialDescription={payload?.job?.description ?? ""}
+                            onDescribeApply={handleApplyDescription}
+                          />
                         </section>
-                      ) : null}
 
-                      {(errors.length > 0 || warnings.length > 0) && (
-                        <div className="space-y-2">
-                          {errors.map((e, i) => (
-                            <div
-                              key={i}
-                              className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-2 text-sm text-brand-danger"
-                            >
-                              Error: {e}
-                            </div>
-                          ))}
-                          {warnings.map((w, i) => (
-                            <div
-                              key={i}
-                              className="rounded-lg border border-brand-warning/30 bg-brand-warning/10 px-4 py-2 text-sm text-brand-warning"
-                            >
-                              Warning: {w}
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                        {payload.job?.pendingGates?.length ? (
+                          <section className="space-y-2 rounded-2xl border border-brand-warning/35 bg-brand-warning/10 p-3">
+                            <p className="text-xs font-black uppercase tracking-wide text-brand-warning">
+                              Parsed gates need positions
+                            </p>
+                            {payload.job.pendingGates.map((gate, index) => {
+                              const run = payload.runs.find((item) => item.runId === gate.runId);
+                              const length = run ? runLengthMm(run) : 0;
+                              return (
+                                <button
+                                  key={gate.id}
+                                  type="button"
+                                  onClick={() => setGatePositionTarget(gate)}
+                                  disabled={length <= 0}
+                                  className="flex w-full items-center justify-between gap-3 rounded-lg border border-brand-warning/40 bg-brand-card px-3 py-2 text-left text-xs font-bold text-brand-warning transition-colors hover:border-brand-primary hover:text-brand-primary disabled:cursor-not-allowed disabled:opacity-60"
+                                  title={length <= 0 ? "Add a run length before positioning this gate." : "Position this parsed gate in the run"}
+                                >
+                                  <span>Position not set - drag in run</span>
+                                  <span>
+                                    Gate {index + 1}: {gate.kind.replace("_", " ")}
+                                    {gate.widthMm ? `, ${gate.widthMm}mm` : ""}
+                                  </span>
+                                </button>
+                              );
+                            })}
+                          </section>
+                        ) : null}
+
+                        {(errors.length > 0 || warnings.length > 0) && (
+                          <div className="space-y-2">
+                            {errors.map((e, i) => (
+                              <div
+                                key={i}
+                                className="rounded-lg border border-brand-danger/30 bg-brand-danger/10 px-4 py-2 text-sm text-brand-danger"
+                              >
+                                Error: {e}
+                              </div>
+                            ))}
+                            {warnings.map((w, i) => (
+                              <div
+                                key={i}
+                                className="rounded-lg border border-brand-warning/30 bg-brand-warning/10 px-4 py-2 text-sm text-brand-warning"
+                              >
+                                Warning: {w}
+                              </div>
+                            ))}
+                          </div>
+                        )}
 
                       {economySlatErrors.length > 0 && (
                         <div className="space-y-2">
@@ -1617,6 +1654,7 @@ function CalculatorV3Content() {
                             : String(bomMutation.error)}
                         </div>
                       )}
+                      </PropertyAnchorFormGate>
 
                     </>
                   )}

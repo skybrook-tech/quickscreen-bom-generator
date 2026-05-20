@@ -11,6 +11,11 @@ export interface SavedQuote {
   user_id: string;
   quote_number: number;
   customer_ref: string;
+  property_anchor?: {
+    lat: number;
+    lng: number;
+    address: string;
+  } | null;
   fence_config: FenceConfig;
   gates: GateConfig[];
   bom: BOMResult;
