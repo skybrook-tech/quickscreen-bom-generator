@@ -28,13 +28,12 @@ describe("Brief BN calculator smoke", () => {
 
     cy.contains("button", "BOM").should("be.visible");
     cy.contains("button", "Map").should("be.visible");
-    cy.contains("button", "Generate BOM").should("be.visible");
-    cy.contains("button", "Clear BOM").should("be.visible");
-    cy.contains("label", "Include map").should("be.visible");
-
-    cy.contains("button", "Map").click();
     cy.contains("button", "Generate BOM").should("not.exist");
     cy.contains("button", "Clear BOM").should("not.exist");
+    cy.contains("label", "Include map").should("be.visible");
+    cy.contains("button", "Print BOM").should("be.visible");
+
+    cy.contains("button", "Map").click();
     cy.contains("label", "Include map").should("not.exist");
     cy.contains("button", "BOM").click();
 
