@@ -16,10 +16,13 @@ interface CanvasOverlayOptions {
 }
 
 function setCanvasOverlayStyles(canvas: HTMLCanvasElement, drawMode: boolean) {
+  canvas.dataset.testid = "fence-overlay-canvas";
+  canvas.setAttribute("aria-label", "Fence drawing overlay canvas");
   canvas.style.position = "absolute";
   canvas.style.inset = "0";
   canvas.style.width = "100%";
   canvas.style.height = "100%";
+  canvas.style.display = "block";
   canvas.style.background = "transparent";
   canvas.style.pointerEvents = drawMode ? "auto" : "none";
   canvas.style.touchAction = drawMode ? "none" : "auto";
@@ -52,9 +55,11 @@ export class CanvasOverlay extends google.maps.OverlayView {
     if (!panes) return;
 
     const container = document.createElement("div");
+    container.dataset.testid = "fence-overlay-canvas-pane";
     container.style.position = "absolute";
     container.style.overflow = "hidden";
     container.style.pointerEvents = this.drawMode ? "auto" : "none";
+    container.style.zIndex = "1000";
     container.appendChild(this.canvas);
     panes.overlayMouseTarget.appendChild(container);
     this.container = container;

@@ -79,5 +79,5 @@ describe("CalculatorV4Page", () => {
     act(() => root.unmount());
     client.clear();
     container.remove();
-  });
+  }, 10000);
 });

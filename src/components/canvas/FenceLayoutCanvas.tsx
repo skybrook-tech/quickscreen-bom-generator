@@ -1,6 +1,10 @@
 import { useRef, useEffect, useCallback, useState, useMemo } from "react";
 import { initCanvasEngine } from "./canvasEngine";
-import { CanvasToolbar, type CanvasMapInteractionMode } from "./CanvasToolbar";
+import {
+  CanvasToolbar,
+  type CanvasGoogleMapType,
+  type CanvasMapInteractionMode,
+} from "./CanvasToolbar";
 import { MapControls } from "./MapControls";
 import type { MapUiState } from "./MapControls";
 import { MapOverlayCanvasFrame } from "./MapOverlayCanvasFrame";
@@ -122,6 +126,8 @@ export function FenceLayoutCanvas({
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
   const [engineVersion, setEngineVersion] = useState(0);
   const [mapInteractionMode, setMapInteractionMode] = useState<CanvasMapInteractionMode>("pan");
+  const [googleMapType, setGoogleMapType] = useState<CanvasGoogleMapType>("satellite");
+  const [googleMapOpacity, setGoogleMapOpacity] = useState(1);
   const [helpOpen, setHelpOpen] = useState(false);
   const [boundaryHintVisible, setBoundaryHintVisible] = useState(false);
   const [mapUiState, setMapUiState] = useState<MapUiState>({
@@ -423,6 +429,10 @@ export function FenceLayoutCanvas({
           mapOverlayEnabled={Boolean(propertyAnchor)}
           mapInteractionMode={mapInteractionMode}
           onMapInteractionModeChange={setMapInteractionMode}
+          googleMapType={googleMapType}
+          onGoogleMapTypeChange={setGoogleMapType}
+          mapOpacity={googleMapOpacity}
+          onMapOpacityChange={setGoogleMapOpacity}
         />
       </div>
 
@@ -433,6 +443,8 @@ export function FenceLayoutCanvas({
         engine={engineRef.current}
         engineVersion={engineVersion}
         mapInteractionMode={mapInteractionMode}
+        mapType={googleMapType}
+        mapOpacity={googleMapOpacity}
         className="relative overflow-hidden"
         style={{ height: expanded ? "700px" : "630px" }}
       >

@@ -1,11 +1,11 @@
 /// <reference types="google.maps" />
 
-import { CheckCircle2, Layers, Loader2, MapPin } from "lucide-react";
+import { CheckCircle2, Loader2, MapPin } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { useGoogleMaps } from "../../hooks/useGoogleMaps";
 import { AddressInput, type LocatedAddress } from "./AddressInput";
 
-type MapType = "satellite" | "hybrid";
+type MapType = "satellite" | "hybrid" | "roadmap" | "terrain";
 
 export interface PropertyAnchor {
   anchorLat: number;
@@ -180,15 +180,21 @@ function ExpandedPropertyMap({
           </p>
         </div>
         {mapRequested ? (
-          <button
-            type="button"
-            onClick={() => setMapType((value) => (value === "satellite" ? "hybrid" : "satellite"))}
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-            title={mapType === "satellite" ? "Show street labels" : "Hide street labels"}
-          >
-            <Layers size={15} />
-            {mapType === "satellite" ? "Hybrid" : "Satellite"}
-          </button>
+          <label className="inline-flex items-center gap-2 text-xs font-bold text-brand-muted">
+            Map
+            <select
+              value={mapType}
+              onChange={(event) => setMapType(event.target.value as MapType)}
+              className="rounded-lg border border-brand-border bg-brand-bg px-3 py-2 text-xs font-bold text-brand-text outline-none transition-colors hover:border-brand-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+              aria-label="Property map type"
+              title="Property map type"
+            >
+              <option value="satellite">Satellite</option>
+              <option value="hybrid">Hybrid</option>
+              <option value="roadmap">Roadmap</option>
+              <option value="terrain">Terrain</option>
+            </select>
+          </label>
         ) : null}
       </div>
 

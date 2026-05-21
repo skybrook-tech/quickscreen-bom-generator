@@ -46,7 +46,12 @@ function installCanvasMock() {
 }
 
 function installGoogleMapsMock() {
+  const mapRoot = document.createElement("div");
+  const tileCanvas = document.createElement("canvas");
+  tileCanvas.dataset.testid = "google-map-tile-canvas";
   const overlayMouseTarget = document.createElement("div");
+  mapRoot.append(tileCanvas, overlayMouseTarget);
+  document.body.appendChild(mapRoot);
 
   class FakeLatLng {
     private readonly value: LatLngLiteral;
@@ -118,12 +123,19 @@ function installGoogleMapsMock() {
     },
   });
 
-  return { overlayMouseTarget };
+  return { overlayMouseTarget, tileCanvas };
 }
 
 function dispatchCanvasClick(canvas: HTMLCanvasElement, clientX: number, clientY: number) {
+  const PointerEventCtor = globalThis.PointerEvent ?? MouseEvent;
+  canvas.dispatchEvent(
+    new PointerEventCtor("pointerdown", { bubbles: true, button: 0, clientX, clientY }),
+  );
   canvas.dispatchEvent(
     new MouseEvent("mousedown", { bubbles: true, button: 0, clientX, clientY }),
+  );
+  canvas.dispatchEvent(
+    new PointerEventCtor("pointerup", { bubbles: true, button: 0, clientX, clientY }),
   );
   canvas.dispatchEvent(
     new MouseEvent("mouseup", { bubbles: true, button: 0, clientX, clientY }),
@@ -145,7 +157,7 @@ describe("CanvasOverlay draw mode", () => {
 
   it("lets draw-mode clicks reach the canvas and persist metre offsets from the anchor", async () => {
     installCanvasMock();
-    const { overlayMouseTarget } = installGoogleMapsMock();
+    const { overlayMouseTarget, tileCanvas } = installGoogleMapsMock();
     const { CanvasOverlay } = await import("../../lib/googleMaps/CanvasOverlay");
 
     const fallbackParent = document.createElement("div");
@@ -204,6 +216,9 @@ describe("CanvasOverlay draw mode", () => {
     overlay.setDrawMode(true);
 
     expect(overlayMouseTarget.contains(canvas)).toBe(true);
+    expect(document.querySelectorAll("canvas").length).toBeGreaterThanOrEqual(2);
+    expect(document.querySelector('[data-testid="google-map-tile-canvas"]')).toBe(tileCanvas);
+    expect(document.querySelector('[data-testid="fence-overlay-canvas"]')).toBe(canvas);
     expect(canvas.style.pointerEvents).toBe("auto");
 
     dispatchCanvasClick(canvas, 500, 500);

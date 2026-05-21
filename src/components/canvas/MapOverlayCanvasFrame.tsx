@@ -1,6 +1,6 @@
 /// <reference types="google.maps" />
 
-import { Layers, Lock, Map as MapIcon, Loader2 } from "lucide-react";
+import { Lock, Map as MapIcon, Loader2 } from "lucide-react";
 import {
   type CSSProperties,
   type ReactNode,
@@ -8,12 +8,11 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState,
 } from "react";
 import { useGoogleMaps } from "../../hooks/useGoogleMaps";
 import type { initCanvasEngine } from "./canvasEngine";
 import type { CanvasOverlay } from "../../lib/googleMaps/CanvasOverlay";
-import type { CanvasMapInteractionMode } from "./CanvasToolbar";
+import type { CanvasGoogleMapType, CanvasMapInteractionMode } from "./CanvasToolbar";
 
 interface PropertyAnchor {
   lat: number;
@@ -32,9 +31,9 @@ interface MapOverlayCanvasFrameProps {
   children: ReactNode;
   overlay?: ReactNode;
   mapInteractionMode?: CanvasMapInteractionMode;
+  mapType?: CanvasGoogleMapType;
+  mapOpacity?: number;
 }
-
-type MapType = "satellite" | "hybrid";
 
 const PROPERTY_ZOOM = 20;
 
@@ -49,6 +48,8 @@ export function MapOverlayCanvasFrame({
   children,
   overlay,
   mapInteractionMode = "pan",
+  mapType = "satellite",
+  mapOpacity = 1,
 }: MapOverlayCanvasFrameProps) {
   const anchor = useMemo(
     () =>
@@ -82,6 +83,8 @@ export function MapOverlayCanvasFrame({
       style={style}
       overlay={overlay}
       mapInteractionMode={mapInteractionMode}
+      mapType={mapType}
+      mapOpacity={mapOpacity}
     >
       {children}
     </AnchoredMapOverlay>
@@ -100,6 +103,8 @@ interface AnchoredMapOverlayProps {
   children: ReactNode;
   overlay?: ReactNode;
   mapInteractionMode: CanvasMapInteractionMode;
+  mapType: CanvasGoogleMapType;
+  mapOpacity: number;
 }
 
 function AnchoredMapOverlay({
@@ -114,12 +119,13 @@ function AnchoredMapOverlay({
   children,
   overlay,
   mapInteractionMode,
+  mapType,
+  mapOpacity,
 }: AnchoredMapOverlayProps) {
   const googleMaps = useGoogleMaps();
   const mapNodeRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const overlayRef = useRef<CanvasOverlay | null>(null);
-  const [mapType, setMapType] = useState<MapType>("satellite");
   const drawMode = mapInteractionMode === "draw";
 
   useEffect(() => {
@@ -144,7 +150,7 @@ function AnchoredMapOverlay({
     }
     mapRef.current.setCenter(anchor);
     mapRef.current.setZoom(PROPERTY_ZOOM);
-  }, [anchor, googleMaps.ready]);
+  }, [anchor, googleMaps.ready, mapType]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -201,7 +207,6 @@ function AnchoredMapOverlay({
     anchor,
     canvasHostRef,
     canvasRef,
-    drawMode,
     engine,
     engineVersion,
     googleMaps.ready,
@@ -229,7 +234,11 @@ function AnchoredMapOverlay({
       data-testid="canvas-map-overlay"
       data-map-interaction-mode={mapInteractionMode}
     >
-      <div ref={mapNodeRef} className="absolute inset-0 bg-brand-bg" />
+      <div
+        ref={mapNodeRef}
+        className="absolute inset-0 bg-brand-bg transition-opacity duration-150 ease-out"
+        style={{ opacity: mapOpacity }}
+      />
       {!googleMaps.ready ? (
         <div className="absolute inset-0 flex items-center justify-center bg-brand-bg">
           <div className="absolute inset-0 animate-pulse bg-gradient-to-br from-brand-border/50 via-brand-card to-brand-bg" />
@@ -244,19 +253,6 @@ function AnchoredMapOverlay({
         className="absolute inset-0 z-10 pointer-events-none"
       >
         {children}
-      </div>
-      <div className="absolute left-3 top-3 z-20 flex flex-wrap gap-2" data-print-hide>
-        <button
-          type="button"
-          onClick={() =>
-            setMapType((value) => (value === "satellite" ? "hybrid" : "satellite"))
-          }
-          className="inline-flex items-center justify-center gap-2 rounded-lg border border-brand-border bg-brand-card/95 px-3 py-2 text-xs font-bold text-brand-text shadow-sm transition-colors hover:border-brand-primary hover:text-brand-primary"
-          title={mapType === "satellite" ? "Show street labels" : "Hide street labels"}
-        >
-          <Layers size={15} />
-          {mapType === "satellite" ? "Hybrid" : "Satellite"}
-        </button>
       </div>
       <div className="absolute bottom-3 left-3 right-3 z-20 flex items-center justify-between gap-3 rounded-lg border border-brand-border bg-brand-card/95 px-3 py-2 text-xs font-bold text-brand-muted shadow-sm pointer-events-none">
         <span className="min-w-0 truncate">{status}</span>

@@ -27,6 +27,7 @@ import { TOOL_HOTKEYS } from "../../lib/canvasShortcuts";
 type Engine = ReturnType<typeof initCanvasEngine>;
 type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand";
 export type CanvasMapInteractionMode = "pan" | "draw";
+export type CanvasGoogleMapType = "satellite" | "hybrid" | "roadmap" | "terrain";
 type FreehandStyle = {
   color: string;
   width: number;
@@ -56,6 +57,10 @@ interface CanvasToolbarProps {
   mapOverlayEnabled?: boolean;
   mapInteractionMode?: CanvasMapInteractionMode;
   onMapInteractionModeChange?: (mode: CanvasMapInteractionMode) => void;
+  mapOpacity?: number;
+  onMapOpacityChange?: (opacity: number) => void;
+  googleMapType?: CanvasGoogleMapType;
+  onGoogleMapTypeChange?: (mapType: CanvasGoogleMapType) => void;
 }
 
 export function CanvasToolbar({
@@ -79,6 +84,10 @@ export function CanvasToolbar({
   mapOverlayEnabled = false,
   mapInteractionMode = "pan",
   onMapInteractionModeChange,
+  mapOpacity = 1,
+  onMapOpacityChange,
+  googleMapType = "satellite",
+  onGoogleMapTypeChange,
 }: CanvasToolbarProps) {
   const handleTool = (t: CanvasTool) => {
     engineRef.current?.setTool(t);
@@ -300,30 +309,64 @@ export function CanvasToolbar({
       <div className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
         <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">View</span>
       {mapOverlayEnabled && onMapInteractionModeChange ? (
-        <div
-          role="group"
-          aria-label="Canvas map interaction mode"
-          className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-brand-border/70 bg-brand-card/80 p-1"
-        >
-          <button
-            type="button"
-            className={modeBtnCls(mapInteractionMode === "pan")}
-            aria-pressed={mapInteractionMode === "pan"}
-            title="Pan map mode: move and zoom the satellite map"
-            onClick={() => onMapInteractionModeChange("pan")}
+        <>
+          <div
+            role="group"
+            aria-label="Canvas map interaction mode"
+            className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-brand-border/70 bg-brand-card/80 p-1"
           >
-            <MapIcon size={16} /> Pan map
-          </button>
-          <button
-            type="button"
-            className={modeBtnCls(mapInteractionMode === "draw")}
-            aria-pressed={mapInteractionMode === "draw"}
-            title="Draw mode: lock the map and draw the fence"
-            onClick={() => onMapInteractionModeChange("draw")}
-          >
-            <Pencil size={16} /> Draw
-          </button>
-        </div>
+            <button
+              type="button"
+              className={modeBtnCls(mapInteractionMode === "pan")}
+              aria-pressed={mapInteractionMode === "pan"}
+              title="Pan map mode: move and zoom the map"
+              onClick={() => onMapInteractionModeChange("pan")}
+            >
+              <MapIcon size={16} /> Pan map
+            </button>
+            <button
+              type="button"
+              className={modeBtnCls(mapInteractionMode === "draw")}
+              aria-pressed={mapInteractionMode === "draw"}
+              title="Draw mode: lock the map and draw the fence"
+              onClick={() => onMapInteractionModeChange("draw")}
+            >
+              <Pencil size={16} /> Draw
+            </button>
+          </div>
+          {onGoogleMapTypeChange ? (
+            <label className="inline-flex shrink-0 items-center gap-1.5 text-xs font-bold text-brand-muted">
+              Map
+              <select
+                value={googleMapType}
+                onChange={(event) => onGoogleMapTypeChange(event.target.value as CanvasGoogleMapType)}
+                className="rounded-md border border-brand-border bg-brand-card px-2 py-1.5 text-xs font-bold text-brand-text outline-none transition-colors hover:border-brand-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+                title="Map type"
+                aria-label="Map type"
+              >
+                <option value="satellite">Satellite</option>
+                <option value="hybrid">Hybrid</option>
+                <option value="roadmap">Roadmap</option>
+                <option value="terrain">Terrain</option>
+              </select>
+            </label>
+          ) : null}
+          {onMapOpacityChange ? (
+            <label className="inline-flex min-w-[160px] shrink-0 items-center gap-2 text-xs font-bold text-brand-muted">
+              Map {Math.round(mapOpacity * 100)}%
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={Math.round(mapOpacity * 100)}
+                onChange={(event) => onMapOpacityChange(Number(event.target.value) / 100)}
+                className="w-24 accent-brand-primary"
+                title="Satellite map opacity"
+                aria-label="Satellite map opacity"
+              />
+            </label>
+          ) : null}
+        </>
       ) : null}
       <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
         <input
