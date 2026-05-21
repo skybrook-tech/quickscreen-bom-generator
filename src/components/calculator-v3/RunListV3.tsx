@@ -22,6 +22,7 @@ export function RunListV3({
   const hasRuns = Boolean(payload?.runs.length);
 
   if (!payload) return null;
+  const currentPayload = payload;
 
   function createPayloadForSystem(productCode: string): CanonicalPayload {
     const variables = initialVariablesForSystem(productCode);
@@ -30,6 +31,9 @@ export function RunListV3({
       productCode,
       schemaVersion: "v1",
       variables,
+      ...(currentPayload.propertyAnchor
+        ? { propertyAnchor: currentPayload.propertyAnchor }
+        : {}),
       runs: [
         {
           runId,

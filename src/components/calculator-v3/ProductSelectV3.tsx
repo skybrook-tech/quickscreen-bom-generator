@@ -78,6 +78,9 @@ export function ProductSelectV3({
       productCode: p.system_type,
       schemaVersion: "v1",
       variables: initialVariables,
+      ...(state.payload?.propertyAnchor
+        ? { propertyAnchor: state.payload.propertyAnchor }
+        : {}),
       runs: [
         {
           runId: crypto.randomUUID(),
