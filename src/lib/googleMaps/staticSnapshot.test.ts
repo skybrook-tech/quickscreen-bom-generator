@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   buildStaticMapUrl,
   clampStaticMapSize,
@@ -102,6 +102,8 @@ describe("Static Maps snapshots", () => {
     resolvers.forEach((resolve) => resolve());
 
     const snapshot = await snapshotPromise;
+    expect(snapshot.layers?.satellite?.url).toContain("maptype=satellite");
+    expect(snapshot.layers?.roadmap?.url).toContain("maptype=roadmap");
     expect(snapshot.layers?.satellite).toMatchObject({
       visible: true,
       opacity: 1,
@@ -110,6 +112,37 @@ describe("Static Maps snapshots", () => {
       visible: false,
       opacity: 1,
     });
+  });
+
+  it("falls back to satellite-only if the roadmap preload fails", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const snapshot = await createLayeredMapSnapshot(
+      {
+        centerLat: -28.503385,
+        centerLng: 153.526262,
+        zoom: 20,
+        viewportWidth: 1280,
+        viewportHeight: 720,
+        capturedAt: "2026-05-22T00:00:00.000Z",
+      },
+      "test-key",
+      (url) =>
+        new URL(url).searchParams.get("maptype") === "roadmap"
+          ? Promise.reject(new Error("roadmap auth failed"))
+          : Promise.resolve(),
+    );
+
+    expect(snapshot.layers?.satellite?.url).toContain("maptype=satellite");
+    expect(snapshot.layers?.roadmap).toEqual({
+      url: null,
+      visible: false,
+      opacity: 1,
+    });
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining("Roadmap layer could not be preloaded"),
+      expect.any(Error),
+    );
+    warnSpy.mockRestore();
   });
 
   it("migrates a legacy single-image snapshot into a satellite layer", () => {
@@ -132,7 +165,11 @@ describe("Static Maps snapshots", () => {
       visible: true,
       opacity: 1,
     });
-    expect(normalized?.layers?.roadmap).toBeUndefined();
+    expect(normalized?.layers?.roadmap).toEqual({
+      url: null,
+      visible: false,
+      opacity: 1,
+    });
   });
 
   it("updates layer visibility and opacity without replacing the snapshot", () => {

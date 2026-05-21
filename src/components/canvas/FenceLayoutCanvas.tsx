@@ -256,7 +256,7 @@ export function FenceLayoutCanvas({
       .filter(
         (
           layer,
-        ): layer is CanonicalMapSnapshotLayer =>
+        ): layer is CanonicalMapSnapshotLayer & { url: string } =>
           Boolean(layer?.url && layer.visible && layer.opacity > 0),
       )
       .map((layer) => ({ imageUrl: layer.url, opacity: layer.opacity }));

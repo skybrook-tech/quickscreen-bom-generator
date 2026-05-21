@@ -19,12 +19,12 @@ export interface CanonicalPayload {
     capturedAt: string;
     layers?: {
       satellite?: {
-        url: string;
+        url: string | null;
         visible: boolean;
         opacity: number;
       };
       roadmap?: {
-        url: string;
+        url: string | null;
         visible: boolean;
         opacity: number;
       };

@@ -16,7 +16,7 @@ export type CanonicalVariables = Record<string, CanonicalVariableValue>;
 export type CanonicalMapLayerId = 'satellite' | 'roadmap';
 
 export interface CanonicalMapSnapshotLayer {
-  url: string;
+  url: string | null;
   visible: boolean;
   opacity: number;
 }

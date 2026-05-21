@@ -3949,7 +3949,7 @@ export function initCanvasEngine(
     const metersPerPixel =
       (156543.03392 * Math.cos((lat * Math.PI) / 180)) / Math.pow(2, mapZoom);
 
-    Promise.all(
+    Promise.allSettled(
       visibleLayers.map(
         (layer) =>
           new Promise<{ image: HTMLImageElement; opacity: number }>(
@@ -3964,8 +3964,17 @@ export function initCanvasEngine(
           ),
       ),
     )
-      .then((loadedLayers) => {
+      .then((results) => {
         if (loadVersion !== mapLoadVersion) return;
+        const loadedLayers = results.flatMap((result) =>
+          result.status === "fulfilled" ? [result.value] : [],
+        );
+        if (loadedLayers.length === 0) {
+          mapLayers = [];
+          mapWorldWidth = 0;
+          scheduleRedraw();
+          return;
+        }
         mapLayers = loadedLayers;
         const firstImage = loadedLayers[0].image;
         mapWorldWidth = firstImage.width * metersPerPixel * scale;

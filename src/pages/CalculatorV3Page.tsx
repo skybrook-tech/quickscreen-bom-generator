@@ -775,14 +775,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   }
 
   function handleMapSnapshotChange(snapshot: NonNullable<CanonicalPayload["snapshot"]>) {
-    if (!payload) return;
-    dispatch({
-      type: "SET_PAYLOAD",
-      payload: {
-        ...payload,
-        snapshot,
-      },
-    });
+    dispatch({ type: "SET_MAP_SNAPSHOT", snapshot });
   }
 
   async function handleSwitchEconomyToStandard(item: BOMLineItem) {

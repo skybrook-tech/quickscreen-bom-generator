@@ -108,8 +108,23 @@ export async function createLayeredMapSnapshot(
   const snapshot = createMapSnapshot(input);
   const satelliteUrl = buildStaticMapUrl(snapshot, apiKey, "satellite");
   const roadmapUrl = buildStaticMapUrl(snapshot, apiKey, "roadmap");
+  const [satelliteResult, roadmapResult] = await Promise.allSettled([
+    loadImage(satelliteUrl),
+    loadImage(roadmapUrl),
+  ]);
 
-  await Promise.all([loadImage(satelliteUrl), loadImage(roadmapUrl)]);
+  if (satelliteResult.status === "rejected") {
+    throw satelliteResult.reason instanceof Error
+      ? satelliteResult.reason
+      : new Error(MAPS_STATIC_API_ENABLEMENT_MESSAGE);
+  }
+
+  if (roadmapResult.status === "rejected") {
+    console.warn(
+      "[StaticMapSnapshot] Roadmap layer could not be preloaded; falling back to satellite-only snapshot.",
+      roadmapResult.reason,
+    );
+  }
 
   return {
     ...snapshot,
@@ -119,7 +134,7 @@ export async function createLayeredMapSnapshot(
         ...DEFAULT_LAYER_STATE.satellite,
       },
       roadmap: {
-        url: roadmapUrl,
+        url: roadmapResult.status === "fulfilled" ? roadmapUrl : null,
         ...DEFAULT_LAYER_STATE.roadmap,
       },
     },
@@ -131,15 +146,17 @@ export function normalizeMapSnapshot(
   apiKey?: string,
 ): CanonicalMapSnapshot | null {
   if (!snapshot) return null;
+  const hasLayerShape = Boolean(snapshot.layers);
   const satelliteLegacyUrl = snapshot.layers?.satellite?.url ?? snapshot.url;
   const roadmapLegacyUrl = snapshot.layers?.roadmap?.url;
   const fallbackSatelliteUrl =
-    satelliteLegacyUrl || (apiKey ? buildStaticMapUrl(snapshot, apiKey, "satellite") : "");
+    satelliteLegacyUrl ||
+    (!hasLayerShape && apiKey ? buildStaticMapUrl(snapshot, apiKey, "satellite") : null);
 
   const layers: CanonicalMapSnapshot["layers"] = {};
-  if (fallbackSatelliteUrl) {
+  if (fallbackSatelliteUrl || hasLayerShape) {
     layers.satellite = {
-      url: fallbackSatelliteUrl,
+      url: fallbackSatelliteUrl ?? null,
       visible:
         snapshot.layers?.satellite?.visible ??
         DEFAULT_LAYER_STATE.satellite.visible,
@@ -149,9 +166,14 @@ export function normalizeMapSnapshot(
       ),
     };
   }
-  if (roadmapLegacyUrl) {
+
+  if (roadmapLegacyUrl || hasLayerShape || snapshot.url || (!hasLayerShape && apiKey)) {
     layers.roadmap = {
-      url: roadmapLegacyUrl,
+      url:
+        roadmapLegacyUrl ??
+        (!hasLayerShape && !snapshot.url && apiKey
+          ? buildStaticMapUrl(snapshot, apiKey, "roadmap")
+          : null),
       visible:
         snapshot.layers?.roadmap?.visible ??
         DEFAULT_LAYER_STATE.roadmap.visible,
@@ -160,14 +182,9 @@ export function normalizeMapSnapshot(
           DEFAULT_LAYER_STATE.roadmap.opacity,
       ),
     };
-  } else if (apiKey) {
-    layers.roadmap = {
-      url: buildStaticMapUrl(snapshot, apiKey, "roadmap"),
-      ...DEFAULT_LAYER_STATE.roadmap,
-    };
   }
 
-  if (Object.keys(layers).length === 0) {
+  if (!layers.satellite && !layers.roadmap) {
     return snapshot;
   }
 

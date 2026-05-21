@@ -314,19 +314,28 @@ export function CanvasToolbar({
           </span>
           {layerRows.map(({ layerId, layer }) => {
             const label = layerId === "satellite" ? "Satellite" : "Roadmap";
+            const layerAvailable = Boolean(layer.url);
             return (
               <div key={layerId} className="inline-flex items-center gap-1.5">
                 <label className="inline-flex cursor-pointer items-center gap-1">
                   <input
                     type="checkbox"
                     checked={layer.visible}
+                    disabled={!layerAvailable}
                     aria-label={`Show ${label} layer`}
+                    title={
+                      layerAvailable
+                        ? `Show ${label} layer`
+                        : `${label} layer was not captured`
+                    }
                     onChange={(event) =>
                       onMapLayerChange(layerId, { visible: event.target.checked })
                     }
-                    className="accent-brand-accent"
+                    className="accent-brand-accent disabled:cursor-not-allowed disabled:opacity-40"
                   />
-                  <span>{label}</span>
+                  <span className={!layerAvailable ? "opacity-50" : undefined}>
+                    {label}
+                  </span>
                 </label>
                 <input
                   type="range"
@@ -335,13 +344,13 @@ export function CanvasToolbar({
                   value={Math.round(layer.opacity * 100)}
                   aria-label={`${label} layer opacity`}
                   title={`${label} opacity`}
-                  disabled={!layer.visible}
+                  disabled={!layer.visible || !layerAvailable}
                   onInput={(event) =>
                     onMapLayerChange(layerId, {
                       opacity: Number(event.currentTarget.value) / 100,
                     })
                   }
-                  className="h-1.5 w-20 accent-brand-accent disabled:opacity-40"
+                  className="h-1.5 w-20 accent-brand-accent disabled:cursor-not-allowed disabled:opacity-40"
                 />
                 <span className="w-8 text-right tabular-nums">
                   {Math.round(layer.opacity * 100)}%

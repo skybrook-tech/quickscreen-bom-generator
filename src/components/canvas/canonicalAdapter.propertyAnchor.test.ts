@@ -142,5 +142,10 @@ describe("canonicalAdapter propertyAnchor", () => {
       visible: true,
       opacity: 1,
     });
+    expect(reloaded?.snapshot?.layers?.roadmap).toEqual({
+      url: null,
+      visible: false,
+      opacity: 1,
+    });
   });
 });

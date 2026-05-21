@@ -1,9 +1,12 @@
 import { act } from "react";
 import { createRoot } from "react-dom/client";
+import { useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { CanvasToolbar } from "./CanvasToolbar";
+import { updateMapSnapshotLayer } from "../../lib/googleMaps/staticSnapshot";
 import type {
   CanonicalMapLayerId,
+  CanonicalMapSnapshot,
   CanonicalMapSnapshotLayer,
 } from "../../types/canonical.types";
 
@@ -101,6 +104,104 @@ describe("CanvasToolbar map layers", () => {
     expect(onMapLayerChange).toHaveBeenNthCalledWith(2, "satellite", {
       opacity: 0.45,
     });
+
+    act(() => root.unmount());
+  });
+
+  it("keeps layer checkbox and opacity changes after a canonical-state rerender", () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    const initialSnapshot: CanonicalMapSnapshot = {
+      centerLat: -33.8688,
+      centerLng: 151.2093,
+      zoom: 19,
+      width: 640,
+      height: 360,
+      metresPerPixel: 0.2,
+      capturedAt: "2026-05-22T00:00:00.000Z",
+      layers: {
+        satellite: {
+          url: "https://example.test/satellite.png",
+          visible: true,
+          opacity: 1,
+        },
+        roadmap: {
+          url: "https://example.test/roadmap.png",
+          visible: false,
+          opacity: 1,
+        },
+      },
+    };
+
+    function Harness() {
+      const [snapshot, setSnapshot] = useState(initialSnapshot);
+      return (
+        <CanvasToolbar
+          engineRef={{ current: null }}
+          activeTool="draw"
+          onToolChange={() => undefined}
+          snapEnabled={false}
+          onSnapToggle={() => undefined}
+          orthoEnabled={false}
+          onOrthoToggle={() => undefined}
+          gateSnap100={false}
+          onGateSnap100Toggle={() => undefined}
+          showGrid
+          onToggleGrid={() => undefined}
+          expanded={false}
+          onToggleExpand={() => undefined}
+          onHelpOpen={() => undefined}
+          onPrintMap={() => undefined}
+          freehandStyle={freehandStyle}
+          onFreehandStyleChange={() => undefined}
+          mapLayers={snapshot.layers}
+          onMapLayerChange={(layerId, updates) =>
+            setSnapshot((current) =>
+              updateMapSnapshotLayer(current, layerId, updates),
+            )
+          }
+        />
+      );
+    }
+
+    act(() => {
+      root.render(<Harness />);
+    });
+
+    const roadmapToggle = container.querySelector<HTMLInputElement>(
+      'input[aria-label="Show Roadmap layer"]',
+    );
+    const roadmapOpacity = container.querySelector<HTMLInputElement>(
+      'input[aria-label="Roadmap layer opacity"]',
+    );
+    expect(roadmapToggle?.checked).toBe(false);
+
+    act(() => {
+      roadmapToggle!.click();
+    });
+    expect(roadmapToggle?.checked).toBe(true);
+    expect(roadmapOpacity?.disabled).toBe(false);
+
+    act(() => {
+      roadmapOpacity!.value = "50";
+      roadmapOpacity!.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    expect(roadmapOpacity?.value).toBe("50");
+
+    act(() => {
+      root.render(<Harness />);
+    });
+    expect(
+      container.querySelector<HTMLInputElement>(
+        'input[aria-label="Show Roadmap layer"]',
+      )?.checked,
+    ).toBe(true);
+    expect(
+      container.querySelector<HTMLInputElement>(
+        'input[aria-label="Roadmap layer opacity"]',
+      )?.value,
+    ).toBe("50");
 
     act(() => root.unmount());
   });

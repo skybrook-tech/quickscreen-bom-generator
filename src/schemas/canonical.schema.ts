@@ -70,7 +70,7 @@ export const canonicalRunSchema = z.object({
 });
 
 const canonicalMapSnapshotLayerSchema = z.object({
-  url: z.string(),
+  url: z.string().nullable(),
   visible: z.boolean(),
   opacity: z.number().min(0).max(1),
 });

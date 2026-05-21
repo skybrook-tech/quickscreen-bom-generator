@@ -1,6 +1,6 @@
 import { act } from "react";
 import { createRoot } from "react-dom/client";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { PropertyAnchorFormGate, PropertyMap } from "./PropertyMap";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -19,6 +19,13 @@ function renderGate(anchorConfirmed: boolean) {
 }
 
 describe("PropertyAnchorFormGate", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+    document.body.innerHTML = "";
+  });
+
   it("marks form children inert until the property anchor is confirmed", () => {
     const { container, root } = renderGate(false);
     const gated = container.querySelector("div[inert]");
@@ -75,6 +82,89 @@ describe("PropertyAnchorFormGate", () => {
     expect(container.textContent).toContain("Property address");
     expect(container.textContent).toContain("Find property");
     expect(container.querySelector('[aria-label="Property satellite map"]')).toBeNull();
+
+    act(() => root.unmount());
+  });
+
+  it("captures satellite and roadmap Static Maps layer URLs when using the current view", async () => {
+    vi.stubEnv("VITE_GOOGLE_MAPS_API_KEY", "test-key");
+    const requestedUrls: string[] = [];
+    class MockImage {
+      onload: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      crossOrigin = "";
+      #src = "";
+
+      set src(value: string) {
+        this.#src = value;
+        requestedUrls.push(value);
+        queueMicrotask(() => this.onload?.());
+      }
+
+      get src() {
+        return this.#src;
+      }
+    }
+    vi.stubGlobal("Image", MockImage);
+
+    const onAnchorConfirmed = vi.fn();
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(
+        <PropertyMap
+          initialAnchor={{
+            lat: -28.503385,
+            lng: 153.526262,
+            address: "9 Mogo Place, Billinudgel NSW, Australia",
+          }}
+          onAnchorConfirmed={onAnchorConfirmed}
+        />,
+      );
+    });
+
+    const changeView = Array.from(container.querySelectorAll("button")).find((button) =>
+      button.textContent?.includes("Change view"),
+    );
+    expect(changeView).not.toBeUndefined();
+    act(() => {
+      changeView!.click();
+    });
+
+    const useView = Array.from(container.querySelectorAll("button")).find((button) =>
+      button.textContent?.includes("Use this view"),
+    );
+    expect(useView).not.toBeUndefined();
+    await act(async () => {
+      useView!.click();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(requestedUrls.map((url) => new URL(url).searchParams.get("maptype"))).toEqual([
+      "satellite",
+      "roadmap",
+    ]);
+    expect(onAnchorConfirmed).toHaveBeenCalledWith(
+      expect.objectContaining({
+        snapshot: expect.objectContaining({
+          layers: {
+            satellite: expect.objectContaining({
+              url: expect.stringContaining("maptype=satellite"),
+              visible: true,
+              opacity: 1,
+            }),
+            roadmap: expect.objectContaining({
+              url: expect.stringContaining("maptype=roadmap"),
+              visible: false,
+              opacity: 1,
+            }),
+          },
+        }),
+      }),
+    );
 
     act(() => root.unmount());
   });
