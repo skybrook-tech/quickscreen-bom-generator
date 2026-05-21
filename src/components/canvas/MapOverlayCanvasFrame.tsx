@@ -170,6 +170,16 @@ function AnchoredMapOverlay({
   }, [drawMode]);
 
   useEffect(() => {
+    console.log("[CanvasOverlay] React overlay effect fired", {
+      googleMapsReady: googleMaps.ready,
+      hasMap: !!mapRef.current,
+      hasCanvas: !!canvasRef.current,
+      hasFallbackParent: !!canvasHostRef.current,
+      hasEngine: !!engine,
+      anchor,
+      drawMode,
+      engineVersion,
+    });
     let cancelled = false;
     if (
       !googleMaps.ready ||
@@ -188,6 +198,15 @@ function AnchoredMapOverlay({
     void import("../../lib/googleMaps/CanvasOverlay").then(({ CanvasOverlay: LoadedOverlay }) => {
       if (cancelled) return;
       overlayRef.current?.setMap(null);
+      console.log("[CanvasOverlay] React overlay.setMap(map) via constructor", {
+        hasMap: !!map,
+        hasCanvas: !!canvas,
+        hasFallbackParent: !!fallbackParent,
+        hasEngine: !!engine,
+        anchor,
+        drawMode,
+        engineVersion,
+      });
       overlayRef.current = new LoadedOverlay({
         map,
         canvas,

@@ -73,13 +73,20 @@ function installGoogleMapsMock() {
   }
 
   class FakeOverlayView {
+    private map: unknown = null;
+
     setMap(map: unknown) {
+      this.map = map;
       if (map) {
         (this as unknown as { onAdd?: () => void; draw?: () => void }).onAdd?.();
         (this as unknown as { onAdd?: () => void; draw?: () => void }).draw?.();
       } else {
         (this as unknown as { onRemove?: () => void }).onRemove?.();
       }
+    }
+
+    getMap() {
+      return this.map;
     }
 
     getPanes() {

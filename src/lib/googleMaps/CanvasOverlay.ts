@@ -37,6 +37,12 @@ export class CanvasOverlay extends google.maps.OverlayView {
   private drawMode: boolean;
   private container: HTMLDivElement | null = null;
   private listeners: google.maps.MapsEventListener[] = [];
+  private diagnosticPointerListener: ((event: MouseEvent | PointerEvent) => void) | null = null;
+  private viewportTransform: {
+    pan: { x: number; y: number };
+    zoom: number;
+    scale: number;
+  } | null = null;
 
   constructor(options: CanvasOverlayOptions) {
     super();
@@ -47,11 +53,25 @@ export class CanvasOverlay extends google.maps.OverlayView {
     this.anchor = options.anchor;
     this.drawMode = options.drawMode;
     setCanvasOverlayStyles(this.canvas, this.drawMode);
+    console.log("[CanvasOverlay] constructed", {
+      hasMap: !!this.getMap(),
+      drawMode: this.drawMode,
+    });
+    console.log("[CanvasOverlay] overlay.setMap(map) called", {
+      hasMap: !!this.map,
+      drawMode: this.drawMode,
+    });
     this.setMap(this.map);
   }
 
   onAdd() {
     const panes = this.getPanes();
+    console.log(
+      "[CanvasOverlay] onAdd fired, panes available:",
+      Object.keys(panes || {}),
+      "canvas element being mounted:",
+      this.canvas,
+    );
     if (!panes) return;
 
     const container = document.createElement("div");
@@ -63,6 +83,13 @@ export class CanvasOverlay extends google.maps.OverlayView {
     container.appendChild(this.canvas);
     panes.overlayMouseTarget.appendChild(container);
     this.container = container;
+    console.log(
+      "[CanvasOverlay] canvas appended to overlayMouseTarget, parent:",
+      this.canvas.parentElement?.tagName,
+      "getBoundingClientRect:",
+      this.canvas.getBoundingClientRect(),
+    );
+    this.attachDiagnosticPointerLogging();
 
     this.listeners = [
       this.map.addListener("bounds_changed", () => this.draw()),
@@ -73,6 +100,7 @@ export class CanvasOverlay extends google.maps.OverlayView {
 
   draw() {
     const projection = this.getProjection();
+    console.log("[CanvasOverlay] draw() called, projection:", !!projection);
     const bounds = this.map.getBounds();
     if (!projection || !bounds || !this.container) return;
 
@@ -111,18 +139,25 @@ export class CanvasOverlay extends google.maps.OverlayView {
     );
     const pxPerMetre = (eastPxPerMetre + northPxPerMetre) / 2;
     const overlayZoom = pxPerMetre / CANVAS_METRES_SCALE;
-
-    this.engine.setViewportTransform({
+    this.viewportTransform = {
       pan: {
         x: anchorPixel.x - left,
         y: anchorPixel.y - top,
       },
       zoom: overlayZoom,
       scale: CANVAS_METRES_SCALE,
+    };
+
+    this.engine.setViewportTransform({
+      pan: this.viewportTransform.pan,
+      zoom: overlayZoom,
+      scale: CANVAS_METRES_SCALE,
     });
   }
 
   onRemove() {
+    console.log("[CanvasOverlay] onRemove fired");
+    this.detachDiagnosticPointerLogging();
     for (const listener of this.listeners) listener.remove();
     this.listeners = [];
     if (this.container?.parentNode) {
@@ -144,5 +179,91 @@ export class CanvasOverlay extends google.maps.OverlayView {
     if (this.container) {
       this.container.style.pointerEvents = drawMode ? "auto" : "none";
     }
+  }
+
+  private attachDiagnosticPointerLogging() {
+    this.detachDiagnosticPointerLogging();
+    this.diagnosticPointerListener = (event) => {
+      const targetTag =
+        event.target instanceof Element ? event.target.tagName : undefined;
+      console.log("[CanvasOverlay] pointer event received", {
+        type: event.type,
+        clientX: event.clientX,
+        clientY: event.clientY,
+        drawMode: this.drawMode,
+        targetTag,
+      });
+
+      const metrePoint = this.eventToMetreOffset(event);
+      const before = this.layoutSignal();
+      window.setTimeout(() => {
+        if (!this.drawMode) {
+          console.log("[CanvasOverlay] click ignored, reason:", "not in draw mode");
+          return;
+        }
+        if (!this.anchor) {
+          console.log("[CanvasOverlay] click ignored, reason:", "no anchor");
+          return;
+        }
+        if (!metrePoint) {
+          console.log(
+            "[CanvasOverlay] click ignored, reason:",
+            "missing viewport transform or empty canvas bounds",
+          );
+          return;
+        }
+
+        const after = this.layoutSignal();
+        if (after !== before) {
+          console.log(
+            `[CanvasOverlay] point added, dxMetres=${metrePoint.dxMetres}, dyMetres=${metrePoint.dyMetres}`,
+          );
+          return;
+        }
+
+        console.log(
+          "[CanvasOverlay] click ignored, reason:",
+          "layout unchanged after event; first draw point may not emit a segment yet, otherwise check active tool/run state",
+        );
+      }, 0);
+    };
+    this.canvas.addEventListener("pointerdown", this.diagnosticPointerListener);
+    this.canvas.addEventListener("mousedown", this.diagnosticPointerListener);
+  }
+
+  private detachDiagnosticPointerLogging() {
+    if (!this.diagnosticPointerListener) return;
+    this.canvas.removeEventListener("pointerdown", this.diagnosticPointerListener);
+    this.canvas.removeEventListener("mousedown", this.diagnosticPointerListener);
+    this.diagnosticPointerListener = null;
+  }
+
+  private eventToMetreOffset(event: MouseEvent | PointerEvent) {
+    if (!this.viewportTransform) return null;
+    const rect = this.canvas.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return null;
+    const canvasX =
+      (event.clientX - rect.left - this.viewportTransform.pan.x) /
+      this.viewportTransform.zoom;
+    const canvasY =
+      (event.clientY - rect.top - this.viewportTransform.pan.y) /
+      this.viewportTransform.zoom;
+    return {
+      dxMetres: canvasX / this.viewportTransform.scale,
+      dyMetres: -canvasY / this.viewportTransform.scale,
+    };
+  }
+
+  private layoutSignal() {
+    const layout = this.engine.getLayout();
+    return JSON.stringify({
+      segments: layout.segments.length,
+      gates: layout.gates.length,
+      totalLengthM: layout.totalLengthM,
+      boundaries: layout.boundaries.length,
+      textNotes: layout.textNotes?.length ?? 0,
+      siteMarkers: layout.siteMarkers?.length ?? 0,
+      freehandStrokes: layout.freehandStrokes?.length ?? 0,
+    });
   }
 }

@@ -124,6 +124,8 @@ Latest canvas overlay anchor-wiring fix: first-run/product selection now preserv
 
 Latest canvas overlay draw/autocomplete fix: anchored Draw mode now keeps one stable `CanvasOverlay` mounted in `overlayMouseTarget` with a marked fence overlay canvas, the sidebar map defers Maps JS until address engagement, Places API (New) suggestions feed the Australian address input with manual geocode fallback, confirming a property switches the workspace to Map view, and anchored map canvases now have session-only opacity and Satellite/Hybrid/Roadmap/Terrain controls.
 
+Latest canvas overlay diagnostic pass: `CanvasOverlay` now emits production console instrumentation for construction, React overlay creation, `setMap`, `onAdd`, canvas attachment, draw projection state, pointer receipt, point-add/reject decisions, and `onRemove`, with the overlay canvas findable via `data-testid="fence-overlay-canvas"`.
+
 Latest Brief BN v2 pass: the sandbox BN work now completes the top-bar reorganisation by moving Map/BOM tabs into the app header as a segmented control, moving BOM actions beside them only while BOM is active, removing the duplicate in-panel action row, and preserving the icon-only settings/Describe/gate-settings conventions in the repo skill mirrors.
 
 Latest Brief BO pass: run summaries now show only accepted run-default fields with height/length removed from the subheading, BOM colour display strips internal dispatch-code suffixes, section and gate match codes stay green when their run-derived settings match, and Print BOM now prints materials and totals first, then Run & Section Details, then the optional map at the bottom.
