@@ -768,6 +768,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
         },
       },
     });
+    setRightPaneView("map");
     toast.success("Property location confirmed");
   }
 

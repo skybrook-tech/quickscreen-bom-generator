@@ -1,5 +1,8 @@
+/// <reference types="google.maps" />
+
 import { Loader2, MapPin, Search } from "lucide-react";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
+import { getGoogleMapsLoader } from "../../lib/googleMaps/loader";
 
 export interface LocatedAddress {
   address: string;
@@ -10,6 +13,13 @@ export interface LocatedAddress {
 
 interface AddressInputProps {
   onLocated: (location: LocatedAddress) => void;
+  onEngaged?: () => void;
+}
+
+interface AddressSuggestion {
+  id: string;
+  description: string;
+  secondaryText?: string;
 }
 
 type GeocodeResult = {
@@ -38,14 +48,30 @@ function geocodeErrorMessage(response: GeocodeResponse) {
   return response.error_message || "Google could not geocode that address.";
 }
 
-export function AddressInput({ onLocated }: AddressInputProps) {
+const AUSTRALIA_BOUNDS = {
+  west: 112.9,
+  north: -10,
+  east: 153.7,
+  south: -44,
+};
+
+function placeText(text: google.maps.places.FormattableText | null | undefined) {
+  return text?.text ?? text?.toString() ?? "";
+}
+
+export function AddressInput({ onLocated, onEngaged }: AddressInputProps) {
   const [address, setAddress] = useState("");
   const [loading, setLoading] = useState(false);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false);
+  const [placesUnavailable, setPlacesUnavailable] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
+  const autocompleteRequestId = useRef(0);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const trimmed = address.trim();
+  async function geocodeAddress(rawAddress: string) {
+    const trimmed = rawAddress.trim();
     if (!trimmed) {
       setError("Enter an Australian property address.");
       return;
@@ -92,12 +118,119 @@ export function AddressInput({ onLocated }: AddressInputProps) {
         lng,
         formattedAddress: result.formatted_address || trimmed,
       });
+      setSuggestions([]);
+      setSuggestionsOpen(false);
+      sessionTokenRef.current = null;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Geocoding failed.");
     } finally {
       setLoading(false);
     }
   }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    onEngaged?.();
+    await geocodeAddress(address);
+  }
+
+  function handleAddressChange(nextAddress: string) {
+    setAddress(nextAddress);
+    setError(null);
+    if (nextAddress.trim()) {
+      onEngaged?.();
+      setSuggestionsOpen(true);
+    } else {
+      setSuggestions([]);
+      setSuggestionsOpen(false);
+      sessionTokenRef.current = null;
+    }
+  }
+
+  async function handleSuggestionSelect(suggestion: AddressSuggestion) {
+    setAddress(suggestion.description);
+    setSuggestions([]);
+    setSuggestionsOpen(false);
+    onEngaged?.();
+    await geocodeAddress(suggestion.description);
+  }
+
+  useEffect(() => {
+    const trimmed = address.trim();
+    if (placesUnavailable || trimmed.length < 3) {
+      setSuggestions([]);
+      setSuggestionsLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    const requestId = autocompleteRequestId.current + 1;
+    autocompleteRequestId.current = requestId;
+    const timer = window.setTimeout(() => {
+      setSuggestionsLoading(true);
+      Promise.resolve()
+        .then(() => getGoogleMapsLoader().load())
+        .then(async () => {
+          const placesLibrary = (await google.maps.importLibrary(
+            "places",
+          )) as google.maps.PlacesLibrary;
+          const AutocompleteSuggestion = placesLibrary.AutocompleteSuggestion;
+          const AutocompleteSessionToken = placesLibrary.AutocompleteSessionToken;
+          if (!AutocompleteSuggestion || !AutocompleteSessionToken) {
+            throw new Error("Places API (New) autocomplete classes are unavailable.");
+          }
+          if (!sessionTokenRef.current) {
+            sessionTokenRef.current = new AutocompleteSessionToken();
+          }
+
+          const request: google.maps.places.AutocompleteRequest & {
+            componentRestrictions?: { country: "au" };
+          } = {
+            input: trimmed,
+            region: "AU",
+            includedRegionCodes: ["au"],
+            locationRestriction: AUSTRALIA_BOUNDS,
+            componentRestrictions: { country: "au" },
+            sessionToken: sessionTokenRef.current,
+          };
+          const { suggestions: nextSuggestions } =
+            await AutocompleteSuggestion.fetchAutocompleteSuggestions(request);
+          if (cancelled || autocompleteRequestId.current !== requestId) return;
+          const parsedSuggestions: AddressSuggestion[] = [];
+          for (const suggestion of nextSuggestions) {
+            const prediction = suggestion.placePrediction;
+            const description = placeText(prediction?.text);
+            if (!prediction || !description) continue;
+            const secondaryText = placeText(prediction.secondaryText);
+            parsedSuggestions.push({
+              id: prediction.placeId,
+              description,
+              ...(secondaryText ? { secondaryText } : {}),
+            });
+          }
+          setSuggestions(parsedSuggestions.slice(0, 5));
+          setSuggestionsOpen(true);
+        })
+        .catch((err: unknown) => {
+          if (cancelled) return;
+          console.warn(
+            "Places API (New) autocomplete is unavailable. Enable Places API in Google Cloud Console to use address suggestions; falling back to manual Find property.",
+            err,
+          );
+          setPlacesUnavailable(true);
+          setSuggestions([]);
+          setSuggestionsOpen(false);
+        })
+        .finally(() => {
+          if (!cancelled) setSuggestionsLoading(false);
+        });
+    }, 250);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [address, placesUnavailable]);
 
   return (
     <form className="space-y-2" onSubmit={handleSubmit}>
@@ -112,10 +245,41 @@ export function AddressInput({ onLocated }: AddressInputProps) {
           />
           <input
             value={address}
-            onChange={(event) => setAddress(event.target.value)}
+            onChange={(event) => handleAddressChange(event.target.value)}
+            onFocus={() => {
+              if (suggestions.length > 0) setSuggestionsOpen(true);
+            }}
             placeholder="Start with an Australian street address"
             className="w-full rounded-lg border border-brand-border bg-brand-bg py-2 pl-9 pr-3 text-sm font-semibold text-brand-text outline-none transition-colors placeholder:text-brand-muted focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
           />
+          {suggestionsOpen && (suggestions.length > 0 || suggestionsLoading) ? (
+            <div className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-lg border border-brand-border bg-brand-card shadow-xl">
+              {suggestionsLoading && suggestions.length === 0 ? (
+                <div className="flex items-center gap-2 px-3 py-2 text-xs font-bold text-brand-muted">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Finding Australian addresses
+                </div>
+              ) : null}
+              {suggestions.map((suggestion) => (
+                <button
+                  key={suggestion.id}
+                  type="button"
+                  onMouseDown={(event) => event.preventDefault()}
+                  onClick={() => void handleSuggestionSelect(suggestion)}
+                  className="block w-full border-t border-brand-border/60 px-3 py-2 text-left text-sm transition-colors first:border-t-0 hover:bg-brand-bg focus:bg-brand-bg focus:outline-none"
+                >
+                  <span className="block font-bold text-brand-text">
+                    {suggestion.description}
+                  </span>
+                  {suggestion.secondaryText ? (
+                    <span className="block truncate text-xs font-semibold text-brand-muted">
+                      {suggestion.secondaryText}
+                    </span>
+                  ) : null}
+                </button>
+              ))}
+            </div>
+          ) : null}
         </div>
         <button
           type="submit"

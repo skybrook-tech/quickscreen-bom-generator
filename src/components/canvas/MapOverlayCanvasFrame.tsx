@@ -241,7 +241,7 @@ function AnchoredMapOverlay({
       ) : null}
       <div
         ref={canvasHostRef}
-        className={`absolute inset-0 z-10 ${drawMode ? "pointer-events-auto" : "pointer-events-none"}`}
+        className="absolute inset-0 z-10 pointer-events-none"
       >
         {children}
       </div>

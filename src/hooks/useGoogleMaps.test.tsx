@@ -6,6 +6,7 @@ import type { GoogleMapsState } from "./useGoogleMaps";
 import "../components/calculator/AddressInput.test";
 import "../components/calculator/PropertyAnchorFormGate.test";
 import "../components/calculator-v3/RunListV3.propertyAnchor.test";
+import "../components/canvas/CanvasOverlay.drawMode.test";
 import "../components/canvas/canonicalAdapter.propertyAnchor.test";
 import "../components/canvas/mapOverlayIntegration.test";
 import "../lib/geo/coordinates.test";

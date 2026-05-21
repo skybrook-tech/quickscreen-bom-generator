@@ -63,4 +63,19 @@ describe("PropertyAnchorFormGate", () => {
 
     act(() => root.unmount());
   });
+
+  it("starts with only the address controls before the user engages", () => {
+    const container = document.createElement("div");
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(<PropertyMap initialAnchor={null} onAnchorConfirmed={vi.fn()} />);
+    });
+
+    expect(container.textContent).toContain("Property address");
+    expect(container.textContent).toContain("Find property");
+    expect(container.querySelector('[aria-label="Property satellite map"]')).toBeNull();
+
+    act(() => root.unmount());
+  });
 });

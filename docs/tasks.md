@@ -122,6 +122,8 @@ Latest canvas overlay follow-up pass: the confirmed sidebar property map now col
 
 Latest canvas overlay anchor-wiring fix: first-run/product selection now preserves the confirmed canonical `propertyAnchor`, so anchored jobs stay in Google Maps overlay mode instead of falling back to the legacy satellite-underlay address loader.
 
+Latest canvas overlay draw/autocomplete fix: anchored Draw mode now leaves pointer ownership with the Google Maps overlay canvas so fence clicks reach the engine, the sidebar map defers Maps JS until address engagement, Places API (New) suggestions feed the Australian address input with manual geocode fallback, and confirming a property switches the workspace to Map view.
+
 Latest Brief BN v2 pass: the sandbox BN work now completes the top-bar reorganisation by moving Map/BOM tabs into the app header as a segmented control, moving BOM actions beside them only while BOM is active, removing the duplicate in-panel action row, and preserving the icon-only settings/Describe/gate-settings conventions in the repo skill mirrors.
 
 Latest Brief BO pass: run summaries now show only accepted run-default fields with height/length removed from the subheading, BOM colour display strips internal dispatch-code suffixes, section and gate match codes stay green when their run-derived settings match, and Print BOM now prints materials and totals first, then Run & Section Details, then the optional map at the bottom.
