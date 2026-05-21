@@ -5,6 +5,7 @@ import { metresToLatLng, latLngToMetres, type LatLngLiteral } from "../../lib/ge
 import type { CanonicalPayload } from "../../types/canonical.types";
 import { canvasLayoutToCanonical, mergeCanonicalPreservingSegmentMeta } from "./canonicalAdapter";
 import { initCanvasEngine, type CanvasLayout } from "./canvasEngine";
+import { ACTIVATE_CANVAS_DRAW_TOOL_EVENT } from "./canvasToolEvents";
 
 const anchor: LatLngLiteral = {
   lat: -28.503385,
@@ -210,7 +211,19 @@ describe("CanvasOverlay draw mode", () => {
         );
       },
     });
-    engine.setTool("draw");
+    engine.setTool("move");
+    const activateDrawTool = () => engine.setTool("draw");
+    window.addEventListener(ACTIVATE_CANVAS_DRAW_TOOL_EVENT, activateDrawTool);
+    window.dispatchEvent(
+      new CustomEvent(ACTIVATE_CANVAS_DRAW_TOOL_EVENT, {
+        detail: {
+          runId: stableIds["run:0"],
+          productCode: "QSHS",
+          source: "fence-system-picker",
+        },
+      }),
+    );
+    window.removeEventListener(ACTIVATE_CANVAS_DRAW_TOOL_EVENT, activateDrawTool);
 
     const overlay = new CanvasOverlay({
       map: new google.maps.Map(document.createElement("div")),

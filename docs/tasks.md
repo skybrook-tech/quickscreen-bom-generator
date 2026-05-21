@@ -126,6 +126,8 @@ Latest canvas overlay draw/autocomplete fix: anchored Draw mode now keeps one st
 
 Latest canvas overlay diagnostic pass: `CanvasOverlay` now emits production console instrumentation for construction, React overlay creation, `setMap`, `onAdd`, canvas attachment, draw projection state, pointer receipt, point-add/reject decisions, and `onRemove`, with the overlay canvas findable via `data-testid="fence-overlay-canvas"`.
 
+Latest canvas overlay draw-tool fix: starting the first run from any V3 fence system button now emits a canvas draw-tool activation event so QSHS, VS, XPL, and BAYG selections put the overlay engine into Draw Fence before the user places points; diagnostics now include active tool, active run, run count, and point/segment counts when a click is rejected.
+
 Latest Brief BN v2 pass: the sandbox BN work now completes the top-bar reorganisation by moving Map/BOM tabs into the app header as a segmented control, moving BOM actions beside them only while BOM is active, removing the duplicate in-panel action row, and preserving the icon-only settings/Describe/gate-settings conventions in the repo skill mirrors.
 
 Latest Brief BO pass: run summaries now show only accepted run-default fields with height/length removed from the subheading, BOM colour display strips internal dispatch-code suffixes, section and gate match codes stay green when their run-derived settings match, and Print BOM now prints materials and totals first, then Run & Section Details, then the optional map at the bottom.

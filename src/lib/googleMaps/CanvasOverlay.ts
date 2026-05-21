@@ -5,6 +5,9 @@ import { CANVAS_METRES_SCALE } from "../geo/canvasGeometry";
 import type { initCanvasEngine } from "../../components/canvas/canvasEngine";
 
 type CanvasEngine = ReturnType<typeof initCanvasEngine>;
+type DiagnosticCanvas = HTMLCanvasElement & {
+  __qsbomCanvasDebugState?: Record<string, unknown>;
+};
 
 interface CanvasOverlayOptions {
   map: google.maps.Map;
@@ -224,6 +227,27 @@ export class CanvasOverlay extends google.maps.OverlayView {
         console.log(
           "[CanvasOverlay] click ignored, reason:",
           "layout unchanged after event; first draw point may not emit a segment yet, otherwise check active tool/run state",
+          {
+            activeTool: this.readCanvasEngineDiagnostics().activeTool,
+            activeRunId:
+              this.canvas.dataset.activeRunId ??
+              this.readCanvasEngineDiagnostics().activeRunId,
+            runsLength: this.readCanvasEngineDiagnostics().runsLength,
+            activeRunPointsLength:
+              this.readCanvasEngineDiagnostics().activeRunPointsLength,
+            activeRunSegmentsLength:
+              this.readCanvasEngineDiagnostics().activeRunSegmentsLength,
+            activeRunFinished: this.readCanvasEngineDiagnostics().activeRunFinished,
+            drawMode: this.drawMode,
+            engineState: this.readCanvasEngineDiagnostics(),
+            overlayState: {
+              hasAnchor: !!this.anchor,
+              hasViewportTransform: !!this.viewportTransform,
+              canvasRect: this.canvas.getBoundingClientRect(),
+              pointerEvents: this.canvas.style.pointerEvents,
+              targetTag,
+            },
+          },
         );
       }, 0);
     };
@@ -265,5 +289,16 @@ export class CanvasOverlay extends google.maps.OverlayView {
       siteMarkers: layout.siteMarkers?.length ?? 0,
       freehandStrokes: layout.freehandStrokes?.length ?? 0,
     });
+  }
+
+  private readCanvasEngineDiagnostics() {
+    return (this.canvas as DiagnosticCanvas).__qsbomCanvasDebugState ?? {
+      activeTool: "unknown",
+      activeRunId: this.canvas.dataset.activeRunId ?? null,
+      runsLength: "unknown",
+      activeRunPointsLength: "unknown",
+      activeRunSegmentsLength: "unknown",
+      activeRunFinished: "unknown",
+    };
   }
 }

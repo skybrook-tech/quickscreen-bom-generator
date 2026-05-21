@@ -23,6 +23,10 @@ import type {
   CanvasRunSummary,
 } from "./canvasEngine";
 import type { PostPosition } from "../../types/bom.types";
+import {
+  ACTIVATE_CANVAS_DRAW_TOOL_EVENT,
+  type ActivateCanvasDrawToolDetail,
+} from "./canvasToolEvents";
 
 interface PendingGate {
   stub: GateConfig;
@@ -73,6 +77,7 @@ export function FenceLayoutCanvas({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasHostRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
+  const pendingDrawToolActivationRef = useRef<ActivateCanvasDrawToolDetail | null>(null);
   const { state: fenceState } = useFenceConfig();
   const { data: products } = useProducts();
   const { gates, dispatch: gateDispatch } = useGates();
@@ -167,6 +172,29 @@ export function FenceLayoutCanvas({
     }
   }, []);
 
+  const activateDrawToolFromFenceSelection = useCallback(
+    (detail: ActivateCanvasDrawToolDetail | null) => {
+      pendingDrawToolActivationRef.current = detail;
+      if (!engineRef.current) return;
+      engineRef.current.setTool("draw");
+      setActiveTool("draw");
+      pendingDrawToolActivationRef.current = null;
+      if (canvasRef.current) {
+        if (detail?.runId) canvasRef.current.dataset.activeRunId = detail.runId;
+        if (detail?.productCode) {
+          canvasRef.current.dataset.activeProductCode = detail.productCode;
+        }
+      }
+      console.log("[CanvasOverlay] draw tool activated from fence type selection", {
+        activeTool: "draw",
+        activeRunId: detail?.runId ?? null,
+        productCode: detail?.productCode ?? null,
+        source: detail?.source ?? null,
+      });
+    },
+    [],
+  );
+
   const handleGatePlaced = useCallback(
     (
       segIdx: number,
@@ -221,6 +249,9 @@ export function FenceLayoutCanvas({
     engineRef.current = engine;
     setEngineVersion((value) => value + 1);
     onEngineReady?.(engine);
+    if (pendingDrawToolActivationRef.current) {
+      activateDrawToolFromFenceSelection(pendingDrawToolActivationRef.current);
+    }
 
     return () => {
       engineRef.current?.destroy();
@@ -354,6 +385,15 @@ export function FenceLayoutCanvas({
       slidingSide: gatePlacementSlideSide,
     });
   }, [gatePlacementType, gatePlacementWidth, gatePlacementSlideSide]);
+
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const detail = (event as CustomEvent<ActivateCanvasDrawToolDetail>).detail;
+      activateDrawToolFromFenceSelection(detail);
+    };
+    window.addEventListener(ACTIVATE_CANVAS_DRAW_TOOL_EVENT, handler);
+    return () => window.removeEventListener(ACTIVATE_CANVAS_DRAW_TOOL_EVENT, handler);
+  }, [activateDrawToolFromFenceSelection]);
 
   useEffect(() => {
     const handler = (event: Event) => {
