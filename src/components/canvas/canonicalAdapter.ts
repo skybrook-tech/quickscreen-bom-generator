@@ -46,10 +46,6 @@ import {
   GATE_SEGMENT_STUB_KEYS,
   SEGMENT_TERMINATION_KEYS,
 } from '../../lib/segmentTermination';
-import {
-  canvasPointToMetreOffset,
-  metreOffsetToCanvasPoint,
-} from '../../lib/geo/canvasGeometry';
 
 // ---------------------------------------------------------------------------
 // Stable ID map — keyed by a deterministic descriptor so round-trips preserve
@@ -277,21 +273,7 @@ function terminationVariablesForSegment(
   return Object.keys(variables).length ? variables : undefined;
 }
 
-function withMetreGeometry(run: CanonicalRun, enabled: boolean): CanonicalRun {
-  if (!enabled || !run.geometry?.points?.length) return run;
-  return {
-    ...run,
-    geometry: {
-      ...run.geometry,
-      metrePoints: run.geometry.points.map(canvasPointToMetreOffset),
-    },
-  };
-}
-
-function geometryPointsForRun(payload: CanonicalPayload, run: CanonicalRun) {
-  if (payload.propertyAnchor && run.geometry?.metrePoints?.length) {
-    return run.geometry.metrePoints.map(metreOffsetToCanvasPoint);
-  }
+function geometryPointsForRun(_payload: CanonicalPayload, run: CanonicalRun) {
   return run.geometry?.points;
 }
 
@@ -668,12 +650,12 @@ export function mergeCanonicalPreservingSegmentMeta(
   generated: CanonicalPayload,
 ): CanonicalPayload {
   const prevRuns = new Map(previous.runs.map((r) => [r.runId, r]));
-  const anchoredGeometry = Boolean(previous.propertyAnchor ?? generated.propertyAnchor);
   return {
     ...generated,
     propertyAnchor: generated.propertyAnchor ?? previous.propertyAnchor,
+    snapshot: generated.snapshot ?? previous.snapshot,
     runs: generated.runs.map((genRun) => {
-      const anchoredRun = withMetreGeometry(genRun, anchoredGeometry);
+      const anchoredRun = genRun;
       const prevRun = prevRuns.get(genRun.runId);
       if (!prevRun) return anchoredRun;
       const prevSegMap = new Map(prevRun.segments.map((s) => [s.segmentId, s]));

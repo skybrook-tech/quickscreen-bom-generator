@@ -79,6 +79,17 @@ export const canonicalPayloadSchema = z.object({
       address: z.string(),
     })
     .optional(),
+  snapshot: z
+    .object({
+      centerLat: z.number(),
+      centerLng: z.number(),
+      zoom: z.number().int().nonnegative(),
+      width: z.number().int().positive(),
+      height: z.number().int().positive(),
+      metresPerPixel: z.number().positive(),
+      capturedAt: z.string(),
+    })
+    .optional(),
   job: z
     .object({
       description: z.string().optional(),

@@ -58,7 +58,7 @@ describe("PropertyAnchorFormGate", () => {
 
     expect(container.querySelector('[data-testid="property-map-collapsed"]')).not.toBeNull();
     expect(container.textContent).toContain("1 Macquarie Street, Sydney NSW 2000, Australia");
-    expect(container.textContent).toContain("Change property");
+    expect(container.textContent).toContain("Change view");
     expect(container.querySelector('[aria-label="Property satellite map"]')).toBeNull();
 
     act(() => root.unmount());

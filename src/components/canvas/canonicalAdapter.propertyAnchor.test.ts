@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { payloadFromV3FenceConfig } from "../../lib/quotePayload";
 import { canonicalPayloadSchema } from "../../schemas/canonical.schema";
 import type { CanonicalPayload } from "../../types/canonical.types";
 import { mergeCanonicalPreservingSegmentMeta } from "./canonicalAdapter";
@@ -23,6 +24,16 @@ const basePayload: CanonicalPayload = {
   ],
 };
 
+const snapshot = {
+  centerLat: -31.9523,
+  centerLng: 115.8613,
+  zoom: 19,
+  width: 640,
+  height: 360,
+  metresPerPixel: 0.212345,
+  capturedAt: "2026-05-22T00:00:00.000Z",
+};
+
 describe("canonicalAdapter propertyAnchor", () => {
   it("preserves a confirmed property anchor during canvas-to-canonical metadata merges", () => {
     const previous: CanonicalPayload = {
@@ -32,6 +43,7 @@ describe("canonicalAdapter propertyAnchor", () => {
         lng: 153.0251,
         address: "Brisbane City QLD, Australia",
       },
+      snapshot,
     };
     const generated: CanonicalPayload = {
       ...basePayload,
@@ -51,9 +63,12 @@ describe("canonicalAdapter propertyAnchor", () => {
     expect(mergeCanonicalPreservingSegmentMeta(previous, generated).propertyAnchor).toEqual(
       previous.propertyAnchor,
     );
+    expect(mergeCanonicalPreservingSegmentMeta(previous, generated).snapshot).toEqual(
+      previous.snapshot,
+    );
   });
 
-  it("accepts propertyAnchor as optional canonical payload state", () => {
+  it("accepts propertyAnchor and snapshot as optional canonical payload state", () => {
     expect(canonicalPayloadSchema.safeParse(basePayload).success).toBe(true);
     expect(
       canonicalPayloadSchema.safeParse({
@@ -63,7 +78,29 @@ describe("canonicalAdapter propertyAnchor", () => {
           lng: 115.8613,
           address: "Perth WA, Australia",
         },
+        snapshot,
       }).success,
     ).toBe(true);
+  });
+
+  it("round-trips a saved v3 quote payload with the same snapshot view", () => {
+    const payload: CanonicalPayload = {
+      ...basePayload,
+      propertyAnchor: {
+        lat: -31.9523,
+        lng: 115.8613,
+        address: "Perth WA, Australia",
+      },
+      snapshot,
+    };
+
+    const reloaded = payloadFromV3FenceConfig({
+      calculator: "v3",
+      jobName: "Snapshot quote",
+      payload,
+    });
+
+    expect(reloaded?.snapshot).toEqual(snapshot);
+    expect(reloaded?.propertyAnchor).toEqual(payload.propertyAnchor);
   });
 });

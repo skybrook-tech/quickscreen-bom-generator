@@ -668,49 +668,6 @@ export function initCanvasEngine(
   let cssCanvasHeight = 0;
   let devicePixelRatioScale = 1;
 
-  function canvasDebugState(trigger: string) {
-    const activeRun = activeRunIdx >= 0 ? runs[activeRunIdx] : undefined;
-    return {
-      trigger,
-      activeTool: tool,
-      activeRunId: canvas.dataset.activeRunId ?? null,
-      activeRunIdx,
-      runsLength: runs.length,
-      activeRunPointsLength: activeRun?.points.length ?? 0,
-      activeRunSegmentsLength: activeRun?.segments.length ?? 0,
-      activeRunFinished: activeRun?.finished ?? null,
-      activeRunIsBoundary: activeRun?.isBoundary ?? false,
-      snap,
-      orthoMode,
-      editingLabel,
-      draggingNode: Boolean(draggingNode),
-      draggingGate: Boolean(draggingGate),
-      selectedItemKind: selectedItem?.kind ?? null,
-      pendingBuildingRect: Boolean(pendingBuildingRect),
-      pendingTextNote: Boolean(pendingTextNote),
-      pendingFreehandStroke: Boolean(pendingFreehandStroke),
-      mouseCanvas,
-      scale,
-      zoom,
-      pan,
-    };
-  }
-
-  function publishCanvasDebugState(trigger: string) {
-    const debugState = canvasDebugState(trigger);
-    const diagnosticCanvas = canvas as HTMLCanvasElement & {
-      __qsbomCanvasDebugState?: ReturnType<typeof canvasDebugState>;
-    };
-    diagnosticCanvas.__qsbomCanvasDebugState = debugState;
-    canvas.dataset.activeTool = debugState.activeTool;
-    canvas.dataset.activeRunIdx = String(debugState.activeRunIdx);
-    canvas.dataset.runsLength = String(debugState.runsLength);
-    canvas.dataset.activeRunPointsLength = String(debugState.activeRunPointsLength);
-    canvas.dataset.activeRunSegmentsLength = String(debugState.activeRunSegmentsLength);
-    canvas.dataset.activeRunFinished = String(debugState.activeRunFinished);
-    return debugState;
-  }
-
   // Resize canvas to fill its CSS size
   function resizeCanvas() {
     const rect = canvas.getBoundingClientRect();
@@ -2740,31 +2697,16 @@ export function initCanvasEngine(
   // ── Event handlers ─────────────────────────────────────────────────────────
 
   function onMouseDown(e: MouseEvent | CanvasPointerLike) {
-    console.log("[CanvasOverlay] canvasEngine mousedown received", {
-      type: "type" in e ? e.type : "synthetic",
-      button: e.button,
-      clientX: e.clientX,
-      clientY: e.clientY,
-      state: publishCanvasDebugState("mousedown:start"),
-    });
     if (e.button === 2) {
       // Right button: start pan
       isPanning = true;
       panStart = eventToScreen(e);
       panOrigin = { ...pan };
       e.preventDefault();
-      console.log("[CanvasOverlay] canvasEngine mousedown ignored", {
-        reason: "right-button-pan",
-        state: publishCanvasDebugState("mousedown:right-button-pan"),
-      });
       return;
     }
 
     if (e.button !== 0) {
-      console.log("[CanvasOverlay] canvasEngine mousedown ignored", {
-        reason: "non-primary-button",
-        state: publishCanvasDebugState("mousedown:non-primary-button"),
-      });
       return;
     }
 
@@ -2909,9 +2851,6 @@ export function initCanvasEngine(
 
     if (tool === "draw") {
       if (isNearActiveLastPoint(screenPtDown)) {
-        console.log("[CanvasOverlay] canvasEngine draw branch stopping chain", {
-          state: publishCanvasDebugState("draw:stop-chain"),
-        });
         stopChain(false);
         return;
       }
@@ -2940,9 +2879,6 @@ export function initCanvasEngine(
           runs[resumedIdx].finished = false;
           activeRunIdx = resumedIdx;
           pushUndo({ type: "RESUME_RUN", runIdx: resumedIdx }); // undo will re-finish it
-          console.log("[CanvasOverlay] canvasEngine draw branch resumed run", {
-            state: publishCanvasDebugState("draw:resume-run"),
-          });
         } else {
           // Start a new run with this as the first point
           const newRun: Run = {
@@ -2953,9 +2889,6 @@ export function initCanvasEngine(
           pushUndo({ type: "ADD_RUN" });
           runs.push(newRun);
           activeRunIdx = runs.length - 1;
-          console.log("[CanvasOverlay] canvasEngine draw branch started run", {
-            state: publishCanvasDebugState("draw:start-run"),
-          });
         }
       } else {
         // Append point to the current run (multi-point polyline)
@@ -2965,9 +2898,6 @@ export function initCanvasEngine(
         rebuildSegmentsPreservingGates(run, scale);
         notifyChange();
         pushUndo({ type: "ADD_POINT", runIdx: activeRunIdx });
-        console.log("[CanvasOverlay] canvasEngine draw branch added point", {
-          state: publishCanvasDebugState("draw:add-point"),
-        });
       }
       scheduleRedraw();
       return;

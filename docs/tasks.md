@@ -116,17 +116,7 @@ Latest Google Maps plumbing pass: `codex/google-maps-plumbing` adds the `@google
 
 Latest property-map UI pass: `codex/calculator-property-map` adds the V3 calculator property map surface above the run/form controls, Australian address geocoding, satellite/hybrid map toggle, draggable/confirmable property pins, nullable quote `property_anchor` storage, top-level canonical `propertyAnchor`, `.nvmrc`, and focused unit coverage for geocoding, anchor gating, and canonical anchor persistence without changing canvas drawing or BOM calculation logic.
 
-Latest canvas map overlay pass: `codex/canvas-engine-map-overlay` adds opt-in map-overlay rendering for anchored canonical payloads, metre-offset geometry helpers, a Google Maps `OverlayView` canvas mount, Lock map/Draw mode controls, V4 route smoke coverage, and a BOM regression test confirming anchored geometry does not change local fallback output.
-
-Latest canvas overlay follow-up pass: the confirmed sidebar property map now collapses to a slim address row with Change property, and anchored canvases expose a toolbar Pan map / Draw toggle so map gestures pass through by default before locking the map for fence drawing.
-
-Latest canvas overlay anchor-wiring fix: first-run/product selection now preserves the confirmed canonical `propertyAnchor`, so anchored jobs stay in Google Maps overlay mode instead of falling back to the legacy satellite-underlay address loader.
-
-Latest canvas overlay draw/autocomplete fix: anchored Draw mode now keeps one stable `CanvasOverlay` mounted in `overlayMouseTarget` with a marked fence overlay canvas, the sidebar map defers Maps JS until address engagement, Places API (New) suggestions feed the Australian address input with manual geocode fallback, confirming a property switches the workspace to Map view, and anchored map canvases now have session-only opacity and Satellite/Hybrid/Roadmap/Terrain controls.
-
-Latest canvas overlay diagnostic pass: `CanvasOverlay` now emits production console instrumentation for construction, React overlay creation, `setMap`, `onAdd`, canvas attachment, draw projection state, pointer receipt, point-add/reject decisions, and `onRemove`, with the overlay canvas findable via `data-testid="fence-overlay-canvas"`.
-
-Latest canvas overlay draw-tool fix: starting the first run from any V3 fence system button now emits a canvas draw-tool activation event so QSHS, VS, XPL, and BAYG selections put the overlay engine into Draw Fence before the user places points; diagnostics now include active tool, active run, run count, and point/segment counts when a click is rejected.
+Latest canvas snapshot pivot: `codex/canvas-engine-map-overlay` now captures the sidebar Google Map view as persisted Static Maps snapshot params, loads the resulting satellite image through the existing canvas underlay path, keeps drawing in the vanilla pixel-coordinate canvas engine, preserves snapshot state across product/run selection and quote reloads, and removes the custom `OverlayView`, Pan/Draw toolbar mode, diagnostic logs, and event-bridge draw-tool wiring.
 
 Latest Brief BN v2 pass: the sandbox BN work now completes the top-bar reorganisation by moving Map/BOM tabs into the app header as a segmented control, moving BOM actions beside them only while BOM is active, removing the duplicate in-panel action row, and preserving the icon-only settings/Describe/gate-settings conventions in the repo skill mirrors.
 

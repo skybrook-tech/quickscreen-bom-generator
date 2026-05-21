@@ -81,6 +81,7 @@ export function ProductSelectV3({
       ...(state.payload?.propertyAnchor
         ? { propertyAnchor: state.payload.propertyAnchor }
         : {}),
+      ...(state.payload?.snapshot ? { snapshot: state.payload.snapshot } : {}),
       runs: [
         {
           runId: crypto.randomUUID(),

@@ -1,20 +1,21 @@
 import { useRef, useEffect, useCallback, useState, useMemo } from "react";
 import { initCanvasEngine } from "./canvasEngine";
-import {
-  CanvasToolbar,
-  type CanvasGoogleMapType,
-  type CanvasMapInteractionMode,
-} from "./CanvasToolbar";
+import { CanvasToolbar } from "./CanvasToolbar";
 import { MapControls } from "./MapControls";
 import type { MapUiState } from "./MapControls";
-import { MapOverlayCanvasFrame } from "./MapOverlayCanvasFrame";
 import { HelpCheatSheet } from "./HelpCheatSheet";
 import { GateModal } from "../gate/GateModal";
 import NumberInput from "../shared/NumberInput";
 import { useFenceConfig } from "../../context/FenceConfigContext";
 import { useGates } from "../../context/GateContext";
 import { useProducts } from "../../hooks/useProducts";
+import { GOOGLE_MAPS_MISSING_API_KEY_MESSAGE } from "../../lib/googleMaps/loader";
+import {
+  buildStaticMapUrl,
+  MAPS_STATIC_API_ENABLEMENT_MESSAGE,
+} from "../../lib/googleMaps/staticSnapshot";
 import type { GateConfig } from "../../schemas/gate.schema";
+import type { CanonicalMapSnapshot } from "../../types/canonical.types";
 import type {
   CanvasGateSlidingSide,
   CanvasGateType,
@@ -23,10 +24,6 @@ import type {
   CanvasRunSummary,
 } from "./canvasEngine";
 import type { PostPosition } from "../../types/bom.types";
-import {
-  ACTIVATE_CANVAS_DRAW_TOOL_EVENT,
-  type ActivateCanvasDrawToolDetail,
-} from "./canvasToolEvents";
 
 interface PendingGate {
   stub: GateConfig;
@@ -58,6 +55,7 @@ interface FenceLayoutCanvasProps {
   /** Called when the expand toggle is triggered internally. */
   onExpandedChange?: (expanded: boolean) => void;
   propertyAnchor?: { lat: number; lng: number; address: string } | null;
+  mapSnapshot?: CanonicalMapSnapshot | null;
 }
 
 export function FenceLayoutCanvas({
@@ -72,12 +70,11 @@ export function FenceLayoutCanvas({
   jobName,
   expanded: expandedProp,
   onExpandedChange,
-  propertyAnchor,
+  mapSnapshot,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasHostRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
-  const pendingDrawToolActivationRef = useRef<ActivateCanvasDrawToolDetail | null>(null);
   const { state: fenceState } = useFenceConfig();
   const { data: products } = useProducts();
   const { gates, dispatch: gateDispatch } = useGates();
@@ -130,9 +127,7 @@ export function FenceLayoutCanvas({
   }, []);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
   const [engineVersion, setEngineVersion] = useState(0);
-  const [mapInteractionMode, setMapInteractionMode] = useState<CanvasMapInteractionMode>("pan");
-  const [googleMapType, setGoogleMapType] = useState<CanvasGoogleMapType>("satellite");
-  const [googleMapOpacity, setGoogleMapOpacity] = useState(1);
+  const [snapshotError, setSnapshotError] = useState<string | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
   const [boundaryHintVisible, setBoundaryHintVisible] = useState(false);
   const [mapUiState, setMapUiState] = useState<MapUiState>({
@@ -171,29 +166,6 @@ export function FenceLayoutCanvas({
       window.localStorage.setItem("qsbom.boundaryHintSeen", "true");
     }
   }, []);
-
-  const activateDrawToolFromFenceSelection = useCallback(
-    (detail: ActivateCanvasDrawToolDetail | null) => {
-      pendingDrawToolActivationRef.current = detail;
-      if (!engineRef.current) return;
-      engineRef.current.setTool("draw");
-      setActiveTool("draw");
-      pendingDrawToolActivationRef.current = null;
-      if (canvasRef.current) {
-        if (detail?.runId) canvasRef.current.dataset.activeRunId = detail.runId;
-        if (detail?.productCode) {
-          canvasRef.current.dataset.activeProductCode = detail.productCode;
-        }
-      }
-      console.log("[CanvasOverlay] draw tool activated from fence type selection", {
-        activeTool: "draw",
-        activeRunId: detail?.runId ?? null,
-        productCode: detail?.productCode ?? null,
-        source: detail?.source ?? null,
-      });
-    },
-    [],
-  );
 
   const handleGatePlaced = useCallback(
     (
@@ -249,9 +221,6 @@ export function FenceLayoutCanvas({
     engineRef.current = engine;
     setEngineVersion((value) => value + 1);
     onEngineReady?.(engine);
-    if (pendingDrawToolActivationRef.current) {
-      activateDrawToolFromFenceSelection(pendingDrawToolActivationRef.current);
-    }
 
     return () => {
       engineRef.current?.destroy();
@@ -260,6 +229,51 @@ export function FenceLayoutCanvas({
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleGatePlaced]);
+
+  useEffect(() => {
+    const engine = engineRef.current;
+    if (!engine) return;
+
+    if (!mapSnapshot) {
+      setSnapshotError(null);
+      engine.loadMapTile("", 0, 0, 0);
+      return;
+    }
+
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim();
+    if (!apiKey) {
+      setSnapshotError(GOOGLE_MAPS_MISSING_API_KEY_MESSAGE);
+      engine.loadMapTile("", 0, 0, 0);
+      return;
+    }
+
+    const staticMapUrl = buildStaticMapUrl(mapSnapshot, apiKey);
+    let cancelled = false;
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => {
+      if (cancelled) return;
+      setSnapshotError(null);
+      engine.setScale(1 / mapSnapshot.metresPerPixel);
+      engine.fitToWidth(mapSnapshot.width * mapSnapshot.metresPerPixel);
+      engine.loadMapTile(
+        staticMapUrl,
+        1,
+        mapSnapshot.centerLat,
+        mapSnapshot.zoom,
+      );
+    };
+    image.onerror = () => {
+      if (cancelled) return;
+      setSnapshotError(MAPS_STATIC_API_ENABLEMENT_MESSAGE);
+      engine.loadMapTile("", 0, 0, 0);
+    };
+    image.src = staticMapUrl;
+
+    return () => {
+      cancelled = true;
+    };
+  }, [engineVersion, mapSnapshot]);
 
   useEffect(() => {
     engineRef.current?.setAllowedAngles(allowedAngles);
@@ -388,15 +402,6 @@ export function FenceLayoutCanvas({
 
   useEffect(() => {
     const handler = (event: Event) => {
-      const detail = (event as CustomEvent<ActivateCanvasDrawToolDetail>).detail;
-      activateDrawToolFromFenceSelection(detail);
-    };
-    window.addEventListener(ACTIVATE_CANVAS_DRAW_TOOL_EVENT, handler);
-    return () => window.removeEventListener(ACTIVATE_CANVAS_DRAW_TOOL_EVENT, handler);
-  }, [activateDrawToolFromFenceSelection]);
-
-  useEffect(() => {
-    const handler = (event: Event) => {
       const label = (event as CustomEvent<string | null>).detail ?? null;
       engineRef.current?.setHighlightedMapLabel(label);
     };
@@ -466,31 +471,17 @@ export function FenceLayoutCanvas({
           onFreehandStyleChange={handleFreehandStyleChange}
           onHelpOpen={() => setHelpOpen(true)}
           onPrintMap={handlePrintMap}
-          mapOverlayEnabled={Boolean(propertyAnchor)}
-          mapInteractionMode={mapInteractionMode}
-          onMapInteractionModeChange={setMapInteractionMode}
-          googleMapType={googleMapType}
-          onGoogleMapTypeChange={setGoogleMapType}
-          mapOpacity={googleMapOpacity}
-          onMapOpacityChange={setGoogleMapOpacity}
         />
       </div>
 
-      <MapOverlayCanvasFrame
-        propertyAnchor={propertyAnchor}
-        canvasRef={canvasRef}
-        canvasHostRef={canvasHostRef}
-        engine={engineRef.current}
-        engineVersion={engineVersion}
-        mapInteractionMode={mapInteractionMode}
-        mapType={googleMapType}
-        mapOpacity={googleMapOpacity}
-        className="relative overflow-hidden"
+      <div
+        ref={canvasHostRef}
+        className="relative overflow-hidden bg-brand-bg"
         style={{ height: expanded ? "700px" : "630px" }}
       >
         <canvas
           ref={canvasRef}
-          className={`block h-full w-full touch-none ${propertyAnchor ? "bg-transparent" : "bg-brand-bg"}`}
+          className="block h-full w-full touch-none bg-brand-bg"
           style={{ cursor: "crosshair" }}
         />
 
@@ -532,9 +523,14 @@ export function FenceLayoutCanvas({
             Calibrated: {mapUiState.calibrationLabel}
           </div>
         )}
-      </MapOverlayCanvasFrame>
+        {snapshotError ? (
+          <div className="absolute left-4 right-4 top-4 rounded-xl border border-brand-danger/40 bg-brand-danger/15 px-4 py-3 text-sm font-bold text-brand-danger shadow-md">
+            {snapshotError}
+          </div>
+        ) : null}
+      </div>
 
-      {!propertyAnchor ? (
+      {!mapSnapshot ? (
         <div data-print-hide>
           <MapControls
             engineRef={engineRef}

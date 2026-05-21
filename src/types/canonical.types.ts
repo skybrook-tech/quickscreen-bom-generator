@@ -13,6 +13,16 @@ export type CanonicalVariableValue = string | number | boolean;
 
 export type CanonicalVariables = Record<string, CanonicalVariableValue>;
 
+export interface CanonicalMapSnapshot {
+  centerLat: number;
+  centerLng: number;
+  zoom: number;
+  width: number;
+  height: number;
+  metresPerPixel: number;
+  capturedAt: string;
+}
+
 export interface CanonicalPayload {
   productCode: string;
   schemaVersion: string;
@@ -21,6 +31,7 @@ export interface CanonicalPayload {
     lng: number;
     address: string;
   };
+  snapshot?: CanonicalMapSnapshot;
   job?: {
     description?: string;
     pendingGates?: Array<{

@@ -3,6 +3,8 @@
 import { CheckCircle2, Loader2, MapPin } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { useGoogleMaps } from "../../hooks/useGoogleMaps";
+import { createMapSnapshot } from "../../lib/googleMaps/staticSnapshot";
+import type { CanonicalMapSnapshot } from "../../types/canonical.types";
 import { AddressInput, type LocatedAddress } from "./AddressInput";
 
 type MapType = "satellite" | "hybrid" | "roadmap" | "terrain";
@@ -11,6 +13,7 @@ export interface PropertyAnchor {
   anchorLat: number;
   anchorLng: number;
   formattedAddress: string;
+  snapshot: CanonicalMapSnapshot;
 }
 
 interface PropertyMapProps {
@@ -19,6 +22,7 @@ interface PropertyMapProps {
     lng: number;
     address: string;
   } | null;
+  initialSnapshot?: CanonicalMapSnapshot | null;
   onAnchorConfirmed: (anchor: PropertyAnchor) => void;
 }
 
@@ -30,6 +34,8 @@ interface PropertyAnchorFormGateProps {
 const DEFAULT_CENTER = { lat: -25, lng: 133 };
 const DEFAULT_ZOOM = 4;
 const PROPERTY_ZOOM = 20;
+const DEFAULT_SNAPSHOT_WIDTH = 640;
+const DEFAULT_SNAPSHOT_HEIGHT = 480;
 
 export function PropertyAnchorFormGate({ anchorConfirmed, children }: PropertyAnchorFormGateProps) {
   return (
@@ -46,7 +52,11 @@ export function PropertyAnchorFormGate({ anchorConfirmed, children }: PropertyAn
   );
 }
 
-export function PropertyMap({ initialAnchor, onAnchorConfirmed }: PropertyMapProps) {
+export function PropertyMap({
+  initialAnchor,
+  initialSnapshot,
+  onAnchorConfirmed,
+}: PropertyMapProps) {
   const [located, setLocated] = useState<LocatedAddress | null>(
     initialAnchor
       ? {
@@ -78,7 +88,7 @@ export function PropertyMap({ initialAnchor, onAnchorConfirmed }: PropertyMapPro
     setMapRequested(true);
   }, [initialAnchor]);
 
-  function handleConfirmFromExpanded() {
+  function handleConfirmFromExpanded(snapshot: CanonicalMapSnapshot) {
     if (!pin || !located) return;
     setConfirmed(true);
     setEditing(false);
@@ -86,6 +96,7 @@ export function PropertyMap({ initialAnchor, onAnchorConfirmed }: PropertyMapPro
       anchorLat: pin.lat,
       anchorLng: pin.lng,
       formattedAddress: located.formattedAddress,
+      snapshot,
     });
   }
 
@@ -98,7 +109,7 @@ export function PropertyMap({ initialAnchor, onAnchorConfirmed }: PropertyMapPro
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <p className="text-[10px] font-black uppercase tracking-[0.14em] text-brand-muted">
-              Confirmed property
+              Captured property view
             </p>
             <p className="truncate text-sm font-bold text-brand-text">
               {located.formattedAddress}
@@ -107,13 +118,21 @@ export function PropertyMap({ initialAnchor, onAnchorConfirmed }: PropertyMapPro
           <button
             type="button"
             onClick={() => {
+              if (
+                initialSnapshot &&
+                !window.confirm(
+                  "Change view? Existing fence drawings will stay in place but the satellite background will move.",
+                )
+              ) {
+                return;
+              }
               setEditing(true);
               setMapRequested(true);
             }}
             className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
           >
             <MapPin size={15} />
-            Change property
+            Change view
           </button>
         </div>
       </section>
@@ -126,6 +145,7 @@ export function PropertyMap({ initialAnchor, onAnchorConfirmed }: PropertyMapPro
       pin={pin}
       confirmed={confirmed}
       mapRequested={mapRequested}
+      initialSnapshot={initialSnapshot ?? null}
       onMapRequested={() => setMapRequested(true)}
       onLocated={(location) => {
         setMapRequested(true);
@@ -147,10 +167,11 @@ interface ExpandedPropertyMapProps {
   pin: { lat: number; lng: number } | null;
   confirmed: boolean;
   mapRequested: boolean;
+  initialSnapshot: CanonicalMapSnapshot | null;
   onMapRequested: () => void;
   onLocated: (location: LocatedAddress) => void;
   onPinChange: (pin: { lat: number; lng: number }) => void;
-  onConfirm: () => void;
+  onConfirm: (snapshot: CanonicalMapSnapshot) => void;
 }
 
 function ExpandedPropertyMap({
@@ -158,15 +179,30 @@ function ExpandedPropertyMap({
   pin,
   confirmed,
   mapRequested,
+  initialSnapshot,
   onMapRequested,
   onLocated,
   onPinChange,
   onConfirm,
 }: ExpandedPropertyMapProps) {
   const [mapType, setMapType] = useState<MapType>("satellite");
+  const snapshotReaderRef = useRef<(() => CanonicalMapSnapshot | null) | null>(null);
   const mapStatus = mapRequested
     ? "Search for the property, then drag the pin if the roofline needs fine tuning."
     : "Enter an address to locate the property.";
+
+  function readSnapshot() {
+    const fromMap = snapshotReaderRef.current?.();
+    if (fromMap) return fromMap;
+    const center = pin ?? located ?? DEFAULT_CENTER;
+    return createMapSnapshot({
+      centerLat: center.lat,
+      centerLng: center.lng,
+      zoom: pin ? PROPERTY_ZOOM : DEFAULT_ZOOM,
+      viewportWidth: DEFAULT_SNAPSHOT_WIDTH,
+      viewportHeight: DEFAULT_SNAPSHOT_HEIGHT,
+    });
+  }
 
   return (
     <section className="space-y-3 rounded-2xl border border-brand-border/70 bg-brand-card p-3 shadow-sm">
@@ -204,7 +240,11 @@ function ExpandedPropertyMap({
         <PropertyMapCanvas
           pin={pin}
           mapType={mapType}
+          initialSnapshot={initialSnapshot}
           onPinChange={onPinChange}
+          onSnapshotReaderChange={(reader) => {
+            snapshotReaderRef.current = reader;
+          }}
         />
       ) : null}
 
@@ -218,11 +258,11 @@ function ExpandedPropertyMap({
           </div>
           <button
             type="button"
-            onClick={onConfirm}
+            onClick={() => onConfirm(readSnapshot())}
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90"
           >
             {confirmed ? <CheckCircle2 size={16} /> : <MapPin size={16} />}
-            {confirmed ? "Location confirmed" : "Confirm property location"}
+            {confirmed ? "View captured" : "Use this view"}
           </button>
         </div>
       ) : null}
@@ -233,21 +273,34 @@ function ExpandedPropertyMap({
 interface PropertyMapCanvasProps {
   pin: { lat: number; lng: number } | null;
   mapType: MapType;
+  initialSnapshot: CanonicalMapSnapshot | null;
   onPinChange: (pin: { lat: number; lng: number }) => void;
+  onSnapshotReaderChange: (
+    reader: (() => CanonicalMapSnapshot | null) | null,
+  ) => void;
 }
 
-function PropertyMapCanvas({ pin, mapType, onPinChange }: PropertyMapCanvasProps) {
+function PropertyMapCanvas({
+  pin,
+  mapType,
+  initialSnapshot,
+  onPinChange,
+  onSnapshotReaderChange,
+}: PropertyMapCanvasProps) {
   const googleMaps = useGoogleMaps();
   const mapNodeRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<google.maps.Map | null>(null);
   const markerRef = useRef<google.maps.Marker | null>(null);
+  const preserveInitialViewRef = useRef(Boolean(initialSnapshot));
 
   useEffect(() => {
     if (!googleMaps.ready || !mapNodeRef.current || mapRef.current) return;
-    const center = pin ?? DEFAULT_CENTER;
+    const center = initialSnapshot
+      ? { lat: initialSnapshot.centerLat, lng: initialSnapshot.centerLng }
+      : pin ?? DEFAULT_CENTER;
     mapRef.current = new google.maps.Map(mapNodeRef.current, {
       center,
-      zoom: pin ? PROPERTY_ZOOM : DEFAULT_ZOOM,
+      zoom: initialSnapshot?.zoom ?? (pin ? PROPERTY_ZOOM : DEFAULT_ZOOM),
       mapTypeId: mapType,
       streetViewControl: false,
       fullscreenControl: false,
@@ -255,7 +308,7 @@ function PropertyMapCanvas({ pin, mapType, onPinChange }: PropertyMapCanvasProps
       rotateControl: false,
       tilt: 0,
     });
-  }, [googleMaps.ready, mapType, pin]);
+  }, [googleMaps.ready, initialSnapshot, mapType, pin]);
 
   useEffect(() => {
     mapRef.current?.setMapTypeId(mapType);
@@ -264,8 +317,12 @@ function PropertyMapCanvas({ pin, mapType, onPinChange }: PropertyMapCanvasProps
   useEffect(() => {
     if (!googleMaps.ready || !mapRef.current || !pin) return;
     const position = new google.maps.LatLng(pin.lat, pin.lng);
-    mapRef.current.panTo(position);
-    mapRef.current.setZoom(PROPERTY_ZOOM);
+    const preserveView = preserveInitialViewRef.current;
+    preserveInitialViewRef.current = false;
+    if (!preserveView) {
+      mapRef.current.panTo(position);
+      mapRef.current.setZoom(PROPERTY_ZOOM);
+    }
 
     if (!markerRef.current) {
       markerRef.current = new google.maps.Marker({
@@ -284,6 +341,29 @@ function PropertyMapCanvas({ pin, mapType, onPinChange }: PropertyMapCanvasProps
       markerRef.current.setMap(mapRef.current);
     }
   }, [googleMaps.ready, onPinChange, pin]);
+
+  useEffect(() => {
+    if (!googleMaps.ready || !mapRef.current || !mapNodeRef.current) {
+      onSnapshotReaderChange(null);
+      return;
+    }
+
+    onSnapshotReaderChange(() => {
+      const map = mapRef.current;
+      const node = mapNodeRef.current;
+      const center = map?.getCenter();
+      if (!map || !node || !center) return null;
+      return createMapSnapshot({
+        centerLat: center.lat(),
+        centerLng: center.lng(),
+        zoom: map.getZoom() ?? PROPERTY_ZOOM,
+        viewportWidth: node.clientWidth || DEFAULT_SNAPSHOT_WIDTH,
+        viewportHeight: node.clientHeight || DEFAULT_SNAPSHOT_HEIGHT,
+      });
+    });
+
+    return () => onSnapshotReaderChange(null);
+  }, [googleMaps.ready, onSnapshotReaderChange]);
 
   return (
     <div className="relative min-h-[300px] overflow-hidden rounded-xl border border-brand-border bg-brand-bg aspect-[4/3] md:aspect-video">

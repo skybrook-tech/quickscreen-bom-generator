@@ -9,6 +9,15 @@ export interface CanonicalPayload {
     lng: number;
     address: string;
   };
+  snapshot?: {
+    centerLat: number;
+    centerLng: number;
+    zoom: number;
+    width: number;
+    height: number;
+    metresPerPixel: number;
+    capturedAt: string;
+  };
   variables: Record<string, string | number | boolean>;
   runs: CanonicalRun[];
 }

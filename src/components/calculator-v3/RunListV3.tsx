@@ -5,7 +5,6 @@ import { localFenceProducts } from "../../lib/localSeedData";
 import type { ParseResult } from "../../lib/describeFenceParser";
 import { DescribeFenceBox } from "../calculator/DescribeFenceBox";
 import { RunCard } from "./RunCard";
-import { dispatchActivateCanvasDrawTool } from "../canvas/canvasToolEvents";
 
 export function RunListV3({
   autoOpenFirstRunId,
@@ -35,6 +34,7 @@ export function RunListV3({
       ...(currentPayload.propertyAnchor
         ? { propertyAnchor: currentPayload.propertyAnchor }
         : {}),
+      ...(currentPayload.snapshot ? { snapshot: currentPayload.snapshot } : {}),
       runs: [
         {
           runId,
@@ -64,11 +64,6 @@ export function RunListV3({
     dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
     window.setTimeout(() => {
       window.dispatchEvent(new CustomEvent("qsbom:open-run", { detail: firstRun.runId }));
-      dispatchActivateCanvasDrawTool({
-        runId: firstRun.runId,
-        productCode,
-        source: "fence-system-picker",
-      });
     }, 80);
   }
 
