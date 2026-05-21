@@ -3,7 +3,12 @@
 import { CheckCircle2, Loader2, MapPin } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { useGoogleMaps } from "../../hooks/useGoogleMaps";
-import { createMapSnapshot } from "../../lib/googleMaps/staticSnapshot";
+import { GOOGLE_MAPS_MISSING_API_KEY_MESSAGE } from "../../lib/googleMaps/loader";
+import {
+  createLayeredMapSnapshot,
+  createMapSnapshot,
+  MAPS_STATIC_API_ENABLEMENT_MESSAGE,
+} from "../../lib/googleMaps/staticSnapshot";
 import type { CanonicalMapSnapshot } from "../../types/canonical.types";
 import { AddressInput, type LocatedAddress } from "./AddressInput";
 
@@ -187,6 +192,8 @@ function ExpandedPropertyMap({
 }: ExpandedPropertyMapProps) {
   const [mapType, setMapType] = useState<MapType>("satellite");
   const snapshotReaderRef = useRef<(() => CanonicalMapSnapshot | null) | null>(null);
+  const [capturingSnapshot, setCapturingSnapshot] = useState(false);
+  const [snapshotError, setSnapshotError] = useState<string | null>(null);
   const mapStatus = mapRequested
     ? "Search for the property, then drag the pin if the roofline needs fine tuning."
     : "Enter an address to locate the property.";
@@ -202,6 +209,36 @@ function ExpandedPropertyMap({
       viewportWidth: DEFAULT_SNAPSHOT_WIDTH,
       viewportHeight: DEFAULT_SNAPSHOT_HEIGHT,
     });
+  }
+
+  async function handleUseView() {
+    const baseSnapshot = readSnapshot();
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim();
+    if (!apiKey) {
+      setSnapshotError(GOOGLE_MAPS_MISSING_API_KEY_MESSAGE);
+      return;
+    }
+
+    setCapturingSnapshot(true);
+    setSnapshotError(null);
+    try {
+      const layeredSnapshot = await createLayeredMapSnapshot(
+        {
+          centerLat: baseSnapshot.centerLat,
+          centerLng: baseSnapshot.centerLng,
+          zoom: baseSnapshot.zoom,
+          viewportWidth: baseSnapshot.width,
+          viewportHeight: baseSnapshot.height,
+          capturedAt: baseSnapshot.capturedAt,
+        },
+        apiKey,
+      );
+      onConfirm(layeredSnapshot);
+    } catch {
+      setSnapshotError(MAPS_STATIC_API_ENABLEMENT_MESSAGE);
+    } finally {
+      setCapturingSnapshot(false);
+    }
   }
 
   return (
@@ -255,14 +292,26 @@ function ExpandedPropertyMap({
             <p className="mt-1 text-xs font-semibold text-brand-muted">
               Pin: {pin.lat.toFixed(6)}, {pin.lng.toFixed(6)}
             </p>
+            {snapshotError ? (
+              <p className="mt-2 text-xs font-bold text-brand-danger">
+                {snapshotError}
+              </p>
+            ) : null}
           </div>
           <button
             type="button"
-            onClick={() => onConfirm(readSnapshot())}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90"
+            onClick={() => void handleUseView()}
+            disabled={capturingSnapshot}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 disabled:cursor-wait disabled:opacity-70"
           >
-            {confirmed ? <CheckCircle2 size={16} /> : <MapPin size={16} />}
-            {confirmed ? "View captured" : "Use this view"}
+            {capturingSnapshot ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : confirmed ? (
+              <CheckCircle2 size={16} />
+            ) : (
+              <MapPin size={16} />
+            )}
+            {capturingSnapshot ? "Capturing" : "Use this view"}
           </button>
         </div>
       ) : null}

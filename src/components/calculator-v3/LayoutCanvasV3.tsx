@@ -28,6 +28,7 @@ interface LayoutCanvasV3Props {
   jobName?: string;
   propertyAnchor?: { lat: number; lng: number; address: string } | null;
   mapSnapshot?: CanonicalMapSnapshot | null;
+  onMapSnapshotChange?: (snapshot: CanonicalMapSnapshot) => void;
 }
 
 export function LayoutCanvasV3({
@@ -37,6 +38,7 @@ export function LayoutCanvasV3({
   jobName,
   propertyAnchor,
   mapSnapshot,
+  onMapSnapshotChange,
 }: LayoutCanvasV3Props) {
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
@@ -238,6 +240,7 @@ export function LayoutCanvasV3({
         onExpandedChange={onMapExpandedChange}
         propertyAnchor={propertyAnchor}
         mapSnapshot={mapSnapshot}
+        onMapSnapshotChange={onMapSnapshotChange}
       />
       {showRunDetails && !mapExpanded && <RunDetailsPanel payload={payload} />}
     </div>

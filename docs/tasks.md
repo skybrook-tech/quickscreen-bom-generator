@@ -118,6 +118,8 @@ Latest property-map UI pass: `codex/calculator-property-map` adds the V3 calcula
 
 Latest canvas snapshot pivot: `codex/canvas-engine-map-overlay` now captures the sidebar Google Map view as persisted Static Maps snapshot params, loads the resulting satellite image through the existing canvas underlay path, keeps drawing in the vanilla pixel-coordinate canvas engine, preserves snapshot state across product/run selection and quote reloads, and removes the custom `OverlayView`, Pan/Draw toolbar mode, diagnostic logs, and event-bridge draw-tool wiring.
 
+Latest layered snapshot pass: PR #30 now captures both satellite and roadmap Static Maps snapshots for the same view, stores them under canonical snapshot layers with per-layer visibility/opacity, renders them below the existing canvas drawing layer, and migrates legacy single-image snapshots into a satellite layer on quote reload.
+
 Latest Brief BN v2 pass: the sandbox BN work now completes the top-bar reorganisation by moving Map/BOM tabs into the app header as a segmented control, moving BOM actions beside them only while BOM is active, removing the duplicate in-panel action row, and preserving the icon-only settings/Describe/gate-settings conventions in the repo skill mirrors.
 
 Latest Brief BO pass: run summaries now show only accepted run-default fields with height/length removed from the subheading, BOM colour display strips internal dispatch-code suffixes, section and gate match codes stay green when their run-derived settings match, and Print BOM now prints materials and totals first, then Run & Section Details, then the optional map at the bottom.

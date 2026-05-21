@@ -17,11 +17,16 @@ import {
   Minus,
   Crosshair,
   CircleHelp,
+  Layers,
 } from "lucide-react";
 import type { RefObject } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
 import { ConfirmButton } from "../shared/ConfirmButton";
 import { TOOL_HOTKEYS } from "../../lib/canvasShortcuts";
+import type {
+  CanonicalMapLayerId,
+  CanonicalMapSnapshotLayer,
+} from "../../types/canonical.types";
 
 type Engine = ReturnType<typeof initCanvasEngine>;
 type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand";
@@ -51,6 +56,11 @@ interface CanvasToolbarProps {
   onPrintMap: () => void;
   freehandStyle: FreehandStyle;
   onFreehandStyleChange: (style: Partial<FreehandStyle>) => void;
+  mapLayers?: Partial<Record<CanonicalMapLayerId, CanonicalMapSnapshotLayer>> | null;
+  onMapLayerChange?: (
+    layerId: CanonicalMapLayerId,
+    updates: Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">>,
+  ) => void;
 }
 
 export function CanvasToolbar({
@@ -71,6 +81,8 @@ export function CanvasToolbar({
   onPrintMap,
   freehandStyle,
   onFreehandStyleChange,
+  mapLayers,
+  onMapLayerChange,
 }: CanvasToolbarProps) {
   const handleTool = (t: CanvasTool) => {
     engineRef.current?.setTool(t);
@@ -92,6 +104,17 @@ export function CanvasToolbar({
       {key}
     </span>
   );
+
+  const layerRows = (["satellite", "roadmap"] as const)
+    .map((layerId) => ({ layerId, layer: mapLayers?.[layerId] }))
+    .filter(
+      (
+        row,
+      ): row is {
+        layerId: CanonicalMapLayerId;
+        layer: CanonicalMapSnapshotLayer;
+      } => Boolean(row.layer),
+    );
 
   return (
     <div className="flex flex-nowrap items-center gap-2 overflow-x-auto border-b border-brand-border/60 bg-brand-card p-2 [scrollbar-width:thin] md:flex-wrap md:gap-3 md:border-b-0">
@@ -284,6 +307,50 @@ export function CanvasToolbar({
 
       <div className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
         <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">View</span>
+      {layerRows.length > 0 && onMapLayerChange ? (
+        <div className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-brand-border/70 bg-brand-card/80 px-2 py-1 text-xs text-brand-muted">
+          <span className="inline-flex items-center gap-1 font-bold uppercase tracking-wide text-brand-text">
+            <Layers size={14} /> Layers
+          </span>
+          {layerRows.map(({ layerId, layer }) => {
+            const label = layerId === "satellite" ? "Satellite" : "Roadmap";
+            return (
+              <div key={layerId} className="inline-flex items-center gap-1.5">
+                <label className="inline-flex cursor-pointer items-center gap-1">
+                  <input
+                    type="checkbox"
+                    checked={layer.visible}
+                    aria-label={`Show ${label} layer`}
+                    onChange={(event) =>
+                      onMapLayerChange(layerId, { visible: event.target.checked })
+                    }
+                    className="accent-brand-accent"
+                  />
+                  <span>{label}</span>
+                </label>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={Math.round(layer.opacity * 100)}
+                  aria-label={`${label} layer opacity`}
+                  title={`${label} opacity`}
+                  disabled={!layer.visible}
+                  onInput={(event) =>
+                    onMapLayerChange(layerId, {
+                      opacity: Number(event.currentTarget.value) / 100,
+                    })
+                  }
+                  className="h-1.5 w-20 accent-brand-accent disabled:opacity-40"
+                />
+                <span className="w-8 text-right tabular-nums">
+                  {Math.round(layer.opacity * 100)}%
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
       <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
         <input
           type="checkbox"

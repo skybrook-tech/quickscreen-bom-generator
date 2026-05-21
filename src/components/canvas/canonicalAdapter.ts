@@ -46,6 +46,7 @@ import {
   GATE_SEGMENT_STUB_KEYS,
   SEGMENT_TERMINATION_KEYS,
 } from '../../lib/segmentTermination';
+import { normalizeMapSnapshot } from '../../lib/googleMaps/staticSnapshot';
 
 // ---------------------------------------------------------------------------
 // Stable ID map — keyed by a deterministic descriptor so round-trips preserve
@@ -650,10 +651,14 @@ export function mergeCanonicalPreservingSegmentMeta(
   generated: CanonicalPayload,
 ): CanonicalPayload {
   const prevRuns = new Map(previous.runs.map((r) => [r.runId, r]));
+  const snapshot =
+    normalizeMapSnapshot(generated.snapshot ?? previous.snapshot) ??
+    generated.snapshot ??
+    previous.snapshot;
   return {
     ...generated,
     propertyAnchor: generated.propertyAnchor ?? previous.propertyAnchor,
-    snapshot: generated.snapshot ?? previous.snapshot,
+    snapshot,
     runs: generated.runs.map((genRun) => {
       const anchoredRun = genRun;
       const prevRun = prevRuns.get(genRun.runId);

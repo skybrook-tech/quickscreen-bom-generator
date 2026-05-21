@@ -11,11 +11,15 @@ import { useGates } from "../../context/GateContext";
 import { useProducts } from "../../hooks/useProducts";
 import { GOOGLE_MAPS_MISSING_API_KEY_MESSAGE } from "../../lib/googleMaps/loader";
 import {
-  buildStaticMapUrl,
-  MAPS_STATIC_API_ENABLEMENT_MESSAGE,
+  normalizeMapSnapshot,
+  updateMapSnapshotLayer,
 } from "../../lib/googleMaps/staticSnapshot";
 import type { GateConfig } from "../../schemas/gate.schema";
-import type { CanonicalMapSnapshot } from "../../types/canonical.types";
+import type {
+  CanonicalMapLayerId,
+  CanonicalMapSnapshot,
+  CanonicalMapSnapshotLayer,
+} from "../../types/canonical.types";
 import type {
   CanvasGateSlidingSide,
   CanvasGateType,
@@ -56,6 +60,7 @@ interface FenceLayoutCanvasProps {
   onExpandedChange?: (expanded: boolean) => void;
   propertyAnchor?: { lat: number; lng: number; address: string } | null;
   mapSnapshot?: CanonicalMapSnapshot | null;
+  onMapSnapshotChange?: (snapshot: CanonicalMapSnapshot) => void;
 }
 
 export function FenceLayoutCanvas({
@@ -71,6 +76,7 @@ export function FenceLayoutCanvas({
   expanded: expandedProp,
   onExpandedChange,
   mapSnapshot,
+  onMapSnapshotChange,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasHostRef = useRef<HTMLDivElement>(null);
@@ -152,6 +158,11 @@ export function FenceLayoutCanvas({
   } | null>(null);
   const [pendingGateWidth, setPendingGateWidth] = useState(DEFAULT_GATE_WIDTH_FALLBACK);
   const [useGatePostsAsTermination, setUseGatePostsAsTermination] = useState(true);
+  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim();
+  const layeredMapSnapshot = useMemo(
+    () => normalizeMapSnapshot(mapSnapshot, googleMapsApiKey || undefined),
+    [googleMapsApiKey, mapSnapshot],
+  );
 
   const handleToolChange = useCallback((tool: CanvasTool) => {
     setActiveTool(tool);
@@ -234,46 +245,40 @@ export function FenceLayoutCanvas({
     const engine = engineRef.current;
     if (!engine) return;
 
-    if (!mapSnapshot) {
+    if (!layeredMapSnapshot) {
       setSnapshotError(null);
-      engine.loadMapTile("", 0, 0, 0);
+      engine.loadMapTileLayers([], 0, 0);
       return;
     }
 
-    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim();
-    if (!apiKey) {
+    const layers = (["satellite", "roadmap"] as const)
+      .map((layerId) => layeredMapSnapshot.layers?.[layerId])
+      .filter(
+        (
+          layer,
+        ): layer is CanonicalMapSnapshotLayer =>
+          Boolean(layer?.url && layer.visible && layer.opacity > 0),
+      )
+      .map((layer) => ({ imageUrl: layer.url, opacity: layer.opacity }));
+    const hasStoredLayerUrls = (["satellite", "roadmap"] as const).some(
+      (layerId) => Boolean(layeredMapSnapshot.layers?.[layerId]?.url),
+    );
+
+    if (!googleMapsApiKey && layers.length === 0 && !hasStoredLayerUrls) {
       setSnapshotError(GOOGLE_MAPS_MISSING_API_KEY_MESSAGE);
-      engine.loadMapTile("", 0, 0, 0);
+      engine.loadMapTileLayers([], 0, 0);
       return;
     }
 
-    const staticMapUrl = buildStaticMapUrl(mapSnapshot, apiKey);
-    let cancelled = false;
-    const image = new Image();
-    image.crossOrigin = "anonymous";
-    image.onload = () => {
-      if (cancelled) return;
-      setSnapshotError(null);
-      engine.setScale(1 / mapSnapshot.metresPerPixel);
-      engine.fitToWidth(mapSnapshot.width * mapSnapshot.metresPerPixel);
-      engine.loadMapTile(
-        staticMapUrl,
-        1,
-        mapSnapshot.centerLat,
-        mapSnapshot.zoom,
-      );
-    };
-    image.onerror = () => {
-      if (cancelled) return;
-      setSnapshotError(MAPS_STATIC_API_ENABLEMENT_MESSAGE);
-      engine.loadMapTile("", 0, 0, 0);
-    };
-    image.src = staticMapUrl;
-
-    return () => {
-      cancelled = true;
-    };
-  }, [engineVersion, mapSnapshot]);
+    setSnapshotError(null);
+    engine.setScale(1 / layeredMapSnapshot.metresPerPixel);
+    engine.fitToWidth(layeredMapSnapshot.width * layeredMapSnapshot.metresPerPixel);
+    engine.loadMapTileLayers(
+      layers,
+      layeredMapSnapshot.centerLat,
+      layeredMapSnapshot.zoom,
+    );
+  }, [engineVersion, googleMapsApiKey, layeredMapSnapshot]);
 
   useEffect(() => {
     engineRef.current?.setAllowedAngles(allowedAngles);
@@ -445,6 +450,22 @@ export function FenceLayoutCanvas({
     engineRef.current?.printMap({ includeSatellite, jobName });
   }, []);
 
+  const handleMapLayerChange = useCallback(
+    (
+      layerId: CanonicalMapLayerId,
+      updates: Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">>,
+    ) => {
+      if (!layeredMapSnapshot) return;
+      const nextSnapshot = updateMapSnapshotLayer(
+        layeredMapSnapshot,
+        layerId,
+        updates,
+      );
+      onMapSnapshotChange?.(nextSnapshot);
+    },
+    [layeredMapSnapshot, onMapSnapshotChange],
+  );
+
   // Totals across all runs
   const totalLengthM = runSummaries.reduce((s, r) => s + r.totalLengthM, 0);
   const totalCorners = runSummaries.reduce((s, r) => s + r.cornerCount, 0);
@@ -471,6 +492,8 @@ export function FenceLayoutCanvas({
           onFreehandStyleChange={handleFreehandStyleChange}
           onHelpOpen={() => setHelpOpen(true)}
           onPrintMap={handlePrintMap}
+          mapLayers={layeredMapSnapshot?.layers ?? null}
+          onMapLayerChange={handleMapLayerChange}
         />
       </div>
 
@@ -530,7 +553,7 @@ export function FenceLayoutCanvas({
         ) : null}
       </div>
 
-      {!mapSnapshot ? (
+      {!layeredMapSnapshot ? (
         <div data-print-hide>
           <MapControls
             engineRef={engineRef}

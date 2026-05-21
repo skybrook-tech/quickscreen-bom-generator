@@ -69,6 +69,12 @@ export const canonicalRunSchema = z.object({
     .optional(),
 });
 
+const canonicalMapSnapshotLayerSchema = z.object({
+  url: z.string(),
+  visible: z.boolean(),
+  opacity: z.number().min(0).max(1),
+});
+
 export const canonicalPayloadSchema = z.object({
   productCode: z.string(),
   schemaVersion: z.string(),
@@ -88,6 +94,13 @@ export const canonicalPayloadSchema = z.object({
       height: z.number().int().positive(),
       metresPerPixel: z.number().positive(),
       capturedAt: z.string(),
+      layers: z
+        .object({
+          satellite: canonicalMapSnapshotLayerSchema.optional(),
+          roadmap: canonicalMapSnapshotLayerSchema.optional(),
+        })
+        .optional(),
+      url: z.string().optional(),
     })
     .optional(),
   job: z

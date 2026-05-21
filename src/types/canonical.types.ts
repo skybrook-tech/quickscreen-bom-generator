@@ -13,6 +13,14 @@ export type CanonicalVariableValue = string | number | boolean;
 
 export type CanonicalVariables = Record<string, CanonicalVariableValue>;
 
+export type CanonicalMapLayerId = 'satellite' | 'roadmap';
+
+export interface CanonicalMapSnapshotLayer {
+  url: string;
+  visible: boolean;
+  opacity: number;
+}
+
 export interface CanonicalMapSnapshot {
   centerLat: number;
   centerLng: number;
@@ -21,6 +29,9 @@ export interface CanonicalMapSnapshot {
   height: number;
   metresPerPixel: number;
   capturedAt: string;
+  layers?: Partial<Record<CanonicalMapLayerId, CanonicalMapSnapshotLayer>>;
+  /** Legacy single-image snapshot URL from the first snapshot PR revision. */
+  url?: string;
 }
 
 export interface CanonicalPayload {

@@ -619,8 +619,8 @@ export function initCanvasEngine(
   let pendingTextNote: { start: Point; current: Point } | null = null;
   let pendingBuildingRect: { start: Point; current: Point } | null = null;
   let pendingFreehandStroke: CanvasFreehandStroke | null = null;
-  let mapImage: HTMLImageElement | null = null;
-  let mapOpacity = 0.5;
+  let mapLayers: Array<{ image: HTMLImageElement; opacity: number }> = [];
+  let mapLoadVersion = 0;
   let mapWorldOriginX = 0; // world px — centre of the tile
   let mapWorldOriginY = 0; // world px — centre of the tile
   let mapWorldWidth = 0; // world px
@@ -1073,17 +1073,19 @@ export function initCanvasEngine(
 
     // Map underlay — drawn inside the pan/zoom transform so the image scales
     // with the canvas coordinate system and stays correctly georeferenced.
-    if (mapImage && mapWorldWidth > 0) {
-      ctx.save();
-      ctx.globalAlpha = mapOpacity;
-      ctx.drawImage(
-        mapImage,
-        mapWorldOriginX - mapWorldWidth / 2,
-        mapWorldOriginY - mapWorldHeight / 2,
-        mapWorldWidth,
-        mapWorldHeight,
-      );
-      ctx.restore();
+    if (mapLayers.length > 0 && mapWorldWidth > 0) {
+      for (const layer of mapLayers) {
+        ctx.save();
+        ctx.globalAlpha = layer.opacity;
+        ctx.drawImage(
+          layer.image,
+          mapWorldOriginX - mapWorldWidth / 2,
+          mapWorldOriginY - mapWorldHeight / 2,
+          mapWorldWidth,
+          mapWorldHeight,
+        );
+        ctx.restore();
+      }
     }
 
     // Grid
@@ -3919,9 +3921,24 @@ export function initCanvasEngine(
     lat: number,
     mapZoom: number,
   ) {
-    mapOpacity = opacity;
-    if (!imageUrl) {
-      mapImage = null;
+    loadMapTileLayers(
+      imageUrl ? [{ imageUrl, opacity }] : [],
+      lat,
+      mapZoom,
+    );
+  }
+
+  function loadMapTileLayers(
+    layers: Array<{ imageUrl: string; opacity: number }>,
+    lat: number,
+    mapZoom: number,
+  ) {
+    const visibleLayers = layers.filter(
+      (layer) => layer.imageUrl && layer.opacity > 0,
+    );
+    const loadVersion = ++mapLoadVersion;
+    if (visibleLayers.length === 0) {
+      mapLayers = [];
       mapWorldWidth = 0;
       scheduleRedraw();
       return;
@@ -3932,31 +3949,43 @@ export function initCanvasEngine(
     const metersPerPixel =
       (156543.03392 * Math.cos((lat * Math.PI) / 180)) / Math.pow(2, mapZoom);
 
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      mapImage = img;
-      // Canvas world size of the tile (world pixels = metres × scale)
-      mapWorldWidth = img.width * metersPerPixel * scale;
-      mapWorldHeight = img.height * metersPerPixel * scale;
-      // Anchor the tile centre to the current view centre so the map appears
-      // immediately beneath the visible canvas area when loaded.
-      const cw = cssCanvasWidth || canvas.getBoundingClientRect().width || 800;
-      const ch = cssCanvasHeight || canvas.getBoundingClientRect().height || 400;
-      mapWorldOriginX = (cw / 2 - pan.x) / zoom;
-      mapWorldOriginY = (ch / 2 - pan.y) / zoom;
-      scheduleRedraw();
-    };
-    img.onerror = () => {
-      mapImage = null;
-      mapWorldWidth = 0;
-      scheduleRedraw();
-    };
-    img.src = imageUrl;
+    Promise.all(
+      visibleLayers.map(
+        (layer) =>
+          new Promise<{ image: HTMLImageElement; opacity: number }>(
+            (resolve, reject) => {
+              const img = new Image();
+              img.crossOrigin = "anonymous";
+              img.onload = () =>
+                resolve({ image: img, opacity: layer.opacity });
+              img.onerror = () => reject(new Error("Map layer failed to load"));
+              img.src = layer.imageUrl;
+            },
+          ),
+      ),
+    )
+      .then((loadedLayers) => {
+        if (loadVersion !== mapLoadVersion) return;
+        mapLayers = loadedLayers;
+        const firstImage = loadedLayers[0].image;
+        mapWorldWidth = firstImage.width * metersPerPixel * scale;
+        mapWorldHeight = firstImage.height * metersPerPixel * scale;
+        const cw = cssCanvasWidth || canvas.getBoundingClientRect().width || 800;
+        const ch = cssCanvasHeight || canvas.getBoundingClientRect().height || 400;
+        mapWorldOriginX = (cw / 2 - pan.x) / zoom;
+        mapWorldOriginY = (ch / 2 - pan.y) / zoom;
+        scheduleRedraw();
+      })
+      .catch(() => {
+        if (loadVersion !== mapLoadVersion) return;
+        mapLayers = [];
+        mapWorldWidth = 0;
+        scheduleRedraw();
+      });
   }
 
   function setMapOpacity(opacity: number) {
-    mapOpacity = opacity;
+    mapLayers = mapLayers.map((layer) => ({ ...layer, opacity }));
     scheduleRedraw();
   }
 
@@ -4077,7 +4106,7 @@ export function initCanvasEngine(
   }
 
   function hasSatelliteUnderlay() {
-    return mapImage !== null;
+    return mapLayers.length > 0;
   }
 
   function contentBounds() {
@@ -4109,7 +4138,7 @@ export function initCanvasEngine(
   }
 
   function printMap(options: { includeSatellite?: boolean; jobName?: string } = {}) {
-    const originalOpacity = mapOpacity;
+    const originalMapLayers = mapLayers;
     const originalZoom = zoom;
     const originalPan = { ...pan };
     const bounds = contentBounds();
@@ -4123,7 +4152,7 @@ export function initCanvasEngine(
         y: H / 2 - zoom * (bounds.minY + bounds.height / 2),
       };
     }
-    if (!options.includeSatellite) mapOpacity = 0;
+    if (!options.includeSatellite) mapLayers = [];
     draw();
     const dataUrl = canvas.toDataURL("image/png");
     const layout = getLayout();
@@ -4152,7 +4181,7 @@ export function initCanvasEngine(
         return `<div class="run-summary"><strong>${run.label} · ${run.totalLengthM.toFixed(2)}m${gatePart}</strong><ul>${sectionRows}</ul></div>`;
       })
       .join("");
-    mapOpacity = originalOpacity;
+    mapLayers = originalMapLayers;
     zoom = originalZoom;
     pan = originalPan;
     draw();
@@ -4380,6 +4409,7 @@ export function initCanvasEngine(
     setViewportTransform,
     setMapOpacity,
     loadMapTile,
+    loadMapTileLayers,
     updateGateWidth,
     updateGateVisual,
     setGateId,

@@ -774,6 +774,17 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     toast.success("Property view captured");
   }
 
+  function handleMapSnapshotChange(snapshot: NonNullable<CanonicalPayload["snapshot"]>) {
+    if (!payload) return;
+    dispatch({
+      type: "SET_PAYLOAD",
+      payload: {
+        ...payload,
+        snapshot,
+      },
+    });
+  }
+
   async function handleSwitchEconomyToStandard(item: BOMLineItem) {
     if (!payload) return;
     const nextPayload = {
@@ -1737,6 +1748,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                           showRunDetails={!mapExpanded}
                           propertyAnchor={payload.propertyAnchor ?? null}
                           mapSnapshot={payload.snapshot ?? null}
+                          onMapSnapshotChange={handleMapSnapshotChange}
                         />
                       ) : (
                         <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/50 p-6 text-center text-sm font-bold text-brand-muted">

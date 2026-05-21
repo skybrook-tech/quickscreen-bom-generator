@@ -32,6 +32,18 @@ const snapshot = {
   height: 360,
   metresPerPixel: 0.212345,
   capturedAt: "2026-05-22T00:00:00.000Z",
+  layers: {
+    satellite: {
+      url: "https://example.test/satellite.png",
+      visible: true,
+      opacity: 1,
+    },
+    roadmap: {
+      url: "https://example.test/roadmap.png",
+      visible: false,
+      opacity: 1,
+    },
+  },
 };
 
 describe("canonicalAdapter propertyAnchor", () => {
@@ -102,5 +114,33 @@ describe("canonicalAdapter propertyAnchor", () => {
 
     expect(reloaded?.snapshot).toEqual(snapshot);
     expect(reloaded?.propertyAnchor).toEqual(payload.propertyAnchor);
+  });
+
+  it("migrates a legacy single-image saved snapshot into a satellite layer", () => {
+    const payload: CanonicalPayload = {
+      ...basePayload,
+      snapshot: {
+        centerLat: -31.9523,
+        centerLng: 115.8613,
+        zoom: 19,
+        width: 640,
+        height: 360,
+        metresPerPixel: 0.212345,
+        capturedAt: "2026-05-22T00:00:00.000Z",
+        url: "https://example.test/legacy.png",
+      },
+    };
+
+    const reloaded = payloadFromV3FenceConfig({
+      calculator: "v3",
+      jobName: "Legacy snapshot quote",
+      payload,
+    });
+
+    expect(reloaded?.snapshot?.layers?.satellite).toEqual({
+      url: "https://example.test/legacy.png",
+      visible: true,
+      opacity: 1,
+    });
   });
 });

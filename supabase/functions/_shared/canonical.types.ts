@@ -17,6 +17,19 @@ export interface CanonicalPayload {
     height: number;
     metresPerPixel: number;
     capturedAt: string;
+    layers?: {
+      satellite?: {
+        url: string;
+        visible: boolean;
+        opacity: number;
+      };
+      roadmap?: {
+        url: string;
+        visible: boolean;
+        opacity: number;
+      };
+    };
+    url?: string;
   };
   variables: Record<string, string | number | boolean>;
   runs: CanonicalRun[];

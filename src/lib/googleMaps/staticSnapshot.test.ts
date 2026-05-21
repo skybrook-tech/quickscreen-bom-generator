@@ -2,9 +2,12 @@ import { describe, expect, it } from "vitest";
 import {
   buildStaticMapUrl,
   clampStaticMapSize,
+  createLayeredMapSnapshot,
   createMapSnapshot,
   metresPerPixelAt,
+  normalizeMapSnapshot,
   STATIC_MAP_MAX_DIMENSION,
+  updateMapSnapshotLayer,
 } from "./staticSnapshot";
 
 describe("Static Maps snapshots", () => {
@@ -48,7 +51,7 @@ describe("Static Maps snapshots", () => {
     );
   });
 
-  it("builds a satellite Static Maps URL from a snapshot", () => {
+  it("builds typed Static Maps URLs from a snapshot", () => {
     const snapshot = createMapSnapshot({
       centerLat: -33.8688,
       centerLng: 151.2093,
@@ -59,6 +62,7 @@ describe("Static Maps snapshots", () => {
     });
 
     const url = new URL(buildStaticMapUrl(snapshot, "test-key"));
+    const roadmapUrl = new URL(buildStaticMapUrl(snapshot, "test-key", "roadmap"));
     expect(url.origin + url.pathname).toBe(
       "https://maps.googleapis.com/maps/api/staticmap",
     );
@@ -67,5 +71,91 @@ describe("Static Maps snapshots", () => {
     expect(url.searchParams.get("size")).toBe("640x360");
     expect(url.searchParams.get("maptype")).toBe("satellite");
     expect(url.searchParams.get("key")).toBe("test-key");
+    expect(roadmapUrl.searchParams.get("maptype")).toBe("roadmap");
+  });
+
+  it("preloads satellite and roadmap snapshot requests in parallel", async () => {
+    const calls: string[] = [];
+    const resolvers: Array<() => void> = [];
+    const snapshotPromise = createLayeredMapSnapshot(
+      {
+        centerLat: -28.503385,
+        centerLng: 153.526262,
+        zoom: 20,
+        viewportWidth: 1280,
+        viewportHeight: 720,
+        capturedAt: "2026-05-22T00:00:00.000Z",
+      },
+      "test-key",
+      (url) => {
+        calls.push(url);
+        return new Promise<void>((resolve) => {
+          resolvers.push(resolve);
+        });
+      },
+    );
+
+    expect(calls.map((url) => new URL(url).searchParams.get("maptype"))).toEqual([
+      "satellite",
+      "roadmap",
+    ]);
+    resolvers.forEach((resolve) => resolve());
+
+    const snapshot = await snapshotPromise;
+    expect(snapshot.layers?.satellite).toMatchObject({
+      visible: true,
+      opacity: 1,
+    });
+    expect(snapshot.layers?.roadmap).toMatchObject({
+      visible: false,
+      opacity: 1,
+    });
+  });
+
+  it("migrates a legacy single-image snapshot into a satellite layer", () => {
+    const snapshot = createMapSnapshot({
+      centerLat: -33.8688,
+      centerLng: 151.2093,
+      zoom: 19,
+      viewportWidth: 640,
+      viewportHeight: 360,
+      capturedAt: "2026-05-22T00:00:00.000Z",
+    });
+
+    const normalized = normalizeMapSnapshot({
+      ...snapshot,
+      url: "https://example.test/legacy-satellite.png",
+    });
+
+    expect(normalized?.layers?.satellite).toEqual({
+      url: "https://example.test/legacy-satellite.png",
+      visible: true,
+      opacity: 1,
+    });
+    expect(normalized?.layers?.roadmap).toBeUndefined();
+  });
+
+  it("updates layer visibility and opacity without replacing the snapshot", () => {
+    const snapshot = createMapSnapshot({
+      centerLat: -33.8688,
+      centerLng: 151.2093,
+      zoom: 19,
+      viewportWidth: 640,
+      viewportHeight: 360,
+      capturedAt: "2026-05-22T00:00:00.000Z",
+    });
+    const layered = normalizeMapSnapshot(snapshot, "test-key");
+
+    const updated = updateMapSnapshotLayer(layered!, "roadmap", {
+      visible: true,
+      opacity: 0.5,
+    });
+
+    expect(updated.centerLat).toBe(snapshot.centerLat);
+    expect(updated.layers?.satellite?.visible).toBe(true);
+    expect(updated.layers?.roadmap).toMatchObject({
+      visible: true,
+      opacity: 0.5,
+    });
   });
 });
