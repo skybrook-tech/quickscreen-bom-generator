@@ -5,7 +5,13 @@ import { GOOGLE_MAPS_MISSING_API_KEY_MESSAGE } from "../lib/googleMaps/loader";
 import type { GoogleMapsState } from "./useGoogleMaps";
 import "../components/calculator/AddressInput.test";
 import "../components/calculator/PropertyAnchorFormGate.test";
+import "../components/calculator-v3/RunListV3.propertyAnchor.test";
+import "../components/canvas/CanvasToolbar.layers.test";
 import "../components/canvas/canonicalAdapter.propertyAnchor.test";
+import "../components/canvas/staticSnapshotCanvas.test";
+import "../lib/geo/coordinates.test";
+import "../lib/googleMaps/staticSnapshot.test";
+import "../pages/CalculatorV4Page.smoke.test";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 

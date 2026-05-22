@@ -1,4 +1,12 @@
 import { useRef, useEffect, useCallback, useState, useMemo, type MouseEvent as ReactMouseEvent } from "react";
+import {
+  useRef,
+  useEffect,
+  useCallback,
+  useState,
+  useMemo,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import { initCanvasEngine } from "./canvasEngine";
 import { CanvasToolbar } from "./CanvasToolbar";
 import { MapControls } from "./MapControls";
@@ -8,7 +16,18 @@ import NumberInput from "../shared/NumberInput";
 import { useFenceConfig } from "../../context/FenceConfigContext";
 import { useGates } from "../../context/GateContext";
 import { useProducts } from "../../hooks/useProducts";
+import { GOOGLE_MAPS_MISSING_API_KEY_MESSAGE } from "../../lib/googleMaps/loader";
+import {
+  getDefaultSnapshotViewportTransform,
+  normalizeMapSnapshot,
+  updateMapSnapshotLayer,
+} from "../../lib/googleMaps/staticSnapshot";
 import type { GateConfig } from "../../schemas/gate.schema";
+import type {
+  CanonicalMapLayerId,
+  CanonicalMapSnapshot,
+  CanonicalMapSnapshotLayer,
+} from "../../types/canonical.types";
 import type {
   CanvasGateSlidingSide,
   CanvasGateType,
@@ -78,6 +97,9 @@ function createGateDraft(overrides: Partial<GateDraft> = {}): GateDraft {
 
 function gateVisualFromDraft(draft: GateDraft): CanvasGateVisual & { widthMM: number } {
   const gateType = canvasTypeFromMovement(draft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+  const gateType = canvasTypeFromMovement(
+    draft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement],
+  );
   return {
     gateType,
     widthMM: draft.widthMM,
@@ -94,6 +116,18 @@ function gateVisualFromDraft(draft: GateDraft): CanvasGateVisual & { widthMM: nu
 
 function legacyGateConfigFromDraft(gateId: string, draft: GateDraft): GateConfig {
   const gateType = canvasTypeFromMovement(draft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+function gatePostSizeFromMm(value: unknown): GateConfig["gatePostSize"] {
+  const size = Number(value);
+  if (size === 100) return "100x100";
+  if (size === 75) return "75x75";
+  if (size === 65) return "65x65";
+  return "50x50";
+}
+
+function legacyGateConfigFromDraft(gateId: string, draft: GateDraft): GateConfig {
+  const gateType = canvasTypeFromMovement(
+    draft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement],
+  );
   return {
     id: gateId,
     qty: 1,
@@ -107,6 +141,9 @@ function legacyGateConfigFromDraft(gateId: string, draft: GateDraft): GateConfig
     slatGap: "match-fence",
     slatSize: "match-fence",
     gatePostSize: "65x65",
+    gatePostSize: gatePostSizeFromMm(
+      draft.variables[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm],
+    ),
     hingeType: "dd-kwik-fit-adjustable",
     latchType: "dd-magna-latch-top-pull",
     swingDirection: String(
@@ -135,6 +172,9 @@ interface FenceLayoutCanvasProps {
   expanded?: boolean;
   /** Called when the expand toggle is triggered internally. */
   onExpandedChange?: (expanded: boolean) => void;
+  propertyAnchor?: { lat: number; lng: number; address: string } | null;
+  mapSnapshot?: CanonicalMapSnapshot | null;
+  onMapSnapshotChange?: (snapshot: CanonicalMapSnapshot) => void;
 }
 
 export function FenceLayoutCanvas({
@@ -149,8 +189,11 @@ export function FenceLayoutCanvas({
   jobName,
   expanded: expandedProp,
   onExpandedChange,
+  mapSnapshot,
+  onMapSnapshotChange,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasHostRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
   const { state: fenceState } = useFenceConfig();
   const { data: products } = useProducts();
@@ -174,9 +217,9 @@ export function FenceLayoutCanvas({
   const [activeTool, setActiveTool] = useState<CanvasTool>(
     "draw",
   );
-  const [snapEnabled, setSnapEnabled] = useState(true);
-  const [gateSnap100, setGateSnap100] = useState(true);
-  const [showGrid, setShowGrid] = useState(true);
+  const [snapEnabled, setSnapEnabled] = useState(false);
+  const [gateSnap100, setGateSnap100] = useState(false);
+  const [showGrid, setShowGrid] = useState(false);
   const [expandedInternal, setExpandedInternal] = useState(false);
   const expanded = expandedProp !== undefined ? expandedProp : expandedInternal;
   const setExpanded = useCallback((v: boolean | ((prev: boolean) => boolean)) => {
@@ -184,7 +227,6 @@ export function FenceLayoutCanvas({
     setExpandedInternal(next);
     onExpandedChange?.(next);
   }, [expanded, onExpandedChange]);
-  const [orthoEnabled, setOrthoEnabled] = useState(false);
   const [freehandStyle, setFreehandStyleState] = useState({
     color: "rgba(14,165,233,0.9)",
     width: 3,
@@ -200,6 +242,8 @@ export function FenceLayoutCanvas({
     });
   }, []);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
+  const [engineVersion, setEngineVersion] = useState(0);
+  const [snapshotError, setSnapshotError] = useState<string | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
   const [boundaryHintVisible, setBoundaryHintVisible] = useState(false);
   const [mapUiState, setMapUiState] = useState<MapUiState>({
@@ -208,6 +252,7 @@ export function FenceLayoutCanvas({
     hasLoadedMap: false,
     calibrationLabel: "",
   });
+  const lastAppliedSnapshotViewportKeyRef = useRef<string | null>(null);
 
   const [gateDialogOpen, setGateDialogOpen] = useState(false);
   const [gateDraft, setGateDraft] = useState<GateDraft>(() => createGateDraft());
@@ -222,6 +267,18 @@ export function FenceLayoutCanvas({
   useEffect(() => {
     gateDraftRef.current = gateDraft;
   }, [gateDraft]);
+  const [gateDialogPosition, setGateDialogPosition] = useState({
+    left: 16,
+    top: 16,
+  });
+  useEffect(() => {
+    gateDraftRef.current = gateDraft;
+  }, [gateDraft]);
+  const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim();
+  const layeredMapSnapshot = useMemo(
+    () => normalizeMapSnapshot(mapSnapshot, googleMapsApiKey || undefined),
+    [googleMapsApiKey, mapSnapshot],
+  );
 
   const handleToolChange = useCallback((tool: CanvasTool) => {
     setActiveTool(tool);
@@ -229,6 +286,10 @@ export function FenceLayoutCanvas({
       setGateDialogOpen(true);
       setActiveGateRef(null);
       setSessionGateRefs([]);
+      setActiveGateRef(null);
+      setSessionGateRefs([]);
+      setGateDialogOpen(true);
+      engineRef.current?.setTool("gate");
     }
     if (
       tool === "boundary" &&
@@ -253,6 +314,12 @@ export function FenceLayoutCanvas({
       engineRef.current?.updateGateVisual(flatSegIdx, gateIdx, visual);
       engineRef.current?.setGateVariables(flatSegIdx, gateIdx, draft.variables);
       engineRef.current?.setGateTerminationPosts(flatSegIdx, gateIdx, draft.useTerminationPosts);
+      engineRef.current?.setGateVariables(gateId, draft.variables);
+      engineRef.current?.setGateTerminationPosts(
+        flatSegIdx,
+        gateIdx,
+        draft.useTerminationPosts,
+      );
       gateDispatch({
         type: "ADD_GATE",
         gate: {
@@ -263,6 +330,8 @@ export function FenceLayoutCanvas({
       const placed = { flatSegIdx, gateIdx, gateId };
       setActiveGateRef(placed);
       setSessionGateRefs((refs) => [...refs, placed]);
+      setSessionGateRefs((refs) => [...refs, { flatSegIdx, gateIdx, gateId }]);
+      setActiveGateRef(null);
       setGateDialogOpen(true);
     },
     [gateDispatch],
@@ -272,9 +341,9 @@ export function FenceLayoutCanvas({
     if (!canvasRef.current) return;
 
     const engine = initCanvasEngine(canvasRef.current, {
-      snapToGrid: true,
+      snapToGrid: false,
       gridSize: 20,
-      showGrid: true,
+      showGrid: false,
       allowedAngles,
       onGatePlaced: handleGatePlaced,
       onLayoutChange: (layout) => {
@@ -282,12 +351,15 @@ export function FenceLayoutCanvas({
         onLayoutChangeRef.current?.(layout);
       },
       onGateEdit: (flatSegIdx, gateIdx, gateId, currentWidthMM, gate) => {
+        // Find the gate in GateContext by id (set when gate was first saved)
+        if (!gateId) return;
         setGateDraft(createGateDraft({
           widthMM: currentWidthMM,
           useTerminationPosts: gate?.useGatePostsAsFenceTermination ?? true,
           variables: gate?.variables,
         }));
         setActiveGateRef(gateId ? { flatSegIdx, gateIdx, gateId } : null);
+        setActiveGateRef({ flatSegIdx, gateIdx, gateId });
         setSessionGateRefs([]);
         setGateDialogOpen(true);
         engine.setTool("gate");
@@ -295,19 +367,80 @@ export function FenceLayoutCanvas({
       },
     });
     engineRef.current = engine;
+    setEngineVersion((value) => value + 1);
     onEngineReady?.(engine);
 
     return () => {
       engineRef.current?.destroy();
       engineRef.current = null;
+      setEngineVersion((value) => value + 1);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleGatePlaced]);
 
   useEffect(() => {
+    const engine = engineRef.current;
+    if (!engine) return;
+
+    if (!layeredMapSnapshot) {
+      setSnapshotError(null);
+      lastAppliedSnapshotViewportKeyRef.current = null;
+      engine.loadMapTileLayers([], 0, 0);
+      return;
+    }
+
+    const layers = (["satellite", "roadmap"] as const)
+      .map((layerId) => layeredMapSnapshot.layers?.[layerId])
+      .filter(
+        (
+          layer,
+        ): layer is CanonicalMapSnapshotLayer & { url: string } =>
+          Boolean(layer?.url && layer.visible && layer.opacity > 0),
+      )
+      .map((layer) => ({ imageUrl: layer.url, opacity: layer.opacity }));
+    const hasStoredLayerUrls = (["satellite", "roadmap"] as const).some(
+      (layerId) => Boolean(layeredMapSnapshot.layers?.[layerId]?.url),
+    );
+
+    if (!googleMapsApiKey && layers.length === 0 && !hasStoredLayerUrls) {
+      setSnapshotError(GOOGLE_MAPS_MISSING_API_KEY_MESSAGE);
+      engine.loadMapTileLayers([], 0, 0);
+      return;
+    }
+
+    setSnapshotError(null);
+    const snapshotViewportKey = [
+      engineVersion,
+      layeredMapSnapshot.centerLat,
+      layeredMapSnapshot.centerLng,
+      layeredMapSnapshot.zoom,
+      layeredMapSnapshot.width,
+      layeredMapSnapshot.height,
+      layeredMapSnapshot.metresPerPixel,
+    ].join(":");
+    if (lastAppliedSnapshotViewportKeyRef.current !== snapshotViewportKey) {
+      const rect = canvasHostRef.current?.getBoundingClientRect();
+      const transform = getDefaultSnapshotViewportTransform(
+        layeredMapSnapshot,
+        rect?.width || 800,
+        rect?.height || 420,
+      );
+      engine.setViewportTransform({
+        ...transform,
+        scale: 1 / layeredMapSnapshot.metresPerPixel,
+      });
+      lastAppliedSnapshotViewportKeyRef.current = snapshotViewportKey;
+    }
+    engine.loadMapTileLayers(
+      layers,
+      layeredMapSnapshot.centerLat,
+      layeredMapSnapshot.zoom,
+    );
+  }, [engineVersion, googleMapsApiKey, layeredMapSnapshot]);
+
+  useEffect(() => {
     engineRef.current?.setAllowedAngles(allowedAngles);
   }, [allowedAngles]);
-
 
   // Sync showGrid state to engine
   useEffect(() => {
@@ -376,6 +509,7 @@ export function FenceLayoutCanvas({
       activeGateRef.gateIdx,
       gateDraft.variables,
     );
+    engineRef.current?.setGateVariables(activeGateRef.gateId, gateDraft.variables);
     engineRef.current?.setGateTerminationPosts(
       activeGateRef.flatSegIdx,
       activeGateRef.gateIdx,
@@ -390,6 +524,7 @@ export function FenceLayoutCanvas({
       } as Partial<GateConfig>,
     });
   }, [activeGateRef, gateDispatch, gateDraft]);
+  }, [activeGateRef, gateDraft, gateDispatch]);
 
   useEffect(() => {
     const handler = (event: Event) => {
@@ -458,6 +593,23 @@ export function FenceLayoutCanvas({
     const onMove = (moveEvent: MouseEvent) => {
       const maxLeft = Math.max(12, window.innerWidth - 420);
       const maxTop = Math.max(12, window.innerHeight - 560);
+  function startGateDialogDrag(event: ReactPointerEvent<HTMLDivElement>) {
+    event.preventDefault();
+    const hostRect = canvasHostRef.current?.getBoundingClientRect();
+    const dialog = event.currentTarget.parentElement as HTMLDivElement | null;
+    const dialogRect = dialog?.getBoundingClientRect();
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const start = gateDialogPosition;
+    const maxLeft = Math.max(
+      12,
+      (hostRect?.width ?? 0) - (dialogRect?.width ?? 410) - 12,
+    );
+    const maxTop = Math.max(
+      12,
+      (hostRect?.height ?? 0) - (dialogRect?.height ?? 520) - 12,
+    );
+    const onMove = (moveEvent: PointerEvent) => {
       setGateDialogPosition({
         left: Math.min(maxLeft, Math.max(12, start.left + moveEvent.clientX - startX)),
         top: Math.min(maxTop, Math.max(12, start.top + moveEvent.clientY - startY)),
@@ -469,6 +621,11 @@ export function FenceLayoutCanvas({
     };
     window.addEventListener("mousemove", onMove);
     window.addEventListener("mouseup", onUp);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp, { once: true });
   }
 
   const handlePrintMap = useCallback(() => {
@@ -477,6 +634,22 @@ export function FenceLayoutCanvas({
       : false;
     engineRef.current?.printMap({ includeSatellite, jobName });
   }, []);
+
+  const handleMapLayerChange = useCallback(
+    (
+      layerId: CanonicalMapLayerId,
+      updates: Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">>,
+    ) => {
+      if (!layeredMapSnapshot) return;
+      const nextSnapshot = updateMapSnapshotLayer(
+        layeredMapSnapshot,
+        layerId,
+        updates,
+      );
+      onMapSnapshotChange?.(nextSnapshot);
+    },
+    [layeredMapSnapshot, onMapSnapshotChange],
+  );
 
   // Totals across all runs
   const totalLengthM = runSummaries.reduce((s, r) => s + r.totalLengthM, 0);
@@ -498,20 +671,24 @@ export function FenceLayoutCanvas({
           onToggleGrid={setShowGrid}
           expanded={expanded}
           onToggleExpand={setExpanded}
-          orthoEnabled={orthoEnabled}
-          onOrthoToggle={setOrthoEnabled}
           freehandStyle={freehandStyle}
           onFreehandStyleChange={handleFreehandStyleChange}
           onHelpOpen={() => setHelpOpen(true)}
           onPrintMap={handlePrintMap}
+          mapLayers={layeredMapSnapshot?.layers ?? null}
+          onMapLayerChange={handleMapLayerChange}
         />
       </div>
 
-      <div className="relative">
+      <div
+        ref={canvasHostRef}
+        className="relative overflow-hidden bg-brand-bg"
+        style={{ height: expanded ? "700px" : "630px" }}
+      >
         <canvas
           ref={canvasRef}
-          className="block w-full touch-none bg-brand-bg"
-          style={{ height: expanded ? "700px" : "630px", cursor: "crosshair" }}
+          className="block h-full w-full touch-none bg-brand-bg"
+          style={{ cursor: "crosshair" }}
         />
 
         {/* Hint overlay */}
@@ -552,14 +729,21 @@ export function FenceLayoutCanvas({
             Calibrated: {mapUiState.calibrationLabel}
           </div>
         )}
+        {snapshotError ? (
+          <div className="absolute left-4 right-4 top-4 rounded-xl border border-brand-danger/40 bg-brand-danger/15 px-4 py-3 text-sm font-bold text-brand-danger shadow-md">
+            {snapshotError}
+          </div>
+        ) : null}
       </div>
 
-      <div data-print-hide>
-        <MapControls
-          engineRef={engineRef}
-          onMapUiStateChange={setMapUiState}
-        />
-      </div>
+      {!layeredMapSnapshot ? (
+        <div data-print-hide>
+          <MapControls
+            engineRef={engineRef}
+            onMapUiStateChange={setMapUiState}
+          />
+        </div>
+      ) : null}
 
       {/* Run summary table */}
       {runSummaries.length > 0 && (
@@ -594,6 +778,7 @@ export function FenceLayoutCanvas({
       {gateDialogOpen && (
         <div
           className="fixed z-50 w-[min(92vw,410px)] overflow-hidden rounded-xl border border-brand-border bg-brand-card shadow-2xl"
+          className="absolute z-50 w-[min(92%,410px)] overflow-hidden rounded-xl border border-brand-border bg-brand-card shadow-2xl"
           style={{ left: gateDialogPosition.left, top: gateDialogPosition.top }}
           role="dialog"
           aria-modal="false"
@@ -609,6 +794,14 @@ export function FenceLayoutCanvas({
             </p>
           </div>
           <div className="max-h-[70vh] space-y-4 overflow-y-auto p-4">
+            onPointerDown={startGateDialogDrag}
+          >
+            <h2 className="text-sm font-black text-brand-text">Edit Gate</h2>
+            <p className="mt-0.5 text-xs font-semibold text-brand-muted">
+              Configure the gate, hover a fence line to preview, click to place.
+            </p>
+          </div>
+          <div className="max-h-[460px] space-y-4 overflow-y-auto p-4">
             <NumberInput
               label="Gate opening (mm)"
               min={400}
@@ -616,6 +809,12 @@ export function FenceLayoutCanvas({
               step={50}
               value={gateDraft.widthMM}
               onChange={(value) => setGateDraft((draft) => ({ ...draft, widthMM: Number(value) || DEFAULT_GATE_WIDTH_FALLBACK }))}
+              onChange={(value) =>
+                setGateDraft((draft) => ({
+                  ...draft,
+                  widthMM: Number(value) || DEFAULT_GATE_WIDTH_FALLBACK,
+                }))
+              }
               className="mt-1 w-full bg-brand-bg text-brand-text"
             />
 
@@ -624,6 +823,9 @@ export function FenceLayoutCanvas({
                 Gate type
                 <select
                   value={canvasTypeFromMovement(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement])}
+                  value={canvasTypeFromMovement(
+                    gateDraft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement],
+                  )}
                   onChange={(event) => setGateMovement(event.target.value as CanvasGateType)}
                   className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
                 >
@@ -638,6 +840,15 @@ export function FenceLayoutCanvas({
                 <select
                   value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.openingDirection] ?? "out")}
                   onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.openingDirection, event.target.value)}
+              <label className="block text-sm font-semibold text-brand-text">
+                {canvasTypeFromMovement(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement]) === "sliding"
+                  ? "Slide direction"
+                  : "Swing direction"}
+                <select
+                  value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.openingDirection] ?? "out")}
+                  onChange={(event) =>
+                    updateGateVariable(GATE_SEGMENT_STUB_KEYS.openingDirection, event.target.value)
+                  }
                   className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
                 >
                   {canvasTypeFromMovement(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement]) === "sliding" ? (
@@ -661,6 +872,9 @@ export function FenceLayoutCanvas({
                 <select
                   value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? "front")}
                   onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.slidingSide, event.target.value)}
+                  onChange={(event) =>
+                    updateGateVariable(GATE_SEGMENT_STUB_KEYS.slidingSide, event.target.value)
+                  }
                   className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
                 >
                   <option value="front">Front side of fence</option>
@@ -675,6 +889,9 @@ export function FenceLayoutCanvas({
                 <select
                   value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.colourCode] ?? "B")}
                   onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.colourCode, event.target.value)}
+                  onChange={(event) =>
+                    updateGateVariable(GATE_SEGMENT_STUB_KEYS.colourCode, event.target.value)
+                  }
                   className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
                 >
                   {COLOUR_OPTIONS.map(([value, label]) => (
@@ -687,6 +904,9 @@ export function FenceLayoutCanvas({
                 <select
                   value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? 65)}
                   onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.slatSizeMm, Number(event.target.value))}
+                  onChange={(event) =>
+                    updateGateVariable(GATE_SEGMENT_STUB_KEYS.slatSizeMm, Number(event.target.value))
+                  }
                   className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
                 >
                   <option value="65">65mm</option>
@@ -698,6 +918,9 @@ export function FenceLayoutCanvas({
                 <select
                   value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? 9)}
                   onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.slatGapMm, Number(event.target.value))}
+                  onChange={(event) =>
+                    updateGateVariable(GATE_SEGMENT_STUB_KEYS.slatGapMm, Number(event.target.value))
+                  }
                   className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
                 >
                   <option value="5">5mm</option>
@@ -744,6 +967,49 @@ export function FenceLayoutCanvas({
                   className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
                 >
                   {HINGE_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                Gate height
+                <input
+                  type="number"
+                  min={600}
+                  max={2500}
+                  step={50}
+                  value={Number(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.gateHeightMm] ?? 1800)}
+                  onChange={(event) =>
+                    updateGateVariable(GATE_SEGMENT_STUB_KEYS.gateHeightMm, Number(event.target.value))
+                  }
+                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+                />
+              </label>
+              <label className="block text-sm font-semibold text-brand-text">
+                Gate post size
+                <select
+                  value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm] ?? 50)}
+                  onChange={(event) =>
+                    updateGateVariable(GATE_SEGMENT_STUB_KEYS.gatePostSizeMm, Number(event.target.value))
+                  }
+                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+                >
+                  <option value="50">50mm</option>
+                  <option value="65">65mm</option>
+                  <option value="75">75mm</option>
+                  <option value="100">100mm</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <label className="block text-sm font-semibold text-brand-text">
+                Hinges
+                <select
+                  value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B")}
+                  onChange={(event) =>
+                    updateGateVariable(GATE_SEGMENT_STUB_KEYS.hingeType, event.target.value)
+                  }
+                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+                >
+                  {HINGE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
                 </select>
               </label>
               <label className="block text-sm font-semibold text-brand-text">
@@ -754,6 +1020,14 @@ export function FenceLayoutCanvas({
                   className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
                 >
                   {LATCH_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                  onChange={(event) =>
+                    updateGateVariable(GATE_SEGMENT_STUB_KEYS.latchType, event.target.value)
+                  }
+                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+                >
+                  {LATCH_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
                 </select>
               </label>
             </div>
@@ -767,6 +1041,14 @@ export function FenceLayoutCanvas({
                   className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
                 >
                   {DROP_BOLT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                  onChange={(event) =>
+                    updateGateVariable(GATE_SEGMENT_STUB_KEYS.dropBoltType, event.target.value)
+                  }
+                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+                >
+                  {DROP_BOLT_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
                 </select>
               </label>
               <label className="block text-sm font-semibold text-brand-text">
@@ -777,6 +1059,14 @@ export function FenceLayoutCanvas({
                   className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
                 >
                   {GATE_STOP_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                  onChange={(event) =>
+                    updateGateVariable(GATE_SEGMENT_STUB_KEYS.gateStopType, event.target.value)
+                  }
+                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+                >
+                  {GATE_STOP_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
                 </select>
               </label>
             </div>
@@ -801,6 +1091,24 @@ export function FenceLayoutCanvas({
                     {SLIDING_CATCH_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                   </select>
                 </label>
+                {[
+                  [GATE_SEGMENT_STUB_KEYS.slidingTrackType, "Track", SLIDING_TRACK_OPTIONS],
+                  [GATE_SEGMENT_STUB_KEYS.slidingGuideType, "Guide", SLIDING_GUIDE_OPTIONS],
+                  [GATE_SEGMENT_STUB_KEYS.slidingCatchType, "Catch", SLIDING_CATCH_OPTIONS],
+                ].map(([key, label, options]) => (
+                  <label key={String(key)} className="block text-sm font-semibold text-brand-text">
+                    {String(label)}
+                    <select
+                      value={String(gateDraft.variables[String(key)] ?? "")}
+                      onChange={(event) => updateGateVariable(String(key), event.target.value)}
+                      className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
+                    >
+                      {(options as typeof SLIDING_TRACK_OPTIONS).map((option) => (
+                        <option key={option.value} value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  </label>
+                ))}
               </div>
             )}
 
@@ -809,6 +1117,12 @@ export function FenceLayoutCanvas({
                 type="checkbox"
                 checked={gateDraft.useTerminationPosts}
                 onChange={(event) => setGateDraft((draft) => ({ ...draft, useTerminationPosts: event.target.checked }))}
+                onChange={(event) =>
+                  setGateDraft((draft) => ({
+                    ...draft,
+                    useTerminationPosts: event.target.checked,
+                  }))
+                }
                 className="mt-0.5 accent-brand-accent"
               />
               <span>Use gate posts as fence termination posts</span>
@@ -817,6 +1131,20 @@ export function FenceLayoutCanvas({
           <div className="flex gap-2 border-t border-brand-border bg-brand-bg/70 p-4">
             <button type="button" onClick={handleGateDialogSave} className="flex-1 rounded-md bg-brand-accent px-4 py-2 text-sm font-semibold text-white hover:bg-brand-accent-hover">Save</button>
             <button type="button" onClick={handleGateDialogCancel} className="rounded-md border border-brand-border px-4 py-2 text-sm font-medium text-brand-muted hover:text-brand-text">Cancel</button>
+            <button
+              type="button"
+              onClick={handleGateDialogSave}
+              className="flex-1 rounded-md bg-brand-accent px-4 py-2 text-sm font-semibold text-white hover:bg-brand-accent-hover"
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              onClick={handleGateDialogCancel}
+              className="rounded-md border border-brand-border px-4 py-2 text-sm font-medium text-brand-muted hover:text-brand-text"
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}

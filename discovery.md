@@ -29,6 +29,20 @@ Changes applied:
 
 Verification plan:
 - Run typecheck, tests, build, and a `/fence-calculator` route smoke check before pushing the BQ branch.
+## May 20, 2026 - Brief BP BOM cleanup and settings timer
+
+UX finding:
+- The BOM needed one clear run-summary source of truth. Repeating `Run 1` in the header and then again in the run details made both the on-screen BOM and print output feel noisier than the installer needs.
+- Section-level setup should surface common ordering first: Slat Range before Color, with hidden advanced data-model choices kept out of the section settings UI.
+
+Changes applied:
+- Kept run details in the dedicated BOM run/section block and changed run settings to compact values such as `Horizontal Slats · Black Satin · 65mm slat · 9mm gap`.
+- Simplified the BOM line-item helper subtitle and removed the section-only Post size override selector while preserving the underlying variables for existing payloads.
+- Generated BOM requests now clone the current canonical payload and ignore late responses from older requests, so repeated Generate BOM presses cannot restore stale results.
+- Run settings now reset the same 60 second collapse timer on editor interactions and close open section editors when opened.
+
+Verification plan:
+- Run the build, smoke `/fence-calculator`, and confirm a section settings change appears after regenerating the BOM.
 
 ---
 

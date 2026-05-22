@@ -3,7 +3,7 @@ import { Loader, type Libraries } from "@googlemaps/js-api-loader";
 export const GOOGLE_MAPS_MISSING_API_KEY_MESSAGE =
   "VITE_GOOGLE_MAPS_API_KEY not set — see README section 'Google Maps API key'";
 
-const GOOGLE_MAPS_LIBRARIES: Libraries = ["geometry"];
+const GOOGLE_MAPS_LIBRARIES: Libraries = ["geometry", "places"];
 
 let googleMapsLoader: Loader | null = null;
 

@@ -303,6 +303,7 @@ export function FenceLayoutCanvasV4() {
         onFenceSegmentClick={
           layoutHighlight ? handleFenceSegmentClick : undefined
         }
+        propertyAnchor={payload?.propertyAnchor ?? null}
       />
       {ctxMenu && ctxMenuSegment ? (
         <SegmentContextMenu

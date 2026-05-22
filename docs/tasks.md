@@ -12,6 +12,8 @@ Living app overview: [`docs/app-overview.md`](./app-overview.md) now tracks curr
 
 Latest BOM workflow pass: generated BOM rows aggregate by product within each tab, individual gate tabs are labelled from the canonical gate segments, Generate BOM clears stale results before recalculating, and the mapper opens without the initial snap dot.
 
+Latest Brief BP pass: on-screen and print BOM run summaries now use one compact run-details block, the line-item subtitle is simplified, section settings put Slat Range before Color, section-only post-size override controls are hidden, Generate BOM uses a fresh canonical payload snapshot, and run/settings disclosures keep the 60 second idle collapse behavior.
+
 Latest sidebar pass: run cards now remove the redundant master-settings line, segment cards show compact order summaries with bold values, length/height editing moved into segment options, segment cards have a blue 3D border, segment confirm/remove controls were reduced to a blue dot and two-click red X, and the layout map button now opens/minimizes the map.
 
 Latest calculation correction: VS F-section stock in the local fallback calculator now uses two height-cut side F-sections per panel, matching the QuickScreen vertical slat catalogue assembly.
@@ -117,6 +119,18 @@ Latest skill sync pass: the BI sidebar conventions were added to the repo skill 
 Latest Google Maps plumbing pass: `codex/google-maps-plumbing` adds the `@googlemaps/js-api-loader` dependency, env examples, a lazy singleton Maps JavaScript API loader with geometry library support, a `useGoogleMaps` hook, setup documentation, and a focused missing-key unit test without touching canvas or calculator UI.
 
 Latest property-map UI pass: `codex/calculator-property-map` adds the V3 calculator property map surface above the run/form controls, Australian address geocoding, satellite/hybrid map toggle, draggable/confirmable property pins, nullable quote `property_anchor` storage, top-level canonical `propertyAnchor`, `.nvmrc`, and focused unit coverage for geocoding, anchor gating, and canonical anchor persistence without changing canvas drawing or BOM calculation logic.
+
+Latest canvas snapshot pivot: `codex/canvas-engine-map-overlay` now captures the sidebar Google Map view as persisted Static Maps snapshot params, loads the resulting satellite image through the existing canvas underlay path, keeps drawing in the vanilla pixel-coordinate canvas engine, preserves snapshot state across product/run selection and quote reloads, and removes the custom `OverlayView`, Pan/Draw toolbar mode, diagnostic logs, and event-bridge draw-tool wiring.
+
+Latest layered snapshot pass: PR #30 now captures both satellite and roadmap Static Maps snapshots for the same view at 2x the sidebar framing size where Static Maps limits allow, opens the canvas on the centred original framing so zoom-out reveals the extra captured area, defaults Satellite to 100% and Roadmap to 50% opacity so the aerial remains visible under labels, keeps the sidebar Google Map explicitly interactive for pan/zoom framing, restores visible canvas zoom +/- controls with Ctrl-wheel and reset-to-default zoom behaviour, logs Places autocomplete success/failure clearly, writes layer toggles through the calculator reducer so they survive re-render/save/reload, renders successful layers in stack order below the existing canvas drawing layer, and migrates legacy single-image snapshots into a satellite layer with a disabled roadmap fallback.
+
+Latest mapper control simplification: PR #30 now starts the map canvas with angle snap, gate snap, and grid off, removes the Ortho toolbar option, replaces per-layer visibility checkboxes with opacity-only layer rows, and adds a single Map on/off button that hides or restores the map underlay while leaving drawn fence geometry on the canvas.
+
+Latest map regression fix: PR #30 now caps Static Maps snapshot width and height independently after the 2x viewport multiplier, stores the original sidebar viewport size for the default centred crop, lets canvas zoom-out reach the 0.5 reveal level, and fully disables angle snapping when the Angle snap checkbox is off.
+
+Latest map canvas zoom pass: PR #30 now supports direct mouse/trackpad wheel zoom over the map canvas and two-finger pinch zoom on touch screens, while keeping toolbar buttons, keyboard zoom, and reset-to-default zoom controls.
+
+Latest edit-gate workflow pass: `codex/edit-gate-workflow-v2` re-implements PR #29's persistent draggable Edit Gate dialog on top of the post-snapshot canvas, keeps Gate mode active for repeated placements, adds session-scoped cancel removal, carries gate variables through canvas/canonical round-trips, suppresses noisy hover stats, and hides the initial draw hint after the first draw click until clear.
 
 Latest Brief BN v2 pass: the sandbox BN work now completes the top-bar reorganisation by moving Map/BOM tabs into the app header as a segmented control, moving BOM actions beside them only while BOM is active, removing the duplicate in-panel action row, and preserving the icon-only settings/Describe/gate-settings conventions in the repo skill mirrors.
 

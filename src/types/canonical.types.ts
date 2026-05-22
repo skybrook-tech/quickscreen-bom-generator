@@ -13,6 +13,30 @@ export type CanonicalVariableValue = string | number | boolean;
 
 export type CanonicalVariables = Record<string, CanonicalVariableValue>;
 
+export type CanonicalMapLayerId = 'satellite' | 'roadmap';
+
+export interface CanonicalMapSnapshotLayer {
+  url: string | null;
+  visible: boolean;
+  opacity: number;
+}
+
+export interface CanonicalMapSnapshot {
+  centerLat: number;
+  centerLng: number;
+  zoom: number;
+  width: number;
+  height: number;
+  /** Original interactive map viewport used for default canvas framing. */
+  sourceViewportWidth?: number;
+  sourceViewportHeight?: number;
+  metresPerPixel: number;
+  capturedAt: string;
+  layers?: Partial<Record<CanonicalMapLayerId, CanonicalMapSnapshotLayer>>;
+  /** Legacy single-image snapshot URL from the first snapshot PR revision. */
+  url?: string;
+}
+
 export interface CanonicalPayload {
   productCode: string;
   schemaVersion: string;
@@ -21,6 +45,7 @@ export interface CanonicalPayload {
     lng: number;
     address: string;
   };
+  snapshot?: CanonicalMapSnapshot;
   job?: {
     description?: string;
     pendingGates?: Array<{
@@ -49,6 +74,7 @@ export interface CanonicalRun {
   corners?: CanonicalCorner[];
   geometry?: {
     points: Array<{ x: number; y: number }>;
+    metrePoints?: Array<{ dxMetres: number; dyMetres: number }>;
   };
 }
 

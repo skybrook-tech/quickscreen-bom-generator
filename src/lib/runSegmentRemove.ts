@@ -26,8 +26,17 @@ function splicePointsAfterTripleFenceMerge(
   if (!pts || pts.length < 4) return undefined;
   const fi = fenceIndexAtSortedIdx(sorted, prevSortedIdx);
   if (fi < 0 || fi + 3 >= pts.length) return undefined;
+  const metrePoints = geometry?.metrePoints;
   return {
     points: [...pts.slice(0, fi + 1), ...pts.slice(fi + 3)],
+    ...(metrePoints && metrePoints.length === pts.length
+      ? {
+          metrePoints: [
+            ...metrePoints.slice(0, fi + 1),
+            ...metrePoints.slice(fi + 3),
+          ],
+        }
+      : {}),
   };
 }
 
@@ -57,15 +66,34 @@ function splicePointsAfterSingleFenceRemoval(
 
   const F = fenceCount;
   if (fenceEdgeIndex === 0) {
-    return { points: pts.slice(1) };
+    return {
+      points: pts.slice(1),
+      ...(geometry?.metrePoints && geometry.metrePoints.length === pts.length
+        ? { metrePoints: geometry.metrePoints.slice(1) }
+        : {}),
+    };
   }
   if (fenceEdgeIndex === F - 1) {
-    return { points: pts.slice(0, -1) };
+    return {
+      points: pts.slice(0, -1),
+      ...(geometry?.metrePoints && geometry.metrePoints.length === pts.length
+        ? { metrePoints: geometry.metrePoints.slice(0, -1) }
+        : {}),
+    };
   }
   const removeAt = fenceEdgeIndex + 1;
   if (removeAt <= 0 || removeAt >= pts.length) return geometry;
+  const metrePoints = geometry?.metrePoints;
   return {
     points: [...pts.slice(0, removeAt), ...pts.slice(removeAt + 1)],
+    ...(metrePoints && metrePoints.length === pts.length
+      ? {
+          metrePoints: [
+            ...metrePoints.slice(0, removeAt),
+            ...metrePoints.slice(removeAt + 1),
+          ],
+        }
+      : {}),
   };
 }
 
