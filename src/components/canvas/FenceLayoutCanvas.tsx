@@ -11,6 +11,7 @@ import { useGates } from "../../context/GateContext";
 import { useProducts } from "../../hooks/useProducts";
 import { GOOGLE_MAPS_MISSING_API_KEY_MESSAGE } from "../../lib/googleMaps/loader";
 import {
+  getDefaultSnapshotViewportTransform,
   normalizeMapSnapshot,
   updateMapSnapshotLayer,
 } from "../../lib/googleMaps/staticSnapshot";
@@ -142,6 +143,7 @@ export function FenceLayoutCanvas({
     hasLoadedMap: false,
     calibrationLabel: "",
   });
+  const lastAppliedSnapshotViewportKeyRef = useRef<string | null>(null);
 
   // Gate placed on canvas but not yet configured by user
   const [pendingGate, setPendingGate] = useState<PendingGate | null>(null);
@@ -247,6 +249,7 @@ export function FenceLayoutCanvas({
 
     if (!layeredMapSnapshot) {
       setSnapshotError(null);
+      lastAppliedSnapshotViewportKeyRef.current = null;
       engine.loadMapTileLayers([], 0, 0);
       return;
     }
@@ -271,8 +274,28 @@ export function FenceLayoutCanvas({
     }
 
     setSnapshotError(null);
-    engine.setScale(1 / layeredMapSnapshot.metresPerPixel);
-    engine.fitToWidth(layeredMapSnapshot.width * layeredMapSnapshot.metresPerPixel);
+    const snapshotViewportKey = [
+      engineVersion,
+      layeredMapSnapshot.centerLat,
+      layeredMapSnapshot.centerLng,
+      layeredMapSnapshot.zoom,
+      layeredMapSnapshot.width,
+      layeredMapSnapshot.height,
+      layeredMapSnapshot.metresPerPixel,
+    ].join(":");
+    if (lastAppliedSnapshotViewportKeyRef.current !== snapshotViewportKey) {
+      const rect = canvasHostRef.current?.getBoundingClientRect();
+      const transform = getDefaultSnapshotViewportTransform(
+        layeredMapSnapshot,
+        rect?.width || 800,
+        rect?.height || 420,
+      );
+      engine.setViewportTransform({
+        ...transform,
+        scale: 1 / layeredMapSnapshot.metresPerPixel,
+      });
+      lastAppliedSnapshotViewportKeyRef.current = snapshotViewportKey;
+    }
     engine.loadMapTileLayers(
       layers,
       layeredMapSnapshot.centerLat,

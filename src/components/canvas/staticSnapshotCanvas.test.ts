@@ -24,6 +24,44 @@ function installCanvasMock() {
   );
 }
 
+function installZoomCanvasMock() {
+  const scaleCalls: Array<[number, number]> = [];
+  const context = new Proxy(
+    {
+      canvas: document.createElement("canvas"),
+      measureText: (text: string) => ({ width: text.length * 6 }),
+      getLineDash: () => [],
+      scale: (x: number, y: number) => {
+        scaleCalls.push([x, y]);
+      },
+    },
+    {
+      get(target, key) {
+        if (key in target) return target[key as keyof typeof target];
+        return () => undefined;
+      },
+      set(target, key, value) {
+        (target as Record<PropertyKey, unknown>)[key] = value;
+        return true;
+      },
+    },
+  );
+  vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+    context as unknown as CanvasRenderingContext2D,
+  );
+  vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+    callback(0);
+    return 1;
+  });
+  vi.spyOn(window, "cancelAnimationFrame").mockImplementation(() => undefined);
+
+  return {
+    latestZoom() {
+      return scaleCalls[scaleCalls.length - 1]?.[0] ?? 0;
+    },
+  };
+}
+
 function installLayerCanvasMock() {
   const drawImage = vi.fn();
   const alphaWrites: number[] = [];
@@ -185,6 +223,72 @@ describe("canvas engine Static Maps snapshot scale", () => {
 
     engine.loadMapTileLayers([], -33.8688, 19);
     expect(engine.hasSatelliteUnderlay()).toBe(false);
+
+    engine.destroy();
+    canvas.remove();
+  });
+
+  it("zooms via engine buttons, Ctrl+wheel, and reset without plain-wheel zoom", () => {
+    const { latestZoom } = installZoomCanvasMock();
+    const canvas = document.createElement("canvas");
+    document.body.appendChild(canvas);
+    Object.defineProperty(canvas, "getBoundingClientRect", {
+      value: () => ({
+        left: 0,
+        top: 0,
+        width: 640,
+        height: 360,
+        right: 640,
+        bottom: 360,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }),
+    });
+
+    const engine = initCanvasEngine(canvas, {
+      snapToGrid: false,
+      gridSize: 20,
+      showGrid: false,
+    });
+    engine.setViewportTransform({
+      pan: { x: -320, y: -180 },
+      zoom: 2,
+      scale: 10,
+    });
+    const defaultZoom = latestZoom();
+
+    engine.zoomIn();
+    expect(latestZoom()).toBeGreaterThan(defaultZoom);
+
+    engine.zoomOut();
+    engine.zoomOut();
+    expect(latestZoom()).toBeLessThan(defaultZoom);
+
+    const beforePlainWheel = latestZoom();
+    canvas.dispatchEvent(
+      new WheelEvent("wheel", {
+        bubbles: true,
+        deltaY: -100,
+        clientX: 120,
+        clientY: 120,
+      }),
+    );
+    expect(latestZoom()).toBe(beforePlainWheel);
+
+    canvas.dispatchEvent(
+      new WheelEvent("wheel", {
+        bubbles: true,
+        ctrlKey: true,
+        deltaY: -100,
+        clientX: 120,
+        clientY: 120,
+      }),
+    );
+    expect(latestZoom()).toBeGreaterThan(beforePlainWheel);
+
+    engine.resetView();
+    expect(latestZoom()).toBeCloseTo(defaultZoom, 6);
 
     engine.destroy();
     canvas.remove();

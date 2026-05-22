@@ -5,6 +5,8 @@ import type {
 } from "../../types/canonical.types";
 
 export const STATIC_MAP_MAX_DIMENSION = 640;
+export const STATIC_MAP_CAPTURE_SIZE_MULTIPLIER = 2;
+export const STATIC_MAP_DEFAULT_VIEWPORT_FRACTION = 0.5;
 
 export const MAPS_STATIC_API_ENABLEMENT_MESSAGE =
   "Maps Static API could not load this property view. Enable Maps Static API in Google Cloud Console: APIs & Services > Library > Maps Static API > Enable, then add Maps Static API to the allowed APIs on the existing Google Maps API key.";
@@ -39,7 +41,10 @@ export function createMapSnapshot(input: {
   viewportHeight: number;
   capturedAt?: string;
 }): CanonicalMapSnapshot {
-  const size = clampStaticMapSize(input.viewportWidth, input.viewportHeight);
+  const size = clampStaticMapSize(
+    input.viewportWidth * STATIC_MAP_CAPTURE_SIZE_MULTIPLIER,
+    input.viewportHeight * STATIC_MAP_CAPTURE_SIZE_MULTIPLIER,
+  );
   const zoom = Math.round(input.zoom);
   return {
     centerLat: input.centerLat,
@@ -49,6 +54,35 @@ export function createMapSnapshot(input: {
     height: size.height,
     metresPerPixel: metresPerPixelAt(input.centerLat, zoom),
     capturedAt: input.capturedAt ?? new Date().toISOString(),
+  };
+}
+
+export function getDefaultSnapshotViewportTransform(
+  snapshot: Pick<CanonicalMapSnapshot, "width" | "height">,
+  viewportWidth: number,
+  viewportHeight: number,
+) {
+  const safeViewportWidth = Math.max(1, viewportWidth || snapshot.width);
+  const safeViewportHeight = Math.max(1, viewportHeight || snapshot.height);
+  const visibleWorldWidth = Math.max(
+    1,
+    snapshot.width * STATIC_MAP_DEFAULT_VIEWPORT_FRACTION,
+  );
+  const visibleWorldHeight = Math.max(
+    1,
+    snapshot.height * STATIC_MAP_DEFAULT_VIEWPORT_FRACTION,
+  );
+  const zoom = Math.min(
+    safeViewportWidth / visibleWorldWidth,
+    safeViewportHeight / visibleWorldHeight,
+  );
+
+  return {
+    zoom,
+    pan: {
+      x: safeViewportWidth / 2 - zoom * (snapshot.width / 2),
+      y: safeViewportHeight / 2 - zoom * (snapshot.height / 2),
+    },
   };
 }
 

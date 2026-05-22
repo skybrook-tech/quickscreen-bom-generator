@@ -4,8 +4,11 @@ import {
   clampStaticMapSize,
   createLayeredMapSnapshot,
   createMapSnapshot,
+  getDefaultSnapshotViewportTransform,
   metresPerPixelAt,
   normalizeMapSnapshot,
+  STATIC_MAP_CAPTURE_SIZE_MULTIPLIER,
+  STATIC_MAP_DEFAULT_VIEWPORT_FRACTION,
   STATIC_MAP_MAX_DIMENSION,
   updateMapSnapshotLayer,
 } from "./staticSnapshot";
@@ -25,6 +28,33 @@ describe("Static Maps snapshots", () => {
     expect(clampStaticMapSize(300, 900)).toEqual({ width: 213, height: 640 });
     expect(clampStaticMapSize(480, 320)).toEqual({ width: 480, height: 320 });
     expect(STATIC_MAP_MAX_DIMENSION).toBe(640);
+  });
+
+  it("captures twice the sidebar viewport size before applying Static Maps caps", () => {
+    const snapshot = createMapSnapshot({
+      centerLat: -33.8688,
+      centerLng: 151.2093,
+      zoom: 19,
+      viewportWidth: 240,
+      viewportHeight: 180,
+      capturedAt: "2026-05-22T00:00:00.000Z",
+    });
+
+    expect(STATIC_MAP_CAPTURE_SIZE_MULTIPLIER).toBe(2);
+    expect(snapshot.width).toBe(480);
+    expect(snapshot.height).toBe(360);
+  });
+
+  it("computes the centered default canvas crop for the original sidebar framing", () => {
+    const transform = getDefaultSnapshotViewportTransform(
+      { width: 640, height: 360 },
+      640,
+      360,
+    );
+
+    expect(STATIC_MAP_DEFAULT_VIEWPORT_FRACTION).toBe(0.5);
+    expect(transform.zoom).toBeCloseTo(2, 6);
+    expect(transform.pan).toEqual({ x: -320, y: -180 });
   });
 
   it("captures snapshot params with clamped size and scale", () => {

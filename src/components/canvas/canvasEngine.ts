@@ -667,6 +667,7 @@ export function initCanvasEngine(
   let cssCanvasWidth = 0;
   let cssCanvasHeight = 0;
   let devicePixelRatioScale = 1;
+  let defaultViewportTransform: { pan: Point; zoom: number; scale?: number } | null = null;
 
   // Resize canvas to fill its CSS size
   function resizeCanvas() {
@@ -3440,9 +3441,10 @@ export function initCanvasEngine(
   }
 
   function onWheel(e: WheelEvent) {
+    if (!e.ctrlKey && !e.metaKey) return;
     e.preventDefault();
     const screen = eventToScreen(e);
-    const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+    const zoomFactor = e.deltaY < 0 ? 1.2 : 1 / 1.2;
     const newZoom = Math.max(0.1, Math.min(10, zoom * zoomFactor));
 
     // Zoom toward cursor
@@ -3572,12 +3574,12 @@ export function initCanvasEngine(
       }
       if (e.key === "+" || e.key === "=") {
         e.preventDefault();
-        zoomAtScreenPoint(canvasCenterScreenPoint(), 1.15);
+        zoomAtScreenPoint(canvasCenterScreenPoint(), 1.2);
         return;
       }
       if (e.key === "-" || e.key === "_") {
         e.preventDefault();
-        zoomAtScreenPoint(canvasCenterScreenPoint(), 0.85);
+        zoomAtScreenPoint(canvasCenterScreenPoint(), 1 / 1.2);
         return;
       }
       if (e.key === "0") {
@@ -3818,7 +3820,7 @@ export function initCanvasEngine(
   function fitToContent() {
     const allPts = runs.flatMap((r) => r.points);
     if (allPts.length === 0) {
-      fitToWidth(50);
+      resetView();
       return;
     }
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
@@ -3842,15 +3844,19 @@ export function initCanvasEngine(
   }
 
   function resetView() {
+    if (defaultViewportTransform) {
+      setViewportTransform(defaultViewportTransform);
+      return;
+    }
     fitToWidth(50);
   }
 
   function zoomIn() {
-    zoomAtScreenPoint(canvasCenterScreenPoint(), 1.15);
+    zoomAtScreenPoint(canvasCenterScreenPoint(), 1.2);
   }
 
   function zoomOut() {
-    zoomAtScreenPoint(canvasCenterScreenPoint(), 0.85);
+    zoomAtScreenPoint(canvasCenterScreenPoint(), 1 / 1.2);
   }
 
   function setSnapToGrid(s: boolean) {
@@ -3919,6 +3925,13 @@ export function initCanvasEngine(
     }
     pan = { ...next.pan };
     zoom = Math.max(0.000001, next.zoom);
+    defaultViewportTransform = {
+      pan: { ...pan },
+      zoom,
+      ...(typeof nextScale === "number" && Number.isFinite(nextScale)
+        ? { scale: nextScale }
+        : {}),
+    };
     scheduleRedraw();
   }
 
