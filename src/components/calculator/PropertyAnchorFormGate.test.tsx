@@ -1,7 +1,11 @@
 import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { PropertyAnchorFormGate, PropertyMap } from "./PropertyMap";
+import {
+  PROPERTY_MAP_INTERACTION_OPTIONS,
+  PropertyAnchorFormGate,
+  PropertyMap,
+} from "./PropertyMap";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -86,6 +90,16 @@ describe("PropertyAnchorFormGate", () => {
     act(() => root.unmount());
   });
 
+  it("keeps the sidebar Google Map interactive for framing the snapshot", () => {
+    expect(PROPERTY_MAP_INTERACTION_OPTIONS).toMatchObject({
+      gestureHandling: "greedy",
+      zoomControl: true,
+      draggable: true,
+      scrollwheel: true,
+      keyboardShortcuts: true,
+    });
+  });
+
   it("captures satellite and roadmap Static Maps layer URLs when using the current view", async () => {
     vi.stubEnv("VITE_GOOGLE_MAPS_API_KEY", "test-key");
     const requestedUrls: string[] = [];
@@ -158,7 +172,7 @@ describe("PropertyAnchorFormGate", () => {
             }),
             roadmap: expect.objectContaining({
               url: expect.stringContaining("maptype=roadmap"),
-              visible: false,
+              visible: true,
               opacity: 1,
             }),
           },

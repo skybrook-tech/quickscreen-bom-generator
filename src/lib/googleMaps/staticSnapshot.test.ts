@@ -109,7 +109,7 @@ describe("Static Maps snapshots", () => {
       opacity: 1,
     });
     expect(snapshot.layers?.roadmap).toMatchObject({
-      visible: false,
+      visible: true,
       opacity: 1,
     });
   });

@@ -59,7 +59,7 @@ const DEFAULT_LAYER_STATE: Record<
   Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">
 > = {
   satellite: { visible: true, opacity: 1 },
-  roadmap: { visible: false, opacity: 1 },
+  roadmap: { visible: true, opacity: 1 },
 };
 
 function clampOpacity(value: number | undefined): number {
@@ -135,7 +135,11 @@ export async function createLayeredMapSnapshot(
       },
       roadmap: {
         url: roadmapResult.status === "fulfilled" ? roadmapUrl : null,
-        ...DEFAULT_LAYER_STATE.roadmap,
+        visible:
+          roadmapResult.status === "fulfilled"
+            ? DEFAULT_LAYER_STATE.roadmap.visible
+            : false,
+        opacity: DEFAULT_LAYER_STATE.roadmap.opacity,
       },
     },
   };
@@ -147,6 +151,7 @@ export function normalizeMapSnapshot(
 ): CanonicalMapSnapshot | null {
   if (!snapshot) return null;
   const hasLayerShape = Boolean(snapshot.layers);
+  const isLegacySingleImageSnapshot = Boolean(snapshot.url && !hasLayerShape);
   const satelliteLegacyUrl = snapshot.layers?.satellite?.url ?? snapshot.url;
   const roadmapLegacyUrl = snapshot.layers?.roadmap?.url;
   const fallbackSatelliteUrl =
@@ -176,7 +181,7 @@ export function normalizeMapSnapshot(
           : null),
       visible:
         snapshot.layers?.roadmap?.visible ??
-        DEFAULT_LAYER_STATE.roadmap.visible,
+        (isLegacySingleImageSnapshot ? false : DEFAULT_LAYER_STATE.roadmap.visible),
       opacity: clampOpacity(
         snapshot.layers?.roadmap?.opacity ??
           DEFAULT_LAYER_STATE.roadmap.opacity,

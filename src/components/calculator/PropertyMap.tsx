@@ -41,6 +41,13 @@ const DEFAULT_ZOOM = 4;
 const PROPERTY_ZOOM = 20;
 const DEFAULT_SNAPSHOT_WIDTH = 640;
 const DEFAULT_SNAPSHOT_HEIGHT = 480;
+export const PROPERTY_MAP_INTERACTION_OPTIONS = {
+  gestureHandling: "greedy",
+  zoomControl: true,
+  draggable: true,
+  scrollwheel: true,
+  keyboardShortcuts: true,
+} as const;
 
 export function PropertyAnchorFormGate({ anchorConfirmed, children }: PropertyAnchorFormGateProps) {
   return (
@@ -351,6 +358,7 @@ function PropertyMapCanvas({
       center,
       zoom: initialSnapshot?.zoom ?? (pin ? PROPERTY_ZOOM : DEFAULT_ZOOM),
       mapTypeId: mapType,
+      ...PROPERTY_MAP_INTERACTION_OPTIONS,
       streetViewControl: false,
       fullscreenControl: false,
       mapTypeControl: false,
