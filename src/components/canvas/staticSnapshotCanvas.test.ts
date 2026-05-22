@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { initCanvasEngine } from "./canvasEngine";
+import { GATE_SEGMENT_STUB_KEYS } from "../../lib/segmentTermination";
 
 function installCanvasMock() {
   const context = new Proxy(
@@ -454,6 +455,73 @@ describe("canvas engine Static Maps snapshot scale", () => {
       endX: 360,
       endY: 229,
     });
+
+    engine.destroy();
+    canvas.remove();
+  });
+
+  it("keeps Gate mode active and supports gate variables plus session removal", () => {
+    installCanvasMock();
+    const canvas = document.createElement("canvas");
+    document.body.appendChild(canvas);
+    Object.defineProperty(canvas, "getBoundingClientRect", {
+      value: () => ({
+        left: 0,
+        top: 0,
+        width: 640,
+        height: 360,
+        right: 640,
+        bottom: 360,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }),
+    });
+
+    const variables = {
+      [GATE_SEGMENT_STUB_KEYS.gateMovement]: "single_swing",
+      [GATE_SEGMENT_STUB_KEYS.openingDirection]: "out",
+      [GATE_SEGMENT_STUB_KEYS.hingeType]: "TC-H-AT-HD-B",
+      [GATE_SEGMENT_STUB_KEYS.latchType]: "LL-DL-KA",
+      [GATE_SEGMENT_STUB_KEYS.slatGapMm]: 9,
+    };
+    const placedIds: string[] = [];
+    let engine: ReturnType<typeof initCanvasEngine>;
+    engine = initCanvasEngine(canvas, {
+      snapToGrid: false,
+      gridSize: 20,
+      showGrid: false,
+      onGatePlaced: (flatSegIdx, gateIdx) => {
+        const gateId = `gate-${gateIdx}`;
+        placedIds.push(gateId);
+        engine.setGateId(flatSegIdx, gateIdx, gateId);
+        engine.setGateVariables(gateId, variables);
+      },
+    });
+
+    engine.setViewportTransform({ pan: { x: 0, y: 0 }, zoom: 1, scale: 100 });
+    clickCanvas(canvas, 100, 100);
+    clickCanvas(canvas, 300, 100);
+    engine.setTool("gate");
+    engine.setPendingGatePlacement({
+      gateType: "single-swing",
+      widthMM: 900,
+      swingDirection: "out",
+      slidingSide: "front",
+      variables,
+    });
+
+    clickCanvas(canvas, 150, 100);
+    clickCanvas(canvas, 250, 100);
+
+    const layoutWithGates = engine.getLayout();
+    expect(placedIds).toEqual(["gate-0", "gate-1"]);
+    expect(layoutWithGates.gates).toHaveLength(2);
+    expect(layoutWithGates.gates[0].variables).toMatchObject(variables);
+    expect(layoutWithGates.gates[1].variables).toMatchObject(variables);
+
+    engine.removeGatesById(placedIds);
+    expect(engine.getLayout().gates).toHaveLength(0);
 
     engine.destroy();
     canvas.remove();
