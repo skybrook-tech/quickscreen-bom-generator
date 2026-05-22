@@ -1,4 +1,3 @@
-import { useRef, useEffect, useCallback, useState, useMemo, type MouseEvent as ReactMouseEvent } from "react";
 import {
   useRef,
   useEffect,
@@ -96,7 +95,6 @@ function createGateDraft(overrides: Partial<GateDraft> = {}): GateDraft {
 }
 
 function gateVisualFromDraft(draft: GateDraft): CanvasGateVisual & { widthMM: number } {
-  const gateType = canvasTypeFromMovement(draft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
   const gateType = canvasTypeFromMovement(
     draft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement],
   );
@@ -114,8 +112,6 @@ function gateVisualFromDraft(draft: GateDraft): CanvasGateVisual & { widthMM: nu
   };
 }
 
-function legacyGateConfigFromDraft(gateId: string, draft: GateDraft): GateConfig {
-  const gateType = canvasTypeFromMovement(draft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement]);
 function gatePostSizeFromMm(value: unknown): GateConfig["gatePostSize"] {
   const size = Number(value);
   if (size === 100) return "100x100";
@@ -140,7 +136,6 @@ function legacyGateConfigFromDraft(gateId: string, draft: GateDraft): GateConfig
     colour: "match-fence",
     slatGap: "match-fence",
     slatSize: "match-fence",
-    gatePostSize: "65x65",
     gatePostSize: gatePostSizeFromMm(
       draft.variables[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm],
     ),
@@ -259,14 +254,6 @@ export function FenceLayoutCanvas({
   const gateDraftRef = useRef(gateDraft);
   const [activeGateRef, setActiveGateRef] = useState<GateSessionRef | null>(null);
   const [sessionGateRefs, setSessionGateRefs] = useState<GateSessionRef[]>([]);
-  const [gateDialogPosition, setGateDialogPosition] = useState(() => ({
-    left: typeof window === "undefined" ? 960 : Math.max(12, window.innerWidth - 430),
-    top: 150,
-  }));
-
-  useEffect(() => {
-    gateDraftRef.current = gateDraft;
-  }, [gateDraft]);
   const [gateDialogPosition, setGateDialogPosition] = useState({
     left: 16,
     top: 16,
@@ -283,9 +270,6 @@ export function FenceLayoutCanvas({
   const handleToolChange = useCallback((tool: CanvasTool) => {
     setActiveTool(tool);
     if (tool === "gate") {
-      setGateDialogOpen(true);
-      setActiveGateRef(null);
-      setSessionGateRefs([]);
       setActiveGateRef(null);
       setSessionGateRefs([]);
       setGateDialogOpen(true);
@@ -312,8 +296,6 @@ export function FenceLayoutCanvas({
       engineRef.current?.setGateId(flatSegIdx, gateIdx, gateId);
       engineRef.current?.updateGateWidth(flatSegIdx, gateIdx, draft.widthMM);
       engineRef.current?.updateGateVisual(flatSegIdx, gateIdx, visual);
-      engineRef.current?.setGateVariables(flatSegIdx, gateIdx, draft.variables);
-      engineRef.current?.setGateTerminationPosts(flatSegIdx, gateIdx, draft.useTerminationPosts);
       engineRef.current?.setGateVariables(gateId, draft.variables);
       engineRef.current?.setGateTerminationPosts(
         flatSegIdx,
@@ -327,9 +309,6 @@ export function FenceLayoutCanvas({
           useGatePostsAsFenceTermination: draft.useTerminationPosts,
         } as GateConfig,
       });
-      const placed = { flatSegIdx, gateIdx, gateId };
-      setActiveGateRef(placed);
-      setSessionGateRefs((refs) => [...refs, placed]);
       setSessionGateRefs((refs) => [...refs, { flatSegIdx, gateIdx, gateId }]);
       setActiveGateRef(null);
       setGateDialogOpen(true);
@@ -358,7 +337,6 @@ export function FenceLayoutCanvas({
           useTerminationPosts: gate?.useGatePostsAsFenceTermination ?? true,
           variables: gate?.variables,
         }));
-        setActiveGateRef(gateId ? { flatSegIdx, gateIdx, gateId } : null);
         setActiveGateRef({ flatSegIdx, gateIdx, gateId });
         setSessionGateRefs([]);
         setGateDialogOpen(true);
@@ -504,11 +482,6 @@ export function FenceLayoutCanvas({
       activeGateRef.gateIdx,
       visual,
     );
-    engineRef.current?.setGateVariables(
-      activeGateRef.flatSegIdx,
-      activeGateRef.gateIdx,
-      gateDraft.variables,
-    );
     engineRef.current?.setGateVariables(activeGateRef.gateId, gateDraft.variables);
     engineRef.current?.setGateTerminationPosts(
       activeGateRef.flatSegIdx,
@@ -523,7 +496,6 @@ export function FenceLayoutCanvas({
         useGatePostsAsFenceTermination: gateDraft.useTerminationPosts,
       } as Partial<GateConfig>,
     });
-  }, [activeGateRef, gateDispatch, gateDraft]);
   }, [activeGateRef, gateDraft, gateDispatch]);
 
   useEffect(() => {
@@ -585,14 +557,6 @@ export function FenceLayoutCanvas({
     setActiveTool("move");
   }
 
-  function startGateDialogDrag(event: ReactMouseEvent<HTMLDivElement>) {
-    event.preventDefault();
-    const startX = event.clientX;
-    const startY = event.clientY;
-    const start = gateDialogPosition;
-    const onMove = (moveEvent: MouseEvent) => {
-      const maxLeft = Math.max(12, window.innerWidth - 420);
-      const maxTop = Math.max(12, window.innerHeight - 560);
   function startGateDialogDrag(event: ReactPointerEvent<HTMLDivElement>) {
     event.preventDefault();
     const hostRect = canvasHostRef.current?.getBoundingClientRect();
@@ -616,11 +580,6 @@ export function FenceLayoutCanvas({
       });
     };
     const onUp = () => {
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-    };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerup", onUp);
     };
@@ -777,7 +736,6 @@ export function FenceLayoutCanvas({
 
       {gateDialogOpen && (
         <div
-          className="fixed z-50 w-[min(92vw,410px)] overflow-hidden rounded-xl border border-brand-border bg-brand-card shadow-2xl"
           className="absolute z-50 w-[min(92%,410px)] overflow-hidden rounded-xl border border-brand-border bg-brand-card shadow-2xl"
           style={{ left: gateDialogPosition.left, top: gateDialogPosition.top }}
           role="dialog"
@@ -786,14 +744,6 @@ export function FenceLayoutCanvas({
         >
           <div
             className="cursor-move border-b border-brand-border bg-brand-bg/80 px-4 py-3"
-            onMouseDown={startGateDialogDrag}
-          >
-            <h2 className="text-sm font-black text-brand-text">Edit Gate</h2>
-            <p className="mt-0.5 text-xs font-semibold text-brand-muted">
-              Configure the gate, hover a fence line to preview, click to place. Save closes this panel.
-            </p>
-          </div>
-          <div className="max-h-[70vh] space-y-4 overflow-y-auto p-4">
             onPointerDown={startGateDialogDrag}
           >
             <h2 className="text-sm font-black text-brand-text">Edit Gate</h2>
@@ -808,7 +758,6 @@ export function FenceLayoutCanvas({
               max={6500}
               step={50}
               value={gateDraft.widthMM}
-              onChange={(value) => setGateDraft((draft) => ({ ...draft, widthMM: Number(value) || DEFAULT_GATE_WIDTH_FALLBACK }))}
               onChange={(value) =>
                 setGateDraft((draft) => ({
                   ...draft,
@@ -822,7 +771,6 @@ export function FenceLayoutCanvas({
               <label className="block text-sm font-semibold text-brand-text">
                 Gate type
                 <select
-                  value={canvasTypeFromMovement(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement])}
                   value={canvasTypeFromMovement(
                     gateDraft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement],
                   )}
@@ -834,12 +782,6 @@ export function FenceLayoutCanvas({
                   <option value="sliding">Sliding</option>
                 </select>
               </label>
-
-              <label className="block text-sm font-semibold text-brand-text">
-                {canvasTypeFromMovement(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement]) === "sliding" ? "Slide direction" : "Swing direction"}
-                <select
-                  value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.openingDirection] ?? "out")}
-                  onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.openingDirection, event.target.value)}
               <label className="block text-sm font-semibold text-brand-text">
                 {canvasTypeFromMovement(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement]) === "sliding"
                   ? "Slide direction"
@@ -871,7 +813,6 @@ export function FenceLayoutCanvas({
                 Sliding side
                 <select
                   value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? "front")}
-                  onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.slidingSide, event.target.value)}
                   onChange={(event) =>
                     updateGateVariable(GATE_SEGMENT_STUB_KEYS.slidingSide, event.target.value)
                   }
@@ -888,7 +829,6 @@ export function FenceLayoutCanvas({
                 Colour
                 <select
                   value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.colourCode] ?? "B")}
-                  onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.colourCode, event.target.value)}
                   onChange={(event) =>
                     updateGateVariable(GATE_SEGMENT_STUB_KEYS.colourCode, event.target.value)
                   }
@@ -903,7 +843,6 @@ export function FenceLayoutCanvas({
                 Slat size
                 <select
                   value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? 65)}
-                  onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.slatSizeMm, Number(event.target.value))}
                   onChange={(event) =>
                     updateGateVariable(GATE_SEGMENT_STUB_KEYS.slatSizeMm, Number(event.target.value))
                   }
@@ -917,7 +856,6 @@ export function FenceLayoutCanvas({
                 Gap
                 <select
                   value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? 9)}
-                  onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.slatGapMm, Number(event.target.value))}
                   onChange={(event) =>
                     updateGateVariable(GATE_SEGMENT_STUB_KEYS.slatGapMm, Number(event.target.value))
                   }
@@ -932,41 +870,6 @@ export function FenceLayoutCanvas({
 
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <label className="block text-sm font-semibold text-brand-text">
-                Gate height
-                <input
-                  type="number"
-                  min={600}
-                  max={2500}
-                  step={50}
-                  value={Number(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.gateHeightMm] ?? 1800)}
-                  onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.gateHeightMm, Number(event.target.value))}
-                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
-                />
-              </label>
-              <label className="block text-sm font-semibold text-brand-text">
-                Gate post size
-                <select
-                  value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm] ?? 50)}
-                  onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.gatePostSizeMm, Number(event.target.value))}
-                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
-                >
-                  <option value="50">50mm</option>
-                  <option value="65">65mm</option>
-                  <option value="75">75mm</option>
-                  <option value="100">100mm</option>
-                </select>
-              </label>
-            </div>
-
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <label className="block text-sm font-semibold text-brand-text">
-                Hinges
-                <select
-                  value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B")}
-                  onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.hingeType, event.target.value)}
-                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
-                >
-                  {HINGE_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                 Gate height
                 <input
                   type="number"
@@ -1016,10 +919,6 @@ export function FenceLayoutCanvas({
                 Latch
                 <select
                   value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.latchType] ?? "LL-DL-KA")}
-                  onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.latchType, event.target.value)}
-                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
-                >
-                  {LATCH_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                   onChange={(event) =>
                     updateGateVariable(GATE_SEGMENT_STUB_KEYS.latchType, event.target.value)
                   }
@@ -1037,10 +936,6 @@ export function FenceLayoutCanvas({
                 Drop bolt
                 <select
                   value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? "none")}
-                  onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.dropBoltType, event.target.value)}
-                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
-                >
-                  {DROP_BOLT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                   onChange={(event) =>
                     updateGateVariable(GATE_SEGMENT_STUB_KEYS.dropBoltType, event.target.value)
                   }
@@ -1055,10 +950,6 @@ export function FenceLayoutCanvas({
                 Gate stop
                 <select
                   value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "none")}
-                  onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.gateStopType, event.target.value)}
-                  className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30"
-                >
-                  {GATE_STOP_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
                   onChange={(event) =>
                     updateGateVariable(GATE_SEGMENT_STUB_KEYS.gateStopType, event.target.value)
                   }
@@ -1073,24 +964,6 @@ export function FenceLayoutCanvas({
 
             {canvasTypeFromMovement(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.gateMovement]) === "sliding" && (
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <label className="block text-sm font-semibold text-brand-text">
-                  Track
-                  <select value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")} onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.slidingTrackType, event.target.value)} className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30">
-                    {SLIDING_TRACK_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                  </select>
-                </label>
-                <label className="block text-sm font-semibold text-brand-text">
-                  Guide
-                  <select value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.slidingGuideType] ?? "XPSG-GUIDE")} onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.slidingGuideType, event.target.value)} className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30">
-                    {SLIDING_GUIDE_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                  </select>
-                </label>
-                <label className="block text-sm font-semibold text-brand-text">
-                  Catch
-                  <select value={String(gateDraft.variables[GATE_SEGMENT_STUB_KEYS.slidingCatchType] ?? "XPSG-CATCH-U")} onChange={(event) => updateGateVariable(GATE_SEGMENT_STUB_KEYS.slidingCatchType, event.target.value)} className="mt-1 w-full rounded-md border border-brand-border bg-brand-bg px-3 py-2 text-sm text-brand-text focus:border-brand-accent focus:outline-none focus:ring-2 focus:ring-brand-accent/30">
-                    {SLIDING_CATCH_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-                  </select>
-                </label>
                 {[
                   [GATE_SEGMENT_STUB_KEYS.slidingTrackType, "Track", SLIDING_TRACK_OPTIONS],
                   [GATE_SEGMENT_STUB_KEYS.slidingGuideType, "Guide", SLIDING_GUIDE_OPTIONS],
@@ -1116,7 +989,6 @@ export function FenceLayoutCanvas({
               <input
                 type="checkbox"
                 checked={gateDraft.useTerminationPosts}
-                onChange={(event) => setGateDraft((draft) => ({ ...draft, useTerminationPosts: event.target.checked }))}
                 onChange={(event) =>
                   setGateDraft((draft) => ({
                     ...draft,
@@ -1129,8 +1001,6 @@ export function FenceLayoutCanvas({
             </label>
           </div>
           <div className="flex gap-2 border-t border-brand-border bg-brand-bg/70 p-4">
-            <button type="button" onClick={handleGateDialogSave} className="flex-1 rounded-md bg-brand-accent px-4 py-2 text-sm font-semibold text-white hover:bg-brand-accent-hover">Save</button>
-            <button type="button" onClick={handleGateDialogCancel} className="rounded-md border border-brand-border px-4 py-2 text-sm font-medium text-brand-muted hover:text-brand-text">Cancel</button>
             <button
               type="button"
               onClick={handleGateDialogSave}
