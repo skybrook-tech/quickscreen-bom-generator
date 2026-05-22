@@ -15,20 +15,6 @@ Build a data-driven BOM (Bill of Materials) quoting configurator for Glass Outle
 
 ---
 
-## May 20, 2026 - Brief BQ map gate placement
-
-UX finding:
-- The mapper should treat Gate mode as an active editing workflow, not a one-shot modal interruption. Users need to choose gate settings while visually previewing the opening on a fence line, then place multiple similar gates without reopening setup.
-- Persistent cursor-attached stats were competing with drawing and gate placement. The first-draw hint is useful only before the first click; after that it should stay quiet until the map is cleared.
-
-Changes applied:
-- Replaced the old gate placement modal with a persistent draggable Edit Gate dialog opened immediately by the Gate tool.
-- Synced the dialog draft into the gate hover preview and into the active placed gate, including movement type, opening direction, sliding side, hardware choices, colour, height, slat settings, and gate-post termination behavior.
-- Kept Gate mode active after placement so repeated gate placement works from one dialog session; Save closes the workflow, and Cancel removes gates placed during the current session.
-- Removed the fence-line hover stats overlay and suppressed the "Click to start fence" hint after the first draw click until Clear/New Job resets the canvas.
-
-Verification plan:
-- Run typecheck, tests, build, and a `/fence-calculator` route smoke check before pushing the BQ branch.
 ## May 20, 2026 - Brief BP BOM cleanup and settings timer
 
 UX finding:
