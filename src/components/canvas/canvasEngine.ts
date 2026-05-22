@@ -84,6 +84,9 @@ export type CanvasGateType = "single-swing" | "double-swing" | "sliding";
 export type CanvasGateSwingDirection = "in" | "out" | "left" | "right";
 export type CanvasGateSlidingSide = "front" | "back";
 
+const MIN_CANVAS_ZOOM = 0.5;
+const MAX_CANVAS_ZOOM = 10;
+
 export interface CanvasGateVisual {
   gateType: CanvasGateType;
   swingDirection?: CanvasGateSwingDirection;
@@ -591,13 +594,15 @@ export function initCanvasEngine(
    * Compute the effective snap angle set for the current context.
    * - Shift held: only 180° (straight continuation) — locks to straight line.
    * - Snap on: nearest 5° turn so the user can draw at any practical angle.
-   * - Snap off: product metadata can still constrain angles where supplied.
+   * - Snap off: no angle constraint; the clicked point lands exactly where placed.
    */
   function effectiveSnapAngles(shiftHeld: boolean): number[] {
+    if (!snap) return [];
     if (shiftHeld) return [180];
-    if (snap) return fiveDegreeAngles();
-    if (allowedAngles.length === 0) return [];
-    return Array.from(new Set([...allowedAngles, 180]));
+    const angles = fiveDegreeAngles();
+    return allowedAngles.length > 0
+      ? Array.from(new Set([...angles, ...allowedAngles]))
+      : angles;
   }
   let mouseCanvas: Point = { x: 0, y: 0 };
   let isPanning = false;
@@ -619,8 +624,8 @@ export function initCanvasEngine(
   let pendingTextNote: { start: Point; current: Point } | null = null;
   let pendingBuildingRect: { start: Point; current: Point } | null = null;
   let pendingFreehandStroke: CanvasFreehandStroke | null = null;
-  let mapImage: HTMLImageElement | null = null;
-  let mapOpacity = 0.5;
+  let mapLayers: Array<{ image: HTMLImageElement; opacity: number }> = [];
+  let mapLoadVersion = 0;
   let mapWorldOriginX = 0; // world px — centre of the tile
   let mapWorldOriginY = 0; // world px — centre of the tile
   let mapWorldWidth = 0; // world px
@@ -650,6 +655,7 @@ export function initCanvasEngine(
   let lastTouchPointer: CanvasPointerLike | null = null;
   let lastTapTime = 0;
   let lastTapScreen: Point | null = null;
+  let pinchZoom: { lastDistance: number } | null = null;
   // Post positions from BOM result. In canvas world coordinates — the same
   // coordinate space as the drawn nodes (canvas pixels before pan/zoom transform).
   // null = nothing to render.
@@ -667,6 +673,7 @@ export function initCanvasEngine(
   let cssCanvasWidth = 0;
   let cssCanvasHeight = 0;
   let devicePixelRatioScale = 1;
+  let defaultViewportTransform: { pan: Point; zoom: number; scale?: number } | null = null;
 
   // Resize canvas to fill its CSS size
   function resizeCanvas() {
@@ -939,7 +946,7 @@ export function initCanvasEngine(
     if (orthoMode) {
       return snapBearingFrom(lastPt, snapped, shiftDown ? 45 : 90);
     }
-    if (shiftDown && run.points.length >= 2) {
+    if (snap && shiftDown && run.points.length >= 2) {
       const prev = run.points[run.points.length - 2];
       return snapToAllowedAngle(prev, lastPt, snapped, [180]);
     }
@@ -1073,17 +1080,19 @@ export function initCanvasEngine(
 
     // Map underlay — drawn inside the pan/zoom transform so the image scales
     // with the canvas coordinate system and stays correctly georeferenced.
-    if (mapImage && mapWorldWidth > 0) {
-      ctx.save();
-      ctx.globalAlpha = mapOpacity;
-      ctx.drawImage(
-        mapImage,
-        mapWorldOriginX - mapWorldWidth / 2,
-        mapWorldOriginY - mapWorldHeight / 2,
-        mapWorldWidth,
-        mapWorldHeight,
-      );
-      ctx.restore();
+    if (mapLayers.length > 0 && mapWorldWidth > 0) {
+      for (const layer of mapLayers) {
+        ctx.save();
+        ctx.globalAlpha = layer.opacity;
+        ctx.drawImage(
+          layer.image,
+          mapWorldOriginX - mapWorldWidth / 2,
+          mapWorldOriginY - mapWorldHeight / 2,
+          mapWorldWidth,
+          mapWorldHeight,
+        );
+        ctx.restore();
+      }
     }
 
     // Grid
@@ -2706,7 +2715,9 @@ export function initCanvasEngine(
       return;
     }
 
-    if (e.button !== 0) return;
+    if (e.button !== 0) {
+      return;
+    }
 
     const canvasPt = eventToCanvas(e);
     let worldPt = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
@@ -3333,8 +3344,44 @@ export function initCanvasEngine(
     };
   }
 
+  function touchToScreenPoint(touch: Touch): Point {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top,
+    };
+  }
+
+  function touchPairDistance(touches: TouchList): number {
+    const a = touches[0];
+    const b = touches[1];
+    if (!a || !b) return 0;
+    const dx = a.clientX - b.clientX;
+    const dy = a.clientY - b.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function touchPairCenter(touches: TouchList): Point {
+    const a = touches[0];
+    const b = touches[1];
+    if (!a || !b) return canvasCenterScreenPoint();
+    const aScreen = touchToScreenPoint(a);
+    const bScreen = touchToScreenPoint(b);
+    return {
+      x: (aScreen.x + bScreen.x) / 2,
+      y: (aScreen.y + bScreen.y) / 2,
+    };
+  }
+
   function onTouchStart(e: TouchEvent) {
-    if (e.touches.length !== 1 || editingLabel) return;
+    if (editingLabel) return;
+    if (e.touches.length === 2) {
+      pinchZoom = { lastDistance: touchPairDistance(e.touches) };
+      lastTouchPointer = null;
+      e.preventDefault();
+      return;
+    }
+    if (e.touches.length !== 1) return;
     const pointer = touchToPointer(e.touches[0], e);
     lastTouchPointer = pointer;
     pointer.preventDefault();
@@ -3342,6 +3389,24 @@ export function initCanvasEngine(
   }
 
   function onTouchMove(e: TouchEvent) {
+    if (e.touches.length === 2) {
+      const distance = touchPairDistance(e.touches);
+      if (pinchZoom && pinchZoom.lastDistance > 0 && distance > 0) {
+        zoomAtScreenPoint(
+          touchPairCenter(e.touches),
+          distance / pinchZoom.lastDistance,
+        );
+      }
+      pinchZoom = { lastDistance: distance };
+      e.preventDefault();
+      return;
+    }
+    if (pinchZoom) {
+      pinchZoom = null;
+      lastTouchPointer = null;
+      e.preventDefault();
+      return;
+    }
     if (e.touches.length !== 1) return;
     const pointer = touchToPointer(e.touches[0], e);
     lastTouchPointer = pointer;
@@ -3350,6 +3415,12 @@ export function initCanvasEngine(
   }
 
   function onTouchEnd(e: TouchEvent) {
+    if (pinchZoom) {
+      pinchZoom = null;
+      lastTouchPointer = null;
+      e.preventDefault();
+      return;
+    }
     const touch = e.changedTouches[0];
     const pointer = touch ? touchToPointer(touch, e) : lastTouchPointer;
     if (!pointer) return;
@@ -3438,16 +3509,8 @@ export function initCanvasEngine(
   function onWheel(e: WheelEvent) {
     e.preventDefault();
     const screen = eventToScreen(e);
-    const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
-    const newZoom = Math.max(0.1, Math.min(10, zoom * zoomFactor));
-
-    // Zoom toward cursor
-    pan = {
-      x: screen.x - (screen.x - pan.x) * (newZoom / zoom),
-      y: screen.y - (screen.y - pan.y) * (newZoom / zoom),
-    };
-    zoom = newZoom;
-    scheduleRedraw();
+    const zoomFactor = e.deltaY < 0 ? 1.2 : 1 / 1.2;
+    zoomAtScreenPoint(screen, zoomFactor);
   }
 
   function onContextMenu(e: MouseEvent) {
@@ -3487,13 +3550,24 @@ export function initCanvasEngine(
   }
 
   function zoomAtScreenPoint(screen: Point, factor: number) {
-    const newZoom = Math.max(0.1, Math.min(10, zoom * factor));
+    const newZoom = Math.max(
+      MIN_CANVAS_ZOOM,
+      Math.min(MAX_CANVAS_ZOOM, zoom * factor),
+    );
     pan = {
       x: screen.x - (screen.x - pan.x) * (newZoom / zoom),
       y: screen.y - (screen.y - pan.y) * (newZoom / zoom),
     };
     zoom = newZoom;
     scheduleRedraw();
+  }
+
+  function canvasCenterScreenPoint(): Point {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (cssCanvasWidth || rect.width || canvas.width || 800) / 2,
+      y: (cssCanvasHeight || rect.height || canvas.height || 420) / 2,
+    };
   }
 
   function onKeyDown(e: KeyboardEvent) {
@@ -3560,12 +3634,12 @@ export function initCanvasEngine(
       }
       if (e.key === "+" || e.key === "=") {
         e.preventDefault();
-        zoomAtScreenPoint({ x: canvas.width / 2, y: canvas.height / 2 }, 1.15);
+        zoomAtScreenPoint(canvasCenterScreenPoint(), 1.2);
         return;
       }
       if (e.key === "-" || e.key === "_") {
         e.preventDefault();
-        zoomAtScreenPoint({ x: canvas.width / 2, y: canvas.height / 2 }, 0.85);
+        zoomAtScreenPoint(canvasCenterScreenPoint(), 1 / 1.2);
         return;
       }
       if (e.key === "0") {
@@ -3806,7 +3880,7 @@ export function initCanvasEngine(
   function fitToContent() {
     const allPts = runs.flatMap((r) => r.points);
     if (allPts.length === 0) {
-      fitToWidth(50);
+      resetView();
       return;
     }
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
@@ -3830,7 +3904,19 @@ export function initCanvasEngine(
   }
 
   function resetView() {
+    if (defaultViewportTransform) {
+      setViewportTransform(defaultViewportTransform);
+      return;
+    }
     fitToWidth(50);
+  }
+
+  function zoomIn() {
+    zoomAtScreenPoint(canvasCenterScreenPoint(), 1.2);
+  }
+
+  function zoomOut() {
+    zoomAtScreenPoint(canvasCenterScreenPoint(), 1 / 1.2);
   }
 
   function setSnapToGrid(s: boolean) {
@@ -3880,6 +3966,35 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  function setViewportTransform(next: {
+    pan: Point;
+    zoom: number;
+    scale?: number;
+  }) {
+    const nextScale = next.scale;
+    if (
+      typeof nextScale === "number" &&
+      Number.isFinite(nextScale) &&
+      Math.abs(nextScale - scale) > 1e-6
+    ) {
+      scale = nextScale;
+      for (const run of runs) {
+        rebuildSegmentsPreservingGates(run, scale);
+      }
+      notifyChange();
+    }
+    pan = { ...next.pan };
+    zoom = Math.max(0.000001, next.zoom);
+    defaultViewportTransform = {
+      pan: { ...pan },
+      zoom,
+      ...(typeof nextScale === "number" && Number.isFinite(nextScale)
+        ? { scale: nextScale }
+        : {}),
+    };
+    scheduleRedraw();
+  }
+
   /**
    * Load a Google Static Maps tile and register its geo-scale so the image is
    * drawn at the correct real-world size inside the canvas coordinate system.
@@ -3895,9 +4010,24 @@ export function initCanvasEngine(
     lat: number,
     mapZoom: number,
   ) {
-    mapOpacity = opacity;
-    if (!imageUrl) {
-      mapImage = null;
+    loadMapTileLayers(
+      imageUrl ? [{ imageUrl, opacity }] : [],
+      lat,
+      mapZoom,
+    );
+  }
+
+  function loadMapTileLayers(
+    layers: Array<{ imageUrl: string; opacity: number }>,
+    lat: number,
+    mapZoom: number,
+  ) {
+    const visibleLayers = layers.filter(
+      (layer) => layer.imageUrl && layer.opacity > 0,
+    );
+    const loadVersion = ++mapLoadVersion;
+    if (visibleLayers.length === 0) {
+      mapLayers = [];
       mapWorldWidth = 0;
       scheduleRedraw();
       return;
@@ -3908,31 +4038,52 @@ export function initCanvasEngine(
     const metersPerPixel =
       (156543.03392 * Math.cos((lat * Math.PI) / 180)) / Math.pow(2, mapZoom);
 
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      mapImage = img;
-      // Canvas world size of the tile (world pixels = metres × scale)
-      mapWorldWidth = img.width * metersPerPixel * scale;
-      mapWorldHeight = img.height * metersPerPixel * scale;
-      // Anchor the tile centre to the current view centre so the map appears
-      // immediately beneath the visible canvas area when loaded.
-      const cw = cssCanvasWidth || canvas.getBoundingClientRect().width || 800;
-      const ch = cssCanvasHeight || canvas.getBoundingClientRect().height || 400;
-      mapWorldOriginX = (cw / 2 - pan.x) / zoom;
-      mapWorldOriginY = (ch / 2 - pan.y) / zoom;
-      scheduleRedraw();
-    };
-    img.onerror = () => {
-      mapImage = null;
-      mapWorldWidth = 0;
-      scheduleRedraw();
-    };
-    img.src = imageUrl;
+    Promise.allSettled(
+      visibleLayers.map(
+        (layer) =>
+          new Promise<{ image: HTMLImageElement; opacity: number }>(
+            (resolve, reject) => {
+              const img = new Image();
+              img.crossOrigin = "anonymous";
+              img.onload = () =>
+                resolve({ image: img, opacity: layer.opacity });
+              img.onerror = () => reject(new Error("Map layer failed to load"));
+              img.src = layer.imageUrl;
+            },
+          ),
+      ),
+    )
+      .then((results) => {
+        if (loadVersion !== mapLoadVersion) return;
+        const loadedLayers = results.flatMap((result) =>
+          result.status === "fulfilled" ? [result.value] : [],
+        );
+        if (loadedLayers.length === 0) {
+          mapLayers = [];
+          mapWorldWidth = 0;
+          scheduleRedraw();
+          return;
+        }
+        mapLayers = loadedLayers;
+        const firstImage = loadedLayers[0].image;
+        mapWorldWidth = firstImage.width * metersPerPixel * scale;
+        mapWorldHeight = firstImage.height * metersPerPixel * scale;
+        const cw = cssCanvasWidth || canvas.getBoundingClientRect().width || 800;
+        const ch = cssCanvasHeight || canvas.getBoundingClientRect().height || 400;
+        mapWorldOriginX = (cw / 2 - pan.x) / zoom;
+        mapWorldOriginY = (ch / 2 - pan.y) / zoom;
+        scheduleRedraw();
+      })
+      .catch(() => {
+        if (loadVersion !== mapLoadVersion) return;
+        mapLayers = [];
+        mapWorldWidth = 0;
+        scheduleRedraw();
+      });
   }
 
   function setMapOpacity(opacity: number) {
-    mapOpacity = opacity;
+    mapLayers = mapLayers.map((layer) => ({ ...layer, opacity }));
     scheduleRedraw();
   }
 
@@ -4053,7 +4204,7 @@ export function initCanvasEngine(
   }
 
   function hasSatelliteUnderlay() {
-    return mapImage !== null;
+    return mapLayers.length > 0;
   }
 
   function contentBounds() {
@@ -4085,7 +4236,7 @@ export function initCanvasEngine(
   }
 
   function printMap(options: { includeSatellite?: boolean; jobName?: string } = {}) {
-    const originalOpacity = mapOpacity;
+    const originalMapLayers = mapLayers;
     const originalZoom = zoom;
     const originalPan = { ...pan };
     const bounds = contentBounds();
@@ -4099,7 +4250,7 @@ export function initCanvasEngine(
         y: H / 2 - zoom * (bounds.minY + bounds.height / 2),
       };
     }
-    if (!options.includeSatellite) mapOpacity = 0;
+    if (!options.includeSatellite) mapLayers = [];
     draw();
     const dataUrl = canvas.toDataURL("image/png");
     const layout = getLayout();
@@ -4128,7 +4279,7 @@ export function initCanvasEngine(
         return `<div class="run-summary"><strong>${run.label} · ${run.totalLengthM.toFixed(2)}m${gatePart}</strong><ul>${sectionRows}</ul></div>`;
       })
       .join("");
-    mapOpacity = originalOpacity;
+    mapLayers = originalMapLayers;
     zoom = originalZoom;
     pan = originalPan;
     draw();
@@ -4346,6 +4497,8 @@ export function initCanvasEngine(
     redo,
     clear,
     resetView,
+    zoomIn,
+    zoomOut,
     setSnapToGrid,
     setOrthoMode,
     setGateSnapTo100mm,
@@ -4353,8 +4506,10 @@ export function initCanvasEngine(
     setAllowedAngles,
     setShowGrid,
     setScale,
+    setViewportTransform,
     setMapOpacity,
     loadMapTile,
+    loadMapTileLayers,
     updateGateWidth,
     updateGateVisual,
     setGateId,

@@ -40,6 +40,7 @@ interface FenceLayoutCanvasProps {
   onFlatSegmentHoverChange?: (flatSegIdx: number) => void;
   /** Draw tool idle: click existing segment — select in run list (v4), do not start a new run. */
   onFenceSegmentClick?: (flatSegIdx: number) => void;
+  propertyAnchor?: { lat: number; lng: number; address: string } | null;
 }
 
 export function FenceLayoutCanvas({
@@ -56,6 +57,7 @@ export function FenceLayoutCanvas({
   onFenceSegmentClick,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasHostRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
   const { state: fenceState } = useFenceConfig();
   const { data: products } = useProducts();
@@ -99,11 +101,10 @@ export function FenceLayoutCanvas({
   const [activeTool, setActiveTool] = useState<
     "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand"
   >("draw");
-  const [snapEnabled, setSnapEnabled] = useState(true);
+  const [snapEnabled, setSnapEnabled] = useState(false);
   const [gateSnap100, setGateSnap100] = useState(false);
-  const [showGrid, setShowGrid] = useState(true);
+  const [showGrid, setShowGrid] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const [orthoEnabled, setOrthoEnabled] = useState(false);
   const [freehandStyle, setFreehandStyleState] = useState({
     color: "rgba(14,165,233,0.9)",
     width: 3,
@@ -157,9 +158,9 @@ export function FenceLayoutCanvas({
     if (!canvasRef.current) return;
 
     const engine = initCanvasEngine(canvasRef.current, {
-      snapToGrid: true,
+      snapToGrid: false,
       gridSize: 20,
-      showGrid: true,
+      showGrid: false,
       allowedAngles,
       onGatePlaced: handleGatePlaced,
       onLayoutChange: (layout) => {
@@ -229,6 +230,10 @@ export function FenceLayoutCanvas({
     engineRef.current?.setShowGrid(showGrid);
   }, [showGrid]);
 
+  useEffect(() => {
+    engineRef.current?.setGateSnapTo100mm(gateSnap100);
+  }, [gateSnap100]);
+
   // Sync postPositions prop into the canvas engine
   useEffect(() => {
     engineRef.current?.setPostPositions(postPositions ?? null);
@@ -278,8 +283,6 @@ export function FenceLayoutCanvas({
         onToggleGrid={setShowGrid}
         expanded={expanded}
         onToggleExpand={setExpanded}
-        orthoEnabled={orthoEnabled}
-        onOrthoToggle={setOrthoEnabled}
         freehandStyle={freehandStyle}
         onFreehandStyleChange={handleFreehandStyleChange}
         onHelpOpen={() => {}}
@@ -310,12 +313,16 @@ export function FenceLayoutCanvas({
         />
       ) : null}
 
-      <div className="relative min-h-0 flex-1">
+      <div
+        ref={canvasHostRef}
+        className="relative min-h-0 flex-1 overflow-hidden bg-brand-bg"
+      >
         <canvas
           ref={canvasRef}
-          className="w-full bg-brand-bg block h-full"
+          className="block h-full w-full bg-brand-bg"
           style={{ cursor: "crosshair" }}
         />
+        {renderOverlay?.(runSummaries)}
 
         {/* Single hint strip — two overlapping absolute rows caused unreadable text */}
         <div className="absolute bottom-2 left-2 right-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-brand-muted pointer-events-none select-none">
@@ -338,7 +345,6 @@ export function FenceLayoutCanvas({
           </span>
         </div>
 
-        {renderOverlay?.(runSummaries)}
       </div>
 
 

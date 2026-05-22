@@ -46,6 +46,7 @@ import {
   GATE_SEGMENT_STUB_KEYS,
   SEGMENT_TERMINATION_KEYS,
 } from '../../lib/segmentTermination';
+import { normalizeMapSnapshot } from '../../lib/googleMaps/staticSnapshot';
 
 // ---------------------------------------------------------------------------
 // Stable ID map — keyed by a deterministic descriptor so round-trips preserve
@@ -271,6 +272,10 @@ function terminationVariablesForSegment(
       nonSystemSubtypeForCanvasTermination(seg.endTermination);
   }
   return Object.keys(variables).length ? variables : undefined;
+}
+
+function geometryPointsForRun(_payload: CanonicalPayload, run: CanonicalRun) {
+  return run.geometry?.points;
 }
 
 function expandSegmentWithGates(
@@ -646,19 +651,25 @@ export function mergeCanonicalPreservingSegmentMeta(
   generated: CanonicalPayload,
 ): CanonicalPayload {
   const prevRuns = new Map(previous.runs.map((r) => [r.runId, r]));
+  const snapshot =
+    normalizeMapSnapshot(generated.snapshot ?? previous.snapshot) ??
+    generated.snapshot ??
+    previous.snapshot;
   return {
     ...generated,
     propertyAnchor: generated.propertyAnchor ?? previous.propertyAnchor,
+    snapshot,
     runs: generated.runs.map((genRun) => {
+      const anchoredRun = genRun;
       const prevRun = prevRuns.get(genRun.runId);
-      if (!prevRun) return genRun;
+      if (!prevRun) return anchoredRun;
       const prevSegMap = new Map(prevRun.segments.map((s) => [s.segmentId, s]));
       return {
-        ...genRun,
+        ...anchoredRun,
         variables: { ...(prevRun.variables ?? {}), ...(genRun.variables ?? {}) },
         leftBoundary: prevRun.leftBoundary,
         rightBoundary: prevRun.rightBoundary,
-        segments: genRun.segments.map((gs) => {
+        segments: anchoredRun.segments.map((gs) => {
           const ps = prevSegMap.get(gs.segmentId);
           if (!ps) return gs;
           return {
@@ -704,7 +715,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
     // fewer geometry points than fence segments after a gate split; in that
     // case per-segment geometry_angle_deg hints preserve turns instead of
     // falling back to a flat straight line.
-    const geomPts = run.geometry?.points;
+    const geomPts = geometryPointsForRun(payload, run);
     const useGeometry = !!(geomPts && geomPts.length >= 2);
 
     let xCursor = 0;       // used only in flat-horizontal fallback

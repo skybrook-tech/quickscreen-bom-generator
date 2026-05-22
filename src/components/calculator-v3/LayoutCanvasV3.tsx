@@ -18,6 +18,7 @@ import {
 } from '../../lib/gateOptionRules';
 import type { CanvasGateVisual, CanvasLayout } from '../canvas/canvasEngine';
 import type { initCanvasEngine } from '../canvas/canvasEngine';
+import type { CanonicalMapSnapshot } from '../../types/canonical.types';
 import { RunDetailsPanel } from './RunDetailsPanel';
 
 interface LayoutCanvasV3Props {
@@ -25,6 +26,9 @@ interface LayoutCanvasV3Props {
   onMapExpandedChange?: (expanded: boolean) => void;
   showRunDetails?: boolean;
   jobName?: string;
+  propertyAnchor?: { lat: number; lng: number; address: string } | null;
+  mapSnapshot?: CanonicalMapSnapshot | null;
+  onMapSnapshotChange?: (snapshot: CanonicalMapSnapshot) => void;
 }
 
 export function LayoutCanvasV3({
@@ -32,6 +36,9 @@ export function LayoutCanvasV3({
   onMapExpandedChange,
   showRunDetails = true,
   jobName,
+  propertyAnchor,
+  mapSnapshot,
+  onMapSnapshotChange,
 }: LayoutCanvasV3Props) {
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
@@ -231,6 +238,9 @@ export function LayoutCanvasV3({
         jobName={jobName}
         expanded={mapExpanded}
         onExpandedChange={onMapExpandedChange}
+        propertyAnchor={propertyAnchor}
+        mapSnapshot={mapSnapshot}
+        onMapSnapshotChange={onMapSnapshotChange}
       />
       {showRunDetails && !mapExpanded && <RunDetailsPanel payload={payload} />}
     </div>

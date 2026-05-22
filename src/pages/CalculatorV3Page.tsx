@@ -755,6 +755,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     anchorLat: number;
     anchorLng: number;
     formattedAddress: string;
+    snapshot: NonNullable<CanonicalPayload["snapshot"]>;
   }) {
     if (!payload) return;
     dispatch({
@@ -766,9 +767,15 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
           lng: anchor.anchorLng,
           address: anchor.formattedAddress,
         },
+        snapshot: anchor.snapshot,
       },
     });
-    toast.success("Property location confirmed");
+    setRightPaneView("map");
+    toast.success("Property view captured");
+  }
+
+  function handleMapSnapshotChange(snapshot: NonNullable<CanonicalPayload["snapshot"]>) {
+    dispatch({ type: "SET_MAP_SNAPSHOT", snapshot });
   }
 
   async function handleSwitchEconomyToStandard(item: BOMLineItem) {
@@ -1438,7 +1445,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     : undefined;
   const gateTargetRunLength = gateTargetRun ? runLengthMm(gateTargetRun) : 0;
   const hasLegacyConfiguredPayload = Boolean(
-    payload && !payload.propertyAnchor && payload.runs.some((run) => run.segments.length > 0),
+    quoteId && payload && !payload.propertyAnchor && payload.runs.some((run) => run.segments.length > 0),
   );
   const propertyAnchorConfirmed = Boolean(payload?.propertyAnchor) || hasLegacyConfiguredPayload;
   const headerActions = !showIntro && !mapExpanded ? (
@@ -1563,10 +1570,13 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                   </section>
                   {payload && (
                     <>
-                      <PropertyMap
-                        initialAnchor={payload.propertyAnchor ?? null}
-                        onAnchorConfirmed={handlePropertyAnchorConfirmed}
-                      />
+                      {!hasLegacyConfiguredPayload ? (
+                        <PropertyMap
+                          initialAnchor={payload.propertyAnchor ?? null}
+                          initialSnapshot={payload.snapshot ?? null}
+                          onAnchorConfirmed={handlePropertyAnchorConfirmed}
+                        />
+                      ) : null}
                       <PropertyAnchorFormGate anchorConfirmed={propertyAnchorConfirmed}>
                         <hr className="border-brand-border/60" />
                         <section>
@@ -1729,6 +1739,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                           mapExpanded={mapExpanded}
                           onMapExpandedChange={setMapExpanded}
                           showRunDetails={!mapExpanded}
+                          propertyAnchor={payload.propertyAnchor ?? null}
+                          mapSnapshot={payload.snapshot ?? null}
+                          onMapSnapshotChange={handleMapSnapshotChange}
                         />
                       ) : (
                         <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/50 p-6 text-center text-sm font-bold text-brand-muted">

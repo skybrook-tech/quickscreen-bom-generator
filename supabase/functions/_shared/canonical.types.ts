@@ -9,6 +9,30 @@ export interface CanonicalPayload {
     lng: number;
     address: string;
   };
+  snapshot?: {
+    centerLat: number;
+    centerLng: number;
+    zoom: number;
+    width: number;
+    height: number;
+    sourceViewportWidth?: number;
+    sourceViewportHeight?: number;
+    metresPerPixel: number;
+    capturedAt: string;
+    layers?: {
+      satellite?: {
+        url: string | null;
+        visible: boolean;
+        opacity: number;
+      };
+      roadmap?: {
+        url: string | null;
+        visible: boolean;
+        opacity: number;
+      };
+    };
+    url?: string;
+  };
   variables: Record<string, string | number | boolean>;
   runs: CanonicalRun[];
 }
@@ -31,6 +55,7 @@ export interface CanonicalRun {
   segments: CanonicalSegment[];
   geometry?: {
     points: Array<{ x: number; y: number }>;
+    metrePoints?: Array<{ dxMetres: number; dyMetres: number }>;
   };
 }
 

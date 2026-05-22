@@ -1,6 +1,7 @@
 import { createContext, useContext, useReducer } from "react";
 import type {
   CanonicalPayload,
+  CanonicalMapSnapshot,
   CanonicalRun,
   CanonicalSegment,
 } from "../types/canonical.types";
@@ -26,6 +27,7 @@ const initialState: CalculatorState = {
 
 export type CalculatorAction =
   | { type: "SET_PAYLOAD"; payload: CanonicalPayload }
+  | { type: "SET_MAP_SNAPSHOT"; snapshot: CanonicalMapSnapshot }
   | { type: "SET_ENTRY_METHOD"; entryMethod: CalculatorState["entryMethod"] }
   | { type: "SET_BOM_RESULT"; result: Record<string, unknown> }
   | { type: "CLEAR_BOM_RESULT" }
@@ -44,6 +46,15 @@ function calculatorReducer(
   switch (action.type) {
     case "SET_PAYLOAD":
       return { ...state, payload: action.payload };
+    case "SET_MAP_SNAPSHOT":
+      if (!state.payload) return state;
+      return {
+        ...state,
+        payload: {
+          ...state.payload,
+          snapshot: action.snapshot,
+        },
+      };
     case "SET_ENTRY_METHOD":
       return { ...state, entryMethod: action.entryMethod };
     case "SET_BOM_RESULT":

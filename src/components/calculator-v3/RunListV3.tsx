@@ -22,6 +22,7 @@ export function RunListV3({
   const hasRuns = Boolean(payload?.runs.length);
 
   if (!payload) return null;
+  const currentPayload = payload;
 
   function createPayloadForSystem(productCode: string): CanonicalPayload {
     const variables = initialVariablesForSystem(productCode);
@@ -30,6 +31,10 @@ export function RunListV3({
       productCode,
       schemaVersion: "v1",
       variables,
+      ...(currentPayload.propertyAnchor
+        ? { propertyAnchor: currentPayload.propertyAnchor }
+        : {}),
+      ...(currentPayload.snapshot ? { snapshot: currentPayload.snapshot } : {}),
       runs: [
         {
           runId,
@@ -55,9 +60,10 @@ export function RunListV3({
 
   function startFirstRun(productCode: string) {
     const nextPayload = createPayloadForSystem(productCode);
+    const firstRun = nextPayload.runs[0];
     dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
     window.setTimeout(() => {
-      window.dispatchEvent(new CustomEvent("qsbom:open-run", { detail: nextPayload.runs[0].runId }));
+      window.dispatchEvent(new CustomEvent("qsbom:open-run", { detail: firstRun.runId }));
     }, 80);
   }
 
