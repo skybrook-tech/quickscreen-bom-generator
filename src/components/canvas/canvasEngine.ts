@@ -3500,6 +3500,14 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  function canvasCenterScreenPoint(): Point {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (cssCanvasWidth || rect.width || canvas.width || 800) / 2,
+      y: (cssCanvasHeight || rect.height || canvas.height || 420) / 2,
+    };
+  }
+
   function onKeyDown(e: KeyboardEvent) {
     if (isTypingTarget(e.target)) return;
     if (editingLabel) return;
@@ -3564,12 +3572,12 @@ export function initCanvasEngine(
       }
       if (e.key === "+" || e.key === "=") {
         e.preventDefault();
-        zoomAtScreenPoint({ x: canvas.width / 2, y: canvas.height / 2 }, 1.15);
+        zoomAtScreenPoint(canvasCenterScreenPoint(), 1.15);
         return;
       }
       if (e.key === "-" || e.key === "_") {
         e.preventDefault();
-        zoomAtScreenPoint({ x: canvas.width / 2, y: canvas.height / 2 }, 0.85);
+        zoomAtScreenPoint(canvasCenterScreenPoint(), 0.85);
         return;
       }
       if (e.key === "0") {
@@ -3835,6 +3843,14 @@ export function initCanvasEngine(
 
   function resetView() {
     fitToWidth(50);
+  }
+
+  function zoomIn() {
+    zoomAtScreenPoint(canvasCenterScreenPoint(), 1.15);
+  }
+
+  function zoomOut() {
+    zoomAtScreenPoint(canvasCenterScreenPoint(), 0.85);
   }
 
   function setSnapToGrid(s: boolean) {
@@ -4408,6 +4424,8 @@ export function initCanvasEngine(
     redo,
     clear,
     resetView,
+    zoomIn,
+    zoomOut,
     setSnapToGrid,
     setOrthoMode,
     setGateSnapTo100mm,

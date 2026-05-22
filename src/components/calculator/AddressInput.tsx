@@ -55,6 +55,9 @@ const AUSTRALIA_BOUNDS = {
   south: -44,
 };
 
+export const PLACES_API_ENABLEMENT_MESSAGE =
+  "Places API is not enabled on the Google Cloud key. Enable it at https://console.cloud.google.com/apis/library/places-backend.googleapis.com to use address autocomplete. Manual address entry still works via the Find property button.";
+
 function placeText(text: google.maps.places.FormattableText | null | undefined) {
   return text?.text ?? text?.toString() ?? "";
 }
@@ -183,14 +186,11 @@ export function AddressInput({ onLocated, onEngaged }: AddressInputProps) {
             sessionTokenRef.current = new AutocompleteSessionToken();
           }
 
-          const request: google.maps.places.AutocompleteRequest & {
-            componentRestrictions?: { country: "au" };
-          } = {
+          const request: google.maps.places.AutocompleteRequest = {
             input: trimmed,
             region: "AU",
             includedRegionCodes: ["au"],
             locationRestriction: AUSTRALIA_BOUNDS,
-            componentRestrictions: { country: "au" },
             sessionToken: sessionTokenRef.current,
           };
           const { suggestions: nextSuggestions } =
@@ -208,15 +208,15 @@ export function AddressInput({ onLocated, onEngaged }: AddressInputProps) {
               ...(secondaryText ? { secondaryText } : {}),
             });
           }
+          console.info(
+            `[Autocomplete] Places API returned ${parsedSuggestions.length} suggestions for query: ${trimmed}`,
+          );
           setSuggestions(parsedSuggestions.slice(0, 5));
           setSuggestionsOpen(true);
         })
         .catch((err: unknown) => {
           if (cancelled) return;
-          console.warn(
-            "Places API (New) autocomplete is unavailable. Enable Places API in Google Cloud Console to use address suggestions; falling back to manual Find property.",
-            err,
-          );
+          console.error(PLACES_API_ENABLEMENT_MESSAGE, err);
           setPlacesUnavailable(true);
           setSuggestions([]);
           setSuggestionsOpen(false);

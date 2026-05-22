@@ -59,7 +59,7 @@ const DEFAULT_LAYER_STATE: Record<
   Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">
 > = {
   satellite: { visible: true, opacity: 1 },
-  roadmap: { visible: true, opacity: 1 },
+  roadmap: { visible: true, opacity: 0.5 },
 };
 
 function clampOpacity(value: number | undefined): number {
@@ -184,7 +184,9 @@ export function normalizeMapSnapshot(
         (isLegacySingleImageSnapshot ? false : DEFAULT_LAYER_STATE.roadmap.visible),
       opacity: clampOpacity(
         snapshot.layers?.roadmap?.opacity ??
-          DEFAULT_LAYER_STATE.roadmap.opacity,
+          (isLegacySingleImageSnapshot
+            ? 1
+            : DEFAULT_LAYER_STATE.roadmap.opacity),
       ),
     };
   }

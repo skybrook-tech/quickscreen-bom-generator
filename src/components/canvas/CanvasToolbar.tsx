@@ -15,6 +15,7 @@ import {
   Maximize2,
   Minimize2,
   Minus,
+  Plus,
   Crosshair,
   CircleHelp,
   Layers,
@@ -267,6 +268,24 @@ export function CanvasToolbar({
         onClick={() => engineRef.current?.redo()}
       >
         <Redo2 size={16} /> Redo
+      </button>
+      <button
+        type="button"
+        title="Zoom in (+)"
+        aria-label="Zoom in canvas"
+        className={iconBtn}
+        onClick={() => engineRef.current?.zoomIn()}
+      >
+        <Plus size={16} /> Zoom in
+      </button>
+      <button
+        type="button"
+        title="Zoom out (-)"
+        aria-label="Zoom out canvas"
+        className={iconBtn}
+        onClick={() => engineRef.current?.zoomOut()}
+      >
+        <Minus size={16} /> Zoom out
       </button>
       <ConfirmButton
         title="Clear map"

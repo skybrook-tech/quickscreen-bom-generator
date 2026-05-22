@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { CanvasToolbar } from "./CanvasToolbar";
+import type { initCanvasEngine } from "./canvasEngine";
 import { updateMapSnapshotLayer } from "../../lib/googleMaps/staticSnapshot";
 import type {
   CanonicalMapLayerId,
@@ -23,6 +24,7 @@ function renderToolbar(
     layerId: CanonicalMapLayerId,
     updates: Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">>,
   ) => void,
+  engine: Partial<ReturnType<typeof initCanvasEngine>> | null = null,
 ) {
   const container = document.createElement("div");
   document.body.appendChild(container);
@@ -44,7 +46,9 @@ function renderToolbar(
   act(() => {
     root.render(
       <CanvasToolbar
-        engineRef={{ current: null }}
+        engineRef={{
+          current: engine as ReturnType<typeof initCanvasEngine> | null,
+        }}
         activeTool="draw"
         onToolChange={() => undefined}
         snapEnabled={false}
@@ -202,6 +206,35 @@ describe("CanvasToolbar map layers", () => {
         'input[aria-label="Roadmap layer opacity"]',
       )?.value,
     ).toBe("50");
+
+    act(() => root.unmount());
+  });
+
+  it("shows canvas zoom controls wired to the engine", () => {
+    const engine = {
+      zoomIn: vi.fn(),
+      zoomOut: vi.fn(),
+      resetView: vi.fn(),
+    };
+    const { container, root } = renderToolbar(vi.fn(), engine);
+
+    const zoomIn = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="Zoom in canvas"]',
+    );
+    const zoomOut = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="Zoom out canvas"]',
+    );
+
+    expect(zoomIn).not.toBeNull();
+    expect(zoomOut).not.toBeNull();
+
+    act(() => {
+      zoomIn!.click();
+      zoomOut!.click();
+    });
+
+    expect(engine.zoomIn).toHaveBeenCalledTimes(1);
+    expect(engine.zoomOut).toHaveBeenCalledTimes(1);
 
     act(() => root.unmount());
   });

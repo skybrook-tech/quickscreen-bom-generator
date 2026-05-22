@@ -110,7 +110,7 @@ describe("Static Maps snapshots", () => {
     });
     expect(snapshot.layers?.roadmap).toMatchObject({
       visible: true,
-      opacity: 1,
+      opacity: 0.5,
     });
   });
 
@@ -136,7 +136,7 @@ describe("Static Maps snapshots", () => {
     expect(snapshot.layers?.roadmap).toEqual({
       url: null,
       visible: false,
-      opacity: 1,
+      opacity: 0.5,
     });
     expect(warnSpy).toHaveBeenCalledWith(
       expect.stringContaining("Roadmap layer could not be preloaded"),
