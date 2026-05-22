@@ -673,6 +673,8 @@ export function initCanvasEngine(
   let segmentPanelWidths: number[] = [];
   // Job-level default panel width — used to draw post previews on the in-progress segment.
   let jobPanelWidthMm: number | null = null;
+  // Pre-computed stats text pushed from the canonical payload (via LayoutCanvasV3 → FenceLayoutCanvas).
+  // Using the canonical data ensures the overlay always matches the form's calcRunStats output.
   let cssCanvasWidth = 0;
   let cssCanvasHeight = 0;
   let devicePixelRatioScale = 1;
@@ -1360,6 +1362,11 @@ export function initCanvasEngine(
   function drawCursorHint() {
     let text = "";
     if (tool === "draw") {
+      text = activeRunIdx >= 0
+        ? "Click next point - double-click to finish"
+        : drawStartHintDismissed
+          ? ""
+          : "Click to start fence";
       text =
         activeRunIdx >= 0
           ? "Click next point - double-click to finish"
@@ -2560,6 +2567,7 @@ export function initCanvasEngine(
               anchor: gate.anchor,
               widthMM: gate.widthMM,
               gateId: gate.gateId,
+              useGatePostsAsFenceTermination: gate.useGatePostsAsFenceTermination ?? true,
               useGatePostsAsFenceTermination:
                 gate.useGatePostsAsFenceTermination,
               gateType: gate.gateType,
@@ -3260,6 +3268,7 @@ export function initCanvasEngine(
                 widthMM: gate.widthMM,
                 gateId: gate.gateId,
                 useGatePostsAsFenceTermination:
+                  gate.useGatePostsAsFenceTermination ?? true,
                   gate.useGatePostsAsFenceTermination,
                 gateType: gate.gateType,
                 swingDirection: gate.swingDirection,
@@ -4127,6 +4136,13 @@ export function initCanvasEngine(
     scheduleRedraw();
   }
 
+  /**
+   * Push pre-computed stats text from the canonical payload.
+   * `global` is shown when no segment is hovered. `perRun[i]` is shown when the
+   * user hovers over a segment in run i (non-boundary run index).
+   */
+  function setRunStatsTexts(_global: string, _perRun: string[]) {
+    scheduleRedraw();
   function setRunStatsTexts(_global: string, _perRun: string[]) {
     // Run stats live in React cards now; the canvas hover stats overlay is suppressed.
   }
@@ -4156,6 +4172,38 @@ export function initCanvasEngine(
         },
       };
     }
+    notifyChange();
+    scheduleRedraw();
+  }
+
+  function setGateVariables(
+    flatSegIdx: number,
+    gateIdx: number,
+    variables: CanvasGateVariables,
+  ) {
+    const allSegs = allSegmentsFlat();
+    const info = allSegs[flatSegIdx];
+    const gate = info?.seg.gates[gateIdx];
+    if (!gate) return;
+    gate.variables = { ...variables };
+    notifyChange();
+    scheduleRedraw();
+  }
+
+  function removeGatesById(gateIds: string[]) {
+    if (gateIds.length === 0) return;
+    const ids = new Set(gateIds);
+    let removed = false;
+    for (const run of runs) {
+      for (const seg of run.segments) {
+        const next = seg.gates.filter((gate) => !gate.gateId || !ids.has(gate.gateId));
+        if (next.length !== seg.gates.length) {
+          seg.gates = next;
+          removed = true;
+        }
+      }
+    }
+    if (!removed) return;
     notifyChange();
     scheduleRedraw();
   }
@@ -4487,6 +4535,8 @@ export function initCanvasEngine(
     loadMapTileLayers,
     updateGateWidth,
     updateGateVisual,
+    setGateVariables,
+    removeGatesById,
     setGateId,
     setGateVariables,
     removeGatesById,
