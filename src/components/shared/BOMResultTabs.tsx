@@ -564,7 +564,7 @@ export function BOMResultTabs({
           <p className="text-xs font-semibold text-brand-muted">
             {viewMode === "cut_list"
               ? "Grouped like flat-pack stock on the truck."
-              : "Priced BOM rows with catalogue pages and quantity-break hints."}
+              : "Priced BOM rows ready for review."}
           </p>
         </div>
         <button

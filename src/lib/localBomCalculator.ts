@@ -1182,19 +1182,9 @@ function calculateVerticalSlatRun(
     ...(run.variables ?? {}),
     ...(firstFenceSegment?.variables ?? {}),
   };
-  const colour = String(
-    mergedRunVars.colour_code ?? mergedRunVars.colour ?? "B",
-  );
-  const postColour = String(mergedRunVars.post_colour_code ?? colour);
-  const slatSize = toNumber(mergedRunVars.slat_size_mm, 65);
-  const slatGap = toNumber(mergedRunVars.slat_gap_mm, 5);
-  const finishFamily = String(mergedRunVars.finish_family ?? "standard");
-  const economySlats = finishFamily === "economy";
-  const slatStockLengthMm = economySlats ? 6500 : finishFamily === "alumawood" ? 5800 : 6100;
-  const maxPanelWidth = clampPostSpacing(
-    mergedRunVars.max_panel_width_mm,
-    maxPanelWidthForSystem(run.productCode),
-  );
+  const runColour = String(mergedRunVars.colour_code ?? mergedRunVars.colour ?? "B");
+  const runPostColour = String(mergedRunVars.post_colour_code ?? runColour);
+  const runFinishFamily = String(mergedRunVars.finish_family ?? "standard");
   const mountingType = String(
     mergedRunVars.mounting_type ?? mergedRunVars.mounting_method ?? "in_ground",
   );
@@ -1208,6 +1198,12 @@ function calculateVerticalSlatRun(
     }
 
     const vars = { ...mergedRunVars, ...(segment.variables ?? {}) };
+    const colour = String(vars.colour_code ?? vars.colour ?? runColour);
+    const slatSize = toNumber(vars.slat_size_mm, 65);
+    const slatGap = toNumber(vars.slat_gap_mm, 5);
+    const finishFamily = String(vars.finish_family ?? runFinishFamily);
+    const economySlats = finishFamily === "economy";
+    const slatStockLengthMm = economySlats ? 6500 : finishFamily === "alumawood" ? 5800 : 6100;
     const segmentWidthMm = toNumber(segment.segmentWidthMm, 0);
     const targetHeightMm = toNumber(
       segment.targetHeightMm ?? vars.target_height_mm,
@@ -1215,7 +1211,10 @@ function calculateVerticalSlatRun(
     );
     if (segmentWidthMm <= 0) continue;
 
-    const segmentMaxPanelWidth = clampPostSpacing(vars.max_panel_width_mm, maxPanelWidth);
+    const segmentMaxPanelWidth = clampPostSpacing(
+      vars.max_panel_width_mm,
+      maxPanelWidthForSystem(run.productCode),
+    );
     const numPanels = Math.max(1, Math.ceil(segmentWidthMm / segmentMaxPanelWidth));
     const panelWidthMm = segmentWidthMm / numPanels;
     internalPanelPosts += Math.max(0, numPanels - 1);
@@ -1315,10 +1314,10 @@ function calculateVerticalSlatRun(
     run,
     firstFenceSegment?.segmentId ?? run.runId,
     postCount,
-    finishFamily,
+    runFinishFamily,
     postSize,
     postHeight,
-    postColour,
+    runPostColour,
     mountingType,
   );
   emitPostFixingLines(
@@ -1346,19 +1345,9 @@ function calculateScreenRun(
     ...(run.variables ?? {}),
     ...(firstFenceSegment?.variables ?? {}),
   };
-  const colour = String(
-    mergedRunVars.colour_code ?? mergedRunVars.colour ?? "B",
-  );
-  const postColour = String(mergedRunVars.post_colour_code ?? colour);
-  const slatSize = toNumber(mergedRunVars.slat_size_mm, 65);
-  const slatGap = toNumber(mergedRunVars.slat_gap_mm, 5);
-  const finishFamily = String(mergedRunVars.finish_family ?? "standard");
-  const economySlats = finishFamily === "economy";
-  const slatStockLengthMm = economySlats ? 6500 : finishFamily === "alumawood" ? 5800 : 6100;
-  const maxPanelWidth = clampPostSpacing(
-    mergedRunVars.max_panel_width_mm,
-    maxPanelWidthForSystem(run.productCode),
-  );
+  const runColour = String(mergedRunVars.colour_code ?? mergedRunVars.colour ?? "B");
+  const runPostColour = String(mergedRunVars.post_colour_code ?? runColour);
+  const runFinishFamily = String(mergedRunVars.finish_family ?? "standard");
   const mountingType = String(
     mergedRunVars.mounting_type ?? mergedRunVars.mounting_method ?? "in_ground",
   );
@@ -1384,6 +1373,13 @@ function calculateScreenRun(
     }
 
     const vars = { ...mergedRunVars, ...(segment.variables ?? {}) };
+    const colour = String(vars.colour_code ?? vars.colour ?? runColour);
+    const postColour = String(vars.post_colour_code ?? colour);
+    const slatSize = toNumber(vars.slat_size_mm, 65);
+    const slatGap = toNumber(vars.slat_gap_mm, 5);
+    const finishFamily = String(vars.finish_family ?? runFinishFamily);
+    const economySlats = finishFamily === "economy";
+    const slatStockLengthMm = economySlats ? 6500 : finishFamily === "alumawood" ? 5800 : 6100;
     const segmentWidthMm = toNumber(segment.segmentWidthMm, 0);
     const targetHeightMm = toNumber(
       segment.targetHeightMm ?? vars.target_height_mm,
@@ -1402,7 +1398,10 @@ function calculateScreenRun(
     const baygPanelQty = isBayg
       ? Math.max(1, Math.round(toNumber(vars.panel_quantity, 1)))
       : 1;
-    const segmentMaxPanelWidth = clampPostSpacing(vars.max_panel_width_mm, maxPanelWidth);
+    const segmentMaxPanelWidth = clampPostSpacing(
+      vars.max_panel_width_mm,
+      maxPanelWidthForSystem(run.productCode),
+    );
     const numPanels = isBayg
       ? baygPanelQty
       : Math.max(1, Math.ceil(segmentWidthMm / segmentMaxPanelWidth));
@@ -1588,10 +1587,10 @@ function calculateScreenRun(
     run,
     firstFenceSegment?.segmentId ?? run.runId,
     postCount,
-    finishFamily,
+    runFinishFamily,
     postSize,
     postHeight,
-    postColour,
+    runPostColour,
     mountingType,
   );
   emitPostFixingLines(

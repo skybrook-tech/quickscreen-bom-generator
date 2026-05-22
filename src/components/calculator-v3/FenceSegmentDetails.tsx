@@ -42,13 +42,6 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
   const { data: runFields = [] } = useProductVariables(productCode, "run");
 
-  // Post size options from the run-scoped post_size variable
-  const postSizeOptions = useMemo(() => {
-    const v = runFields.find((f) => f.field_key === "post_size");
-    const raw = v?.options_json ?? ["50", "65"];
-    return raw.map(String);
-  }, [runFields]);
-
   const v = seg.variables ?? {};
   const runVariables = {
     ...initialVariablesForSystem(productCode),
@@ -218,7 +211,10 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     jobFields.filter((field) => field.field_key === "post_colour_code"),
     mergedJobDisplay,
   )[0];
-  const remainingOptionFields = optionFields.filter((field) => field.field_key !== "colour_code");
+  const finishFamilyField = optionFields.find((field) => field.field_key === "finish_family");
+  const remainingOptionFields = optionFields.filter(
+    (field) => field.field_key !== "colour_code" && field.field_key !== "finish_family",
+  );
   function handleOptionChange(key: string, value: string | number | boolean) {
     onJobOverrideChange(key, value);
   }
@@ -249,6 +245,13 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
       {optionFields.length > 0 ? (
         <SettingsDisclosureRow id={`${seg.segmentId}-section-style`} label="Slats, colors, and spacings" value={optionSummary || "Run defaults"}>
           <div className="space-y-4">
+            {finishFamilyField && (
+              <SchemaDrivenForm
+                fields={[finishFamilyField]}
+                variables={mergedJobDisplay}
+                onChange={handleOptionChange}
+              />
+            )}
             {colourField && (
               <SchemaDrivenForm
                 fields={[colourField]}
@@ -314,27 +317,6 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
               onChange={handleOptionChange}
             />
           )}
-            <label className="flex flex-col gap-1">
-              <span className="text-sm font-bold text-brand-muted">Post size override</span>
-              <select
-                value={postSize}
-                onChange={(e) =>
-                  setScalar(
-                    SEGMENT_OPTION_KEYS.postSize,
-                    e.target.value || null,
-                  )
-                }
-                className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-              >
-                <option value="">Job default</option>
-                {postSizeOptions.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {POST_SIZE_LABELS[opt] ?? `${opt}mm Post`}
-                  </option>
-                ))}
-                <option value="custom">Non-standard post</option>
-              </select>
-            </label>
           <label className="flex flex-col gap-1">
             <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
             <input
