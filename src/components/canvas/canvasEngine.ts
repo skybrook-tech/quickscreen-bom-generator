@@ -655,6 +655,7 @@ export function initCanvasEngine(
   let lastTouchPointer: CanvasPointerLike | null = null;
   let lastTapTime = 0;
   let lastTapScreen: Point | null = null;
+  let pinchZoom: { lastDistance: number } | null = null;
   // Post positions from BOM result. In canvas world coordinates — the same
   // coordinate space as the drawn nodes (canvas pixels before pan/zoom transform).
   // null = nothing to render.
@@ -3343,8 +3344,44 @@ export function initCanvasEngine(
     };
   }
 
+  function touchToScreenPoint(touch: Touch): Point {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: touch.clientX - rect.left,
+      y: touch.clientY - rect.top,
+    };
+  }
+
+  function touchPairDistance(touches: TouchList): number {
+    const a = touches[0];
+    const b = touches[1];
+    if (!a || !b) return 0;
+    const dx = a.clientX - b.clientX;
+    const dy = a.clientY - b.clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function touchPairCenter(touches: TouchList): Point {
+    const a = touches[0];
+    const b = touches[1];
+    if (!a || !b) return canvasCenterScreenPoint();
+    const aScreen = touchToScreenPoint(a);
+    const bScreen = touchToScreenPoint(b);
+    return {
+      x: (aScreen.x + bScreen.x) / 2,
+      y: (aScreen.y + bScreen.y) / 2,
+    };
+  }
+
   function onTouchStart(e: TouchEvent) {
-    if (e.touches.length !== 1 || editingLabel) return;
+    if (editingLabel) return;
+    if (e.touches.length === 2) {
+      pinchZoom = { lastDistance: touchPairDistance(e.touches) };
+      lastTouchPointer = null;
+      e.preventDefault();
+      return;
+    }
+    if (e.touches.length !== 1) return;
     const pointer = touchToPointer(e.touches[0], e);
     lastTouchPointer = pointer;
     pointer.preventDefault();
@@ -3352,6 +3389,24 @@ export function initCanvasEngine(
   }
 
   function onTouchMove(e: TouchEvent) {
+    if (e.touches.length === 2) {
+      const distance = touchPairDistance(e.touches);
+      if (pinchZoom && pinchZoom.lastDistance > 0 && distance > 0) {
+        zoomAtScreenPoint(
+          touchPairCenter(e.touches),
+          distance / pinchZoom.lastDistance,
+        );
+      }
+      pinchZoom = { lastDistance: distance };
+      e.preventDefault();
+      return;
+    }
+    if (pinchZoom) {
+      pinchZoom = null;
+      lastTouchPointer = null;
+      e.preventDefault();
+      return;
+    }
     if (e.touches.length !== 1) return;
     const pointer = touchToPointer(e.touches[0], e);
     lastTouchPointer = pointer;
@@ -3360,6 +3415,12 @@ export function initCanvasEngine(
   }
 
   function onTouchEnd(e: TouchEvent) {
+    if (pinchZoom) {
+      pinchZoom = null;
+      lastTouchPointer = null;
+      e.preventDefault();
+      return;
+    }
     const touch = e.changedTouches[0];
     const pointer = touch ? touchToPointer(touch, e) : lastTouchPointer;
     if (!pointer) return;
@@ -3446,22 +3507,10 @@ export function initCanvasEngine(
   }
 
   function onWheel(e: WheelEvent) {
-    if (!e.ctrlKey && !e.metaKey) return;
     e.preventDefault();
     const screen = eventToScreen(e);
     const zoomFactor = e.deltaY < 0 ? 1.2 : 1 / 1.2;
-    const newZoom = Math.max(
-      MIN_CANVAS_ZOOM,
-      Math.min(MAX_CANVAS_ZOOM, zoom * zoomFactor),
-    );
-
-    // Zoom toward cursor
-    pan = {
-      x: screen.x - (screen.x - pan.x) * (newZoom / zoom),
-      y: screen.y - (screen.y - pan.y) * (newZoom / zoom),
-    };
-    zoom = newZoom;
-    scheduleRedraw();
+    zoomAtScreenPoint(screen, zoomFactor);
   }
 
   function onContextMenu(e: MouseEvent) {

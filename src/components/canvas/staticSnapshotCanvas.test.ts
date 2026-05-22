@@ -139,6 +139,24 @@ function clickCanvas(canvas: HTMLCanvasElement, x: number, y: number) {
   );
 }
 
+type TestTouch = Pick<Touch, "clientX" | "clientY">;
+
+function dispatchTouch(
+  canvas: HTMLCanvasElement,
+  type: "touchstart" | "touchmove" | "touchend",
+  touches: TestTouch[],
+  changedTouches: TestTouch[] = touches,
+) {
+  const event = new Event(type, { bubbles: true, cancelable: true });
+  Object.defineProperty(event, "touches", {
+    value: touches as unknown as TouchList,
+  });
+  Object.defineProperty(event, "changedTouches", {
+    value: changedTouches as unknown as TouchList,
+  });
+  canvas.dispatchEvent(event);
+}
+
 describe("canvas engine Static Maps snapshot scale", () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -228,7 +246,7 @@ describe("canvas engine Static Maps snapshot scale", () => {
     canvas.remove();
   });
 
-  it("zooms via engine buttons, Ctrl+wheel, and reset without plain-wheel zoom", () => {
+  it("zooms via engine buttons, direct wheel, Ctrl-wheel, and reset", () => {
     const { latestZoom } = installZoomCanvasMock();
     const canvas = document.createElement("canvas");
     document.body.appendChild(canvas);
@@ -265,7 +283,7 @@ describe("canvas engine Static Maps snapshot scale", () => {
     engine.zoomOut();
     expect(latestZoom()).toBeLessThan(defaultZoom);
 
-    const beforePlainWheel = latestZoom();
+    const beforeWheel = latestZoom();
     canvas.dispatchEvent(
       new WheelEvent("wheel", {
         bubbles: true,
@@ -274,21 +292,76 @@ describe("canvas engine Static Maps snapshot scale", () => {
         clientY: 120,
       }),
     );
-    expect(latestZoom()).toBe(beforePlainWheel);
+    expect(latestZoom()).toBeGreaterThan(beforeWheel);
 
+    const beforeCtrlWheel = latestZoom();
     canvas.dispatchEvent(
       new WheelEvent("wheel", {
         bubbles: true,
         ctrlKey: true,
-        deltaY: -100,
+        deltaY: 100,
         clientX: 120,
         clientY: 120,
       }),
     );
-    expect(latestZoom()).toBeGreaterThan(beforePlainWheel);
+    expect(latestZoom()).toBeLessThan(beforeCtrlWheel);
 
     engine.resetView();
     expect(latestZoom()).toBeCloseTo(defaultZoom, 6);
+
+    engine.destroy();
+    canvas.remove();
+  });
+
+  it("zooms the map canvas with a two-finger pinch gesture", () => {
+    const { latestZoom } = installZoomCanvasMock();
+    const canvas = document.createElement("canvas");
+    document.body.appendChild(canvas);
+    Object.defineProperty(canvas, "getBoundingClientRect", {
+      value: () => ({
+        left: 0,
+        top: 0,
+        width: 640,
+        height: 360,
+        right: 640,
+        bottom: 360,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }),
+    });
+
+    const engine = initCanvasEngine(canvas, {
+      snapToGrid: false,
+      gridSize: 20,
+      showGrid: false,
+    });
+    engine.setViewportTransform({
+      pan: { x: 0, y: 0 },
+      zoom: 1,
+      scale: 10,
+    });
+
+    dispatchTouch(canvas, "touchstart", [
+      { clientX: 200, clientY: 180 },
+      { clientX: 300, clientY: 180 },
+    ]);
+    dispatchTouch(canvas, "touchmove", [
+      { clientX: 175, clientY: 180 },
+      { clientX: 325, clientY: 180 },
+    ]);
+
+    expect(latestZoom()).toBeGreaterThan(1);
+
+    dispatchTouch(
+      canvas,
+      "touchend",
+      [],
+      [
+        { clientX: 175, clientY: 180 },
+        { clientX: 325, clientY: 180 },
+      ],
+    );
 
     engine.destroy();
     canvas.remove();
