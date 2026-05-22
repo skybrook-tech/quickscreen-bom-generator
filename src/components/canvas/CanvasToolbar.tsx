@@ -45,8 +45,6 @@ interface CanvasToolbarProps {
   onToolChange: (t: CanvasTool) => void;
   snapEnabled: boolean;
   onSnapToggle: (v: boolean) => void;
-  orthoEnabled: boolean;
-  onOrthoToggle: (v: boolean) => void;
   gateSnap100: boolean;
   onGateSnap100Toggle: (v: boolean) => void;
   showGrid: boolean;
@@ -70,8 +68,6 @@ export function CanvasToolbar({
   onToolChange,
   snapEnabled,
   onSnapToggle,
-  orthoEnabled,
-  onOrthoToggle,
   gateSnap100,
   onGateSnap100Toggle,
   showGrid,
@@ -116,6 +112,15 @@ export function CanvasToolbar({
         layer: CanonicalMapSnapshotLayer;
       } => Boolean(row.layer),
     );
+  const availableLayerRows = layerRows.filter(({ layer }) => Boolean(layer.url));
+  const mapVisible = availableLayerRows.some(({ layer }) => layer.visible);
+  const handleMapVisibilityToggle = () => {
+    if (!onMapLayerChange) return;
+    const nextVisible = !mapVisible;
+    availableLayerRows.forEach(({ layerId }) => {
+      onMapLayerChange(layerId, { visible: nextVisible });
+    });
+  };
 
   return (
     <div className="flex flex-nowrap items-center gap-2 overflow-x-auto border-b border-brand-border/60 bg-brand-card p-2 [scrollbar-width:thin] md:flex-wrap md:gap-3 md:border-b-0">
@@ -331,31 +336,31 @@ export function CanvasToolbar({
           <span className="inline-flex items-center gap-1 font-bold uppercase tracking-wide text-brand-text">
             <Layers size={14} /> Layers
           </span>
+          <button
+            type="button"
+            aria-label={mapVisible ? "Hide map underlay" : "Show map underlay"}
+            title={mapVisible ? "Hide map underlay" : "Show map underlay"}
+            className={btnCls(mapVisible)}
+            onClick={handleMapVisibilityToggle}
+          >
+            <Layers size={14} />
+            {mapVisible ? "Map off" : "Map on"}
+          </button>
           {layerRows.map(({ layerId, layer }) => {
             const label = layerId === "satellite" ? "Satellite" : "Roadmap";
             const layerAvailable = Boolean(layer.url);
             return (
               <div key={layerId} className="inline-flex items-center gap-1.5">
-                <label className="inline-flex cursor-pointer items-center gap-1">
-                  <input
-                    type="checkbox"
-                    checked={layer.visible}
-                    disabled={!layerAvailable}
-                    aria-label={`Show ${label} layer`}
-                    title={
-                      layerAvailable
-                        ? `Show ${label} layer`
-                        : `${label} layer was not captured`
-                    }
-                    onChange={(event) =>
-                      onMapLayerChange(layerId, { visible: event.target.checked })
-                    }
-                    className="accent-brand-accent disabled:cursor-not-allowed disabled:opacity-40"
-                  />
-                  <span className={!layerAvailable ? "opacity-50" : undefined}>
-                    {label}
-                  </span>
-                </label>
+                <span
+                  className={!layerAvailable || !mapVisible ? "opacity-50" : undefined}
+                  title={
+                    layerAvailable
+                      ? `${label} layer opacity`
+                      : `${label} layer was not captured`
+                  }
+                >
+                  {label}
+                </span>
                 <input
                   type="range"
                   min={0}
@@ -363,7 +368,7 @@ export function CanvasToolbar({
                   value={Math.round(layer.opacity * 100)}
                   aria-label={`${label} layer opacity`}
                   title={`${label} opacity`}
-                  disabled={!layer.visible || !layerAvailable}
+                  disabled={!mapVisible || !layerAvailable}
                   onInput={(event) =>
                     onMapLayerChange(layerId, {
                       opacity: Number(event.currentTarget.value) / 100,
@@ -382,6 +387,7 @@ export function CanvasToolbar({
       <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
         <input
           type="checkbox"
+          aria-label="Angle snap"
           checked={snapEnabled}
           onChange={(e) => {
             onSnapToggle(e.target.checked);
@@ -389,25 +395,13 @@ export function CanvasToolbar({
           }}
           className="accent-brand-accent"
         />
-        Angle/grid snap
+        Angle snap
       </label>
 
       <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
         <input
           type="checkbox"
-          checked={orthoEnabled}
-          onChange={(e) => {
-            onOrthoToggle(e.target.checked);
-            engineRef.current?.setOrthoMode(e.target.checked);
-          }}
-          className="accent-brand-accent"
-        />
-        Ortho
-      </label>
-
-      <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
-        <input
-          type="checkbox"
+          aria-label="Gate snap 100mm"
           checked={gateSnap100}
           onChange={(e) => {
             onGateSnap100Toggle(e.target.checked);
@@ -422,6 +416,7 @@ export function CanvasToolbar({
       <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
         <input
           type="checkbox"
+          aria-label="Show grid"
           checked={showGrid}
           onChange={(e) => onToggleGrid(e.target.checked)}
           className="accent-brand-accent"

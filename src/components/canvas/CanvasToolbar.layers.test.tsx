@@ -38,7 +38,7 @@ function renderToolbar(
     },
     roadmap: {
       url: "https://example.test/roadmap.png",
-      visible: false,
+      visible: true,
       opacity: 1,
     },
   };
@@ -53,11 +53,9 @@ function renderToolbar(
         onToolChange={() => undefined}
         snapEnabled={false}
         onSnapToggle={() => undefined}
-        orthoEnabled={false}
-        onOrthoToggle={() => undefined}
         gateSnap100={false}
         onGateSnap100Toggle={() => undefined}
-        showGrid
+        showGrid={false}
         onToggleGrid={() => undefined}
         expanded={false}
         onToggleExpand={() => undefined}
@@ -80,17 +78,20 @@ describe("CanvasToolbar map layers", () => {
     document.body.innerHTML = "";
   });
 
-  it("emits canonical snapshot layer visibility and opacity updates", () => {
+  it("emits map underlay visibility and opacity updates without per-layer checkboxes", () => {
     const onMapLayerChange = vi.fn();
     const { container, root } = renderToolbar(onMapLayerChange);
 
-    const roadmapToggle = container.querySelector<HTMLInputElement>(
-      'input[aria-label="Show Roadmap layer"]',
-    );
-    expect(roadmapToggle).not.toBeNull();
-    act(() => {
-      roadmapToggle!.click();
-    });
+    expect(
+      container.querySelector<HTMLInputElement>(
+        'input[aria-label="Show Satellite layer"]',
+      ),
+    ).toBeNull();
+    expect(
+      container.querySelector<HTMLInputElement>(
+        'input[aria-label="Show Roadmap layer"]',
+      ),
+    ).toBeNull();
 
     const satelliteOpacity = container.querySelector<HTMLInputElement>(
       'input[aria-label="Satellite layer opacity"]',
@@ -102,17 +103,28 @@ describe("CanvasToolbar map layers", () => {
       satelliteOpacity!.dispatchEvent(new Event("change", { bubbles: true }));
     });
 
-    expect(onMapLayerChange).toHaveBeenNthCalledWith(1, "roadmap", {
-      visible: true,
+    const mapToggle = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="Hide map underlay"]',
+    );
+    expect(mapToggle).not.toBeNull();
+    act(() => {
+      mapToggle!.click();
+    });
+
+    expect(onMapLayerChange).toHaveBeenNthCalledWith(1, "satellite", {
+      opacity: 0.45,
     });
     expect(onMapLayerChange).toHaveBeenNthCalledWith(2, "satellite", {
-      opacity: 0.45,
+      visible: false,
+    });
+    expect(onMapLayerChange).toHaveBeenNthCalledWith(3, "roadmap", {
+      visible: false,
     });
 
     act(() => root.unmount());
   });
 
-  it("keeps layer checkbox and opacity changes after a canonical-state rerender", () => {
+  it("keeps map visibility and opacity changes after a canonical-state rerender", () => {
     const container = document.createElement("div");
     document.body.appendChild(container);
     const root = createRoot(container);
@@ -132,7 +144,7 @@ describe("CanvasToolbar map layers", () => {
         },
         roadmap: {
           url: "https://example.test/roadmap.png",
-          visible: false,
+          visible: true,
           opacity: 1,
         },
       },
@@ -147,11 +159,9 @@ describe("CanvasToolbar map layers", () => {
           onToolChange={() => undefined}
           snapEnabled={false}
           onSnapToggle={() => undefined}
-          orthoEnabled={false}
-          onOrthoToggle={() => undefined}
           gateSnap100={false}
           onGateSnap100Toggle={() => undefined}
-          showGrid
+          showGrid={false}
           onToggleGrid={() => undefined}
           expanded={false}
           onToggleExpand={() => undefined}
@@ -173,39 +183,75 @@ describe("CanvasToolbar map layers", () => {
       root.render(<Harness />);
     });
 
-    const roadmapToggle = container.querySelector<HTMLInputElement>(
-      'input[aria-label="Show Roadmap layer"]',
+    const hideMap = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="Hide map underlay"]',
     );
-    const roadmapOpacity = container.querySelector<HTMLInputElement>(
-      'input[aria-label="Roadmap layer opacity"]',
-    );
-    expect(roadmapToggle?.checked).toBe(false);
+    expect(hideMap).not.toBeNull();
 
     act(() => {
-      roadmapToggle!.click();
+      hideMap!.click();
     });
-    expect(roadmapToggle?.checked).toBe(true);
-    expect(roadmapOpacity?.disabled).toBe(false);
-
-    act(() => {
-      roadmapOpacity!.value = "50";
-      roadmapOpacity!.dispatchEvent(new Event("input", { bubbles: true }));
-    });
-    expect(roadmapOpacity?.value).toBe("50");
+    expect(
+      container.querySelector<HTMLButtonElement>(
+        'button[aria-label="Show map underlay"]',
+      ),
+    ).not.toBeNull();
 
     act(() => {
       root.render(<Harness />);
     });
     expect(
-      container.querySelector<HTMLInputElement>(
-        'input[aria-label="Show Roadmap layer"]',
-      )?.checked,
-    ).toBe(true);
+      container.querySelector<HTMLButtonElement>(
+        'button[aria-label="Show map underlay"]',
+      ),
+    ).not.toBeNull();
+
+    const showMap = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="Show map underlay"]',
+    );
+    act(() => {
+      showMap!.click();
+    });
+    const roadmapOpacity = container.querySelector<HTMLInputElement>(
+      'input[aria-label="Roadmap layer opacity"]',
+    );
+    expect(roadmapOpacity?.disabled).toBe(false);
+    act(() => {
+      roadmapOpacity!.value = "50";
+      roadmapOpacity!.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    expect(
+      container.querySelector<HTMLButtonElement>(
+        'button[aria-label="Hide map underlay"]',
+      ),
+    ).not.toBeNull();
     expect(
       container.querySelector<HTMLInputElement>(
         'input[aria-label="Roadmap layer opacity"]',
       )?.value,
     ).toBe("50");
+
+    act(() => root.unmount());
+  });
+
+  it("starts optional snap/grid controls unchecked and omits Ortho", () => {
+    const { container, root } = renderToolbar(vi.fn());
+
+    expect(
+      container.querySelector<HTMLInputElement>('input[aria-label="Angle snap"]')
+        ?.checked,
+    ).toBe(false);
+    expect(
+      container.querySelector<HTMLInputElement>(
+        'input[aria-label="Gate snap 100mm"]',
+      )?.checked,
+    ).toBe(false);
+    expect(
+      container.querySelector<HTMLInputElement>('input[aria-label="Show grid"]')
+        ?.checked,
+    ).toBe(false);
+    expect(container.textContent).not.toContain("Ortho");
 
     act(() => root.unmount());
   });

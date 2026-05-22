@@ -101,11 +101,10 @@ export function FenceLayoutCanvas({
   const [activeTool, setActiveTool] = useState<
     "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand"
   >("draw");
-  const [snapEnabled, setSnapEnabled] = useState(true);
+  const [snapEnabled, setSnapEnabled] = useState(false);
   const [gateSnap100, setGateSnap100] = useState(false);
-  const [showGrid, setShowGrid] = useState(true);
+  const [showGrid, setShowGrid] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const [orthoEnabled, setOrthoEnabled] = useState(false);
   const [freehandStyle, setFreehandStyleState] = useState({
     color: "rgba(14,165,233,0.9)",
     width: 3,
@@ -159,9 +158,9 @@ export function FenceLayoutCanvas({
     if (!canvasRef.current) return;
 
     const engine = initCanvasEngine(canvasRef.current, {
-      snapToGrid: true,
+      snapToGrid: false,
       gridSize: 20,
-      showGrid: true,
+      showGrid: false,
       allowedAngles,
       onGatePlaced: handleGatePlaced,
       onLayoutChange: (layout) => {
@@ -231,6 +230,10 @@ export function FenceLayoutCanvas({
     engineRef.current?.setShowGrid(showGrid);
   }, [showGrid]);
 
+  useEffect(() => {
+    engineRef.current?.setGateSnapTo100mm(gateSnap100);
+  }, [gateSnap100]);
+
   // Sync postPositions prop into the canvas engine
   useEffect(() => {
     engineRef.current?.setPostPositions(postPositions ?? null);
@@ -280,8 +283,6 @@ export function FenceLayoutCanvas({
         onToggleGrid={setShowGrid}
         expanded={expanded}
         onToggleExpand={setExpanded}
-        orthoEnabled={orthoEnabled}
-        onOrthoToggle={setOrthoEnabled}
         freehandStyle={freehandStyle}
         onFreehandStyleChange={handleFreehandStyleChange}
         onHelpOpen={() => {}}

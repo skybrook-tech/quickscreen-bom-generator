@@ -107,9 +107,9 @@ export function FenceLayoutCanvas({
   const [activeTool, setActiveTool] = useState<CanvasTool>(
     "draw",
   );
-  const [snapEnabled, setSnapEnabled] = useState(true);
-  const [gateSnap100, setGateSnap100] = useState(true);
-  const [showGrid, setShowGrid] = useState(true);
+  const [snapEnabled, setSnapEnabled] = useState(false);
+  const [gateSnap100, setGateSnap100] = useState(false);
+  const [showGrid, setShowGrid] = useState(false);
   const [expandedInternal, setExpandedInternal] = useState(false);
   const expanded = expandedProp !== undefined ? expandedProp : expandedInternal;
   const setExpanded = useCallback((v: boolean | ((prev: boolean) => boolean)) => {
@@ -117,7 +117,6 @@ export function FenceLayoutCanvas({
     setExpandedInternal(next);
     onExpandedChange?.(next);
   }, [expanded, onExpandedChange]);
-  const [orthoEnabled, setOrthoEnabled] = useState(false);
   const [freehandStyle, setFreehandStyleState] = useState({
     color: "rgba(14,165,233,0.9)",
     width: 3,
@@ -213,9 +212,9 @@ export function FenceLayoutCanvas({
     if (!canvasRef.current) return;
 
     const engine = initCanvasEngine(canvasRef.current, {
-      snapToGrid: true,
+      snapToGrid: false,
       gridSize: 20,
-      showGrid: true,
+      showGrid: false,
       allowedAngles,
       onGatePlaced: handleGatePlaced,
       onLayoutChange: (layout) => {
@@ -509,8 +508,6 @@ export function FenceLayoutCanvas({
           onToggleGrid={setShowGrid}
           expanded={expanded}
           onToggleExpand={setExpanded}
-          orthoEnabled={orthoEnabled}
-          onOrthoToggle={setOrthoEnabled}
           freehandStyle={freehandStyle}
           onFreehandStyleChange={handleFreehandStyleChange}
           onHelpOpen={() => setHelpOpen(true)}
