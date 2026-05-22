@@ -128,6 +128,8 @@ Latest map regression fix: PR #30 now caps Static Maps snapshot width and height
 
 Latest map canvas zoom pass: PR #30 now supports direct mouse/trackpad wheel zoom over the map canvas and two-finger pinch zoom on touch screens, while keeping toolbar buttons, keyboard zoom, and reset-to-default zoom controls.
 
+Latest edit-gate workflow pass: `codex/edit-gate-workflow-v2` re-implements PR #29's persistent draggable Edit Gate dialog on top of the post-snapshot canvas, keeps Gate mode active for repeated placements, adds session-scoped cancel removal, carries gate variables through canvas/canonical round-trips, suppresses noisy hover stats, and hides the initial draw hint after the first draw click until clear.
+
 Latest Brief BN v2 pass: the sandbox BN work now completes the top-bar reorganisation by moving Map/BOM tabs into the app header as a segmented control, moving BOM actions beside them only while BOM is active, removing the duplicate in-panel action row, and preserving the icon-only settings/Describe/gate-settings conventions in the repo skill mirrors.
 
 Latest Brief BO pass: run summaries now show only accepted run-default fields with height/length removed from the subheading, BOM colour display strips internal dispatch-code suffixes, section and gate match codes stay green when their run-derived settings match, and Print BOM now prints materials and totals first, then Run & Section Details, then the optional map at the bottom.

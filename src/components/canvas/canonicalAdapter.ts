@@ -175,6 +175,7 @@ interface GateInSegment {
   gateType?: CanvasGate['gateType'];
   swingDirection?: CanvasGate['swingDirection'];
   slidingSide?: CanvasGate['slidingSide'];
+  variables?: CanvasGate['variables'];
 }
 
 function gateMovementFromCanvas(gateType: CanvasGate['gateType']) {
@@ -350,6 +351,7 @@ function expandSegmentWithGates(
       canvasSegmentIndex: localSegIdx,
       sourceSegmentLengthMm: Math.round(totalMm),
       variables: {
+        ...(gate.variables ?? {}),
         ...(parentSectionId ? { parent_section_id: parentSectionId } : {}),
         [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]:
           gate.useGatePostsAsFenceTermination ?? true,
@@ -518,6 +520,7 @@ export function canvasLayoutToCanonical(
         gateType: gate.gateType,
         swingDirection: gate.swingDirection,
         slidingSide: gate.slidingSide,
+        variables: gate.variables,
       });
     }
 
@@ -765,6 +768,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
           gateId: canonSeg.segmentId,
           useGatePostsAsFenceTermination:
             canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
+          variables: canonSeg.variables,
           ...gateVisualFromCanon(canonSeg),
         };
         allFlatGates.push(gate);
@@ -801,6 +805,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
             gateId: canonSeg.segmentId,
             useGatePostsAsFenceTermination:
               canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
+            variables: canonSeg.variables,
             ...gateVisualFromCanon(canonSeg),
           });
           runGates.push({
@@ -811,6 +816,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
             gateId: canonSeg.segmentId,
             useGatePostsAsFenceTermination:
               canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
+            variables: canonSeg.variables,
             ...gateVisualFromCanon(canonSeg),
           });
         } else {
@@ -823,8 +829,8 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
             lengthMM: 1, angleDeg: 0,
           });
           const gateIdx = globalFlatOffset + localFlatSegments.length - 1;
-          allFlatGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900, gateId: canonSeg.segmentId, ...gateVisualFromCanon(canonSeg) });
-          runGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900, gateId: canonSeg.segmentId, ...gateVisualFromCanon(canonSeg) });
+          allFlatGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900, gateId: canonSeg.segmentId, variables: canonSeg.variables, ...gateVisualFromCanon(canonSeg) });
+          runGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900, gateId: canonSeg.segmentId, variables: canonSeg.variables, ...gateVisualFromCanon(canonSeg) });
           if (!useGeometry) xCursor += 1;
         }
       } else {

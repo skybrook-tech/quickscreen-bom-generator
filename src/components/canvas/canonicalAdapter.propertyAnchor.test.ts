@@ -2,7 +2,13 @@ import { describe, expect, it } from "vitest";
 import { payloadFromV3FenceConfig } from "../../lib/quotePayload";
 import { canonicalPayloadSchema } from "../../schemas/canonical.schema";
 import type { CanonicalPayload } from "../../types/canonical.types";
-import { mergeCanonicalPreservingSegmentMeta } from "./canonicalAdapter";
+import { GATE_SEGMENT_STUB_KEYS } from "../../lib/segmentTermination";
+import type { CanvasGate } from "./canvasEngine";
+import {
+  canonicalToCanvasLayout,
+  canvasLayoutToCanonical,
+  mergeCanonicalPreservingSegmentMeta,
+} from "./canonicalAdapter";
 
 const basePayload: CanonicalPayload = {
   productCode: "QSHS",
@@ -147,5 +153,66 @@ describe("canonicalAdapter propertyAnchor", () => {
       visible: false,
       opacity: 1,
     });
+  });
+
+  it("round-trips gate variables through canvas to canonical conversions", () => {
+    const variables = {
+      [GATE_SEGMENT_STUB_KEYS.gateMovement]: "sliding",
+      [GATE_SEGMENT_STUB_KEYS.openingDirection]: "right",
+      [GATE_SEGMENT_STUB_KEYS.slidingSide]: "back",
+      [GATE_SEGMENT_STUB_KEYS.hingeType]: "none",
+      [GATE_SEGMENT_STUB_KEYS.latchType]: "LLAA",
+      [GATE_SEGMENT_STUB_KEYS.slatGapMm]: 20,
+      [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]: false,
+    };
+    const gate: CanvasGate = {
+      segmentIndex: 0,
+      positionOnSegment: 0.5,
+      anchor: "center",
+      widthMM: 900,
+      gateId: "33333333-3333-4333-8333-333333333333",
+      useGatePostsAsFenceTermination: false,
+      gateType: "sliding",
+      swingDirection: "right",
+      slidingSide: "back",
+      variables,
+    };
+    const payload = canvasLayoutToCanonical(
+      {
+        segments: [
+          {
+            startX: 0,
+            startY: 0,
+            endX: 300,
+            endY: 0,
+            lengthMM: 3000,
+            angleDeg: 0,
+          },
+        ],
+        gates: [gate],
+        totalLengthM: 3,
+        cornerCount: 0,
+        runs: [
+          {
+            label: "Run 1",
+            totalLengthM: 3,
+            cornerCount: 0,
+            gates: [gate],
+          },
+        ],
+        boundaries: [],
+      },
+      "QSHS",
+      {},
+    );
+
+    const gateSegment = payload.runs[0].segments.find(
+      (segment) => segment.segmentKind === "gate_opening",
+    );
+    expect(gateSegment?.variables).toMatchObject(variables);
+
+    const restored = canonicalToCanvasLayout(payload);
+    expect(restored.gates[0].variables).toMatchObject(variables);
+    expect(restored.runs[0].gates[0].variables).toMatchObject(variables);
   });
 });
