@@ -92,6 +92,8 @@ export const canonicalPayloadSchema = z.object({
       zoom: z.number().int().nonnegative(),
       width: z.number().int().positive(),
       height: z.number().int().positive(),
+      sourceViewportWidth: z.number().int().positive().optional(),
+      sourceViewportHeight: z.number().int().positive().optional(),
       metresPerPixel: z.number().positive(),
       capturedAt: z.string(),
       layers: z

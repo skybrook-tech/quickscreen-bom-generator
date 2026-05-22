@@ -84,6 +84,9 @@ export type CanvasGateType = "single-swing" | "double-swing" | "sliding";
 export type CanvasGateSwingDirection = "in" | "out" | "left" | "right";
 export type CanvasGateSlidingSide = "front" | "back";
 
+const MIN_CANVAS_ZOOM = 0.5;
+const MAX_CANVAS_ZOOM = 10;
+
 export interface CanvasGateVisual {
   gateType: CanvasGateType;
   swingDirection?: CanvasGateSwingDirection;
@@ -591,13 +594,15 @@ export function initCanvasEngine(
    * Compute the effective snap angle set for the current context.
    * - Shift held: only 180° (straight continuation) — locks to straight line.
    * - Snap on: nearest 5° turn so the user can draw at any practical angle.
-   * - Snap off: product metadata can still constrain angles where supplied.
+   * - Snap off: no angle constraint; the clicked point lands exactly where placed.
    */
   function effectiveSnapAngles(shiftHeld: boolean): number[] {
+    if (!snap) return [];
     if (shiftHeld) return [180];
-    if (snap) return fiveDegreeAngles();
-    if (allowedAngles.length === 0) return [];
-    return Array.from(new Set([...allowedAngles, 180]));
+    const angles = fiveDegreeAngles();
+    return allowedAngles.length > 0
+      ? Array.from(new Set([...angles, ...allowedAngles]))
+      : angles;
   }
   let mouseCanvas: Point = { x: 0, y: 0 };
   let isPanning = false;
@@ -940,7 +945,7 @@ export function initCanvasEngine(
     if (orthoMode) {
       return snapBearingFrom(lastPt, snapped, shiftDown ? 45 : 90);
     }
-    if (shiftDown && run.points.length >= 2) {
+    if (snap && shiftDown && run.points.length >= 2) {
       const prev = run.points[run.points.length - 2];
       return snapToAllowedAngle(prev, lastPt, snapped, [180]);
     }
@@ -3445,7 +3450,10 @@ export function initCanvasEngine(
     e.preventDefault();
     const screen = eventToScreen(e);
     const zoomFactor = e.deltaY < 0 ? 1.2 : 1 / 1.2;
-    const newZoom = Math.max(0.1, Math.min(10, zoom * zoomFactor));
+    const newZoom = Math.max(
+      MIN_CANVAS_ZOOM,
+      Math.min(MAX_CANVAS_ZOOM, zoom * zoomFactor),
+    );
 
     // Zoom toward cursor
     pan = {
@@ -3493,7 +3501,10 @@ export function initCanvasEngine(
   }
 
   function zoomAtScreenPoint(screen: Point, factor: number) {
-    const newZoom = Math.max(0.1, Math.min(10, zoom * factor));
+    const newZoom = Math.max(
+      MIN_CANVAS_ZOOM,
+      Math.min(MAX_CANVAS_ZOOM, zoom * factor),
+    );
     pan = {
       x: screen.x - (screen.x - pan.x) * (newZoom / zoom),
       y: screen.y - (screen.y - pan.y) * (newZoom / zoom),

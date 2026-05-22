@@ -21,29 +21,28 @@ export function metresPerPixelAt(latitude: number, zoom: number): number {
 export function clampStaticMapSize(width: number, height: number) {
   const safeWidth = Math.max(1, Math.round(width));
   const safeHeight = Math.max(1, Math.round(height));
-  const ratio = Math.min(
-    1,
-    STATIC_MAP_MAX_DIMENSION / safeWidth,
-    STATIC_MAP_MAX_DIMENSION / safeHeight,
-  );
 
   return {
-    width: Math.max(1, Math.round(safeWidth * ratio)),
-    height: Math.max(1, Math.round(safeHeight * ratio)),
+    width: Math.min(STATIC_MAP_MAX_DIMENSION, safeWidth),
+    height: Math.min(STATIC_MAP_MAX_DIMENSION, safeHeight),
   };
 }
 
-export function createMapSnapshot(input: {
+export interface MapSnapshotCaptureInput {
   centerLat: number;
   centerLng: number;
   zoom: number;
   viewportWidth: number;
   viewportHeight: number;
   capturedAt?: string;
-}): CanonicalMapSnapshot {
+}
+
+export function createMapSnapshot(input: MapSnapshotCaptureInput): CanonicalMapSnapshot {
+  const sourceViewportWidth = Math.max(1, Math.round(input.viewportWidth));
+  const sourceViewportHeight = Math.max(1, Math.round(input.viewportHeight));
   const size = clampStaticMapSize(
-    input.viewportWidth * STATIC_MAP_CAPTURE_SIZE_MULTIPLIER,
-    input.viewportHeight * STATIC_MAP_CAPTURE_SIZE_MULTIPLIER,
+    sourceViewportWidth * STATIC_MAP_CAPTURE_SIZE_MULTIPLIER,
+    sourceViewportHeight * STATIC_MAP_CAPTURE_SIZE_MULTIPLIER,
   );
   const zoom = Math.round(input.zoom);
   return {
@@ -52,13 +51,18 @@ export function createMapSnapshot(input: {
     zoom,
     width: size.width,
     height: size.height,
+    sourceViewportWidth,
+    sourceViewportHeight,
     metresPerPixel: metresPerPixelAt(input.centerLat, zoom),
     capturedAt: input.capturedAt ?? new Date().toISOString(),
   };
 }
 
 export function getDefaultSnapshotViewportTransform(
-  snapshot: Pick<CanonicalMapSnapshot, "width" | "height">,
+  snapshot: Pick<
+    CanonicalMapSnapshot,
+    "width" | "height" | "sourceViewportWidth" | "sourceViewportHeight"
+  >,
   viewportWidth: number,
   viewportHeight: number,
 ) {
@@ -66,11 +70,19 @@ export function getDefaultSnapshotViewportTransform(
   const safeViewportHeight = Math.max(1, viewportHeight || snapshot.height);
   const visibleWorldWidth = Math.max(
     1,
-    snapshot.width * STATIC_MAP_DEFAULT_VIEWPORT_FRACTION,
+    Math.min(
+      snapshot.width,
+      snapshot.sourceViewportWidth ??
+        snapshot.width * STATIC_MAP_DEFAULT_VIEWPORT_FRACTION,
+    ),
   );
   const visibleWorldHeight = Math.max(
     1,
-    snapshot.height * STATIC_MAP_DEFAULT_VIEWPORT_FRACTION,
+    Math.min(
+      snapshot.height,
+      snapshot.sourceViewportHeight ??
+        snapshot.height * STATIC_MAP_DEFAULT_VIEWPORT_FRACTION,
+    ),
   );
   const zoom = Math.min(
     safeViewportWidth / visibleWorldWidth,
@@ -128,14 +140,7 @@ export function preloadStaticMapImage(url: string): Promise<void> {
 }
 
 export async function createLayeredMapSnapshot(
-  input: {
-    centerLat: number;
-    centerLng: number;
-    zoom: number;
-    viewportWidth: number;
-    viewportHeight: number;
-    capturedAt?: string;
-  },
+  input: MapSnapshotCaptureInput,
   apiKey: string,
   loadImage: StaticMapImageLoader = preloadStaticMapImage,
 ): Promise<CanonicalMapSnapshot> {

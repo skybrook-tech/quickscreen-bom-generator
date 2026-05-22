@@ -6,8 +6,8 @@ import { useGoogleMaps } from "../../hooks/useGoogleMaps";
 import { GOOGLE_MAPS_MISSING_API_KEY_MESSAGE } from "../../lib/googleMaps/loader";
 import {
   createLayeredMapSnapshot,
-  createMapSnapshot,
   MAPS_STATIC_API_ENABLEMENT_MESSAGE,
+  type MapSnapshotCaptureInput,
 } from "../../lib/googleMaps/staticSnapshot";
 import type { CanonicalMapSnapshot } from "../../types/canonical.types";
 import { AddressInput, type LocatedAddress } from "./AddressInput";
@@ -198,28 +198,28 @@ function ExpandedPropertyMap({
   onConfirm,
 }: ExpandedPropertyMapProps) {
   const [mapType, setMapType] = useState<MapType>("satellite");
-  const snapshotReaderRef = useRef<(() => CanonicalMapSnapshot | null) | null>(null);
+  const snapshotReaderRef = useRef<(() => MapSnapshotCaptureInput | null) | null>(null);
   const [capturingSnapshot, setCapturingSnapshot] = useState(false);
   const [snapshotError, setSnapshotError] = useState<string | null>(null);
   const mapStatus = mapRequested
     ? "Search for the property, then drag the pin if the roofline needs fine tuning."
     : "Enter an address to locate the property.";
 
-  function readSnapshot() {
+  function readSnapshotInput(): MapSnapshotCaptureInput {
     const fromMap = snapshotReaderRef.current?.();
     if (fromMap) return fromMap;
     const center = pin ?? located ?? DEFAULT_CENTER;
-    return createMapSnapshot({
+    return {
       centerLat: center.lat,
       centerLng: center.lng,
       zoom: pin ? PROPERTY_ZOOM : DEFAULT_ZOOM,
       viewportWidth: DEFAULT_SNAPSHOT_WIDTH,
       viewportHeight: DEFAULT_SNAPSHOT_HEIGHT,
-    });
+    };
   }
 
   async function handleUseView() {
-    const baseSnapshot = readSnapshot();
+    const snapshotInput = readSnapshotInput();
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim();
     if (!apiKey) {
       setSnapshotError(GOOGLE_MAPS_MISSING_API_KEY_MESSAGE);
@@ -230,14 +230,7 @@ function ExpandedPropertyMap({
     setSnapshotError(null);
     try {
       const layeredSnapshot = await createLayeredMapSnapshot(
-        {
-          centerLat: baseSnapshot.centerLat,
-          centerLng: baseSnapshot.centerLng,
-          zoom: baseSnapshot.zoom,
-          viewportWidth: baseSnapshot.width,
-          viewportHeight: baseSnapshot.height,
-          capturedAt: baseSnapshot.capturedAt,
-        },
+        snapshotInput,
         apiKey,
       );
       onConfirm(layeredSnapshot);
@@ -332,7 +325,7 @@ interface PropertyMapCanvasProps {
   initialSnapshot: CanonicalMapSnapshot | null;
   onPinChange: (pin: { lat: number; lng: number }) => void;
   onSnapshotReaderChange: (
-    reader: (() => CanonicalMapSnapshot | null) | null,
+    reader: (() => MapSnapshotCaptureInput | null) | null,
   ) => void;
 }
 
@@ -410,13 +403,13 @@ function PropertyMapCanvas({
       const node = mapNodeRef.current;
       const center = map?.getCenter();
       if (!map || !node || !center) return null;
-      return createMapSnapshot({
+      return {
         centerLat: center.lat(),
         centerLng: center.lng(),
         zoom: map.getZoom() ?? PROPERTY_ZOOM,
         viewportWidth: node.clientWidth || DEFAULT_SNAPSHOT_WIDTH,
         viewportHeight: node.clientHeight || DEFAULT_SNAPSHOT_HEIGHT,
-      });
+      };
     });
 
     return () => onSnapshotReaderChange(null);

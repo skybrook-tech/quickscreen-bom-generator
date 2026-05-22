@@ -15,6 +15,8 @@ export interface CanonicalPayload {
     zoom: number;
     width: number;
     height: number;
+    sourceViewportWidth?: number;
+    sourceViewportHeight?: number;
     metresPerPixel: number;
     capturedAt: string;
     layers?: {

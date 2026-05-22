@@ -122,6 +122,8 @@ Latest layered snapshot pass: PR #30 now captures both satellite and roadmap Sta
 
 Latest mapper control simplification: PR #30 now starts the map canvas with angle snap, gate snap, and grid off, removes the Ortho toolbar option, replaces per-layer visibility checkboxes with opacity-only layer rows, and adds a single Map on/off button that hides or restores the map underlay while leaving drawn fence geometry on the canvas.
 
+Latest map regression fix: PR #30 now caps Static Maps snapshot width and height independently after the 2x viewport multiplier, stores the original sidebar viewport size for the default centred crop, lets canvas zoom-out reach the 0.5 reveal level, and fully disables angle snapping when the Angle snap checkbox is off.
+
 Latest Brief BN v2 pass: the sandbox BN work now completes the top-bar reorganisation by moving Map/BOM tabs into the app header as a segmented control, moving BOM actions beside them only while BOM is active, removing the duplicate in-panel action row, and preserving the icon-only settings/Describe/gate-settings conventions in the repo skill mirrors.
 
 Latest Brief BO pass: run summaries now show only accepted run-default fields with height/length removed from the subheading, BOM colour display strips internal dispatch-code suffixes, section and gate match codes stay green when their run-derived settings match, and Print BOM now prints materials and totals first, then Run & Section Details, then the optional map at the bottom.

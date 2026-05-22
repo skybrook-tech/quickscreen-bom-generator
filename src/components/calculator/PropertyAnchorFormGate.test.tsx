@@ -161,9 +161,17 @@ describe("PropertyAnchorFormGate", () => {
       "satellite",
       "roadmap",
     ]);
+    expect(requestedUrls.map((url) => new URL(url).searchParams.get("size"))).toEqual([
+      "640x640",
+      "640x640",
+    ]);
     expect(onAnchorConfirmed).toHaveBeenCalledWith(
       expect.objectContaining({
         snapshot: expect.objectContaining({
+          width: 640,
+          height: 640,
+          sourceViewportWidth: 640,
+          sourceViewportHeight: 480,
           layers: {
             satellite: expect.objectContaining({
               url: expect.stringContaining("maptype=satellite"),

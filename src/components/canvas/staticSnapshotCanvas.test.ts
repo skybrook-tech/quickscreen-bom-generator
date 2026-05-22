@@ -293,4 +293,96 @@ describe("canvas engine Static Maps snapshot scale", () => {
     engine.destroy();
     canvas.remove();
   });
+
+  it("zooms out below the default view down to the larger snapshot reveal level", () => {
+    const { latestZoom } = installZoomCanvasMock();
+    const canvas = document.createElement("canvas");
+    document.body.appendChild(canvas);
+    Object.defineProperty(canvas, "getBoundingClientRect", {
+      value: () => ({
+        left: 0,
+        top: 0,
+        width: 640,
+        height: 360,
+        right: 640,
+        bottom: 360,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }),
+    });
+
+    const engine = initCanvasEngine(canvas, {
+      snapToGrid: false,
+      gridSize: 20,
+      showGrid: false,
+    });
+    engine.setViewportTransform({
+      pan: { x: 0, y: 0 },
+      zoom: 1,
+      scale: 10,
+    });
+
+    engine.zoomOut();
+    expect(latestZoom()).toBeCloseTo(1 / 1.2, 6);
+
+    for (let i = 0; i < 8; i++) {
+      engine.zoomOut();
+    }
+    expect(latestZoom()).toBeCloseTo(0.5, 6);
+
+    engine.destroy();
+    canvas.remove();
+  });
+
+  it("does not angle-snap drawing points while snap is disabled", () => {
+    installCanvasMock();
+    const canvas = document.createElement("canvas");
+    document.body.appendChild(canvas);
+    Object.defineProperty(canvas, "getBoundingClientRect", {
+      value: () => ({
+        left: 0,
+        top: 0,
+        width: 640,
+        height: 360,
+        right: 640,
+        bottom: 360,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }),
+    });
+    const engine = initCanvasEngine(canvas, {
+      snapToGrid: false,
+      gridSize: 20,
+      showGrid: false,
+      allowedAngles: [90],
+    });
+    engine.setViewportTransform({
+      pan: { x: 0, y: 0 },
+      zoom: 1,
+      scale: 10,
+    });
+
+    clickCanvas(canvas, 100, 100);
+    clickCanvas(canvas, 250, 187);
+    clickCanvas(canvas, 360, 229);
+
+    const layout = engine.getLayout();
+    expect(layout.segments[0]).toMatchObject({
+      startX: 100,
+      startY: 100,
+      endX: 250,
+      endY: 187,
+    });
+    expect(layout.segments[1]).toMatchObject({
+      startX: 250,
+      startY: 187,
+      endX: 360,
+      endY: 229,
+    });
+
+    engine.destroy();
+    canvas.remove();
+  });
 });

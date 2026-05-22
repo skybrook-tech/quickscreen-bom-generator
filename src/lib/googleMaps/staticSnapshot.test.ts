@@ -23,9 +23,9 @@ describe("Static Maps snapshots", () => {
     }
   });
 
-  it("clamps Static Maps dimensions while preserving viewport aspect", () => {
-    expect(clampStaticMapSize(1280, 720)).toEqual({ width: 640, height: 360 });
-    expect(clampStaticMapSize(300, 900)).toEqual({ width: 213, height: 640 });
+  it("clamps Static Maps dimensions independently to the free-tier limit", () => {
+    expect(clampStaticMapSize(1280, 720)).toEqual({ width: 640, height: 640 });
+    expect(clampStaticMapSize(300, 900)).toEqual({ width: 300, height: 640 });
     expect(clampStaticMapSize(480, 320)).toEqual({ width: 480, height: 320 });
     expect(STATIC_MAP_MAX_DIMENSION).toBe(640);
   });
@@ -43,9 +43,11 @@ describe("Static Maps snapshots", () => {
     expect(STATIC_MAP_CAPTURE_SIZE_MULTIPLIER).toBe(2);
     expect(snapshot.width).toBe(480);
     expect(snapshot.height).toBe(360);
+    expect(snapshot.sourceViewportWidth).toBe(240);
+    expect(snapshot.sourceViewportHeight).toBe(180);
   });
 
-  it("computes the centered default canvas crop for the original sidebar framing", () => {
+  it("computes the centered default canvas crop for legacy snapshots without source viewport metadata", () => {
     const transform = getDefaultSnapshotViewportTransform(
       { width: 640, height: 360 },
       640,
@@ -55,6 +57,23 @@ describe("Static Maps snapshots", () => {
     expect(STATIC_MAP_DEFAULT_VIEWPORT_FRACTION).toBe(0.5);
     expect(transform.zoom).toBeCloseTo(2, 6);
     expect(transform.pan).toEqual({ x: -320, y: -180 });
+  });
+
+  it("uses the original sidebar viewport as the centered default canvas crop", () => {
+    const transform = getDefaultSnapshotViewportTransform(
+      {
+        width: 640,
+        height: 640,
+        sourceViewportWidth: 600,
+        sourceViewportHeight: 480,
+      },
+      800,
+      640,
+    );
+
+    expect(transform.zoom).toBeCloseTo(1.333333, 5);
+    expect(transform.pan.x).toBeCloseTo(-26.666667, 5);
+    expect(transform.pan.y).toBeCloseTo(-106.666667, 5);
   });
 
   it("captures snapshot params with clamped size and scale", () => {
@@ -72,7 +91,9 @@ describe("Static Maps snapshots", () => {
       centerLng: 153.526262,
       zoom: 20,
       width: 640,
-      height: 360,
+      height: 640,
+      sourceViewportWidth: 1280,
+      sourceViewportHeight: 720,
       capturedAt: "2026-05-22T00:00:00.000Z",
     });
     expect(snapshot.metresPerPixel).toBeCloseTo(
@@ -98,7 +119,7 @@ describe("Static Maps snapshots", () => {
     );
     expect(url.searchParams.get("center")).toBe("-33.8688,151.2093");
     expect(url.searchParams.get("zoom")).toBe("19");
-    expect(url.searchParams.get("size")).toBe("640x360");
+    expect(url.searchParams.get("size")).toBe("640x640");
     expect(url.searchParams.get("maptype")).toBe("satellite");
     expect(url.searchParams.get("key")).toBe("test-key");
     expect(roadmapUrl.searchParams.get("maptype")).toBe("roadmap");

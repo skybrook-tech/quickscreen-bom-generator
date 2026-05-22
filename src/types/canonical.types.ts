@@ -27,6 +27,9 @@ export interface CanonicalMapSnapshot {
   zoom: number;
   width: number;
   height: number;
+  /** Original interactive map viewport used for default canvas framing. */
+  sourceViewportWidth?: number;
+  sourceViewportHeight?: number;
   metresPerPixel: number;
   capturedAt: string;
   layers?: Partial<Record<CanonicalMapLayerId, CanonicalMapSnapshotLayer>>;
