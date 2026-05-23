@@ -10,7 +10,7 @@ Latest sandbox polish: run sidebar readability, 0m first-segment defaults, compa
 
 Living app overview: [`docs/app-overview.md`](./app-overview.md) now tracks current routes, file responsibilities, data flow, mapper responsibilities, fallback engine behavior, Supabase seed structure, and update rules.
 
-Latest brief queue pass: Brief 005 restyles canvas text annotations with a translucent rounded label, thin border, soft shadow, 14px Inter text, and a white text halo for readability over satellite snapshots.
+Latest brief queue pass: Brief 001 removes the pre-address confirm-location warning from the calculator entry flow and hides custom-angle warning chips in the V3 sidebar while leaving BOM calculation behavior unchanged.
 
 Latest BOM workflow pass: generated BOM rows aggregate by product within each tab, individual gate tabs are labelled from the canonical gate segments, Generate BOM clears stale results before recalculating, and the mapper opens without the initial snap dot.
 
@@ -81,6 +81,8 @@ Latest BAY-G and launch workflow pass: BAY-G is restored to the active system se
 Latest run-default and gate-behaviour pass: Run Settings now actively reset section and gate defaults for the whole run, matching section codes stay green and can be clicked to revert an overridden section, number fields allow clearing before retyping, double swing gates calculate as two leaves with hinge/latch clearance and default drop bolt handling, failed hinge/latch options move under override sections, and sliding gates carry slide-side data through the sidebar, canvas, canonical payload, and local fallback BOM.
 
 Latest mobile mapper audit pass: the `/calculator` mobile workflow now opens the layout map from the intro with a fallback QSHS payload, uses the bottom Run/BOM/Map tabs as true mobile panes, keeps Run/BOM reachable by minimizing the map when those tabs are selected, gives the mapper touch start/move/end support for phone drawing and gate dragging, switches the mapper toolbar to horizontal scrolling on narrow screens, hides the satellite hint over the phone canvas, and adds mobile footer clearance so action buttons are not covered by the bottom nav.
+
+Latest Brief 006 pass: the mapper now has a first-class Arrow site tool with its own toolbar button and `A` shortcut. Arrows are placed as straight tail-to-head annotations, render with a fixed dark-grey style, and round-trip through the canonical payload alongside the existing canvas data.
 
 Latest Brief AU pass: BOM rows now retain source breakdowns for run/gate scoped review, the All BOM tab aggregates to one line per SKU while filtered tabs re-price by scoped quantity, BOM display categories now use a richer category/subcategory/sort order taxonomy, seed components carry display metadata without changing engine selector categories, and TruClose safety caps (`TC-CAPS3`) are offered as an optional add-on instead of being auto-added.
 
@@ -450,6 +452,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Brief BM map canvas overhaul foundation: moved address search above the canvas with a collapsed map-settings popover, removed the duplicate right-pane expand button, renamed Draw to Draw Fence and Existing wall to Dotted line, added click-drag building rectangles, free-draw strokes, post/pillar dimensions, transparent text notes, cursor hints, fitted print-map output with job/run/gate/date summary, and preserved map annotations through layout reloads.
 - [x] Brief BM completion pass: added Ortho snapping for Draw Fence/Dotted line, free-draw colour/width/style/opacity/arrow controls, map item selection with Delete/Backspace removal, right-click context actions, draggable/resizable text notes, movable/resizable building rectangles, movable existing post/pillar markers, and editable text/post/pillar details without changing BOM dispatch.
 - [x] Brief BO residual punch-list: removed redundant run-subheading length/height, kept height section-only in the visible UI, added stripped colour-code display text for BOM summaries/rows/exports, tightened visible green section/gate match chips, and confirmed the existing icon Describe trigger plus hidden initial Add Run behaviour.
+- [x] Brief 011 queue pass: double-click fence finish now preserves the user's zoomed-out canvas viewport during same-geometry form sync, preventing the satellite/background view from shifting away from the drawn run.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---
