@@ -1,6 +1,8 @@
 // canvasEngine.ts — Pure TypeScript canvas engine (no React imports)
 // All drawing, interaction, snap, undo logic lives here.
 
+import { computePrintViewport } from "./printMap";
+
 export interface CanvasSegment {
   startX: number;
   startY: number;
@@ -41,6 +43,31 @@ export interface CanvasRunSummary {
     panelCount: number;
     gateCount: number;
   }>;
+}
+
+export interface CanvasPrintSectionSummary {
+  label: string;
+  lengthM: number;
+  heightMm?: number;
+  panelCount?: number;
+  gateCount?: number;
+}
+
+export interface CanvasPrintRunSummary {
+  label: string;
+  systemType?: string;
+  colour?: string;
+  totalLengthM?: number;
+  postCount?: number;
+  gateCount?: number;
+  sections?: CanvasPrintSectionSummary[];
+}
+
+export interface CanvasPrintMapOptions {
+  includeSatellite?: boolean;
+  jobName?: string;
+  propertyAddress?: string;
+  runs?: CanvasPrintRunSummary[];
 }
 
 export interface CanvasLayout {
@@ -4206,7 +4233,8 @@ export function initCanvasEngine(
     return { minX, minY, maxX, maxY, width: Math.max(1, maxX - minX), height: Math.max(1, maxY - minY) };
   }
 
-  function printMap(options: { includeSatellite?: boolean; jobName?: string } = {}) {
+  async function printMap(options: CanvasPrintMapOptions = {}) {
+    return printMapOutput(options);
     const originalMapLayers = mapLayers;
     const originalZoom = zoom;
     const originalPan = { ...pan };
@@ -4214,12 +4242,9 @@ export function initCanvasEngine(
     if (bounds) {
       const W = canvas.getBoundingClientRect().width || canvas.width || 1000;
       const H = canvas.getBoundingClientRect().height || canvas.height || 700;
-      const pad = 70;
-      zoom = Math.min((W - pad * 2) / bounds.width, (H - pad * 2) / bounds.height, 8);
-      pan = {
-        x: W / 2 - zoom * (bounds.minX + bounds.width / 2),
-        y: H / 2 - zoom * (bounds.minY + bounds.height / 2),
-      };
+      const viewport = computePrintViewport(bounds!, W, H);
+      zoom = viewport.zoom;
+      pan = viewport.pan;
     }
     if (!options.includeSatellite) mapLayers = [];
     draw();
@@ -4257,7 +4282,7 @@ export function initCanvasEngine(
 
     const printWindow = window.open("", "_blank", "noopener,noreferrer");
     if (!printWindow) return;
-    printWindow.document.write(`
+    printWindow!.document.write(`
       <!doctype html>
       <html>
         <head>
@@ -4297,7 +4322,158 @@ export function initCanvasEngine(
         </body>
       </html>
     `);
-    printWindow.document.close();
+    printWindow!.document.close();
+  }
+
+  async function printMapOutput(options: CanvasPrintMapOptions = {}) {
+    const originalMapLayers = mapLayers;
+    const originalZoom = zoom;
+    const originalPan = { ...pan };
+    const bounds = contentBounds();
+    if (bounds) {
+      const W = canvas.getBoundingClientRect().width || canvas.width || 1000;
+      const H = canvas.getBoundingClientRect().height || canvas.height || 700;
+      const viewport = computePrintViewport(bounds, W, H);
+      zoom = viewport.zoom;
+      pan = viewport.pan;
+    }
+    if (!options.includeSatellite) mapLayers = [];
+    draw();
+    const dataUrl = canvas.toDataURL("image/png");
+    const layout = getLayout();
+    const printedAt = new Date().toLocaleDateString("en-AU");
+    const escapeHtml = (value: string) =>
+      value.replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[char] ?? char);
+    const jobName = escapeHtml(options.jobName?.trim() || "Untitled Glass Outlet job");
+    const propertyAddress = escapeHtml(options.propertyAddress?.trim() || "Not supplied");
+    const printRuns: CanvasPrintRunSummary[] = options.runs?.length
+      ? options.runs
+      : layout.runs.map((run) => ({
+          label: run.label,
+          totalLengthM: run.totalLengthM,
+          gateCount: run.gates.length,
+          sections: run.sections,
+        }));
+    const totalGates = printRuns.reduce((sum, run) => sum + (run.gateCount ?? 0), 0);
+    const totalPosts = printRuns.reduce((sum, run) => sum + (run.postCount ?? 0), 0);
+    const summaryHtml = printRuns
+      .map((run) => {
+        const meta = [
+          run.systemType ? `System: ${escapeHtml(run.systemType)}` : null,
+          run.colour ? `Colour: ${escapeHtml(run.colour)}` : null,
+          `Total: ${(run.totalLengthM ?? 0).toFixed(2)}m`,
+          typeof run.postCount === "number" ? `Posts: ${run.postCount}` : null,
+          `Gates: ${run.gateCount ?? 0}`,
+        ].filter(Boolean);
+        const sectionRows = (run.sections ?? [])
+          .map((section) => {
+            const sectionGatePart = section.gateCount
+              ? `${section.gateCount} gate${section.gateCount === 1 ? "" : "s"}`
+              : "none";
+            const heightPart = section.heightMm ? ` - ${section.heightMm}mm high` : "";
+            const panelPart =
+              typeof section.panelCount === "number"
+                ? ` - ${section.panelCount} panel${section.panelCount === 1 ? "" : "s"}`
+                : "";
+            return `<li>${escapeHtml(section.label)} - ${section.lengthM.toFixed(2)}m${heightPart}${panelPart} - ${sectionGatePart}</li>`;
+          })
+          .join("");
+        return `<section class="run-summary"><h2>${escapeHtml(run.label)}</h2><div class="run-meta">${meta.map((item) => `<span>${item}</span>`).join("")}</div>${sectionRows ? `<ul>${sectionRows}</ul>` : ""}</section>`;
+      })
+      .join("");
+    mapLayers = originalMapLayers;
+    zoom = originalZoom;
+    pan = originalPan;
+    draw();
+
+    const shareTitle = options.jobName?.trim() || "Fence layout map";
+    const shareText = `Fence layout map${options.propertyAddress ? ` for ${options.propertyAddress}` : ""}`;
+    const canTryShare =
+      typeof navigator !== "undefined" &&
+      typeof navigator.share === "function" &&
+      /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (canTryShare) {
+      try {
+        const response = await fetch(dataUrl);
+        const blob = await response.blob();
+        const file = new File([blob], "fence-layout-map.png", { type: "image/png" });
+        const shareData: ShareData = { title: shareTitle, text: shareText, files: [file] };
+        if (!navigator.canShare || navigator.canShare(shareData)) {
+          await navigator.share(shareData);
+          return;
+        }
+        await navigator.share({ title: shareTitle, text: shareText });
+        return;
+      } catch {
+        // Fall through to printable HTML when native sharing is unavailable.
+      }
+    }
+
+    const printWindow = window.open("", "_blank", "noopener,noreferrer");
+    if (!printWindow) return;
+    printWindow!.document.write(`
+      <!doctype html>
+      <html>
+        <head>
+          <title>Fence Layout Map</title>
+          <style>
+            * { box-sizing: border-box; }
+            body { margin: 0; padding: 18px; font-family: Arial, sans-serif; color: #111827; background: #fff; }
+            h1 { margin: 0; font-size: 22px; color: #0f2f6f; }
+            p { margin: 4px 0 0; font-size: 12px; color: #4b5563; }
+            img { width: 100%; height: auto; border: 1px solid #cbd5e1; border-radius: 8px; display: block; }
+            .header { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; margin-bottom: 12px; }
+            .header-meta { text-align: right; font-size: 12px; color: #4b5563; }
+            .summary { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 12px 0; }
+            .summary div { border: 1px solid #d1d5db; border-radius: 8px; padding: 8px; font-size: 10px; background: #f8fafc; }
+            .summary span { color: #64748b; text-transform: uppercase; letter-spacing: .04em; }
+            .summary strong { display: block; margin-top: 3px; font-size: 13px; color: #111827; }
+            .run-summary { margin-top: 10px; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; break-inside: avoid; page-break-inside: avoid; }
+            .run-summary h2 { margin: 0 0 6px; font-size: 14px; color: #111827; }
+            .run-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+            .run-meta span { border: 1px solid #e5e7eb; border-radius: 999px; padding: 3px 7px; font-size: 11px; background: #f9fafb; }
+            ul { margin: 8px 0 0 18px; padding: 0; color: #374151; font-size: 11px; }
+            li { margin: 3px 0; }
+            @media print {
+              @page { size: A4 landscape; margin: 10mm; }
+              body { padding: 0; }
+              img { break-inside: avoid; page-break-inside: avoid; }
+              .run-summary { break-inside: avoid; page-break-inside: avoid; }
+            }
+          </style>
+        </head>
+        <body>
+          <header class="header">
+            <div>
+              <h1>${jobName}</h1>
+              <p>Fence layout map for customer review and installation reference.</p>
+            </div>
+            <div class="header-meta">
+              <div><strong>Date:</strong> ${printedAt}</div>
+              <div><strong>Address:</strong> ${propertyAddress}</div>
+            </div>
+          </header>
+          <div class="summary">
+            <div><span>Job</span><strong>${jobName}</strong></div>
+            <div><span>Address</span><strong>${propertyAddress}</strong></div>
+            <div><span>Total</span><strong>${layout.totalLengthM.toFixed(2)}m</strong></div>
+            <div><span>Runs</span><strong>${layout.runs.length}</strong></div>
+            <div><span>Gates</span><strong>${totalGates}</strong></div>
+            <div><span>Posts</span><strong>${totalPosts || "See runs"}</strong></div>
+          </div>
+          <img src="${dataUrl}" alt="Fence layout map" />
+          ${summaryHtml}
+          <script>window.onload = () => window.print();</script>
+        </body>
+      </html>
+    `);
+    printWindow!.document.close();
   }
 
   function setHighlightedMapLabel(label: string | null) {

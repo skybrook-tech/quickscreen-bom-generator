@@ -33,6 +33,7 @@ import type {
   CanvasGateVariables,
   CanvasGateVisual,
   CanvasLayout,
+  CanvasPrintRunSummary,
   CanvasRunSummary,
 } from "./canvasEngine";
 import type { PostPosition } from "../../types/bom.types";
@@ -170,6 +171,7 @@ interface FenceLayoutCanvasProps {
   propertyAnchor?: { lat: number; lng: number; address: string } | null;
   mapSnapshot?: CanonicalMapSnapshot | null;
   onMapSnapshotChange?: (snapshot: CanonicalMapSnapshot) => void;
+  printRuns?: CanvasPrintRunSummary[];
 }
 
 export function FenceLayoutCanvas({
@@ -184,8 +186,10 @@ export function FenceLayoutCanvas({
   jobName,
   expanded: expandedProp,
   onExpandedChange,
+  propertyAnchor,
   mapSnapshot,
   onMapSnapshotChange,
+  printRuns,
 }: FenceLayoutCanvasProps = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const canvasHostRef = useRef<HTMLDivElement>(null);
@@ -591,8 +595,13 @@ export function FenceLayoutCanvas({
     const includeSatellite = engineRef.current?.hasSatelliteUnderlay()
       ? window.confirm("Include the satellite underlay on the printed map?")
       : false;
-    engineRef.current?.printMap({ includeSatellite, jobName });
-  }, []);
+    void engineRef.current?.printMap({
+      includeSatellite,
+      jobName,
+      propertyAddress: propertyAnchor?.address,
+      runs: printRuns,
+    });
+  }, [jobName, printRuns, propertyAnchor?.address]);
 
   const handleMapLayerChange = useCallback(
     (
