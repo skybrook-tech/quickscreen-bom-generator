@@ -16,7 +16,7 @@ import {
   gateMovementOrDefault,
   isSwingGateMovement,
 } from '../../lib/gateOptionRules';
-import type { CanvasGateVisual, CanvasLayout } from '../canvas/canvasEngine';
+import type { CanvasGateVisual, CanvasLayout, CanvasPrintRunSummary } from '../canvas/canvasEngine';
 import type { initCanvasEngine } from '../canvas/canvasEngine';
 import type { CanonicalMapSnapshot } from '../../types/canonical.types';
 import { RunDetailsPanel } from './RunDetailsPanel';
@@ -94,6 +94,53 @@ export function LayoutCanvasV3({
     );
     const global = [`${payload.runs.length} ${payload.runs.length === 1 ? 'run' : 'runs'}`, `${totals.segs} ${totals.segs === 1 ? 'section' : 'sections'}`, `${totals.panels} ${totals.panels === 1 ? 'panel' : 'panels'}`, `${totals.posts} ${totals.posts === 1 ? 'post' : 'posts'}`, `${totals.corners} ${totals.corners === 1 ? 'corner' : 'corners'}`].join(' - ');
     return { global, perRun };
+  }, [payload]);
+
+  const printRuns = useMemo<CanvasPrintRunSummary[]>(() => {
+    if (!payload) return [];
+    const jobMax = clampPostSpacing(payload.variables.max_panel_width_mm, 2600);
+    const formatVariable = (value: unknown) =>
+      value === undefined || value === null || value === "" ? undefined : String(value);
+
+    return payload.runs.map((run, runIndex) => {
+      const stats = calcRunStats(run, jobMax);
+      const fenceSegments = run.segments.filter(
+        (segment) => segment.segmentKind !== "gate_opening",
+      );
+      const sections = fenceSegments.map((segment, sectionIndex) => {
+        const maxW = clampPostSpacing(segment.variables?.max_panel_width_mm, jobMax);
+        const lengthM = (segment.segmentWidthMm ?? 0) / 1000;
+        const heightValue =
+          segment.targetHeightMm ??
+          segment.variables?.target_height_mm ??
+          run.variables?.target_height_mm ??
+          payload.variables.target_height_mm;
+        return {
+          label: `R${runIndex + 1}S${sectionIndex + 1}`,
+          lengthM,
+          heightMm:
+            typeof heightValue === "number"
+              ? heightValue
+              : Number.isFinite(Number(heightValue))
+                ? Number(heightValue)
+                : undefined,
+          panelCount: maxW > 0 ? Math.ceil((segment.segmentWidthMm ?? 0) / maxW) : undefined,
+          gateCount: 0,
+        };
+      });
+      return {
+        label: run.displayName || `Run ${runIndex + 1}`,
+        systemType: run.productCode || payload.productCode,
+        colour: formatVariable(run.variables?.colour ?? payload.variables.colour),
+        totalLengthM:
+          run.segments.reduce((sum, segment) => sum + (segment.segmentWidthMm ?? 0), 0) /
+          1000,
+        postCount: stats.posts,
+        gateCount: run.segments.filter((segment) => segment.segmentKind === "gate_opening")
+          .length,
+        sections,
+      };
+    });
   }, [payload]);
 
   const gateVisuals = useMemo<Record<string, CanvasGateVisual>>(() => {
@@ -241,6 +288,7 @@ export function LayoutCanvasV3({
         propertyAnchor={propertyAnchor}
         mapSnapshot={mapSnapshot}
         onMapSnapshotChange={onMapSnapshotChange}
+        printRuns={printRuns}
       />
       {showRunDetails && !mapExpanded && <RunDetailsPanel payload={payload} />}
     </div>
