@@ -52,7 +52,7 @@ import {
 } from "../../lib/gateOptionRules";
 
 const DEFAULT_GATE_WIDTH_FALLBACK = 900;
-type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand";
+type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand" | "arrow";
 type GateSessionRef = { flatSegIdx: number; gateIdx: number; gateId: string };
 type GateDraft = {
   widthMM: number;

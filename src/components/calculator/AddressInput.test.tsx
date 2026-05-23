@@ -189,6 +189,146 @@ describe("AddressInput", () => {
     view.unmount();
   });
 
+  it("dismisses suggestions after selection until the user types again", async () => {
+    vi.useFakeTimers();
+    vi.stubEnv("VITE_GOOGLE_MAPS_API_KEY", "test-key");
+    vi.spyOn(console, "info").mockImplementation(() => undefined);
+    const fetchAutocompleteSuggestions = vi.fn().mockResolvedValue({
+      suggestions: [
+        {
+          placePrediction: {
+            placeId: "mogo-billinudgel",
+            text: { text: "9 Mogo Pl, Billinudgel NSW 2483, Australia" },
+            secondaryText: { text: "Billinudgel NSW, Australia" },
+          },
+        },
+      ],
+    });
+    vi.stubGlobal("google", {
+      maps: {
+        importLibrary: vi.fn().mockResolvedValue({
+          AutocompleteSuggestion: { fetchAutocompleteSuggestions },
+          AutocompleteSessionToken: class AutocompleteSessionToken {},
+        }),
+      },
+    });
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: "OK",
+        results: [
+          {
+            formatted_address: "9 Mogo Place, Billinudgel NSW 2483, Australia",
+            geometry: { location: { lat: -28.503385, lng: 153.526262 } },
+          },
+        ],
+      }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const view = renderAddressInput();
+
+    await act(async () => {
+      view.input.focus();
+      setInputValue(view.input, "9 Mogo Pl Billi");
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+
+    const suggestionButton = Array.from(view.container.querySelectorAll("button")).find((button) =>
+      button.textContent?.includes("9 Mogo Pl"),
+    );
+    expect(suggestionButton).not.toBeUndefined();
+
+    await act(async () => {
+      suggestionButton!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+
+    expect(view.input.value).toBe("9 Mogo Pl, Billinudgel NSW 2483, Australia");
+    expect(view.onLocated).toHaveBeenCalledWith({
+      address: "9 Mogo Pl, Billinudgel NSW 2483, Australia",
+      lat: -28.503385,
+      lng: 153.526262,
+      formattedAddress: "9 Mogo Place, Billinudgel NSW 2483, Australia",
+    });
+    expect(fetchAutocompleteSuggestions).toHaveBeenCalledTimes(1);
+    expect(
+      Array.from(view.container.querySelectorAll("button")).some((button) =>
+        button.textContent?.includes("Billinudgel NSW, Australia"),
+      ),
+    ).toBe(false);
+
+    await act(async () => {
+      setInputValue(view.input, "9 Mogo Pl Billinudgel");
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+
+    expect(fetchAutocompleteSuggestions).toHaveBeenCalledTimes(2);
+
+    view.unmount();
+  });
+
+  it("clears suggestions on Escape and blur", async () => {
+    vi.useFakeTimers();
+    vi.spyOn(console, "info").mockImplementation(() => undefined);
+    const fetchAutocompleteSuggestions = vi.fn().mockResolvedValue({
+      suggestions: [
+        {
+          placePrediction: {
+            placeId: "sydney-nsw",
+            text: { text: "Sydney NSW, Australia" },
+          },
+        },
+      ],
+    });
+    vi.stubGlobal("google", {
+      maps: {
+        importLibrary: vi.fn().mockResolvedValue({
+          AutocompleteSuggestion: { fetchAutocompleteSuggestions },
+          AutocompleteSessionToken: class AutocompleteSessionToken {},
+        }),
+      },
+    });
+
+    const view = renderAddressInput();
+
+    await act(async () => {
+      setInputValue(view.input, "Sydney NSW");
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+    expect(view.container.textContent).toContain("Sydney NSW, Australia");
+
+    await act(async () => {
+      view.input.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    });
+    expect(view.container.textContent).not.toContain("Sydney NSW, Australia");
+
+    await act(async () => {
+      setInputValue(view.input, "Sydney Harbour");
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+    expect(view.container.textContent).toContain("Sydney NSW, Australia");
+
+    await act(async () => {
+      view.input.dispatchEvent(new FocusEvent("focusout", { bubbles: true }));
+    });
+    expect(view.container.textContent).not.toContain("Sydney NSW, Australia");
+
+    view.unmount();
+  });
+
   it("logs the Places API enablement error and keeps manual geocoding available", async () => {
     vi.useFakeTimers();
     vi.stubEnv("VITE_GOOGLE_MAPS_API_KEY", "test-key");

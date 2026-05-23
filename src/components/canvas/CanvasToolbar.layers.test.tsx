@@ -235,6 +235,93 @@ describe("CanvasToolbar map layers", () => {
     act(() => root.unmount());
   });
 
+  it("restores the previous partial map layer visibility when toggled back on", () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+    const changes: Array<{
+      layerId: CanonicalMapLayerId;
+      updates: Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">>;
+    }> = [];
+    const initialSnapshot: CanonicalMapSnapshot = {
+      centerLat: -33.8688,
+      centerLng: 151.2093,
+      zoom: 19,
+      width: 640,
+      height: 360,
+      metresPerPixel: 0.2,
+      capturedAt: "2026-05-22T00:00:00.000Z",
+      layers: {
+        satellite: {
+          url: "https://example.test/satellite.png",
+          visible: true,
+          opacity: 1,
+        },
+        roadmap: {
+          url: "https://example.test/roadmap.png",
+          visible: false,
+          opacity: 0.5,
+        },
+      },
+    };
+
+    function Harness() {
+      const [snapshot, setSnapshot] = useState(initialSnapshot);
+      return (
+        <CanvasToolbar
+          engineRef={{ current: null }}
+          activeTool="draw"
+          onToolChange={() => undefined}
+          snapEnabled={false}
+          onSnapToggle={() => undefined}
+          gateSnap100={false}
+          onGateSnap100Toggle={() => undefined}
+          showGrid={false}
+          onToggleGrid={() => undefined}
+          expanded={false}
+          onToggleExpand={() => undefined}
+          onHelpOpen={() => undefined}
+          onPrintMap={() => undefined}
+          freehandStyle={freehandStyle}
+          onFreehandStyleChange={() => undefined}
+          mapLayers={snapshot.layers}
+          onMapLayerChange={(layerId, updates) => {
+            changes.push({ layerId, updates });
+            setSnapshot((current) =>
+              updateMapSnapshotLayer(current, layerId, updates),
+            );
+          }}
+        />
+      );
+    }
+
+    act(() => {
+      root.render(<Harness />);
+    });
+
+    act(() => {
+      container
+        .querySelector<HTMLButtonElement>('button[aria-label="Hide map underlay"]')!
+        .click();
+    });
+    act(() => {
+      container
+        .querySelector<HTMLButtonElement>('button[aria-label="Show map underlay"]')!
+        .click();
+    });
+
+    expect(changes).toContainEqual({
+      layerId: "satellite",
+      updates: { visible: true, opacity: 1 },
+    });
+    expect(changes).toContainEqual({
+      layerId: "roadmap",
+      updates: { visible: false, opacity: 0.5 },
+    });
+
+    act(() => root.unmount());
+  });
+
   it("starts optional snap/grid controls unchecked and omits Ortho", () => {
     const { container, root } = renderToolbar(vi.fn());
 
