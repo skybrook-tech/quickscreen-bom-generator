@@ -18,9 +18,8 @@ import {
   Plus,
   Crosshair,
   CircleHelp,
-  Layers,
 } from "lucide-react";
-import type { RefObject } from "react";
+import { useRef, type RefObject } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
 import { ConfirmButton } from "../shared/ConfirmButton";
 import { TOOL_HOTKEYS } from "../../lib/canvasShortcuts";
@@ -38,6 +37,13 @@ type FreehandStyle = {
   opacity: number;
   arrow: boolean;
 };
+
+type CachedMapLayerState = Partial<
+  Record<
+    CanonicalMapLayerId,
+    Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">
+  >
+>;
 
 interface CanvasToolbarProps {
   engineRef: RefObject<Engine | null>;
@@ -114,11 +120,28 @@ export function CanvasToolbar({
     );
   const availableLayerRows = layerRows.filter(({ layer }) => Boolean(layer.url));
   const mapVisible = availableLayerRows.some(({ layer }) => layer.visible);
+  const previousMapLayerStateRef = useRef<CachedMapLayerState | null>(null);
   const handleMapVisibilityToggle = () => {
     if (!onMapLayerChange) return;
-    const nextVisible = !mapVisible;
+    if (mapVisible) {
+      previousMapLayerStateRef.current = Object.fromEntries(
+        availableLayerRows.map(({ layerId, layer }) => [
+          layerId,
+          { visible: layer.visible, opacity: layer.opacity },
+        ]),
+      ) as CachedMapLayerState;
+      availableLayerRows.forEach(({ layerId }) => {
+        onMapLayerChange(layerId, { visible: false });
+      });
+      return;
+    }
+
+    const fallback: Required<CachedMapLayerState> = {
+      satellite: { visible: true, opacity: 1 },
+      roadmap: { visible: true, opacity: 0.5 },
+    };
     availableLayerRows.forEach(({ layerId }) => {
-      onMapLayerChange(layerId, { visible: nextVisible });
+      onMapLayerChange(layerId, previousMapLayerStateRef.current?.[layerId] ?? fallback[layerId]);
     });
   };
 
@@ -333,9 +356,7 @@ export function CanvasToolbar({
         <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">View</span>
       {layerRows.length > 0 && onMapLayerChange ? (
         <div className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-brand-border/70 bg-brand-card/80 px-2 py-1 text-xs text-brand-muted">
-          <span className="inline-flex items-center gap-1 font-bold uppercase tracking-wide text-brand-text">
-            <Layers size={14} /> Layers
-          </span>
+          <span className="font-bold uppercase tracking-wide text-brand-text">Layers</span>
           <button
             type="button"
             aria-label={mapVisible ? "Hide map underlay" : "Show map underlay"}
@@ -343,7 +364,6 @@ export function CanvasToolbar({
             className={btnCls(mapVisible)}
             onClick={handleMapVisibilityToggle}
           >
-            <Layers size={14} />
             {mapVisible ? "Map off" : "Map on"}
           </button>
           {layerRows.map(({ layerId, layer }) => {
