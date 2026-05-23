@@ -37,6 +37,16 @@ export interface CanonicalMapSnapshot {
   url?: string;
 }
 
+export interface CanonicalArrowAnnotation {
+  kind: 'arrow';
+  from: { x: number; y: number };
+  to: { x: number; y: number };
+  color: string;
+  weight: number;
+}
+
+export type CanonicalCanvasAnnotation = CanonicalArrowAnnotation;
+
 export interface CanonicalPayload {
   productCode: string;
   schemaVersion: string;
@@ -46,6 +56,7 @@ export interface CanonicalPayload {
     address: string;
   };
   snapshot?: CanonicalMapSnapshot;
+  annotations?: CanonicalCanvasAnnotation[];
   job?: {
     description?: string;
     pendingGates?: Array<{

@@ -3,7 +3,7 @@ import { payloadFromV3FenceConfig } from "../../lib/quotePayload";
 import { canonicalPayloadSchema } from "../../schemas/canonical.schema";
 import type { CanonicalPayload } from "../../types/canonical.types";
 import { GATE_SEGMENT_STUB_KEYS } from "../../lib/segmentTermination";
-import type { CanvasGate } from "./canvasEngine";
+import type { CanvasArrowAnnotation, CanvasGate } from "./canvasEngine";
 import {
   canonicalToCanvasLayout,
   canvasLayoutToCanonical,
@@ -214,5 +214,81 @@ describe("canonicalAdapter propertyAnchor", () => {
     const restored = canonicalToCanvasLayout(payload);
     expect(restored.gates[0].variables).toMatchObject(variables);
     expect(restored.runs[0].gates[0].variables).toMatchObject(variables);
+  });
+
+  it("round-trips straight arrow annotations through canonical payloads", () => {
+    const arrow: CanvasArrowAnnotation = {
+      kind: "arrow",
+      from: { x: 120, y: 80 },
+      to: { x: 260, y: 160 },
+      color: "#444",
+      weight: 2,
+    };
+    const payload = canvasLayoutToCanonical(
+      {
+        segments: [
+          {
+            startX: 0,
+            startY: 0,
+            endX: 300,
+            endY: 0,
+            lengthMM: 3000,
+            angleDeg: 0,
+          },
+        ],
+        gates: [],
+        totalLengthM: 3,
+        cornerCount: 0,
+        runs: [
+          {
+            label: "Run 1",
+            totalLengthM: 3,
+            cornerCount: 0,
+            gates: [],
+          },
+        ],
+        boundaries: [],
+        arrows: [arrow],
+      },
+      "QSHS",
+      {},
+    );
+
+    expect(payload.annotations).toEqual([arrow]);
+    expect(canonicalPayloadSchema.safeParse(payload).success).toBe(true);
+    expect(canonicalToCanvasLayout(payload).arrows).toEqual([arrow]);
+  });
+
+  it("preserves previous arrow annotations during canvas metadata merges", () => {
+    const previous: CanonicalPayload = {
+      ...basePayload,
+      annotations: [
+        {
+          kind: "arrow",
+          from: { x: 12, y: 24 },
+          to: { x: 80, y: 24 },
+          color: "#444",
+          weight: 2,
+        },
+      ],
+    };
+    const generated: CanonicalPayload = {
+      ...basePayload,
+      runs: [
+        {
+          ...basePayload.runs[0],
+          segments: [
+            {
+              ...basePayload.runs[0].segments[0],
+              segmentWidthMm: 1800,
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(mergeCanonicalPreservingSegmentMeta(previous, generated).annotations).toEqual(
+      previous.annotations,
+    );
   });
 });

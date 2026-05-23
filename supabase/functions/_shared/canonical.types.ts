@@ -33,6 +33,13 @@ export interface CanonicalPayload {
     };
     url?: string;
   };
+  annotations?: Array<{
+    kind: "arrow";
+    from: { x: number; y: number };
+    to: { x: number; y: number };
+    color: string;
+    weight: number;
+  }>;
   variables: Record<string, string | number | boolean>;
   runs: CanonicalRun[];
 }

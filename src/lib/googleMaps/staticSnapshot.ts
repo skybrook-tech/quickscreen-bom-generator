@@ -108,6 +108,25 @@ const DEFAULT_LAYER_STATE: Record<
   roadmap: { visible: true, opacity: 0.5 },
 };
 
+export const ROADMAP_BOUNDARY_EMPHASIS_STYLES = [
+  "feature:poi|visibility:off",
+  "feature:administrative.land_parcel|element:geometry.stroke|color:0x000000",
+  "feature:administrative.land_parcel|element:geometry.stroke|weight:3",
+  "feature:poi.business|visibility:off",
+  "feature:poi.business|element:labels|visibility:off",
+  "feature:poi.attraction|visibility:off",
+  "feature:poi.government|visibility:off",
+  "feature:poi.medical|visibility:off",
+  "feature:poi.park|visibility:off",
+  "feature:poi.place_of_worship|visibility:off",
+  "feature:poi.school|visibility:off",
+  "feature:poi.sports_complex|visibility:off",
+  "feature:transit.station.airport|visibility:off",
+  "feature:transit.station.bus|visibility:off",
+  "feature:transit.station.rail|visibility:off",
+  "feature:transit.line|visibility:off",
+];
+
 function clampOpacity(value: number | undefined): number {
   if (!Number.isFinite(value)) return 1;
   return Math.max(0, Math.min(1, Number(value)));
@@ -125,6 +144,11 @@ export function buildStaticMapUrl(
     maptype: mapType,
     key: apiKey,
   });
+  if (mapType === "roadmap") {
+    for (const style of ROADMAP_BOUNDARY_EMPHASIS_STYLES) {
+      params.append("style", style);
+    }
+  }
 
   return `https://maps.googleapis.com/maps/api/staticmap?${params.toString()}`;
 }
