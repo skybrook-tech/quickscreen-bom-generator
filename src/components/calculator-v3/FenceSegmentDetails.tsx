@@ -29,6 +29,13 @@ const POST_SIZE_LABELS: Record<string, string> = {
   xpl: "XPress Plus post",
 };
 
+const SECTION_POST_FIELD_KEYS = new Set([
+  "mounting_method",
+  "mounting_type",
+  "post_system",
+  "post_size",
+]);
+
 interface Props {
   runId: string;
   seg: CanonicalSegment;
@@ -131,6 +138,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     ...displayVariables,
   };
   function shapePostField(field: SchemaField): SchemaField | null {
+    if (!SECTION_POST_FIELD_KEYS.has(field.field_key)) return null;
     if (
       field.field_key === "mounting_method" ||
       field.field_key === "mounting_type"
