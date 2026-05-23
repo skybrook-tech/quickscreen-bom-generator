@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { initCanvasEngine } from "./canvasEngine";
+import { initCanvasEngine, type CanvasLayout } from "./canvasEngine";
 import { GATE_SEGMENT_STUB_KEYS } from "../../lib/segmentTermination";
 
 function installCanvasMock() {
@@ -27,11 +27,15 @@ function installCanvasMock() {
 
 function installZoomCanvasMock() {
   const scaleCalls: Array<[number, number]> = [];
+  const translateCalls: Array<[number, number]> = [];
   const context = new Proxy(
     {
       canvas: document.createElement("canvas"),
       measureText: (text: string) => ({ width: text.length * 6 }),
       getLineDash: () => [],
+      translate: (x: number, y: number) => {
+        translateCalls.push([x, y]);
+      },
       scale: (x: number, y: number) => {
         scaleCalls.push([x, y]);
       },
@@ -59,6 +63,10 @@ function installZoomCanvasMock() {
   return {
     latestZoom() {
       return scaleCalls[scaleCalls.length - 1]?.[0] ?? 0;
+    },
+    latestPan() {
+      const latest = translateCalls[translateCalls.length - 1];
+      return latest ? { x: latest[0], y: latest[1] } : { x: 0, y: 0 };
     },
   };
 }
@@ -404,6 +412,70 @@ describe("canvas engine Static Maps snapshot scale", () => {
       engine.zoomOut();
     }
     expect(latestZoom()).toBeCloseTo(0.5, 6);
+
+    engine.destroy();
+    canvas.remove();
+  });
+
+  it("preserves the zoomed-out viewport when finishing a run and syncing the same layout", () => {
+    const { latestPan, latestZoom } = installZoomCanvasMock();
+    const canvas = document.createElement("canvas");
+    document.body.appendChild(canvas);
+    Object.defineProperty(canvas, "getBoundingClientRect", {
+      value: () => ({
+        left: 0,
+        top: 0,
+        width: 640,
+        height: 360,
+        right: 640,
+        bottom: 360,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }),
+    });
+
+    const layoutChanges: CanvasLayout[] = [];
+    const engine = initCanvasEngine(canvas, {
+      snapToGrid: false,
+      gridSize: 20,
+      showGrid: false,
+      onLayoutChange: (layout) => {
+        layoutChanges.push(layout);
+      },
+    });
+    engine.setViewportTransform({
+      pan: { x: -320, y: -180 },
+      zoom: 0.5,
+      scale: 10,
+    });
+
+    clickCanvas(canvas, 200, 160);
+    clickCanvas(canvas, 320, 160);
+    canvas.dispatchEvent(
+      new MouseEvent("dblclick", {
+        bubbles: true,
+        button: 0,
+        clientX: 320,
+        clientY: 160,
+      }),
+    );
+    const finishedLayout = layoutChanges[layoutChanges.length - 1];
+    expect(finishedLayout?.segments).toHaveLength(1);
+    if (!finishedLayout) throw new Error("Expected a finished layout change");
+
+    const panBeforeSync = latestPan();
+    const zoomBeforeSync = latestZoom();
+    engine.loadLayout(finishedLayout);
+
+    expect(latestPan()).toEqual(panBeforeSync);
+    expect(latestZoom()).toBeCloseTo(zoomBeforeSync, 6);
+    expect(engine.getLayout().segments[0]).toMatchObject({
+      startX: 1040,
+      startY: 680,
+      endX: 1280,
+      endY: 680,
+    });
 
     engine.destroy();
     canvas.remove();
