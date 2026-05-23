@@ -69,9 +69,12 @@ export function AddressInput({ onLocated, onEngaged }: AddressInputProps) {
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
   const [suggestionsOpen, setSuggestionsOpen] = useState(false);
   const [placesUnavailable, setPlacesUnavailable] = useState(false);
+  const [justSelected, setJustSelected] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
   const autocompleteRequestId = useRef(0);
+  const justSelectedValueRef = useRef("");
 
   async function geocodeAddress(rawAddress: string) {
     const trimmed = rawAddress.trim();
@@ -138,6 +141,8 @@ export function AddressInput({ onLocated, onEngaged }: AddressInputProps) {
   }
 
   function handleAddressChange(nextAddress: string) {
+    setJustSelected(false);
+    justSelectedValueRef.current = "";
     setAddress(nextAddress);
     setError(null);
     if (nextAddress.trim()) {
@@ -151,15 +156,31 @@ export function AddressInput({ onLocated, onEngaged }: AddressInputProps) {
   }
 
   async function handleSuggestionSelect(suggestion: AddressSuggestion) {
+    justSelectedValueRef.current = suggestion.description.trim();
+    setJustSelected(true);
     setAddress(suggestion.description);
     setSuggestions([]);
     setSuggestionsOpen(false);
+    inputRef.current?.blur();
     onEngaged?.();
     await geocodeAddress(suggestion.description);
   }
 
   useEffect(() => {
     const trimmed = address.trim();
+    if (justSelected && justSelectedValueRef.current === trimmed) {
+      setSuggestions([]);
+      setSuggestionsOpen(false);
+      setSuggestionsLoading(false);
+      setJustSelected(false);
+      return;
+    }
+    if (justSelectedValueRef.current === trimmed) {
+      setSuggestions([]);
+      setSuggestionsOpen(false);
+      setSuggestionsLoading(false);
+      return;
+    }
     if (placesUnavailable || trimmed.length < 3) {
       setSuggestions([]);
       setSuggestionsLoading(false);
@@ -230,7 +251,7 @@ export function AddressInput({ onLocated, onEngaged }: AddressInputProps) {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [address, placesUnavailable]);
+  }, [address, justSelected, placesUnavailable]);
 
   return (
     <form className="space-y-2" onSubmit={handleSubmit}>
@@ -244,10 +265,21 @@ export function AddressInput({ onLocated, onEngaged }: AddressInputProps) {
             className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-muted"
           />
           <input
+            ref={inputRef}
             value={address}
             onChange={(event) => handleAddressChange(event.target.value)}
             onFocus={() => {
               if (suggestions.length > 0) setSuggestionsOpen(true);
+            }}
+            onBlur={() => {
+              setSuggestions([]);
+              setSuggestionsOpen(false);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                setSuggestions([]);
+                setSuggestionsOpen(false);
+              }
             }}
             placeholder="Start with an Australian street address"
             className="w-full rounded-lg border border-brand-border bg-brand-bg py-2 pl-9 pr-3 text-sm font-semibold text-brand-text outline-none transition-colors placeholder:text-brand-muted focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"

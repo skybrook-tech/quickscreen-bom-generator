@@ -30,18 +30,17 @@ describe("PropertyAnchorFormGate", () => {
     document.body.innerHTML = "";
   });
 
-  it("marks form children inert until the property anchor is confirmed", () => {
+  it("keeps form children interactive before the property anchor is confirmed", () => {
     const { container, root } = renderGate(false);
-    const gated = container.querySelector("div[inert]");
 
-    expect(container.textContent).toContain("Confirm property location to start drawing");
-    expect(gated).not.toBeNull();
-    expect(gated?.className).toContain("opacity-50");
+    expect(container.querySelector("div[inert]")).toBeNull();
+    expect(container.textContent).not.toContain("Confirm property location to start drawing");
+    expect(container.querySelector("button")?.textContent).toBe("Schema driven form child");
 
     act(() => root.unmount());
   });
 
-  it("removes inert once the property anchor is confirmed", () => {
+  it("keeps form children interactive once the property anchor is confirmed", () => {
     const { container, root } = renderGate(true);
 
     expect(container.querySelector("div[inert]")).toBeNull();

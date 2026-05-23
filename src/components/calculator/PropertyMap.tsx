@@ -49,19 +49,8 @@ export const PROPERTY_MAP_INTERACTION_OPTIONS = {
   keyboardShortcuts: true,
 } as const;
 
-export function PropertyAnchorFormGate({ anchorConfirmed, children }: PropertyAnchorFormGateProps) {
-  return (
-    <>
-      {!anchorConfirmed ? (
-        <div className="rounded-xl border border-brand-warning/35 bg-brand-warning/10 px-3 py-2 text-sm font-bold text-brand-warning">
-          Confirm property location to start drawing
-        </div>
-      ) : null}
-      <div inert={!anchorConfirmed} className={!anchorConfirmed ? "opacity-50" : ""}>
-        {children}
-      </div>
-    </>
-  );
+export function PropertyAnchorFormGate({ children }: PropertyAnchorFormGateProps) {
+  return <div>{children}</div>;
 }
 
 export function PropertyMap({
