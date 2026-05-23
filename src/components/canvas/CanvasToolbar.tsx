@@ -18,7 +18,6 @@ import {
   Plus,
   Crosshair,
   CircleHelp,
-  Layers,
   ArrowRight,
 } from "lucide-react";
 import { useRef, type RefObject } from "react";
