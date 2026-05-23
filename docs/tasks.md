@@ -10,7 +10,7 @@ Latest sandbox polish: run sidebar readability, 0m first-segment defaults, compa
 
 Living app overview: [`docs/app-overview.md`](./app-overview.md) now tracks current routes, file responsibilities, data flow, mapper responsibilities, fallback engine behavior, Supabase seed structure, and update rules.
 
-Latest brief queue pass: Brief 004 repositions the V3 Map/BOM header toggle near the sidebar-to-canvas boundary on desktop while preserving the existing tab state logic and active styling.
+Latest brief queue pass: Brief 001 removes the pre-address confirm-location warning from the calculator entry flow and hides custom-angle warning chips in the V3 sidebar while leaving BOM calculation behavior unchanged.
 
 Latest BOM workflow pass: generated BOM rows aggregate by product within each tab, individual gate tabs are labelled from the canonical gate segments, Generate BOM clears stale results before recalculating, and the mapper opens without the initial snap dot.
 

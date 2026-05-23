@@ -86,6 +86,14 @@ function payloadBomKey(payload: CanonicalPayload): string {
   return JSON.stringify(payload);
 }
 
+function isAngleDrawingWarning(warning: string): boolean {
+  const normalised = warning.toLowerCase();
+  return (
+    normalised.includes("custom angle") &&
+    (normalised.includes("supplier verification") || normalised.includes("verify components"))
+  );
+}
+
 const formatMoney = (value: number) =>
   new Intl.NumberFormat("en-AU", {
     minimumFractionDigits: 2,
@@ -1158,7 +1166,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     URL.revokeObjectURL(url);
   }
 
-  const warnings = (lastBom?.warnings as string[]) ?? [];
+  const warnings = ((lastBom?.warnings as string[]) ?? []).filter(
+    (warning) => !isAngleDrawingWarning(warning),
+  );
   const errors = (lastBom?.errors as string[]) ?? [];
   const hasErrors = errors.length > 0;
   const economySlatErrors =

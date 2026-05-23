@@ -7,6 +7,7 @@ import {
   getDefaultSnapshotViewportTransform,
   metresPerPixelAt,
   normalizeMapSnapshot,
+  ROADMAP_BOUNDARY_EMPHASIS_STYLES,
   STATIC_MAP_CAPTURE_SIZE_MULTIPLIER,
   STATIC_MAP_DEFAULT_VIEWPORT_FRACTION,
   STATIC_MAP_MAX_DIMENSION,
@@ -122,7 +123,23 @@ describe("Static Maps snapshots", () => {
     expect(url.searchParams.get("size")).toBe("640x640");
     expect(url.searchParams.get("maptype")).toBe("satellite");
     expect(url.searchParams.get("key")).toBe("test-key");
+    expect(url.searchParams.getAll("style")).toEqual([]);
     expect(roadmapUrl.searchParams.get("maptype")).toBe("roadmap");
+    expect(roadmapUrl.searchParams.getAll("style")).toEqual(
+      ROADMAP_BOUNDARY_EMPHASIS_STYLES,
+    );
+    expect(roadmapUrl.searchParams.getAll("style")).toEqual(
+      expect.arrayContaining([
+        "feature:poi|visibility:off",
+        "feature:administrative.land_parcel|element:geometry.stroke|color:0x000000",
+        "feature:administrative.land_parcel|element:geometry.stroke|weight:3",
+        "feature:poi.business|visibility:off",
+        "feature:poi.business|element:labels|visibility:off",
+        "feature:poi.school|visibility:off",
+        "feature:transit.station.bus|visibility:off",
+        "feature:transit.line|visibility:off",
+      ]),
+    );
   });
 
   it("preloads satellite and roadmap snapshot requests in parallel", async () => {
