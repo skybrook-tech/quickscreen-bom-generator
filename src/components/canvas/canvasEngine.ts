@@ -4487,6 +4487,7 @@ export function initCanvasEngine(
    * Boundary runs in `layout.boundaries` are also restored.
    */
   function loadLayout(layout: CanvasLayout) {
+    const shouldPreserveViewport = layoutMatchesCurrentGeometry(layout);
     const newRuns: Run[] = [];
     const preservedBoundaries: CanvasSegment[] = [];
     for (const run of runs) {
@@ -4600,7 +4601,53 @@ export function initCanvasEngine(
     // The caller already has the latest data in context; firing onLayoutChange
     // would trigger handleLiveSync which dispatches SET_PAYLOAD with fresh IDs,
     // causing all RunCard components to remount and lose their expanded state.
-    fitToContent();
+    if (shouldPreserveViewport) {
+      scheduleRedraw();
+    } else {
+      fitToContent();
+    }
+  }
+
+  function layoutMatchesCurrentGeometry(layout: CanvasLayout) {
+    const current = getLayout();
+    const sameNumber = (a: number, b: number, tolerance = 0.01) =>
+      Math.abs(a - b) <= tolerance;
+
+    if (
+      current.segments.length !== layout.segments.length ||
+      current.gates.length !== layout.gates.length ||
+      current.runs.length !== layout.runs.length
+    ) {
+      return false;
+    }
+
+    for (let i = 0; i < current.segments.length; i++) {
+      const a = current.segments[i];
+      const b = layout.segments[i];
+      if (
+        !sameNumber(a.startX, b.startX) ||
+        !sameNumber(a.startY, b.startY) ||
+        !sameNumber(a.endX, b.endX) ||
+        !sameNumber(a.endY, b.endY) ||
+        !sameNumber(a.lengthMM, b.lengthMM, 0.1)
+      ) {
+        return false;
+      }
+    }
+
+    for (let i = 0; i < current.gates.length; i++) {
+      const a = current.gates[i];
+      const b = layout.gates[i];
+      if (
+        a.segmentIndex !== b.segmentIndex ||
+        !sameNumber(a.positionOnSegment, b.positionOnSegment) ||
+        !sameNumber(a.widthMM, b.widthMM, 0.1)
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   function destroy() {
