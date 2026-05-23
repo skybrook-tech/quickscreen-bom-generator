@@ -190,7 +190,10 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         : [],
     [mergedJobDisplay, productCode, runFields],
   );
-  const optionSummary = optionFields
+  const slatOptionFields = optionFields.filter(
+    (field) => field.field_key !== "finish_family",
+  );
+  const optionSummary = slatOptionFields
     .map((field) => {
       const raw = mergedJobDisplay[field.field_key] ?? field.default_value_json;
       if (raw === undefined || raw === null || raw === "") return null;
@@ -205,15 +208,14 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     .filter(Boolean)
     .slice(0, 2)
     .join(" / ");
-  const colourField = optionFields.find((field) => field.field_key === "colour_code");
+  const colourField = slatOptionFields.find((field) => field.field_key === "colour_code");
   const postColourField = applyProductOptionRules(
     productCode,
     jobFields.filter((field) => field.field_key === "post_colour_code"),
     mergedJobDisplay,
   )[0];
-  const finishFamilyField = optionFields.find((field) => field.field_key === "finish_family");
-  const remainingOptionFields = optionFields.filter(
-    (field) => field.field_key !== "colour_code" && field.field_key !== "finish_family",
+  const remainingOptionFields = slatOptionFields.filter(
+    (field) => field.field_key !== "colour_code",
   );
   function handleOptionChange(key: string, value: string | number | boolean) {
     onJobOverrideChange(key, value);
@@ -242,16 +244,9 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         </div>
       </SettingsDisclosureRow>
 
-      {optionFields.length > 0 ? (
+      {slatOptionFields.length > 0 || postColourField ? (
         <SettingsDisclosureRow id={`${seg.segmentId}-section-style`} label="Slats, colors, and spacings" value={optionSummary || "Run defaults"}>
           <div className="space-y-4">
-            {finishFamilyField && (
-              <SchemaDrivenForm
-                fields={[finishFamilyField]}
-                variables={mergedJobDisplay}
-                onChange={handleOptionChange}
-              />
-            )}
             {colourField && (
               <SchemaDrivenForm
                 fields={[colourField]}
