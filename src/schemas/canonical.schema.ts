@@ -75,6 +75,21 @@ const canonicalMapSnapshotLayerSchema = z.object({
   opacity: z.number().min(0).max(1),
 });
 
+const canonicalPointSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+});
+
+const canonicalCanvasAnnotationSchema = z.discriminatedUnion('kind', [
+  z.object({
+    kind: z.literal('arrow'),
+    from: canonicalPointSchema,
+    to: canonicalPointSchema,
+    color: z.string(),
+    weight: z.number().positive(),
+  }),
+]);
+
 export const canonicalPayloadSchema = z.object({
   productCode: z.string(),
   schemaVersion: z.string(),
@@ -105,6 +120,7 @@ export const canonicalPayloadSchema = z.object({
       url: z.string().optional(),
     })
     .optional(),
+  annotations: z.array(canonicalCanvasAnnotationSchema).optional(),
   job: z
     .object({
       description: z.string().optional(),

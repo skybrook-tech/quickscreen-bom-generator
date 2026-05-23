@@ -28,6 +28,7 @@
 // additional `panel` segments (before and after the gate opening).
 
 import type {
+  CanvasArrowAnnotation,
   CanvasGate,
   CanvasLayout,
   CanvasSegment,
@@ -40,6 +41,7 @@ import type {
   CanonicalSegment,
   CanonicalBoundary,
   CanonicalCorner,
+  CanonicalCanvasAnnotation,
 } from '../../types/canonical.types';
 import {
   classifyCorner,
@@ -61,6 +63,26 @@ const CORNER_ANGLE_THRESHOLD_DEG = 5;
 
 function newId(): string {
   return crypto.randomUUID();
+}
+
+function arrowToCanonical(arrow: CanvasArrowAnnotation): CanonicalCanvasAnnotation {
+  return {
+    kind: 'arrow',
+    from: { x: arrow.from.x, y: arrow.from.y },
+    to: { x: arrow.to.x, y: arrow.to.y },
+    color: arrow.color ?? '#444',
+    weight: arrow.weight ?? 2,
+  };
+}
+
+function arrowToCanvas(annotation: CanonicalCanvasAnnotation): CanvasArrowAnnotation {
+  return {
+    kind: 'arrow',
+    from: { x: annotation.from.x, y: annotation.from.y },
+    to: { x: annotation.to.x, y: annotation.to.y },
+    color: annotation.color,
+    weight: annotation.weight,
+  };
 }
 
 /** Normalise an angle to [0, 360). */
@@ -492,6 +514,7 @@ export function canvasLayoutToCanonical(
   stableIds: StableIdMap = {},
 ): CanonicalPayload {
   const runSlices = buildRunSlices(layout);
+  const annotations = (layout.arrows ?? []).map(arrowToCanonical);
 
   const canonicalRuns: CanonicalRun[] = runSlices.map((slice) => {
     // Stable runId keyed by run index
@@ -629,6 +652,7 @@ export function canvasLayoutToCanonical(
     productCode,
     schemaVersion: 'v1',
     variables,
+    ...(annotations.length > 0 ? { annotations } : {}),
     runs: canonicalRuns.length > 0 ? canonicalRuns : [
       // Fallback: empty payload still needs at least one run to be valid.
       // This branch is only hit if layout.runs is empty.
@@ -662,6 +686,7 @@ export function mergeCanonicalPreservingSegmentMeta(
     ...generated,
     propertyAnchor: generated.propertyAnchor ?? previous.propertyAnchor,
     snapshot,
+    annotations: generated.annotations ?? previous.annotations,
     runs: generated.runs.map((genRun) => {
       const anchoredRun = genRun;
       const prevRun = prevRuns.get(genRun.runId);
@@ -910,5 +935,6 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
     runs: runSummaries,
     boundaries: [], // canonical payload has no boundary context lines
     textNotes: [], // canonical payload has no text annotations
+    arrows: (payload.annotations ?? []).map(arrowToCanvas),
   };
 }
