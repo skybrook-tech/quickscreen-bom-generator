@@ -10,6 +10,8 @@ Latest sandbox polish: run sidebar readability, 0m first-segment defaults, compa
 
 Living app overview: [`docs/app-overview.md`](./app-overview.md) now tracks current routes, file responsibilities, data flow, mapper responsibilities, fallback engine behavior, Supabase seed structure, and update rules.
 
+Latest brief queue pass: Brief 001 removes the pre-address confirm-location warning from the calculator entry flow and hides custom-angle warning chips in the V3 sidebar while leaving BOM calculation behavior unchanged.
+
 Latest BOM workflow pass: generated BOM rows aggregate by product within each tab, individual gate tabs are labelled from the canonical gate segments, Generate BOM clears stale results before recalculating, and the mapper opens without the initial snap dot.
 
 Latest Brief BP pass: on-screen and print BOM run summaries now use one compact run-details block, the line-item subtitle is simplified, section settings put Slat Range before Color, section-only post-size override controls are hidden, Generate BOM uses a fresh canonical payload snapshot, and run/settings disclosures keep the 60 second idle collapse behavior.
@@ -80,7 +82,7 @@ Latest run-default and gate-behaviour pass: Run Settings now actively reset sect
 
 Latest mobile mapper audit pass: the `/calculator` mobile workflow now opens the layout map from the intro with a fallback QSHS payload, uses the bottom Run/BOM/Map tabs as true mobile panes, keeps Run/BOM reachable by minimizing the map when those tabs are selected, gives the mapper touch start/move/end support for phone drawing and gate dragging, switches the mapper toolbar to horizontal scrolling on narrow screens, hides the satellite hint over the phone canvas, and adds mobile footer clearance so action buttons are not covered by the bottom nav.
 
-Latest Brief 007 pass: section-level Slats, colors, and spacings controls now hide finish-family choices so Standard/Alumawood are only managed at the run/product level, while preserving slat colour, slat size, gap controls, and the separate Alternate post colour affordance.
+Latest Brief 006 pass: the mapper now has a first-class Arrow site tool with its own toolbar button and `A` shortcut. Arrows are placed as straight tail-to-head annotations, render with a fixed dark-grey style, and round-trip through the canonical payload alongside the existing canvas data.
 
 Latest Brief AU pass: BOM rows now retain source breakdowns for run/gate scoped review, the All BOM tab aggregates to one line per SKU while filtered tabs re-price by scoped quantity, BOM display categories now use a richer category/subcategory/sort order taxonomy, seed components carry display metadata without changing engine selector categories, and TruClose safety caps (`TC-CAPS3`) are offered as an optional add-on instead of being auto-added.
 

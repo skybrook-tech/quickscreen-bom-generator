@@ -86,6 +86,14 @@ function payloadBomKey(payload: CanonicalPayload): string {
   return JSON.stringify(payload);
 }
 
+function isAngleDrawingWarning(warning: string): boolean {
+  const normalised = warning.toLowerCase();
+  return (
+    normalised.includes("custom angle") &&
+    (normalised.includes("supplier verification") || normalised.includes("verify components"))
+  );
+}
+
 const formatMoney = (value: number) =>
   new Intl.NumberFormat("en-AU", {
     minimumFractionDigits: 2,
@@ -1158,7 +1166,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     URL.revokeObjectURL(url);
   }
 
-  const warnings = (lastBom?.warnings as string[]) ?? [];
+  const warnings = ((lastBom?.warnings as string[]) ?? []).filter(
+    (warning) => !isAngleDrawingWarning(warning),
+  );
   const errors = (lastBom?.errors as string[]) ?? [];
   const hasErrors = errors.length > 0;
   const economySlatErrors =
@@ -1426,6 +1436,12 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const propertyAnchorConfirmed = Boolean(payload?.propertyAnchor) || hasLegacyConfiguredPayload;
   const headerActions = !showIntro && !mapExpanded ? (
     <div className="flex w-full flex-wrap items-center justify-end gap-2">
+      <div
+        className="lg:fixed lg:top-2 lg:z-40"
+        style={mobileLayout ? undefined : { left: runPaneWidth + 16 }}
+      >
+        <RightPaneTabs activeView={rightPaneView} onChange={handleRightPaneChange} />
+      </div>
       {rightPaneView === "bom" && (
         <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
           <button
@@ -1468,7 +1484,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
           </button>
         </div>
       )}
-      <RightPaneTabs activeView={rightPaneView} onChange={handleRightPaneChange} />
     </div>
   ) : null;
 

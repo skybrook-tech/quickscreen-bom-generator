@@ -99,7 +99,7 @@ export function FenceLayoutCanvas({
   gatesRef.current = gates;
 
   const [activeTool, setActiveTool] = useState<
-    "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand"
+    "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand" | "arrow"
   >("draw");
   const [snapEnabled, setSnapEnabled] = useState(false);
   const [gateSnap100, setGateSnap100] = useState(false);
