@@ -19,6 +19,7 @@ import {
   Crosshair,
   CircleHelp,
   Layers,
+  ArrowRight,
 } from "lucide-react";
 import type { RefObject } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
@@ -30,7 +31,7 @@ import type {
 } from "../../types/canonical.types";
 
 type Engine = ReturnType<typeof initCanvasEngine>;
-type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand";
+type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand" | "arrow";
 type FreehandStyle = {
   color: string;
   width: number;
@@ -164,6 +165,14 @@ export function CanvasToolbar({
       </button>
       <button
         type="button"
+        title={`Draw a straight arrow annotation (${TOOL_HOTKEYS.arrow})`}
+        className={btnCls(activeTool === "arrow")}
+        onClick={() => handleTool("arrow")}
+      >
+        <ArrowRight size={16} /> Arrow {keyBadge(TOOL_HOTKEYS.arrow)}
+      </button>
+      <button
+        type="button"
         title={`Draw a building or fixed structure line (${TOOL_HOTKEYS.building})`}
         className={btnCls(activeTool === "building")}
         onClick={() => handleTool("building")}
@@ -219,15 +228,6 @@ export function CanvasToolbar({
             <option value={0.75}>75%</option>
             <option value={1}>100%</option>
           </select>
-          <label className="inline-flex items-center gap-1">
-            <input
-              type="checkbox"
-              checked={freehandStyle.arrow}
-              onChange={(event) => onFreehandStyleChange({ arrow: event.target.checked })}
-              className="accent-brand-accent"
-            />
-            Arrow
-          </label>
         </div>
       )}
       <button

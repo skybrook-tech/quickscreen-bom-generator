@@ -57,6 +57,8 @@ export interface CanvasLayout {
   siteMarkers?: CanvasSiteMarker[];
   /** Hand-drawn site notes/features. Ignored by canonicalAdapter. */
   freehandStrokes?: CanvasFreehandStroke[];
+  /** Straight arrow annotations placed on the map. */
+  arrows?: CanvasArrowAnnotation[];
 }
 
 export interface CanvasEngineConfig {
@@ -133,6 +135,14 @@ export interface CanvasFreehandStroke {
   arrow?: boolean;
 }
 
+export interface CanvasArrowAnnotation {
+  kind: "arrow";
+  from: Point;
+  to: Point;
+  color?: string;
+  weight?: number;
+}
+
 // ── Internal state types ──────────────────────────────────────────────────────
 
 export interface Point {
@@ -181,7 +191,7 @@ interface GateMarker {
   variables?: CanvasGateVariables;
 }
 
-type Tool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand";
+type Tool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand" | "arrow";
 
 type SelectedCanvasItem =
   | { kind: "segment"; runIdx: number; segIdx: number; flatIdx: number }
@@ -217,6 +227,7 @@ interface CanvasSnapshot {
   textNotes: CanvasTextNote[];
   siteMarkers: CanvasSiteMarker[];
   freehandStrokes: CanvasFreehandStroke[];
+  arrows: CanvasArrowAnnotation[];
 }
 
 interface RedoEntry {
@@ -636,9 +647,11 @@ export function initCanvasEngine(
   let textNotes: CanvasTextNote[] = [];
   let siteMarkers: CanvasSiteMarker[] = [];
   let freehandStrokes: CanvasFreehandStroke[] = [];
+  let arrows: CanvasArrowAnnotation[] = [];
   let pendingTextNote: { start: Point; current: Point } | null = null;
   let pendingBuildingRect: { start: Point; current: Point } | null = null;
   let pendingFreehandStroke: CanvasFreehandStroke | null = null;
+  let pendingArrow: { from: Point; to: Point } | null = null;
   let mapLayers: Array<{ image: HTMLImageElement; opacity: number }> = [];
   let mapLoadVersion = 0;
   let mapWorldOriginX = 0; // world px — centre of the tile
@@ -852,6 +865,7 @@ export function initCanvasEngine(
       textNotes: JSON.parse(JSON.stringify(textNotes)) as CanvasTextNote[],
       siteMarkers: JSON.parse(JSON.stringify(siteMarkers)) as CanvasSiteMarker[],
       freehandStrokes: JSON.parse(JSON.stringify(freehandStrokes)) as CanvasFreehandStroke[],
+      arrows: JSON.parse(JSON.stringify(arrows)) as CanvasArrowAnnotation[],
     };
   }
 
@@ -862,6 +876,7 @@ export function initCanvasEngine(
     textNotes = JSON.parse(JSON.stringify(next.textNotes ?? [])) as CanvasTextNote[];
     siteMarkers = JSON.parse(JSON.stringify(next.siteMarkers ?? [])) as CanvasSiteMarker[];
     freehandStrokes = JSON.parse(JSON.stringify(next.freehandStrokes ?? [])) as CanvasFreehandStroke[];
+    arrows = JSON.parse(JSON.stringify(next.arrows ?? [])) as CanvasArrowAnnotation[];
   }
 
   function pushUndo(action: UndoAction) {
@@ -1153,6 +1168,7 @@ export function initCanvasEngine(
       textNotes: [...textNotes],
       siteMarkers: [...siteMarkers],
       freehandStrokes: [...freehandStrokes],
+      arrows: [...arrows],
     };
   }
 
@@ -1301,11 +1317,13 @@ export function initCanvasEngine(
     }
 
     drawFreehandStrokes();
+    drawArrowAnnotations();
     drawTextNotes();
     drawSiteMarkers();
     drawPendingTextNote();
     drawPendingBuildingRect();
     drawPendingFreehandStroke();
+    drawPendingArrow();
 
     // Preview line (while drawing)
     if (tool === "draw" && activeRunIdx >= 0) {
@@ -1462,6 +1480,7 @@ export function initCanvasEngine(
     if (tool === "boundary") text = activeRunIdx >= 0 ? "Click next point - double-click to finish" : "Click to start dotted line";
     if (tool === "text") text = "Drag a text box";
     if (tool === "freehand") text = "Drag to free draw";
+    if (tool === "arrow") text = pendingArrow ? "Click to place arrow head" : "Click to place arrow tail";
     if (tool === "post") text = "Click a fence section for existing post";
     if (tool === "pillar") text = "Click a fence section for pillar";
     if (orthoMode && (tool === "draw" || tool === "boundary")) {
@@ -1693,6 +1712,40 @@ export function initCanvasEngine(
     ctx.stroke();
   }
 
+  function drawAnnotationArrow(arrow: Pick<CanvasArrowAnnotation, "from" | "to" | "color" | "weight">, preview = false) {
+    const dx = arrow.to.x - arrow.from.x;
+    const dy = arrow.to.y - arrow.from.y;
+    const length = Math.hypot(dx, dy);
+    if (length < 1 / zoom) return;
+    const angle = Math.atan2(dy, dx);
+    const head = 12 / zoom;
+    const color = arrow.color ?? "#444";
+    const weight = (arrow.weight ?? 2) / zoom;
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.globalAlpha = preview ? 0.65 : 1;
+    ctx.lineWidth = weight;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(arrow.from.x, arrow.from.y);
+    ctx.lineTo(arrow.to.x, arrow.to.y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(arrow.to.x, arrow.to.y);
+    ctx.lineTo(
+      arrow.to.x - Math.cos(angle - Math.PI / 7) * head,
+      arrow.to.y - Math.sin(angle - Math.PI / 7) * head,
+    );
+    ctx.lineTo(
+      arrow.to.x - Math.cos(angle + Math.PI / 7) * head,
+      arrow.to.y - Math.sin(angle + Math.PI / 7) * head,
+    );
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
   function drawPlacedGateVisual(seg: Segment, gate: GateMarker) {
     const range = gateRange(seg, gate);
     const pStart = lerp(seg.p1, seg.p2, range.tStart);
@@ -1813,6 +1866,13 @@ export function initCanvasEngine(
     ctx.restore();
   }
 
+  function drawArrowAnnotations() {
+    if (arrows.length === 0) return;
+    for (const arrow of arrows) {
+      drawAnnotationArrow(arrow);
+    }
+  }
+
   function drawPendingFreehandStroke() {
     if (!pendingFreehandStroke || pendingFreehandStroke.points.length < 2) return;
     ctx.save();
@@ -1836,6 +1896,11 @@ export function initCanvasEngine(
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
+  }
+
+  function drawPendingArrow() {
+    if (!pendingArrow) return;
+    drawAnnotationArrow({ from: pendingArrow.from, to: pendingArrow.to, color: "#444", weight: 2 }, true);
   }
 
   function drawTextNotes() {
@@ -2797,6 +2862,28 @@ export function initCanvasEngine(
       return;
     }
 
+    if (tool === "arrow") {
+      if (pendingArrow) {
+        pendingArrow.to = canvasPt;
+        if (dist(pendingArrow.from, pendingArrow.to) > 2 / zoom) {
+          arrows.push({
+            kind: "arrow",
+            from: { ...pendingArrow.from },
+            to: { ...pendingArrow.to },
+            color: "#444",
+            weight: 2,
+          });
+          notifyChange();
+        }
+        pendingArrow = null;
+      } else {
+        pushSnapshotUndo();
+        pendingArrow = { from: canvasPt, to: canvasPt };
+      }
+      scheduleRedraw();
+      return;
+    }
+
     if (tool === "post" || tool === "pillar") {
       const markerType = tool;
       const defaultLabel = markerType === "pillar" ? "Pillar" : "Existing post";
@@ -3135,6 +3222,13 @@ export function initCanvasEngine(
       return;
     }
 
+    if (pendingArrow) {
+      pendingArrow.to = canvasPt;
+      canvas.style.cursor = "crosshair";
+      scheduleRedraw();
+      return;
+    }
+
     // Update hover state
     const prevHover = hoveredSegIdx;
     hoveredSegIdx = hitTestSegments(canvasPt, 10);
@@ -3182,7 +3276,7 @@ export function initCanvasEngine(
           ? tool === "gate"
             ? "crosshair"
             : "pointer"
-          : tool === "draw" || tool === "building" || tool === "text" || tool === "freehand"
+          : tool === "draw" || tool === "building" || tool === "text" || tool === "freehand" || tool === "arrow"
             ? "crosshair"
             : "default";
     }
@@ -3335,7 +3429,7 @@ export function initCanvasEngine(
         );
       }
       draggingGate = null;
-      canvas.style.cursor = tool === "draw" || tool === "building" || tool === "text" || tool === "freehand" ? "crosshair" : "default";
+      canvas.style.cursor = tool === "draw" || tool === "building" || tool === "text" || tool === "freehand" || tool === "arrow" ? "crosshair" : "default";
       return;
     }
   }
@@ -3637,6 +3731,11 @@ export function initCanvasEngine(
         setTool("freehand");
         return;
       }
+      if (key === "a") {
+        e.preventDefault();
+        setTool("arrow");
+        return;
+      }
       if (e.key === "+" || e.key === "=") {
         e.preventDefault();
         zoomAtScreenPoint(canvasCenterScreenPoint(), 1.2);
@@ -3664,6 +3763,12 @@ export function initCanvasEngine(
         stopChain(false); // keyboard — no extra mousedown point to pop
         scheduleRedraw();
       }
+    }
+    if (e.key === "Escape" && tool === "arrow") {
+      pendingArrow = null;
+      setTool("move");
+      scheduleRedraw();
+      return;
     }
     if (
       ((e.key === "y" || e.key === "Y") && (e.ctrlKey || e.metaKey)) ||
@@ -3830,7 +3935,8 @@ export function initCanvasEngine(
     if (t !== "text") pendingTextNote = null;
     if (t !== "building") pendingBuildingRect = null;
     if (t !== "freehand") pendingFreehandStroke = null;
-    if (t === "draw" || t === "boundary" || t === "building" || t === "text" || t === "post" || t === "pillar" || t === "freehand") {
+    if (t !== "arrow") pendingArrow = null;
+    if (t === "draw" || t === "boundary" || t === "building" || t === "text" || t === "post" || t === "pillar" || t === "freehand" || t === "arrow") {
       canvas.style.cursor = "crosshair";
     } else if (t === "move") {
       canvas.style.cursor = "grab";
@@ -3868,6 +3974,8 @@ export function initCanvasEngine(
     textNotes = [];
     siteMarkers = [];
     freehandStrokes = [];
+    arrows = [];
+    pendingArrow = null;
     activeRunIdx = -1;
     drawStartHintDismissed = false;
     notifyChange();
@@ -4257,6 +4365,9 @@ export function initCanvasEngine(
       points.push({ x: marker.x + halfW, y: marker.y + halfH });
     }
     for (const stroke of freehandStrokes) points.push(...stroke.points);
+    for (const arrow of arrows) {
+      points.push(arrow.from, arrow.to);
+    }
     if (points.length === 0) return null;
     let minX = Infinity;
     let minY = Infinity;
@@ -4404,6 +4515,8 @@ export function initCanvasEngine(
       layout.freehandStrokes && layout.freehandStrokes.length > 0
         ? layout.freehandStrokes
         : freehandStrokes;
+    const nextArrows =
+      layout.arrows && layout.arrows.length > 0 ? layout.arrows : arrows;
 
     // Group flat segments into runs using totalLengthM as slice boundaries
     let segIdx = 0;
@@ -4475,6 +4588,8 @@ export function initCanvasEngine(
     textNotes = [...nextTextNotes];
     siteMarkers = [...nextSiteMarkers];
     freehandStrokes = [...nextFreehandStrokes];
+    arrows = [...nextArrows];
+    pendingArrow = null;
     activeRunIdx = -1;
     drawStartHintDismissed = newRuns.some(
       (run) => !run.isBoundary && run.points.length > 0,
