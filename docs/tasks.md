@@ -10,6 +10,8 @@ Latest sandbox polish: run sidebar readability, 0m first-segment defaults, compa
 
 Living app overview: [`docs/app-overview.md`](./app-overview.md) now tracks current routes, file responsibilities, data flow, mapper responsibilities, fallback engine behavior, Supabase seed structure, and update rules.
 
+Latest brief queue pass: Brief 005 restyles canvas text annotations with a translucent rounded label, thin border, soft shadow, 14px Inter text, and a white text halo for readability over satellite snapshots.
+
 Latest BOM workflow pass: generated BOM rows aggregate by product within each tab, individual gate tabs are labelled from the canonical gate segments, Generate BOM clears stale results before recalculating, and the mapper opens without the initial snap dot.
 
 Latest Brief BP pass: on-screen and print BOM run summaries now use one compact run-details block, the line-item subtitle is simplified, section settings put Slat Range before Color, section-only post-size override controls are hidden, Generate BOM uses a fresh canonical payload snapshot, and run/settings disclosures keep the 60 second idle collapse behavior.
