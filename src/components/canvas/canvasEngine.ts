@@ -1938,25 +1938,33 @@ export function initCanvasEngine(
       const note = textNotes[idx];
       const text = note.text.trim();
       if (!text) continue;
-      const fs = Math.max(10, (note.fontSize ?? 13) / zoom);
-      ctx.font = `${note.italic ? "italic " : ""}${note.bold !== false ? "bold " : ""}${fs}px sans-serif`;
-      const padX = 7 / zoom;
-      const padY = 5 / zoom;
+      const fs = Math.max(10, (note.fontSize ?? 14) / zoom);
+      ctx.font = `${note.italic ? "italic " : ""}${note.bold !== false ? "bold " : ""}${fs}px Inter, system-ui, sans-serif`;
+      const padX = 4 / zoom;
+      const padY = 2 / zoom;
+      const lineGap = 3 / zoom;
       const lines = text.split(/\r?\n/).map((line) => note.bullets ? `• ${line}` : line);
       const textW = Math.max(...lines.map((line) => ctx.measureText(line).width));
       const boxW = Math.max(note.width ?? 0, textW + padX * 2);
-      const h = Math.max(note.height ?? 0, lines.length * (fs + 3 / zoom) + padY * 2);
-      ctx.fillStyle = "rgba(255,255,255,0.02)";
+      const h = Math.max(note.height ?? 0, lines.length * (fs + lineGap) + padY * 2);
+      ctx.shadowColor = "rgba(0,0,0,0.15)";
+      ctx.shadowBlur = 4 / zoom;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 1 / zoom;
+      ctx.fillStyle = "rgba(255,255,255,0.9)";
       ctx.strokeStyle =
         selectedItem?.kind === "text" && selectedItem.index === idx
           ? "rgba(245,158,11,0.9)"
-          : "rgba(59,130,246,0.45)";
+          : "#333";
       ctx.lineWidth = 1 / zoom;
       ctx.beginPath();
-      ctx.roundRect(note.x, note.y, boxW, h, 5 / zoom);
+      ctx.roundRect(note.x, note.y, boxW, h, 4 / zoom);
       ctx.fill();
+      ctx.shadowColor = "transparent";
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
       ctx.stroke();
-      ctx.fillStyle = note.color ?? COLOR.label;
       ctx.textAlign = note.align ?? "left";
       const textX =
         note.align === "center"
@@ -1965,7 +1973,12 @@ export function initCanvasEngine(
             ? note.x + boxW - padX
             : note.x + padX;
       lines.forEach((line, lineIdx) => {
-        ctx.fillText(line, textX, note.y + padY + lineIdx * (fs + 3 / zoom));
+        const textY = note.y + padY + lineIdx * (fs + lineGap);
+        ctx.strokeStyle = "rgba(255,255,255,0.85)";
+        ctx.lineWidth = 2 / zoom;
+        ctx.strokeText(line, textX, textY);
+        ctx.fillStyle = note.color ?? "#222";
+        ctx.fillText(line, textX, textY);
       });
       if (selectedItem?.kind === "text" && selectedItem.index === idx) {
         const handle = 7 / zoom;
@@ -2363,18 +2376,19 @@ export function initCanvasEngine(
 
   function textNoteBounds(note: CanvasTextNote) {
     ctx.save();
-    const fs = Math.max(10, (note.fontSize ?? 13) / zoom);
-    ctx.font = `${note.italic ? "italic " : ""}${note.bold !== false ? "bold " : ""}${fs}px sans-serif`;
+    const fs = Math.max(10, (note.fontSize ?? 14) / zoom);
+    ctx.font = `${note.italic ? "italic " : ""}${note.bold !== false ? "bold " : ""}${fs}px Inter, system-ui, sans-serif`;
     const lines = note.text.split(/\r?\n/).map((line) => note.bullets ? `• ${line}` : line);
-    const padX = 7 / zoom;
-    const padY = 5 / zoom;
+    const padX = 4 / zoom;
+    const padY = 2 / zoom;
+    const lineGap = 3 / zoom;
     const textW = Math.max(...lines.map((line) => ctx.measureText(line).width), 80 / zoom);
     ctx.restore();
     return {
       x: note.x,
       y: note.y,
       width: Math.max(note.width ?? 0, textW + padX * 2),
-      height: Math.max(note.height ?? 0, lines.length * (fs + 3 / zoom) + padY * 2),
+      height: Math.max(note.height ?? 0, lines.length * (fs + lineGap) + padY * 2),
     };
   }
 
