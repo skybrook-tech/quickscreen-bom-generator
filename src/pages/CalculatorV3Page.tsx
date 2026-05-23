@@ -1436,6 +1436,12 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const propertyAnchorConfirmed = Boolean(payload?.propertyAnchor) || hasLegacyConfiguredPayload;
   const headerActions = !showIntro && !mapExpanded ? (
     <div className="flex w-full flex-wrap items-center justify-end gap-2">
+      <div
+        className="lg:fixed lg:top-2 lg:z-40"
+        style={mobileLayout ? undefined : { left: runPaneWidth + 16 }}
+      >
+        <RightPaneTabs activeView={rightPaneView} onChange={handleRightPaneChange} />
+      </div>
       {rightPaneView === "bom" && (
         <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
           <button
@@ -1478,7 +1484,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
           </button>
         </div>
       )}
-      <RightPaneTabs activeView={rightPaneView} onChange={handleRightPaneChange} />
     </div>
   ) : null;
 
