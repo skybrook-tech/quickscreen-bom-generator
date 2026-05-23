@@ -7,6 +7,9 @@ import { FenceConfigProvider } from "../context/FenceConfigContext";
 import { GateProvider } from "../context/GateContext";
 import { RunListV3 } from "../components/calculator-v3/RunListV3";
 import { LayoutCanvasV3 } from "../components/calculator-v3/LayoutCanvasV3";
+import {
+  MobileCalculatorTabs,
+} from "../components/calculator-v3/MobileCalculatorTabs";
 import { RightPaneTabs, type RightPaneView } from "../components/calculator-v3/RightPaneTabs";
 import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
@@ -41,6 +44,11 @@ import {
 import { hingeGapForSku, latchGapForSku } from "../lib/gateHardware";
 import { gateTypeLabel, validateGateWidth } from "../lib/gateConstraints";
 import { stripParentheticalDispatchCode } from "../lib/displayText";
+import { MOBILE_BREAKPOINT } from "../lib/layoutBreakpoints";
+import {
+  calculatorPaneVisibility,
+  type MobileCalculatorTab,
+} from "../lib/mobileShell";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
 import { useQuote } from "../hooks/useQuote";
@@ -415,7 +423,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   } | null>(null);
   const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
   const [mobileLayout, setMobileLayout] = useState(false);
-  const [mobileTab, setMobileTab] = useState<"run" | "bom" | "map">("bom");
+  const [mobileTab, setMobileTab] = useState<MobileCalculatorTab>("job");
   const [rightPaneView, setRightPaneView] = useState<RightPaneView>("bom");
   const [mapExpanded, setMapExpanded] = useState(false);
   const [introDismissed, setIntroDismissed] = useState(false);
@@ -453,7 +461,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   }, [quoteId, quoteQuery.data, dispatch]);
 
   useEffect(() => {
-    const updateLayout = () => setMobileLayout(window.innerWidth < 768);
+    const updateLayout = () => setMobileLayout(window.innerWidth < MOBILE_BREAKPOINT);
     updateLayout();
     window.addEventListener("resize", updateLayout);
     return () => window.removeEventListener("resize", updateLayout);
@@ -479,7 +487,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
       if (!gateId) return;
       setRightPaneView("map");
       setMapExpanded(false);
-      if (mobileLayout) setMobileTab("run");
+      if (mobileLayout) setMobileTab("job");
       window.setTimeout(() => {
         window.dispatchEvent(new CustomEvent("qsbom:open-segment", { detail: gateId }));
       }, 80);
@@ -492,6 +500,30 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     setRightPaneView(view);
     if (view !== "map") setMapExpanded(false);
   }, []);
+
+  const handleMobileTabChange = useCallback(
+    (tab: MobileCalculatorTab) => {
+      setMobileTab(tab);
+      if (tab === "map") {
+        if (!payload) {
+          dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
+          dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "draw" });
+        }
+        setIntroDismissed(true);
+        setRightPaneView("map");
+        window.setTimeout(() => window.dispatchEvent(new Event("resize")), 0);
+        return;
+      }
+      if (tab === "bom") {
+        setRightPaneView("bom");
+        setMapExpanded(false);
+        return;
+      }
+      setRightPaneView("bom");
+      setMapExpanded(false);
+    },
+    [dispatch, payload],
+  );
 
   function handleResizeStart() {
     let latestWidth = runPaneWidth;
@@ -1392,6 +1424,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
   const showIntro = !quoteId && !payload && !introDismissed;
+  const paneVisibility = calculatorPaneVisibility(mobileLayout, mobileTab);
 
   if (quoteId && quoteQuery.isLoading) {
     return (
@@ -1488,7 +1521,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   ) : null;
 
   return (
-    <AppShell headerActions={headerActions}>
+    <AppShell headerActions={headerActions} mobileTitle={jobName.trim() || "New job"}>
       {gatePositionTarget && gateTargetRunLength > 0 && (
         <GatePositionModal
           gateLabel={gatePositionTarget.kind.replace("_", " ")}
@@ -1540,8 +1573,8 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             className={`${mapExpanded ? "fixed inset-0 z-50" : "relative"} flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row`}
           >
             <aside
-              className={`relative w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${mapExpanded || (mobileLayout && mobileTab !== "run") ? "hidden" : "flex"
-                } ${bomResultForTabs ? "max-h-[32vh]" : "min-h-[46vh]"
+              className={`relative w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${mapExpanded || !paneVisibility.job ? "hidden" : "flex"
+                } ${mobileLayout ? "h-full min-h-0 max-h-none" : bomResultForTabs ? "max-h-[32vh]" : "min-h-[46vh]"
                 }`}
               style={mobileLayout ? undefined : { width: runPaneWidth }}
             >
@@ -1709,7 +1742,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
             <main
               data-print-bom-main
-              className={`min-h-0 min-w-0 flex-1 overflow-y-auto ${mapExpanded ? "p-0" : "p-3 pb-24 sm:p-5 lg:p-8"} ${mobileLayout && mobileTab === "run" ? "hidden" : ""
+              className={`min-h-0 min-w-0 flex-1 overflow-y-auto ${mapExpanded ? "p-0" : "p-3 pb-[calc(var(--safe-bottom)+6rem)] sm:p-5 lg:p-8"} ${mobileLayout && paneVisibility.job ? "hidden" : ""
                 }`}
             >
               <div
@@ -1718,7 +1751,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
               >
                 <section
                   data-print-map-section
-                  className={`${rightPaneView === "map" ? "block" : "hidden"} overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"}`}
+                  className={`${mobileLayout ? (paneVisibility.map ? "block" : "hidden") : rightPaneView === "map" ? "block" : "hidden"} overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"}`}
                 >
                   <div className={`${mapExpanded ? "p-2" : "p-3 sm:p-4"}`}>
                     <div
@@ -1742,7 +1775,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                     </div>
                   </div>
                 </section>
-                <section data-print-bom-section className={`rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5 ${rightPaneView === "bom" && !mapExpanded ? "block" : "hidden"}`}>
+                <section data-print-bom-section className={`rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5 ${mobileLayout ? (paneVisibility.bom && !mapExpanded ? "block" : "hidden") : rightPaneView === "bom" && !mapExpanded ? "block" : "hidden"}`}>
                   <div className="mb-4 flex flex-col gap-4 border-b border-brand-border pb-5 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <div className="mb-3 flex flex-wrap items-center gap-3">
@@ -1919,41 +1952,10 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
           </div>
           {mobileLayout && !mapExpanded && (
-            <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-brand-border bg-brand-card/95 p-2 shadow-2xl backdrop-blur md:hidden">
-              {([
-                ["run", "Run"],
-                ["bom", "BOM"],
-                ["map", "Map"],
-              ] as const).map(([id, label]) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => {
-                    setMobileTab(id);
-                    if (id === "map") {
-                      if (!payload) {
-                        dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
-                        dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "draw" });
-                      }
-                      setIntroDismissed(true);
-                      setRightPaneView("map");
-                    } else if (id === "bom") {
-                      setRightPaneView("bom");
-                      setMapExpanded(false);
-                    } else {
-                      setRightPaneView("bom");
-                      setMapExpanded(false);
-                    }
-                  }}
-                  className={`rounded-lg px-3 py-2 text-sm font-extrabold transition-colors ${mobileTab === id
-                    ? "bg-brand-primary text-white"
-                    : "text-brand-muted hover:bg-brand-border/40 hover:text-brand-text"
-                    }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </nav>
+            <MobileCalculatorTabs
+              activeTab={mobileTab}
+              onChange={handleMobileTabChange}
+            />
           )}
           {clearJobDialogOpen && (
             <div
