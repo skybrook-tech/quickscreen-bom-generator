@@ -7,12 +7,28 @@ interface AppShellProps {
   headerActions?: React.ReactNode;
   branding?: TenantBranding;
   mobileTitle?: string;
+  customerMode?: boolean;
+  onCustomerModeChange?: (enabled: boolean) => void;
 }
 
-export function AppShell({ children, topBar, headerActions, branding, mobileTitle }: AppShellProps) {
+export function AppShell({
+  children,
+  topBar,
+  headerActions,
+  branding,
+  mobileTitle,
+  customerMode,
+  onCustomerModeChange,
+}: AppShellProps) {
   return (
     <div className="flex h-screen h-dvh flex-col overflow-hidden bg-brand-bg text-brand-text">
-      <Header branding={branding} actions={headerActions} mobileTitle={mobileTitle} />
+      <Header
+        branding={branding}
+        actions={headerActions}
+        mobileTitle={mobileTitle}
+        customerMode={customerMode}
+        onCustomerModeChange={onCustomerModeChange}
+      />
       {topBar && (
         <div className="shrink-0 bg-brand-bg border-b border-brand-border/60">
           {topBar}

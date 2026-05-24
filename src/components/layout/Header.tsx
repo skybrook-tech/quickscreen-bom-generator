@@ -1,4 +1,4 @@
-import { LogOut, Menu, Moon, Plus, PlayCircle, Sun, X } from 'lucide-react';
+import { Eye, EyeOff, LogOut, Menu, Moon, Plus, PlayCircle, Sun, X } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -13,9 +13,17 @@ interface HeaderProps {
   branding?: TenantBranding;
   actions?: ReactNode;
   mobileTitle?: string;
+  customerMode?: boolean;
+  onCustomerModeChange?: (enabled: boolean) => void;
 }
 
-export function Header({ branding, actions, mobileTitle }: HeaderProps = {}) {
+export function Header({
+  branding,
+  actions,
+  mobileTitle,
+  customerMode = false,
+  onCustomerModeChange,
+}: HeaderProps = {}) {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
   const [installVideosOpen, setInstallVideosOpen] = useState(false);
@@ -100,6 +108,17 @@ export function Header({ branding, actions, mobileTitle }: HeaderProps = {}) {
 
         {user && (
           <>
+            {onCustomerModeChange && (
+              <button
+                type="button"
+                onClick={() => onCustomerModeChange(!customerMode)}
+                title={customerMode ? "Show cost mode" : "Show customer mode"}
+                className="hidden items-center gap-1.5 rounded-md px-2.5 py-2 text-xs font-bold text-brand-muted transition-colors hover:bg-brand-border/30 hover:text-brand-text sm:flex"
+              >
+                {customerMode ? <EyeOff size={16} /> : <Eye size={16} />}
+                <span>{customerMode ? "Cost mode" : "Customer mode"}</span>
+              </button>
+            )}
             <div
               title={user.email ?? ''}
               className="hidden h-7 w-7 select-none items-center justify-center rounded-full border border-brand-accent/30 bg-brand-accent/15 text-xs font-semibold text-brand-accent sm:flex"
@@ -173,6 +192,16 @@ export function Header({ branding, actions, mobileTitle }: HeaderProps = {}) {
               {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
               {theme === 'light' ? 'Dark mode' : 'Light mode'}
             </button>
+            {onCustomerModeChange && (
+              <button
+                type="button"
+                onClick={() => onCustomerModeChange(!customerMode)}
+                className="flex min-h-11 items-center gap-3 rounded-lg border border-brand-border px-3 py-2 text-left text-sm font-bold text-brand-text"
+              >
+                {customerMode ? <EyeOff size={18} /> : <Eye size={18} />}
+                {customerMode ? "Show cost mode" : "Show customer mode"}
+              </button>
+            )}
             {user && (
               <button
                 type="button"
