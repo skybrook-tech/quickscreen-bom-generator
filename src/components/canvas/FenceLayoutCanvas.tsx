@@ -52,13 +52,17 @@ import {
 } from "../../lib/gateOptionRules";
 
 const DEFAULT_GATE_WIDTH_FALLBACK = 900;
-type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand" | "arrow";
+export type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand" | "arrow";
 type GateSessionRef = { flatSegIdx: number; gateIdx: number; gateId: string };
 type GateDraft = {
   widthMM: number;
   useTerminationPosts: boolean;
   variables: CanvasGateVariables;
 };
+
+export function touchActionForCanvasTool(tool: CanvasTool): "auto" | "none" {
+  return tool === "move" ? "auto" : "none";
+}
 
 const COLOUR_OPTIONS = [
   ["B", "Black Satin"],
@@ -203,6 +207,16 @@ export function FenceLayoutCanvas({
   // re-renders with a new handleLiveSync that closes over updated payload variables.
   const onLayoutChangeRef = useRef(onLayoutChange);
   useEffect(() => { onLayoutChangeRef.current = onLayoutChange; });
+
+  const [mobileLandscape, setMobileLandscape] = useState(false);
+  useEffect(() => {
+    if (!window.matchMedia) return;
+    const query = window.matchMedia("(max-width: 767px) and (orientation: landscape)");
+    const update = () => setMobileLandscape(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
 
   // allowedAngles prop takes priority; fallback to product metadata lookup (v1 path)
   const allowedAngles = useMemo(() => {
@@ -626,7 +640,7 @@ export function FenceLayoutCanvas({
 
   return (
     <div className="space-y-0">
-      <div data-print-hide>
+      <div data-print-hide className="relative z-30 md:static">
         <CanvasToolbar
           engineRef={engineRef}
           activeTool={activeTool}
@@ -651,12 +665,21 @@ export function FenceLayoutCanvas({
       <div
         ref={canvasHostRef}
         className="relative overflow-hidden bg-brand-bg"
-        style={{ height: expanded ? "700px" : "630px" }}
+        style={{
+          height: mobileLandscape
+            ? "calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 4rem)"
+            : expanded
+              ? "700px"
+              : "630px",
+        }}
       >
         <canvas
           ref={canvasRef}
-          className="block h-full w-full touch-none bg-brand-bg"
-          style={{ cursor: "crosshair" }}
+          className="block h-full w-full bg-brand-bg"
+          style={{
+            cursor: "crosshair",
+            touchAction: touchActionForCanvasTool(activeTool),
+          }}
         />
 
         {/* Hint overlay */}

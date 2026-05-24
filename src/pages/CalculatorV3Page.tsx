@@ -14,6 +14,8 @@ import { RightPaneTabs, type RightPaneView } from "../components/calculator-v3/R
 import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
+import { MobileBomTotals } from "../components/shared/MobileBomTotals";
+import { BomV3PDFTemplate } from "../components/quote/BomV3PDFTemplate";
 import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
 import { JobNameEditor } from "../components/calculator/JobNameEditor";
 import { GatePositionModal } from "../components/calculator/GatePositionModal";
@@ -44,6 +46,7 @@ import {
 import { hingeGapForSku, latchGapForSku } from "../lib/gateHardware";
 import { gateTypeLabel, validateGateWidth } from "../lib/gateConstraints";
 import { stripParentheticalDispatchCode } from "../lib/displayText";
+import { shareOrDownloadPdfBlob } from "../lib/sharePdf";
 import { MOBILE_BREAKPOINT } from "../lib/layoutBreakpoints";
 import {
   calculatorPaneVisibility,
@@ -67,6 +70,7 @@ import {
   Loader2,
   Printer,
   Save,
+  Share2,
   Trash2,
   X,
 } from "lucide-react";
@@ -74,6 +78,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import Papa from "papaparse";
+import { pdf } from "@react-pdf/renderer";
 import type {
   CalculatorBOMResult,
   BOMLineItem,
@@ -416,9 +421,13 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
   const [lineEdits, setLineEdits] = useState<Record<string, number | null>>({});
   const [saving, setSaving] = useState(false);
+  const [sharingPdf, setSharingPdf] = useState(false);
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
   const [jobName, setJobName] = useState("");
   const [activeBomSummary, setActiveBomSummary] = useState<{
     label: string;
+    subtotal: number;
+    gst: number;
     grandTotal: number;
   } | null>(null);
   const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
@@ -434,9 +443,11 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const [clearJobDialogOpen, setClearJobDialogOpen] = useState(false);
   const [gatePositionTarget, setGatePositionTarget] = useState<PendingParsedGate | null>(null);
   const handleActiveBomSummaryChange = useCallback(
-    (summary: { label: string; grandTotal: number }) => {
+    (summary: { label: string; subtotal: number; gst: number; grandTotal: number }) => {
       setActiveBomSummary({
         label: summary.label === "All Items" ? "All items" : summary.label,
+        subtotal: summary.subtotal,
+        gst: summary.gst,
         grandTotal: summary.grandTotal,
       });
     },
@@ -469,17 +480,19 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined" || !window.visualViewport) return;
     const viewport = window.visualViewport;
-    const updateKeyboardOffset = () => {
-      setKeyboardOffset(Math.max(0, Math.round(window.innerHeight - viewport.height - viewport.offsetTop)));
+    if (!viewport) return;
+    const updateOffset = () => {
+      setKeyboardOffset(
+        Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop),
+      );
     };
-    updateKeyboardOffset();
-    viewport.addEventListener("resize", updateKeyboardOffset);
-    viewport.addEventListener("scroll", updateKeyboardOffset);
+    updateOffset();
+    viewport.addEventListener("resize", updateOffset);
+    viewport.addEventListener("scroll", updateOffset);
     return () => {
-      viewport.removeEventListener("resize", updateKeyboardOffset);
-      viewport.removeEventListener("scroll", updateKeyboardOffset);
+      viewport.removeEventListener("resize", updateOffset);
+      viewport.removeEventListener("scroll", updateOffset);
     };
   }, []);
 
@@ -1214,6 +1227,42 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     URL.revokeObjectURL(url);
   }
 
+  async function handleSharePdf() {
+    if (!bomResultForTabs) return;
+    setSharingPdf(true);
+    try {
+      const fileDate = new Date().toISOString().slice(0, 10);
+      const fileSlug =
+        jobName.trim().replace(/\s+/g, "-").toLowerCase() || "quickscreen-quote";
+      const pdfDocument = (
+        <BomV3PDFTemplate
+          items={bomResultForTabs.allItems}
+          subtotal={bomResultForTabs.total}
+          gst={bomResultForTabs.gst}
+          grandTotal={bomResultForTabs.grandTotal}
+          pricingTier={bomResultForTabs.pricingTier}
+          generatedAt={bomResultForTabs.generatedAt}
+          customerRef={jobName.trim() || undefined}
+          siteAddress={payload?.propertyAnchor?.address}
+        />
+      );
+      const blob = await pdf(pdfDocument).toBlob();
+      const result = await shareOrDownloadPdfBlob({
+        blob,
+        fileName: `quickscreen-quote-${fileSlug}-${fileDate}.pdf`,
+        title: "QuickScreen Quote",
+        text: jobName.trim()
+          ? `QuickScreen BOM quote for ${jobName.trim()}`
+          : "QuickScreen BOM quote",
+      });
+      toast.success(result === "shared" ? "PDF shared" : "PDF downloaded");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to share PDF");
+    } finally {
+      setSharingPdf(false);
+    }
+  }
+
   const warnings = ((lastBom?.warnings as string[]) ?? []).filter(
     (warning) => !isAngleDrawingWarning(warning),
   );
@@ -1291,12 +1340,13 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const runBomRecalcRef = useRef(runBomRecalculation);
   runBomRecalcRef.current = runBomRecalculation;
 
-  function handleGenerateBom() {
-    if (hasBlockingErrors) return;
-    setRightPaneView("bom");
-    if (mobileLayout) setMobileTab("bom");
-    void runBomRecalcRef.current();
-  }
+  const handleManualBomGenerate = useCallback(() => {
+    void runBomRecalcRef.current().then(() => {
+      document
+        .querySelector("[data-print-bom-section]")
+        ?.scrollIntoView({ block: "start", behavior: "smooth" });
+    });
+  }, []);
 
   useEffect(() => {
     if (!introDismissed && !quoteId) return;
@@ -1447,6 +1497,13 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
+  const mobileBomTotals = bomResultForTabs
+    ? {
+        subtotal: activeBomSummary?.subtotal ?? bomResultForTabs.total,
+        gst: activeBomSummary?.gst ?? bomResultForTabs.gst,
+        grandTotal: activeBomSummary?.grandTotal ?? bomResultForTabs.grandTotal,
+      }
+    : null;
   const showIntro = !quoteId && !payload && !introDismissed;
   const paneVisibility = calculatorPaneVisibility(mobileLayout, mobileTab);
 
@@ -1529,6 +1586,16 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
           >
             <Download size={16} />
             Export CSV
+          </button>
+          <button
+            type="button"
+            onClick={() => void handleSharePdf()}
+            disabled={!bomResultForTabs || sharingPdf}
+            title="Share PDF"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {sharingPdf ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
+            Share PDF
           </button>
           <button
             type="button"
@@ -1856,6 +1923,13 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                       </p>
                     </div>
                   </div>
+                  {mobileBomTotals && (
+                    <MobileBomTotals
+                      subtotal={mobileBomTotals.subtotal}
+                      gst={mobileBomTotals.gst}
+                      grandTotal={mobileBomTotals.grandTotal}
+                    />
+                  )}
                   {bomMutation.isPending && !bomResultForTabs ? (
                     <div className="space-y-3" aria-label="Generating BOM">
                       {Array.from({ length: 7 }).map((_, index) => (
@@ -1992,6 +2066,45 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             </main>
 
           </div>
+          {mobileLayout && !mapExpanded && paneVisibility.bom && (
+            <div
+              className="fixed inset-x-0 z-40 border-t border-brand-border bg-brand-card/95 px-3 py-2 shadow-2xl backdrop-blur md:hidden"
+              style={{
+                bottom: `calc(var(--safe-bottom) + 56px + ${keyboardOffset}px)`,
+              }}
+              data-testid="mobile-bom-action-bar"
+            >
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  type="button"
+                  onClick={handleSaveJob}
+                  disabled={!payload || saving}
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg bg-brand-primary px-2 py-2 text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                  Save Quote
+                </button>
+                <button
+                  type="button"
+                  onClick={handleManualBomGenerate}
+                  disabled={!payload || bomMutation.isPending}
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-brand-border px-2 py-2 text-xs font-black text-brand-text disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {bomMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <Printer size={16} />}
+                  Generate
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void handleSharePdf()}
+                  disabled={!bomResultForTabs || sharingPdf}
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-brand-border px-2 py-2 text-xs font-black text-brand-text disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {sharingPdf ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
+                  Share PDF
+                </button>
+              </div>
+            </div>
+          )}
           {mobileLayout && !mapExpanded && (
             <MobileCalculatorTabs
               activeTab={mobileTab}

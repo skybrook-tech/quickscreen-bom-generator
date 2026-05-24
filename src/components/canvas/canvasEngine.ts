@@ -181,7 +181,12 @@ interface CanvasPointerLike {
   button: number;
   clientX: number;
   clientY: number;
+  pointerType?: "mouse" | "touch" | "pen";
   preventDefault: () => void;
+}
+
+export function snapRadiusForPointerType(pointerType?: string): number {
+  return pointerType === "touch" ? 44 : 8;
 }
 
 interface Segment {
@@ -710,7 +715,7 @@ export function initCanvasEngine(
   let lastTouchPointer: CanvasPointerLike | null = null;
   let lastTapTime = 0;
   let lastTapScreen: Point | null = null;
-  let pinchZoom: { lastDistance: number } | null = null;
+  let pinchZoom: { lastDistance: number; lastCenter: Point } | null = null;
   // Post positions from BOM result. In canvas world coordinates — the same
   // coordinate space as the drawn nodes (canvas pixels before pan/zoom transform).
   // null = nothing to render.
@@ -2364,6 +2369,18 @@ export function initCanvasEngine(
     return closest;
   }
 
+  function pointerSnapRadius(e: MouseEvent | CanvasPointerLike): number {
+    return snapRadiusForPointerType("pointerType" in e ? e.pointerType : undefined);
+  }
+
+  function drawingTouchAction(t: Tool): "auto" | "none" {
+    return t === "move" ? "auto" : "none";
+  }
+
+  function updateCanvasTouchAction() {
+    canvas.style.touchAction = drawingTouchAction(tool);
+  }
+
   function hitTestLabel(pt: Point): number {
     // Returns flat segment index if pt is near its midpoint label
     const allSegs = allSegmentsFlat();
@@ -2815,6 +2832,7 @@ export function initCanvasEngine(
     }
 
     const canvasPt = eventToCanvas(e);
+    const hitRadius = pointerSnapRadius(e);
     let worldPt = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
     const screenPtDown = eventToScreen(e);
     clearContextMenu();
@@ -2861,7 +2879,7 @@ export function initCanvasEngine(
       for (const gm of gateMids) {
         const dx = screenPtDown.x - gm.screenPt.x;
         const dy = screenPtDown.y - gm.screenPt.y;
-        if (Math.sqrt(dx * dx + dy * dy) < 12) {
+        if (Math.sqrt(dx * dx + dy * dy) < Math.max(12, hitRadius)) {
           draggingGate = {
             runIdx: gm.runIdx,
             segIdx: gm.segIdx,
@@ -2995,7 +3013,7 @@ export function initCanvasEngine(
           );
           const dx = screenPtDown.x - endPtScreen.x;
           const dy = screenPtDown.y - endPtScreen.y;
-          if (Math.sqrt(dx * dx + dy * dy) < 10) {
+          if (Math.sqrt(dx * dx + dy * dy) < Math.max(10, hitRadius)) {
             resumedIdx = ri;
             break;
           }
@@ -3065,7 +3083,7 @@ export function initCanvasEngine(
     }
 
     if (tool === "gate") {
-      const flatIdx = hitTestSegments(canvasPt, 12);
+      const flatIdx = hitTestSegments(canvasPt, Math.max(12, hitRadius));
       if (flatIdx >= 0) {
         const allSegs = allSegmentsFlat();
         const info = allSegs[flatIdx];
@@ -3113,7 +3131,7 @@ export function initCanvasEngine(
           const nodePtScreen = canvasToScreen(run.points[pi], pan, zoom);
           const dx = screenPtDown.x - nodePtScreen.x;
           const dy = screenPtDown.y - nodePtScreen.y;
-          if (Math.sqrt(dx * dx + dy * dy) < 8) {
+          if (Math.sqrt(dx * dx + dy * dy) < hitRadius) {
             draggingNode = { runIdx: ri, ptIdx: pi };
             return;
           }
@@ -3143,6 +3161,7 @@ export function initCanvasEngine(
 
   function onMouseMove(e: MouseEvent | CanvasPointerLike) {
     const canvasPt = eventToCanvas(e);
+    const hitRadius = pointerSnapRadius(e);
     mouseCanvas = canvasPt;
 
     if (dragAction) {
@@ -3272,7 +3291,7 @@ export function initCanvasEngine(
 
     // Update hover state
     const prevHover = hoveredSegIdx;
-    hoveredSegIdx = hitTestSegments(canvasPt, 10);
+    hoveredSegIdx = hitTestSegments(canvasPt, Math.max(10, hitRadius));
 
     // Gate hover cursor works in all modes
     const screenPt = eventToScreen(e);
@@ -3281,7 +3300,7 @@ export function initCanvasEngine(
     for (const gm of gateMids) {
       const dx = screenPt.x - gm.screenPt.x;
       const dy = screenPt.y - gm.screenPt.y;
-      if (Math.sqrt(dx * dx + dy * dy) < 12) {
+      if (Math.sqrt(dx * dx + dy * dy) < Math.max(12, hitRadius)) {
         overGate = true;
         break;
       }
@@ -3299,7 +3318,7 @@ export function initCanvasEngine(
           const nodePtScreen = canvasToScreen(pt, pan, zoom);
           const dx = screenPt.x - nodePtScreen.x;
           const dy = screenPt.y - nodePtScreen.y;
-          if (Math.sqrt(dx * dx + dy * dy) < 8) {
+          if (Math.sqrt(dx * dx + dy * dy) < hitRadius) {
             overNode = true;
             break;
           }
@@ -3480,6 +3499,7 @@ export function initCanvasEngine(
       button: 0,
       clientX: touch.clientX,
       clientY: touch.clientY,
+      pointerType: "touch",
       preventDefault: () => source.preventDefault(),
     };
   }
@@ -3516,7 +3536,10 @@ export function initCanvasEngine(
   function onTouchStart(e: TouchEvent) {
     if (editingLabel) return;
     if (e.touches.length === 2) {
-      pinchZoom = { lastDistance: touchPairDistance(e.touches) };
+      pinchZoom = {
+        lastDistance: touchPairDistance(e.touches),
+        lastCenter: touchPairCenter(e.touches),
+      };
       lastTouchPointer = null;
       e.preventDefault();
       return;
@@ -3531,13 +3554,17 @@ export function initCanvasEngine(
   function onTouchMove(e: TouchEvent) {
     if (e.touches.length === 2) {
       const distance = touchPairDistance(e.touches);
+      const center = touchPairCenter(e.touches);
       if (pinchZoom && pinchZoom.lastDistance > 0 && distance > 0) {
         zoomAtScreenPoint(
-          touchPairCenter(e.touches),
+          center,
           distance / pinchZoom.lastDistance,
         );
+        pan.x += center.x - pinchZoom.lastCenter.x;
+        pan.y += center.y - pinchZoom.lastCenter.y;
+        scheduleRedraw();
       }
-      pinchZoom = { lastDistance: distance };
+      pinchZoom = { lastDistance: distance, lastCenter: center };
       e.preventDefault();
       return;
     }
@@ -3973,6 +4000,7 @@ export function initCanvasEngine(
 
   function setTool(t: Tool) {
     tool = t;
+    updateCanvasTouchAction();
     if (t !== "text") pendingTextNote = null;
     if (t !== "building") pendingBuildingRect = null;
     if (t !== "freehand") pendingFreehandStroke = null;
@@ -4863,7 +4891,7 @@ export function initCanvasEngine(
 
   // ── Register events ────────────────────────────────────────────────────────
 
-  canvas.style.touchAction = "none";
+  updateCanvasTouchAction();
   canvas.addEventListener("mousedown", onMouseDown);
   canvas.addEventListener("mousemove", onMouseMove);
   canvas.addEventListener("mouseup", onMouseUp);

@@ -5,6 +5,7 @@ import {
   createLayeredMapSnapshot,
   createMapSnapshot,
   getDefaultSnapshotViewportTransform,
+  isMobileTouchViewport,
   metresPerPixelAt,
   normalizeMapSnapshot,
   ROADMAP_BOUNDARY_EMPHASIS_STYLES,
@@ -177,9 +178,62 @@ describe("Static Maps snapshots", () => {
       opacity: 1,
     });
     expect(snapshot.layers?.roadmap).toMatchObject({
+      visible: false,
+      opacity: 0.5,
+    });
+  });
+
+  it("keeps roadmap hidden on desktop snapshots and visible on mobile touch captures", async () => {
+    const desktopSnapshot = await createLayeredMapSnapshot(
+      {
+        centerLat: -28.503385,
+        centerLng: 153.526262,
+        zoom: 20,
+        viewportWidth: 1280,
+        viewportHeight: 720,
+        capturedAt: "2026-05-22T00:00:00.000Z",
+      },
+      "test-key",
+      () => Promise.resolve(),
+    );
+    const mobileSnapshot = await createLayeredMapSnapshot(
+      {
+        centerLat: -28.503385,
+        centerLng: 153.526262,
+        zoom: 20,
+        viewportWidth: 390,
+        viewportHeight: 720,
+        capturedAt: "2026-05-22T00:00:00.000Z",
+        mobileLayerDefaults: true,
+      },
+      "test-key",
+      () => Promise.resolve(),
+    );
+
+    expect(desktopSnapshot.layers?.roadmap).toMatchObject({
+      visible: false,
+      opacity: 0.5,
+    });
+    expect(mobileSnapshot.layers?.roadmap).toMatchObject({
       visible: true,
       opacity: 0.5,
     });
+  });
+
+  it("detects a mobile touch viewport for snapshot layer defaults", () => {
+    const touchWindow = {
+      innerWidth: 390,
+      navigator: { maxTouchPoints: 1 },
+      matchMedia: () => ({ matches: false }),
+    } as unknown as Window;
+    const desktopWindow = {
+      innerWidth: 1024,
+      navigator: { maxTouchPoints: 1 },
+      matchMedia: () => ({ matches: true }),
+    } as unknown as Window;
+
+    expect(isMobileTouchViewport(touchWindow)).toBe(true);
+    expect(isMobileTouchViewport(desktopWindow)).toBe(false);
   });
 
   it("falls back to satellite-only if the roadmap preload fails", async () => {
