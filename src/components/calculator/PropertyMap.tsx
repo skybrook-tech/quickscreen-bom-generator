@@ -6,6 +6,7 @@ import { useGoogleMaps } from "../../hooks/useGoogleMaps";
 import { GOOGLE_MAPS_MISSING_API_KEY_MESSAGE } from "../../lib/googleMaps/loader";
 import {
   createLayeredMapSnapshot,
+  isMobileTouchViewport,
   MAPS_STATIC_API_ENABLEMENT_MESSAGE,
   type MapSnapshotCaptureInput,
 } from "../../lib/googleMaps/staticSnapshot";
@@ -204,11 +205,15 @@ function ExpandedPropertyMap({
       zoom: pin ? PROPERTY_ZOOM : DEFAULT_ZOOM,
       viewportWidth: DEFAULT_SNAPSHOT_WIDTH,
       viewportHeight: DEFAULT_SNAPSHOT_HEIGHT,
+      mobileLayerDefaults: isMobileTouchViewport(),
     };
   }
 
   async function handleUseView() {
-    const snapshotInput = readSnapshotInput();
+    const snapshotInput = {
+      ...readSnapshotInput(),
+      mobileLayerDefaults: isMobileTouchViewport(),
+    };
     const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim();
     if (!apiKey) {
       setSnapshotError(GOOGLE_MAPS_MISSING_API_KEY_MESSAGE);

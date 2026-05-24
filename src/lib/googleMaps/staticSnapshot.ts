@@ -35,6 +35,7 @@ export interface MapSnapshotCaptureInput {
   viewportWidth: number;
   viewportHeight: number;
   capturedAt?: string;
+  mobileLayerDefaults?: boolean;
 }
 
 export function createMapSnapshot(input: MapSnapshotCaptureInput): CanonicalMapSnapshot {
@@ -105,8 +106,26 @@ const DEFAULT_LAYER_STATE: Record<
   Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">
 > = {
   satellite: { visible: true, opacity: 1 },
-  roadmap: { visible: true, opacity: 0.5 },
+  roadmap: { visible: false, opacity: 0.5 },
 };
+
+export function isMobileTouchViewport(win: Window = window): boolean {
+  return (
+    win.innerWidth < 768 &&
+    ((win.navigator?.maxTouchPoints ?? 0) > 0 ||
+      win.matchMedia?.("(pointer: coarse)")?.matches === true)
+  );
+}
+
+function layerStateForSnapshotCapture(input: MapSnapshotCaptureInput) {
+  return {
+    satellite: DEFAULT_LAYER_STATE.satellite,
+    roadmap: {
+      ...DEFAULT_LAYER_STATE.roadmap,
+      visible: input.mobileLayerDefaults ? true : DEFAULT_LAYER_STATE.roadmap.visible,
+    },
+  };
+}
 
 export const ROADMAP_BOUNDARY_EMPHASIS_STYLES = [
   "feature:poi|visibility:off",
@@ -169,6 +188,7 @@ export async function createLayeredMapSnapshot(
   loadImage: StaticMapImageLoader = preloadStaticMapImage,
 ): Promise<CanonicalMapSnapshot> {
   const snapshot = createMapSnapshot(input);
+  const layerState = layerStateForSnapshotCapture(input);
   const satelliteUrl = buildStaticMapUrl(snapshot, apiKey, "satellite");
   const roadmapUrl = buildStaticMapUrl(snapshot, apiKey, "roadmap");
   const [satelliteResult, roadmapResult] = await Promise.allSettled([
@@ -194,15 +214,15 @@ export async function createLayeredMapSnapshot(
     layers: {
       satellite: {
         url: satelliteUrl,
-        ...DEFAULT_LAYER_STATE.satellite,
+        ...layerState.satellite,
       },
       roadmap: {
         url: roadmapResult.status === "fulfilled" ? roadmapUrl : null,
         visible:
           roadmapResult.status === "fulfilled"
-            ? DEFAULT_LAYER_STATE.roadmap.visible
+            ? layerState.roadmap.visible
             : false,
-        opacity: DEFAULT_LAYER_STATE.roadmap.opacity,
+        opacity: layerState.roadmap.opacity,
       },
     },
   };
