@@ -64,6 +64,14 @@ export function touchActionForCanvasTool(tool: CanvasTool): "auto" | "none" {
   return tool === "move" ? "auto" : "none";
 }
 
+export function applyGateDialogSaveToolState(
+  engine: Pick<ReturnType<typeof initCanvasEngine>, "setTool"> | null | undefined,
+  setToolState: (tool: CanvasTool) => void,
+) {
+  engine?.setTool("gate");
+  setToolState("gate");
+}
+
 const COLOUR_OPTIONS = [
   ["B", "Black Satin"],
   ["MN", "Monument Matt"],
@@ -74,6 +82,10 @@ const COLOUR_OPTIONS = [
   ["D", "Dune Satin"],
   ["M", "Mill"],
 ] as const;
+
+function isMobileCanvasViewport(): boolean {
+  return window.matchMedia?.("(max-width: 767px)").matches ?? false;
+}
 
 function movementFromCanvasType(gateType: CanvasGateType): GateMovement {
   if (gateType === "sliding") return "sliding";
@@ -290,7 +302,7 @@ export function FenceLayoutCanvas({
     if (tool === "gate") {
       setActiveGateRef(null);
       setSessionGateRefs([]);
-      setGateDialogOpen(true);
+      setGateDialogOpen(!isMobileCanvasViewport());
       engineRef.current?.setTool("gate");
     }
     if (
@@ -560,8 +572,7 @@ export function FenceLayoutCanvas({
     setGateDialogOpen(false);
     setActiveGateRef(null);
     setSessionGateRefs([]);
-    engineRef.current?.setTool("move");
-    setActiveTool("move");
+    applyGateDialogSaveToolState(engineRef.current, setActiveTool);
   }
 
   function handleGateDialogCancel() {
@@ -687,7 +698,7 @@ export function FenceLayoutCanvas({
           {activeTool === "draw" &&
             "Click to place points - double-click near the last point to finish - click a length label to edit"}
           {activeTool === "gate" &&
-            "Click on a fence section to place a gate marker, then drag it along the line to fine-tune"}
+            "Tap or click on a fence section to place a gate marker, then drag it along the line to fine-tune"}
           {activeTool === "move" &&
             "Drag nodes or gates to reposition · Click a label to edit length"}
           {activeTool === "boundary" &&
