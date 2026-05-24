@@ -18,6 +18,8 @@ Latest Brief 020 pass: mobile canvas drawing now defers draw/gate taps until tou
 
 Latest Brief 020 fix-up: real-device iPhone regressions were addressed by suppressing tap-start phantom previews, restoring 500ms long-press vertex dragging, and keeping Gate mode active after saving a placed gate.
 
+Latest Brief 022 pass: mobile bottom navigation now includes a Glass Outlet save-icon action, opens a Save Job dialog prefilled from the current job name or a dated default, reuses the existing Supabase/local save flow with edited names, keeps the dialog open on save failure, and removes the mobile floating save/share action bar.
+
 Latest sandbox polish: run sidebar readability, 0m first-segment defaults, compact length/height controls, and endpoint/corner gate placement are implemented on `codex/qshs-calculator-sandbox`.
 
 Living app overview: [`docs/app-overview.md`](./app-overview.md) now tracks current routes, file responsibilities, data flow, mapper responsibilities, fallback engine behavior, Supabase seed structure, and update rules.
