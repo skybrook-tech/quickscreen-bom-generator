@@ -43,6 +43,7 @@ export function SuggestedAccessoriesPanel({
   const [dismissed, setDismissed] = useState(loadDismissed);
   const [query, setQuery] = useState("");
   const [pinned, setPinned] = useState<SuggestedAccessory[]>([]);
+  const [open, setOpen] = useState(true);
   const { data: matches = [], isFetching } = useProductSearch(query);
 
   useEffect(() => persistDismissed(dismissed), [dismissed]);
@@ -137,18 +138,30 @@ export function SuggestedAccessoriesPanel({
             on this browser.
           </p>
         </div>
+        <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => setOpen((value) => !value)}
+          className="min-h-11 rounded-lg border border-brand-border px-3 py-2 text-xs font-black text-brand-muted hover:border-brand-primary hover:text-brand-primary"
+          aria-expanded={open}
+        >
+          {open ? "Hide suggestions" : `Show suggestions (${visible.length})`}
+        </button>
         {dismissed.size > 0 && (
           <button
             type="button"
             onClick={() => setDismissed(new Set())}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-brand-border px-2 py-1 text-xs font-bold text-brand-muted hover:border-brand-primary hover:text-brand-primary"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted hover:border-brand-primary hover:text-brand-primary"
           >
             <RotateCcw size={16} />
             Restore hidden
           </button>
         )}
+        </div>
       </div>
 
+      {open && (
+      <>
       <div className="relative mb-3">
         <Search
           size={16}
@@ -199,7 +212,7 @@ export function SuggestedAccessoriesPanel({
             return (
               <div
                 key={item.id}
-                className="grid gap-3 rounded-2xl border border-brand-border/70 bg-brand-bg/60 px-3 py-3 text-sm font-semibold md:grid-cols-[1fr_auto]"
+                className="grid gap-3 rounded-lg border border-brand-border/70 bg-brand-bg/60 p-3 text-sm font-semibold shadow-sm md:grid-cols-[1fr_auto]"
               >
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -240,7 +253,7 @@ export function SuggestedAccessoriesPanel({
                       }
                       onAdd(item);
                     }}
-                    className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-bold transition-colors hover:shadow-sm ${
+                    className={`flex min-h-11 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-bold transition-colors hover:shadow-sm ${
                       added
                         ? "border border-brand-success/40 bg-brand-success/10 text-brand-success hover:bg-brand-success hover:text-white"
                         : "bg-brand-primary text-white hover:bg-brand-primary/90"
@@ -252,7 +265,7 @@ export function SuggestedAccessoriesPanel({
                   <button
                     type="button"
                     onClick={() => dismiss(item)}
-                    className="rounded-lg p-2 text-brand-muted transition-colors hover:bg-brand-danger/10 hover:text-brand-danger"
+                    className="min-h-11 rounded-lg p-2 text-brand-muted transition-colors hover:bg-brand-danger/10 hover:text-brand-danger"
                     title="Hide this suggestion"
                     aria-label="Hide this suggestion"
                   >
@@ -263,6 +276,8 @@ export function SuggestedAccessoriesPanel({
             );
           })}
         </div>
+      )}
+      </>
       )}
     </div>
   );
