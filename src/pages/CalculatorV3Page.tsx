@@ -424,6 +424,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
   const [mobileLayout, setMobileLayout] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileCalculatorTab>("job");
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
   const [rightPaneView, setRightPaneView] = useState<RightPaneView>("bom");
   const [mapExpanded, setMapExpanded] = useState(false);
   const [introDismissed, setIntroDismissed] = useState(false);
@@ -465,6 +466,21 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     updateLayout();
     window.addEventListener("resize", updateLayout);
     return () => window.removeEventListener("resize", updateLayout);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.visualViewport) return;
+    const viewport = window.visualViewport;
+    const updateKeyboardOffset = () => {
+      setKeyboardOffset(Math.max(0, Math.round(window.innerHeight - viewport.height - viewport.offsetTop)));
+    };
+    updateKeyboardOffset();
+    viewport.addEventListener("resize", updateKeyboardOffset);
+    viewport.addEventListener("scroll", updateKeyboardOffset);
+    return () => {
+      viewport.removeEventListener("resize", updateKeyboardOffset);
+      viewport.removeEventListener("scroll", updateKeyboardOffset);
+    };
   }, []);
 
   useEffect(() => {
@@ -1275,6 +1291,13 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const runBomRecalcRef = useRef(runBomRecalculation);
   runBomRecalcRef.current = runBomRecalculation;
 
+  function handleGenerateBom() {
+    if (hasBlockingErrors) return;
+    setRightPaneView("bom");
+    if (mobileLayout) setMobileTab("bom");
+    void runBomRecalcRef.current();
+  }
+
   useEffect(() => {
     if (!introDismissed && !quoteId) return;
     if (!payload || !payloadCalcKey) return;
@@ -1420,6 +1443,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     : jobName.trim()
       ? `Save ${jobName.trim()}`
       : "Save Job";
+  const hasConfiguredRuns = Boolean(payload?.runs.some((run) => run.segments.length > 0));
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
@@ -1708,22 +1732,39 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                     </>
                   )}
                 </div>
-                <div className="border-t border-brand-border bg-brand-card p-3 pb-24 sm:p-5 md:pb-5">
-                  <div className="flex flex-wrap gap-2">
+                <div
+                  className="sticky z-30 border-t border-brand-border bg-brand-card p-3 pb-[calc(var(--safe-bottom)+1rem)] shadow-2xl sm:p-5 md:pb-5"
+                  style={{
+                    bottom: mobileLayout
+                      ? `calc(56px + var(--safe-bottom) + ${keyboardOffset}px)`
+                      : 0,
+                  }}
+                  data-testid="mobile-job-action-bar"
+                >
+                  <div className="grid gap-2 sm:flex sm:flex-wrap">
                     <button
                       type="button"
                       onClick={handleSaveJob}
                       disabled={!payload || saving}
-                      className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                       {saveJobLabel}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleGenerateBom}
+                      disabled={!hasConfiguredRuns || hasBlockingErrors || bomMutation.isPending}
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      {bomMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : null}
+                      Generate BOM
                     </button>
                     <ConfirmButton
                       onConfirm={() => setClearJobDialogOpen(true)}
                       disabled={!payload && !jobName}
                       confirmLabel={<><Trash2 size={16} /> Click again to confirm</>}
-                      className="inline-flex items-center gap-2 rounded-lg border border-brand-danger/30 px-3 py-2 text-sm font-bold text-brand-danger transition-colors hover:bg-brand-danger/10 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-brand-danger/30 px-3 py-2 text-sm font-bold text-brand-danger transition-colors hover:bg-brand-danger/10 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       <Trash2 size={16} />
                       Clear Job

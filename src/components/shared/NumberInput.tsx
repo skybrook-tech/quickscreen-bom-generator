@@ -23,6 +23,7 @@ const NumberInput = ({
   onBlur,
 }: NumberInputProps) => {
   const [draft, setDraft] = useState(value === null ? "" : String(value));
+  const decimalInput = step !== undefined && !Number.isInteger(step);
 
   useEffect(() => {
     setDraft(value === null ? "" : String(value));
@@ -36,6 +37,8 @@ const NumberInput = ({
         min={min}
         max={max}
         step={step}
+        inputMode={decimalInput ? "decimal" : "numeric"}
+        pattern={decimalInput ? "[0-9]*\\.?[0-9]*" : "[0-9]*"}
         value={draft}
         onChange={(e) => {
           const next = e.target.value;

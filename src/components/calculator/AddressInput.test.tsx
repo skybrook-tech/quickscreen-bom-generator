@@ -135,6 +135,96 @@ describe("AddressInput", () => {
     view.unmount();
   });
 
+  it("renders the voice mic only when Web Speech API is supported", () => {
+    let view = renderAddressInput();
+    expect(view.container.querySelector('[aria-label="Speak property address"]')).toBeNull();
+    view.unmount();
+
+    vi.stubGlobal(
+      "SpeechRecognition",
+      class SpeechRecognition {
+        continuous = false;
+        interimResults = false;
+        lang = "";
+        onresult = null;
+        onerror = null;
+        onend = null;
+        start() {}
+        stop() {}
+      },
+    );
+
+    view = renderAddressInput();
+    expect(view.container.querySelector('[aria-label="Speak property address"]')).not.toBeNull();
+    view.unmount();
+  });
+
+  it("fills and geocodes the address after voice recognition", async () => {
+    vi.stubEnv("VITE_GOOGLE_MAPS_API_KEY", "test-key");
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        status: "OK",
+        results: [
+          {
+            formatted_address: "9 Mogo Place, Billinudgel NSW 2483, Australia",
+            geometry: { location: { lat: -28.503385, lng: 153.526262 } },
+          },
+        ],
+      }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    let recognitionInstance: {
+      onresult: ((event: { results: Array<Array<{ transcript: string }>> }) => void) | null;
+      onend: (() => void) | null;
+    } | null = null;
+    vi.stubGlobal(
+      "SpeechRecognition",
+      class SpeechRecognition {
+        continuous = false;
+        interimResults = false;
+        lang = "";
+        onresult: ((event: { results: Array<Array<{ transcript: string }>> }) => void) | null = null;
+        onerror = null;
+        onend: (() => void) | null = null;
+        constructor() {
+          recognitionInstance = this;
+        }
+        start() {}
+        stop() {}
+      },
+    );
+
+    const view = renderAddressInput();
+    const micButton = view.container.querySelector(
+      '[aria-label="Speak property address"]',
+    ) as HTMLButtonElement;
+
+    await act(async () => {
+      micButton.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    expect(recognitionInstance).not.toBeNull();
+
+    await act(async () => {
+      recognitionInstance!.onresult?.({
+        results: [[{ transcript: "9 Mogo Pl Billinudgel" }]],
+      });
+      recognitionInstance!.onend?.();
+      await Promise.resolve();
+    });
+
+    expect(view.input.value).toBe("9 Mogo Pl Billinudgel");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(view.onLocated).toHaveBeenCalledWith({
+      address: "9 Mogo Pl Billinudgel",
+      lat: -28.503385,
+      lng: 153.526262,
+      formattedAddress: "9 Mogo Place, Billinudgel NSW 2483, Australia",
+    });
+
+    view.unmount();
+  });
+
   it("renders Places API suggestions while typing", async () => {
     vi.useFakeTimers();
     const infoSpy = vi.spyOn(console, "info").mockImplementation(() => undefined);
