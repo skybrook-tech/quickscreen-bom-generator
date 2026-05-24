@@ -289,7 +289,8 @@ const TOUCH_DOUBLE_TAP_MS = 300;
 const TOUCH_DOUBLE_TAP_DISTANCE_PX = 30;
 const TOUCH_SINGLE_TAP_DEBOUNCE_MS = 250;
 const TOUCH_DUPLICATE_TAP_DISTANCE_PX = 6;
-const TOUCH_LONG_PRESS_SUPPRESS_MS = 300;
+const TOUCH_SINGLE_TAP_MAX_MS = 250;
+const TOUCH_VERTEX_LONG_PRESS_MS = 500;
 const TOUCH_TAP_MOVE_TOLERANCE_PX = 16;
 
 // ── Colours ───────────────────────────────────────────────────────────────────
@@ -732,6 +733,12 @@ export function initCanvasEngine(
     screenPt: Point;
     startedAt: number;
     moved: boolean;
+  } | null = null;
+  let touchVertexLongPress: {
+    timer: number;
+    pointer: CanvasPointerLike;
+    screenPt: Point;
+    node: { runIdx: number; ptIdx: number };
   } | null = null;
   let pinchZoom: { lastDistance: number; lastCenter: Point } | null = null;
   // Post positions from BOM result. In canvas world coordinates — the same
@@ -2363,6 +2370,12 @@ export function initCanvasEngine(
     animFrame = requestAnimationFrame(() => draw());
   }
 
+  function redrawNow() {
+    cancelAnimationFrame(animFrame);
+    animFrame = 0;
+    draw();
+  }
+
   // ── Coordinate helpers ─────────────────────────────────────────────────────
 
   function eventToCanvas(e: Pick<MouseEvent, "clientX" | "clientY">): Point {
@@ -2397,6 +2410,22 @@ export function initCanvasEngine(
     return snapRadiusForPointerType("pointerType" in e ? e.pointerType : undefined);
   }
 
+  function hitTestNodeAtScreen(
+    screenPt: Point,
+    hitRadius: number,
+  ): { runIdx: number; ptIdx: number } | null {
+    for (let ri = 0; ri < runs.length; ri++) {
+      const run = runs[ri];
+      for (let pi = 0; pi < run.points.length; pi++) {
+        const nodePtScreen = canvasToScreen(run.points[pi], pan, zoom);
+        if (dist(screenPt, nodePtScreen) < hitRadius) {
+          return { runIdx: ri, ptIdx: pi };
+        }
+      }
+    }
+    return null;
+  }
+
   function drawingTouchAction(t: Tool): "auto" | "none" {
     return t === "move" ? "auto" : "none";
   }
@@ -2415,6 +2444,7 @@ export function initCanvasEngine(
 
   function cancelTouchInteractionState() {
     const hadDrag = draggingNode !== null || draggingGate !== null || dragAction !== null;
+    clearTouchVertexLongPress();
     touchTapCandidate = null;
     draggingNode = null;
     draggingGate = null;
@@ -2441,9 +2471,59 @@ export function initCanvasEngine(
     isMultiTouching = false;
     pinchZoom = null;
     touchTapCandidate = null;
+    clearTouchVertexLongPress();
     lastTapTime = 0;
     lastTapScreen = null;
     multiTouchCooldownUntil = Date.now() + TOUCH_MULTI_COOLDOWN_MS;
+  }
+
+  function clearTouchVertexLongPress() {
+    if (!touchVertexLongPress) return;
+    window.clearTimeout(touchVertexLongPress.timer);
+    touchVertexLongPress = null;
+  }
+
+  function startTouchVertexLongPress(
+    pointer: CanvasPointerLike,
+    node: { runIdx: number; ptIdx: number },
+  ) {
+    clearTouchVertexLongPress();
+    const longPress = {
+      timer: 0,
+      pointer,
+      screenPt: eventToScreen(pointer),
+      node,
+    };
+    longPress.timer = window.setTimeout(() => {
+      if (touchVertexLongPress !== longPress) return;
+      if (
+        !touchTapCandidate ||
+        touchTapCandidate.moved ||
+        isTouchInteractionSuppressed() ||
+        activePointerCount !== 1
+      ) {
+        clearTouchVertexLongPress();
+        return;
+      }
+
+      touchTapCandidate = null;
+      draggingNode = { ...longPress.node };
+      mouseCanvas = eventToCanvas(longPress.pointer);
+      canvas.style.cursor = "grabbing";
+      touchVertexLongPress = null;
+      scheduleRedraw();
+    }, TOUCH_VERTEX_LONG_PRESS_MS);
+    touchVertexLongPress = longPress;
+  }
+
+  function updateTouchVertexLongPress(pointer: CanvasPointerLike) {
+    if (!touchVertexLongPress) return;
+    const screenPt = eventToScreen(pointer);
+    if (dist(screenPt, touchVertexLongPress.screenPt) > TOUCH_TAP_MOVE_TOLERANCE_PX) {
+      clearTouchVertexLongPress();
+      return;
+    }
+    touchVertexLongPress.pointer = pointer;
   }
 
   function hitTestLabel(pt: Point): number {
@@ -3195,17 +3275,10 @@ export function initCanvasEngine(
 
     if (tool === "move") {
       // Hit test nodes first (screen-space comparison for consistent 8px threshold)
-      for (let ri = 0; ri < runs.length; ri++) {
-        const run = runs[ri];
-        for (let pi = 0; pi < run.points.length; pi++) {
-          const nodePtScreen = canvasToScreen(run.points[pi], pan, zoom);
-          const dx = screenPtDown.x - nodePtScreen.x;
-          const dy = screenPtDown.y - nodePtScreen.y;
-          if (Math.sqrt(dx * dx + dy * dy) < hitRadius) {
-            draggingNode = { runIdx: ri, ptIdx: pi };
-            return;
-          }
-        }
+      const nodeHit = hitTestNodeAtScreen(screenPtDown, hitRadius);
+      if (nodeHit) {
+        draggingNode = nodeHit;
+        return;
       }
 
       // Label click-to-edit
@@ -3604,6 +3677,7 @@ export function initCanvasEngine(
   }
 
   function completeDeferredTouchTap(pointer: CanvasPointerLike) {
+    clearTouchVertexLongPress();
     const candidate = touchTapCandidate;
     touchTapCandidate = null;
     if (!candidate || isTouchInteractionSuppressed()) return;
@@ -3629,7 +3703,7 @@ export function initCanvasEngine(
       return;
     }
 
-    if (candidate.moved || heldMs > TOUCH_LONG_PRESS_SUPPRESS_MS) {
+    if (candidate.moved || heldMs > TOUCH_SINGLE_TAP_MAX_MS) {
       return;
     }
 
@@ -3648,6 +3722,7 @@ export function initCanvasEngine(
     mouseCanvas = eventToCanvas(pointer);
     onMouseDown(pointer);
     onMouseUp(pointer);
+    redrawNow();
   }
 
   function onTouchStart(e: TouchEvent) {
@@ -3670,15 +3745,20 @@ export function initCanvasEngine(
       return;
     }
     if (isTouchTapDeferredTool(tool)) {
-      mouseCanvas = eventToCanvas(pointer);
+      const screenPt = eventToScreen(pointer);
+      const nodeHit = hitTestNodeAtScreen(screenPt, pointerSnapRadius(pointer));
       touchTapCandidate = {
         pointer,
-        screenPt: eventToScreen(pointer),
+        screenPt,
         startedAt: Date.now(),
         moved: false,
       };
+      if (nodeHit) {
+        startTouchVertexLongPress(pointer, nodeHit);
+      } else {
+        clearTouchVertexLongPress();
+      }
       pointer.preventDefault();
-      scheduleRedraw();
       return;
     }
     pointer.preventDefault();
@@ -3725,10 +3805,15 @@ export function initCanvasEngine(
       const screenPt = eventToScreen(pointer);
       if (dist(screenPt, touchTapCandidate.screenPt) > TOUCH_TAP_MOVE_TOLERANCE_PX) {
         touchTapCandidate.moved = true;
+        clearTouchVertexLongPress();
+      } else {
+        updateTouchVertexLongPress(pointer);
       }
       touchTapCandidate.pointer = pointer;
       pointer.preventDefault();
-      onMouseMove(pointer);
+      if (touchTapCandidate.moved) {
+        onMouseMove(pointer);
+      }
       return;
     }
     pointer.preventDefault();
@@ -3751,11 +3836,15 @@ export function initCanvasEngine(
     }
     const touch = e.changedTouches[0];
     const pointer = touch ? touchToPointer(touch, e) : lastTouchPointer;
-    if (!pointer) return;
+    if (!pointer) {
+      clearTouchVertexLongPress();
+      return;
+    }
 
     pointer.preventDefault();
     if (isTouchInteractionSuppressed()) {
       touchTapCandidate = null;
+      clearTouchVertexLongPress();
       lastTouchPointer = null;
       return;
     }
@@ -3766,6 +3855,7 @@ export function initCanvasEngine(
       return;
     }
 
+    clearTouchVertexLongPress();
     onMouseUp(pointer);
     lastTouchPointer = null;
   }

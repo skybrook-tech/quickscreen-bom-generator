@@ -16,6 +16,8 @@ Latest Brief 019 pass: the V3 calculator header now uses the Glass Outlet symbol
 
 Latest Brief 020 pass: mobile canvas drawing now defers draw/gate taps until touch release, suppresses all placement and previews during multi-touch pinch gestures plus a cooldown, supports double-tap run finishing without adding a duplicate point, clears stale preview lines after point placement, and lets mobile users place gates before the gate editor opens.
 
+Latest Brief 020 fix-up: real-device iPhone regressions were addressed by suppressing tap-start phantom previews, restoring 500ms long-press vertex dragging, and keeping Gate mode active after saving a placed gate.
+
 Latest sandbox polish: run sidebar readability, 0m first-segment defaults, compact length/height controls, and endpoint/corner gate placement are implemented on `codex/qshs-calculator-sandbox`.
 
 Living app overview: [`docs/app-overview.md`](./app-overview.md) now tracks current routes, file responsibilities, data flow, mapper responsibilities, fallback engine behavior, Supabase seed structure, and update rules.

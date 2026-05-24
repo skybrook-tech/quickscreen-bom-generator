@@ -64,6 +64,14 @@ export function touchActionForCanvasTool(tool: CanvasTool): "auto" | "none" {
   return tool === "move" ? "auto" : "none";
 }
 
+export function applyGateDialogSaveToolState(
+  engine: Pick<ReturnType<typeof initCanvasEngine>, "setTool"> | null | undefined,
+  setToolState: (tool: CanvasTool) => void,
+) {
+  engine?.setTool("gate");
+  setToolState("gate");
+}
+
 const COLOUR_OPTIONS = [
   ["B", "Black Satin"],
   ["MN", "Monument Matt"],
@@ -564,8 +572,7 @@ export function FenceLayoutCanvas({
     setGateDialogOpen(false);
     setActiveGateRef(null);
     setSessionGateRefs([]);
-    engineRef.current?.setTool("move");
-    setActiveTool("move");
+    applyGateDialogSaveToolState(engineRef.current, setActiveTool);
   }
 
   function handleGateDialogCancel() {
