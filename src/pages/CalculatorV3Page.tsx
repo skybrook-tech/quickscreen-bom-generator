@@ -15,6 +15,7 @@ import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { MobileBomTotals } from "../components/shared/MobileBomTotals";
+import { PwaStatusBanners } from "../components/pwa/PwaStatusBanners";
 import { BomV3PDFTemplate } from "../components/quote/BomV3PDFTemplate";
 import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
 import { JobNameEditor } from "../components/calculator/JobNameEditor";
@@ -277,6 +278,13 @@ function initialRunPaneWidth() {
   return Math.round(Math.min(680, Math.max(390, window.innerWidth / 3)));
 }
 
+const CUSTOMER_MODE_KEY = "qsbom-customer-mode";
+
+function initialCustomerMode() {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(CUSTOMER_MODE_KEY) === "true";
+}
+
 function createInitialPayload(systemType = "QSHS"): CanonicalPayload {
   const initialVariables = initialVariablesForSystem(systemType);
   const initialHeight = Number(initialVariables.target_height_mm ?? 1800);
@@ -423,6 +431,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const [saving, setSaving] = useState(false);
   const [sharingPdf, setSharingPdf] = useState(false);
   const [keyboardOffset, setKeyboardOffset] = useState(0);
+  const [customerMode, setCustomerMode] = useState(initialCustomerMode);
   const [jobName, setJobName] = useState("");
   const [activeBomSummary, setActiveBomSummary] = useState<{
     label: string;
@@ -477,6 +486,10 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     window.addEventListener("resize", updateLayout);
     return () => window.removeEventListener("resize", updateLayout);
   }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(CUSTOMER_MODE_KEY, customerMode ? "true" : "false");
+  }, [customerMode]);
 
   useEffect(() => {
     const viewport = window.visualViewport;
@@ -1611,7 +1624,13 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   ) : null;
 
   return (
-    <AppShell headerActions={headerActions} mobileTitle={jobName.trim() || "New job"}>
+    <AppShell
+      headerActions={headerActions}
+      mobileTitle={customerMode ? "Customer quote" : jobName.trim() || "New job"}
+      topBar={<PwaStatusBanners />}
+      customerMode={customerMode}
+      onCustomerModeChange={setCustomerMode}
+    >
       {gatePositionTarget && gateTargetRunLength > 0 && (
         <GatePositionModal
           gateLabel={gatePositionTarget.kind.replace("_", " ")}
@@ -1893,7 +1912,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                         />
                         <div className="h-10 w-px bg-brand-border" />
                         <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-muted">
-                          Bill of Materials
+                          {customerMode ? "Customer Quote" : "Bill of Materials"}
                         </p>
                       </div>
                       {jobName.trim() && (
@@ -1913,16 +1932,20 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                     </div>
                     <div className="text-left sm:text-right" data-print-hide>
                       <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
-                        {bomMutation.isPending
+                        {customerMode ? (
+                          "Customer view"
+                        ) : (
+                          bomMutation.isPending
                           ? "Recalculating…"
-                          : activeBomSummary?.label ?? (bomResultForTabs ? "Auto quantity breaks" : "Estimated total")}
+                          : activeBomSummary?.label ?? (bomResultForTabs ? "Auto quantity breaks" : "Estimated total")
+                        )}
                       </p>
                       <p className="font-mono text-4xl font-black tabular-nums text-brand-primary sm:text-5xl">
-                        ${formatMoney(animatedGrandTotal)}
+                        {customerMode ? "No pricing" : `$${formatMoney(animatedGrandTotal)}`}
                       </p>
                     </div>
                   </div>
-                  {mobileBomTotals && (
+                  {!customerMode && mobileBomTotals && (
                     <MobileBomTotals
                       subtotal={mobileBomTotals.subtotal}
                       gst={mobileBomTotals.gst}
@@ -1992,6 +2015,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                         }
                         onSwitchEconomyToStandard={handleSwitchEconomyToStandard}
                         onActiveSummaryChange={handleActiveBomSummaryChange}
+                        customerMode={customerMode}
                       />
                       {bomRunDetails.length > 0 && (
                         <div
