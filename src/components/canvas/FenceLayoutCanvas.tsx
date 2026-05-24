@@ -75,6 +75,10 @@ const COLOUR_OPTIONS = [
   ["M", "Mill"],
 ] as const;
 
+function isMobileCanvasViewport(): boolean {
+  return window.matchMedia?.("(max-width: 767px)").matches ?? false;
+}
+
 function movementFromCanvasType(gateType: CanvasGateType): GateMovement {
   if (gateType === "sliding") return "sliding";
   if (gateType === "double-swing") return "double_swing";
@@ -290,7 +294,7 @@ export function FenceLayoutCanvas({
     if (tool === "gate") {
       setActiveGateRef(null);
       setSessionGateRefs([]);
-      setGateDialogOpen(true);
+      setGateDialogOpen(!isMobileCanvasViewport());
       engineRef.current?.setTool("gate");
     }
     if (
@@ -687,7 +691,7 @@ export function FenceLayoutCanvas({
           {activeTool === "draw" &&
             "Click to place points - double-click near the last point to finish - click a length label to edit"}
           {activeTool === "gate" &&
-            "Click on a fence section to place a gate marker, then drag it along the line to fine-tune"}
+            "Tap or click on a fence section to place a gate marker, then drag it along the line to fine-tune"}
           {activeTool === "move" &&
             "Drag nodes or gates to reposition · Click a label to edit length"}
           {activeTool === "boundary" &&

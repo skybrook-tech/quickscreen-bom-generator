@@ -284,6 +284,13 @@ const DEFAULT_SCALE = 100; // px per metre
 
 // ── Gate default width ────────────────────────────────────────────────────────
 const DEFAULT_GATE_WIDTH_MM = 900;
+const TOUCH_MULTI_COOLDOWN_MS = 150;
+const TOUCH_DOUBLE_TAP_MS = 300;
+const TOUCH_DOUBLE_TAP_DISTANCE_PX = 30;
+const TOUCH_SINGLE_TAP_DEBOUNCE_MS = 250;
+const TOUCH_DUPLICATE_TAP_DISTANCE_PX = 6;
+const TOUCH_LONG_PRESS_SUPPRESS_MS = 300;
+const TOUCH_TAP_MOVE_TOLERANCE_PX = 16;
 
 // ── Colours ───────────────────────────────────────────────────────────────────
 const COLOR = {
@@ -715,6 +722,17 @@ export function initCanvasEngine(
   let lastTouchPointer: CanvasPointerLike | null = null;
   let lastTapTime = 0;
   let lastTapScreen: Point | null = null;
+  let lastPlacedTouchTapTime = 0;
+  let lastPlacedTouchTapScreen: Point | null = null;
+  let activePointerCount = 0;
+  let isMultiTouching = false;
+  let multiTouchCooldownUntil = 0;
+  let touchTapCandidate: {
+    pointer: CanvasPointerLike;
+    screenPt: Point;
+    startedAt: number;
+    moved: boolean;
+  } | null = null;
   let pinchZoom: { lastDistance: number; lastCenter: Point } | null = null;
   // Post positions from BOM result. In canvas world coordinates — the same
   // coordinate space as the drawn nodes (canvas pixels before pan/zoom transform).
@@ -1286,7 +1304,9 @@ export function initCanvasEngine(
 
     // Boundary runs — dashed gray lines (non-product context lines)
     {
+      const suppressTouchPreview = isTouchInteractionSuppressed();
       const hasActiveBoundary =
+        !suppressTouchPreview &&
         (tool === "boundary" || tool === "building") &&
         activeRunIdx >= 0 &&
         runs[activeRunIdx]?.isBoundary &&
@@ -1358,27 +1378,31 @@ export function initCanvasEngine(
     drawPendingArrow();
 
     // Preview line (while drawing)
-    if (tool === "draw" && activeRunIdx >= 0) {
+    const suppressTouchPreview = isTouchInteractionSuppressed();
+    if (tool === "draw" && activeRunIdx >= 0 && !suppressTouchPreview) {
       const run = runs[activeRunIdx];
       if (run && run.points.length > 0 && !run.finished) {
         const lastPt = run.points[run.points.length - 1];
         const target = snapDrawingPoint(mouseCanvas);
-        ctx.save();
+        const previewDistance = dist(lastPt, target);
         const isBuilding = run.boundaryType === "building";
-        ctx.setLineDash(isBuilding ? [] : [6, 4]);
-        ctx.strokeStyle = isBuilding ? "rgba(30,64,175,0.72)" : COLOR.preview;
-        ctx.lineWidth = isBuilding ? 3 / zoom : 2 / zoom;
-        ctx.beginPath();
-        ctx.moveTo(lastPt.x, lastPt.y);
-        ctx.lineTo(target.x, target.y);
-        ctx.stroke();
-        ctx.restore();
-
         drawActiveEndpoint(lastPt, "last point");
-        drawActiveEndpoint(target, "next point", true);
+        if (previewDistance > 0.5 / zoom) {
+          ctx.save();
+          ctx.setLineDash(isBuilding ? [] : [6, 4]);
+          ctx.strokeStyle = isBuilding ? "rgba(30,64,175,0.72)" : COLOR.preview;
+          ctx.lineWidth = isBuilding ? 3 / zoom : 2 / zoom;
+          ctx.beginPath();
+          ctx.moveTo(lastPt.x, lastPt.y);
+          ctx.lineTo(target.x, target.y);
+          ctx.stroke();
+          ctx.restore();
+
+          drawActiveEndpoint(target, "next point", true);
+        }
 
         // Post position preview along the in-progress segment
-        const segDist = dist(lastPt, target);
+        const segDist = previewDistance;
         if (!isBuilding && jobPanelWidthMm && jobPanelWidthMm > 0 && segDist > 0) {
           const previewLengthMm = pixelsToMM(segDist, scale);
           const numPanels = Math.ceil(previewLengthMm / jobPanelWidthMm);
@@ -1421,7 +1445,7 @@ export function initCanvasEngine(
     }
 
     // Gate preview (while in gate mode, hovering a segment)
-    if (tool === "gate" && hoveredSegIdx >= 0) {
+    if (tool === "gate" && hoveredSegIdx >= 0 && !suppressTouchPreview) {
       const info = allSegs[hoveredSegIdx];
       if (info) {
         const proj = closestPointOnSegment(mouseCanvas, info.seg);
@@ -1430,7 +1454,7 @@ export function initCanvasEngine(
     }
 
     // Snap indicator
-    if (tool === "draw" && activeRunIdx >= 0) {
+    if (tool === "draw" && activeRunIdx >= 0 && !suppressTouchPreview) {
       const snapped = snapDrawingPoint(mouseCanvas);
       ctx.save();
       ctx.beginPath();
@@ -1502,14 +1526,14 @@ export function initCanvasEngine(
     if (tool === "draw") {
       text =
         activeRunIdx >= 0
-          ? "Click next point - double-click to finish"
+          ? "Tap/click next point - double-tap/double-click to finish"
           : drawStartHintDismissed
             ? ""
-            : "Click to start fence";
+            : "Tap/click to start fence";
     }
-    if (tool === "gate") text = "Click a fence section to place gate";
+    if (tool === "gate") text = "Tap/click a fence section to place gate";
     if (tool === "building") text = "Drag a building rectangle";
-    if (tool === "boundary") text = activeRunIdx >= 0 ? "Click next point - double-click to finish" : "Click to start dotted line";
+    if (tool === "boundary") text = activeRunIdx >= 0 ? "Tap/click next point - double-tap/double-click to finish" : "Tap/click to start dotted line";
     if (tool === "text") text = "Drag a text box";
     if (tool === "freehand") text = "Drag to free draw";
     if (tool === "arrow") text = pendingArrow ? "Click to place arrow head" : "Click to place arrow tail";
@@ -2381,6 +2405,47 @@ export function initCanvasEngine(
     canvas.style.touchAction = drawingTouchAction(tool);
   }
 
+  function isTouchTapDeferredTool(t: Tool): boolean {
+    return t === "draw" || t === "boundary" || t === "gate";
+  }
+
+  function isTouchInteractionSuppressed(): boolean {
+    return isMultiTouching || Date.now() < multiTouchCooldownUntil;
+  }
+
+  function cancelTouchInteractionState() {
+    const hadDrag = draggingNode !== null || draggingGate !== null || dragAction !== null;
+    touchTapCandidate = null;
+    draggingNode = null;
+    draggingGate = null;
+    dragAction = null;
+    isPanning = false;
+    lastTouchPointer = null;
+    if (hadDrag) notifyChange();
+    canvas.style.cursor =
+      tool === "move"
+        ? "grab"
+        : tool === "draw" || tool === "boundary" || tool === "building" || tool === "text" || tool === "post" || tool === "pillar" || tool === "freehand" || tool === "arrow"
+          ? "crosshair"
+          : "default";
+  }
+
+  function beginMultiTouch(touchCount: number) {
+    activePointerCount = touchCount;
+    isMultiTouching = true;
+    cancelTouchInteractionState();
+  }
+
+  function finishMultiTouchCooldown() {
+    activePointerCount = 0;
+    isMultiTouching = false;
+    pinchZoom = null;
+    touchTapCandidate = null;
+    lastTapTime = 0;
+    lastTapScreen = null;
+    multiTouchCooldownUntil = Date.now() + TOUCH_MULTI_COOLDOWN_MS;
+  }
+
   function hitTestLabel(pt: Point): number {
     // Returns flat segment index if pt is near its midpoint label
     const allSegs = allSegmentsFlat();
@@ -2833,6 +2898,7 @@ export function initCanvasEngine(
 
     const canvasPt = eventToCanvas(e);
     const hitRadius = pointerSnapRadius(e);
+    mouseCanvas = canvasPt;
     let worldPt = snap ? snapToGrid(canvasPt, gridSize) : canvasPt;
     const screenPtDown = eventToScreen(e);
     clearContextMenu();
@@ -3026,6 +3092,7 @@ export function initCanvasEngine(
           pushUndo({ type: "RESUME_RUN", runIdx: resumedIdx }); // undo will re-finish it
         } else {
           // Start a new run with this as the first point
+          mouseCanvas = worldPt;
           const newRun: Run = {
             points: [worldPt],
             finished: false,
@@ -3039,6 +3106,7 @@ export function initCanvasEngine(
         // Append point to the current run (multi-point polyline)
         const run = runs[activeRunIdx];
         worldPt = snapDrawingPoint(canvasPt);
+        mouseCanvas = worldPt;
         run.points.push(worldPt);
         rebuildSegmentsPreservingGates(run, scale);
         notifyChange();
@@ -3050,6 +3118,7 @@ export function initCanvasEngine(
 
     if (tool === "boundary") {
       if (activeRunIdx === -1 || runs[activeRunIdx]?.finished) {
+        mouseCanvas = worldPt;
         const newRun: Run = {
           points: [worldPt],
           finished: false,
@@ -3063,6 +3132,7 @@ export function initCanvasEngine(
         const run = runs[activeRunIdx];
         const prevRunIdx = activeRunIdx;
         worldPt = snapDrawingPoint(canvasPt);
+        mouseCanvas = worldPt;
         run.points.push(worldPt);
         rebuildSegmentsPreservingGates(run, scale);
         run.finished = true;
@@ -3533,26 +3603,92 @@ export function initCanvasEngine(
     };
   }
 
+  function completeDeferredTouchTap(pointer: CanvasPointerLike) {
+    const candidate = touchTapCandidate;
+    touchTapCandidate = null;
+    if (!candidate || isTouchInteractionSuppressed()) return;
+
+    const screenPt = eventToScreen(pointer);
+    const now = Date.now();
+    const heldMs = now - candidate.startedAt;
+    const isDoubleTap =
+      lastTapScreen !== null &&
+      now - lastTapTime < TOUCH_DOUBLE_TAP_MS &&
+      dist(screenPt, lastTapScreen) < TOUCH_DOUBLE_TAP_DISTANCE_PX;
+
+    if (
+      isDoubleTap &&
+      (tool === "draw" || tool === "boundary") &&
+      activeRunIdx >= 0 &&
+      !runs[activeRunIdx]?.finished
+    ) {
+      lastTapTime = 0;
+      lastTapScreen = null;
+      stopChain(false);
+      scheduleRedraw();
+      return;
+    }
+
+    if (candidate.moved || heldMs > TOUCH_LONG_PRESS_SUPPRESS_MS) {
+      return;
+    }
+
+    const isDuplicateTap =
+      lastPlacedTouchTapScreen !== null &&
+      now - lastPlacedTouchTapTime < TOUCH_SINGLE_TAP_DEBOUNCE_MS &&
+      dist(screenPt, lastPlacedTouchTapScreen) < TOUCH_DUPLICATE_TAP_DISTANCE_PX;
+    if (isDuplicateTap) return;
+
+    // Debounce only exact duplicate touchend taps; fast taps in different
+    // locations still place distinct points as intentional drawing input.
+    lastPlacedTouchTapTime = now;
+    lastPlacedTouchTapScreen = screenPt;
+    lastTapTime = now;
+    lastTapScreen = screenPt;
+    mouseCanvas = eventToCanvas(pointer);
+    onMouseDown(pointer);
+    onMouseUp(pointer);
+  }
+
   function onTouchStart(e: TouchEvent) {
     if (editingLabel) return;
-    if (e.touches.length === 2) {
+    activePointerCount = e.touches.length;
+    if (e.touches.length >= 2) {
+      beginMultiTouch(e.touches.length);
       pinchZoom = {
         lastDistance: touchPairDistance(e.touches),
         lastCenter: touchPairCenter(e.touches),
       };
-      lastTouchPointer = null;
       e.preventDefault();
       return;
     }
     if (e.touches.length !== 1) return;
     const pointer = touchToPointer(e.touches[0], e);
     lastTouchPointer = pointer;
+    if (isTouchInteractionSuppressed()) {
+      pointer.preventDefault();
+      return;
+    }
+    if (isTouchTapDeferredTool(tool)) {
+      mouseCanvas = eventToCanvas(pointer);
+      touchTapCandidate = {
+        pointer,
+        screenPt: eventToScreen(pointer),
+        startedAt: Date.now(),
+        moved: false,
+      };
+      pointer.preventDefault();
+      scheduleRedraw();
+      return;
+    }
     pointer.preventDefault();
     onMouseDown(pointer);
   }
 
   function onTouchMove(e: TouchEvent) {
-    if (e.touches.length === 2) {
+    activePointerCount = e.touches.length;
+    if (e.touches.length >= 2) {
+      beginMultiTouch(e.touches.length);
       const distance = touchPairDistance(e.touches);
       const center = touchPairCenter(e.touches);
       if (pinchZoom && pinchZoom.lastDistance > 0 && distance > 0) {
@@ -3568,8 +3704,12 @@ export function initCanvasEngine(
       e.preventDefault();
       return;
     }
-    if (pinchZoom) {
-      pinchZoom = null;
+    if (pinchZoom || isMultiTouching) {
+      if (e.touches.length === 0) {
+        finishMultiTouchCooldown();
+      } else {
+        activePointerCount = e.touches.length;
+      }
       lastTouchPointer = null;
       e.preventDefault();
       return;
@@ -3577,15 +3717,36 @@ export function initCanvasEngine(
     if (e.touches.length !== 1) return;
     const pointer = touchToPointer(e.touches[0], e);
     lastTouchPointer = pointer;
+    if (isTouchInteractionSuppressed()) {
+      pointer.preventDefault();
+      return;
+    }
+    if (touchTapCandidate) {
+      const screenPt = eventToScreen(pointer);
+      if (dist(screenPt, touchTapCandidate.screenPt) > TOUCH_TAP_MOVE_TOLERANCE_PX) {
+        touchTapCandidate.moved = true;
+      }
+      touchTapCandidate.pointer = pointer;
+      pointer.preventDefault();
+      onMouseMove(pointer);
+      return;
+    }
     pointer.preventDefault();
     onMouseMove(pointer);
   }
 
   function onTouchEnd(e: TouchEvent) {
-    if (pinchZoom) {
-      pinchZoom = null;
+    activePointerCount = e.touches.length;
+    if (pinchZoom || isMultiTouching || activePointerCount >= 2) {
+      if (e.touches.length === 0) {
+        finishMultiTouchCooldown();
+      } else {
+        activePointerCount = e.touches.length;
+        isMultiTouching = true;
+      }
       lastTouchPointer = null;
       e.preventDefault();
+      scheduleRedraw();
       return;
     }
     const touch = e.changedTouches[0];
@@ -3593,28 +3754,27 @@ export function initCanvasEngine(
     if (!pointer) return;
 
     pointer.preventDefault();
-    onMouseUp(pointer);
-
-    const screenPt = eventToScreen(pointer);
-    const now = Date.now();
-    const isDoubleTap =
-      lastTapScreen !== null &&
-      now - lastTapTime < 350 &&
-      dist(screenPt, lastTapScreen) < 34;
-
-    lastTapTime = now;
-    lastTapScreen = screenPt;
-    lastTouchPointer = null;
-
-    if (
-      isDoubleTap &&
-      (tool === "draw" || tool === "building" || tool === "boundary") &&
-      activeRunIdx >= 0 &&
-      !runs[activeRunIdx]?.finished
-    ) {
-      stopChain(!isNearActiveLastPoint(screenPt));
-      scheduleRedraw();
+    if (isTouchInteractionSuppressed()) {
+      touchTapCandidate = null;
+      lastTouchPointer = null;
+      return;
     }
+
+    if (touchTapCandidate) {
+      completeDeferredTouchTap(pointer);
+      lastTouchPointer = null;
+      return;
+    }
+
+    onMouseUp(pointer);
+    lastTouchPointer = null;
+  }
+
+  function onTouchCancel(e: TouchEvent) {
+    cancelTouchInteractionState();
+    finishMultiTouchCooldown();
+    e.preventDefault();
+    scheduleRedraw();
   }
 
   function onDblClick(e: MouseEvent) {
@@ -4877,7 +5037,7 @@ export function initCanvasEngine(
     canvas.removeEventListener("touchstart", onTouchStart);
     canvas.removeEventListener("touchmove", onTouchMove);
     canvas.removeEventListener("touchend", onTouchEnd);
-    canvas.removeEventListener("touchcancel", onTouchEnd);
+    canvas.removeEventListener("touchcancel", onTouchCancel);
     canvas.removeEventListener("dblclick", onDblClick);
     canvas.removeEventListener("wheel", onWheel);
     canvas.removeEventListener("contextmenu", onContextMenu);
@@ -4898,7 +5058,7 @@ export function initCanvasEngine(
   canvas.addEventListener("touchstart", onTouchStart, { passive: false });
   canvas.addEventListener("touchmove", onTouchMove, { passive: false });
   canvas.addEventListener("touchend", onTouchEnd, { passive: false });
-  canvas.addEventListener("touchcancel", onTouchEnd, { passive: false });
+  canvas.addEventListener("touchcancel", onTouchCancel, { passive: false });
   canvas.addEventListener("dblclick", onDblClick);
   canvas.addEventListener("wheel", onWheel, { passive: false });
   canvas.addEventListener("contextmenu", onContextMenu);
