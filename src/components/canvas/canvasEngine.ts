@@ -95,6 +95,7 @@ export interface CanvasEngineConfig {
   /** Interior corner angles (degrees) permitted at post junctions. Empty = no constraint. */
   allowedAngles?: number[];
   onLayoutChange?: (layout: CanvasLayout) => void;
+  onHistoryChange?: (history: CanvasHistoryState) => void;
   /** Called immediately when the user places a NEW gate marker on a segment */
   onGatePlaced?: (
     segIdx: number,
@@ -116,6 +117,13 @@ export interface CanvasEngineConfig {
 export type CanvasGateType = "single-swing" | "double-swing" | "sliding";
 export type CanvasGateSwingDirection = "in" | "out" | "left" | "right";
 export type CanvasGateSlidingSide = "front" | "back";
+
+export interface CanvasHistoryState {
+  canUndo: boolean;
+  canRedo: boolean;
+  undoDepth: number;
+  redoDepth: number;
+}
 
 const MIN_CANVAS_ZOOM = 0.5;
 const MAX_CANVAS_ZOOM = 10;
@@ -292,6 +300,7 @@ const TOUCH_DUPLICATE_TAP_DISTANCE_PX = 6;
 const TOUCH_SINGLE_TAP_MAX_MS = 250;
 const TOUCH_VERTEX_LONG_PRESS_MS = 500;
 const TOUCH_TAP_MOVE_TOLERANCE_PX = 16;
+const HISTORY_STACK_LIMIT = 20;
 
 // ── Colours ───────────────────────────────────────────────────────────────────
 const COLOR = {
@@ -938,11 +947,28 @@ export function initCanvasEngine(
 
   function pushUndo(action: UndoAction) {
     undoStack.push(action);
+    if (undoStack.length > HISTORY_STACK_LIMIT) {
+      undoStack.shift();
+    }
     redoStack = [];
+    notifyHistoryChange();
   }
 
   function pushSnapshotUndo() {
     pushUndo({ type: "SNAPSHOT", snapshot: snapshot() });
+  }
+
+  function getHistoryState(): CanvasHistoryState {
+    return {
+      canUndo: undoStack.length > 0,
+      canRedo: redoStack.length > 0,
+      undoDepth: undoStack.length,
+      redoDepth: redoStack.length,
+    };
+  }
+
+  function notifyHistoryChange() {
+    config.onHistoryChange?.(getHistoryState());
   }
 
   function gateVisualFor(gate: GateMarker): CanvasGateVisual {
@@ -2723,6 +2749,7 @@ export function initCanvasEngine(
       // The matching ADD_POINT was just pushed; remove it from the undo stack.
       if (undoStack[undoStack.length - 1]?.type === "ADD_POINT") {
         undoStack.pop();
+        notifyHistoryChange();
       }
     }
 
@@ -2731,6 +2758,7 @@ export function initCanvasEngine(
       runs.splice(activeRunIdx, 1);
       if (undoStack[undoStack.length - 1]?.type === "ADD_RUN") {
         undoStack.pop();
+        notifyHistoryChange();
       }
     } else {
       // Finish the run with its accumulated points
@@ -4161,6 +4189,9 @@ export function initCanvasEngine(
     if (undoStack.length === 0) return;
     const action = undoStack.pop()!;
     redoStack.push({ action, snapshot: snapshot() });
+    if (redoStack.length > HISTORY_STACK_LIMIT) {
+      redoStack.shift();
+    }
 
     switch (action.type) {
       case "ADD_RUN": {
@@ -4175,7 +4206,10 @@ export function initCanvasEngine(
           rebuildSegmentsPreservingGates(run, scale);
         } else if (run) {
           runs.splice(action.runIdx, 1);
-          undoStack.pop(); // also remove the ADD_RUN
+          if (undoStack[undoStack.length - 1]?.type === "ADD_RUN") {
+            undoStack.pop();
+            notifyHistoryChange();
+          }
           activeRunIdx = -1;
         }
         if (run) rebuildSegmentsPreservingGates(run, scale);
@@ -4234,6 +4268,7 @@ export function initCanvasEngine(
     }
 
     notifyChange();
+    notifyHistoryChange();
     scheduleRedraw();
   }
 
@@ -4242,7 +4277,11 @@ export function initCanvasEngine(
     if (!entry) return;
     restoreSnapshot(entry.snapshot);
     undoStack.push(entry.action);
+    if (undoStack.length > HISTORY_STACK_LIMIT) {
+      undoStack.shift();
+    }
     notifyChange();
+    notifyHistoryChange();
     scheduleRedraw();
   }
 
@@ -5065,6 +5104,7 @@ export function initCanvasEngine(
     );
     undoStack = [];
     redoStack = [];
+    notifyHistoryChange();
     // Do NOT call notifyChange() here — this is a form→canvas push.
     // The caller already has the latest data in context; firing onLayoutChange
     // would trigger handleLiveSync which dispatches SET_PAYLOAD with fresh IDs,
@@ -5158,6 +5198,7 @@ export function initCanvasEngine(
 
   // Initial draw — fit to 50m wide view
   fitToWidth(50);
+  notifyHistoryChange();
 
   return {
     destroy,
@@ -5166,6 +5207,9 @@ export function initCanvasEngine(
     undo,
     redo,
     clear,
+    canUndo: () => undoStack.length > 0,
+    canRedo: () => redoStack.length > 0,
+    getHistoryState,
     resetView,
     zoomIn,
     zoomOut,

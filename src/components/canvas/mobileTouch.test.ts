@@ -55,6 +55,18 @@ function dispatchTouch(
   canvas.dispatchEvent(event);
 }
 
+function dispatchMouseDown(canvas: HTMLCanvasElement, x: number, y: number) {
+  canvas.dispatchEvent(
+    new MouseEvent("mousedown", {
+      bubbles: true,
+      cancelable: true,
+      button: 0,
+      clientX: x,
+      clientY: y,
+    }),
+  );
+}
+
 function createEngineHarness() {
   const host = document.createElement("div");
   const canvas = document.createElement("canvas");
@@ -156,6 +168,48 @@ describe("mobile canvas touch helpers", () => {
     const afterDrag = latestLayout()?.segments[0];
     expect(afterDrag?.startX).toBeGreaterThan(beforeDrag!.startX);
     expect(afterDrag?.startY).toBeGreaterThan(beforeDrag!.startY);
+    engine.destroy();
+  });
+
+  it("caps undo history at 20 actions", () => {
+    const { canvas, engine } = createEngineHarness();
+
+    for (let index = 0; index < 25; index += 1) {
+      dispatchMouseDown(canvas, 80 + index * 10, 100 + (index % 3) * 20);
+    }
+
+    expect(engine.getHistoryState()).toMatchObject({
+      canUndo: true,
+      canRedo: false,
+      undoDepth: 20,
+      redoDepth: 0,
+    });
+    engine.destroy();
+  });
+
+  it("updates undo and redo availability after history actions", () => {
+    const { canvas, engine } = createEngineHarness();
+
+    dispatchMouseDown(canvas, 100, 100);
+    dispatchMouseDown(canvas, 200, 100);
+    expect(engine.getHistoryState()).toMatchObject({
+      canUndo: true,
+      canRedo: false,
+    });
+
+    engine.undo();
+    expect(engine.getHistoryState()).toMatchObject({
+      canUndo: true,
+      canRedo: true,
+      redoDepth: 1,
+    });
+
+    engine.redo();
+    expect(engine.getHistoryState()).toMatchObject({
+      canUndo: true,
+      canRedo: false,
+      redoDepth: 0,
+    });
     engine.destroy();
   });
 

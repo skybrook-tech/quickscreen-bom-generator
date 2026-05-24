@@ -32,6 +32,7 @@ import type {
   CanvasGateType,
   CanvasGateVariables,
   CanvasGateVisual,
+  CanvasHistoryState,
   CanvasLayout,
   CanvasPrintRunSummary,
   CanvasRunSummary,
@@ -267,6 +268,12 @@ export function FenceLayoutCanvas({
     });
   }, []);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
+  const [historyState, setHistoryState] = useState<CanvasHistoryState>({
+    canUndo: false,
+    canRedo: false,
+    undoDepth: 0,
+    redoDepth: 0,
+  });
   const [engineVersion, setEngineVersion] = useState(0);
   const [snapshotError, setSnapshotError] = useState<string | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -359,6 +366,7 @@ export function FenceLayoutCanvas({
         setRunSummaries(layout.runs);
         onLayoutChangeRef.current?.(layout);
       },
+      onHistoryChange: setHistoryState,
       onGateEdit: (flatSegIdx, gateIdx, gateId, currentWidthMM, gate) => {
         // Find the gate in GateContext by id (set when gate was first saved)
         if (!gateId) return;
@@ -668,6 +676,8 @@ export function FenceLayoutCanvas({
           onFreehandStyleChange={handleFreehandStyleChange}
           onHelpOpen={() => setHelpOpen(true)}
           onPrintMap={handlePrintMap}
+          canUndo={historyState.canUndo}
+          canRedo={historyState.canRedo}
           mapLayers={layeredMapSnapshot?.layers ?? null}
           onMapLayerChange={handleMapLayerChange}
         />

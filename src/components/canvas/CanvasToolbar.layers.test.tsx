@@ -25,6 +25,7 @@ function renderToolbar(
     updates: Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">>,
   ) => void,
   engine: Partial<ReturnType<typeof initCanvasEngine>> | null = null,
+  options: { canUndo?: boolean; canRedo?: boolean } = {},
 ) {
   const container = document.createElement("div");
   document.body.appendChild(container);
@@ -61,6 +62,8 @@ function renderToolbar(
         onToggleExpand={() => undefined}
         onHelpOpen={() => undefined}
         onPrintMap={() => undefined}
+        canUndo={options.canUndo}
+        canRedo={options.canRedo}
         freehandStyle={freehandStyle}
         onFreehandStyleChange={() => undefined}
         mapLayers={mapLayers}
@@ -343,31 +346,143 @@ describe("CanvasToolbar map layers", () => {
     act(() => root.unmount());
   });
 
-  it("shows canvas zoom controls wired to the engine", () => {
+  it("omits canvas zoom controls from the toolbar", () => {
     const engine = {
       zoomIn: vi.fn(),
       zoomOut: vi.fn(),
-      resetView: vi.fn(),
     };
     const { container, root } = renderToolbar(vi.fn(), engine);
 
-    const zoomIn = container.querySelector<HTMLButtonElement>(
-      'button[aria-label="Zoom in canvas"]',
+    expect(
+      container.querySelector<HTMLButtonElement>(
+        'button[aria-label="Zoom in canvas"]',
+      ),
+    ).toBeNull();
+    expect(
+      container.querySelector<HTMLButtonElement>(
+        'button[aria-label="Zoom out canvas"]',
+      ),
+    ).toBeNull();
+
+    expect(engine.zoomIn).not.toHaveBeenCalled();
+    expect(engine.zoomOut).not.toHaveBeenCalled();
+
+    act(() => root.unmount());
+  });
+
+  it("disables undo and redo until history is available", () => {
+    const engine = {
+      undo: vi.fn(),
+      redo: vi.fn(),
+    };
+    const { container, root } = renderToolbar(vi.fn(), engine);
+    const undoButtons = Array.from(container.querySelectorAll<HTMLButtonElement>("button")).filter((button) =>
+      button.textContent?.includes("Undo"),
     );
-    const zoomOut = container.querySelector<HTMLButtonElement>(
-      'button[aria-label="Zoom out canvas"]',
+    const redoButtons = Array.from(container.querySelectorAll<HTMLButtonElement>("button")).filter((button) =>
+      button.textContent?.includes("Redo"),
     );
 
-    expect(zoomIn).not.toBeNull();
-    expect(zoomOut).not.toBeNull();
+    expect(undoButtons.length).toBeGreaterThan(0);
+    expect(redoButtons.length).toBeGreaterThan(0);
+    expect(undoButtons.every((button) => button.disabled)).toBe(true);
+    expect(redoButtons.every((button) => button.disabled)).toBe(true);
 
     act(() => {
-      zoomIn!.click();
-      zoomOut!.click();
+      undoButtons[0].click();
+      redoButtons[0].click();
     });
 
-    expect(engine.zoomIn).toHaveBeenCalledTimes(1);
-    expect(engine.zoomOut).toHaveBeenCalledTimes(1);
+    expect(engine.undo).not.toHaveBeenCalled();
+    expect(engine.redo).not.toHaveBeenCalled();
+
+    act(() => root.unmount());
+  });
+
+  it("wires enabled undo and redo buttons to the engine", () => {
+    const engine = {
+      undo: vi.fn(),
+      redo: vi.fn(),
+    };
+    const { container, root } = renderToolbar(vi.fn(), engine, {
+      canUndo: true,
+      canRedo: true,
+    });
+    const undoButton = Array.from(container.querySelectorAll<HTMLButtonElement>("button")).find((button) =>
+      button.textContent?.includes("Undo"),
+    );
+    const redoButton = Array.from(container.querySelectorAll<HTMLButtonElement>("button")).find((button) =>
+      button.textContent?.includes("Redo"),
+    );
+
+    expect(undoButton?.disabled).toBe(false);
+    expect(redoButton?.disabled).toBe(false);
+
+    act(() => {
+      undoButton!.click();
+      redoButton!.click();
+    });
+
+    expect(engine.undo).toHaveBeenCalledTimes(1);
+    expect(engine.redo).toHaveBeenCalledTimes(1);
+
+    act(() => root.unmount());
+  });
+
+  it("opens a clear confirmation before clearing the canvas", () => {
+    const engine = {
+      clear: vi.fn(),
+      setTool: vi.fn(),
+    };
+    const { container, root } = renderToolbar(vi.fn(), engine);
+    const clearButton = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="Clear canvas"]',
+    );
+
+    expect(clearButton).not.toBeNull();
+    act(() => {
+      clearButton!.click();
+    });
+
+    expect(engine.clear).not.toHaveBeenCalled();
+    const dialog = container.querySelector<HTMLElement>(
+      '[role="dialog"][aria-label="Clear canvas confirmation"]',
+    );
+    expect(dialog).not.toBeNull();
+    expect(dialog?.textContent).toContain(
+      "This will delete all runs and gates. The map snapshot will be kept. This can be undone.",
+    );
+
+    const confirmClear = Array.from(dialog!.querySelectorAll<HTMLButtonElement>("button")).find(
+      (button) => button.textContent?.trim() === "Clear",
+    );
+    expect(confirmClear).not.toBeUndefined();
+    act(() => {
+      confirmClear!.click();
+    });
+
+    expect(engine.clear).toHaveBeenCalledTimes(1);
+    expect(engine.setTool).toHaveBeenCalledWith("draw");
+
+    act(() => root.unmount());
+  });
+
+  it("opens the mobile layers sheet at roughly full-screen height", () => {
+    const { container, root } = renderToolbar(vi.fn());
+    const layersButton = container.querySelector<HTMLButtonElement>(
+      'button[aria-label="Open map layers"]',
+    );
+
+    act(() => {
+      layersButton!.click();
+    });
+
+    const sheet = container.querySelector<HTMLElement>(
+      '[data-testid="layers-bottom-sheet"]',
+    );
+    expect(sheet).not.toBeNull();
+    expect(sheet?.className).toContain("min-h-[90dvh]");
+    expect(sheet?.className).toContain("max-h-[90dvh]");
 
     act(() => root.unmount());
   });

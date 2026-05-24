@@ -15,7 +15,6 @@ import {
   Maximize2,
   Minimize2,
   Minus,
-  Plus,
   Crosshair,
   CircleHelp,
   ArrowRight,
@@ -23,7 +22,6 @@ import {
 } from "lucide-react";
 import { useRef, useState, type RefObject } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
-import { ConfirmButton } from "../shared/ConfirmButton";
 import { TOOL_HOTKEYS } from "../../lib/canvasShortcuts";
 import type {
   CanonicalMapLayerId,
@@ -61,6 +59,8 @@ interface CanvasToolbarProps {
   onToggleExpand: (v: boolean) => void;
   onHelpOpen: () => void;
   onPrintMap: () => void;
+  canUndo?: boolean;
+  canRedo?: boolean;
   freehandStyle: FreehandStyle;
   onFreehandStyleChange: (style: Partial<FreehandStyle>) => void;
   mapLayers?: Partial<Record<CanonicalMapLayerId, CanonicalMapSnapshotLayer>> | null;
@@ -84,14 +84,15 @@ export function CanvasToolbar({
   onToggleExpand,
   onHelpOpen,
   onPrintMap,
+  canUndo = false,
+  canRedo = false,
   freehandStyle,
   onFreehandStyleChange,
   mapLayers,
   onMapLayerChange,
 }: CanvasToolbarProps) {
   const [mobileLayersOpen, setMobileLayersOpen] = useState(false);
-  const zoomOutPressRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const zoomOutLongPressRef = useRef(false);
+  const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
   const sheetTouchStartYRef = useRef<number | null>(null);
 
   const handleTool = (t: CanvasTool) => {
@@ -106,8 +107,12 @@ export function CanvasToolbar({
         : "border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50"
     }`;
 
-  const iconBtn =
-    "inline-flex shrink-0 items-center gap-1.5 rounded-md border border-brand-border px-3 py-1.5 text-xs font-medium text-brand-muted transition-colors hover:text-brand-text hover:border-brand-accent/50";
+  const iconBtnCls = (disabled = false) =>
+    `inline-flex shrink-0 items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors ${
+      disabled
+        ? "cursor-not-allowed border-brand-border/60 text-brand-muted/40"
+        : "border-brand-border text-brand-muted hover:text-brand-text hover:border-brand-accent/50"
+    }`;
 
   const keyBadge = (key: string) => (
     <span className="rounded border border-current/30 px-1 font-mono text-[10px] opacity-75">
@@ -152,26 +157,10 @@ export function CanvasToolbar({
     });
   };
 
-  const beginZoomOutPress = () => {
-    zoomOutLongPressRef.current = false;
-    if (zoomOutPressRef.current) clearTimeout(zoomOutPressRef.current);
-    zoomOutPressRef.current = setTimeout(() => {
-      zoomOutLongPressRef.current = true;
-      engineRef.current?.resetView();
-    }, 600);
-  };
-
-  const endZoomOutPress = () => {
-    if (zoomOutPressRef.current) clearTimeout(zoomOutPressRef.current);
-    zoomOutPressRef.current = null;
-  };
-
-  const handleZoomOutClick = () => {
-    if (zoomOutLongPressRef.current) {
-      zoomOutLongPressRef.current = false;
-      return;
-    }
-    engineRef.current?.zoomOut();
+  const clearCanvas = () => {
+    engineRef.current?.clear();
+    handleTool("draw");
+    setClearConfirmOpen(false);
   };
 
   const renderLayerControls = (mode: "desktop" | "sheet") =>
@@ -258,22 +247,16 @@ export function CanvasToolbar({
         <GitMerge size={17} /> Gate
       </button>
       <button type="button" className={mobileBtnCls(activeTool === "move")} onClick={() => handleTool("move")}>
-        <Move size={17} /> Move
+        <Move size={17} /> Move/Edit
       </button>
-      <button type="button" aria-label="Zoom in canvas" className={mobileBtnCls(false)} onClick={() => engineRef.current?.zoomIn()}>
-        <Plus size={17} /> In
+      <button type="button" className={mobileBtnCls(false)} disabled={!canUndo} onClick={() => engineRef.current?.undo()}>
+        <Undo2 size={17} /> Undo
       </button>
-      <button
-        type="button"
-        aria-label="Zoom out canvas"
-        title="Tap to zoom out. Long-press to reset view."
-        className={mobileBtnCls(false)}
-        onPointerDown={beginZoomOutPress}
-        onPointerUp={endZoomOutPress}
-        onPointerCancel={endZoomOutPress}
-        onClick={handleZoomOutClick}
-      >
-        <Minus size={17} /> Out
+      <button type="button" className={mobileBtnCls(false)} disabled={!canRedo} onClick={() => engineRef.current?.redo()}>
+        <Redo2 size={17} /> Redo
+      </button>
+      <button type="button" aria-label="Clear canvas" className={mobileBtnCls(false)} onClick={() => setClearConfirmOpen(true)}>
+        <Trash2 size={17} /> Clear
       </button>
       <button
         type="button"
@@ -285,10 +268,47 @@ export function CanvasToolbar({
       </button>
     </div>
 
+    {clearConfirmOpen && (
+      <div
+        className="fixed inset-0 z-[60] flex items-center justify-center bg-black/55 p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Clear canvas confirmation"
+        onClick={() => setClearConfirmOpen(false)}
+      >
+        <div
+          className="w-full max-w-sm rounded-lg border border-brand-border bg-brand-card p-4 text-brand-text shadow-2xl"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <h2 className="text-base font-semibold">Are you sure?</h2>
+          <p className="mt-2 text-sm leading-6 text-brand-muted">
+            This will delete all runs and gates. The map snapshot will be kept. This can be undone.
+          </p>
+          <div className="mt-4 flex justify-end gap-2">
+            <button
+              type="button"
+              className="rounded-md border border-brand-border px-3 py-1.5 text-sm font-medium text-brand-muted transition-colors hover:text-brand-text"
+              onClick={() => setClearConfirmOpen(false)}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="rounded-md border border-red-500/60 bg-red-500/15 px-3 py-1.5 text-sm font-semibold text-red-200 transition-colors hover:bg-red-500/25"
+              onClick={clearCanvas}
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
     {mobileLayersOpen && (
       <div className="fixed inset-0 z-50 bg-black/45 md:hidden" onClick={() => setMobileLayersOpen(false)}>
         <div
-          className="absolute inset-x-0 bottom-0 rounded-t-2xl border border-brand-border bg-brand-card p-4 shadow-2xl"
+          data-testid="layers-bottom-sheet"
+          className="absolute inset-x-0 bottom-0 flex min-h-[90dvh] max-h-[90dvh] flex-col overflow-y-auto rounded-t-2xl border border-brand-border bg-brand-card p-4 shadow-2xl"
           onClick={(event) => event.stopPropagation()}
           onTouchStart={(event) => {
             sheetTouchStartYRef.current = event.touches[0]?.clientY ?? null;
@@ -333,7 +353,34 @@ export function CanvasToolbar({
         className={btnCls(activeTool === "move")}
         onClick={() => handleTool("move")}
       >
-        <Move size={16} /> Move / Edit {keyBadge(TOOL_HOTKEYS.move)}
+        <Move size={16} /> Move/Edit {keyBadge(TOOL_HOTKEYS.move)}
+      </button>
+      <button
+        type="button"
+        title="Undo (Ctrl+Z)"
+        disabled={!canUndo}
+        className={iconBtnCls(!canUndo)}
+        onClick={() => engineRef.current?.undo()}
+      >
+        <Undo2 size={16} /> Undo
+      </button>
+      <button
+        type="button"
+        title="Redo (Ctrl+Y or Ctrl+Shift+Z)"
+        disabled={!canRedo}
+        className={iconBtnCls(!canRedo)}
+        onClick={() => engineRef.current?.redo()}
+      >
+        <Redo2 size={16} /> Redo
+      </button>
+      <button
+        type="button"
+        title="Clear canvas"
+        aria-label="Clear canvas"
+        className={iconBtnCls()}
+        onClick={() => setClearConfirmOpen(true)}
+      >
+        <Trash2 size={16} /> Clear
       </button>
       </div>
 
@@ -444,53 +491,8 @@ export function CanvasToolbar({
         <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">Actions</span>
       <button
         type="button"
-        title="Undo (Ctrl+Z)"
-        className={iconBtn}
-        onClick={() => engineRef.current?.undo()}
-      >
-        <Undo2 size={16} /> Undo
-      </button>
-      <button
-        type="button"
-        title="Redo (Ctrl+Y or Ctrl+Shift+Z)"
-        className={iconBtn}
-        onClick={() => engineRef.current?.redo()}
-      >
-        <Redo2 size={16} /> Redo
-      </button>
-      <button
-        type="button"
-        title="Zoom in (+)"
-        aria-label="Zoom in canvas"
-        className={iconBtn}
-        onClick={() => engineRef.current?.zoomIn()}
-      >
-        <Plus size={16} /> Zoom in
-      </button>
-      <button
-        type="button"
-        title="Zoom out (-)"
-        aria-label="Zoom out canvas"
-        className={iconBtn}
-        onClick={() => engineRef.current?.zoomOut()}
-      >
-        <Minus size={16} /> Zoom out
-      </button>
-      <ConfirmButton
-        title="Clear map"
-        className={iconBtn}
-        confirmLabel={<><Trash2 size={16} /> Click again to confirm</>}
-        onConfirm={() => {
-          engineRef.current?.clear();
-          handleTool("draw");
-        }}
-      >
-        <Trash2 size={16} /> Clear map
-      </ConfirmButton>
-      <button
-        type="button"
         title="Centre view on drawn fence"
-        className={iconBtn}
+        className={iconBtnCls()}
         onClick={() => engineRef.current?.fitToContent()}
       >
         <Crosshair size={16} /> Centre
@@ -498,7 +500,7 @@ export function CanvasToolbar({
       <button
         type="button"
         title="Print installer-ready layout map"
-        className={iconBtn}
+        className={iconBtnCls()}
         onClick={onPrintMap}
       >
         <Printer size={16} /> Print Map
@@ -506,7 +508,7 @@ export function CanvasToolbar({
       <button
         type="button"
         title="Reset zoom and pan"
-        className={iconBtn}
+        className={iconBtnCls()}
         onClick={() => engineRef.current?.resetView()}
       >
         <RotateCcw size={16} /> Reset View
@@ -565,7 +567,7 @@ export function CanvasToolbar({
         title={
           expanded ? "Collapse canvas" : "Expand canvas for complex layouts"
         }
-        className={iconBtn}
+        className={iconBtnCls()}
       >
         {expanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
         {expanded ? "Collapse" : "Expand"}
