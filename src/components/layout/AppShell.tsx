@@ -7,8 +7,13 @@ interface AppShellProps {
   headerActions?: React.ReactNode;
   branding?: TenantBranding;
   mobileTitle?: string;
+  brandLogoSrc?: string;
+  brandLogoAlt?: string;
+  headerPriceLabel?: string | null;
   customerMode?: boolean;
   onCustomerModeChange?: (enabled: boolean) => void;
+  onClearJobRequest?: () => void;
+  clearJobDisabled?: boolean;
 }
 
 export function AppShell({
@@ -17,8 +22,13 @@ export function AppShell({
   headerActions,
   branding,
   mobileTitle,
+  brandLogoSrc,
+  brandLogoAlt,
+  headerPriceLabel,
   customerMode,
   onCustomerModeChange,
+  onClearJobRequest,
+  clearJobDisabled,
 }: AppShellProps) {
   return (
     <div className="flex h-screen h-dvh flex-col overflow-hidden bg-brand-bg text-brand-text">
@@ -26,8 +36,13 @@ export function AppShell({
         branding={branding}
         actions={headerActions}
         mobileTitle={mobileTitle}
+        brandLogoSrc={brandLogoSrc}
+        brandLogoAlt={brandLogoAlt}
+        priceLabel={headerPriceLabel}
         customerMode={customerMode}
         onCustomerModeChange={onCustomerModeChange}
+        onClearJobRequest={onClearJobRequest}
+        clearJobDisabled={clearJobDisabled}
       />
       {topBar && (
         <div className="shrink-0 bg-brand-bg border-b border-brand-border/60">

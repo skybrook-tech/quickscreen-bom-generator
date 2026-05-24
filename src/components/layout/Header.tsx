@@ -1,5 +1,5 @@
-import { Eye, EyeOff, LogOut, Menu, Moon, Plus, PlayCircle, Sun, X } from 'lucide-react';
-import { useState, type ReactNode } from 'react';
+import { Eye, EyeOff, LogOut, Menu, Moon, Plus, PlayCircle, Sun, Trash2, WifiOff, X } from 'lucide-react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 
 import { supabase } from '../../lib/supabase';
@@ -13,21 +13,43 @@ interface HeaderProps {
   branding?: TenantBranding;
   actions?: ReactNode;
   mobileTitle?: string;
+  brandLogoSrc?: string;
+  brandLogoAlt?: string;
+  priceLabel?: string | null;
   customerMode?: boolean;
   onCustomerModeChange?: (enabled: boolean) => void;
+  onClearJobRequest?: () => void;
+  clearJobDisabled?: boolean;
 }
 
 export function Header({
   branding,
   actions,
   mobileTitle,
+  brandLogoSrc,
+  brandLogoAlt = "The Glass Outlet",
+  priceLabel,
   customerMode = false,
   onCustomerModeChange,
+  onClearJobRequest,
+  clearJobDisabled = false,
 }: HeaderProps = {}) {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
   const [installVideosOpen, setInstallVideosOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [offline, setOffline] = useState(() => navigator.onLine === false);
+
+  useEffect(() => {
+    const onOnline = () => setOffline(false);
+    const onOffline = () => setOffline(true);
+    window.addEventListener("online", onOnline);
+    window.addEventListener("offline", onOffline);
+    return () => {
+      window.removeEventListener("online", onOnline);
+      window.removeEventListener("offline", onOffline);
+    };
+  }, []);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -48,19 +70,27 @@ export function Header({
     }`;
 
   return (
-    <header className="sticky top-0 z-40 flex flex-wrap items-stretch justify-between border-b border-brand-border bg-brand-card px-4 py-0 pt-[var(--safe-top)] sm:px-6">
+    <header className="sticky top-0 z-40 flex min-h-[calc(var(--safe-top)+3.25rem)] flex-wrap items-stretch justify-between border-b border-brand-border bg-brand-card px-3 py-0 pt-[var(--safe-top)] sm:px-6">
       {/* ── Brand + Nav ───────────────────────────────────────────── */}
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-3 py-3">
-          <div className="leading-tight">
-            <p className="text-base font-black tracking-tight text-brand-text sm:text-lg">
-              {branding?.title ?? 'The Glass Outlet'}{branding?.titleItalic && <em>{branding.titleItalic}</em>}
-            </p>
-            <p className="text-xs font-semibold text-brand-muted">
-              {branding?.subtitle ?? 'QuickScreen BOM Generator'}
-              {!branding && <span className="hidden sm:inline"> · Powered by SkyBrookAI</span>}
-            </p>
-          </div>
+      <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+        <div className="flex min-w-0 items-center gap-3 py-2 sm:py-3">
+          {brandLogoSrc ? (
+            <img
+              src={brandLogoSrc}
+              alt={brandLogoAlt}
+              className="h-8 w-auto max-w-[9rem] shrink-0 object-contain sm:h-10 sm:max-w-[12rem]"
+            />
+          ) : (
+            <div className="min-w-0 leading-tight">
+              <p className="truncate text-base font-black tracking-tight text-brand-text sm:text-lg">
+                {branding?.title ?? 'The Glass Outlet'}{branding?.titleItalic && <em>{branding.titleItalic}</em>}
+              </p>
+              <p className="truncate text-xs font-semibold text-brand-muted">
+                {branding?.subtitle ?? 'QuickScreen BOM Generator'}
+                {!branding && <span className="hidden sm:inline"> · Powered by SkyBrookAI</span>}
+              </p>
+            </div>
+          )}
         </div>
 
         {user && (
@@ -79,12 +109,14 @@ export function Header({
         )}
       </div>
 
-      <div className="pointer-events-none absolute left-1/2 top-[calc(var(--safe-top)+0.75rem)] w-[42vw] -translate-x-1/2 truncate text-center text-sm font-black text-brand-text sm:hidden">
-        {mobileTitle || "Calculator"}
-      </div>
+      {mobileTitle && (
+        <div className="pointer-events-none absolute left-1/2 top-[calc(var(--safe-top)+0.9rem)] w-[34vw] -translate-x-1/2 truncate text-center text-sm font-black text-brand-text sm:hidden">
+          {mobileTitle}
+        </div>
+      )}
 
       {/* ── Controls ──────────────────────────────────────────────── */}
-      <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
+      <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2">
         {actions && (
           <div className="hidden min-w-0 flex-1 items-center justify-end gap-2 lg:flex" data-print-hide>
             {actions}
@@ -135,6 +167,15 @@ export function Header({
             </button>
           </>
         )}
+        {priceLabel && (
+          <div
+            className="min-w-0 shrink truncate rounded-lg border border-brand-primary/25 bg-brand-primary/10 px-2 py-1 text-right font-mono text-sm font-black tabular-nums text-brand-primary sm:px-3 sm:text-base"
+            data-testid="header-price"
+            aria-label={`Current total ${priceLabel}`}
+          >
+            {priceLabel}
+          </div>
+        )}
         <button
           type="button"
           onClick={() => setMobileMenuOpen(true)}
@@ -173,6 +214,29 @@ export function Header({
                 <X size={18} />
               </button>
             </div>
+            {offline && (
+              <div
+                className="flex min-h-11 items-center gap-3 rounded-lg border border-brand-danger/45 bg-brand-danger/10 px-3 py-2 text-left text-sm font-bold text-brand-danger"
+                data-testid="mobile-menu-offline-indicator"
+              >
+                <WifiOff size={18} />
+                Offline - quotes can't save
+              </div>
+            )}
+            {onClearJobRequest && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onClearJobRequest();
+                }}
+                disabled={clearJobDisabled}
+                className="flex min-h-11 items-center gap-3 rounded-lg border border-brand-danger/45 px-3 py-2 text-left text-sm font-bold text-brand-danger transition-colors hover:bg-brand-danger/10 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Trash2 size={18} />
+                Clear Job
+              </button>
+            )}
             <button
               type="button"
               onClick={() => {

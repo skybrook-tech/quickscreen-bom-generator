@@ -12,7 +12,7 @@ Latest Brief 014 pass: the mobile Job tab now prioritises job/address/system/run
 
 Latest Brief 017 pass: the calculator now has production-only PWA registration, manifest/icons, install and offline banners, customer quote mode that hides costs, and a real-device mobile QA checklist.
 
-Latest Brief 024 pass: the Describe Your Fence voice mic now returns to an idle reusable state after speech recognition ends and disposes active handlers on unmount, while fuzzy spoken measurements such as `six and a half meters`, `six point five`, `6m 50`, and `around six` parse as metre values without silently defaulting unparseable phrases to zero.
+Latest Brief 019 pass: the V3 calculator header now uses the Glass Outlet symbol with a live non-zero total, opens new mobile sessions on the Job tab, moves Clear Job plus offline-only status into the mobile hamburger menu, removes duplicate Generate controls, clears stale BOM totals when runs or sections are deleted, and deploys the bundled icon assets to `public/icons/`.
 
 Latest sandbox polish: run sidebar readability, 0m first-segment defaults, compact length/height controls, and endpoint/corner gate placement are implemented on `codex/qshs-calculator-sandbox`.
 

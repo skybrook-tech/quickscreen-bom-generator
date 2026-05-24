@@ -39,7 +39,7 @@ export type CalculatorAction =
 
 // ─── Reducer ─────────────────────────────────────────────────────────────────
 
-function calculatorReducer(
+export function calculatorReducer(
   state: CalculatorState,
   action: CalculatorAction,
 ): CalculatorState {
@@ -170,6 +170,7 @@ function calculatorReducer(
       });
       return {
         ...state,
+        bomResult: null,
         payload: { ...state.payload, runs },
       };
     }
@@ -177,6 +178,7 @@ function calculatorReducer(
       if (!state.payload) return state;
       return {
         ...state,
+        bomResult: null,
         payload: {
           ...state.payload,
           runs: state.payload.runs.filter((r) => r.runId !== action.runId),

@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { calculatorPaneVisibility } from "./mobileShell";
+import { INITIAL_MOBILE_CALCULATOR_TAB, calculatorPaneVisibility } from "./mobileShell";
 
 describe("calculatorPaneVisibility", () => {
+  it("starts new mobile calculator sessions on the Job tab", () => {
+    expect(INITIAL_MOBILE_CALCULATOR_TAB).toBe("job");
+  });
+
   it("shows only the active pane in mobile layout", () => {
     expect(calculatorPaneVisibility(true, "job")).toEqual({
       job: true,

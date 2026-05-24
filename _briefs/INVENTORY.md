@@ -1,3 +1,3 @@
 | Brief | Status | PR | Branch |
 |---|---|---|---|
-| 024-voice-ai-fixes | PR open | #54 | codex/brief-024-voice-ai-fixes |
+| 019-page-cleanup | PR open | #53 | codex/brief-019-page-cleanup |

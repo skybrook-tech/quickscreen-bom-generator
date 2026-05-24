@@ -1,4 +1,4 @@
-import { Download, WifiOff, X } from "lucide-react";
+import { Download, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 const INSTALL_DISMISSED_KEY = "qsbom-pwa-install-dismissed-at";
@@ -29,8 +29,6 @@ export function PwaStatusBanners() {
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const [installHidden, setInstallHidden] = useState(false);
   const [iosHintVisible, setIosHintVisible] = useState(false);
-  const [offline, setOffline] = useState(() => navigator.onLine === false);
-  const [offlineDismissed, setOfflineDismissed] = useState(false);
 
   useEffect(() => {
     const onBeforeInstallPrompt = (event: Event) => {
@@ -50,54 +48,16 @@ export function PwaStatusBanners() {
     setIosHintVisible(true);
   }, []);
 
-  useEffect(() => {
-    const onOnline = () => {
-      setOffline(false);
-      setOfflineDismissed(false);
-    };
-    const onOffline = () => {
-      setOffline(true);
-      setOfflineDismissed(false);
-    };
-    window.addEventListener("online", onOnline);
-    window.addEventListener("offline", onOffline);
-    return () => {
-      window.removeEventListener("online", onOnline);
-      window.removeEventListener("offline", onOffline);
-    };
-  }, []);
-
   const showInstall = Boolean(installEvent && !installHidden);
-  const showOffline = offline && !offlineDismissed;
   const visible = useMemo(
-    () => showInstall || iosHintVisible || showOffline,
-    [iosHintVisible, showInstall, showOffline],
+    () => showInstall || iosHintVisible,
+    [iosHintVisible, showInstall],
   );
 
   if (!visible) return null;
 
   return (
     <div className="space-y-2 border-b border-brand-border bg-brand-card px-3 py-2 text-sm font-bold text-brand-text">
-      {showOffline && (
-        <div
-          className="flex items-center justify-between gap-3 rounded-lg border border-brand-warning/40 bg-brand-warning/10 px-3 py-2 text-brand-warning"
-          data-testid="offline-indicator"
-        >
-          <span className="inline-flex items-center gap-2">
-            <WifiOff size={16} />
-            You're offline. Quotes can't be saved until you reconnect.
-          </span>
-          <button
-            type="button"
-            onClick={() => setOfflineDismissed(true)}
-            className="rounded-md p-1 hover:bg-brand-warning/15"
-            aria-label="Dismiss offline warning"
-          >
-            <X size={16} />
-          </button>
-        </div>
-      )}
-
       {showInstall && installEvent && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-brand-primary/40 bg-brand-primary/10 px-3 py-2 text-brand-primary">
           <span className="inline-flex items-center gap-2">
