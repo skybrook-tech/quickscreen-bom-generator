@@ -179,7 +179,7 @@ describe("PropertyAnchorFormGate", () => {
             }),
             roadmap: expect.objectContaining({
               url: expect.stringContaining("maptype=roadmap"),
-              visible: true,
+              visible: false,
               opacity: 0.5,
             }),
           },

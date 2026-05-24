@@ -19,8 +19,9 @@ import {
   Crosshair,
   CircleHelp,
   ArrowRight,
+  Layers,
 } from "lucide-react";
-import { useRef, type RefObject } from "react";
+import { useRef, useState, type RefObject } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
 import { ConfirmButton } from "../shared/ConfirmButton";
 import { TOOL_HOTKEYS } from "../../lib/canvasShortcuts";
@@ -88,6 +89,11 @@ export function CanvasToolbar({
   mapLayers,
   onMapLayerChange,
 }: CanvasToolbarProps) {
+  const [mobileLayersOpen, setMobileLayersOpen] = useState(false);
+  const zoomOutPressRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const zoomOutLongPressRef = useRef(false);
+  const sheetTouchStartYRef = useRef<number | null>(null);
+
   const handleTool = (t: CanvasTool) => {
     engineRef.current?.setTool(t);
     onToolChange(t);
@@ -146,8 +152,163 @@ export function CanvasToolbar({
     });
   };
 
+  const beginZoomOutPress = () => {
+    zoomOutLongPressRef.current = false;
+    if (zoomOutPressRef.current) clearTimeout(zoomOutPressRef.current);
+    zoomOutPressRef.current = setTimeout(() => {
+      zoomOutLongPressRef.current = true;
+      engineRef.current?.resetView();
+    }, 600);
+  };
+
+  const endZoomOutPress = () => {
+    if (zoomOutPressRef.current) clearTimeout(zoomOutPressRef.current);
+    zoomOutPressRef.current = null;
+  };
+
+  const handleZoomOutClick = () => {
+    if (zoomOutLongPressRef.current) {
+      zoomOutLongPressRef.current = false;
+      return;
+    }
+    engineRef.current?.zoomOut();
+  };
+
+  const renderLayerControls = (mode: "desktop" | "sheet") =>
+    layerRows.length > 0 && onMapLayerChange ? (
+      <div
+        className={
+          mode === "desktop"
+            ? "inline-flex shrink-0 items-center gap-2 rounded-lg border border-brand-border/70 bg-brand-card/80 px-2 py-1 text-xs text-brand-muted"
+            : "space-y-4 text-sm text-brand-muted"
+        }
+      >
+        <div className={mode === "desktop" ? "contents" : "flex items-center justify-between gap-3"}>
+          <span className="font-bold uppercase tracking-wide text-brand-text">Layers</span>
+          <button
+            type="button"
+            aria-label={mapVisible ? "Hide map underlay" : "Show map underlay"}
+            title={mapVisible ? "Hide map underlay" : "Show map underlay"}
+            className={btnCls(mapVisible)}
+            onClick={handleMapVisibilityToggle}
+          >
+            {mapVisible ? "Map off" : "Map on"}
+          </button>
+        </div>
+        {layerRows.map(({ layerId, layer }) => {
+          const label = layerId === "satellite" ? "Satellite" : "Roadmap";
+          const layerAvailable = Boolean(layer.url);
+          return (
+            <div
+              key={layerId}
+              className={
+                mode === "desktop"
+                  ? "inline-flex items-center gap-1.5"
+                  : "grid grid-cols-[5rem_1fr_2.5rem] items-center gap-3"
+              }
+            >
+              <span
+                className={!layerAvailable || !mapVisible ? "opacity-50" : undefined}
+                title={
+                  layerAvailable
+                    ? `${label} layer opacity`
+                    : `${label} layer was not captured`
+                }
+              >
+                {label}
+              </span>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={Math.round(layer.opacity * 100)}
+                aria-label={`${label} layer opacity`}
+                title={`${label} opacity`}
+                disabled={!mapVisible || !layerAvailable}
+                onInput={(event) =>
+                  onMapLayerChange(layerId, {
+                    opacity: Number(event.currentTarget.value) / 100,
+                  })
+                }
+                className="h-1.5 w-full accent-brand-accent disabled:cursor-not-allowed disabled:opacity-40 md:w-20"
+              />
+              <span className="w-8 text-right tabular-nums">
+                {Math.round(layer.opacity * 100)}%
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    ) : null;
+
+  const mobileBtnCls = (active: boolean) =>
+    `flex min-h-11 min-w-11 flex-col items-center justify-center gap-0.5 rounded-md border px-2 py-1 text-[10px] font-semibold leading-tight ${
+      active
+        ? "border-brand-accent bg-brand-accent/20 text-brand-accent"
+        : "border-brand-border bg-brand-card/95 text-brand-muted"
+    }`;
+
   return (
-    <div className="flex flex-nowrap items-center gap-2 overflow-x-auto border-b border-brand-border/60 bg-brand-card p-2 [scrollbar-width:thin] md:flex-wrap md:gap-3 md:border-b-0">
+    <>
+    <div className="absolute left-1/2 top-2 z-30 flex -translate-x-1/2 items-center gap-1 rounded-lg border border-brand-border/80 bg-brand-bg/95 p-1 shadow-xl backdrop-blur md:hidden">
+      <button type="button" className={mobileBtnCls(activeTool === "draw")} onClick={() => handleTool("draw")}>
+        <Pencil size={17} /> Draw
+      </button>
+      <button type="button" className={mobileBtnCls(activeTool === "gate")} onClick={() => handleTool("gate")}>
+        <GitMerge size={17} /> Gate
+      </button>
+      <button type="button" className={mobileBtnCls(activeTool === "move")} onClick={() => handleTool("move")}>
+        <Move size={17} /> Move
+      </button>
+      <button type="button" aria-label="Zoom in canvas" className={mobileBtnCls(false)} onClick={() => engineRef.current?.zoomIn()}>
+        <Plus size={17} /> In
+      </button>
+      <button
+        type="button"
+        aria-label="Zoom out canvas"
+        title="Tap to zoom out. Long-press to reset view."
+        className={mobileBtnCls(false)}
+        onPointerDown={beginZoomOutPress}
+        onPointerUp={endZoomOutPress}
+        onPointerCancel={endZoomOutPress}
+        onClick={handleZoomOutClick}
+      >
+        <Minus size={17} /> Out
+      </button>
+      <button
+        type="button"
+        aria-label="Open map layers"
+        className={mobileBtnCls(mobileLayersOpen)}
+        onClick={() => setMobileLayersOpen(true)}
+      >
+        <Layers size={17} /> Layers
+      </button>
+    </div>
+
+    {mobileLayersOpen && (
+      <div className="fixed inset-0 z-50 bg-black/45 md:hidden" onClick={() => setMobileLayersOpen(false)}>
+        <div
+          className="absolute inset-x-0 bottom-0 rounded-t-2xl border border-brand-border bg-brand-card p-4 shadow-2xl"
+          onClick={(event) => event.stopPropagation()}
+          onTouchStart={(event) => {
+            sheetTouchStartYRef.current = event.touches[0]?.clientY ?? null;
+          }}
+          onTouchEnd={(event) => {
+            const startY = sheetTouchStartYRef.current;
+            const endY = event.changedTouches[0]?.clientY;
+            sheetTouchStartYRef.current = null;
+            if (startY !== null && endY !== undefined && endY - startY > 40) {
+              setMobileLayersOpen(false);
+            }
+          }}
+        >
+          <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-brand-border" />
+          {renderLayerControls("sheet")}
+        </div>
+      </div>
+    )}
+
+    <div className="hidden flex-nowrap items-center gap-2 overflow-x-auto border-b border-brand-border/60 bg-brand-card p-2 [scrollbar-width:thin] md:flex md:flex-wrap md:gap-3 md:border-b-0">
       <div className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
         <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">Draw</span>
       <button
@@ -354,56 +515,7 @@ export function CanvasToolbar({
 
       <div className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
         <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">View</span>
-      {layerRows.length > 0 && onMapLayerChange ? (
-        <div className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-brand-border/70 bg-brand-card/80 px-2 py-1 text-xs text-brand-muted">
-          <span className="font-bold uppercase tracking-wide text-brand-text">Layers</span>
-          <button
-            type="button"
-            aria-label={mapVisible ? "Hide map underlay" : "Show map underlay"}
-            title={mapVisible ? "Hide map underlay" : "Show map underlay"}
-            className={btnCls(mapVisible)}
-            onClick={handleMapVisibilityToggle}
-          >
-            {mapVisible ? "Map off" : "Map on"}
-          </button>
-          {layerRows.map(({ layerId, layer }) => {
-            const label = layerId === "satellite" ? "Satellite" : "Roadmap";
-            const layerAvailable = Boolean(layer.url);
-            return (
-              <div key={layerId} className="inline-flex items-center gap-1.5">
-                <span
-                  className={!layerAvailable || !mapVisible ? "opacity-50" : undefined}
-                  title={
-                    layerAvailable
-                      ? `${label} layer opacity`
-                      : `${label} layer was not captured`
-                  }
-                >
-                  {label}
-                </span>
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={Math.round(layer.opacity * 100)}
-                  aria-label={`${label} layer opacity`}
-                  title={`${label} opacity`}
-                  disabled={!mapVisible || !layerAvailable}
-                  onInput={(event) =>
-                    onMapLayerChange(layerId, {
-                      opacity: Number(event.currentTarget.value) / 100,
-                    })
-                  }
-                  className="h-1.5 w-20 accent-brand-accent disabled:cursor-not-allowed disabled:opacity-40"
-                />
-                <span className="w-8 text-right tabular-nums">
-                  {Math.round(layer.opacity * 100)}%
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      ) : null}
+      {renderLayerControls("desktop")}
       <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
         <input
           type="checkbox"
@@ -469,5 +581,6 @@ export function CanvasToolbar({
         <CircleHelp size={16} /> Help
       </button>
     </div>
+    </>
   );
 }
