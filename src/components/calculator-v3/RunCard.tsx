@@ -180,12 +180,12 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
                   return next;
                 })
               }
-              className={`ml-auto mb-2 inline-flex h-9 w-9 items-center justify-center rounded-lg border text-sm font-extrabold transition-colors ${runSettingsOpen
+              className={`ml-auto mb-2 inline-flex h-11 w-11 items-center justify-center rounded-lg border text-sm font-extrabold transition-colors ${runSettingsOpen
                 ? "border-brand-primary bg-brand-primary text-white"
                 : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
                 }`}
-              aria-label={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
-              title={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
+              aria-label={runSettingsOpen ? "Collapse more options" : "Open more options"}
+              title={runSettingsOpen ? "Collapse more options" : "More options"}
             >
               {runSettingsOpen ? <ChevronUp size={16} /> : <Settings size={16} />}
             </button>
@@ -285,7 +285,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
             <ConfirmButton
               onConfirm={() => dispatch({ type: "REMOVE_RUN", runId: run.runId })}
               confirmLabel={<><Trash2 size={16} /> Click again to confirm</>}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-brand-danger/30 px-3 py-1.5 text-xs font-semibold text-brand-danger transition-colors hover:bg-brand-danger/10"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-brand-danger/30 px-3 py-2 text-xs font-semibold text-brand-danger transition-colors hover:bg-brand-danger/10"
             >
               <Trash2 size={16} />
               Remove run

@@ -1,6 +1,6 @@
 /// <reference types="google.maps" />
 
-import { Loader2, MapPin, Search } from "lucide-react";
+import { Loader2, MapPin, Mic, Search } from "lucide-react";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { getGoogleMapsLoader } from "../../lib/googleMaps/loader";
 
@@ -38,8 +38,44 @@ type GeocodeResponse = {
   results?: GeocodeResult[];
 };
 
+type SpeechRecognitionResultLike = {
+  [index: number]: { transcript?: string };
+};
+
+type SpeechRecognitionEventLike = {
+  results?: {
+    [index: number]: SpeechRecognitionResultLike | undefined;
+  };
+};
+
+type SpeechRecognitionErrorLike = {
+  error?: string;
+};
+
+type SpeechRecognitionLike = {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorLike) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+};
+
+type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
+
 function readApiKey() {
   return import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim() ?? "";
+}
+
+function readSpeechRecognitionCtor(): SpeechRecognitionConstructor | null {
+  if (typeof window === "undefined") return null;
+  const speechWindow = window as Window & {
+    SpeechRecognition?: SpeechRecognitionConstructor;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
+  };
+  return speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition ?? null;
 }
 
 function geocodeErrorMessage(response: GeocodeResponse) {
@@ -71,10 +107,13 @@ export function AddressInput({ onLocated, onEngaged }: AddressInputProps) {
   const [placesUnavailable, setPlacesUnavailable] = useState(false);
   const [justSelected, setJustSelected] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [speechSupported, setSpeechSupported] = useState(() => Boolean(readSpeechRecognitionCtor()));
+  const [listening, setListening] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
   const autocompleteRequestId = useRef(0);
   const justSelectedValueRef = useRef("");
+  const speechRecognitionRef = useRef<SpeechRecognitionLike | null>(null);
 
   async function geocodeAddress(rawAddress: string) {
     const trimmed = rawAddress.trim();
@@ -166,6 +205,49 @@ export function AddressInput({ onLocated, onEngaged }: AddressInputProps) {
     await geocodeAddress(suggestion.description);
   }
 
+  function handleVoiceInput() {
+    const SpeechRecognition = readSpeechRecognitionCtor();
+    if (!SpeechRecognition) {
+      setSpeechSupported(false);
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    speechRecognitionRef.current = recognition;
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = "en-AU";
+    recognition.onresult = (event) => {
+      const transcript = event.results?.[0]?.[0]?.transcript?.trim();
+      if (!transcript) return;
+      setAddress(transcript);
+      setError(null);
+      setSuggestions([]);
+      setSuggestionsOpen(false);
+      onEngaged?.();
+      void geocodeAddress(transcript);
+    };
+    recognition.onerror = (event) => {
+      setListening(false);
+      if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+        setSpeechSupported(false);
+      }
+    };
+    recognition.onend = () => {
+      setListening(false);
+      speechRecognitionRef.current = null;
+    };
+
+    try {
+      setListening(true);
+      recognition.start();
+    } catch {
+      setListening(false);
+      setSpeechSupported(false);
+      speechRecognitionRef.current = null;
+    }
+  }
+
   useEffect(() => {
     const trimmed = address.trim();
     if (justSelected && justSelectedValueRef.current === trimmed) {
@@ -253,6 +335,13 @@ export function AddressInput({ onLocated, onEngaged }: AddressInputProps) {
     };
   }, [address, justSelected, placesUnavailable]);
 
+  useEffect(
+    () => () => {
+      speechRecognitionRef.current?.stop();
+    },
+    [],
+  );
+
   return (
     <form className="space-y-2" onSubmit={handleSubmit}>
       <label className="block text-xs font-black uppercase tracking-[0.14em] text-brand-muted">
@@ -282,8 +371,20 @@ export function AddressInput({ onLocated, onEngaged }: AddressInputProps) {
               }
             }}
             placeholder="Start with an Australian street address"
-            className="w-full rounded-lg border border-brand-border bg-brand-bg py-2 pl-9 pr-3 text-sm font-semibold text-brand-text outline-none transition-colors placeholder:text-brand-muted focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
+            className="w-full rounded-lg border border-brand-border bg-brand-bg py-3 pl-9 pr-12 text-sm font-semibold text-brand-text outline-none transition-colors placeholder:text-brand-muted focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
           />
+          {speechSupported ? (
+            <button
+              type="button"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={handleVoiceInput}
+              className={`absolute right-1.5 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-lg text-brand-muted transition-colors hover:bg-brand-border/50 hover:text-brand-primary ${listening ? "animate-pulse text-brand-primary" : ""}`}
+              aria-label={listening ? "Listening for address" : "Speak property address"}
+              title={listening ? "Listening" : "Speak property address"}
+            >
+              {listening ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mic size={17} />}
+            </button>
+          ) : null}
           {suggestionsOpen && (suggestions.length > 0 || suggestionsLoading) ? (
             <div className="absolute left-0 right-0 top-full z-30 mt-1 overflow-hidden rounded-lg border border-brand-border bg-brand-card shadow-xl">
               {suggestionsLoading && suggestions.length === 0 ? (
@@ -298,7 +399,7 @@ export function AddressInput({ onLocated, onEngaged }: AddressInputProps) {
                   type="button"
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={() => void handleSuggestionSelect(suggestion)}
-                  className="block w-full border-t border-brand-border/60 px-3 py-2 text-left text-sm transition-colors first:border-t-0 hover:bg-brand-bg focus:bg-brand-bg focus:outline-none"
+                  className="block min-h-11 w-full border-t border-brand-border/60 px-3 py-2 text-left text-sm transition-colors first:border-t-0 hover:bg-brand-bg focus:bg-brand-bg focus:outline-none"
                 >
                   <span className="block font-bold text-brand-text">
                     {suggestion.description}
@@ -316,7 +417,7 @@ export function AddressInput({ onLocated, onEngaged }: AddressInputProps) {
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search size={16} />}
           Find property

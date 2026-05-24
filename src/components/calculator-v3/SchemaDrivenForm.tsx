@@ -187,6 +187,8 @@ export function SchemaDrivenForm({
                 <input
                   type="number"
                   aria-label={`${field.label} ${field.unit ?? ""}`.trim()}
+                  inputMode={field.data_type === "integer" ? "numeric" : "decimal"}
+                  pattern={field.data_type === "integer" ? "[0-9]*" : "[0-9]*\\.?[0-9]*"}
                   value={Number(
                     variables[field.field_key] ?? field.default_value_json ?? 0,
                   )}

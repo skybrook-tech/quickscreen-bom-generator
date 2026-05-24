@@ -608,7 +608,7 @@ export function SegmentRow({
                     event.stopPropagation();
                     onAddGate(seg.segmentId);
                   }}
-                  className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-brand-border px-2 text-xs font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-brand-border px-3 text-xs font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
                   title="Add gate to this section"
                   aria-label="Add gate to this section"
                 >
@@ -620,12 +620,12 @@ export function SegmentRow({
                 <button
                   type="button"
                   onClick={onToggle}
-                  className={`inline-flex h-8 w-8 items-center justify-center rounded-lg border text-xs font-extrabold transition-colors ${open
+                  className={`inline-flex h-11 w-11 items-center justify-center rounded-lg border text-xs font-extrabold transition-colors ${open
                     ? "border-brand-primary bg-brand-primary text-white"
                     : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
                     }`}
-                  aria-label={open ? (gate ? "Collapse gate settings" : "Collapse section settings") : (gate ? "Expand gate settings" : "Expand section settings")}
-                  title={open ? "Collapse settings" : (gate ? "Open gate settings" : "Open section settings")}
+                  aria-label={open ? "Collapse more options" : "Open more options"}
+                  title={open ? "Collapse more options" : "More options"}
                 >
                   {open ? <ChevronUp size={16} /> : <Settings size={16} />}
                 </button>
@@ -640,7 +640,7 @@ export function SegmentRow({
                     })
                   }
                   confirmLabel={<X size={16} strokeWidth={3} />}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-full text-brand-danger transition-colors hover:bg-brand-danger/10 hover:text-brand-danger/90"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-brand-danger transition-colors hover:bg-brand-danger/10 hover:text-brand-danger/90"
                   aria-label={gate ? "Remove gate" : "Remove section"}
                   title={gate ? "Remove gate" : "Remove section"}
                 >
@@ -778,7 +778,7 @@ export function SegmentRow({
                   <button
                     type="button"
                     onClick={switchGateToAlternative}
-                    className="rounded-lg border border-brand-danger/50 bg-brand-card px-3 py-1.5 text-xs font-black text-brand-danger hover:shadow-sm"
+                    className="min-h-11 rounded-lg border border-brand-danger/50 bg-brand-card px-3 py-2 text-xs font-black text-brand-danger hover:shadow-sm"
                   >
                     Switch to {gateTypeLabel(gateWidthValidation.alternative)}
                   </button>
