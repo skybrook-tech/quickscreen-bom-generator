@@ -433,7 +433,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
   const [mobileLayout, setMobileLayout] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileCalculatorTab>("job");
-  const [keyboardOffset, setKeyboardOffset] = useState(0);
   const [rightPaneView, setRightPaneView] = useState<RightPaneView>("bom");
   const [mapExpanded, setMapExpanded] = useState(false);
   const [introDismissed, setIntroDismissed] = useState(false);
@@ -1820,7 +1819,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                     </button>
                     <button
                       type="button"
-                      onClick={handleGenerateBom}
+                      onClick={handleManualBomGenerate}
                       disabled={!hasConfiguredRuns || hasBlockingErrors || bomMutation.isPending}
                       className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                     >
