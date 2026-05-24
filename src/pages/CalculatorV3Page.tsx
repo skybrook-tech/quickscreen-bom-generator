@@ -10,6 +10,7 @@ import { LayoutCanvasV3 } from "../components/calculator-v3/LayoutCanvasV3";
 import {
   MobileCalculatorTabs,
 } from "../components/calculator-v3/MobileCalculatorTabs";
+import { ClearJobConfirmDialog } from "../components/calculator-v3/ClearJobConfirmDialog";
 import { RightPaneTabs, type RightPaneView } from "../components/calculator-v3/RightPaneTabs";
 import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
@@ -21,7 +22,6 @@ import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
 import { JobNameEditor } from "../components/calculator/JobNameEditor";
 import { GatePositionModal } from "../components/calculator/GatePositionModal";
 import { PropertyAnchorFormGate, PropertyMap } from "../components/calculator/PropertyMap";
-import { ConfirmButton } from "../components/shared/ConfirmButton";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { suggestAccessories } from "../lib/suggestedAccessories";
 import { priceForSku } from "../lib/localBomCalculator";
@@ -50,6 +50,7 @@ import { stripParentheticalDispatchCode } from "../lib/displayText";
 import { shareOrDownloadPdfBlob } from "../lib/sharePdf";
 import { MOBILE_BREAKPOINT } from "../lib/layoutBreakpoints";
 import {
+  INITIAL_MOBILE_CALCULATOR_TAB,
   calculatorPaneVisibility,
   type MobileCalculatorTab,
 } from "../lib/mobileShell";
@@ -72,7 +73,6 @@ import {
   Printer,
   Save,
   Share2,
-  Trash2,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -113,6 +113,11 @@ const formatMoney = (value: number) =>
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value);
+
+const formatHeaderMoney = (value: number) =>
+  `$${new Intl.NumberFormat("en-AU", {
+    maximumFractionDigits: 0,
+  }).format(Math.round(value))}`;
 
 const lineKey = (line: BOMLineItem) =>
   `${line.sku}|${line.category}|${line.description}`;
@@ -441,7 +446,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   } | null>(null);
   const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
   const [mobileLayout, setMobileLayout] = useState(false);
-  const [mobileTab, setMobileTab] = useState<MobileCalculatorTab>("job");
+  const [mobileTab, setMobileTab] = useState<MobileCalculatorTab>(INITIAL_MOBILE_CALCULATOR_TAB);
   const [rightPaneView, setRightPaneView] = useState<RightPaneView>("bom");
   const [mapExpanded, setMapExpanded] = useState(false);
   const [introDismissed, setIntroDismissed] = useState(false);
@@ -479,6 +484,15 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     setRightPaneView("bom");
     setMobileTab("bom");
   }, [quoteId, quoteQuery.data, dispatch]);
+
+  useEffect(() => {
+    if (quoteId || payload || introDismissed) return;
+    dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
+    dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "select" });
+    setIntroDismissed(true);
+    setRightPaneView("bom");
+    setMobileTab("job");
+  }, [dispatch, introDismissed, payload, quoteId]);
 
   useEffect(() => {
     const updateLayout = () => setMobileLayout(window.innerWidth < MOBILE_BREAKPOINT);
@@ -591,7 +605,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     setIntroDismissed(true);
     setRightPaneView("bom");
     setMapExpanded(false);
-    setMobileTab("bom");
+    setMobileTab("job");
   }
 
   function handleApplyDescription(result: ParseResult) {
@@ -1136,23 +1150,8 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     setRightPaneView("bom");
     setMapExpanded(false);
     setAutoOpenFirstSectionRunId(null);
-    setMobileTab("bom");
+    setMobileTab("job");
     setClearJobDialogOpen(false);
-  }
-
-  function saveCurrentJobLocallyBeforeClear() {
-    if (!payload) return;
-    localStorage.setItem(
-      `glass-calc-cleared-job-${Date.now()}`,
-      JSON.stringify({
-        jobName: jobName.trim() || "Untitled Glass Outlet Job",
-        payload,
-        bom: bomResultForTabs,
-        savedAt: new Date().toISOString(),
-        source: "clear-job-dialog",
-      }),
-    );
-    toast.success("Job saved locally before clearing");
   }
 
   function handlePrintBom() {
@@ -1309,6 +1308,14 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     [payload],
   );
 
+  useEffect(() => {
+    setActiveBomSummary(null);
+  }, [payloadCalcKey]);
+
+  useEffect(() => {
+    if (!lastBom) setActiveBomSummary(null);
+  }, [lastBom]);
+
   const runBomRecalculation = useCallback(async () => {
     if (!payload || !payloadCalcKey) {
       lastCalcPayloadKeyRef.current = null;
@@ -1351,14 +1358,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
   const runBomRecalcRef = useRef(runBomRecalculation);
   runBomRecalcRef.current = runBomRecalculation;
-
-  const handleManualBomGenerate = useCallback(() => {
-    void runBomRecalcRef.current().then(() => {
-      document
-        .querySelector("[data-print-bom-section]")
-        ?.scrollIntoView({ block: "start", behavior: "smooth" });
-    });
-  }, []);
 
   useEffect(() => {
     if (!introDismissed && !quoteId) return;
@@ -1505,7 +1504,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     : jobName.trim()
       ? `Save ${jobName.trim()}`
       : "Save Job";
-  const hasConfiguredRuns = Boolean(payload?.runs.some((run) => run.segments.length > 0));
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
@@ -1516,6 +1514,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
         grandTotal: activeBomSummary?.grandTotal ?? bomResultForTabs.grandTotal,
       }
     : null;
+  const headerGrandTotal = activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0;
+  const headerPriceLabel =
+    !customerMode && headerGrandTotal > 0 ? formatHeaderMoney(headerGrandTotal) : null;
   const showIntro = !quoteId && !payload && !introDismissed;
   const paneVisibility = calculatorPaneVisibility(mobileLayout, mobileTab);
 
@@ -1626,10 +1627,14 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   return (
     <AppShell
       headerActions={headerActions}
-      mobileTitle={customerMode ? "Customer quote" : jobName.trim() || "New job"}
       topBar={<PwaStatusBanners />}
+      brandLogoSrc="/icons/glass-outlet-symbol.svg"
+      brandLogoAlt="Glass Outlet"
+      headerPriceLabel={headerPriceLabel}
       customerMode={customerMode}
       onCustomerModeChange={setCustomerMode}
+      onClearJobRequest={() => setClearJobDialogOpen(true)}
+      clearJobDisabled={!payload && !jobName}
     >
       {gatePositionTarget && gateTargetRunLength > 0 && (
         <GatePositionModal
@@ -1836,24 +1841,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                       {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                       {saveJobLabel}
                     </button>
-                    <button
-                      type="button"
-                      onClick={handleManualBomGenerate}
-                      disabled={!hasConfiguredRuns || hasBlockingErrors || bomMutation.isPending}
-                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      {bomMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : null}
-                      Generate BOM
-                    </button>
-                    <ConfirmButton
-                      onConfirm={() => setClearJobDialogOpen(true)}
-                      disabled={!payload && !jobName}
-                      confirmLabel={<><Trash2 size={16} /> Click again to confirm</>}
-                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-brand-danger/30 px-3 py-2 text-sm font-bold text-brand-danger transition-colors hover:bg-brand-danger/10 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      <Trash2 size={16} />
-                      Clear Job
-                    </ConfirmButton>
                   </div>
                 </div>
               </div>
@@ -2091,13 +2078,13 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
           </div>
           {mobileLayout && !mapExpanded && paneVisibility.bom && (
             <div
-              className="fixed inset-x-0 z-40 border-t border-brand-border bg-brand-card/95 px-3 py-2 shadow-2xl backdrop-blur md:hidden"
+              className="fixed inset-x-0 z-30 border-t border-brand-border bg-brand-card/95 px-3 py-2 shadow-2xl backdrop-blur md:hidden"
               style={{
                 bottom: `calc(var(--safe-bottom) + 56px + ${keyboardOffset}px)`,
               }}
               data-testid="mobile-bom-action-bar"
             >
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={handleSaveJob}
@@ -2106,15 +2093,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                 >
                   {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                   Save Quote
-                </button>
-                <button
-                  type="button"
-                  onClick={handleManualBomGenerate}
-                  disabled={!payload || bomMutation.isPending}
-                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-brand-border px-2 py-2 text-xs font-black text-brand-text disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {bomMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <Printer size={16} />}
-                  Generate
                 </button>
                 <button
                   type="button"
@@ -2135,51 +2113,10 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             />
           )}
           {clearJobDialogOpen && (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Save current job before clearing"
-              onClick={() => setClearJobDialogOpen(false)}
-            >
-              <div
-                className="w-full max-w-md rounded-2xl border border-brand-border bg-brand-card p-5 shadow-2xl"
-                onClick={(event) => event.stopPropagation()}
-              >
-                <h2 className="text-lg font-black text-brand-text">
-                  Save the current job before clearing?
-                </h2>
-                <p className="mt-2 text-sm font-semibold leading-relaxed text-brand-muted">
-                  Save a local browser copy, clear without saving, or cancel and keep working.
-                </p>
-                <div className="mt-5 grid gap-2 sm:grid-cols-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      saveCurrentJobLocallyBeforeClear();
-                      clearToFreshWorkspace();
-                    }}
-                    className="rounded-lg bg-brand-primary px-3 py-2 text-sm font-black text-white transition-colors hover:bg-brand-primary/90"
-                  >
-                    Save & clear
-                  </button>
-                  <button
-                    type="button"
-                    onClick={clearToFreshWorkspace}
-                    className="rounded-lg border border-brand-danger/40 px-3 py-2 text-sm font-black text-brand-danger transition-colors hover:bg-brand-danger/10"
-                  >
-                    Clear without saving
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setClearJobDialogOpen(false)}
-                    className="rounded-lg border border-brand-border px-3 py-2 text-sm font-black text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
+            <ClearJobConfirmDialog
+              onCancel={() => setClearJobDialogOpen(false)}
+              onClear={clearToFreshWorkspace}
+            />
           )}
           {shortcutsOpen && (
             <div

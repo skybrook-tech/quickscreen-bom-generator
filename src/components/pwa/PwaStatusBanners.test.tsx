@@ -13,7 +13,7 @@ describe("PwaStatusBanners", () => {
     });
   });
 
-  it("shows an offline indicator when the browser is offline", () => {
+  it("does not render the old standalone offline banner", () => {
     Object.defineProperty(navigator, "onLine", {
       configurable: true,
       value: false,
@@ -27,8 +27,8 @@ describe("PwaStatusBanners", () => {
       root.render(<PwaStatusBanners />);
     });
 
-    expect(container.querySelector('[data-testid="offline-indicator"]')).not.toBeNull();
-    expect(container.textContent).toContain("You're offline");
+    expect(container.querySelector('[data-testid="offline-indicator"]')).toBeNull();
+    expect(container.textContent).not.toContain("You're offline");
 
     act(() => root.unmount());
   });
