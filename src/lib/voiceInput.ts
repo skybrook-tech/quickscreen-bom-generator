@@ -60,5 +60,15 @@ export function createVoiceInput({
   return {
     start: () => recognition.start(),
     stop: () => recognition.stop(),
+    dispose: () => {
+      recognition.onresult = null;
+      recognition.onerror = null;
+      recognition.onend = null;
+      try {
+        recognition.stop();
+      } catch {
+        // Some browsers throw when stop is called after recognition has already ended.
+      }
+    },
   };
 }

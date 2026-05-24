@@ -12,6 +12,8 @@ Latest Brief 014 pass: the mobile Job tab now prioritises job/address/system/run
 
 Latest Brief 017 pass: the calculator now has production-only PWA registration, manifest/icons, install and offline banners, customer quote mode that hides costs, and a real-device mobile QA checklist.
 
+Latest Brief 024 pass: the Describe Your Fence voice mic now returns to an idle reusable state after speech recognition ends and disposes active handlers on unmount, while fuzzy spoken measurements such as `six and a half meters`, `six point five`, `6m 50`, and `around six` parse as metre values without silently defaulting unparseable phrases to zero.
+
 Latest sandbox polish: run sidebar readability, 0m first-segment defaults, compact length/height controls, and endpoint/corner gate placement are implemented on `codex/qshs-calculator-sandbox`.
 
 Living app overview: [`docs/app-overview.md`](./app-overview.md) now tracks current routes, file responsibilities, data flow, mapper responsibilities, fallback engine behavior, Supabase seed structure, and update rules.

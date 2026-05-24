@@ -1,4 +1,5 @@
 import { stripVoiceFillers } from "./voiceFillers";
+import { extractMeasurementCandidates } from "./measurementParser";
 
 export type Confidence = "stated" | "inferred" | "default";
 export type ColourCode = "B" | "MN" | "G" | "SM" | "W" | "BS" | "D" | "M" | "P" | "PB" | "S";
@@ -90,13 +91,29 @@ function systemFromText(text: string): ParsedAttribute<ParsedSystemType> | undef
 }
 
 function lengthsFromText(text: string) {
-  return [...text.matchAll(LENGTH_RE)].map((match) => ({
+  const explicit = [...text.matchAll(LENGTH_RE)].map((match) => ({
     raw: match[0],
     value: Number(match[1]),
     unit: match[2],
     mm: mmFromLength(Number(match[1]), match[2]),
     index: match.index ?? 0,
   }));
+  const fuzzy = extractMeasurementCandidates(text).map((match) => ({
+    raw: match.raw,
+    value: match.metres,
+    unit: "m",
+    mm: match.mm,
+    index: match.index,
+  }));
+  const seen = new Set<string>();
+  return [...explicit, ...fuzzy]
+    .filter((match) => {
+      const key = `${match.index}|${match.mm}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a, b) => a.index - b.index);
 }
 
 function textWithoutCatalogueSlatSizes(text: string) {
