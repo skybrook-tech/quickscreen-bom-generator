@@ -238,7 +238,16 @@ function BOMTable({
   }
 
   return (
-    <div className="overflow-x-auto">
+    <>
+    <BOMMobileCards
+      groups={groups}
+      editable={editable}
+      onQuantityChange={onQuantityChange}
+      onRemoveLine={onRemoveLine}
+      onSwitchEconomyToStandard={onSwitchEconomyToStandard}
+      hoveredGateDiagramNumber={hoveredGateDiagramNumber}
+    />
+    <div className="hidden overflow-x-auto md:block" data-testid="bom-desktop-table">
       <table className="w-full text-left border-collapse">
         <thead>
           <tr className="bg-brand-bg/80">
@@ -283,6 +292,167 @@ function BOMTable({
         </tbody>
       </table>
     </div>
+    </>
+  );
+}
+
+function BOMMobileCards({
+  groups,
+  editable,
+  onQuantityChange,
+  onRemoveLine,
+  onSwitchEconomyToStandard,
+  hoveredGateDiagramNumber,
+}: {
+  groups: [string, BOMLineItem[]][];
+  editable?: boolean;
+  onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
+  onRemoveLine?: (item: BOMLineItem) => void;
+  onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
+  hoveredGateDiagramNumber: GateDiagramNumber | null;
+}) {
+  return (
+    <div className="space-y-4 md:hidden" data-testid="bom-mobile-cards">
+      {groups.map(([category, categoryItems]) => (
+        <section key={category} className="space-y-2">
+          <h3 className="text-[11px] font-black uppercase tracking-[0.14em] text-brand-muted">
+            {humanizeCategory(category)}
+          </h3>
+          <div className="space-y-2">
+            {orderCompanions(categoryItems).map((item, itemIndex) => (
+              <BOMMobileCard
+                key={`${category}-${item.sku}-${item.category}-${item.description}-${itemIndex}`}
+                item={item}
+                editable={editable}
+                onQuantityChange={onQuantityChange}
+                onRemoveLine={onRemoveLine}
+                onSwitchEconomyToStandard={onSwitchEconomyToStandard}
+                highlighted={
+                  hoveredGateDiagramNumber !== null &&
+                  gateDiagramNumbersForSku(item.sku).includes(hoveredGateDiagramNumber)
+                }
+              />
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+function BOMMobileCard({
+  item,
+  editable,
+  onQuantityChange,
+  onRemoveLine,
+  onSwitchEconomyToStandard,
+  highlighted,
+}: {
+  item: BOMLineItem;
+  editable?: boolean;
+  onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
+  onRemoveLine?: (item: BOMLineItem) => void;
+  onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
+  highlighted: boolean;
+}) {
+  const hint = nextBreakHint(item);
+  const cartonHint = cartonHintForLine(item);
+  const sourceText = sourceBreakdown(item);
+  const diagramNumbers = isGateDiagramLine(item) ? gateDiagramNumbersForSku(item.sku) : [];
+  const canSwitchEconomy =
+    item.sku.startsWith("XP-6500-E65") &&
+    item.notes?.includes("Switch to Standard slats?");
+
+  return (
+    <article
+      className={`rounded-lg border border-brand-border/70 bg-brand-bg/60 p-3 shadow-sm transition-colors ${
+        highlighted ? "ring-1 ring-brand-warning/60" : ""
+      }`}
+      title={sourceText ? `Source breakdown: ${sourceText}` : undefined}
+    >
+      <div className="grid grid-cols-[1fr_auto] gap-3">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <GateDiagramBadges numbers={diagramNumbers} />
+            <span className="font-mono text-xs font-bold text-brand-muted">
+              {item.sku}
+            </span>
+            <PageChip sku={item.sku} />
+          </div>
+          <p className="mt-1 text-base font-black leading-snug text-brand-text">
+            {stripParentheticalDispatchCode(item.description)}
+          </p>
+          {sourceText && (
+            <p className="mt-2 rounded-full bg-brand-card px-2 py-1 text-[11px] font-bold text-brand-muted">
+              {sourceText}
+            </p>
+          )}
+        </div>
+        <div className="text-right tabular-nums">
+          <p className="text-xs font-bold uppercase tracking-wide text-brand-muted">
+            Qty
+          </p>
+          {editable ? (
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={item.quantity}
+              onChange={(event) =>
+                onQuantityChange?.(item, Number(event.target.value))
+              }
+              className="mt-1 h-11 w-20 rounded-lg border border-brand-border bg-brand-card px-2 text-right text-sm font-black text-brand-text outline-none focus:border-brand-primary"
+              aria-label={`Quantity for ${item.sku}`}
+            />
+          ) : (
+            <p className="text-xl font-black text-brand-text">{item.quantity}</p>
+          )}
+          <p className="mt-2 text-xs font-semibold text-brand-muted">
+            {item.unitPrice > 0 ? `$${formatMoney(item.unitPrice)}` : "-"} / {unitLabel(item)}
+          </p>
+          <p className="mt-1 text-base font-black text-brand-primary">
+            {item.unitPrice > 0 ? `$${formatMoney(item.lineTotal)}` : "-"}
+          </p>
+        </div>
+      </div>
+      {(hint || cartonHint || item.notes || canSwitchEconomy || editable) && (
+        <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-brand-border/60 pt-3">
+          {hint && (
+            <span className="rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-1 text-[11px] font-bold text-brand-success">
+              {hint.more} more for lower unit price
+            </span>
+          )}
+          {cartonHint && (
+            <span className="rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-1 text-[11px] font-bold text-brand-success">
+              {cartonHint.more} more for carton
+            </span>
+          )}
+          {item.notes && (
+            <span className="rounded-full border border-brand-warning/30 bg-brand-warning/10 px-2 py-1 text-[11px] font-bold text-brand-warning">
+              {item.notes}
+            </span>
+          )}
+          {canSwitchEconomy && (
+            <button
+              type="button"
+              onClick={() => onSwitchEconomyToStandard?.(item)}
+              className="min-h-11 rounded-lg border border-brand-warning/40 bg-brand-warning/10 px-3 py-2 text-xs font-black text-brand-warning"
+            >
+              Switch
+            </button>
+          )}
+          {editable && (
+            <button
+              type="button"
+              onClick={() => onRemoveLine?.(item)}
+              className="ml-auto min-h-11 rounded-lg px-3 py-2 text-xs font-black text-brand-danger"
+            >
+              Remove
+            </button>
+          )}
+        </div>
+      )}
+    </article>
   );
 }
 
