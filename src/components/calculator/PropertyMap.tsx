@@ -191,10 +191,6 @@ function ExpandedPropertyMap({
   const snapshotReaderRef = useRef<(() => MapSnapshotCaptureInput | null) | null>(null);
   const [capturingSnapshot, setCapturingSnapshot] = useState(false);
   const [snapshotError, setSnapshotError] = useState<string | null>(null);
-  const mapStatus = mapRequested
-    ? "Search for the property, then drag the pin if the roofline needs fine tuning."
-    : "Enter an address to locate the property.";
-
   function readSnapshotInput(): MapSnapshotCaptureInput {
     const fromMap = snapshotReaderRef.current?.();
     if (fromMap) return fromMap;
@@ -238,14 +234,15 @@ function ExpandedPropertyMap({
   return (
     <section className="space-y-3 rounded-2xl border border-brand-border/70 bg-brand-card p-3 shadow-sm">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-brand-muted">
-            Property map
-          </p>
-          <p className="mt-1 text-sm font-semibold text-brand-text">
-            {confirmed && located ? located.formattedAddress : mapStatus}
-          </p>
-        </div>
+        {confirmed && located ? (
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-brand-text">
+              {located.formattedAddress}
+            </p>
+          </div>
+        ) : (
+          <div className="min-w-0" aria-hidden="true" />
+        )}
         {mapRequested ? (
           <label className="inline-flex items-center gap-2 text-xs font-bold text-brand-muted">
             Map
