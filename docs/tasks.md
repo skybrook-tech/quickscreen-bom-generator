@@ -18,7 +18,9 @@ Latest Brief 020 pass: mobile canvas drawing now defers draw/gate taps until tou
 
 Latest Brief 020 fix-up: real-device iPhone regressions were addressed by suppressing tap-start phantom previews, restoring 500ms long-press vertex dragging, and keeping Gate mode active after saving a placed gate.
 
-Latest Brief 022 pass: mobile bottom navigation now includes a Glass Outlet save-icon action, opens a Save Job dialog prefilled from the current job name or a dated default, reuses the existing Supabase/local save flow with edited names, keeps the dialog open on save failure, and removes the mobile floating save/share action bar.
+Latest Brief 021 pass: the canvas toolbar now removes zoom buttons, labels Move/Edit clearly, exposes history-aware Undo/Redo plus a clear-confirmation modal, caps canvas history at 20 actions, uses a compact mobile layers sheet, and keeps the map underlay toggle working across desktop and mobile.
+
+Latest Brief 021 iPhone fix-up: undo now clears stale canvas segment previews, the mobile layers sheet is constrained to 45dvh with internal scrolling, and map visibility changes are batched so the underlay hides on both desktop and mobile.
 
 Latest sandbox polish: run sidebar readability, 0m first-segment defaults, compact length/height controls, and endpoint/corner gate placement are implemented on `codex/qshs-calculator-sandbox`.
 

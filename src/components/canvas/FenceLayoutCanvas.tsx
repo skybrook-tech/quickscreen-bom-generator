@@ -32,6 +32,7 @@ import type {
   CanvasGateType,
   CanvasGateVariables,
   CanvasGateVisual,
+  CanvasHistoryState,
   CanvasLayout,
   CanvasPrintRunSummary,
   CanvasRunSummary,
@@ -267,6 +268,12 @@ export function FenceLayoutCanvas({
     });
   }, []);
   const [runSummaries, setRunSummaries] = useState<CanvasRunSummary[]>([]);
+  const [historyState, setHistoryState] = useState<CanvasHistoryState>({
+    canUndo: false,
+    canRedo: false,
+    undoDepth: 0,
+    redoDepth: 0,
+  });
   const [engineVersion, setEngineVersion] = useState(0);
   const [snapshotError, setSnapshotError] = useState<string | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -296,6 +303,10 @@ export function FenceLayoutCanvas({
     () => normalizeMapSnapshot(mapSnapshot, googleMapsApiKey || undefined),
     [googleMapsApiKey, mapSnapshot],
   );
+  const layeredMapSnapshotRef = useRef(layeredMapSnapshot);
+  useEffect(() => {
+    layeredMapSnapshotRef.current = layeredMapSnapshot;
+  }, [layeredMapSnapshot]);
 
   const handleToolChange = useCallback((tool: CanvasTool) => {
     setActiveTool(tool);
@@ -359,6 +370,7 @@ export function FenceLayoutCanvas({
         setRunSummaries(layout.runs);
         onLayoutChangeRef.current?.(layout);
       },
+      onHistoryChange: setHistoryState,
       onGateEdit: (flatSegIdx, gateIdx, gateId, currentWidthMM, gate) => {
         // Find the gate in GateContext by id (set when gate was first saved)
         if (!gateId) return;
@@ -633,15 +645,40 @@ export function FenceLayoutCanvas({
       layerId: CanonicalMapLayerId,
       updates: Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">>,
     ) => {
-      if (!layeredMapSnapshot) return;
-      const nextSnapshot = updateMapSnapshotLayer(
-        layeredMapSnapshot,
-        layerId,
-        updates,
-      );
+      const currentSnapshot = layeredMapSnapshotRef.current;
+      if (!currentSnapshot) return;
+      const nextSnapshot = updateMapSnapshotLayer(currentSnapshot, layerId, updates);
+      layeredMapSnapshotRef.current = nextSnapshot;
       onMapSnapshotChange?.(nextSnapshot);
     },
-    [layeredMapSnapshot, onMapSnapshotChange],
+    [onMapSnapshotChange],
+  );
+
+  const handleMapLayersChange = useCallback(
+    (
+      updatesByLayer: Partial<
+        Record<
+          CanonicalMapLayerId,
+          Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">>
+        >
+      >,
+    ) => {
+      const currentSnapshot = layeredMapSnapshotRef.current;
+      if (!currentSnapshot) return;
+      const nextSnapshot = (Object.entries(updatesByLayer) as Array<
+        [
+          CanonicalMapLayerId,
+          Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">> | undefined,
+        ]
+      >).reduce(
+        (snapshot, [layerId, updates]) =>
+          updates ? updateMapSnapshotLayer(snapshot, layerId, updates) : snapshot,
+        currentSnapshot,
+      );
+      layeredMapSnapshotRef.current = nextSnapshot;
+      onMapSnapshotChange?.(nextSnapshot);
+    },
+    [onMapSnapshotChange],
   );
 
   // Totals across all runs
@@ -668,8 +705,11 @@ export function FenceLayoutCanvas({
           onFreehandStyleChange={handleFreehandStyleChange}
           onHelpOpen={() => setHelpOpen(true)}
           onPrintMap={handlePrintMap}
+          canUndo={historyState.canUndo}
+          canRedo={historyState.canRedo}
           mapLayers={layeredMapSnapshot?.layers ?? null}
           onMapLayerChange={handleMapLayerChange}
+          onMapLayersChange={handleMapLayersChange}
         />
       </div>
 
