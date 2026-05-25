@@ -678,6 +678,7 @@ export function initCanvasEngine(
       : angles;
   }
   let mouseCanvas: Point = { x: 0, y: 0 };
+  let segmentPreviewEndpoint: Point | null = null;
   let isPanning = false;
   let panStart: Point = { x: 0, y: 0 };
   let panOrigin: Point = { x: 0, y: 0 };
@@ -943,6 +944,7 @@ export function initCanvasEngine(
     siteMarkers = JSON.parse(JSON.stringify(next.siteMarkers ?? [])) as CanvasSiteMarker[];
     freehandStrokes = JSON.parse(JSON.stringify(next.freehandStrokes ?? [])) as CanvasFreehandStroke[];
     arrows = JSON.parse(JSON.stringify(next.arrows ?? [])) as CanvasArrowAnnotation[];
+    segmentPreviewEndpoint = null;
   }
 
   function pushUndo(action: UndoAction) {
@@ -1340,6 +1342,7 @@ export function initCanvasEngine(
       const suppressTouchPreview = isTouchInteractionSuppressed();
       const hasActiveBoundary =
         !suppressTouchPreview &&
+        segmentPreviewEndpoint !== null &&
         (tool === "boundary" || tool === "building") &&
         activeRunIdx >= 0 &&
         runs[activeRunIdx]?.isBoundary &&
@@ -1387,6 +1390,7 @@ export function initCanvasEngine(
       if (hasActiveBoundary) {
         const run = runs[activeRunIdx];
         const lastPt = run.points[run.points.length - 1];
+        const target = segmentPreviewEndpoint ?? lastPt;
         ctx.save();
         const isBuilding = run.boundaryType === "building";
         ctx.setLineDash(isBuilding ? [] : [6 / zoom, 4 / zoom]);
@@ -1394,7 +1398,7 @@ export function initCanvasEngine(
         ctx.lineWidth = isBuilding ? 3 / zoom : 2 / zoom;
         ctx.beginPath();
         ctx.moveTo(lastPt.x, lastPt.y);
-        ctx.lineTo(mouseCanvas.x, mouseCanvas.y);
+        ctx.lineTo(target.x, target.y);
         ctx.stroke();
         ctx.setLineDash([]);
         ctx.restore();
@@ -1412,11 +1416,16 @@ export function initCanvasEngine(
 
     // Preview line (while drawing)
     const suppressTouchPreview = isTouchInteractionSuppressed();
-    if (tool === "draw" && activeRunIdx >= 0 && !suppressTouchPreview) {
+    if (
+      tool === "draw" &&
+      activeRunIdx >= 0 &&
+      !suppressTouchPreview &&
+      segmentPreviewEndpoint !== null
+    ) {
       const run = runs[activeRunIdx];
       if (run && run.points.length > 0 && !run.finished) {
         const lastPt = run.points[run.points.length - 1];
-        const target = snapDrawingPoint(mouseCanvas);
+        const target = snapDrawingPoint(segmentPreviewEndpoint);
         const previewDistance = dist(lastPt, target);
         const isBuilding = run.boundaryType === "building";
         drawActiveEndpoint(lastPt, "last point");
@@ -1487,8 +1496,13 @@ export function initCanvasEngine(
     }
 
     // Snap indicator
-    if (tool === "draw" && activeRunIdx >= 0 && !suppressTouchPreview) {
-      const snapped = snapDrawingPoint(mouseCanvas);
+    if (
+      tool === "draw" &&
+      activeRunIdx >= 0 &&
+      !suppressTouchPreview &&
+      segmentPreviewEndpoint !== null
+    ) {
+      const snapped = snapDrawingPoint(segmentPreviewEndpoint);
       ctx.save();
       ctx.beginPath();
       ctx.arc(snapped.x, snapped.y, 4 / zoom, 0, Math.PI * 2);
@@ -2460,6 +2474,23 @@ export function initCanvasEngine(
     canvas.style.touchAction = drawingTouchAction(tool);
   }
 
+  function clearSegmentPreview() {
+    segmentPreviewEndpoint = null;
+  }
+
+  function activateSegmentPreview(point: Point) {
+    if (
+      (tool !== "draw" && tool !== "boundary" && tool !== "building") ||
+      activeRunIdx < 0 ||
+      runs[activeRunIdx]?.finished ||
+      isTouchInteractionSuppressed()
+    ) {
+      clearSegmentPreview();
+      return;
+    }
+    segmentPreviewEndpoint = point;
+  }
+
   function isTouchTapDeferredTool(t: Tool): boolean {
     return t === "draw" || t === "boundary" || t === "gate";
   }
@@ -2470,6 +2501,7 @@ export function initCanvasEngine(
 
   function cancelTouchInteractionState() {
     const hadDrag = draggingNode !== null || draggingGate !== null || dragAction !== null;
+    clearSegmentPreview();
     clearTouchVertexLongPress();
     touchTapCandidate = null;
     draggingNode = null;
@@ -2496,6 +2528,7 @@ export function initCanvasEngine(
     activePointerCount = 0;
     isMultiTouching = false;
     pinchZoom = null;
+    clearSegmentPreview();
     touchTapCandidate = null;
     clearTouchVertexLongPress();
     lastTapTime = 0;
@@ -2740,6 +2773,7 @@ export function initCanvasEngine(
   function stopChain(popExtra = true) {
     if (activeRunIdx < 0 || runs[activeRunIdx]?.finished) return;
     const run = runs[activeRunIdx];
+    clearSegmentPreview();
 
     // The dblclick's first mousedown already added the dblclick point — pop it.
     // Skip the pop when called from keyboard (Enter/Escape) since no extra point was added.
@@ -2993,6 +3027,7 @@ export function initCanvasEngine(
   function onMouseDown(e: MouseEvent | CanvasPointerLike) {
     if (e.button === 2) {
       // Right button: start pan
+      clearSegmentPreview();
       isPanning = true;
       panStart = eventToScreen(e);
       panOrigin = { ...pan };
@@ -3001,6 +3036,7 @@ export function initCanvasEngine(
     }
 
     if (e.button !== 0) {
+      clearSegmentPreview();
       return;
     }
 
@@ -3169,6 +3205,7 @@ export function initCanvasEngine(
 
     if (tool === "draw") {
       drawStartHintDismissed = true;
+      clearSegmentPreview();
       if (isNearActiveLastPoint(screenPtDown)) {
         stopChain(false);
         return;
@@ -3225,6 +3262,7 @@ export function initCanvasEngine(
     }
 
     if (tool === "boundary") {
+      clearSegmentPreview();
       if (activeRunIdx === -1 || runs[activeRunIdx]?.finished) {
         mouseCanvas = worldPt;
         const newRun: Run = {
@@ -3261,6 +3299,7 @@ export function initCanvasEngine(
     }
 
     if (tool === "gate") {
+      clearSegmentPreview();
       const flatIdx = hitTestSegments(canvasPt, Math.max(12, hitRadius));
       if (flatIdx >= 0) {
         const allSegs = allSegmentsFlat();
@@ -3459,6 +3498,8 @@ export function initCanvasEngine(
       scheduleRedraw();
       return;
     }
+
+    activateSegmentPreview(canvasPt);
 
     // Update hover state
     const prevHover = hoveredSegIdx;
@@ -3879,12 +3920,14 @@ export function initCanvasEngine(
 
     if (touchTapCandidate) {
       completeDeferredTouchTap(pointer);
+      clearSegmentPreview();
       lastTouchPointer = null;
       return;
     }
 
     clearTouchVertexLongPress();
     onMouseUp(pointer);
+    clearSegmentPreview();
     lastTouchPointer = null;
   }
 
@@ -4187,6 +4230,7 @@ export function initCanvasEngine(
 
   function undoLast() {
     if (undoStack.length === 0) return;
+    clearSegmentPreview();
     const action = undoStack.pop()!;
     redoStack.push({ action, snapshot: snapshot() });
     if (redoStack.length > HISTORY_STACK_LIMIT) {
@@ -4275,6 +4319,7 @@ export function initCanvasEngine(
   function redoLast() {
     const entry = redoStack.pop();
     if (!entry) return;
+    clearSegmentPreview();
     restoreSnapshot(entry.snapshot);
     undoStack.push(entry.action);
     if (undoStack.length > HISTORY_STACK_LIMIT) {
@@ -4288,6 +4333,7 @@ export function initCanvasEngine(
   // ── Public API ─────────────────────────────────────────────────────────────
 
   function setTool(t: Tool) {
+    clearSegmentPreview();
     tool = t;
     updateCanvasTouchAction();
     if (t !== "text") pendingTextNote = null;
@@ -4334,6 +4380,7 @@ export function initCanvasEngine(
     freehandStrokes = [];
     arrows = [];
     pendingArrow = null;
+    clearSegmentPreview();
     activeRunIdx = -1;
     drawStartHintDismissed = false;
     notifyChange();
@@ -4994,6 +5041,7 @@ export function initCanvasEngine(
    * Boundary runs in `layout.boundaries` are also restored.
    */
   function loadLayout(layout: CanvasLayout) {
+    clearSegmentPreview();
     const shouldPreserveViewport = layoutMatchesCurrentGeometry(layout);
     const newRuns: Run[] = [];
     const preservedBoundaries: CanvasSegment[] = [];

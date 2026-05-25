@@ -303,6 +303,10 @@ export function FenceLayoutCanvas({
     () => normalizeMapSnapshot(mapSnapshot, googleMapsApiKey || undefined),
     [googleMapsApiKey, mapSnapshot],
   );
+  const layeredMapSnapshotRef = useRef(layeredMapSnapshot);
+  useEffect(() => {
+    layeredMapSnapshotRef.current = layeredMapSnapshot;
+  }, [layeredMapSnapshot]);
 
   const handleToolChange = useCallback((tool: CanvasTool) => {
     setActiveTool(tool);
@@ -641,15 +645,40 @@ export function FenceLayoutCanvas({
       layerId: CanonicalMapLayerId,
       updates: Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">>,
     ) => {
-      if (!layeredMapSnapshot) return;
-      const nextSnapshot = updateMapSnapshotLayer(
-        layeredMapSnapshot,
-        layerId,
-        updates,
-      );
+      const currentSnapshot = layeredMapSnapshotRef.current;
+      if (!currentSnapshot) return;
+      const nextSnapshot = updateMapSnapshotLayer(currentSnapshot, layerId, updates);
+      layeredMapSnapshotRef.current = nextSnapshot;
       onMapSnapshotChange?.(nextSnapshot);
     },
-    [layeredMapSnapshot, onMapSnapshotChange],
+    [onMapSnapshotChange],
+  );
+
+  const handleMapLayersChange = useCallback(
+    (
+      updatesByLayer: Partial<
+        Record<
+          CanonicalMapLayerId,
+          Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">>
+        >
+      >,
+    ) => {
+      const currentSnapshot = layeredMapSnapshotRef.current;
+      if (!currentSnapshot) return;
+      const nextSnapshot = (Object.entries(updatesByLayer) as Array<
+        [
+          CanonicalMapLayerId,
+          Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">> | undefined,
+        ]
+      >).reduce(
+        (snapshot, [layerId, updates]) =>
+          updates ? updateMapSnapshotLayer(snapshot, layerId, updates) : snapshot,
+        currentSnapshot,
+      );
+      layeredMapSnapshotRef.current = nextSnapshot;
+      onMapSnapshotChange?.(nextSnapshot);
+    },
+    [onMapSnapshotChange],
   );
 
   // Totals across all runs
@@ -680,6 +709,7 @@ export function FenceLayoutCanvas({
           canRedo={historyState.canRedo}
           mapLayers={layeredMapSnapshot?.layers ?? null}
           onMapLayerChange={handleMapLayerChange}
+          onMapLayersChange={handleMapLayersChange}
         />
       </div>
 

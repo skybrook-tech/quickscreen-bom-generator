@@ -248,7 +248,9 @@ describe("canvas engine Static Maps snapshot scale", () => {
     expect(drawImage).toHaveBeenCalledTimes(2);
     expect(alphaWrites.slice(0, 2)).toEqual([1, 0.5]);
 
+    drawImage.mockClear();
     engine.loadMapTileLayers([], -33.8688, 19);
+    expect(drawImage).not.toHaveBeenCalled();
     expect(engine.hasSatelliteUnderlay()).toBe(false);
 
     engine.destroy();

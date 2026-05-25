@@ -44,6 +44,12 @@ type CachedMapLayerState = Partial<
     Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">
   >
 >;
+type MapLayerUpdates = Partial<
+  Record<
+    CanonicalMapLayerId,
+    Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">>
+  >
+>;
 
 interface CanvasToolbarProps {
   engineRef: RefObject<Engine | null>;
@@ -68,6 +74,7 @@ interface CanvasToolbarProps {
     layerId: CanonicalMapLayerId,
     updates: Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">>,
   ) => void;
+  onMapLayersChange?: (updates: MapLayerUpdates) => void;
 }
 
 export function CanvasToolbar({
@@ -90,6 +97,7 @@ export function CanvasToolbar({
   onFreehandStyleChange,
   mapLayers,
   onMapLayerChange,
+  onMapLayersChange,
 }: CanvasToolbarProps) {
   const [mobileLayersOpen, setMobileLayersOpen] = useState(false);
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
@@ -132,9 +140,21 @@ export function CanvasToolbar({
     );
   const availableLayerRows = layerRows.filter(({ layer }) => Boolean(layer.url));
   const mapVisible = availableLayerRows.some(({ layer }) => layer.visible);
+  const canChangeMapLayers = Boolean(onMapLayerChange || onMapLayersChange);
   const previousMapLayerStateRef = useRef<CachedMapLayerState | null>(null);
-  const handleMapVisibilityToggle = () => {
+  const applyMapLayerUpdates = (updates: MapLayerUpdates) => {
+    if (onMapLayersChange) {
+      onMapLayersChange(updates);
+      return;
+    }
     if (!onMapLayerChange) return;
+    (Object.entries(updates) as Array<[CanonicalMapLayerId, MapLayerUpdates[CanonicalMapLayerId]]>)
+      .forEach(([layerId, layerUpdates]) => {
+        if (layerUpdates) onMapLayerChange(layerId, layerUpdates);
+      });
+  };
+  const handleMapVisibilityToggle = () => {
+    if (!canChangeMapLayers) return;
     if (mapVisible) {
       previousMapLayerStateRef.current = Object.fromEntries(
         availableLayerRows.map(({ layerId, layer }) => [
@@ -142,9 +162,11 @@ export function CanvasToolbar({
           { visible: layer.visible, opacity: layer.opacity },
         ]),
       ) as CachedMapLayerState;
-      availableLayerRows.forEach(({ layerId }) => {
-        onMapLayerChange(layerId, { visible: false });
-      });
+      applyMapLayerUpdates(
+        Object.fromEntries(
+          availableLayerRows.map(({ layerId }) => [layerId, { visible: false }]),
+        ) as MapLayerUpdates,
+      );
       return;
     }
 
@@ -152,9 +174,14 @@ export function CanvasToolbar({
       satellite: { visible: true, opacity: 1 },
       roadmap: { visible: true, opacity: 0.5 },
     };
-    availableLayerRows.forEach(({ layerId }) => {
-      onMapLayerChange(layerId, previousMapLayerStateRef.current?.[layerId] ?? fallback[layerId]);
-    });
+    applyMapLayerUpdates(
+      Object.fromEntries(
+        availableLayerRows.map(({ layerId }) => [
+          layerId,
+          previousMapLayerStateRef.current?.[layerId] ?? fallback[layerId],
+        ]),
+      ) as MapLayerUpdates,
+    );
   };
 
   const clearCanvas = () => {
@@ -164,7 +191,7 @@ export function CanvasToolbar({
   };
 
   const renderLayerControls = (mode: "desktop" | "sheet") =>
-    layerRows.length > 0 && onMapLayerChange ? (
+    layerRows.length > 0 && canChangeMapLayers ? (
       <div
         className={
           mode === "desktop"
@@ -215,8 +242,10 @@ export function CanvasToolbar({
                 title={`${label} opacity`}
                 disabled={!mapVisible || !layerAvailable}
                 onInput={(event) =>
-                  onMapLayerChange(layerId, {
-                    opacity: Number(event.currentTarget.value) / 100,
+                  applyMapLayerUpdates({
+                    [layerId]: {
+                      opacity: Number(event.currentTarget.value) / 100,
+                    },
                   })
                 }
                 className="h-1.5 w-full accent-brand-accent disabled:cursor-not-allowed disabled:opacity-40 md:w-20"
@@ -308,7 +337,7 @@ export function CanvasToolbar({
       <div className="fixed inset-0 z-50 bg-black/45 md:hidden" onClick={() => setMobileLayersOpen(false)}>
         <div
           data-testid="layers-bottom-sheet"
-          className="absolute inset-x-0 bottom-0 flex min-h-[90dvh] max-h-[90dvh] flex-col overflow-y-auto rounded-t-2xl border border-brand-border bg-brand-card p-4 shadow-2xl"
+          className="absolute inset-x-0 bottom-0 flex min-h-[45dvh] max-h-[45dvh] flex-col overflow-y-auto rounded-t-2xl border border-brand-border bg-brand-card p-4 shadow-2xl"
           onClick={(event) => event.stopPropagation()}
           onTouchStart={(event) => {
             sheetTouchStartYRef.current = event.touches[0]?.clientY ?? null;

@@ -25,7 +25,18 @@ function renderToolbar(
     updates: Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">>,
   ) => void,
   engine: Partial<ReturnType<typeof initCanvasEngine>> | null = null,
-  options: { canUndo?: boolean; canRedo?: boolean } = {},
+  options: {
+    canUndo?: boolean;
+    canRedo?: boolean;
+    onMapLayersChange?: (
+      updates: Partial<
+        Record<
+          CanonicalMapLayerId,
+          Partial<Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">>
+        >
+      >,
+    ) => void;
+  } = {},
 ) {
   const container = document.createElement("div");
   document.body.appendChild(container);
@@ -68,6 +79,7 @@ function renderToolbar(
         onFreehandStyleChange={() => undefined}
         mapLayers={mapLayers}
         onMapLayerChange={onMapLayerChange}
+        onMapLayersChange={options.onMapLayersChange}
       />,
     );
   });
@@ -234,6 +246,29 @@ describe("CanvasToolbar map layers", () => {
         'input[aria-label="Roadmap layer opacity"]',
       )?.value,
     ).toBe("50");
+
+    act(() => root.unmount());
+  });
+
+  it("batches whole-map visibility changes so both layers hide in one update", () => {
+    const onMapLayerChange = vi.fn();
+    const onMapLayersChange = vi.fn();
+    const { container, root } = renderToolbar(onMapLayerChange, null, {
+      onMapLayersChange,
+    });
+
+    act(() => {
+      container
+        .querySelector<HTMLButtonElement>('button[aria-label="Hide map underlay"]')!
+        .click();
+    });
+
+    expect(onMapLayerChange).not.toHaveBeenCalled();
+    expect(onMapLayersChange).toHaveBeenCalledTimes(1);
+    expect(onMapLayersChange).toHaveBeenCalledWith({
+      satellite: { visible: false },
+      roadmap: { visible: false },
+    });
 
     act(() => root.unmount());
   });
@@ -467,7 +502,7 @@ describe("CanvasToolbar map layers", () => {
     act(() => root.unmount());
   });
 
-  it("opens the mobile layers sheet at roughly full-screen height", () => {
+  it("opens the mobile layers sheet at roughly half-screen height with internal scrolling", () => {
     const { container, root } = renderToolbar(vi.fn());
     const layersButton = container.querySelector<HTMLButtonElement>(
       'button[aria-label="Open map layers"]',
@@ -481,8 +516,9 @@ describe("CanvasToolbar map layers", () => {
       '[data-testid="layers-bottom-sheet"]',
     );
     expect(sheet).not.toBeNull();
-    expect(sheet?.className).toContain("min-h-[90dvh]");
-    expect(sheet?.className).toContain("max-h-[90dvh]");
+    expect(sheet?.className).toContain("min-h-[45dvh]");
+    expect(sheet?.className).toContain("max-h-[45dvh]");
+    expect(sheet?.className).toContain("overflow-y-auto");
 
     act(() => root.unmount());
   });

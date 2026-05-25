@@ -213,6 +213,21 @@ describe("mobile canvas touch helpers", () => {
     engine.destroy();
   });
 
+  it("clears the next-segment preview when undo removes the latest point", () => {
+    const { canvas, context, engine } = createEngineHarness();
+
+    dispatchMouseDown(canvas, 100, 100);
+    dispatchMouseDown(canvas, 200, 100);
+    expect(engine.getLayout().segments).toHaveLength(1);
+
+    context.lineTo.mockClear();
+    engine.undo();
+
+    expect(engine.getLayout().segments).toHaveLength(0);
+    expect(context.lineTo).not.toHaveBeenCalled();
+    engine.destroy();
+  });
+
   afterEach(() => {
     vi.useRealTimers();
     vi.unstubAllGlobals();
