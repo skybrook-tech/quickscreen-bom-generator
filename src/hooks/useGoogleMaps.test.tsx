@@ -7,6 +7,7 @@ import "../components/calculator/AddressInput.test";
 import "../components/calculator/PropertyAnchorFormGate.test";
 import "../components/calculator-v3/RunListV3.propertyAnchor.test";
 import "../components/calculator-v3/MobileCalculatorTabs.test";
+import "../components/calculator-v3/SaveJobDialog.test";
 import "../components/canvas/CanvasToolbar.layers.test";
 import "../components/canvas/canonicalAdapter.propertyAnchor.test";
 import "../components/canvas/staticSnapshotCanvas.test";
