@@ -11,6 +11,7 @@ import {
   MobileCalculatorTabs,
 } from "../components/calculator-v3/MobileCalculatorTabs";
 import { ClearJobConfirmDialog } from "../components/calculator-v3/ClearJobConfirmDialog";
+import { SaveJobDialog } from "../components/calculator-v3/SaveJobDialog";
 import { RightPaneTabs, type RightPaneView } from "../components/calculator-v3/RightPaneTabs";
 import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
@@ -118,6 +119,15 @@ const formatHeaderMoney = (value: number) =>
   `$${new Intl.NumberFormat("en-AU", {
     maximumFractionDigits: 0,
   }).format(Math.round(value))}`;
+
+function defaultSaveJobName(now = new Date()) {
+  const date = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(now);
+  return `Untitled Job (${date})`;
+}
 
 const lineKey = (line: BOMLineItem) =>
   `${line.sku}|${line.category}|${line.description}`;
@@ -454,6 +464,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const [includeMapInBomPrint, setIncludeMapInBomPrint] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [clearJobDialogOpen, setClearJobDialogOpen] = useState(false);
+  const [saveJobDialogOpen, setSaveJobDialogOpen] = useState(false);
   const [gatePositionTarget, setGatePositionTarget] = useState<PendingParsedGate | null>(null);
   const handleActiveBomSummaryChange = useCallback(
     (summary: { label: string; subtotal: number; gst: number; grandTotal: number }) => {
@@ -1033,11 +1044,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     })()
     : null;
 
-  async function handleSaveJob() {
-    if (!payload) return;
-    const cleanJobName = jobName.trim();
-    const customerRef =
-      cleanJobName || `Glass Outlet Job ${new Date().toLocaleDateString("en-AU")}`;
+  async function saveJobWithName(requestedJobName: string): Promise<boolean> {
+    if (!payload) return false;
+    const customerRef = requestedJobName.trim() || defaultSaveJobName();
     const quoteBom = buildV3QuoteBom(bomResultForTabs);
     const fenceConfig = buildV3FenceConfig(customerRef, payload);
 
@@ -1051,8 +1060,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
           savedAt: new Date().toISOString(),
         }),
       );
+      setJobName(customerRef);
       toast.success("Job saved locally for this browser");
-      return;
+      return true;
     }
 
     setSaving(true);
@@ -1067,8 +1077,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             savedAt: new Date().toISOString(),
           }),
         );
+        setJobName(customerRef);
         toast.success("Job saved locally for this browser");
-        return;
+        return true;
       }
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
@@ -1106,6 +1117,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
         await queryClient.invalidateQueries({ queryKey: ["quote", quoteId] });
         await queryClient.invalidateQueries({ queryKey: ["quotes"] });
+        setJobName(customerRef);
         toast.success("Job updated");
       } else {
         const { data: quote, error: quoteError } = await supabase
@@ -1129,14 +1141,28 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
         await replaceV3QuoteRuns(supabase, orgId, quote.id, payload);
 
         await queryClient.invalidateQueries({ queryKey: ["quotes"] });
+        setJobName(customerRef);
         toast.success("Job saved");
         navigate(`/quote/${quote.id}`);
       }
+      return true;
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to save job");
+      toast.error("Couldn't save — please try again");
+      console.error(error);
+      return false;
     } finally {
       setSaving(false);
     }
+  }
+
+  async function handleSaveJob() {
+    return saveJobWithName(jobName);
+  }
+
+  async function handleSaveDialogConfirm(name: string) {
+    const saved = await saveJobWithName(name);
+    if (saved) setSaveJobDialogOpen(false);
+    return saved;
   }
 
   function clearToFreshWorkspace() {
@@ -1504,6 +1530,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     : jobName.trim()
       ? `Save ${jobName.trim()}`
       : "Save Job";
+  const saveDialogInitialName = jobName.trim() || defaultSaveJobName();
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
@@ -1823,7 +1850,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                   )}
                 </div>
                 <div
-                  className="sticky z-30 border-t border-brand-border bg-brand-card p-3 pb-[calc(var(--safe-bottom)+1rem)] shadow-2xl sm:p-5 md:pb-5"
+                  className="sticky z-30 hidden border-t border-brand-border bg-brand-card p-3 pb-[calc(var(--safe-bottom)+1rem)] shadow-2xl sm:p-5 md:block md:pb-5"
                   style={{
                     bottom: mobileLayout
                       ? `calc(56px + var(--safe-bottom) + ${keyboardOffset}px)`
@@ -2076,40 +2103,20 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             </main>
 
           </div>
-          {mobileLayout && !mapExpanded && paneVisibility.bom && (
-            <div
-              className="fixed inset-x-0 z-30 border-t border-brand-border bg-brand-card/95 px-3 py-2 shadow-2xl backdrop-blur md:hidden"
-              style={{
-                bottom: `calc(var(--safe-bottom) + 56px + ${keyboardOffset}px)`,
-              }}
-              data-testid="mobile-bom-action-bar"
-            >
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={handleSaveJob}
-                  disabled={!payload || saving}
-                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg bg-brand-primary px-2 py-2 text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                  Save Quote
-                </button>
-                <button
-                  type="button"
-                  onClick={() => void handleSharePdf()}
-                  disabled={!bomResultForTabs || sharingPdf}
-                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-brand-border px-2 py-2 text-xs font-black text-brand-text disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {sharingPdf ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
-                  Share PDF
-                </button>
-              </div>
-            </div>
-          )}
           {mobileLayout && !mapExpanded && (
             <MobileCalculatorTabs
               activeTab={mobileTab}
               onChange={handleMobileTabChange}
+              onSave={() => setSaveJobDialogOpen(true)}
+              saveDisabled={!payload || saving}
+            />
+          )}
+          {saveJobDialogOpen && (
+            <SaveJobDialog
+              initialName={saveDialogInitialName}
+              saving={saving}
+              onCancel={() => setSaveJobDialogOpen(false)}
+              onSave={handleSaveDialogConfirm}
             />
           )}
           {clearJobDialogOpen && (

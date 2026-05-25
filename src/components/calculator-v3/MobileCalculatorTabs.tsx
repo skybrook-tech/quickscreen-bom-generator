@@ -16,16 +16,20 @@ const TABS: Array<{
 interface MobileCalculatorTabsProps {
   activeTab: MobileCalculatorTab;
   onChange: (tab: MobileCalculatorTab) => void;
+  onSave: () => void;
+  saveDisabled?: boolean;
 }
 
 export function MobileCalculatorTabs({
   activeTab,
   onChange,
+  onSave,
+  saveDisabled = false,
 }: MobileCalculatorTabsProps) {
   return (
     <nav
       data-testid="mobile-calculator-tabs"
-      className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-brand-border bg-brand-card/95 px-2 pb-[calc(var(--safe-bottom)+0.5rem)] pt-2 shadow-2xl backdrop-blur md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-brand-border bg-brand-card/95 px-2 pb-[calc(var(--safe-bottom)+0.5rem)] pt-2 shadow-2xl backdrop-blur md:hidden"
       style={{
         paddingLeft: "max(0.5rem, var(--safe-left))",
         paddingRight: "max(0.5rem, var(--safe-right))",
@@ -51,6 +55,15 @@ export function MobileCalculatorTabs({
           </button>
         );
       })}
+      <button
+        type="button"
+        onClick={onSave}
+        disabled={saveDisabled}
+        className="flex min-h-11 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-extrabold text-brand-muted opacity-80 transition-[background-color,color,opacity] duration-200 hover:bg-brand-border/40 hover:text-brand-text hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        <img src="/icons/save-icon.png" alt="Save" className="h-6 w-6 object-contain" />
+        <span>Save</span>
+      </button>
     </nav>
   );
 }
