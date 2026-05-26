@@ -37,13 +37,14 @@ function renderToolbar(
         >
       >,
     ) => void;
+    mapLayers?: Partial<Record<CanonicalMapLayerId, CanonicalMapSnapshotLayer>>;
   } = {},
 ) {
   const container = document.createElement("div");
   document.body.appendChild(container);
   const root = createRoot(container);
 
-  const mapLayers = {
+  const mapLayers = options.mapLayers ?? {
     satellite: {
       url: "https://example.test/satellite.png",
       visible: true,
@@ -94,20 +95,18 @@ describe("CanvasToolbar map layers", () => {
     document.body.innerHTML = "";
   });
 
-  it("emits map underlay visibility and opacity updates without per-layer checkboxes", () => {
+  it("emits map underlay visibility and opacity updates with per-layer checkboxes", () => {
     const onMapLayerChange = vi.fn();
     const { container, root } = renderToolbar(onMapLayerChange);
 
-    expect(
-      container.querySelector<HTMLInputElement>(
-        'input[aria-label="Show Satellite layer"]',
-      ),
-    ).toBeNull();
-    expect(
-      container.querySelector<HTMLInputElement>(
-        'input[aria-label="Show Roadmap layer"]',
-      ),
-    ).toBeNull();
+    const satelliteToggle = container.querySelector<HTMLInputElement>(
+      'input[aria-label="Show Satellite layer"]',
+    );
+    const roadmapToggle = container.querySelector<HTMLInputElement>(
+      'input[aria-label="Show Roadmap layer"]',
+    );
+    expect(satelliteToggle?.checked).toBe(true);
+    expect(roadmapToggle?.checked).toBe(true);
 
     const satelliteOpacity = container.querySelector<HTMLInputElement>(
       'input[aria-label="Satellite layer opacity"]',
@@ -117,6 +116,9 @@ describe("CanvasToolbar map layers", () => {
       satelliteOpacity!.value = "45";
       satelliteOpacity!.dispatchEvent(new Event("input", { bubbles: true }));
       satelliteOpacity!.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    act(() => {
+      roadmapToggle!.click();
     });
 
     const mapToggle = container.querySelector<HTMLButtonElement>(
@@ -130,10 +132,13 @@ describe("CanvasToolbar map layers", () => {
     expect(onMapLayerChange).toHaveBeenNthCalledWith(1, "satellite", {
       opacity: 0.45,
     });
-    expect(onMapLayerChange).toHaveBeenNthCalledWith(2, "satellite", {
+    expect(onMapLayerChange).toHaveBeenNthCalledWith(2, "roadmap", {
       visible: false,
     });
-    expect(onMapLayerChange).toHaveBeenNthCalledWith(3, "roadmap", {
+    expect(onMapLayerChange).toHaveBeenNthCalledWith(3, "satellite", {
+      visible: false,
+    });
+    expect(onMapLayerChange).toHaveBeenNthCalledWith(4, "roadmap", {
       visible: false,
     });
 
@@ -290,6 +295,44 @@ describe("CanvasToolbar map layers", () => {
     expect(onMapLayersChange).toHaveBeenCalledWith({
       satellite: { visible: false },
       roadmap: { visible: false },
+    });
+
+    act(() => root.unmount());
+  });
+
+  it("emits an independent update when the roadmap layer is enabled", () => {
+    const onMapLayerChange = vi.fn();
+    const { container, root } = renderToolbar(vi.fn(), null, {
+      mapLayers: {
+        satellite: {
+          url: "https://example.test/satellite.png",
+          visible: true,
+          opacity: 1,
+        },
+        roadmap: {
+          url: "https://example.test/roadmap.png",
+          visible: false,
+          opacity: 0.5,
+        },
+      },
+      onMapLayersChange: onMapLayerChange,
+    });
+
+    const roadmapToggle = container.querySelector<HTMLInputElement>(
+      'input[aria-label="Show Roadmap layer"]',
+    );
+    const roadmapOpacity = container.querySelector<HTMLInputElement>(
+      'input[aria-label="Roadmap layer opacity"]',
+    );
+    expect(roadmapToggle?.checked).toBe(false);
+    expect(roadmapOpacity?.disabled).toBe(true);
+
+    act(() => {
+      roadmapToggle!.click();
+    });
+
+    expect(onMapLayerChange).toHaveBeenCalledWith({
+      roadmap: { visible: true },
     });
 
     act(() => root.unmount());

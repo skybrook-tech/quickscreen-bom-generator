@@ -220,19 +220,34 @@ export function CanvasToolbar({
               className={
                 mode === "desktop"
                   ? "inline-flex items-center gap-1.5"
-                  : "grid grid-cols-[5rem_1fr_2.5rem] items-center gap-3"
+                  : "grid grid-cols-[5.75rem_1fr_2.5rem] items-center gap-3"
               }
             >
-              <span
-                className={!layerAvailable || !mapVisible ? "opacity-50" : undefined}
+              <label
+                className={[
+                  "inline-flex items-center gap-1.5 font-semibold",
+                  !layerAvailable ? "cursor-not-allowed opacity-50" : "cursor-pointer",
+                ].join(" ")}
                 title={
                   layerAvailable
-                    ? `${label} layer opacity`
+                    ? `Show ${label} layer`
                     : `${label} layer was not captured`
                 }
               >
+                <input
+                  type="checkbox"
+                  checked={layer.visible}
+                  disabled={!layerAvailable}
+                  aria-label={`Show ${label} layer`}
+                  onChange={(event) =>
+                    applyMapLayerUpdates({
+                      [layerId]: { visible: event.currentTarget.checked },
+                    })
+                  }
+                  className="accent-brand-accent disabled:cursor-not-allowed"
+                />
                 {label}
-              </span>
+              </label>
               <input
                 type="range"
                 min={0}
@@ -240,7 +255,7 @@ export function CanvasToolbar({
                 value={Math.round(layer.opacity * 100)}
                 aria-label={`${label} layer opacity`}
                 title={`${label} opacity`}
-                disabled={!mapVisible || !layerAvailable}
+                disabled={!layer.visible || !layerAvailable}
                 onInput={(event) =>
                   applyMapLayerUpdates({
                     [layerId]: {
