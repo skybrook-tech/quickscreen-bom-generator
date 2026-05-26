@@ -157,6 +157,8 @@ Latest Brief BN v2 pass: the sandbox BN work now completes the top-bar reorganis
 
 Latest Brief BO pass: run summaries now show only accepted run-default fields with height/length removed from the subheading, BOM colour display strips internal dispatch-code suffixes, section and gate match codes stay green when their run-derived settings match, and Print BOM now prints materials and totals first, then Run & Section Details, then the optional map at the bottom.
 
+Latest Brief 031 pass: run headings now show full system names with inline editable default height, section and gate headings share the same inline height editor, settings buttons are labeled text controls, run/section gap selectors combine type and size in one dropdown, section settings mirror run settings grouping, and closed section subheadings show only settings that differ from run defaults.
+
 
 ---
 
