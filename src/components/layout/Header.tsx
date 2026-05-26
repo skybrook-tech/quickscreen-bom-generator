@@ -13,6 +13,7 @@ interface HeaderProps {
   branding?: TenantBranding;
   actions?: ReactNode;
   mobileTitle?: string;
+  jobTitle?: string;
   brandLogoSrc?: string;
   brandLogoAlt?: string;
   priceLabel?: string | null;
@@ -26,6 +27,7 @@ export function Header({
   branding,
   actions,
   mobileTitle,
+  jobTitle,
   brandLogoSrc,
   brandLogoAlt = "The Glass Outlet",
   priceLabel,
@@ -56,6 +58,7 @@ export function Header({
   };
 
   const initials = user?.email?.[0].toUpperCase() ?? '?';
+  const compactJobTitle = jobTitle?.trim();
 
   const navLinkCls = ({ isActive }: { isActive: boolean }) =>
     `text-xs font-medium px-3 py-1.5 rounded-md transition-colors ${isActive
@@ -74,7 +77,17 @@ export function Header({
       {/* ── Brand + Nav ───────────────────────────────────────────── */}
       <div className="flex min-w-0 items-center gap-3 sm:gap-4">
         <div className="flex min-w-0 items-center gap-3 py-2 sm:py-3">
-          {brandLogoSrc ? (
+          {compactJobTitle ? (
+            <div className="min-w-0 max-w-[42vw] leading-tight sm:max-w-[18rem] lg:max-w-[24rem]">
+              <span
+                className="block truncate text-sm font-black text-brand-text sm:text-base"
+                data-testid="header-job-title"
+                title={compactJobTitle}
+              >
+                {compactJobTitle}
+              </span>
+            </div>
+          ) : brandLogoSrc ? (
             <img
               src={brandLogoSrc}
               alt={brandLogoAlt}
@@ -169,7 +182,7 @@ export function Header({
         )}
         {priceLabel && (
           <div
-            className="min-w-0 shrink truncate rounded-lg border border-brand-primary/25 bg-brand-primary/10 px-2 py-1 text-right font-mono text-sm font-black tabular-nums text-brand-primary sm:px-3 sm:text-base"
+            className="shrink-0 whitespace-nowrap rounded-lg border border-brand-primary/25 bg-brand-primary/10 px-2 py-1 text-right font-mono text-sm font-black tabular-nums text-brand-primary sm:px-3 sm:text-base"
             data-testid="header-price"
             aria-label={`Current total ${priceLabel}`}
           >
