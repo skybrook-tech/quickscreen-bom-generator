@@ -32,17 +32,15 @@ This guards against compounding bad code on a broken baseline.
    - `Depends on: brief NNN (PR #XX) merged` → check via `gh pr view XX --json state` or via the search above
    - Multiple dependencies (e.g., `Depends on: brief 013 AND brief 016 merged`) → ALL must be merged before proceeding
 
-   **Active dependency chains as of brief 019+ (current batch)**:
-   - Brief 019 deploys icon assets from `_briefs/assets/` to `public/icons/` as part of its first commit
-   - Brief 020 depends on brief 019 merged
-   - Brief 021 depends on brief 020 merged
-   - Brief 022 depends on brief 019 merged (needs `save-icon.png` on master)
-   - Brief 023 depends on brief 019 merged (needs PWA icons on master)
-   - Brief 024 has no current-batch dependencies — fully independent
+   **Active dependency chains as of brief 028+ (current mini-batch)**:
+   - Briefs 019-027 are all in flight (025/026/027 PR'd but not yet merged when this batch begins; merge expected before this batch runs)
+   - Brief 028 (canvas drawing refinements) — depends on brief 021 merged ✅ (already on master)
+   - Brief 029 (label decluttering + attribution crop) — depends on brief 025 (PR #64) merged
+   - If brief 025 (PR #64) is NOT merged yet, brief 029 will pause. Brief 028 can still proceed in parallel.
 
    When a dependency isn't met: STOP this invocation, report which brief is blocked and on what, move the unprocessed brief back to `00-inbox/`, exit cleanly.
 
-3. **Pre-flight asset check** (for briefs 019, 022, 023): if the brief has a "Pre-flight check" section listing required asset files, run those checks. If any fail → move brief to `03-paused/` and report which assets Liam needs to commit.
+3. **Pre-flight asset check** (for brief 027): if the brief has a "Pre-flight check" section listing required asset files in `_briefs/assets/`, run those checks. If any fail → move brief to `03-paused/` and report which assets Liam needs to commit.
 
 ### Phase C — Move to in-progress, execute
 
@@ -93,9 +91,8 @@ This guards against compounding bad code on a broken baseline.
 10. Return to Phase A and check the next brief.
 
 11. **Hard-coded stop points** (Codex must stop at these and report, even if more briefs are in the inbox):
-    - **After brief 019 AND brief 024 are both PR'd in this invocation** → STOP. Report: "Briefs 019 and 024 PRs are open. 020, 021, 022, 023 all depend on 019 merging. Please merge 019 (and optionally 024) on master, then re-paste MASTER-BRIEF to continue with 020/022/023."
-    - **After brief 020 is PR'd** → STOP. Report: "Brief 020 PR is open. Brief 021 depends on it merging first. 022 and 023 should have been PR'd in this invocation too if they were unblocked — confirm. Re-paste Master Brief after merging 020."
-    - Earlier hard stops (briefs 013 and 016 from the previous batch) are no longer relevant — those briefs are merged on master.
+    - **No hard stops apply for the current mini-batch (briefs 028, 029).** Both can be PR'd in one invocation if 029's dependency (PR #64 merged) is met. If 029 is blocked, only 028 ships in this invocation. Natural stop is when `00-inbox/` is empty or all remaining briefs are blocked.
+    - Earlier hard stops (briefs 013, 016, 019, 020 from previous batches) are no longer relevant — those briefs are merged on master.
 
 ## Self-healing
 
