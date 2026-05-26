@@ -10,7 +10,9 @@ import {
 } from "./FenceLayoutCanvas";
 
 type MockCanvasContext = CanvasRenderingContext2D & {
+  arc: ReturnType<typeof vi.fn>;
   lineTo: ReturnType<typeof vi.fn>;
+  roundRect: ReturnType<typeof vi.fn>;
 };
 
 function mockCanvasContext(): MockCanvasContext {
@@ -147,6 +149,44 @@ describe("mobile canvas touch helpers", () => {
 
     dispatchTouch(canvas, "touchend", [], [touchAt(canvas, 200, 100)]);
     expect(latestLayout()?.segments).toHaveLength(1);
+    engine.destroy();
+  });
+
+  it("draws a visible marker after the first fence point", () => {
+    const { canvas, context, engine } = createEngineHarness();
+
+    context.arc.mockClear();
+    dispatchMouseDown(canvas, 100, 100);
+
+    expect(
+      context.arc.mock.calls.some(([, , radius]) => Number(radius) > 0),
+    ).toBe(true);
+    engine.destroy();
+  });
+
+  it("keeps the viewport transform stable while placing fence points", () => {
+    const { canvas, engine } = createEngineHarness();
+
+    const before = engine.getViewportTransform();
+    dispatchMouseDown(canvas, 100, 100);
+    const afterFirst = engine.getViewportTransform();
+    dispatchMouseDown(canvas, 200, 100);
+    const afterSecond = engine.getViewportTransform();
+
+    expect(afterFirst).toEqual(before);
+    expect(afterSecond).toEqual(before);
+    engine.destroy();
+  });
+
+  it("hides cursor hints after first action and shows them again after clear", () => {
+    const { canvas, context, engine } = createEngineHarness();
+
+    context.roundRect.mockClear();
+    dispatchMouseDown(canvas, 100, 100);
+    expect(context.roundRect).not.toHaveBeenCalled();
+
+    engine.clear();
+    expect(context.roundRect).toHaveBeenCalled();
     engine.destroy();
   });
 

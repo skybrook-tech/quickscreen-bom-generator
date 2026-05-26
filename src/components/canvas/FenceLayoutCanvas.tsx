@@ -84,10 +84,6 @@ const COLOUR_OPTIONS = [
   ["M", "Mill"],
 ] as const;
 
-function isMobileCanvasViewport(): boolean {
-  return window.matchMedia?.("(max-width: 767px)").matches ?? false;
-}
-
 function movementFromCanvasType(gateType: CanvasGateType): GateMovement {
   if (gateType === "sliding") return "sliding";
   if (gateType === "double-swing") return "double_swing";
@@ -289,6 +285,7 @@ export function FenceLayoutCanvas({
   const [gateDialogOpen, setGateDialogOpen] = useState(false);
   const [gateDraft, setGateDraft] = useState<GateDraft>(() => createGateDraft());
   const gateDraftRef = useRef(gateDraft);
+  const configuredGatePlacementPendingRef = useRef(false);
   const [activeGateRef, setActiveGateRef] = useState<GateSessionRef | null>(null);
   const [sessionGateRefs, setSessionGateRefs] = useState<GateSessionRef[]>([]);
   const [gateDialogPosition, setGateDialogPosition] = useState({
@@ -311,11 +308,15 @@ export function FenceLayoutCanvas({
   const handleToolChange = useCallback((tool: CanvasTool) => {
     setActiveTool(tool);
     if (tool === "gate") {
+      configuredGatePlacementPendingRef.current = false;
+      setGateDraft(createGateDraft());
       setActiveGateRef(null);
       setSessionGateRefs([]);
-      setGateDialogOpen(!isMobileCanvasViewport());
+      setGateDialogOpen(true);
       engineRef.current?.setTool("gate");
+      return;
     }
+    configuredGatePlacementPendingRef.current = false;
     if (
       tool === "boundary" &&
       window.localStorage.getItem("qsbom.boundaryHintSeen") !== "true"
@@ -334,6 +335,8 @@ export function FenceLayoutCanvas({
       const gateId = crypto.randomUUID();
       const draft = gateDraftRef.current;
       const visual = gateVisualFromDraft(draft);
+      const shouldOpenAfterPlacement = !configuredGatePlacementPendingRef.current;
+      configuredGatePlacementPendingRef.current = false;
       engineRef.current?.setGateId(flatSegIdx, gateIdx, gateId);
       engineRef.current?.updateGateWidth(flatSegIdx, gateIdx, draft.widthMM);
       engineRef.current?.updateGateVisual(flatSegIdx, gateIdx, visual);
@@ -350,9 +353,11 @@ export function FenceLayoutCanvas({
           useGatePostsAsFenceTermination: draft.useTerminationPosts,
         } as GateConfig,
       });
-      setSessionGateRefs((refs) => [...refs, { flatSegIdx, gateIdx, gateId }]);
+      setSessionGateRefs((refs) =>
+        shouldOpenAfterPlacement ? [...refs, { flatSegIdx, gateIdx, gateId }] : [],
+      );
       setActiveGateRef(null);
-      setGateDialogOpen(true);
+      setGateDialogOpen(shouldOpenAfterPlacement);
     },
     [gateDispatch],
   );
@@ -581,6 +586,8 @@ export function FenceLayoutCanvas({
   }
 
   function handleGateDialogSave() {
+    configuredGatePlacementPendingRef.current =
+      !activeGateRef && sessionGateRefs.length === 0;
     setGateDialogOpen(false);
     setActiveGateRef(null);
     setSessionGateRefs([]);
@@ -588,6 +595,7 @@ export function FenceLayoutCanvas({
   }
 
   function handleGateDialogCancel() {
+    configuredGatePlacementPendingRef.current = false;
     const ids = sessionGateRefs.map((ref) => ref.gateId);
     engineRef.current?.removeGatesById(ids);
     ids.forEach((id) => gateDispatch({ type: "REMOVE_GATE", id }));
@@ -1089,7 +1097,7 @@ export function FenceLayoutCanvas({
               onClick={handleGateDialogSave}
               className="flex-1 rounded-md bg-brand-accent px-4 py-2 text-sm font-semibold text-white hover:bg-brand-accent-hover"
             >
-              Save
+              {activeGateRef || sessionGateRefs.length > 0 ? "Save" : "Place Gate"}
             </button>
             <button
               type="button"

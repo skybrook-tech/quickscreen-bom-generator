@@ -28,6 +28,7 @@ function renderToolbar(
   options: {
     canUndo?: boolean;
     canRedo?: boolean;
+    onToolChange?: (tool: Parameters<typeof CanvasToolbar>[0]["activeTool"]) => void;
     onMapLayersChange?: (
       updates: Partial<
         Record<
@@ -62,7 +63,7 @@ function renderToolbar(
           current: engine as ReturnType<typeof initCanvasEngine> | null,
         }}
         activeTool="draw"
-        onToolChange={() => undefined}
+        onToolChange={options.onToolChange ?? (() => undefined)}
         snapEnabled={false}
         onSnapToggle={() => undefined}
         gateSnap100={false}
@@ -135,6 +136,27 @@ describe("CanvasToolbar map layers", () => {
     expect(onMapLayerChange).toHaveBeenNthCalledWith(3, "roadmap", {
       visible: false,
     });
+
+    act(() => root.unmount());
+  });
+
+  it("routes Gate toolbar clicks through the engine and parent tool handler", () => {
+    const onMapLayerChange = vi.fn();
+    const setTool = vi.fn();
+    const onToolChange = vi.fn();
+    const { container, root } = renderToolbar(onMapLayerChange, { setTool }, { onToolChange });
+
+    const gateButton = Array.from(container.querySelectorAll("button")).find(
+      (button) => button.textContent?.includes("Gate"),
+    );
+    expect(gateButton).toBeDefined();
+
+    act(() => {
+      gateButton!.click();
+    });
+
+    expect(setTool).toHaveBeenCalledWith("gate");
+    expect(onToolChange).toHaveBeenCalledWith("gate");
 
     act(() => root.unmount());
   });

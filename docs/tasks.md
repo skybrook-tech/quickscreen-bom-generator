@@ -22,6 +22,8 @@ Latest Brief 021 pass: the canvas toolbar now removes zoom buttons, labels Move/
 
 Latest Brief 021 iPhone fix-up: undo now clears stale canvas segment previews, the mobile layers sheet is constrained to 45dvh with internal scrolling, and map visibility changes are batched so the underlay hides on both desktop and mobile.
 
+Latest Brief 028 pass: canvas drawing now renders the first fence point immediately, keeps the viewport transform stable across point placement, opens the gate configuration dialog as soon as Gate is selected, places configured gates without a second dialog, and hides cursor hints after the first canvas action until Clear resets the map.
+
 Latest sandbox polish: run sidebar readability, 0m first-segment defaults, compact length/height controls, and endpoint/corner gate placement are implemented on `codex/qshs-calculator-sandbox`.
 
 Living app overview: [`docs/app-overview.md`](./app-overview.md) now tracks current routes, file responsibilities, data flow, mapper responsibilities, fallback engine behavior, Supabase seed structure, and update rules.
