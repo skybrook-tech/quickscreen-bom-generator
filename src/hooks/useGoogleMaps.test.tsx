@@ -11,6 +11,7 @@ import "../components/calculator-v3/SaveJobDialog.test";
 import "../components/canvas/CanvasToolbar.layers.test";
 import "../components/canvas/canonicalAdapter.propertyAnchor.test";
 import "../components/canvas/staticSnapshotCanvas.test";
+import "../components/layout/Header.test";
 import "../lib/geo/coordinates.test";
 import "../lib/googleMaps/staticSnapshot.test";
 import "../lib/manifestAssets.test";

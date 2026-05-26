@@ -7,6 +7,7 @@ interface AppShellProps {
   headerActions?: React.ReactNode;
   branding?: TenantBranding;
   mobileTitle?: string;
+  jobTitle?: string;
   brandLogoSrc?: string;
   brandLogoAlt?: string;
   headerPriceLabel?: string | null;
@@ -22,6 +23,7 @@ export function AppShell({
   headerActions,
   branding,
   mobileTitle,
+  jobTitle,
   brandLogoSrc,
   brandLogoAlt,
   headerPriceLabel,
@@ -36,6 +38,7 @@ export function AppShell({
         branding={branding}
         actions={headerActions}
         mobileTitle={mobileTitle}
+        jobTitle={jobTitle}
         brandLogoSrc={brandLogoSrc}
         brandLogoAlt={brandLogoAlt}
         priceLabel={headerPriceLabel}
