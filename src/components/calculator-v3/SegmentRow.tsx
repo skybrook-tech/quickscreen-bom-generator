@@ -620,26 +620,28 @@ export function SegmentRow({
         <div className="p-2">
 
           <div className="min-w-0 space-y-3 w-full">
-            <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2">
-              <p className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-left text-lg font-black text-brand-text">
-                {titleLabel}
-                {!gate && (
-                  <span className="text-sm font-semibold text-brand-muted">
-                    <strong className="font-extrabold text-brand-text">{(segmentLength / 1000).toFixed(2)}m</strong>
+            <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
+              <div className="min-w-0">
+                <p className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-left text-lg font-black text-brand-text">
+                  {titleLabel}
+                  {!gate && (
+                    <span className="text-sm font-semibold text-brand-muted">
+                      <strong className="font-extrabold text-brand-text">{(segmentLength / 1000).toFixed(2)}m</strong>
+                    </span>
+                  )}
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-muted">
+                    Height:
+                    <InlineHeightEditor
+                      productCode={productCode}
+                      variables={segmentVariables}
+                      valueMm={selectedHeight}
+                      ariaLabel={`${titleLabel} height`}
+                      onChange={updateInlineHeight}
+                    />
                   </span>
-                )}
-                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-muted">
-                  Height:
-                  <InlineHeightEditor
-                    productCode={productCode}
-                    variables={segmentVariables}
-                    valueMm={selectedHeight}
-                    ariaLabel={`${titleLabel} height`}
-                    onChange={updateInlineHeight}
-                  />
-                </span>
-              </p>
-              <div className="flex items-center justify-center">
+                </p>
+              </div>
+              <div className="flex flex-col items-end gap-2">
                 <button
                   type="button"
                   onClick={resetToMaster}
@@ -659,23 +661,21 @@ export function SegmentRow({
                     {compactLabel}
                   </span>
                 </button>
-              </div>
-              {!gate && !isBayg && onAddGate && (
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onAddGate(seg.segmentId);
-                  }}
-                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-brand-border px-3 text-xs font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-                  title="Add gate to this section"
-                  aria-label="Add gate to this section"
-                >
-                  <Plus size={15} />
-                  Gate
-                </button>
-              )}
-              <div className="flex items-center justify-center gap-1 ml-auto">
+                {!gate && !isBayg && onAddGate && (
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onAddGate(seg.segmentId);
+                    }}
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-blue-800 bg-blue-800 px-3 text-xs font-extrabold text-white transition-colors hover:bg-blue-700"
+                    title="Add gate to this section"
+                    aria-label="Add gate to this section"
+                  >
+                    <Plus size={15} />
+                    Gate
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={onToggle}
@@ -689,8 +689,6 @@ export function SegmentRow({
                   <span>{gate ? "Gate Settings" : "Section Settings"}</span>
                   {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                 </button>
-              </div>
-              <div className="flex justify-end">
                 <ConfirmButton
                   onConfirm={() =>
                     dispatch({

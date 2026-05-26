@@ -124,6 +124,7 @@ export function initialVariablesForSystem(productCode: string): Variables {
     slat_size_mm: 65,
     slat_gap_mode: "spacer",
     slat_gap_mm: DEFAULT_SLAT_GAP_MM,
+    target_height_mm: 1800,
     post_size: 50,
     post_system: productCode === "XPL" ? "xpl" : "standard_50",
     mounting_type: "in_ground",

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CheckCircle2, ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, X } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
 import { defaultGateVariables } from "../../lib/gateOptionRules";
@@ -18,7 +18,6 @@ import { SegmentRow } from "./SegmentRow";
 import { colourName } from "./ColourPalette";
 import { RunSettingsEditor } from "./RunSettingsEditor";
 import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
-import { ConfirmButton } from "../shared/ConfirmButton";
 import { InlineHeightEditor } from "./InlineHeightEditor";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
@@ -64,6 +63,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   const { state, dispatch } = useCalculator();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [runSettingsOpen, setRunSettingsOpen] = useState(false);
+  const [removeRunDialogOpen, setRemoveRunDialogOpen] = useState(false);
   const [teachingDismissed, setTeachingDismissed] = useState(
     () => typeof window !== "undefined" && window.localStorage.getItem(RUN_DEFAULTS_TEACHING_KEY) === "true",
   );
@@ -196,16 +196,16 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
 
   return (
     <div className="rounded-2xl border-2 border-brand-primary/20 bg-brand-card py-4 shadow-md">
-      <div className="px-4 mb-3 flex flex-wrap items-start justify-between gap-3">
-        <h3 className="grid min-w-0 flex-1 gap-1 text-brand-text">
-          <span className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5 leading-tight">
+      <div className="mb-3 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 px-4">
+        <h3 className="grid min-w-0 gap-1 text-brand-text">
+          <span className="flex min-w-0 flex-wrap items-baseline justify-center gap-x-2 gap-y-0.5 text-center leading-tight">
             <span className="text-xl font-extrabold tracking-normal">Run {runIdx + 1}</span>
             <span className="text-lg font-extrabold tracking-normal">{runLengthM}m</span>
-            <span className="text-sm font-semibold text-brand-muted">
+            <span className="whitespace-nowrap text-xl font-extrabold tracking-normal text-brand-text [font-family:'Playfair_Display',serif]">
               {systemDisplayName(run.productCode)}
             </span>
           </span>
-          <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-brand-muted">
+          <span className="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 text-sm text-brand-muted">
             <span className="inline-flex items-center gap-1.5">
               Height:
               <InlineHeightEditor
@@ -225,32 +225,38 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           </span>
         </h3>
         <div
-          className="mb-3"
+          className="mb-3 flex flex-col items-end gap-2"
           onMouseEnter={keepRunSettingsOpen}
           onMouseLeave={scheduleRunSettingsCollapse}
         >
-          <div className="flex justify-end">
-
-            <button
-              type="button"
-              onClick={() =>
-                setRunSettingsOpen((value) => {
-                  const next = !value;
-                  if (next) setExpandedId(null);
-                  return next;
-                })
-              }
-              className={`ml-auto mb-2 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-extrabold transition-colors ${runSettingsOpen
-                ? "border-brand-primary bg-brand-primary text-white"
-                : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
-                }`}
-              aria-label={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
-              title={runSettingsOpen ? "Collapse run settings" : "Run settings"}
-            >
-              <span>Run Settings</span>
-              {runSettingsOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() =>
+              setRunSettingsOpen((value) => {
+                const next = !value;
+                if (next) setExpandedId(null);
+                return next;
+              })
+            }
+            className={`inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-extrabold transition-colors ${runSettingsOpen
+              ? "border-brand-primary bg-brand-primary text-white"
+              : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
+              }`}
+            aria-label={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
+            title={runSettingsOpen ? "Collapse run settings" : "Run settings"}
+          >
+            <span>Run Settings</span>
+            {runSettingsOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
+          <button
+            type="button"
+            onClick={() => setRemoveRunDialogOpen(true)}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full text-brand-danger transition-colors hover:bg-brand-danger/10 hover:text-brand-danger/90"
+            aria-label={`Remove run ${runIdx + 1}`}
+            title="Remove run"
+          >
+            <X size={20} strokeWidth={3} />
+          </button>
         </div>
       </div>
 
@@ -307,54 +313,90 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
                 />
               ))}
             {!isBayg && run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
-              <div className="pt-2">
-                <p className="mb-2 flex items-center gap-2 text-sm font-bold text-brand-muted">
-                  <CheckCircle2 size={16} />
-                  Gates
-                </p>
-                <div className="space-y-2">
-                  {run.segments
-                    .filter((segment) => segment.segmentKind === "gate_opening")
-                    .map((seg, gateIdx) => (
-                      <SegmentRow
-                        key={seg.segmentId}
-                        runId={run.runId}
-                        seg={seg}
-                        segIdx={gateIdx}
-                        runIdx={runIdx}
-                        displayLabel={`R${runIdx + 1}G${gateIdx + 1}`}
-                        open={expandedId === seg.segmentId}
-                        onToggle={() =>
-                          setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
-                        }
-                      />
-                    ))}
-                </div>
+              <div className="space-y-2 pt-2">
+                {run.segments
+                  .filter((segment) => segment.segmentKind === "gate_opening")
+                  .map((seg, gateIdx) => (
+                    <SegmentRow
+                      key={seg.segmentId}
+                      runId={run.runId}
+                      seg={seg}
+                      segIdx={gateIdx}
+                      runIdx={runIdx}
+                      displayLabel={`R${runIdx + 1}G${gateIdx + 1}`}
+                      open={expandedId === seg.segmentId}
+                      onToggle={() =>
+                        setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
+                      }
+                    />
+                  ))}
               </div>
             )}
           </div>
 
           <div className="px-4 mt-3 flex flex-wrap justify-end gap-2">
-            <Button onClick={addFenceSegment} icon={Plus} variant="ghost" size="small">
-              {isBayg ? "Add panel size" : "Add section"}
+            <Button
+              onClick={addFenceSegment}
+              icon={Plus}
+              variant="ghost"
+              size="small"
+              className="border-blue-800 bg-blue-800 text-white hover:bg-blue-700"
+            >
+              {isBayg ? "Add Panel Size" : "Add Section"}
             </Button>
             {!isBayg && (
-              <Button onClick={addGateSegment} icon={Plus} variant="ghost" size="small">
-                Add gate
+              <Button
+                onClick={addGateSegment}
+                icon={Plus}
+                variant="ghost"
+                size="small"
+                className="border-blue-800 bg-blue-800 text-white hover:bg-blue-700"
+              >
+                Add Gate
               </Button>
             )}
-            <ConfirmButton
-              onConfirm={() => dispatch({ type: "REMOVE_RUN", runId: run.runId })}
-              confirmLabel={<><Trash2 size={16} /> Click again to confirm</>}
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-brand-danger/30 px-3 py-2 text-xs font-semibold text-brand-danger transition-colors hover:bg-brand-danger/10"
-            >
-              <Trash2 size={16} />
-              Remove run
-            </ConfirmButton>
           </div>
         </>
       )}
 
+      {removeRunDialogOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Remove this run?"
+          onClick={() => setRemoveRunDialogOpen(false)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl border border-brand-border bg-brand-card p-5 shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 className="text-lg font-black text-brand-text">Remove this run?</h2>
+            <p className="mt-2 text-sm font-semibold leading-relaxed text-brand-muted">
+              This will delete the entire run and all its sections and gates. This cannot be undone.
+            </p>
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setRemoveRunDialogOpen(false)}
+                className="rounded-lg border border-brand-border px-4 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setRemoveRunDialogOpen(false);
+                  dispatch({ type: "REMOVE_RUN", runId: run.runId });
+                }}
+                className="rounded-lg bg-brand-danger px-4 py-2 text-sm font-black text-white transition-colors hover:bg-brand-danger/90"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

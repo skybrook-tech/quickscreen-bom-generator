@@ -159,6 +159,8 @@ Latest Brief BO pass: run summaries now show only accepted run-default fields wi
 
 Latest Brief 031 pass: run headings now show full system names with inline editable default height, section and gate headings share the same inline height editor, settings buttons are labeled text controls, run/section gap selectors combine type and size in one dropdown, section settings mirror run settings grouping, and closed section subheadings show only settings that differ from run defaults.
 
+Latest Brief 032 pass: the desktop header now has the shared hamburger menu with customer mode, offline status, and install-video placeholders; job name and non-zero totals render together in the header; VS defaults to 1800mm; alternate post colour moved under Slats, colors, and spacings for run and section settings; run/section/gate card actions align in right-side columns; Add Section/Add Gate use dark-blue primary styling; and Remove Run now requires a confirmation dialog.
+
 
 ---
 

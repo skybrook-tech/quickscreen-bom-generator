@@ -7,8 +7,11 @@ import type {
   CanonicalRun,
   CanonicalSegment,
 } from "../../types/canonical.types";
+import { initialVariablesForSystem } from "../../lib/productOptionRules";
+import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { InlineHeightEditor } from "./InlineHeightEditor";
 import { RunCard } from "./RunCard";
+import { RunSettingsEditor } from "./RunSettingsEditor";
 import { SegmentRow } from "./SegmentRow";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -22,10 +25,51 @@ const contextMock = vi.hoisted(() => ({
   dispatch: vi.fn(),
 }));
 
+const variableMock = vi.hoisted(() => {
+  const field = (
+    field_key: string,
+    label: string,
+    options_json: Array<string | number>,
+    default_value_json: string | number,
+    sort_order: number,
+  ) => ({
+    id: `${field_key}-field`,
+    field_key,
+    label,
+    control_type: "select",
+    data_type: typeof default_value_json === "number" ? "number" : "enum",
+    required: true,
+    default_value_json,
+    options_json,
+    visible_when_json: {},
+    sort_order,
+  });
+  return {
+    jobFields: [
+      field("colour_code", "Colour", ["B", "MN", "SM"], "B", 10),
+      field("post_colour_code", "Post colour", ["B", "MN", "SM"], "B", 20),
+      field("slat_size_mm", "Slat Size", [65, 90], 65, 30),
+      field("slat_gap_mm", "Slat Gap", [5, 9, 20], 9, 40),
+    ],
+    runFields: [
+      field("post_system", "Post size", ["standard_50", "standard_65"], "standard_50", 10),
+      field("post_size", "Standard post size", [50, 65], 50, 20),
+      field("mounting_method", "Post mounting type", ["in_ground", "base_plate", "core_drill"], "in_ground", 30),
+      field("max_panel_width_mm", "Max Post Spacing", [2000, 2600], 2600, 40),
+    ],
+  };
+});
+
 vi.mock("../../context/CalculatorContext", () => ({
   useCalculator: () => ({
     state: contextMock.state,
     dispatch: contextMock.dispatch,
+  }),
+}));
+
+vi.mock("../../hooks/useProductVariables", () => ({
+  useProductVariables: (_productCode: string, scope: "job" | "run") => ({
+    data: scope === "job" ? variableMock.jobFields : variableMock.runFields,
   }),
 }));
 
@@ -122,6 +166,74 @@ describe("Run, section, and gate UI consistency", () => {
     cleanup(vs.root, vs.container);
   });
 
+  it("defaults VS runs to 1800mm", () => {
+    expect(initialVariablesForSystem("VS").target_height_mm).toBe(1800);
+  });
+
+  it("orders run slat settings and keeps alternate post colour out of post settings", () => {
+    const run: CanonicalRun = {
+      ...baseRun,
+      variables: {
+        ...baseRun.variables,
+        post_colour_code: "MN",
+      },
+    };
+    setPayload(run);
+    const { container, root } = render(<RunSettingsEditor run={run} />);
+    const text = (container.textContent ?? "").toLowerCase();
+
+    const slatRange = text.indexOf("slat range");
+    const colour = text.indexOf("colour");
+    const altPost = text.indexOf("alternate post colour");
+    const slatSize = text.indexOf("slat size");
+    const slatGap = text.indexOf("slat gap");
+    const postSettings = text.indexOf("post size, mounting and spacing");
+
+    expect(slatRange).toBeGreaterThanOrEqual(0);
+    expect(slatRange).toBeLessThan(colour);
+    expect(colour).toBeLessThan(altPost);
+    expect(altPost).toBeLessThan(slatSize);
+    expect(slatSize).toBeLessThan(slatGap);
+    expect(altPost).toBeLessThan(postSettings);
+    expect(text).not.toContain("finish");
+
+    cleanup(root, container);
+  });
+
+  it("matches the section slat settings order", () => {
+    const segment: CanonicalSegment = {
+      segmentId: "seg-1",
+      sortOrder: 1,
+      segmentKind: "panel",
+      segmentWidthMm: 3000,
+      targetHeightMm: 1800,
+      variables: {
+        post_colour_code: "MN",
+      },
+    };
+    const run = { ...baseRun, segments: [segment] };
+    setPayload(run);
+    const { container, root } = render(<FenceSegmentDetails runId={run.runId} seg={segment} />);
+    const text = (container.textContent ?? "").toLowerCase();
+
+    const slatRange = text.indexOf("slat range");
+    const colour = text.indexOf("colour");
+    const altPost = text.indexOf("alternate post colour");
+    const slatSize = text.indexOf("slat size");
+    const slatGap = text.indexOf("slat gap");
+    const postSettings = text.indexOf("post size, mounting and spacing");
+
+    expect(slatRange).toBeGreaterThanOrEqual(0);
+    expect(slatRange).toBeLessThan(colour);
+    expect(colour).toBeLessThan(altPost);
+    expect(altPost).toBeLessThan(slatSize);
+    expect(slatSize).toBeLessThan(slatGap);
+    expect(altPost).toBeLessThan(postSettings);
+    expect(text).not.toContain("finish");
+
+    cleanup(root, container);
+  });
+
   it("shows only changed section settings in the closed subheading", () => {
     const segment: CanonicalSegment = {
       segmentId: "seg-1",
@@ -179,6 +291,51 @@ describe("Run, section, and gate UI consistency", () => {
     );
 
     expect(container.textContent).toContain("Gate Settings");
+
+    cleanup(root, container);
+  });
+
+  it("requires explicit confirmation before removing a run", () => {
+    setPayload(baseRun);
+    const { container, root } = render(<RunCard run={baseRun} runIdx={0} />);
+
+    act(() => {
+      container
+        .querySelector<HTMLButtonElement>('[aria-label="Remove run 1"]')
+        ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+
+    expect(contextMock.dispatch).not.toHaveBeenCalledWith({
+      type: "REMOVE_RUN",
+      runId: baseRun.runId,
+    });
+    expect(container.textContent).toContain("Remove this run?");
+
+    act(() => {
+      Array.from(container.querySelectorAll<HTMLButtonElement>("button"))
+        .find((button) => button.textContent === "Cancel")
+        ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    expect(contextMock.dispatch).not.toHaveBeenCalledWith({
+      type: "REMOVE_RUN",
+      runId: baseRun.runId,
+    });
+
+    act(() => {
+      container
+        .querySelector<HTMLButtonElement>('[aria-label="Remove run 1"]')
+        ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    act(() => {
+      Array.from(container.querySelectorAll<HTMLButtonElement>("button"))
+        .find((button) => button.textContent === "Remove")
+        ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+
+    expect(contextMock.dispatch).toHaveBeenCalledWith({
+      type: "REMOVE_RUN",
+      runId: baseRun.runId,
+    });
 
     cleanup(root, container);
   });

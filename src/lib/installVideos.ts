@@ -1,21 +1,31 @@
-export type InstallVideoKey = "QSHS" | "VS" | "QS_GATE_PED" | "QS_GATE_SLIDE";
+export type InstallVideoKey = "QSHS" | "XPL" | "VS" | "BAYG" | "QS_GATE_PED" | "QS_GATE_SLIDE";
+
+export const INSTALL_VIDEO_MENU_KEYS: InstallVideoKey[] = ["QSHS", "XPL", "VS", "BAYG"];
 
 export const INSTALL_VIDEOS: Record<InstallVideoKey, { label: string; url: string }> = {
   QSHS: {
-    label: "QSHS install",
-    url: "https://glassoutlet.com.au/install/qshs",
+    label: "QSHS installation",
+    url: "https://youtube.com/results?search_query=QuickScreen+QSHS+installation",
+  },
+  XPL: {
+    label: "XPL installation",
+    url: "https://youtube.com/results?search_query=XPress+Plus+slat+screening+installation",
   },
   VS: {
-    label: "VS install",
-    url: "https://glassoutlet.com.au/install/vs",
+    label: "VS installation",
+    url: "https://youtube.com/results?search_query=vertical+slat+screening+installation",
+  },
+  BAYG: {
+    label: "BAYG installation",
+    url: "https://youtube.com/results?search_query=BAYG+infill+screen+installation",
   },
   QS_GATE_PED: {
-    label: "Pedestrian gate install",
-    url: "https://glassoutlet.com.au/install/gate-ped",
+    label: "Pedestrian gate installation",
+    url: "https://youtube.com/results?search_query=QuickScreen+pedestrian+gate+installation",
   },
   QS_GATE_SLIDE: {
-    label: "Sliding gate install",
-    url: "https://glassoutlet.com.au/install/gate-slide",
+    label: "Sliding gate installation",
+    url: "https://youtube.com/results?search_query=QuickScreen+sliding+gate+installation",
   },
 };
 

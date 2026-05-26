@@ -29,6 +29,9 @@ export function InstallVideoQR({ videoKey, compact = false }: InstallVideoQRProp
         <span className="block text-xs font-semibold text-brand-muted">
           {video.label}
         </span>
+        <span className="block text-xs font-bold text-brand-primary">
+          Watch on YouTube
+        </span>
         <span className="block truncate font-mono text-[10px] text-brand-primary">
           {video.url}
         </span>

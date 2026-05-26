@@ -50,7 +50,7 @@ function renderHeader(props: HeaderTestProps = {}) {
   };
 }
 
-describe("Header mobile menu", () => {
+describe("Header menu", () => {
   afterEach(() => {
     document.body.innerHTML = "";
     window.localStorage.clear();
@@ -63,12 +63,12 @@ describe("Header mobile menu", () => {
 
     act(() => {
       container
-        .querySelector<HTMLButtonElement>('[aria-label="Open mobile menu"]')
+        .querySelector<HTMLButtonElement>('[aria-label="Open menu"]')
         ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     });
 
-    expect(container.querySelector('[data-testid="mobile-menu-offline-indicator"]')).not.toBeNull();
-    expect(container.textContent).toContain("Offline - quotes can't save");
+    expect(container.querySelector('[data-testid="menu-offline-indicator"]')).not.toBeNull();
+    expect(container.textContent).toContain("Offline - quotes can't be saved");
 
     act(() => root.unmount());
   });
@@ -79,17 +79,45 @@ describe("Header mobile menu", () => {
 
     act(() => {
       container
-        .querySelector<HTMLButtonElement>('[aria-label="Open mobile menu"]')
+        .querySelector<HTMLButtonElement>('[aria-label="Open menu"]')
         ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     });
 
-    expect(container.querySelector('[data-testid="mobile-menu-offline-indicator"]')).toBeNull();
-    expect(container.textContent).not.toContain("Offline - quotes can't save");
+    expect(container.querySelector('[data-testid="menu-offline-indicator"]')).toBeNull();
+    expect(container.textContent).not.toContain("Offline - quotes can't be saved");
 
     act(() => root.unmount());
   });
 
-  it("renders New Quote in the title slot without the Glass Outlet logo", () => {
+  it("renders customer mode and install videos in the shared menu", () => {
+    const onCustomerModeChange = vi.fn();
+    const { container, root } = renderHeader({ onCustomerModeChange });
+
+    act(() => {
+      container
+        .querySelector<HTMLButtonElement>('[aria-label="Open menu"]')
+        ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+
+    expect(container.textContent).toContain("Customer Mode");
+    expect(container.textContent).toContain("Install Videos");
+
+    act(() => {
+      Array.from(container.querySelectorAll<HTMLButtonElement>("button"))
+        .find((button) => button.textContent?.includes("Install Videos"))
+        ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+
+    expect(container.querySelector('[aria-label="Install Videos"]')).not.toBeNull();
+    expect(container.textContent).toContain("QSHS installation");
+    expect(container.textContent).toContain("XPL installation");
+    expect(container.textContent).toContain("VS installation");
+    expect(container.textContent).toContain("BAYG installation");
+
+    act(() => root.unmount());
+  });
+
+  it("renders New Quote in the centered title slot while keeping the brand logo", () => {
     const { container, root } = renderHeader({
       jobTitle: "New Quote",
       brandLogoSrc: "/icons/glass-outlet-symbol.svg",
@@ -99,7 +127,7 @@ describe("Header mobile menu", () => {
     expect(container.querySelector('[data-testid="header-job-title"]')?.textContent).toBe(
       "New Quote",
     );
-    expect(container.querySelector('img[src="/icons/glass-outlet-symbol.svg"]')).toBeNull();
+    expect(container.querySelector('img[src="/icons/glass-outlet-symbol.svg"]')).not.toBeNull();
 
     act(() => root.unmount());
   });
@@ -130,7 +158,7 @@ describe("Header mobile menu", () => {
     expect(title?.className).toContain("truncate");
     expect(title?.textContent).toBe("Smith Family Beachfront Property at 47 Beach Road");
     expect(container.querySelector('[data-testid="header-price"]')?.textContent).toBe("$12,345");
-    expect(container.querySelector('[aria-label="Open mobile menu"]')).not.toBeNull();
+    expect(container.querySelector('[aria-label="Open menu"]')).not.toBeNull();
 
     act(() => root.unmount());
   });

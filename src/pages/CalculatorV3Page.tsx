@@ -1592,8 +1592,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const headerActions = !showIntro && !mapExpanded ? (
     <div className="flex w-full flex-wrap items-center justify-end gap-2">
       <div
-        className="lg:fixed lg:top-2 lg:z-40"
-        style={mobileLayout ? undefined : { left: runPaneWidth + 16 }}
+        className="shrink-0"
       >
         <RightPaneTabs activeView={rightPaneView} onChange={handleRightPaneChange} />
       </div>
@@ -1721,18 +1720,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             >
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="flex-1 space-y-4 overflow-y-auto p-3 sm:p-5">
-                  <section className="-mx-3 border-b border-brand-border/70 bg-brand-card/95 px-3 pb-3 pt-3 shadow-sm sm:-mx-5 sm:px-5">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <div className="min-w-0 flex-1">
-                        <JobNameEditor
-                          value={jobName}
-                          onChange={setJobName}
-                          inputClassName="mb-1"
-                          textClassName="mb-1"
-                        />
-                      </div>
-                    </div>
-                  </section>
                   {payload && (
                     <>
                       {!hasLegacyConfiguredPayload ? (
