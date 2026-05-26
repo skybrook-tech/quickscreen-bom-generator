@@ -1531,6 +1531,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
       ? `Save ${jobName.trim()}`
       : "Save Job";
   const saveDialogInitialName = jobName.trim() || defaultSaveJobName();
+  const headerJobTitle = cleanJobName || "New Quote";
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
@@ -1655,8 +1656,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     <AppShell
       headerActions={headerActions}
       topBar={<PwaStatusBanners />}
-      brandLogoSrc="/icons/glass-outlet-symbol.svg"
-      brandLogoAlt="Glass Outlet"
+      jobTitle={headerJobTitle}
       headerPriceLabel={headerPriceLabel}
       customerMode={customerMode}
       onCustomerModeChange={setCustomerMode}

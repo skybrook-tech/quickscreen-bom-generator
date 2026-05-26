@@ -7,3 +7,4 @@
 | 023-app-icon-swap | Merged | #58 | codex/brief-023-app-icon-swap |
 | 024-voice-ai-fixes | Merged | #54 | codex/brief-024-voice-ai-fixes |
 | 025-property-map-sidebar | PR open | #64 | codex/brief-025-property-map-sidebar |
+| 026-title-bar-job-name | PR open | #65 | codex/brief-026-title-bar-job-name |
