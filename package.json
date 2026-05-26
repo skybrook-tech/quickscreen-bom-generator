@@ -45,7 +45,7 @@
     "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1",
     "autoprefixer": "^10.4.27",
-    "cypress": "^13.17.0",
+    "cypress": "^15.15.0",
     "jsdom": "^29.1.1",
     "postcss": "^8.5.8",
     "serve": "^14.2.4",
