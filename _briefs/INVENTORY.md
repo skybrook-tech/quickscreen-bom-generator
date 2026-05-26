@@ -12,4 +12,5 @@
 | 028-canvas-drawing-refinements | Merged | #68 | codex/brief-028-canvas-drawing-refinements |
 | 029-property-map-label-and-attribution-crop | Merged | #69 | codex/brief-029-property-map-label-and-attribution-crop |
 | 030-canvas-roadmap-layer-fix | Merged | #70 | codex/brief-030-canvas-roadmap-layer-fix |
-| 031-run-section-gate-ui-consistency | PR open | #71 | codex/brief-031-run-section-gate-ui-consistency |
+| 031-run-section-gate-ui-consistency | Merged | #71 | codex/brief-031-run-section-gate-ui-consistency |
+| 032-ui-polish-and-hamburger-menu | PR open | #72 | codex/brief-032-ui-polish-and-hamburger-menu |
