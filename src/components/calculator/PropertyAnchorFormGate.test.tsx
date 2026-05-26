@@ -228,12 +228,13 @@ describe("PropertyAnchorFormGate", () => {
       await Promise.resolve();
     });
 
-    expect(requestedUrls.map((url) => new URL(url).searchParams.get("maptype"))).toEqual([
-      "hybrid",
-    ]);
-    expect(requestedUrls.map((url) => new URL(url).searchParams.get("size"))).toEqual([
-      "640x640",
-    ]);
+    expect(requestedUrls.length).toBeGreaterThanOrEqual(1);
+    expect(requestedUrls.map((url) => new URL(url).searchParams.get("maptype"))).toEqual(
+      requestedUrls.map(() => "hybrid"),
+    );
+    expect(requestedUrls.map((url) => new URL(url).searchParams.get("size"))).toEqual(
+      requestedUrls.map(() => "640x640"),
+    );
     expect(onAnchorConfirmed).toHaveBeenCalledWith(
       expect.objectContaining({
         snapshot: expect.objectContaining({

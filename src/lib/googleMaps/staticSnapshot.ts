@@ -9,6 +9,7 @@ type StaticMapType = CanonicalMapLayerId | "hybrid";
 export const STATIC_MAP_MAX_DIMENSION = 640;
 export const STATIC_MAP_CAPTURE_SIZE_MULTIPLIER = 2;
 export const STATIC_MAP_DEFAULT_VIEWPORT_FRACTION = 0.5;
+export const GOOGLE_ATTRIBUTION_STRIP_HEIGHT_PX = 22;
 
 export const MAPS_STATIC_API_ENABLEMENT_MESSAGE =
   "Maps Static API could not load this property view. Enable Maps Static API in Google Cloud Console: APIs & Services > Library > Maps Static API > Enable, then add Maps Static API to the allowed APIs on the existing Google Maps API key.";
@@ -138,6 +139,16 @@ export const ROADMAP_BOUNDARY_EMPHASIS_STYLES = [
   "feature:transit.line|visibility:off",
 ];
 
+export const STATIC_MAP_STYLE_PARAMS = [
+  "feature:road.local|element:labels|visibility:off",
+  "feature:road.arterial|element:labels|lightness:30",
+  "feature:transit|visibility:off",
+  "feature:poi.business|visibility:off",
+  "feature:poi.attraction|visibility:off",
+  "feature:poi.park|element:labels|visibility:off",
+  "feature:water|element:labels|visibility:off",
+];
+
 function clampOpacity(value: number | undefined): number {
   if (!Number.isFinite(value)) return 1;
   return Math.max(0, Math.min(1, Number(value)));
@@ -156,12 +167,97 @@ export function buildStaticMapUrl(
     key: apiKey,
   });
   if (mapType === "roadmap") {
-    for (const style of ROADMAP_BOUNDARY_EMPHASIS_STYLES) {
-      params.append("style", style);
-    }
+    return appendStaticMapStyles(params, ROADMAP_BOUNDARY_EMPHASIS_STYLES);
+  }
+
+  if (mapType === "hybrid") {
+    return appendStaticMapStyles(params, STATIC_MAP_STYLE_PARAMS);
   }
 
   return `https://maps.googleapis.com/maps/api/staticmap?${params.toString()}`;
+}
+
+function appendStaticMapStyles(
+  params: URLSearchParams,
+  styles: string[],
+): string {
+  const styleQuery = styles.map((style) => `style=${style}`).join("&");
+  return `https://maps.googleapis.com/maps/api/staticmap?${params.toString()}&${styleQuery}`;
+}
+
+export function croppedSnapshotHeight(height: number, scale: 1 | 2 = 1): number {
+  return Math.max(1, Math.round(height) - GOOGLE_ATTRIBUTION_STRIP_HEIGHT_PX * scale);
+}
+
+export async function cropAttribution(
+  srcUrl: string,
+  scale: 1 | 2 = 1,
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      try {
+        const stripHeight = GOOGLE_ATTRIBUTION_STRIP_HEIGHT_PX * scale;
+        const canvas = document.createElement("canvas");
+        canvas.width = img.naturalWidth;
+        canvas.height = Math.max(1, img.naturalHeight - stripHeight);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Canvas context unavailable"));
+          return;
+        }
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/png"));
+      } catch (error) {
+        reject(error);
+      }
+    };
+    img.onerror = () => reject(new Error("Failed to load map image for crop"));
+    img.src = srcUrl;
+  });
+}
+
+export async function cropMapSnapshotAttribution(
+  snapshot: CanonicalMapSnapshot,
+  scale: 1 | 2 = 1,
+  cropper: typeof cropAttribution = cropAttribution,
+): Promise<CanonicalMapSnapshot> {
+  const sourceUrl = snapshot.layers?.satellite?.url ?? snapshot.url;
+  if (!sourceUrl) return snapshot;
+
+  try {
+    const croppedUrl = await cropper(sourceUrl, scale);
+    const nextHeight = croppedSnapshotHeight(snapshot.height, scale);
+    const nextSourceViewportHeight =
+      snapshot.sourceViewportHeight === undefined
+        ? undefined
+        : Math.min(snapshot.sourceViewportHeight, nextHeight);
+    const layers = snapshot.layers
+      ? {
+          ...snapshot.layers,
+          satellite: snapshot.layers.satellite
+            ? {
+                ...snapshot.layers.satellite,
+                url: croppedUrl,
+              }
+            : snapshot.layers.satellite,
+        }
+      : undefined;
+
+    return {
+      ...snapshot,
+      height: nextHeight,
+      ...(nextSourceViewportHeight !== undefined
+        ? { sourceViewportHeight: nextSourceViewportHeight }
+        : {}),
+      ...(snapshot.url ? { url: croppedUrl } : {}),
+      ...(layers ? { layers } : {}),
+    };
+  } catch (error) {
+    console.warn("Map attribution crop failed; using uncropped Static Maps image.", error);
+    return snapshot;
+  }
 }
 
 export function preloadStaticMapImage(url: string): Promise<void> {

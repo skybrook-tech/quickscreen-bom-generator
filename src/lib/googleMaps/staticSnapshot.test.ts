@@ -1,9 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   buildStaticMapUrl,
   clampStaticMapSize,
+  cropMapSnapshotAttribution,
+  croppedSnapshotHeight,
   createLayeredMapSnapshot,
   createMapSnapshot,
+  GOOGLE_ATTRIBUTION_STRIP_HEIGHT_PX,
   getDefaultSnapshotViewportTransform,
   isMobileTouchViewport,
   metresPerPixelAt,
@@ -12,6 +15,7 @@ import {
   STATIC_MAP_CAPTURE_SIZE_MULTIPLIER,
   STATIC_MAP_DEFAULT_VIEWPORT_FRACTION,
   STATIC_MAP_MAX_DIMENSION,
+  STATIC_MAP_STYLE_PARAMS,
   updateMapSnapshotLayer,
 } from "./staticSnapshot";
 
@@ -125,7 +129,10 @@ describe("Static Maps snapshots", () => {
     expect(url.searchParams.get("size")).toBe("640x640");
     expect(url.searchParams.get("maptype")).toBe("hybrid");
     expect(url.searchParams.get("key")).toBe("test-key");
-    expect(url.searchParams.getAll("style")).toEqual([]);
+    expect(url.searchParams.getAll("style")).toEqual(STATIC_MAP_STYLE_PARAMS);
+    expect(buildStaticMapUrl(snapshot, "test-key")).toContain(
+      "style=feature:road.local|element:labels|visibility:off",
+    );
     expect(satelliteUrl.searchParams.get("maptype")).toBe("satellite");
     expect(satelliteUrl.searchParams.getAll("style")).toEqual([]);
     expect(roadmapUrl.searchParams.get("maptype")).toBe("roadmap");
@@ -144,6 +151,80 @@ describe("Static Maps snapshots", () => {
         "feature:transit.line|visibility:off",
       ]),
     );
+  });
+
+  it("crops the Google attribution strip from a snapshot layer", async () => {
+    const snapshot = normalizeMapSnapshot(
+      createMapSnapshot({
+        centerLat: -33.8688,
+        centerLng: 151.2093,
+        zoom: 19,
+        viewportWidth: 640,
+        viewportHeight: 360,
+        capturedAt: "2026-05-22T00:00:00.000Z",
+      }),
+      "test-key",
+    )!;
+
+    const cropped = await cropMapSnapshotAttribution(
+      snapshot,
+      1,
+      async () => "data:image/png;base64,cropped",
+    );
+
+    expect(GOOGLE_ATTRIBUTION_STRIP_HEIGHT_PX).toBe(22);
+    expect(cropped.height).toBe(croppedSnapshotHeight(snapshot.height, 1));
+    expect(cropped.height).toBe(snapshot.height - 22);
+    expect(cropped.layers?.satellite?.url).toBe("data:image/png;base64,cropped");
+  });
+
+  it("crops a scale-2 attribution strip from a snapshot layer", async () => {
+    const snapshot = normalizeMapSnapshot(
+      createMapSnapshot({
+        centerLat: -33.8688,
+        centerLng: 151.2093,
+        zoom: 19,
+        viewportWidth: 640,
+        viewportHeight: 360,
+        capturedAt: "2026-05-22T00:00:00.000Z",
+      }),
+      "test-key",
+    )!;
+
+    const cropped = await cropMapSnapshotAttribution(
+      snapshot,
+      2,
+      async () => "data:image/png;base64,cropped-2x",
+    );
+
+    expect(cropped.height).toBe(snapshot.height - 44);
+    expect(cropped.layers?.satellite?.url).toBe("data:image/png;base64,cropped-2x");
+  });
+
+  it("keeps the uncropped snapshot if attribution cropping fails", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined);
+    const snapshot = normalizeMapSnapshot(
+      createMapSnapshot({
+        centerLat: -33.8688,
+        centerLng: 151.2093,
+        zoom: 19,
+        viewportWidth: 640,
+        viewportHeight: 360,
+        capturedAt: "2026-05-22T00:00:00.000Z",
+      }),
+      "test-key",
+    )!;
+
+    const cropped = await cropMapSnapshotAttribution(snapshot, 1, async () => {
+      throw new Error("tainted canvas");
+    });
+
+    expect(cropped).toBe(snapshot);
+    expect(warn).toHaveBeenCalledWith(
+      "Map attribution crop failed; using uncropped Static Maps image.",
+      expect.any(Error),
+    );
+    warn.mockRestore();
   });
 
   it("preloads a hybrid snapshot request", async () => {
