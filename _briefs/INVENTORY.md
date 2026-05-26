@@ -10,4 +10,5 @@
 | 026-title-bar-job-name | Merged | #65 | codex/brief-026-title-bar-job-name |
 | 027-pwa-icon-fix | Merged | #66 | codex/brief-027-pwa-icon-fix |
 | 028-canvas-drawing-refinements | Merged | #68 | codex/brief-028-canvas-drawing-refinements |
-| 029-property-map-label-and-attribution-crop | PR open | #69 | codex/brief-029-property-map-label-and-attribution-crop |
+| 029-property-map-label-and-attribution-crop | Merged | #69 | codex/brief-029-property-map-label-and-attribution-crop |
+| 030-canvas-roadmap-layer-fix | PR open | #70 | codex/brief-030-canvas-roadmap-layer-fix |

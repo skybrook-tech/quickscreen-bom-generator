@@ -171,7 +171,7 @@ describe("PropertyAnchorFormGate", () => {
     act(() => root.unmount());
   });
 
-  it("captures a hybrid Static Maps layer URL when using the current view", async () => {
+  it("captures satellite and roadmap Static Maps layer URLs when using the current view", async () => {
     vi.stubEnv("VITE_GOOGLE_MAPS_API_KEY", "test-key");
     const requestedUrls: string[] = [];
     class MockImage {
@@ -228,9 +228,9 @@ describe("PropertyAnchorFormGate", () => {
       await Promise.resolve();
     });
 
-    expect(requestedUrls.length).toBeGreaterThanOrEqual(1);
+    expect(requestedUrls.length).toBeGreaterThanOrEqual(2);
     expect(requestedUrls.map((url) => new URL(url).searchParams.get("maptype"))).toEqual(
-      requestedUrls.map(() => "hybrid"),
+      expect.arrayContaining(["satellite", "roadmap"]),
     );
     expect(requestedUrls.map((url) => new URL(url).searchParams.get("size"))).toEqual(
       requestedUrls.map(() => "640x640"),
@@ -244,9 +244,14 @@ describe("PropertyAnchorFormGate", () => {
           sourceViewportHeight: 480,
           layers: {
             satellite: expect.objectContaining({
-              url: expect.stringContaining("maptype=hybrid"),
+              url: expect.stringContaining("maptype=satellite"),
               visible: true,
               opacity: 1,
+            }),
+            roadmap: expect.objectContaining({
+              url: expect.stringContaining("maptype=roadmap"),
+              visible: false,
+              opacity: 0.5,
             }),
           },
         }),

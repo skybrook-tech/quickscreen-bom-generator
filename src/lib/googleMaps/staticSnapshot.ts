@@ -149,6 +149,11 @@ export const STATIC_MAP_STYLE_PARAMS = [
   "feature:water|element:labels|visibility:off",
 ];
 
+export const ROADMAP_STATIC_MAP_STYLE_PARAMS = [
+  ...STATIC_MAP_STYLE_PARAMS,
+  ...ROADMAP_BOUNDARY_EMPHASIS_STYLES,
+];
+
 function clampOpacity(value: number | undefined): number {
   if (!Number.isFinite(value)) return 1;
   return Math.max(0, Math.min(1, Number(value)));
@@ -167,7 +172,7 @@ export function buildStaticMapUrl(
     key: apiKey,
   });
   if (mapType === "roadmap") {
-    return appendStaticMapStyles(params, ROADMAP_BOUNDARY_EMPHASIS_STYLES);
+    return appendStaticMapStyles(params, ROADMAP_STATIC_MAP_STYLE_PARAMS);
   }
 
   if (mapType === "hybrid") {
@@ -223,27 +228,43 @@ export async function cropMapSnapshotAttribution(
   scale: 1 | 2 = 1,
   cropper: typeof cropAttribution = cropAttribution,
 ): Promise<CanonicalMapSnapshot> {
-  const sourceUrl = snapshot.layers?.satellite?.url ?? snapshot.url;
-  if (!sourceUrl) return snapshot;
+  const layerEntries = snapshot.layers
+    ? (Object.entries(snapshot.layers) as Array<
+        [CanonicalMapLayerId, CanonicalMapSnapshotLayer | undefined]
+      >).filter(
+        (entry): entry is [
+          CanonicalMapLayerId,
+          CanonicalMapSnapshotLayer & { url: string },
+        ] => Boolean(entry[1]?.url),
+      )
+    : [];
+  const shouldCropLegacyUrl = Boolean(snapshot.url);
+  if (layerEntries.length === 0 && !shouldCropLegacyUrl) return snapshot;
 
   try {
-    const croppedUrl = await cropper(sourceUrl, scale);
+    const croppedLayers = snapshot.layers ? { ...snapshot.layers } : undefined;
+    const layerResults = await Promise.all(
+      layerEntries.map(async ([layerId, layer]) => ({
+        layerId,
+        croppedUrl: await cropper(layer.url, scale),
+      })),
+    );
+    for (const { layerId, croppedUrl } of layerResults) {
+      const layer = snapshot.layers?.[layerId];
+      if (!layer || !croppedLayers) continue;
+      croppedLayers[layerId] = {
+        ...layer,
+        url: croppedUrl,
+      };
+    }
+    const croppedLegacyUrl = shouldCropLegacyUrl
+      ? (croppedLayers?.satellite?.url ?? await cropper(snapshot.url!, scale))
+      : undefined;
     const nextHeight = croppedSnapshotHeight(snapshot.height, scale);
     const nextSourceViewportHeight =
       snapshot.sourceViewportHeight === undefined
         ? undefined
         : Math.min(snapshot.sourceViewportHeight, nextHeight);
-    const layers = snapshot.layers
-      ? {
-          ...snapshot.layers,
-          satellite: snapshot.layers.satellite
-            ? {
-                ...snapshot.layers.satellite,
-                url: croppedUrl,
-              }
-            : snapshot.layers.satellite,
-        }
-      : undefined;
 
     return {
       ...snapshot,
@@ -251,8 +272,8 @@ export async function cropMapSnapshotAttribution(
       ...(nextSourceViewportHeight !== undefined
         ? { sourceViewportHeight: nextSourceViewportHeight }
         : {}),
-      ...(snapshot.url ? { url: croppedUrl } : {}),
-      ...(layers ? { layers } : {}),
+      ...(croppedLegacyUrl ? { url: croppedLegacyUrl } : {}),
+      ...(croppedLayers ? { layers: croppedLayers } : {}),
     };
   } catch (error) {
     console.warn("Map attribution crop failed; using uncropped Static Maps image.", error);
@@ -276,16 +297,38 @@ export async function createLayeredMapSnapshot(
   loadImage: StaticMapImageLoader = preloadStaticMapImage,
 ): Promise<CanonicalMapSnapshot> {
   const snapshot = createMapSnapshot(input);
-  const hybridUrl = buildStaticMapUrl(snapshot, apiKey, "hybrid");
-  await loadImage(hybridUrl);
+  const satelliteUrl = buildStaticMapUrl(snapshot, apiKey, "satellite");
+  const roadmapUrl = buildStaticMapUrl(snapshot, apiKey, "roadmap");
+  const [satelliteResult, roadmapResult] = await Promise.allSettled([
+    loadImage(satelliteUrl),
+    loadImage(roadmapUrl),
+  ]);
+
+  if (satelliteResult.status === "rejected") {
+    throw satelliteResult.reason;
+  }
+  if (roadmapResult.status === "rejected") {
+    console.warn(
+      "Roadmap Static Maps layer failed to preload; continuing with satellite only.",
+      roadmapResult.reason,
+    );
+  }
 
   return {
     ...snapshot,
     layers: {
       satellite: {
-        url: hybridUrl,
+        url: satelliteUrl,
         ...DEFAULT_LAYER_STATE.satellite,
       },
+      ...(roadmapResult.status === "fulfilled"
+        ? {
+            roadmap: {
+              url: roadmapUrl,
+              ...DEFAULT_LAYER_STATE.roadmap,
+            },
+          }
+        : {}),
     },
   };
 }
