@@ -4,6 +4,8 @@ import type {
   CanonicalMapSnapshotLayer,
 } from "../../types/canonical.types";
 
+type StaticMapType = CanonicalMapLayerId | "hybrid";
+
 export const STATIC_MAP_MAX_DIMENSION = 640;
 export const STATIC_MAP_CAPTURE_SIZE_MULTIPLIER = 2;
 export const STATIC_MAP_DEFAULT_VIEWPORT_FRACTION = 0.5;
@@ -117,16 +119,6 @@ export function isMobileTouchViewport(win: Window = window): boolean {
   );
 }
 
-function layerStateForSnapshotCapture(input: MapSnapshotCaptureInput) {
-  return {
-    satellite: DEFAULT_LAYER_STATE.satellite,
-    roadmap: {
-      ...DEFAULT_LAYER_STATE.roadmap,
-      visible: input.mobileLayerDefaults ? true : DEFAULT_LAYER_STATE.roadmap.visible,
-    },
-  };
-}
-
 export const ROADMAP_BOUNDARY_EMPHASIS_STYLES = [
   "feature:poi|visibility:off",
   "feature:administrative.land_parcel|element:geometry.stroke|color:0x000000",
@@ -154,7 +146,7 @@ function clampOpacity(value: number | undefined): number {
 export function buildStaticMapUrl(
   snapshot: CanonicalMapSnapshot,
   apiKey: string,
-  mapType: CanonicalMapLayerId = "satellite",
+  mapType: StaticMapType = "hybrid",
 ): string {
   const params = new URLSearchParams({
     center: `${snapshot.centerLat},${snapshot.centerLng}`,
@@ -188,41 +180,15 @@ export async function createLayeredMapSnapshot(
   loadImage: StaticMapImageLoader = preloadStaticMapImage,
 ): Promise<CanonicalMapSnapshot> {
   const snapshot = createMapSnapshot(input);
-  const layerState = layerStateForSnapshotCapture(input);
-  const satelliteUrl = buildStaticMapUrl(snapshot, apiKey, "satellite");
-  const roadmapUrl = buildStaticMapUrl(snapshot, apiKey, "roadmap");
-  const [satelliteResult, roadmapResult] = await Promise.allSettled([
-    loadImage(satelliteUrl),
-    loadImage(roadmapUrl),
-  ]);
-
-  if (satelliteResult.status === "rejected") {
-    throw satelliteResult.reason instanceof Error
-      ? satelliteResult.reason
-      : new Error(MAPS_STATIC_API_ENABLEMENT_MESSAGE);
-  }
-
-  if (roadmapResult.status === "rejected") {
-    console.warn(
-      "[StaticMapSnapshot] Roadmap layer could not be preloaded; falling back to satellite-only snapshot.",
-      roadmapResult.reason,
-    );
-  }
+  const hybridUrl = buildStaticMapUrl(snapshot, apiKey, "hybrid");
+  await loadImage(hybridUrl);
 
   return {
     ...snapshot,
     layers: {
       satellite: {
-        url: satelliteUrl,
-        ...layerState.satellite,
-      },
-      roadmap: {
-        url: roadmapResult.status === "fulfilled" ? roadmapUrl : null,
-        visible:
-          roadmapResult.status === "fulfilled"
-            ? layerState.roadmap.visible
-            : false,
-        opacity: layerState.roadmap.opacity,
+        url: hybridUrl,
+        ...DEFAULT_LAYER_STATE.satellite,
       },
     },
   };
@@ -239,7 +205,7 @@ export function normalizeMapSnapshot(
   const roadmapLegacyUrl = snapshot.layers?.roadmap?.url;
   const fallbackSatelliteUrl =
     satelliteLegacyUrl ||
-    (!hasLayerShape && apiKey ? buildStaticMapUrl(snapshot, apiKey, "satellite") : null);
+    (!hasLayerShape && apiKey ? buildStaticMapUrl(snapshot, apiKey, "hybrid") : null);
 
   const layers: CanonicalMapSnapshot["layers"] = {};
   if (fallbackSatelliteUrl || hasLayerShape) {

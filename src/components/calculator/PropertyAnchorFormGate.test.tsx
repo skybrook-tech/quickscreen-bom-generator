@@ -69,7 +69,7 @@ describe("PropertyAnchorFormGate", () => {
     expect(container.querySelector('[data-testid="property-map-collapsed"]')).not.toBeNull();
     expect(container.textContent).toContain("1 Macquarie Street, Sydney NSW 2000, Australia");
     expect(container.textContent).toContain("Change view");
-    expect(container.querySelector('[aria-label="Property satellite map"]')).toBeNull();
+    expect(container.querySelector('[aria-label="Property hybrid map"]')).toBeNull();
 
     act(() => root.unmount());
   });
@@ -84,7 +84,7 @@ describe("PropertyAnchorFormGate", () => {
 
     expect(container.textContent).toContain("Property address");
     expect(container.textContent).toContain("Find property");
-    expect(container.querySelector('[aria-label="Property satellite map"]')).toBeNull();
+    expect(container.querySelector('[aria-label="Property hybrid map"]')).toBeNull();
 
     act(() => root.unmount());
   });
@@ -99,7 +99,79 @@ describe("PropertyAnchorFormGate", () => {
     });
   });
 
-  it("captures satellite and roadmap Static Maps layer URLs when using the current view", async () => {
+  it("renders the hybrid map without the map type selector or GPS coordinates", () => {
+    const container = document.createElement("div");
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(
+        <PropertyMap
+          initialAnchor={{
+            lat: -28.503385,
+            lng: 153.526262,
+            address: "9 Mogo Place, Billinudgel NSW, Australia",
+          }}
+          onAnchorConfirmed={vi.fn()}
+        />,
+      );
+    });
+
+    const changeView = Array.from(container.querySelectorAll("button")).find((button) =>
+      button.textContent?.includes("Change view"),
+    );
+    expect(changeView).not.toBeUndefined();
+    act(() => {
+      changeView!.click();
+    });
+
+    expect(container.querySelector('[aria-label="Property map type"]')).toBeNull();
+    expect(container.querySelector('[aria-label="Property hybrid map"]')).not.toBeNull();
+    expect(container.textContent).toContain("Use this view");
+    expect(container.textContent).not.toContain("Pin:");
+    expect(container.textContent).not.toContain("-28.503385");
+    expect(container.textContent).not.toContain("153.526262");
+
+    act(() => root.unmount());
+  });
+
+  it("renders the use-view action before the map in DOM order", () => {
+    const container = document.createElement("div");
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(
+        <PropertyMap
+          initialAnchor={{
+            lat: -28.503385,
+            lng: 153.526262,
+            address: "9 Mogo Place, Billinudgel NSW, Australia",
+          }}
+          onAnchorConfirmed={vi.fn()}
+        />,
+      );
+    });
+
+    const changeView = Array.from(container.querySelectorAll("button")).find((button) =>
+      button.textContent?.includes("Change view"),
+    );
+    act(() => {
+      changeView!.click();
+    });
+
+    const useView = Array.from(container.querySelectorAll("button")).find((button) =>
+      button.textContent?.includes("Use this view"),
+    );
+    const map = container.querySelector('[aria-label="Property hybrid map"]');
+    expect(useView).not.toBeUndefined();
+    expect(map).not.toBeNull();
+    expect(Boolean(useView!.compareDocumentPosition(map!) & Node.DOCUMENT_POSITION_FOLLOWING)).toBe(
+      true,
+    );
+
+    act(() => root.unmount());
+  });
+
+  it("captures a hybrid Static Maps layer URL when using the current view", async () => {
     vi.stubEnv("VITE_GOOGLE_MAPS_API_KEY", "test-key");
     const requestedUrls: string[] = [];
     class MockImage {
@@ -157,11 +229,9 @@ describe("PropertyAnchorFormGate", () => {
     });
 
     expect(requestedUrls.map((url) => new URL(url).searchParams.get("maptype"))).toEqual([
-      "satellite",
-      "roadmap",
+      "hybrid",
     ]);
     expect(requestedUrls.map((url) => new URL(url).searchParams.get("size"))).toEqual([
-      "640x640",
       "640x640",
     ]);
     expect(onAnchorConfirmed).toHaveBeenCalledWith(
@@ -173,14 +243,9 @@ describe("PropertyAnchorFormGate", () => {
           sourceViewportHeight: 480,
           layers: {
             satellite: expect.objectContaining({
-              url: expect.stringContaining("maptype=satellite"),
+              url: expect.stringContaining("maptype=hybrid"),
               visible: true,
               opacity: 1,
-            }),
-            roadmap: expect.objectContaining({
-              url: expect.stringContaining("maptype=roadmap"),
-              visible: false,
-              opacity: 0.5,
             }),
           },
         }),

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   buildStaticMapUrl,
   clampStaticMapSize,
@@ -115,6 +115,7 @@ describe("Static Maps snapshots", () => {
     });
 
     const url = new URL(buildStaticMapUrl(snapshot, "test-key"));
+    const satelliteUrl = new URL(buildStaticMapUrl(snapshot, "test-key", "satellite"));
     const roadmapUrl = new URL(buildStaticMapUrl(snapshot, "test-key", "roadmap"));
     expect(url.origin + url.pathname).toBe(
       "https://maps.googleapis.com/maps/api/staticmap",
@@ -122,9 +123,11 @@ describe("Static Maps snapshots", () => {
     expect(url.searchParams.get("center")).toBe("-33.8688,151.2093");
     expect(url.searchParams.get("zoom")).toBe("19");
     expect(url.searchParams.get("size")).toBe("640x640");
-    expect(url.searchParams.get("maptype")).toBe("satellite");
+    expect(url.searchParams.get("maptype")).toBe("hybrid");
     expect(url.searchParams.get("key")).toBe("test-key");
     expect(url.searchParams.getAll("style")).toEqual([]);
+    expect(satelliteUrl.searchParams.get("maptype")).toBe("satellite");
+    expect(satelliteUrl.searchParams.getAll("style")).toEqual([]);
     expect(roadmapUrl.searchParams.get("maptype")).toBe("roadmap");
     expect(roadmapUrl.searchParams.getAll("style")).toEqual(
       ROADMAP_BOUNDARY_EMPHASIS_STYLES,
@@ -143,9 +146,8 @@ describe("Static Maps snapshots", () => {
     );
   });
 
-  it("preloads satellite and roadmap snapshot requests in parallel", async () => {
+  it("preloads a hybrid snapshot request", async () => {
     const calls: string[] = [];
-    const resolvers: Array<() => void> = [];
     const snapshotPromise = createLayeredMapSnapshot(
       {
         centerLat: -28.503385,
@@ -158,32 +160,24 @@ describe("Static Maps snapshots", () => {
       "test-key",
       (url) => {
         calls.push(url);
-        return new Promise<void>((resolve) => {
-          resolvers.push(resolve);
-        });
+        return Promise.resolve();
       },
     );
 
     expect(calls.map((url) => new URL(url).searchParams.get("maptype"))).toEqual([
-      "satellite",
-      "roadmap",
+      "hybrid",
     ]);
-    resolvers.forEach((resolve) => resolve());
 
     const snapshot = await snapshotPromise;
-    expect(snapshot.layers?.satellite?.url).toContain("maptype=satellite");
-    expect(snapshot.layers?.roadmap?.url).toContain("maptype=roadmap");
+    expect(snapshot.layers?.satellite?.url).toContain("maptype=hybrid");
     expect(snapshot.layers?.satellite).toMatchObject({
       visible: true,
       opacity: 1,
     });
-    expect(snapshot.layers?.roadmap).toMatchObject({
-      visible: false,
-      opacity: 0.5,
-    });
+    expect(snapshot.layers?.roadmap).toBeUndefined();
   });
 
-  it("keeps roadmap hidden on desktop snapshots and visible on mobile touch captures", async () => {
+  it("uses the same hybrid snapshot for desktop and mobile touch captures", async () => {
     const desktopSnapshot = await createLayeredMapSnapshot(
       {
         centerLat: -28.503385,
@@ -210,14 +204,10 @@ describe("Static Maps snapshots", () => {
       () => Promise.resolve(),
     );
 
-    expect(desktopSnapshot.layers?.roadmap).toMatchObject({
-      visible: false,
-      opacity: 0.5,
-    });
-    expect(mobileSnapshot.layers?.roadmap).toMatchObject({
-      visible: true,
-      opacity: 0.5,
-    });
+    expect(desktopSnapshot.layers?.satellite?.url).toContain("maptype=hybrid");
+    expect(mobileSnapshot.layers?.satellite?.url).toContain("maptype=hybrid");
+    expect(desktopSnapshot.layers?.roadmap).toBeUndefined();
+    expect(mobileSnapshot.layers?.roadmap).toBeUndefined();
   });
 
   it("detects a mobile touch viewport for snapshot layer defaults", () => {
@@ -236,9 +226,8 @@ describe("Static Maps snapshots", () => {
     expect(isMobileTouchViewport(desktopWindow)).toBe(false);
   });
 
-  it("falls back to satellite-only if the roadmap preload fails", async () => {
-    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
-    const snapshot = await createLayeredMapSnapshot(
+  it("throws if the hybrid snapshot preload fails", async () => {
+    await expect(createLayeredMapSnapshot(
       {
         centerLat: -28.503385,
         centerLng: 153.526262,
@@ -248,23 +237,8 @@ describe("Static Maps snapshots", () => {
         capturedAt: "2026-05-22T00:00:00.000Z",
       },
       "test-key",
-      (url) =>
-        new URL(url).searchParams.get("maptype") === "roadmap"
-          ? Promise.reject(new Error("roadmap auth failed"))
-          : Promise.resolve(),
-    );
-
-    expect(snapshot.layers?.satellite?.url).toContain("maptype=satellite");
-    expect(snapshot.layers?.roadmap).toEqual({
-      url: null,
-      visible: false,
-      opacity: 0.5,
-    });
-    expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining("Roadmap layer could not be preloaded"),
-      expect.any(Error),
-    );
-    warnSpy.mockRestore();
+      () => Promise.reject(new Error("hybrid auth failed")),
+    )).rejects.toThrow("hybrid auth failed");
   });
 
   it("migrates a legacy single-image snapshot into a satellite layer", () => {

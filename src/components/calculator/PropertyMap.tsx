@@ -13,8 +13,6 @@ import {
 import type { CanonicalMapSnapshot } from "../../types/canonical.types";
 import { AddressInput, type LocatedAddress } from "./AddressInput";
 
-type MapType = "satellite" | "hybrid" | "roadmap" | "terrain";
-
 export interface PropertyAnchor {
   anchorLat: number;
   anchorLng: number;
@@ -123,7 +121,7 @@ export function PropertyMap({
               if (
                 initialSnapshot &&
                 !window.confirm(
-                  "Change view? Existing fence drawings will stay in place but the satellite background will move.",
+                  "Change view? Existing fence drawings will stay in place but the map background will move.",
                 )
               ) {
                 return;
@@ -187,7 +185,6 @@ function ExpandedPropertyMap({
   onPinChange,
   onConfirm,
 }: ExpandedPropertyMapProps) {
-  const [mapType, setMapType] = useState<MapType>("satellite");
   const snapshotReaderRef = useRef<(() => MapSnapshotCaptureInput | null) | null>(null);
   const [capturingSnapshot, setCapturingSnapshot] = useState(false);
   const [snapshotError, setSnapshotError] = useState<string | null>(null);
@@ -243,46 +240,14 @@ function ExpandedPropertyMap({
         ) : (
           <div className="min-w-0" aria-hidden="true" />
         )}
-        {mapRequested ? (
-          <label className="inline-flex items-center gap-2 text-xs font-bold text-brand-muted">
-            Map
-            <select
-              value={mapType}
-              onChange={(event) => setMapType(event.target.value as MapType)}
-              className="rounded-lg border border-brand-border bg-brand-bg px-3 py-2 text-xs font-bold text-brand-text outline-none transition-colors hover:border-brand-primary focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
-              aria-label="Property map type"
-              title="Property map type"
-            >
-              <option value="satellite">Satellite</option>
-              <option value="hybrid">Hybrid</option>
-              <option value="roadmap">Roadmap</option>
-              <option value="terrain">Terrain</option>
-            </select>
-          </label>
-        ) : null}
       </div>
 
       <AddressInput onLocated={onLocated} onEngaged={onMapRequested} />
-
-      {mapRequested ? (
-        <PropertyMapCanvas
-          pin={pin}
-          mapType={mapType}
-          initialSnapshot={initialSnapshot}
-          onPinChange={onPinChange}
-          onSnapshotReaderChange={(reader) => {
-            snapshotReaderRef.current = reader;
-          }}
-        />
-      ) : null}
 
       {pin && located ? (
         <div className="flex flex-col gap-3 rounded-xl border border-brand-border bg-brand-bg/60 p-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0 text-sm">
             <p className="font-bold text-brand-text">{located.formattedAddress}</p>
-            <p className="mt-1 text-xs font-semibold text-brand-muted">
-              Pin: {pin.lat.toFixed(6)}, {pin.lng.toFixed(6)}
-            </p>
             {snapshotError ? (
               <p className="mt-2 text-xs font-bold text-brand-danger">
                 {snapshotError}
@@ -306,13 +271,23 @@ function ExpandedPropertyMap({
           </button>
         </div>
       ) : null}
+
+      {mapRequested ? (
+        <PropertyMapCanvas
+          pin={pin}
+          initialSnapshot={initialSnapshot}
+          onPinChange={onPinChange}
+          onSnapshotReaderChange={(reader) => {
+            snapshotReaderRef.current = reader;
+          }}
+        />
+      ) : null}
     </section>
   );
 }
 
 interface PropertyMapCanvasProps {
   pin: { lat: number; lng: number } | null;
-  mapType: MapType;
   initialSnapshot: CanonicalMapSnapshot | null;
   onPinChange: (pin: { lat: number; lng: number }) => void;
   onSnapshotReaderChange: (
@@ -322,7 +297,6 @@ interface PropertyMapCanvasProps {
 
 function PropertyMapCanvas({
   pin,
-  mapType,
   initialSnapshot,
   onPinChange,
   onSnapshotReaderChange,
@@ -341,7 +315,7 @@ function PropertyMapCanvas({
     mapRef.current = new google.maps.Map(mapNodeRef.current, {
       center,
       zoom: initialSnapshot?.zoom ?? (pin ? PROPERTY_ZOOM : DEFAULT_ZOOM),
-      mapTypeId: mapType,
+      mapTypeId: "hybrid",
       ...PROPERTY_MAP_INTERACTION_OPTIONS,
       streetViewControl: false,
       fullscreenControl: false,
@@ -349,11 +323,7 @@ function PropertyMapCanvas({
       rotateControl: false,
       tilt: 0,
     });
-  }, [googleMaps.ready, initialSnapshot, mapType, pin]);
-
-  useEffect(() => {
-    mapRef.current?.setMapTypeId(mapType);
-  }, [mapType]);
+  }, [googleMaps.ready, initialSnapshot, pin]);
 
   useEffect(() => {
     if (!googleMaps.ready || !mapRef.current || !pin) return;
@@ -417,7 +387,7 @@ function PropertyMapCanvas({
           </div>
         </div>
       ) : null}
-      <div ref={mapNodeRef} className="h-full w-full" aria-label="Property satellite map" />
+      <div ref={mapNodeRef} className="h-full w-full" aria-label="Property hybrid map" />
     </div>
   );
 }
