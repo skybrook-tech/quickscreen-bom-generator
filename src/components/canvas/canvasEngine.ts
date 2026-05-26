@@ -691,7 +691,7 @@ export function initCanvasEngine(
     slidingSide: "front",
     widthMM: DEFAULT_GATE_WIDTH_MM,
   };
-  let drawStartHintDismissed = false;
+  let canvasHintsDismissed = false;
   let highlightedMapLabel: string | null = null;
   let labelCollisionBoxes: LabelCollisionBox[] = [];
   let textNotes: CanvasTextNote[] = [];
@@ -1336,6 +1336,7 @@ export function initCanvasEngine(
         labels,
       );
     }
+    drawRunPointMarkers(runColorIdx);
 
     // Boundary runs — dashed gray lines (non-product context lines)
     {
@@ -1569,14 +1570,13 @@ export function initCanvasEngine(
   }
 
   function drawCursorHint() {
+    if (canvasHintsDismissed) return;
     let text = "";
     if (tool === "draw") {
       text =
         activeRunIdx >= 0
           ? "Tap/click next point - double-tap/double-click to finish"
-          : drawStartHintDismissed
-            ? ""
-            : "Tap/click to start fence";
+          : "Tap/click to start fence";
     }
     if (tool === "gate") text = "Tap/click a fence section to place gate";
     if (tool === "building") text = "Drag a building rectangle";
@@ -1610,6 +1610,25 @@ export function initCanvasEngine(
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
     ctx.fillText(text, x + padX, y + h / 2);
+    ctx.restore();
+  }
+
+  function drawRunPointMarkers(runColorIdx: Map<number, number>) {
+    ctx.save();
+    for (let ri = 0; ri < runs.length; ri++) {
+      const run = runs[ri];
+      if (run.isBoundary || run.points.length === 0) continue;
+      const fill = getRunColor(runColorIdx.get(ri) ?? 0);
+      for (const pt of run.points) {
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 4 / zoom, 0, Math.PI * 2);
+        ctx.fillStyle = fill;
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,0.96)";
+        ctx.lineWidth = 1.5 / zoom;
+        ctx.stroke();
+      }
+    }
     ctx.restore();
   }
 
@@ -3111,6 +3130,7 @@ export function initCanvasEngine(
     }
 
     if (tool === "text") {
+      canvasHintsDismissed = true;
       pushSnapshotUndo();
       pendingTextNote = { start: canvasPt, current: canvasPt };
       scheduleRedraw();
@@ -3118,6 +3138,7 @@ export function initCanvasEngine(
     }
 
     if (tool === "freehand") {
+      canvasHintsDismissed = true;
       pushSnapshotUndo();
       pendingFreehandStroke = {
         points: [canvasPt],
@@ -3132,6 +3153,7 @@ export function initCanvasEngine(
     }
 
     if (tool === "arrow") {
+      canvasHintsDismissed = true;
       if (pendingArrow) {
         pendingArrow.to = canvasPt;
         if (dist(pendingArrow.from, pendingArrow.to) > 2 / zoom) {
@@ -3186,6 +3208,7 @@ export function initCanvasEngine(
             depthMM,
           );
           if (placed) {
+            canvasHintsDismissed = true;
             notifyChange();
             scheduleRedraw();
           }
@@ -3197,6 +3220,7 @@ export function initCanvasEngine(
     }
 
     if (tool === "building") {
+      canvasHintsDismissed = true;
       pushSnapshotUndo();
       pendingBuildingRect = { start: canvasPt, current: canvasPt };
       scheduleRedraw();
@@ -3204,7 +3228,7 @@ export function initCanvasEngine(
     }
 
     if (tool === "draw") {
-      drawStartHintDismissed = true;
+      canvasHintsDismissed = true;
       clearSegmentPreview();
       if (isNearActiveLastPoint(screenPtDown)) {
         stopChain(false);
@@ -3262,6 +3286,7 @@ export function initCanvasEngine(
     }
 
     if (tool === "boundary") {
+      canvasHintsDismissed = true;
       clearSegmentPreview();
       if (activeRunIdx === -1 || runs[activeRunIdx]?.finished) {
         mouseCanvas = worldPt;
@@ -3327,6 +3352,7 @@ export function initCanvasEngine(
           slidingSide: pendingGatePlacement.slidingSide,
           variables: pendingGatePlacement.variables,
         });
+        canvasHintsDismissed = true;
         notifyChange();
         scheduleRedraw();
         config.onGatePlaced?.(
@@ -4382,7 +4408,7 @@ export function initCanvasEngine(
     pendingArrow = null;
     clearSegmentPreview();
     activeRunIdx = -1;
-    drawStartHintDismissed = false;
+    canvasHintsDismissed = false;
     notifyChange();
     scheduleRedraw();
   }
@@ -4512,6 +4538,14 @@ export function initCanvasEngine(
         : {}),
     };
     scheduleRedraw();
+  }
+
+  function getViewportTransform() {
+    return {
+      pan: { ...pan },
+      zoom,
+      scale,
+    };
   }
 
   /**
@@ -5147,9 +5181,14 @@ export function initCanvasEngine(
     arrows = [...nextArrows];
     pendingArrow = null;
     activeRunIdx = -1;
-    drawStartHintDismissed = newRuns.some(
+    canvasHintsDismissed =
+      newRuns.some(
       (run) => !run.isBoundary && run.points.length > 0,
-    );
+      ) ||
+      textNotes.length > 0 ||
+      siteMarkers.length > 0 ||
+      freehandStrokes.length > 0 ||
+      arrows.length > 0;
     undoStack = [];
     redoStack = [];
     notifyHistoryChange();
@@ -5259,6 +5298,7 @@ export function initCanvasEngine(
     canRedo: () => redoStack.length > 0,
     getHistoryState,
     resetView,
+    getViewportTransform,
     zoomIn,
     zoomOut,
     setSnapToGrid,
