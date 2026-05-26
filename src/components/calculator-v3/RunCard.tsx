@@ -17,7 +17,6 @@ import { Button } from "../shared/Button";
 import { SegmentRow } from "./SegmentRow";
 import { colourName } from "./ColourPalette";
 import { RunSettingsEditor } from "./RunSettingsEditor";
-import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
 import { InlineHeightEditor } from "./InlineHeightEditor";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
@@ -61,12 +60,8 @@ function runMasterVariables(
 
 export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenConsumed }: Props) {
   const { state, dispatch } = useCalculator();
-  const [expandedId, setExpandedId] = useState<string | null>(null);
   const [runSettingsOpen, setRunSettingsOpen] = useState(false);
   const [removeRunDialogOpen, setRemoveRunDialogOpen] = useState(false);
-  const [teachingDismissed, setTeachingDismissed] = useState(
-    () => typeof window !== "undefined" && window.localStorage.getItem(RUN_DEFAULTS_TEACHING_KEY) === "true",
-  );
   const runCollapseRef = useRef<number | null>(null);
 
   const runVariables = useMemo(
@@ -101,14 +96,8 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   useEffect(() => {
     if (!autoOpenFirstSection || !firstSegment) return;
     setRunSettingsOpen(false);
-    setExpandedId(firstSegment.segmentId);
     onAutoOpenConsumed?.();
   }, [autoOpenFirstSection, firstSegment, onAutoOpenConsumed]);
-
-  function dismissRunDefaultsTeaching() {
-    setTeachingDismissed(true);
-    window.localStorage.setItem(RUN_DEFAULTS_TEACHING_KEY, "true");
-  }
 
   function keepRunSettingsOpen() {
     if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
@@ -191,7 +180,6 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
       gateProductCode: GATE_PRODUCT_CODE,
       variables: defaultGateVariables({ ...masterVariables, productCode: run.productCode }, targetHeight),
     });
-    setExpandedId(segmentId);
   }
 
   return (
@@ -231,13 +219,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
         >
           <button
             type="button"
-            onClick={() =>
-              setRunSettingsOpen((value) => {
-                const next = !value;
-                if (next) setExpandedId(null);
-                return next;
-              })
-            }
+            onClick={() => setRunSettingsOpen((value) => !value)}
             className={`inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-extrabold transition-colors ${runSettingsOpen
               ? "border-brand-primary bg-brand-primary text-white"
               : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
@@ -293,23 +275,6 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
                   segIdx={segIdx}
                   runIdx={runIdx}
                   displayLabel={`R${runIdx + 1}S${segIdx + 1}`}
-                  open={expandedId === seg.segmentId}
-                  showRunDefaultsTeaching={
-                    expandedId === seg.segmentId &&
-                    seg.segmentId === firstSegment?.segmentId &&
-                    !teachingDismissed &&
-                    !state.bomResult
-                  }
-                  onDismissRunDefaultsTeaching={dismissRunDefaultsTeaching}
-                  onToggle={() =>
-                    setExpandedId((id) => {
-                      const next = id === seg.segmentId ? null : seg.segmentId;
-                      if (id === seg.segmentId && seg.segmentId === firstSegment?.segmentId) {
-                        dismissRunDefaultsTeaching();
-                      }
-                      return next;
-                    })
-                  }
                 />
               ))}
             {!isBayg && run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
@@ -324,10 +289,6 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
                       segIdx={gateIdx}
                       runIdx={runIdx}
                       displayLabel={`R${runIdx + 1}G${gateIdx + 1}`}
-                      open={expandedId === seg.segmentId}
-                      onToggle={() =>
-                        setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
-                      }
                     />
                   ))}
               </div>

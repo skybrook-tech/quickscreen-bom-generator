@@ -11,6 +11,7 @@ interface SettingsDisclosureRowProps {
   placeholder?: string;
   children: ReactNode;
   defaultOpen?: boolean;
+  hideClosedValue?: boolean;
 }
 
 export function SettingsDisclosureRow({
@@ -20,6 +21,7 @@ export function SettingsDisclosureRow({
   placeholder = "Choose",
   children,
   defaultOpen = false,
+  hideClosedValue = false,
 }: SettingsDisclosureRowProps) {
   const [open, setOpen] = useState(defaultOpen);
   const timerRef = useRef<number | null>(null);
@@ -66,7 +68,7 @@ export function SettingsDisclosureRow({
       >
         <span>{label}</span>
         <span className="flex min-w-0 items-center gap-2 text-xs font-bold text-brand-primary">
-          {!open && (
+          {!open && !hideClosedValue && (
             <span className="max-w-[13rem] truncate rounded-full bg-brand-card px-2 py-0.5 font-extrabold text-brand-text">
               {value ?? <span className="font-semibold text-brand-muted">{placeholder}</span>}
             </span>

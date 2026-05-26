@@ -102,6 +102,7 @@ const SLAT_GAP_OPTIONS: GateOption[] = [
 interface Props {
   runId: string;
   seg: CanonicalSegment;
+  compact?: boolean;
 }
 
 function optionClasses(active: boolean) {
@@ -250,11 +251,13 @@ function GateSettingsSection({
   summary,
   children,
   defaultOpen = false,
+  hideClosedValue = false,
 }: {
   title: string;
   summary?: string;
   children: ReactNode;
   defaultOpen?: boolean;
+  hideClosedValue?: boolean;
 }) {
   const componentId = useId();
   return (
@@ -263,6 +266,7 @@ function GateSettingsSection({
       label={title}
       value={summary}
       defaultOpen={defaultOpen}
+      hideClosedValue={hideClosedValue}
     >
       {children}
     </SettingsDisclosureRow>
@@ -515,7 +519,7 @@ function LatchPicker({
   );
 }
 
-export function GateSegmentDetails({ runId, seg }: Props) {
+export function GateSegmentDetails({ runId, seg, compact = false }: Props) {
   const { state, dispatch } = useCalculator();
   const v = seg.variables ?? {};
   const run = state.payload?.runs.find((item) => item.runId === runId);
@@ -747,10 +751,11 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   }
 
   return (
-    <div className="space-y-4 text-sm font-semibold">
+    <div className={compact ? "grid gap-2 sm:grid-cols-2 text-sm font-semibold" : "space-y-4 text-sm font-semibold"}>
       <GateSettingsSection
-        title="Gate Type & Direction"
+        title={compact ? "Gate" : "Gate type and direction"}
         summary={`${optionLabel(buildOptions, build)} / ${optionLabel(GATE_MOVEMENTS, movement)}`}
+        hideClosedValue={compact}
       >
         <OptionPills
           label="QSG gate system"
@@ -830,8 +835,9 @@ export function GateSegmentDetails({ runId, seg }: Props) {
       </GateSettingsSection>
 
       <GateSettingsSection
-        title="Slat, Post & Colour"
+        title={compact ? "Slats" : "Slat, post and colour"}
         summary={`${slatSizeMm}mm / ${slatGapMm}mm / ${gateColour}`}
+        hideClosedValue={compact}
       >
         <OptionPills
           label="Gate slat size"
@@ -873,244 +879,248 @@ export function GateSegmentDetails({ runId, seg }: Props) {
         </label>
       </GateSettingsSection>
 
-      <GateSettingsSection
-        title="Hardware & Weight"
-        summary={
-          isSwing
-            ? `${rankedLabel(rankedHinges, currentHingeValue)} / ${rankedLabel(rankedLatches, currentLatchValue)}`
-            : `${String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")} / ${automationEnabled ? "Automation on" : "Manual"}`
-        }
-      >
-        <GateWeightCard estimate={weightEstimate} />
-        {isSwing ? (
-          <>
-          <div className="rounded-lg border border-brand-border/70 bg-brand-card p-3 text-xs font-bold text-brand-muted">
-            <span className="text-brand-text">{leafCount}</span> leaf{leafCount === 1 ? "" : "s"} from a{" "}
-            <span className="text-brand-text">{Math.round(gateWidthMm)}mm</span> opening.{" "}
-            {leafCount === 2
-              ? `Each leaf is calculated after ${Math.round(hingeGapMm)}mm hinge gap on each side and ${Math.round(latchGapMm)}mm shared latch gap: `
-              : `Leaf width after ${Math.round(hingeGapMm)}mm hinge gap and ${Math.round(latchGapMm)}mm latch gap: `}
-            <span className="text-brand-text">{leafWidthsMm.map((width) => `${Math.round(width)}mm`).join(" + ")}</span>.
-          </div>
-          <HingePicker
-            value={currentHingeValue}
-            options={rankedHinges}
-            onChange={(value) =>
-              upsertVariables({
-                [GATE_SEGMENT_STUB_KEYS.hingeType]: value,
-                [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
-                ...clearOptionalAddOnsFor(baseHardwareSku(currentHingeValue)),
-              })
+      {!compact && (
+        <>
+          <GateSettingsSection
+            title="Hardware and weight"
+            summary={
+              isSwing
+                ? `${rankedLabel(rankedHinges, currentHingeValue)} / ${rankedLabel(rankedLatches, currentLatchValue)}`
+                : `${String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")} / ${automationEnabled ? "Automation on" : "Manual"}`
             }
-          />
-          <OptionalAddOns
-            parentSku={baseHardwareSku(currentHingeValue)}
-            selected={optionalAddOns[baseHardwareSku(currentHingeValue)] ?? []}
-            onChange={(selected) => setOptionalAddOns(baseHardwareSku(currentHingeValue), selected)}
-          />
-          <LatchPicker
-            value={currentLatchValue}
-            options={rankedLatches}
-            onChange={(value) =>
-              upsertVariables({
-                [GATE_SEGMENT_STUB_KEYS.latchType]: value,
-                [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
-                ...clearOptionalAddOnsFor(baseHardwareSku(currentLatchValue)),
-              })
-            }
-          />
-          {matchingHardwareKit && (
-            <div className="rounded-lg border border-brand-success/40 bg-brand-success/10 p-3">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <p className="text-sm font-black text-brand-success">Save as kit</p>
-                  <p className="text-xs font-bold text-brand-muted">
-                    {matchingHardwareKit.label} - {matchingHardwareKit.kitSku}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() =>
-                    upsertVariables({
-                      [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]:
-                        selectedKitSku === matchingHardwareKit.kitSku ? "" : matchingHardwareKit.kitSku,
-                    })
-                  }
-                  className="rounded-lg border border-brand-success bg-brand-card px-3 py-1.5 text-xs font-black text-brand-success hover:shadow-sm"
-                >
-                  {selectedKitSku === matchingHardwareKit.kitSku ? "Using kit" : "Use kit"}
-                </button>
+          >
+            <GateWeightCard estimate={weightEstimate} />
+            {isSwing ? (
+              <>
+              <div className="rounded-lg border border-brand-border/70 bg-brand-card p-3 text-xs font-bold text-brand-muted">
+                <span className="text-brand-text">{leafCount}</span> leaf{leafCount === 1 ? "" : "s"} from a{" "}
+                <span className="text-brand-text">{Math.round(gateWidthMm)}mm</span> opening.{" "}
+                {leafCount === 2
+                  ? `Each leaf is calculated after ${Math.round(hingeGapMm)}mm hinge gap on each side and ${Math.round(latchGapMm)}mm shared latch gap: `
+                  : `Leaf width after ${Math.round(hingeGapMm)}mm hinge gap and ${Math.round(latchGapMm)}mm latch gap: `}
+                <span className="text-brand-text">{leafWidthsMm.map((width) => `${Math.round(width)}mm`).join(" + ")}</span>.
               </div>
-            </div>
-          )}
-          {latchCanUseExternalAccessKit && (
-            <label className="flex items-center gap-2 rounded-lg border border-brand-border/70 bg-brand-card p-3">
-              <input
-                type="checkbox"
-                checked={v[GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit] === true}
-                onChange={(e) =>
+              <HingePicker
+                value={currentHingeValue}
+                options={rankedHinges}
+                onChange={(value) =>
                   upsertVariables({
-                    [GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit]: e.target.checked,
+                    [GATE_SEGMENT_STUB_KEYS.hingeType]: value,
+                    [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
+                    ...clearOptionalAddOnsFor(baseHardwareSku(currentHingeValue)),
                   })
                 }
               />
-              <span className="text-sm font-bold text-brand-muted">
-                Add external access kit <b className="text-brand-text">LLB</b>
-              </span>
-            </label>
-          )}
-          <HardwareDropdown
-            label="Drop bolt"
-            value={String(v[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? (movement === "double_swing" ? "SS-0300DB-B" : "none"))}
-            options={DROP_BOLT_OPTIONS}
-            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.dropBoltType]: value })}
-          />
-          <HardwareDropdown
-            label="Gate stop"
-            value={String(v[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "none")}
-            options={GATE_STOP_OPTIONS}
-            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gateStopType]: value })}
-          />
-          </>
-        ) : (
-          <>
-          <HardwareDropdown
-            label="Track"
-            value={String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")}
-            options={SLIDING_TRACK_OPTIONS}
-            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingTrackType]: value })}
-          />
-          <HardwareDropdown
-            label="Top guide system"
-            value={String(v[GATE_SEGMENT_STUB_KEYS.slidingGuideType] ?? "XPSG-GUIDE")}
-            options={SLIDING_GUIDE_OPTIONS}
-            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingGuideType]: value })}
-          />
-          <HardwareDropdown
-            label="Catch type"
-            value={String(v[GATE_SEGMENT_STUB_KEYS.slidingCatchType] ?? "XPSG-CATCH-U")}
-            options={SLIDING_CATCH_OPTIONS}
-            onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingCatchType]: value })}
-          />
-          <div className="space-y-3 rounded-lg border border-brand-border/70 bg-brand-card p-3">
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={automationEnabled}
-                onChange={(e) =>
+              <OptionalAddOns
+                parentSku={baseHardwareSku(currentHingeValue)}
+                selected={optionalAddOns[baseHardwareSku(currentHingeValue)] ?? []}
+                onChange={(selected) => setOptionalAddOns(baseHardwareSku(currentHingeValue), selected)}
+              />
+              <LatchPicker
+                value={currentLatchValue}
+                options={rankedLatches}
+                onChange={(value) =>
                   upsertVariables({
-                    [GATE_SEGMENT_STUB_KEYS.automationEnabled]: e.target.checked,
-                    [GATE_SEGMENT_STUB_KEYS.slidingMotorType]: e.target.checked ? "none" : "none",
+                    [GATE_SEGMENT_STUB_KEYS.latchType]: value,
+                    [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: "",
+                    ...clearOptionalAddOnsFor(baseHardwareSku(currentLatchValue)),
                   })
                 }
               />
-              <span className="text-sm font-black text-brand-text">Add automation kit?</span>
-            </label>
-            {automationEnabled && (
-              <div className="space-y-3">
-                <OptionPills
-                  label="Power source"
-                  value={automationPower}
-                  options={[
-                    { value: "mains", label: "Mains powered" },
-                    { value: "solar", label: "Solar powered" },
-                  ]}
-                  onChange={(value) =>
-                    upsertVariables({ [GATE_SEGMENT_STUB_KEYS.automationPowerSource]: value })
-                  }
-                />
-                {automationPower === "mains" && (
-                  <label className="flex flex-col gap-1">
-                    <span className="text-sm font-bold text-brand-muted">Motor distance from mains outlet (m)</span>
-                    <NumberInput
-                      value={cableDistanceM}
-                      min={0}
-                      step={1}
-                      className="w-24 px-2 py-1.5 text-center tabular-nums"
-                      onChange={(value) =>
+              {matchingHardwareKit && (
+                <div className="rounded-lg border border-brand-success/40 bg-brand-success/10 p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <p className="text-sm font-black text-brand-success">Save as kit</p>
+                      <p className="text-xs font-bold text-brand-muted">
+                        {matchingHardwareKit.label} - {matchingHardwareKit.kitSku}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
                         upsertVariables({
-                          [GATE_SEGMENT_STUB_KEYS.automationCableDistanceM]: Number(value),
+                          [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]:
+                            selectedKitSku === matchingHardwareKit.kitSku ? "" : matchingHardwareKit.kitSku,
                         })
                       }
-                    />
-                    {cableDistanceM > 30 && (
-                      <span className="rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-1 text-xs font-bold text-brand-success">
-                        Switched to Split Pack - better for long cable runs
-                      </span>
-                    )}
-                  </label>
-                )}
-                <label className="flex items-center gap-2">
+                      className="rounded-lg border border-brand-success bg-brand-card px-3 py-1.5 text-xs font-black text-brand-success hover:shadow-sm"
+                    >
+                      {selectedKitSku === matchingHardwareKit.kitSku ? "Using kit" : "Use kit"}
+                    </button>
+                  </div>
+                </div>
+              )}
+              {latchCanUseExternalAccessKit && (
+                <label className="flex items-center gap-2 rounded-lg border border-brand-border/70 bg-brand-card p-3">
                   <input
                     type="checkbox"
-                    checked={v[GATE_SEGMENT_STUB_KEYS.automationBattery] === true}
+                    checked={v[GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit] === true}
                     onChange={(e) =>
-                      upsertVariables({ [GATE_SEGMENT_STUB_KEYS.automationBattery]: e.target.checked })
-                    }
-                  />
-                  <span className="text-sm font-bold text-brand-muted">Add backup battery for power outages</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={v[GATE_SEGMENT_STUB_KEYS.automationKeypad] === true}
-                    onChange={(e) =>
-                      upsertVariables({ [GATE_SEGMENT_STUB_KEYS.automationKeypad]: e.target.checked })
-                    }
-                  />
-                  <span className="text-sm font-bold text-brand-muted">Wireless keypad</span>
-                </label>
-                <label className="flex flex-col gap-1">
-                  <span className="text-sm font-bold text-brand-muted">Extra remotes</span>
-                  <NumberInput
-                    value={extraRemoteCount}
-                    min={0}
-                    max={10}
-                    step={1}
-                    className="w-20 px-2 py-1.5 text-center tabular-nums"
-                    onChange={(value) =>
                       upsertVariables({
-                        [GATE_SEGMENT_STUB_KEYS.automationExtraRemotes]: Math.min(10, Math.max(0, Number(value))),
+                        [GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit]: e.target.checked,
                       })
                     }
                   />
+                  <span className="text-sm font-bold text-brand-muted">
+                    Add external access kit <b className="text-brand-text">LLB</b>
+                  </span>
                 </label>
-                <div className="rounded-lg border border-brand-border/70 bg-brand-bg/70 p-3">
-                  <p className="text-sm font-black text-brand-text">Automation summary</p>
-                  <div className="mt-2 space-y-1 text-xs font-bold text-brand-muted">
-                    {automationSummary.map((item) => (
-                      <div key={item.sku} className="flex justify-between gap-2">
-                        <span>{item.qty} x {item.sku}</span>
-                        <span>${priceForSku(item.sku, item.qty).toFixed(2)}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-2 flex justify-between text-sm font-black text-brand-text">
-                    <span>Automation subtotal</span>
-                    <span>${automationSubtotal.toFixed(2)}</span>
-                  </div>
-                  <p className="mt-2 text-xs font-semibold text-brand-muted">
-                    Installation by certified electrician recommended for mains-powered kits.
-                  </p>
-                </div>
-              </div>
               )}
-          </div>
-          </>
-        )}
-      </GateSettingsSection>
+              <HardwareDropdown
+                label="Drop bolt"
+                value={String(v[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? (movement === "double_swing" ? "SS-0300DB-B" : "none"))}
+                options={DROP_BOLT_OPTIONS}
+                onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.dropBoltType]: value })}
+              />
+              <HardwareDropdown
+                label="Gate stop"
+                value={String(v[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "none")}
+                options={GATE_STOP_OPTIONS}
+                onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.gateStopType]: value })}
+              />
+              </>
+            ) : (
+              <>
+              <HardwareDropdown
+                label="Track"
+                value={String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")}
+                options={SLIDING_TRACK_OPTIONS}
+                onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingTrackType]: value })}
+              />
+              <HardwareDropdown
+                label="Top guide system"
+                value={String(v[GATE_SEGMENT_STUB_KEYS.slidingGuideType] ?? "XPSG-GUIDE")}
+                options={SLIDING_GUIDE_OPTIONS}
+                onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingGuideType]: value })}
+              />
+              <HardwareDropdown
+                label="Catch type"
+                value={String(v[GATE_SEGMENT_STUB_KEYS.slidingCatchType] ?? "XPSG-CATCH-U")}
+                options={SLIDING_CATCH_OPTIONS}
+                onChange={(value) => upsertVariables({ [GATE_SEGMENT_STUB_KEYS.slidingCatchType]: value })}
+              />
+              <div className="space-y-3 rounded-lg border border-brand-border/70 bg-brand-card p-3">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={automationEnabled}
+                    onChange={(e) =>
+                      upsertVariables({
+                        [GATE_SEGMENT_STUB_KEYS.automationEnabled]: e.target.checked,
+                        [GATE_SEGMENT_STUB_KEYS.slidingMotorType]: e.target.checked ? "none" : "none",
+                      })
+                    }
+                  />
+                  <span className="text-sm font-black text-brand-text">Add automation kit?</span>
+                </label>
+                {automationEnabled && (
+                  <div className="space-y-3">
+                    <OptionPills
+                      label="Power source"
+                      value={automationPower}
+                      options={[
+                        { value: "mains", label: "Mains powered" },
+                        { value: "solar", label: "Solar powered" },
+                      ]}
+                      onChange={(value) =>
+                        upsertVariables({ [GATE_SEGMENT_STUB_KEYS.automationPowerSource]: value })
+                      }
+                    />
+                    {automationPower === "mains" && (
+                      <label className="flex flex-col gap-1">
+                        <span className="text-sm font-bold text-brand-muted">Motor distance from mains outlet (m)</span>
+                        <NumberInput
+                          value={cableDistanceM}
+                          min={0}
+                          step={1}
+                          className="w-24 px-2 py-1.5 text-center tabular-nums"
+                          onChange={(value) =>
+                            upsertVariables({
+                              [GATE_SEGMENT_STUB_KEYS.automationCableDistanceM]: Number(value),
+                            })
+                          }
+                        />
+                        {cableDistanceM > 30 && (
+                          <span className="rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-1 text-xs font-bold text-brand-success">
+                            Switched to Split Pack - better for long cable runs
+                          </span>
+                        )}
+                      </label>
+                    )}
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={v[GATE_SEGMENT_STUB_KEYS.automationBattery] === true}
+                        onChange={(e) =>
+                          upsertVariables({ [GATE_SEGMENT_STUB_KEYS.automationBattery]: e.target.checked })
+                        }
+                      />
+                      <span className="text-sm font-bold text-brand-muted">Add backup battery for power outages</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={v[GATE_SEGMENT_STUB_KEYS.automationKeypad] === true}
+                        onChange={(e) =>
+                          upsertVariables({ [GATE_SEGMENT_STUB_KEYS.automationKeypad]: e.target.checked })
+                        }
+                      />
+                      <span className="text-sm font-bold text-brand-muted">Wireless keypad</span>
+                    </label>
+                    <label className="flex flex-col gap-1">
+                      <span className="text-sm font-bold text-brand-muted">Extra remotes</span>
+                      <NumberInput
+                        value={extraRemoteCount}
+                        min={0}
+                        max={10}
+                        step={1}
+                        className="w-20 px-2 py-1.5 text-center tabular-nums"
+                        onChange={(value) =>
+                          upsertVariables({
+                            [GATE_SEGMENT_STUB_KEYS.automationExtraRemotes]: Math.min(10, Math.max(0, Number(value))),
+                          })
+                        }
+                      />
+                    </label>
+                    <div className="rounded-lg border border-brand-border/70 bg-brand-bg/70 p-3">
+                      <p className="text-sm font-black text-brand-text">Automation summary</p>
+                      <div className="mt-2 space-y-1 text-xs font-bold text-brand-muted">
+                        {automationSummary.map((item) => (
+                          <div key={item.sku} className="flex justify-between gap-2">
+                            <span>{item.qty} x {item.sku}</span>
+                            <span>${priceForSku(item.sku, item.qty).toFixed(2)}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="mt-2 flex justify-between text-sm font-black text-brand-text">
+                        <span>Automation subtotal</span>
+                        <span>${automationSubtotal.toFixed(2)}</span>
+                      </div>
+                      <p className="mt-2 text-xs font-semibold text-brand-muted">
+                        Installation by certified electrician recommended for mains-powered kits.
+                      </p>
+                    </div>
+                  </div>
+                  )}
+              </div>
+              </>
+            )}
+          </GateSettingsSection>
 
-      <GateSettingsSection title="Gate Components" summary="Checklist">
-        <GateComponentList
-          orientation={build.includes("vertical") ? "vertical" : "horizontal"}
-          movement={movement}
-          slatSizeMm={slatSizeMm}
-          slatGapMm={slatGapMm}
-          colourCode={gateColour}
-          hingeSku={currentHingeValue}
-          latchSku={currentLatchValue}
-        />
-      </GateSettingsSection>
+          <GateSettingsSection title="Gate components" summary="Checklist">
+            <GateComponentList
+              orientation={build.includes("vertical") ? "vertical" : "horizontal"}
+              movement={movement}
+              slatSizeMm={slatSizeMm}
+              slatGapMm={slatGapMm}
+              colourCode={gateColour}
+              hingeSku={currentHingeValue}
+              latchSku={currentLatchValue}
+            />
+          </GateSettingsSection>
+        </>
+      )}
     </div>
   );
 }

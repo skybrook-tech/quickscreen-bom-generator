@@ -161,6 +161,8 @@ Latest Brief 031 pass: run headings now show full system names with inline edita
 
 Latest Brief 032 pass: the desktop header now has the shared hamburger menu with customer mode, offline status, and install-video placeholders; job name and non-zero totals render together in the header; VS defaults to 1800mm; alternate post colour moved under Slats, colors, and spacings for run and section settings; run/section/gate card actions align in right-side columns; Add Section/Add Gate use dark-blue primary styling; and Remove Run now requires a confirmation dialog.
 
+Latest Brief 032 follow-up: section and gate cards now show the blue system name in the heading, editable length/width and height directly under the heading, compact code/remove controls together on the right, and the slat/post dropdown controls on the third line with summary text removed. Section system-type overrides were removed, post settings no longer show slat range or colour controls, and slat gaps now use preset mm buttons plus a custom gap input.
+
 
 ---
 

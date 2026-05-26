@@ -234,7 +234,7 @@ describe("Run, section, and gate UI consistency", () => {
     cleanup(root, container);
   });
 
-  it("shows only changed section settings in the closed subheading", () => {
+  it("renders compact section cards with inline geometry and settings controls", () => {
     const segment: CanonicalSegment = {
       segmentId: "seg-1",
       sortOrder: 1,
@@ -254,20 +254,22 @@ describe("Run, section, and gate UI consistency", () => {
         seg={segment}
         segIdx={0}
         runIdx={0}
-        open={false}
-        onToggle={() => undefined}
       />,
     );
 
-    expect(container.textContent).toContain("Section Settings");
-    expect(container.textContent).toContain("Colour: Surfmist Matt");
-    expect(container.textContent).toContain("Gap: 20mm");
-    expect(container.textContent).not.toContain("Post: 50mm Post Standard");
+    expect(container.textContent).toContain("Section 1");
+    expect(container.textContent).toContain("QuickScreen Horizontal Slat");
+    expect(container.textContent).toContain("Length");
+    expect(container.textContent).toContain("Height");
+    expect(container.textContent).toContain("Slats");
+    expect(container.textContent).toContain("Posts");
+    expect(container.textContent).not.toContain("Section Settings");
+    expect(container.textContent).not.toContain("Colour: Surfmist Matt");
 
     cleanup(root, container);
   });
 
-  it("renders a labeled gate settings button", () => {
+  it("renders compact gate cards with matching inline controls", () => {
     const gate: CanonicalSegment = {
       segmentId: "gate-1",
       sortOrder: 2,
@@ -285,12 +287,16 @@ describe("Run, section, and gate UI consistency", () => {
         seg={gate}
         segIdx={0}
         runIdx={0}
-        open={false}
-        onToggle={() => undefined}
       />,
     );
 
-    expect(container.textContent).toContain("Gate Settings");
+    expect(container.textContent).toContain("Gate 1");
+    expect(container.textContent).toContain("QuickScreen Horizontal Slat");
+    expect(container.textContent).toContain("Width");
+    expect(container.textContent).toContain("Height");
+    expect(container.textContent).toContain("Gate");
+    expect(container.textContent).toContain("Slats");
+    expect(container.textContent).not.toContain("Gate Settings");
 
     cleanup(root, container);
   });

@@ -14,6 +14,8 @@ interface InlineHeightEditorProps {
   valueMm: number;
   ariaLabel: string;
   onChange: (heightMm: number, entry?: DerivedHeight) => void;
+  className?: string;
+  compactLabels?: boolean;
 }
 
 function clampHeight(value: number) {
@@ -27,6 +29,8 @@ export function InlineHeightEditor({
   valueMm,
   ariaLabel,
   onChange,
+  className,
+  compactLabels = false,
 }: InlineHeightEditorProps) {
   const [draft, setDraft] = useState(String(clampHeight(valueMm)));
   const heightEntries = useMemo(
@@ -71,7 +75,7 @@ export function InlineHeightEditor({
           onKeyDown={(event) => {
             if (event.key === "Enter") event.currentTarget.blur();
           }}
-          className={`${sharedClasses} w-24 tabular-nums`}
+          className={`${sharedClasses} ${className ?? "w-24"} tabular-nums`}
         />
         <span className="text-xs font-bold text-brand-muted">mm</span>
       </span>
@@ -83,7 +87,7 @@ export function InlineHeightEditor({
       <select
         aria-label={ariaLabel}
         disabled
-        className={`${sharedClasses} w-40 text-brand-muted`}
+        className={`${sharedClasses} ${className ?? "w-40"} text-brand-muted`}
         onClick={(event) => event.stopPropagation()}
         onDoubleClick={(event) => event.stopPropagation()}
       >
@@ -104,11 +108,11 @@ export function InlineHeightEditor({
         );
         if (entry) onChange(entry.height, entry);
       }}
-      className={`${sharedClasses} w-44`}
+      className={`${sharedClasses} ${className ?? "w-44"}`}
     >
       {heightEntries.map((entry) => (
         <option key={entry.N} value={entry.height}>
-          {entry.height}mm - {entry.N} slats
+          {compactLabels ? `${entry.height}mm / ${entry.N}` : `${entry.height}mm - ${entry.N} slats`}
         </option>
       ))}
     </select>

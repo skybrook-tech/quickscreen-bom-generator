@@ -11,7 +11,6 @@ import {
   MIN_POST_SPACING_MM,
   normaliseVariablesForSystem,
 } from "../../lib/productOptionRules";
-import { localFenceProducts } from "../../lib/localSeedData";
 import {
   SEGMENT_OPTION_KEYS,
   patchSegmentVariables,
@@ -45,9 +44,10 @@ const SECTION_POST_FIELD_KEYS = new Set([
 interface Props {
   runId: string;
   seg: CanonicalSegment;
+  compact?: boolean;
 }
 
-export function FenceSegmentDetails({ runId, seg }: Props) {
+export function FenceSegmentDetails({ runId, seg, compact = false }: Props) {
   const { state, dispatch } = useCalculator();
   const run = state.payload?.runs.find((item) => item.runId === runId);
   const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
@@ -95,31 +95,6 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
       nextPatch[key] = value === runVariables[key] ? null : value;
     }
     upsertSegment(patchSegmentVariables(seg, nextPatch));
-  }
-
-  function onSystemTypeChange(nextProductCode: string) {
-    const normalised = normaliseVariablesForSystem(nextProductCode, {
-      ...initialVariablesForSystem(nextProductCode),
-      ...runVariables,
-      ...v,
-      product_code: nextProductCode,
-    });
-    upsertSegment(
-      patchSegmentVariables(seg, {
-        product_code: nextProductCode === runProductCode ? null : nextProductCode,
-        finish_family: normalised.finish_family,
-        colour_code: normalised.colour_code,
-        post_colour_code: normalised.post_colour_code,
-        slat_size_mm: normalised.slat_size_mm,
-        slat_gap_mode: normalised.slat_gap_mode,
-        slat_gap_mm: normalised.slat_gap_mm,
-        post_system: normalised.post_system,
-        post_size: normalised.post_size,
-        mounting_type: normalised.mounting_type,
-        mounting_method: normalised.mounting_method,
-        max_panel_width_mm: normalised.max_panel_width_mm,
-      }),
-    );
   }
 
   const jobMax = clampPostSpacing(
@@ -203,12 +178,12 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     () =>
       productCode
         ? applyProductOptionRules(
-          productCode,
-          runFields
-            .map(shapePostField)
-            .filter((field): field is SchemaField => Boolean(field)),
-          mergedJobDisplay,
-        )
+            productCode,
+            runFields
+              .map(shapePostField)
+              .filter((field): field is SchemaField => Boolean(field)),
+            mergedJobDisplay,
+          ).filter((field) => SECTION_POST_FIELD_KEYS.has(field.field_key))
         : [],
     [mergedJobDisplay, productCode, runFields],
   );
@@ -264,29 +239,14 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     .join(" / ");
 
   return (
-    <div className="space-y-4">
-      <SettingsDisclosureRow id={`${seg.segmentId}-section-system-type`} label="System type" value={productCode}>
-        <div className="flex flex-wrap gap-2">
-          {localFenceProducts.map((product) => (
-            <button
-              key={product.system_type}
-              type="button"
-              onClick={() => onSystemTypeChange(product.system_type)}
-              aria-pressed={product.system_type === productCode}
-              className={`inline-flex items-center rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${
-                product.system_type === productCode
-                  ? "border-brand-primary bg-brand-primary text-white shadow-sm"
-                  : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-              }`}
-            >
-              {product.system_type}
-            </button>
-          ))}
-        </div>
-      </SettingsDisclosureRow>
-
+    <div className={compact ? "grid gap-2 sm:grid-cols-2" : "space-y-4"}>
       {slatOptionFields.length > 0 ? (
-        <SettingsDisclosureRow id={`${seg.segmentId}-section-style`} label="Slats, colors, and spacings" value={slatSummary || "Run defaults"}>
+        <SettingsDisclosureRow
+          id={`${seg.segmentId}-section-style`}
+          label={compact ? "Slats" : "Slats, colors, and spacings"}
+          value={slatSummary || "Run defaults"}
+          hideClosedValue={compact}
+        >
           <div className="space-y-4">
             {finishField && (
               <SchemaDrivenForm
@@ -358,7 +318,12 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
       ) : null}
 
       {!isBayg && (
-        <SettingsDisclosureRow id={`${seg.segmentId}-section-posts`} label="Post size, mounting and spacing" value={postSummary}>
+        <SettingsDisclosureRow
+          id={`${seg.segmentId}-section-posts`}
+          label={compact ? "Posts" : "Post size, mounting and spacing"}
+          value={postSummary}
+          hideClosedValue={compact}
+        >
           {postFields.length > 0 && (
             <SchemaDrivenForm
               fields={postFields}
@@ -390,6 +355,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
           id={`${seg.segmentId}-section-custom-post`}
           label="Custom post width"
           value={`${v[SEGMENT_OPTION_KEYS.postWidthMm] ?? "Not set"}mm`}
+          hideClosedValue={compact}
         >
           <label className="flex flex-col gap-1">
             <span className="text-sm font-bold text-brand-muted">Post width (mm)</span>
