@@ -6,6 +6,7 @@ import { useGoogleMaps } from "../../hooks/useGoogleMaps";
 import { GOOGLE_MAPS_MISSING_API_KEY_MESSAGE } from "../../lib/googleMaps/loader";
 import {
   createLayeredMapSnapshot,
+  cropMapSnapshotAttribution,
   isMobileTouchViewport,
   MAPS_STATIC_API_ENABLEMENT_MESSAGE,
   type MapSnapshotCaptureInput,
@@ -220,7 +221,8 @@ function ExpandedPropertyMap({
         snapshotInput,
         apiKey,
       );
-      onConfirm(layeredSnapshot);
+      const croppedSnapshot = await cropMapSnapshotAttribution(layeredSnapshot);
+      onConfirm(croppedSnapshot);
     } catch {
       setSnapshotError(MAPS_STATIC_API_ENABLEMENT_MESSAGE);
     } finally {
