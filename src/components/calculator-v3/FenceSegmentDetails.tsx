@@ -198,8 +198,11 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         : [],
     [mergedJobDisplay, productCode, runFields],
   );
+  const postColourField = optionFields.find((field) => field.field_key === "post_colour_code");
   const slatOptionFields = optionFields.filter(
-    (field) => field.field_key !== "finish_family",
+    (field) =>
+      field.field_key !== "finish_family" &&
+      field.field_key !== "post_colour_code",
   );
   const optionSummary = slatOptionFields
     .map((field) => {
@@ -217,11 +220,6 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     .slice(0, 2)
     .join(" / ");
   const colourField = slatOptionFields.find((field) => field.field_key === "colour_code");
-  const postColourField = applyProductOptionRules(
-    productCode,
-    jobFields.filter((field) => field.field_key === "post_colour_code"),
-    mergedJobDisplay,
-  )[0];
   const remainingOptionFields = slatOptionFields.filter(
     (field) => field.field_key !== "colour_code",
   );
