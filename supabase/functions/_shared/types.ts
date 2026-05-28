@@ -1,7 +1,7 @@
 // ─── Shared types (mirrored from src/types/) ──────────────────────────────────
 // These are Deno-compatible copies. Do not import from src/ in edge functions.
 
-export type SystemType = 'QSHS' | 'VS' | 'XPL' | 'BAYG';
+export type SystemType = 'QSHS' | 'VS' | 'XPL' | 'BAYG' | 'COLORBOND';
 export type SlatSize = '65' | '90';
 export type SlatGap = '0' | '5' | '9' | '20';
 export type MaxPanelWidth = '2600' | '2000';

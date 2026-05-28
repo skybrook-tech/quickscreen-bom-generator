@@ -48,6 +48,12 @@ const VALUE_LABELS: Record<string, string> = {
   xpl: "XPress Plus post",
   standard_50: "50mm Post Standard",
   standard_65: "65mm Post Standard HD",
+  GLINE: "GO-Line",
+  GZAG: "GO-Zag",
+  GTRIM: "GO-Trim",
+  single: "Single cap",
+  double: "Double cap",
+  none: "None",
 };
 
 function shapeRunField(field: SchemaField, productCode: string): SchemaField | null {
@@ -60,7 +66,10 @@ function shapeRunField(field: SchemaField, productCode: string): SchemaField | n
       ...field,
       label: "Post mounting type",
       default_value_json: "in_ground",
-      options_json: ["in_ground", "base_plate", "core_drill"],
+      options_json:
+        productCode === "COLORBOND"
+          ? ["in_ground", "base_plate"]
+          : ["in_ground", "base_plate", "core_drill"],
     };
   }
   if (field.field_key === "mounting_type") {
@@ -68,7 +77,10 @@ function shapeRunField(field: SchemaField, productCode: string): SchemaField | n
       ...field,
       label: "Post mounting type",
       default_value_json: "in_ground",
-      options_json: ["in_ground", "base_plate", "core_drill"],
+      options_json:
+        productCode === "COLORBOND"
+          ? ["in_ground", "base_plate"]
+          : ["in_ground", "base_plate", "core_drill"],
     };
   }
   if (field.field_key === "post_system") {
@@ -88,8 +100,8 @@ function shapeRunField(field: SchemaField, productCode: string): SchemaField | n
   if (field.field_key === "max_panel_width_mm") {
     return {
       ...field,
-      label: "Max Post Spacing",
-      default_value_json: 2600,
+      label: productCode === "COLORBOND" ? "Bay/rail width" : "Max Post Spacing",
+      default_value_json: productCode === "COLORBOND" ? 2365 : 2600,
     };
   }
   return field;
@@ -108,6 +120,7 @@ function fieldValueLabel(field: SchemaField, variables: Record<string, string | 
 }
 
 function postLabel(productCode: string, variables: Record<string, string | number | boolean>) {
+  if (productCode === "COLORBOND") return "Channel post";
   const postSystem = String(variables.post_system ?? (productCode === "XPL" ? "xpl" : "standard_50"));
   if (postSystem === "xpl") return "XPress Plus post";
   if (postSystem === "standard_65" || Number(variables.post_size ?? 50) === 65) return "65mm Post Standard HD";
@@ -122,6 +135,7 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
   });
   const [fixingsOpen, setFixingsOpen] = useState(false);
   const productCode = run.productCode;
+  const isColorBond = productCode === "COLORBOND";
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
   const { data: runFields = [] } = useProductVariables(productCode, "run");
   const variables = {
@@ -227,6 +241,10 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
       "mounting_method",
       "max_panel_width_mm",
       "louvre_treatment",
+      "profile_code",
+      "include_65mm_support_posts",
+      "post_cap_type",
+      "include_timber_sleeper",
     ]);
     const resetSectionKeys = [
       key,
@@ -351,10 +369,15 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
       </SettingsDisclosureRow>
       <SettingsDisclosureRow
         id={`${run.runId}-slats-colours-spacings`}
-        label="Slats, colors, and spacings"
-        value={`${valueFor("finish_family")} / ${colourName(variables.colour_code)} / ${valueFor("slat_size_mm")} / ${valueFor("slat_gap_mm")}`}
+        label={isColorBond ? "Profile and colours" : "Slats, colors, and spacings"}
+        value={
+          isColorBond
+            ? `${valueFor("profile_code")} / ${colourName(variables.colour_code)} / ${colourName(variables.post_colour_code ?? variables.colour_code)}`
+            : `${valueFor("finish_family")} / ${colourName(variables.colour_code)} / ${valueFor("slat_size_mm")} / ${valueFor("slat_gap_mm")}`
+        }
       >
         <div className="space-y-4">
+          {renderField("profile_code")}
           {renderField("finish_family")}
           {renderField("colour_code")}
           <button
@@ -362,12 +385,18 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
             onClick={() => setPostColourOpen((value) => !value)}
             className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
           >
-            {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
+            {postColourOpen
+              ? isColorBond
+                ? "Hide alternate rail/post colour"
+                : "Hide alternate post colour"
+              : isColorBond
+                ? "Alternate rail/post colour"
+                : "Alternate post colour"}
           </button>
           {postColourOpen && renderField("post_colour_code")}
-          {renderField("slat_size_mm")}
-          {renderField("slat_gap_mode")}
-          {renderField("slat_gap_mm")}
+          {!isColorBond && renderField("slat_size_mm")}
+          {!isColorBond && renderField("slat_gap_mode")}
+          {!isColorBond && renderField("slat_gap_mm")}
           {productCode === "QSHS" && (
             <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
               <input
@@ -399,12 +428,16 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
       {productCode !== "BAYG" && (
         <SettingsDisclosureRow
           id={`${run.runId}-post-mounting`}
-          label="Post size, mounting and spacing"
-          value={`${valueFor("post_system", postLabel(productCode, variables))} / ${valueFor("max_panel_width_mm", "2600mm")}`}
+          label={isColorBond ? "Posts, mounting and bay width" : "Post size, mounting and spacing"}
+          value={
+            isColorBond
+              ? `${valueFor("mounting_type", valueFor("mounting_method", "Concreted in ground"))} / ${valueFor("max_panel_width_mm", "2365mm")}`
+              : `${valueFor("post_system", postLabel(productCode, variables))} / ${valueFor("max_panel_width_mm", "2600mm")}`
+          }
         >
           <div className="space-y-4">
-            {renderField("post_system")}
-            {renderField("post_size")}
+            {!isColorBond && renderField("post_system")}
+            {!isColorBond && renderField("post_size")}
             {mountingField && (
               <SchemaDrivenForm
                 fields={[mountingField]}
@@ -412,14 +445,16 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
                 onChange={updateRunVariables}
               />
             )}
-            <button
-              type="button"
-              onClick={() => setFixingsOpen((value) => !value)}
-              className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-            >
-              Choose fixings
-            </button>
-            {fixingsOpen && (
+            {!isColorBond && (
+              <button
+                type="button"
+                onClick={() => setFixingsOpen((value) => !value)}
+                className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+              >
+                Choose fixings
+              </button>
+            )}
+            {!isColorBond && fixingsOpen && (
               <div className="grid gap-3 rounded-xl border border-brand-border/60 bg-brand-card/70 p-3 md:grid-cols-2">
                 <label className="flex flex-col gap-1">
                   <span className="text-sm font-bold text-brand-muted">Post-fixing material</span>
@@ -458,6 +493,9 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
               </div>
             )}
             {renderField("max_panel_width_mm")}
+            {isColorBond && renderField("include_65mm_support_posts")}
+            {isColorBond && renderField("post_cap_type")}
+            {isColorBond && renderField("include_timber_sleeper")}
           </div>
         </SettingsDisclosureRow>
       )}

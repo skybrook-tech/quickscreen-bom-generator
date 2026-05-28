@@ -11,8 +11,13 @@ type Variables = Record<string, string | number | boolean>;
 const STANDARD_COLOURS = ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"];
 const ALUMAWOOD_COLOURS = ["KWI", "WRC"];
 const ECONOMY_COLOURS = ["B", "MN", "SM"];
+const COLORBOND_INFILL_COLOURS = ["BS", "G", "MN", "PB", "P", "SM"];
+const COLORBOND_FRAME_COLOURS = ["B", "BS", "G", "MN", "PB", "P", "SM"];
+const COLORBOND_PROFILES = ["GLINE", "GZAG", "GTRIM"];
+const COLORBOND_HEIGHTS = [1500, 1800, 2100];
+const COLORBOND_RAIL_WIDTHS = [2365, 3125];
 export const MIN_POST_SPACING_MM = 100;
-export const MAX_POST_SPACING_MM = 3000;
+export const MAX_POST_SPACING_MM = 3125;
 const DEFAULT_SLAT_GAP_MM = 9;
 
 const SYSTEM_MAX_PANEL_WIDTH: Record<string, number> = {
@@ -20,6 +25,7 @@ const SYSTEM_MAX_PANEL_WIDTH: Record<string, number> = {
   VS: 2600,
   XPL: 2600,
   BAYG: 3000,
+  COLORBOND: 2365,
 };
 
 export function maxPanelWidthForSystem(productCode: string | null | undefined) {
@@ -67,6 +73,7 @@ export function finishOptionsForSystem(productCode: string) {
 }
 
 export function slatOptionsForSystem(productCode: string, variables: Variables) {
+  if (productCode === "COLORBOND") return [];
   const finish = String(variables.finish_family ?? "standard");
   if (productCode === "XPL") return [65];
   if (finish === "economy") return [65];
@@ -74,6 +81,7 @@ export function slatOptionsForSystem(productCode: string, variables: Variables) 
 }
 
 export function gapOptionsForSystem(productCode: string) {
+  if (productCode === "COLORBOND") return [];
   if (productCode === "XPL") return [5, 9, 20];
   if (productCode === "BAYG") return [5, 9, 20];
   if (productCode === "QSHS") return [5, 9, 12, 15, 20, 30];
@@ -86,6 +94,7 @@ export function heightOptionsForSystem(productCode: string, variables: Variables
 }
 
 export function heightEntriesForSystem(productCode: string, variables: Variables): DerivedHeight[] {
+  if (productCode === "COLORBOND") return [];
   if (productCode === "VS") return [];
   const slatSize = Number(variables.slat_size_mm ?? 65);
   const slatGap = Number(variables.slat_gap_mm ?? DEFAULT_SLAT_GAP_MM);
@@ -98,7 +107,8 @@ export function heightEntriesForSystem(productCode: string, variables: Variables
   });
 }
 
-export function colourOptionsForSystem(variables: Variables) {
+export function colourOptionsForSystem(variables: Variables, productCode?: string) {
+  if (productCode === "COLORBOND") return COLORBOND_INFILL_COLOURS;
   const finish = String(variables.finish_family ?? "standard");
   const slatSize = Number(variables.slat_size_mm ?? 65);
 
@@ -109,13 +119,29 @@ export function colourOptionsForSystem(variables: Variables) {
   return STANDARD_COLOURS;
 }
 
-export function postColourOptionsForSystem(variables: Variables) {
+export function postColourOptionsForSystem(variables: Variables, productCode?: string) {
+  if (productCode === "COLORBOND") return COLORBOND_FRAME_COLOURS;
   const finish = String(variables.finish_family ?? "standard");
   if (finish === "alumawood") return [...ALUMAWOOD_COLOURS, ...STANDARD_COLOURS];
   return STANDARD_COLOURS;
 }
 
 export function initialVariablesForSystem(productCode: string): Variables {
+  if (productCode === "COLORBOND") {
+    return normaliseVariablesForSystem(productCode, {
+      colour_code: "MN",
+      post_colour_code: "MN",
+      profile_code: "GZAG",
+      target_height_mm: 1800,
+      max_panel_width_mm: 2365,
+      mounting_type: "in_ground",
+      mounting_method: "in_ground",
+      include_65mm_support_posts: false,
+      post_cap_type: "none",
+      include_timber_sleeper: false,
+    });
+  }
+
   const maxPanelWidth = maxPanelWidthForSystem(productCode);
   return normaliseVariablesForSystem(productCode, {
     finish_family: "standard",
@@ -132,10 +158,71 @@ export function initialVariablesForSystem(productCode: string): Variables {
   });
 }
 
+function nearestAllowedHeight(value: unknown) {
+  const height = Number(value);
+  if (COLORBOND_HEIGHTS.includes(height)) return height;
+  if (!Number.isFinite(height)) return 1800;
+  return COLORBOND_HEIGHTS.reduce((best, option) =>
+    Math.abs(option - height) < Math.abs(best - height) ? option : best,
+  );
+}
+
+function boolValue(value: unknown) {
+  return value === true || value === "true";
+}
+
+function normaliseColorBondVariables(variables: Variables): Variables {
+  const next: Variables = { ...variables };
+  delete next.finish_family;
+  delete next.slat_size_mm;
+  delete next.slat_gap_mm;
+  delete next.slat_gap_mode;
+  delete next.post_size;
+  delete next.post_system;
+
+  const profile = COLORBOND_PROFILES.includes(String(next.profile_code))
+    ? String(next.profile_code)
+    : "GZAG";
+  const colour = COLORBOND_INFILL_COLOURS.includes(String(next.colour_code))
+    ? String(next.colour_code)
+    : "MN";
+  const postColour = COLORBOND_FRAME_COLOURS.includes(String(next.post_colour_code))
+    ? String(next.post_colour_code)
+    : COLORBOND_FRAME_COLOURS.includes(colour)
+      ? colour
+      : "MN";
+  const mounting = ["in_ground", "base_plate"].includes(String(next.mounting_method ?? next.mounting_type))
+    ? String(next.mounting_method ?? next.mounting_type)
+    : "in_ground";
+  const requestedRailWidth = Number(next.max_panel_width_mm);
+  const railWidth = COLORBOND_RAIL_WIDTHS.includes(requestedRailWidth) ? requestedRailWidth : 2365;
+  let height = nearestAllowedHeight(next.target_height_mm);
+  if (profile === "GTRIM" && height === 1500) height = 1800;
+  const capType = ["none", "single", "double"].includes(String(next.post_cap_type))
+    ? String(next.post_cap_type)
+    : "none";
+
+  return {
+    ...next,
+    colour_code: colour,
+    post_colour_code: postColour,
+    profile_code: profile,
+    target_height_mm: height,
+    max_panel_width_mm: railWidth,
+    mounting_type: mounting,
+    mounting_method: mounting,
+    include_65mm_support_posts: boolValue(next.include_65mm_support_posts),
+    post_cap_type: capType,
+    include_timber_sleeper: boolValue(next.include_timber_sleeper),
+  };
+}
+
 export function normaliseVariablesForSystem(
   productCode: string,
   variables: Variables,
 ): Variables {
+  if (productCode === "COLORBOND") return normaliseColorBondVariables(variables);
+
   const finishOptions = finishOptionsForSystem(productCode);
   const finish = finishOptions.includes(String(variables.finish_family))
     ? String(variables.finish_family)
@@ -182,12 +269,12 @@ export function normaliseVariablesForSystem(
 
   const previousColour = String(next.colour_code ?? "");
   const previousPostColour = String(next.post_colour_code ?? previousColour);
-  const colourOptions = colourOptionsForSystem(next);
+  const colourOptions = colourOptionsForSystem(next, productCode);
   if (!colourOptions.includes(String(next.colour_code))) {
     next = { ...next, colour_code: colourOptions[0] };
   }
 
-  const postColourOptions = postColourOptionsForSystem(next);
+  const postColourOptions = postColourOptionsForSystem(next, productCode);
   const keepPostMatchedToFence =
     !next.post_colour_code || previousPostColour === previousColour;
   const postColour = keepPostMatchedToFence
@@ -264,16 +351,19 @@ export function applyProductOptionRules(
   variables: Variables,
 ): SchemaField[] {
   const byKey = new Map(fields.map((field) => [field.field_key, field]));
-  const finishField = optionField(
-    productCode,
-    "finish_family",
-    "Slat range",
-    finishOptionsForSystem(productCode),
-    "standard",
-    5,
-  );
-
-  const result: SchemaField[] = [finishField];
+  const result: SchemaField[] =
+    productCode === "COLORBOND"
+      ? []
+      : [
+          optionField(
+            productCode,
+            "finish_family",
+            "Slat range",
+            finishOptionsForSystem(productCode),
+            "standard",
+            5,
+          ),
+        ];
 
   for (const field of fields) {
     if (field.field_key.endsWith("_stock_length_mm")) continue;
@@ -281,7 +371,8 @@ export function applyProductOptionRules(
     if (field.field_key === "colour_code") {
       result.push(
         cloneField(field, {
-          options_json: colourOptionsForSystem(variables),
+          options_json: colourOptionsForSystem(variables, productCode),
+          ...(productCode === "COLORBOND" ? { label: "Infill colour" } : {}),
         }),
       );
       continue;
@@ -290,7 +381,8 @@ export function applyProductOptionRules(
     if (field.field_key === "post_colour_code") {
       result.push(
         cloneField(field, {
-          options_json: postColourOptionsForSystem(variables),
+          options_json: postColourOptionsForSystem(variables, productCode),
+          ...(productCode === "COLORBOND" ? { label: "Rail/post colour" } : {}),
         }),
       );
       continue;
@@ -369,7 +461,23 @@ export function applyProductOptionRules(
         cloneField(field, {
           label: "Post mounting type",
           default_value_json: "in_ground",
-          options_json: ["in_ground", "base_plate", "core_drill"],
+          options_json:
+            productCode === "COLORBOND"
+              ? ["in_ground", "base_plate"]
+              : ["in_ground", "base_plate", "core_drill"],
+        }),
+      );
+      continue;
+    }
+
+    if (field.field_key === "max_panel_width_mm" && productCode === "COLORBOND") {
+      result.push(
+        cloneField(field, {
+          label: "Bay/rail width",
+          control_type: "select",
+          data_type: "number",
+          options_json: COLORBOND_RAIL_WIDTHS,
+          default_value_json: 2365,
         }),
       );
       continue;
@@ -404,23 +512,25 @@ export function applyProductOptionRules(
         productCode,
         "colour_code",
         "Colour",
-        colourOptionsForSystem(variables),
-        "B",
+        colourOptionsForSystem(variables, productCode),
+        productCode === "COLORBOND" ? "MN" : "B",
         10,
       ),
     );
   }
 
-  result.push(
-    optionField(
-      productCode,
-      "post_colour_code",
-      "Post colour",
-      postColourOptionsForSystem(variables),
-      "B",
-      25,
-    ),
-  );
+  if (!byKey.has("post_colour_code")) {
+    result.push(
+      optionField(
+        productCode,
+        "post_colour_code",
+        productCode === "COLORBOND" ? "Rail/post colour" : "Post colour",
+        postColourOptionsForSystem(variables, productCode),
+        productCode === "COLORBOND" ? "MN" : "B",
+        25,
+      ),
+    );
+  }
 
   return result.sort((a, b) => a.sort_order - b.sort_order);
 }

@@ -6,6 +6,14 @@ import type { ParseResult } from "../../lib/describeFenceParser";
 import { DescribeFenceBox } from "../calculator/DescribeFenceBox";
 import { RunCard } from "./RunCard";
 
+const SYSTEM_BUTTON_LABELS: Record<string, string> = {
+  QSHS: "Quick Screen Horizontal Slats",
+  VS: "Vertical Slats",
+  XPL: "Xpress Plus",
+  BAYG: "Build As You Go",
+  COLORBOND: "ColorBond Steel Fence",
+};
+
 export function RunListV3({
   autoOpenFirstRunId,
   onAutoOpenConsumed,
@@ -26,6 +34,7 @@ export function RunListV3({
 
   function createPayloadForSystem(productCode: string): CanonicalPayload {
     const variables = initialVariablesForSystem(productCode);
+    const initialHeight = Number(variables.target_height_mm ?? 1800);
     const runId = crypto.randomUUID();
     return {
       productCode,
@@ -48,7 +57,7 @@ export function RunListV3({
               sortOrder: 1,
               segmentKind: "panel",
               segmentWidthMm: 0,
-              targetHeightMm: 1800,
+              targetHeightMm: initialHeight,
               variables: productCode === "BAYG" ? { panel_quantity: 1 } : undefined,
             },
           ],
@@ -74,6 +83,7 @@ export function RunListV3({
       ...(payload!.variables ?? {}),
       ...(firstRun?.variables ?? {}),
     };
+    const initialHeight = Number(variables.target_height_mm ?? 1800);
     const newRun: CanonicalRun = {
       runId: crypto.randomUUID(),
       productCode,
@@ -86,7 +96,7 @@ export function RunListV3({
           sortOrder: 1,
           segmentKind: "panel",
           segmentWidthMm: 0,
-          targetHeightMm: 1800,
+          targetHeightMm: initialHeight,
           variables: productCode === "BAYG" ? { panel_quantity: 1 } : undefined,
         },
       ],
@@ -112,13 +122,7 @@ export function RunListV3({
                 <span className="grid gap-1">
                   <span className="text-2xl font-black">{product.system_type}</span>
                   <span className="text-sm font-extrabold leading-tight">
-                    {product.system_type === "QSHS"
-                      ? "Quick Screen Horizontal Slats"
-                      : product.system_type === "VS"
-                        ? "Vertical Slats"
-                        : product.system_type === "XPL"
-                          ? "Xpress Plus"
-                          : "Build As You Go"}
+                    {SYSTEM_BUTTON_LABELS[product.system_type] ?? product.name}
                   </span>
                 </span>
                 <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs">{product.system_type}</span>

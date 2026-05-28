@@ -58,8 +58,11 @@ type ScopeInfo = Omit<BOMSource, "qty"> & {
   productCode?: string;
 };
 
-const SUPPORTED_PRODUCTS = new Set(["QSHS", "BAYG", "VS", "XPL"]);
+const SUPPORTED_PRODUCTS = new Set(["QSHS", "BAYG", "VS", "XPL", "COLORBOND"]);
 const STANDARD_COLOURS = new Set(["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"]);
+const COLORBOND_INFILL_COLOURS = new Set(["BS", "G", "MN", "PB", "P", "SM"]);
+const COLORBOND_FRAME_COLOURS = new Set(["B", "BS", "G", "MN", "PB", "P", "SM"]);
+const COLORBOND_PROFILES = new Set(["GLINE", "GZAG", "GTRIM"]);
 const ALUMAWOOD_CORE_COLOURS = new Set(["KWI", "WRC"]);
 const CSR_CAP_COLOURS = new Set(["B", "G", "MN", "S", "SM", "W"]);
 const COLOUR_NAMES: Record<string, string> = {
@@ -471,6 +474,44 @@ function runPostBoundaryCount(run: CanonicalRun): number {
     (run.rightBoundary!.type === "product_post" ? 1 : 0) +
     run.corners!.length
   );
+}
+
+function colorbondColour(value: unknown): string {
+  const colour = String(value ?? "MN");
+  return COLORBOND_INFILL_COLOURS.has(colour) ? colour : "MN";
+}
+
+function colorbondFrameColour(value: unknown, fallback: string): string {
+  const colour = String(value ?? fallback);
+  if (COLORBOND_FRAME_COLOURS.has(colour)) return colour;
+  return COLORBOND_FRAME_COLOURS.has(fallback) ? fallback : "MN";
+}
+
+function colorbondProfile(value: unknown): string {
+  const profile = String(value ?? "GZAG");
+  return COLORBOND_PROFILES.has(profile) ? profile : "GZAG";
+}
+
+function colorbondHeight(value: unknown, profile: string): number {
+  const height = toNumber(value, 1800);
+  const allowed = [1500, 1800, 2100];
+  let resolved = allowed.includes(height)
+    ? height
+    : allowed.reduce((best, option) =>
+        Math.abs(option - height) < Math.abs(best - height) ? option : best,
+      );
+  if (profile === "GTRIM" && resolved === 1500) resolved = 1800;
+  return resolved;
+}
+
+function colorbondRailLength(value: unknown): 2365 | 3125 {
+  return Number(value) === 3125 ? 3125 : 2365;
+}
+
+function colorbondChannelPostHeight(targetHeightMm: number, mountingType: string): 1800 | 2400 | 3000 {
+  if (targetHeightMm <= 1500 && mountingType === "base_plate") return 1800;
+  if (targetHeightMm <= 1800) return 2400;
+  return 3000;
 }
 
 function emitPostLines(
@@ -1332,6 +1373,197 @@ function calculateVerticalSlatRun(
   return lines;
 }
 
+function calculateColorBondRun(
+  payload: CanonicalPayload,
+  run: CanonicalRun,
+  warnings: string[],
+  computed: LocalBomResult["computed"],
+): QtyLine[] {
+  const lines: QtyLine[] = [];
+  const firstFenceSegment = run.segments.find((s) => s.segmentKind !== "gate_opening");
+  const mergedRunVars = {
+    ...payload.variables,
+    ...(run.variables ?? {}),
+    ...(firstFenceSegment?.variables ?? {}),
+  };
+  const runProfile = colorbondProfile(mergedRunVars.profile_code);
+  const runColour = colorbondColour(mergedRunVars.colour_code);
+  const runPostColour = colorbondFrameColour(mergedRunVars.post_colour_code, runColour);
+  const mountingType = String(
+    mergedRunVars.mounting_type ?? mergedRunVars.mounting_method ?? "in_ground",
+  ) === "base_plate" ? "base_plate" : "in_ground";
+  const includeSupportPosts =
+    mergedRunVars.include_65mm_support_posts === true ||
+    mergedRunVars.include_65mm_support_posts === "true";
+  const includeTimberSleeper =
+    mergedRunVars.include_timber_sleeper === true ||
+    mergedRunVars.include_timber_sleeper === "true";
+  const postCapType = ["single", "double"].includes(String(mergedRunVars.post_cap_type))
+    ? String(mergedRunVars.post_cap_type)
+    : "none";
+  let internalPanelPosts = 0;
+  let totalPanels = 0;
+  let gateWarningAdded = false;
+
+  warnings.push(
+    "ColorBond steel fencing should not be used within 1km of the ocean or in saltwater/chlorine splash zones.",
+  );
+  if (runProfile === "GLINE") {
+    warnings.push("GO-Line ColorBond panels are catalogue-listed for Brisbane and Gold Coast depots.");
+  } else if (runProfile === "GTRIM") {
+    warnings.push("GO-Trim ColorBond panels are catalogue-listed for Newcastle depot only.");
+  } else {
+    warnings.push("GO-Zag ColorBond panels are catalogue-listed for Brisbane, Gold Coast, and Newcastle depots.");
+  }
+
+  for (const segment of run.segments) {
+    if (segment.segmentKind === "gate_opening") {
+      if (!gateWarningAdded) {
+        warnings.push(
+          "ColorBond gate components were extracted from the catalogue, but ColorBond gate openings are not wired into the local fallback BOM yet. Add gate hardware manually for this quote.",
+        );
+        gateWarningAdded = true;
+      }
+      continue;
+    }
+
+    const vars = { ...mergedRunVars, ...(segment.variables ?? {}) };
+    const profile = colorbondProfile(vars.profile_code ?? runProfile);
+    const colour = colorbondColour(vars.colour_code ?? runColour);
+    const postColour = colorbondFrameColour(vars.post_colour_code ?? runPostColour, colour);
+    const railLengthMm = colorbondRailLength(vars.max_panel_width_mm);
+    const targetHeightMm = colorbondHeight(
+      segment.targetHeightMm ?? vars.target_height_mm,
+      profile,
+    );
+    const infillHeightMm = targetHeightMm - 10;
+    const infillSheetsPerPanel = railLengthMm === 3125 ? 4 : 3;
+    const segmentWidthMm = toNumber(segment.segmentWidthMm, 0);
+    if (segmentWidthMm <= 0) continue;
+
+    const numPanels = Math.max(1, Math.ceil(segmentWidthMm / railLengthMm));
+    const panelWidthMm = segmentWidthMm / numPanels;
+    totalPanels += numPanels;
+    internalPanelPosts += Math.max(0, numPanels - 1);
+
+    computed[run.runId] = computed[run.runId] ?? {};
+    computed[run.runId][segment.segmentId] = {
+      actual_height_mm: targetHeightMm,
+      profile_code: profile,
+      infill_height_mm: infillHeightMm,
+      rail_length_mm: railLengthMm,
+      infill_sheets_per_panel: infillSheetsPerPanel,
+      num_panels: numPanels,
+      panel_width_mm: Math.round(panelWidthMm),
+    };
+
+    const base = { runId: run.runId, segmentId: segment.segmentId };
+    emit(lines, {
+      ...base,
+      sku: `CB-${profile}-${infillHeightMm}-${colour}`,
+      category: "screening",
+      quantity: numPanels * infillSheetsPerPanel,
+      unit: "each",
+      notes: `${infillSheetsPerPanel} overlapping ColorBond infill sheets per ${railLengthMm}mm bay`,
+    });
+    emit(lines, {
+      ...base,
+      sku: `CB-RAIL-${railLengthMm}-${postColour}`,
+      category: "rail",
+      quantity: numPanels * 2,
+      unit: "length",
+      notes: `Top and bottom rails; set posts ${railLengthMm + 10}mm centre-to-centre`,
+    });
+    emit(lines, {
+      ...base,
+      sku: `CB-TS-${postColour}-15PK`,
+      category: "screw",
+      quantity: numPanels,
+      unit: "pack",
+      notes: "One 15-pack of Tek screws per ColorBond bay",
+    });
+    if (includeTimberSleeper) {
+      emit(lines, {
+        ...base,
+        sku: `CB-SLEEPER-${railLengthMm}`,
+        category: "accessory",
+        quantity: numPanels,
+        unit: "length",
+        notes: "Optional ColorBond timber sleeper",
+      });
+    }
+    if (railLengthMm === 3125) {
+      warnings.push(
+        "3125mm ColorBond bays use four overlapping infill sheets. Confirm site handling and wind/design requirements.",
+      );
+    }
+    if (profile === "GTRIM" && targetHeightMm === 1500) {
+      warnings.push("GO-Trim ColorBond panels are only catalogue-listed for 1800mm and 2100mm finished heights.");
+    }
+  }
+
+  const postCount = runPostBoundaryCount(run) + internalPanelPosts;
+  const postHeight = colorbondChannelPostHeight(
+    colorbondHeight(firstFenceSegment?.targetHeightMm ?? mergedRunVars.target_height_mm, runProfile),
+    mountingType,
+  );
+  const postSegmentId = firstFenceSegment?.segmentId ?? run.runId;
+  emit(lines, {
+    runId: run.runId,
+    segmentId: postSegmentId,
+    sku: `CB-CPOST-${postHeight}-${runPostColour}`,
+    category: "post",
+    quantity: postCount,
+    unit: "length",
+    notes: "ColorBond channel posts for run ends, corners, and internal bay joins",
+  });
+  if (mountingType === "base_plate") {
+    emit(lines, {
+      runId: run.runId,
+      segmentId: postSegmentId,
+      sku: `CB-SHARKFIN-${runPostColour}`,
+      category: "post_accessory",
+      quantity: postCount,
+      unit: "each",
+      notes: "Shark fin base plates for base-plated ColorBond channel posts",
+    });
+  }
+  if (includeSupportPosts) {
+    emit(lines, {
+      runId: run.runId,
+      segmentId: postSegmentId,
+      sku: `XPSG-2700-ST65-${runPostColour}`,
+      category: "post",
+      quantity: runPostBoundaryCount(run),
+      unit: "length",
+      notes: "Optional 65mm steel support posts at starts, ends, corners, and gate openings",
+    });
+  }
+  if (postCapType === "single" || postCapType === "double") {
+    emit(lines, {
+      runId: run.runId,
+      segmentId: postSegmentId,
+      sku: postCapType === "single" ? "CB-POSTCAP-SGL" : "CB-POSTCAP-DBL",
+      category: "post_accessory",
+      quantity: postCount,
+      unit: "each",
+      notes: `${postCapType === "single" ? "Single" : "Double"} ColorBond channel post caps`,
+    });
+  }
+
+  if (totalPanels > 0) {
+    computed[run.runId] = computed[run.runId] ?? {};
+    computed[run.runId][postSegmentId] = {
+      ...(computed[run.runId][postSegmentId] ?? {}),
+      num_posts: postCount,
+      channel_post_height_mm: postHeight,
+      total_colorbond_bays: totalPanels,
+    };
+  }
+
+  return lines;
+}
+
 function calculateScreenRun(
   payload: CanonicalPayload,
   run: CanonicalRun,
@@ -1359,9 +1591,13 @@ function calculateScreenRun(
     return calculateVerticalSlatRun(payload, run, warnings, computed);
   }
 
+  if (run.productCode === "COLORBOND") {
+    return calculateColorBondRun(payload, run, warnings, computed);
+  }
+
   if (!SUPPORTED_PRODUCTS.has(run.productCode)) {
     warnings.push(
-      `${run.productCode} is available in product search but the local fallback BOM engine currently calculates QSHS, BAYG, and VS only.`,
+      `${run.productCode} is available in product search but the local fallback BOM engine currently calculates QSHS, BAYG, VS, XPL, and ColorBond only.`,
     );
     return lines;
   }

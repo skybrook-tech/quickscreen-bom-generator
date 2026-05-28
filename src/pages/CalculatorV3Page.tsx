@@ -332,7 +332,7 @@ function createEmptyPayload(systemType = "QSHS"): CanonicalPayload {
 type PendingParsedGate = NonNullable<NonNullable<CanonicalPayload["job"]>["pendingGates"]>[number];
 
 function productCodeFromParsedSystem(systemType: ParsedSystemType | undefined) {
-  if (systemType === "VS" || systemType === "XPL" || systemType === "BAYG") return systemType;
+  if (systemType === "VS" || systemType === "XPL" || systemType === "BAYG" || systemType === "COLORBOND") return systemType;
   return "QSHS";
 }
 
@@ -1402,6 +1402,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     if (productCode === "VS") return "Vertical Slats";
     if (productCode === "XPL") return "XPress Plus";
     if (productCode === "BAYG") return "BAY-G Infill";
+    if (productCode === "COLORBOND") return "ColorBond Steel Fence";
     return productCode;
   };
   const gateSummaryForRun = (run: CanonicalRun) => {

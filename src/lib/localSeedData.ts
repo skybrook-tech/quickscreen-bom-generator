@@ -2,6 +2,7 @@ import qshsRaw from "../../supabase/seeds/glass-outlet/products/qshs.json?raw";
 import baygRaw from "../../supabase/seeds/glass-outlet/products/bayg.json?raw";
 import vsRaw from "../../supabase/seeds/glass-outlet/products/vs.json?raw";
 import xplRaw from "../../supabase/seeds/glass-outlet/products/xpl.json?raw";
+import colorbondRaw from "../../supabase/seeds/glass-outlet/products/colorbond.json?raw";
 import qsGateRaw from "../../supabase/seeds/glass-outlet/products/qs_gate.json?raw";
 import priceCatalogueRaw from "../../supabase/seeds/glass-outlet/products/price_catalogue.json?raw";
 import type { Product } from "../hooks/useProducts";
@@ -64,6 +65,7 @@ const seedFiles: SeedFile[] = [
   JSON.parse(baygRaw) as SeedFile,
   JSON.parse(vsRaw) as SeedFile,
   JSON.parse(xplRaw) as SeedFile,
+  JSON.parse(colorbondRaw) as SeedFile,
   JSON.parse(qsGateRaw) as SeedFile,
   JSON.parse(priceCatalogueRaw) as SeedFile,
 ];
@@ -946,7 +948,7 @@ export const localFenceProducts = localProducts.filter((product) => {
     .find((p) => p.system_type === product.system_type);
   return (
     seedProduct?.product_type !== "gate" &&
-    ["QSHS", "VS", "XPL", "BAYG"].includes(product.system_type)
+    ["QSHS", "VS", "XPL", "BAYG", "COLORBOND"].includes(product.system_type)
   );
 });
 

@@ -21,6 +21,7 @@ function shortLabel(product: FenceProduct): string {
   if (product.system_type === "VS") return "VS - Vertical Slat";
   if (product.system_type === "XPL") return "XPL - Premium";
   if (product.system_type === "BAYG") return "BAY-G - Infill Screens";
+  if (product.system_type === "COLORBOND") return "ColorBond - Steel Fence";
   return `${product.system_type} - ${product.name}`;
 }
 

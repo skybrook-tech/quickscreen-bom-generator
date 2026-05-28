@@ -3,6 +3,7 @@ export const SYSTEM_NAMES: Record<string, string> = {
   VS: "Vertical Slat",
   XPL: "XPress Plus",
   BAYG: "BAY-G Infill Panels",
+  COLORBOND: "ColorBond Steel Fence",
   QS_GATE: "QuickScreen Gate",
 };
 

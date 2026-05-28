@@ -64,6 +64,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   const postSize = String((displayVariables[SEGMENT_OPTION_KEYS.postSize] as string | number) ?? "");
   const isCustomPost = postSize === "custom";
   const isBayg = productCode === "BAYG";
+  const isColorBond = productCode === "COLORBOND";
   const [postColourOpen, setPostColourOpen] = useState(() => {
     const colour = String(displayVariables.colour_code ?? "B");
     return Boolean(v.post_colour_code && String(v.post_colour_code) !== colour);
@@ -104,6 +105,10 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         mounting_type: normalised.mounting_type,
         mounting_method: normalised.mounting_method,
         max_panel_width_mm: normalised.max_panel_width_mm,
+        profile_code: normalised.profile_code,
+        include_65mm_support_posts: normalised.include_65mm_support_posts,
+        post_cap_type: normalised.post_cap_type,
+        include_timber_sleeper: normalised.include_timber_sleeper,
       }),
     );
   }
@@ -147,7 +152,9 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         ...field,
         label: "Post mounting type",
         default_value_json: "in_ground",
-        options_json: ["in_ground", "base_plate", "core_drill"],
+        options_json: isColorBond
+          ? ["in_ground", "base_plate"]
+          : ["in_ground", "base_plate", "core_drill"],
       };
     }
     if (field.field_key === "post_system") {
@@ -226,7 +233,9 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   function handleOptionChange(key: string, value: string | number | boolean) {
     onJobOverrideChange(key, value);
   }
-  const postSummary = `${POST_SIZE_LABELS[postSystem] ?? POST_SIZE_LABELS[postSize] ?? (postSize ? `${postSize}mm Post` : "Run default")} / ${effectiveMax}mm`;
+  const postSummary = isColorBond
+    ? `Channel post / ${effectiveMax}mm`
+    : `${POST_SIZE_LABELS[postSystem] ?? POST_SIZE_LABELS[postSize] ?? (postSize ? `${postSize}mm Post` : "Run default")} / ${effectiveMax}mm`;
 
   return (
     <div className="space-y-4">
@@ -251,7 +260,11 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
       </SettingsDisclosureRow>
 
       {slatOptionFields.length > 0 || postColourField ? (
-        <SettingsDisclosureRow id={`${seg.segmentId}-section-style`} label="Slats, colors, and spacings" value={optionSummary || "Run defaults"}>
+        <SettingsDisclosureRow
+          id={`${seg.segmentId}-section-style`}
+          label={isColorBond ? "Profile and colours" : "Slats, colors, and spacings"}
+          value={optionSummary || "Run defaults"}
+        >
           <div className="space-y-4">
             {colourField && (
               <SchemaDrivenForm
@@ -267,11 +280,17 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                   onClick={() => setPostColourOpen((value) => !value)}
                   className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
                 >
-                  {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
+                  {postColourOpen
+                    ? isColorBond
+                      ? "Hide alternate rail/post colour"
+                      : "Hide alternate post colour"
+                    : isColorBond
+                      ? "Alternate rail/post colour"
+                      : "Alternate post colour"}
                 </button>
                 {postColourOpen && (
                   <div className="space-y-1">
-                    <p className="text-sm font-bold text-brand-muted">Post colour</p>
+                    <p className="text-sm font-bold text-brand-muted">{isColorBond ? "Rail/post colour" : "Post colour"}</p>
                     <ColourPalette
                       value={String(mergedJobDisplay.post_colour_code ?? mergedJobDisplay.colour_code ?? "B")}
                       options={(postColourField.options_json ?? colourField?.options_json ?? ["B", "MN", "G", "SM", "W", "BS", "D", "M"]).map(String)}
@@ -310,7 +329,11 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
       ) : null}
 
       {!isBayg && (
-        <SettingsDisclosureRow id={`${seg.segmentId}-section-posts`} label="Post size, mounting and spacing" value={postSummary}>
+        <SettingsDisclosureRow
+          id={`${seg.segmentId}-section-posts`}
+          label={isColorBond ? "Posts, mounting and bay width" : "Post size, mounting and spacing"}
+          value={postSummary}
+        >
           {postFields.length > 0 && (
             <SchemaDrivenForm
               fields={postFields}
@@ -318,22 +341,36 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
               onChange={handleOptionChange}
             />
           )}
-          <label className="flex flex-col gap-1">
-            <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
-            <input
-              type="number"
-              value={maxSpacingDraft}
-              onChange={(event) => setMaxSpacingDraft(event.target.value)}
-              onBlur={() => commitMaxPanelWidth()}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") event.currentTarget.blur();
-              }}
-              min={MIN_POST_SPACING_MM}
-              max={MAX_POST_SPACING_MM}
-              step={50}
-              className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-            />
-          </label>
+          {isColorBond ? (
+            <label className="flex flex-col gap-1">
+              <span className="text-sm font-bold text-brand-muted">Bay/rail width (mm)</span>
+              <select
+                value={String(effectiveMax === 3125 ? 3125 : 2365)}
+                onChange={(event) => updateMaxPanelWidth(Number(event.target.value))}
+                className="w-36 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+              >
+                <option value={2365}>2365mm</option>
+                <option value={3125}>3125mm</option>
+              </select>
+            </label>
+          ) : (
+            <label className="flex flex-col gap-1">
+              <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
+              <input
+                type="number"
+                value={maxSpacingDraft}
+                onChange={(event) => setMaxSpacingDraft(event.target.value)}
+                onBlur={() => commitMaxPanelWidth()}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") event.currentTarget.blur();
+                }}
+                min={MIN_POST_SPACING_MM}
+                max={MAX_POST_SPACING_MM}
+                step={50}
+                className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+              />
+            </label>
+          )}
         </SettingsDisclosureRow>
       )}
 

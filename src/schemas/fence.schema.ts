@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const SystemType = z.enum(["QSHS", "VS", "XPL", "BAYG"]);
+export const SystemType = z.enum(["QSHS", "VS", "XPL", "BAYG", "COLORBOND"]);
 export const SlatSize = z.enum(["65", "90"]);
 export const SlatGap = z.enum(["0", "5", "9", "20"]);
 export const MaxPanelWidth = z.enum(["2600", "2000"]);

@@ -178,13 +178,19 @@ export function SegmentRow({
   const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
   const productCode = String(seg.variables?.product_code ?? runProductCode);
   const isBayg = productCode === "BAYG";
+  const isColorBond = productCode === "COLORBOND";
   const heightEntries = run
     ? heightEntriesForSystem(productCode, segmentVariables)
     : [];
   const heightInputsReady =
+    isColorBond ||
     productCode === "VS" ||
     (Number.isFinite(Number(segmentVariables.slat_size_mm)) &&
       Number.isFinite(Number(segmentVariables.slat_gap_mm)));
+  const colorBondHeightOptions =
+    String(segmentVariables.profile_code ?? "GZAG") === "GTRIM"
+      ? [1800, 2100]
+      : [1500, 1800, 2100];
   const selectedHeightEntry =
     derivedHeightForSlatCount(heightEntries, seg.variables?.slat_count ?? segmentVariables.slat_count) ??
     nearestDerivedHeight(
@@ -258,6 +264,10 @@ export function SegmentRow({
       "mounting_type",
       "mounting_method",
       "max_panel_width_mm",
+      "profile_code",
+      "include_65mm_support_posts",
+      "post_cap_type",
+      "include_timber_sleeper",
       SEGMENT_TERMINATION_KEYS.leftNonSystemSubtype,
       SEGMENT_TERMINATION_KEYS.rightNonSystemSubtype,
     ];
@@ -330,7 +340,47 @@ export function SegmentRow({
         ]
         : []),
     ]
-    : [
+    : isColorBond
+      ? [
+        {
+          label: "Height",
+          value: `${selectedHeight}mm`,
+          changed: !sameValue(
+            selectedHeight,
+            masterVariables.target_height_mm ?? 1800,
+          ),
+        },
+        {
+          label: "System",
+          value: "ColorBond",
+          changed: !sameValue(productCode, runProductCode),
+        },
+        {
+          label: "Profile",
+          value: String(segmentVariables.profile_code ?? "GZAG"),
+          changed: !sameValue(segmentVariables.profile_code ?? "GZAG", masterVariables.profile_code ?? "GZAG"),
+        },
+        { label: "Infill", value: colourName(fenceColour), changed: !sameValue(fenceColour, masterFenceColour) },
+        {
+          label: "Rail/post",
+          value: colourName(postColour),
+          changed: !sameValue(postColour, masterPostColour),
+        },
+        {
+          label: "Mounting",
+          value:
+            MOUNTING_LABELS[String(segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground")] ??
+            "Concreted",
+          changed:
+            !sameValue(
+              segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground",
+              masterVariables.mounting_method ?? masterVariables.mounting_type ?? "in_ground",
+            ),
+        },
+        { label: "Bay Count", value: panelCount, changed: !sameValue(panelCount, masterPanelCount) },
+        { label: "Bay width", value: panelWidthSummary, changed: !sameValue(maxSpacing, masterMaxSpacing) },
+      ]
+      : [
       {
         label: "Height",
         value: `${selectedHeight}mm`,
@@ -536,6 +586,10 @@ export function SegmentRow({
           mounting_type: null,
           mounting_method: null,
           max_panel_width_mm: null,
+          profile_code: null,
+          include_65mm_support_posts: null,
+          post_cap_type: null,
+          include_timber_sleeper: null,
         }),
       },
     });
@@ -601,7 +655,7 @@ export function SegmentRow({
                   </span>
                 </button>
               </div>
-              {!gate && !isBayg && onAddGate && (
+              {!gate && !isBayg && !isColorBond && onAddGate && (
                 <button
                   type="button"
                   onClick={(event) => {
@@ -710,7 +764,19 @@ export function SegmentRow({
                   <span className="text-sm font-bold text-brand-muted">Height (mm)</span>
 
                 </div>
-                {productCode === "VS" ? (
+                {isColorBond ? (
+                  <select
+                    value={colorBondHeightOptions.includes(selectedHeight) ? selectedHeight : colorBondHeightOptions[0]}
+                    onChange={(event) => updateGeometry("targetHeightMm", Number(event.target.value))}
+                    className="w-44 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+                  >
+                    {colorBondHeightOptions.map((height) => (
+                      <option key={height} value={height}>
+                        {height}mm
+                      </option>
+                    ))}
+                  </select>
+                ) : productCode === "VS" ? (
                   <>
 
                     <NumberInput
@@ -747,7 +813,9 @@ export function SegmentRow({
                     <option>Select slat size and gap first</option>
                   </select>
                 )}
-                {productCode === "VS" ? (
+                {isColorBond ? (
+                  <span className="text-xs text-brand-muted/70">Catalogue finished heights</span>
+                ) : productCode === "VS" ? (
                   <span className="text-xs text-brand-muted/70">Custom height</span>
                 ) : (
                   <span className="text-xs text-brand-muted">Calculated for {segmentVariables.slat_size_mm ?? "?"}mm x {segmentVariables.slat_gap_mm ?? "?"}mm gap</span>

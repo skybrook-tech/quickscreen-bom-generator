@@ -8,6 +8,8 @@
 
 Latest infrastructure fix: duplicate Supabase migration version 029 was resolved by keeping the earlier profile-email migration at 029 and renaming the later quote property-anchor migration to 030.
 
+Latest ColorBond pass: extracted `GO_colorbond_V2B_lowres.pdf` into a new `COLORBOND` fence product seed, added the fifth fence-system selector path, customised the ColorBond run/section options for profiles, infill colours, rail/post colours, 1500/1800/2100mm heights and 2365/3125mm bays, documented the catalogue mapping, widened the component system-type constraint, and added local fallback BOM rules for ColorBond panels, rails, channel posts, Tek screws, shark fins, sleepers, post caps, and optional 65mm support posts.
+
 Latest QuickScreen post-colour UI pass: section Slats, colors, and spacings now hides the raw post-colour picker and uses the alternate post colour button under Colour as the only section-level post-colour control.
 
 Latest Brief 014 pass: the mobile Job tab now prioritises job/address/system/run controls, supports Web Speech API address dictation, adds numeric and decimal mobile keyboard hints, enlarges key touch targets, and keeps Save/Clear/Generate actions in a keyboard-aware sticky action bar.
@@ -473,6 +475,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Brief 011 queue pass: double-click fence finish now preserves the user's zoomed-out canvas viewport during same-geometry form sync, preventing the satellite/background view from shifting away from the drawn run.
 - [x] Brief 016 mobile BOM cards: mobile BOM view now renders grouped stacked cards, sticky totals, collapsible accessory cards, a bottom BOM action bar, and Share PDF support with Web Share API plus download fallback while preserving the desktop BOM table.
 - [x] Master baseline keyboard-offset fix: removed the duplicate `keyboardOffset` state declaration left by the mobile brief merge and rewired the orphaned Job-tab Generate BOM button to the current `handleManualBomGenerate` handler.
+- [x] ColorBond fence system: extracted `GO_colorbond_V2B_lowres.pdf`, added `supabase/seeds/glass-outlet/products/colorbond.json`, allowed `COLORBOND` in component system types, removed the inactive placeholder from `other.json`, added the fifth calculator selector, and wired ColorBond-specific profile/colour/height/bay options plus local fallback BOM quantities.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---

@@ -12,16 +12,6 @@
       "metadata": {}
     },
     {
-      "system_type": "COLORBOND",
-      "product_type": "other",
-      "compatible_with_system_types": [],
-      "name": "Colorbond Fencing",
-      "description": "Colorbond steel fencing panels and accessories.",
-      "active": false,
-      "sort_order": 11,
-      "metadata": {}
-    },
-    {
       "system_type": "DRAINLAB",
       "product_type": "other",
       "compatible_with_system_types": [],

@@ -1,0 +1,1481 @@
+{
+  "org_slug": "glass-outlet",
+  "products": [
+    {
+      "system_type": "COLORBOND",
+      "product_type": "fence",
+      "compatible_with_system_types": [],
+      "name": "ColorBond Steel Fence",
+      "description": "ColorBond steel fencing system with GO-Line, GO-Zag, and GO-Trim infill profiles, 1500/1800/2100mm finished heights, 2365/3125mm rail bays, channel posts, base-plate options, sleepers, post caps, and matching gate/extras catalogue data.",
+      "active": true,
+      "sort_order": 5,
+      "metadata": {
+        "allowedAngles": [
+          90
+        ],
+        "catalogue": "GO_colorbond_V2B_lowres.pdf",
+        "catalogueVersion": "V2",
+        "options": {
+          "profile": {
+            "GLINE": "GO-Line premium ribbed profile",
+            "GZAG": "GO-Zag zigzag profile",
+            "GTRIM": "GO-Trim classic profile"
+          },
+          "infillColour": [
+            "BS",
+            "G",
+            "MN",
+            "PB",
+            "P",
+            "SM"
+          ],
+          "frameColour": [
+            "B",
+            "BS",
+            "G",
+            "MN",
+            "PB",
+            "P",
+            "SM"
+          ],
+          "hardwareColour": [
+            "B",
+            "M",
+            "BS",
+            "G",
+            "MN",
+            "PB",
+            "P",
+            "SM"
+          ],
+          "finishedHeight": [
+            1500,
+            1800,
+            2100
+          ],
+          "railWidth": [
+            2365,
+            3125
+          ],
+          "panelSheetWidth": 820,
+          "panelSheetCoverageMm": {
+            "GLINE": "765-770",
+            "GZAG": "765-770",
+            "GTRIM": "760"
+          },
+          "infillSheetsPerBay": {
+            "2365": 3,
+            "3125": 4
+          }
+        },
+        "warnings": [
+          "ColorBond steel fencing should not be used within 1km of the ocean or in salt/chlorine splash zones.",
+          "Night Sky / black is rails and posts only, not an infill sheet colour.",
+          "GO-Trim is catalogue-listed for 1800mm and 2100mm finished heights only."
+        ]
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "CB-GTRIM-1790-BS",
+      "name": "ColorBond GO-Trim infill sheet 1790mm - Basalt",
+      "description": "GO-Trim classic ColorBond steel infill sheet, 1790mm high x 820mm wide, approx 760mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 30
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 30
+    },
+    {
+      "sku": "CB-GTRIM-2090-BS",
+      "name": "ColorBond GO-Trim infill sheet 2090mm - Basalt",
+      "description": "GO-Trim classic ColorBond steel infill sheet, 2090mm high x 820mm wide, approx 760mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 30
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 30
+    },
+    {
+      "sku": "CB-GZAG-1490-G",
+      "name": "ColorBond GO-Zag infill sheet 1490mm - Woodland Grey",
+      "description": "GO-Zag zigzag ColorBond steel infill sheet, 1490mm high x 820mm wide, approx 765-770mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 20
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 20
+    },
+    {
+      "sku": "CB-GTRIM-1790-G",
+      "name": "ColorBond GO-Trim infill sheet 1790mm - Woodland Grey",
+      "description": "GO-Trim classic ColorBond steel infill sheet, 1790mm high x 820mm wide, approx 760mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 30
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 30
+    },
+    {
+      "sku": "CB-GTRIM-2090-G",
+      "name": "ColorBond GO-Trim infill sheet 2090mm - Woodland Grey",
+      "description": "GO-Trim classic ColorBond steel infill sheet, 2090mm high x 820mm wide, approx 760mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 30
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 30
+    },
+    {
+      "sku": "CB-GLINE-1490-MN",
+      "name": "ColorBond GO-Line infill sheet 1490mm - Monument",
+      "description": "GO-Line premium ribbed ColorBond steel infill sheet, 1490mm high x 820mm wide, approx 765-770mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 10,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 10
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 10
+    },
+    {
+      "sku": "CB-GZAG-1490-MN",
+      "name": "ColorBond GO-Zag infill sheet 1490mm - Monument",
+      "description": "GO-Zag zigzag ColorBond steel infill sheet, 1490mm high x 820mm wide, approx 765-770mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 20
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 20
+    },
+    {
+      "sku": "CB-GTRIM-1790-MN",
+      "name": "ColorBond GO-Trim infill sheet 1790mm - Monument",
+      "description": "GO-Trim classic ColorBond steel infill sheet, 1790mm high x 820mm wide, approx 760mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 30
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 30
+    },
+    {
+      "sku": "CB-GTRIM-2090-MN",
+      "name": "ColorBond GO-Trim infill sheet 2090mm - Monument",
+      "description": "GO-Trim classic ColorBond steel infill sheet, 2090mm high x 820mm wide, approx 760mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 30
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 30
+    },
+    {
+      "sku": "CB-GTRIM-1790-PB",
+      "name": "ColorBond GO-Trim infill sheet 1790mm - Paperbark",
+      "description": "GO-Trim classic ColorBond steel infill sheet, 1790mm high x 820mm wide, approx 760mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 30
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 30
+    },
+    {
+      "sku": "CB-GTRIM-2090-PB",
+      "name": "ColorBond GO-Trim infill sheet 2090mm - Paperbark",
+      "description": "GO-Trim classic ColorBond steel infill sheet, 2090mm high x 820mm wide, approx 760mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 30
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 30
+    },
+    {
+      "sku": "CB-GTRIM-1790-P",
+      "name": "ColorBond GO-Trim infill sheet 1790mm - Domain / Primrose",
+      "description": "GO-Trim classic ColorBond steel infill sheet, 1790mm high x 820mm wide, approx 760mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 30
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 30
+    },
+    {
+      "sku": "CB-GTRIM-2090-P",
+      "name": "ColorBond GO-Trim infill sheet 2090mm - Domain / Primrose",
+      "description": "GO-Trim classic ColorBond steel infill sheet, 2090mm high x 820mm wide, approx 760mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 30
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 30
+    },
+    {
+      "sku": "CB-GZAG-1490-SM",
+      "name": "ColorBond GO-Zag infill sheet 1490mm - Surfmist",
+      "description": "GO-Zag zigzag ColorBond steel infill sheet, 1490mm high x 820mm wide, approx 765-770mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 20
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 20
+    },
+    {
+      "sku": "CB-GTRIM-1790-SM",
+      "name": "ColorBond GO-Trim infill sheet 1790mm - Surfmist",
+      "description": "GO-Trim classic ColorBond steel infill sheet, 1790mm high x 820mm wide, approx 760mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 30
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 30
+    },
+    {
+      "sku": "CB-GTRIM-2090-SM",
+      "name": "ColorBond GO-Trim infill sheet 2090mm - Surfmist",
+      "description": "GO-Trim classic ColorBond steel infill sheet, 2090mm high x 820mm wide, approx 760mm coverage.",
+      "category": "infill_sheet",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 11,
+        "bomCategory": "screening",
+        "subCategory": "infill_sheets",
+        "sortPriority": 30
+      },
+      "active": true,
+      "subCategory": "infill_sheets",
+      "sortPriority": 30
+    },
+    {
+      "sku": "AWALL-1700-1W-G",
+      "name": "Alumawall retaining wall post 1700mm - Woodland Grey",
+      "description": "Heavy-duty 4.3mm aluminium retaining wall post, 1700mm high, top plate included.",
+      "category": "retaining_post",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 25,
+        "bomCategory": "posts_and_mounting",
+        "subCategory": "alumawall",
+        "sortPriority": 80
+      },
+      "active": true,
+      "subCategory": "alumawall",
+      "sortPriority": 80
+    },
+    {
+      "sku": "AWALL-TP-G",
+      "name": "Alumawall top plate - Woodland Grey",
+      "description": "Optional extra top plate for cut-down Alumawall retaining wall posts.",
+      "category": "post_cap",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 25,
+        "bomCategory": "caps_and_plugs",
+        "subCategory": "alumawall",
+        "sortPriority": 90
+      },
+      "active": true,
+      "subCategory": "alumawall",
+      "sortPriority": 90
+    },
+    {
+      "sku": "AWALL-1700-1W-MN",
+      "name": "Alumawall retaining wall post 1700mm - Monument",
+      "description": "Heavy-duty 4.3mm aluminium retaining wall post, 1700mm high, top plate included.",
+      "category": "retaining_post",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 25,
+        "bomCategory": "posts_and_mounting",
+        "subCategory": "alumawall",
+        "sortPriority": 80
+      },
+      "active": true,
+      "subCategory": "alumawall",
+      "sortPriority": 80
+    },
+    {
+      "sku": "AWALL-TP-MN",
+      "name": "Alumawall top plate - Monument",
+      "description": "Optional extra top plate for cut-down Alumawall retaining wall posts.",
+      "category": "post_cap",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 25,
+        "bomCategory": "caps_and_plugs",
+        "subCategory": "alumawall",
+        "sortPriority": 90
+      },
+      "active": true,
+      "subCategory": "alumawall",
+      "sortPriority": 90
+    },
+    {
+      "sku": "AWALL-1700-1W-PB",
+      "name": "Alumawall retaining wall post 1700mm - Paperbark",
+      "description": "Heavy-duty 4.3mm aluminium retaining wall post, 1700mm high, top plate included.",
+      "category": "retaining_post",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 25,
+        "bomCategory": "posts_and_mounting",
+        "subCategory": "alumawall",
+        "sortPriority": 80
+      },
+      "active": true,
+      "subCategory": "alumawall",
+      "sortPriority": 80
+    },
+    {
+      "sku": "AWALL-TP-PB",
+      "name": "Alumawall top plate - Paperbark",
+      "description": "Optional extra top plate for cut-down Alumawall retaining wall posts.",
+      "category": "post_cap",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 25,
+        "bomCategory": "caps_and_plugs",
+        "subCategory": "alumawall",
+        "sortPriority": 90
+      },
+      "active": true,
+      "subCategory": "alumawall",
+      "sortPriority": 90
+    },
+    {
+      "sku": "AWALL-1700-1W-P",
+      "name": "Alumawall retaining wall post 1700mm - Domain / Primrose",
+      "description": "Heavy-duty 4.3mm aluminium retaining wall post, 1700mm high, top plate included.",
+      "category": "retaining_post",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 25,
+        "bomCategory": "posts_and_mounting",
+        "subCategory": "alumawall",
+        "sortPriority": 80
+      },
+      "active": true,
+      "subCategory": "alumawall",
+      "sortPriority": 80
+    },
+    {
+      "sku": "AWALL-TP-P",
+      "name": "Alumawall top plate - Domain / Primrose",
+      "description": "Optional extra top plate for cut-down Alumawall retaining wall posts.",
+      "category": "post_cap",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 25,
+        "bomCategory": "caps_and_plugs",
+        "subCategory": "alumawall",
+        "sortPriority": 90
+      },
+      "active": true,
+      "subCategory": "alumawall",
+      "sortPriority": 90
+    },
+    {
+      "sku": "LT2-SF-0250-BS",
+      "name": "Screen topper side frame pair 250mm - Basalt",
+      "description": "250mm extension side frame pair for ColorBond steel fence screen topper, 13mm gap between slats.",
+      "category": "topper_side_frame",
+      "unit": "pair",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 26,
+        "bomCategory": "frames_and_covers",
+        "subCategory": "screen_topper",
+        "sortPriority": 120
+      },
+      "active": true,
+      "subCategory": "screen_topper",
+      "sortPriority": 120
+    },
+    {
+      "sku": "LT-2400-S65-3PK-B",
+      "name": "ColorBond topper slat 2400mm 3-pack - Night Sky / black",
+      "description": "65 x 16.5mm aluminium slat, 2400mm long, 3-pack for screen topper side frames.",
+      "category": "topper_slat",
+      "unit": "pack",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 26,
+        "bomCategory": "screening",
+        "subCategory": "screen_topper",
+        "sortPriority": 130
+      },
+      "active": true,
+      "subCategory": "screen_topper",
+      "sortPriority": 130
+    },
+    {
+      "sku": "LT-2400-S65-3PK-G",
+      "name": "ColorBond topper slat 2400mm 3-pack - Woodland Grey",
+      "description": "65 x 16.5mm aluminium slat, 2400mm long, 3-pack for screen topper side frames.",
+      "category": "topper_slat",
+      "unit": "pack",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 26,
+        "bomCategory": "screening",
+        "subCategory": "screen_topper",
+        "sortPriority": 130
+      },
+      "active": true,
+      "subCategory": "screen_topper",
+      "sortPriority": 130
+    },
+    {
+      "sku": "LT-2400-S65-3PK-MN",
+      "name": "ColorBond topper slat 2400mm 3-pack - Monument",
+      "description": "65 x 16.5mm aluminium slat, 2400mm long, 3-pack for screen topper side frames.",
+      "category": "topper_slat",
+      "unit": "pack",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 26,
+        "bomCategory": "screening",
+        "subCategory": "screen_topper",
+        "sortPriority": 130
+      },
+      "active": true,
+      "subCategory": "screen_topper",
+      "sortPriority": 130
+    },
+    {
+      "sku": "LT-2400-S65-3PK-PB",
+      "name": "ColorBond topper slat 2400mm 3-pack - Paperbark",
+      "description": "65 x 16.5mm aluminium slat, 2400mm long, 3-pack for screen topper side frames.",
+      "category": "topper_slat",
+      "unit": "pack",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 26,
+        "bomCategory": "screening",
+        "subCategory": "screen_topper",
+        "sortPriority": 130
+      },
+      "active": true,
+      "subCategory": "screen_topper",
+      "sortPriority": 130
+    },
+    {
+      "sku": "LT-2400-S65-3PK-P",
+      "name": "ColorBond topper slat 2400mm 3-pack - Domain / Primrose",
+      "description": "65 x 16.5mm aluminium slat, 2400mm long, 3-pack for screen topper side frames.",
+      "category": "topper_slat",
+      "unit": "pack",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 26,
+        "bomCategory": "screening",
+        "subCategory": "screen_topper",
+        "sortPriority": 130
+      },
+      "active": true,
+      "subCategory": "screen_topper",
+      "sortPriority": 130
+    },
+    {
+      "sku": "LT-2400-S65-3PK-SM",
+      "name": "ColorBond topper slat 2400mm 3-pack - Surfmist",
+      "description": "65 x 16.5mm aluminium slat, 2400mm long, 3-pack for screen topper side frames.",
+      "category": "topper_slat",
+      "unit": "pack",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 26,
+        "bomCategory": "screening",
+        "subCategory": "screen_topper",
+        "sortPriority": 130
+      },
+      "active": true,
+      "subCategory": "screen_topper",
+      "sortPriority": 130
+    },
+    {
+      "sku": "XPSG-2700-ST65-B",
+      "name": "65x65mm galvanised steel post 2700mm - Night Sky / black",
+      "description": "65 x 65mm galvanised steel post, 2700mm long, powder coated black, includes welded 8mm bottom plate and top cap.",
+      "category": "post",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "GO_colorbond_V2B_lowres.pdf catalogue extraction",
+        "price_status": "missing_from_price_catalogue",
+        "catalogue_page": 14,
+        "bomCategory": "posts_and_mounting",
+        "subCategory": "support_posts",
+        "sortPriority": 70
+      },
+      "active": true,
+      "subCategory": "support_posts",
+      "sortPriority": 70
+    }
+  ],
+  "rule_sets": [
+    {
+      "product_system_type": "COLORBOND",
+      "name": "ColorBond Fence Rules",
+      "description": "Data-driven ColorBond steel fence BOM rules from GO ColorBond catalogue V2",
+      "active": true
+    }
+  ],
+  "rule_versions": [
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "is_current": true,
+      "effective_from": "2026-05-26",
+      "notes": "Initial ColorBond fence rules from GO_colorbond_V2B_lowres.pdf"
+    }
+  ],
+  "product_constraints": [
+    {
+      "product_system_type": "COLORBOND",
+      "name": "finished_height_options",
+      "constraint_type": "enum",
+      "value_text": "[1500,1800,2100]",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "ColorBond finished height must be 1500mm, 1800mm, or 2100mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "name": "rail_width_options",
+      "constraint_type": "enum",
+      "value_text": "[2365,3125]",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "ColorBond rail/bay width must be 2365mm or 3125mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "name": "profile_options",
+      "constraint_type": "enum",
+      "value_text": "[\"GLINE\",\"GZAG\",\"GTRIM\"]",
+      "unit": null,
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "ColorBond profile must be GO-Line, GO-Zag, or GO-Trim.",
+      "active": true
+    }
+  ],
+  "product_variables": [
+    {
+      "product_system_type": "COLORBOND",
+      "name": "colour_code",
+      "label": "Infill colour",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "MN",
+      "options_json": [
+        "BS",
+        "G",
+        "MN",
+        "PB",
+        "P",
+        "SM"
+      ],
+      "scope": "job",
+      "sort_order": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "name": "post_colour_code",
+      "label": "Rail/post colour",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "MN",
+      "options_json": [
+        "B",
+        "BS",
+        "G",
+        "MN",
+        "PB",
+        "P",
+        "SM"
+      ],
+      "scope": "job",
+      "sort_order": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "name": "profile_code",
+      "label": "Panel profile",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "GZAG",
+      "options_json": [
+        "GLINE",
+        "GZAG",
+        "GTRIM"
+      ],
+      "scope": "job",
+      "sort_order": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "name": "mounting_type",
+      "label": "Post mounting type",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "in_ground",
+      "options_json": [
+        "in_ground",
+        "base_plate"
+      ],
+      "scope": "run",
+      "sort_order": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "name": "max_panel_width_mm",
+      "label": "Bay/rail width",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 2365,
+      "options_json": [
+        2365,
+        3125
+      ],
+      "scope": "run",
+      "sort_order": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "name": "include_65mm_support_posts",
+      "label": "Add 65mm support posts",
+      "data_type": "boolean",
+      "unit": null,
+      "required": false,
+      "default_value_json": false,
+      "options_json": [],
+      "scope": "run",
+      "sort_order": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "name": "post_cap_type",
+      "label": "Channel post cap",
+      "data_type": "enum",
+      "unit": null,
+      "required": true,
+      "default_value_json": "none",
+      "options_json": [
+        "none",
+        "single",
+        "double"
+      ],
+      "scope": "run",
+      "sort_order": 70,
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "name": "include_timber_sleeper",
+      "label": "Add timber sleeper",
+      "data_type": "boolean",
+      "unit": null,
+      "required": false,
+      "default_value_json": false,
+      "options_json": [],
+      "scope": "run",
+      "sort_order": 80,
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "name": "target_height_mm",
+      "label": "Finished fence height",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 1800,
+      "options_json": [
+        1500,
+        1800,
+        2100
+      ],
+      "scope": "segment",
+      "sort_order": 90,
+      "active": true
+    }
+  ],
+  "product_validations": [
+    {
+      "product_system_type": "COLORBOND",
+      "name": "height_allowed",
+      "expression": "target_height_mm == 1500 || target_height_mm == 1800 || target_height_mm == 2100",
+      "severity": "error",
+      "message": "ColorBond finished height must be 1500mm, 1800mm, or 2100mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "name": "rail_width_allowed",
+      "expression": "max_panel_width_mm == 2365 || max_panel_width_mm == 3125",
+      "severity": "error",
+      "message": "ColorBond rail/bay width must be 2365mm or 3125mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "name": "gtrim_height_allowed",
+      "expression": "profile_code != \"GTRIM\" || target_height_mm != 1500",
+      "severity": "error",
+      "message": "GO-Trim ColorBond panels are only catalogue-listed for 1800mm and 2100mm finished heights.",
+      "active": true
+    }
+  ],
+  "product_rules": [
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "infill_height_mm",
+      "expression": "target_height_mm - 10",
+      "output_key": "infill_height_mm",
+      "priority": 10,
+      "active": true,
+      "notes": "1490/1790/2090 sheets achieve 1500/1800/2100mm finished height with top and bottom rail."
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "rail_length_mm",
+      "expression": "max_panel_width_mm == 3125 ? 3125 : 2365",
+      "output_key": "rail_length_mm",
+      "priority": 20,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "infill_sheets_per_panel",
+      "expression": "rail_length_mm == 3125 ? 4 : 3",
+      "output_key": "infill_sheets_per_panel",
+      "priority": 30,
+      "active": true,
+      "notes": "Catalogue: 2365mm bay uses 3 overlapping sheets; 3125mm opening uses 4 sheets."
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "channel_post_height_mm",
+      "expression": "(target_height_mm <= 1500 && mounting_type_is_base_plate == 1) ? 1800 : (target_height_mm <= 1800 ? 2400 : 3000)",
+      "output_key": "channel_post_height_mm",
+      "priority": 40,
+      "active": true,
+      "notes": "Catalogue post guidance: 1800mm for 1500mm base-plate/rock-earth, 2400mm for 1500/1800mm inground, 3000mm for 2100mm."
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_infill_sheets",
+      "expression": "num_panels * infill_sheets_per_panel",
+      "output_key": "num_infill_sheets",
+      "priority": 50,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_rails",
+      "expression": "num_panels * 2",
+      "output_key": "num_rails",
+      "priority": 60,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_channel_posts",
+      "expression": "num_posts",
+      "output_key": "num_channel_posts",
+      "priority": 70,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_tek_screw_packs",
+      "expression": "num_panels",
+      "output_key": "num_tek_screw_packs",
+      "priority": 80,
+      "active": true,
+      "notes": "Catalogue typical panel includes one 15-pack of Tek screws."
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_sharkfins",
+      "expression": "mounting_type_is_base_plate == 1 ? num_posts : 0",
+      "output_key": "num_sharkfins",
+      "priority": 90,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_support_posts_65",
+      "expression": "include_65mm_support_posts == true ? system_termination_count + corner_count : 0",
+      "output_key": "num_support_posts_65",
+      "priority": 100,
+      "active": true,
+      "notes": "Optional 65x65mm steel support posts at start/end/corner conditions."
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_timber_sleepers",
+      "expression": "include_timber_sleeper == true ? num_panels : 0",
+      "output_key": "num_timber_sleepers",
+      "priority": 110,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_postcap_sgl",
+      "expression": "post_cap_type == \"single\" ? num_posts : 0",
+      "output_key": "num_postcap_sgl",
+      "priority": 120,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "num_postcap_dbl",
+      "expression": "post_cap_type == \"double\" ? num_posts : 0",
+      "output_key": "num_postcap_dbl",
+      "priority": 130,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_infill_sheets",
+      "expression": "num_infill_sheets",
+      "output_key": "qty_infill_sheet",
+      "priority": 10,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_rails",
+      "expression": "num_rails",
+      "output_key": "qty_rail",
+      "priority": 20,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_channel_posts",
+      "expression": "num_channel_posts",
+      "output_key": "qty_channel_post",
+      "priority": 30,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_tek_screws",
+      "expression": "num_tek_screw_packs",
+      "output_key": "qty_tek_screw_pack",
+      "priority": 40,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_sharkfins",
+      "expression": "num_sharkfins",
+      "output_key": "qty_sharkfin",
+      "priority": 50,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_support_posts_65",
+      "expression": "num_support_posts_65",
+      "output_key": "qty_support_post_65",
+      "priority": 60,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_timber_sleepers",
+      "expression": "num_timber_sleepers",
+      "output_key": "qty_timber_sleeper",
+      "priority": 70,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_postcap_sgl",
+      "expression": "num_postcap_sgl",
+      "output_key": "qty_postcap_sgl",
+      "priority": 80,
+      "active": true,
+      "notes": null
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "rule_set_name": "ColorBond Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_postcap_dbl",
+      "expression": "num_postcap_dbl",
+      "output_key": "qty_postcap_dbl",
+      "priority": 90,
+      "active": true,
+      "notes": null
+    }
+  ],
+  "product_component_selectors": [
+    {
+      "product_system_type": "COLORBOND",
+      "selector_key": "cb_infill_gline",
+      "component_category": "infill_sheet",
+      "selector_type": "exact",
+      "match_json": {
+        "profile_code": "GLINE"
+      },
+      "qty_key": "qty_infill_sheet",
+      "sku_pattern": "CB-GLINE-{infill_height_mm}-{colour}",
+      "priority": 10,
+      "notes": "GO-Line profile sheets.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "selector_key": "cb_infill_gzag",
+      "component_category": "infill_sheet",
+      "selector_type": "exact",
+      "match_json": {
+        "profile_code": "GZAG"
+      },
+      "qty_key": "qty_infill_sheet",
+      "sku_pattern": "CB-GZAG-{infill_height_mm}-{colour}",
+      "priority": 10,
+      "notes": "GO-Zag profile sheets.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "selector_key": "cb_infill_gtrim",
+      "component_category": "infill_sheet",
+      "selector_type": "exact",
+      "match_json": {
+        "profile_code": "GTRIM"
+      },
+      "qty_key": "qty_infill_sheet",
+      "sku_pattern": "CB-GTRIM-{infill_height_mm}-{colour}",
+      "priority": 10,
+      "notes": "GO-Trim profile sheets.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "selector_key": "cb_rail",
+      "component_category": "rail",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_rail",
+      "sku_pattern": "CB-RAIL-{rail_length_mm}-{post_colour_code}",
+      "priority": 20,
+      "notes": "Top and bottom rails.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "selector_key": "cb_channel_post",
+      "component_category": "channel_post",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_channel_post",
+      "sku_pattern": "CB-CPOST-{channel_post_height_mm}-{post_colour_code}",
+      "priority": 30,
+      "notes": "Channel posts.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "selector_key": "cb_tek_screw_pack",
+      "component_category": "screw",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_tek_screw_pack",
+      "sku_pattern": "CB-TS-{post_colour_code}-15PK",
+      "priority": 40,
+      "notes": "Powder-coated Tek screws, 15 pack.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "selector_key": "cb_sharkfin",
+      "component_category": "mounting",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_sharkfin",
+      "sku_pattern": "CB-SHARKFIN-{post_colour_code}",
+      "priority": 50,
+      "notes": "Shark fin base plate when base-plated.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "selector_key": "cb_support_post_65",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_support_post_65",
+      "sku_pattern": "XPSG-2700-ST65-{post_colour_code}",
+      "priority": 60,
+      "notes": "Optional 65x65mm galvanised steel support post.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "selector_key": "cb_timber_sleeper",
+      "component_category": "sleeper",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_timber_sleeper",
+      "sku_pattern": "CB-SLEEPER-{rail_length_mm}",
+      "priority": 70,
+      "notes": "Optional treated pine sleeper matching bay width.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "selector_key": "cb_postcap_single",
+      "component_category": "post_cap",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_postcap_sgl",
+      "sku_pattern": "CB-POSTCAP-SGL",
+      "priority": 80,
+      "notes": "Optional single-sided channel post cap.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "selector_key": "cb_postcap_double",
+      "component_category": "post_cap",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_postcap_dbl",
+      "sku_pattern": "CB-POSTCAP-DBL",
+      "priority": 90,
+      "notes": "Optional double-sided channel post cap.",
+      "active": true
+    }
+  ],
+  "product_companion_rules": [],
+  "product_warnings": [
+    {
+      "product_system_type": "COLORBOND",
+      "warning_key": "cb_no_coastal_zone",
+      "severity": "warning",
+      "condition_json": {},
+      "message": "ColorBond steel fencing should not be used within 1km of the ocean or within saltwater/chlorine splash zones.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "warning_key": "cb_black_infill_unavailable",
+      "severity": "info",
+      "condition_json": {},
+      "message": "Night Sky / black is available for rails/posts only. Infill sheet colours are BS, G, MN, PB, P, and SM.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "warning_key": "cb_gline_depots",
+      "severity": "info",
+      "condition_json": {
+        "profile_code": "GLINE"
+      },
+      "message": "GO-Line ColorBond panels are catalogue-listed for Brisbane and Gold Coast depots.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "warning_key": "cb_gzag_depots",
+      "severity": "info",
+      "condition_json": {
+        "profile_code": "GZAG"
+      },
+      "message": "GO-Zag ColorBond panels are catalogue-listed for Brisbane, Gold Coast, and Newcastle depots.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "warning_key": "cb_gtrim_depots",
+      "severity": "info",
+      "condition_json": {
+        "profile_code": "GTRIM"
+      },
+      "message": "GO-Trim ColorBond panels are catalogue-listed for Newcastle depot only.",
+      "active": true
+    },
+    {
+      "product_system_type": "COLORBOND",
+      "warning_key": "cb_3125_wide_bay",
+      "severity": "warning",
+      "condition_json": {
+        "max_panel_width_mm": 3125
+      },
+      "message": "3125mm ColorBond bays use four overlapping infill sheets. Confirm site handling and wind/design requirements.",
+      "active": true
+    }
+  ]
+}

@@ -3,7 +3,7 @@ import { extractMeasurementCandidates } from "./measurementParser";
 
 export type Confidence = "stated" | "inferred" | "default";
 export type ColourCode = "B" | "MN" | "G" | "SM" | "W" | "BS" | "D" | "M" | "P" | "PB" | "S";
-export type ParsedSystemType = "QSHS" | "VS" | "XPL" | "BAYG" | "SLIDING" | "PEDESTRIAN";
+export type ParsedSystemType = "QSHS" | "VS" | "XPL" | "BAYG" | "COLORBOND" | "SLIDING" | "PEDESTRIAN";
 
 export type ParsedAttribute<T> = {
   value: T;
@@ -81,6 +81,7 @@ function mmFromLength(value: number, unit: string) {
 }
 
 function systemFromText(text: string): ParsedAttribute<ParsedSystemType> | undefined {
+  if (/\bcolou?r\s*bond\b|\bcolorbond\b|\bcolou?rbond\b/i.test(text)) return attr("COLORBOND", "stated");
   if (/\bbay[-\s]?g\b|buy as you go|infill panel|infill screen/i.test(text)) return attr("BAYG", "stated");
   if (/\bxpress|x-?press|xpl|premium\b/i.test(text)) return attr("XPL", "stated");
   if (/\bvertical\b/i.test(text)) return attr("VS", "stated");
@@ -175,7 +176,7 @@ function unparsedTokens(cleaned: string) {
     .replace(/\b(65|90)\s*(mm|mil|mils)?\s*slats?\b/gi, " ")
     .replace(/\b(5|9|20)\s*(mm|mil)?\s*(gap|spacing)\b/gi, " ")
     .replace(/\b(monument|black|woodland|surfmist|white|basalt|dune|cream|beige|mill|primrose|paperbark|palladium|silver|dark grey|dark gray)\b/gi, " ")
-    .replace(/\b(qshs|quick\s*screen|quickscreen|vertical|bay[-\s]?g|buy as you go|xpress|xpl|slat|fence|screen|pool|boundary|aluminium|aluminum|panels?)\b/gi, " ")
+    .replace(/\b(qshs|quick\s*screen|quickscreen|vertical|bay[-\s]?g|buy as you go|xpress|xpl|colou?r\s*bond|colou?rbond|colorbond|slat|fence|screen|pool|boundary|aluminium|aluminum|panels?)\b/gi, " ")
     .replace(/\b(concreted|concrete|base[-\s]?plated|bolted|core[-\s]?drilled|wall|post|gate|pedestrian|single|double|swing|sliding|l[-\s]?shaped|u[-\s]?shaped|sides?|total|about|around|back|with|and|of|high|wide|in|to|a|one|two|three|four|five|the|yard|want)\b/gi, " ")
     .replace(/[^\w\s-]/g, " ");
   return stripped.split(/\s+/).map((token) => token.trim()).filter((token) => token.length > 2).slice(0, 8);
