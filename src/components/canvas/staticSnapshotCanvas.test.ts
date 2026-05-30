@@ -259,6 +259,72 @@ describe("canvas engine Static Maps snapshot scale", () => {
     canvas.remove();
   });
 
+  it("keeps a reloaded map layer anchored when the URL is unchanged", async () => {
+    const { drawImage } = installLayerCanvasMock();
+    const canvas = document.createElement("canvas");
+    document.body.appendChild(canvas);
+    Object.defineProperty(canvas, "getBoundingClientRect", {
+      value: () => ({
+        left: 0,
+        top: 0,
+        width: 640,
+        height: 360,
+        right: 640,
+        bottom: 360,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }),
+    });
+
+    const engine = initCanvasEngine(canvas, {
+      snapToGrid: false,
+      gridSize: 20,
+      showGrid: false,
+    });
+    engine.setViewportTransform({
+      pan: { x: 0, y: 0 },
+      zoom: 1,
+      scale: 10,
+    });
+    engine.loadMapTileLayers(
+      [{ imageUrl: "https://example.test/satellite.png", opacity: 1 }],
+      -33.8688,
+      19,
+    );
+    await new Promise((resolve) => window.setTimeout(resolve, 0));
+    const firstDraw = drawImage.mock.calls[drawImage.mock.calls.length - 1];
+    expect(firstDraw).toBeDefined();
+    const firstOrigin = firstDraw?.slice(1, 3);
+
+    drawImage.mockClear();
+    engine.setViewportTransform({
+      pan: { x: -200, y: -100 },
+      zoom: 0.75,
+      scale: 10,
+    });
+    drawImage.mockClear();
+    engine.loadMapTileLayers(
+      [{ imageUrl: "https://example.test/satellite.png", opacity: 0.5 }],
+      -33.8688,
+      19,
+    );
+    await new Promise((resolve) => window.setTimeout(resolve, 0));
+    expect(drawImage.mock.calls[drawImage.mock.calls.length - 1]?.slice(1, 3)).toEqual(firstOrigin);
+
+    drawImage.mockClear();
+    engine.loadMapTileLayers(
+      [{ imageUrl: "https://example.test/roadmap.png", opacity: 0.5 }],
+      -33.8688,
+      19,
+    );
+    await new Promise((resolve) => window.setTimeout(resolve, 0));
+    expect(drawImage.mock.calls[drawImage.mock.calls.length - 1]?.slice(1, 3)).not.toEqual(firstOrigin);
+
+    engine.destroy();
+    canvas.remove();
+  });
+
   it("zooms via engine buttons, direct wheel, Ctrl-wheel, and reset", () => {
     const { latestZoom } = installZoomCanvasMock();
     const canvas = document.createElement("canvas");

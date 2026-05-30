@@ -278,6 +278,7 @@ export function FenceLayoutCanvas({
     calibrationLabel: "",
   });
   const lastAppliedSnapshotViewportKeyRef = useRef<string | null>(null);
+  const lastAppliedSnapshotLayerKeyRef = useRef<string | null>(null);
 
   const [gateDialogOpen, setGateDialogOpen] = useState(false);
   const [gateDraft, setGateDraft] = useState<GateDraft>(() => createGateDraft());
@@ -393,6 +394,7 @@ export function FenceLayoutCanvas({
     if (!layeredMapSnapshot) {
       setSnapshotError(null);
       lastAppliedSnapshotViewportKeyRef.current = null;
+      lastAppliedSnapshotLayerKeyRef.current = null;
       engine.loadMapTileLayers([], 0, 0);
       return;
     }
@@ -412,6 +414,7 @@ export function FenceLayoutCanvas({
 
     if (!googleMapsApiKey && layers.length === 0 && !hasStoredLayerUrls) {
       setSnapshotError(GOOGLE_MAPS_MISSING_API_KEY_MESSAGE);
+      lastAppliedSnapshotLayerKeyRef.current = null;
       engine.loadMapTileLayers([], 0, 0);
       return;
     }
@@ -439,11 +442,18 @@ export function FenceLayoutCanvas({
       });
       lastAppliedSnapshotViewportKeyRef.current = snapshotViewportKey;
     }
-    engine.loadMapTileLayers(
-      layers,
-      layeredMapSnapshot.centerLat,
-      layeredMapSnapshot.zoom,
-    );
+    const snapshotLayerKey = [
+      snapshotViewportKey,
+      ...layers.map((layer) => `${layer.imageUrl}:${layer.opacity}`),
+    ].join("|");
+    if (lastAppliedSnapshotLayerKeyRef.current !== snapshotLayerKey) {
+      engine.loadMapTileLayers(
+        layers,
+        layeredMapSnapshot.centerLat,
+        layeredMapSnapshot.zoom,
+      );
+      lastAppliedSnapshotLayerKeyRef.current = snapshotLayerKey;
+    }
   }, [engineVersion, googleMapsApiKey, layeredMapSnapshot]);
 
   useEffect(() => {

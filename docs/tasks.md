@@ -154,6 +154,8 @@ Latest roadmap underlay fix: new property-map captures now send the roadmap Stat
 
 Latest canvas finish fix: finishing a run with double-click now preserves the user's current canvas viewport through the canvas-to-canonical sync, even when canonical length rounding changes a segment by a fraction of a millimetre.
 
+Latest canvas point-placement fix: repeated canvas-to-canonical syncs no longer reload and re-anchor unchanged Static Maps layers, so the satellite/roadmap underlay stays pinned under drawn points across later runs.
+
 
 ---
 
@@ -471,6 +473,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Brief 011 queue pass: double-click fence finish now preserves the user's zoomed-out canvas viewport during same-geometry form sync, preventing the satellite/background view from shifting away from the drawn run.
 - [x] Roadmap underlay fix: new layered Static Maps captures now make the roadmap layer visible by default, and opacity changes on a hidden captured layer restore it to the canvas stack.
 - [x] Canvas finish viewport fix: double-click run completion now treats canonical round-trip millimetre rounding as the same geometry, so the mapper does not refit away from the line just drawn.
+- [x] Canvas point-placement underlay fix: unchanged Static Maps layers are cached through live canvas syncs, and same-URL layer reloads preserve their world origin instead of re-centering under the current viewport.
 - [x] Brief 016 mobile BOM cards: mobile BOM view now renders grouped stacked cards, sticky totals, collapsible accessory cards, a bottom BOM action bar, and Share PDF support with Web Share API plus download fallback while preserving the desktop BOM table.
 - [x] Master baseline keyboard-offset fix: removed the duplicate `keyboardOffset` state declaration left by the mobile brief merge and rewired the orphaned Job-tab Generate BOM button to the current `handleManualBomGenerate` handler.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
