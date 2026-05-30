@@ -181,7 +181,6 @@ Latest canvas finish fix: finishing a run with double-click now preserves the us
 
 Latest canvas point-placement fix: repeated canvas-to-canonical syncs no longer reload and re-anchor unchanged Static Maps layers, so the satellite/roadmap underlay stays pinned under drawn points across later runs.
 
-
 ---
 
 ## Phases Overview
