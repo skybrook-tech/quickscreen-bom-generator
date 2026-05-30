@@ -159,6 +159,8 @@ Latest Brief BO pass: run summaries now show only accepted run-default fields wi
 
 Latest Brief 031 pass: run headings now show full system names with inline editable default height, section and gate headings share the same inline height editor, settings buttons are labeled text controls, run/section gap selectors combine type and size in one dropdown, section settings mirror run settings grouping, and closed section subheadings show only settings that differ from run defaults.
 
+Latest map-label cleanup pass: layout map angle annotations and gate direction text have been removed; section/gate codes now share smaller black labels, section and gate measurements share smaller blue labels, and redundant gate-to-section-end distance text has been consolidated out of the canvas.
+
 
 ---
 
