@@ -1567,6 +1567,69 @@ export function initCanvasEngine(
 
     ctx.restore();
     drawCursorHint();
+    drawScaleRuler();
+  }
+
+  function drawScaleRuler() {
+    const canvasW = cssCanvasWidth || canvas.getBoundingClientRect().width || 800;
+    const canvasH = cssCanvasHeight || canvas.getBoundingClientRect().height || 400;
+
+    const pxPerMeter = scale * zoom;
+    if (pxPerMeter <= 0) return;
+
+    const standardDistances = [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000];
+    let distance = 5;
+    for (const d of standardDistances) {
+      if (d * pxPerMeter >= 60) {
+        distance = d;
+        break;
+      }
+    }
+
+    const L = distance * pxPerMeter;
+    const label = distance >= 1 ? `${distance} m` : `${distance * 1000} mm`;
+
+    // Position of ruler: bottom-left
+    const startX = 20;
+    const endX = startX + L;
+    const barY = canvasH - 24;
+    const tickHeight = 6;
+
+    ctx.save();
+
+    // Draw background card (semi-transparent glassmorphism) for readability over maps
+    ctx.fillStyle = "rgba(15, 23, 42, 0.75)";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(startX - 8, barY - 26, L + 16, 36, 6);
+    ctx.fill();
+    ctx.stroke();
+
+    // Draw main scale line
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(startX, barY);
+    ctx.lineTo(endX, barY);
+
+    // Draw ticks: start, middle, end
+    ctx.moveTo(startX, barY - tickHeight / 2);
+    ctx.lineTo(startX, barY + tickHeight / 2);
+    ctx.moveTo(startX + L / 2, barY - tickHeight / 2);
+    ctx.lineTo(startX + L / 2, barY + tickHeight / 2);
+    ctx.moveTo(endX, barY - tickHeight / 2);
+    ctx.lineTo(endX, barY + tickHeight / 2);
+    ctx.stroke();
+
+    // Draw label
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "600 10px Inter, system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(label, startX + L / 2, barY - 4);
+
+    ctx.restore();
   }
 
   function drawCursorHint() {

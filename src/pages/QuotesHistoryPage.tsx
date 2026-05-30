@@ -5,20 +5,19 @@ import { AppShell } from "../components/layout/AppShell";
 import { useAuth } from "../hooks/useAuth";
 import { useQuotes } from "../hooks/useQuotes";
 import { formatLayoutLabel, isJobNameFallback } from "../lib/quoteListMeta";
-// TODO: re-enable status filter + column
-// import type { QuoteStatus } from "../types/quote.types";
+import type { QuoteStatus } from "../types/quote.types";
 
 type CreatedByFilter = "mine" | "all" | "users";
-// type StatusFilter = "any" | QuoteStatus;
+type StatusFilter = "any" | QuoteStatus;
 type DateFilter = "any" | "today" | "7d" | "30d" | "year";
 
-// const STATUS_OPTIONS: { value: StatusFilter; label: string }[] = [
-//   { value: "any", label: "Any" },
-//   { value: "draft", label: "Draft" },
-//   { value: "sent", label: "Sent" },
-//   { value: "accepted", label: "Accepted" },
-//   { value: "expired", label: "Expired" },
-// ];
+const STATUS_OPTIONS: { value: StatusFilter; label: string }[] = [
+  { value: "any", label: "Any" },
+  { value: "draft", label: "Draft" },
+  { value: "sent", label: "Sent" },
+  { value: "accepted", label: "Accepted" },
+  { value: "expired", label: "Expired" },
+];
 
 const DATE_OPTIONS: { value: DateFilter; label: string }[] = [
   { value: "any", label: "Any" },
@@ -215,21 +214,19 @@ function quoteMatchesDate(createdAt: string, dateFilter: DateFilter): boolean {
   }
 }
 
-// TODO: re-enable status column badge colours
-// const STATUS_COLOURS: Record<string, string> = {
-//   draft: "text-brand-muted bg-brand-border/30",
-//   sent: "text-brand-primary bg-brand-primary/10",
-//   accepted: "text-brand-success bg-brand-success/10",
-//   expired: "text-brand-danger bg-brand-danger/10",
-// };
+const STATUS_COLOURS: Record<string, string> = {
+  draft: "text-brand-muted bg-brand-border/30",
+  sent: "text-brand-primary bg-brand-primary/10",
+  accepted: "text-brand-success bg-brand-success/10",
+  expired: "text-brand-danger bg-brand-danger/10",
+};
 
 export function QuotesHistoryPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { quotesQuery, deleteQuote } = useQuotes();
   const [search, setSearch] = useState("");
-  // TODO: re-enable status filter
-  // const [statusFilter, setStatusFilter] = useState<StatusFilter>("any");
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("any");
   const [dateFilter, setDateFilter] = useState<DateFilter>("any");
   const [createdByFilter, setCreatedByFilter] =
     useState<CreatedByFilter>("mine");
@@ -269,10 +266,9 @@ export function QuotesHistoryPage() {
     if (query) {
       result = result.filter((q) => q.jobName.toLowerCase().includes(query));
     }
-    // TODO: re-enable status filter
-    // if (statusFilter !== "any") {
-    //   result = result.filter((q) => q.status === statusFilter);
-    // }
+    if (statusFilter !== "any") {
+      result = result.filter((q) => q.status === statusFilter);
+    }
     if (dateFilter !== "any") {
       result = result.filter((q) => quoteMatchesDate(q.created_at, dateFilter));
     }
@@ -288,7 +284,7 @@ export function QuotesHistoryPage() {
   }, [
     quotes,
     search,
-    // statusFilter,
+    statusFilter,
     dateFilter,
     createdByFilter,
     selectedUserIds,
@@ -297,11 +293,29 @@ export function QuotesHistoryPage() {
 
   const hasActiveFilters =
     search.trim().length > 0 ||
-    // statusFilter !== "any" ||
+    statusFilter !== "any" ||
     dateFilter !== "any" ||
     createdByFilter !== "mine";
 
   const openQuote = (quoteId: string) => {
+    const quote = quotes.find((q) => q.id === quoteId);
+    const isV4 = quote && (!quote.fence_config || Object.keys(quote.fence_config).length === 0 || (typeof quote.notes === 'string' && quote.notes.includes('"v4_payload"')));
+    if (isV4) {
+      try {
+        const parsed = JSON.parse(quote.notes);
+        if (parsed && parsed.v4_payload) {
+          navigate("/fence-calculator-v4", {
+            state: {
+              v4Payload: parsed.v4_payload,
+              savedQuoteId: quote.id,
+            },
+          });
+          return;
+        }
+      } catch (e) {
+        console.error("Failed to parse V4 quote payload", e);
+      }
+    }
     navigate(`/quote/${quoteId}`);
   };
 
@@ -363,15 +377,14 @@ export function QuotesHistoryPage() {
                 aria-hidden
               />
 
-              {/* TODO: re-enable status filter */}
-              {/* <FilterField label="Status">
+              <FilterField label="Status">
                 <FilterSelect
                   value={statusFilter}
                   onChange={setStatusFilter}
                   options={STATUS_OPTIONS}
                   aria-label="Status"
                 />
-              </FilterField> */}
+              </FilterField>
 
               <FilterField label="Created by">
                 <CreatedByDropdown
@@ -455,10 +468,9 @@ export function QuotesHistoryPage() {
                   <th className="text-right px-4 py-3 text-xs font-medium text-brand-muted">
                     Total (inc. GST)
                   </th>
-                  {/* TODO: re-enable status column */}
-                  {/* <th className="text-left px-4 py-3 text-xs font-medium text-brand-muted hidden sm:table-cell">
+                  <th className="text-left px-4 py-3 text-xs font-medium text-brand-muted hidden sm:table-cell">
                     Status
-                  </th> */}
+                  </th>
                   <th className="px-4 py-3" />
                 </tr>
               </thead>
@@ -514,14 +526,13 @@ export function QuotesHistoryPage() {
                           ? `$${quote.displayTotal.toFixed(2)}`
                           : "—"}
                       </td>
-                      {/* TODO: re-enable status column */}
-                      {/* <td className="px-4 py-3 hidden sm:table-cell">
+                      <td className="px-4 py-3 hidden sm:table-cell">
                         <span
                           className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLOURS[quote.status] ?? "text-brand-muted bg-brand-border/30"}`}
                         >
                           {quote.status}
                         </span>
-                      </td> */}
+                      </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end">
                           <button

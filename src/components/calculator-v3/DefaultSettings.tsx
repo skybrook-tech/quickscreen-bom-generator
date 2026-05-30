@@ -147,7 +147,7 @@ export function DefaultSettings() {
   );
   const { data: allColours = [] } = useColourOptions();
 
-  const finishType = variables["finish_type"] as string | undefined;
+  const finishType = (variables["finish_family"] ?? variables["finish_type"]) as string | undefined;
   const allowedColours = allColours.filter((c) =>
     !finishType || finishType === "standard"
       ? c.finish_group === "standard"

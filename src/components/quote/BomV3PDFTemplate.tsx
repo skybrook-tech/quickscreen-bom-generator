@@ -72,8 +72,37 @@ const s = StyleSheet.create({
 });
 
 const CATEGORY_ORDER = [
-  "post", "slat", "rail", "bracket", "gate", "hardware", "accessory", "screw",
+  "screening",
+  "frames_and_covers",
+  "posts_and_mounting",
+  "gate_components",
+  "gate_hardware",
+  "sliding_gate_running_gear",
+  "caps_and_plugs",
+  "fasteners_and_screws",
+  "spacers",
+  "fixings",
+  "tools_and_consumables",
+  "automation",
 ];
+
+function humanizeCategory(category: string): string {
+  const labels: Record<string, string> = {
+    screening: "SCREENING",
+    frames_and_covers: "FRAMES AND COVERS",
+    posts_and_mounting: "POSTS AND MOUNTING",
+    gate_components: "GATE COMPONENTS",
+    gate_hardware: "GATE HARDWARE",
+    sliding_gate_running_gear: "SLIDING GATE RUNNING GEAR",
+    caps_and_plugs: "CAPS AND PLUGS",
+    fasteners_and_screws: "FASTENERS AND SCREWS",
+    spacers: "SPACERS",
+    fixings: "FIXINGS",
+    tools_and_consumables: "TOOLS AND CONSUMABLES",
+    automation: "AUTOMATION",
+  };
+  return labels[category] || category.replace(/_/g, " ").toUpperCase();
+}
 
 function sortItems(items: BOMLineItem[]): BOMLineItem[] {
   return [...items].sort((a, b) => {
@@ -168,7 +197,7 @@ export function BomV3PDFTemplate({
           <View key={category}>
             <View style={s.groupRow}>
               <Text style={s.groupLabel}>
-                {category.toUpperCase()}S
+                {humanizeCategory(category)}
               </Text>
             </View>
             {catItems.map((item) => (

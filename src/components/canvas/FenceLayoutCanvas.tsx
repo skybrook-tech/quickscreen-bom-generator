@@ -741,21 +741,26 @@ export function FenceLayoutCanvas({
           }}
         />
 
-        {/* Hint overlay */}
-        <div className="hidden">
-          {activeTool === "draw" &&
-            "Click to place points - double-click near the last point to finish - click a length label to edit"}
-          {activeTool === "gate" &&
-            "Tap or click on a fence section to place a gate marker, then drag it along the line to fine-tune"}
-          {activeTool === "move" &&
-            "Drag nodes or gates to reposition · Click a label to edit length"}
-          {activeTool === "boundary" &&
-            "Draw non-product context lines (existing fences, walls, property lines) — not included in BOM"}
-        </div>
-
-        {/* Zoom hint */}
-        <div className="hidden">
-          Scroll = zoom · Right-drag = pan · Ctrl+Z = undo
+        {/* Floating guided overlay */}
+        <div className="absolute bottom-4 left-1/2 z-20 -translate-x-1/2 rounded-full border border-brand-border/80 bg-brand-card/90 px-4 py-2 text-xs font-semibold text-brand-text shadow-lg backdrop-blur flex items-center gap-3 max-w-[95vw] md:max-w-xl text-center justify-between pointer-events-none transition-all">
+          <div className="flex items-center gap-2">
+            <span className="inline-block h-2 w-2 rounded-full bg-brand-accent animate-pulse shrink-0" />
+            <span>
+              {activeTool === "draw" && "Click to place points · Double-click to finish · Click any length label to edit"}
+              {activeTool === "gate" && "Click on a fence section to place a gate · Drag gate to reposition"}
+              {activeTool === "move" && "Drag nodes or gates to reposition · Click any length label to edit"}
+              {activeTool === "boundary" && "Draw context lines (existing walls/fences) — excluded from BOM"}
+              {activeTool === "building" && "Click and drag to draw rectangular buildings/structures"}
+              {activeTool === "freehand" && "Click and drag to draw freehand annotations on the site"}
+              {activeTool === "arrow" && "Click and drag tail-to-head to place straight arrow markers"}
+              {activeTool === "post" && "Click to place an existing post marker for termination"}
+              {activeTool === "pillar" && "Click to place a pillar marker for wall-mount termination"}
+              {activeTool === "text" && "Click anywhere to place custom text annotations"}
+            </span>
+          </div>
+          <div className="hidden sm:block pl-3 border-l border-brand-border/60 text-[10px] text-brand-muted whitespace-nowrap">
+            Scroll = zoom · Right-drag = pan
+          </div>
         </div>
         {boundaryHintVisible && (
           <div className="absolute left-4 top-4 max-w-xs rounded-lg border border-brand-warning/40 bg-brand-card/95 p-3 text-xs text-brand-text shadow-md">
