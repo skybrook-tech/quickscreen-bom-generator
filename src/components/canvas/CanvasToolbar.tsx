@@ -228,6 +228,7 @@ export function CanvasToolbar({
                 onInput={(event) =>
                   onMapLayerChange(layerId, {
                     opacity: Number(event.currentTarget.value) / 100,
+                    ...(layer.visible ? {} : { visible: true }),
                   })
                 }
                 className="h-1.5 w-full accent-brand-accent disabled:cursor-not-allowed disabled:opacity-40 md:w-20"

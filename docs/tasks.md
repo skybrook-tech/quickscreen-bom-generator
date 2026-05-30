@@ -150,6 +150,10 @@ Latest Brief BN v2 pass: the sandbox BN work now completes the top-bar reorganis
 
 Latest Brief BO pass: run summaries now show only accepted run-default fields with height/length removed from the subheading, BOM colour display strips internal dispatch-code suffixes, section and gate match codes stay green when their run-derived settings match, and Print BOM now prints materials and totals first, then Run & Section Details, then the optional map at the bottom.
 
+Latest roadmap underlay fix: new property-map captures now send the roadmap Static Maps layer to the canvas as a visible 50% overlay above satellite, and adjusting a hidden captured layer's opacity re-enables that layer.
+
+Latest canvas finish fix: finishing a run with double-click now preserves the user's current canvas viewport through the canvas-to-canonical sync, even when canonical length rounding changes a segment by a fraction of a millimetre.
+
 
 ---
 
@@ -465,6 +469,8 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Brief BM completion pass: added Ortho snapping for Draw Fence/Dotted line, free-draw colour/width/style/opacity/arrow controls, map item selection with Delete/Backspace removal, right-click context actions, draggable/resizable text notes, movable/resizable building rectangles, movable existing post/pillar markers, and editable text/post/pillar details without changing BOM dispatch.
 - [x] Brief BO residual punch-list: removed redundant run-subheading length/height, kept height section-only in the visible UI, added stripped colour-code display text for BOM summaries/rows/exports, tightened visible green section/gate match chips, and confirmed the existing icon Describe trigger plus hidden initial Add Run behaviour.
 - [x] Brief 011 queue pass: double-click fence finish now preserves the user's zoomed-out canvas viewport during same-geometry form sync, preventing the satellite/background view from shifting away from the drawn run.
+- [x] Roadmap underlay fix: new layered Static Maps captures now make the roadmap layer visible by default, and opacity changes on a hidden captured layer restore it to the canvas stack.
+- [x] Canvas finish viewport fix: double-click run completion now treats canonical round-trip millimetre rounding as the same geometry, so the mapper does not refit away from the line just drawn.
 - [x] Brief 016 mobile BOM cards: mobile BOM view now renders grouped stacked cards, sticky totals, collapsible accessory cards, a bottom BOM action bar, and Share PDF support with Web Share API plus download fallback while preserving the desktop BOM table.
 - [x] Master baseline keyboard-offset fix: removed the duplicate `keyboardOffset` state declaration left by the mobile brief merge and rewired the orphaned Job-tab Generate BOM button to the current `handleManualBomGenerate` handler.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)

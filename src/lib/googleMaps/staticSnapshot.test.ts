@@ -178,12 +178,12 @@ describe("Static Maps snapshots", () => {
       opacity: 1,
     });
     expect(snapshot.layers?.roadmap).toMatchObject({
-      visible: false,
+      visible: true,
       opacity: 0.5,
     });
   });
 
-  it("keeps roadmap hidden on desktop snapshots and visible on mobile touch captures", async () => {
+  it("keeps roadmap visible on desktop and mobile touch captures", async () => {
     const desktopSnapshot = await createLayeredMapSnapshot(
       {
         centerLat: -28.503385,
@@ -211,7 +211,7 @@ describe("Static Maps snapshots", () => {
     );
 
     expect(desktopSnapshot.layers?.roadmap).toMatchObject({
-      visible: false,
+      visible: true,
       opacity: 0.5,
     });
     expect(mobileSnapshot.layers?.roadmap).toMatchObject({

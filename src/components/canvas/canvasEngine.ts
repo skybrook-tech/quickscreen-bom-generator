@@ -5097,7 +5097,7 @@ export function initCanvasEngine(
         !sameNumber(a.startY, b.startY) ||
         !sameNumber(a.endX, b.endX) ||
         !sameNumber(a.endY, b.endY) ||
-        !sameNumber(a.lengthMM, b.lengthMM, 0.1)
+        !sameNumber(a.lengthMM, b.lengthMM, 1)
       ) {
         return false;
       }

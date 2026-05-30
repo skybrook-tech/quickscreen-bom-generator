@@ -322,6 +322,65 @@ describe("CanvasToolbar map layers", () => {
     act(() => root.unmount());
   });
 
+  it("re-enables a hidden captured layer when its opacity is adjusted", () => {
+    const onMapLayerChange = vi.fn();
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(
+        <CanvasToolbar
+          engineRef={{ current: null }}
+          activeTool="draw"
+          onToolChange={() => undefined}
+          snapEnabled={false}
+          onSnapToggle={() => undefined}
+          gateSnap100={false}
+          onGateSnap100Toggle={() => undefined}
+          showGrid={false}
+          onToggleGrid={() => undefined}
+          expanded={false}
+          onToggleExpand={() => undefined}
+          onHelpOpen={() => undefined}
+          onPrintMap={() => undefined}
+          freehandStyle={freehandStyle}
+          onFreehandStyleChange={() => undefined}
+          mapLayers={{
+            satellite: {
+              url: "https://example.test/satellite.png",
+              visible: true,
+              opacity: 1,
+            },
+            roadmap: {
+              url: "https://example.test/roadmap.png",
+              visible: false,
+              opacity: 0.5,
+            },
+          }}
+          onMapLayerChange={onMapLayerChange}
+        />,
+      );
+    });
+
+    const roadmapOpacity = container.querySelector<HTMLInputElement>(
+      'input[aria-label="Roadmap layer opacity"]',
+    );
+    expect(roadmapOpacity).not.toBeNull();
+
+    act(() => {
+      roadmapOpacity!.value = "75";
+      roadmapOpacity!.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    expect(onMapLayerChange).toHaveBeenCalledWith("roadmap", {
+      opacity: 0.75,
+      visible: true,
+    });
+
+    act(() => root.unmount());
+  });
+
   it("starts optional snap/grid controls unchecked and omits Ortho", () => {
     const { container, root } = renderToolbar(vi.fn());
 
