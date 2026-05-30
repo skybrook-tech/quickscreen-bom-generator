@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CheckCircle2, ChevronUp, Plus, Settings, Trash2 } from "lucide-react";
+import { CheckCircle2, ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
 import { defaultGateVariables } from "../../lib/gateOptionRules";
@@ -7,12 +7,19 @@ import {
   clampPostSpacing,
   maxPanelWidthForSystem,
 } from "../../lib/productOptionRules";
+import type { DerivedHeight } from "../../lib/heights";
+import {
+  GATE_SEGMENT_STUB_KEYS,
+  patchSegmentVariables,
+} from "../../lib/segmentTermination";
+import { systemDisplayName } from "../../lib/systemDisplay";
 import { Button } from "../shared/Button";
 import { SegmentRow } from "./SegmentRow";
 import { colourName } from "./ColourPalette";
 import { RunSettingsEditor } from "./RunSettingsEditor";
 import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
 import { ConfirmButton } from "../shared/ConfirmButton";
+import { InlineHeightEditor } from "./InlineHeightEditor";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 const RUN_SETTINGS_AUTO_COLLAPSE_MS = 60000;
@@ -72,6 +79,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   );
   const firstSegment = firstFenceSegment(run);
   const runLengthM = (calcTotalLength(run) / 1000).toFixed(2);
+  const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
   const slatSize = Number(runVariables.slat_size_mm ?? 65);
   const slatGap = Number(runVariables.slat_gap_mm ?? 5);
   const mounting = String(runVariables.mounting_method ?? runVariables.mounting_type ?? "in_ground").replace(/_/g, " ");
@@ -83,6 +91,12 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
     },
     [],
   );
+
+  useEffect(() => {
+    if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
+    if (!runSettingsOpen) return;
+    runCollapseRef.current = window.setTimeout(() => setRunSettingsOpen(false), RUN_SETTINGS_AUTO_COLLAPSE_MS);
+  }, [runSettingsOpen]);
 
   useEffect(() => {
     if (!autoOpenFirstSection || !firstSegment) return;
@@ -105,8 +119,52 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
     runCollapseRef.current = window.setTimeout(() => setRunSettingsOpen(false), RUN_SETTINGS_AUTO_COLLAPSE_MS);
   }
 
+  function resetRunSettingsCollapse() {
+    if (!runSettingsOpen) return;
+    scheduleRunSettingsCollapse();
+  }
+
   function upsertSegment(segment: CanonicalSegment) {
     dispatch({ type: "UPSERT_SEGMENT", runId: run.runId, segment });
+  }
+
+  function segmentInheritsRunHeight(segment: CanonicalSegment) {
+    const segmentHeight = Number(segment.targetHeightMm ?? runHeight);
+    const variables = segment.variables ?? {};
+    const hasHeightOverride =
+      variables.target_height_mm != null ||
+      variables.slat_count != null ||
+      variables[GATE_SEGMENT_STUB_KEYS.gateHeightMm] != null;
+    return !hasHeightOverride || segmentHeight === runHeight;
+  }
+
+  function updateRunHeight(heightMm: number, entry?: DerivedHeight) {
+    const nextVariables: CanonicalRun["variables"] = {
+      ...(run.variables ?? {}),
+      target_height_mm: heightMm,
+    };
+    if (entry) nextVariables.slat_count = entry.N;
+    else delete nextVariables.slat_count;
+
+    dispatch({
+      type: "UPSERT_RUN",
+      run: {
+        ...run,
+        variables: nextVariables,
+        segments: run.segments.map((segment) => {
+          if (!segmentInheritsRunHeight(segment)) return segment;
+          const cleared = patchSegmentVariables(segment, {
+            target_height_mm: null,
+            slat_count: null,
+            [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: null,
+          });
+          return {
+            ...cleared,
+            targetHeightMm: heightMm,
+          };
+        }),
+      },
+    });
   }
 
   function addFenceSegment() {
@@ -139,12 +197,25 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   return (
     <div className="rounded-2xl border-2 border-brand-primary/20 bg-brand-card py-4 shadow-md">
       <div className="px-4 mb-3 flex flex-wrap items-start justify-between gap-3">
-        <h3 className="grid gap-1 text-brand-text">
-          <span className="text-xl font-extrabold leading-tight tracking-normal">
-            Run {runIdx + 1} — {runLengthM}m
+        <h3 className="grid min-w-0 flex-1 gap-1 text-brand-text">
+          <span className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5 leading-tight">
+            <span className="text-xl font-extrabold tracking-normal">Run {runIdx + 1}</span>
+            <span className="text-lg font-extrabold tracking-normal">{runLengthM}m</span>
+            <span className="text-sm font-semibold text-brand-muted">
+              {systemDisplayName(run.productCode)}
+            </span>
           </span>
-          <span className="flex flex-wrap gap-x-2.5 gap-y-1 text-sm text-brand-muted">
-            <span>System Type: <strong className="text-brand-text">{run.productCode}</strong></span>
+          <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-brand-muted">
+            <span className="inline-flex items-center gap-1.5">
+              Height:
+              <InlineHeightEditor
+                productCode={run.productCode}
+                variables={runVariables}
+                valueMm={runHeight}
+                ariaLabel={`Run ${runIdx + 1} default height`}
+                onChange={updateRunHeight}
+              />
+            </span>
             <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
             <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
             <span>Gap size: <strong className="text-brand-text">{slatGap}mm</strong></span>
@@ -162,22 +233,37 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
 
             <button
               type="button"
-              onClick={() => setRunSettingsOpen((value) => !value)}
-              className={`ml-auto mb-2 inline-flex h-9 w-9 items-center justify-center rounded-lg border text-sm font-extrabold transition-colors ${runSettingsOpen
+              onClick={() =>
+                setRunSettingsOpen((value) => {
+                  const next = !value;
+                  if (next) setExpandedId(null);
+                  return next;
+                })
+              }
+              className={`ml-auto mb-2 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-extrabold transition-colors ${runSettingsOpen
                 ? "border-brand-primary bg-brand-primary text-white"
                 : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
                 }`}
               aria-label={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
-              title={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
+              title={runSettingsOpen ? "Collapse run settings" : "Run settings"}
             >
-              {runSettingsOpen ? <ChevronUp size={16} /> : <Settings size={16} />}
+              <span>Run Settings</span>
+              {runSettingsOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             </button>
           </div>
         </div>
       </div>
 
       {runSettingsOpen && (
-        <RunSettingsEditor run={run} onCollapse={() => setRunSettingsOpen(false)} />
+        <div
+          onPointerDown={resetRunSettingsCollapse}
+          onKeyDown={resetRunSettingsCollapse}
+          onScroll={resetRunSettingsCollapse}
+          onInput={resetRunSettingsCollapse}
+          onChange={resetRunSettingsCollapse}
+        >
+          <RunSettingsEditor run={run} onCollapse={() => setRunSettingsOpen(false)} />
+        </div>
       )}
 
 
@@ -260,7 +346,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
             <ConfirmButton
               onConfirm={() => dispatch({ type: "REMOVE_RUN", runId: run.runId })}
               confirmLabel={<><Trash2 size={16} /> Click again to confirm</>}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-brand-danger/30 px-3 py-1.5 text-xs font-semibold text-brand-danger transition-colors hover:bg-brand-danger/10"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-brand-danger/30 px-3 py-2 text-xs font-semibold text-brand-danger transition-colors hover:bg-brand-danger/10"
             >
               <Trash2 size={16} />
               Remove run

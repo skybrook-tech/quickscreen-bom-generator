@@ -36,6 +36,13 @@ export function DescribeFenceBox({
     setText(initialDescription);
   }, [initialDescription]);
 
+  useEffect(() => {
+    return () => {
+      voiceRef.current?.dispose();
+      voiceRef.current = null;
+    };
+  }, []);
+
   function parseNow() {
     if (!text.trim()) {
       const nextMessage = "Add a short fence description first.";
@@ -65,8 +72,12 @@ export function DescribeFenceBox({
       onError: (message) => {
         toast.error(message);
         setListening(false);
+        voiceRef.current = null;
       },
-      onEnd: () => setListening(false),
+      onEnd: () => {
+        setListening(false);
+        voiceRef.current = null;
+      },
     });
     if (!voice) return;
     voiceRef.current = voice;

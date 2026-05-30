@@ -7,15 +7,22 @@ import { FenceConfigProvider } from "../context/FenceConfigContext";
 import { GateProvider } from "../context/GateContext";
 import { RunListV3 } from "../components/calculator-v3/RunListV3";
 import { LayoutCanvasV3 } from "../components/calculator-v3/LayoutCanvasV3";
+import {
+  MobileCalculatorTabs,
+} from "../components/calculator-v3/MobileCalculatorTabs";
+import { ClearJobConfirmDialog } from "../components/calculator-v3/ClearJobConfirmDialog";
+import { SaveJobDialog } from "../components/calculator-v3/SaveJobDialog";
 import { RightPaneTabs, type RightPaneView } from "../components/calculator-v3/RightPaneTabs";
 import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
+import { MobileBomTotals } from "../components/shared/MobileBomTotals";
+import { PwaStatusBanners } from "../components/pwa/PwaStatusBanners";
+import { BomV3PDFTemplate } from "../components/quote/BomV3PDFTemplate";
 import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
 import { JobNameEditor } from "../components/calculator/JobNameEditor";
 import { GatePositionModal } from "../components/calculator/GatePositionModal";
 import { PropertyAnchorFormGate, PropertyMap } from "../components/calculator/PropertyMap";
-import { ConfirmButton } from "../components/shared/ConfirmButton";
 import { useBomCalculator } from "../hooks/useBomCalculator";
 import { suggestAccessories } from "../lib/suggestedAccessories";
 import { priceForSku } from "../lib/localBomCalculator";
@@ -41,6 +48,13 @@ import {
 import { hingeGapForSku, latchGapForSku } from "../lib/gateHardware";
 import { gateTypeLabel, validateGateWidth } from "../lib/gateConstraints";
 import { stripParentheticalDispatchCode } from "../lib/displayText";
+import { shareOrDownloadPdfBlob } from "../lib/sharePdf";
+import { MOBILE_BREAKPOINT } from "../lib/layoutBreakpoints";
+import {
+  INITIAL_MOBILE_CALCULATOR_TAB,
+  calculatorPaneVisibility,
+  type MobileCalculatorTab,
+} from "../lib/mobileShell";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
 import { useQuote } from "../hooks/useQuote";
@@ -59,13 +73,14 @@ import {
   Loader2,
   Printer,
   Save,
-  Trash2,
+  Share2,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import Papa from "papaparse";
+import { pdf } from "@react-pdf/renderer";
 import type {
   CalculatorBOMResult,
   BOMLineItem,
@@ -86,11 +101,33 @@ function payloadBomKey(payload: CanonicalPayload): string {
   return JSON.stringify(payload);
 }
 
+function isAngleDrawingWarning(warning: string): boolean {
+  const normalised = warning.toLowerCase();
+  return (
+    normalised.includes("custom angle") &&
+    (normalised.includes("supplier verification") || normalised.includes("verify components"))
+  );
+}
+
 const formatMoney = (value: number) =>
   new Intl.NumberFormat("en-AU", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(value);
+
+const formatHeaderMoney = (value: number) =>
+  `$${new Intl.NumberFormat("en-AU", {
+    maximumFractionDigits: 0,
+  }).format(Math.round(value))}`;
+
+function defaultSaveJobName(now = new Date()) {
+  const date = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(now);
+  return `Untitled Job (${date})`;
+}
 
 const lineKey = (line: BOMLineItem) =>
   `${line.sku}|${line.category}|${line.description}`;
@@ -256,6 +293,13 @@ function initialRunPaneWidth() {
   return Math.round(Math.min(680, Math.max(390, window.innerWidth / 3)));
 }
 
+const CUSTOMER_MODE_KEY = "qsbom-customer-mode";
+
+function initialCustomerMode() {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(CUSTOMER_MODE_KEY) === "true";
+}
+
 function createInitialPayload(systemType = "QSHS"): CanonicalPayload {
   const initialVariables = initialVariablesForSystem(systemType);
   const initialHeight = Number(initialVariables.target_height_mm ?? 1800);
@@ -400,14 +444,19 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
   const [lineEdits, setLineEdits] = useState<Record<string, number | null>>({});
   const [saving, setSaving] = useState(false);
+  const [sharingPdf, setSharingPdf] = useState(false);
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
+  const [customerMode, setCustomerMode] = useState(initialCustomerMode);
   const [jobName, setJobName] = useState("");
   const [activeBomSummary, setActiveBomSummary] = useState<{
     label: string;
+    subtotal: number;
+    gst: number;
     grandTotal: number;
   } | null>(null);
   const [runPaneWidth, setRunPaneWidth] = useState(initialRunPaneWidth);
   const [mobileLayout, setMobileLayout] = useState(false);
-  const [mobileTab, setMobileTab] = useState<"run" | "bom" | "map">("bom");
+  const [mobileTab, setMobileTab] = useState<MobileCalculatorTab>(INITIAL_MOBILE_CALCULATOR_TAB);
   const [rightPaneView, setRightPaneView] = useState<RightPaneView>("bom");
   const [mapExpanded, setMapExpanded] = useState(false);
   const [introDismissed, setIntroDismissed] = useState(false);
@@ -415,11 +464,14 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const [includeMapInBomPrint, setIncludeMapInBomPrint] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [clearJobDialogOpen, setClearJobDialogOpen] = useState(false);
+  const [saveJobDialogOpen, setSaveJobDialogOpen] = useState(false);
   const [gatePositionTarget, setGatePositionTarget] = useState<PendingParsedGate | null>(null);
   const handleActiveBomSummaryChange = useCallback(
-    (summary: { label: string; grandTotal: number }) => {
+    (summary: { label: string; subtotal: number; gst: number; grandTotal: number }) => {
       setActiveBomSummary({
         label: summary.label === "All Items" ? "All items" : summary.label,
+        subtotal: summary.subtotal,
+        gst: summary.gst,
         grandTotal: summary.grandTotal,
       });
     },
@@ -445,10 +497,40 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   }, [quoteId, quoteQuery.data, dispatch]);
 
   useEffect(() => {
-    const updateLayout = () => setMobileLayout(window.innerWidth < 768);
+    if (quoteId || payload || introDismissed) return;
+    dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
+    dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "select" });
+    setIntroDismissed(true);
+    setRightPaneView("bom");
+    setMobileTab("job");
+  }, [dispatch, introDismissed, payload, quoteId]);
+
+  useEffect(() => {
+    const updateLayout = () => setMobileLayout(window.innerWidth < MOBILE_BREAKPOINT);
     updateLayout();
     window.addEventListener("resize", updateLayout);
     return () => window.removeEventListener("resize", updateLayout);
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem(CUSTOMER_MODE_KEY, customerMode ? "true" : "false");
+  }, [customerMode]);
+
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+    const updateOffset = () => {
+      setKeyboardOffset(
+        Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop),
+      );
+    };
+    updateOffset();
+    viewport.addEventListener("resize", updateOffset);
+    viewport.addEventListener("scroll", updateOffset);
+    return () => {
+      viewport.removeEventListener("resize", updateOffset);
+      viewport.removeEventListener("scroll", updateOffset);
+    };
   }, []);
 
   useEffect(() => {
@@ -471,7 +553,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
       if (!gateId) return;
       setRightPaneView("map");
       setMapExpanded(false);
-      if (mobileLayout) setMobileTab("run");
+      if (mobileLayout) setMobileTab("job");
       window.setTimeout(() => {
         window.dispatchEvent(new CustomEvent("qsbom:open-segment", { detail: gateId }));
       }, 80);
@@ -484,6 +566,30 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     setRightPaneView(view);
     if (view !== "map") setMapExpanded(false);
   }, []);
+
+  const handleMobileTabChange = useCallback(
+    (tab: MobileCalculatorTab) => {
+      setMobileTab(tab);
+      if (tab === "map") {
+        if (!payload) {
+          dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
+          dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "draw" });
+        }
+        setIntroDismissed(true);
+        setRightPaneView("map");
+        window.setTimeout(() => window.dispatchEvent(new Event("resize")), 0);
+        return;
+      }
+      if (tab === "bom") {
+        setRightPaneView("bom");
+        setMapExpanded(false);
+        return;
+      }
+      setRightPaneView("bom");
+      setMapExpanded(false);
+    },
+    [dispatch, payload],
+  );
 
   function handleResizeStart() {
     let latestWidth = runPaneWidth;
@@ -510,7 +616,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     setIntroDismissed(true);
     setRightPaneView("bom");
     setMapExpanded(false);
-    setMobileTab("bom");
+    setMobileTab("job");
   }
 
   function handleApplyDescription(result: ParseResult) {
@@ -755,6 +861,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     anchorLat: number;
     anchorLng: number;
     formattedAddress: string;
+    snapshot: NonNullable<CanonicalPayload["snapshot"]>;
   }) {
     if (!payload) return;
     dispatch({
@@ -766,9 +873,15 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
           lng: anchor.anchorLng,
           address: anchor.formattedAddress,
         },
+        snapshot: anchor.snapshot,
       },
     });
-    toast.success("Property location confirmed");
+    setRightPaneView("map");
+    toast.success("Property view captured");
+  }
+
+  function handleMapSnapshotChange(snapshot: NonNullable<CanonicalPayload["snapshot"]>) {
+    dispatch({ type: "SET_MAP_SNAPSHOT", snapshot });
   }
 
   async function handleSwitchEconomyToStandard(item: BOMLineItem) {
@@ -931,11 +1044,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     })()
     : null;
 
-  async function handleSaveJob() {
-    if (!payload) return;
-    const cleanJobName = jobName.trim();
-    const customerRef =
-      cleanJobName || `Glass Outlet Job ${new Date().toLocaleDateString("en-AU")}`;
+  async function saveJobWithName(requestedJobName: string): Promise<boolean> {
+    if (!payload) return false;
+    const customerRef = requestedJobName.trim() || defaultSaveJobName();
     const quoteBom = buildV3QuoteBom(bomResultForTabs);
     const fenceConfig = buildV3FenceConfig(customerRef, payload);
 
@@ -949,8 +1060,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
           savedAt: new Date().toISOString(),
         }),
       );
+      setJobName(customerRef);
       toast.success("Job saved locally for this browser");
-      return;
+      return true;
     }
 
     setSaving(true);
@@ -965,8 +1077,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             savedAt: new Date().toISOString(),
           }),
         );
+        setJobName(customerRef);
         toast.success("Job saved locally for this browser");
-        return;
+        return true;
       }
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
@@ -1004,6 +1117,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
         await queryClient.invalidateQueries({ queryKey: ["quote", quoteId] });
         await queryClient.invalidateQueries({ queryKey: ["quotes"] });
+        setJobName(customerRef);
         toast.success("Job updated");
       } else {
         const { data: quote, error: quoteError } = await supabase
@@ -1027,14 +1141,28 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
         await replaceV3QuoteRuns(supabase, orgId, quote.id, payload);
 
         await queryClient.invalidateQueries({ queryKey: ["quotes"] });
+        setJobName(customerRef);
         toast.success("Job saved");
         navigate(`/quote/${quote.id}`);
       }
+      return true;
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to save job");
+      toast.error("Couldn't save — please try again");
+      console.error(error);
+      return false;
     } finally {
       setSaving(false);
     }
+  }
+
+  async function handleSaveJob() {
+    return saveJobWithName(jobName);
+  }
+
+  async function handleSaveDialogConfirm(name: string) {
+    const saved = await saveJobWithName(name);
+    if (saved) setSaveJobDialogOpen(false);
+    return saved;
   }
 
   function clearToFreshWorkspace() {
@@ -1048,23 +1176,8 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     setRightPaneView("bom");
     setMapExpanded(false);
     setAutoOpenFirstSectionRunId(null);
-    setMobileTab("bom");
+    setMobileTab("job");
     setClearJobDialogOpen(false);
-  }
-
-  function saveCurrentJobLocallyBeforeClear() {
-    if (!payload) return;
-    localStorage.setItem(
-      `glass-calc-cleared-job-${Date.now()}`,
-      JSON.stringify({
-        jobName: jobName.trim() || "Untitled Glass Outlet Job",
-        payload,
-        bom: bomResultForTabs,
-        savedAt: new Date().toISOString(),
-        source: "clear-job-dialog",
-      }),
-    );
-    toast.success("Job saved locally before clearing");
   }
 
   function handlePrintBom() {
@@ -1151,7 +1264,45 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     URL.revokeObjectURL(url);
   }
 
-  const warnings = (lastBom?.warnings as string[]) ?? [];
+  async function handleSharePdf() {
+    if (!bomResultForTabs) return;
+    setSharingPdf(true);
+    try {
+      const fileDate = new Date().toISOString().slice(0, 10);
+      const fileSlug =
+        jobName.trim().replace(/\s+/g, "-").toLowerCase() || "quickscreen-quote";
+      const pdfDocument = (
+        <BomV3PDFTemplate
+          items={bomResultForTabs.allItems}
+          subtotal={bomResultForTabs.total}
+          gst={bomResultForTabs.gst}
+          grandTotal={bomResultForTabs.grandTotal}
+          pricingTier={bomResultForTabs.pricingTier}
+          generatedAt={bomResultForTabs.generatedAt}
+          customerRef={jobName.trim() || undefined}
+          siteAddress={payload?.propertyAnchor?.address}
+        />
+      );
+      const blob = await pdf(pdfDocument).toBlob();
+      const result = await shareOrDownloadPdfBlob({
+        blob,
+        fileName: `quickscreen-quote-${fileSlug}-${fileDate}.pdf`,
+        title: "QuickScreen Quote",
+        text: jobName.trim()
+          ? `QuickScreen BOM quote for ${jobName.trim()}`
+          : "QuickScreen BOM quote",
+      });
+      toast.success(result === "shared" ? "PDF shared" : "PDF downloaded");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to share PDF");
+    } finally {
+      setSharingPdf(false);
+    }
+  }
+
+  const warnings = ((lastBom?.warnings as string[]) ?? []).filter(
+    (warning) => !isAngleDrawingWarning(warning),
+  );
   const errors = (lastBom?.errors as string[]) ?? [];
   const hasErrors = errors.length > 0;
   const economySlatErrors =
@@ -1182,6 +1333,14 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     () => (payload ? payloadBomKey(payload) : null),
     [payload],
   );
+
+  useEffect(() => {
+    setActiveBomSummary(null);
+  }, [payloadCalcKey]);
+
+  useEffect(() => {
+    if (!lastBom) setActiveBomSummary(null);
+  }, [lastBom]);
 
   const runBomRecalculation = useCallback(async () => {
     if (!payload || !payloadCalcKey) {
@@ -1265,10 +1424,10 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
   const cleanJobName = jobName.trim();
   const systemLabel = (productCode: string) => {
-    if (productCode === "QSHS") return "QuickScreen Horizontal Slat";
-    if (productCode === "VS") return "QuickScreen Vertical Slat";
-    if (productCode === "XPL") return "XPress Plus Fence";
-    if (productCode === "BAYG") return "BAY-G Infill Screens";
+    if (productCode === "QSHS") return "Horizontal Slats";
+    if (productCode === "VS") return "Vertical Slats";
+    if (productCode === "XPL") return "XPress Plus";
+    if (productCode === "BAYG") return "BAY-G Infill";
     return productCode;
   };
   const gateSummaryForRun = (run: CanonicalRun) => {
@@ -1288,33 +1447,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
       .map(([label, count]) => `${count} ${label}${count === 1 ? "" : "s"}`)
       .join(" + ");
   };
-  const runBomSummaries = payload?.runs.map((run, index) => {
-    const vars = {
-      ...(payload.variables ?? {}),
-      ...(run.variables ?? {}),
-    };
-    const lengthM = run.segments.reduce(
-      (sum, segment) => {
-        const qty =
-          run.productCode === "BAYG" && segment.segmentKind !== "gate_opening"
-            ? Math.max(1, Math.round(Number(segment.variables?.panel_quantity ?? 1)))
-            : 1;
-        return sum + Number(segment.segmentWidthMm ?? 0) * qty;
-      },
-      0,
-    ) / 1000;
-    const gatePart = gateSummaryForRun(run);
-    return [
-      `Run ${index + 1}`,
-      `${lengthM.toFixed(2)}m`,
-      systemLabel(run.productCode),
-      colourName(vars.colour_code),
-      `${Number(vars.slat_size_mm ?? 65)}mm slat`,
-      `${Number(vars.slat_gap_mm ?? 9)}mm gap`,
-      gatePart || null,
-    ].filter(Boolean).join(" - ");
-  }) ?? [];
-  const summaryText = payload ? runBomSummaries.join(" | ") : cleanJobName;
+  const summaryText = cleanJobName;
   const bomRunDetails = payload?.runs.map((run, runIndex) => {
     const vars = { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
     const gates = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
@@ -1328,14 +1461,16 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     }, 0);
     const maxPanelWidth = Number(vars.max_panel_width_mm ?? 2600);
     const runSettings = [
-      `System Type: ${systemLabel(run.productCode)}`,
-      `Color: ${colourName(vars.colour_code)}`,
-      `Slat size: ${Number(vars.slat_size_mm ?? 65)}mm`,
-      `Gap size: ${Number(vars.slat_gap_mm ?? 9)}mm`,
-      `Post mounting: ${run.productCode === "BAYG" ? "Not required" : mountingLabel(vars.mounting_method ?? vars.mounting_type)}`,
-      `Max post spacing: ${maxPanelWidth}mm`,
-      `Corners: ${run.corners?.length ?? 0}`,
-    ];
+      systemLabel(run.productCode),
+      colourName(vars.colour_code),
+      `${Number(vars.slat_size_mm ?? 65)}mm slat`,
+      `${Number(vars.slat_gap_mm ?? 9)}mm gap`,
+      run.productCode === "BAYG" ? null : mountingLabel(vars.mounting_method ?? vars.mounting_type),
+      `${maxPanelWidth}mm spacing`,
+      (run.corners?.length ?? 0) > 0
+        ? `${run.corners?.length} corner${run.corners?.length === 1 ? "" : "s"}`
+        : null,
+    ].filter(Boolean) as string[];
     const sectionRows = sections.map((section, sectionIndex) => {
       const sectionVars = section.variables ?? {};
       const width = Number(section.segmentWidthMm ?? 0);
@@ -1384,7 +1519,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     return {
       hero: `Run ${runIndex + 1} - ${(lengthMm / 1000).toFixed(2)}m - ${systemLabel(run.productCode)} - ${gateSummaryForRun(run) || "no gates"}`,
       printHeading: `Run ${runIndex + 1}`,
-      settings: runSettings,
+      settings: runSettings.join(" · "),
       sections: sectionRows,
     };
   }) ?? [];
@@ -1395,10 +1530,23 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     : jobName.trim()
       ? `Save ${jobName.trim()}`
       : "Save Job";
+  const saveDialogInitialName = jobName.trim() || defaultSaveJobName();
+  const headerJobTitle = cleanJobName || "New Quote";
   const animatedGrandTotal = useAnimatedNumber(
     activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0,
   );
+  const mobileBomTotals = bomResultForTabs
+    ? {
+        subtotal: activeBomSummary?.subtotal ?? bomResultForTabs.total,
+        gst: activeBomSummary?.gst ?? bomResultForTabs.gst,
+        grandTotal: activeBomSummary?.grandTotal ?? bomResultForTabs.grandTotal,
+      }
+    : null;
+  const headerGrandTotal = activeBomSummary?.grandTotal ?? bomResultForTabs?.grandTotal ?? 0;
+  const headerPriceLabel =
+    !customerMode && headerGrandTotal > 0 ? formatHeaderMoney(headerGrandTotal) : null;
   const showIntro = !quoteId && !payload && !introDismissed;
+  const paneVisibility = calculatorPaneVisibility(mobileLayout, mobileTab);
 
   if (quoteId && quoteQuery.isLoading) {
     return (
@@ -1438,11 +1586,17 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     : undefined;
   const gateTargetRunLength = gateTargetRun ? runLengthMm(gateTargetRun) : 0;
   const hasLegacyConfiguredPayload = Boolean(
-    payload && !payload.propertyAnchor && payload.runs.some((run) => run.segments.length > 0),
+    quoteId && payload && !payload.propertyAnchor && payload.runs.some((run) => run.segments.length > 0),
   );
   const propertyAnchorConfirmed = Boolean(payload?.propertyAnchor) || hasLegacyConfiguredPayload;
   const headerActions = !showIntro && !mapExpanded ? (
     <div className="flex w-full flex-wrap items-center justify-end gap-2">
+      <div
+        className="lg:fixed lg:top-2 lg:z-40"
+        style={mobileLayout ? undefined : { left: runPaneWidth + 16 }}
+      >
+        <RightPaneTabs activeView={rightPaneView} onChange={handleRightPaneChange} />
+      </div>
       {rightPaneView === "bom" && (
         <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
           <button
@@ -1476,6 +1630,16 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
           </button>
           <button
             type="button"
+            onClick={() => void handleSharePdf()}
+            disabled={!bomResultForTabs || sharingPdf}
+            title="Share PDF"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {sharingPdf ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
+            Share PDF
+          </button>
+          <button
+            type="button"
             onClick={() => setShortcutsOpen(true)}
             title="Keyboard shortcuts (?)"
             className="inline-flex items-center gap-1.5 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
@@ -1485,12 +1649,20 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
           </button>
         </div>
       )}
-      <RightPaneTabs activeView={rightPaneView} onChange={handleRightPaneChange} />
     </div>
   ) : null;
 
   return (
-    <AppShell headerActions={headerActions}>
+    <AppShell
+      headerActions={headerActions}
+      topBar={<PwaStatusBanners />}
+      jobTitle={headerJobTitle}
+      headerPriceLabel={headerPriceLabel}
+      customerMode={customerMode}
+      onCustomerModeChange={setCustomerMode}
+      onClearJobRequest={() => setClearJobDialogOpen(true)}
+      clearJobDisabled={!payload && !jobName}
+    >
       {gatePositionTarget && gateTargetRunLength > 0 && (
         <GatePositionModal
           gateLabel={gatePositionTarget.kind.replace("_", " ")}
@@ -1542,8 +1714,8 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             className={`${mapExpanded ? "fixed inset-0 z-50" : "relative"} flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row`}
           >
             <aside
-              className={`relative w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${mapExpanded || (mobileLayout && mobileTab !== "run") ? "hidden" : "flex"
-                } ${bomResultForTabs ? "max-h-[32vh]" : "min-h-[46vh]"
+              className={`relative w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${mapExpanded || !paneVisibility.job ? "hidden" : "flex"
+                } ${mobileLayout ? "h-full min-h-0 max-h-none" : bomResultForTabs ? "max-h-[32vh]" : "min-h-[46vh]"
                 }`}
               style={mobileLayout ? undefined : { width: runPaneWidth }}
             >
@@ -1563,10 +1735,13 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                   </section>
                   {payload && (
                     <>
-                      <PropertyMap
-                        initialAnchor={payload.propertyAnchor ?? null}
-                        onAnchorConfirmed={handlePropertyAnchorConfirmed}
-                      />
+                      {!hasLegacyConfiguredPayload ? (
+                        <PropertyMap
+                          initialAnchor={payload.propertyAnchor ?? null}
+                          initialSnapshot={payload.snapshot ?? null}
+                          onAnchorConfirmed={handlePropertyAnchorConfirmed}
+                        />
+                      ) : null}
                       <PropertyAnchorFormGate anchorConfirmed={propertyAnchorConfirmed}>
                         <hr className="border-brand-border/60" />
                         <section>
@@ -1674,26 +1849,25 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                     </>
                   )}
                 </div>
-                <div className="border-t border-brand-border bg-brand-card p-3 pb-24 sm:p-5 md:pb-5">
-                  <div className="flex flex-wrap gap-2">
+                <div
+                  className="sticky z-30 hidden border-t border-brand-border bg-brand-card p-3 pb-[calc(var(--safe-bottom)+1rem)] shadow-2xl sm:p-5 md:block md:pb-5"
+                  style={{
+                    bottom: mobileLayout
+                      ? `calc(56px + var(--safe-bottom) + ${keyboardOffset}px)`
+                      : 0,
+                  }}
+                  data-testid="mobile-job-action-bar"
+                >
+                  <div className="grid gap-2 sm:flex sm:flex-wrap">
                     <button
                       type="button"
                       onClick={handleSaveJob}
                       disabled={!payload || saving}
-                      className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
+                      className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                       {saveJobLabel}
                     </button>
-                    <ConfirmButton
-                      onConfirm={() => setClearJobDialogOpen(true)}
-                      disabled={!payload && !jobName}
-                      confirmLabel={<><Trash2 size={16} /> Click again to confirm</>}
-                      className="inline-flex items-center gap-2 rounded-lg border border-brand-danger/30 px-3 py-2 text-sm font-bold text-brand-danger transition-colors hover:bg-brand-danger/10 hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      <Trash2 size={16} />
-                      Clear Job
-                    </ConfirmButton>
                   </div>
                 </div>
               </div>
@@ -1708,7 +1882,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
             <main
               data-print-bom-main
-              className={`min-h-0 min-w-0 flex-1 overflow-y-auto ${mapExpanded ? "p-0" : "p-3 pb-24 sm:p-5 lg:p-8"} ${mobileLayout && mobileTab === "run" ? "hidden" : ""
+              className={`min-h-0 min-w-0 flex-1 overflow-y-auto ${mapExpanded ? "p-0" : "p-3 pb-[calc(var(--safe-bottom)+6rem)] sm:p-5 lg:p-8"} ${mobileLayout && paneVisibility.job ? "hidden" : ""
                 }`}
             >
               <div
@@ -1717,7 +1891,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
               >
                 <section
                   data-print-map-section
-                  className={`${rightPaneView === "map" ? "block" : "hidden"} overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"}`}
+                  className={`${mobileLayout ? (paneVisibility.map ? "block" : "hidden") : rightPaneView === "map" ? "block" : "hidden"} overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"}`}
                 >
                   <div className={`${mapExpanded ? "p-2" : "p-3 sm:p-4"}`}>
                     <div
@@ -1729,6 +1903,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                           mapExpanded={mapExpanded}
                           onMapExpandedChange={setMapExpanded}
                           showRunDetails={!mapExpanded}
+                          propertyAnchor={payload.propertyAnchor ?? null}
+                          mapSnapshot={payload.snapshot ?? null}
+                          onMapSnapshotChange={handleMapSnapshotChange}
                         />
                       ) : (
                         <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/50 p-6 text-center text-sm font-bold text-brand-muted">
@@ -1738,7 +1915,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                     </div>
                   </div>
                 </section>
-                <section data-print-bom-section className={`rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5 ${rightPaneView === "bom" && !mapExpanded ? "block" : "hidden"}`}>
+                <section data-print-bom-section className={`rounded-2xl border border-brand-border/60 bg-brand-card p-3 sm:p-5 ${mobileLayout ? (paneVisibility.bom && !mapExpanded ? "block" : "hidden") : rightPaneView === "bom" && !mapExpanded ? "block" : "hidden"}`}>
                   <div className="mb-4 flex flex-col gap-4 border-b border-brand-border pb-5 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <div className="mb-3 flex flex-wrap items-center gap-3">
@@ -1749,7 +1926,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                         />
                         <div className="h-10 w-px bg-brand-border" />
                         <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-muted">
-                          Bill of Materials
+                          {customerMode ? "Customer Quote" : "Bill of Materials"}
                         </p>
                       </div>
                       {jobName.trim() && (
@@ -1769,15 +1946,26 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                     </div>
                     <div className="text-left sm:text-right" data-print-hide>
                       <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
-                        {bomMutation.isPending
+                        {customerMode ? (
+                          "Customer view"
+                        ) : (
+                          bomMutation.isPending
                           ? "Recalculating…"
-                          : activeBomSummary?.label ?? (bomResultForTabs ? "Auto quantity breaks" : "Estimated total")}
+                          : activeBomSummary?.label ?? (bomResultForTabs ? "Auto quantity breaks" : "Estimated total")
+                        )}
                       </p>
                       <p className="font-mono text-4xl font-black tabular-nums text-brand-primary sm:text-5xl">
-                        ${formatMoney(animatedGrandTotal)}
+                        {customerMode ? "No pricing" : `$${formatMoney(animatedGrandTotal)}`}
                       </p>
                     </div>
                   </div>
+                  {!customerMode && mobileBomTotals && (
+                    <MobileBomTotals
+                      subtotal={mobileBomTotals.subtotal}
+                      gst={mobileBomTotals.gst}
+                      grandTotal={mobileBomTotals.grandTotal}
+                    />
+                  )}
                   {bomMutation.isPending && !bomResultForTabs ? (
                     <div className="space-y-3" aria-label="Generating BOM">
                       {Array.from({ length: 7 }).map((_, index) => (
@@ -1801,11 +1989,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                               <p className="text-sm font-black text-brand-text print:text-black">
                                 {runDetail.hero}
                               </p>
-                              <div className="grid gap-x-4 gap-y-1 text-xs font-semibold text-brand-muted sm:grid-cols-2 print:text-slate-700">
-                                {runDetail.settings.map((setting) => (
-                                  <span key={setting}>{setting}</span>
-                                ))}
-                              </div>
+                              <p className="text-xs font-semibold text-brand-muted print:text-slate-700">
+                                {runDetail.settings}
+                              </p>
                               <div className="space-y-1 pl-3 text-xs font-semibold text-brand-muted print:text-slate-700">
                                 {runDetail.sections.map((section) => (
                                   <div key={section.label}>
@@ -1843,6 +2029,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                         }
                         onSwitchEconomyToStandard={handleSwitchEconomyToStandard}
                         onActiveSummaryChange={handleActiveBomSummaryChange}
+                        customerMode={customerMode}
                       />
                       {bomRunDetails.length > 0 && (
                         <div
@@ -1855,11 +2042,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                           {bomRunDetails.map((runDetail) => (
                             <section key={runDetail.hero} className="break-inside-avoid space-y-2">
                               <h3 className="text-sm font-black text-black">{runDetail.printHeading}</h3>
-                              <div className="grid gap-x-6 gap-y-1 text-xs font-semibold text-slate-700 sm:grid-cols-2">
-                                {runDetail.settings.map((setting) => (
-                                  <span key={setting}>{setting}</span>
-                                ))}
-                              </div>
+                              <p className="text-xs font-semibold text-slate-700">
+                                {runDetail.settings}
+                              </p>
                               <div className="space-y-2 pl-3 text-xs font-semibold text-slate-700">
                                 {runDetail.sections.map((section) => (
                                   <div key={section.label} className="break-inside-avoid">
@@ -1919,88 +2104,26 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
           </div>
           {mobileLayout && !mapExpanded && (
-            <nav className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-brand-border bg-brand-card/95 p-2 shadow-2xl backdrop-blur md:hidden">
-              {([
-                ["run", "Run"],
-                ["bom", "BOM"],
-                ["map", "Map"],
-              ] as const).map(([id, label]) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => {
-                    setMobileTab(id);
-                    if (id === "map") {
-                      if (!payload) {
-                        dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
-                        dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "draw" });
-                      }
-                      setIntroDismissed(true);
-                      setRightPaneView("map");
-                    } else if (id === "bom") {
-                      setRightPaneView("bom");
-                      setMapExpanded(false);
-                    } else {
-                      setRightPaneView("bom");
-                      setMapExpanded(false);
-                    }
-                  }}
-                  className={`rounded-lg px-3 py-2 text-sm font-extrabold transition-colors ${mobileTab === id
-                    ? "bg-brand-primary text-white"
-                    : "text-brand-muted hover:bg-brand-border/40 hover:text-brand-text"
-                    }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </nav>
+            <MobileCalculatorTabs
+              activeTab={mobileTab}
+              onChange={handleMobileTabChange}
+              onSave={() => setSaveJobDialogOpen(true)}
+              saveDisabled={!payload || saving}
+            />
+          )}
+          {saveJobDialogOpen && (
+            <SaveJobDialog
+              initialName={saveDialogInitialName}
+              saving={saving}
+              onCancel={() => setSaveJobDialogOpen(false)}
+              onSave={handleSaveDialogConfirm}
+            />
           )}
           {clearJobDialogOpen && (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Save current job before clearing"
-              onClick={() => setClearJobDialogOpen(false)}
-            >
-              <div
-                className="w-full max-w-md rounded-2xl border border-brand-border bg-brand-card p-5 shadow-2xl"
-                onClick={(event) => event.stopPropagation()}
-              >
-                <h2 className="text-lg font-black text-brand-text">
-                  Save the current job before clearing?
-                </h2>
-                <p className="mt-2 text-sm font-semibold leading-relaxed text-brand-muted">
-                  Save a local browser copy, clear without saving, or cancel and keep working.
-                </p>
-                <div className="mt-5 grid gap-2 sm:grid-cols-3">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      saveCurrentJobLocallyBeforeClear();
-                      clearToFreshWorkspace();
-                    }}
-                    className="rounded-lg bg-brand-primary px-3 py-2 text-sm font-black text-white transition-colors hover:bg-brand-primary/90"
-                  >
-                    Save & clear
-                  </button>
-                  <button
-                    type="button"
-                    onClick={clearToFreshWorkspace}
-                    className="rounded-lg border border-brand-danger/40 px-3 py-2 text-sm font-black text-brand-danger transition-colors hover:bg-brand-danger/10"
-                  >
-                    Clear without saving
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setClearJobDialogOpen(false)}
-                    className="rounded-lg border border-brand-border px-3 py-2 text-sm font-black text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
+            <ClearJobConfirmDialog
+              onCancel={() => setClearJobDialogOpen(false)}
+              onClear={clearToFreshWorkspace}
+            />
           )}
           {shortcutsOpen && (
             <div

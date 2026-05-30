@@ -7,6 +7,7 @@ const root = process.cwd();
 const outDir = path.join(root, "node_modules", ".tmp", "describe-fence-parser-tests");
 const files = [
   "src/lib/voiceFillers.ts",
+  "src/lib/measurementParser.ts",
   "src/lib/describeFenceParser.ts",
   "src/lib/describeFenceParser.test.ts",
 ];

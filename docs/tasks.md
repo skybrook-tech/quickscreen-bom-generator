@@ -6,11 +6,34 @@
 > **v3 Engine** — V3-1 through V3-6 complete. V3-7 (docs cross-linking) is the only remaining item.
 > Start here for an overview: [`docs/how_it_works.md`](./how_it_works.md).
 
+Latest infrastructure fix: duplicate Supabase migration version 029 was resolved by keeping the earlier profile-email migration at 029 and renaming the later quote property-anchor migration to 030.
+
+Latest Brief 014 pass: the mobile Job tab now prioritises job/address/system/run controls, supports Web Speech API address dictation, adds numeric and decimal mobile keyboard hints, enlarges key touch targets, and keeps Save/Clear/Generate actions in a keyboard-aware sticky action bar.
+
+Latest Brief 017 pass: the calculator now has production-only PWA registration, manifest/icons, install and offline banners, customer quote mode that hides costs, and a real-device mobile QA checklist.
+
+Latest Brief 019 pass: the V3 calculator header now uses the Glass Outlet symbol with a live non-zero total, opens new mobile sessions on the Job tab, moves Clear Job plus offline-only status into the mobile hamburger menu, removes duplicate Generate controls, clears stale BOM totals when runs or sections are deleted, and deploys the bundled icon assets to `public/icons/`.
+
+Latest Brief 020 pass: mobile canvas drawing now defers draw/gate taps until touch release, suppresses all placement and previews during multi-touch pinch gestures plus a cooldown, supports double-tap run finishing without adding a duplicate point, clears stale preview lines after point placement, and lets mobile users place gates before the gate editor opens.
+
+Latest Brief 020 fix-up: real-device iPhone regressions were addressed by suppressing tap-start phantom previews, restoring 500ms long-press vertex dragging, and keeping Gate mode active after saving a placed gate.
+
+Latest Brief 021 pass: the canvas toolbar now removes zoom buttons, labels Move/Edit clearly, exposes history-aware Undo/Redo plus a clear-confirmation modal, caps canvas history at 20 actions, uses a compact mobile layers sheet, and keeps the map underlay toggle working across desktop and mobile.
+
+Latest Brief 021 iPhone fix-up: undo now clears stale canvas segment previews, the mobile layers sheet is constrained to 45dvh with internal scrolling, and map visibility changes are batched so the underlay hides on both desktop and mobile.
+
+Latest Brief 029 pass: property map Static Maps captures now use hybrid label-decluttering style parameters, crop the Google attribution band from newly captured map snapshots before sending them to the canvas, and fall back to the uncropped URL if browser canvas/CORS restrictions block the crop.
+Latest Brief 028 pass: canvas drawing now renders the first fence point immediately, keeps the viewport transform stable across point placement, opens the gate configuration dialog as soon as Gate is selected, places configured gates without a second dialog, and hides cursor hints after the first canvas action until Clear resets the map.
+
 Latest sandbox polish: run sidebar readability, 0m first-segment defaults, compact length/height controls, and endpoint/corner gate placement are implemented on `codex/qshs-calculator-sandbox`.
 
 Living app overview: [`docs/app-overview.md`](./app-overview.md) now tracks current routes, file responsibilities, data flow, mapper responsibilities, fallback engine behavior, Supabase seed structure, and update rules.
 
+Latest brief queue pass: Brief 001 removes the pre-address confirm-location warning from the calculator entry flow and hides custom-angle warning chips in the V3 sidebar while leaving BOM calculation behavior unchanged.
+
 Latest BOM workflow pass: generated BOM rows aggregate by product within each tab, individual gate tabs are labelled from the canonical gate segments, Generate BOM clears stale results before recalculating, and the mapper opens without the initial snap dot.
+
+Latest Brief BP pass: on-screen and print BOM run summaries now use one compact run-details block, the line-item subtitle is simplified, section settings put Slat Range before Color, section-only post-size override controls are hidden, Generate BOM uses a fresh canonical payload snapshot, and run/settings disclosures keep the 60 second idle collapse behavior.
 
 Latest sidebar pass: run cards now remove the redundant master-settings line, segment cards show compact order summaries with bold values, length/height editing moved into segment options, segment cards have a blue 3D border, segment confirm/remove controls were reduced to a blue dot and two-click red X, and the layout map button now opens/minimizes the map.
 
@@ -78,6 +101,8 @@ Latest run-default and gate-behaviour pass: Run Settings now actively reset sect
 
 Latest mobile mapper audit pass: the `/calculator` mobile workflow now opens the layout map from the intro with a fallback QSHS payload, uses the bottom Run/BOM/Map tabs as true mobile panes, keeps Run/BOM reachable by minimizing the map when those tabs are selected, gives the mapper touch start/move/end support for phone drawing and gate dragging, switches the mapper toolbar to horizontal scrolling on narrow screens, hides the satellite hint over the phone canvas, and adds mobile footer clearance so action buttons are not covered by the bottom nav.
 
+Latest Brief 006 pass: the mapper now has a first-class Arrow site tool with its own toolbar button and `A` shortcut. Arrows are placed as straight tail-to-head annotations, render with a fixed dark-grey style, and round-trip through the canonical payload alongside the existing canvas data.
+
 Latest Brief AU pass: BOM rows now retain source breakdowns for run/gate scoped review, the All BOM tab aggregates to one line per SKU while filtered tabs re-price by scoped quantity, BOM display categories now use a richer category/subcategory/sort order taxonomy, seed components carry display metadata without changing engine selector categories, and TruClose safety caps (`TC-CAPS3`) are offered as an optional add-on instead of being auto-added.
 
 Latest print BOM pass: the print/PDF BOM now hides screen-only pricing hints, tier badges, derivation notes, next-tier/carton prompts, source chips, edit controls, accessory/search panels, and QR cards; print CSS resets scroll-container heights so long BOMs can paginate beyond page one; optional map inclusion prints the layout map as a normal bottom section after the BOM.
@@ -116,9 +141,23 @@ Latest Google Maps plumbing pass: `codex/google-maps-plumbing` adds the `@google
 
 Latest property-map UI pass: `codex/calculator-property-map` adds the V3 calculator property map surface above the run/form controls, Australian address geocoding, satellite/hybrid map toggle, draggable/confirmable property pins, nullable quote `property_anchor` storage, top-level canonical `propertyAnchor`, `.nvmrc`, and focused unit coverage for geocoding, anchor gating, and canonical anchor persistence without changing canvas drawing or BOM calculation logic.
 
+Latest canvas snapshot pivot: `codex/canvas-engine-map-overlay` now captures the sidebar Google Map view as persisted Static Maps snapshot params, loads the resulting satellite image through the existing canvas underlay path, keeps drawing in the vanilla pixel-coordinate canvas engine, preserves snapshot state across product/run selection and quote reloads, and removes the custom `OverlayView`, Pan/Draw toolbar mode, diagnostic logs, and event-bridge draw-tool wiring.
+
+Latest layered snapshot pass: PR #30 now captures both satellite and roadmap Static Maps snapshots for the same view at 2x the sidebar framing size where Static Maps limits allow, opens the canvas on the centred original framing so zoom-out reveals the extra captured area, defaults Satellite to 100% and Roadmap to 50% opacity so the aerial remains visible under labels, keeps the sidebar Google Map explicitly interactive for pan/zoom framing, restores visible canvas zoom +/- controls with Ctrl-wheel and reset-to-default zoom behaviour, logs Places autocomplete success/failure clearly, writes layer toggles through the calculator reducer so they survive re-render/save/reload, renders successful layers in stack order below the existing canvas drawing layer, and migrates legacy single-image snapshots into a satellite layer with a disabled roadmap fallback.
+
+Latest mapper control simplification: PR #30 now starts the map canvas with angle snap, gate snap, and grid off, removes the Ortho toolbar option, replaces per-layer visibility checkboxes with opacity-only layer rows, and adds a single Map on/off button that hides or restores the map underlay while leaving drawn fence geometry on the canvas.
+
+Latest map regression fix: PR #30 now caps Static Maps snapshot width and height independently after the 2x viewport multiplier, stores the original sidebar viewport size for the default centred crop, lets canvas zoom-out reach the 0.5 reveal level, and fully disables angle snapping when the Angle snap checkbox is off.
+
+Latest map canvas zoom pass: PR #30 now supports direct mouse/trackpad wheel zoom over the map canvas and two-finger pinch zoom on touch screens, while keeping toolbar buttons, keyboard zoom, and reset-to-default zoom controls.
+
+Latest edit-gate workflow pass: `codex/edit-gate-workflow-v2` re-implements PR #29's persistent draggable Edit Gate dialog on top of the post-snapshot canvas, keeps Gate mode active for repeated placements, adds session-scoped cancel removal, carries gate variables through canvas/canonical round-trips, suppresses noisy hover stats, and hides the initial draw hint after the first draw click until clear.
+
 Latest Brief BN v2 pass: the sandbox BN work now completes the top-bar reorganisation by moving Map/BOM tabs into the app header as a segmented control, moving BOM actions beside them only while BOM is active, removing the duplicate in-panel action row, and preserving the icon-only settings/Describe/gate-settings conventions in the repo skill mirrors.
 
 Latest Brief BO pass: run summaries now show only accepted run-default fields with height/length removed from the subheading, BOM colour display strips internal dispatch-code suffixes, section and gate match codes stay green when their run-derived settings match, and Print BOM now prints materials and totals first, then Run & Section Details, then the optional map at the bottom.
+
+Latest Brief 031 pass: run headings now show full system names with inline editable default height, section and gate headings share the same inline height editor, settings buttons are labeled text controls, run/section gap selectors combine type and size in one dropdown, section settings mirror run settings grouping, and closed section subheadings show only settings that differ from run defaults.
 
 
 ---
@@ -434,6 +473,10 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Brief BM map canvas overhaul foundation: moved address search above the canvas with a collapsed map-settings popover, removed the duplicate right-pane expand button, renamed Draw to Draw Fence and Existing wall to Dotted line, added click-drag building rectangles, free-draw strokes, post/pillar dimensions, transparent text notes, cursor hints, fitted print-map output with job/run/gate/date summary, and preserved map annotations through layout reloads.
 - [x] Brief BM completion pass: added Ortho snapping for Draw Fence/Dotted line, free-draw colour/width/style/opacity/arrow controls, map item selection with Delete/Backspace removal, right-click context actions, draggable/resizable text notes, movable/resizable building rectangles, movable existing post/pillar markers, and editable text/post/pillar details without changing BOM dispatch.
 - [x] Brief BO residual punch-list: removed redundant run-subheading length/height, kept height section-only in the visible UI, added stripped colour-code display text for BOM summaries/rows/exports, tightened visible green section/gate match chips, and confirmed the existing icon Describe trigger plus hidden initial Add Run behaviour.
+- [x] Brief 011 queue pass: double-click fence finish now preserves the user's zoomed-out canvas viewport during same-geometry form sync, preventing the satellite/background view from shifting away from the drawn run.
+- [x] Brief 016 mobile BOM cards: mobile BOM view now renders grouped stacked cards, sticky totals, collapsible accessory cards, a bottom BOM action bar, and Share PDF support with Web Share API plus download fallback while preserving the desktop BOM table.
+- [x] Master baseline keyboard-offset fix: removed the duplicate `keyboardOffset` state declaration left by the mobile brief merge and rewired the orphaned Job-tab Generate BOM button to the current `handleManualBomGenerate` handler.
+- [x] Brief 030 canvas roadmap layer fix: property map capture now builds separate satellite and roadmap Static Maps layers, crops attribution from both captured layers, exposes per-layer Satellite/Roadmap visibility toggles with opacity controls, and keeps the drawing layer rendered above map underlays.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---

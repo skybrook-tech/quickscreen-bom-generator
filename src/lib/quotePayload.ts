@@ -11,6 +11,7 @@ import {
   type QuoteFenceConfig,
   type V3FenceConfig,
 } from '../types/quote.types';
+import { normalizeMapSnapshot } from './googleMaps/staticSnapshot';
 
 export type QuoteRunRow = {
   id: string;
@@ -110,7 +111,11 @@ export function payloadFromV3FenceConfig(config: V3FenceConfig): CanonicalPayloa
     console.warn('[quotePayload] canonical payload validation failed', parsed.error.flatten());
     return config.payload;
   }
-  return parsed.data as CanonicalPayload;
+  const payload = parsed.data as CanonicalPayload;
+  return {
+    ...payload,
+    snapshot: normalizeMapSnapshot(payload.snapshot) ?? payload.snapshot,
+  };
 }
 
 export function resolveCanonicalPayload(

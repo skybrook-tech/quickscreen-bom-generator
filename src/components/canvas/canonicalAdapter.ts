@@ -28,6 +28,7 @@
 // additional `panel` segments (before and after the gate opening).
 
 import type {
+  CanvasArrowAnnotation,
   CanvasGate,
   CanvasLayout,
   CanvasSegment,
@@ -40,12 +41,14 @@ import type {
   CanonicalSegment,
   CanonicalBoundary,
   CanonicalCorner,
+  CanonicalCanvasAnnotation,
 } from '../../types/canonical.types';
 import {
   classifyCorner,
   GATE_SEGMENT_STUB_KEYS,
   SEGMENT_TERMINATION_KEYS,
 } from '../../lib/segmentTermination';
+import { normalizeMapSnapshot } from '../../lib/googleMaps/staticSnapshot';
 
 // ---------------------------------------------------------------------------
 // Stable ID map — keyed by a deterministic descriptor so round-trips preserve
@@ -60,6 +63,26 @@ const CORNER_ANGLE_THRESHOLD_DEG = 5;
 
 function newId(): string {
   return crypto.randomUUID();
+}
+
+function arrowToCanonical(arrow: CanvasArrowAnnotation): CanonicalCanvasAnnotation {
+  return {
+    kind: 'arrow',
+    from: { x: arrow.from.x, y: arrow.from.y },
+    to: { x: arrow.to.x, y: arrow.to.y },
+    color: arrow.color ?? '#444',
+    weight: arrow.weight ?? 2,
+  };
+}
+
+function arrowToCanvas(annotation: CanonicalCanvasAnnotation): CanvasArrowAnnotation {
+  return {
+    kind: 'arrow',
+    from: { x: annotation.from.x, y: annotation.from.y },
+    to: { x: annotation.to.x, y: annotation.to.y },
+    color: annotation.color,
+    weight: annotation.weight,
+  };
 }
 
 /** Normalise an angle to [0, 360). */
@@ -174,6 +197,7 @@ interface GateInSegment {
   gateType?: CanvasGate['gateType'];
   swingDirection?: CanvasGate['swingDirection'];
   slidingSide?: CanvasGate['slidingSide'];
+  variables?: CanvasGate['variables'];
 }
 
 function gateMovementFromCanvas(gateType: CanvasGate['gateType']) {
@@ -273,6 +297,10 @@ function terminationVariablesForSegment(
   return Object.keys(variables).length ? variables : undefined;
 }
 
+function geometryPointsForRun(_payload: CanonicalPayload, run: CanonicalRun) {
+  return run.geometry?.points;
+}
+
 function expandSegmentWithGates(
   seg: CanvasSegment,
   gates: GateInSegment[],
@@ -345,6 +373,7 @@ function expandSegmentWithGates(
       canvasSegmentIndex: localSegIdx,
       sourceSegmentLengthMm: Math.round(totalMm),
       variables: {
+        ...(gate.variables ?? {}),
         ...(parentSectionId ? { parent_section_id: parentSectionId } : {}),
         [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]:
           gate.useGatePostsAsFenceTermination ?? true,
@@ -485,6 +514,7 @@ export function canvasLayoutToCanonical(
   stableIds: StableIdMap = {},
 ): CanonicalPayload {
   const runSlices = buildRunSlices(layout);
+  const annotations = (layout.arrows ?? []).map(arrowToCanonical);
 
   const canonicalRuns: CanonicalRun[] = runSlices.map((slice) => {
     // Stable runId keyed by run index
@@ -513,6 +543,7 @@ export function canvasLayoutToCanonical(
         gateType: gate.gateType,
         swingDirection: gate.swingDirection,
         slidingSide: gate.slidingSide,
+        variables: gate.variables,
       });
     }
 
@@ -621,6 +652,7 @@ export function canvasLayoutToCanonical(
     productCode,
     schemaVersion: 'v1',
     variables,
+    ...(annotations.length > 0 ? { annotations } : {}),
     runs: canonicalRuns.length > 0 ? canonicalRuns : [
       // Fallback: empty payload still needs at least one run to be valid.
       // This branch is only hit if layout.runs is empty.
@@ -646,19 +678,26 @@ export function mergeCanonicalPreservingSegmentMeta(
   generated: CanonicalPayload,
 ): CanonicalPayload {
   const prevRuns = new Map(previous.runs.map((r) => [r.runId, r]));
+  const snapshot =
+    normalizeMapSnapshot(generated.snapshot ?? previous.snapshot) ??
+    generated.snapshot ??
+    previous.snapshot;
   return {
     ...generated,
     propertyAnchor: generated.propertyAnchor ?? previous.propertyAnchor,
+    snapshot,
+    annotations: generated.annotations ?? previous.annotations,
     runs: generated.runs.map((genRun) => {
+      const anchoredRun = genRun;
       const prevRun = prevRuns.get(genRun.runId);
-      if (!prevRun) return genRun;
+      if (!prevRun) return anchoredRun;
       const prevSegMap = new Map(prevRun.segments.map((s) => [s.segmentId, s]));
       return {
-        ...genRun,
+        ...anchoredRun,
         variables: { ...(prevRun.variables ?? {}), ...(genRun.variables ?? {}) },
         leftBoundary: prevRun.leftBoundary,
         rightBoundary: prevRun.rightBoundary,
-        segments: genRun.segments.map((gs) => {
+        segments: anchoredRun.segments.map((gs) => {
           const ps = prevSegMap.get(gs.segmentId);
           if (!ps) return gs;
           return {
@@ -704,7 +743,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
     // fewer geometry points than fence segments after a gate split; in that
     // case per-segment geometry_angle_deg hints preserve turns instead of
     // falling back to a flat straight line.
-    const geomPts = run.geometry?.points;
+    const geomPts = geometryPointsForRun(payload, run);
     const useGeometry = !!(geomPts && geomPts.length >= 2);
 
     let xCursor = 0;       // used only in flat-horizontal fallback
@@ -754,6 +793,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
           gateId: canonSeg.segmentId,
           useGatePostsAsFenceTermination:
             canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
+          variables: canonSeg.variables,
           ...gateVisualFromCanon(canonSeg),
         };
         allFlatGates.push(gate);
@@ -790,6 +830,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
             gateId: canonSeg.segmentId,
             useGatePostsAsFenceTermination:
               canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
+            variables: canonSeg.variables,
             ...gateVisualFromCanon(canonSeg),
           });
           runGates.push({
@@ -800,6 +841,7 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
             gateId: canonSeg.segmentId,
             useGatePostsAsFenceTermination:
               canonSeg.variables?.use_gate_posts_as_fence_termination !== false,
+            variables: canonSeg.variables,
             ...gateVisualFromCanon(canonSeg),
           });
         } else {
@@ -812,8 +854,8 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
             lengthMM: 1, angleDeg: 0,
           });
           const gateIdx = globalFlatOffset + localFlatSegments.length - 1;
-          allFlatGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900, gateId: canonSeg.segmentId, ...gateVisualFromCanon(canonSeg) });
-          runGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900, gateId: canonSeg.segmentId, ...gateVisualFromCanon(canonSeg) });
+          allFlatGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900, gateId: canonSeg.segmentId, variables: canonSeg.variables, ...gateVisualFromCanon(canonSeg) });
+          runGates.push({ segmentIndex: gateIdx, positionOnSegment: 0, anchor: 'start', widthMM: canonSeg.segmentWidthMm ?? 900, gateId: canonSeg.segmentId, variables: canonSeg.variables, ...gateVisualFromCanon(canonSeg) });
           if (!useGeometry) xCursor += 1;
         }
       } else {
@@ -893,5 +935,6 @@ export function canonicalToCanvasLayout(payload: CanonicalPayload): CanvasLayout
     runs: runSummaries,
     boundaries: [], // canonical payload has no boundary context lines
     textNotes: [], // canonical payload has no text annotations
+    arrows: (payload.annotations ?? []).map(arrowToCanvas),
   };
 }

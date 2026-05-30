@@ -22,6 +22,7 @@ export function RunListV3({
   const hasRuns = Boolean(payload?.runs.length);
 
   if (!payload) return null;
+  const currentPayload = payload;
 
   function createPayloadForSystem(productCode: string): CanonicalPayload {
     const variables = initialVariablesForSystem(productCode);
@@ -30,6 +31,10 @@ export function RunListV3({
       productCode,
       schemaVersion: "v1",
       variables,
+      ...(currentPayload.propertyAnchor
+        ? { propertyAnchor: currentPayload.propertyAnchor }
+        : {}),
+      ...(currentPayload.snapshot ? { snapshot: currentPayload.snapshot } : {}),
       runs: [
         {
           runId,
@@ -55,9 +60,10 @@ export function RunListV3({
 
   function startFirstRun(productCode: string) {
     const nextPayload = createPayloadForSystem(productCode);
+    const firstRun = nextPayload.runs[0];
     dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
     window.setTimeout(() => {
-      window.dispatchEvent(new CustomEvent("qsbom:open-run", { detail: nextPayload.runs[0].runId }));
+      window.dispatchEvent(new CustomEvent("qsbom:open-run", { detail: firstRun.runId }));
     }, 80);
   }
 
@@ -100,18 +106,20 @@ export function RunListV3({
                 key={product.system_type}
                 type="button"
                 onClick={() => startFirstRun(product.system_type)}
-                className="flex items-center justify-between gap-3 rounded-lg border border-brand-primary bg-brand-primary px-3 py-4 text-left text-xl font-black text-white shadow-sm transition hover:bg-brand-primary/90 hover:shadow-md"
+                className="flex min-h-[88px] items-center justify-between gap-3 rounded-lg border border-brand-primary bg-brand-primary px-4 py-4 text-left text-white shadow-sm transition hover:bg-brand-primary/90 hover:shadow-md"
                 data-testid={`landing-system-${product.system_type}`}
               >
-                <span>
-                  {product.system_type === "QSHS"
-                    ? "Quick Screen Horizontal Slats"
-                    : product.system_type === "VS"
-                      ? "Vertical Slats"
-                      : product.system_type === "XPL"
-                        ? "Xpress Plus"
-                        : "Build As You Go"}{" "}
-                  ({product.system_type})
+                <span className="grid gap-1">
+                  <span className="text-2xl font-black">{product.system_type}</span>
+                  <span className="text-sm font-extrabold leading-tight">
+                    {product.system_type === "QSHS"
+                      ? "Quick Screen Horizontal Slats"
+                      : product.system_type === "VS"
+                        ? "Vertical Slats"
+                        : product.system_type === "XPL"
+                          ? "Xpress Plus"
+                          : "Build As You Go"}
+                  </span>
                 </span>
                 <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs">{product.system_type}</span>
               </button>
@@ -145,7 +153,7 @@ export function RunListV3({
         <button
           type="button"
           onClick={addRun}
-          className="w-full rounded-lg border border-brand-primary/50 bg-brand-primary px-4 py-3 text-sm font-black text-white shadow-sm transition-all hover:bg-brand-primary/90 hover:shadow-md"
+          className="min-h-11 w-full rounded-lg border border-brand-primary/50 bg-brand-primary px-4 py-3 text-sm font-black text-white shadow-sm transition-all hover:bg-brand-primary/90 hover:shadow-md"
         >
           + Add run
         </button>

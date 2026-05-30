@@ -20,6 +20,12 @@ import { getPreferredGroutSku, setPreferredGroutSku } from "../../lib/userPrefs"
 import { SchemaDrivenForm, type SchemaField } from "./SchemaDrivenForm";
 import { colourName } from "./ColourPalette";
 import { SettingsDisclosureRow } from "./SettingsDisclosureRow";
+import { CombinedGapSelect } from "./CombinedGapSelect";
+import {
+  combinedGapLabel,
+  normaliseGapMode,
+  type GapMode,
+} from "../../lib/gapChoices";
 
 interface Props {
   run: CanonicalRun;
@@ -148,6 +154,8 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
   const substrate = String(variables.base_plate_substrate ?? "concrete");
   const slatSize = Number(variables.slat_size_mm ?? 65);
   const louvreEnabled = variables.louvre_treatment === true || variables.louvre_treatment === "true";
+  const gapMode = normaliseGapMode(productCode, variables.slat_gap_mode);
+  const gapMm = Number(variables.slat_gap_mm ?? 9);
   const fieldMap = useMemo(() => new Map(fields.map((field) => [field.field_key, field])), [fields]);
   const mountingField = fieldMap.get("mounting_method") ?? fieldMap.get("mounting_type");
 
@@ -186,12 +194,14 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
     key: string,
     value: string | number | boolean,
     nextProductCode = productCode,
+    extraVariables: Record<string, string | number | boolean> = {},
   ) {
     const previousColour = String(variables.colour_code ?? "");
     const previousPostColour = String(variables.post_colour_code ?? previousColour);
     const nextVariables: Record<string, string | number | boolean> = {
       ...(run.variables ?? {}),
       [key]: value,
+      ...extraVariables,
     };
     if (key === "mounting_type" || key === "mounting_method") {
       nextVariables.mounting_type = value;
@@ -230,6 +240,7 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
     ]);
     const resetSectionKeys = [
       key,
+      ...Object.keys(extraVariables),
       ...(key === "colour_code" ? ["colour_code", "post_colour_code"] : []),
       ...(key === "post_system" ? ["post_system", "post_size"] : []),
       ...(key === "mounting_type" || key === "mounting_method" ? ["mounting_type", "mounting_method"] : []),
@@ -278,6 +289,12 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
           })
           : run.segments,
       },
+    });
+  }
+
+  function updateRunGap(mode: GapMode, gapMm: number) {
+    updateRunVariables("slat_gap_mode", mode, productCode, {
+      slat_gap_mm: gapMm,
     });
   }
 
@@ -352,22 +369,18 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
       <SettingsDisclosureRow
         id={`${run.runId}-slats-colours-spacings`}
         label="Slats, colors, and spacings"
-        value={`${valueFor("finish_family")} / ${colourName(variables.colour_code)} / ${valueFor("slat_size_mm")} / ${valueFor("slat_gap_mm")}`}
+        value={`${valueFor("finish_family")} / ${colourName(variables.colour_code)} / ${valueFor("slat_size_mm")} / ${combinedGapLabel(gapMode, gapMm)}`}
       >
         <div className="space-y-4">
           {renderField("finish_family")}
           {renderField("colour_code")}
-          <button
-            type="button"
-            onClick={() => setPostColourOpen((value) => !value)}
-            className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-          >
-            {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
-          </button>
-          {postColourOpen && renderField("post_colour_code")}
           {renderField("slat_size_mm")}
-          {renderField("slat_gap_mode")}
-          {renderField("slat_gap_mm")}
+          <CombinedGapSelect
+            productCode={productCode}
+            mode={variables.slat_gap_mode}
+            gapMm={variables.slat_gap_mm}
+            onChange={updateRunGap}
+          />
           {productCode === "QSHS" && (
             <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
               <input
@@ -400,9 +413,17 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
         <SettingsDisclosureRow
           id={`${run.runId}-post-mounting`}
           label="Post size, mounting and spacing"
-          value={`${valueFor("post_system", postLabel(productCode, variables))} / ${valueFor("max_panel_width_mm", "2600mm")}`}
+          value={`${valueFor("post_system", postLabel(productCode, variables))} / ${colourName(variables.post_colour_code ?? variables.colour_code)} / ${valueFor("max_panel_width_mm", "2600mm")}`}
         >
           <div className="space-y-4">
+            <button
+              type="button"
+              onClick={() => setPostColourOpen((value) => !value)}
+              className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+            >
+              {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
+            </button>
+            {postColourOpen && renderField("post_colour_code")}
             {renderField("post_system")}
             {renderField("post_size")}
             {mountingField && (

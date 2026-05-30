@@ -60,9 +60,35 @@ export const canonicalRunSchema = z.object({
   corners: z.array(canonicalCornerSchema).optional(),
   segments: z.array(canonicalSegmentSchema),
   geometry: z
-    .object({ points: z.array(z.object({ x: z.number(), y: z.number() })) })
+    .object({
+      points: z.array(z.object({ x: z.number(), y: z.number() })),
+      metrePoints: z
+        .array(z.object({ dxMetres: z.number(), dyMetres: z.number() }))
+        .optional(),
+    })
     .optional(),
 });
+
+const canonicalMapSnapshotLayerSchema = z.object({
+  url: z.string().nullable(),
+  visible: z.boolean(),
+  opacity: z.number().min(0).max(1),
+});
+
+const canonicalPointSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+});
+
+const canonicalCanvasAnnotationSchema = z.discriminatedUnion('kind', [
+  z.object({
+    kind: z.literal('arrow'),
+    from: canonicalPointSchema,
+    to: canonicalPointSchema,
+    color: z.string(),
+    weight: z.number().positive(),
+  }),
+]);
 
 export const canonicalPayloadSchema = z.object({
   productCode: z.string(),
@@ -74,6 +100,27 @@ export const canonicalPayloadSchema = z.object({
       address: z.string(),
     })
     .optional(),
+  snapshot: z
+    .object({
+      centerLat: z.number(),
+      centerLng: z.number(),
+      zoom: z.number().int().nonnegative(),
+      width: z.number().int().positive(),
+      height: z.number().int().positive(),
+      sourceViewportWidth: z.number().int().positive().optional(),
+      sourceViewportHeight: z.number().int().positive().optional(),
+      metresPerPixel: z.number().positive(),
+      capturedAt: z.string(),
+      layers: z
+        .object({
+          satellite: canonicalMapSnapshotLayerSchema.optional(),
+          roadmap: canonicalMapSnapshotLayerSchema.optional(),
+        })
+        .optional(),
+      url: z.string().optional(),
+    })
+    .optional(),
+  annotations: z.array(canonicalCanvasAnnotationSchema).optional(),
   job: z
     .object({
       description: z.string().optional(),

@@ -35,6 +35,7 @@ interface BOMResultTabsProps {
     gst: number;
     grandTotal: number;
   }) => void;
+  customerMode?: boolean;
 }
 
 const CATEGORY_ORDER = BOM_CATEGORY_ORDER;
@@ -218,12 +219,14 @@ function BOMTable({
   onQuantityChange,
   onRemoveLine,
   onSwitchEconomyToStandard,
+  customerMode,
 }: {
   items: BOMLineItem[];
   editable?: boolean;
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
+  customerMode?: boolean;
 }) {
   const sorted = sortItems(items);
   const groups = groupByCategory(sorted);
@@ -238,7 +241,17 @@ function BOMTable({
   }
 
   return (
-    <div className="overflow-x-auto">
+    <>
+    <BOMMobileCards
+      groups={groups}
+      editable={editable}
+      onQuantityChange={onQuantityChange}
+      onRemoveLine={onRemoveLine}
+      onSwitchEconomyToStandard={onSwitchEconomyToStandard}
+      hoveredGateDiagramNumber={hoveredGateDiagramNumber}
+      customerMode={customerMode}
+    />
+    <div className="hidden overflow-x-auto md:block" data-testid="bom-desktop-table">
       <table className="w-full text-left border-collapse">
         <thead>
           <tr className="bg-brand-bg/80">
@@ -254,12 +267,16 @@ function BOMTable({
             <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
               Qty
             </th>
-            <th className="hidden py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right whitespace-nowrap sm:table-cell">
-              Unit $
-            </th>
-            <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
-              Line $
-            </th>
+            {!customerMode && (
+              <>
+                <th className="hidden py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right whitespace-nowrap sm:table-cell">
+                  Unit $
+                </th>
+                <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
+                  Line $
+                </th>
+              </>
+            )}
             {editable && (
               <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right print:hidden">
                 Edit
@@ -278,11 +295,182 @@ function BOMTable({
               onRemoveLine={onRemoveLine}
               onSwitchEconomyToStandard={onSwitchEconomyToStandard}
               hoveredGateDiagramNumber={hoveredGateDiagramNumber}
+              customerMode={customerMode}
             />
           ))}
         </tbody>
       </table>
     </div>
+    </>
+  );
+}
+
+function BOMMobileCards({
+  groups,
+  editable,
+  onQuantityChange,
+  onRemoveLine,
+  onSwitchEconomyToStandard,
+  hoveredGateDiagramNumber,
+  customerMode,
+}: {
+  groups: [string, BOMLineItem[]][];
+  editable?: boolean;
+  onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
+  onRemoveLine?: (item: BOMLineItem) => void;
+  onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
+  hoveredGateDiagramNumber: GateDiagramNumber | null;
+  customerMode?: boolean;
+}) {
+  return (
+    <div className="space-y-4 md:hidden" data-testid="bom-mobile-cards">
+      {groups.map(([category, categoryItems]) => (
+        <section key={category} className="space-y-2">
+          <h3 className="text-[11px] font-black uppercase tracking-[0.14em] text-brand-muted">
+            {humanizeCategory(category)}
+          </h3>
+          <div className="space-y-2">
+            {orderCompanions(categoryItems).map((item, itemIndex) => (
+              <BOMMobileCard
+                key={`${category}-${item.sku}-${item.category}-${item.description}-${itemIndex}`}
+                item={item}
+                editable={editable}
+                onQuantityChange={onQuantityChange}
+                onRemoveLine={onRemoveLine}
+                onSwitchEconomyToStandard={onSwitchEconomyToStandard}
+                highlighted={
+                  hoveredGateDiagramNumber !== null &&
+                  gateDiagramNumbersForSku(item.sku).includes(hoveredGateDiagramNumber)
+                }
+                customerMode={customerMode}
+              />
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+function BOMMobileCard({
+  item,
+  editable,
+  onQuantityChange,
+  onRemoveLine,
+  onSwitchEconomyToStandard,
+  highlighted,
+  customerMode,
+}: {
+  item: BOMLineItem;
+  editable?: boolean;
+  onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
+  onRemoveLine?: (item: BOMLineItem) => void;
+  onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
+  highlighted: boolean;
+  customerMode?: boolean;
+}) {
+  const hint = nextBreakHint(item);
+  const cartonHint = cartonHintForLine(item);
+  const sourceText = sourceBreakdown(item);
+  const diagramNumbers = isGateDiagramLine(item) ? gateDiagramNumbersForSku(item.sku) : [];
+  const canSwitchEconomy =
+    item.sku.startsWith("XP-6500-E65") &&
+    item.notes?.includes("Switch to Standard slats?");
+
+  return (
+    <article
+      className={`rounded-lg border border-brand-border/70 bg-brand-bg/60 p-3 shadow-sm transition-colors ${
+        highlighted ? "ring-1 ring-brand-warning/60" : ""
+      }`}
+      title={sourceText ? `Source breakdown: ${sourceText}` : undefined}
+    >
+      <div className="grid grid-cols-[1fr_auto] gap-3">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <GateDiagramBadges numbers={diagramNumbers} />
+            <span className="font-mono text-xs font-bold text-brand-muted">
+              {item.sku}
+            </span>
+            <PageChip sku={item.sku} />
+          </div>
+          <p className="mt-1 text-base font-black leading-snug text-brand-text">
+            {stripParentheticalDispatchCode(item.description)}
+          </p>
+          {sourceText && (
+            <p className="mt-2 rounded-full bg-brand-card px-2 py-1 text-[11px] font-bold text-brand-muted">
+              {sourceText}
+            </p>
+          )}
+        </div>
+        <div className="text-right tabular-nums">
+          <p className="text-xs font-bold uppercase tracking-wide text-brand-muted">
+            Qty
+          </p>
+          {editable ? (
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={item.quantity}
+              onChange={(event) =>
+                onQuantityChange?.(item, Number(event.target.value))
+              }
+              className="mt-1 h-11 w-20 rounded-lg border border-brand-border bg-brand-card px-2 text-right text-sm font-black text-brand-text outline-none focus:border-brand-primary"
+              aria-label={`Quantity for ${item.sku}`}
+            />
+          ) : (
+            <p className="text-xl font-black text-brand-text">{item.quantity}</p>
+          )}
+          {!customerMode && (
+            <>
+              <p className="mt-2 text-xs font-semibold text-brand-muted">
+                {item.unitPrice > 0 ? `$${formatMoney(item.unitPrice)}` : "-"} / {unitLabel(item)}
+              </p>
+              <p className="mt-1 text-base font-black text-brand-primary">
+                {item.unitPrice > 0 ? `$${formatMoney(item.lineTotal)}` : "-"}
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+      {(hint || cartonHint || item.notes || canSwitchEconomy || editable) && (
+        <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-brand-border/60 pt-3">
+          {hint && (
+            <span className="rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-1 text-[11px] font-bold text-brand-success">
+              {hint.more} more for lower unit price
+            </span>
+          )}
+          {cartonHint && (
+            <span className="rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-1 text-[11px] font-bold text-brand-success">
+              {cartonHint.more} more for carton
+            </span>
+          )}
+          {item.notes && (
+            <span className="rounded-full border border-brand-warning/30 bg-brand-warning/10 px-2 py-1 text-[11px] font-bold text-brand-warning">
+              {item.notes}
+            </span>
+          )}
+          {canSwitchEconomy && (
+            <button
+              type="button"
+              onClick={() => onSwitchEconomyToStandard?.(item)}
+              className="min-h-11 rounded-lg border border-brand-warning/40 bg-brand-warning/10 px-3 py-2 text-xs font-black text-brand-warning"
+            >
+              Switch
+            </button>
+          )}
+          {editable && (
+            <button
+              type="button"
+              onClick={() => onRemoveLine?.(item)}
+              className="ml-auto min-h-11 rounded-lg px-3 py-2 text-xs font-black text-brand-danger"
+            >
+              Remove
+            </button>
+          )}
+        </div>
+      )}
+    </article>
   );
 }
 
@@ -294,6 +482,7 @@ function ItemGroup({
   onRemoveLine,
   onSwitchEconomyToStandard,
   hoveredGateDiagramNumber,
+  customerMode,
 }: {
   category: string;
   items: BOMLineItem[];
@@ -302,6 +491,7 @@ function ItemGroup({
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
   hoveredGateDiagramNumber: GateDiagramNumber | null;
+  customerMode?: boolean;
 }) {
   const orderedItems = orderCompanions(items);
   let lastSubCategory = "";
@@ -309,7 +499,7 @@ function ItemGroup({
     <>
       <tr className="border-t border-brand-border">
         <td
-          colSpan={editable ? 7 : 6}
+          colSpan={editable ? (customerMode ? 5 : 7) : (customerMode ? 4 : 6)}
           className="px-3 py-1.5 bg-slate-300/15 border-b border-brand-border capitalize text-xs font-semibold text-brand-muted tracking-wider"
         >
           {humanizeCategory(category)}
@@ -339,7 +529,7 @@ function ItemGroup({
             rows.push(
               <tr key={`${category}-${subCategory}-heading`}>
                 <td
-                  colSpan={editable ? 7 : 6}
+                  colSpan={editable ? (customerMode ? 5 : 7) : (customerMode ? 4 : 6)}
                   className="px-3 pt-3 pb-1 text-[11px] font-extrabold uppercase tracking-wide text-brand-muted"
                 >
                   {humanizeSubCategory(subCategory)}
@@ -449,12 +639,16 @@ function ItemGroup({
               item.quantity
             )}
           </td>
-          <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-right tabular-nums sm:table-cell">
-            {item.unitPrice > 0 ? `$${formatMoney(item.unitPrice)}` : "-"}
-          </td>
-          <td className="py-2.5 px-3 text-sm text-brand-text font-medium text-right tabular-nums">
-            {item.unitPrice > 0 ? `$${formatMoney(item.lineTotal)}` : "-"}
-          </td>
+          {!customerMode && (
+            <>
+              <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-right tabular-nums sm:table-cell">
+                {item.unitPrice > 0 ? `$${formatMoney(item.unitPrice)}` : "-"}
+              </td>
+              <td className="py-2.5 px-3 text-sm text-brand-text font-medium text-right tabular-nums">
+                {item.unitPrice > 0 ? `$${formatMoney(item.lineTotal)}` : "-"}
+              </td>
+            </>
+          )}
           {editable && (
             <td className="py-2.5 px-3 text-right print:hidden">
               <button
@@ -481,6 +675,7 @@ export function BOMResultTabs({
   onRemoveLine,
   onSwitchEconomyToStandard,
   onActiveSummaryChange,
+  customerMode,
 }: BOMResultTabsProps) {
   const [activeTab, setActiveTab] = useState("all");
   const [viewMode, setViewMode] = useState<"line_items" | "cut_list">("line_items");
@@ -564,7 +759,7 @@ export function BOMResultTabs({
           <p className="text-xs font-semibold text-brand-muted">
             {viewMode === "cut_list"
               ? "Grouped like flat-pack stock on the truck."
-              : "Priced BOM rows with catalogue pages and quantity-break hints."}
+              : "Priced BOM rows ready for review."}
           </p>
         </div>
         <button
@@ -587,6 +782,7 @@ export function BOMResultTabs({
           onQuantityChange={onQuantityChange}
           onRemoveLine={onRemoveLine}
           onSwitchEconomyToStandard={onSwitchEconomyToStandard}
+          customerMode={customerMode}
         />
       )}
 
@@ -604,6 +800,7 @@ export function BOMResultTabs({
       )}
 
       {/* Summary */}
+      {!customerMode && (
       <div className="mt-6 pt-4 border-t border-brand-border">
         <div className="mb-3 inline-flex rounded-full border border-brand-success/30 bg-brand-success/10 px-3 py-1 text-xs font-bold text-brand-success print:hidden">
           {PRICE_SOURCE_LABEL} · {PRICE_SOURCE_VERIFIED_DATE}
@@ -642,6 +839,7 @@ export function BOMResultTabs({
           </span>
         </div>
       </div>
+      )}
     </div>
   );
 }

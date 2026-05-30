@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
-import { ChevronUp, Plus, Settings, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, X } from "lucide-react";
 import { ConfirmButton } from "../shared/ConfirmButton";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
@@ -39,6 +39,7 @@ import {
   type DerivedHeight,
 } from "../../lib/heights";
 import { colourName } from "./ColourPalette";
+import { InlineHeightEditor } from "./InlineHeightEditor";
 
 interface Props {
   runId: string;
@@ -171,6 +172,7 @@ export function SegmentRow({
   const masterVariables = {
     ...runVariables,
   };
+  const runDefaultHeight = Number(masterVariables.target_height_mm ?? 1800);
   const segmentVariables = {
     ...runVariables,
     ...(seg.variables ?? {}),
@@ -389,7 +391,12 @@ export function SegmentRow({
     ];
   const differenceBits =
     matchesMaster ? [] : rawDifferenceBits.filter((item) => item.changed && item.label !== "Height");
-  const summaryBits = [...summaryBitsBase, ...differenceBits];
+  const summaryText = [
+    ...(gate
+      ? summaryBitsBase.map((item) => `${item.label}: ${item.value}`)
+      : []),
+    ...differenceBits.map((item) => `${item.label}: ${item.value}`),
+  ].join(", ");
   const visibleSettings = rawDifferenceBits.filter((item) => {
     if (item.label === "Height") return false;
     if (isBayg && ["Post", "Mounting", "Panel Count", "Panel width"].includes(item.label)) {
@@ -468,6 +475,49 @@ export function SegmentRow({
               slat_count: entry.N,
             }),
             targetHeightMm: entry.height,
+          },
+    });
+  }
+
+  function updateInlineHeight(heightMm: number, entry?: DerivedHeight) {
+    if (heightMm === runDefaultHeight) {
+      dispatch({
+        type: "UPSERT_SEGMENT",
+        runId,
+        segment: {
+          ...patchSegmentVariables(seg, {
+            [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: null,
+            target_height_mm: null,
+            slat_count: null,
+          }),
+          targetHeightMm: heightMm,
+        },
+      });
+      return;
+    }
+    if (entry) {
+      updateDerivedHeight(entry);
+      return;
+    }
+    dispatch({
+      type: "UPSERT_SEGMENT",
+      runId,
+      segment:
+        gate
+          ? {
+            ...patchSegmentVariables(seg, {
+              [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: heightMm,
+              target_height_mm: heightMm,
+              slat_count: null,
+            }),
+            targetHeightMm: heightMm,
+          }
+          : {
+            ...patchSegmentVariables(seg, {
+              target_height_mm: heightMm,
+              slat_count: null,
+            }),
+            targetHeightMm: heightMm,
           },
     });
   }
@@ -571,14 +621,23 @@ export function SegmentRow({
 
           <div className="min-w-0 space-y-3 w-full">
             <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2">
-              <p className="min-w-0 text-left text-lg font-black text-brand-text">
+              <p className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-left text-lg font-black text-brand-text">
                 {titleLabel}
-                {!gate && !isBayg && (
-                  <span className="ml-1 text-sm font-semibold text-brand-muted">
-                    — <strong className="font-extrabold text-brand-text">{(segmentLength / 1000).toFixed(2)}m</strong> —{" "}
-                    <strong className="font-extrabold text-brand-text">{selectedHeight}mm</strong>
+                {!gate && (
+                  <span className="text-sm font-semibold text-brand-muted">
+                    <strong className="font-extrabold text-brand-text">{(segmentLength / 1000).toFixed(2)}m</strong>
                   </span>
                 )}
+                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-muted">
+                  Height:
+                  <InlineHeightEditor
+                    productCode={productCode}
+                    variables={segmentVariables}
+                    valueMm={selectedHeight}
+                    ariaLabel={`${titleLabel} height`}
+                    onChange={updateInlineHeight}
+                  />
+                </span>
               </p>
               <div className="flex items-center justify-center">
                 <button
@@ -608,7 +667,7 @@ export function SegmentRow({
                     event.stopPropagation();
                     onAddGate(seg.segmentId);
                   }}
-                  className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-brand-border px-2 text-xs font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-brand-border px-3 text-xs font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
                   title="Add gate to this section"
                   aria-label="Add gate to this section"
                 >
@@ -620,14 +679,15 @@ export function SegmentRow({
                 <button
                   type="button"
                   onClick={onToggle}
-                  className={`inline-flex h-8 w-8 items-center justify-center rounded-lg border text-xs font-extrabold transition-colors ${open
+                  className={`inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-extrabold transition-colors ${open
                     ? "border-brand-primary bg-brand-primary text-white"
                     : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
                     }`}
-                  aria-label={open ? (gate ? "Collapse gate settings" : "Collapse section settings") : (gate ? "Expand gate settings" : "Expand section settings")}
-                  title={open ? "Collapse settings" : (gate ? "Open gate settings" : "Open section settings")}
+                  aria-label={open ? `Collapse ${gate ? "gate" : "section"} settings` : `Open ${gate ? "gate" : "section"} settings`}
+                  title={open ? `Collapse ${gate ? "gate" : "section"} settings` : `${gate ? "Gate" : "Section"} settings`}
                 >
-                  {open ? <ChevronUp size={16} /> : <Settings size={16} />}
+                  <span>{gate ? "Gate Settings" : "Section Settings"}</span>
+                  {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                 </button>
               </div>
               <div className="flex justify-end">
@@ -640,7 +700,7 @@ export function SegmentRow({
                     })
                   }
                   confirmLabel={<X size={16} strokeWidth={3} />}
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-full text-brand-danger transition-colors hover:bg-brand-danger/10 hover:text-brand-danger/90"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-brand-danger transition-colors hover:bg-brand-danger/10 hover:text-brand-danger/90"
                   aria-label={gate ? "Remove gate" : "Remove section"}
                   title={gate ? "Remove gate" : "Remove section"}
                 >
@@ -648,17 +708,13 @@ export function SegmentRow({
                 </ConfirmButton>
               </div>
             </div>
-            {summaryBits.length > 0 && (
-            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] leading-tight">
-              {summaryBits.map((item) => (
-                <SummaryBit
-                  key={item.label}
-                  label={item.label}
-                  value={item.value}
-                  emphasis={"emphasis" in item ? item.emphasis : undefined}
-                />
-              ))}
-            </div>
+            {summaryText && (
+              <div
+                className="min-w-0 truncate text-[11px] font-semibold leading-tight text-brand-muted"
+                title={summaryText}
+              >
+                {summaryText}
+              </div>
             )}
 
           </div>
@@ -778,7 +834,7 @@ export function SegmentRow({
                   <button
                     type="button"
                     onClick={switchGateToAlternative}
-                    className="rounded-lg border border-brand-danger/50 bg-brand-card px-3 py-1.5 text-xs font-black text-brand-danger hover:shadow-sm"
+                    className="min-h-11 rounded-lg border border-brand-danger/50 bg-brand-card px-3 py-2 text-xs font-black text-brand-danger hover:shadow-sm"
                   >
                     Switch to {gateTypeLabel(gateWidthValidation.alternative)}
                   </button>
