@@ -179,14 +179,39 @@ body {
 
   body[data-print-bom="true"] #root [data-print-logo] svg {
     display: block !important;
-    width: 48px !important;
-    height: 43px !important;
+    width: 50px !important;
+    height: 50px !important;
     flex-shrink: 0 !important;
     overflow: visible !important;
   }
 
+  body[data-print-bom="true"] #root [data-print-logo-symbol],
+  body[data-print-bom="true"] #root [data-print-logo-symbol] rect {
+    color: #1e40af !important;
+    stroke: #1e40af !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
   body[data-print-bom="true"] #root [data-print-logo] span {
     color: #1e40af !important;
+  }
+
+  body[data-print-bom="true"] #root [data-print-job-name] {
+    display: block !important;
+    margin-top: 4px !important;
+    max-width: none !important;
+    color: black !important;
+    font-size: 30pt !important;
+    font-weight: 900 !important;
+    line-height: 1.05 !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+  }
+
+  body[data-print-bom="true"] #root [data-testid="mobile-bom-totals"] {
+    display: none !important;
   }
 
   body[data-print-bom="true"] #root [data-testid="bom-mobile-cards"] {
