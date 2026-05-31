@@ -4433,7 +4433,9 @@ export function initCanvasEngine(
     const pad = 80; // px
     const contentW = maxX - minX || 1;
     const contentH = maxY - minY || 1;
-    zoom = Math.min((W - pad * 2) / contentW, (H - pad * 2) / contentH, 8);
+    const usableW = Math.max(1, W - pad * 2);
+    const usableH = Math.max(1, H - pad * 2);
+    zoom = Math.max(0.000001, Math.min(usableW / contentW, usableH / contentH, 8));
     pan = {
       x: W / 2 - zoom * (minX + contentW / 2),
       y: H / 2 - zoom * (minY + contentH / 2),

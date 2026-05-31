@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { CanonicalPayload } from "../types/canonical.types";
+import { prepareBomCalculatorPayload } from "./bomPayloadAdapter";
 import { calculateLocalBom } from "./localBomCalculator";
 
 describe("calculateLocalBom", () => {
@@ -93,9 +94,10 @@ describe("calculateLocalBom", () => {
       ],
     };
 
-    const result = calculateLocalBom(payload);
+    const result = calculateLocalBom(prepareBomCalculatorPayload(payload));
     const skus = result.lines.map((line) => line.sku);
 
+    expect(result.lines.length).toBeGreaterThan(0);
     expect(skus).toContain("XP-6100-S65-MN");
     expect(skus).toContain("QS-5800-SF-MN");
   });
