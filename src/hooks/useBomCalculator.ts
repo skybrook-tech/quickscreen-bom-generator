@@ -5,15 +5,6 @@ import { prepareBomCalculatorPayload } from '../lib/bomPayloadAdapter';
 import type { CanonicalPayload, CanonicalRun, CanonicalSegment } from '../types/canonical.types';
 import type { PricingTier } from '../types/bom.types';
 
-export function isEdgeFailurePayload(data: unknown): data is { error: string } {
-  return (
-    typeof data === 'object' &&
-    data !== null &&
-    'error' in data &&
-    typeof (data as { error?: unknown }).error === 'string'
-  );
-}
-
 function expandSectionSystemOverrides(payload: CanonicalPayload): CanonicalPayload {
   const runs: CanonicalRun[] = [];
   let changed = false;
@@ -75,9 +66,7 @@ export function useBomCalculator() {
         body: { payload: calculatorPayload, pricingTier: tier },
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
-      if (error || !data || isEdgeFailurePayload(data)) {
-        return calculateLocalBom(calculatorPayload, tier);
-      }
+      if (error) return calculateLocalBom(calculatorPayload, tier);
       return data as Record<string, unknown>;
     },
   });
