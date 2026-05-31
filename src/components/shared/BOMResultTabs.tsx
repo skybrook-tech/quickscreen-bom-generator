@@ -251,7 +251,10 @@ function BOMTable({
       hoveredGateDiagramNumber={hoveredGateDiagramNumber}
       customerMode={customerMode}
     />
-    <div className="hidden overflow-x-auto md:block" data-testid="bom-desktop-table">
+    <div
+      className="hidden overflow-x-auto md:block print:block print:overflow-visible"
+      data-testid="bom-desktop-table"
+    >
       <table className="w-full text-left border-collapse">
         <thead>
           <tr className="bg-brand-bg/80">
@@ -323,7 +326,7 @@ function BOMMobileCards({
   customerMode?: boolean;
 }) {
   return (
-    <div className="space-y-4 md:hidden" data-testid="bom-mobile-cards">
+    <div className="space-y-4 md:hidden print:hidden" data-testid="bom-mobile-cards">
       {groups.map(([category, categoryItems]) => (
         <section key={category} className="space-y-2">
           <h3 className="text-[11px] font-black uppercase tracking-[0.14em] text-brand-muted">

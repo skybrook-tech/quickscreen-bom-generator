@@ -12,7 +12,10 @@ export function GlassOutletLogo({
   showThe = true,
 }: GlassOutletLogoProps) {
   return (
-    <div className={`inline-flex items-center gap-3 text-brand-primary ${className}`}>
+    <div
+      className={`inline-flex items-center gap-3 text-brand-primary ${className}`}
+      data-print-logo
+    >
       <svg
         viewBox="0 0 132 118"
         aria-hidden="true"

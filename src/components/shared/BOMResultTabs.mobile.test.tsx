@@ -52,6 +52,25 @@ describe("BOMResultTabs mobile cards", () => {
     act(() => root.unmount());
   });
 
+  it("uses the desktop table for print output", () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(<BOMResultTabs result={result} />);
+    });
+
+    expect(
+      container.querySelector('[data-testid="bom-mobile-cards"]')?.className,
+    ).toContain("print:hidden");
+    expect(
+      container.querySelector('[data-testid="bom-desktop-table"]')?.className,
+    ).toContain("print:block");
+
+    act(() => root.unmount());
+  });
+
   it("hides price columns and totals in customer mode", () => {
     const container = document.createElement("div");
     document.body.appendChild(container);

@@ -8,6 +8,8 @@
 
 Latest infrastructure fix: duplicate Supabase migration version 029 was resolved by keeping the earlier profile-email migration at 029 and renaming the later quote property-anchor migration to 030.
 
+Latest print BOM cleanup: printed BOMs now force the desktop line-item table, hide mobile card-only price-break/source details, remove the print-only run/section appendix, and pin explicit Glass Outlet logo print styling.
+
 Latest gate assembly diagram pass: horizontal and vertical gate component checklists now show matching assembly images with orange numbered overlays, and checklist scroll/hover state stays synced with BOM row highlighting.
 
 Latest print options pass: the BOM header no longer carries a persistent Include map checkbox; Print BOM now opens a print options dialog every time so the layout map can be included per print.
@@ -483,6 +485,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Brief 016 mobile BOM cards: mobile BOM view now renders grouped stacked cards, sticky totals, collapsible accessory cards, a bottom BOM action bar, and Share PDF support with Web Share API plus download fallback while preserving the desktop BOM table.
 - [x] Master baseline keyboard-offset fix: removed the duplicate `keyboardOffset` state declaration left by the mobile brief merge and rewired the orphaned Job-tab Generate BOM button to the current `handleManualBomGenerate` handler.
 - [x] Brief 030 canvas roadmap layer fix: property map capture now builds separate satellite and roadmap Static Maps layers, crops attribution from both captured layers, exposes per-layer Satellite/Roadmap visibility toggles with opacity controls, and keeps the drawing layer rendered above map underlays.
+- [x] Print BOM cleanup: print output now suppresses run/section labels and mobile price-break/source chips, uses the desktop BOM table for printing, and keeps the Glass Outlet logo visible with print-specific sizing.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---
