@@ -1510,33 +1510,6 @@ export function initCanvasEngine(
       ctx.fill();
     }
 
-    // Node labels (A, B, C…)
-    if (zoom > 0.3) {
-      let nbLabelIdx = 0;
-      for (const run of runs) {
-        if (run.isBoundary) continue;
-        const colorIdx = nbLabelIdx++;
-        const pts = run.points;
-        if (pts.length < 2) continue;
-        // Node labels
-        for (let i = 0; i < pts.length; i++) {
-          drawPillLabel(
-            String.fromCharCode(65 + i),
-            { x: pts[i].x - 10 / zoom, y: pts[i].y - 10 / zoom },
-            {
-              fontPx: 10,
-              color: getRunColor(colorIdx),
-              bold: true,
-              padX: 4,
-              padY: 1,
-              radius: 5,
-              push: { x: -1, y: -1 },
-            },
-          );
-        }
-      }
-    }
-
     // Post position squares (from BOM result) — rendered on top of fence lines
     if (postPositions !== null && zoom > 0.2) {
       drawPostPositions();
