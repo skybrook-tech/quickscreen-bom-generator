@@ -17,14 +17,17 @@ export function GlassOutletLogo({
       data-print-logo
     >
       <svg
-        viewBox="0 0 132 118"
+        viewBox="0 0 100 100"
         aria-hidden="true"
         className={`h-14 w-16 shrink-0 ${iconClassName}`}
         fill="none"
+        stroke="currentColor"
+        strokeLinejoin="miter"
+        data-print-logo-symbol
       >
-        <rect x="3" y="20" width="84" height="82" rx="3" stroke="currentColor" strokeWidth="6" />
-        <rect x="17" y="8" width="84" height="82" rx="3" stroke="currentColor" strokeWidth="6" />
-        <rect x="31" y="29" width="84" height="82" rx="3" stroke="currentColor" strokeWidth="6" />
+        <rect x="6" y="36" width="58" height="58" strokeWidth="3.5" />
+        <rect x="21" y="21" width="58" height="58" strokeWidth="3.5" />
+        <rect x="36" y="6" width="58" height="58" strokeWidth="3.5" />
       </svg>
       <div className={`leading-none ${textClassName}`}>
         {showThe && (
