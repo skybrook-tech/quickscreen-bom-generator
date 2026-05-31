@@ -6,7 +6,11 @@
 > **v3 Engine** — V3-1 through V3-6 complete. V3-7 (docs cross-linking) is the only remaining item.
 > Start here for an overview: [`docs/how_it_works.md`](./how_it_works.md).
 
-Latest BOM readability pass: BOM rows no longer show source breakdown, derivation note text, or source tooltips, and run/gate tab item counts now render as highlighted explicit item-count pills.
+Latest PWA install-banner cleanup: the `/fence-calculator` top bar no longer mounts the custom install-for-offline-access prompt or iPhone home-screen hint, and mobile QA now verifies those install banners stay absent.
+
+Latest print BOM map-options merge fix: `codex/print-bom-map-options` is synced with current master, keeps the print dialog/map option and print BOM cleanup, and retains the BOM workings toggle plus PR #79 BOM-generation fixes.
+
+Latest BOM readability pass: run/gate tab item counts now render as highlighted explicit item-count pills, and per-line source/workings text is controlled by the BOM workings toggle.
 
 Latest infrastructure fix: duplicate Supabase migration version 029 was resolved by keeping the earlier profile-email migration at 029 and renaming the later quote property-anchor migration to 030.
 

@@ -17,7 +17,6 @@ import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { MobileBomTotals } from "../components/shared/MobileBomTotals";
-import { PwaStatusBanners } from "../components/pwa/PwaStatusBanners";
 import { BomV3PDFTemplate } from "../components/quote/BomV3PDFTemplate";
 import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
 import { JobNameEditor } from "../components/calculator/JobNameEditor";
@@ -1729,7 +1728,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   return (
     <AppShell
       headerActions={headerActions}
-      topBar={<PwaStatusBanners />}
       jobTitle={headerJobTitle}
       headerPriceLabel={headerPriceLabel}
       customerMode={customerMode}
