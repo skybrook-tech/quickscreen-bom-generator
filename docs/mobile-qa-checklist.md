@@ -24,11 +24,11 @@ Use this checklist for real-device validation before marking mobile calculator r
 ## PWA And Offline
 
 - Confirm the app manifest is discoverable from browser dev tools.
-- On Android Chrome, confirm the install prompt appears after browser eligibility is met.
-- On iPhone Safari, confirm the install hint appears once and can be dismissed.
+- Confirm the custom install-for-offline-access banner does not appear after browser eligibility is met.
+- Confirm the iPhone Add to Home Screen hint banner does not appear.
 - Install to the home screen where the device supports it, then launch from the icon.
 - While online, load `/fence-calculator` once, close the browser, reopen the installed app, and confirm the shell appears.
-- Switch to offline mode mid-quote and confirm the offline banner appears.
+- Switch to offline mode mid-quote and confirm the mobile menu offline status appears.
 - While offline, confirm map/BOM save actions do not silently claim success.
 - Reconnect and confirm the offline banner clears and save works again.
 
@@ -49,6 +49,6 @@ Use this checklist for real-device validation before marking mobile calculator r
 ## PR Evidence
 
 - Attach screenshots for each device class tested.
-- Include at least one screenshot each of Job, Map, BOM, customer mode, and offline banner.
+- Include at least one screenshot each of Job, Map, BOM, customer mode, and the mobile menu offline status.
 - Note any unavailable device/browser combinations in the PR comment.
 - Record the tested browser and OS versions.

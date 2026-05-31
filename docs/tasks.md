@@ -6,6 +6,8 @@
 > **v3 Engine** — V3-1 through V3-6 complete. V3-7 (docs cross-linking) is the only remaining item.
 > Start here for an overview: [`docs/how_it_works.md`](./how_it_works.md).
 
+Latest PWA install-banner cleanup: the `/fence-calculator` top bar no longer mounts the custom install-for-offline-access prompt or iPhone home-screen hint, and mobile QA now verifies those install banners stay absent.
+
 Latest print BOM map-options merge fix: `codex/print-bom-map-options` is synced with current master, keeps the print dialog/map option and print BOM cleanup, and retains the BOM workings toggle plus PR #79 BOM-generation fixes.
 
 Latest BOM readability pass: run/gate tab item counts now render as highlighted explicit item-count pills, and per-line source/workings text is controlled by the BOM workings toggle.
