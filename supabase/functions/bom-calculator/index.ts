@@ -135,6 +135,203 @@ interface TraceEntry {
   error?: string;
 }
 
+type LegacyBoundaryType =
+  | "product_post"
+  | "brick_post"
+  | "existing_post"
+  | "wall"
+  | "corner_90";
+
+type LegacySegmentKind = "panel" | "bay_group" | "gate_opening" | "corner";
+
+interface LegacyBoundary {
+  type?: LegacyBoundaryType;
+}
+
+interface LegacyCorner {
+  afterSegmentId: string;
+  type: "90" | "135" | "custom";
+}
+
+type FlexibleSegment = Partial<CanonicalSegment> & {
+  segmentId: string;
+  sortOrder: number;
+  segmentKind?: LegacySegmentKind;
+  gateProductCode?: string;
+  variables?: Record<string, string | number | boolean>;
+};
+
+type FlexibleRun = Partial<CanonicalRun> & {
+  runId: string;
+  productCode?: string;
+  leftBoundary?: LegacyBoundary;
+  rightBoundary?: LegacyBoundary;
+  corners?: LegacyCorner[];
+  segments: FlexibleSegment[];
+};
+
+const TERMINATION_KEYS = {
+  leftKind: "left_termination_kind",
+  leftCornerDegrees: "left_corner_degrees",
+  leftNonSystemSubtype: "left_non_system_subtype",
+  rightKind: "right_termination_kind",
+  rightCornerDegrees: "right_corner_degrees",
+  rightNonSystemSubtype: "right_non_system_subtype",
+} as const;
+
+function boundaryToTermination(boundary?: LegacyBoundary): SegmentTermination {
+  if (boundary?.type === "wall") return { kind: "non_system", subtype: "wall" };
+  if (boundary?.type === "brick_post" || boundary?.type === "existing_post") {
+    return { kind: "non_system", subtype: "post" };
+  }
+  if (boundary?.type === "corner_90") return { kind: "system_corner", angleDeg: 90 };
+  return { kind: "system" };
+}
+
+function nonSystemSubtype(raw: unknown): SegmentTermination {
+  if (raw === "wall") return { kind: "non_system", subtype: "wall" };
+  if (raw === "pillar" || raw === "non_system_post") {
+    return { kind: "non_system", subtype: "post" };
+  }
+  return { kind: "non_system", subtype: "other" };
+}
+
+function cornerAngleFromVars(
+  vars: Record<string, string | number | boolean> | undefined,
+  side: "left" | "right",
+  fallback: number,
+): number {
+  const key =
+    side === "left"
+      ? TERMINATION_KEYS.leftCornerDegrees
+      : TERMINATION_KEYS.rightCornerDegrees;
+  const value = Number(vars?.[key] ?? fallback);
+  return Number.isFinite(value) && value !== 0 ? value : fallback;
+}
+
+function terminationFromVariables(
+  vars: Record<string, string | number | boolean> | undefined,
+  side: "left" | "right",
+  fallbackCornerAngle: number,
+): SegmentTermination | null {
+  const kindKey =
+    side === "left" ? TERMINATION_KEYS.leftKind : TERMINATION_KEYS.rightKind;
+  const subtypeKey =
+    side === "left"
+      ? TERMINATION_KEYS.leftNonSystemSubtype
+      : TERMINATION_KEYS.rightNonSystemSubtype;
+
+  const kind = vars?.[kindKey];
+  if (kind === "system_post") return { kind: "system" };
+  if (kind === "non_system_termination") return nonSystemSubtype(vars?.[subtypeKey]);
+  if (kind === "corner") {
+    return {
+      kind: "system_corner",
+      angleDeg: cornerAngleFromVars(vars, side, fallbackCornerAngle),
+    };
+  }
+  return null;
+}
+
+function cornerAngleFromRun(run: FlexibleRun, segmentId: string): number | null {
+  const corner = run.corners?.find((item) => item.afterSegmentId === segmentId);
+  if (!corner) return null;
+  if (corner.type === "135") return 135;
+  return 90;
+}
+
+function previousCornerAngle(
+  run: FlexibleRun,
+  segments: FlexibleSegment[],
+  index: number,
+): number | null {
+  if (index <= 0) return null;
+  return cornerAngleFromRun(run, segments[index - 1].segmentId);
+}
+
+function defaultLeftTermination(
+  run: FlexibleRun,
+  segments: FlexibleSegment[],
+  index: number,
+): SegmentTermination {
+  const previousCorner = previousCornerAngle(run, segments, index);
+  if (previousCorner) return { kind: "system_corner", angleDeg: previousCorner };
+  if (index === 0) return boundaryToTermination(run.leftBoundary);
+  return { kind: "segment_join" };
+}
+
+function defaultRightTermination(
+  run: FlexibleRun,
+  segments: FlexibleSegment[],
+  index: number,
+): SegmentTermination {
+  const rightCorner = cornerAngleFromRun(run, segments[index].segmentId);
+  if (rightCorner) return { kind: "system_corner", angleDeg: rightCorner };
+  if (index === segments.length - 1) return boundaryToTermination(run.rightBoundary);
+  return { kind: "segment_join" };
+}
+
+function segmentKindForEngine(segment: FlexibleSegment): "fence" | "gate" {
+  if (segment.kind === "gate" || segment.segmentKind === "gate_opening") return "gate";
+  return "fence";
+}
+
+function segmentProductCode(
+  payload: CanonicalPayload,
+  run: FlexibleRun,
+  segment: FlexibleSegment,
+): string {
+  if (segment.segmentKind === "gate_opening") {
+    return segment.productCode ?? segment.gateProductCode ?? "QS_GATE";
+  }
+  const variableProduct = segment.variables?.product_code;
+  return String(segment.productCode ?? variableProduct ?? run.productCode ?? payload.productCode);
+}
+
+function normalisePayloadForEngine(payload: CanonicalPayload): CanonicalPayload {
+  const runs = (payload.runs as unknown as FlexibleRun[]).map((run) => {
+    const sortedSegments = [...run.segments].sort((a, b) => a.sortOrder - b.sortOrder);
+    const adaptedById = new Map<string, CanonicalSegment>();
+
+    sortedSegments.forEach((segment, index) => {
+      const leftFallback = defaultLeftTermination(run, sortedSegments, index);
+      const rightFallback = defaultRightTermination(run, sortedSegments, index);
+      const leftTermination =
+        segment.leftTermination ??
+        terminationFromVariables(
+          segment.variables,
+          "left",
+          leftFallback.kind === "system_corner" ? leftFallback.angleDeg : 90,
+        ) ??
+        leftFallback;
+      const rightTermination =
+        segment.rightTermination ??
+        terminationFromVariables(
+          segment.variables,
+          "right",
+          rightFallback.kind === "system_corner" ? rightFallback.angleDeg : 90,
+        ) ??
+        rightFallback;
+
+      adaptedById.set(segment.segmentId, {
+        ...segment,
+        kind: segmentKindForEngine(segment),
+        productCode: segmentProductCode(payload, run, segment),
+        leftTermination,
+        rightTermination,
+      } as CanonicalSegment);
+    });
+
+    return {
+      ...run,
+      productCode: run.productCode ?? payload.productCode,
+      segments: run.segments.map((segment) => adaptedById.get(segment.segmentId) ?? segment),
+    } as CanonicalRun;
+  });
+
+  return { ...payload, runs };
+}
+
 // ─── Main handler ─────────────────────────────────────────────────────────────
 
 Deno.serve(async (req: Request) => {
@@ -174,20 +371,22 @@ Deno.serve(async (req: Request) => {
       debug?: boolean;
     };
 
-    const { payload, pricingTier: reqTier, debug } = body;
+    const { payload: rawPayload, pricingTier: reqTier, debug } = body;
     const pricingTier: PricingTier = reqTier ?? defaultTier ?? "tier1";
     const wantTrace = isAdmin && debug === true;
 
     if (
-      !payload?.productCode ||
-      !Array.isArray(payload?.runs) ||
-      payload.runs.length === 0
+      !rawPayload?.productCode ||
+      !Array.isArray(rawPayload?.runs) ||
+      rawPayload.runs.length === 0
     ) {
       return Response.json(
         { error: "Invalid payload: productCode and runs[] are required" },
         { status: 400, headers: corsHeaders },
       );
     }
+
+    const payload = normalisePayloadForEngine(rawPayload);
 
     // Step 4 — load engine data per unique productCode (parallelised).
     // Collect all unique productCodes from every segment across all runs,
@@ -425,7 +624,7 @@ Deno.serve(async (req: Request) => {
 
         if (seg.variables?.post_size === "custom") {
           const numPosts = numPostsBySegmentId.get(seg.segmentId) ?? 0;
-          w = w - numPosts * (seg.variables?.post_width_mm ?? 0);
+          w = w - numPosts * Number(seg.variables?.post_width_mm ?? 0);
           // w = segment.variables?.post_width_mm ?? 0;
         }
         panelWidthBySegmentId.set(
@@ -522,7 +721,7 @@ Deno.serve(async (req: Request) => {
                   {
                     ...mergedRunVars,
                     ...(segment.variables ?? {}),
-                    gate_width_mm: segment.segmentWidthMm,
+                    gate_width_mm: segment.segmentWidthMm ?? 0,
                     gate_height_mm:
                       segment.targetHeightMm ??
                       (runCtx["target_height_mm"] as number),
@@ -533,10 +732,13 @@ Deno.serve(async (req: Request) => {
                 // Geometry for gate
                 left_is_system: leftIsSystem,
                 right_is_system: rightIsSystem,
+                left_is_product_post: leftIsSystem,
+                right_is_product_post: rightIsSystem,
                 left_is_wall: leftIsWall,
                 right_is_wall: rightIsWall,
                 left_is_join: leftIsJoin,
                 right_is_join: rightIsJoin,
+                product_post_boundary_count: numPosts,
                 corner_count: runCornerCount,
               }
             : {
@@ -554,6 +756,8 @@ Deno.serve(async (req: Request) => {
                 // Termination flags (1/0 booleans for mathjs)
                 left_is_system: leftIsSystem,
                 right_is_system: rightIsSystem,
+                left_is_product_post: leftIsSystem,
+                right_is_product_post: rightIsSystem,
                 left_is_wall: leftIsWall,
                 right_is_wall: rightIsWall,
                 left_is_non_system: leftIsNonSystem,
@@ -569,6 +773,7 @@ Deno.serve(async (req: Request) => {
                 system_termination_count: systemTerminationCount,
                 non_system_termination_count: nonSystemTerminationCount,
                 non_system_wall_count: nonSystemWallCount,
+                product_post_boundary_count: numPosts,
                 // Numeric helpers
                 post_size_num: postSizeNum,
                 mounting_type_is_base_plate:

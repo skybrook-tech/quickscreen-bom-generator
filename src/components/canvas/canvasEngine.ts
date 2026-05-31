@@ -1059,6 +1059,33 @@ export function initCanvasEngine(
     return { x: vector.x / length, y: vector.y / length };
   }
 
+  function cornerLabelPoint(
+    prev: Point,
+    corner: Point,
+    next: Point,
+  ): { center: Point; push: Point } {
+    const intoPrev = normaliseVector({
+      x: prev.x - corner.x,
+      y: prev.y - corner.y,
+    });
+    const intoNext = normaliseVector({
+      x: next.x - corner.x,
+      y: next.y - corner.y,
+    });
+    const push = normaliseVector({
+      x: intoPrev.x + intoNext.x,
+      y: intoPrev.y + intoNext.y,
+    });
+    const offset = 24 / zoom;
+    return {
+      center: {
+        x: corner.x + push.x * offset,
+        y: corner.y + push.y * offset,
+      },
+      push,
+    };
+  }
+
   function drawPillLabel(
     text: string,
     center: Point,
@@ -1510,29 +1537,28 @@ export function initCanvasEngine(
       ctx.fill();
     }
 
-    // Node labels (A, B, C…)
+    // Corner angle annotations
     if (zoom > 0.3) {
-      let nbLabelIdx = 0;
       for (const run of runs) {
         if (run.isBoundary) continue;
-        const colorIdx = nbLabelIdx++;
         const pts = run.points;
         if (pts.length < 2) continue;
-        // Node labels
-        for (let i = 0; i < pts.length; i++) {
-          drawPillLabel(
-            String.fromCharCode(65 + i),
-            { x: pts[i].x - 10 / zoom, y: pts[i].y - 10 / zoom },
-            {
-              fontPx: 10,
-              color: getRunColor(colorIdx),
-              bold: true,
-              padX: 4,
-              padY: 1,
+        // Corner angle annotations at intermediate nodes
+        for (let i = 1; i < pts.length - 1; i++) {
+          const angle = angleBetween(pts[i - 1], pts[i], pts[i + 1]);
+          if (angle > 30 && angle < 150) {
+            const angleText = `${Math.round(angle)}°`;
+            const labelPosition = cornerLabelPoint(pts[i - 1], pts[i], pts[i + 1]);
+            drawPillLabel(angleText, labelPosition.center, {
+              fontPx: 11,
+              color: "#6d28d9",
+              italic: true,
+              padX: 5,
+              padY: 2,
               radius: 5,
-              push: { x: -1, y: -1 },
-            },
-          );
+              push: labelPosition.push,
+            });
+          }
         }
       }
     }
@@ -1548,7 +1574,69 @@ export function initCanvasEngine(
     }
 
     ctx.restore();
+    drawScaleRuler(W, H);
     drawCursorHint();
+  }
+
+  function drawScaleRuler(canvasW: number, canvasH: number) {
+    const pxPerMetre = scale * zoom;
+    if (!Number.isFinite(pxPerMetre) || pxPerMetre <= 0) return;
+
+    const minWidth = 64;
+    const maxWidth = Math.max(80, Math.min(180, canvasW - 48));
+    const standardDistances = [
+      0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500,
+      1000,
+    ];
+    let distance = standardDistances[standardDistances.length - 1];
+    let width = distance * pxPerMetre;
+
+    for (const candidate of standardDistances) {
+      const candidateWidth = candidate * pxPerMetre;
+      if (candidateWidth >= minWidth && candidateWidth <= maxWidth) {
+        distance = candidate;
+        width = candidateWidth;
+        break;
+      }
+    }
+
+    if (width > maxWidth || width < 12) return;
+
+    const label =
+      distance >= 1 ? `${distance} m` : `${Math.round(distance * 1000)} mm`;
+    const startX = 20;
+    const endX = startX + width;
+    const barY = canvasH - 24;
+    const tickHeight = 6;
+
+    ctx.save();
+    ctx.fillStyle = "rgba(15,23,42,0.75)";
+    ctx.strokeStyle = "rgba(255,255,255,0.15)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(startX - 8, barY - 26, width + 16, 36, 6);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(startX, barY);
+    ctx.lineTo(endX, barY);
+    ctx.moveTo(startX, barY - tickHeight / 2);
+    ctx.lineTo(startX, barY + tickHeight / 2);
+    ctx.moveTo(startX + width / 2, barY - tickHeight / 2);
+    ctx.lineTo(startX + width / 2, barY + tickHeight / 2);
+    ctx.moveTo(endX, barY - tickHeight / 2);
+    ctx.lineTo(endX, barY + tickHeight / 2);
+    ctx.stroke();
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "600 10px Inter, system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(label, startX + width / 2, barY - 4);
+    ctx.restore();
   }
 
   function drawCursorHint() {
@@ -4371,7 +4459,9 @@ export function initCanvasEngine(
     const pad = 80; // px
     const contentW = maxX - minX || 1;
     const contentH = maxY - minY || 1;
-    zoom = Math.min((W - pad * 2) / contentW, (H - pad * 2) / contentH, 8);
+    const usableW = Math.max(1, W - pad * 2);
+    const usableH = Math.max(1, H - pad * 2);
+    zoom = Math.max(0.000001, Math.min(usableW / contentW, usableH / contentH, 8));
     pan = {
       x: W / 2 - zoom * (minX + contentW / 2),
       y: H / 2 - zoom * (minY + contentH / 2),

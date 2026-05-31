@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import pluralize from "pluralize";
 import type { CalculatorBOMResult, BOMLineItem } from "../../types/bom.types";
 import { localPriceBreaks } from "../../lib/localPriceBreaks";
@@ -127,6 +128,14 @@ function orderCompanions(items: BOMLineItem[]): BOMLineItem[] {
   return roots.flatMap((item) => [item, ...(companions.get(item.sku) ?? [])]);
 }
 
+function sourceBreakdown(item: BOMLineItem) {
+  const sources = item.sources ?? [];
+  if (sources.length === 0) return "";
+  return sources
+    .map((source) => `${source.scopeLabel}: ${source.qty}`)
+    .join(" · ");
+}
+
 function humanizeCategory(value: string) {
   return pluralize(value.replace(/_/g, " "));
 }
@@ -212,6 +221,7 @@ function BOMTable({
   onRemoveLine,
   onSwitchEconomyToStandard,
   customerMode,
+  showWorkings,
 }: {
   items: BOMLineItem[];
   editable?: boolean;
@@ -219,6 +229,7 @@ function BOMTable({
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
   customerMode?: boolean;
+  showWorkings: boolean;
 }) {
   const sorted = sortItems(items);
   const groups = groupByCategory(sorted);
@@ -242,6 +253,7 @@ function BOMTable({
       onSwitchEconomyToStandard={onSwitchEconomyToStandard}
       hoveredGateDiagramNumber={hoveredGateDiagramNumber}
       customerMode={customerMode}
+      showWorkings={showWorkings}
     />
     <div
       className="hidden overflow-x-auto md:block print:block print:overflow-visible"
@@ -291,6 +303,7 @@ function BOMTable({
               onSwitchEconomyToStandard={onSwitchEconomyToStandard}
               hoveredGateDiagramNumber={hoveredGateDiagramNumber}
               customerMode={customerMode}
+              showWorkings={showWorkings}
             />
           ))}
         </tbody>
@@ -308,6 +321,7 @@ function BOMMobileCards({
   onSwitchEconomyToStandard,
   hoveredGateDiagramNumber,
   customerMode,
+  showWorkings,
 }: {
   groups: [string, BOMLineItem[]][];
   editable?: boolean;
@@ -316,6 +330,7 @@ function BOMMobileCards({
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
   hoveredGateDiagramNumber: GateDiagramNumber | null;
   customerMode?: boolean;
+  showWorkings: boolean;
 }) {
   return (
     <div className="space-y-4 md:hidden print:hidden" data-testid="bom-mobile-cards">
@@ -338,6 +353,7 @@ function BOMMobileCards({
                   gateDiagramNumbersForSku(item.sku).includes(hoveredGateDiagramNumber)
                 }
                 customerMode={customerMode}
+                showWorkings={showWorkings}
               />
             ))}
           </div>
@@ -355,6 +371,7 @@ function BOMMobileCard({
   onSwitchEconomyToStandard,
   highlighted,
   customerMode,
+  showWorkings,
 }: {
   item: BOMLineItem;
   editable?: boolean;
@@ -363,9 +380,11 @@ function BOMMobileCard({
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
   highlighted: boolean;
   customerMode?: boolean;
+  showWorkings: boolean;
 }) {
   const hint = nextBreakHint(item);
   const cartonHint = cartonHintForLine(item);
+  const sourceText = sourceBreakdown(item);
   const diagramNumbers = isGateDiagramLine(item) ? gateDiagramNumbersForSku(item.sku) : [];
   const canSwitchEconomy =
     item.sku.startsWith("XP-6500-E65") &&
@@ -376,6 +395,7 @@ function BOMMobileCard({
       className={`rounded-lg border border-brand-border/70 bg-brand-bg/60 p-3 shadow-sm transition-colors ${
         highlighted ? "ring-1 ring-brand-warning/60" : ""
       }`}
+      title={showWorkings && sourceText ? `Source breakdown: ${sourceText}` : undefined}
     >
       <div className="grid grid-cols-[1fr_auto] gap-3">
         <div className="min-w-0">
@@ -389,6 +409,11 @@ function BOMMobileCard({
           <p className="mt-1 text-base font-black leading-snug text-brand-text">
             {stripParentheticalDispatchCode(item.description)}
           </p>
+          {showWorkings && sourceText && (
+            <p className="mt-2 rounded-full bg-brand-card px-2 py-1 text-[11px] font-bold text-brand-muted">
+              {sourceText}
+            </p>
+          )}
         </div>
         <div className="text-right tabular-nums">
           <p className="text-xs font-bold uppercase tracking-wide text-brand-muted">
@@ -421,7 +446,7 @@ function BOMMobileCard({
           )}
         </div>
       </div>
-      {(hint || cartonHint || canSwitchEconomy || editable) && (
+      {(hint || cartonHint || (showWorkings && item.notes) || canSwitchEconomy || editable) && (
         <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-brand-border/60 pt-3">
           {hint && (
             <span className="rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-1 text-[11px] font-bold text-brand-success">
@@ -431,6 +456,11 @@ function BOMMobileCard({
           {cartonHint && (
             <span className="rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-1 text-[11px] font-bold text-brand-success">
               {cartonHint.more} more for carton
+            </span>
+          )}
+          {showWorkings && item.notes && (
+            <span className="rounded-full border border-brand-warning/30 bg-brand-warning/10 px-2 py-1 text-[11px] font-bold text-brand-warning">
+              {item.notes}
             </span>
           )}
           {canSwitchEconomy && (
@@ -466,6 +496,7 @@ function ItemGroup({
   onSwitchEconomyToStandard,
   hoveredGateDiagramNumber,
   customerMode,
+  showWorkings,
 }: {
   category: string;
   items: BOMLineItem[];
@@ -475,6 +506,7 @@ function ItemGroup({
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
   hoveredGateDiagramNumber: GateDiagramNumber | null;
   customerMode?: boolean;
+  showWorkings: boolean;
 }) {
   const orderedItems = orderCompanions(items);
   let lastSubCategory = "";
@@ -500,6 +532,7 @@ function ItemGroup({
           const canSwitchEconomy =
             item.sku.startsWith("XP-6500-E65") &&
             item.notes?.includes("Switch to Standard slats?");
+          const sourceText = sourceBreakdown(item);
           const diagramNumbers = isGateDiagramLine(item) ? gateDiagramNumbersForSku(item.sku) : [];
           const diagramHighlighted =
             hoveredGateDiagramNumber !== null && diagramNumbers.includes(hoveredGateDiagramNumber);
@@ -522,6 +555,7 @@ function ItemGroup({
           rows.push(
         <tr
           key={`${category}-${item.sku}-${item.category}-${item.description}-${itemIndex}`}
+          title={showWorkings && sourceText ? `Source breakdown: ${sourceText}` : undefined}
           onMouseEnter={() => {
             if (diagramNumbers[0]) setGateDiagramHover(diagramNumbers[0]);
           }}
@@ -547,6 +581,11 @@ function ItemGroup({
               {item.unitPrice <= 0 && (
                 <span className="rounded-full border border-brand-warning/40 bg-brand-warning/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-warning print:hidden">
                   Price not set
+                </span>
+              )}
+              {showWorkings && item.notes && (
+                <span className="text-xs text-brand-warning print:hidden">
+                  {item.notes}
                 </span>
               )}
               {canSwitchEconomy && (
@@ -584,6 +623,11 @@ function ItemGroup({
                 {bulkBuySaving > 0
                   ? ` saves $${formatMoney(bulkBuySaving)} each`
                   : " available"}
+              </p>
+            )}
+            {showWorkings && sourceText && item.sources && item.sources.length > 1 && (
+              <p className="mt-1 text-[11px] font-semibold text-brand-muted print:hidden">
+                Sources: {sourceText}
               </p>
             )}
           </td>
@@ -650,6 +694,7 @@ export function BOMResultTabs({
 }: BOMResultTabsProps) {
   const [activeTab, setActiveTab] = useState("all");
   const [viewMode, setViewMode] = useState<"line_items" | "cut_list">("line_items");
+  const [showWorkings, setShowWorkings] = useState(true);
 
   const gateResults = result.gateResults ?? [];
   const tabs = [
@@ -735,15 +780,31 @@ export function BOMResultTabs({
               : "Priced BOM rows ready for review."}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() =>
-            setViewMode((mode) => (mode === "line_items" ? "cut_list" : "line_items"))
-          }
-          className="rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-        >
-          {viewMode === "line_items" ? "Show cut list" : "Show line items"}
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowWorkings((value) => !value)}
+            aria-pressed={showWorkings}
+            data-testid="bom-workings-toggle"
+            className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors hover:shadow-sm ${
+              showWorkings
+                ? "border-brand-warning/40 bg-brand-warning/10 text-brand-warning hover:bg-brand-warning/15"
+                : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
+            }`}
+          >
+            {showWorkings ? <EyeOff size={15} /> : <Eye size={15} />}
+            {showWorkings ? "Hide workings" : "Show workings"}
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              setViewMode((mode) => (mode === "line_items" ? "cut_list" : "line_items"))
+            }
+            className="rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
+          >
+            {viewMode === "line_items" ? "Show cut list" : "Show line items"}
+          </button>
+        </div>
       </div>
 
       {viewMode === "cut_list" ? (
@@ -756,6 +817,7 @@ export function BOMResultTabs({
           onRemoveLine={onRemoveLine}
           onSwitchEconomyToStandard={onSwitchEconomyToStandard}
           customerMode={customerMode}
+          showWorkings={showWorkings}
         />
       )}
 

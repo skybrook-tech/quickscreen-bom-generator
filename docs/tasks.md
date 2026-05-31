@@ -6,15 +6,23 @@
 > **v3 Engine** — V3-1 through V3-6 complete. V3-7 (docs cross-linking) is the only remaining item.
 > Start here for an overview: [`docs/how_it_works.md`](./how_it_works.md).
 
-Latest BOM readability pass: BOM rows no longer show source breakdown, derivation note text, or source tooltips, and run/gate tab item counts now render as highlighted explicit item-count pills.
+Latest print BOM map-options merge fix: `codex/print-bom-map-options` is synced with current master, keeps the print dialog/map option and print BOM cleanup, and retains the BOM workings toggle plus PR #79 BOM-generation fixes.
+
+Latest BOM readability pass: run/gate tab item counts now render as highlighted explicit item-count pills, and per-line source/workings text is controlled by the BOM workings toggle.
 
 Latest infrastructure fix: duplicate Supabase migration version 029 was resolved by keeping the earlier profile-email migration at 029 and renaming the later quote property-anchor migration to 030.
 
 Latest print BOM cleanup: printed BOMs now force the desktop line-item table, hide mobile card-only price-break/source details, remove the print-only run/section appendix, and pin explicit Glass Outlet logo print styling.
 
+Latest map label cleanup: fence point placement no longer renders permanent A/B/C node labels on drawn runs, while endpoint feedback and corner angle annotations remain intact.
+
 Latest gate assembly diagram pass: horizontal and vertical gate component checklists now show matching assembly images with orange numbered overlays, and checklist scroll/hover state stays synced with BOM row highlighting.
 
 Latest print options pass: the BOM header no longer carries a persistent Include map checkbox; Print BOM now opens a print options dialog every time so the layout map can be included per print.
+
+Latest PR #79 replacement pass: the safe fixes were split into a clean branch with finish-family colour filtering, match-fence finish fallback, long Colorbond-name SKU normalization in the local fallback calculator, clearer PDF BOM category labels, valid v4 job-label markup, and a read-only canvas scale ruler that reflects the existing map calibration without changing layout measurements.
+
+Latest PR #79 BOM fix: v3 canvas/run payloads are now adapted to the edge calculator's engine segment shape before invocation, the edge function also accepts legacy v3 segment payloads directly, seeded termination aliases are restored for product-post rules, hidden-canvas fit-to-content zoom is clamped positive, and a Cypress smoke covers QSHS BOM generation after entering a run length.
 
 Latest Brief 014 pass: the mobile Job tab now prioritises job/address/system/run controls, supports Web Speech API address dictation, adds numeric and decimal mobile keyboard hints, enlarges key touch targets, and keeps Save/Clear/Generate actions in a keyboard-aware sticky action bar.
 
@@ -488,6 +496,8 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Master baseline keyboard-offset fix: removed the duplicate `keyboardOffset` state declaration left by the mobile brief merge and rewired the orphaned Job-tab Generate BOM button to the current `handleManualBomGenerate` handler.
 - [x] Brief 030 canvas roadmap layer fix: property map capture now builds separate satellite and roadmap Static Maps layers, crops attribution from both captured layers, exposes per-layer Satellite/Roadmap visibility toggles with opacity controls, and keeps the drawing layer rendered above map underlays.
 - [x] Print BOM cleanup: print output now suppresses run/section labels and mobile price-break/source chips, uses the desktop BOM table for printing, and keeps the Glass Outlet logo visible with print-specific sizing.
+- [x] BOM workings toggle: added a top-of-BOM control to show or hide per-line source/workings text across mobile cards and desktop line items.
+- [x] Preview BOM fallback fix: top-level edge-function error payloads now fall back to the local BOM calculator instead of rendering an empty BOM result.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---
