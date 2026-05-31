@@ -279,7 +279,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         </div>
       </SettingsDisclosureRow>
 
-      {slatOptionFields.length > 0 ? (
+      {slatOptionFields.length > 0 || postColourField ? (
         <SettingsDisclosureRow id={`${seg.segmentId}-section-style`} label="Slats, colors, and spacings" value={slatSummary || "Run defaults"}>
           <div className="space-y-4">
             {colourField && (
@@ -288,6 +288,27 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                 variables={mergedJobDisplay}
                 onChange={handleOptionChange}
               />
+            )}
+            {postColourField && (
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={() => setPostColourOpen((value) => !value)}
+                  className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+                >
+                  {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
+                </button>
+                {postColourOpen && (
+                  <div className="space-y-1">
+                    <p className="text-sm font-bold text-brand-muted">Post colour</p>
+                    <ColourPalette
+                      value={String(mergedJobDisplay.post_colour_code ?? mergedJobDisplay.colour_code ?? "B")}
+                      options={(postColourField.options_json ?? colourField?.options_json ?? ["B", "MN", "G", "SM", "W", "BS", "D", "M"]).map(String)}
+                      onChange={(value) => handleOptionChange("post_colour_code", value)}
+                    />
+                  </div>
+                )}
+              </div>
             )}
             {remainingOptionFields.length > 0 && (
               <SchemaDrivenForm
@@ -325,27 +346,6 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
       {!isBayg && (
         <SettingsDisclosureRow id={`${seg.segmentId}-section-posts`} label="Post size, mounting and spacing" value={postSummary}>
-          {postColourField && (
-            <div className="space-y-3">
-              <button
-                type="button"
-                onClick={() => setPostColourOpen((value) => !value)}
-                className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-              >
-                {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
-              </button>
-              {postColourOpen && (
-                <div className="space-y-1">
-                  <p className="text-sm font-bold text-brand-muted">Post colour</p>
-                  <ColourPalette
-                    value={String(mergedJobDisplay.post_colour_code ?? mergedJobDisplay.colour_code ?? "B")}
-                    options={(postColourField.options_json ?? colourField?.options_json ?? ["B", "MN", "G", "SM", "W", "BS", "D", "M"]).map(String)}
-                    onChange={(value) => handleOptionChange("post_colour_code", value)}
-                  />
-                </div>
-              )}
-            </div>
-          )}
           {postFields.length > 0 && (
             <SchemaDrivenForm
               fields={postFields}
