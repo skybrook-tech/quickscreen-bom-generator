@@ -319,6 +319,12 @@ const COLOR = {
   snap: "rgba(96,165,250,0.4)",
 };
 
+const MAP_SECTION_LABEL_FONT_PX = 10;
+const MAP_MEASUREMENT_FONT_PX = 10;
+const LABEL_OVERLAP_THRESHOLD = 0.08;
+const LABEL_COLLISION_STEP_PX = 12;
+const LABEL_COLLISION_MAX_STEPS = 8;
+
 // Distinct run colors (dark-theme palette, cycling for >8 runs)
 const RUN_COLORS = [
   "#3b82f6", // blue
@@ -1028,16 +1034,21 @@ export function initCanvasEngine(
 
   function adjustedLabelCenter(center: Point, width: number, height: number, push: Point): Point {
     let next = { ...center };
-    let nextBox = labelBox(next, width, height);
-    for (const existing of labelCollisionBoxes) {
-      if (overlapRatio(nextBox, existing) <= 0.5) continue;
+    for (let attempt = 0; attempt < LABEL_COLLISION_MAX_STEPS; attempt++) {
+      const nextBox = labelBox(next, width, height);
+      const collides = labelCollisionBoxes.some(
+        (existing) => overlapRatio(nextBox, existing) > LABEL_OVERLAP_THRESHOLD,
+      );
+      if (!collides) {
+        labelCollisionBoxes.push(nextBox);
+        return next;
+      }
       next = {
-        x: next.x + push.x * (16 / zoom),
-        y: next.y + push.y * (16 / zoom),
+        x: next.x + push.x * (LABEL_COLLISION_STEP_PX / zoom),
+        y: next.y + push.y * (LABEL_COLLISION_STEP_PX / zoom),
       };
-      nextBox = labelBox(next, width, height);
-      break;
     }
+    const nextBox = labelBox(next, width, height);
     labelCollisionBoxes.push(nextBox);
     return next;
   }
@@ -1085,18 +1096,6 @@ export function initCanvasEngine(
     ctx.fillStyle = options.color;
     ctx.fillText(text, adjusted.x, adjusted.y);
     ctx.restore();
-  }
-
-  function cornerLabelPoint(prev: Point, vertex: Point, next: Point): { center: Point; push: Point } {
-    const intoPrev = normaliseVector({ x: prev.x - vertex.x, y: prev.y - vertex.y });
-    const intoNext = normaliseVector({ x: next.x - vertex.x, y: next.y - vertex.y });
-    const bisector = normaliseVector({ x: intoPrev.x + intoNext.x, y: intoPrev.y + intoNext.y });
-    const perpendicular = normaliseVector({ x: -bisector.y, y: bisector.x });
-    const center = {
-      x: vertex.x + perpendicular.x * (18 / zoom),
-      y: vertex.y + perpendicular.y * (18 / zoom),
-    };
-    return { center, push: perpendicular };
   }
 
   function setSegmentLength(flatIdx: number, lengthMM: number) {
@@ -1511,7 +1510,7 @@ export function initCanvasEngine(
       ctx.fill();
     }
 
-    // Node labels (A, B, C…) and corner angle annotations
+    // Node labels (A, B, C…)
     if (zoom > 0.3) {
       let nbLabelIdx = 0;
       for (const run of runs) {
@@ -1534,23 +1533,6 @@ export function initCanvasEngine(
               push: { x: -1, y: -1 },
             },
           );
-        }
-        // Corner angle annotations at intermediate nodes
-        for (let i = 1; i < pts.length - 1; i++) {
-          const angle = angleBetween(pts[i - 1], pts[i], pts[i + 1]);
-          if (angle > 30 && angle < 150) {
-            const angleText = `${Math.round(angle)}°`;
-            const labelPosition = cornerLabelPoint(pts[i - 1], pts[i], pts[i + 1]);
-            drawPillLabel(angleText, labelPosition.center, {
-              fontPx: 11,
-              color: "#6d28d9",
-              italic: true,
-              padX: 5,
-              padY: 2,
-              radius: 5,
-              push: labelPosition.push,
-            });
-          }
         }
       }
     }
@@ -1903,10 +1885,6 @@ export function initCanvasEngine(
       ctx.lineTo(width / 2, slideOffset);
       ctx.stroke();
       ctx.setLineDash([]);
-      ctx.font = `bold ${Math.max(8, 10 / zoom)}px sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "bottom";
-      ctx.fillText(direction === "left" ? "SLIDE LEFT" : "SLIDE RIGHT", 0, slideOffset - 8 / zoom);
       ctx.restore();
       return;
     }
@@ -1917,7 +1895,6 @@ export function initCanvasEngine(
       const totalLeafMm = leaf1Mm + leaf2Mm;
       const leaf1Radius = totalLeafMm > 0 ? width * (leaf1Mm / totalLeafMm) : width / 2;
       const leaf2Radius = totalLeafMm > 0 ? width * (leaf2Mm / totalLeafMm) : width / 2;
-      const labelY = side > 0 ? -8 / zoom : 14 / zoom;
       ctx.beginPath();
       ctx.arc(-width / 2, 0, leaf1Radius, 0, side * Math.PI / 2, side < 0);
       ctx.stroke();
@@ -1926,10 +1903,6 @@ export function initCanvasEngine(
       ctx.stroke();
       drawArrow(-width / 2, 0, -width / 2 + leaf1Radius * 0.68, side * leaf1Radius * 0.68);
       drawArrow(width / 2, 0, width / 2 - leaf2Radius * 0.68, side * leaf2Radius * 0.68);
-      ctx.font = `bold ${Math.max(8, 10 / zoom)}px sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "bottom";
-      ctx.fillText(direction === "in" ? "DBL IN" : "DBL OUT", 0, labelY);
       ctx.restore();
       return;
     }
@@ -1947,10 +1920,6 @@ export function initCanvasEngine(
     ctx.arc(hingeX, 0, radius, closedAngle, openAngle, gate.anchor === "end" ? side > 0 : side < 0);
     ctx.stroke();
     drawArrow(hingeX, 0, leafEndX, side * radius * 0.7);
-    ctx.font = `bold ${Math.max(8, 10 / zoom)}px sans-serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "bottom";
-    ctx.fillText(direction === "in" ? "SG IN" : "SG OUT", 0, side > 0 ? -8 / zoom : 14 / zoom);
     ctx.restore();
   }
 
@@ -2194,7 +2163,7 @@ export function initCanvasEngine(
     }
     ctx.restore();
 
-    // Draw each gate gap as a dashed amber line + distance annotations
+    // Draw each gate gap as a dashed amber line.
     for (const gap of gaps) {
       const pStart = lerp(seg.p1, seg.p2, gap.tStart);
       const pEnd = lerp(seg.p1, seg.p2, gap.tEnd);
@@ -2221,76 +2190,14 @@ export function initCanvasEngine(
       }
       ctx.restore();
 
-      // Distance annotations (only when zoomed in enough)
-      if (zoom > 0.25) {
-        const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
-        const perpX = -Math.sin(ang);
-        const perpY = Math.cos(ang);
-        const offset = 12 / zoom;
-        const fs = Math.max(8, 10 / zoom);
-
-        // Distance before gate (p1 → gap start)
-        const distBeforeM = (gap.tStart * seg.lengthMM) / 1000;
-        // Distance after gate (gap end → p2)
-        const distAfterM = ((1 - gap.tEnd) * seg.lengthMM) / 1000;
-        ctx.save();
-        ctx.font = `${fs}px sans-serif`;
-        ctx.fillStyle = COLOR.gate;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-
-        // Mid-before label
-        if (distBeforeM > 0.05) {
-          const midBefore = lerp(seg.p1, pStart, 0.5);
-          ctx.fillText(
-            `${distBeforeM.toFixed(2)}m`,
-            midBefore.x + perpX * offset,
-            midBefore.y + perpY * offset,
-          );
-        }
-        // Gate opening label (centred on the gap)
-        const midGate = lerp(pStart, pEnd, 0.5);
-        ctx.font = `bold ${fs}px sans-serif`;
-        const gateText = `${Math.round(gap.widthMM)}mm gate`;
-        const gateX = midGate.x + perpX * (offset * 2.2);
-        const gateY = midGate.y + perpY * (offset * 2.2);
-        const gateTextWidth = ctx.measureText(gateText).width;
-        const padX = 5 / zoom;
-        const padY = 3 / zoom;
-        ctx.fillStyle = "rgba(15,23,42,0.9)";
-        ctx.strokeStyle = COLOR.gate;
-        ctx.lineWidth = 1 / zoom;
-        ctx.beginPath();
-        ctx.roundRect(
-          gateX - gateTextWidth / 2 - padX,
-          gateY - fs / 2 - padY,
-          gateTextWidth + padX * 2,
-          fs + padY * 2,
-          4 / zoom,
-        );
-        ctx.fill();
-        ctx.stroke();
-        ctx.fillStyle = COLOR.gate;
-        ctx.fillText(gateText, gateX, gateY);
-        ctx.font = `${fs}px sans-serif`;
-
-        // Mid-after label
-        if (distAfterM > 0.05) {
-          const midAfter = lerp(pEnd, seg.p2, 0.5);
-          ctx.fillStyle = COLOR.gate;
-          ctx.fillText(
-            `${distAfterM.toFixed(2)}m`,
-            midAfter.x + perpX * offset,
-            midAfter.y + perpY * offset,
-          );
-        }
-        ctx.restore();
-      }
     }
 
     // Labels render over fence geometry but before handles/endpoints.
-    drawLabel(seg);
-    drawMapSegmentLabels(seg, mapLabels);
+    if (mapLabels.length > 0) {
+      drawMapSegmentLabels(seg, mapLabels);
+    } else {
+      drawLabel(seg);
+    }
 
     // End-point dots
     ctx.save();
@@ -2308,6 +2215,7 @@ export function initCanvasEngine(
   }
 
   function drawLabel(seg: Segment) {
+    if (zoom <= 0.18) return;
     const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
     const mid = offsetPointFromSegment(seg, 0.5, 10 / zoom);
     const labelText =
@@ -2315,9 +2223,12 @@ export function initCanvasEngine(
         ? `${(seg.lengthMM / 1000).toFixed(2)}m`
         : `${Math.round(seg.lengthMM)}mm`;
     drawPillLabel(labelText, mid, {
-      fontPx: 12,
+      fontPx: MAP_MEASUREMENT_FONT_PX,
       color: "#2563eb",
       bold: true,
+      padX: 5,
+      padY: 1,
+      radius: 5,
       push: { x: -Math.sin(ang), y: Math.cos(ang) },
     });
   }
@@ -2325,13 +2236,33 @@ export function initCanvasEngine(
   function drawMapSegmentLabels(seg: Segment, labels: SegmentMapLabel[]) {
     if (zoom <= 0.18 || labels.length === 0) return;
     for (const label of labels) {
-      const pt = offsetPointFromSegment(seg, label.t, -14 / zoom);
       const ang = Math.atan2(seg.p2.y - seg.p1.y, seg.p2.x - seg.p1.x);
-      drawPillLabel(label.text, pt, {
-        fontPx: 12,
-        color: label.kind === "gate" ? "#92400e" : "#333333",
+      const titlePt = offsetPointFromSegment(seg, label.t, -14 / zoom);
+      const measurementPt = offsetPointFromSegment(seg, label.t, 10 / zoom);
+      const labelLengthMM = Math.max(0, (label.tEnd - label.tStart) * seg.lengthMM);
+      const measurementText =
+        label.kind === "gate"
+          ? `${Math.round(labelLengthMM)}mm`
+          : labelLengthMM >= 1000
+            ? `${(labelLengthMM / 1000).toFixed(2)}m`
+            : `${Math.round(labelLengthMM)}mm`;
+      drawPillLabel(label.text, titlePt, {
+        fontPx: MAP_SECTION_LABEL_FONT_PX,
+        color: "#333333",
         bold: true,
+        padX: 5,
+        padY: 1,
+        radius: 5,
         push: { x: Math.sin(ang), y: -Math.cos(ang) },
+      });
+      drawPillLabel(measurementText, measurementPt, {
+        fontPx: MAP_MEASUREMENT_FONT_PX,
+        color: "#2563eb",
+        bold: true,
+        padX: 5,
+        padY: 1,
+        radius: 5,
+        push: { x: -Math.sin(ang), y: Math.cos(ang) },
       });
     }
   }
@@ -2608,7 +2539,7 @@ export function initCanvasEngine(
     // Returns flat segment index if pt is near its midpoint label
     const allSegs = allSegmentsFlat();
     for (const { seg, flatIdx } of allSegs) {
-      const mid = offsetPointFromSegment(seg, 0.5, 18 / zoom);
+      const mid = offsetPointFromSegment(seg, 0.5, 10 / zoom);
       if (dist(pt, mid) < 30 / zoom) return flatIdx;
     }
     return -1;
