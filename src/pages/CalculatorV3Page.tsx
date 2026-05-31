@@ -2105,40 +2105,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                         onActiveSummaryChange={handleActiveBomSummaryChange}
                         customerMode={customerMode}
                       />
-                      {bomRunDetails.length > 0 && (
-                        <div
-                          data-print-run-details
-                          className="mt-8 hidden space-y-4 border-t border-slate-300 pt-5 print:block"
-                        >
-                          <h2 className="text-base font-black uppercase tracking-wide text-black">
-                            Run &amp; Section Details
-                          </h2>
-                          {bomRunDetails.map((runDetail) => (
-                            <section key={runDetail.hero} className="break-inside-avoid space-y-2">
-                              <h3 className="text-sm font-black text-black">{runDetail.printHeading}</h3>
-                              <p className="text-xs font-semibold text-slate-700">
-                                {runDetail.settings}
-                              </p>
-                              <div className="space-y-2 pl-3 text-xs font-semibold text-slate-700">
-                                {runDetail.sections.map((section) => (
-                                  <div key={section.label} className="break-inside-avoid">
-                                    <p className="font-bold text-black">{section.label}</p>
-                                    <p>{section.panelLine}</p>
-                                    {section.overrides.length > 0 && (
-                                      <p>Overrides: {section.overrides.join(", ")}</p>
-                                    )}
-                                    {section.gates.map((gate) => (
-                                      <p key={gate} className="pl-3 text-slate-700">
-                                        {gate}
-                                      </p>
-                                    ))}
-                                  </div>
-                                ))}
-                              </div>
-                            </section>
-                          ))}
-                        </div>
-                      )}
                       <div data-print-hide>
                         <ExtraItemsPanel
                           items={extraItems}

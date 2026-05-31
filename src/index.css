@@ -169,6 +169,35 @@ body {
     background: white !important;
   }
 
+  body[data-print-bom="true"] #root [data-print-logo] {
+    display: inline-flex !important;
+    align-items: center !important;
+    color: #1e40af !important;
+    gap: 8px !important;
+    break-inside: avoid;
+  }
+
+  body[data-print-bom="true"] #root [data-print-logo] svg {
+    display: block !important;
+    width: 48px !important;
+    height: 43px !important;
+    flex-shrink: 0 !important;
+    overflow: visible !important;
+  }
+
+  body[data-print-bom="true"] #root [data-print-logo] span {
+    color: #1e40af !important;
+  }
+
+  body[data-print-bom="true"] #root [data-testid="bom-mobile-cards"] {
+    display: none !important;
+  }
+
+  body[data-print-bom="true"] #root [data-testid="bom-desktop-table"] {
+    display: block !important;
+    overflow: visible !important;
+  }
+
   body[data-print-bom="true"] [data-print-map-section] {
     display: none !important;
     order: 3 !important;
