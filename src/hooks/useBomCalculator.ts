@@ -1,8 +1,18 @@
 import { useMutation } from '@tanstack/react-query';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { calculateLocalBom } from '../lib/localBomCalculator';
+import { prepareBomCalculatorPayload } from '../lib/bomPayloadAdapter';
 import type { CanonicalPayload, CanonicalRun, CanonicalSegment } from '../types/canonical.types';
 import type { PricingTier } from '../types/bom.types';
+
+export function isEdgeFailurePayload(data: unknown): data is { error: string } {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'error' in data &&
+    typeof (data as { error?: unknown }).error === 'string'
+  );
+}
 
 function expandSectionSystemOverrides(payload: CanonicalPayload): CanonicalPayload {
   const runs: CanonicalRun[] = [];
@@ -51,7 +61,9 @@ export function useBomCalculator() {
   return useMutation({
     mutationFn: async ({ payload, pricingTier }: { payload: CanonicalPayload; pricingTier?: PricingTier }) => {
       const tier = pricingTier ?? 'tier1';
-      const calculatorPayload = expandSectionSystemOverrides(payload);
+      const calculatorPayload = prepareBomCalculatorPayload(
+        expandSectionSystemOverrides(payload),
+      );
       if (!isSupabaseConfigured) {
         return calculateLocalBom(calculatorPayload, tier);
       }
@@ -63,7 +75,9 @@ export function useBomCalculator() {
         body: { payload: calculatorPayload, pricingTier: tier },
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
-      if (error) return calculateLocalBom(calculatorPayload, tier);
+      if (error || !data || isEdgeFailurePayload(data)) {
+        return calculateLocalBom(calculatorPayload, tier);
+      }
       return data as Record<string, unknown>;
     },
   });

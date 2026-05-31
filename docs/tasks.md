@@ -6,9 +6,15 @@
 > **v3 Engine** — V3-1 through V3-6 complete. V3-7 (docs cross-linking) is the only remaining item.
 > Start here for an overview: [`docs/how_it_works.md`](./how_it_works.md).
 
+Latest map-label merge fix: `codex/map-label-cleanup` is synced with current master, keeps permanent A/B/C fence point labels removed, and retains the PR #79 BOM fixes plus read-only canvas scale ruler.
+
 Latest infrastructure fix: duplicate Supabase migration version 029 was resolved by keeping the earlier profile-email migration at 029 and renaming the later quote property-anchor migration to 030.
 
 Latest point label cleanup: fence drawing no longer renders permanent A/B/C labels on placed points.
+
+Latest PR #79 replacement pass: the safe fixes were split into a clean branch with finish-family colour filtering, match-fence finish fallback, long Colorbond-name SKU normalization in the local fallback calculator, clearer PDF BOM category labels, valid v4 job-label markup, and a read-only canvas scale ruler that reflects the existing map calibration without changing layout measurements.
+
+Latest PR #79 BOM fix: v3 canvas/run payloads are now adapted to the edge calculator's engine segment shape before invocation, the edge function also accepts legacy v3 segment payloads directly, seeded termination aliases are restored for product-post rules, hidden-canvas fit-to-content zoom is clamped positive, and a Cypress smoke covers QSHS BOM generation after entering a run length.
 
 Latest Brief 014 pass: the mobile Job tab now prioritises job/address/system/run controls, supports Web Speech API address dictation, adds numeric and decimal mobile keyboard hints, enlarges key touch targets, and keeps Save/Clear/Generate actions in a keyboard-aware sticky action bar.
 
@@ -481,6 +487,8 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Brief 016 mobile BOM cards: mobile BOM view now renders grouped stacked cards, sticky totals, collapsible accessory cards, a bottom BOM action bar, and Share PDF support with Web Share API plus download fallback while preserving the desktop BOM table.
 - [x] Master baseline keyboard-offset fix: removed the duplicate `keyboardOffset` state declaration left by the mobile brief merge and rewired the orphaned Job-tab Generate BOM button to the current `handleManualBomGenerate` handler.
 - [x] Brief 030 canvas roadmap layer fix: property map capture now builds separate satellite and roadmap Static Maps layers, crops attribution from both captured layers, exposes per-layer Satellite/Roadmap visibility toggles with opacity controls, and keeps the drawing layer rendered above map underlays.
+- [x] BOM workings toggle: added a top-of-BOM control to show or hide per-line source/workings text across mobile cards and desktop line items.
+- [x] Preview BOM fallback fix: top-level edge-function error payloads now fall back to the local BOM calculator instead of rendering an empty BOM result.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---

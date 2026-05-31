@@ -16,6 +16,7 @@ const result: CalculatorBOMResult = {
       unit: "each",
       unitPrice: 50,
       lineTotal: 100,
+      notes: "Post formula note",
       sources: [{ scopeKind: "fence_run", scopeId: "run-1", scopeLabel: "Run 1", qty: 2 }],
     },
   ],
@@ -69,6 +70,43 @@ describe("BOMResultTabs mobile cards", () => {
     expect(container.textContent).not.toContain("$100.00");
     expect(container.textContent).not.toContain("Subtotal");
     expect(container.textContent).not.toContain("Total (inc. GST)");
+
+    act(() => root.unmount());
+  });
+
+  it("toggles per-line workings from the BOM toolbar", () => {
+    const container = document.createElement("div");
+    document.body.appendChild(container);
+    const root = createRoot(container);
+
+    act(() => {
+      root.render(<BOMResultTabs result={result} />);
+    });
+
+    expect(container.textContent).toContain("Run 1: 2");
+    expect(container.textContent).toContain("Post formula note");
+
+    const toggle = container.querySelector<HTMLButtonElement>(
+      '[data-testid="bom-workings-toggle"]',
+    );
+    expect(toggle).not.toBeNull();
+    expect(toggle?.textContent).toContain("Hide workings");
+
+    act(() => {
+      toggle?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+
+    expect(container.textContent).not.toContain("Run 1: 2");
+    expect(container.textContent).not.toContain("Post formula note");
+    expect(toggle?.textContent).toContain("Show workings");
+
+    act(() => {
+      toggle?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+
+    expect(container.textContent).toContain("Run 1: 2");
+    expect(container.textContent).toContain("Post formula note");
+    expect(toggle?.textContent).toContain("Hide workings");
 
     act(() => root.unmount());
   });
