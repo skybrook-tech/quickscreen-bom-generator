@@ -1548,69 +1548,7 @@ export function initCanvasEngine(
     }
 
     ctx.restore();
-    drawScaleRuler(W, H);
     drawCursorHint();
-  }
-
-  function drawScaleRuler(canvasW: number, canvasH: number) {
-    const pxPerMetre = scale * zoom;
-    if (!Number.isFinite(pxPerMetre) || pxPerMetre <= 0) return;
-
-    const minWidth = 64;
-    const maxWidth = Math.max(80, Math.min(180, canvasW - 48));
-    const standardDistances = [
-      0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500,
-      1000,
-    ];
-    let distance = standardDistances[standardDistances.length - 1];
-    let width = distance * pxPerMetre;
-
-    for (const candidate of standardDistances) {
-      const candidateWidth = candidate * pxPerMetre;
-      if (candidateWidth >= minWidth && candidateWidth <= maxWidth) {
-        distance = candidate;
-        width = candidateWidth;
-        break;
-      }
-    }
-
-    if (width > maxWidth || width < 12) return;
-
-    const label =
-      distance >= 1 ? `${distance} m` : `${Math.round(distance * 1000)} mm`;
-    const startX = 20;
-    const endX = startX + width;
-    const barY = canvasH - 24;
-    const tickHeight = 6;
-
-    ctx.save();
-    ctx.fillStyle = "rgba(15,23,42,0.75)";
-    ctx.strokeStyle = "rgba(255,255,255,0.15)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.roundRect(startX - 8, barY - 26, width + 16, 36, 6);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(startX, barY);
-    ctx.lineTo(endX, barY);
-    ctx.moveTo(startX, barY - tickHeight / 2);
-    ctx.lineTo(startX, barY + tickHeight / 2);
-    ctx.moveTo(startX + width / 2, barY - tickHeight / 2);
-    ctx.lineTo(startX + width / 2, barY + tickHeight / 2);
-    ctx.moveTo(endX, barY - tickHeight / 2);
-    ctx.lineTo(endX, barY + tickHeight / 2);
-    ctx.stroke();
-
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "600 10px Inter, system-ui, sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "bottom";
-    ctx.fillText(label, startX + width / 2, barY - 4);
-    ctx.restore();
   }
 
   function drawCursorHint() {
@@ -4433,9 +4371,7 @@ export function initCanvasEngine(
     const pad = 80; // px
     const contentW = maxX - minX || 1;
     const contentH = maxY - minY || 1;
-    const usableW = Math.max(1, W - pad * 2);
-    const usableH = Math.max(1, H - pad * 2);
-    zoom = Math.max(0.000001, Math.min(usableW / contentW, usableH / contentH, 8));
+    zoom = Math.min((W - pad * 2) / contentW, (H - pad * 2) / contentH, 8);
     pan = {
       x: W / 2 - zoom * (minX + contentW / 2),
       y: H / 2 - zoom * (minY + contentH / 2),

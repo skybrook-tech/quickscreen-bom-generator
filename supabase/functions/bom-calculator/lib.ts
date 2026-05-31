@@ -83,7 +83,6 @@ export interface EngineData {
     add_sku_pattern: string;
     qty_formula: string;
     is_pack: boolean;
-    is_suggestion?: boolean;
     priority: number;
   }>;
   warnings: Array<{
@@ -142,11 +141,7 @@ export function matchesJSON(
         return false;
       if ("eq" in range && actual !== range.eq) return false;
       if ("neq" in range && actual === range.neq) return false;
-      if (
-        "in" in range &&
-        Array.isArray(range.in) &&
-        !range.in.includes(actual)
-      ) return false;
+      if ("in" in range && !range.in.includes(actual)) return false;
     } else if (Array.isArray(expected)) {
       if (!expected.includes(actual)) return false;
     } else {
