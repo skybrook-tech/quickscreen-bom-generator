@@ -127,14 +127,6 @@ function orderCompanions(items: BOMLineItem[]): BOMLineItem[] {
   return roots.flatMap((item) => [item, ...(companions.get(item.sku) ?? [])]);
 }
 
-function sourceBreakdown(item: BOMLineItem) {
-  const sources = item.sources ?? [];
-  if (sources.length === 0) return "";
-  return sources
-    .map((source) => `${source.scopeLabel}: ${source.qty}`)
-    .join(" · ");
-}
-
 function humanizeCategory(value: string) {
   return pluralize(value.replace(/_/g, " "));
 }
@@ -374,7 +366,6 @@ function BOMMobileCard({
 }) {
   const hint = nextBreakHint(item);
   const cartonHint = cartonHintForLine(item);
-  const sourceText = sourceBreakdown(item);
   const diagramNumbers = isGateDiagramLine(item) ? gateDiagramNumbersForSku(item.sku) : [];
   const canSwitchEconomy =
     item.sku.startsWith("XP-6500-E65") &&
@@ -385,7 +376,6 @@ function BOMMobileCard({
       className={`rounded-lg border border-brand-border/70 bg-brand-bg/60 p-3 shadow-sm transition-colors ${
         highlighted ? "ring-1 ring-brand-warning/60" : ""
       }`}
-      title={sourceText ? `Source breakdown: ${sourceText}` : undefined}
     >
       <div className="grid grid-cols-[1fr_auto] gap-3">
         <div className="min-w-0">
@@ -399,11 +389,6 @@ function BOMMobileCard({
           <p className="mt-1 text-base font-black leading-snug text-brand-text">
             {stripParentheticalDispatchCode(item.description)}
           </p>
-          {sourceText && (
-            <p className="mt-2 rounded-full bg-brand-card px-2 py-1 text-[11px] font-bold text-brand-muted">
-              {sourceText}
-            </p>
-          )}
         </div>
         <div className="text-right tabular-nums">
           <p className="text-xs font-bold uppercase tracking-wide text-brand-muted">
@@ -436,7 +421,7 @@ function BOMMobileCard({
           )}
         </div>
       </div>
-      {(hint || cartonHint || item.notes || canSwitchEconomy || editable) && (
+      {(hint || cartonHint || canSwitchEconomy || editable) && (
         <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-brand-border/60 pt-3">
           {hint && (
             <span className="rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-1 text-[11px] font-bold text-brand-success">
@@ -446,11 +431,6 @@ function BOMMobileCard({
           {cartonHint && (
             <span className="rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-1 text-[11px] font-bold text-brand-success">
               {cartonHint.more} more for carton
-            </span>
-          )}
-          {item.notes && (
-            <span className="rounded-full border border-brand-warning/30 bg-brand-warning/10 px-2 py-1 text-[11px] font-bold text-brand-warning">
-              {item.notes}
             </span>
           )}
           {canSwitchEconomy && (
@@ -520,7 +500,6 @@ function ItemGroup({
           const canSwitchEconomy =
             item.sku.startsWith("XP-6500-E65") &&
             item.notes?.includes("Switch to Standard slats?");
-          const sourceText = sourceBreakdown(item);
           const diagramNumbers = isGateDiagramLine(item) ? gateDiagramNumbersForSku(item.sku) : [];
           const diagramHighlighted =
             hoveredGateDiagramNumber !== null && diagramNumbers.includes(hoveredGateDiagramNumber);
@@ -543,7 +522,6 @@ function ItemGroup({
           rows.push(
         <tr
           key={`${category}-${item.sku}-${item.category}-${item.description}-${itemIndex}`}
-          title={sourceText ? `Source breakdown: ${sourceText}` : undefined}
           onMouseEnter={() => {
             if (diagramNumbers[0]) setGateDiagramHover(diagramNumbers[0]);
           }}
@@ -569,11 +547,6 @@ function ItemGroup({
               {item.unitPrice <= 0 && (
                 <span className="rounded-full border border-brand-warning/40 bg-brand-warning/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-warning print:hidden">
                   Price not set
-                </span>
-              )}
-              {item.notes && (
-                <span className="text-xs text-brand-warning print:hidden">
-                  {item.notes}
                 </span>
               )}
               {canSwitchEconomy && (
@@ -611,11 +584,6 @@ function ItemGroup({
                 {bulkBuySaving > 0
                   ? ` saves $${formatMoney(bulkBuySaving)} each`
                   : " available"}
-              </p>
-            )}
-            {sourceText && item.sources && item.sources.length > 1 && (
-              <p className="mt-1 text-[11px] font-semibold text-brand-muted print:hidden">
-                Sources: {sourceText}
               </p>
             )}
           </td>
@@ -742,13 +710,15 @@ export function BOMResultTabs({
           >
             {tab.label}
             <span
-              className={`text-xs px-1.5 py-0.5 rounded-full font-medium leading-none ${
+              className={`ml-1 inline-flex items-center rounded-full border px-2 py-0.5 font-mono text-[11px] font-black leading-none tabular-nums shadow-sm ${
                 activeTab === tab.id
-                  ? "bg-brand-accent/15 text-brand-accent"
-                  : "bg-brand-border/60 text-brand-muted"
+                  ? "border-brand-warning/45 bg-brand-warning/15 text-brand-warning"
+                  : "border-brand-primary/25 bg-brand-primary/10 text-brand-primary"
               }`}
+              aria-label={`${pluralize("item", tab.count, true)} in ${tab.label}`}
+              title={`${pluralize("item", tab.count, true)} in ${tab.label}`}
             >
-              {tab.count}
+              {pluralize("item", tab.count, true)}
             </span>
           </button>
         ))}

@@ -6,6 +6,8 @@
 > **v3 Engine** — V3-1 through V3-6 complete. V3-7 (docs cross-linking) is the only remaining item.
 > Start here for an overview: [`docs/how_it_works.md`](./how_it_works.md).
 
+Latest BOM readability pass: BOM rows no longer show source breakdown, derivation note text, or source tooltips, and run/gate tab item counts now render as highlighted explicit item-count pills.
+
 Latest infrastructure fix: duplicate Supabase migration version 029 was resolved by keeping the earlier profile-email migration at 029 and renaming the later quote property-anchor migration to 030.
 
 Latest print BOM cleanup: printed BOMs now force the desktop line-item table, hide mobile card-only price-break/source details, remove the print-only run/section appendix, and pin explicit Glass Outlet logo print styling.
