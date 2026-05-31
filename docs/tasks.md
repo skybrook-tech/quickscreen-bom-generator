@@ -8,6 +8,8 @@
 
 Latest infrastructure fix: duplicate Supabase migration version 029 was resolved by keeping the earlier profile-email migration at 029 and renaming the later quote property-anchor migration to 030.
 
+Latest PR #79 replacement pass: the safe fixes were split into a clean branch with finish-family colour filtering, match-fence finish fallback, long Colorbond-name SKU normalization in the local fallback calculator, clearer PDF BOM category labels, valid v4 job-label markup, and a read-only canvas scale ruler that reflects the existing map calibration without changing layout measurements.
+
 Latest Brief 014 pass: the mobile Job tab now prioritises job/address/system/run controls, supports Web Speech API address dictation, adds numeric and decimal mobile keyboard hints, enlarges key touch targets, and keeps Save/Clear/Generate actions in a keyboard-aware sticky action bar.
 
 Latest Brief 017 pass: the calculator now has production-only PWA registration, manifest/icons, install and offline banners, customer quote mode that hides costs, and a real-device mobile QA checklist.
