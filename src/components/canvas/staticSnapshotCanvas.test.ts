@@ -1,5 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { initCanvasEngine, type CanvasLayout } from "./canvasEngine";
+import {
+  canvasLayoutToCanonical,
+  canonicalToCanvasLayout,
+} from "./canonicalAdapter";
 import { GATE_SEGMENT_STUB_KEYS } from "../../lib/segmentTermination";
 
 function installCanvasMock() {
@@ -257,6 +261,72 @@ describe("canvas engine Static Maps snapshot scale", () => {
     canvas.remove();
   });
 
+  it("keeps a reloaded map layer anchored when the URL is unchanged", async () => {
+    const { drawImage } = installLayerCanvasMock();
+    const canvas = document.createElement("canvas");
+    document.body.appendChild(canvas);
+    Object.defineProperty(canvas, "getBoundingClientRect", {
+      value: () => ({
+        left: 0,
+        top: 0,
+        width: 640,
+        height: 360,
+        right: 640,
+        bottom: 360,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }),
+    });
+
+    const engine = initCanvasEngine(canvas, {
+      snapToGrid: false,
+      gridSize: 20,
+      showGrid: false,
+    });
+    engine.setViewportTransform({
+      pan: { x: 0, y: 0 },
+      zoom: 1,
+      scale: 10,
+    });
+    engine.loadMapTileLayers(
+      [{ imageUrl: "https://example.test/satellite.png", opacity: 1 }],
+      -33.8688,
+      19,
+    );
+    await new Promise((resolve) => window.setTimeout(resolve, 0));
+    const firstDraw = drawImage.mock.calls[drawImage.mock.calls.length - 1];
+    expect(firstDraw).toBeDefined();
+    const firstOrigin = firstDraw?.slice(1, 3);
+
+    drawImage.mockClear();
+    engine.setViewportTransform({
+      pan: { x: -200, y: -100 },
+      zoom: 0.75,
+      scale: 10,
+    });
+    drawImage.mockClear();
+    engine.loadMapTileLayers(
+      [{ imageUrl: "https://example.test/satellite.png", opacity: 0.5 }],
+      -33.8688,
+      19,
+    );
+    await new Promise((resolve) => window.setTimeout(resolve, 0));
+    expect(drawImage.mock.calls[drawImage.mock.calls.length - 1]?.slice(1, 3)).toEqual(firstOrigin);
+
+    drawImage.mockClear();
+    engine.loadMapTileLayers(
+      [{ imageUrl: "https://example.test/roadmap.png", opacity: 0.5 }],
+      -33.8688,
+      19,
+    );
+    await new Promise((resolve) => window.setTimeout(resolve, 0));
+    expect(drawImage.mock.calls[drawImage.mock.calls.length - 1]?.slice(1, 3)).not.toEqual(firstOrigin);
+
+    engine.destroy();
+    canvas.remove();
+  });
+
   it("zooms via engine buttons, direct wheel, Ctrl-wheel, and reset", () => {
     const { latestZoom } = installZoomCanvasMock();
     const canvas = document.createElement("canvas");
@@ -478,6 +548,70 @@ describe("canvas engine Static Maps snapshot scale", () => {
       endX: 1280,
       endY: 680,
     });
+
+    engine.destroy();
+    canvas.remove();
+  });
+
+  it("preserves the viewport when a finished run syncs through canonical rounded lengths", () => {
+    const { latestPan, latestZoom } = installZoomCanvasMock();
+    const canvas = document.createElement("canvas");
+    document.body.appendChild(canvas);
+    Object.defineProperty(canvas, "getBoundingClientRect", {
+      value: () => ({
+        left: 0,
+        top: 0,
+        width: 640,
+        height: 360,
+        right: 640,
+        bottom: 360,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }),
+    });
+
+    const layoutChanges: CanvasLayout[] = [];
+    const engine = initCanvasEngine(canvas, {
+      snapToGrid: false,
+      gridSize: 20,
+      showGrid: false,
+      onLayoutChange: (layout) => {
+        layoutChanges.push(layout);
+      },
+    });
+    engine.setViewportTransform({
+      pan: { x: -320, y: -180 },
+      zoom: 0.5,
+      scale: 7.3,
+    });
+
+    clickCanvas(canvas, 200, 160);
+    clickCanvas(canvas, 323, 177);
+    canvas.dispatchEvent(
+      new MouseEvent("dblclick", {
+        bubbles: true,
+        button: 0,
+        clientX: 323,
+        clientY: 177,
+      }),
+    );
+    const finishedLayout = layoutChanges[layoutChanges.length - 1];
+    expect(finishedLayout?.segments).toHaveLength(1);
+    if (!finishedLayout) throw new Error("Expected a finished layout change");
+
+    const canonical = canvasLayoutToCanonical(finishedLayout, "QSHS", {});
+    const roundTrippedLayout = canonicalToCanvasLayout(canonical);
+    expect(roundTrippedLayout.segments[0].lengthMM).not.toBe(
+      finishedLayout.segments[0].lengthMM,
+    );
+
+    const panBeforeSync = latestPan();
+    const zoomBeforeSync = latestZoom();
+    engine.loadLayout(roundTrippedLayout);
+
+    expect(latestPan()).toEqual(panBeforeSync);
+    expect(latestZoom()).toBeCloseTo(zoomBeforeSync, 6);
 
     engine.destroy();
     canvas.remove();

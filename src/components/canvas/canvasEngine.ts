@@ -710,6 +710,7 @@ export function initCanvasEngine(
   let pendingArrow: { from: Point; to: Point } | null = null;
   let mapLayers: Array<{ image: HTMLImageElement; opacity: number }> = [];
   let mapLoadVersion = 0;
+  let mapViewKey = "";
   let mapWorldOriginX = 0; // world px — centre of the tile
   let mapWorldOriginY = 0; // world px — centre of the tile
   let mapWorldWidth = 0; // world px
@@ -4512,10 +4513,16 @@ export function initCanvasEngine(
     const loadVersion = ++mapLoadVersion;
     if (visibleLayers.length === 0) {
       mapLayers = [];
+      mapViewKey = "";
       mapWorldWidth = 0;
       scheduleRedraw();
       return;
     }
+    const nextMapViewKey = JSON.stringify({
+      lat,
+      mapZoom,
+      urls: visibleLayers.map((layer) => layer.imageUrl),
+    });
 
     // Ground resolution: metres per image pixel at this latitude and zoom level.
     // Formula from Google Maps documentation (Mercator projection).
@@ -4544,23 +4551,32 @@ export function initCanvasEngine(
         );
         if (loadedLayers.length === 0) {
           mapLayers = [];
+          mapViewKey = "";
           mapWorldWidth = 0;
           scheduleRedraw();
           return;
         }
+        const preserveMapOrigin =
+          mapViewKey === nextMapViewKey &&
+          mapWorldWidth > 0 &&
+          mapWorldHeight > 0;
         mapLayers = loadedLayers;
         const firstImage = loadedLayers[0].image;
         mapWorldWidth = firstImage.width * metersPerPixel * scale;
         mapWorldHeight = firstImage.height * metersPerPixel * scale;
-        const cw = cssCanvasWidth || canvas.getBoundingClientRect().width || 800;
-        const ch = cssCanvasHeight || canvas.getBoundingClientRect().height || 400;
-        mapWorldOriginX = (cw / 2 - pan.x) / zoom;
-        mapWorldOriginY = (ch / 2 - pan.y) / zoom;
+        if (!preserveMapOrigin) {
+          const cw = cssCanvasWidth || canvas.getBoundingClientRect().width || 800;
+          const ch = cssCanvasHeight || canvas.getBoundingClientRect().height || 400;
+          mapWorldOriginX = (cw / 2 - pan.x) / zoom;
+          mapWorldOriginY = (ch / 2 - pan.y) / zoom;
+        }
+        mapViewKey = nextMapViewKey;
         scheduleRedraw();
       })
       .catch(() => {
         if (loadVersion !== mapLoadVersion) return;
         mapLayers = [];
+        mapViewKey = "";
         mapWorldWidth = 0;
         scheduleRedraw();
       });
@@ -5155,7 +5171,7 @@ export function initCanvasEngine(
         !sameNumber(a.startY, b.startY) ||
         !sameNumber(a.endX, b.endX) ||
         !sameNumber(a.endY, b.endY) ||
-        !sameNumber(a.lengthMM, b.lengthMM, 0.1)
+        !sameNumber(a.lengthMM, b.lengthMM, 1)
       ) {
         return false;
       }

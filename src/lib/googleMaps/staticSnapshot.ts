@@ -109,7 +109,7 @@ const DEFAULT_LAYER_STATE: Record<
   Pick<CanonicalMapSnapshotLayer, "visible" | "opacity">
 > = {
   satellite: { visible: true, opacity: 1 },
-  roadmap: { visible: false, opacity: 0.5 },
+  roadmap: { visible: true, opacity: 0.5 },
 };
 
 export function isMobileTouchViewport(win: Window = window): boolean {

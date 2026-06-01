@@ -266,7 +266,7 @@ describe("Static Maps snapshots", () => {
       "style=feature:road.local|element:labels|visibility:off",
     );
     expect(snapshot.layers?.roadmap).toMatchObject({
-      visible: false,
+      visible: true,
       opacity: 0.5,
     });
   });
@@ -302,6 +302,14 @@ describe("Static Maps snapshots", () => {
     expect(mobileSnapshot.layers?.satellite?.url).toContain("maptype=satellite");
     expect(desktopSnapshot.layers?.roadmap?.url).toContain("maptype=roadmap");
     expect(mobileSnapshot.layers?.roadmap?.url).toContain("maptype=roadmap");
+    expect(desktopSnapshot.layers?.roadmap).toMatchObject({
+      visible: true,
+      opacity: 0.5,
+    });
+    expect(mobileSnapshot.layers?.roadmap).toMatchObject({
+      visible: true,
+      opacity: 0.5,
+    });
   });
 
   it("detects a mobile touch viewport for snapshot layer defaults", () => {
