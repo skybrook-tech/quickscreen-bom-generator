@@ -85,36 +85,6 @@ function toNumber(value: unknown, fallback: number): number {
   return Number.isFinite(n) ? n : fallback;
 }
 
-function normalizeColour(colour: string): string {
-  const clean = String(colour).trim().toLowerCase();
-  const upper = clean.toUpperCase();
-
-  if (STANDARD_COLOURS.has(upper) || ALUMAWOOD_CORE_COLOURS.has(upper)) {
-    return upper;
-  }
-
-  const map: Record<string, string> = {
-    "black-satin": "B",
-    "monument-matt": "MN",
-    "woodland-grey-matt": "G",
-    "surfmist-matt": "SM",
-    "pearl-white-gloss": "W",
-    "basalt-satin": "BS",
-    dune: "D",
-    "dune-satin": "D",
-    mill: "M",
-    primrose: "P",
-    paperbark: "PB",
-    "palladium-silver-pearl": "S",
-    kwila: "KWI",
-    "western-red-cedar": "WRC",
-    "island-grey": "IG",
-    terrain: "TR",
-  };
-
-  return map[clean] ?? colour;
-}
-
 function gapCode(gapMm: number): string {
   return `${String(gapMm).padStart(2, "0")}MM`;
 }
@@ -904,9 +874,7 @@ function calculateGateSegment(
     vars[GATE_SEGMENT_STUB_KEYS.gateBuild] ??
       (run.productCode === "VS" ? "qsg_hinged_vertical" : "qsg_hinged_horizontal"),
   );
-  const colour = normalizeColour(
-    String(vars[GATE_SEGMENT_STUB_KEYS.colourCode] ?? vars.colour_code ?? "B"),
-  );
+  const colour = String(vars[GATE_SEGMENT_STUB_KEYS.colourCode] ?? vars.colour_code ?? "B");
   const slatGap = toNumber(vars[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? vars.slat_gap_mm, 9);
   const slatSize = toNumber(vars[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? vars.slat_size_mm, 65);
   const finishFamily = String(vars.finish_family ?? "standard");
@@ -1214,12 +1182,8 @@ function calculateVerticalSlatRun(
     ...(run.variables ?? {}),
     ...(firstFenceSegment?.variables ?? {}),
   };
-  const runColour = normalizeColour(
-    String(mergedRunVars.colour_code ?? mergedRunVars.colour ?? "B"),
-  );
-  const runPostColour = normalizeColour(
-    String(mergedRunVars.post_colour_code ?? runColour),
-  );
+  const runColour = String(mergedRunVars.colour_code ?? mergedRunVars.colour ?? "B");
+  const runPostColour = String(mergedRunVars.post_colour_code ?? runColour);
   const runFinishFamily = String(mergedRunVars.finish_family ?? "standard");
   const mountingType = String(
     mergedRunVars.mounting_type ?? mergedRunVars.mounting_method ?? "in_ground",
@@ -1234,7 +1198,7 @@ function calculateVerticalSlatRun(
     }
 
     const vars = { ...mergedRunVars, ...(segment.variables ?? {}) };
-    const colour = normalizeColour(String(vars.colour_code ?? vars.colour ?? runColour));
+    const colour = String(vars.colour_code ?? vars.colour ?? runColour);
     const slatSize = toNumber(vars.slat_size_mm, 65);
     const slatGap = toNumber(vars.slat_gap_mm, 5);
     const finishFamily = String(vars.finish_family ?? runFinishFamily);
@@ -1381,12 +1345,8 @@ function calculateScreenRun(
     ...(run.variables ?? {}),
     ...(firstFenceSegment?.variables ?? {}),
   };
-  const runColour = normalizeColour(
-    String(mergedRunVars.colour_code ?? mergedRunVars.colour ?? "B"),
-  );
-  const runPostColour = normalizeColour(
-    String(mergedRunVars.post_colour_code ?? runColour),
-  );
+  const runColour = String(mergedRunVars.colour_code ?? mergedRunVars.colour ?? "B");
+  const runPostColour = String(mergedRunVars.post_colour_code ?? runColour);
   const runFinishFamily = String(mergedRunVars.finish_family ?? "standard");
   const mountingType = String(
     mergedRunVars.mounting_type ?? mergedRunVars.mounting_method ?? "in_ground",
@@ -1413,8 +1373,8 @@ function calculateScreenRun(
     }
 
     const vars = { ...mergedRunVars, ...(segment.variables ?? {}) };
-    const colour = normalizeColour(String(vars.colour_code ?? vars.colour ?? runColour));
-    const postColour = normalizeColour(String(vars.post_colour_code ?? colour));
+    const colour = String(vars.colour_code ?? vars.colour ?? runColour);
+    const postColour = String(vars.post_colour_code ?? colour);
     const slatSize = toNumber(vars.slat_size_mm, 65);
     const slatGap = toNumber(vars.slat_gap_mm, 5);
     const finishFamily = String(vars.finish_family ?? runFinishFamily);

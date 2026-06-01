@@ -53,9 +53,7 @@ export function resolveMatchFenceJobStyle(
   fenceCtx: Record<string, string | number | boolean>,
 ): Record<string, string | number | boolean> {
   const finish =
-    (fenceCtx.finish_type as string | undefined) ??
-    (fenceCtx.finish_family as string | undefined) ??
-    "standard";
+    (fenceCtx.finish_type as string | undefined) ?? "standard";
   const colour =
     (fenceCtx.colour_code as string | undefined) ?? "B";
   const slatSize = Number(fenceCtx.slat_size_mm ?? 65);

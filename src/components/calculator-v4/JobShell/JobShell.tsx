@@ -14,10 +14,10 @@ interface JobShellProps {
 export function JobShell({ onOpenLayoutMap, hasPayload }: JobShellProps) {
   return (
     <div className="py-4  flex flex-col gap-1">
-      <div className="text-[11px] font-medium uppercase tracking-wider text-brand-muted mb-4">
+      <label className="text-[11px] font-medium uppercase tracking-wider text-brand-muted mb-4">
         Job
         <JobNameField />
-      </div>
+      </label>
 
 
       {/* <QuoteDetailsPanel /> */}

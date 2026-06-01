@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { calculateLocalBom } from '../lib/localBomCalculator';
-import { prepareBomCalculatorPayload } from '../lib/bomPayloadAdapter';
 import type { CanonicalPayload, CanonicalRun, CanonicalSegment } from '../types/canonical.types';
 import type { PricingTier } from '../types/bom.types';
 
@@ -61,9 +60,7 @@ export function useBomCalculator() {
   return useMutation({
     mutationFn: async ({ payload, pricingTier }: { payload: CanonicalPayload; pricingTier?: PricingTier }) => {
       const tier = pricingTier ?? 'tier1';
-      const calculatorPayload = prepareBomCalculatorPayload(
-        expandSectionSystemOverrides(payload),
-      );
+      const calculatorPayload = expandSectionSystemOverrides(payload);
       if (!isSupabaseConfigured) {
         return calculateLocalBom(calculatorPayload, tier);
       }
