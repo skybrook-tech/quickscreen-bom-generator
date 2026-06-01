@@ -161,6 +161,12 @@ Latest Brief 031 pass: run headings now show full system names with inline edita
 
 Latest map-label cleanup pass: layout map angle annotations and gate direction text have been removed; section/gate codes now share smaller black labels, section and gate measurements share smaller blue labels, and redundant gate-to-section-end distance text has been consolidated out of the canvas.
 
+Latest roadmap underlay fix: new property-map captures now send the roadmap Static Maps layer to the canvas as a visible 50% overlay above satellite, while preserving the current per-layer visibility controls.
+
+Latest canvas finish fix: finishing a run with double-click now preserves the user's current canvas viewport through the canvas-to-canonical sync, even when canonical length rounding changes a segment by a fraction of a millimetre.
+
+Latest canvas point-placement fix: repeated canvas-to-canonical syncs no longer reload and re-anchor unchanged Static Maps layers, so the satellite/roadmap underlay stays pinned under drawn points across later runs.
+
 
 ---
 
@@ -476,6 +482,9 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Brief BM completion pass: added Ortho snapping for Draw Fence/Dotted line, free-draw colour/width/style/opacity/arrow controls, map item selection with Delete/Backspace removal, right-click context actions, draggable/resizable text notes, movable/resizable building rectangles, movable existing post/pillar markers, and editable text/post/pillar details without changing BOM dispatch.
 - [x] Brief BO residual punch-list: removed redundant run-subheading length/height, kept height section-only in the visible UI, added stripped colour-code display text for BOM summaries/rows/exports, tightened visible green section/gate match chips, and confirmed the existing icon Describe trigger plus hidden initial Add Run behaviour.
 - [x] Brief 011 queue pass: double-click fence finish now preserves the user's zoomed-out canvas viewport during same-geometry form sync, preventing the satellite/background view from shifting away from the drawn run.
+- [x] Roadmap underlay fix: new layered Static Maps captures now make the roadmap layer visible by default while preserving the current Satellite/Roadmap visibility toggles.
+- [x] Canvas finish viewport fix: double-click run completion now treats canonical round-trip millimetre rounding as the same geometry, so the mapper does not refit away from the line just drawn.
+- [x] Canvas point-placement underlay fix: unchanged Static Maps layers are cached through live canvas syncs, and same-URL layer reloads preserve their world origin instead of re-centering under the current viewport.
 - [x] Brief 016 mobile BOM cards: mobile BOM view now renders grouped stacked cards, sticky totals, collapsible accessory cards, a bottom BOM action bar, and Share PDF support with Web Share API plus download fallback while preserving the desktop BOM table.
 - [x] Master baseline keyboard-offset fix: removed the duplicate `keyboardOffset` state declaration left by the mobile brief merge and rewired the orphaned Job-tab Generate BOM button to the current `handleManualBomGenerate` handler.
 - [x] Brief 030 canvas roadmap layer fix: property map capture now builds separate satellite and roadmap Static Maps layers, crops attribution from both captured layers, exposes per-layer Satellite/Roadmap visibility toggles with opacity controls, and keeps the drawing layer rendered above map underlays.
