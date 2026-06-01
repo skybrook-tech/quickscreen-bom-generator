@@ -24,6 +24,10 @@ Latest print options pass: the BOM header no longer carries a persistent Include
 
 Latest point label cleanup: fence drawing no longer renders permanent A/B/C labels on placed points.
 
+Latest QuickScreen post-colour UI pass: section Slats, colors, and spacings now keeps the alternate post colour button under Colour as the only section-level post-colour control.
+
+Latest sidebar post-colour parity pass: run settings now places Alternate post colour directly under Colour in Slats, colors, and spacings; section settings mirrors the same run dropdown order and keeps post colour out of the posts dropdown.
+
 Latest Brief 014 pass: the mobile Job tab now prioritises job/address/system/run controls, supports Web Speech API address dictation, adds numeric and decimal mobile keyboard hints, enlarges key touch targets, and keeps Save/Clear/Generate actions in a keyboard-aware sticky action bar.
 
 Latest Brief 017 pass: the calculator now has production-only PWA registration, manifest/icons, install and offline banners, customer quote mode that hides costs, and a real-device mobile QA checklist.
