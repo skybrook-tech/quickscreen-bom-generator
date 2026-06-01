@@ -17,7 +17,6 @@ import { ExtraItemsPanel } from "../components/calculator-v3/ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "../components/calculator-v3/SuggestedAccessoriesPanel";
 import { BOMResultTabs } from "../components/shared/BOMResultTabs";
 import { MobileBomTotals } from "../components/shared/MobileBomTotals";
-import { PwaStatusBanners } from "../components/pwa/PwaStatusBanners";
 import { BomV3PDFTemplate } from "../components/quote/BomV3PDFTemplate";
 import { GlassOutletLogo } from "../components/brand/GlassOutletLogo";
 import { JobNameEditor } from "../components/calculator/JobNameEditor";
@@ -76,7 +75,7 @@ import {
   Share2,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import Papa from "papaparse";
@@ -127,6 +126,82 @@ function defaultSaveJobName(now = new Date()) {
     year: "numeric",
   }).format(now);
   return `Untitled Job (${date})`;
+}
+
+interface PrintBomOptionsDialogProps {
+  includeMap: boolean;
+  onIncludeMapChange: (includeMap: boolean) => void;
+  onCancel: () => void;
+  onPrint: () => void;
+}
+
+function PrintBomOptionsDialog({
+  includeMap,
+  onIncludeMapChange,
+  onCancel,
+  onPrint,
+}: PrintBomOptionsDialogProps) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    onPrint();
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="print-bom-options-title"
+      onClick={onCancel}
+    >
+      <form
+        className="w-full max-w-sm rounded-2xl border border-brand-border bg-brand-card p-5 text-brand-text shadow-2xl"
+        onClick={(event) => event.stopPropagation()}
+        onSubmit={handleSubmit}
+      >
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h2 id="print-bom-options-title" className="text-base font-extrabold">
+            Print BOM
+          </h2>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-lg p-1 text-brand-muted transition-colors hover:bg-brand-border/40 hover:text-brand-text"
+            aria-label="Close print options"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        <label className="flex items-center gap-3 rounded-xl border border-brand-border bg-brand-bg/60 px-3 py-3 text-sm font-bold text-brand-text">
+          <input
+            type="checkbox"
+            checked={includeMap}
+            onChange={(event) => onIncludeMapChange(event.target.checked)}
+            className="h-4 w-4 accent-brand-primary"
+          />
+          Include layout map
+        </label>
+
+        <div className="mt-5 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-lg border border-brand-border px-3 py-2 text-sm font-bold text-brand-muted transition-colors hover:text-brand-text"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-black text-white transition-colors hover:bg-brand-primary/90 hover:shadow-sm"
+          >
+            <Printer size={16} />
+            Print BOM
+          </button>
+        </div>
+      </form>
+    </div>
+  );
 }
 
 const lineKey = (line: BOMLineItem) =>
@@ -461,7 +536,8 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const [mapExpanded, setMapExpanded] = useState(false);
   const [introDismissed, setIntroDismissed] = useState(false);
   const [autoOpenFirstSectionRunId, setAutoOpenFirstSectionRunId] = useState<string | null>(null);
-  const [includeMapInBomPrint, setIncludeMapInBomPrint] = useState(false);
+  const [printBomDialogOpen, setPrintBomDialogOpen] = useState(false);
+  const [printBomIncludeMap, setPrintBomIncludeMap] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [clearJobDialogOpen, setClearJobDialogOpen] = useState(false);
   const [saveJobDialogOpen, setSaveJobDialogOpen] = useState(false);
@@ -1180,7 +1256,13 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     setClearJobDialogOpen(false);
   }
 
-  function handlePrintBom() {
+  function handlePrintBomRequest() {
+    setPrintBomIncludeMap(false);
+    setPrintBomDialogOpen(true);
+  }
+
+  function handlePrintBom(includeMap: boolean) {
+    setPrintBomDialogOpen(false);
     const previousRightPaneView = rightPaneView;
     const cleanupPrintMode = () => {
       document.body.removeAttribute("data-print-bom");
@@ -1189,13 +1271,13 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
       setRightPaneView(previousRightPaneView);
     };
     document.body.setAttribute("data-print-bom", "true");
-    if (includeMapInBomPrint) {
+    if (includeMap) {
       document.body.setAttribute("data-print-bom-map", "true");
     } else {
       document.body.removeAttribute("data-print-bom-map");
     }
     window.addEventListener("afterprint", cleanupPrintMode);
-    if (includeMapInBomPrint) {
+    if (includeMap) {
       setRightPaneView("map");
       window.setTimeout(() => window.print(), 300);
       return;
@@ -1601,7 +1683,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
         <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
           <button
             type="button"
-            onClick={handlePrintBom}
+            onClick={handlePrintBomRequest}
             disabled={!bomResultForTabs}
             title="Print BOM"
             className="inline-flex items-center gap-1.5 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-40"
@@ -1609,15 +1691,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             <Printer size={16} />
             Print BOM
           </button>
-          <label className="inline-flex items-center gap-1.5 rounded-lg border border-brand-border px-3 py-2 text-xs font-bold text-brand-muted">
-            <input
-              type="checkbox"
-              checked={includeMapInBomPrint}
-              onChange={(event) => setIncludeMapInBomPrint(event.target.checked)}
-              className="accent-brand-primary"
-            />
-            Include map
-          </label>
           <button
             type="button"
             onClick={handleExportCsv}
@@ -1655,7 +1728,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   return (
     <AppShell
       headerActions={headerActions}
-      topBar={<PwaStatusBanners />}
       jobTitle={headerJobTitle}
       headerPriceLabel={headerPriceLabel}
       customerMode={customerMode}
@@ -2031,40 +2103,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                         onActiveSummaryChange={handleActiveBomSummaryChange}
                         customerMode={customerMode}
                       />
-                      {bomRunDetails.length > 0 && (
-                        <div
-                          data-print-run-details
-                          className="mt-8 hidden space-y-4 border-t border-slate-300 pt-5 print:block"
-                        >
-                          <h2 className="text-base font-black uppercase tracking-wide text-black">
-                            Run &amp; Section Details
-                          </h2>
-                          {bomRunDetails.map((runDetail) => (
-                            <section key={runDetail.hero} className="break-inside-avoid space-y-2">
-                              <h3 className="text-sm font-black text-black">{runDetail.printHeading}</h3>
-                              <p className="text-xs font-semibold text-slate-700">
-                                {runDetail.settings}
-                              </p>
-                              <div className="space-y-2 pl-3 text-xs font-semibold text-slate-700">
-                                {runDetail.sections.map((section) => (
-                                  <div key={section.label} className="break-inside-avoid">
-                                    <p className="font-bold text-black">{section.label}</p>
-                                    <p>{section.panelLine}</p>
-                                    {section.overrides.length > 0 && (
-                                      <p>Overrides: {section.overrides.join(", ")}</p>
-                                    )}
-                                    {section.gates.map((gate) => (
-                                      <p key={gate} className="pl-3 text-slate-700">
-                                        {gate}
-                                      </p>
-                                    ))}
-                                  </div>
-                                ))}
-                              </div>
-                            </section>
-                          ))}
-                        </div>
-                      )}
                       <div data-print-hide>
                         <ExtraItemsPanel
                           items={extraItems}
@@ -2123,6 +2161,14 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             <ClearJobConfirmDialog
               onCancel={() => setClearJobDialogOpen(false)}
               onClear={clearToFreshWorkspace}
+            />
+          )}
+          {printBomDialogOpen && (
+            <PrintBomOptionsDialog
+              includeMap={printBomIncludeMap}
+              onIncludeMapChange={setPrintBomIncludeMap}
+              onCancel={() => setPrintBomDialogOpen(false)}
+              onPrint={() => handlePrintBom(printBomIncludeMap)}
             />
           )}
           {shortcutsOpen && (

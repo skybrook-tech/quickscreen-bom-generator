@@ -6,7 +6,23 @@
 > **v3 Engine** — V3-1 through V3-6 complete. V3-7 (docs cross-linking) is the only remaining item.
 > Start here for an overview: [`docs/how_it_works.md`](./how_it_works.md).
 
+Latest print BOM header pass: printed BOMs no longer show the mobile subtotal/GST/total strip at the top, the job name prints as a large bold heading, and the Glass Outlet three-square mark uses explicit print-safe styling.
+
+Latest PWA install-banner cleanup: the `/fence-calculator` top bar no longer mounts the custom install-for-offline-access prompt or iPhone home-screen hint, and mobile QA now verifies those install banners stay absent.
+
+Latest print BOM map-options merge fix: `codex/print-bom-map-options` is synced with current master, keeps the print dialog/map option and print BOM cleanup, and retains the BOM workings toggle plus PR #79 BOM-generation fixes.
+
+Latest BOM readability pass: run/gate tab item counts now render as highlighted explicit item-count pills, and per-line source/workings text is controlled by the BOM workings toggle.
+
 Latest infrastructure fix: duplicate Supabase migration version 029 was resolved by keeping the earlier profile-email migration at 029 and renaming the later quote property-anchor migration to 030.
+
+Latest print BOM cleanup: printed BOMs now force the desktop line-item table, hide mobile card-only price-break/source details, remove the print-only run/section appendix, and pin explicit Glass Outlet logo print styling.
+
+Latest gate assembly diagram pass: horizontal and vertical gate component checklists now show matching assembly images with orange numbered overlays, and checklist scroll/hover state stays synced with BOM row highlighting.
+
+Latest print options pass: the BOM header no longer carries a persistent Include map checkbox; Print BOM now opens a print options dialog every time so the layout map can be included per print.
+
+Latest point label cleanup: fence drawing no longer renders permanent A/B/C labels on placed points.
 
 Latest Brief 014 pass: the mobile Job tab now prioritises job/address/system/run controls, supports Web Speech API address dictation, adds numeric and decimal mobile keyboard hints, enlarges key touch targets, and keeps Save/Clear/Generate actions in a keyboard-aware sticky action bar.
 
@@ -166,7 +182,6 @@ Latest roadmap underlay fix: new property-map captures now send the roadmap Stat
 Latest canvas finish fix: finishing a run with double-click now preserves the user's current canvas viewport through the canvas-to-canonical sync, even when canonical length rounding changes a segment by a fraction of a millimetre.
 
 Latest canvas point-placement fix: repeated canvas-to-canonical syncs no longer reload and re-anchor unchanged Static Maps layers, so the satellite/roadmap underlay stays pinned under drawn points across later runs.
-
 
 ---
 
@@ -490,6 +505,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] Brief 030 canvas roadmap layer fix: property map capture now builds separate satellite and roadmap Static Maps layers, crops attribution from both captured layers, exposes per-layer Satellite/Roadmap visibility toggles with opacity controls, and keeps the drawing layer rendered above map underlays.
 - [x] BOM workings toggle: added a top-of-BOM control to show or hide per-line source/workings text across mobile cards and desktop line items.
 - [x] Preview BOM fallback fix: top-level edge-function error payloads now fall back to the local BOM calculator instead of rendering an empty BOM result.
+- [x] Print BOM cleanup: print output now suppresses run/section labels and mobile price-break/source chips, uses the desktop BOM table for printing, and keeps the Glass Outlet logo visible with print-specific sizing.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---

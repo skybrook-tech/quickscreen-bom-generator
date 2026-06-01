@@ -255,7 +255,10 @@ function BOMTable({
       customerMode={customerMode}
       showWorkings={showWorkings}
     />
-    <div className="hidden overflow-x-auto md:block" data-testid="bom-desktop-table">
+    <div
+      className="hidden overflow-x-auto md:block print:block print:overflow-visible"
+      data-testid="bom-desktop-table"
+    >
       <table className="w-full text-left border-collapse">
         <thead>
           <tr className="bg-brand-bg/80">
@@ -330,7 +333,7 @@ function BOMMobileCards({
   showWorkings: boolean;
 }) {
   return (
-    <div className="space-y-4 md:hidden" data-testid="bom-mobile-cards">
+    <div className="space-y-4 md:hidden print:hidden" data-testid="bom-mobile-cards">
       {groups.map(([category, categoryItems]) => (
         <section key={category} className="space-y-2">
           <h3 className="text-[11px] font-black uppercase tracking-[0.14em] text-brand-muted">
@@ -752,13 +755,15 @@ export function BOMResultTabs({
           >
             {tab.label}
             <span
-              className={`text-xs px-1.5 py-0.5 rounded-full font-medium leading-none ${
+              className={`ml-1 inline-flex items-center rounded-full border px-2 py-0.5 font-mono text-[11px] font-black leading-none tabular-nums shadow-sm ${
                 activeTab === tab.id
-                  ? "bg-brand-accent/15 text-brand-accent"
-                  : "bg-brand-border/60 text-brand-muted"
+                  ? "border-brand-warning/45 bg-brand-warning/15 text-brand-warning"
+                  : "border-brand-primary/25 bg-brand-primary/10 text-brand-primary"
               }`}
+              aria-label={`${pluralize("item", tab.count, true)} in ${tab.label}`}
+              title={`${pluralize("item", tab.count, true)} in ${tab.label}`}
             >
-              {tab.count}
+              {pluralize("item", tab.count, true)}
             </span>
           </button>
         ))}
