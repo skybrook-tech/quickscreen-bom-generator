@@ -8,7 +8,9 @@ import type {
   CanonicalSegment,
 } from "../../types/canonical.types";
 import { InlineHeightEditor } from "./InlineHeightEditor";
+import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { RunCard } from "./RunCard";
+import { RunSettingsEditor } from "./RunSettingsEditor";
 import { SegmentRow } from "./SegmentRow";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
@@ -22,11 +24,57 @@ const contextMock = vi.hoisted(() => ({
   dispatch: vi.fn(),
 }));
 
+const productVariablesMock = vi.hoisted(() => {
+  const field = (
+    fieldKey: string,
+    label: string,
+    controlType: string,
+    dataType: string,
+    defaultValue: unknown,
+    options: unknown[],
+    sortOrder: number,
+  ) => ({
+    id: `${fieldKey}-field`,
+    field_key: fieldKey,
+    label,
+    control_type: controlType,
+    data_type: dataType,
+    required: true,
+    default_value_json: defaultValue,
+    options_json: options,
+    visible_when_json: {},
+    sort_order: sortOrder,
+  });
+
+  const jobFields = [
+    field("colour_code", "Colour", "select", "enum", "B", ["B", "SM"], 10),
+    field("post_colour_code", "Post colour", "select", "enum", "B", ["B", "SM"], 11),
+    field("slat_size_mm", "Slat size", "select", "number", 65, [65, 90], 20),
+    field("slat_gap_mm", "Slat gap", "select", "number", 9, [5, 9, 20], 30),
+  ];
+  const runFields = [
+    field("post_system", "Post size", "select", "enum", "standard_50", ["standard_50", "standard_65"], 40),
+    field("post_size", "Standard post size", "select", "number", 50, [50, 65], 41),
+    field("mounting_method", "Post mounting type", "select", "enum", "in_ground", ["in_ground", "base_plate", "core_drill"], 50),
+    field("max_panel_width_mm", "Max Post Spacing", "number", "number", 2600, [], 60),
+  ];
+
+  return {
+    useProductVariables: vi.fn((_productCode: string, scope: string) => ({
+      data: scope === "run" ? runFields : jobFields,
+    })),
+  };
+});
+
 vi.mock("../../context/CalculatorContext", () => ({
   useCalculator: () => ({
     state: contextMock.state,
     dispatch: contextMock.dispatch,
   }),
+}));
+
+vi.mock("../../hooks/useProductVariables", () => ({
+  useProductVariables: productVariablesMock.useProductVariables,
 }));
 
 function render(ui: ReactNode) {
@@ -40,6 +88,14 @@ function render(ui: ReactNode) {
 function cleanup(root?: Root, container?: HTMLElement) {
   if (root) act(() => root.unmount());
   container?.remove();
+}
+
+function disclosureRow(container: HTMLElement, label: string) {
+  const button = Array.from(container.querySelectorAll("button")).find((item) =>
+    item.textContent?.includes(label),
+  );
+  expect(button).toBeTruthy();
+  return button!.parentElement as HTMLElement;
 }
 
 const baseRun: CanonicalRun = {
@@ -151,6 +207,46 @@ describe("Run, section, and gate UI consistency", () => {
     expect(container.textContent).toContain("Colour: Surfmist Matt");
     expect(container.textContent).toContain("Gap: 20mm");
     expect(container.textContent).not.toContain("Post: 50mm Post Standard");
+
+    cleanup(root, container);
+  });
+
+  it("places alternate post colour inside the run slats and colours dropdown", () => {
+    setPayload(baseRun);
+    const { container, root } = render(<RunSettingsEditor run={baseRun} />);
+
+    const slatsRow = disclosureRow(container, "Slats, colors, and spacings");
+    const postsRow = disclosureRow(container, "Post size, mounting and spacing");
+
+    expect(slatsRow.textContent).toContain("Alternate post colour");
+    expect(postsRow.textContent).not.toContain("Alternate post colour");
+
+    cleanup(root, container);
+  });
+
+  it("mirrors run dropdown grouping in section settings", () => {
+    const segment: CanonicalSegment = {
+      segmentId: "seg-1",
+      sortOrder: 1,
+      segmentKind: "panel",
+      segmentWidthMm: 3000,
+      targetHeightMm: 1800,
+      variables: {},
+    };
+    const run = { ...baseRun, segments: [segment] };
+    setPayload(run);
+    const { container, root } = render(
+      <FenceSegmentDetails runId={run.runId} seg={segment} />,
+    );
+
+    const slatsRow = disclosureRow(container, "Slats, colors, and spacings");
+    const postsRow = disclosureRow(container, "Post size, mounting and spacing");
+
+    expect(slatsRow.textContent).toContain("Alternate post colour");
+    expect(slatsRow.textContent?.match(/Post colour/g) ?? []).toHaveLength(0);
+    expect(postsRow.textContent).not.toContain("Alternate post colour");
+    expect(postsRow.textContent).not.toContain("Post colour");
+    expect(postsRow.textContent).not.toContain("Slat range");
 
     cleanup(root, container);
   });

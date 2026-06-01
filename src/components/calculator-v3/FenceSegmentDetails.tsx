@@ -19,7 +19,7 @@ import {
 import { SchemaDrivenForm, type SchemaField } from "./SchemaDrivenForm";
 import NumberInput from "../shared/NumberInput";
 import { SettingsDisclosureRow } from "./SettingsDisclosureRow";
-import { ColourPalette, colourName } from "./ColourPalette";
+import { colourName } from "./ColourPalette";
 import { CombinedGapSelect } from "./CombinedGapSelect";
 import {
   combinedGapLabel,
@@ -35,7 +35,37 @@ const POST_SIZE_LABELS: Record<string, string> = {
   xpl: "XPress Plus post",
 };
 
+const VALUE_LABELS: Record<string, string> = {
+  standard: "Standard slats",
+  economy: "Economy slats",
+  alumawood: "Alumawood timber-look",
+  spacer: "Preset spacer gaps",
+  custom: "Custom gap",
+  in_ground: "Concreted in ground",
+  base_plate: "Base plated",
+  core_drill: "Core drilled",
+  xpl: "XPress Plus post",
+  standard_50: "50mm Post Standard",
+  standard_65: "65mm Post Standard HD",
+};
+
 const SECTION_POST_FIELD_KEYS = new Set([
+  "mounting_method",
+  "mounting_type",
+  "post_system",
+  "post_size",
+]);
+
+const CORE_SLAT_FIELD_KEYS = new Set([
+  "finish_family",
+  "colour_code",
+  "post_colour_code",
+  "slat_size_mm",
+  "slat_gap_mode",
+  "slat_gap_mm",
+]);
+
+const CORE_POST_FIELD_KEYS = new Set([
   "mounting_method",
   "mounting_type",
   "post_system",
@@ -45,6 +75,18 @@ const SECTION_POST_FIELD_KEYS = new Set([
 interface Props {
   runId: string;
   seg: CanonicalSegment;
+}
+
+function fieldValueLabel(field: SchemaField, variables: Record<string, string | number | boolean>) {
+  const raw = variables[field.field_key] ?? field.default_value_json;
+  if (field.field_key === "colour_code" || field.field_key === "post_colour_code") {
+    return colourName(raw);
+  }
+  if (raw === true) return "Yes";
+  if (raw === false) return "No";
+  if (raw === undefined || raw === null || raw === "") return "Default";
+  if (VALUE_LABELS[String(raw)]) return VALUE_LABELS[String(raw)];
+  return `${raw}${field.unit ? field.unit : ""}`;
 }
 
 export function FenceSegmentDetails({ runId, seg }: Props) {
@@ -84,8 +126,27 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
   function onJobOverrideChange(key: string, value: string | number | boolean) {
     const base = runVariables[key];
+    const nextPatch: Record<string, string | number | boolean | null> = {
+      [key]: value === base ? null : value,
+    };
+    if (key === "colour_code") {
+      const runColour = String(runVariables.colour_code ?? "");
+      const runPostColour = String(runVariables.post_colour_code ?? runColour);
+      const currentColour = String(displayVariables.colour_code ?? "");
+      const currentPostColour = String(displayVariables.post_colour_code ?? currentColour);
+      const explicitPostColour = v.post_colour_code;
+      const postColourFollowsColour =
+        explicitPostColour === undefined ||
+        explicitPostColour === null ||
+        explicitPostColour === ""
+          ? runPostColour === runColour
+          : currentPostColour === currentColour;
+      if (postColourFollowsColour) {
+        nextPatch.post_colour_code = value === runVariables.colour_code ? null : value;
+      }
+    }
     upsertSegment(
-      patchSegmentVariables(seg, { [key]: value === base ? null : value }),
+      patchSegmentVariables(seg, nextPatch),
     );
   }
 
@@ -213,36 +274,52 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     [mergedJobDisplay, productCode, runFields],
   );
   const slatOptionFields = optionFields;
+  const slatFieldMap = useMemo(
+    () => new Map(slatOptionFields.map((field) => [field.field_key, field])),
+    [slatOptionFields],
+  );
+  const postFieldMap = useMemo(
+    () => new Map(postFields.map((field) => [field.field_key, field])),
+    [postFields],
+  );
   const gapMode = normaliseGapMode(productCode, mergedJobDisplay.slat_gap_mode);
   const gapMm = Number(mergedJobDisplay.slat_gap_mm ?? 9);
-  const optionSummary = slatOptionFields
-    .filter((field) => field.field_key !== "slat_gap_mode" && field.field_key !== "slat_gap_mm")
-    .map((field) => {
-      const raw = mergedJobDisplay[field.field_key] ?? field.default_value_json;
-      if (raw === undefined || raw === null || raw === "") return null;
-      const label =
-        raw === true
-          ? "Yes"
-          : raw === false
-            ? "No"
-            : `${raw}${field.unit ?? ""}`;
-      return `${field.label}: ${label}`;
-    })
-    .filter(Boolean)
-    .slice(0, 2)
-    .join(" / ");
-  const colourField = slatOptionFields.find((field) => field.field_key === "colour_code");
-  const postColourField = applyProductOptionRules(
-    productCode,
-    jobFields.filter((field) => field.field_key === "post_colour_code"),
-    mergedJobDisplay,
-  )[0];
+  const postColourField = slatFieldMap.get("post_colour_code");
   const remainingOptionFields = slatOptionFields.filter(
-    (field) =>
-      field.field_key !== "colour_code" &&
-      field.field_key !== "slat_gap_mode" &&
-      field.field_key !== "slat_gap_mm",
+    (field) => !CORE_SLAT_FIELD_KEYS.has(field.field_key),
   );
+  const mountingField = postFieldMap.get("mounting_method") ?? postFieldMap.get("mounting_type");
+  const remainingPostFields = postFields.filter(
+    (field) =>
+      !CORE_POST_FIELD_KEYS.has(field.field_key) &&
+      !CORE_SLAT_FIELD_KEYS.has(field.field_key),
+  );
+  function renderSlatField(key: string) {
+    const field = slatFieldMap.get(key);
+    if (!field) return null;
+    return (
+      <SchemaDrivenForm
+        fields={[field]}
+        variables={mergedJobDisplay}
+        onChange={handleOptionChange}
+      />
+    );
+  }
+  function renderPostField(key: string) {
+    const field = postFieldMap.get(key);
+    if (!field) return null;
+    return (
+      <SchemaDrivenForm
+        fields={[field]}
+        variables={mergedJobDisplay}
+        onChange={handleOptionChange}
+      />
+    );
+  }
+  function valueFor(key: string, fallback = "Default") {
+    const field = slatFieldMap.get(key) ?? postFieldMap.get(key);
+    return field ? fieldValueLabel(field, mergedJobDisplay) : fallback;
+  }
   function handleOptionChange(key: string, value: string | number | boolean) {
     onJobOverrideChange(key, value);
   }
@@ -253,9 +330,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     });
   }
   const postSummary = `${POST_SIZE_LABELS[postSystem] ?? POST_SIZE_LABELS[postSize] ?? (postSize ? `${postSize}mm Post` : "Run default")} / ${colourName(mergedJobDisplay.post_colour_code ?? mergedJobDisplay.colour_code)} / ${effectiveMax}mm`;
-  const slatSummary = [optionSummary, combinedGapLabel(gapMode, gapMm)]
-    .filter(Boolean)
-    .join(" / ");
+  const slatSummary = `${valueFor("finish_family")} / ${colourName(mergedJobDisplay.colour_code)} / ${valueFor("slat_size_mm")} / ${combinedGapLabel(gapMode, gapMm)}`;
 
   return (
     <div className="space-y-4">
@@ -282,15 +357,10 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
       {slatOptionFields.length > 0 || postColourField ? (
         <SettingsDisclosureRow id={`${seg.segmentId}-section-style`} label="Slats, colors, and spacings" value={slatSummary || "Run defaults"}>
           <div className="space-y-4">
-            {colourField && (
-              <SchemaDrivenForm
-                fields={[colourField]}
-                variables={mergedJobDisplay}
-                onChange={handleOptionChange}
-              />
-            )}
-            {postColourField && (
-              <div className="space-y-3">
+            {renderSlatField("finish_family")}
+            {renderSlatField("colour_code")}
+            {postColourField && !isBayg && (
+              <>
                 <button
                   type="button"
                   onClick={() => setPostColourOpen((value) => !value)}
@@ -298,18 +368,10 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                 >
                   {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
                 </button>
-                {postColourOpen && (
-                  <div className="space-y-1">
-                    <p className="text-sm font-bold text-brand-muted">Post colour</p>
-                    <ColourPalette
-                      value={String(mergedJobDisplay.post_colour_code ?? mergedJobDisplay.colour_code ?? "B")}
-                      options={(postColourField.options_json ?? colourField?.options_json ?? ["B", "MN", "G", "SM", "W", "BS", "D", "M"]).map(String)}
-                      onChange={(value) => handleOptionChange("post_colour_code", value)}
-                    />
-                  </div>
-                )}
-              </div>
+                {postColourOpen && renderSlatField("post_colour_code")}
+              </>
             )}
+            {renderSlatField("slat_size_mm")}
             {remainingOptionFields.length > 0 && (
               <SchemaDrivenForm
                 fields={remainingOptionFields}
@@ -323,52 +385,63 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
               gapMm={mergedJobDisplay.slat_gap_mm}
               onChange={handleGapChange}
             />
-          </div>
-          {productCode === "QSHS" && (
-            <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
-              <input
-                type="checkbox"
-                checked={mergedJobDisplay.louvre_treatment === true || mergedJobDisplay.louvre_treatment === "true"}
-                disabled={Number(mergedJobDisplay.slat_size_mm ?? 65) !== 65}
-                onChange={(event) => onJobOverrideChange("louvre_treatment", event.target.checked)}
-                className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
-              />
-              <span>
-                <span className="block text-sm font-extrabold text-brand-text">Louvre treatment</span>
-                <span className="mt-1 block text-xs font-semibold text-brand-muted">
-                  40 degree slat angle. Available with 65mm slats.
+            {productCode === "QSHS" && (
+              <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
+                <input
+                  type="checkbox"
+                  checked={mergedJobDisplay.louvre_treatment === true || mergedJobDisplay.louvre_treatment === "true"}
+                  disabled={Number(mergedJobDisplay.slat_size_mm ?? 65) !== 65}
+                  onChange={(event) => onJobOverrideChange("louvre_treatment", event.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
+                />
+                <span>
+                  <span className="block text-sm font-extrabold text-brand-text">Louvre treatment</span>
+                  <span className="mt-1 block text-xs font-semibold text-brand-muted">
+                    40 degree slat angle. Available with 65mm slats.
+                  </span>
                 </span>
-              </span>
-            </label>
-          )}
+              </label>
+            )}
+          </div>
         </SettingsDisclosureRow>
       ) : null}
 
       {!isBayg && (
         <SettingsDisclosureRow id={`${seg.segmentId}-section-posts`} label="Post size, mounting and spacing" value={postSummary}>
-          {postFields.length > 0 && (
-            <SchemaDrivenForm
-              fields={postFields}
-              variables={mergedJobDisplay}
-              onChange={handleOptionChange}
-            />
-          )}
-          <label className="flex flex-col gap-1">
-            <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
-            <input
-              type="number"
-              value={maxSpacingDraft}
-              onChange={(event) => setMaxSpacingDraft(event.target.value)}
-              onBlur={() => commitMaxPanelWidth()}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") event.currentTarget.blur();
-              }}
-              min={MIN_POST_SPACING_MM}
-              max={MAX_POST_SPACING_MM}
-              step={50}
-              className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-            />
-          </label>
+          <div className="space-y-4">
+            {renderPostField("post_system")}
+            {renderPostField("post_size")}
+            {mountingField && (
+              <SchemaDrivenForm
+                fields={[mountingField]}
+                variables={mergedJobDisplay}
+                onChange={handleOptionChange}
+              />
+            )}
+            {remainingPostFields.length > 0 && (
+              <SchemaDrivenForm
+                fields={remainingPostFields}
+                variables={mergedJobDisplay}
+                onChange={handleOptionChange}
+              />
+            )}
+            <label className="flex flex-col gap-1">
+              <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
+              <input
+                type="number"
+                value={maxSpacingDraft}
+                onChange={(event) => setMaxSpacingDraft(event.target.value)}
+                onBlur={() => commitMaxPanelWidth()}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") event.currentTarget.blur();
+                }}
+                min={MIN_POST_SPACING_MM}
+                max={MAX_POST_SPACING_MM}
+                step={50}
+                className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+              />
+            </label>
+          </div>
         </SettingsDisclosureRow>
       )}
 

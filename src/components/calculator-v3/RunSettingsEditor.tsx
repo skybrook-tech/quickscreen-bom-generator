@@ -158,6 +158,7 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
   const gapMm = Number(variables.slat_gap_mm ?? 9);
   const fieldMap = useMemo(() => new Map(fields.map((field) => [field.field_key, field])), [fields]);
   const mountingField = fieldMap.get("mounting_method") ?? fieldMap.get("mounting_type");
+  const showPostColourControl = productCode !== "BAYG" && fieldMap.has("post_colour_code");
 
   function renderField(key: string) {
     const field = fieldMap.get(key);
@@ -374,6 +375,18 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
         <div className="space-y-4">
           {renderField("finish_family")}
           {renderField("colour_code")}
+          {showPostColourControl && (
+            <>
+              <button
+                type="button"
+                onClick={() => setPostColourOpen((value) => !value)}
+                className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+              >
+                {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
+              </button>
+              {postColourOpen && renderField("post_colour_code")}
+            </>
+          )}
           {renderField("slat_size_mm")}
           <CombinedGapSelect
             productCode={productCode}
@@ -416,14 +429,6 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
           value={`${valueFor("post_system", postLabel(productCode, variables))} / ${colourName(variables.post_colour_code ?? variables.colour_code)} / ${valueFor("max_panel_width_mm", "2600mm")}`}
         >
           <div className="space-y-4">
-            <button
-              type="button"
-              onClick={() => setPostColourOpen((value) => !value)}
-              className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-            >
-              {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
-            </button>
-            {postColourOpen && renderField("post_colour_code")}
             {renderField("post_system")}
             {renderField("post_size")}
             {mountingField && (
