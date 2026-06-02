@@ -20,13 +20,11 @@ import {
 } from "../../../lib/gateOptionRules";
 import {
   baseHardwareSku,
-  estimateGateWeight,
   isWhiteHardwareFinish,
   kitForHardwareSelection,
-  rankHinges,
-  rankLatches,
+  listHinges,
+  listLatches,
   type GateHardwareStatus,
-  type GateWeightEstimate,
   type HingeHardware,
   type LatchHardware,
   type RankedHardware,
@@ -224,45 +222,6 @@ function statusClasses(status: GateHardwareStatus) {
 }
 
 
-function GateWeightCard({ estimate }: { estimate: GateWeightEstimate }) {
-  return (
-    <div className="rounded-[var(--brand-radius-sm)] border border-brand-border/70 bg-brand-card p-3">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm font-medium text-brand-text">
-            Estimated gate weight
-          </p>
-          <p className="text-[11px] text-brand-muted">
-            Frame + slats + hardware allowance, 30% hinge safety margin.
-          </p>
-        </div>
-        <div className="text-right shrink-0">
-          <p className="text-xl font-bold tabular-nums text-brand-accent">
-            {estimate.totalKg.toFixed(1)}kg
-          </p>
-          <p className="text-[11px] text-brand-muted">
-            Need {estimate.requiredRatingKg}kg+ hinges
-          </p>
-        </div>
-      </div>
-      <div className="mt-3 grid grid-cols-3 gap-2 text-[11px] text-brand-muted">
-        <span>
-          Slats <b className="text-brand-text">{estimate.slatCount}</b>
-        </span>
-        <span>
-          Slat kg{" "}
-          <b className="text-brand-text">{estimate.slatWeightKg.toFixed(1)}</b>
-        </span>
-        <span>
-          Frame kg{" "}
-          <b className="text-brand-text">
-            {estimate.frameWeightKg.toFixed(1)}
-          </b>
-        </span>
-      </div>
-    </div>
-  );
-}
 
 function HardwareReasonTags({
   status,
@@ -482,35 +441,8 @@ export function GateSegmentDetails({ runId, seg, locked = false }: Props) {
   const gateWidthMm = Number(seg.segmentWidthMm ?? v.gate_width_mm ?? 900);
   const whiteFinish = isWhiteHardwareFinish(gateColour);
 
-  const weightEstimate = useMemo(
-    () =>
-      estimateGateWeight({
-        widthMm: gateWidthMm,
-        heightMm: gateHeightMm,
-        slatSizeMm,
-        slatGapMm,
-        finishFamily: String(fenceContext.finish_type ?? "standard"),
-        build,
-        movement,
-      }),
-    [build, gateHeightMm, gateWidthMm, movement, slatGapMm, slatSizeMm, fenceContext.finish_type],
-  );
-
-  const rankedHinges = useMemo(
-    () =>
-      rankHinges({
-        requiredRatingKg: weightEstimate.requiredRatingKg,
-        gateGapMm: 20,
-        whiteFinish,
-        requireSelfClosing: true,
-      }),
-    [weightEstimate.requiredRatingKg, whiteFinish],
-  );
-
-  const rankedLatches = useMemo(
-    () => rankLatches({ movement, whiteFinish }),
-    [movement, whiteFinish],
-  );
+  const rankedHinges = useMemo(() => listHinges(whiteFinish), [whiteFinish]);
+  const rankedLatches = useMemo(() => listLatches(movement, whiteFinish), [movement, whiteFinish]);
 
   const currentHingeValue = String(v.hinge_type ?? "ML-TL-TC-H-AT");
   const currentLatchValue = String(v.latch_sku ?? "none");
@@ -880,7 +812,6 @@ export function GateSegmentDetails({ runId, seg, locked = false }: Props) {
       {/* Hardware — swing vs sliding */}
       {isSwing ? (
         <div className="space-y-3 rounded-[var(--brand-radius)] border border-brand-border/50 bg-brand-bg/60 p-3">
-          <GateWeightCard estimate={weightEstimate} />
           <HingePicker
             value={currentHingeValue}
             options={rankedHinges}

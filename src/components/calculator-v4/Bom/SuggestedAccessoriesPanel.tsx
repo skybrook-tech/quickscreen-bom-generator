@@ -1,7 +1,7 @@
 import { ChevronDown, Plus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useCalculatorV4 } from "../../../context/CalculatorContextV4";
-import { suggestAccessories } from "../../../lib/suggestedAccessories";
+import type { SuggestedAccessory } from "../../../types/bom.types";
 
 const fmt = (n: number) =>
   new Intl.NumberFormat("en-AU", {
@@ -19,12 +19,8 @@ export function SuggestedAccessoriesPanel({ onAddedSuggestion }: Props) {
   const { state, dispatch } = useCalculatorV4();
   const [expanded, setExpanded] = useState(true);
 
-  const visible = useMemo(() => {
-    if (!state.payload || !state.bomResult) return [];
-    const bomLines = (state.bomResult as { lines?: unknown[] } | null)?.lines ?? [];
-    const all = suggestAccessories(state.payload!, bomLines as import("../../../types/bom.types").BOMLineItem[]);
-    return all.filter((s) => !state.dismissedSuggestionSkus.has(s.sku ?? ''));
-  }, [state.payload, state.bomResult, state.dismissedSuggestionSkus]);
+  const allSuggestions = ((state.bomResult as { suggestedItems?: SuggestedAccessory[] } | null)?.suggestedItems ?? []);
+  const visible = allSuggestions.filter((s) => !state.dismissedSuggestionSkus.has(s.sku ?? ''));
 
   if (!state.bomResult || visible.length === 0) return null;
 

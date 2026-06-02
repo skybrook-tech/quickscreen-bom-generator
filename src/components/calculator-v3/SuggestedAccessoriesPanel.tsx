@@ -2,7 +2,7 @@ import { Check, PlusCircle, RotateCcw, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import type { ExtraItem } from "../../types/bom.types";
-import type { SuggestedAccessory } from "../../lib/suggestedAccessories";
+import type { SuggestedAccessory } from "../../types/bom.types";
 import { useProductSearch } from "../../hooks/useProductSearch";
 import { getComponent } from "../../lib/localSeedData";
 
