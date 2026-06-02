@@ -1,11 +1,33 @@
 // engine.ts — static BOM calculator engine for bom-calculator-static edge function
 
-import qshsData from "../../seeds/glass-outlet/products/qshs.json" assert { type: "json" };
-import baygData from "../../seeds/glass-outlet/products/bayg.json" assert { type: "json" };
-import vsData from "../../seeds/glass-outlet/products/vs.json" assert { type: "json" };
-import xplData from "../../seeds/glass-outlet/products/xpl.json" assert { type: "json" };
-import qsGateData from "../../seeds/glass-outlet/products/qs_gate.json" assert { type: "json" };
-import priceCatalogueData from "../../seeds/glass-outlet/products/price_catalogue.json" assert { type: "json" };
+// ─── Seed data loading ────────────────────────────────────────────────────────
+// Uses Deno.readTextFileSync with import.meta.url-relative paths rather than
+// JSON import assertions — more compatible with Supabase's local edge runtime.
+
+function loadSeedJson(relativePath: string): SeedFile {
+  try {
+    const url = new URL(relativePath, import.meta.url);
+    return JSON.parse(Deno.readTextFileSync(url)) as SeedFile;
+  } catch (e) {
+    console.warn(`[bom-calculator-static] Failed to load seed file ${relativePath}:`, e);
+    return {};
+  }
+}
+
+// Defer loading so type SeedFile is defined before use (see below).
+let _seedFiles: SeedFile[] | null = null;
+function getSeedFiles(): SeedFile[] {
+  if (_seedFiles) return _seedFiles;
+  _seedFiles = [
+    loadSeedJson("../../seeds/glass-outlet/products/qshs.json"),
+    loadSeedJson("../../seeds/glass-outlet/products/bayg.json"),
+    loadSeedJson("../../seeds/glass-outlet/products/vs.json"),
+    loadSeedJson("../../seeds/glass-outlet/products/xpl.json"),
+    loadSeedJson("../../seeds/glass-outlet/products/qs_gate.json"),
+    loadSeedJson("../../seeds/glass-outlet/products/price_catalogue.json"),
+  ];
+  return _seedFiles;
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -122,15 +144,6 @@ type SeedFile = {
   product_components?: SeedComponent[];
   pricing_rules?: LocalPricingRule[];
 };
-
-const seedFiles: SeedFile[] = [
-  qshsData as SeedFile,
-  baygData as SeedFile,
-  vsData as SeedFile,
-  xplData as SeedFile,
-  qsGateData as SeedFile,
-  priceCatalogueData as SeedFile,
-];
 
 // ─── Synthetic helpers ────────────────────────────────────────────────────────
 
@@ -370,9 +383,24 @@ const syntheticPricingRules: LocalPricingRule[] = [
   ...pricing("AW-65DR-TR", 4.73, 4.41, 3.79),
 ];
 
-export const localComponents: SeedComponent[] = seedFiles.flatMap((s) => s.product_components ?? []).concat(syntheticComponents).filter((c) => c.active !== false);
-export const localPricingRules: LocalPricingRule[] = seedFiles.flatMap((s) => s.pricing_rules ?? []).concat(syntheticPricingRules).filter((r) => r.active !== false);
-export function getComponent(sku: string): SeedComponent | undefined { return localComponents.find((c) => c.sku === sku); }
+let _localComponents: SeedComponent[] | null = null;
+let _localPricingRules: LocalPricingRule[] | null = null;
+
+export function getLocalComponents(): SeedComponent[] {
+  if (!_localComponents) {
+    _localComponents = getSeedFiles().flatMap((s) => s.product_components ?? []).concat(syntheticComponents).filter((c) => c.active !== false);
+  }
+  return _localComponents;
+}
+
+export function getLocalPricingRules(): LocalPricingRule[] {
+  if (!_localPricingRules) {
+    _localPricingRules = getSeedFiles().flatMap((s) => s.pricing_rules ?? []).concat(syntheticPricingRules).filter((r) => r.active !== false);
+  }
+  return _localPricingRules;
+}
+
+export function getComponent(sku: string): SeedComponent | undefined { return getLocalComponents().find((c) => c.sku === sku); }
 
 
 // ─── Gate hardware ────────────────────────────────────────────────────────────
@@ -726,7 +754,7 @@ export type OptionalAccessory = { sku: string; label: string; unitPrice: number;
 
 export function optionalAccessoriesForParent(parentSku: unknown): OptionalAccessory[] {
   const parents = parentCandidates(parentSku);
-  const accessories = localComponents.filter((comp) => {
+  const accessories = getLocalComponents().filter((comp) => {
     const optionalParents = [...(Array.isArray(comp.optionalChildOf) ? comp.optionalChildOf : []), ...(Array.isArray(comp.metadata?.optionalChildOf) ? (comp.metadata!.optionalChildOf as unknown[]).filter((i): i is string => typeof i === "string") : [])];
     if (comp.isOptionalAccessory || comp.metadata?.isOptionalAccessory === true) return optionalParents.some((p) => parents.includes(p));
     return false;
@@ -770,12 +798,12 @@ function matchesPriceRule(rule: string | null | undefined, qty: number): boolean
 }
 
 export function priceForSku(sku: string, qty: number, tier: PricingTier): number {
-  const explicitRules = localPricingRules.filter((r) => r.sku === sku && r.rule != null).sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+  const explicitRules = getLocalPricingRules().filter((r) => r.sku === sku && r.rule != null).sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
   const exMatch = explicitRules.find((r) => matchesPriceRule(r.rule, qty));
   if (exMatch) return exMatch.price;
-  const tierRules = localPricingRules.filter((r) => r.sku === sku && r.tier_code === tier && !r.rule).sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+  const tierRules = getLocalPricingRules().filter((r) => r.sku === sku && r.tier_code === tier && !r.rule).sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
   if (tierRules.length > 0) return tierRules[0].price;
-  const t1 = localPricingRules.find((r) => r.sku === sku && r.tier_code === "tier1" && !r.rule);
+  const t1 = getLocalPricingRules().find((r) => r.sku === sku && r.tier_code === "tier1" && !r.rule);
   return t1?.price ?? 0;
 }
 

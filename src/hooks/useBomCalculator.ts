@@ -55,20 +55,6 @@ function expandSectionSystemOverrides(payload: CanonicalPayload): CanonicalPaylo
   return changed ? { ...payload, runs } : payload;
 }
 
-async function callStaticCalculator(
-  payload: CanonicalPayload,
-  token: string,
-): Promise<Record<string, unknown>> {
-  const { data, error } = await supabase.functions.invoke('bom-calculator-static', {
-    body: { payload },
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (error || !data || isEdgeFailurePayload(data)) {
-    throw new Error('BOM calculation unavailable — static fallback failed');
-  }
-  return data as Record<string, unknown>;
-}
-
 export function useBomCalculator() {
   return useMutation({
     mutationFn: async ({ payload }: { payload: CanonicalPayload; pricingTier?: PricingTier }) => {
@@ -77,12 +63,12 @@ export function useBomCalculator() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated — please sign in to generate a BOM');
 
-      const { data, error } = await supabase.functions.invoke('bom-calculator', {
+      const { data, error } = await supabase.functions.invoke('bom-calculator-static', {
         body: { payload: calculatorPayload },
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
       if (error || !data || isEdgeFailurePayload(data)) {
-        return callStaticCalculator(calculatorPayload, session.access_token);
+        throw new Error('BOM calculation failed — please try again');
       }
       return data as Record<string, unknown>;
     },
