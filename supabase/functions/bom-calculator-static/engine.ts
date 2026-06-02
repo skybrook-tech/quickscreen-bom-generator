@@ -772,7 +772,7 @@ export function priceForSku(sku: string, qty: number, tier: PricingTier): number
   const tierRules = _pricingRules.filter((r) => r.sku === sku && r.tier_code === tier && !r.rule).sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
   if (tierRules.length > 0) return tierRules[0].price;
   const t1 = _pricingRules.find((r) => r.sku === sku && r.tier_code === "tier1" && !r.rule);
-  return t1?.price ?? 0;
+  return t1?.price ?? getComponent(sku)?.default_price ?? 0;
 }
 
 const ECONOMY_SLAT_PACK_SIZE = 96;
