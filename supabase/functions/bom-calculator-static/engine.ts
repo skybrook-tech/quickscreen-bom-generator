@@ -5,13 +5,8 @@
 // JSON import assertions — more compatible with Supabase's local edge runtime.
 
 function loadSeedJson(relativePath: string): SeedFile {
-  try {
-    const url = new URL(relativePath, import.meta.url);
-    return JSON.parse(Deno.readTextFileSync(url)) as SeedFile;
-  } catch (e) {
-    console.warn(`[bom-calculator-static] Failed to load seed file ${relativePath}:`, e);
-    return {};
-  }
+  const url = new URL(relativePath, import.meta.url);
+  return JSON.parse(Deno.readTextFileSync(url)) as SeedFile;
 }
 
 // Defer loading so type SeedFile is defined before use (see below).
