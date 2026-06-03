@@ -1,5 +1,4 @@
 import type { BOMLineItem } from "../types/bom.types";
-import { priceForSku } from "./localBomCalculator";
 
 const CARTON_QTY_ENTRIES = [
   ["TC-H-AT-HD", 20, "pairs"],
@@ -31,17 +30,11 @@ export function cartonHintForLine(item: BOMLineItem) {
   const more = nextCartonQty - item.quantity;
   if (more > cartonQty * 0.3) return null;
 
-  const cartonUnitPrice = priceForSku(item.sku, nextCartonQty);
-  const saving =
-    cartonUnitPrice > 0 && item.unitPrice > cartonUnitPrice
-      ? Math.round((item.unitPrice - cartonUnitPrice) * nextCartonQty)
-      : 0;
-
   return {
     more,
     cartonQty,
     label,
-    saving,
+    saving: 0,
   };
 }
 

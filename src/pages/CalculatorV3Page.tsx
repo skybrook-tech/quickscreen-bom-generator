@@ -23,8 +23,6 @@ import { JobNameEditor } from "../components/calculator/JobNameEditor";
 import { GatePositionModal } from "../components/calculator/GatePositionModal";
 import { PropertyAnchorFormGate, PropertyMap } from "../components/calculator/PropertyMap";
 import { useBomCalculator } from "../hooks/useBomCalculator";
-import { suggestAccessories } from "../lib/suggestedAccessories";
-import { priceForSku } from "../lib/localBomCalculator";
 import {
   initialVariablesForSystem,
   normaliseVariablesForSystem,
@@ -210,14 +208,7 @@ const lineKey = (line: BOMLineItem) =>
 const bomGroupKey = (line: BOMLineItem) =>
   `${line.sku}|${line.category}|${line.description}|${line.unit}`;
 
-const ECONOMY_SLAT_PACK_SIZE = 96;
 
-function priceForBomLine(line: Pick<BOMLineItem, "sku" | "unit">, quantity: number) {
-  if (line.sku.startsWith("XP-6500-E65") && line.unit === "pack") {
-    return roundMoney(priceForSku(line.sku, quantity * ECONOMY_SLAT_PACK_SIZE) * ECONOMY_SLAT_PACK_SIZE);
-  }
-  return priceForSku(line.sku, quantity);
-}
 
 function aggregateBomItems(items: BOMLineItem[]): BOMLineItem[] {
   const grouped = new Map<string, BOMLineItem>();
@@ -233,16 +224,14 @@ function aggregateBomItems(items: BOMLineItem[]): BOMLineItem[] {
       ...(existing.sources ?? sourceFromLine(existing)),
       ...(item.sources ?? sourceFromLine(item)),
     ]);
-    const lineTotalBeforeReprice = existing.lineTotal + item.lineTotal;
-    const unitPrice = priceForBomLine(item, quantity);
-    const lineTotal =
-      unitPrice > 0 ? roundMoney(unitPrice * quantity) : roundMoney(lineTotalBeforeReprice);
+    const unitPrice = existing.unitPrice;
+    const lineTotal = roundMoney(existing.lineTotal + item.lineTotal);
     grouped.set(key, {
       ...existing,
       quantity,
       totalQty: quantity,
       sources,
-      unitPrice: unitPrice > 0 ? unitPrice : roundMoney(lineTotal / Math.max(1, quantity)),
+      unitPrice,
       lineTotal,
       notes:
         existing.notes || item.notes
@@ -285,14 +274,12 @@ function deriveLineForSources(
   const sources = (line.sources ?? sourceFromLine(line)).filter(predicate);
   if (sources.length === 0) return null;
   const quantity = sources.reduce((sum, source) => sum + source.qty, 0);
-  const unitPrice = priceForBomLine(line, quantity);
   return {
     ...line,
     quantity,
     totalQty: quantity,
     sources,
-    unitPrice,
-    lineTotal: roundMoney(unitPrice * quantity),
+    lineTotal: roundMoney(line.unitPrice * quantity),
   };
 }
 
@@ -994,23 +981,17 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   }
 
   const lastBom = state.bomResult;
-  const baseBomLines = ((lastBom?.lines as BOMLineItem[]) ?? []);
-  const suggestedAccessories = useMemo(
-    () => (payload && lastBom ? suggestAccessories(payload, baseBomLines) : []),
-    [payload, lastBom, baseBomLines],
-  );
+  const suggestedAccessories = (lastBom?.suggestedItems ?? []) as import("../types/bom.types").SuggestedAccessory[];
   const applyLineEdits = (items: BOMLineItem[]) =>
     items
       .map((line) => {
         const edit = lineEdits[lineKey(line)];
         if (edit === null) return null;
         if (typeof edit === "number") {
-          const unitPrice = priceForBomLine(line, edit);
           return {
             ...line,
             quantity: edit,
-            unitPrice,
-            lineTotal: roundMoney(unitPrice * edit),
+            lineTotal: roundMoney(line.unitPrice * edit),
             notes: line.notes ? `${line.notes}; edited` : "edited",
           };
         }

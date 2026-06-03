@@ -24,15 +24,13 @@ import {
 import { GateComponentList } from "./GateComponentList";
 import {
   baseHardwareSku,
-  estimateGateWeight,
   hingeGapForSku,
   isWhiteHardwareFinish,
   kitForHardwareSelection,
   latchGapForSku,
-  rankHinges,
-  rankLatches,
+  listHinges,
+  listLatches,
   type GateHardwareStatus,
-  type GateWeightEstimate,
   type HingeHardware,
   type LatchHardware,
   type RankedHardware,
@@ -40,7 +38,6 @@ import {
 import NumberInput from "../shared/NumberInput";
 import { useProductSearch } from "../../hooks/useProductSearch";
 import { ColourPalette } from "./ColourPalette";
-import { priceForSku } from "../../lib/localBomCalculator";
 import {
   OPTIONAL_ACCESSORY_KEY,
   optionalAccessoriesForParent,
@@ -269,31 +266,6 @@ function GateSettingsSection({
   );
 }
 
-function GateWeightCard({ estimate }: { estimate: GateWeightEstimate }) {
-  return (
-    <div className="rounded-lg border border-brand-border/70 bg-brand-card p-3 shadow-none">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm font-bold text-brand-text">Estimated leaf weight</p>
-          <p className="text-xs font-semibold text-brand-muted">
-            Used for hinge rating. It uses the finished leaf size, not stock off-cuts.
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="text-xl font-black tabular-nums text-brand-primary">{estimate.totalKg.toFixed(1)}kg</p>
-          <p className="text-xs font-bold text-brand-muted">
-            Need {estimate.requiredRatingKg}kg+ hinges
-          </p>
-        </div>
-      </div>
-      <div className="mt-3 grid grid-cols-3 gap-2 text-xs font-bold text-brand-muted">
-        <span>Slats <b className="text-brand-text">{estimate.slatCount}</b></span>
-        <span>Slat kg <b className="text-brand-text">{estimate.slatWeightKg.toFixed(1)}</b></span>
-        <span>Frame kg <b className="text-brand-text">{estimate.frameWeightKg.toFixed(1)}</b></span>
-      </div>
-    </div>
-  );
-}
 
 function OptionalAddOns({
   parentSku,
@@ -541,12 +513,6 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   const gateColour = String(v[GATE_SEGMENT_STUB_KEYS.colourCode] ?? masterVars.colour_code ?? "B");
   const slatSizeMm = Number(v[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVars.slat_size_mm ?? 65);
   const slatGapMm = Number(v[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVars.slat_gap_mm ?? 9);
-  const gateHeightMm = Number(
-    seg.targetHeightMm ??
-      v[GATE_SEGMENT_STUB_KEYS.gateHeightMm] ??
-      runVars.target_height_mm ??
-      1800,
-  );
   const gateWidthMm = Number(seg.segmentWidthMm ?? 900);
   const whiteFinish = isWhiteHardwareFinish(gateColour);
   const currentHingeValue = String(v[GATE_SEGMENT_STUB_KEYS.hingeType] ?? "TC-H-AT-HD-B");
@@ -560,44 +526,15 @@ export function GateSegmentDetails({ runId, seg }: Props) {
     latchGapMm,
     leafWidthsMm: seg.leaves?.map((leaf) => leaf.widthMm),
   });
-  const { leafCount, leafWidthMm, leafWidthsMm } = gateGeometry;
+  const { leafCount, leafWidthsMm } = gateGeometry;
   const clearOpeningMm = clearGateOpeningWidthMm({
     movement,
     openingWidthMm: gateWidthMm,
     hingeGapMm,
     latchGapMm,
   });
-  const weightEstimate = useMemo(
-    () =>
-      estimateGateWeight({
-        widthMm: leafWidthMm,
-        heightMm: gateHeightMm,
-        slatSizeMm,
-        slatGapMm,
-        finishFamily: String(masterVars.finish_family ?? "standard"),
-        build,
-        movement,
-      }),
-    [build, gateHeightMm, leafWidthMm, movement, slatGapMm, slatSizeMm, masterVars.finish_family],
-  );
-  const rankedHinges = useMemo(
-    () =>
-      rankHinges({
-        requiredRatingKg: weightEstimate.requiredRatingKg,
-        gateGapMm: 20,
-        whiteFinish,
-        requireSelfClosing: true,
-      }),
-    [weightEstimate.requiredRatingKg, whiteFinish],
-  );
-  const rankedLatches = useMemo(
-    () =>
-      rankLatches({
-        movement,
-        whiteFinish,
-      }),
-    [movement, whiteFinish],
-  );
+  const rankedHinges = useMemo(() => listHinges(whiteFinish), [whiteFinish]);
+  const rankedLatches = useMemo(() => listLatches(movement, whiteFinish), [movement, whiteFinish]);
   const currentLatchBase = baseHardwareSku(currentLatchValue);
   const matchingHardwareKit = kitForHardwareSelection(currentHingeValue, currentLatchValue);
   const selectedKitSku = String(v[GATE_SEGMENT_STUB_KEYS.hardwareKitSku] ?? "");
@@ -623,10 +560,6 @@ export function GateSegmentDetails({ runId, seg }: Props) {
     ...(extraRemoteCount > 0 ? [{ sku: "XPSG-FILO-REMOTE", qty: extraRemoteCount }] : []),
     { sku: "XPSG-FILO-RACK", qty: rackCount },
   ];
-  const automationSubtotal = automationSummary.reduce(
-    (sum, item) => sum + priceForSku(item.sku, item.qty) * item.qty,
-    0,
-  );
 
   function upsertSegmentPatch({
     patch,
@@ -881,7 +814,6 @@ export function GateSegmentDetails({ runId, seg }: Props) {
             : `${String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST")} / ${automationEnabled ? "Automation on" : "Manual"}`
         }
       >
-        <GateWeightCard estimate={weightEstimate} />
         {isSwing ? (
           <>
           <div className="rounded-lg border border-brand-border/70 bg-brand-card p-3 text-xs font-bold text-brand-muted">
@@ -1081,14 +1013,12 @@ export function GateSegmentDetails({ runId, seg }: Props) {
                     {automationSummary.map((item) => (
                       <div key={item.sku} className="flex justify-between gap-2">
                         <span>{item.qty} x {item.sku}</span>
-                        <span>${priceForSku(item.sku, item.qty).toFixed(2)}</span>
                       </div>
                     ))}
                   </div>
-                  <div className="mt-2 flex justify-between text-sm font-black text-brand-text">
-                    <span>Automation subtotal</span>
-                    <span>${automationSubtotal.toFixed(2)}</span>
-                  </div>
+                  <p className="mt-1 text-xs font-semibold text-brand-muted">
+                    Pricing shown after BOM is calculated.
+                  </p>
                   <p className="mt-2 text-xs font-semibold text-brand-muted">
                     Installation by certified electrician recommended for mains-powered kits.
                   </p>

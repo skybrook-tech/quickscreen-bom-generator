@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import pluralize from "pluralize";
 import type { CalculatorBOMResult, BOMLineItem } from "../../types/bom.types";
-import { localPriceBreaks } from "../../lib/localPriceBreaks";
-import { priceForSku } from "../../lib/localBomCalculator";
 import { cataloguePageForSku, CATALOGUE_PDF_URL } from "../../lib/cataloguePages";
 import { cartonHintForLine } from "../../lib/cartonQuantities";
 import { bulkBuyVariantForSku } from "../../lib/bulkBuyVariants";
@@ -48,27 +46,6 @@ const formatMoney = (value: number) =>
   }).format(value);
 
 
-function nextBreakHint(item: BOMLineItem) {
-  if (item.sku.startsWith("XP-6500-E65") && item.unit === "pack") return null;
-  const breaks = (localPriceBreaks as Record<string, readonly number[] | undefined>)[
-    item.sku
-  ];
-  const nextBreak = breaks?.find((qty) => qty > item.quantity);
-  if (!nextBreak) return null;
-
-  const nextUnitPrice = priceForSku(item.sku, nextBreak);
-  if (nextUnitPrice <= 0 || item.unitPrice <= 0 || nextUnitPrice >= item.unitPrice) {
-    return {
-      more: nextBreak - item.quantity,
-      savingPct: null as number | null,
-    };
-  }
-
-  return {
-    more: nextBreak - item.quantity,
-    savingPct: Math.round(((item.unitPrice - nextUnitPrice) / item.unitPrice) * 100),
-  };
-}
 
 function unitLabel(item: BOMLineItem) {
   return item.sku.startsWith("XP-6500-E65") && item.unit === "pack"
@@ -382,7 +359,6 @@ function BOMMobileCard({
   customerMode?: boolean;
   showWorkings: boolean;
 }) {
-  const hint = nextBreakHint(item);
   const cartonHint = cartonHintForLine(item);
   const sourceText = sourceBreakdown(item);
   const diagramNumbers = isGateDiagramLine(item) ? gateDiagramNumbersForSku(item.sku) : [];
@@ -446,13 +422,8 @@ function BOMMobileCard({
           )}
         </div>
       </div>
-      {(hint || cartonHint || (showWorkings && item.notes) || canSwitchEconomy || editable) && (
+      {(cartonHint || (showWorkings && item.notes) || canSwitchEconomy || editable) && (
         <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-brand-border/60 pt-3">
-          {hint && (
-            <span className="rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-1 text-[11px] font-bold text-brand-success">
-              {hint.more} more for lower unit price
-            </span>
-          )}
           {cartonHint && (
             <span className="rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-1 text-[11px] font-bold text-brand-success">
               {cartonHint.more} more for carton
@@ -521,14 +492,8 @@ function ItemGroup({
         </td>
       </tr>
       {orderedItems.flatMap((item, itemIndex) => {
-          const hint = nextBreakHint(item);
           const cartonHint = cartonHintForLine(item);
           const bulkBuySku = bulkBuyVariantForSku(item.sku);
-          const bulkBuyUnitPrice = bulkBuySku ? priceForSku(bulkBuySku, item.quantity) : 0;
-          const bulkBuySaving =
-            bulkBuySku && bulkBuyUnitPrice > 0 && item.unitPrice > bulkBuyUnitPrice
-              ? item.unitPrice - bulkBuyUnitPrice
-              : 0;
           const canSwitchEconomy =
             item.sku.startsWith("XP-6500-E65") &&
             item.notes?.includes("Switch to Standard slats?");
@@ -598,12 +563,6 @@ function ItemGroup({
                 </button>
               )}
             </div>
-            {hint && (
-              <p className="mt-1 text-[11px] font-semibold text-brand-success print:hidden">
-                {hint.more} more to unlock a lower unit price
-                {hint.savingPct ? ` (save ${hint.savingPct}%)` : ""}
-              </p>
-            )}
             {cartonHint && (
               <p className="mt-1 inline-flex rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-0.5 text-[11px] font-bold text-brand-success print:hidden">
                 {cartonHint.more} more for a carton ({cartonHint.cartonQty} {cartonHint.label})
@@ -612,17 +571,10 @@ function ItemGroup({
             )}
             {bulkBuySku && (
               <p
-                className={`mt-1 inline-flex rounded-full border px-2 py-0.5 text-[11px] font-bold print:hidden ${
-                  bulkBuySaving > 0
-                    ? "border-brand-success/30 bg-brand-success/10 text-brand-success"
-                    : "border-brand-border bg-brand-bg text-brand-muted"
-                }`}
+                className="mt-1 inline-flex rounded-full border border-brand-border bg-brand-bg px-2 py-0.5 text-[11px] font-bold text-brand-muted print:hidden"
                 title={`Bulk-buy variant: ${bulkBuySku}`}
               >
-                Bulk buy {bulkBuySku}
-                {bulkBuySaving > 0
-                  ? ` saves $${formatMoney(bulkBuySaving)} each`
-                  : " available"}
+                Bulk buy {bulkBuySku} available
               </p>
             )}
             {showWorkings && sourceText && item.sources && item.sources.length > 1 && (

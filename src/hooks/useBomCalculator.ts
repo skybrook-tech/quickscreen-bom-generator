@@ -1,6 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { isSupabaseConfigured, supabase } from '../lib/supabase';
-import { calculateLocalBom } from '../lib/localBomCalculator';
+import { supabase } from '../lib/supabase';
 import type { CanonicalPayload, CanonicalRun, CanonicalSegment } from '../types/canonical.types';
 import type { PricingTier } from '../types/bom.types';
 
@@ -58,22 +57,18 @@ function expandSectionSystemOverrides(payload: CanonicalPayload): CanonicalPaylo
 
 export function useBomCalculator() {
   return useMutation({
-    mutationFn: async ({ payload, pricingTier }: { payload: CanonicalPayload; pricingTier?: PricingTier }) => {
-      const tier = pricingTier ?? 'tier1';
+    mutationFn: async ({ payload }: { payload: CanonicalPayload; pricingTier?: PricingTier }) => {
       const calculatorPayload = expandSectionSystemOverrides(payload);
-      if (!isSupabaseConfigured) {
-        return calculateLocalBom(calculatorPayload, tier);
-      }
 
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return calculateLocalBom(calculatorPayload, tier);
+      if (!session) throw new Error('Not authenticated — please sign in to generate a BOM');
 
-      const { data, error } = await supabase.functions.invoke('bom-calculator', {
-        body: { payload: calculatorPayload, pricingTier: tier },
+      const { data, error } = await supabase.functions.invoke('bom-calculator-static', {
+        body: { payload: calculatorPayload },
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
       if (error || !data || isEdgeFailurePayload(data)) {
-        return calculateLocalBom(calculatorPayload, tier);
+        throw new Error('BOM calculation failed — please try again');
       }
       return data as Record<string, unknown>;
     },

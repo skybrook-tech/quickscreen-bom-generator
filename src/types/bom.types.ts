@@ -86,6 +86,40 @@ export interface SegmentDiagnostic {
   message: string;
 }
 
+export interface SuggestedAccessory {
+  id: string;
+  sku?: string;
+  description: string;
+  reason: string;
+  quantity: number;
+  unitPrice: number;
+  category: "fixing" | "finish" | "post_accessory" | "catalogue_gap";
+  priced: boolean;
+}
+
+export interface GateWeightEstimate {
+  leafWeightKg: number;
+  requiredRatingKg: number;
+  method: string;
+}
+
+export interface RankedHardwareOption {
+  sku: string;
+  effectiveSku: string;
+  name: string;
+  status: string;
+  recommended: boolean;
+  ratingKg?: number;
+}
+
+export interface GateHardwareHint {
+  weightEstimate: GateWeightEstimate;
+  rankedHinges: RankedHardwareOption[];
+  rankedLatches: RankedHardwareOption[];
+  recommendedHingeSku?: string;
+  recommendedLatchSku?: string;
+}
+
 export interface CalculatorBOMResult {
   runResults: Array<{ runId: string; items: BOMLineItem[] }>;
   gateResults?: Array<{ id: string; label: string; items: BOMLineItem[] }>;
@@ -97,6 +131,8 @@ export interface CalculatorBOMResult {
   pricingTier: PricingTier;
   generatedAt: string;
   segmentDiagnostics?: SegmentDiagnostic[];
+  suggestedItems?: SuggestedAccessory[];
+  gateHardwareHints?: Record<string, GateHardwareHint>;
 }
 
 /** Ad-hoc line item added manually by staff — not from the BOM calculation */
