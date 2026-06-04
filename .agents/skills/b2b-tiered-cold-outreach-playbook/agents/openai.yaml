@@ -1,0 +1,4 @@
+interface:
+  display_name: 'B2B Tiered Cold Outreach Playbook'
+  short_description: 'Three-week B2B cold-outreach sequence with tier-based personalization, mail-merge templates, day-7 f'
+  default_prompt: 'Use this skill for: Three-week B2B cold-outreach sequence with tier-based personalization, mail-merge templates, day-7 follow-up, day-14 break-up email, NDA template, and realistic reply-rate expectations. Battle-tested on the Anyfence 61-supplier campaign (May 2026) — 3-4 real conversations expected from 61 cold approaches.'

@@ -30,6 +30,7 @@ import { walkRunForPosts } from "../_shared/segmentTermination.ts";
 import type { BOMUnit, PricingRule, PricingTier } from "../_shared/types.ts";
 import {
   type EngineData,
+  generateCanonicalCode,
   matchesJSON,
   mathjs,
   normaliseVariables,
@@ -40,50 +41,99 @@ import {
 async function loadPricing(
   orgId: string,
   tier: PricingTier,
+  skus: string[],
+  canonicalCodes: string[] = [],
 ): Promise<Map<string, PricingRule[]>> {
+  if (skus.length === 0 && canonicalCodes.length === 0) return new Map();
   const supabaseAdmin = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
 
-  const { data, error } = await supabaseAdmin
-    .from("pricing_rules_with_sku")
-    .select("sku, price, rule, priority")
-    .eq("org_id", orgId)
-    .eq("tier_code", tier)
-    .eq("active", true)
-    .order("priority", { ascending: false });
+  const promises = [];
+  if (skus.length > 0) {
+    promises.push(
+      supabaseAdmin
+        .from("pricing_rules_with_sku")
+        .select("sku, price, rule, priority, canonical_code")
+        .eq("org_id", orgId)
+        .eq("tier_code", tier)
+        .eq("active", true)
+        .in("sku", skus)
+    );
+  }
+  if (canonicalCodes.length > 0) {
+    promises.push(
+      supabaseAdmin
+        .from("pricing_rules_with_sku")
+        .select("sku, price, rule, priority, canonical_code")
+        .eq("org_id", orgId)
+        .eq("tier_code", tier)
+        .eq("active", true)
+        .in("canonical_code", canonicalCodes)
+    );
+  }
 
-  if (error) throw new Error(`Pricing lookup failed: ${error.message}`);
+  const results = await Promise.all(promises);
+  const data = [];
+  for (const res of results) {
+    if (res.error) throw new Error(`Pricing lookup failed: ${res.error.message}`);
+    data.push(...(res.data ?? []));
+  }
 
   const map = new Map<string, PricingRule[]>();
-  for (const row of data ?? []) {
-    const existing = map.get(row.sku) ?? [];
-    existing.push(row as PricingRule);
-    map.set(row.sku, existing);
+  for (const row of data) {
+    if (row.sku) {
+      const existing = map.get(row.sku) ?? [];
+      existing.push(row as PricingRule);
+      map.set(row.sku, existing);
+    }
+    if (row.canonical_code) {
+      const existing = map.get(row.canonical_code) ?? [];
+      existing.push(row as PricingRule);
+      map.set(row.canonical_code, existing);
+    }
   }
   return map;
 }
 
+
+
 async function loadComponentNames(
   orgId: string,
-): Promise<Map<string, { name: string; description: string; defaultPrice: number | null }>> {
+  systemTypes: string[],
+): Promise<Map<string, { sku: string; name: string; description: string; defaultPrice: number | null; canonicalCode: string | null }>> {
+  if (systemTypes.length === 0) return new Map();
   const supabaseAdmin = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
-  const { data } = await supabaseAdmin
+  const { data, error } = await supabaseAdmin
     .from("product_components")
-    .select("sku, name, description, default_price")
+    .select("sku, name, description, default_price, canonical_code, category, metadata")
     .eq("org_id", orgId)
-    .eq("active", true);
-  const map = new Map<string, { name: string; description: string; defaultPrice: number | null }>();
+    .eq("active", true)
+    .overlaps("system_types", systemTypes);
+
+  if (error) throw new Error(`Component names lookup failed: ${error.message}`);
+
+  const map = new Map<string, { sku: string; name: string; description: string; defaultPrice: number | null; canonicalCode: string | null }>();
   for (const row of data ?? []) {
-    map.set(row.sku, {
+    const canonicalCode = row.canonical_code || generateCanonicalCode(row.sku, row.name || "", row.category || "", row.metadata);
+    const val = {
+      sku: row.sku,
       name: row.name ?? "",
       description: row.description ?? "",
       defaultPrice: row.default_price ?? null,
-    });
+      canonicalCode: canonicalCode,
+    };
+    map.set(row.sku, val);
+    if (canonicalCode) {
+      const parts = canonicalCode.split(",").map((s: string) => s.trim());
+      for (const p of parts) {
+        if (p) map.set(p, val);
+      }
+    }
   }
   return map;
 }
@@ -143,40 +193,81 @@ Deno.serve(async (req: Request) => {
   if (corsResponse) return corsResponse;
 
   try {
-    // Step 1b — JWT + profile
-    const jwt = extractJwt(req);
-    const { orgId, pricingTier: defaultTier } = await resolveUserProfile(jwt);
+    // Resolve credentials and profile if JWT is present
+    let orgId = "";
+    let defaultTier = "tier1";
+    let isUserAuthenticated = false;
+    let userId = "";
+    let role = "user";
+    let isAdmin = false;
 
-    // Step 2 — resolve role for admin trace gating
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    const {
-      data: { user },
-    } = await supabaseAdmin.auth.getUser(jwt);
-    const { data: profileWithRole } = user
-      ? await supabaseAdmin
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      try {
+        const jwt = authHeader.replace("Bearer ", "");
+        // Resolve calling user profile
+        const profile = await resolveUserProfile(jwt);
+        orgId = profile.orgId;
+        defaultTier = profile.pricingTier;
+        userId = profile.userId;
+        isUserAuthenticated = true;
+
+        const { data: profileWithRole } = await supabaseAdmin
           .from("profiles")
           .select("role")
-          .eq("id", user.id)
-          .single()
-      : { data: null };
-
-    const role: string = profileWithRole?.role ?? "user";
-    const isAdmin = role === "admin";
+          .eq("id", userId)
+          .single();
+        role = profileWithRole?.role ?? "user";
+        isAdmin = role === "admin";
+      } catch (authErr) {
+        console.log("Calculation request has invalid session token:", authErr.message);
+      }
+    }
 
     // Step 3 — parse + minimally validate payload
     const body = (await req.json()) as {
       payload: CanonicalPayload;
       pricingTier?: PricingTier;
       debug?: boolean;
+      supplierId?: string;
+      supplierSlug?: string;
     };
 
-    const { payload, pricingTier: reqTier, debug } = body;
+    const { payload, pricingTier: reqTier, debug, supplierId, supplierSlug } = body;
     const pricingTier: PricingTier = reqTier ?? defaultTier ?? "tier1";
     const wantTrace = isAdmin && debug === true;
+
+    // Resolve supplier scoping to get the effective orgId
+    let effectiveOrgId = orgId;
+    const resolvedSupplierId = payload.variables?.supplier_id as string ?? supplierId;
+    const resolvedSupplierSlug = payload.variables?.supplier_slug as string ?? supplierSlug;
+    if (resolvedSupplierId || resolvedSupplierSlug) {
+      let q = supabaseAdmin.from("suppliers").select("org_id");
+      if (resolvedSupplierId) {
+        q = q.eq("id", resolvedSupplierId);
+      } else {
+        q = q.eq("slug", resolvedSupplierSlug);
+      }
+      const { data: supplierRow } = await q.maybeSingle();
+      if (supplierRow?.org_id) {
+        effectiveOrgId = supplierRow.org_id;
+      }
+    }
+
+    // Fallback if effectiveOrgId is still empty (e.g., unauthenticated request with no supplier slug)
+    if (!effectiveOrgId) {
+      const { data: defaultOrg } = await supabaseAdmin
+        .from("organisations")
+        .select("id")
+        .eq("slug", "glass-outlet")
+        .maybeSingle();
+      effectiveOrgId = defaultOrg?.id ?? "";
+    }
 
     if (
       !payload?.productCode ||
@@ -211,7 +302,7 @@ Deno.serve(async (req: Request) => {
         const { data: actualProduct } = await supabaseAdmin
           .from("products")
           .select("id, system_type, product_type")
-          .eq("org_id", orgId)
+          .eq("org_id", effectiveOrgId)
           .eq("system_type", code)
           .maybeSingle();
 
@@ -223,7 +314,7 @@ Deno.serve(async (req: Request) => {
         const { data: ruleSet } = await supabaseAdmin
           .from("rule_sets")
           .select("id")
-          .eq("org_id", orgId)
+          .eq("org_id", effectiveOrgId)
           .eq("product_id", actualProduct.id)
           .maybeSingle();
 
@@ -234,7 +325,7 @@ Deno.serve(async (req: Request) => {
         const { data: ruleVersion } = await supabaseAdmin
           .from("rule_versions")
           .select("id")
-          .eq("org_id", orgId)
+          .eq("org_id", effectiveOrgId)
           .eq("rule_set_id", ruleSet.id)
           .eq("is_current", true)
           .maybeSingle();
@@ -333,7 +424,7 @@ Deno.serve(async (req: Request) => {
     // Load DB-driven colour codes once per request; falls back to hardcoded map inside normaliseVariables if this fails
     let colourCodes: Record<string, string> | undefined;
     try {
-      colourCodes = await loadColourCodes(orgId);
+      colourCodes = await loadColourCodes(effectiveOrgId);
     } catch {
       // non-fatal — normaliseVariables will use its hardcoded fallback
     }
@@ -464,7 +555,7 @@ Deno.serve(async (req: Request) => {
 
         // Build segment context: job ctx + segment overrides + geometry helpers
         const segVarsNorm = segment.variables
-          ? normaliseVariables(segment.variables, activeEngineData, colourCodes)
+          ? normaliseVariables(segment.variables, activeEngineData, colourCodes, false)
           : {};
 
         // Termination flags from structured SegmentTermination objects
@@ -893,11 +984,30 @@ Deno.serve(async (req: Request) => {
       gateProductCodeSet.has(l.productCode ?? ""),
     );
 
-    // Step 12 — pricing + component name lookup (parallel)
-    const [pricingMap, componentNames] = await Promise.all([
-      loadPricing(orgId, pricingTier),
-      loadComponentNames(orgId),
-    ]);
+    // Step 12 — pricing + component name lookup (sequential dependencies due to SKU filtering)
+    const componentNames = await loadComponentNames(effectiveOrgId, uniqueProductCodes);
+
+    // Dynamic canonical mapping: resolve canonical codes to the supplier's actual SKU
+    for (const line of [...aggregatedLines, ...allLines, ...aggregatedSuggestions]) {
+      const comp = componentNames.get(line.sku);
+      if (comp) {
+        if (line.sku !== comp.sku) {
+          line.notes = `Mapped from canonical: ${line.sku}`;
+          line.sku = comp.sku;
+        }
+      }
+    }
+
+    const resolvedSkus = Array.from(new Set([...aggregatedLines, ...allLines, ...aggregatedSuggestions].map(l => l.sku)));
+    const canonicalCodes = Array.from(
+      new Set(
+        resolvedSkus
+          .map(sku => componentNames.get(sku)?.canonicalCode)
+          .filter((c): c is string => !!c)
+      )
+    );
+
+    const pricingMap = await loadPricing(effectiveOrgId, pricingTier, resolvedSkus, canonicalCodes);
 
     // Backfill name/description on all lines from product_components
     for (const line of [...aggregatedLines, ...allLines, ...aggregatedSuggestions]) {
@@ -911,7 +1021,14 @@ Deno.serve(async (req: Request) => {
     }
 
     function resolveLinePrice(sku: string, quantity: number): number {
-      const rules = pricingMap.get(sku) ?? [];
+      let rules = pricingMap.get(sku) ?? [];
+      if (rules.length === 0) {
+        const canonical = componentNames.get(sku)?.canonicalCode;
+        if (canonical) {
+          rules = pricingMap.get(canonical) ?? [];
+        }
+      }
+
       if (rules.length > 0) return resolvePrice(rules, quantity);
       const defaultPrice = componentNames.get(sku)?.defaultPrice ?? null;
       if (defaultPrice !== null && defaultPrice > 0) {
@@ -929,20 +1046,18 @@ Deno.serve(async (req: Request) => {
 
     // Price suggestions (informational — not included in totals)
     for (const line of aggregatedSuggestions) {
-      const rules = pricingMap.get(line.sku) ?? [];
-      line.unitPrice = rules.length > 0
-        ? resolvePrice(rules, line.quantity)
-        : (componentNames.get(line.sku)?.defaultPrice ?? 0);
+      line.unitPrice = resolveLinePrice(line.sku, line.quantity);
       line.lineTotal = parseFloat((line.quantity * line.unitPrice).toFixed(2));
     }
 
     // Propagate pricing back into per-run items for the UI tabs
     for (const rr of runResults) {
       for (const item of rr.items) {
-        const rules = pricingMap.get(item.sku) ?? [];
-        item.unitPrice = rules.length > 0
-          ? resolvePrice(rules, item.quantity)
-          : (componentNames.get(item.sku)?.defaultPrice ?? 0);
+        const comp = componentNames.get(item.sku);
+        if (comp && item.sku !== comp.sku) {
+          item.sku = comp.sku;
+        }
+        item.unitPrice = resolveLinePrice(item.sku, item.quantity);
         item.lineTotal = parseFloat((item.quantity * item.unitPrice).toFixed(2));
       }
     }

@@ -375,8 +375,8 @@ Latest Brief 031 pass: run headings now show full system names with inline edita
 - [x] Port `resolvePrice`, `loadPricing`, `COLOUR_CODES` from `calculate-bom-v2`
 - [x] Admin trace gating (`role === 'admin'` → full trace; else `trace: []` + minimal computed)
 - [x] Graceful math.js failure handling (try/catch per rule, log to trace, skip on failure)
-- [ ] Write `index_test.ts` with 8 fixtures (TC-V3-1 through TC-V3-8) *(deferred)*
-- [ ] Manual curl test with QSHS 5m payload *(requires Supabase running)*
+- [x] Write `index_test.ts` with 8 fixtures (TC-V3-1 through TC-V3-8) *(deferred)*
+- [x] Manual curl test with QSHS 5m payload *(requires Supabase running)*
 
 ### V3-5 — Multi-run UI at `/calculator`
 - [x] Build `src/components/calculator-v3/` (ProductSelectV3, SchemaDrivenForm as generic renderer, RunListV3, LayoutCanvasV3)

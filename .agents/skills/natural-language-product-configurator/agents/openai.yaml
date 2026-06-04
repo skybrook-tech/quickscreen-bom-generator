@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Natural Language Product Configurator'
+  short_description: 'Pattern for building natural-language input that configures a product (fence, roof, deck, etc.). Cov'
+  default_prompt: 'Use this skill for: Pattern for building natural-language input that configures a product (fence, roof, deck, etc.). Covers hard-coded regex parser (v1), LLM parser (v2), and sketch-upload (v3) — progressive enhancement without changing the UI.'

@@ -1,13 +1,16 @@
-import { Eye, EyeOff, LogOut, Menu, Moon, Plus, PlayCircle, Sun, Trash2, WifiOff, X } from 'lucide-react';
+import { Eye, EyeOff, LogOut, Menu, Moon, Plus, PlayCircle, Sun, Trash2, WifiOff, X, Shield } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../context/ThemeContext';
+import { useProfile } from '../../context/ProfileContext';
 import type { TenantBranding } from '../../lib/tenantThemes';
 import { INSTALL_VIDEOS, type InstallVideoKey } from '../../lib/installVideos';
 import { InstallVideoQR } from '../calculator-v3/InstallVideoQR';
+import { AnyfenceLogo } from '../brand/AnyfenceLogo';
+import { AmazingFencingLogo } from '../brand/AmazingFencingLogo';
 
 interface HeaderProps {
   branding?: TenantBranding;
@@ -37,6 +40,7 @@ export function Header({
   clearJobDisabled = false,
 }: HeaderProps = {}) {
   const { user } = useAuth();
+  const { role } = useProfile();
   const { theme, toggle } = useTheme();
   const [installVideosOpen, setInstallVideosOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -88,25 +92,58 @@ export function Header({
               </span>
             </div>
           ) : brandLogoSrc ? (
-            <img
-              src={brandLogoSrc}
-              alt={brandLogoAlt}
-              className="h-8 w-auto max-w-[9rem] shrink-0 object-contain sm:h-10 sm:max-w-[12rem]"
-            />
+            <div className="flex items-center gap-3">
+              <img
+                src={brandLogoSrc}
+                alt={brandLogoAlt}
+                className="h-8 w-auto max-w-[9rem] shrink-0 object-contain sm:h-10 sm:max-w-[12rem]"
+              />
+              <span className="h-4 w-px bg-brand-border/60" />
+              <AnyfenceLogo
+                showSubtitle={false}
+                variant="white"
+                iconClassName="h-5 w-5"
+                textClassName="text-sm"
+                className="opacity-50 hover:opacity-100 transition-opacity"
+              />
+            </div>
+          ) : branding?.title === 'Amazing Fencing' ? (
+            <div className="flex items-center gap-3">
+              <AmazingFencingLogo className="scale-75 origin-left" />
+              <span className="h-4 w-px bg-brand-border/60" />
+              <AnyfenceLogo
+                showSubtitle={false}
+                variant="white"
+                iconClassName="h-5 w-5"
+                textClassName="text-sm"
+                className="opacity-50 hover:opacity-100 transition-opacity"
+              />
+            </div>
+          ) : branding?.title === 'Anyfence' || branding?.title === 'AnyFence' || !branding ? (
+            <AnyfenceLogo showSubtitle={true} iconClassName="h-8 w-8" textClassName="text-xl sm:text-2xl" />
           ) : (
-            <div className="min-w-0 leading-tight">
-              <p className="truncate text-base font-black tracking-tight text-brand-text sm:text-lg">
-                {branding?.title ?? 'The Glass Outlet'}{branding?.titleItalic && <em>{branding.titleItalic}</em>}
-              </p>
-              <p className="truncate text-xs font-semibold text-brand-muted">
-                {branding?.subtitle ?? 'QuickScreen BOM Generator'}
-                {!branding && <span className="hidden sm:inline"> · Powered by SkyBrookAI</span>}
-              </p>
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="min-w-0 leading-tight">
+                <p className="truncate text-base font-black tracking-tight text-brand-text sm:text-lg">
+                  {branding?.title ?? 'The Glass Outlet'}{branding?.titleItalic && <em>{branding.titleItalic}</em>}
+                </p>
+                <p className="truncate text-xs font-semibold text-brand-muted">
+                  {branding?.subtitle ?? 'QuickScreen BOM Generator'}
+                </p>
+              </div>
+              <span className="h-4 w-px bg-brand-border/60 shrink-0" />
+              <AnyfenceLogo
+                showSubtitle={false}
+                variant="white"
+                iconClassName="h-5 w-5"
+                textClassName="text-sm"
+                className="opacity-50 hover:opacity-100 transition-opacity shrink-0"
+              />
             </div>
           )}
         </div>
 
-        {user && (
+        {user ? (
           <nav className="hidden sm:flex items-center gap-0.5 ml-2">
             <NavLink to="/" end className={navLinkCls}>
               Home
@@ -117,6 +154,20 @@ export function Header({
             <NavLink to="/fence-calculator" className={newQuoteLinkCls}>
               <Plus size={16} />
               New Quote
+            </NavLink>
+            {role === 'admin' && (
+              <NavLink to="/admin/portal" className={navLinkCls}>
+                Admin Portal
+              </NavLink>
+            )}
+          </nav>
+        ) : (
+          <nav className="hidden sm:flex items-center gap-0.5 ml-2">
+            <NavLink to="/" end className={navLinkCls}>
+              Interactive Planner
+            </NavLink>
+            <NavLink to="/onboarding" className={navLinkCls}>
+              Join Network
             </NavLink>
           </nav>
         )}
@@ -151,7 +202,7 @@ export function Header({
           {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
         </button>
 
-        {user && (
+        {user ? (
           <>
             {onCustomerModeChange && (
               <button
@@ -163,6 +214,16 @@ export function Header({
                 {customerMode ? <EyeOff size={16} /> : <Eye size={16} />}
                 <span>{customerMode ? "Cost mode" : "Customer mode"}</span>
               </button>
+            )}
+            {role === 'admin' && (
+              <Link
+                to="/admin/portal"
+                title="Admin Control Panel"
+                className="hidden items-center gap-1.5 rounded-md px-2.5 py-2 text-xs text-brand-accent transition-colors hover:bg-brand-accent/10 sm:flex font-semibold"
+              >
+                <Shield size={16} />
+                <span>Admin</span>
+              </Link>
             )}
             <div
               title={user.email ?? ''}
@@ -179,6 +240,21 @@ export function Header({
               <span className="hidden sm:inline">Sign out</span>
             </button>
           </>
+        ) : (
+          <div className="hidden sm:flex items-center gap-2" data-print-hide>
+            <Link
+              to="/login"
+              className="text-xs font-semibold px-3 py-1.5 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/20 transition-colors"
+            >
+              Sign In
+            </Link>
+            <Link
+              to="/onboarding"
+              className="text-xs font-semibold px-3 py-1.5 rounded-md text-white bg-brand-accent hover:bg-brand-accent-hover transition-colors"
+            >
+              Sign Up
+            </Link>
+          </div>
         )}
         {priceLabel && (
           <div
@@ -279,15 +355,44 @@ export function Header({
                 {customerMode ? "Show cost mode" : "Show customer mode"}
               </button>
             )}
-            {user && (
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="flex min-h-11 items-center gap-3 rounded-lg border border-brand-border px-3 py-2 text-left text-sm font-bold text-brand-text"
-              >
-                <LogOut size={18} />
-                Sign out
-              </button>
+            {user ? (
+              <>
+                {role === 'admin' && (
+                  <Link
+                    to="/admin/portal"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex min-h-11 items-center gap-3 rounded-lg border border-brand-border px-3 py-2 text-left text-sm font-bold text-brand-accent"
+                  >
+                    <Shield size={18} />
+                    Admin Portal
+                  </Link>
+                )}
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="flex min-h-11 items-center gap-3 rounded-lg border border-brand-border px-3 py-2 text-left text-sm font-bold text-brand-text"
+                >
+                  <LogOut size={18} />
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex min-h-11 items-center justify-center gap-3 rounded-lg border border-brand-border px-3 py-2 text-center text-sm font-bold text-brand-text hover:bg-brand-border/10"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  to="/onboarding"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex min-h-11 items-center justify-center gap-3 rounded-lg bg-brand-accent text-white px-3 py-2 text-center text-sm font-bold hover:bg-brand-accent-hover"
+                >
+                  Sign Up / Onboarding
+                </Link>
+              </>
             )}
           </div>
         </div>

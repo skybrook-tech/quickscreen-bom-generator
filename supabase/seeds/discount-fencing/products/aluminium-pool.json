@@ -1,0 +1,305 @@
+{
+  "org_slug": "glass-outlet",
+  "supplier_slug": "discount-fencing",
+  "system_instance_slug": "dfsau-aluminium-pool",
+  "_format_note": "Matches the canonical seed shape used by Glass Outlet seed files (org_slug + products[] + product_components[]). Rules, variables, selectors, validations are NOT in this seed file — they are wired up via the admin Rule-Authoring UI (brief 037) after this seed lands.",
+  "_source": "https://www.dfsau.com.au/aluminium-pool-fencing (public retail prices observed 2026-05-28). All panels compliant with Australian pool safety standards; Form 15 supplied on request.",
+  "products": [
+    {
+      "system_type": "DF_AL_POOL",
+      "product_type": "fence",
+      "name": "Discount Fencing — Aluminium Pool Fence",
+      "description": "Aluminium pool fencing in flat-top, spear-top, and loop-top profiles. Black stock + powder coat to any colour. Form 15 pool safety certificate supplied on request.",
+      "active": true,
+      "sort_order": 110,
+      "metadata": {
+        "_provenance": {
+          "supplier_slug": "discount-fencing",
+          "system_instance_slug": "dfsau-aluminium-pool"
+        },
+        "allowedAngles": [90, 135, 180],
+        "options": {
+          "panelProfile": ["flat_top", "spear_top", "loop_top"],
+          "panelColour": ["black", "powdercoat_choice"],
+          "postFixing": ["core_drill", "flanged"],
+          "panelWidth": ["2400", "2450", "2475", "3000"]
+        },
+        "compliance": "AS_pool_safety",
+        "form_15_available": true,
+        "notes": "Custom panels priced on application; Dave handles pool fence certification design."
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "DF-AP-FT-BLK-2450",
+      "name": "Flat-top Pool Panel 2450mm — Black",
+      "description": "Aluminium flat-top pool panel, 2450mm wide × 1200mm high, Black",
+      "category": "panel",
+      "unit": "each",
+      "default_price": 94.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "width_mm": 2450, "height_mm": 1200, "profile": "flat_top", "colour": "black",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "panels", "sortPriority": 10
+    },
+    {
+      "sku": "DF-AP-FT-BLK-3000",
+      "name": "Flat-top Pool Panel 3000mm — Black",
+      "description": "Aluminium flat-top pool panel, 3000mm wide × 1200mm high, Black",
+      "category": "panel",
+      "unit": "each",
+      "default_price": 129.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "width_mm": 3000, "height_mm": 1200, "profile": "flat_top", "colour": "black",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "panels", "sortPriority": 10
+    },
+    {
+      "sku": "DF-AP-FT-COL-2475",
+      "name": "Flat-top Pool Panel 2475mm — Powdercoat",
+      "description": "Aluminium flat-top pool panel, 2475mm wide × 1200mm high, powder-coated to chosen colour",
+      "category": "panel",
+      "unit": "each",
+      "default_price": 115.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "width_mm": 2475, "height_mm": 1200, "profile": "flat_top", "colour": "powdercoat_choice",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28",
+        "lead_time": "1-2 weeks"
+      },
+      "active": true, "subCategory": "panels", "sortPriority": 10
+    },
+    {
+      "sku": "DF-AP-FT-COL-3000",
+      "name": "Flat-top Pool Panel 3000mm — Powdercoat",
+      "description": "Aluminium flat-top pool panel, 3000mm wide × 1200mm high, powder-coated to chosen colour",
+      "category": "panel",
+      "unit": "each",
+      "default_price": 150.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "width_mm": 3000, "height_mm": 1200, "profile": "flat_top", "colour": "powdercoat_choice",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28",
+        "lead_time": "1-2 weeks"
+      },
+      "active": true, "subCategory": "panels", "sortPriority": 10
+    },
+    {
+      "sku": "DF-AP-SPEAR-2400x1200-BLK",
+      "name": "Spear-top Pool Panel 2400×1200 — Black",
+      "description": "Aluminium spear-top pool panel, 2400mm wide × 1200mm high, Black",
+      "category": "panel",
+      "unit": "each",
+      "default_price": 155.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "width_mm": 2400, "height_mm": 1200, "profile": "spear_top", "colour": "black",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "panels", "sortPriority": 12
+    },
+    {
+      "sku": "DF-AP-LOOP-2400x1200-BLK",
+      "name": "Loop-top Pool Panel 2400×1200 — Black",
+      "description": "Aluminium loop-top pool panel, 2400mm wide × 1200mm high, Black (POA — needs concrete pricing from supplier)",
+      "category": "panel",
+      "unit": "each",
+      "default_price": null,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "width_mm": 2400, "height_mm": 1200, "profile": "loop_top", "colour": "black",
+        "price_status": "POA",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing (price not shown on public page; needs PDF)",
+        "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "panels", "sortPriority": 14
+    },
+    {
+      "sku": "DF-AP-GATE-975-BLK",
+      "name": "Pool Gate 975mm — Black",
+      "description": "Standard pool gate, 975mm wide × 1200mm high, Black, swing",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 69.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "width_mm": 975, "height_mm": 1200, "colour": "black", "gate_movement": "swing",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "gates", "sortPriority": 20
+    },
+    {
+      "sku": "DF-AP-GATE-975-COL",
+      "name": "Pool Gate 975mm — Powdercoat",
+      "description": "Standard pool gate, 975mm wide × 1200mm high, powder-coated to chosen colour, swing",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 115.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "width_mm": 975, "height_mm": 1200, "colour": "powdercoat_choice", "gate_movement": "swing",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "gates", "sortPriority": 20
+    },
+    {
+      "sku": "DF-AP-GATE-1515-ADJ-BLK",
+      "name": "Adjustable Pool Gate 1515mm — Black",
+      "description": "Adjustable pool gate, 1515mm wide × 1200mm high, Black",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 113.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "width_mm": 1515, "height_mm": 1200, "colour": "black", "adjustable": true,
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "gates", "sortPriority": 22
+    },
+    {
+      "sku": "DF-AP-POST-1800-BLK",
+      "name": "Pool Post 1800mm — Black",
+      "description": "Core-drill pool post, 1800mm length, Black",
+      "category": "post",
+      "unit": "each",
+      "default_price": 26.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "length_mm": 1800, "colour": "black", "fixing": "core_drill",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "posts", "sortPriority": 30
+    },
+    {
+      "sku": "DF-AP-POST-2100-BLK",
+      "name": "Pool Post 2100mm — Black",
+      "description": "Core-drill pool post, 2100mm length, Black",
+      "category": "post",
+      "unit": "each",
+      "default_price": 28.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "length_mm": 2100, "colour": "black", "fixing": "core_drill",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "posts", "sortPriority": 30
+    },
+    {
+      "sku": "DF-AP-POST-1800-COL",
+      "name": "Pool Post 1800mm — Powdercoat",
+      "description": "Core-drill pool post, 1800mm length, powder-coated",
+      "category": "post",
+      "unit": "each",
+      "default_price": 32.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "length_mm": 1800, "colour": "powdercoat_choice", "fixing": "core_drill",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "posts", "sortPriority": 30
+    },
+    {
+      "sku": "DF-AP-POST-2100-COL",
+      "name": "Pool Post 2100mm — Powdercoat",
+      "description": "Core-drill pool post, 2100mm length, powder-coated",
+      "category": "post",
+      "unit": "each",
+      "default_price": 35.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "length_mm": 2100, "colour": "powdercoat_choice", "fixing": "core_drill",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "posts", "sortPriority": 30
+    },
+    {
+      "sku": "DF-AP-FLPOST-1300-BLK",
+      "name": "Flanged Post 1300mm — Black",
+      "description": "Flanged pool post, 1300mm length, Black",
+      "category": "post",
+      "unit": "each",
+      "default_price": 29.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "length_mm": 1300, "colour": "black", "fixing": "flanged",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "posts", "sortPriority": 32
+    },
+    {
+      "sku": "DF-AP-FLPOST-1600-BLK",
+      "name": "Flanged Post 1600mm — Black",
+      "description": "Flanged pool post, 1600mm length, Black",
+      "category": "post",
+      "unit": "each",
+      "default_price": 31.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "length_mm": 1600, "colour": "black", "fixing": "flanged",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "posts", "sortPriority": 32
+    },
+    {
+      "sku": "DF-AP-FLPOST-1300-COL",
+      "name": "Flanged Post 1300mm — Powdercoat",
+      "description": "Flanged pool post, 1300mm length, powder-coated",
+      "category": "post",
+      "unit": "each",
+      "default_price": 42.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "length_mm": 1300, "colour": "powdercoat_choice", "fixing": "flanged",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "posts", "sortPriority": 32
+    },
+    {
+      "sku": "DF-AP-FLPOST-1500-COL",
+      "name": "Flanged Post 1500mm — Powdercoat",
+      "description": "Flanged pool post, 1500mm length, powder-coated",
+      "category": "post",
+      "unit": "each",
+      "default_price": 44.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "length_mm": 1500, "colour": "powdercoat_choice", "fixing": "flanged",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "posts", "sortPriority": 32
+    },
+    {
+      "sku": "DF-AP-SHROUD-BLK",
+      "name": "Post Shroud — Black",
+      "description": "Decorative shroud cover for pool post, Black",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 3.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "colour": "black", "fits": "post",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "accessories", "sortPriority": 40
+    },
+    {
+      "sku": "DF-AP-SHROUD-COL",
+      "name": "Post Shroud — Powdercoat",
+      "description": "Decorative shroud cover for pool post, powder-coated",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 3.00,
+      "system_types": ["DF_AL_POOL"],
+      "metadata": {
+        "colour": "powdercoat_choice", "fits": "post",
+        "price_source": "dfsau.com.au/aluminium-pool-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "accessories", "sortPriority": 40
+    }
+  ]
+}

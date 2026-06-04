@@ -136,6 +136,9 @@ export function normaliseVariablesForSystem(
   productCode: string,
   variables: Variables,
 ): Variables {
+  if (productCode === "DF_CCA_PAL") {
+    return variables;
+  }
   const finishOptions = finishOptionsForSystem(productCode);
   const finish = finishOptions.includes(String(variables.finish_family))
     ? String(variables.finish_family)
@@ -263,6 +266,9 @@ export function applyProductOptionRules(
   fields: SchemaField[],
   variables: Variables,
 ): SchemaField[] {
+  if (productCode === "DF_CCA_PAL") {
+    return fields.sort((a, b) => a.sort_order - b.sort_order);
+  }
   const byKey = new Map(fields.map((field) => [field.field_key, field]));
   const finishField = optionField(
     productCode,

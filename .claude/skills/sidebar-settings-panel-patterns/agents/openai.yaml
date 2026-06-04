@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Sidebar Settings Panel Patterns'
+  short_description: 'Reusable UX patterns for sidebar settings panels with disclosure rows, auto-collapse, match indicato'
+  default_prompt: 'Use this skill for: Reusable UX patterns for sidebar settings panels with disclosure rows, auto-collapse, match indicators, and hierarchical card layouts. Extracted from building a production calculator with run/section/gate settings parity.'

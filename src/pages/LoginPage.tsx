@@ -3,25 +3,38 @@ import { Navigate } from 'react-router-dom';
 import { LoginForm } from '../components/auth/LoginForm';
 import { SignUpForm } from '../components/auth/SignUpForm';
 import { useAuth } from '../hooks/useAuth';
+import { useProfile } from '../context/ProfileContext';
 import { isSupabaseConfigured } from '../lib/supabase';
 
 export function LoginPage() {
   const { user, loading } = useAuth();
+  const { role, userType, orgSlug, isLoading: profileLoading } = useProfile();
   const [mode, setMode] = useState<'login' | 'signup'>('login');
 
   if (!isSupabaseConfigured) {
     return <Navigate to="/calculator" replace />;
   }
 
-  if (loading) {
+  if (loading || (user && profileLoading)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-brand-bg">
-        <div className="text-brand-muted text-sm">Loading…</div>
+        <div className="text-brand-muted text-sm">Loading profile…</div>
       </div>
     );
   }
 
   if (user) {
+    if (role === 'admin') {
+      return <Navigate to="/admin/portal" replace />;
+    }
+    if (userType === 'contractor') {
+      return <Navigate to="/contractor" replace />;
+    }
+    if ((userType === 'supplier_staff' || userType === 'supplier_client') && orgSlug) {
+      if (orgSlug !== 'glass-outlet') {
+        return <Navigate to={`/s/${orgSlug}`} replace />;
+      }
+    }
     return <Navigate to="/" replace />;
   }
 

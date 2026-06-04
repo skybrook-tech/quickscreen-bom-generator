@@ -41,23 +41,30 @@ function mergeFenceProducts(products: FenceProduct[]): FenceProduct[] {
 export function ProductSelectV3({
   mapAction,
   onProductSelected,
+  supplierId,
 }: {
   mapAction?: (selectDefaultProduct: () => void) => ReactNode;
   onProductSelected?: (payload: CanonicalPayload) => void;
+  supplierId?: string;
 }) {
   const { state, dispatch } = useCalculator();
 
   const { data: products = [] } = useQuery<FenceProduct[]>({
-    queryKey: ["v3FenceProducts"],
+    queryKey: ["v3FenceProducts", supplierId],
     queryFn: async () => {
       if (!isSupabaseConfigured) return localFenceProducts;
 
-      const { data, error } = await supabase
+      let q = supabase
         .from("products")
         .select("id, name, system_type, description")
         .eq("product_type", "fence")
-        .eq("active", true)
-        .order("sort_order", { ascending: true });
+        .eq("active", true);
+
+      if (supplierId) {
+        q = q.eq("supplier_id", supplierId);
+      }
+
+      const { data, error } = await q.order("sort_order", { ascending: true });
       if (error) return localFenceProducts;
       return data && data.length > 0
         ? mergeFenceProducts(data as FenceProduct[])

@@ -1,0 +1,214 @@
+{
+  "org_slug": "glass-outlet",
+  "supplier_slug": "discount-fencing",
+  "system_instance_slug": "dfsau-cca-pine-paling",
+  "_format_note": "Matches the canonical seed shape used by Glass Outlet seed files (org_slug + products[] + product_components[]). Rules, variables, selectors, validations are NOT in this seed file — they are wired up via the admin Rule-Authoring UI (brief 037) after this seed lands, with the system_instance moving from 'imported' to 'calculator_ready' once that's done.",
+  "_source": "https://www.dfsau.com.au/timber-fencing (public retail prices observed 2026-05-28)",
+  "products": [
+    {
+      "system_type": "DF_CCA_PAL",
+      "product_type": "fence",
+      "name": "Discount Fencing — CCA Pine Paling Fence",
+      "description": "CCA Pine paling fence using 100×16 palings, 100×75 pine posts, 75×38 or 100×38 pine rails. Sourced from Discount Fencing Supplies (Burleigh Heads, QLD). Seed-time the seed loader resolves supplier_id from supplier_slug + system_instance_id from (supplier_slug, system_instance_slug) and stamps the row.",
+      "active": true,
+      "sort_order": 100,
+      "metadata": {
+        "_provenance": {
+          "supplier_slug": "discount-fencing",
+          "system_instance_slug": "dfsau-cca-pine-paling"
+        },
+        "allowedAngles": [90, 135, 180],
+        "options": {
+          "fenceHeight": ["1200", "1500", "1800", "2100", "2400"],
+          "railCount": ["2", "3"],
+          "railProfile": ["75x38", "100x38_arrissed"]
+        },
+        "notes": "Concrete bags for post setting are sold under a separate 'consumable' category that lives outside this seed (Discount Fencing doesn't ship concrete in their public price list — sourced separately)."
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "DF-PAL-100x16-1200",
+      "name": "CCA Pine Paling 100×16×1200mm",
+      "description": "CCA Treated Pine paling, 100mm wide × 16mm thick, 1200mm length",
+      "category": "paling",
+      "unit": "each",
+      "default_price": 1.74,
+      "system_types": ["DF_CCA_PAL"],
+      "metadata": {
+        "height_mm": 1200, "width_mm": 100, "thickness_mm": 16, "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "palings", "sortPriority": 10
+    },
+    {
+      "sku": "DF-PAL-100x16-1800",
+      "name": "CCA Pine Paling 100×16×1800mm",
+      "description": "CCA Treated Pine paling, 100mm wide × 16mm thick, 1800mm length",
+      "category": "paling",
+      "unit": "each",
+      "default_price": 2.15,
+      "system_types": ["DF_CCA_PAL"],
+      "metadata": {
+        "height_mm": 1800, "width_mm": 100, "thickness_mm": 16, "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "palings", "sortPriority": 10
+    },
+    {
+      "sku": "DF-PAL-100x16-2100",
+      "name": "CCA Pine Paling 100×16×2100mm",
+      "description": "CCA Treated Pine paling, 100mm wide × 16mm thick, 2100mm length",
+      "category": "paling",
+      "unit": "each",
+      "default_price": 2.90,
+      "system_types": ["DF_CCA_PAL"],
+      "metadata": {
+        "height_mm": 2100, "width_mm": 100, "thickness_mm": 16, "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "palings", "sortPriority": 10
+    },
+    {
+      "sku": "DF-PAL-100x16-2400",
+      "name": "CCA Pine Paling 100×16×2400mm",
+      "description": "CCA Treated Pine paling, 100mm wide × 16mm thick, 2400mm length",
+      "category": "paling",
+      "unit": "each",
+      "default_price": 3.40,
+      "system_types": ["DF_CCA_PAL"],
+      "metadata": {
+        "height_mm": 2400, "width_mm": 100, "thickness_mm": 16, "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "palings", "sortPriority": 10
+    },
+    {
+      "sku": "DF-POST-100x75-1800",
+      "name": "CCA Pine Post 100×75×1800mm",
+      "description": "CCA Treated Pine post, 100×75mm, 1800mm length",
+      "category": "post",
+      "unit": "each",
+      "default_price": 14.70,
+      "system_types": ["DF_CCA_PAL"],
+      "metadata": {
+        "length_mm": 1800, "width_mm": 100, "depth_mm": 75, "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "posts", "sortPriority": 20
+    },
+    {
+      "sku": "DF-POST-100x75-2400",
+      "name": "CCA Pine Post 100×75×2400mm",
+      "description": "CCA Treated Pine post, 100×75mm, 2400mm length",
+      "category": "post",
+      "unit": "each",
+      "default_price": 19.60,
+      "system_types": ["DF_CCA_PAL"],
+      "metadata": {
+        "length_mm": 2400, "width_mm": 100, "depth_mm": 75, "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "posts", "sortPriority": 20
+    },
+    {
+      "sku": "DF-POST-100x75-3000",
+      "name": "CCA Pine Post 100×75×3000mm",
+      "description": "CCA Treated Pine post, 100×75mm, 3000mm length",
+      "category": "post",
+      "unit": "each",
+      "default_price": 24.50,
+      "system_types": ["DF_CCA_PAL"],
+      "metadata": {
+        "length_mm": 3000, "width_mm": 100, "depth_mm": 75, "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "posts", "sortPriority": 20
+    },
+    {
+      "sku": "DF-RAIL-75x38-4800",
+      "name": "CCA Pine Rail 75×38×4800mm",
+      "description": "CCA Treated Pine rail, 75×38mm, 4800mm stock length",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 12.10,
+      "system_types": ["DF_CCA_PAL"],
+      "metadata": {
+        "length_mm": 4800, "width_mm": 75, "thickness_mm": 38, "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "rails", "sortPriority": 30
+    },
+    {
+      "sku": "DF-RAIL-100x38-ARR-4800",
+      "name": "CCA Pine Rail Arrissed 100×38×4800mm",
+      "description": "CCA Treated Pine arrissed (eased-edge) rail, 100×38mm, 4800mm stock length",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 17.00,
+      "system_types": ["DF_CCA_PAL"],
+      "metadata": {
+        "length_mm": 4800, "width_mm": 100, "thickness_mm": 38, "material": "CCA Pine", "profile": "arrissed",
+        "price_source": "dfsau.com.au/timber-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "rails", "sortPriority": 30
+    },
+    {
+      "sku": "DF-SLEEPER-200x50-2400",
+      "name": "CCA Pine Arrissed Sleeper 200×50×2400mm",
+      "description": "CCA Treated Pine retaining-wall sleeper, arrissed edges, 200×50mm, 2400mm length",
+      "category": "sleeper",
+      "unit": "each",
+      "default_price": 24.80,
+      "system_types": ["DF_CCA_PAL"],
+      "metadata": {
+        "length_mm": 2400, "width_mm": 200, "thickness_mm": 50, "material": "CCA Pine", "profile": "arrissed",
+        "price_source": "dfsau.com.au/timber-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "sleepers", "sortPriority": 40
+    },
+    {
+      "sku": "DF-SLEEPER-200x50-3000",
+      "name": "CCA Pine Arrissed Sleeper 200×50×3000mm",
+      "description": "CCA Treated Pine retaining-wall sleeper, arrissed edges, 200×50mm, 3000mm length",
+      "category": "sleeper",
+      "unit": "each",
+      "default_price": 30.00,
+      "system_types": ["DF_CCA_PAL"],
+      "metadata": {
+        "length_mm": 3000, "width_mm": 200, "thickness_mm": 50, "material": "CCA Pine", "profile": "arrissed",
+        "price_source": "dfsau.com.au/timber-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "sleepers", "sortPriority": 40
+    },
+    {
+      "sku": "DF-SLEEPER-200x75-2400",
+      "name": "CCA Pine Arrissed Sleeper 200×75×2400mm",
+      "description": "CCA Treated Pine retaining-wall sleeper, arrissed edges, 200×75mm, 2400mm length",
+      "category": "sleeper",
+      "unit": "each",
+      "default_price": 33.00,
+      "system_types": ["DF_CCA_PAL"],
+      "metadata": {
+        "length_mm": 2400, "width_mm": 200, "thickness_mm": 75, "material": "CCA Pine", "profile": "arrissed",
+        "price_source": "dfsau.com.au/timber-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "sleepers", "sortPriority": 40
+    },
+    {
+      "sku": "DF-SLEEPER-200x75-3000",
+      "name": "CCA Pine Arrissed Sleeper 200×75×3000mm",
+      "description": "CCA Treated Pine retaining-wall sleeper, arrissed edges, 200×75mm, 3000mm length",
+      "category": "sleeper",
+      "unit": "each",
+      "default_price": 40.00,
+      "system_types": ["DF_CCA_PAL"],
+      "metadata": {
+        "length_mm": 3000, "width_mm": 200, "thickness_mm": 75, "material": "CCA Pine", "profile": "arrissed",
+        "price_source": "dfsau.com.au/timber-fencing", "price_verified_date": "2026-05-28"
+      },
+      "active": true, "subCategory": "sleepers", "sortPriority": 40
+    }
+  ]
+}

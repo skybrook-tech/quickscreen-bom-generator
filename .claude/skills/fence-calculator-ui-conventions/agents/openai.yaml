@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Fence Calculator UI Conventions'
+  short_description: 'UI conventions for any fence BOM calculator with a canvas/mapper component — section-owned gate UX ('
+  default_prompt: 'Use this skill for: UI conventions for any fence BOM calculator with a canvas/mapper component — section-owned gate UX (gates as flat segments with parent_section_id), mapper UI principles (endpoint pivot, Ortho snapping, free-draw, plain installer language), Print BOM ordering (materials first, then run/section details, then optional map), and the two-click destructive confirm pattern. Complements sidebar-settings-panel-patterns and editorial-design-system-v2 without duplicating them.'

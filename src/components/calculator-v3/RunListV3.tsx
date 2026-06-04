@@ -1,3 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+import { supabase, isSupabaseConfigured } from "../../lib/supabase";
+import { getSupplierBySlug } from "../../lib/multiSupplier/queries";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalPayload, CanonicalRun } from "../../types/canonical.types";
 import { initialVariablesForSystem } from "../../lib/productOptionRules";
@@ -18,8 +22,48 @@ export function RunListV3({
   initialDescription?: string;
 }) {
   const { state, dispatch } = useCalculator();
+  const { supplierSlug } = useParams<{ supplierSlug?: string }>();
   const payload = state.payload;
   const hasRuns = Boolean(payload?.runs.length);
+
+  // Fetch active supplier if on a branded page
+  const { data: supplier } = useQuery({
+    queryKey: ["runListSupplier", supplierSlug],
+    queryFn: () => supplierSlug ? getSupplierBySlug(supplierSlug) : Promise.resolve(null),
+    enabled: !!supplierSlug,
+  });
+
+  // Query products filtered by active supplier or active system instance
+  const { data: dbProducts = [] } = useQuery({
+    queryKey: ["runListProducts", supplier?.id, payload?.variables?.system_instance_id],
+    queryFn: async () => {
+      if (!isSupabaseConfigured) return [];
+      let q = supabase
+        .from("products")
+        .select("id, name, system_type, description")
+        .eq("product_type", "fence")
+        .eq("active", true);
+
+      const systemInstanceId = payload?.variables?.system_instance_id;
+      if (systemInstanceId) {
+        q = q.eq("system_instance_id", systemInstanceId);
+      } else if (supplier?.id) {
+        q = q.eq("supplier_id", supplier.id);
+      }
+
+      const { data } = await q.order("sort_order", { ascending: true });
+      return data ?? [];
+    },
+    enabled: true,
+  });
+
+  const productsToRender = dbProducts.length > 0 
+    ? dbProducts.map(p => ({
+        system_type: p.system_type,
+        name: p.name,
+        description: p.description
+      }))
+    : localFenceProducts;
 
   if (!payload) return null;
   const currentPayload = payload;
@@ -101,7 +145,7 @@ export function RunListV3({
         <section className="space-y-3 rounded-2xl border border-brand-primary/30 bg-brand-primary/5 p-3">
           <p className="text-sm font-black text-brand-text">Choose a fence system</p>
           <div className="grid gap-2">
-            {localFenceProducts.map((product) => (
+            {productsToRender.map((product) => (
               <button
                 key={product.system_type}
                 type="button"
@@ -118,7 +162,9 @@ export function RunListV3({
                         ? "Vertical Slats"
                         : product.system_type === "XPL"
                           ? "Xpress Plus"
-                          : "Build As You Go"}
+                          : product.system_type === "BAYG"
+                            ? "Build As You Go"
+                            : product.name}
                   </span>
                 </span>
                 <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs">{product.system_type}</span>

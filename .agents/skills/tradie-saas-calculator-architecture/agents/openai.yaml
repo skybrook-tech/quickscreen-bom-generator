@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Tradie SaaS Calculator Architecture'
+  short_description: 'Architecture patterns for building SaaS calculators and BOM generators for trade industries. Covers '
+  default_prompt: 'Use this skill for: Architecture patterns for building SaaS calculators and BOM generators for trade industries. Covers 3-layer schema, run/section/gate hierarchy, BOM dispatch taxonomy, pricing models, and data model decisions.'

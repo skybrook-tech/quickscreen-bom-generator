@@ -49,7 +49,15 @@ function expandSectionSystemOverrides(payload: CanonicalPayload): CanonicalPaylo
 
 export function useBomCalculator() {
   return useMutation({
-    mutationFn: async ({ payload, pricingTier }: { payload: CanonicalPayload; pricingTier?: PricingTier }) => {
+    mutationFn: async ({
+      payload,
+      pricingTier,
+      supplierSlug,
+    }: {
+      payload: CanonicalPayload;
+      pricingTier?: PricingTier;
+      supplierSlug?: string;
+    }) => {
       const tier = pricingTier ?? 'tier1';
       const calculatorPayload = expandSectionSystemOverrides(payload);
       if (!isSupabaseConfigured) {
@@ -57,11 +65,15 @@ export function useBomCalculator() {
       }
 
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return calculateLocalBom(calculatorPayload, tier);
+      
+      const invokeHeaders: Record<string, string> = {};
+      if (session?.access_token) {
+        invokeHeaders['Authorization'] = `Bearer ${session.access_token}`;
+      }
 
       const { data, error } = await supabase.functions.invoke('bom-calculator', {
-        body: { payload: calculatorPayload, pricingTier: tier },
-        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { payload: calculatorPayload, pricingTier: tier, supplierSlug },
+        headers: invokeHeaders,
       });
       if (error) return calculateLocalBom(calculatorPayload, tier);
       return data as Record<string, unknown>;

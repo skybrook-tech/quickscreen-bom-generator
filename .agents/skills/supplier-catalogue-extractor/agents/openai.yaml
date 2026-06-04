@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Supplier Catalogue Extractor'
+  short_description: 'Methodology for extracting Australian fencing supplier catalogues (PDFs, brochures, build-packs) int'
+  default_prompt: 'Use this skill for: Methodology for extracting Australian fencing supplier catalogues (PDFs, brochures, build-packs) into calculator-ready structured data — products, SKUs, dimensions, finishes, accessories, dependencies, formulas, compatibility rules, and open questions. Complements bunnings-fence-scraper by handling any non-Bunnings supplier source.'

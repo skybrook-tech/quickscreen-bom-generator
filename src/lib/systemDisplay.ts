@@ -5,6 +5,7 @@ const SYSTEM_DISPLAY_NAME_FALLBACKS: Record<string, string> = {
   XPL: "XPress Plus Premium",
   VS: "Vertical Slat",
   BAYG: "Buy As You Go",
+  DF_CCA_PAL: "CCA Pine Paling",
 };
 
 function tidySeedName(name: string) {

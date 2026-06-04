@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Calculator Project Coordination Playbook'
+  short_description: 'Project coordination playbook for parametric calculator builds (QuickScreen, Anyfence, any tradie Sa'
+  default_prompt: 'Use this skill for: Project coordination playbook for parametric calculator builds (QuickScreen, Anyfence, any tradie SaaS calculator) — 5-state calculation-status taxonomy, evidence-source separation discipline, narrow-slice-over-broad-coverage rule, specialist-agent handoff template, and progress report shape. Captures the project-management discipline that keeps a calculator program coherent across many catalogues and many parallel workstreams.'

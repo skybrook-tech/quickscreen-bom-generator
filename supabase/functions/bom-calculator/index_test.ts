@@ -21,6 +21,7 @@ import {
   resolvePlaceholders,
   resolvePrice,
   stocks,
+  generateCanonicalCode,
   type EngineData,
 } from "./lib.ts";
 import type { PricingRule } from "../_shared/types.ts";
@@ -227,6 +228,55 @@ Deno.test("normaliseVariables: null default_value_json not applied", () => {
   };
   const ctx = normaliseVariables({}, engineData);
   assertEquals(ctx["segment_width_mm"], undefined);
+});
+
+// ─── generateCanonicalCode ──────────────────────────────────────────────────
+
+Deno.test("generateCanonicalCode: post canonical name generation", () => {
+  assertEquals(
+    generateCanonicalCode("AF-POST-PINE-100x75-2400", "CCA Pine Post 100×75×2400mm", "post", { length_mm: 2400, width_mm: 100, depth_mm: 75 }),
+    "100x75 Treated Pine Post 2400mm"
+  );
+  assertEquals(
+    generateCanonicalCode("AF-POST-HWD-100x75-1800", "H4 Hardwood Post 100×75×1800mm", "post", { length_mm: 1800, width_mm: 100, depth_mm: 75 }),
+    "100x75 Hardwood Post 1800mm"
+  );
+});
+
+Deno.test("generateCanonicalCode: rail canonical name generation", () => {
+  assertEquals(
+    generateCanonicalCode("AF-RAIL-PINE-75x38-4800", "Pine Rail 75×38×4800mm", "rail", { length_mm: 4800, width_mm: 75, thickness_mm: 38 }),
+    "75x38 Treated Pine Rail 4800mm"
+  );
+  assertEquals(
+    generateCanonicalCode("AF-CAP-75x50-4800", "75x50 Treated Pine Capping Rail 4800mm", "rail", { length_mm: 4800, width_mm: 75, thickness_mm: 50 }),
+    "75x50 Treated Pine Capping Rail 4800mm"
+  );
+});
+
+Deno.test("generateCanonicalCode: paling canonical name generation", () => {
+  assertEquals(
+    generateCanonicalCode("AF-PAL-100x16-1800", "CCA Pine Paling 100×16×1800mm", "paling", { length_mm: 1800, width_mm: 100, thickness_mm: 16 }),
+    "100x16 Rough Sawn Treated Pine Paling 1800mm"
+  );
+});
+
+Deno.test("generateCanonicalCode: concrete canonical name generation", () => {
+  assertEquals(
+    generateCanonicalCode("AF-CON-RAPID-30", "Rapid Set 30kg", "fixing", { weight_kg: 30, type: "rapid_set" }),
+    "Rapid Set Concrete 30kg"
+  );
+});
+
+Deno.test("generateCanonicalCode: nails and batten screws canonical name generation", () => {
+  assertEquals(
+    generateCanonicalCode("AF-NAIL-COIL-57-250", "Coil Nails 57mm Ring M Gal (250 pack)", "fixing", { length_mm: 57, pack_size: 250 }),
+    "57mm Ring Shank Gal Nail"
+  );
+  assertEquals(
+    generateCanonicalCode("AF-SCR-BB-14g-100-500", "Batten Screws 14g × 100mm Galv (500 pack)", "fixing", { length_mm: 100, pack_size: 500 }),
+    "100mm Galvanised Batten Screw"
+  );
 });
 
 // ─── Fixture-driven integration tests ────────────────────────────────────────

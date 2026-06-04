@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Anyfence fence_system_config.json Schema'
+  short_description: 'The canonical fence_system_config.json schema used by the Anyfence calculator engine. Covers compone'
+  default_prompt: 'Use this skill for: The canonical fence_system_config.json schema used by the Anyfence calculator engine. Covers component categories (panel, post, rail, post_cap vs capping, glass_panel, spigot, paling, plinth, pole, gate_kit), per-piece vs per-metre pricing, cuts_per_run formulas (including the 6mm paling overlap), colour palettes, quantity-break pricing tiers, and compliance JSON injection. Single source of truth across all fence types.'

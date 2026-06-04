@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Fence Calculator QA Tester'
+  short_description: 'Quality-assurance methodology for any fence BOM calculator — audits calculation accuracy against sou'
+  default_prompt: 'Use this skill for: Quality-assurance methodology for any fence BOM calculator — audits calculation accuracy against source-of-truth spreadsheets, CSV pricelists, seed JSON, catalogues, and app output. Includes a 7-step testing workflow, report-shape template, source-priority resolution order, and a canonical high-risk-check list for slats, frames, posts, gates, and quantity-break pricing.'

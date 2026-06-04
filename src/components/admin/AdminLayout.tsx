@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Package, Layers, Palette, ArrowLeft } from "lucide-react";
+import { Package, Layers, Palette, ArrowLeft, Truck, Sliders } from "lucide-react";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -11,6 +11,8 @@ const navItems = [
   { to: "/admin/products", label: "Products", icon: Package },
   { to: "/admin/components", label: "Components", icon: Layers },
   { to: "/admin/colours", label: "Colours", icon: Palette },
+  { to: "/admin/suppliers", label: "Suppliers", icon: Truck },
+  { to: "/admin/system-instances", label: "System Instances", icon: Sliders },
 ];
 
 export function AdminLayout({ children, title, subtitle }: AdminLayoutProps) {

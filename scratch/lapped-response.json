@@ -1,0 +1,469 @@
+{
+  "lines": [
+    {
+      "sku": "DF-POST-100x75-2400",
+      "name": "CCA Pine Post 100×75×2400mm",
+      "description": "CCA Treated Pine post, 100×75mm, 2400mm length",
+      "quantity": 9,
+      "unit": "each",
+      "category": "post",
+      "unitPrice": 19.6,
+      "lineTotal": 176.4,
+      "runId": "run-test-lapped",
+      "segmentId": "seg-test-lapped",
+      "productCode": "DF_CCA_PAL"
+    },
+    {
+      "sku": "DF-PAL-100x16-1800",
+      "name": "CCA Pine Paling 100×16×1800mm",
+      "description": "CCA Treated Pine paling, 100mm wide × 16mm thick, 1800mm length",
+      "quantity": 315,
+      "unit": "each",
+      "category": "paling",
+      "unitPrice": 2.15,
+      "lineTotal": 677.25,
+      "runId": "run-test-lapped",
+      "segmentId": "seg-test-lapped",
+      "productCode": "DF_CCA_PAL"
+    },
+    {
+      "sku": "DF-CONCRETE-20KG",
+      "name": "Rapid Set Concrete 20kg",
+      "description": "Rapid Set Concrete 20kg bag",
+      "quantity": 14,
+      "unit": "each",
+      "category": "fixing",
+      "unitPrice": 9.5,
+      "lineTotal": 133,
+      "runId": "run-test-lapped",
+      "segmentId": "seg-test-lapped",
+      "productCode": "DF_CCA_PAL"
+    },
+    {
+      "sku": "DF-RAIL-75x38-4800",
+      "name": "CCA Pine Rail 75×38×4800mm",
+      "description": "CCA Treated Pine rail, 75×38mm, 4800mm stock length",
+      "quantity": 12,
+      "unit": "each",
+      "category": "rail",
+      "unitPrice": 12.1,
+      "lineTotal": 145.2,
+      "runId": "run-test-lapped",
+      "segmentId": "seg-test-lapped",
+      "productCode": "DF_CCA_PAL"
+    },
+    {
+      "sku": "DF-NAIL-57-RS",
+      "name": "57mm Ring Shank Gal Nail",
+      "description": "57mm Ring Shank Gal Nail for paling fixing",
+      "quantity": 1000,
+      "unit": "each",
+      "category": "fixing",
+      "unitPrice": 0.15,
+      "lineTotal": 150,
+      "runId": "run-test-lapped",
+      "segmentId": "seg-test-lapped",
+      "productCode": "DF_CCA_PAL"
+    },
+    {
+      "sku": "DF-CAP-75x50-4800",
+      "name": "75x50 Treated Pine Capping Rail 4800mm",
+      "description": "75x50 Treated Pine Capping Rail, 4800mm length",
+      "quantity": 4,
+      "unit": "each",
+      "category": "rail",
+      "unitPrice": 16.5,
+      "lineTotal": 66,
+      "runId": "run-test-lapped",
+      "segmentId": "seg-test-lapped",
+      "productCode": "DF_CCA_PAL"
+    },
+    {
+      "sku": "DF-NAIL-45-RS",
+      "name": "45mm Ring Shank Gal Nail",
+      "description": "45mm Ring Shank Gal Nail for back paling fixing",
+      "quantity": 500,
+      "unit": "each",
+      "category": "fixing",
+      "unitPrice": 0.12,
+      "lineTotal": 60,
+      "runId": "run-test-lapped",
+      "segmentId": "seg-test-lapped",
+      "productCode": "DF_CCA_PAL"
+    },
+    {
+      "sku": "DF-SCREW-100",
+      "name": "100mm Galvanised Batten Screw",
+      "description": "100mm Galvanised Batten Screw for rail fixing",
+      "quantity": 48,
+      "unit": "each",
+      "category": "fixing",
+      "unitPrice": 0.8,
+      "lineTotal": 38.4,
+      "runId": "run-test-lapped",
+      "segmentId": "seg-test-lapped",
+      "productCode": "DF_CCA_PAL"
+    }
+  ],
+  "suggestions": [],
+  "runResults": [
+    {
+      "runId": "run-test-lapped",
+      "label": "Run 1 — DF_CCA_PAL",
+      "productCode": "DF_CCA_PAL",
+      "items": [
+        {
+          "sku": "DF-POST-100x75-2400",
+          "name": "CCA Pine Post 100×75×2400mm",
+          "description": "CCA Treated Pine post, 100×75mm, 2400mm length",
+          "quantity": 9,
+          "unit": "each",
+          "category": "post",
+          "unitPrice": 19.6,
+          "lineTotal": 176.4,
+          "runId": "run-test-lapped",
+          "segmentId": "seg-test-lapped",
+          "productCode": "DF_CCA_PAL"
+        },
+        {
+          "sku": "DF-PAL-100x16-1800",
+          "name": "CCA Pine Paling 100×16×1800mm",
+          "description": "CCA Treated Pine paling, 100mm wide × 16mm thick, 1800mm length",
+          "quantity": 315,
+          "unit": "each",
+          "category": "paling",
+          "unitPrice": 2.15,
+          "lineTotal": 677.25,
+          "runId": "run-test-lapped",
+          "segmentId": "seg-test-lapped",
+          "productCode": "DF_CCA_PAL"
+        },
+        {
+          "sku": "DF-CONCRETE-20KG",
+          "name": "Rapid Set Concrete 20kg",
+          "description": "Rapid Set Concrete 20kg bag",
+          "quantity": 14,
+          "unit": "each",
+          "category": "fixing",
+          "unitPrice": 9.5,
+          "lineTotal": 133,
+          "runId": "run-test-lapped",
+          "segmentId": "seg-test-lapped",
+          "productCode": "DF_CCA_PAL"
+        },
+        {
+          "sku": "DF-RAIL-75x38-4800",
+          "name": "CCA Pine Rail 75×38×4800mm",
+          "description": "CCA Treated Pine rail, 75×38mm, 4800mm stock length",
+          "quantity": 12,
+          "unit": "each",
+          "category": "rail",
+          "unitPrice": 12.1,
+          "lineTotal": 145.2,
+          "runId": "run-test-lapped",
+          "segmentId": "seg-test-lapped",
+          "productCode": "DF_CCA_PAL"
+        },
+        {
+          "sku": "DF-NAIL-57-RS",
+          "name": "57mm Ring Shank Gal Nail",
+          "description": "57mm Ring Shank Gal Nail for paling fixing",
+          "quantity": 1000,
+          "unit": "each",
+          "category": "fixing",
+          "unitPrice": 0.15,
+          "lineTotal": 150,
+          "runId": "run-test-lapped",
+          "segmentId": "seg-test-lapped",
+          "productCode": "DF_CCA_PAL"
+        },
+        {
+          "sku": "DF-CAP-75x50-4800",
+          "name": "75x50 Treated Pine Capping Rail 4800mm",
+          "description": "75x50 Treated Pine Capping Rail, 4800mm length",
+          "quantity": 4,
+          "unit": "each",
+          "category": "rail",
+          "unitPrice": 16.5,
+          "lineTotal": 66,
+          "runId": "run-test-lapped",
+          "segmentId": "seg-test-lapped",
+          "productCode": "DF_CCA_PAL"
+        },
+        {
+          "sku": "DF-NAIL-45-RS",
+          "name": "45mm Ring Shank Gal Nail",
+          "description": "45mm Ring Shank Gal Nail for back paling fixing",
+          "quantity": 500,
+          "unit": "each",
+          "category": "fixing",
+          "unitPrice": 0.12,
+          "lineTotal": 60,
+          "runId": "run-test-lapped",
+          "segmentId": "seg-test-lapped",
+          "productCode": "DF_CCA_PAL"
+        },
+        {
+          "sku": "DF-SCREW-100",
+          "name": "100mm Galvanised Batten Screw",
+          "description": "100mm Galvanised Batten Screw for rail fixing",
+          "quantity": 48,
+          "unit": "each",
+          "category": "fixing",
+          "unitPrice": 0.8,
+          "lineTotal": 38.4,
+          "runId": "run-test-lapped",
+          "segmentId": "seg-test-lapped",
+          "productCode": "DF_CCA_PAL"
+        }
+      ]
+    }
+  ],
+  "gateItems": [],
+  "totals": {
+    "subtotal": 1446.25,
+    "gst": 144.63,
+    "grandTotal": 1590.88
+  },
+  "normalized_inputs": {},
+  "warnings": [],
+  "errors": [],
+  "assumptions": [],
+  "segmentDiagnostics": [],
+  "computed": {
+    "run-test-lapped": {
+      "seg-test-lapped": {
+        "actual_height_mm": 1800,
+        "panel_width_mm": 2500,
+        "num_panels": 8,
+        "num_posts": 9,
+        "corner_count": 0,
+        "left_is_system": 1,
+        "right_is_system": 1,
+        "left_is_wall": 0,
+        "right_is_wall": 0,
+        "system_termination_count": 2
+      }
+    }
+  },
+  "trace": [
+    {
+      "stage": "derive",
+      "rule_id": "6afaf387-ba6d-486b-9a4f-de3512b28aa9",
+      "rule_name": "actual_height_mm",
+      "expression": "target_height_mm",
+      "output_key": "actual_height_mm",
+      "output": 1800
+    },
+    {
+      "stage": "derive",
+      "rule_id": "36564755-3306-4534-8964-af9fd8123e8a",
+      "rule_name": "rail_count_derived",
+      "expression": "rail_count > 0 ? rail_count : (target_height_mm < 1500 ? 2 : (target_height_mm < 2400 ? 3 : 4))",
+      "output_key": "rail_count",
+      "output": 3
+    },
+    {
+      "stage": "derive",
+      "rule_id": "bbd5c598-18ad-4597-8405-abbf10100fc3",
+      "rule_name": "post_height_mm",
+      "expression": "target_height_mm + 600",
+      "output_key": "post_height_mm",
+      "output": 2400
+    },
+    {
+      "stage": "derive",
+      "rule_id": "a04de734-f19e-41c2-9e05-a5d0533e042a",
+      "rule_name": "bay_count",
+      "expression": "num_panels",
+      "output_key": "bay_count",
+      "output": 8
+    },
+    {
+      "stage": "derive",
+      "rule_id": "40b7a225-b697-43a1-ba5d-775c0101a5c6",
+      "rule_name": "rail_pieces",
+      "expression": "num_panels * rail_count",
+      "output_key": "rail_pieces",
+      "output": 24
+    },
+    {
+      "stage": "derive",
+      "rule_id": "f7dbcd6f-8860-4644-bca9-5ed6f37af96a",
+      "rule_name": "concrete_bags",
+      "expression": "ceil(num_posts * 1.5)",
+      "output_key": "concrete_bags",
+      "output": 14
+    },
+    {
+      "stage": "derive",
+      "rule_id": "443cfa82-bea6-4892-b8c8-1f2c02530ed2",
+      "rule_name": "batten_screws",
+      "expression": "rail_pieces * 2",
+      "output_key": "batten_screws",
+      "output": 48
+    },
+    {
+      "stage": "derive",
+      "rule_id": "fb4c4720-c4c5-4fc2-9c51-41cd5dd758fe",
+      "rule_name": "paling_count",
+      "expression": "equalStrings(paling_style, \"butted\") ? ceil(segment_width_mm / (100 + paling_gap_mm)) : ceil((segment_width_mm / 1000) * 15)",
+      "output_key": "paling_count",
+      "output": 300
+    },
+    {
+      "stage": "derive",
+      "rule_id": "7b841ab0-e90d-426c-bf4f-b6c244b67f26",
+      "rule_name": "palings_with_wastage",
+      "expression": "ceil(paling_count * 1.05)",
+      "output_key": "palings_with_wastage",
+      "output": 315
+    },
+    {
+      "stage": "derive",
+      "rule_id": "540ffd07-a8c6-42a4-aeaf-d4e43bd53ed2",
+      "rule_name": "back_palings",
+      "expression": "equalStrings(paling_style, \"butted\") ? 0 : ceil(paling_count / 2)",
+      "output_key": "back_palings",
+      "output": 150
+    },
+    {
+      "stage": "derive",
+      "rule_id": "6c56b35f-e8c0-4416-ba77-bf31b3b33256",
+      "rule_name": "front_palings",
+      "expression": "equalStrings(paling_style, \"butted\") ? paling_count : paling_count - back_palings",
+      "output_key": "front_palings",
+      "output": 150
+    },
+    {
+      "stage": "stock",
+      "rule_id": "0021294a-d7fa-45cd-803a-4cbf6671fb76",
+      "rule_name": "rail_stock_lengths",
+      "expression": "ceil(rail_pieces / 2)",
+      "output_key": "rail_stock_lengths",
+      "output": 12
+    },
+    {
+      "stage": "stock",
+      "rule_id": "77e82cef-38eb-4a94-804e-153ff3a3c08d",
+      "rule_name": "capping_stock_lengths",
+      "expression": "equalStrings(paling_style, \"lapped_capped\") ? ceil(num_panels / 2) : 0",
+      "output_key": "capping_stock_lengths",
+      "output": 4
+    },
+    {
+      "stage": "accessory",
+      "rule_id": "cf9962dd-cefe-4c32-9987-62e750ec00a5",
+      "rule_name": "nails_front_count",
+      "expression": "front_palings * rail_count * 2",
+      "output_key": "nails_front_count",
+      "output": 900
+    },
+    {
+      "stage": "accessory",
+      "rule_id": "e41ab9f2-b557-494b-823e-d0b7c7782c50",
+      "rule_name": "nails_front_with_wastage",
+      "expression": "ceil(nails_front_count * 1.05)",
+      "output_key": "nails_front_with_wastage",
+      "output": 945
+    },
+    {
+      "stage": "accessory",
+      "rule_id": "73b766ed-0d8b-4937-ae0b-bc8958cd2bd0",
+      "rule_name": "nails_front_rounded",
+      "expression": "ceil(nails_front_with_wastage / 250) * 250",
+      "output_key": "nails_front_rounded",
+      "output": 1000
+    },
+    {
+      "stage": "accessory",
+      "rule_id": "e869a802-baa4-4c16-944f-e22622e6a6dc",
+      "rule_name": "nails_back_count",
+      "expression": "equalStrings(paling_style, \"butted\") ? 0 : back_palings * rail_count * 1",
+      "output_key": "nails_back_count",
+      "output": 450
+    },
+    {
+      "stage": "accessory",
+      "rule_id": "5dc23482-1577-4cfb-a851-1bccf192ce2d",
+      "rule_name": "nails_back_with_wastage",
+      "expression": "equalStrings(paling_style, \"butted\") ? 0 : ceil(nails_back_count * 1.05)",
+      "output_key": "nails_back_with_wastage",
+      "output": 473
+    },
+    {
+      "stage": "accessory",
+      "rule_id": "a4f039a6-fe5e-4727-b5f4-2543eb48bce3",
+      "rule_name": "nails_back_rounded",
+      "expression": "equalStrings(paling_style, \"butted\") ? 0 : ceil(nails_back_with_wastage / 250) * 250",
+      "output_key": "nails_back_rounded",
+      "output": 500
+    },
+    {
+      "stage": "component",
+      "rule_id": "33ab1598-6b41-4641-89ee-8191690b352e",
+      "rule_name": "qty_post",
+      "expression": "num_posts",
+      "output_key": "qty_post",
+      "output": 9
+    },
+    {
+      "stage": "component",
+      "rule_id": "d19edcbd-35f2-44ea-8d81-f7962595fc58",
+      "rule_name": "qty_rail",
+      "expression": "rail_stock_lengths",
+      "output_key": "qty_rail",
+      "output": 12
+    },
+    {
+      "stage": "component",
+      "rule_id": "236b2def-4032-4c2a-9225-8bfa07f4b46b",
+      "rule_name": "qty_paling",
+      "expression": "palings_with_wastage",
+      "output_key": "qty_paling",
+      "output": 315
+    },
+    {
+      "stage": "component",
+      "rule_id": "9df04a8a-939c-45a2-8dad-f34ccb45efc1",
+      "rule_name": "qty_concrete",
+      "expression": "concrete_bags",
+      "output_key": "qty_concrete",
+      "output": 14
+    },
+    {
+      "stage": "component",
+      "rule_id": "dbab8eb4-1ad2-4cb3-993b-63b39daad06e",
+      "rule_name": "qty_nails_front",
+      "expression": "nails_front_rounded",
+      "output_key": "qty_nails_front",
+      "output": 1000
+    },
+    {
+      "stage": "component",
+      "rule_id": "74eb31ec-d075-4a05-998f-7fca8a6aa1dd",
+      "rule_name": "qty_nails_back",
+      "expression": "nails_back_rounded",
+      "output_key": "qty_nails_back",
+      "output": 500
+    },
+    {
+      "stage": "component",
+      "rule_id": "8964c7eb-4072-4d00-8e1d-c87e3485afe5",
+      "rule_name": "qty_batten_screws",
+      "expression": "batten_screws",
+      "output_key": "qty_batten_screws",
+      "output": 48
+    },
+    {
+      "stage": "component",
+      "rule_id": "d5d9c106-bd54-41e7-8ee3-bbefe8d947c4",
+      "rule_name": "qty_capping",
+      "expression": "capping_stock_lengths",
+      "output_key": "qty_capping",
+      "output": 4
+    }
+  ],
+  "pricingTier": "tier1",
+  "generatedAt": "2026-06-03T14:34:43.602Z"
+}
