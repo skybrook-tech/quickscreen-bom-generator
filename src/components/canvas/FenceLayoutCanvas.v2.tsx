@@ -2,7 +2,7 @@ import { useRef, useEffect, useCallback, useState, useMemo } from "react";
 import { Map } from "lucide-react";
 import { cn } from "../../lib";
 import { initCanvasEngine } from "./canvasEngine";
-import { CanvasToolbar } from "./CanvasToolbar";
+import { CanvasToolbar, type CanvasTool } from "./CanvasToolbar";
 import { MapControls } from "./MapControls";
 import { GateModal } from "../gate/GateModal";
 import { useFenceConfig } from "../../context/FenceConfigContext";
@@ -98,9 +98,7 @@ export function FenceLayoutCanvas({
   const gatesRef = useRef(gates);
   gatesRef.current = gates;
 
-  const [activeTool, setActiveTool] = useState<
-    "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand" | "arrow"
-  >("draw");
+  const [activeTool, setActiveTool] = useState<CanvasTool>("draw");
   const [snapEnabled, setSnapEnabled] = useState(false);
   const [gateSnap100, setGateSnap100] = useState(false);
   const [showGrid, setShowGrid] = useState(false);

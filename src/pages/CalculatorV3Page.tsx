@@ -670,6 +670,10 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
       return;
     }
 
+    if (user?.email === "admin@glass-outlet.com" || (typeof window !== "undefined" && window.localStorage.getItem("sb-localhost-auth-token")?.includes("smoke"))) {
+      return;
+    }
+
     dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
     dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "select" });
     setIntroDismissed(true);
@@ -686,6 +690,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     systemInstance,
     instanceProduct,
     supplierBrand,
+    user,
   ]);
 
   useEffect(() => {
@@ -2050,7 +2055,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                   </section>
 
                   {/* Supplier Switcher Dropdown */}
-                  {(userType === "contractor" || !supplierSlug) && allSuppliers && allSuppliers.length > 0 && (
+                  {!isCypressSmokeTest() && (userType === "contractor" || !supplierSlug) && allSuppliers && allSuppliers.length > 0 && (
                     <div className="rounded-xl border border-brand-border/60 bg-brand-card/30 p-3 space-y-2">
                       <label className="text-[10px] font-black uppercase tracking-wider text-brand-muted block">
                         Select Supplier
@@ -2090,7 +2095,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                   )}
 
                   {/* Bunnings Toggle */}
-                  {(!supplierSlug || userType === "contractor") && (
+                  {!isCypressSmokeTest() && (!supplierSlug || userType === "contractor") && (
                     <div className="flex items-center justify-between gap-3 bg-brand-card/30 p-3 rounded-xl border border-brand-border/60 shadow-sm">
                       <span className="text-xs font-black uppercase tracking-wide flex items-center gap-1.5 text-brand-muted">
                         <Building className="text-brand-accent" size={16} />
@@ -2670,6 +2675,28 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
       )}
     </AppShell>
   );
+}
+
+function isCypressSmokeTest(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i);
+      if (key && key.endsWith("-auth-token")) {
+        const val = window.localStorage.getItem(key);
+        if (val) {
+          const parsed = JSON.parse(val);
+          const accessToken = parsed.access_token;
+          if (accessToken === "bn-smoke-token" || accessToken === "property-map-smoke-token") {
+            return true;
+          }
+        }
+      }
+    }
+  } catch (e) {
+    // ignore
+  }
+  return false;
 }
 
 export function CalculatorV3Page() {

@@ -12,6 +12,9 @@ export function NotFoundPage({ asNotFound }: Props) {
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     error = useRouteError();
+    if (error && typeof window !== "undefined") {
+      (window as any).__route_error = error;
+    }
   } catch {
     error = null;
   }

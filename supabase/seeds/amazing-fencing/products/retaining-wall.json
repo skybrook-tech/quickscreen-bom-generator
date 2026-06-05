@@ -1,5 +1,5 @@
 {
-  "org_slug": "glass-outlet",
+  "org_slug": "amazing-fencing",
   "supplier_slug": "amazing-fencing",
   "system_instance_slug": "amazing-retaining-wall",
   "_format_note": "Timber retaining wall sleepers from Amazing Fencing's Cin7 export 2026-05-26. Retaining walls are not fences but use the same supply pipeline (sleepers + posts). Modelled as a timber-fence archetype instance with metadata flagging 'retaining' use_case until a dedicated retaining-wall archetype is added in a future architectural iteration. Prices are TRADE (tier2 in our convention) from Cin7 BuyPriceEx.",

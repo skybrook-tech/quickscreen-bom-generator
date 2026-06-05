@@ -1,0 +1,152 @@
+{
+  "org_slug": "amazing-fencing",
+  "products": [
+    {
+      "system_type": "QS_GATE",
+      "product_type": "gate",
+      "name": "QS Pedestrian Gate",
+      "description": "Amazing Fencing Colorbond Pedestrian Gate",
+      "active": true,
+      "sort_order": 300,
+      "metadata": {
+        "_provenance": {
+          "supplier_slug": "amazing-fencing",
+          "system_instance_slug": "amazing-colorbond"
+        }
+      }
+    }
+  ],
+  "product_components": [],
+  "rule_sets": [
+    {
+      "product_system_type": "QS_GATE",
+      "name": "QS Gate Rules",
+      "description": "BOM rules for Amazing Colorbond Gate",
+      "active": true
+    }
+  ],
+  "rule_versions": [
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "is_current": true,
+      "effective_from": "2026-06-03",
+      "notes": "Initial gate rules for Amazing Colorbond"
+    }
+  ],
+  "product_constraints": [
+    {
+      "product_system_type": "QS_GATE",
+      "name": "max_gate_width_mm",
+      "constraint_type": "max",
+      "value_text": "1200",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Gate width cannot exceed 1200mm.",
+      "active": true
+    }
+  ],
+  "product_variables": [
+    {
+      "product_system_type": "QS_GATE",
+      "name": "colour",
+      "label": "Colour",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "Monument",
+      "options_json": [
+        "Monument",
+        "Woodland Grey",
+        "Surfmist",
+        "Basalt",
+        "Dune",
+        "Riversand",
+        "Cottage Green",
+        "Paperbark",
+        "Primrose",
+        "Shale Grey",
+        "Jasper",
+        "Windspray",
+        "Evening Haze",
+        "Pale Eucalypt",
+        "Deep Ocean",
+        "Manor Red",
+        "Domain",
+        "Wilderness",
+        "Night Sky"
+      ],
+      "scope": "job",
+      "sort_order": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_width_mm",
+      "label": "Gate Width",
+      "data_type": "number",
+      "required": true,
+      "default_value_json": 1000,
+      "options_json": [],
+      "scope": "segment",
+      "sort_order": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "name": "gate_height_mm",
+      "label": "Gate Height",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": 1800,
+      "options_json": [1500, 1800, 2100, 2400],
+      "scope": "segment",
+      "sort_order": 30,
+      "active": true
+    }
+  ],
+  "product_validations": [],
+  "product_rules": [
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "actual_height_mm",
+      "expression": "gate_height_mm",
+      "output_key": "actual_height_mm",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "QS_GATE",
+      "rule_set_name": "QS Gate Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_gate",
+      "expression": "1",
+      "output_key": "qty_gate",
+      "priority": 10,
+      "active": true
+    }
+  ],
+  "product_component_selectors": [
+    {
+      "product_system_type": "QS_GATE",
+      "selector_key": "af_gate_monument",
+      "component_category": "gate",
+      "selector_type": "exact",
+      "match_json": {
+        "colour": "MO"
+      },
+      "qty_key": "qty_gate",
+      "sku_pattern": "0001",
+      "priority": 10,
+      "active": true
+    }
+  ],
+  "product_companion_rules": [],
+  "product_warnings": [],
+  "pricing_rules": []
+}

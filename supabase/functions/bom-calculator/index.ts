@@ -108,17 +108,33 @@ async function loadComponentNames(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
-  const { data, error } = await supabaseAdmin
-    .from("product_components")
-    .select("sku, name, description, default_price, canonical_code, category, metadata")
-    .eq("org_id", orgId)
-    .eq("active", true)
-    .overlaps("system_types", systemTypes);
 
-  if (error) throw new Error(`Component names lookup failed: ${error.message}`);
+  const allRows: any[] = [];
+  let from = 0;
+  let to = 999;
+  let hasMore = true;
+
+  while (hasMore) {
+    const { data, error } = await supabaseAdmin
+      .from("product_components")
+      .select("sku, name, description, default_price, canonical_code, category, metadata")
+      .eq("org_id", orgId)
+      .eq("active", true)
+      .overlaps("system_types", systemTypes)
+      .range(from, to);
+
+    if (error) throw new Error(`Component names lookup failed: ${error.message}`);
+    allRows.push(...(data ?? []));
+    if ((data ?? []).length < 1000) {
+      hasMore = false;
+    } else {
+      from += 1000;
+      to += 1000;
+    }
+  }
 
   const map = new Map<string, { sku: string; name: string; description: string; defaultPrice: number | null; canonicalCode: string | null }>();
-  for (const row of data ?? []) {
+  for (const row of allRows) {
     const canonicalCode = row.canonical_code || generateCanonicalCode(row.sku, row.name || "", row.category || "", row.metadata);
     const val = {
       sku: row.sku,

@@ -1,5 +1,5 @@
 {
-  "org_slug": "glass-outlet",
+  "org_slug": "amazing-fencing",
   "supplier_slug": "amazing-fencing",
   "system_instance_slug": "amazing-colorbond",
   "_format_note": "ColorBond steel panel fencing as sold by Amazing Fencing using multi-brand sheets (Gramline / Lysaght / Oxworks / ColorMAX). Standard galvanised + coloured posts/rails/sheets. Prices null — trade pricing PDF required.",
@@ -74,5 +74,310 @@
     {"sku": "AF-CBD-SCREW-COLOURED-SD10", "name": "Coloured Screw SD 10-16 × 16mm Hex", "description": "Coloured hex screw, SD 10-16 × 16mm", "category": "screw", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"type": "hex_coloured"}, "active": true, "subCategory": "screws", "sortPriority": 82},
 
     {"sku": "AF-CBD-TOUCHUP-PAINT", "name": "Touch-up Paint", "description": "Colour-matched touch-up paint for steel fence", "category": "accessory", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND", "AF_PERMASTEEL"], "metadata": {}, "active": true, "subCategory": "accessories", "sortPriority": 90}
-  ]
+  ],
+  "rule_sets": [
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "Amazing Colorbond Rules",
+      "description": "Calculation rules for Colorbond steel panel fence",
+      "active": true
+    }
+  ],
+  "rule_versions": [
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "is_current": true,
+      "effective_from": "2026-06-03",
+      "notes": "Initial rules for Colorbond steel fence"
+    }
+  ],
+  "product_constraints": [
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "min_panel_width_mm",
+      "constraint_type": "min",
+      "value_text": "100",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Panel width must be at least 100mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "max_panel_width_mm",
+      "constraint_type": "max",
+      "value_text": "3125",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Panel width cannot exceed 3125mm.",
+      "active": true
+    }
+  ],
+  "product_variables": [
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "colour",
+      "label": "Colour",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "Monument",
+      "options_json": [
+        "Monument",
+        "Woodland Grey",
+        "Surfmist",
+        "Basalt",
+        "Dune",
+        "Riversand",
+        "Cottage Green",
+        "Paperbark",
+        "Primrose",
+        "Shale Grey",
+        "Jasper",
+        "Windspray",
+        "Evening Haze",
+        "Pale Eucalypt",
+        "Deep Ocean",
+        "Manor Red",
+        "Domain",
+        "Wilderness",
+        "Night Sky"
+      ],
+      "scope": "job",
+      "sort_order": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "max_panel_width_mm",
+      "label": "Max Panel Width",
+      "data_type": "number",
+      "required": true,
+      "default_value_json": 2365,
+      "options_json": [],
+      "scope": "run",
+      "sort_order": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "target_height_mm",
+      "label": "Target Height",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": 1800,
+      "options_json": [1500, 1800, 2100, 2400],
+      "scope": "segment",
+      "sort_order": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "mounting_type",
+      "label": "Mounting Type",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "concreted-in-ground",
+      "options_json": ["concreted-in-ground", "base-plated", "core-drilled"],
+      "scope": "run",
+      "sort_order": 40,
+      "active": true
+    }
+  ],
+  "product_validations": [
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "post_spacing_in_range",
+      "expression": "max_panel_width_mm >= 100 and max_panel_width_mm <= 3125",
+      "severity": "error",
+      "message": "Panel width must be between 100mm and 3125mm.",
+      "active": true
+    }
+  ],
+  "product_rules": [
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "actual_height_mm",
+      "expression": "target_height_mm",
+      "output_key": "actual_height_mm",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "post_height_mm",
+      "expression": "target_height_mm + 600",
+      "output_key": "post_height_mm",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "post_height_suffix",
+      "expression": "post_height_mm / 100",
+      "output_key": "post_height_suffix",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "sheet_height_suffix",
+      "expression": "target_height_mm == 1200 ? 11 : (target_height_mm == 1500 ? 15 : (target_height_mm == 1800 ? 17 : (target_height_mm == 2100 ? 21 : 24)))",
+      "output_key": "sheet_height_suffix",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "rail_suffix",
+      "expression": "max_panel_width_mm <= 2400 ? 23 : 31",
+      "output_key": "rail_suffix",
+      "priority": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "concrete_bags",
+      "expression": "equalStrings(mounting_type, \"concreted-in-ground\") ? num_posts : 0",
+      "output_key": "concrete_bags",
+      "priority": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_post",
+      "expression": "num_posts",
+      "output_key": "qty_post",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_rail",
+      "expression": "num_panels * 2",
+      "output_key": "qty_rail",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_infill",
+      "expression": "num_panels * 3",
+      "output_key": "qty_infill",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_cap",
+      "expression": "num_posts",
+      "output_key": "qty_cap",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_concrete",
+      "expression": "concrete_bags",
+      "output_key": "qty_concrete",
+      "priority": 50,
+      "active": true
+    }
+  ],
+  "product_component_selectors": [
+    {
+      "product_system_type": "AF_COLORBOND",
+      "selector_key": "af_cb_post",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_post",
+      "sku_pattern": "FNP{colour}{post_height_suffix}",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "selector_key": "af_cb_rail",
+      "component_category": "rail",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_rail",
+      "sku_pattern": "FRM{colour}{rail_suffix}",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "selector_key": "af_cb_infill",
+      "component_category": "sheet",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_infill",
+      "sku_pattern": "FZS{colour}{sheet_height_suffix}",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "selector_key": "af_cb_cap",
+      "component_category": "cap",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_cap",
+      "sku_pattern": "CCAP{colour}",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "selector_key": "af_cb_concrete",
+      "component_category": "fixing",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_concrete",
+      "sku_pattern": "Post Mix Concrete 30kg",
+      "priority": 10,
+      "active": true
+    }
+  ],
+  "product_companion_rules": [],
+  "product_warnings": [],
+  "pricing_rules": []
 }

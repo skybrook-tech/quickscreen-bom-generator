@@ -418,21 +418,28 @@ async function upsertPricingRules(orgId, rows) {
 // ── Colour options ──────────────────────────────────────────────────────────
 
 async function upsertColourOptions() {
-  let raw;
-  try {
-    raw = JSON.parse(readFileSync(COLOUR_OPTIONS_FILE, 'utf8'));
-  } catch {
-    console.log('colour-options.json not found — skipping');
-    return;
+  const dirs = readdirSync(ROOT).filter((name) => {
+    try {
+      return statSync(resolve(ROOT, name)).isDirectory() && name !== 'schemas' && name !== 'tools';
+    } catch {
+      return false;
+    }
+  });
+
+  for (const dirName of dirs) {
+    const file = resolve(ROOT, dirName, 'colour-options.json');
+    if (existsSync(file)) {
+      const raw = JSON.parse(readFileSync(file, 'utf8'));
+      const orgId = await resolveOrgId(raw.org_slug);
+      const rows = (raw.colour_options ?? []).map(r => ({ org_id: orgId, ...r }));
+      if (rows.length === 0) continue;
+      const { error } = await supabase
+        .from('colour_options')
+        .upsert(rows, { onConflict: 'org_id,value' });
+      if (error) throw new Error(`colour_options upsert in ${dirName}: ${error.message}`);
+      console.log(`${dirName}/colour-options.json: ${rows.length} colour options upserted`);
+    }
   }
-  const orgId = await resolveOrgId(raw.org_slug);
-  const rows = (raw.colour_options ?? []).map(r => ({ org_id: orgId, ...r }));
-  if (rows.length === 0) return;
-  const { error } = await supabase
-    .from('colour_options')
-    .upsert(rows, { onConflict: 'org_id,value' });
-  if (error) throw new Error(`colour_options upsert: ${error.message}`);
-  console.log(`colour-options.json: ${rows.length} upserted`);
 }
 
 // ── Main per-file loader ────────────────────────────────────────────────────

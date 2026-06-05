@@ -1,0 +1,53 @@
+category,supplier_sku,description,size,length_mm,tier2_price_ex_gst,carton_qty
+Bagged Concrete,CG2CD,General Purpose Cement 20kg,20 KG,,6.68,
+Bagged Concrete,DMPM3056LD,Post Mix 30KG,30 KG,,9.8,56
+Bagged Concrete,DMR3056LD,Rapid Set 30KG,30 KG,,11.04,56
+Nails,CN2545RMGSINCOIL,Coil Nails 15Deg - 2.5 x 45mm Ring M Gal (250) - Single Coil,45,,2.47,250
+Nails,CN2545RMG,Coil Nails 15Deg - 2.5 x 45mm Ring M Gal (9000),45,,58.0,9000
+Nails,CN2557RMGSINCOIL,Coil Nails 15Deg - 2.5 x 57mm Ring M Gal (250) - Single Coil,57,,3.8,
+Nails,CN2557RMG,Coil Nails 15Deg - 2.5 x 57mm Ring M Gal (9000),57,,89.0,9000
+Nails,YF452563F,Coil Nails 45mm Stainless Steel (Box 1800),,45,148.0,1800
+Nails,CNHD32Single,Hardened Coil Nail 15 Deg - 2.5 x 32mm (200) - Single Coil,2.5 x 32,,1.66,
+Nails,CNHD32,Hardened Coil Nail 15 Deg - 2.5 x 32mm (6000),2.5 x 32,,50.0,
+Paling,100x1200x16Paddle,CCA Treated Pine *Paddle Pop* Paling 100 x 16 x 1200mm,1200,1200,1.7,
+Paling,100x1500x16Paddle,CCA Treated Pine *Paddle Pop* Paling 100 x 16 x 1500mm,1500,,1.7,
+Paling,PL100x16x1200,CCA Treated Pine Paling 100 x 16 x 1200mm,1200,1200,0.33,330
+Paling,PL100x16x1500,CCA Treated Pine Paling 100 x 16 x 1500mm,1500,1500,1.54,330
+Paling,PL100x16x1800,CCA Treated Pine Paling 100 x 16 x 1800mm,1800,1800,1.78,330
+Paling,PL100x16x2100,CCA Treated Pine Paling 100 x 16 x 2100mm,2100,2100,0.0,330
+Paling,PL100x16x2400,CCA Treated Pine Paling 100 x 16 x 2400mm,2400,2400,2.5,330
+Paling,PL100x16x3000,CCA Treated Pine Paling 100 x 16 x 3000mm - Custom Order - Pack of 330 ONLY,3000,3000,3.15,330
+Picket,CP75x16x1200,CCA Treated Pine Colonial Picket 75 x 16 x 1200mm,1200,2100,1.39,429
+Picket,CP75x16x1500,CCA Treated Pine Colonial Picket 75 x 16 x 1500mm,1500,1500,1.73,429
+Picket,CP75x16x1800,CCA Treated Pine Colonial Picket 75 x 16 x 1800mm,1800,1800,2.0,429
+Post,PP100x100x2400,CCA Treated Pine Post 100 x 100 x 2400mm,2400,2400,20.3,55
+Post,,CCA Treated Pine Post 100 x 100 x 3000mm,,,32.1,
+Post,PP100x75x1800,CCA Treated Pine Post 100 x 75 x 1800mm,1800,1800,10.71,55
+Post,PP100x75x2400,CCA Treated Pine Post 100 x 75 x 2400mm,2400,2400,14.27,55
+Post,PP100x75x3000,CCA Treated Pine Post 100 x 75 x 3000mm,3000,3000,17.85,55
+Post,HP100x100,H4 Treated Hardwood Post 100 x 100 x 1800mm,1800,1800,22.13,42
+Post,HP100x100,H4 Treated Hardwood Post 100 x 100 x 2100mm,2100,2100,27.98,42
+Post,HP100x100,H4 Treated Hardwood Post 100 x 100 x 2400mm,2400,2400,30.33,42
+Post,HP100x100,H4 Treated Hardwood Post 100 x 100 x 2700mm,2700,2700,35.97,42
+Post,hw100x75x1800,H4 Treated Hardwood Post 100 x 75 x 1800mm,1800,1800,16.81,56
+Post,Futhw100x75x2100,H4 Treated Hardwood Post 100 x 75 x 2100mm,2100,2100,20.79,55
+Post,hw100x75x2400,H4 Treated Hardwood Post 100 x 75 x 2400mm,2400,2400,22.43,28
+Post,hw100x75x2700,H4 Treated Hardwood Post 100 x 75 x 2700mm,2700,2700,25.43,56
+Post,hw100x75x3000,H4 Treated Hardwood Post 100 x 75 x 3000mm,3000,3000,28.41,56
+Rail,pr75x38x4800,CCA 75x38 x 4800mm Treated Pine Rail,75 x 38 x 4800,4800,8.64,90
+Rail,pr100x38x4800,CCA Treated Pine Rail 100 x 38 x 4800mm,100 x 38 x 4800,4800,11.52,70
+Rail,F100038H3AR4800,CCA Treated Pine Rail Arrissed 100 x 38 x 4800mm,4800,4800,12.38,60
+Rail,hw100x38x4800,H4 Treated Hardwood Rail 100 x 38 x 4800mm,100 x 38 x 4800,4800,26.76,56
+Rail,hw75x38x4800,H4 Treated Hardwood Rail 75 x 38 x 4800mm,75 x 38 x 4800,4800,19.8,80
+Screw,BBEG141005,Batten Screws 14g x 100mm Galvanised(500),100,,12.13,500
+Screw,BBEG141255,Batten Screws 14g x 125mm Galvanised(500),125,,9.94,
+Screw,BBEG14755,Batten Screws 14g x 75mm Galvanised(500),,,36.37,500
+Sleeper,ps200x50x2400,CCA Treated Pine Sleeper 200 x 50 x 2400mm,2400,2400,16.32,55
+Sleeper,ps200x50x3000,CCA Treated Pine Sleeper 200 x 50 x 3000mm,3000,3000,21.45,55
+Sleeper,ps200x75x2400,CCA Treated Pine Sleeper 200 x 75 x 2400mm,2400,2400,23.65,36
+Sleeper,ps200x75x300,CCA Treated Pine Sleeper 200 x 75 x 3000mm,3000,3000,29.55,36
+Sleeper,HS200x50x2400,H4 Treated Hardwood Sleeper 200 x 50 x 2400mm,2400,2400,24.98,48
+Sleeper,HS200x50x3000,H4 Treated Hardwood Sleeper 200 x 50 x 3000mm,3000,3000,31.4,48
+Sleeper,HS200x75x1800,H4 Treated Hardwood Sleeper 200 x 75 x 1800mm,1800,1800,30.0,
+Sleeper,HS200x75x2400,H4 Treated Hardwood Sleeper 200 x 75 x 2400mm,2400,2400,37.49,32
+Sleeper,HS200x75x3000,H4 Treated Hardwood Sleeper 200 x 75 x 3000mm,3000,3000,48.61,32

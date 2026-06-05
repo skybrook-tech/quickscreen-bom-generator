@@ -1,5 +1,5 @@
 {
-  "org_slug": "glass-outlet",
+  "org_slug": "amazing-fencing",
   "supplier_slug": "amazing-fencing",
   "system_instance_slug": "amazing-timber-paling",
   "_format_note": "Treated pine paling + hardwood paling fence components from Amazing Fencing Cin7. Fully wired up with rule sets, variables, selectors, and pricing rules.",
@@ -47,7 +47,9 @@
     {"sku": "AF-NAIL-COIL-45-250", "name": "Coil Nails 45mm Ring M Gal (250 pack)", "description": "Single coil 250 nails, 2.5×45mm Ring Galv", "canonical_code": "45mm Ring Shank Gal Nail, 45mm Smooth Shank Gal Nail", "category": "fixing", "unit": "pack", "default_price": 2.47, "system_types": ["AF_TIMBER_PALING"], "metadata": {"length_mm": 45, "diameter_mm": 2.5, "pack_size": 250, "finish": "galvanised", "bomCategory": "fasteners_and_screws"}, "active": true, "subCategory": "fasteners_and_screws", "sortPriority": 50},
     {"sku": "AF-NAIL-COIL-57-250", "name": "Coil Nails 57mm Ring M Gal (250 pack)", "description": "Single coil 250 nails, 2.5×57mm Ring Galv", "canonical_code": "57mm Ring Shank Gal Nail, 57mm Smooth Shank Gal Nail", "category": "fixing", "unit": "pack", "default_price": 3.80, "system_types": ["AF_TIMBER_PALING"], "metadata": {"length_mm": 57, "diameter_mm": 2.5, "pack_size": 250, "finish": "galvanised", "bomCategory": "fasteners_and_screws"}, "active": true, "subCategory": "fasteners_and_screws", "sortPriority": 50},
     {"sku": "AF-SCR-BB-14g-100-500", "name": "Batten Screws 14g × 100mm Galv (500 pack)", "description": "Batten screws 14g × 100mm, galvanised, 500 pack", "canonical_code": "100mm Galvanised Batten Screw", "category": "fixing", "unit": "pack", "default_price": 12.13, "system_types": ["AF_TIMBER_PALING"], "metadata": {"length_mm": 100, "gauge": "14g", "pack_size": 500, "finish": "galvanised", "bomCategory": "fasteners_and_screws"}, "active": true, "subCategory": "fasteners_and_screws", "sortPriority": 60},
-    {"sku": "AF-CON-RAPID-30", "name": "Rapid Set 30kg", "description": "Rapid set concrete 30kg bag", "canonical_code": "Rapid Set Concrete 30kg", "category": "fixing", "unit": "bag", "default_price": 11.04, "system_types": ["AF_TIMBER_PALING"], "metadata": {"weight_kg": 30, "type": "rapid_set", "bomCategory": "fixings"}, "active": true, "subCategory": "fixings", "sortPriority": 70},
+    {"sku": "DMR3056LD", "name": "Rapid Set Concrete 30kg", "description": "Rapid Set Concrete 30kg bag", "canonical_code": "Rapid Set Concrete 30kg", "category": "fixing", "unit": "bag", "default_price": 11.04, "system_types": ["AF_TIMBER_PALING", "AF_COLORBOND"], "metadata": {"size": "30 KG", "brand": "Treated Pine", "style": "Bagged Concrete", "weight_kg": 30, "type": "rapid_set", "bomCategory": "fixings"}, "active": true, "subCategory": "fixings", "sortPriority": 70},
+    {"sku": "DMPM3056LD", "name": "Post Mix Concrete 30kg", "description": "Post Mix Concrete 30kg bag", "canonical_code": "Post Mix Concrete 30kg", "category": "fixing", "unit": "bag", "default_price": 9.80, "system_types": ["AF_TIMBER_PALING", "AF_COLORBOND"], "metadata": {"size": "30 KG", "brand": "Treated Pine", "style": "Bagged Concrete", "weight_kg": 30, "type": "post_mix", "bomCategory": "fixings"}, "active": true, "subCategory": "fixings", "sortPriority": 70},
+    {"sku": "CG2CD", "name": "General Purpose Cement 20kg", "description": "General Purpose Cement 20kg bag", "canonical_code": "General Purpose Cement 20kg", "category": "fixing", "unit": "each", "default_price": 6.68, "system_types": ["AF_TIMBER_PALING", "AF_COLORBOND"], "metadata": {"size": "20 KG", "brand": "Treated Pine", "style": "Bagged Concrete", "weight_kg": 20, "type": "gp_cement", "bomCategory": "fixings"}, "active": true, "subCategory": "fixings", "sortPriority": 70},
     {"sku": "AF-CAP-75x50-4800", "name": "75x50 Treated Pine Capping Rail 4800mm", "description": "75x50 Treated Pine Capping Rail, 4800mm length", "canonical_code": "75x50 Treated Pine Capping Rail 4800mm", "category": "rail", "unit": "length", "default_price": 16.5, "system_types": ["AF_TIMBER_PALING"], "metadata": {"length_mm": 4800, "width_mm": 75, "thickness_mm": 50, "material": "CCA Pine", "bomCategory": "rails"}, "active": true, "subCategory": "rails", "sortPriority": 35}
   ],
   "rule_sets": [
@@ -883,9 +885,15 @@
     {"sku": "AF-SCR-BB-14g-100-500", "tier_code": "tier1", "rule": null, "price": 14.56, "priority": 0, "active": true},
     {"sku": "AF-SCR-BB-14g-100-500", "tier_code": "tier2", "rule": null, "price": 12.13, "priority": 0, "active": true},
     {"sku": "AF-SCR-BB-14g-100-500", "tier_code": "tier3", "rule": null, "price": 10.31, "priority": 0, "active": true},
-    {"sku": "AF-CON-RAPID-30", "tier_code": "tier1", "rule": null, "price": 13.25, "priority": 0, "active": true},
-    {"sku": "AF-CON-RAPID-30", "tier_code": "tier2", "rule": null, "price": 11.04, "priority": 0, "active": true},
-    {"sku": "AF-CON-RAPID-30", "tier_code": "tier3", "rule": null, "price": 9.38, "priority": 0, "active": true},
+    {"sku": "DMR3056LD", "tier_code": "tier1", "rule": null, "price": 13.25, "priority": 0, "active": true},
+    {"sku": "DMR3056LD", "tier_code": "tier2", "rule": null, "price": 11.04, "priority": 0, "active": true},
+    {"sku": "DMR3056LD", "tier_code": "tier3", "rule": null, "price": 9.38, "priority": 0, "active": true},
+    {"sku": "DMPM3056LD", "tier_code": "tier1", "rule": null, "price": 11.76, "priority": 0, "active": true},
+    {"sku": "DMPM3056LD", "tier_code": "tier2", "rule": null, "price": 9.80, "priority": 0, "active": true},
+    {"sku": "DMPM3056LD", "tier_code": "tier3", "rule": null, "price": 8.33, "priority": 0, "active": true},
+    {"sku": "CG2CD", "tier_code": "tier1", "rule": null, "price": 8.02, "priority": 0, "active": true},
+    {"sku": "CG2CD", "tier_code": "tier2", "rule": null, "price": 6.68, "priority": 0, "active": true},
+    {"sku": "CG2CD", "tier_code": "tier3", "rule": null, "price": 5.68, "priority": 0, "active": true},
     {"sku": "AF-CAP-75x50-4800", "tier_code": "tier1", "rule": null, "price": 19.80, "priority": 0, "active": true},
     {"sku": "AF-CAP-75x50-4800", "tier_code": "tier2", "rule": null, "price": 16.50, "priority": 0, "active": true},
     {"sku": "AF-CAP-75x50-4800", "tier_code": "tier3", "rule": null, "price": 14.03, "priority": 0, "active": true}

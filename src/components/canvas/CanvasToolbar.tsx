@@ -10,17 +10,15 @@ import {
   Undo2,
   Redo2,
   Trash2,
-  Printer,
-  RotateCcw,
-  Maximize2,
-  Minimize2,
   Minus,
-  Crosshair,
   CircleHelp,
   ArrowRight,
   Layers,
+  Camera,
+  TreePine,
+  Compass,
 } from "lucide-react";
-import { useRef, useState, type RefObject } from "react";
+import { useRef, useState, useEffect, type RefObject } from "react";
 import type { initCanvasEngine } from "./canvasEngine";
 import { TOOL_HOTKEYS } from "../../lib/canvasShortcuts";
 import type {
@@ -29,7 +27,20 @@ import type {
 } from "../../types/canonical.types";
 
 type Engine = ReturnType<typeof initCanvasEngine>;
-type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand" | "arrow";
+export type CanvasTool =
+  | "draw"
+  | "gate"
+  | "move"
+  | "boundary"
+  | "building"
+  | "text"
+  | "post"
+  | "pillar"
+  | "freehand"
+  | "arrow"
+  | "photo"
+  | "tree"
+  | "north";
 type FreehandStyle = {
   color: string;
   width: number;
@@ -87,8 +98,6 @@ export function CanvasToolbar({
   onGateSnap100Toggle,
   showGrid,
   onToggleGrid,
-  expanded,
-  onToggleExpand,
   onHelpOpen,
   onPrintMap,
   canUndo = false,
@@ -103,8 +112,50 @@ export function CanvasToolbar({
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
   const sheetTouchStartYRef = useRef<number | null>(null);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target?.isContentEditable ||
+        target?.tagName === "INPUT" ||
+        target?.tagName === "TEXTAREA" ||
+        target?.tagName === "SELECT"
+      ) {
+        return;
+      }
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+      const key = e.key.toLowerCase();
+      if (key === "o") {
+        e.preventDefault();
+        handleTool("photo");
+      } else if (key === "r") {
+        e.preventDefault();
+        handleTool("tree");
+      } else if (key === "n") {
+        e.preventDefault();
+        handleTool("north");
+      } else if (key === "c") {
+        e.preventDefault();
+        engineRef.current?.fitToContent();
+      } else if (key === "p") {
+        e.preventDefault();
+        onPrintMap();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [activeTool]);
+
   const handleTool = (t: CanvasTool) => {
-    engineRef.current?.setTool(t);
+    const nativeTools = ["draw", "gate", "move", "boundary", "building", "text", "post", "pillar", "freehand", "arrow"];
+    if (nativeTools.includes(t)) {
+      engineRef.current?.setTool(t as any);
+    } else {
+      engineRef.current?.setTool("move");
+    }
     onToolChange(t);
   };
 
@@ -529,93 +580,74 @@ export function CanvasToolbar({
       >
         <Type size={16} /> Text {keyBadge(TOOL_HOTKEYS.text)}
       </button>
-      </div>
-
-      <div className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
-        <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">Actions</span>
       <button
         type="button"
-        title="Centre view on drawn fence"
-        className={iconBtnCls()}
-        onClick={() => engineRef.current?.fitToContent()}
+        title="Place a photo pin marker (O)"
+        className={btnCls(activeTool === "photo")}
+        onClick={() => handleTool("photo")}
       >
-        <Crosshair size={16} /> Centre
+        <Camera size={16} /> Photo pin {keyBadge("O")}
       </button>
       <button
         type="button"
-        title="Print installer-ready layout map"
-        className={iconBtnCls()}
-        onClick={onPrintMap}
+        title="Place a tree marker (R)"
+        className={btnCls(activeTool === "tree")}
+        onClick={() => handleTool("tree")}
       >
-        <Printer size={16} /> Print Map
+        <TreePine size={16} /> Tree {keyBadge("R")}
       </button>
       <button
         type="button"
-        title="Reset zoom and pan"
-        className={iconBtnCls()}
-        onClick={() => engineRef.current?.resetView()}
+        title="Place a north arrow bearing marker (N)"
+        className={btnCls(activeTool === "north")}
+        onClick={() => handleTool("north")}
       >
-        <RotateCcw size={16} /> Reset View
+        <Compass size={16} /> North {keyBadge("N")}
       </button>
       </div>
 
       <div className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-brand-border/70 bg-brand-bg/50 px-2 py-1.5">
         <span className="shrink-0 text-[10px] font-black uppercase tracking-wide text-brand-muted">View</span>
-      {renderLayerControls("desktop")}
-      <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
-        <input
-          type="checkbox"
-          aria-label="Angle snap"
-          checked={snapEnabled}
-          onChange={(e) => {
-            onSnapToggle(e.target.checked);
-            engineRef.current?.setSnapToGrid(e.target.checked);
-          }}
-          className="accent-brand-accent"
-        />
-        Angle snap
-      </label>
+        {renderLayerControls("desktop")}
+        <div className="w-px h-4 bg-brand-border/60 mx-1" />
+        <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
+          <input
+            type="checkbox"
+            aria-label="Angle snap"
+            checked={snapEnabled}
+            onChange={(e) => {
+              onSnapToggle(e.target.checked);
+              engineRef.current?.setSnapToGrid(e.target.checked);
+            }}
+            className="accent-brand-accent"
+          />
+          Angle snap
+        </label>
 
-      <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
-        <input
-          type="checkbox"
-          aria-label="Gate snap 100mm"
-          checked={gateSnap100}
-          onChange={(e) => {
-            onGateSnap100Toggle(e.target.checked);
-            engineRef.current?.setGateSnapTo100mm(e.target.checked);
-          }}
-          className="accent-brand-accent"
-        />
-        Gate snap 100mm
-      </label>
+        <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
+          <input
+            type="checkbox"
+            aria-label="Gate snap 100mm"
+            checked={gateSnap100}
+            onChange={(e) => {
+              onGateSnap100Toggle(e.target.checked);
+              engineRef.current?.setGateSnapTo100mm(e.target.checked);
+            }}
+            className="accent-brand-accent"
+          />
+          Gate snap 100mm
+        </label>
 
-      {/* Grid toggle */}
-      <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
-        <input
-          type="checkbox"
-          aria-label="Show grid"
-          checked={showGrid}
-          onChange={(e) => onToggleGrid(e.target.checked)}
-          className="accent-brand-accent"
-        />
-        Grid
-      </label>
-
-      <div className="w-px h-4 bg-brand-border" />
-
-      {/* Expand/Collapse */}
-      <button
-        type="button"
-        onClick={() => onToggleExpand(!expanded)}
-        title={
-          expanded ? "Collapse canvas" : "Expand canvas for complex layouts"
-        }
-        className={iconBtnCls()}
-      >
-        {expanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-        {expanded ? "Collapse" : "Expand"}
-      </button>
+        <label className="flex shrink-0 cursor-pointer items-center gap-1.5 text-xs text-brand-muted">
+          <input
+            type="checkbox"
+            aria-label="Show grid"
+            checked={showGrid}
+            onChange={(e) => onToggleGrid(e.target.checked)}
+            className="accent-brand-accent"
+          />
+          Grid
+        </label>
       </div>
       <button
         type="button"

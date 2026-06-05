@@ -1,0 +1,452 @@
+category,supplier_sku,description,size,colour,length_mm,tier2_price_ex_gst,rrp,carton_qty
+C POST,FNPBA18,Colorbond® CPost 1800 BASALT,1800,BASALT,1800,7.06,,
+C POST,FNPBA21,Colorbond® CPost 2100 BASALT,2100,BASALT,2100,8.27,,
+C POST,FNPBA24,Colorbond® CPost 2400 BASALT,2400,BASALT,2400,8.56,,144
+C POST,FNPBA27,Colorbond® CPost 2700 BASALT,2700,BASALT,2700,9.63,,144
+C POST,FNPBA30,Colorbond® CPost 3000 BASALT,3000,BASALT,3000,11.77,,
+C POST,FNPCG18,Colorbond® CPost 1800 COTTAGE GREEN,1800,COTTAGE GREEN,1800,7.09,,
+C POST,FNPCG21,Colorbond® CPost 2100 COTTAGE GREEN,2100,COTTAGE GREEN,2100,8.26,,
+C POST,FNPCG24,Colorbond® CPost 2400 COTTAGE GREEN,2400,COTTAGE GREEN,2400,8.56,,48
+C POST,FNPCG27,Colorbond® CPost 2700 COTTAGE GREEN,2700,COTTAGE GREEN,2700,9.63,,48
+C POST,FNPCG30,Colorbond® CPost 3000 COTTAGE GREEN,3000,COTTAGE GREEN,3000,11.77,,
+C POST,FNPDO18,Colorbond® CPost 1800 DEEP OCEAN,1800,DEEP OCEAN,1800,7.06,,
+C POST,FNPDO21,Colorbond® CPost 2100 DEEP OCEAN,2100,DEEP OCEAN,2100,8.27,,
+C POST,FNPDO24,Colorbond® CPost 2400 DEEP OCEAN,2400,DEEP OCEAN,2400,8.56,,0
+C POST,FNPDO27,Colorbond® CPost 2700 DEEP OCEAN,2700,DEEP OCEAN,2700,9.63,,48
+C POST,FNPDO30,Colorbond® CPost 3000 DEEP OCEAN,3000,DEEP OCEAN,3000,11.8,,48
+C POST,FNPDM18,Colorbond® CPost 1800 DOMAIN,1800,DOMAIN,1800,7.06,,
+C POST,FNPDM21,Colorbond® CPost 2100 DOMAIN,2100,DOMAIN,2100,8.27,,
+C POST,FNPDM24,Colorbond® CPost 2400 DOMAIN,2400,DOMAIN,2400,8.56,,144
+C POST,FNPDM27,Colorbond® CPost 2700 DOMAIN,2700,DOMAIN,2700,9.63,,144
+C POST,FNPDM30,Colorbond® CPost 3000 DOMAIN,3000,DOMAIN,3000,11.77,,
+C POST,FNPDU18,Colorbond® CPost 1800 DUNE,1800,DUNE,1800,7.06,,
+C POST,FNPDU21,Colorbond® CPost 2100 DUNE,2100,DUNE,2100,8.27,,
+C POST,FNPDU24,Colorbond® CPost 2400 DUNE,2400,DUNE,2400,8.56,,144
+C POST,FNPDU27,Colorbond® CPost 2700 DUNE,2700,DUNE,2700,9.63,,144
+C POST,FNPDU30,Colorbond® CPost 3000 DUNE,3000,DUNE,3000,11.77,,
+C POST,FNPEH18,Colorbond® CPost 1800 EVENING HAZE,1800,EVENING HAZE,1800,7.06,,
+C POST,FNPEH21,Colorbond® CPost 2100 EVENING HAZE,2100,EVENING HAZE,2100,8.27,,
+C POST,FNPEH24,Colorbond® CPost 2400 EVENING HAZE,2400,EVENING HAZE,2400,8.56,,48
+C POST,FNPEH27,Colorbond® CPost 2700 EVENING HAZE,2700,EVENING HAZE,2700,9.63,,48
+C POST,FNPEH30,Colorbond® CPost 3000 EVENING HAZE,3000,EVENING HAZE,3000,11.77,,
+C POST,FNPIS18,Colorbond® CPost 1800 IRONSTONE,1800,IRONSTONE,1800,7.09,,
+C POST,FNPIS21,Colorbond® CPost 2100 IRONSTONE,2100,IRONSTONE,2100,8.27,,
+C POST,FNPIS24,Colorbond® CPost 2400 IRONSTONE,2400,IRONSTONE,2400,8.56,,144
+C POST,FNPIS27,Colorbond® CPost 2700 IRONSTONE,2700,IRONSTONE,2700,9.63,,144
+C POST,FNPIS30,Colorbond® CPost 3000 IRONSTONE,3000,IRONSTONE,3000,11.77,,
+C POST,FNPJA18,Colorbond® CPost 1800 JASPER,1800,JASPER,,7.09,,
+C POST,FNPJA21,Colorbond® CPost 2100 JASPER,2100,JASPER,,8.26,,
+C POST,FNPJA24,Colorbond® CPost 2400 JASPER,2400,JASPER,2400,9.44,,48
+C POST,FNPJA27,Colorbond® CPost 2700 JASPER,2700,JASPER,2700,10.01,,
+C POST,FNPMR18,Colorbond® CPost 1800 MANOR RED,1800,MANOR RED,1800,7.09,,
+C POST,FNPMR21,Colorbond® CPost 2100 MANOR RED,2100,MANOR RED,2100,8.27,,
+C POST,FNPMR24,Colorbond® CPost 2400 MANOR RED,2400,MANOR RED,2400,8.56,,48
+C POST,FNPMR27,Colorbond® CPost 2700 MANOR RED,2700,MANOR RED,2700,9.63,,
+C POST,,Colorbond® **CUSTOM** CPost 1500 MONUMENT,1500,MONUMENT,1500,7.06,,
+C POST,FNPMO18,Colorbond® CPost 1800 MONUMENT,1800,MONUMENT,1800,7.09,,
+C POST,FNPMO21,Colorbond® CPost 2100 MONUMENT,2100,MONUMENT,2100,8.26,,
+C POST,FNPMO24,Colorbond® CPost 2400 MONUMENT,2400,MONUMENT,2400,8.56,,144
+C POST,FNPMO27,Colorbond® CPost 2700 MONUMENT,2700,MONUMENT,2700,9.63,,144
+C POST,FNPMO30,Colorbond® CPost 3000 MONUMENT,3000,MONUMENT,3000,11.8,,48
+C POST,FNPNS18,Colorbond® CPost 1800 NIGHT SKY,1800,NIGHT SKY,1800,7.09,,
+C POST,FNPNS21,Colorbond® CPost 2100 NIGHT SKY,2100,NIGHT SKY,2100,8.26,,
+C POST,FNPNS24,Colorbond® CPost 2400 NIGHT SKY,2400,NIGHT SKY,2400,8.56,,144
+C POST,FNPNS27,Colorbond® CPost 2700 NIGHT SKY,2700,NIGHT SKY,2700,9.63,,144
+C POST,FNPNS30,Colorbond® CPost 3000 NIGHT SKY,3000,NIGHT SKY,3000,11.8,,48
+C POST,FNPPE18,Colorbond® CPost 1800 PALE EUCALYPT,1800,PALE EUCALYPT,1800,7.09,,
+C POST,FNPPE21,Colorbond® CPost 2100 PALE EUCALYPT,2100,PALE EUCALYPT,2100,8.27,,
+C POST,FNPPE24,Colorbond® CPost 2400 PALE EUCALYPT,2400,PALE EUCALYPT,2400,8.56,,48
+C POST,FNPPE27,Colorbond® CPost 2700 PALE EUCALYPT,2700,PALE EUCALYPT,2700,9.93,,48
+C POST,FNPPE30,Colorbond® CPost 3000 PALE EUCALYPT,3000,PALE EUCALYPT,3000,11.77,,
+C POST,FNPPB18,Colorbond® CPost 1800 PAPERBARK,1800,PAPERBARK,1800,7.09,,
+C POST,FNPPB21,Colorbond® CPost 2100 PAPERBARK,2100,PAPERBARK,2100,8.27,,
+C POST,FNPPB24,Colorbond® CPost 2400 PAPERBARK,2400,PAPERBARK,2400,8.56,,144
+C POST,FNPPB27,Colorbond® CPost 2700 PAPERBARK,2700,PAPERBARK,2700,9.63,,144
+C POST,FNPPB30,Colorbond® CPost 3000 PAPERBARK,3000,PAPERBARK,3000,11.8,,
+C POST,FNPRS18,Colorbond® CPost 1800 RIVERSAND,1800,RIVERSAND,1800,7.06,,
+C POST,FNPRS21,Colorbond® CPost 2100 RIVERSAND,2100,RIVERSAND,2100,8.27,,
+C POST,FNPRS24,Colorbond® CPost 2400 RIVERSAND,2400,RIVERSAND,2400,8.56,,48
+C POST,FNPRS27,Colorbond® CPost 2700 RIVERSAND,2700,RIVERSAND,2700,9.63,,48
+C POST,FNPSG18,Colorbond® CPost 1800 SHALE GREY,1800,SHALE GREY,1800,7.06,,
+C POST,FNPSG21,Colorbond® CPost 2100 SHALE GREY,2100,SHALE GREY,2100,8.27,,
+C POST,FNPSG24,Colorbond® CPost 2400 SHALE GREY,2400,SHALE GREY,2400,8.56,,96
+C POST,FNPSG27,Colorbond® CPost 2700 SHALE GREY,2700,SHALE GREY,2700,9.67,,96
+C POST,FNPSG30,Colorbond® CPost 3000 SHALE GREY,3000,SHALE GREY,3000,11.77,,
+C POST,,Colorbond® **CUSTOM** CPost 1500 SURFMIST,1500,SURFMIST,1500,7.06,,
+C POST,FNPSM18,Colorbond® CPost 1800 SURFMIST,1800,SURFMIST,1800,7.09,,
+C POST,FNPSM21,Colorbond® CPost 2100 SURFMIST,2100,SURFMIST,2100,8.27,,
+C POST,FNPSM24,Colorbond® CPost 2400 SURFMIST,2400,SURFMIST,2400,8.56,,144
+C POST,FNPSM27,Colorbond® CPost 2700 SURFMIST,2700,SURFMIST,2700,9.63,,144
+C POST,FNPSM30,Colorbond® CPost 3000 SURFMIST,3000,SURFMIST,3000,11.8,,
+C POST,FNPWI18,Colorbond® CPost 1800 WILDERNESS,1800,WILDERNESS,1800,7.09,,
+C POST,FNPWI21,Colorbond® CPost 2100 WILDERNESS,2100,WILDERNESS,2100,8.27,,
+C POST,FNPWI24,Colorbond® CPost 2400 WILDERNESS,2400,WILDERNESS,2400,8.56,,48
+C POST,FNPWI27,Colorbond® CPost 2700 WILDERNESS,2700,WILDERNESS,2700,10.62,,48
+C POST,FNPWS21,Colorbond® CPost 2100 WINDSPRAY,2100,WINDSPRAY,2100,8.27,,
+C POST,FNPWS24,Colorbond® CPost 2400 WINDSPRAY,2400,WINDSPRAY,2400,8.56,,48
+C POST,FNPWS27,Colorbond® CPost 2700 WINDSPRAY,2700,WINDSPRAY,2700,10.62,,0
+C POST,FNPWS30,Colorbond® CPost 3000 WINDSPRAY,3000,WINDSPRAY,,11.8,,
+C POST,FNPWS33,Colorbond® CPost 3300 WINDSPRAY,3300,WINDSPRAY,,11.8,,
+C POST,FNPWG18,Colorbond® CPost 1800 WOODLAND GREY,1800,WOODLAND GREY,1800,7.09,,
+C POST,FNPWG21,Colorbond® CPost 2100 WOODLAND GREY,2100,WOODLAND GREY,2100,8.26,,
+C POST,FNPWG24,Colorbond® CPost 2400 WOODLAND GREY,2400,WOODLAND GREY,2400,8.56,,144
+C POST,FNPWG27,Colorbond® CPost 2700 WOODLAND GREY,2700,WOODLAND GREY,2700,9.63,,96
+C POST,,Colorbond® CPost 3000 Woodland Grey,3000,WOODLAND GREY,3000,11.8,,
+Cap,CCAPBA,Coloured CPost Caps BASALT - Double/Full,,BASALT,60,2.25,,
+Cap,CCAPBG,Coloured CPost Caps BLUE GUM - Double/Full,,BLUE GUM,60,2.25,,
+Cap,CCAPCG,Coloured CPost Caps COTTAGE GREEN - Double/Full,,COTTAGE GREEN,60,2.25,,
+Cap,CCAPDO,Coloured CPost Caps DEEP OCEAN - Double/Full,,DEEP OCEAN,60,2.25,,
+Cap,CCAPDM,Coloured CPost Caps DOMAIN - Double/Full,,DOMAIN,60,2.25,,
+Cap,CCAPDU,Coloured CPost Caps DUNE - Double/Full,,DUNE,60,2.25,,
+Cap,CCAPEH,Coloured CPost Caps EVENING HAZE - Double/Full,,EVENING HAZE,60,2.25,,
+Cap,CCAPIS,Coloured CPost Caps IRONSTONE - Double/Full,,IRONSTONE,60,2.25,,
+Cap,CCAPJA,Coloured CPost Caps JASPER - Double/Full,,JASPER,60,2.22,,
+Cap,CCAPMR,Coloured CPost Caps MANOR RED - Double/Full,,MANOR RED,60,2.25,,
+Cap,CCAPMO,Coloured CPost Caps MONUMENT - Double/Full,,MONUMENT,60,2.25,,
+Cap,CCAPNS,Coloured CPost Caps NIGHT SKY - Double/Full,,NIGHT SKY,60,2.25,,
+Cap,OrigCCAPNS,ORIGINAL Double CPost Caps - NIGHT SKY,,NIGHT SKY,60,2.25,,
+Cap,CCAPPE,Coloured CPost Caps PALE EUCALYPT - Double/Full,,PALE EUCALYPT,60,2.25,,
+Cap,CCAPPB,Coloured CPost Caps PAPERBARK - Double/Full,,PAPERBARK,60,2.25,,
+Cap,CCAPRS,Coloured CPost Caps RIVERSAND - Double/Full,,RIVERSAND,60,2.25,,
+Cap,CCAPSG,Coloured CPost Caps SHALE GREY - Double/Full,,SHALE GREY,60,2.25,,
+Cap,CCAPSM,Coloured CPost Caps SURFMIST - Double/Full,,SURFMIST,60,2.25,,
+Cap,CCAPWI,Coloured CPost Caps WILDERNESS - Double/Full,,WILDERNESS,60,2.25,,
+Cap,CCAPWS,Coloured CPost Caps WINDSPRAY - Double/Full,,WINDSPRAY,60,2.25,,
+Cap,CCAPWG,Coloured CPost Caps WOODLAND GREY - Double/Full,,WOODLAND GREY,60,2.25,,
+Custom,,"PREFAB Aluminium - Suit Colorbond Infills (SWING GATE) - Fully Welded-NO Assembly Required - (Overall Opening Sizes - Height, Width, Quantity & Colour Required in Comments Section) 2.5-4 weeks lead time - Prepayment Required at time of order",,,,1.0,,
+Full panel,SKU-230425015257DUNE,1500 Colorbond Standard Panel 2365,2365,,,79.36,,
+Full panel,SKU-230425002624BSTD,1800 Colorbond Standard Panel 2365 BASALT,,BASALT,,82.9,,
+Full panel,SKU-230425002624BR,1800 Colorbond Raked Panel 2365 BASALT,,BASALT,,92.2,,
+Full panel,SKU-230425002624BR2700,1800 Raked Colorbond Panel 2365 with 2700 Posts BASALT,2365,BASALT,,94.34,,
+Full panel,SKU-230425002624BSTD2700,1800 Stepped Colorbond Panel 2365 with 2700 posts BASALT,2365,BASALT,,85.04,,
+Full panel,SKU-230425002624BSTD2100,2100 Colorbond Standard Panel 2365 BASALT,2365,BASALT,,94.34,,
+Full panel,SKU-230425002624BSTD21500,1500 Colorbond Standard Panel 2365 BASALT,2365,BASALT,,78.69,,
+Full panel,SKU-230425015258,1800 Colorbond Std Panel 2365 COTTAGE GREEN,2365,COTTAGE GREEN,1800,83.0,,
+Full panel,,1800 Standard Colorbond® Panel 2365 DOMAIN,2365,DOMAIN,2.35,82.9,,
+Full panel,SKU-220425050931DUNE,2100 Standard Colorbond Panel 2365 DUNE,2100,DUNE,2365,94.34,,
+Full panel,SKU-230425015257DUNEStd1800,1800 Colorbond Std Panel 2365 DUNE,2365,DUNE,,82.9,,
+Full panel,SKU-230425015257DUNER1800,1800 Colorbond Raked Panel 2365 DUNE,2365,DUNE,,92.2,,
+Full panel,SKU-230425015257DUNEStd2700P,1800 Colorbond Std Panel 2365 2700 POST DUNE,2365,DUNE,,85.04,,
+Full panel,SKU-220425053402,1500 Standard Panel 2365 MONUMENT,,MONUMENT,,78.51,,
+Full panel,SKU-220425050931,2100 Standard Colorbond Panel 2365 MONUMENT,2100,MONUMENT,2365,94.24,,
+Full panel,SKU-110425042828,1800 Raked Colorbond Panel 2365 with 2700 Posts MONUMENT,2365,MONUMENT,,94.24,,
+Full panel,SKU-230425002624SMstd1800,1800 Colorbond Std Panel 2365 SURFMIST,2365,SURFMIST,,82.9,,
+Full panel,SKU-230425002624SMR1800,1800 Colorbond Raked Panel 2365 SURFMIST,2365,SURFMIST,,92.2,,
+Full panel,SKU-230425002624SMR2700P,1800 Colorbond Raked Panel 2365 2700 Posts SURFMIST,2365,SURFMIST,,94.34,,
+Full panel,SKU-230425002624SMSTD2700P,1800 Colorbond STD Panel 2365 2700 Posts SURFMIST,2365,SURFMIST,,85.04,,
+Full panel,SKU-230425002624SMSTD1500,1500 Colorbond STD Panel 2365 SURFMIST,2365,SURFMIST,,78.51,,
+Full panel,SKU-230425002624SMSTD2100,2100 Colorbond STD Panel 2365 SURFMIST,2365,SURFMIST,,94.34,,
+Full panel,SKU-230425002624,1800 Colorbond Standard Panel 2365 WOODLAND GREY,,WOODLAND GREY,,82.9,,
+Full panel,SKU-230425002624WG27,1800 Stepped Colorbond Panel 2365 with 2700 posts WOODLAND GREY,,WOODLAND GREY,,85.04,,
+Full panel,SKU-230425002624WG27R,1800 Raked Colorbond Panel 2365 with 2700 posts WOODLAND GREY,,WOODLAND GREY,,94.16,,
+Gate,,CB S/Gate Kit 1800h x 910w BASALT,,BASALT,1800,140.73,,
+Gate,,1800 Standard Colorbond® Panel 3125 BASALT,3125,BASALT,3.13,104.62,,
+Gate,,1800 Standard Colorbond® Panel 3125 Cottage Green,3125,COTTAGE GREEN,3.13,104.62,,
+Gate,,CB S/Gate Kit 1200h x 910w DUNE,,DUNE,1200,141.01,,
+Gate,,CB S/Gate Kit 1200h x 910w EVENING HAZE,,EVENING HAZE,1200,141.01,,
+Gate,,CB S/Gate Kit 1200h x 910w IRONSTONE,,IRONSTONE,1200,141.57,,
+Gate,,1800 Standard Colorbond® Panel 2365 Monument,2365,MONUMENT,2.35,82.92,,
+Gate,,CB S/Gate Kit 1200h x 910w PALE EUCALYPT,,PALE EUCALYPT,1200,141.04,,
+Gate,,CB S/Gate Kit 1200h x 910w PAPERBARK,,PAPERBARK,1200,141.01,,
+Gate,,CB S/Gate Kit 2100h x 1670w SHALE GREY,,SHALE GREY,2100,192.14,,
+Gate,,CB S/Gate Kit 1200h x 910w SURFMIST,,SURFMIST,1200,141.03,,
+Gate,,CB S/Gate Kit 1200h x 910w WOODLAND GREY,,WOODLAND GREY,1200,137.63,,
+Gate Style,1220OriginalGateStyleStripPreGalSetBASALT,1220x50 Original Gate Style With Strip Pre-Gal Each Set BASALT,1220,BASALT,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetBasalt,1820x50 Original Gate Style With Strip Pre-Gal Each Set BASALT,1820,BASALT,1820,42.0,,
+Gate Style,1220OriginalGateStyleStripPreGalSetCottageGreen,1220x50 Original Gate Style With Strip Pre-Gal Each Set COTTAGE GREEN,1220,COTTAGE GREEN,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetCottageGreen,1820x50 Original Gate Style With Strip Pre-Gal Each Set COTTAGE GREEN,1820,COTTAGE GREEN,1820,42.0,,
+Gate Style,1220OriginalGateStyleStripPreGalSetDeepOcean,1220x50 Original Gate Style With Strip Pre-Gal Each Set DEEP OCEAN,1220,DEEP OCEAN,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetDeepOcean,1820x50 Original Gate Style With Strip Pre-Gal Each Set DEEP OCEAN,1820,DEEP OCEAN,1820,42.0,,
+Gate Style,1220OriginalGateStyleStripPreGalSetDomain,1220x50 Original Gate Style With Strip Pre-Gal Each Set DOMAIN,1220,DOMAIN,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetDOMAIN,1820x50 Original Gate Style With Strip Pre-Gal Each Set DOMAIN,1820,DOMAIN,1820,42.0,,
+Gate Style,1220OriginalGateStyleStripPreGalSetDune,1220x50 Original Gate Style With Strip Pre-Gal Each Set DUNE,1220,DUNE,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetDune,1820x50 Original Gate Style With Strip Pre-Gal Each Set DUNE,1820,DUNE,1820,42.0,,
+Gate Style,1220OriginalGateStyleStripPreGalSetEveningHaze,1220x50 Original Gate Style With Strip Pre-Gal Each Set EVENING HAZE,1220,EVENING HAZE,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetEveningHaze,1820x50 Original Gate Style With Strip Pre-Gal Each Set EVENING HAZE,1820,EVENING HAZE,1820,42.0,,
+Gate Style,1220OriginalGateStyleStripPreGalSetIronstone,1220x50 Original Gate Style With Strip Pre-Gal Each Set IRONSTONE,1220,IRONSTONE,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetIRONSTONE,1820x50 Original Gate Style With Strip Pre-Gal Each Set IRONSTONE,1820,IRONSTONE,1820,42.0,,
+Gate Style,1220OriginalGateStyleStripPreGalSetJasper,1220x50 Original Gate Style With Strip Pre-Gal Each Set JASPER,1220,JASPER,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetJasper,1820x50 Original Gate Style With Strip Pre-Gal Each Set JASPER,1820,JASPER,1820,42.0,,
+Gate Style,1220OriginalGateStyleStripPreGalSetManorRed,1220x50 Original Gate Style With Strip Pre-Gal Each Set MANOR RED,1220,MANOR RED,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetManorRed,1820x50 Original Gate Style With Strip Pre-Gal Each Set MANOR RED,1820,MANOR RED,1820,42.0,,
+Gate Style,,CB D/Gate Kit 1800h x 3325w MONUMENT,,MONUMENT,,269.48,,
+Gate Style,1220OriginalGateStyleStripPreGalSetMonument,1220x50 Original Gate Style With Strip Pre-Gal Each Set MONUMENT,1220,MONUMENT,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetMONUMENT,1820x50 Original Gate Style With Strip Pre-Gal Each Set MONUMENT,1820,MONUMENT,1820,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetMill,1820x50 Original Gate Style With Strip Pre-Gal Each Set Galvanised,1820,Mill Finish,1820,42.0,,
+Gate Style,1220OriginalGateStyleStripPreGalSetNightSky,1220x50 Original Gate Style With Strip Pre-Gal Each Set NIGHT SKY,1220,NIGHT SKY,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetNIGHTSKY,1820x50 Original Gate Style With Strip Pre-Gal Each Set NIGHT SKY,1820,NIGHT SKY,1820,42.0,,
+Gate Style,1220OriginalGateStyleStripPreGalSetPaleEucalypt,1220x50 Original Gate Style With Strip Pre-Gal Each Set PALE EUCALYPT,1220,PALE EUCALYPT,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetPALEEUCASLYPT,1820x50 Original Gate Style With Strip Pre-Gal Each Set PALE EUCALYPT,1820,PALE EUCALYPT,1820,42.0,,
+Gate Style,1220OriginalGateStyleStripPreGalSetPaperbark,1220x50 Original Gate Style With Strip Pre-Gal Each Set PAPERBARK,1220,PAPERBARK,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetPAPERBARK,1820x50 Original Gate Style With Strip Pre-Gal Each Set PAPERBARK,1820,PAPERBARK,1820,42.0,,49
+Gate Style,,CB D/Gate Kit 1800h x 3325w RIVERSAND,,RIVERSAND,1800,289.11,,
+Gate Style,1220OriginalGateStyleStripPreGalSetRiversand,1220x50 Original Gate Style With Strip Pre-Gal Each Set RIVERSAND,1220,RIVERSAND,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetRIVERSAND,1820x50 Original Gate Style With Strip Pre-Gal Each Set RIVERSAND,1820,RIVERSAND,1820,42.0,,49
+Gate Style,1220OriginalGateStyleStripPreGalSetShaleGrey,1220x50 Original Gate Style With Strip Pre-Gal Each Set SHALE GREY,1220,SHALE GREY,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetSHALEGREY,1820x50 Original Gate Style With Strip Pre-Gal Each Set SHALE GREY,1820,SHALE GREY,1820,42.0,,
+Gate Style,1220OriginalGateStyleStripPreGalSetSurfmist,1220x50 Original Gate Style With Strip Pre-Gal Each Set SURFMIST,1220,SURFMIST,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetSURFMIST,1820x50 Original Gate Style With Strip Pre-Gal Each Set SURFMIST,1820,SURFMIST,1820,42.0,,
+Gate Style,1220OriginalGateStyleStripPreGalSetWilderness,1220x50 Original Gate Style With Strip Pre-Gal Each Set WILDERNESS,1220,WILDERNESS,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetWILDERNESS,1820x50 Original Gate Style With Strip Pre-Gal Each Set WILDERNESS,1820,WILDERNESS,1820,42.0,,
+Gate Style,820OriginalGateStyleStripPreGalSetWindspray,1820x50 Original Gate Style With Strip Pre-Gal Each Set WINDSPRAY,1820,WINDSPRAY,1820,42.0,,
+Gate Style,1220OriginalGateStyleStripPreGalSetWoodlandGrey,1220x50 Original Gate Style With Strip Pre-Gal Each Set WOODLAND,1220,WOODLAND GREY,1220,42.0,,
+Gate Style,1820OriginalGateStyleStripPreGalSetWOODLANDGREY,1820x50 Original Gate Style With Strip Pre-Gal Each Set WOODLAND GREY,1820,WOODLAND GREY,1820,42.0,,
+Infill Sheet,FMSBA12,Metline Colorbond® Infill Sheet 1190 BASALT,1190,BASALT,1190,12.01,,
+Infill Sheet,FNSBA12,Trimclad Colorbond® Infill Sheet 1190 BASALT,1190,BASALT,1190,12.01,,
+Infill Sheet,FZSBA12,Metzag Colorbond® Infill Sheet 1190 BASALT,1190,BASALT,1190,12.01,,
+Infill Sheet,FZSBA15,Metzag Colorbond® Infill Sheet 1490 BASALT,1490,BASALT,1490,15.09,,
+Infill Sheet,FMSBA15,Metline Colorbond® Infill Sheet 1490 BASALT,1490,BASALT,1490,15.03,,
+Infill Sheet,FNSBA15,Trimclad Colorbond® Infill Sheet 1490 BASALT,1490,BASALT,1490,15.03,,
+Infill Sheet,FZSBA17,Metzag Colorbond® Infill Sheet 1790 BASALT,1790,BASALT,1790,16.3,,100
+Infill Sheet,FMSBA18,Metline Colorbond® Infill Sheet 1790 BASALT,1790,BASALT,1790,16.3,,100
+Infill Sheet,FNSBA18,Trimclad Colorbond® Infill Sheet 1790 BASALT,1790,BASALT,1790,16.3,,100
+Infill Sheet,FZSBA21,Metzag Colorbond® Infill Sheet 2090 BASALT,2090,BASALT,2090,19.4,,100
+Infill Sheet,FMSBA21,Metline Colorbond® Infill Sheet 2090 BASALT,2090,BASALT,2090,19.4,,100
+Infill Sheet,FNSBA21,Trimclad Colorbond® Infill Sheet 2090 BASALT,2090,BASALT,2090,19.4,,100
+Infill Sheet,FNSBA24,Trimclad Colorbond® Infill Sheet 2390 BASALT,2390,BASALT,2390,24.0,,
+Infill Sheet,SKU-040925020348,Metzag Colorbond® Infill Sheet 2390 BASALT,2390,BASALT,2390,24.0,,
+Infill Sheet,FMSCG12,Metline Colorbond® Infill Sheet 1190 COTTAGE GREEN,1190,COTTAGE GREEN,1190,12.01,,
+Infill Sheet,FNSCG12,Trimclad Colorbond® Infill Sheet 1190 COTTAGE GREEN,1190,COTTAGE GREEN,1190,12.01,,
+Infill Sheet,FZSCG12,Metzag Colorbond® Infill Sheet 1190 COTTAGE GREEN,1190,COTTAGE GREEN,1190,12.01,,
+Infill Sheet,FZSCG15,Metzag Colorbond® Infill Sheet 1490 COTTAGE GREEN,1490,COTTAGE GREEN,1490,15.03,,
+Infill Sheet,FMSCG15,Metline Colorbond® Infill Sheet 1490 COTTAGE GREEN,1490,COTTAGE GREEN,1490,15.03,,
+Infill Sheet,FNSCG15,Trimclad Colorbond® Infill Sheet 1490 COTTAGE GREEN,1490,COTTAGE GREEN,1490,15.03,,
+Infill Sheet,FZSCG17,Metzag Colorbond® Infill Sheet 1790 COTTAGE GREEN,1790,COTTAGE GREEN,1790,16.3,,
+Infill Sheet,FMSCG18,Metline Colorbond® Infill Sheet 1790 COTTAGE GREEN,1790,COTTAGE GREEN,1790,18.02,,100
+Infill Sheet,FNSCG18,Trimclad Colorbond® Infill Sheet 1790 COTTAGE GREEN,1790,COTTAGE GREEN,1790,16.3,,
+Infill Sheet,FZSCG21,Metzag Colorbond® Infill Sheet 2090 COTTAGE GREEN,2090,COTTAGE GREEN,2090,19.4,,
+Infill Sheet,FMSCG21,Metline Colorbond® Infill Sheet 2090 COTTAGE GREEN,2090,COTTAGE GREEN,2090,19.4,,
+Infill Sheet,FNSCG21,Trimclad Colorbond® Infill Sheet 2090 COTTAGE GREEN,2090,COTTAGE GREEN,2090,19.4,,
+Infill Sheet,FMSDO12,Metline Colorbond® Infill Sheet 1190 DEEP OCEAN,1190,DEEP OCEAN,1190,12.01,,
+Infill Sheet,FNSDO12,Trimclad Colorbond® Infill Sheet 1190 DEEP OCEAN,1190,DEEP OCEAN,1190,12.01,,
+Infill Sheet,FZSDO12,Metzag Colorbond® Infill Sheet 1190 DEEP OCEAN,1190,DEEP OCEAN,1190,12.01,,
+Infill Sheet,FMSDO15,Metline Colorbond® Infill Sheet 1490 DEEP OCEAN,1490,DEEP OCEAN,1490,15.03,,
+Infill Sheet,FNSDO15,Trimclad Colorbond® Infill Sheet 1490 DEEP OCEAN,1490,DEEP OCEAN,1490,15.03,,
+Infill Sheet,FZSDO15,Metzag Colorbond® Infill Sheet 1490 DEEP OCEAN,1490,DEEP OCEAN,1490,15.03,,
+Infill Sheet,FMSDO18,Metline Colorbond® Infill Sheet 1790 DEEP OCEAN,1790,DEEP OCEAN,1790,16.3,,100
+Infill Sheet,FNSDO18,Trimclad Colorbond® Infill Sheet 1790 DEEP OCEAN,1790,DEEP OCEAN,1790,16.3,,100
+Infill Sheet,FZSDO17,Metzag Colorbond® Infill Sheet 1790 DEEP OCEAN,1790,DEEP OCEAN,1790,16.68,,
+Infill Sheet,FMSDO21,Metline Colorbond® Infill Sheet 2090 DEEP OCEAN,2090,DEEP OCEAN,2090,19.4,,
+Infill Sheet,FNSDO21,Trimclad Colorbond® Infill Sheet 2090 DEEP OCEAN,2090,DEEP OCEAN,2090,19.4,,
+Infill Sheet,FZSDO21,Metzag Colorbond® Infill Sheet 2090 DEEP OCEAN,2090,DEEP OCEAN,2090,19.4,,
+Infill Sheet,FZSDO24,Metzag Colorbond® Infill Sheet 2390 DEEP OCEAN,2390,DEEP OCEAN,2390,24.0,,
+Infill Sheet,FMSDM12,Metline Colorbond® Infill Sheet 1190 DOMAIN,1190,DOMAIN,1190,12.01,,
+Infill Sheet,FNSDM12,Trimclad Colorbond® Infill Sheet 1190 DOMAIN,1190,DOMAIN,1190,11.98,,
+Infill Sheet,FZSDM12,Metzag Colorbond® Infill Sheet 1190 DOMAIN,1190,DOMAIN,1190,12.03,,
+Infill Sheet,FZSDM15,Metzag Colorbond® Infill Sheet 1490 DOMAIN,1490,DOMAIN,1490,15.09,,
+Infill Sheet,FMSDM15,Metline Colorbond® Infill Sheet 1490 DOMAIN,1490,DOMAIN,1490,15.03,,
+Infill Sheet,FNSDM15,Trimclad Colorbond® Infill Sheet 1490 DOMAIN,1490,DOMAIN,1490,15.03,,
+Infill Sheet,FZSDM17,Metzag Colorbond® Infill Sheet 1790 DOMAIN,1790,DOMAIN,1790,16.3,,100
+Infill Sheet,FMSDM18,Metline Colorbond® Infill Sheet 1790 DOMAIN,1790,DOMAIN,1790,16.3,,100
+Infill Sheet,FNSDM18,Trimclad Colorbond® Infill Sheet 1790 DOMAIN,1790,DOMAIN,1790,16.3,,100
+Infill Sheet,FZSDM21,Metzag Colorbond® Infill Sheet 2090 DOMAIN,2090,DOMAIN,2090,19.4,,100
+Infill Sheet,FMSDM21,Metline Colorbond® Infill Sheet 2090 DOMAIN,2090,DOMAIN,2090,19.4,,100
+Infill Sheet,FNSDM21,Trimclad Colorbond® Infill Sheet 2090 DOMAIN,2090,DOMAIN,2090,19.4,,100
+Infill Sheet,FNSDM24,Trimclad Colorbond® Infill Sheet 2390 DOMAIN,2390,DOMAIN,2390,24.0,,
+Infill Sheet,FMSDU12,Metline Colorbond® Infill Sheet 1190 DUNE,1190,DUNE,1190,12.01,,
+Infill Sheet,FNSDU12,Trimclad Colorbond® Infill Sheet 1190 DUNE,1190,DUNE,1190,12.01,,
+Infill Sheet,FZSDU12,Metzag Colorbond® Infill Sheet 1190 DUNE,1190,DUNE,1190,12.01,,
+Infill Sheet,FZSDU15,Metzag Colorbond® Infill Sheet 1490 DUNE,1490,DUNE,1490,15.03,,
+Infill Sheet,FMSDU15,Metline Colorbond® Infill Sheet 1490 DUNE,1490,DUNE,1490,15.03,,
+Infill Sheet,FNSDU15,Trimclad Colorbond® Infill Sheet 1490 DUNE,1490,DUNE,1490,15.03,,
+Infill Sheet,FZSDU17,Metzag Colorbond® Infill Sheet 1790 DUNE,1790,DUNE,1790,16.3,,100
+Infill Sheet,FMSDU18,Metline Colorbond® Infill Sheet 1790 DUNE,1790,DUNE,1790,16.3,,100
+Infill Sheet,FNSDU18,Trimclad Colorbond® Infill Sheet 1790 DUNE,1790,DUNE,1790,18.02,,100
+Infill Sheet,FZSDU21,Metzag Colorbond® Infill Sheet 2090 DUNE,2090,DUNE,2090,19.4,,100
+Infill Sheet,FMSDU21,Metline Colorbond® Infill Sheet 2090 DUNE,2090,DUNE,2090,19.4,,
+Infill Sheet,FNSDU21,Trimclad Colorbond® Infill Sheet 2090 DUNE,2090,DUNE,2090,19.4,,100
+Infill Sheet,FZSDU24,Metzag Colorbond® Infill Sheet 2390 DUNE,2390,DUNE,2390,24.0,,
+Infill Sheet,FMSEH12,Metline Colorbond® Infill Sheet 1190 EVENING HAZE,1190,EVENING HAZE,1190,12.01,,
+Infill Sheet,FNSEH12,Trimclad Colorbond® Infill Sheet 1190 EVENING HAZE,1190,EVENING HAZE,1190,12.01,,
+Infill Sheet,FZSEH12,Metzag Colorbond® Infill Sheet 1190 EVENING HAZE,1190,EVENING HAZE,1190,12.01,,
+Infill Sheet,FZSEH15,Metzag Colorbond® Infill Sheet 1490 EVENING HAZE,1490,EVENING HAZE,1490,15.03,,
+Infill Sheet,FMSEH15,Metline Colorbond® Infill Sheet 1490 EVENING HAZE,1490,EVENING HAZE,1490,15.03,,
+Infill Sheet,FNSEH15,Trimclad Colorbond® Infill Sheet 1490 EVENING HAZE,1490,EVENING HAZE,1490,15.03,,
+Infill Sheet,FZSEH17,Metzag Colorbond® Infill Sheet 1790 EVENING HAZE,1790,EVENING HAZE,1790,16.3,,
+Infill Sheet,FMSEH18,Metline Colorbond® Infill Sheet 1790 EVENING HAZE,1790,EVENING HAZE,1790,16.3,,100
+Infill Sheet,FNSEH18,Trimclad Colorbond® Infill Sheet 1790 EVENING HAZE,1790,EVENING HAZE,1790,18.02,,100
+Infill Sheet,FZSEH21,Metzag Colorbond® Infill Sheet 2090 EVENING HAZE,2090,EVENING HAZE,2090,19.4,,
+Infill Sheet,FMSEH21,Metline Colorbond® Infill Sheet 2090 EVENING HAZE,2090,EVENING HAZE,2090,19.4,,
+Infill Sheet,FNSEH21,Trimclad Colorbond® Infill Sheet 2090 EVENING HAZE,2090,EVENING HAZE,2090,19.4,,
+Infill Sheet,FMSIS12,Metline Colorbond® Infill Sheet 1190 IRONSTONE,1190,IRONSTONE,1190,12.01,,
+Infill Sheet,FNSIS12,Trimclad Colorbond® Infill Sheet 1190 IRONSTONE,1190,IRONSTONE,1190,12.01,,
+Infill Sheet,FZSIS12,Metzag Colorbond® Infill Sheet 1190 IRONSTONE,1190,IRONSTONE,1190,12.01,,
+Infill Sheet,FZSIS15,Metzag Colorbond® Infill Sheet 1490 IRONSTONE,1490,IRONSTONE,1490,15.03,,
+Infill Sheet,FMSIS15,Metline Colorbond® Infill Sheet 1490 IRONSTONE,1490,IRONSTONE,1490,15.03,,
+Infill Sheet,FNSIS15,Trimclad Colorbond® Infill Sheet 1490 IRONSTONE,1490,IRONSTONE,1490,15.03,,
+Infill Sheet,FZSIS17,Metzag Colorbond® Infill Sheet 1790 IRONSTONE,1790,IRONSTONE,1790,16.3,,100
+Infill Sheet,FMSIS18,Metline Colorbond® Infill Sheet 1790 IRONSTONE,1790,IRONSTONE,1790,16.3,,100
+Infill Sheet,FNSIS18,Trimclad Colorbond® Infill Sheet 1790 IRONSTONE,1790,IRONSTONE,1790,16.3,,100
+Infill Sheet,FZSIS21,Metzag Colorbond® Infill Sheet 2090 IRONSTONE,2090,IRONSTONE,2090,19.4,,100
+Infill Sheet,FMSIS21,Metline Colorbond® Infill Sheet 2090 IRONSTONE,2090,IRONSTONE,2090,19.4,,100
+Infill Sheet,FNSIS21,Trimclad Colorbond® Infill Sheet 2090 IRONSTONE,2090,IRONSTONE,2090,19.4,,100
+Infill Sheet,FZSJA12,Metzag Colorbond® Infill Sheet 1190 JASPER,1190,JASPER,1190,12.01,,
+Infill Sheet,,Metzag Colorbond® Infill Sheet 1490 JASPER,1490,JASPER,,15.09,,
+Infill Sheet,FZSJA17,Metzag Colorbond® Infill Sheet 1790 JASPER,1790,JASPER,1790,18.09,,
+Infill Sheet,FMSJA18,Metline Colorbond® Infill Sheet 1790 JASPER,1790,JASPER,1790,18.09,,
+Infill Sheet,FMSJA21,Metline Colorbond® Infill Sheet 2090 JASPER,2090,JASPER,2090,19.4,,
+Infill Sheet,FMSMR12,Metline Colorbond® Infill Sheet 1190 MANOR RED,1190,MANOR RED,1190,12.01,,
+Infill Sheet,FNSMR12,Trimclad Colorbond® Infill Sheet 1190 MANOR RED,1190,MANOR RED,1190,12.01,,
+Infill Sheet,FZSMR12,Metzag Colorbond® Infill Sheet 1190 MANOR RED,1190,MANOR RED,1190,12.01,,
+Infill Sheet,FMSMR15,Metline Colorbond® Infill Sheet 1490 MANOR RED,1490,MANOR RED,1490,15.03,,
+Infill Sheet,FNSMR15,Trimclad Colorbond® Infill Sheet 1490 MANOR RED,1490,MANOR RED,1490,15.03,,
+Infill Sheet,FZSMR15,Metzag Colorbond® Infill Sheet 1490 MANOR RED,1490,MANOR RED,1490,15.03,,
+Infill Sheet,FMSMR18,Metline Colorbond® Infill Sheet 1790 MANOR RED,1790,MANOR RED,1790,16.3,,
+Infill Sheet,FNSMR18,Trimclad Colorbond® Infill Sheet 1790 MANOR RED,1790,MANOR RED,1790,16.3,,
+Infill Sheet,FMSMR21,Metline Colorbond® Infill Sheet 2090 MANOR RED,2090,MANOR RED,2090,19.4,,
+Infill Sheet,FNSMR21,Trimclad Colorbond® Infill Sheet 2090 MANOR RED,2090,MANOR RED,2090,19.4,,
+Infill Sheet,FMSMO12,Metline Colorbond® Infill Sheet 1190 MONUMENT,1190,MONUMENT,1190,12.01,,
+Infill Sheet,FNSMO12,Trimclad Colorbond® Infill Sheet 1190 MONUMENT,1190,MONUMENT,1190,12.01,,
+Infill Sheet,FZSMO11,Metzag Colorbond® Infill Sheet 1190 MONUMENT,1190,MONUMENT,1190,12.03,,
+Infill Sheet,FZSMO15,Metzag Colorbond® Infill Sheet 1490 MONUMENT,1490,MONUMENT,1490,15.03,,
+Infill Sheet,FMSMO15,Metline Colorbond® Infill Sheet 1490 MONUMENT,1490,MONUMENT,1490,15.03,,
+Infill Sheet,FNSMO15,Trimclad Colorbond® Infill Sheet 1490 MONUMENT,1490,MONUMENT,1490,15.03,,
+Infill Sheet,FZSMO17,Metzag Colorbond® Infill Sheet 1790 MONUMENT,1790,MONUMENT,1790,16.3,,100
+Infill Sheet,FMSMO18,Metline Colorbond® Infill Sheet 1790 MONUMENT,1790,MONUMENT,1790,16.3,,100
+Infill Sheet,FNSMO18,Trimclad Colorbond® Infill Sheet 1790 MONUMENT,1790,MONUMENT,1790,16.3,,100
+Infill Sheet,FZSMO21,Metzag Colorbond® Infill Sheet 2090 MONUMENT,2090,MONUMENT,2090,19.36,,100
+Infill Sheet,FMSMO21,Metline Colorbond® Infill Sheet 2090 MONUMENT,2090,MONUMENT,2090,19.4,,100
+Infill Sheet,FNSMO21,Trimclad Colorbond® Infill Sheet 2090 MONUMENT,2090,MONUMENT,2090,19.4,,100
+Infill Sheet,FZSMO24,Metzag Colorbond® Infill Sheet 2390 MONUMENT,2390,MONUMENT,2390,21.69,,
+Infill Sheet,FMSPE12,Metline Colorbond® Infill Sheet 1190 PALE EUCALYPT,1190,PALE EUCALYPT,1190,12.01,,
+Infill Sheet,FNSPE12,Trimclad Colorbond® Infill Sheet 1190 PALE EUCALYPT,1190,PALE EUCALYPT,1190,12.01,,
+Infill Sheet,FZSPE12,Metzag Colorbond® Infill Sheet 1190 PALE EUCALYPT,1190,PALE EUCALYPT,1190,12.01,,
+Infill Sheet,FZSPE15,Metzag Colorbond® Infill Sheet 1490 PALE EUCALYPT,1490,PALE EUCALYPT,1490,15.03,,
+Infill Sheet,FMSPE15,Metline Colorbond® Infill Sheet 1490 PALE EUCALYPT,1490,PALE EUCALYPT,1490,15.03,,
+Infill Sheet,FNSPE15,Trimclad Colorbond® Infill Sheet 1490 PALE EUCALYPT,1490,PALE EUCALYPT,1490,15.03,,
+Infill Sheet,FZSPE17,Metzag Colorbond® Infill Sheet 1790 PALE EUCALYPT,1790,PALE EUCALYPT,1790,16.3,,
+Infill Sheet,FMSPE18,Metline Colorbond® Infill Sheet 1790 PALE EUCALYPT,1790,PALE EUCALYPT,1790,16.3,,100
+Infill Sheet,FNSPE18,Trimclad Colorbond® Infill Sheet 1790 PALE EUCALYPT,1790,PALE EUCALYPT,1790,16.32,,
+Infill Sheet,FZSPE21,Metzag Colorbond® Infill Sheet 2090 PALE EUCALYPT,2090,PALE EUCALYPT,2090,19.4,,
+Infill Sheet,FMSPE21,Metline Colorbond® Infill Sheet 2090 PALE EUCALYPT,2090,PALE EUCALYPT,2090,19.4,,
+Infill Sheet,FNSPE21,Trimclad Colorbond® Infill Sheet 2090 PALE EUCALYPT,2090,PALE EUCALYPT,2090,20.27,,
+Infill Sheet,FMSPB12,Metline Colorbond® Infill Sheet 1190 PAPERBARK,1190,PAPERBARK,1190,12.01,,
+Infill Sheet,FNSPB12,Trimclad Colorbond® Infill Sheet 1190 PAPERBARK,1190,PAPERBARK,1190,12.01,,
+Infill Sheet,FZSPB12,Metzag Colorbond® Infill Sheet 1190 PAPERBARK,1190,PAPERBARK,1190,12.01,,
+Infill Sheet,FZSPB15,Metzag Colorbond® Infill Sheet 1490 PAPERBARK,1490,PAPERBARK,1490,11.18,,
+Infill Sheet,FMSPB15,Metline Colorbond® Infill Sheet 1490 PAPERBARK,1490,PAPERBARK,1490,15.03,,
+Infill Sheet,FNSPB15,Trimclad Colorbond® Infill Sheet 1490 PAPERBARK,1490,PAPERBARK,1490,15.03,,
+Infill Sheet,FZSPB17,Metzag Colorbond® Infill Sheet 1790 PAPERBARK,1790,PAPERBARK,1790,16.3,,100
+Infill Sheet,FMSPB18,Metline Colorbond® Infill Sheet 1790 PAPERBARK,1790,PAPERBARK,1790,16.3,,100
+Infill Sheet,FNSPB18,Trimclad Colorbond® Infill Sheet 1790 PAPERBARK,1790,PAPERBARK,1790,16.3,,100
+Infill Sheet,FZSPB21,Metzag Colorbond® Infill Sheet 2090 PAPERBARK,2090,PAPERBARK,2090,19.03,,100
+Infill Sheet,FMSPB21,Metline Colorbond® Infill Sheet 2090 PAPERBARK,2090,PAPERBARK,2090,19.4,,100
+Infill Sheet,FNSPB21,Trimclad Colorbond® Infill Sheet 2090 PAPERBARK,2090,PAPERBARK,2090,19.4,,100
+Infill Sheet,FMSRS12,Metline Colorbond® Infill Sheet 1190 RIVERSAND,1190,RIVERSAND,1190,12.01,,
+Infill Sheet,FNSRS12,Trimclad Colorbond® Infill Sheet 1190 RIVERSAND,1190,RIVERSAND,1190,12.01,,
+Infill Sheet,FZSRS12,Metzag Colorbond® Infill Sheet 1190 RIVERSAND,1190,RIVERSAND,1190,12.01,,
+Infill Sheet,FZSRS15,Metzag Colorbond® Infill Sheet 1490 RIVERSAND,1490,RIVERSAND,1490,15.03,,
+Infill Sheet,FMSRS15,Metline Colorbond® Infill Sheet 1490 RIVERSAND,1490,RIVERSAND,1490,15.03,,
+Infill Sheet,FNSRS15,Trimclad Colorbond® Infill Sheet 1490 RIVERSAND,1490,RIVERSAND,1490,15.03,,
+Infill Sheet,FZSRS17,Metzag Colorbond® Infill Sheet 1790 RIVERSAND,1790,RIVERSAND,1790,18.09,,100
+Infill Sheet,FMSRS18,Metline Colorbond® Infill Sheet 1790 RIVERSAND,1790,RIVERSAND,1790,16.3,,100
+Infill Sheet,FNSRS18,Trimclad Colorbond® Infill Sheet 1790 RIVERSAND,1790,RIVERSAND,1790,16.3,,
+Infill Sheet,FZSRS21,Metzag Colorbond® Infill Sheet 2090 RIVERSAND,2090,RIVERSAND,2090,19.4,,
+Infill Sheet,FMSRS21,Metline Colorbond® Infill Sheet 2090 RIVERSAND,2090,RIVERSAND,2090,19.4,,
+Infill Sheet,FNSRS21,Trimclad Colorbond® Infill Sheet 2090 RIVERSAND,2090,RIVERSAND,2090,19.4,,
+Infill Sheet,FMSSG12,Metline Colorbond® Infill Sheet 1190 SHALE GREY,1190,SHALE GREY,1190,12.01,,
+Infill Sheet,FNSSG12,Trimclad Colorbond® Infill Sheet 1190 SHALE GREY,1190,SHALE GREY,1190,12.01,,
+Infill Sheet,FZSSG12,Metzag Colorbond® Infill Sheet 1190 SHALE GREY,1190,SHALE GREY,1190,12.01,,
+Infill Sheet,FZSSG15,Metzag Colorbond® Infill Sheet 1490 SHALE GREY,1490,SHALE GREY,1490,15.03,,
+Infill Sheet,FMSSG15,Metline Colorbond® Infill Sheet 1490 SHALE GREY,1490,SHALE GREY,1490,15.03,,
+Infill Sheet,FNSSG15,Trimclad Colorbond® Infill Sheet 1490 SHALE GREY,1490,SHALE GREY,1490,15.03,,
+Infill Sheet,FZSSG17,Metzag Colorbond® Infill Sheet 1790 SHALE GREY,1790,SHALE GREY,1790,16.3,,100
+Infill Sheet,FMSSG18,Metline Colorbond® Infill Sheet 1790 SHALE GREY,1790,SHALE GREY,1790,16.3,,100
+Infill Sheet,FNSSG18,Trimclad Colorbond® Infill Sheet 1790 SHALE GREY,1790,SHALE GREY,1790,16.3,,100
+Infill Sheet,FZSSG21,Metzag Colorbond® Infill Sheet 2090 SHALE GREY,2090,SHALE GREY,2090,19.4,,100
+Infill Sheet,FMSSG21,Metline Colorbond® Infill Sheet 2090 SHALE GREY,2090,SHALE GREY,2090,19.4,,
+Infill Sheet,FNSSG21,Trimclad Colorbond® Infill Sheet 2090 SHALE GREY,2090,SHALE GREY,2090,19.4,,
+Infill Sheet,FZSSM24,Metzag Colorbond® Infill Sheet 2390 SURFMIST,,SURFMIST,2390,24.0,,
+Infill Sheet,FMSSM12,Metline Colorbond® Infill Sheet 1190 SURFMIST,1190,SURFMIST,1190,12.01,,
+Infill Sheet,FNSSM12,Trimclad Colorbond® Infill Sheet 1190 SURFMIST,1190,SURFMIST,1190,12.01,,
+Infill Sheet,FZSSM12,Metzag Colorbond® Infill Sheet 1190 SURFMIST,1190,SURFMIST,1190,12.03,,
+Infill Sheet,FZSSM15,Metzag Colorbond® Infill Sheet 1490 SURFMIST,1490,SURFMIST,1490,15.03,,
+Infill Sheet,FMSSM15,Metline Colorbond® Infill Sheet 1490 SURFMIST,1490,SURFMIST,1490,15.03,,
+Infill Sheet,FNSSM15,Trimclad Colorbond® Infill Sheet 1490 SURFMIST,1490,SURFMIST,1490,13.59,,
+Infill Sheet,FZSSM17,Metzag Colorbond® Infill Sheet 1790 SURFMIST,1790,SURFMIST,1790,16.3,,100
+Infill Sheet,FMSSM18,Metline Colorbond® Infill Sheet 1790 SURFMIST,1790,SURFMIST,1790,16.3,,100
+Infill Sheet,FNSSM18,Trimclad Colorbond® Infill Sheet 1790 SURFMIST,1790,SURFMIST,1790,16.3,,100
+Infill Sheet,FZSSM21,Metzag Colorbond® Infill Sheet 2090 SURFMIST,2090,SURFMIST,2090,19.4,,50
+Infill Sheet,FMSSM21,Metline Colorbond® Infill Sheet 2090 SURFMIST,2090,SURFMIST,2090,19.4,,100
+Infill Sheet,FNSSM21,Trimclad Colorbond® Infill Sheet 2090 SURFMIST,2090,SURFMIST,2090,19.4,,100
+Infill Sheet,FMSWI12,Metline Colorbond® Infill Sheet 1190 WILDERNESS,1190,WILDERNESS,1190,12.01,,
+Infill Sheet,FNSWI12,Trimclad Colorbond® Infill Sheet 1190 WILDERNESS,1190,WILDERNESS,1190,12.01,,
+Infill Sheet,FZSWI12,Metzag Colorbond® Infill Sheet 1190 WILDERNESS,1190,WILDERNESS,1190,12.01,,
+Infill Sheet,FZSWI15,Metzag Colorbond® Infill Sheet 1490 WILDERNESS,1490,WILDERNESS,1490,15.03,,
+Infill Sheet,FMSWI15,Metline Colorbond® Infill Sheet 1490 WILDERNESS,1490,WILDERNESS,1490,15.03,,
+Infill Sheet,FNSWI15,Trimclad Colorbond® Infill Sheet 1490 WILDERNESS,1490,WILDERNESS,1490,15.03,,
+Infill Sheet,FZSWI17,Metzag Colorbond® Infill Sheet 1790 WILDERNESS,1790,WILDERNESS,1790,16.3,,
+Infill Sheet,FMSWI18,Metline Colorbond® Infill Sheet 1790 WILDERNESS,1790,WILDERNESS,1790,18.02,,100
+Infill Sheet,FNSWI18,Trimclad Colorbond® Infill Sheet 1790 WILDERNESS,1790,WILDERNESS,1790,18.02,,
+Infill Sheet,FZSWI21,Metzag Colorbond® Infill Sheet 2090 WILDERNESS,2090,WILDERNESS,2090,19.4,,
+Infill Sheet,FMSWI21,Metline Colorbond® Infill Sheet 2090 WILDERNESS,2090,WILDERNESS,2090,19.4,,
+Infill Sheet,FNSWI21,Trimclad Colorbond® Infill Sheet 2090 WILDERNESS,2090,WILDERNESS,2090,19.4,,
+Infill Sheet,FZSWS12,Metzag Colorbond® Infill Sheet 1190 WINDSPRAY,1190,WINDSPRAY,1190,12.01,,
+Infill Sheet,FMSWS12,Metline Colorbond® Infill Sheet 1190 WINDSPRAY,1190,WINDSPRAY,1190,12.01,,
+Infill Sheet,FMSWS15,Metline Colorbond® Infill Sheet 1490 WINDSPRAY,1490,WINDSPRAY,1490,15.03,,
+Infill Sheet,FZSWS17,Metzag Colorbond® Infill Sheet 1790 WINDSPRAY,1790,WINDSPRAY,1790,18.09,,48
+Infill Sheet,FMSWS18,Metline Colorbond® Infill Sheet 1790 WINDSPRAY,1790,WINDSPRAY,1790,16.3,,
+Infill Sheet,FNSWS18,Trimclad Colorbond® Infill Sheet 1790 WINDSPRAY,1790,WINDSPRAY,1790,16.3,,
+Infill Sheet,FZSWS21,Metzag Colorbond® Infill Sheet 2090 WINDSPRAY,2090,WINDSPRAY,2090,19.93,,100
+Infill Sheet,FMSWS21,Metline Colorbond® Infill Sheet 2090 WINDSPRAY,2090,WINDSPRAY,2090,19.4,,
+Infill Sheet,FNSWS21,Trimclad Colorbond® Infill Sheet 2090 WINDSPRAY,2090,WINDSPRAY,2090,19.4,,
+Infill Sheet,FZSWG24,Metzag Colorbond® Infill Sheet 2390 WOODLAND GREY,,WOODLAND GREY,2390,24.0,,
+Infill Sheet,FMSWG12,Metline Colorbond® Infill Sheet 1190 WOODLAND GREY,1190,WOODLAND GREY,1190,12.01,,
+Infill Sheet,FNSWG12,Trimclad Colorbond® Infill Sheet 1190 WOODLAND GREY,1190,WOODLAND GREY,1190,12.01,,
+Infill Sheet,FZSWG12,Metzag Colorbond® Infill Sheet 1190 WOODLAND GREY,1190,WOODLAND GREY,1190,12.03,,
+Infill Sheet,FZSWG15,Metzag Colorbond® Infill Sheet 1490 WOODLAND GREY,1490,WOODLAND GREY,1490,15.03,,
+Infill Sheet,FMSWG15,Metline Colorbond® Infill Sheet 1490 WOODLAND GREY,1490,WOODLAND GREY,1490,15.03,,
+Infill Sheet,FNSWG15,Trimclad Colorbond® Infill Sheet 1490 WOODLAND GREY,1490,WOODLAND GREY,1490,15.03,,
+Infill Sheet,FZSWG17,Metzag Colorbond® Infill Sheet 1790 WOODLAND GREY,1790,WOODLAND GREY,1790,16.3,,100
+Infill Sheet,FMSWG18,Metline Colorbond® Infill Sheet 1790 WOODLAND GREY,1790,WOODLAND GREY,1790,16.3,,50
+Infill Sheet,FNSWG18,Trimclad Colorbond® Infill Sheet 1790 WOODLAND GREY,1790,WOODLAND GREY,1790,16.3,,100
+Infill Sheet,FZSWG21,Metzag Colorbond® Infill Sheet 2090 WOODLAND GREY,2090,WOODLAND GREY,2090,19.34,,100
+Infill Sheet,FMSWG21,Metline Colorbond® Infill Sheet 2090 WOODLAND GREY,2090,WOODLAND GREY,2090,19.4,,0
+Infill Sheet,FNSWG21,Trimclad Colorbond® Infill Sheet 2090 WOODLAND GREY,2090,WOODLAND GREY,2090,19.4,,100
+Rail,,Colorbond® Fence Rail BASALT 2350 - CUSTOM CUT,2350,BASALT,2350,8.44,,
+Rail,FRMBA23,Colorbond® Fence Rail 2365 BASALT,2365,BASALT,2365,8.44,,144
+Rail,FRMBA31,Colorbond® Fence Rail 3125 BASALT,3125,BASALT,3125,11.15,,48
+Rail,,Colorbond® Fence Rail **CUSTOM 2350mm** COTTAGE GREEN,,COTTAGE GREEN,2350,8.0,,
+Rail,FRMCG23,Colorbond® Fence Rail 2365 COTTAGE GREEN,2365,COTTAGE GREEN,2365,8.49,,0
+Rail,FRMCG31,Colorbond® Fence Rail 3125 COTTAGE GREEN,3125,COTTAGE GREEN,3125,11.15,,48
+Rail,FRMDO23,Colorbond® Fence Rail 2365 DEEP OCEAN,2365,DEEP OCEAN,2365,8.44,,0
+Rail,FRMDO31,Colorbond® Fence Rail 3125 DEEP OCEAN,3125,DEEP OCEAN,3125,11.15,,0
+Rail,FRMDM23,Colorbond® Fence Rail 2365 DOMAIN,2365,DOMAIN,2365,8.44,,144
+Rail,FRMDM31,Colorbond® Fence Rail 3125 DOMAIN,3125,DOMAIN,3125,11.15,,48
+Rail,,Test Created Product,1234,DUNE,,8.44,,
+Rail,FRMDU23,Colorbond® Fence Rail 2365 DUNE,2365,DUNE,2365,8.44,,144
+Rail,FRMDU31,Colorbond® Fence Rail 3125 DUNE,3125,DUNE,3125,11.15,,48
+Rail,FRMEH23,Colorbond® Fence Rail 2365 EVENING HAZE,2365,EVENING HAZE,2365,8.44,,48
+Rail,FRMEH31,Colorbond® Fence Rail 3125 EVENING HAZE,3125,EVENING HAZE,3125,11.15,,48
+Rail,FRMIS23,Colorbond® Fence Rail 2365 IRONSTONE,2365,IRONSTONE,2365,8.44,,144
+Rail,FRMIS31,Colorbond® Fence Rail 3125 IRONSTONE,3125,IRONSTONE,3125,11.15,,48
+Rail,FRMJA23,Colorbond® Fence Rail 2365 JASPER,2365,JASPER,2365,8.76,,
+Rail,FRMJA31,Colorbond® Fence Rail 3125 JASPER,3125,JASPER,3125,12.3,,48
+Rail,FRMMR23,Colorbond® Fence Rail 2365 MANOR RED,2365,MANOR RED,2365,8.44,,48
+Rail,FRMMR31,Colorbond® Fence Rail 3125 MANOR RED,3125,MANOR RED,3125,11.15,,48
+Rail,,Colorbond® Fence Rail MONUMENT 2350 - CUSTOM CUT,2350,MONUMENT,2350,8.44,,
+Rail,FRMMO23,Colorbond® Fence Rail 2365 MONUMENT,2365,MONUMENT,2365,8.45,,144
+Rail,,Colorbond® Fence Rail MONUMENT 3100 - CUSTOM CUT,3100,MONUMENT,3100,8.44,,
+Rail,FRMMO31,Colorbond® Fence Rail 3125 MONUMENT,3125,MONUMENT,3125,11.15,,48
+Rail,,Colorbond® Fence Rail NIGHT SKY 2350 - CUSTOM CUT,2350,NIGHT SKY,,8.45,,144
+Rail,FRMNS23,Colorbond® Fence Rail 2365 NIGHT SKY,2365,NIGHT SKY,2365,8.44,,144
+Rail,,Colorbond® Fence Rail NIGHT SKY 3100 - CUSTOM CUT,3100,NIGHT SKY,,12.3,,
+Rail,FRMNS31,Colorbond® Fence Rail 3125 NIGHT SKY,3125,NIGHT SKY,3125,11.28,,48
+Rail,FRMPE23,Colorbond® Fence Rail 2365 PALE EUCALYPT,2365,PALE EUCALYPT,2365,8.47,,48
+Rail,FRMPE31,Colorbond® Fence Rail 3125 PALE EUCALYPT,3125,PALE EUCALYPT,3125,11.22,,48
+Rail,FRMPB23,Colorbond® Fence Rail 2365 PAPERBARK,2365,PAPERBARK,2365,8.44,,144
+Rail,FRMPB31,Colorbond® Fence Rail 3125 PAPERBARK,3125,PAPERBARK,3125,11.15,,48
+Rail,FRMRS23,Colorbond® Fence Rail 2365 RIVERSAND,2365,RIVERSAND,2365,8.44,,48
+Rail,FRMRS31,Colorbond® Fence Rail 3125 RIVERSAND,3125,RIVERSAND,3125,11.15,,48
+Rail,FRMSG23,Colorbond® Fence Rail 2365 SHALE GREY,2365,SHALE GREY,2365,8.47,,96
+Rail,FRMSG31,Colorbond® Fence Rail 3125 SHALE GREY,3125,SHALE GREY,3125,11.15,,48
+Rail,FRMSM23,Colorbond® Fence Rail 2365 SURFMIST,2365,SURFMIST,2365,8.44,,144
+Rail,FRMSM31,Colorbond® Fence Rail 3125 SURFMIST,3125,SURFMIST,3125,11.15,,48
+Rail,FRMWI23,Colorbond® Fence Rail 2365 WILDERNESS,2365,WILDERNESS,2365,8.44,,48
+Rail,FRMWI31,Colorbond® Fence Rail 3125 WILDERNESS,3125,WILDERNESS,3125,11.15,,48
+Rail,FRMWS23,Colorbond® Fence Rail 2365 WINDSPRAY,2365,WINDSPRAY,2365,8.87,,48
+Rail,FRMWS31,Colorbond® Fence Rail 3125 WINDSPRAY,3125,WINDSPRAY,3125,11.53,,48
+Rail,,Colorbond® Fence Rail WOODLAND GREY 2350 - CUSTOM CUT,2350,WOODLAND GREY,,8.44,,
+Rail,FRMWG23,Colorbond® Fence Rail 2365 WOODLAND GREY,2365,WOODLAND GREY,2365,8.44,,96
+Rail,FRMWG31,Colorbond® Fence Rail 3125 WOODLAND GREY,3125,WOODLAND GREY,3125,11.15,,48
+Sleeper,A 2.34 CB,Concrete 50mm Thick Plinth/Sleeper Smooth Grey 2340 x 200 x 50,2340 x 200 x 50,Smooth Grey,2340,28.0,,96
