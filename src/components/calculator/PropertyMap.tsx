@@ -269,10 +269,14 @@ function ExpandedPropertyMap({
 
   function handleConfirmForSmokeTest() {
     if (!pin) return;
-    const dummySnapshot = {
+    const dummySnapshot: CanonicalMapSnapshot = {
       centerLat: pin.lat,
       centerLng: pin.lng,
       zoom: PROPERTY_ZOOM,
+      width: 800,
+      height: 600,
+      metresPerPixel: 1.0,
+      capturedAt: new Date().toISOString(),
       url: "",
     };
     onConfirm(dummySnapshot);

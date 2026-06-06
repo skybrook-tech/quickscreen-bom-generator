@@ -56,6 +56,7 @@ handoff-package/
 | **Skip the Deno integration job** | Known red on XP-BTP-B fixture; pre-existing, out of scope. |
 | **Pilot supplier is Amazing Fencing.** No QuickScreen / QSHS / VS / XPL / BAYG content in any new component | Glass Outlet's structure was kept; their products are out. |
 | **All copy must read as Amazing Fencing primary, Anyfence platform secondary** | Amazing Fencing's brand is the customer's brand. Anyfence is the platform underneath. |
+| **Run `npm run build` locally before opening draft PR** | Executes `tsc -p tsconfig.app.json && vite build` to catch TS compile errors immediately and save round trips. |
 
 ## Stop points (mandatory pauses)
 
