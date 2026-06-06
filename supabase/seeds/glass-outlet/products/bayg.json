@@ -400,7 +400,7 @@
       "version_label": "v1.0.0",
       "stage": "stock",
       "name": "sf_stocks",
-      "expression": "num_sf_total > 0 ? ceil(num_sf_total / floor(5800 / sf_cut_mm)) : 0",
+      "expression": "ceil((num_sf_total + (num_panels - 1) * 2) / floor(5800 / sf_cut_mm))",
       "output_key": "sf_stocks",
       "priority": 30,
       "active": true
@@ -411,7 +411,7 @@
       "version_label": "v1.0.0",
       "stage": "stock",
       "name": "csr_stocks",
-      "expression": "num_csr > 0 ? ceil(num_csr / floor(5800 / (actual_height_mm - 6))) : 0",
+      "expression": "num_csr > 0 ? ceil((num_csr * num_panels) / floor(5800 / (actual_height_mm - 6))) : 0",
       "output_key": "csr_stocks",
       "priority": 40,
       "active": true
@@ -443,9 +443,31 @@
       "product_system_type": "BAYG",
       "rule_set_name": "BAYG Fence Rules",
       "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "spacer_packs",
+      "expression": "ceil(((num_slats - 1) * 2 * num_panels) / 50)",
+      "output_key": "spacer_packs",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "screw_packs",
+      "expression": "ceil(((num_slats * 2 * 1.01 + num_csr * 4) * num_panels) / 50)",
+      "output_key": "screw_packs",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_slat_65",
-      "expression": "slat_size_mm == 65 ? slat_stocks : 0",
+      "expression": "slat_size_mm == 65 ? (slat_stocks * num_panels) : 0",
       "output_key": "qty_slat_65",
       "priority": 10,
       "active": true
@@ -456,7 +478,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_slat_90",
-      "expression": "slat_size_mm == 90 ? slat_stocks : 0",
+      "expression": "slat_size_mm == 90 ? (slat_stocks * num_panels) : 0",
       "output_key": "qty_slat_90",
       "priority": 20,
       "active": true
@@ -661,6 +683,17 @@
       "priority": 220,
       "active": true,
       "notes": "Dress ring for 65mm HD core-drill install; 1 per post"
+    },
+    {
+      "product_system_type": "BAYG",
+      "rule_set_name": "BAYG Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_135_adapters",
+      "expression": "right_angle_deg == 135 ? 1 : 0",
+      "output_key": "qty_135_adapters",
+      "priority": 230,
+      "active": true
     }
   ],
   "product_component_selectors": [
@@ -868,6 +901,65 @@
       "priority": 100,
       "notes": "65mm HD post dress ring — shared in qshs.json",
       "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_spacer_5",
+      "component_category": "spacer",
+      "selector_type": "exact",
+      "qty_key": "spacer_packs",
+      "priority": 100,
+      "match_json": {"slat_gap_mm": 5},
+      "sku_pattern": "QS-SPACER-05MM-50PK",
+      "notes": "QS 5mm Spacers",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_spacer_9",
+      "component_category": "spacer",
+      "selector_type": "exact",
+      "qty_key": "spacer_packs",
+      "priority": 100,
+      "match_json": {"slat_gap_mm": 9},
+      "sku_pattern": "QS-SPACER-09MM-50PK",
+      "notes": "QS 9mm Spacers",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_spacer_20",
+      "component_category": "spacer",
+      "selector_type": "exact",
+      "qty_key": "spacer_packs",
+      "priority": 100,
+      "match_json": {"slat_gap_mm": 20},
+      "sku_pattern": "QS-SPACER-20MM-50PK",
+      "notes": "QS 20mm Spacers",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_screws",
+      "component_category": "fixing",
+      "selector_type": "exact",
+      "qty_key": "screw_packs",
+      "priority": 100,
+      "match_json": {},
+      "sku_pattern": "QS-SCREWS-50PK",
+      "notes": "QS Screws",
+      "active": true
+    },
+    {
+      "product_system_type": "BAYG",
+      "selector_key": "bayg_135_adapter",
+      "component_category": "corner_adapter",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_135_adapters",
+      "sku_pattern": "XP-6000-135-{colour}",
+      "priority": 100,
+      "active": true
     }
   ],
   "product_companion_rules": [
@@ -891,7 +983,7 @@
       "trigger_match_json": {},
       "add_category": "accessory",
       "add_sku_pattern": "XP-CSRC-{colour}",
-      "qty_formula": "csr_cap_qty",
+      "qty_formula": "num_csr * num_panels",
       "is_pack": false,
       "priority": 10,
       "notes": "1 CSR cap per CSR",
@@ -904,9 +996,10 @@
       "trigger_match_json": {},
       "add_category": "accessory",
       "add_sku_pattern": "XP-BTP-{colour}",
-      "qty_formula": "num_csr * 2",
+      "qty_formula": "num_csr * 2 * num_panels",
       "is_pack": false,
       "priority": 20,
+      "is_suggestion": true,
       "notes": "2 XP-BTP per CSR",
       "active": true
     },

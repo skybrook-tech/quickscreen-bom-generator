@@ -32,6 +32,16 @@ export function MapCapture({ onConfirm, onSkip }: MapCaptureProps) {
   const [located, setLocated] = useState<LocatedAddress | null>(null);
   const [capturingSnapshot, setCapturingSnapshot] = useState(false);
   const [snapshotError, setSnapshotError] = useState<string | null>(null);
+  const idleListenerRef = useRef<google.maps.MapsEventListener | null>(null);
+
+  // Clean up listener on unmount
+  useEffect(() => {
+    return () => {
+      if (idleListenerRef.current) {
+        google.maps.event.removeListener(idleListenerRef.current);
+      }
+    };
+  }, []);
 
   // Initialize map
   useEffect(() => {
@@ -56,6 +66,17 @@ export function MapCapture({ onConfirm, onSkip }: MapCaptureProps) {
       { lat: -9, lng: 156 }
     );
     map.fitBounds(AU_BOUNDS);
+
+    if (idleListenerRef.current) {
+      google.maps.event.removeListener(idleListenerRef.current);
+    }
+    idleListenerRef.current = google.maps.event.addListener(map, "idle", () => {
+      map.fitBounds(AU_BOUNDS);
+      if (idleListenerRef.current) {
+        google.maps.event.removeListener(idleListenerRef.current);
+        idleListenerRef.current = null;
+      }
+    });
   }, [googleMaps.ready]);
 
   // Adjust zoom and location based on geocoded located address
@@ -63,6 +84,10 @@ export function MapCapture({ onConfirm, onSkip }: MapCaptureProps) {
     if (!googleMaps.ready || !mapRef.current) return;
 
     if (located) {
+      if (idleListenerRef.current) {
+        google.maps.event.removeListener(idleListenerRef.current);
+        idleListenerRef.current = null;
+      }
       const position = new google.maps.LatLng(located.lat, located.lng);
       mapRef.current.setCenter(position);
       mapRef.current.setZoom(PROPERTY_ZOOM);
@@ -103,6 +128,19 @@ export function MapCapture({ onConfirm, onSkip }: MapCaptureProps) {
         { lat: -9, lng: 156 }
       );
       mapRef.current.fitBounds(AU_BOUNDS);
+
+      if (idleListenerRef.current) {
+        google.maps.event.removeListener(idleListenerRef.current);
+      }
+      const map = mapRef.current;
+      idleListenerRef.current = google.maps.event.addListener(map, "idle", () => {
+        map.fitBounds(AU_BOUNDS);
+        if (idleListenerRef.current) {
+          google.maps.event.removeListener(idleListenerRef.current);
+          idleListenerRef.current = null;
+        }
+      });
+
       mapRef.current.setOptions({
         zoomControl: false,
         mapTypeControl: false,

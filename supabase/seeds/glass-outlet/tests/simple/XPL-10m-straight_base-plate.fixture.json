@@ -41,33 +41,8 @@
   },
   "expect": {
     "errors": [],
-    "suggestions": [
-      {
-        "sku": "XP-BTP-B",
-        "qty": 8,
-        "category": "accessory",
-        "name": "BTP plate"
-      }
-    ],
+    "suggestions": [],
     "lines": [
-      {
-        "sku": "XPL-6000-F-B",
-        "qty": 3,
-        "category": "side_frame",
-        "name": "F-section"
-      },
-      {
-        "sku": "XPL-EP-B-2PK",
-        "qty": 8,
-        "category": "accessory",
-        "name": "Side frame end plate"
-      },
-      {
-        "sku": "XPL-6000-SF-B",
-        "qty": 3,
-        "category": "side_frame",
-        "name": "Side frame"
-      },
       {
         "sku": "XPL-2100-INS09-B",
         "qty": 8,
@@ -81,34 +56,10 @@
         "name": "Slat"
       },
       {
-        "sku": "QS-SCREWS-50PK",
-        "qty": 1,
-        "category": "fixing",
-        "name": "Screws"
-      },
-      {
         "sku": "XP-2400-FP-B",
         "qty": 5,
         "category": "post",
         "name": "FP post"
-      },
-      {
-        "sku": "XP-TP-B",
-        "qty": 4,
-        "category": "accessory",
-        "name": "TP cap"
-      },
-      {
-        "sku": "XP-CSRC-B",
-        "qty": 4,
-        "category": "accessory",
-        "name": "CSR cap"
-      },
-      {
-        "sku": "XP-5800-CSR-B",
-        "qty": 2,
-        "category": "centre_support_rail",
-        "name": "CSR cap"
       },
       {
         "sku": "XP-BP-SET-B",

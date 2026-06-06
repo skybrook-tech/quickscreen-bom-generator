@@ -134,9 +134,9 @@ export function loadFixtures(dir: string): Fixture[] {
 // ─── Runner ───────────────────────────────────────────────────────────────────
 
 export async function runFixtures(): Promise<void> {
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") || Deno.env.get("VITE_SUPABASE_URL")!;
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-  const email = Deno.env.get("TEST_USER_EMAIL") ?? "test@glass-outlet.com";
+  const email = Deno.env.get("TEST_USER_EMAIL") ?? "admin@glass-outlet.com";
   const password = Deno.env.get("TEST_USER_PASSWORD") ?? "123456";
 
   const supabase = createClient(supabaseUrl, serviceRoleKey);
@@ -170,16 +170,23 @@ export async function runFixtures(): Promise<void> {
 
   for (const fixture of fixtures) {
     Deno.test(`${fixture.id}: ${fixture.description}`, async () => {
-      const res = await fetch(`${supabaseUrl}/functions/v1/bom-calculator`, {
+      const isLocal = Deno.env.get("TEST_LOCAL_FUNC") === "true";
+      const url = isLocal ? "http://localhost:8000" : `${supabaseUrl}/functions/v1/bom-calculator`;
+      const res = await fetch(url, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${jwt}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(fixture.input),
+        body: JSON.stringify({ ...fixture.input, debug: true }),
       });
 
       const body = (await res.json()) as Record<string, unknown>;
+
+      if (res.status !== 200 || Deno.args.includes("--verbose") || fixture.id.includes("AF_TIMBER_PALING")) {
+        console.log(`\n--- Test: ${fixture.id} ---`);
+        console.log("Response:", JSON.stringify(body, null, 2));
+      }
 
       assertEquals(
         res.status,
@@ -187,7 +194,14 @@ export async function runFixtures(): Promise<void> {
         `HTTP ${res.status}: ${JSON.stringify(body)}`,
       );
 
-      assertFixture(body, fixture.expect);
+      try {
+        assertFixture(body, fixture.expect);
+      } catch (err) {
+        const errMsg = err instanceof Error ? err.message : String(err);
+        console.log(`\nAssertion failed for ${fixture.id}:`, errMsg);
+        console.log("Full Response:", JSON.stringify(body, null, 2));
+        throw err;
+      }
     });
   }
 }

@@ -1562,7 +1562,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_slat_65",
-      "expression": "slat_size_mm == 65 ? slat_stocks : 0",
+      "expression": "slat_size_mm == 65 ? (slat_stocks * num_panels) : 0",
       "output_key": "qty_slat_65",
       "priority": 10,
       "active": true
@@ -1573,7 +1573,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_slat_90",
-      "expression": "slat_size_mm == 90 ? slat_stocks : 0",
+      "expression": "slat_size_mm == 90 ? (slat_stocks * num_panels) : 0",
       "output_key": "qty_slat_90",
       "priority": 20,
       "active": true
@@ -1620,6 +1620,28 @@
       "expression": "slatclip_packs",
       "output_key": "qty_slatclip",
       "priority": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_insert_09",
+      "expression": "slat_gap_mm == 9 ? (num_panels * 2) : 0",
+      "output_key": "qty_insert_09",
+      "priority": 70,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_insert_20",
+      "expression": "slat_gap_mm == 20 ? (num_panels * 2) : 0",
+      "output_key": "qty_insert_20",
+      "priority": 80,
       "active": true
     },
     {
@@ -1905,6 +1927,30 @@
       "sku_pattern": "XPL-SLATCLIP-10PK",
       "priority": 100,
       "notes": "Locks the top slat; 1 pack per panel",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_insert_09",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "qty_key": "qty_insert_09",
+      "priority": 100,
+      "match_json": {"slat_gap_mm": 9},
+      "sku_pattern": "XPL-2100-INS09-{colour}",
+      "notes": "XPL 9mm insert",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_insert_20",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "qty_key": "qty_insert_20",
+      "priority": 100,
+      "match_json": {"slat_gap_mm": 20},
+      "sku_pattern": "XPL-2100-INS20-{colour}",
+      "notes": "XPL 20mm insert",
       "active": true
     },
     {
