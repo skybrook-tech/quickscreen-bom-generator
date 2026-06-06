@@ -379,7 +379,7 @@ function PropertyMapCanvas({
     const center = initialSnapshot
       ? { lat: initialSnapshot.centerLat, lng: initialSnapshot.centerLng }
       : pin ?? DEFAULT_CENTER;
-    mapRef.current = new google.maps.Map(mapNodeRef.current, {
+    const map = new google.maps.Map(mapNodeRef.current, {
       center,
       zoom: initialSnapshot?.zoom ?? (pin ? PROPERTY_ZOOM : DEFAULT_ZOOM),
       mapTypeId: "hybrid",
@@ -390,6 +390,15 @@ function PropertyMapCanvas({
       rotateControl: false,
       tilt: 0,
     });
+    mapRef.current = map;
+
+    if (!initialSnapshot && !pin) {
+      const AU_BOUNDS = new google.maps.LatLngBounds(
+        { lat: -44.5, lng: 110 },
+        { lat: -9, lng: 156 }
+      );
+      map.fitBounds(AU_BOUNDS);
+    }
   }, [googleMaps.ready, initialSnapshot, pin]);
 
   useEffect(() => {

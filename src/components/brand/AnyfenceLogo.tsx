@@ -12,7 +12,6 @@ export function AnyfenceLogo({
   className = "",
   iconClassName = "",
   textClassName = "",
-  showSubtitle = true,
   variant,
 }: AnyfenceLogoProps) {
   // Gracefully fallback to dark theme (using white logo) if context is missing (e.g. in test suites)
@@ -67,11 +66,6 @@ export function AnyfenceLogo({
             />
           </g>
         </svg>
-        {showSubtitle && (
-          <span className="mt-1 block text-[0.38em] font-bold uppercase tracking-[0.25em] text-brand-muted">
-            Mapping & Quoting
-          </span>
-        )}
       </div>
     </div>
   );

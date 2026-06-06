@@ -37,7 +37,7 @@ export function MapCapture({ onConfirm, onSkip }: MapCaptureProps) {
   useEffect(() => {
     if (!googleMaps.ready || !mapNodeRef.current || mapRef.current) return;
 
-    mapRef.current = new google.maps.Map(mapNodeRef.current, {
+    const map = new google.maps.Map(mapNodeRef.current, {
       center: DEFAULT_CENTER,
       zoom: DEFAULT_ZOOM,
       mapTypeId: "hybrid",
@@ -49,6 +49,13 @@ export function MapCapture({ onConfirm, onSkip }: MapCaptureProps) {
       rotateControl: false,
       tilt: 0,
     });
+    mapRef.current = map;
+
+    const AU_BOUNDS = new google.maps.LatLngBounds(
+      { lat: -44.5, lng: 110 },
+      { lat: -9, lng: 156 }
+    );
+    map.fitBounds(AU_BOUNDS);
   }, [googleMaps.ready]);
 
   // Adjust zoom and location based on geocoded located address
@@ -91,8 +98,11 @@ export function MapCapture({ onConfirm, onSkip }: MapCaptureProps) {
       }
     } else {
       // Revert to landing zoom
-      mapRef.current.setCenter(DEFAULT_CENTER);
-      mapRef.current.setZoom(DEFAULT_ZOOM);
+      const AU_BOUNDS = new google.maps.LatLngBounds(
+        { lat: -44.5, lng: 110 },
+        { lat: -9, lng: 156 }
+      );
+      mapRef.current.fitBounds(AU_BOUNDS);
       mapRef.current.setOptions({
         zoomControl: false,
         mapTypeControl: false,

@@ -89,6 +89,7 @@ export function Header({
 
   const initials = user?.email?.[0].toUpperCase() ?? '?';
   const compactJobTitle = jobTitle?.trim();
+  const isPrivileged = Boolean(user && (role === 'admin' || role === 'contractor'));
 
   const navLinkCls = ({ isActive }: { isActive: boolean }) =>
     `text-xs font-medium px-3 py-1.5 rounded-md transition-colors ${isActive
@@ -131,7 +132,7 @@ export function Header({
                 <span>Powered by <span className="font-black text-brand-text">Anyfence</span></span>
               </div>
             </div>
-          ) : branding?.title === 'Amazing Fencing' ? (
+          ) : (!branding || branding?.title === 'Amazing Fencing') ? (
             <div className="flex items-center gap-3">
               <AmazingFencingLogo className="scale-75 origin-left" />
               <span className="h-4 w-px bg-brand-border/60" />
@@ -139,7 +140,7 @@ export function Header({
                 <span>Powered by <span className="font-black text-brand-text">Anyfence</span></span>
               </div>
             </div>
-          ) : branding?.title === 'Anyfence' || branding?.title === 'AnyFence' || !branding ? (
+          ) : (branding?.title === 'Anyfence' || branding?.title === 'AnyFence') ? (
             <AnyfenceLogo showSubtitle={true} iconClassName="h-8 w-8" textClassName="text-xl sm:text-2xl" />
           ) : (
             <div className="flex items-center gap-3 min-w-0">
@@ -148,7 +149,7 @@ export function Header({
                   {branding?.title ?? 'The Glass Outlet'}{branding?.titleItalic && <em>{branding.titleItalic}</em>}
                 </p>
                 <p className="truncate text-xs font-semibold text-brand-muted">
-                  {branding?.subtitle ?? 'QuickScreen BOM Generator'}
+                  {branding?.subtitle ?? 'Amazing Fencing — Get a Fence Quote'}
                 </p>
               </div>
               <span className="h-4 w-px bg-brand-border/60 shrink-0" />
@@ -163,7 +164,7 @@ export function Header({
           )}
         </div>
 
-        {user ? (
+        {user && (
           <nav className="hidden sm:flex items-center gap-0.5 ml-2">
             <NavLink to="/" end className={navLinkCls}>
               Home
@@ -181,15 +182,6 @@ export function Header({
               </NavLink>
             )}
           </nav>
-        ) : (
-          <nav className="hidden sm:flex items-center gap-0.5 ml-2">
-            <NavLink to="/" end className={navLinkCls}>
-              Interactive Planner
-            </NavLink>
-            <NavLink to="/onboarding" className={navLinkCls}>
-              Join Network
-            </NavLink>
-          </nav>
         )}
       </div>
 
@@ -206,7 +198,7 @@ export function Header({
             {actions}
           </div>
         )}
-        {!showCypressMinimal && (
+        {!showCypressMinimal && isPrivileged && (
           <button
             type="button"
             onClick={() => setInstallVideosOpen(true)}
@@ -216,7 +208,7 @@ export function Header({
             <PlayCircle size={16} />
           </button>
         )}
-        {!showCypressMinimal && (
+        {!showCypressMinimal && isPrivileged && (
           <button
             onClick={toggle}
             title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
@@ -278,7 +270,7 @@ export function Header({
             </Link>
             <Link
               to="/onboarding"
-              className="text-xs font-semibold px-3 py-1.5 rounded-md text-white bg-brand-accent hover:bg-brand-accent-hover transition-colors"
+              className="text-xs font-semibold px-3 py-1.5 rounded-md text-brand-muted hover:text-brand-text hover:bg-brand-border/20 transition-colors"
             >
               Sign Up
             </Link>
@@ -354,25 +346,29 @@ export function Header({
                 Clear Job
               </button>
             )}
-            <button
-              type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setInstallVideosOpen(true);
-              }}
-              className="flex min-h-11 items-center gap-3 rounded-lg border border-brand-border px-3 py-2 text-left text-sm font-bold text-brand-text"
-            >
-              <PlayCircle size={18} />
-              Install videos
-            </button>
-            <button
-              type="button"
-              onClick={toggle}
-              className="flex min-h-11 items-center gap-3 rounded-lg border border-brand-border px-3 py-2 text-left text-sm font-bold text-brand-text"
-            >
-              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-              {theme === 'light' ? 'Dark mode' : 'Light mode'}
-            </button>
+            {isPrivileged && (
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setInstallVideosOpen(true);
+                }}
+                className="flex min-h-11 items-center gap-3 rounded-lg border border-brand-border px-3 py-2 text-left text-sm font-bold text-brand-text"
+              >
+                <PlayCircle size={18} />
+                Install videos
+              </button>
+            )}
+            {isPrivileged && (
+              <button
+                type="button"
+                onClick={toggle}
+                className="flex min-h-11 items-center gap-3 rounded-lg border border-brand-border px-3 py-2 text-left text-sm font-bold text-brand-text"
+              >
+                {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+                {theme === 'light' ? 'Dark mode' : 'Light mode'}
+              </button>
+            )}
             {onCustomerModeChange && (
               <button
                 type="button"
