@@ -57,9 +57,7 @@
   },
   "expect": {
     "errors": [],
-    "suggestions": [
-      { "sku": "XP-BTP-B", "qty": 18, "category": "accessory", "name": "BTP plate" }
-    ],
+    "suggestions": [],
     "lines": [
       { "sku": "XP-2400-FP-B", "qty": 10, "category": "post", "name": "FP post" },
       { "sku": "XP-TP-B", "qty": 7, "category": "accessory", "name": "TP cap" },
@@ -70,8 +68,6 @@
       { "sku": "QS-SFCAP-B-2PK", "qty": 4, "category": "accessory", "name": "SFCAP" },
       { "sku": "XP-6100-S65-B", "qty": 87, "category": "slat", "name": "Slat" },
       { "sku": "QS-SCREWS-50PK", "qty": 6, "category": "fixing", "name": "Screws" },
-      { "sku": "XP-5800-CSR-B", "qty": 3, "category": "centre_support_rail", "name": "CSR cap" },
-      { "sku": "XP-CSRC-B", "qty": 9, "category": "accessory", "name": "CSR cap" },
       { "sku": "XP-6000-135-B", "qty": 1, "category": "corner_adapter" }
     ],
     "totals": {

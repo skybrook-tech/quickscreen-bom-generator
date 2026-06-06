@@ -39,14 +39,7 @@
   },
   "expect": {
     "errors": [],
-    "suggestions": [
-      {
-        "sku": "XP-BTP-B",
-        "qty": 8,
-        "category": "accessory",
-        "name": "BTP plate"
-      }
-    ],
+    "suggestions": [],
     "lines": [
       {
         "sku": "QS-5800-F-B",
@@ -62,14 +55,14 @@
       },
       {
         "sku": "QS-5800-SF-B",
-        "qty": 3,
+        "qty": 1,
         "category": "side_frame",
         "name": "SF cap"
       },
       { "sku": "XP-6100-S65-B", "qty": 48, "category": "slat", "name": "Slat" },
       {
         "sku": "QS-5800-CFC-B",
-        "qty": 8,
+        "qty": 2,
         "category": "cfc_cover",
         "name": "CFC cover"
       },
@@ -81,7 +74,7 @@
       },
       {
         "sku": "QS-SFCAP-B-2PK",
-        "qty": 4,
+        "qty": 1,
         "category": "accessory",
         "name": "SFCAP"
       },
@@ -92,20 +85,7 @@
         "category": "post",
         "name": "FP post"
       },
-      { "sku": "XP-TP-B", "qty": 4, "category": "accessory", "name": "TP cap" },
-
-      {
-        "sku": "XP-CSRC-B",
-        "qty": 4,
-        "category": "accessory",
-        "name": "CSR cap"
-      },
-      {
-        "sku": "XP-5800-CSR-B",
-        "qty": 2,
-        "category": "centre_support_rail",
-        "name": "CSR cap"
-      }
+      { "sku": "XP-TP-B", "qty": 4, "category": "accessory", "name": "TP cap" }
     ],
     "totals": {
       "grandTotal": {

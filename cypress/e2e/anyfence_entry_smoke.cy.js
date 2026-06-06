@@ -31,6 +31,11 @@ function mockGoogleMaps() {
             lat() { return this._lat; }
             lng() { return this._lng; }
           }
+          class LatLngBounds {
+            constructor(sw, ne) { this._sw = sw; this._ne = ne; }
+            getSouthWest() { return this._sw; }
+            getNorthEast() { return this._ne; }
+          }
           class Map {
             constructor(el, opts) {
               this.el = el;
@@ -57,6 +62,7 @@ function mockGoogleMaps() {
             }
             setMapTypeId(mapTypeId) { this.mapTypeId = mapTypeId; this.render(); }
             setOptions(opts) { this.options = { ...this.options, ...opts }; }
+            fitBounds() {}
           }
           class Marker {
             constructor(opts) {
@@ -80,6 +86,7 @@ function mockGoogleMaps() {
           window.google = window.google || {};
           window.google.maps = window.google.maps || {};
           window.google.maps.LatLng = LatLng;
+          window.google.maps.LatLngBounds = LatLngBounds;
           window.google.maps.Map = Map;
           window.google.maps.Marker = Marker;
           window.google.maps.importLibrary = (name) => {

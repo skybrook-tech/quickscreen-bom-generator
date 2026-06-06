@@ -134,7 +134,7 @@ export function loadFixtures(dir: string): Fixture[] {
 // ─── Runner ───────────────────────────────────────────────────────────────────
 
 export async function runFixtures(): Promise<void> {
-  const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") || Deno.env.get("VITE_SUPABASE_URL")!;
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const email = Deno.env.get("TEST_USER_EMAIL") ?? "test@glass-outlet.com";
   const password = Deno.env.get("TEST_USER_PASSWORD") ?? "123456";
