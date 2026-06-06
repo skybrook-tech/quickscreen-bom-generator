@@ -62,15 +62,14 @@
     ],
     "lines": [
       { "sku": "XP-2400-FP-B", "qty": 10, "category": "post", "name": "FP post" },
-      { "sku": "XP-TP-B", "qty": 7, "category": "accessory", "name": "TP cap" },
-      { "sku": "XPL-6000-SF-B", "qty": 2, "category": "side_frame", "name": "Side frame" },
-      { "sku": "XPL-EP-B-2PK", "qty": 18, "category": "accessory", "name": "Side frame end plate" },
-      { "sku": "XP-6100-S65-B", "qty": 72, "category": "slat", "name": "Slat" },
-      { "sku": "XPL-SB-50PK-09MM", "qty": 9, "category": "accessory", "name": "Spacer" },
-      { "sku": "QS-SCREWS-50PK", "qty": 3, "category": "fixing", "name": "Screws" },
+      { "sku": "QS-5800-SF-B", "qty": 6, "category": "side_frame", "name": "SF cap" },
       { "sku": "XP-5800-CSR-B", "qty": 3, "category": "centre_support_rail", "name": "CSR cap" },
+      { "sku": "QS-SPACER-09MM-50PK", "qty": 9, "category": "spacer", "name": "Spacer" },
+      { "sku": "QS-SCREWS-50PK", "qty": 12, "category": "fixing", "name": "Screws" },
+      { "sku": "QS-5800-CFC-B", "qty": 6, "category": "cfc_cover", "name": "CFC cover" },
       { "sku": "XP-CSRC-B", "qty": 9, "category": "accessory", "name": "CSR cap" },
-      { "sku": "AW-5800-135-B", "qty": 1, "category": "corner_adapter" }
+      { "sku": "XP-6100-S65-B", "qty": 72, "category": "slat", "name": "Slat" },
+      { "sku": "XP-6000-135-B", "qty": 1, "category": "corner_adapter" }
     ],
     "totals": {
       "grandTotal": { "gte": 3500 }

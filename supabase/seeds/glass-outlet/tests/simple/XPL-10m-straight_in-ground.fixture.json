@@ -56,21 +56,10 @@
         "name": "Slat"
       },
       {
-        "sku": "QS-SCREWS-50PK",
-        "qty": 1,
-        "category": "fixing",
-        "name": "Screws"
-      },
-      {
         "sku": "XP-2400-FP-B",
         "qty": 5,
         "category": "post",
         "name": "FP post"
-      },
-      {
-        "sku": "XP-TP-B",
-        "qty": 4,
-        "category": "accessory"
       }
     ],
     "totals": {

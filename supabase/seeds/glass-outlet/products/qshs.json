@@ -5417,7 +5417,7 @@
       "version_label": "v1.0.0",
       "stage": "stock",
       "name": "sf_stocks",
-      "expression": "ceil(sf_cut_mm / 5800)",
+      "expression": "ceil((num_sf_total + (num_panels - 1) * 2) / floor(5800 / sf_cut_mm))",
       "output_key": "sf_stocks",
       "priority": 10,
       "active": true,
@@ -5532,11 +5532,11 @@
       "version_label": "v1.0.0",
       "stage": "accessory",
       "name": "spacer_packs",
-      "expression": "ceil((2 * (num_slats + 1)) / 50)",
+      "expression": "ceil(((num_slats - 1) * 2 * num_panels) / 50)",
       "output_key": "spacer_packs",
       "priority": 40,
       "active": true,
-      "notes": "2*(slats+1) spacers per panel; 50-pack"
+      "notes": "2*(slats-1) spacers per panel; 50-pack"
     },
     {
       "product_system_type": "QSHS",
@@ -5544,11 +5544,11 @@
       "version_label": "v1.0.0",
       "stage": "accessory",
       "name": "screw_packs",
-      "expression": "ceil((num_slats * 2 * 1.01 + num_csr * 4) / 50)",
+      "expression": "ceil(((num_slats * 2 * 1.01 + num_csr * 4) * num_panels) / 50)",
       "output_key": "screw_packs",
       "priority": 50,
       "active": true,
-      "notes": "slats*2*1.01 + CSR screws, in 50-packs"
+      "notes": "slats*2*1.01 + CSR screws, in 50-packs scaled segment-wide"
     },
     {
       "product_system_type": "QSHS",
@@ -5590,7 +5590,7 @@
       "version_label": "v1.0.0",
       "stage": "component",
       "name": "emit_sf",
-      "expression": "num_sf_total * sf_stocks",
+      "expression": "sf_stocks",
       "output_key": "qty_sf",
       "priority": 30,
       "active": true,
@@ -5677,6 +5677,17 @@
       "priority": 5,
       "active": true,
       "notes": "65mm HD post 6000mm (cut to size) for screens over 2400mm — not available in P/PB"
+    },
+    {
+      "product_system_type": "QSHS",
+      "rule_set_name": "QSHS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_135_adapters",
+      "expression": "right_angle_deg == 135 ? 1 : 0",
+      "output_key": "qty_135_adapters",
+      "priority": 110,
+      "active": true
     }
   ],
   "product_component_selectors": [
@@ -5827,6 +5838,65 @@
       "sku_pattern": "XP-6000-65HD-{colour}",
       "priority": 100,
       "notes": "65mm HD post 6000mm — colour resolved at runtime. Not available in P/PB.",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_spacer_5",
+      "component_category": "spacer",
+      "selector_type": "exact",
+      "qty_key": "spacer_packs",
+      "priority": 100,
+      "match_json": {"slat_gap_mm": 5},
+      "sku_pattern": "QS-SPACER-05MM-50PK",
+      "notes": "QS 5mm Spacers",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_spacer_9",
+      "component_category": "spacer",
+      "selector_type": "exact",
+      "qty_key": "spacer_packs",
+      "priority": 100,
+      "match_json": {"slat_gap_mm": 9},
+      "sku_pattern": "QS-SPACER-09MM-50PK",
+      "notes": "QS 9mm Spacers",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_spacer_20",
+      "component_category": "spacer",
+      "selector_type": "exact",
+      "qty_key": "spacer_packs",
+      "priority": 100,
+      "match_json": {"slat_gap_mm": 20},
+      "sku_pattern": "QS-SPACER-20MM-50PK",
+      "notes": "QS 20mm Spacers",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_screws",
+      "component_category": "fixing",
+      "selector_type": "exact",
+      "qty_key": "screw_packs",
+      "priority": 100,
+      "match_json": {},
+      "sku_pattern": "QS-SCREWS-50PK",
+      "notes": "QS Screws",
+      "active": true
+    },
+    {
+      "product_system_type": "QSHS",
+      "selector_key": "qshs_135_adapter",
+      "component_category": "corner_adapter",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_135_adapters",
+      "sku_pattern": "XP-6000-135-{colour}",
+      "priority": 100,
       "active": true
     }
   ],

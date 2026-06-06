@@ -1626,6 +1626,28 @@
       "product_system_type": "XPL",
       "rule_set_name": "XPL Fence Rules",
       "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_insert_09",
+      "expression": "slat_gap_mm == 9 ? (num_panels * 2) : 0",
+      "output_key": "qty_insert_09",
+      "priority": 70,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_insert_20",
+      "expression": "slat_gap_mm == 20 ? (num_panels * 2) : 0",
+      "output_key": "qty_insert_20",
+      "priority": 80,
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "rule_set_name": "XPL Fence Rules",
+      "version_label": "v1.0.0",
       "stage": "derive",
       "name": "num_posts",
       "expression": "xpl_end_post_count + xpl_inline_post_count + xpl_corner_post_count",
@@ -1905,6 +1927,30 @@
       "sku_pattern": "XPL-SLATCLIP-10PK",
       "priority": 100,
       "notes": "Locks the top slat; 1 pack per panel",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_insert_09",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "qty_key": "qty_insert_09",
+      "priority": 100,
+      "match_json": {"slat_gap_mm": 9},
+      "sku_pattern": "XPL-2100-INS09-{colour}",
+      "notes": "XPL 9mm insert",
+      "active": true
+    },
+    {
+      "product_system_type": "XPL",
+      "selector_key": "xpl_insert_20",
+      "component_category": "accessory",
+      "selector_type": "exact",
+      "qty_key": "qty_insert_20",
+      "priority": 100,
+      "match_json": {"slat_gap_mm": 20},
+      "sku_pattern": "XPL-2100-INS20-{colour}",
+      "notes": "XPL 20mm insert",
       "active": true
     },
     {

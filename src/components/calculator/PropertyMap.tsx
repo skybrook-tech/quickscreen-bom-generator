@@ -373,6 +373,15 @@ function PropertyMapCanvas({
   const mapRef = useRef<google.maps.Map | null>(null);
   const markerRef = useRef<google.maps.Marker | null>(null);
   const preserveInitialViewRef = useRef(Boolean(initialSnapshot));
+  const idleListenerRef = useRef<google.maps.MapsEventListener | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (idleListenerRef.current) {
+        google.maps.event.removeListener(idleListenerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!googleMaps.ready || !mapNodeRef.current || mapRef.current) return;
@@ -398,11 +407,26 @@ function PropertyMapCanvas({
         { lat: -9, lng: 156 }
       );
       map.fitBounds(AU_BOUNDS);
+
+      if (idleListenerRef.current) {
+        google.maps.event.removeListener(idleListenerRef.current);
+      }
+      idleListenerRef.current = google.maps.event.addListener(map, "idle", () => {
+        map.fitBounds(AU_BOUNDS);
+        if (idleListenerRef.current) {
+          google.maps.event.removeListener(idleListenerRef.current);
+          idleListenerRef.current = null;
+        }
+      });
     }
   }, [googleMaps.ready, initialSnapshot, pin]);
 
   useEffect(() => {
     if (!googleMaps.ready || !mapRef.current || !pin) return;
+    if (idleListenerRef.current) {
+      google.maps.event.removeListener(idleListenerRef.current);
+      idleListenerRef.current = null;
+    }
     const position = new google.maps.LatLng(pin.lat, pin.lng);
     const preserveView = preserveInitialViewRef.current;
     preserveInitialViewRef.current = false;

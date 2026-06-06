@@ -62,30 +62,28 @@
       { "sku": "XP-6100-S65-B", "qty": 48, "category": "slat", "name": "Slat" },
       {
         "sku": "QS-5800-CFC-B",
-        "qty": 2,
+        "qty": 1,
         "category": "cfc_cover",
         "name": "CFC cover"
       },
       {
-        "sku": "QS-SCREWS-50PK",
-        "qty": 4,
-        "category": "fixing",
-        "name": "Screws"
+        "sku": "XP-SCREWS-B",
+        "qty": 1,
+        "category": "hardware",
+        "name": "Wafer head screws"
       },
       {
-        "sku": "QS-SFCAP-B-2PK",
-        "qty": 1,
+        "sku": "QS-SFC-B",
+        "qty": 4,
         "category": "accessory",
         "name": "SFCAP"
       },
-
       {
         "sku": "XP-2400-FP-B",
         "qty": 5,
         "category": "post",
         "name": "FP post"
-      },
-      { "sku": "XP-TP-B", "qty": 4, "category": "accessory", "name": "TP cap" }
+      }
     ],
     "totals": {
       "grandTotal": {

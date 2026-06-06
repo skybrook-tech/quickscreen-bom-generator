@@ -87,6 +87,15 @@ function mockGoogleMaps() {
           window.google.maps.LatLngBounds = LatLngBounds;
           window.google.maps.Map = Map;
           window.google.maps.Marker = Marker;
+          window.google.maps.event = {
+            addListener(instance, eventName, handler) {
+              return { remove() {} };
+            },
+            addListenerOnce(instance, eventName, handler) {
+              return { remove() {} };
+            },
+            removeListener(listener) {}
+          };
           window.google.maps.importLibrary = (name) => {
             if (name === 'places') {
               return Promise.resolve({ AutocompleteSuggestion, AutocompleteSessionToken });

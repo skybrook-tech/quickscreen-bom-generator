@@ -766,6 +766,17 @@
       "priority": 5,
       "active": true,
       "notes": "65mm HD post 6000mm (cut to size) for screens over 2400mm — not available in P/PB"
+    },
+    {
+      "product_system_type": "VS",
+      "rule_set_name": "VS Fence Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "emit_135_adapters",
+      "expression": "right_angle_deg == 135 ? 1 : 0",
+      "output_key": "qty_135_adapters",
+      "priority": 110,
+      "active": true
     }
   ],
   "product_component_selectors": [
@@ -879,6 +890,17 @@
       "sku_pattern": "XP-6000-65HD-{colour}",
       "priority": 100,
       "notes": "65mm HD post 6000mm — colour resolved at runtime. Not available in P/PB.",
+      "active": true
+    },
+    {
+      "product_system_type": "VS",
+      "selector_key": "vs_135_adapter",
+      "component_category": "corner_adapter",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_135_adapters",
+      "sku_pattern": "XP-6000-135-{colour}",
+      "priority": 100,
       "active": true
     }
   ],
