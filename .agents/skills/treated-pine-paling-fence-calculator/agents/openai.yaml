@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Treated Pine Paling Fence — BOM Calculator'
+  short_description: 'Calculates a bill of materials for standard boundary paling fences (treated pine or hardwood) using '
+  default_prompt: 'Use this skill for: Calculates a bill of materials for standard boundary paling fences (treated pine or hardwood) using canonical product names. Supports butted (6-line BOM) and lapped & capped (8-line BOM with capping rail) styles. Pure calculation engine — no credentials required.'

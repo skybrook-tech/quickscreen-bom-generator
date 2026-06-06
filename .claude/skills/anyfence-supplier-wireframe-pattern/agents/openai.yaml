@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Anyfence Supplier Calculator Wireframe Pattern'
+  short_description: 'Single-page HTML wireframe pattern for showing fence suppliers what their branded Anyfence calculato'
+  default_prompt: 'Use this skill for: Single-page HTML wireframe pattern for showing fence suppliers what their branded Anyfence calculator would look like — supplier''s product codes prominent on every BOM line, supplier''s brand at top, contractor-view layout. Send this when a Tier A supplier says "show me what you mean" during outreach. Drives "I get it" conversion within 10 seconds of opening.'

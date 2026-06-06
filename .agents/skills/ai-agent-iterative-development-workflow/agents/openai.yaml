@@ -1,0 +1,4 @@
+interface:
+  display_name: 'AI Agent Iterative Development Workflow'
+  short_description: 'Meta-workflow for managing iterative development with AI coding agents. Covers the audit → brief → s'
+  default_prompt: 'Use this skill for: Meta-workflow for managing iterative development with AI coding agents. Covers the audit → brief → ship → verify → iterate cycle, handling spec reversals, dealing with "claimed-fixed" bugs, and maintaining a discovery log.'

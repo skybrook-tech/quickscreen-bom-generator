@@ -1,0 +1,71 @@
+{
+  "org_slug": "amazing-fencing",
+  "colour_options": [
+    { "value": "Monument", "short_code": "MO", "label": "Monument", "finish_group": "standard", "sort_order": 10, "active": true },
+    { "value": "monument", "short_code": "MO", "label": "Monument", "finish_group": "standard", "sort_order": 11, "active": true },
+    { "value": "monument-matt", "short_code": "MO", "label": "Monument", "finish_group": "standard", "sort_order": 12, "active": true },
+    { "value": "Monument Matt", "short_code": "MO", "label": "Monument", "finish_group": "standard", "sort_order": 13, "active": true },
+
+    { "value": "Woodland Grey", "short_code": "WG", "label": "Woodland Grey", "finish_group": "standard", "sort_order": 20, "active": true },
+    { "value": "woodland-grey", "short_code": "WG", "label": "Woodland Grey", "finish_group": "standard", "sort_order": 21, "active": true },
+    { "value": "woodland-grey-matt", "short_code": "WG", "label": "Woodland Grey", "finish_group": "standard", "sort_order": 22, "active": true },
+    { "value": "Woodland Grey Matt", "short_code": "WG", "label": "Woodland Grey", "finish_group": "standard", "sort_order": 23, "active": true },
+
+    { "value": "Surfmist", "short_code": "SM", "label": "Surfmist", "finish_group": "standard", "sort_order": 30, "active": true },
+    { "value": "surfmist", "short_code": "SM", "label": "Surfmist", "finish_group": "standard", "sort_order": 31, "active": true },
+    { "value": "surfmist-matt", "short_code": "SM", "label": "Surfmist", "finish_group": "standard", "sort_order": 32, "active": true },
+    { "value": "Surfmist Matt", "short_code": "SM", "label": "Surfmist", "finish_group": "standard", "sort_order": 33, "active": true },
+
+    { "value": "Basalt", "short_code": "BA", "label": "Basalt", "finish_group": "standard", "sort_order": 40, "active": true },
+    { "value": "basalt", "short_code": "BA", "label": "Basalt", "finish_group": "standard", "sort_order": 41, "active": true },
+    { "value": "basalt-satin", "short_code": "BA", "label": "Basalt", "finish_group": "standard", "sort_order": 42, "active": true },
+    { "value": "Basalt Satin", "short_code": "BA", "label": "Basalt", "finish_group": "standard", "sort_order": 43, "active": true },
+
+    { "value": "Dune", "short_code": "DU", "label": "Dune", "finish_group": "standard", "sort_order": 50, "active": true },
+    { "value": "dune", "short_code": "DU", "label": "Dune", "finish_group": "standard", "sort_order": 51, "active": true },
+    { "value": "dune-satin", "short_code": "DU", "label": "Dune", "finish_group": "standard", "sort_order": 52, "active": true },
+    { "value": "Dune Satin", "short_code": "DU", "label": "Dune", "finish_group": "standard", "sort_order": 53, "active": true },
+
+    { "value": "Riversand", "short_code": "RS", "label": "Riversand", "finish_group": "standard", "sort_order": 60, "active": true },
+    { "value": "riversand", "short_code": "RS", "label": "Riversand", "finish_group": "standard", "sort_order": 61, "active": true },
+
+    { "value": "Cottage Green", "short_code": "CG", "label": "Cottage Green", "finish_group": "standard", "sort_order": 70, "active": true },
+    { "value": "cottage-green", "short_code": "CG", "label": "Cottage Green", "finish_group": "standard", "sort_order": 71, "active": true },
+
+    { "value": "Paperbark", "short_code": "PB", "label": "Paperbark", "finish_group": "standard", "sort_order": 80, "active": true },
+    { "value": "paperbark", "short_code": "PB", "label": "Paperbark", "finish_group": "standard", "sort_order": 81, "active": true },
+
+    { "value": "Primrose", "short_code": "P", "label": "Primrose", "finish_group": "standard", "sort_order": 90, "active": true },
+    { "value": "primrose", "short_code": "P", "label": "Primrose", "finish_group": "standard", "sort_order": 91, "active": true },
+
+    { "value": "Shale Grey", "short_code": "SG", "label": "Shale Grey", "finish_group": "standard", "sort_order": 100, "active": true },
+    { "value": "shale-grey", "short_code": "SG", "label": "Shale Grey", "finish_group": "standard", "sort_order": 101, "active": true },
+
+    { "value": "Jasper", "short_code": "JA", "label": "Jasper", "finish_group": "standard", "sort_order": 110, "active": true },
+    { "value": "jasper", "short_code": "JA", "label": "Jasper", "finish_group": "standard", "sort_order": 111, "active": true },
+
+    { "value": "Windspray", "short_code": "WS", "label": "Windspray", "finish_group": "standard", "sort_order": 120, "active": true },
+    { "value": "windspray", "short_code": "WS", "label": "Windspray", "finish_group": "standard", "sort_order": 121, "active": true },
+
+    { "value": "Evening Haze", "short_code": "EH", "label": "Evening Haze", "finish_group": "standard", "sort_order": 130, "active": true },
+    { "value": "evening-haze", "short_code": "EH", "label": "Evening Haze", "finish_group": "standard", "sort_order": 131, "active": true },
+
+    { "value": "Pale Eucalypt", "short_code": "PE", "label": "Pale Eucalypt", "finish_group": "standard", "sort_order": 140, "active": true },
+    { "value": "pale-eucalypt", "short_code": "PE", "label": "Pale Eucalypt", "finish_group": "standard", "sort_order": 141, "active": true },
+
+    { "value": "Deep Ocean", "short_code": "DO", "label": "Deep Ocean", "finish_group": "standard", "sort_order": 150, "active": true },
+    { "value": "deep-ocean", "short_code": "DO", "label": "Deep Ocean", "finish_group": "standard", "sort_order": 151, "active": true },
+
+    { "value": "Manor Red", "short_code": "MR", "label": "Manor Red", "finish_group": "standard", "sort_order": 160, "active": true },
+    { "value": "manor-red", "short_code": "MR", "label": "Manor Red", "finish_group": "standard", "sort_order": 161, "active": true },
+
+    { "value": "Domain", "short_code": "DM", "label": "Domain", "finish_group": "standard", "sort_order": 170, "active": true },
+    { "value": "domain", "short_code": "DM", "label": "Domain", "finish_group": "standard", "sort_order": 171, "active": true },
+
+    { "value": "Wilderness", "short_code": "WI", "label": "Wilderness", "finish_group": "standard", "sort_order": 180, "active": true },
+    { "value": "wilderness", "short_code": "WI", "label": "Wilderness", "finish_group": "standard", "sort_order": 181, "active": true },
+
+    { "value": "Night Sky", "short_code": "NS", "label": "Night Sky", "finish_group": "standard", "sort_order": 190, "active": true },
+    { "value": "night-sky", "short_code": "NS", "label": "Night Sky", "finish_group": "standard", "sort_order": 191, "active": true }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "id": "AF_TIMBER_PALING-30m-straight_lapped_capped_hardwood",
+  "description": "AF_TIMBER_PALING 30m straight run, 1800mm height, lapped & capped hardwood timber paling fence. 13 bays @ 2307mm, 14 posts.",
+  "input": {
+    "pricingTier": "tier1",
+    "payload": {
+      "productCode": "AF_TIMBER_PALING",
+      "schemaVersion": "v2",
+      "variables": {
+        "timber_type": "hardwood",
+        "paling_style": "lapped_capped",
+        "max_panel_width_mm": 2400,
+        "paling_gap_mm": 0,
+        "rail_profile": "75x38"
+      },
+      "runs": [
+        {
+          "runId": "run-001",
+          "segments": [
+            {
+              "segmentId": "seg-001",
+              "sortOrder": 0,
+              "kind": "fence",
+              "productCode": "AF_TIMBER_PALING",
+              "segmentWidthMm": 30000,
+              "targetHeightMm": 1800,
+              "leftTermination": {
+                "kind": "system"
+              },
+              "rightTermination": {
+                "kind": "system"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "expect": {
+    "errors": [],
+    "suggestions": [],
+    "lines": [
+      { "sku": "AF-POST-HWD-100x75-2400", "qty": 14, "name": "H4 Hardwood Post 100×75×2400mm" },
+      { "sku": "AF-RAIL-HWD-75x38-4800", "qty": 20, "name": "Hardwood Rail 75×38×4800mm" },
+      { "sku": "AF-PAL-100x16-1800", "qty": 473, "name": "CCA Pine Paling 100×16×1800mm" },
+      { "sku": "AF-CON-POSTMIX-30", "qty": 14, "name": "Post Mix 30kg" },
+      { "sku": "AF-NAIL-COIL-57-250", "qty": 6, "name": "Coil Nails 57mm Ring M Gal (250 pack)" },
+      { "sku": "AF-NAIL-COIL-45-250", "qty": 3, "name": "Coil Nails 45mm Ring M Gal (250 pack)" },
+      { "sku": "AF-SCR-BB-14g-100-500", "qty": 1, "name": "Batten Screws 14g × 100mm Galv (500 pack)" },
+      { "sku": "AF-CAP-75x50-4800", "qty": 7, "name": "75x50 Treated Pine Capping Rail 4800mm" }
+    ],
+    "totals": {
+      "grandTotal": {
+        "gte": 1000
+      }
+    }
+  }
+}

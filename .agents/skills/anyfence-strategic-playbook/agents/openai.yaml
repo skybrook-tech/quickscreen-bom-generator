@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Anyfence Strategic Playbook'
+  short_description: 'Strategic playbook for Anyfence — the per-fence-type calculator network connecting Australian contra'
+  default_prompt: 'Use this skill for: Strategic playbook for Anyfence — the per-fence-type calculator network connecting Australian contractors with local material suppliers. Captures the three-channel distribution model, calculator engine capabilities, supplier-pilot prioritization rationale, competitive positioning vs QuoteMate, and Tier A decision-maker map.'

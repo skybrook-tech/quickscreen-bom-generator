@@ -1,0 +1,134 @@
+{
+  "ok": true,
+  "inputs": {
+    "fence_length_m": 20,
+    "fence_height_mm": 1800,
+    "timber_type": "treated_pine",
+    "post_spacing_mm": 2400,
+    "rail_count": 3,
+    "paling_gap_mm": 0,
+    "paling_style": "lapped_capped"
+  },
+  "derived": {
+    "length_mm": 20000,
+    "post_count": 10,
+    "bay_count": 9,
+    "rail_count": 3,
+    "rail_pieces": 27,
+    "rail_stock_lengths": 14,
+    "paling_count": 300,
+    "back_palings": 150,
+    "front_palings": 150,
+    "palings_with_wastage": 315,
+    "concrete_bags": 15,
+    "nails_front_count": 900,
+    "nails_front_with_wastage": 945,
+    "nails_front_rounded": 1000,
+    "nails_back_count": 450,
+    "nails_back_with_wastage": 473,
+    "nails_back_rounded": 500,
+    "batten_screws": 54,
+    "capping_pieces": 9,
+    "capping_stock_lengths": 5,
+    "post_height_mm": 2400
+  },
+  "bom": [
+    {
+      "line": 1,
+      "category": "Posts",
+      "canonical_name": "100x75 Treated Pine Post",
+      "description": "100x75 Treated Pine Post (2400mm)",
+      "qty": 10,
+      "unit": "ea",
+      "notes": "2400mm total (1800mm fence + 600mm in-ground)"
+    },
+    {
+      "line": 2,
+      "category": "Rails",
+      "canonical_name": "75x38 Treated Pine Rail 4800mm",
+      "description": "75x38 Treated Pine Rail 4800mm",
+      "qty": 14,
+      "unit": "length",
+      "notes": "3 rails/bay \u00d7 9 bays = 27 pieces \u2192 14 stock lengths"
+    },
+    {
+      "line": 3,
+      "category": "Palings",
+      "canonical_name": "100x16 Rough Sawn Treated Pine Paling",
+      "description": "100x16 Rough Sawn Treated Pine Paling (1800mm)",
+      "qty": 315,
+      "unit": "ea",
+      "notes": "15/m total \u2014 150 back layer + 150 front layer (+5% wastage applied to total)"
+    },
+    {
+      "line": 4,
+      "category": "Concrete",
+      "canonical_name": "Rapid Set Concrete 20kg",
+      "description": "Rapid Set Concrete 20kg",
+      "qty": 15,
+      "unit": "bag",
+      "notes": "1.5 bags/post"
+    },
+    {
+      "line": 5,
+      "category": "Fasteners",
+      "canonical_name": "57mm Ring Shank Gal Nail",
+      "description": "57mm Ring Shank Gal Nail",
+      "qty": 1000,
+      "unit": "ea",
+      "notes": "Front layer: 2 per rail per paling \u2014 rounded to nearest 250-pack"
+    },
+    {
+      "line": 6,
+      "category": "Fasteners",
+      "canonical_name": "45mm Ring Shank Gal Nail",
+      "description": "45mm Ring Shank Gal Nail",
+      "qty": 500,
+      "unit": "ea",
+      "notes": "Back layer: 1 per rail per paling \u2014 rounded to nearest 250-pack"
+    },
+    {
+      "line": 7,
+      "category": "Fasteners",
+      "canonical_name": "100mm Galvanised Batten Screw",
+      "description": "100mm Galvanised Batten Screw",
+      "qty": 54,
+      "unit": "ea",
+      "notes": "2 per rail piece"
+    },
+    {
+      "line": 8,
+      "category": "Capping",
+      "canonical_name": "75x50 Treated Pine Capping Rail 4800mm",
+      "description": "75x50 Treated Pine Capping Rail 4800mm",
+      "qty": 5,
+      "unit": "length",
+      "notes": "1 piece per bay \u00d7 9 bays = 9 pieces \u2192 5 stock lengths (2 pieces per 4800mm length)"
+    }
+  ],
+  "warnings": [],
+  "constants": {
+    "PALING_FACE_MM": 100,
+    "PALING_THICKNESS_MM": 16,
+    "POST_SIZE": "100x75",
+    "RAIL_SIZE": "75x38",
+    "RAIL_STOCK_LENGTH_MM": 4800,
+    "RAIL_PIECES_PER_STOCK": 2,
+    "POST_IN_GROUND_MM": 600,
+    "CONCRETE_BAGS_PER_POST": 1.5,
+    "CONCRETE_BAG_SIZE_KG": 20,
+    "NAILS_PER_PALING_PER_RAIL": 2,
+    "NAIL_SIZE_MM": 57,
+    "BACK_NAIL_SIZE_MM": 45,
+    "NAILS_PER_BACK_PALING_PER_RAIL": 1,
+    "NAIL_PACK_SIZE": 250,
+    "BATTEN_SCREW_LEN_MM": 100,
+    "WASTAGE_PALINGS": 0.05,
+    "WASTAGE_NAILS": 0.05,
+    "DEFAULT_PALINGS_PER_M": 10,
+    "LAPPED_PALINGS_PER_M": 15,
+    "CAPPING_SIZE": "75x50",
+    "CAPPING_STOCK_LENGTH_MM": 4800,
+    "CAPPING_PIECES_PER_STOCK": 2
+  }
+}

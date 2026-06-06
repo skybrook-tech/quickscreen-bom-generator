@@ -4,9 +4,18 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import type { CanonicalPayload } from "../../types/canonical.types";
 import { RunListV3 } from "./RunListV3";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 const dispatchMock = vi.fn();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 const anchoredEmptyPayload: CanonicalPayload = {
   productCode: "QSHS",
@@ -50,7 +59,11 @@ describe("RunListV3 propertyAnchor wiring", () => {
     const root = createRoot(container);
 
     act(() => {
-      root.render(<RunListV3 />);
+      root.render(
+        <QueryClientProvider client={queryClient}>
+          <RunListV3 />
+        </QueryClientProvider>
+      );
     });
 
     const qshsButton = container.querySelector(

@@ -1,0 +1,105 @@
+[
+  {
+    "name": "butted-treatedpine-20m-1800",
+    "description": "Standard butted treated pine, 20m \u00d7 1800mm (3 rails).",
+    "ok": true,
+    "bom_lines": 6,
+    "warnings": 0,
+    "key_derived": {
+      "post_count": 10,
+      "bay_count": 9,
+      "rail_count": 3,
+      "rail_stock_lengths": 14,
+      "paling_count": 200,
+      "palings_with_wastage": 210,
+      "concrete_bags": 15
+    }
+  },
+  {
+    "name": "butted-treatedpine-12m-1200",
+    "description": "Butted treated pine, 12m \u00d7 1200mm (2 rails \u2014 low boundary).",
+    "ok": true,
+    "bom_lines": 6,
+    "warnings": 0,
+    "key_derived": {
+      "post_count": 6,
+      "bay_count": 5,
+      "rail_count": 2,
+      "rail_stock_lengths": 5,
+      "paling_count": 120,
+      "palings_with_wastage": 126,
+      "concrete_bags": 9
+    }
+  },
+  {
+    "name": "lappedcapped-treatedpine-20m-1800",
+    "description": "Lapped & capped treated pine, 20m \u00d7 1800mm (8-line BOM with capping rail).",
+    "ok": true,
+    "bom_lines": 8,
+    "warnings": 0,
+    "key_derived": {
+      "post_count": 10,
+      "bay_count": 9,
+      "rail_count": 3,
+      "rail_stock_lengths": 14,
+      "paling_count": 300,
+      "palings_with_wastage": 315,
+      "concrete_bags": 15
+    }
+  },
+  {
+    "name": "butted-hardwood-30m-1500",
+    "description": "Butted hardwood, 30m \u00d7 1500mm (smooth-shank nails, 3 rails).",
+    "ok": true,
+    "bom_lines": 6,
+    "warnings": 0,
+    "key_derived": {
+      "post_count": 14,
+      "bay_count": 13,
+      "rail_count": 3,
+      "rail_stock_lengths": 20,
+      "paling_count": 300,
+      "palings_with_wastage": 315,
+      "concrete_bags": 21
+    }
+  },
+  {
+    "name": "lappedcapped-hardwood-25m-2100",
+    "description": "Lapped & capped hardwood, 25m \u00d7 2100mm.",
+    "ok": true,
+    "bom_lines": 8,
+    "warnings": 0,
+    "key_derived": {
+      "post_count": 12,
+      "bay_count": 11,
+      "rail_count": 3,
+      "rail_stock_lengths": 17,
+      "paling_count": 375,
+      "palings_with_wastage": 394,
+      "concrete_bags": 18
+    }
+  },
+  {
+    "name": "warning-nonstandard-height-1650",
+    "description": "Non-standard height 1650mm \u2014 should emit a warning and interpolate 3 rails.",
+    "ok": true,
+    "bom_lines": 6,
+    "warnings": 1,
+    "key_derived": {
+      "post_count": 9,
+      "bay_count": 8,
+      "rail_count": 3,
+      "rail_stock_lengths": 12,
+      "paling_count": 180,
+      "palings_with_wastage": 189,
+      "concrete_bags": 14
+    }
+  },
+  {
+    "name": "error-postspacing-over-cap",
+    "description": "Validation error \u2014 post_spacing_mm exceeds the 2400 cap. Engine returns ok:false with errors.",
+    "ok": false,
+    "bom_lines": 0,
+    "warnings": 0
+  }
+]

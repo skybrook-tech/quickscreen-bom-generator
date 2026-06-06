@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://anyfence.com.au/schema/fence_system_config.schema.json",
+  "title": "Anyfence fence_system_config",
+  "description": "Canonical configuration consumed by the Anyfence calculator engine. One config per fence system, across all fence types. See knowledge-pack/02-fence-system-config-schema.md.",
+  "type": "object",
+  "required": ["system_id", "display_name", "fence_type", "heights_mm", "components", "metadata"],
+  "additionalProperties": false,
+  "properties": {
+    "system_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "Stable kebab-case identifier, e.g. 'treated-pine-paling'."
+    },
+    "display_name": { "type": "string" },
+    "manufacturer": { "type": "string" },
+    "fence_type": {
+      "type": "string",
+      "description": "Archetype family, e.g. timber-paling, panel-fence, pool-glass, pool-aluminium, aluminium-slat, picket, chain-wire, hardwood, tubular."
+    },
+    "heights_mm": {
+      "type": "array",
+      "items": { "type": "integer", "minimum": 100 },
+      "minItems": 1
+    },
+    "colours": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "code": { "type": "string" },
+          "name": { "type": "string" },
+          "hex": { "type": "string", "pattern": "^#?[0-9A-Fa-f]{6}$" },
+          "swatch_url": { "type": "string" },
+          "surcharge_pct": { "type": "number", "minimum": 0 }
+        }
+      }
+    },
+    "post_spacing_mm": { "type": "integer", "minimum": 100 },
+    "post_mounting_options": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["in-ground", "bolt-down", "core-drill", "surface-mount", "retro-fit"] }
+    },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/component" }
+    },
+    "gate_options": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/gate_option" }
+    },
+    "compliance": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/compliance_rule" }
+    },
+    "labour_rules": { "type": "object", "description": "Optional contractor-specific labour pricing rules." },
+    "visual_assets": { "type": "object" },
+    "metadata": {
+      "type": "object",
+      "required": ["currency", "gst_pct"],
+      "properties": {
+        "currency": { "type": "string", "const": "AUD" },
+        "gst_pct": { "type": "number", "const": 10 },
+        "source": { "type": "string" },
+        "captured_at": { "type": "string" },
+        "schema_version": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "component": {
+      "type": "object",
+      "required": ["category", "unit", "canonical_name"],
+      "additionalProperties": false,
+      "properties": {
+        "sku": { "type": "string", "description": "Internal/canonical sku." },
+        "external_sku": { "type": "string", "description": "Supplier's own code (e.g. Bunnings I/N). Passthrough — never re-mapped." },
+        "canonical_name": { "type": "string", "description": "Supplier-agnostic, version-locked. See 04-canonical-product-names.md." },
+        "category": {
+          "type": "string",
+          "enum": [
+            "panel", "glass_panel", "post", "rail", "post_cap", "capping",
+            "paling", "picket", "picket_panel", "screen_board", "infill_sheet",
+            "mesh_roll", "mesh_panel", "tension_band", "spigot", "gate_kit",
+            "hinge", "latch", "plinth", "pole", "handrail", "fence_tie", "accessory"
+          ]
+        },
+        "unit": { "type": "string", "enum": ["each", "length"] },
+        "stock_length_mm": { "type": "integer", "minimum": 1 },
+        "base_price_aud": { "type": "number", "minimum": 0, "description": "Per piece." },
+        "price_per_metre_aud": { "type": ["number", "null"], "minimum": 0, "description": "Populate when supplier publishes both piece and per-metre price." },
+        "qty_break_pricing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["min_qty", "unit_price"],
+            "properties": {
+              "min_qty": { "type": "integer", "minimum": 1 },
+              "unit_price": { "type": "number", "minimum": 0 }
+            }
+          }
+        },
+        "cuts_per_run_fn": {
+          "type": "string",
+          "description": "Safe string expression interpreted by the engine (NOT eval). Whitelisted vars + ceil/floor/round. Default: 'ceil(run_length_mm / stock_length_mm)'. Palings: 'ceil(run_length_mm / (paling_width_mm - 6))'."
+        },
+        "paling_width_mm": { "type": ["integer", "null"], "minimum": 1 },
+        "picket_width_mm": { "type": ["integer", "null"], "minimum": 1 },
+        "board_width_mm": { "type": ["integer", "null"], "minimum": 1 },
+        "colour": { "type": "string" },
+        "compliance_class": { "type": "string", "description": "e.g. H3, H4, AS1926, BAL-29." }
+      }
+    },
+    "gate_option": {
+      "type": "object",
+      "required": ["gate_id", "kit_components"],
+      "properties": {
+        "gate_id": { "type": "string" },
+        "display_name": { "type": "string" },
+        "width_mm": { "type": "integer" },
+        "height_mm": { "type": "integer" },
+        "kit_components": {
+          "type": "array",
+          "items": { "type": "string", "description": "canonical_name references bundled into this gate kit." }
+        },
+        "compliance_class": { "type": "string" }
+      }
+    },
+    "compliance_rule": {
+      "type": "object",
+      "required": ["rule_id", "standard", "enforcement", "user_message"],
+      "properties": {
+        "rule_id": { "type": "string" },
+        "standard": { "type": "string", "description": "e.g. AS1926.1-2012, AS3959-2018, AS/NZS 1604." },
+        "value": { "description": "Rule parameters, shape varies by rule." },
+        "enforcement": { "type": "string", "enum": ["block_quote", "warn", "advisory"] },
+        "user_message": { "type": "string" }
+      }
+    }
+  }
+}

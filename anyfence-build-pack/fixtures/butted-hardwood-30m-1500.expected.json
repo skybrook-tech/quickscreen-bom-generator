@@ -1,0 +1,109 @@
+{
+  "ok": true,
+  "inputs": {
+    "fence_length_m": 30,
+    "fence_height_mm": 1500,
+    "timber_type": "hardwood",
+    "post_spacing_mm": 2400,
+    "rail_count": 3,
+    "paling_gap_mm": 0,
+    "paling_style": "butted"
+  },
+  "derived": {
+    "length_mm": 30000,
+    "post_count": 14,
+    "bay_count": 13,
+    "rail_count": 3,
+    "rail_pieces": 39,
+    "rail_stock_lengths": 20,
+    "paling_count": 300,
+    "palings_with_wastage": 315,
+    "concrete_bags": 21,
+    "nails_count": 1800,
+    "nails_with_wastage": 1890,
+    "nails_rounded": 2000,
+    "batten_screws": 78,
+    "post_height_mm": 2100
+  },
+  "bom": [
+    {
+      "line": 1,
+      "category": "Posts",
+      "canonical_name": "100x75 Hardwood Post",
+      "description": "100x75 Hardwood Post (2100mm)",
+      "qty": 14,
+      "unit": "ea",
+      "notes": "2100mm total (1500mm fence + 600mm in-ground)"
+    },
+    {
+      "line": 2,
+      "category": "Rails",
+      "canonical_name": "75x38 Hardwood Rail 4800mm",
+      "description": "75x38 Hardwood Rail 4800mm",
+      "qty": 20,
+      "unit": "length",
+      "notes": "3 rails/bay \u00d7 13 bays = 39 pieces \u2192 20 stock lengths"
+    },
+    {
+      "line": 3,
+      "category": "Palings",
+      "canonical_name": "100x16 Rough Sawn Hardwood Paling",
+      "description": "100x16 Rough Sawn Hardwood Paling (1500mm)",
+      "qty": 315,
+      "unit": "ea",
+      "notes": "H: 1500mm (+5% wastage)"
+    },
+    {
+      "line": 4,
+      "category": "Concrete",
+      "canonical_name": "Rapid Set Concrete 20kg",
+      "description": "Rapid Set Concrete 20kg",
+      "qty": 21,
+      "unit": "bag",
+      "notes": "1.5 bags/post"
+    },
+    {
+      "line": 5,
+      "category": "Fasteners",
+      "canonical_name": "57mm Smooth Shank Gal Nail",
+      "description": "57mm Smooth Shank Gal Nail",
+      "qty": 2000,
+      "unit": "ea",
+      "notes": "Rounded to nearest 250-pack"
+    },
+    {
+      "line": 6,
+      "category": "Fasteners",
+      "canonical_name": "100mm Galvanised Batten Screw",
+      "description": "100mm Galvanised Batten Screw",
+      "qty": 78,
+      "unit": "ea",
+      "notes": "2 per rail piece"
+    }
+  ],
+  "warnings": [],
+  "constants": {
+    "PALING_FACE_MM": 100,
+    "PALING_THICKNESS_MM": 16,
+    "POST_SIZE": "100x75",
+    "RAIL_SIZE": "75x38",
+    "RAIL_STOCK_LENGTH_MM": 4800,
+    "RAIL_PIECES_PER_STOCK": 2,
+    "POST_IN_GROUND_MM": 600,
+    "CONCRETE_BAGS_PER_POST": 1.5,
+    "CONCRETE_BAG_SIZE_KG": 20,
+    "NAILS_PER_PALING_PER_RAIL": 2,
+    "NAIL_SIZE_MM": 57,
+    "BACK_NAIL_SIZE_MM": 45,
+    "NAILS_PER_BACK_PALING_PER_RAIL": 1,
+    "NAIL_PACK_SIZE": 250,
+    "BATTEN_SCREW_LEN_MM": 100,
+    "WASTAGE_PALINGS": 0.05,
+    "WASTAGE_NAILS": 0.05,
+    "DEFAULT_PALINGS_PER_M": 10,
+    "LAPPED_PALINGS_PER_M": 15,
+    "CAPPING_SIZE": "75x50",
+    "CAPPING_STOCK_LENGTH_MM": 4800,
+    "CAPPING_PIECES_PER_STOCK": 2
+  }
+}

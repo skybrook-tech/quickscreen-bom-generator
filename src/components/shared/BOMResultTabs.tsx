@@ -23,12 +23,30 @@ import { BomCutList } from "./BomCutList";
 import { NumberedBadge } from "./NumberedBadge";
 import { stripParentheticalDispatchCode } from "../../lib/displayText";
 
+function getBunningsMockSuggestion(item: { description: string }) {
+  const desc = item.description.toLowerCase();
+  if (desc.includes("post")) {
+    return { sku: "BUN-POST-90", description: "Treated Pine Post 90x90mm 3.0m H4", unitPrice: 28.50 };
+  }
+  if (desc.includes("rail")) {
+    return { sku: "BUN-RAIL-70", description: "Treated Pine Rail 70x45mm 4.8m H3", unitPrice: 18.20 };
+  }
+  if (desc.includes("hinge")) {
+    return { sku: "BUN-HINGE-HD", description: "Zenith Heavy Duty Gate Hinge 150mm Galvanised (Pair)", unitPrice: 14.95 };
+  }
+  if (desc.includes("screw") || desc.includes("fastener")) {
+    return { sku: "BUN-SCREW-T17", description: "Buildex 14-10 x 75mm Bugle Batten Screws - 100 Pack", unitPrice: 24.60 };
+  }
+  return { sku: "BUN-HDW-GEN", description: "Zenith General Utility Hardware Accessory", unitPrice: 8.90 };
+}
+
 interface BOMResultTabsProps {
   result: CalculatorBOMResult;
   editable?: boolean;
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
+  onAssignCustomSku?: (item: BOMLineItem, override: { sku: string; description: string; unitPrice: number }) => void;
   onActiveSummaryChange?: (summary: {
     label: string;
     subtotal: number;
@@ -36,6 +54,7 @@ interface BOMResultTabsProps {
     grandTotal: number;
   }) => void;
   customerMode?: boolean;
+  hideBunnings?: boolean;
 }
 
 const CATEGORY_ORDER = BOM_CATEGORY_ORDER;
@@ -219,14 +238,18 @@ function BOMTable({
   onQuantityChange,
   onRemoveLine,
   onSwitchEconomyToStandard,
+  onAssignCustomSku,
   customerMode,
+  bunningsEnabled,
 }: {
   items: BOMLineItem[];
   editable?: boolean;
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
+  onAssignCustomSku?: (item: BOMLineItem, override: { sku: string; description: string; unitPrice: number }) => void;
   customerMode?: boolean;
+  bunningsEnabled?: boolean;
 }) {
   const sorted = sortItems(items);
   const groups = groupByCategory(sorted);
@@ -248,8 +271,10 @@ function BOMTable({
       onQuantityChange={onQuantityChange}
       onRemoveLine={onRemoveLine}
       onSwitchEconomyToStandard={onSwitchEconomyToStandard}
+      onAssignCustomSku={onAssignCustomSku}
       hoveredGateDiagramNumber={hoveredGateDiagramNumber}
       customerMode={customerMode}
+      bunningsEnabled={bunningsEnabled}
     />
     <div className="hidden overflow-x-auto md:block" data-testid="bom-desktop-table">
       <table className="w-full text-left border-collapse">
@@ -294,8 +319,10 @@ function BOMTable({
               onQuantityChange={onQuantityChange}
               onRemoveLine={onRemoveLine}
               onSwitchEconomyToStandard={onSwitchEconomyToStandard}
+              onAssignCustomSku={onAssignCustomSku}
               hoveredGateDiagramNumber={hoveredGateDiagramNumber}
               customerMode={customerMode}
+              bunningsEnabled={bunningsEnabled}
             />
           ))}
         </tbody>
@@ -311,16 +338,20 @@ function BOMMobileCards({
   onQuantityChange,
   onRemoveLine,
   onSwitchEconomyToStandard,
+  onAssignCustomSku,
   hoveredGateDiagramNumber,
   customerMode,
+  bunningsEnabled,
 }: {
   groups: [string, BOMLineItem[]][];
   editable?: boolean;
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
+  onAssignCustomSku?: (item: BOMLineItem, override: { sku: string; description: string; unitPrice: number }) => void;
   hoveredGateDiagramNumber: GateDiagramNumber | null;
   customerMode?: boolean;
+  bunningsEnabled?: boolean;
 }) {
   return (
     <div className="space-y-4 md:hidden" data-testid="bom-mobile-cards">
@@ -338,11 +369,13 @@ function BOMMobileCards({
                 onQuantityChange={onQuantityChange}
                 onRemoveLine={onRemoveLine}
                 onSwitchEconomyToStandard={onSwitchEconomyToStandard}
+                onAssignCustomSku={onAssignCustomSku}
                 highlighted={
                   hoveredGateDiagramNumber !== null &&
                   gateDiagramNumbersForSku(item.sku).includes(hoveredGateDiagramNumber)
                 }
                 customerMode={customerMode}
+                bunningsEnabled={bunningsEnabled}
               />
             ))}
           </div>
@@ -358,16 +391,20 @@ function BOMMobileCard({
   onQuantityChange,
   onRemoveLine,
   onSwitchEconomyToStandard,
+  onAssignCustomSku,
   highlighted,
   customerMode,
+  bunningsEnabled,
 }: {
   item: BOMLineItem;
   editable?: boolean;
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
+  onAssignCustomSku?: (item: BOMLineItem, override: { sku: string; description: string; unitPrice: number }) => void;
   highlighted: boolean;
   customerMode?: boolean;
+  bunningsEnabled?: boolean;
 }) {
   const hint = nextBreakHint(item);
   const cartonHint = cartonHintForLine(item);
@@ -376,11 +413,14 @@ function BOMMobileCard({
   const canSwitchEconomy =
     item.sku.startsWith("XP-6500-E65") &&
     item.notes?.includes("Switch to Standard slats?");
+  const isFallback = item.sku === "CANONICAL-FALLBACK" || item.sku.includes("FALLBACK");
 
   return (
     <article
-      className={`rounded-lg border border-brand-border/70 bg-brand-bg/60 p-3 shadow-sm transition-colors ${
+      className={`rounded-lg border p-3 shadow-sm transition-colors ${
         highlighted ? "ring-1 ring-brand-warning/60" : ""
+      } ${
+        isFallback ? "border-brand-warning bg-brand-warning/5" : "border-brand-border/70 bg-brand-bg/60"
       }`}
       title={sourceText ? `Source breakdown: ${sourceText}` : undefined}
     >
@@ -433,6 +473,59 @@ function BOMMobileCard({
           )}
         </div>
       </div>
+
+      {isFallback && (
+        <div className="mt-3 space-y-2 border border-brand-warning/20 bg-brand-warning/10 rounded-lg p-2.5">
+          <p className="text-xs font-bold text-brand-warning">
+            ⚠️ Missing SKU in supplier catalogue
+          </p>
+          {bunningsEnabled && (
+            <div className="text-xs text-brand-text bg-brand-bg/90 border border-brand-border p-2 rounded space-y-1">
+              <div>
+                <span className="font-extrabold text-brand-success">Bunnings Suggestion:</span><br/>
+                {getBunningsMockSuggestion(item).description}
+                <span className="text-brand-muted"> (${getBunningsMockSuggestion(item).unitPrice}/ea)</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const sug = getBunningsMockSuggestion(item);
+                  onAssignCustomSku?.(item, {
+                    sku: sug.sku,
+                    description: sug.description,
+                    unitPrice: sug.unitPrice,
+                  });
+                }}
+                className="mt-1 w-full px-2 py-1 bg-brand-success hover:bg-brand-success/90 text-white rounded text-[10px] font-bold"
+              >
+                Apply Bunnings Material & Price
+              </button>
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => {
+              const newSku = prompt("Enter Custom SKU:", item.sku);
+              if (newSku === null) return;
+              const newDesc = prompt("Enter Custom Name/Description:", item.description);
+              if (newDesc === null) return;
+              const newPriceStr = prompt("Enter Custom Price (ex-GST):", String(item.unitPrice));
+              if (newPriceStr === null) return;
+              const newPrice = parseFloat(newPriceStr);
+              if (isNaN(newPrice)) return;
+              onAssignCustomSku?.(item, {
+                sku: newSku,
+                description: newDesc,
+                unitPrice: newPrice,
+              });
+            }}
+            className="w-full text-center py-1.5 bg-brand-primary hover:bg-brand-primary/95 text-white text-[10px] font-bold rounded"
+          >
+            Assign Custom SKU & Price
+          </button>
+        </div>
+      )}
+
       {(hint || cartonHint || item.notes || canSwitchEconomy || editable) && (
         <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-brand-border/60 pt-3">
           {hint && (
@@ -481,8 +574,10 @@ function ItemGroup({
   onQuantityChange,
   onRemoveLine,
   onSwitchEconomyToStandard,
+  onAssignCustomSku,
   hoveredGateDiagramNumber,
   customerMode,
+  bunningsEnabled,
 }: {
   category: string;
   items: BOMLineItem[];
@@ -490,8 +585,10 @@ function ItemGroup({
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
+  onAssignCustomSku?: (item: BOMLineItem, override: { sku: string; description: string; unitPrice: number }) => void;
   hoveredGateDiagramNumber: GateDiagramNumber | null;
   customerMode?: boolean;
+  bunningsEnabled?: boolean;
 }) {
   const orderedItems = orderCompanions(items);
   let lastSubCategory = "";
@@ -524,6 +621,7 @@ function ItemGroup({
           const subCategory = item.subCategory ?? "";
           const showSubCategory = subCategory && subCategory !== lastSubCategory && !item.companionOf;
           if (subCategory) lastSubCategory = subCategory;
+          const isFallback = item.sku === "CANONICAL-FALLBACK" || item.sku.includes("FALLBACK");
           const rows = [];
           if (showSubCategory) {
             rows.push(
@@ -551,6 +649,8 @@ function ItemGroup({
             diagramHighlighted
               ? "bg-brand-warning/15 ring-1 ring-inset ring-brand-warning/50"
               : "hover:bg-brand-accent/5"
+          } ${
+            isFallback ? "border-l-4 border-l-brand-warning bg-brand-warning/5" : ""
           }`}
         >
           <td className="py-2.5 px-3 text-xs font-mono text-brand-accent whitespace-nowrap">
@@ -583,6 +683,57 @@ function ItemGroup({
                 </button>
               )}
             </div>
+            {isFallback && (
+              <div className="mt-2 space-y-2 border border-brand-warning/20 bg-brand-warning/10 rounded-lg p-2.5 max-w-lg print:hidden">
+                <p className="text-xs font-bold text-brand-warning">
+                  ⚠️ Missing SKU in supplier catalogue
+                </p>
+                {bunningsEnabled && (
+                  <div className="text-xs text-brand-text bg-brand-bg border border-brand-border p-2 rounded flex items-center justify-between gap-3">
+                    <div>
+                      <span className="font-extrabold text-brand-success">Bunnings Suggestion:</span>{" "}
+                      <span>{getBunningsMockSuggestion(item).description}</span>{" "}
+                      <span className="text-brand-muted">(${getBunningsMockSuggestion(item).unitPrice}/ea)</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const sug = getBunningsMockSuggestion(item);
+                        onAssignCustomSku?.(item, {
+                          sku: sug.sku,
+                          description: sug.description,
+                          unitPrice: sug.unitPrice,
+                        });
+                      }}
+                      className="px-2 py-1 bg-brand-success hover:bg-brand-success/90 text-white rounded text-[10px] font-bold whitespace-nowrap animate-fade-in"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newSku = prompt("Enter Custom SKU:", item.sku);
+                    if (newSku === null) return;
+                    const newDesc = prompt("Enter Custom Name/Description:", item.description);
+                    if (newDesc === null) return;
+                    const newPriceStr = prompt("Enter Custom Price (ex-GST):", String(item.unitPrice));
+                    if (newPriceStr === null) return;
+                    const newPrice = parseFloat(newPriceStr);
+                    if (isNaN(newPrice)) return;
+                    onAssignCustomSku?.(item, {
+                      sku: newSku,
+                      description: newDesc,
+                      unitPrice: newPrice,
+                    });
+                  }}
+                  className="px-2.5 py-1 bg-brand-primary hover:bg-brand-primary/95 text-white text-[10px] font-bold rounded"
+                >
+                  Assign Custom SKU & Price
+                </button>
+              </div>
+            )}
             {hint && (
               <p className="mt-1 text-[11px] font-semibold text-brand-success print:hidden">
                 {hint.more} more to unlock a lower unit price
@@ -674,11 +825,35 @@ export function BOMResultTabs({
   onQuantityChange,
   onRemoveLine,
   onSwitchEconomyToStandard,
+  onAssignCustomSku,
   onActiveSummaryChange,
   customerMode,
+  hideBunnings,
 }: BOMResultTabsProps) {
   const [activeTab, setActiveTab] = useState("all");
   const [viewMode, setViewMode] = useState<"line_items" | "cut_list">("line_items");
+  const [bunningsEnabled, setBunningsEnabled] = useState(() => {
+    if (typeof window === "undefined" || hideBunnings) return false;
+    return window.localStorage.getItem("qsg-bunnings-enabled") === "true";
+  });
+
+  useEffect(() => {
+    if (hideBunnings) {
+      setBunningsEnabled(false);
+      return;
+    }
+    // Synchronize if changes happen elsewhere in the session
+    const handleStorage = () => {
+      setBunningsEnabled(window.localStorage.getItem("qsg-bunnings-enabled") === "true");
+    };
+    window.addEventListener("storage", handleStorage);
+    // Poll/check periodically as well for intra-tab transitions
+    const timer = setInterval(handleStorage, 1000);
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      clearInterval(timer);
+    };
+  }, [hideBunnings]);
 
   const gateResults = result.gateResults ?? [];
   const tabs = [
@@ -700,10 +875,10 @@ export function BOMResultTabs({
     activeTab === "all"
       ? result.allItems
       : activeTab === "gates"
-        ? result.gateItems
-        : gateResults.find((gate) => gate.id === activeTab)?.items ??
-          result.runResults.find((r) => r.runId === activeTab)?.items ??
-          [];
+      ? result.gateItems
+      : gateResults.find((gate) => gate.id === activeTab)?.items ??
+        result.runResults.find((r) => r.runId === activeTab)?.items ??
+        [];
 
   const activeTotal = parseFloat(
     activeItems.reduce((s, i) => s + i.lineTotal, 0).toFixed(2),
@@ -782,7 +957,9 @@ export function BOMResultTabs({
           onQuantityChange={onQuantityChange}
           onRemoveLine={onRemoveLine}
           onSwitchEconomyToStandard={onSwitchEconomyToStandard}
+          onAssignCustomSku={onAssignCustomSku}
           customerMode={customerMode}
+          bunningsEnabled={bunningsEnabled}
         />
       )}
 

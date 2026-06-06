@@ -1,0 +1,621 @@
+system,brand,style,category,canonical_name,canonical_status,supplier_sku,description,size,colour,length_mm,tier2_ex_gst,tier2_inc_gst,carton_qty
+timber,Treated Pine,Paling,Paling,100x16 Treated Pine Paling 1200mm,ratified,PL100x16x1200,CCA Treated Pine Paling 100 x 16 x 1200mm,1200,,1200,1.33,1.46,330
+timber,Treated Pine,Paling,Paling,100x16 Treated Pine Paling 1500mm,ratified,PL100x16x1500,CCA Treated Pine Paling 100 x 16 x 1500mm,1500,,1500,1.54,1.69,330
+timber,Treated Pine,Paling,Paling,100x16 Treated Pine Paling 1800mm,ratified,PL100x16x1800,CCA Treated Pine Paling 100 x 16 x 1800mm,1800,,1800,1.78,1.96,330
+timber,Treated Pine,Paling,Paling,100x16 Treated Pine Paling 2100mm,ratified,PL100x16x2100,CCA Treated Pine Paling 100 x 16 x 2100mm,2100,,2100,2.15,2.37,330
+timber,Treated Pine,Paling,Paling,100x16 Treated Pine Paling 2400mm,ratified,PL100x16x2400,CCA Treated Pine Paling 100 x 16 x 2400mm,2400,,2400,2.5,2.75,330
+timber,Hardwood,Post,Post,100x75 Hardwood Post 1800mm,ratified,hw100x75x1800,H4 Treated Hardwood Post 100 x 75 x 1800mm,1800,,1800,16.81,18.49,56
+timber,Hardwood,Post,Post,100x75 Hardwood Post 2400mm,ratified,hw100x75x2400,H4 Treated Hardwood Post 100 x 75 x 2400mm,2400,,2400,22.43,24.67,28
+timber,Hardwood,Post,Post,100x75 Hardwood Post 2700mm,ratified,hw100x75x2700,H4 Treated Hardwood Post 100 x 75 x 2700mm,2700,,2700,25.43,27.97,56
+timber,Hardwood,Post,Post,100x75 Hardwood Post 2100mm,ratified,Futhw100x75x2100,H4 Treated Hardwood Post 100 x 75 x 2100mm,2100,,2100,20.79,22.87,55
+timber,Hardwood,Post,Post,100x75 Hardwood Post 3000mm,ratified,hw100x75x3000,H4 Treated Hardwood Post 100 x 75 x 3000mm,3000,,3000,28.41,31.25,56
+timber,Hardwood,Post,Post,100x100 Hardwood Post 1800mm,ratified,HP100x100,H4 Treated Hardwood Post 100 x 100 x 1800mm,1800,,1800,22.13,24.34,42
+timber,Hardwood,Post,Post,100x100 Hardwood Post 2100mm,ratified,HP100x100,H4 Treated Hardwood Post 100 x 100 x 2100mm,2100,,2100,27.98,30.78,42
+timber,Hardwood,Post,Post,100x100 Hardwood Post 2400mm,ratified,HP100x100,H4 Treated Hardwood Post 100 x 100 x 2400mm,2400,,2400,30.33,33.36,42
+timber,Hardwood,Post,Post,100x100 Hardwood Post 2700mm,ratified,HP100x100,H4 Treated Hardwood Post 100 x 100 x 2700mm,2700,,2700,35.97,39.57,42
+timber,Treated Pine,Rail,Rail,75x38 Treated Pine Rail 4800mm,ratified,pr75x38x4800,CCA 75x38 x 4800mm Treated Pine Rail,75 x 38 x 4800,,4800,8.64,9.5,90
+timber,Treated Pine,Rail,Rail,100x38 Treated Pine Rail 4800mm,ratified,pr100x38x4800,CCA Treated Pine Rail 100 x 38 x 4800mm,100 x 38 x 4800,,4800,11.52,12.67,70
+timber,Hardwood,Rail,Rail,75x38 Hardwood Rail 4800mm,ratified,hw75x38x4800,H4 Treated Hardwood Rail 75 x 38 x 4800mm,75 x 38 x 4800,,4800,19.8,21.78,80
+timber,Hardwood,Rail,Rail,100x38 Hardwood Rail 4800mm,ratified,hw100x38x4800,H4 Treated Hardwood Rail 100 x 38 x 4800mm,100 x 38 x 4800,,4800,26.76,29.44,56
+timber,Treated Pine,Sleeper,Sleeper,200x50 Treated Pine Sleeper 2400mm,ratified,ps200x50x2400,CCA Treated Pine Sleeper 200 x 50 x 2400mm,2400,,2400,16.32,17.95,55
+timber,Treated Pine,Sleeper,Sleeper,200x50 Treated Pine Sleeper 3000mm,ratified,ps200x50x3000,CCA Treated Pine Sleeper 200 x 50 x 3000mm,3000,,3000,21.45,23.6,55
+timber,Treated Pine,Sleeper,Sleeper,200x75 Treated Pine Sleeper 2400mm,ratified,ps200x75x2400,CCA Treated Pine Sleeper 200 x 75 x 2400mm,2400,,2400,23.65,26.02,36
+timber,Treated Pine,Sleeper,Sleeper,200x75 Treated Pine Sleeper 3000mm,ratified,ps200x75x300,CCA Treated Pine Sleeper 200 x 75 x 3000mm,3000,,3000,29.55,32.51,36
+timber,Treated Pine,Picket,Picket,75x16 Treated Pine Colonial Picket 2100mm,ratified,CP75x16x1200,CCA Treated Pine Colonial Picket 75 x 16 x 1200mm,1200,,2100,1.39,1.53,429
+timber,Treated Pine,Picket,Picket,75x16 Treated Pine Colonial Picket 1500mm,ratified,CP75x16x1500,CCA Treated Pine Colonial Picket 75 x 16 x 1500mm,1500,,1500,1.73,1.9,429
+timber,Treated Pine,Picket,Picket,75x16 Treated Pine Colonial Picket 1800mm,ratified,CP75x16x1800,CCA Treated Pine Colonial Picket 75 x 16 x 1800mm,1800,,1800,2.0,2.2,429
+timber,Treated Pine,Post,Post,100x75 Treated Pine Post 1800mm,ratified,PP100x75x1800,CCA Treated Pine Post 100 x 75 x 1800mm,1800,,1800,10.71,11.78,55
+timber,Treated Pine,Post,Post,100x75 Treated Pine Post 2400mm,ratified,PP100x75x2400,CCA Treated Pine Post 100 x 75 x 2400mm,2400,,2400,14.27,15.7,55
+timber,Treated Pine,Post,Post,100x75 Treated Pine Post 3000mm,ratified,PP100x75x3000,CCA Treated Pine Post 100 x 75 x 3000mm,3000,,3000,17.85,19.64,55
+timber,Treated Pine,Nails,Nails,2.5x45mm Ring Shank Gal Coil Nail,ratified,CN2545RMG,Coil Nails 15Deg - 2.5 x 45mm Ring M Gal (9000),45,,,58.0,63.8,9000
+timber,Treated Pine,Nails,Nails,2.5x57mm Ring Shank Gal Coil Nail,ratified,CN2557RMG,Coil Nails 15Deg - 2.5 x 57mm Ring M Gal (9000),57,,,89.0,97.9,9000
+timber,Treated Pine,Screw,Screw,14g x 75mm Galvanised Batten Screw,ratified,BBEG14755,Batten Screws 14g x 75mm Galvanised(500),,,,36.37,40.01,500
+timber,Treated Pine,Screw,Screw,14g x 125mm Galvanised Batten Screw,ratified,BBEG141255,Batten Screws 14g x 125mm Galvanised(500),125,,,9.94,10.93,
+timber,Treated Pine,Bagged Concrete,Bagged Concrete,Rapid Set Concrete 30kg,ratified,DMR3056LD,Rapid Set 30KG,30 KG,,,11.04,12.14,56
+timber,Treated Pine,Bagged Concrete,Bagged Concrete,Post Mix Concrete 30kg,ratified,DMPM3056LD,Post Mix 30KG,30 KG,,,9.8,10.78,56
+timber,Treated Pine,Bagged Concrete,Bagged Concrete,General Purpose Cement 20kg,ratified,CG2CD,General Purpose Cement 20kg,20 KG,,,6.68,7.35,
+timber,Hardwood,Sleeper,Sleeper,200x50 Hardwood Sleeper 2400mm,ratified,HS200x50x2400,H4 Treated Hardwood Sleeper 200 x 50 x 2400mm,2400,,2400,24.98,27.48,48
+timber,Treated Pine,Nails,Nails,2.5x32mm Hardened Gal Coil Nail,ratified,CNHD32,Hardened Coil Nail 15 Deg - 2.5 x 32mm (6000),2.5 x 32,,,50.0,55.0,
+timber,Treated Pine,Screw,Screw,14g x 100mm Galvanised Batten Screw,ratified,BBEG141005,Batten Screws 14g x 100mm Galvanised(500),100,,,12.13,13.34,500
+timber,Hardwood,Sleeper,Sleeper,200x50 Hardwood Sleeper 3000mm,ratified,HS200x50x3000,H4 Treated Hardwood Sleeper 200 x 50 x 3000mm,3000,,3000,31.4,34.54,48
+timber,Hardwood,Sleeper,Sleeper,200x75 Hardwood Sleeper 2400mm,ratified,HS200x75x2400,H4 Treated Hardwood Sleeper 200 x 75 x 2400mm,2400,,2400,37.49,41.24,32
+timber,Hardwood,Sleeper,Sleeper,200x75 Hardwood Sleeper 3000mm,ratified,HS200x75x3000,H4 Treated Hardwood Sleeper 200 x 75 x 3000mm,3000,,3000,48.61,53.47,32
+timber,Treated Pine,Nails,Nails,2.5x45mm Ring Shank Gal Coil Nail,ratified,CN2545RMGSINCOIL,Coil Nails 15Deg - 2.5 x 45mm Ring M Gal (250) - Single Coil,45,,,2.47,2.72,250
+timber,Treated Pine,Nails,Nails,2.5x32mm Hardened Gal Coil Nail,ratified,CNHD32Single,Hardened Coil Nail 15 Deg - 2.5 x 32mm (200) - Single Coil,2.5 x 32,,,1.66,1.83,
+timber,Treated Pine,Paling,Paling,100x16 Treated Pine Paddle Pop Paling 1200mm,ratified,100x1200x16Paddle,CCA Treated Pine *Paddle Pop* Paling 100 x 16 x 1200mm,1200,,1200,1.7,1.87,
+timber,Treated Pine,Post,Post,100x100 Treated Pine Post 2400mm,ratified,PP100x100x2400,CCA Treated Pine Post 100 x 100 x 2400mm,2400,,2400,20.3,22.33,55
+timber,Treated Pine,Paling,Paling,100x16 Treated Pine Paling 3000mm,ratified,PL100x16x3000,CCA Treated Pine Paling 100 x 16 x 3000mm - Custom Order - Pack of 330 ONLY,3000,,3000,3.15,3.47,330
+timber,Treated Pine,Rail,Rail,100x38 Treated Pine Arrissed Rail 4800mm,ratified,F100038H3AR4800,CCA Treated Pine Rail Arrissed 100 x 38 x 4800mm,4800,,4800,12.38,13.62,60
+timber,Hardwood,Sleeper,Sleeper,200x75 Hardwood Sleeper 1800mm,ratified,HS200x75x1800,H4 Treated Hardwood Sleeper 200 x 75 x 1800mm,1800,,1800,30.0,33.0,
+timber,Treated Pine,Nails,Nails,2.5x57mm Ring Shank Gal Coil Nail,ratified,CN2557RMGSINCOIL,Coil Nails 15Deg - 2.5 x 57mm Ring M Gal (250) - Single Coil,57,,,3.8,4.18,
+timber,Treated Pine,Paling,Paling,100x16 Treated Pine Paddle Pop Paling 1500mm,ratified,100x1500x16Paddle,CCA Treated Pine *Paddle Pop* Paling 100 x 16 x 1500mm,1500,,,1.7,1.87,
+timber,Treated Pine,Post,Post,100x100 Treated Pine Post 3000mm,ratified,,CCA Treated Pine Post 100 x 100 x 3000mm,,,,32.1,35.31,
+timber,Treated Pine,Nails,Nails,Stainless Steel Coil Nail,ratified,YF452563F,Coil Nails 45mm Stainless Steel (Box 1800),,,45,148.0,162.8,1800
+colorbond,Metroll,Double gate,Gate Style,Colorbond Double Gate Monument,ratified,,CB D/Gate Kit 1800h x 3325w MONUMENT,,Monument,,269.48,296.43,
+colorbond,Metroll,Single gate,Gate Style,Colorbond Single Gate Monument,ratified,,CB S/Gate Kit 1800h x 1670w MONUMENT,,Monument,1800,167.1,183.81,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Monument,ratified,,CB S/Gate Kit 1800h x 910w MONUMENT,,Monument,1800,142.35,156.59,
+colorbond,Metroll,Single gate,Gate Style,Colorbond Single Gate Monument,ratified,,CB S/Gate Kit 1500h x 1670w MONUMENT,,Monument,1800,157.56,173.32,
+colorbond,Metroll,Double gate,Gate Style,Colorbond Double Gate Riversand,ratified,,CB D/Gate Kit 1800h x 3325w RIVERSAND,,Riversand,1800,289.11,318.02,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Basalt,ratified,,CB S/Gate Kit 1800h x 910w BASALT,,Basalt,1800,140.73,154.8,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Basalt,ratified,,CB S/Gate Kit 1500h x 910w BASALT,,Basalt,1500,132.52,145.77,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Basalt,ratified,,CB S/Gate Kit 1200h x 910w BASALT,,Basalt,1200,136.44,150.08,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Basalt,ratified,,CB S/Gate Kit 1200h x 1670w BASALT,,Basalt,1200,156.89,172.58,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Basalt,ratified,,CB D/Gate Kit 1200h x 3325w BASALT,,Basalt,1200,250.51,275.56,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Basalt,ratified,,CB D/Gate Kit 1500h x 3325w BASALT,,Basalt,1500,248.83,273.71,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Basalt,ratified,,CB S/Gate Kit 1800h x 1670w BASALT,,Basalt,1800,165.47,182.02,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Basalt,ratified,,CB D/Gate Kit 1800h x 3325w BASALT,,Basalt,1800,267.67,294.44,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Basalt,ratified,,CB S/Gate Kit 2100h x 910w BASALT,,Basalt,2100,159.67,175.64,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Basalt,ratified,,CB S/Gate Kit 2100h x 1670w BASALT,,Basalt,2100,187.51,206.26,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Basalt,ratified,,CB D/Gate Kit 2100h x 3325w BASALT,,Basalt,2100,298.91,328.8,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Monument,ratified,,CB S/Gate Kit 1200h x 910w MONUMENT,,Monument,1200,138.08,151.89,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Monument,ratified,,CB S/Gate Kit 1200h x 1670w MONUMENT,,Monument,1200,158.56,174.42,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Monument,ratified,,CB D/Gate Kit 1200h x 3325w MONUMENT,,Monument,1200,252.4,277.64,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Monument,ratified,,CB S/Gate Kit 1500h x 910w MONUMENT,,Monument,1500,134.08,147.49,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Monument,ratified,,CB D/Gate Kit 1500h x 3325w MONUMENT,,Monument,1500,250.4,275.44,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Monument,ratified,,CB S/Gate Kit 2100h x 910w MONUMENT,,Monument,2100,161.27,177.4,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Monument,ratified,,CB S/Gate Kit 2100h x 1670w MONUMENT,,Monument,2100,189.08,207.99,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Monument,ratified,,CB D/Gate Kit 2100h x 3325w MONUMENT,,Monument,2100,300.58,330.64,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Basalt,ratified,,CB S/Gate Kit 1500h x 1670w BASALT,,Basalt,1500,156.05,171.66,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Surfmist,ratified,,CB S/Gate Kit 1200h x 910w SURFMIST,,Surfmist,1200,141.03,155.13,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Surfmist,ratified,,CB S/Gate Kit 1200h x 1670w SURFMIST,,Surfmist,1200,161.5,177.65,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Surfmist,ratified,,CB D/Gate Kit 1200h x 3325w SURFMIST,,Surfmist,1200,255.54,281.09,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Surfmist,ratified,,CB S/Gate Kit 1500h x 910w SURFMIST,,Surfmist,1500,137.03,150.73,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Surfmist,ratified,,CB S/Gate Kit 1500h x 1670w SURFMIST,,Surfmist,1500,160.5,176.55,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Surfmist,ratified,,CB D/Gate Kit 1500h x 3325w SURFMIST,,Surfmist,1500,253.54,278.89,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Surfmist,ratified,,CB S/Gate Kit 1800h x 910w SURFMIST,,Surfmist,1800,145.3,159.83,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Surfmist,ratified,,CB S/Gate Kit 1800h x 1670w SURFMIST,,Surfmist,1800,170.04,187.04,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Surfmist,ratified,,CB D/Gate Kit 1800h x 3325w SURFMIST,,Surfmist,1800,272.62,299.88,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Surfmist,ratified,,CB S/Gate Kit 2100h x 910w SURFMIST,,Surfmist,2100,164.24,180.66,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Surfmist,ratified,,CB S/Gate Kit 2100h x 1670w SURFMIST,,Surfmist,2100,192.08,211.29,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Surfmist,ratified,,CB D/Gate Kit 2100h x 3325w SURFMIST,,Surfmist,2100,303.86,334.25,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Woodland Grey,ratified,,CB S/Gate Kit 1200h x 910w WOODLAND GREY,,Woodland Grey,1200,137.63,151.39,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Woodland Grey,ratified,,CB S/Gate Kit 1200h x 1670w WOODLAND GREY,,Woodland Grey,1200,158.1,173.91,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Woodland Grey,ratified,,CB D/Gate Kit 1200h x 3325w WOODLAND GREY,,Woodland Grey,1200,252.14,277.35,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Woodland Grey,ratified,,CB S/Gate Kit 1500h x 910w WOODLAND GREY,,Woodland Grey,1500,133.63,146.99,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Woodland Grey,ratified,,CB S/Gate Kit 1500h x 1670w WOODLAND GREY,,Woodland Grey,1500,157.1,172.81,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Woodland Grey,ratified,,CB D/Gate Kit 1500h x 3325w WOODLAND GREY,,Woodland Grey,1500,250.14,275.15,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Woodland Grey,ratified,,CB S/Gate Kit 1800h x 910w WOODLAND GREY,,Woodland Grey,1800,141.9,156.09,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Woodland Grey,ratified,,CB S/Gate Kit 1800h x 1670w WOODLAND GREY,,Woodland Grey,1800,166.64,183.3,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Woodland Grey,ratified,,CB D/Gate Kit 1800h x 3325w WOODLAND GREY,,Woodland Grey,1800,269.22,296.14,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Woodland Grey,ratified,,CB S/Gate Kit 2100h x 910w WOODLAND GREY,,Woodland Grey,2100,160.78,176.86,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Woodland Grey,ratified,,CB S/Gate Kit 2100h x 1670w WOODLAND GREY,,Woodland Grey,2100,188.56,207.42,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Woodland Grey,ratified,,CB D/Gate Kit 2100h x 3325w WOODLAND GREY,,Woodland Grey,2100,300.22,330.24,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Shale Grey,ratified,,CB S/Gate Kit 2100h x 1670w SHALE GREY,,Shale Grey,2100,192.14,211.35,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Ironstone,ratified,,CB S/Gate Kit 1200h x 910w IRONSTONE,,Ironstone,1200,141.57,155.73,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Ironstone,ratified,,CB S/Gate Kit 1200h x 1670w IRONSTONE,,Ironstone,1200,162.02,178.22,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Ironstone,ratified,,CB D/Gate Kit 1200h x 3325w IRONSTONE,,Ironstone,1200,256.58,282.24,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Ironstone,ratified,,CB S/Gate Kit 1500h x 910w IRONSTONE,,Ironstone,1500,137.59,151.35,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Ironstone,ratified,,CB S/Gate Kit 1500h x 1670w IRONSTONE,,Ironstone,1500,161.06,177.17,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Ironstone,ratified,,CB D/Gate Kit 1500h x 3325w IRONSTONE,,Ironstone,1500,254.66,280.13,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Ironstone,ratified,,CB S/Gate Kit 1800h x 910w IRONSTONE,,Ironstone,1800,145.86,160.45,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Ironstone,ratified,,CB S/Gate Kit 1800h x 1670w IRONSTONE,,Ironstone,1800,170.6,187.66,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Ironstone,ratified,,CB D/Gate Kit 1800h x 3325w IRONSTONE,,Ironstone,1800,280.9,308.99,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Ironstone,ratified,,CB S/Gate Kit 2100h x 910w IRONSTONE,,Ironstone,2100,164.8,181.28,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Ironstone,ratified,,CB S/Gate Kit 2100h x 1670w IRONSTONE,,Ironstone,2100,192.64,211.9,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Ironstone,ratified,,CB D/Gate Kit 2100h x 3325w IRONSTONE,,Ironstone,2100,304.98,335.48,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Paperbark,ratified,,CB S/Gate Kit 1200h x 910w PAPERBARK,,Paperbark,1200,141.01,155.11,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Paperbark,ratified,,CB S/Gate Kit 1200h x 1670w PAPERBARK,,Paperbark,1200,161.46,177.61,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Paperbark,ratified,,CB D/Gate Kit 1200h x 3325w PAPERBARK,,Paperbark,1200,255.46,281.01,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Paperbark,ratified,,CB S/Gate Kit 1500h x 910w PAPERBARK,,Paperbark,1500,133.18,146.5,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Paperbark,ratified,,CB S/Gate Kit 1500h x 1670w PAPERBARK,,Paperbark,1500,152.8,168.08,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Paperbark,ratified,,CB D/Gate Kit 1500h x 3325w PAPERBARK,,Paperbark,1500,238.14,261.95,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Paperbark,ratified,,CB S/Gate Kit 1800h x 1670w PAPERBARK,,Paperbark,1800,170.04,187.04,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Paperbark,ratified,,CB D/Gate Kit 1800h x 3325w PAPERBARK,,Paperbark,1800,272.62,299.88,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Paperbark,ratified,,CB S/Gate Kit 2100h x 910w PAPERBARK,,Paperbark,2100,163.87,180.26,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Paperbark,ratified,,CB S/Gate Kit 2100h x 1670w PAPERBARK,,Paperbark,2100,191.34,210.47,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Paperbark,ratified,,CB D/Gate Kit 2100h x 3325w PAPERBARK,,Paperbark,2100,302.38,332.62,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Dune,ratified,,CB S/Gate Kit 1200h x 910w DUNE,,Dune,1200,141.01,155.11,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Dune,ratified,,CB S/Gate Kit 1200h x 1670w DUNE,,Dune,1200,161.46,177.61,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Dune,ratified,,CB D/Gate Kit 1200h x 3325w DUNE,,Dune,1200,255.46,281.01,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Dune,ratified,,CB S/Gate Kit 1500h x 910w DUNE,,Dune,1500,137.03,150.73,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Dune,ratified,,CB S/Gate Kit 1500h x 1670w DUNE,,Dune,1500,160.5,176.55,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Dune,ratified,,CB D/Gate Kit 1500h x 3325w DUNE,,Dune,1500,253.54,278.89,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Dune,ratified,,CB S/Gate Kit 1800h x 1670w DUNE,,Dune,1800,170.04,187.04,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Dune,ratified,,CB D/Gate Kit 1800h x 3325w DUNE,,Dune,1800,272.62,299.88,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Dune,ratified,,CB S/Gate Kit 2100h x 910w DUNE,,Dune,2100,160.46,176.51,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Dune,ratified,,CB S/Gate Kit 2100h x 1670w DUNE,,Dune,2100,188.3,207.13,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Dune,ratified,,CB D/Gate Kit 2100h x 3325w DUNE,,Dune,2100,300.08,330.09,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Pale Eucalypt,ratified,,CB S/Gate Kit 1200h x 910w PALE EUCALYPT,,Pale Eucalypt,1200,141.04,155.14,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Pale Eucalypt,ratified,,CB S/Gate Kit 1200h x 1670w PALE EUCALYPT,,Pale Eucalypt,1200,161.52,177.67,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Pale Eucalypt,ratified,,CB D/Gate Kit 1200h x 3325w PALE EUCALYPT,,Pale Eucalypt,1200,255.6,281.16,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Pale Eucalypt,ratified,,CB S/Gate Kit 1500h x 910w PALE EUCALYPT,,Pale Eucalypt,1500,137.06,150.77,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Pale Eucalypt,ratified,,CB S/Gate Kit 1500h x 1670w PALE EUCALYPT,,Pale Eucalypt,1500,160.56,176.62,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Pale Eucalypt,ratified,,CB D/Gate Kit 1500h x 3325w PALE EUCALYPT,,Pale Eucalypt,1500,253.68,279.05,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Pale Eucalypt,ratified,,CB S/Gate Kit 1800h x 1670w PALE EUCALYPT,,Pale Eucalypt,1800,170.1,187.11,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Pale Eucalypt,ratified,,CB D/Gate Kit 1800h x 3325w PALE EUCALYPT,,Pale Eucalypt,1800,272.76,300.04,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Pale Eucalypt,ratified,,CB S/Gate Kit 2100h x 910w PALE EUCALYPT,,Pale Eucalypt,2100,164.27,180.7,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Pale Eucalypt,ratified,,CB S/Gate Kit 2100h x 1670w PALE EUCALYPT,,Pale Eucalypt,2100,192.14,211.35,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Pale Eucalypt,ratified,,CB D/Gate Kit 2100h x 3325w PALE EUCALYPT,,Pale Eucalypt,2100,304.0,334.4,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Evening Haze,ratified,,CB S/Gate Kit 1200h x 910w EVENING HAZE,,Evening Haze,1200,141.01,155.11,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Evening Haze,ratified,,CB S/Gate Kit 1200h x 1670w EVENING HAZE,,Evening Haze,1200,161.46,177.61,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Evening Haze,ratified,,CB D/Gate Kit 1200h x 3325w EVENING HAZE,,Evening Haze,1200,255.46,281.01,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Evening Haze,ratified,,CB S/Gate Kit 1500h x 910w EVENING HAZE,,Evening Haze,1500,137.03,150.73,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Evening Haze,ratified,,CB S/Gate Kit 1500h x 1670w EVENING HAZE,,Evening Haze,1500,160.5,176.55,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Evening Haze,ratified,,CB D/Gate Kit 1500h x 3325w EVENING HAZE,,Evening Haze,1500,253.54,278.89,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Evening Haze,ratified,,CB S/Gate Kit 1800h x 1670w EVENING HAZE,,Evening Haze,1800,170.04,187.04,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Evening Haze,ratified,,CB D/Gate Kit 1800h x 3325w EVENING HAZE,,Evening Haze,1800,272.62,299.88,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Evening Haze,ratified,,CB S/Gate Kit 2100h x 910w EVENING HAZE,,Evening Haze,2100,164.24,180.66,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Evening Haze,ratified,,CB S/Gate Kit 2100h x 1670w EVENING HAZE,,Evening Haze,2100,192.08,211.29,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Evening Haze,ratified,,CB D/Gate Kit 2100h x 3325w EVENING HAZE,,Evening Haze,2100,303.86,334.25,
+colorbond,Metroll,Custom,Custom,Colorbond Custom,ratified,,"PREFAB Aluminium - Suit Colorbond Infills (SWING GATE) - Fully Welded-NO Assembly Required - (Overall Opening Sizes - Height, Width, Quantity & Colour Required in Comments Section) 2.5-4 weeks lead time - Prepayment Required at time of order",,,,1.0,1.1,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Shale Grey,ratified,,CB S/Gate Kit 1200h x 910w SHALE GREY,,Shale Grey,1200,141.04,155.14,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Shale Grey,ratified,,CB S/Gate Kit 1200h x 1670w SHALE GREY,,Shale Grey,1200,161.52,177.67,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Shale Grey,ratified,,CB D/Gate Kit 1200h x 3325w SHALE GREY,,Shale Grey,1200,255.46,281.01,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Shale Grey,ratified,,CB S/Gate Kit 1500h x 910w SHALE GREY,,Shale Grey,1500,137.06,150.77,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Shale Grey,ratified,,CB S/Gate Kit 1500h x 1670w SHALE GREY,,Shale Grey,1500,160.56,176.62,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Shale Grey,ratified,,CB D/Gate Kit 1500h x 3325w SHALE GREY,,Shale Grey,1500,253.54,278.89,
+colorbond,Metroll,Single gate,Gate,Colorbond Single Gate Shale Grey,ratified,,CB S/Gate Kit 1800h x 1670w SHALE GREY,,Shale Grey,1800,170.1,187.11,
+colorbond,Metroll,Double gate,Gate,Colorbond Double Gate Shale Grey,ratified,,CB D/Gate Kit 1800h x 3325w SHALE GREY,,Shale Grey,1800,272.62,299.88,
+colorbond,Metroll,Sleeper,Sleeper,Colorbond Sleeper 2340 x 200 x 50 Smooth Grey,ratified,A 2.34 CB,Concrete 50mm Thick Plinth/Sleeper Smooth Grey 2340 x 200 x 50,2340 x 200 x 50,Smooth Grey,2340,28.0,30.8,96
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Domain,ratified,FRMDM23,Colorbond® Fence Rail 2365 DOMAIN,2365,Domain,2365,8.44,9.28,144
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Dune,ratified,FRMDU23,Colorbond® Fence Rail 2365 DUNE,2365,Dune,2365,8.44,9.28,144
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Evening Haze,ratified,FRMEH23,Colorbond® Fence Rail 2365 EVENING HAZE,2365,Evening Haze,2365,8.44,9.28,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Ironstone,ratified,FRMIS23,Colorbond® Fence Rail 2365 IRONSTONE,2365,Ironstone,2365,8.44,9.28,144
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Monument,ratified,FRMMO23,Colorbond® Fence Rail 2365 MONUMENT,2365,Monument,2365,8.45,9.29,144
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Night Sky,ratified,FRMNS23,Colorbond® Fence Rail 2365 NIGHT SKY,2365,Night Sky,2365,8.44,9.28,144
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Pale Eucalypt,ratified,FRMPE23,Colorbond® Fence Rail 2365 PALE EUCALYPT,2365,Pale Eucalypt,2365,8.47,9.32,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Paperbark,ratified,FRMPB23,Colorbond® Fence Rail 2365 PAPERBARK,2365,Paperbark,2365,8.44,9.28,144
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Riversand,ratified,FRMRS23,Colorbond® Fence Rail 2365 RIVERSAND,2365,Riversand,2365,8.44,9.28,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Shale Grey,ratified,FRMSG23,Colorbond® Fence Rail 2365 SHALE GREY,2365,Shale Grey,2365,8.47,9.32,96
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Surfmist,ratified,FRMSM23,Colorbond® Fence Rail 2365 SURFMIST,2365,Surfmist,2365,8.44,9.28,144
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Wilderness,ratified,FRMWI23,Colorbond® Fence Rail 2365 WILDERNESS,2365,Wilderness,2365,8.44,9.28,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Woodland Grey,ratified,FRMWG23,Colorbond® Fence Rail 2365 WOODLAND GREY,2365,Woodland Grey,2365,8.44,9.28,96
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Cottage Green,ratified,FRMCG31,Colorbond® Fence Rail 3125 COTTAGE GREEN,3125,Cottage Green,3125,11.15,12.27,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Domain,ratified,FRMDM31,Colorbond® Fence Rail 3125 DOMAIN,3125,Domain,3125,11.15,12.27,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Dune,ratified,FRMDU31,Colorbond® Fence Rail 3125 DUNE,3125,Dune,3125,11.15,12.27,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Evening Haze,ratified,FRMEH31,Colorbond® Fence Rail 3125 EVENING HAZE,3125,Evening Haze,3125,11.15,12.27,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Ironstone,ratified,FRMIS31,Colorbond® Fence Rail 3125 IRONSTONE,3125,Ironstone,3125,11.15,12.27,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Monument,ratified,FRMMO31,Colorbond® Fence Rail 3125 MONUMENT,3125,Monument,3125,11.15,12.27,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Night Sky,ratified,FRMNS31,Colorbond® Fence Rail 3125 NIGHT SKY,3125,Night Sky,3125,11.28,12.41,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Pale Eucalypt,ratified,FRMPE31,Colorbond® Fence Rail 3125 PALE EUCALYPT,3125,Pale Eucalypt,3125,11.22,12.34,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Paperbark,ratified,FRMPB31,Colorbond® Fence Rail 3125 PAPERBARK,3125,Paperbark,3125,11.15,12.27,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Riversand,ratified,FRMRS31,Colorbond® Fence Rail 3125 RIVERSAND,3125,Riversand,3125,11.15,12.27,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Shale Grey,ratified,FRMSG31,Colorbond® Fence Rail 3125 SHALE GREY,3125,Shale Grey,3125,11.15,12.27,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Surfmist,ratified,FRMSM31,Colorbond® Fence Rail 3125 SURFMIST,3125,Surfmist,3125,11.15,12.27,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Wilderness,ratified,FRMWI31,Colorbond® Fence Rail 3125 WILDERNESS,3125,Wilderness,3125,11.15,12.27,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Woodland Grey,ratified,FRMWG31,Colorbond® Fence Rail 3125 WOODLAND GREY,3125,Woodland Grey,3125,11.15,12.27,48
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Basalt,ratified,FNPBA24,Colorbond® CPost 2400 BASALT,2400,Basalt,2400,8.56,9.42,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Cottage Green,ratified,FNPCG24,Colorbond® CPost 2400 COTTAGE GREEN,2400,Cottage Green,2400,8.56,9.42,48
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Domain,ratified,FNPDM24,Colorbond® CPost 2400 DOMAIN,2400,Domain,2400,8.56,9.42,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Dune,ratified,FNPDU24,Colorbond® CPost 2400 DUNE,2400,Dune,2400,8.56,9.42,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Evening Haze,ratified,FNPEH24,Colorbond® CPost 2400 EVENING HAZE,2400,Evening Haze,2400,8.56,9.42,48
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Ironstone,ratified,FNPIS24,Colorbond® CPost 2400 IRONSTONE,2400,Ironstone,2400,8.56,9.42,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Monument,ratified,FNPMO24,Colorbond® CPost 2400 MONUMENT,2400,Monument,2400,8.56,9.42,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Night Sky,ratified,FNPNS24,Colorbond® CPost 2400 NIGHT SKY,2400,Night Sky,2400,8.56,9.42,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Pale Eucalypt,ratified,FNPPE24,Colorbond® CPost 2400 PALE EUCALYPT,2400,Pale Eucalypt,2400,8.56,9.42,48
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Paperbark,ratified,FNPPB24,Colorbond® CPost 2400 PAPERBARK,2400,Paperbark,2400,8.56,9.42,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Riversand,ratified,FNPRS24,Colorbond® CPost 2400 RIVERSAND,2400,Riversand,2400,8.56,9.42,48
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Shale Grey,ratified,FNPSG24,Colorbond® CPost 2400 SHALE GREY,2400,Shale Grey,2400,8.56,9.42,96
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Surfmist,ratified,FNPSM24,Colorbond® CPost 2400 SURFMIST,2400,Surfmist,2400,8.56,9.42,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Wilderness,ratified,FNPWI24,Colorbond® CPost 2400 WILDERNESS,2400,Wilderness,2400,8.56,9.42,48
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Woodland Grey,ratified,FNPWG24,Colorbond® CPost 2400 WOODLAND GREY,2400,Woodland Grey,2400,8.56,9.42,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Basalt,ratified,FNPBA27,Colorbond® CPost 2700 BASALT,2700,Basalt,2700,9.63,10.59,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Cottage Green,ratified,FNPCG27,Colorbond® CPost 2700 COTTAGE GREEN,2700,Cottage Green,2700,9.63,10.59,48
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Domain,ratified,FNPDM27,Colorbond® CPost 2700 DOMAIN,2700,Domain,2700,9.63,10.59,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Dune,ratified,FNPDU27,Colorbond® CPost 2700 DUNE,2700,Dune,2700,9.63,10.59,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Evening Haze,ratified,FNPEH27,Colorbond® CPost 2700 EVENING HAZE,2700,Evening Haze,2700,9.63,10.59,48
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Ironstone,ratified,FNPIS27,Colorbond® CPost 2700 IRONSTONE,2700,Ironstone,2700,9.63,10.59,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Monument,ratified,FNPMO27,Colorbond® CPost 2700 MONUMENT,2700,Monument,2700,9.63,10.59,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Pale Eucalypt,ratified,FNPPE27,Colorbond® CPost 2700 PALE EUCALYPT,2700,Pale Eucalypt,2700,9.93,10.92,48
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Paperbark,ratified,FNPPB27,Colorbond® CPost 2700 PAPERBARK,2700,Paperbark,2700,9.63,10.59,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Riversand,ratified,FNPRS27,Colorbond® CPost 2700 RIVERSAND,2700,Riversand,2700,9.63,10.59,48
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Shale Grey,ratified,FNPSG27,Colorbond® CPost 2700 SHALE GREY,2700,Shale Grey,2700,9.67,10.64,96
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Surfmist,ratified,FNPSM27,Colorbond® CPost 2700 SURFMIST,2700,Surfmist,2700,9.63,10.59,144
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Wilderness,ratified,FNPWI27,Colorbond® CPost 2700 WILDERNESS,2700,Wilderness,2700,10.62,11.68,48
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Woodland Grey,ratified,FNPWG27,Colorbond® CPost 2700 WOODLAND GREY,2700,Woodland Grey,2700,9.63,10.59,96
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Night Sky,ratified,FNPNS27,Colorbond® CPost 2700 NIGHT SKY,2700,Night Sky,2700,9.63,10.59,144
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Basalt,ratified,FZSBA17,Metzag Colorbond® Infill Sheet 1790 BASALT,1790,Basalt,1790,16.3,17.93,100
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Cottage Green,ratified,FZSCG17,Metzag Colorbond® Infill Sheet 1790 COTTAGE GREEN,1790,Cottage Green,1790,16.3,17.93,
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Domain,ratified,FZSDM17,Metzag Colorbond® Infill Sheet 1790 DOMAIN,1790,Domain,1790,16.3,17.93,100
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Dune,ratified,FZSDU17,Metzag Colorbond® Infill Sheet 1790 DUNE,1790,Dune,1790,16.3,17.93,100
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Evening Haze,ratified,FZSEH17,Metzag Colorbond® Infill Sheet 1790 EVENING HAZE,1790,Evening Haze,1790,16.3,17.93,
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Ironstone,ratified,FZSIS17,Metzag Colorbond® Infill Sheet 1790 IRONSTONE,1790,Ironstone,1790,16.3,17.93,100
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Monument,ratified,FZSMO17,Metzag Colorbond® Infill Sheet 1790 MONUMENT,1790,Monument,1790,16.3,17.93,100
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Pale Eucalypt,ratified,FZSPE17,Metzag Colorbond® Infill Sheet 1790 PALE EUCALYPT,1790,Pale Eucalypt,1790,16.3,17.93,
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Paperbark,ratified,FZSPB17,Metzag Colorbond® Infill Sheet 1790 PAPERBARK,1790,Paperbark,1790,16.3,17.93,100
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Riversand,ratified,FZSRS17,Metzag Colorbond® Infill Sheet 1790 RIVERSAND,1790,Riversand,1790,18.09,19.9,100
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Shale Grey,ratified,FZSSG17,Metzag Colorbond® Infill Sheet 1790 SHALE GREY,1790,Shale Grey,1790,16.3,17.93,100
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Surfmist,ratified,FZSSM17,Metzag Colorbond® Infill Sheet 1790 SURFMIST,1790,Surfmist,1790,16.3,17.93,100
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Wilderness,ratified,FZSWI17,Metzag Colorbond® Infill Sheet 1790 WILDERNESS,1790,Wilderness,1790,16.3,17.93,
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Woodland Grey,ratified,FZSWG17,Metzag Colorbond® Infill Sheet 1790 WOODLAND GREY,1790,Woodland Grey,1790,16.3,17.93,100
+colorbond,Metroll,Gate,Gate,2365 Colorbond Gate Monument,ratified,,1800 Standard Colorbond® Panel 2365 Monument,2365,Monument,2.35,82.92,91.21,
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Basalt,ratified,FZSBA21,Metzag Colorbond® Infill Sheet 2090 BASALT,2090,Basalt,2090,19.4,21.34,100
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Cottage Green,ratified,FZSCG21,Metzag Colorbond® Infill Sheet 2090 COTTAGE GREEN,2090,Cottage Green,2090,19.4,21.34,
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Domain,ratified,FZSDM21,Metzag Colorbond® Infill Sheet 2090 DOMAIN,2090,Domain,2090,19.4,21.34,100
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Dune,ratified,FZSDU21,Metzag Colorbond® Infill Sheet 2090 DUNE,2090,Dune,2090,19.4,21.34,100
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Evening Haze,ratified,FZSEH21,Metzag Colorbond® Infill Sheet 2090 EVENING HAZE,2090,Evening Haze,2090,19.4,21.34,
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Ironstone,ratified,FZSIS21,Metzag Colorbond® Infill Sheet 2090 IRONSTONE,2090,Ironstone,2090,19.4,21.34,100
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Monument,ratified,FZSMO21,Metzag Colorbond® Infill Sheet 2090 MONUMENT,2090,Monument,2090,19.36,21.3,100
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Pale Eucalypt,ratified,FZSPE21,Metzag Colorbond® Infill Sheet 2090 PALE EUCALYPT,2090,Pale Eucalypt,2090,19.4,21.34,
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Paperbark,ratified,FZSPB21,Metzag Colorbond® Infill Sheet 2090 PAPERBARK,2090,Paperbark,2090,19.03,20.93,100
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Riversand,ratified,FZSRS21,Metzag Colorbond® Infill Sheet 2090 RIVERSAND,2090,Riversand,2090,19.4,21.34,
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Shale Grey,ratified,FZSSG21,Metzag Colorbond® Infill Sheet 2090 SHALE GREY,2090,Shale Grey,2090,19.4,21.34,100
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Surfmist,ratified,FZSSM21,Metzag Colorbond® Infill Sheet 2090 SURFMIST,2090,Surfmist,2090,19.4,21.34,50
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Wilderness,ratified,FZSWI21,Metzag Colorbond® Infill Sheet 2090 WILDERNESS,2090,Wilderness,2090,19.4,21.34,
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Woodland Grey,ratified,FZSWG21,Metzag Colorbond® Infill Sheet 2090 WOODLAND GREY,2090,Woodland Grey,2090,19.34,21.27,100
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Woodland Grey,ratified,FZSWG15,Metzag Colorbond® Infill Sheet 1490 WOODLAND GREY,1490,Woodland Grey,1490,15.03,16.53,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Basalt,ratified,FZSBA15,Metzag Colorbond® Infill Sheet 1490 BASALT,1490,Basalt,1490,15.09,16.6,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Cottage Green,ratified,FZSCG15,Metzag Colorbond® Infill Sheet 1490 COTTAGE GREEN,1490,Cottage Green,1490,15.03,16.53,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Domain,ratified,FZSDM15,Metzag Colorbond® Infill Sheet 1490 DOMAIN,1490,Domain,1490,15.09,16.6,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Dune,ratified,FZSDU15,Metzag Colorbond® Infill Sheet 1490 DUNE,1490,Dune,1490,15.03,16.53,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Evening Haze,ratified,FZSEH15,Metzag Colorbond® Infill Sheet 1490 EVENING HAZE,1490,Evening Haze,1490,15.03,16.53,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Ironstone,ratified,FZSIS15,Metzag Colorbond® Infill Sheet 1490 IRONSTONE,1490,Ironstone,1490,15.03,16.53,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Monument,ratified,FZSMO15,Metzag Colorbond® Infill Sheet 1490 MONUMENT,1490,Monument,1490,15.03,16.53,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Pale Eucalypt,ratified,FZSPE15,Metzag Colorbond® Infill Sheet 1490 PALE EUCALYPT,1490,Pale Eucalypt,1490,15.03,16.53,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Paperbark,ratified,FZSPB15,Metzag Colorbond® Infill Sheet 1490 PAPERBARK,1490,Paperbark,1490,11.18,12.3,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Riversand,ratified,FZSRS15,Metzag Colorbond® Infill Sheet 1490 RIVERSAND,1490,Riversand,1490,15.03,16.53,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Shale Grey,ratified,FZSSG15,Metzag Colorbond® Infill Sheet 1490 SHALE GREY,1490,Shale Grey,1490,15.03,16.53,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Surfmist,ratified,FZSSM15,Metzag Colorbond® Infill Sheet 1490 SURFMIST,1490,Surfmist,1490,15.03,16.53,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Wilderness,ratified,FZSWI15,Metzag Colorbond® Infill Sheet 1490 WILDERNESS,1490,Wilderness,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Basalt,ratified,FMSBA12,Metline Colorbond® Infill Sheet 1190 BASALT,1190,Basalt,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Surfmist,ratified,FMSSM12,Metline Colorbond® Infill Sheet 1190 SURFMIST,1190,Surfmist,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Shale Grey,ratified,FMSSG12,Metline Colorbond® Infill Sheet 1190 SHALE GREY,1190,Shale Grey,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Riversand,ratified,FMSRS12,Metline Colorbond® Infill Sheet 1190 RIVERSAND,1190,Riversand,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Paperbark,ratified,FMSPB12,Metline Colorbond® Infill Sheet 1190 PAPERBARK,1190,Paperbark,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Pale Eucalypt,ratified,FMSPE12,Metline Colorbond® Infill Sheet 1190 PALE EUCALYPT,1190,Pale Eucalypt,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Wilderness,ratified,FMSWI12,Metline Colorbond® Infill Sheet 1190 WILDERNESS,1190,Wilderness,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Monument,ratified,FMSMO12,Metline Colorbond® Infill Sheet 1190 MONUMENT,1190,Monument,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Ironstone,ratified,FMSIS12,Metline Colorbond® Infill Sheet 1190 IRONSTONE,1190,Ironstone,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Evening Haze,ratified,FMSEH12,Metline Colorbond® Infill Sheet 1190 EVENING HAZE,1190,Evening Haze,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Dune,ratified,FMSDU12,Metline Colorbond® Infill Sheet 1190 DUNE,1190,Dune,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Domain,ratified,FMSDM12,Metline Colorbond® Infill Sheet 1190 DOMAIN,1190,Domain,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Deep Ocean,ratified,FMSDO12,Metline Colorbond® Infill Sheet 1190 DEEP OCEAN,1190,Deep Ocean,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Cottage Green,ratified,FMSCG12,Metline Colorbond® Infill Sheet 1190 COTTAGE GREEN,1190,Cottage Green,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Manor Red,ratified,FMSMR12,Metline Colorbond® Infill Sheet 1190 MANOR RED,1190,Manor Red,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Woodland Grey,ratified,FMSWG12,Metline Colorbond® Infill Sheet 1190 WOODLAND GREY,1190,Woodland Grey,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Basalt,ratified,FMSBA15,Metline Colorbond® Infill Sheet 1490 BASALT,1490,Basalt,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Surfmist,ratified,FMSSM15,Metline Colorbond® Infill Sheet 1490 SURFMIST,1490,Surfmist,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Shale Grey,ratified,FMSSG15,Metline Colorbond® Infill Sheet 1490 SHALE GREY,1490,Shale Grey,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Riversand,ratified,FMSRS15,Metline Colorbond® Infill Sheet 1490 RIVERSAND,1490,Riversand,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Paperbark,ratified,FMSPB15,Metline Colorbond® Infill Sheet 1490 PAPERBARK,1490,Paperbark,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Pale Eucalypt,ratified,FMSPE15,Metline Colorbond® Infill Sheet 1490 PALE EUCALYPT,1490,Pale Eucalypt,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Wilderness,ratified,FMSWI15,Metline Colorbond® Infill Sheet 1490 WILDERNESS,1490,Wilderness,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Monument,ratified,FMSMO15,Metline Colorbond® Infill Sheet 1490 MONUMENT,1490,Monument,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Ironstone,ratified,FMSIS15,Metline Colorbond® Infill Sheet 1490 IRONSTONE,1490,Ironstone,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Evening Haze,ratified,FMSEH15,Metline Colorbond® Infill Sheet 1490 EVENING HAZE,1490,Evening Haze,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Dune,ratified,FMSDU15,Metline Colorbond® Infill Sheet 1490 DUNE,1490,Dune,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Domain,ratified,FMSDM15,Metline Colorbond® Infill Sheet 1490 DOMAIN,1490,Domain,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Deep Ocean,ratified,FMSDO15,Metline Colorbond® Infill Sheet 1490 DEEP OCEAN,1490,Deep Ocean,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Cottage Green,ratified,FMSCG15,Metline Colorbond® Infill Sheet 1490 COTTAGE GREEN,1490,Cottage Green,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Manor Red,ratified,FMSMR15,Metline Colorbond® Infill Sheet 1490 MANOR RED,1490,Manor Red,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Woodland Grey,ratified,FMSWG15,Metline Colorbond® Infill Sheet 1490 WOODLAND GREY,1490,Woodland Grey,1490,15.03,16.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Basalt,ratified,FMSBA18,Metline Colorbond® Infill Sheet 1790 BASALT,1790,Basalt,1790,16.3,17.93,100
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Surfmist,ratified,FMSSM18,Metline Colorbond® Infill Sheet 1790 SURFMIST,1790,Surfmist,1790,16.3,17.93,100
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Shale Grey,ratified,FMSSG18,Metline Colorbond® Infill Sheet 1790 SHALE GREY,1790,Shale Grey,1790,16.3,17.93,100
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Riversand,ratified,FMSRS18,Metline Colorbond® Infill Sheet 1790 RIVERSAND,1790,Riversand,1790,16.3,17.93,100
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Paperbark,ratified,FMSPB18,Metline Colorbond® Infill Sheet 1790 PAPERBARK,1790,Paperbark,1790,16.3,17.93,100
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Pale Eucalypt,ratified,FMSPE18,Metline Colorbond® Infill Sheet 1790 PALE EUCALYPT,1790,Pale Eucalypt,1790,16.3,17.93,100
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Wilderness,ratified,FMSWI18,Metline Colorbond® Infill Sheet 1790 WILDERNESS,1790,Wilderness,1790,18.02,19.82,100
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Monument,ratified,FMSMO18,Metline Colorbond® Infill Sheet 1790 MONUMENT,1790,Monument,1790,16.3,17.93,100
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Ironstone,ratified,FMSIS18,Metline Colorbond® Infill Sheet 1790 IRONSTONE,1790,Ironstone,1790,16.3,17.93,100
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Evening Haze,ratified,FMSEH18,Metline Colorbond® Infill Sheet 1790 EVENING HAZE,1790,Evening Haze,1790,16.3,17.93,100
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Dune,ratified,FMSDU18,Metline Colorbond® Infill Sheet 1790 DUNE,1790,Dune,1790,16.3,17.93,100
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Domain,ratified,FMSDM18,Metline Colorbond® Infill Sheet 1790 DOMAIN,1790,Domain,1790,16.3,17.93,100
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Deep Ocean,ratified,FMSDO18,Metline Colorbond® Infill Sheet 1790 DEEP OCEAN,1790,Deep Ocean,1790,16.3,17.93,100
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Cottage Green,ratified,FMSCG18,Metline Colorbond® Infill Sheet 1790 COTTAGE GREEN,1790,Cottage Green,1790,18.02,19.82,100
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Manor Red,ratified,FMSMR18,Metline Colorbond® Infill Sheet 1790 MANOR RED,1790,Manor Red,1790,16.3,17.93,
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Woodland Grey,ratified,FMSWG18,Metline Colorbond® Infill Sheet 1790 WOODLAND GREY,1790,Woodland Grey,1790,16.3,17.93,50
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Basalt,ratified,FMSBA21,Metline Colorbond® Infill Sheet 2090 BASALT,2090,Basalt,2090,19.4,21.34,100
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Surfmist,ratified,FMSSM21,Metline Colorbond® Infill Sheet 2090 SURFMIST,2090,Surfmist,2090,19.4,21.34,100
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Shale Grey,ratified,FMSSG21,Metline Colorbond® Infill Sheet 2090 SHALE GREY,2090,Shale Grey,2090,19.4,21.34,
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Riversand,ratified,FMSRS21,Metline Colorbond® Infill Sheet 2090 RIVERSAND,2090,Riversand,2090,19.4,21.34,
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Paperbark,ratified,FMSPB21,Metline Colorbond® Infill Sheet 2090 PAPERBARK,2090,Paperbark,2090,19.4,21.34,100
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Pale Eucalypt,ratified,FMSPE21,Metline Colorbond® Infill Sheet 2090 PALE EUCALYPT,2090,Pale Eucalypt,2090,19.4,21.34,
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Wilderness,ratified,FMSWI21,Metline Colorbond® Infill Sheet 2090 WILDERNESS,2090,Wilderness,2090,19.4,21.34,
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Monument,ratified,FMSMO21,Metline Colorbond® Infill Sheet 2090 MONUMENT,2090,Monument,2090,19.4,21.34,100
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Ironstone,ratified,FMSIS21,Metline Colorbond® Infill Sheet 2090 IRONSTONE,2090,Ironstone,2090,19.4,21.34,100
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Evening Haze,ratified,FMSEH21,Metline Colorbond® Infill Sheet 2090 EVENING HAZE,2090,Evening Haze,2090,19.4,21.34,
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Dune,ratified,FMSDU21,Metline Colorbond® Infill Sheet 2090 DUNE,2090,Dune,2090,19.4,21.34,
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Domain,ratified,FMSDM21,Metline Colorbond® Infill Sheet 2090 DOMAIN,2090,Domain,2090,19.4,21.34,100
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Deep Ocean,ratified,FMSDO21,Metline Colorbond® Infill Sheet 2090 DEEP OCEAN,2090,Deep Ocean,2090,19.4,21.34,
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Cottage Green,ratified,FMSCG21,Metline Colorbond® Infill Sheet 2090 COTTAGE GREEN,2090,Cottage Green,2090,19.4,21.34,
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Manor Red,ratified,FMSMR21,Metline Colorbond® Infill Sheet 2090 MANOR RED,2090,Manor Red,2090,19.4,21.34,
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Woodland Grey,ratified,FMSWG21,Metline Colorbond® Infill Sheet 2090 WOODLAND GREY,2090,Woodland Grey,2090,19.4,21.34,0
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Basalt,ratified,FNSBA15,Trimclad Colorbond® Infill Sheet 1490 BASALT,1490,Basalt,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Surfmist,ratified,FNSSM15,Trimclad Colorbond® Infill Sheet 1490 SURFMIST,1490,Surfmist,1490,13.59,14.95,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Shale Grey,ratified,FNSSG15,Trimclad Colorbond® Infill Sheet 1490 SHALE GREY,1490,Shale Grey,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Riversand,ratified,FNSRS15,Trimclad Colorbond® Infill Sheet 1490 RIVERSAND,1490,Riversand,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Paperbark,ratified,FNSPB15,Trimclad Colorbond® Infill Sheet 1490 PAPERBARK,1490,Paperbark,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Pale Eucalypt,ratified,FNSPE15,Trimclad Colorbond® Infill Sheet 1490 PALE EUCALYPT,1490,Pale Eucalypt,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Wilderness,ratified,FNSWI15,Trimclad Colorbond® Infill Sheet 1490 WILDERNESS,1490,Wilderness,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Monument,ratified,FNSMO15,Trimclad Colorbond® Infill Sheet 1490 MONUMENT,1490,Monument,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Ironstone,ratified,FNSIS15,Trimclad Colorbond® Infill Sheet 1490 IRONSTONE,1490,Ironstone,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Evening Haze,ratified,FNSEH15,Trimclad Colorbond® Infill Sheet 1490 EVENING HAZE,1490,Evening Haze,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Dune,ratified,FNSDU15,Trimclad Colorbond® Infill Sheet 1490 DUNE,1490,Dune,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Domain,ratified,FNSDM15,Trimclad Colorbond® Infill Sheet 1490 DOMAIN,1490,Domain,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Deep Ocean,ratified,FNSDO15,Trimclad Colorbond® Infill Sheet 1490 DEEP OCEAN,1490,Deep Ocean,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Cottage Green,ratified,FNSCG15,Trimclad Colorbond® Infill Sheet 1490 COTTAGE GREEN,1490,Cottage Green,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Manor Red,ratified,FNSMR15,Trimclad Colorbond® Infill Sheet 1490 MANOR RED,1490,Manor Red,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1490mm Colorbond Infill Sheet Woodland Grey,ratified,FNSWG15,Trimclad Colorbond® Infill Sheet 1490 WOODLAND GREY,1490,Woodland Grey,1490,15.03,16.53,
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Basalt,ratified,FNSBA18,Trimclad Colorbond® Infill Sheet 1790 BASALT,1790,Basalt,1790,16.3,17.93,100
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Surfmist,ratified,FNSSM18,Trimclad Colorbond® Infill Sheet 1790 SURFMIST,1790,Surfmist,1790,16.3,17.93,100
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Shale Grey,ratified,FNSSG18,Trimclad Colorbond® Infill Sheet 1790 SHALE GREY,1790,Shale Grey,1790,16.3,17.93,100
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Riversand,ratified,FNSRS18,Trimclad Colorbond® Infill Sheet 1790 RIVERSAND,1790,Riversand,1790,16.3,17.93,
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Paperbark,ratified,FNSPB18,Trimclad Colorbond® Infill Sheet 1790 PAPERBARK,1790,Paperbark,1790,16.3,17.93,100
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Pale Eucalypt,ratified,FNSPE18,Trimclad Colorbond® Infill Sheet 1790 PALE EUCALYPT,1790,Pale Eucalypt,1790,16.32,17.95,
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Wilderness,ratified,FNSWI18,Trimclad Colorbond® Infill Sheet 1790 WILDERNESS,1790,Wilderness,1790,18.02,19.82,
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Monument,ratified,FNSMO18,Trimclad Colorbond® Infill Sheet 1790 MONUMENT,1790,Monument,1790,16.3,17.93,100
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Ironstone,ratified,FNSIS18,Trimclad Colorbond® Infill Sheet 1790 IRONSTONE,1790,Ironstone,1790,16.3,17.93,100
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Evening Haze,ratified,FNSEH18,Trimclad Colorbond® Infill Sheet 1790 EVENING HAZE,1790,Evening Haze,1790,18.02,19.82,100
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Dune,ratified,FNSDU18,Trimclad Colorbond® Infill Sheet 1790 DUNE,1790,Dune,1790,18.02,19.82,100
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Domain,ratified,FNSDM18,Trimclad Colorbond® Infill Sheet 1790 DOMAIN,1790,Domain,1790,16.3,17.93,100
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Deep Ocean,ratified,FNSDO18,Trimclad Colorbond® Infill Sheet 1790 DEEP OCEAN,1790,Deep Ocean,1790,16.3,17.93,100
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Cottage Green,ratified,FNSCG18,Trimclad Colorbond® Infill Sheet 1790 COTTAGE GREEN,1790,Cottage Green,1790,16.3,17.93,
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Manor Red,ratified,FNSMR18,Trimclad Colorbond® Infill Sheet 1790 MANOR RED,1790,Manor Red,1790,16.3,17.93,
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Woodland Grey,ratified,FNSWG18,Trimclad Colorbond® Infill Sheet 1790 WOODLAND GREY,1790,Woodland Grey,1790,16.3,17.93,100
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Basalt,ratified,FNSBA21,Trimclad Colorbond® Infill Sheet 2090 BASALT,2090,Basalt,2090,19.4,21.34,100
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Cottage Green,ratified,FNSCG21,Trimclad Colorbond® Infill Sheet 2090 COTTAGE GREEN,2090,Cottage Green,2090,19.4,21.34,
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Deep Ocean,ratified,FNSDO21,Trimclad Colorbond® Infill Sheet 2090 DEEP OCEAN,2090,Deep Ocean,2090,19.4,21.34,
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Domain,ratified,FNSDM21,Trimclad Colorbond® Infill Sheet 2090 DOMAIN,2090,Domain,2090,19.4,21.34,100
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Dune,ratified,FNSDU21,Trimclad Colorbond® Infill Sheet 2090 DUNE,2090,Dune,2090,19.4,21.34,100
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Evening Haze,ratified,FNSEH21,Trimclad Colorbond® Infill Sheet 2090 EVENING HAZE,2090,Evening Haze,2090,19.4,21.34,
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Ironstone,ratified,FNSIS21,Trimclad Colorbond® Infill Sheet 2090 IRONSTONE,2090,Ironstone,2090,19.4,21.34,100
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Manor Red,ratified,FNSMR21,Trimclad Colorbond® Infill Sheet 2090 MANOR RED,2090,Manor Red,2090,19.4,21.34,
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Monument,ratified,FNSMO21,Trimclad Colorbond® Infill Sheet 2090 MONUMENT,2090,Monument,2090,19.4,21.34,100
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Pale Eucalypt,ratified,FNSPE21,Trimclad Colorbond® Infill Sheet 2090 PALE EUCALYPT,2090,Pale Eucalypt,2090,20.27,22.3,
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Paperbark,ratified,FNSPB21,Trimclad Colorbond® Infill Sheet 2090 PAPERBARK,2090,Paperbark,2090,19.4,21.34,100
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Riversand,ratified,FNSRS21,Trimclad Colorbond® Infill Sheet 2090 RIVERSAND,2090,Riversand,2090,19.4,21.34,
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Shale Grey,ratified,FNSSG21,Trimclad Colorbond® Infill Sheet 2090 SHALE GREY,2090,Shale Grey,2090,19.4,21.34,
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Surfmist,ratified,FNSSM21,Trimclad Colorbond® Infill Sheet 2090 SURFMIST,2090,Surfmist,2090,19.4,21.34,100
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Wilderness,ratified,FNSWI21,Trimclad Colorbond® Infill Sheet 2090 WILDERNESS,2090,Wilderness,2090,19.4,21.34,
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Woodland Grey,ratified,FNSWG21,Trimclad Colorbond® Infill Sheet 2090 WOODLAND GREY,2090,Woodland Grey,2090,19.4,21.34,100
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Basalt,ratified,FNSBA12,Trimclad Colorbond® Infill Sheet 1190 BASALT,1190,Basalt,1190,12.01,13.21,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Cottage Green,ratified,FNSCG12,Trimclad Colorbond® Infill Sheet 1190 COTTAGE GREEN,1190,Cottage Green,1190,12.01,13.21,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Deep Ocean,ratified,FNSDO12,Trimclad Colorbond® Infill Sheet 1190 DEEP OCEAN,1190,Deep Ocean,1190,12.01,13.21,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Domain,ratified,FNSDM12,Trimclad Colorbond® Infill Sheet 1190 DOMAIN,1190,Domain,1190,11.98,13.18,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Dune,ratified,FNSDU12,Trimclad Colorbond® Infill Sheet 1190 DUNE,1190,Dune,1190,12.01,13.21,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Evening Haze,ratified,FNSEH12,Trimclad Colorbond® Infill Sheet 1190 EVENING HAZE,1190,Evening Haze,1190,12.01,13.21,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Ironstone,ratified,FNSIS12,Trimclad Colorbond® Infill Sheet 1190 IRONSTONE,1190,Ironstone,1190,12.01,13.21,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Manor Red,ratified,FNSMR12,Trimclad Colorbond® Infill Sheet 1190 MANOR RED,1190,Manor Red,1190,12.01,13.21,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Monument,ratified,FNSMO12,Trimclad Colorbond® Infill Sheet 1190 MONUMENT,1190,Monument,1190,12.01,13.21,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Pale Eucalypt,ratified,FNSPE12,Trimclad Colorbond® Infill Sheet 1190 PALE EUCALYPT,1190,Pale Eucalypt,1190,12.01,13.21,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Paperbark,ratified,FNSPB12,Trimclad Colorbond® Infill Sheet 1190 PAPERBARK,1190,Paperbark,1190,12.01,13.21,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Riversand,ratified,FNSRS12,Trimclad Colorbond® Infill Sheet 1190 RIVERSAND,1190,Riversand,1190,12.01,13.21,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Shale Grey,ratified,FNSSG12,Trimclad Colorbond® Infill Sheet 1190 SHALE GREY,1190,Shale Grey,1190,12.01,13.21,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Surfmist,ratified,FNSSM12,Trimclad Colorbond® Infill Sheet 1190 SURFMIST,1190,Surfmist,1190,12.01,13.21,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Wilderness,ratified,FNSWI12,Trimclad Colorbond® Infill Sheet 1190 WILDERNESS,1190,Wilderness,1190,12.01,13.21,
+colorbond,Metroll,Infill,Infill Sheet,1190mm Colorbond Infill Sheet Woodland Grey,ratified,FNSWG12,Trimclad Colorbond® Infill Sheet 1190 WOODLAND GREY,1190,Woodland Grey,1190,12.01,13.21,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Basalt,ratified,FNPBA18,Colorbond® CPost 1800 BASALT,1800,Basalt,1800,7.06,7.77,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Surfmist,ratified,FNPSM18,Colorbond® CPost 1800 SURFMIST,1800,Surfmist,1800,7.09,7.8,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Shale Grey,ratified,FNPSG18,Colorbond® CPost 1800 SHALE GREY,1800,Shale Grey,1800,7.06,7.77,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Riversand,ratified,FNPRS18,Colorbond® CPost 1800 RIVERSAND,1800,Riversand,1800,7.06,7.77,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Paperbark,ratified,FNPPB18,Colorbond® CPost 1800 PAPERBARK,1800,Paperbark,1800,7.09,7.8,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Pale Eucalypt,ratified,FNPPE18,Colorbond® CPost 1800 PALE EUCALYPT,1800,Pale Eucalypt,1800,7.09,7.8,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Night Sky,ratified,FNPNS18,Colorbond® CPost 1800 NIGHT SKY,1800,Night Sky,1800,7.09,7.8,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Wilderness,ratified,FNPWI18,Colorbond® CPost 1800 WILDERNESS,1800,Wilderness,1800,7.09,7.8,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Monument,ratified,FNPMO18,Colorbond® CPost 1800 MONUMENT,1800,Monument,1800,7.09,7.8,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Ironstone,ratified,FNPIS18,Colorbond® CPost 1800 IRONSTONE,1800,Ironstone,1800,7.09,7.8,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Evening Haze,ratified,FNPEH18,Colorbond® CPost 1800 EVENING HAZE,1800,Evening Haze,1800,7.06,7.77,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Dune,ratified,FNPDU18,Colorbond® CPost 1800 DUNE,1800,Dune,1800,7.06,7.77,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Domain,ratified,FNPDM18,Colorbond® CPost 1800 DOMAIN,1800,Domain,1800,7.06,7.77,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Deep Ocean,ratified,FNPDO18,Colorbond® CPost 1800 DEEP OCEAN,1800,Deep Ocean,1800,7.06,7.77,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Cottage Green,ratified,FNPCG18,Colorbond® CPost 1800 COTTAGE GREEN,1800,Cottage Green,1800,7.09,7.8,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Manor Red,ratified,FNPMR18,Colorbond® CPost 1800 MANOR RED,1800,Manor Red,1800,7.09,7.8,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Woodland Grey,ratified,FNPWG18,Colorbond® CPost 1800 WOODLAND GREY,1800,Woodland Grey,1800,7.09,7.8,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Basalt,ratified,FNPBA21,Colorbond® CPost 2100 BASALT,2100,Basalt,2100,8.27,9.1,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Surfmist,ratified,FNPSM21,Colorbond® CPost 2100 SURFMIST,2100,Surfmist,2100,8.27,9.1,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Shale Grey,ratified,FNPSG21,Colorbond® CPost 2100 SHALE GREY,2100,Shale Grey,2100,8.27,9.1,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Riversand,ratified,FNPRS21,Colorbond® CPost 2100 RIVERSAND,2100,Riversand,2100,8.27,9.1,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Paperbark,ratified,FNPPB21,Colorbond® CPost 2100 PAPERBARK,2100,Paperbark,2100,8.27,9.1,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Pale Eucalypt,ratified,FNPPE21,Colorbond® CPost 2100 PALE EUCALYPT,2100,Pale Eucalypt,2100,8.27,9.1,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Night Sky,ratified,FNPNS21,Colorbond® CPost 2100 NIGHT SKY,2100,Night Sky,2100,8.26,9.09,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Wilderness,ratified,FNPWI21,Colorbond® CPost 2100 WILDERNESS,2100,Wilderness,2100,8.27,9.1,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Monument,ratified,FNPMO21,Colorbond® CPost 2100 MONUMENT,2100,Monument,2100,8.26,9.09,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Ironstone,ratified,FNPIS21,Colorbond® CPost 2100 IRONSTONE,2100,Ironstone,2100,8.27,9.1,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Evening Haze,ratified,FNPEH21,Colorbond® CPost 2100 EVENING HAZE,2100,Evening Haze,2100,8.27,9.1,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Dune,ratified,FNPDU21,Colorbond® CPost 2100 DUNE,2100,Dune,2100,8.27,9.1,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Domain,ratified,FNPDM21,Colorbond® CPost 2100 DOMAIN,2100,Domain,2100,8.27,9.1,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Deep Ocean,ratified,FNPDO21,Colorbond® CPost 2100 DEEP OCEAN,2100,Deep Ocean,2100,8.27,9.1,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Cottage Green,ratified,FNPCG21,Colorbond® CPost 2100 COTTAGE GREEN,2100,Cottage Green,2100,8.26,9.09,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Manor Red,ratified,FNPMR21,Colorbond® CPost 2100 MANOR RED,2100,Manor Red,2100,8.27,9.1,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Woodland Grey,ratified,FNPWG21,Colorbond® CPost 2100 WOODLAND GREY,2100,Woodland Grey,2100,8.26,9.09,
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Basalt,ratified,FRMBA23,Colorbond® Fence Rail 2365 BASALT,2365,Basalt,2365,8.44,9.28,144
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Basalt,ratified,FRMBA31,Colorbond® Fence Rail 3125 BASALT,3125,Basalt,3125,11.15,12.27,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 1234mm Dune,ratified,,Test Created Product,1234,Dune,,8.44,9.28,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Basalt,ratified,CCAPBA,Coloured CPost Caps BASALT - Double/Full,,Basalt,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Wilderness,ratified,CCAPWI,Coloured CPost Caps WILDERNESS - Double/Full,,Wilderness,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Surfmist,ratified,CCAPSM,Coloured CPost Caps SURFMIST - Double/Full,,Surfmist,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Shale Grey,ratified,CCAPSG,Coloured CPost Caps SHALE GREY - Double/Full,,Shale Grey,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Riversand,ratified,CCAPRS,Coloured CPost Caps RIVERSAND - Double/Full,,Riversand,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Paperbark,ratified,CCAPPB,Coloured CPost Caps PAPERBARK - Double/Full,,Paperbark,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Pale Eucalypt,ratified,CCAPPE,Coloured CPost Caps PALE EUCALYPT - Double/Full,,Pale Eucalypt,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Night Sky,ratified,CCAPNS,Coloured CPost Caps NIGHT SKY - Double/Full,,Night Sky,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Monument,ratified,CCAPMO,Coloured CPost Caps MONUMENT - Double/Full,,Monument,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Manor Red,ratified,CCAPMR,Coloured CPost Caps MANOR RED - Double/Full,,Manor Red,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Jasper,ratified,CCAPJA,Coloured CPost Caps JASPER - Double/Full,,Jasper,60,2.22,2.44,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Ironstone,ratified,CCAPIS,Coloured CPost Caps IRONSTONE - Double/Full,,Ironstone,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Evening Haze,ratified,CCAPEH,Coloured CPost Caps EVENING HAZE - Double/Full,,Evening Haze,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Dune,ratified,CCAPDU,Coloured CPost Caps DUNE - Double/Full,,Dune,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Domain,ratified,CCAPDM,Coloured CPost Caps DOMAIN - Double/Full,,Domain,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Deep Ocean,ratified,CCAPDO,Coloured CPost Caps DEEP OCEAN - Double/Full,,Deep Ocean,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Cottage Green,ratified,CCAPCG,Coloured CPost Caps COTTAGE GREEN - Double/Full,,Cottage Green,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Blue Gum,ratified,CCAPBG,Coloured CPost Caps BLUE GUM - Double/Full,,Blue Gum,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Windspray,ratified,CCAPWS,Coloured CPost Caps WINDSPRAY - Double/Full,,Windspray,60,2.25,2.48,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Woodland Grey,ratified,CCAPWG,Coloured CPost Caps WOODLAND GREY - Double/Full,,Woodland Grey,60,2.25,2.48,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Monument,ratified,FNPMO30,Colorbond® CPost 3000 MONUMENT,3000,Monument,3000,11.8,12.98,48
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel Monument,ratified,,1800 Raked MONUMENT Colorbond Panel,,Monument,,92.1,101.31,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Monument,ratified,SKU-110425042828,1800 Raked Colorbond Panel 2365 with 2700 Posts MONUMENT,2365,Monument,,94.24,103.66,
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Cottage Green,ratified,FRMCG23,Colorbond® Fence Rail 2365 COTTAGE GREEN,2365,Cottage Green,2365,8.49,9.34,0
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel Woodland Grey,ratified,,1800 Raked Colorbond Panel 2365 WOODLAND GREY,,Woodland Grey,,92.02,101.22,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel Monument,ratified,,1800 Stepped Colorbond Panel 2365 with 2700 posts Monument,,Monument,,85.06,93.57,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2100mm Monument,ratified,SKU-220425050931,2100 Standard Colorbond Panel 2365 MONUMENT,2100,Monument,2365,94.24,103.66,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel Monument,ratified,SKU-220425053402,1500 Standard Panel 2365 MONUMENT,,Monument,,78.51,86.36,
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Manor Red,ratified,FRMMR23,Colorbond® Fence Rail 2365 MANOR RED,2365,Manor Red,2365,8.44,9.28,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Manor Red,ratified,FRMMR31,Colorbond® Fence Rail 3125 MANOR RED,3125,Manor Red,3125,11.15,12.27,48
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Manor Red,ratified,FNPMR24,Colorbond® CPost 2400 MANOR RED,2400,Manor Red,2400,8.56,9.42,48
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel Woodland Grey,ratified,SKU-230425002624,1800 Colorbond Standard Panel 2365 WOODLAND GREY,,Woodland Grey,,82.9,91.19,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2100mm Dune,ratified,SKU-220425050931DUNE,2100 Standard Colorbond Panel 2365 DUNE,2100,Dune,2365,94.34,103.77,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel Woodland Grey,ratified,SKU-230425002624WG27,1800 Stepped Colorbond Panel 2365 with 2700 posts WOODLAND GREY,,Woodland Grey,,85.04,93.54,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel Woodland Grey,ratified,SKU-230425002624WG27R,1800 Raked Colorbond Panel 2365 with 2700 posts WOODLAND GREY,,Woodland Grey,,94.16,103.58,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel Basalt,ratified,SKU-230425002624BSTD,1800 Colorbond Standard Panel 2365 BASALT,,Basalt,,82.9,91.19,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel Basalt,ratified,SKU-230425002624BR,1800 Colorbond Raked Panel 2365 BASALT,,Basalt,,92.2,101.42,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm,ratified,SKU-230425015257DUNE,1500 Colorbond Standard Panel 2365,2365,,,79.36,87.3,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Basalt,ratified,SKU-230425002624BR2700,1800 Raked Colorbond Panel 2365 with 2700 Posts BASALT,2365,Basalt,,94.34,103.77,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Manor Red,ratified,FZSMR15,Metzag Colorbond® Infill Sheet 1490 MANOR RED,1490,Manor Red,1490,15.03,16.53,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Basalt,ratified,SKU-230425002624BSTD2700,1800 Stepped Colorbond Panel 2365 with 2700 posts BASALT,2365,Basalt,,85.04,93.54,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Basalt,ratified,SKU-230425002624BSTD2100,2100 Colorbond Standard Panel 2365 BASALT,2365,Basalt,,94.34,103.77,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Basalt,ratified,SKU-230425002624BSTD21500,1500 Colorbond Standard Panel 2365 BASALT,2365,Basalt,,78.69,86.56,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Surfmist,ratified,SKU-230425002624SMstd1800,1800 Colorbond Std Panel 2365 SURFMIST,2365,Surfmist,,82.9,91.19,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Surfmist,ratified,SKU-230425002624SMR1800,1800 Colorbond Raked Panel 2365 SURFMIST,2365,Surfmist,,92.2,101.42,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Surfmist,ratified,SKU-230425002624SMR2700P,1800 Colorbond Raked Panel 2365 2700 Posts SURFMIST,2365,Surfmist,,94.34,103.77,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Dune,ratified,SKU-230425015257DUNEStd1800,1800 Colorbond Std Panel 2365 DUNE,2365,Dune,,82.9,91.19,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Dune,ratified,SKU-230425015257DUNER1800,1800 Colorbond Raked Panel 2365 DUNE,2365,Dune,,92.2,101.42,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Dune,ratified,SKU-230425015257DUNEStd2700P,1800 Colorbond Std Panel 2365 2700 POST DUNE,2365,Dune,,85.04,93.54,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Surfmist,ratified,SKU-230425002624SMSTD2700P,1800 Colorbond STD Panel 2365 2700 Posts SURFMIST,2365,Surfmist,,85.04,93.54,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Surfmist,ratified,SKU-230425002624SMSTD1500,1500 Colorbond STD Panel 2365 SURFMIST,2365,Surfmist,,78.51,86.36,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Surfmist,ratified,SKU-230425002624SMSTD2100,2100 Colorbond STD Panel 2365 SURFMIST,2365,Surfmist,,94.34,103.77,
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Deep Ocean,ratified,FZSDO17,Metzag Colorbond® Infill Sheet 1790 DEEP OCEAN,1790,Deep Ocean,1790,16.68,18.35,
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Deep Ocean,ratified,FZSDO21,Metzag Colorbond® Infill Sheet 2090 DEEP OCEAN,2090,Deep Ocean,2090,19.4,21.34,
+colorbond,Metroll,Metzag profile,Infill Sheet,2390mm Metzag Colorbond Infill Sheet Dune,ratified,FZSDU24,Metzag Colorbond® Infill Sheet 2390 DUNE,2390,Dune,2390,24.0,26.4,
+colorbond,Metroll,Metzag profile,Infill Sheet,2390mm Metzag Colorbond Infill Sheet Monument,ratified,FZSMO24,Metzag Colorbond® Infill Sheet 2390 MONUMENT,2390,Monument,2390,21.69,23.86,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Deep Ocean,ratified,FNPDO27,Colorbond® CPost 2700 DEEP OCEAN,2700,Deep Ocean,2700,9.63,10.59,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Deep Ocean,ratified,FRMDO23,Colorbond® Fence Rail 2365 DEEP OCEAN,2365,Deep Ocean,2365,8.44,9.28,0
+colorbond,Metroll,Metzag profile,Infill Sheet,2390mm Metzag Colorbond Infill Sheet Deep Ocean,ratified,FZSDO24,Metzag Colorbond® Infill Sheet 2390 DEEP OCEAN,2390,Deep Ocean,2390,24.0,26.4,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Deep Ocean,ratified,FNPDO24,Colorbond® CPost 2400 DEEP OCEAN,2400,Deep Ocean,2400,8.56,9.42,0
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Deep Ocean,ratified,FNPDO30,Colorbond® CPost 3000 DEEP OCEAN,3000,Deep Ocean,3000,11.8,12.98,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Deep Ocean,ratified,FRMDO31,Colorbond® Fence Rail 3125 DEEP OCEAN,3125,Deep Ocean,3125,11.15,12.27,0
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Deep Ocean,ratified,FZSDO12,Metzag Colorbond® Infill Sheet 1190 DEEP OCEAN,1190,Deep Ocean,1190,12.01,13.21,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Deep Ocean,ratified,FZSDO15,Metzag Colorbond® Infill Sheet 1490 DEEP OCEAN,1490,Deep Ocean,1490,15.03,16.53,
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Windspray,ratified,FZSWS17,Metzag Colorbond® Infill Sheet 1790 WINDSPRAY,1790,Windspray,1790,18.09,19.9,48
+colorbond,Metroll,Metzag profile,Infill Sheet,2090mm Metzag Colorbond Infill Sheet Windspray,ratified,FZSWS21,Metzag Colorbond® Infill Sheet 2090 WINDSPRAY,2090,Windspray,2090,19.93,21.92,100
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Windspray,ratified,FNPWS24,Colorbond® CPost 2400 WINDSPRAY,2400,Windspray,2400,8.56,9.42,48
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Windspray,ratified,FNPWS27,Colorbond® CPost 2700 WINDSPRAY,2700,Windspray,2700,10.62,11.68,0
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Windspray,ratified,FRMWS23,Colorbond® Fence Rail 2365 WINDSPRAY,2365,Windspray,2365,8.87,9.76,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Windspray,ratified,FRMWS31,Colorbond® Fence Rail 3125 WINDSPRAY,3125,Windspray,3125,11.53,12.68,48
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Windspray,ratified,FMSWS18,Metline Colorbond® Infill Sheet 1790 WINDSPRAY,1790,Windspray,1790,16.3,17.93,
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Windspray,ratified,FMSWS21,Metline Colorbond® Infill Sheet 2090 WINDSPRAY,2090,Windspray,2090,19.4,21.34,
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Windspray,ratified,FNSWS18,Trimclad Colorbond® Infill Sheet 1790 WINDSPRAY,1790,Windspray,1790,16.3,17.93,
+colorbond,Metroll,Infill,Infill Sheet,2090mm Colorbond Infill Sheet Windspray,ratified,FNSWS21,Trimclad Colorbond® Infill Sheet 2090 WINDSPRAY,2090,Windspray,2090,19.4,21.34,
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2350mm Basalt,ratified,,Colorbond® Fence Rail BASALT 2350 - CUSTOM CUT,2350,Basalt,2350,8.44,9.28,
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2350mm Night Sky,ratified,,Colorbond® Fence Rail NIGHT SKY 2350 - CUSTOM CUT,2350,Night Sky,,8.45,9.29,144
+colorbond,Metroll,Infill,Infill Sheet,2390mm Colorbond Infill Sheet Basalt,ratified,FNSBA24,Trimclad Colorbond® Infill Sheet 2390 BASALT,2390,Basalt,2390,24.0,26.4,
+colorbond,Metroll,Infill,Infill Sheet,2390mm Colorbond Infill Sheet Domain,ratified,FNSDM24,Trimclad Colorbond® Infill Sheet 2390 DOMAIN,2390,Domain,2390,24.0,26.4,
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2350mm Monument,ratified,,Colorbond® Fence Rail MONUMENT 2350 - CUSTOM CUT,2350,Monument,2350,8.44,9.28,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Night Sky,ratified,FNPNS30,Colorbond® CPost 3000 NIGHT SKY,3000,Night Sky,3000,11.8,12.98,48
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Domain,ratified,,1800 Standard Colorbond® Panel 2365 DOMAIN,2365,Domain,2.35,82.9,91.19,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Monument,ratified,FZSMO11,Metzag Colorbond® Infill Sheet 1190 MONUMENT,1190,Monument,1190,12.03,13.23,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Basalt,ratified,FZSBA12,Metzag Colorbond® Infill Sheet 1190 BASALT,1190,Basalt,1190,12.01,13.21,
+colorbond,Metroll,Gate,Gate,3125 Colorbond Gate Cottage Green,ratified,,1800 Standard Colorbond® Panel 3125 Cottage Green,3125,Cottage Green,3.13,104.62,115.08,
+colorbond,Metroll,ZZ - Other,ZZ - Other,Colorbond ZZ - Other,ratified,,Metroll Misc 1,,,,0.0,0.0,
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3100mm Monument,ratified,,Colorbond® Fence Rail MONUMENT 3100 - CUSTOM CUT,3100,Monument,3100,8.44,9.28,
+colorbond,Metroll,Metzag profile,Infill Sheet,1790mm Metzag Colorbond Infill Sheet Jasper,ratified,FZSJA17,Metzag Colorbond® Infill Sheet 1790 JASPER,1790,Jasper,1790,18.09,19.9,
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2365mm Jasper,ratified,FRMJA23,Colorbond® Fence Rail 2365 JASPER,2365,Jasper,2365,8.76,9.64,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2400mm Jasper,ratified,FNPJA24,Colorbond® CPost 2400 JASPER,2400,Jasper,2400,9.44,10.38,48
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3125mm Jasper,ratified,FRMJA31,Colorbond® Fence Rail 3125 JASPER,3125,Jasper,3125,12.3,13.53,48
+colorbond,Metroll,Gate,Gate,3125 Colorbond Gate Basalt,ratified,,1800 Standard Colorbond® Panel 3125 BASALT,3125,Basalt,3.13,104.62,115.08,
+colorbond,Metroll,Gate,Gate,3125 Colorbond Gate Basalt,ratified,,1500 Standard Colorbond® Panel 3125 BASALT,3125,Basalt,3.13,99.2,109.12,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Woodland Grey,ratified,FZSWG12,Metzag Colorbond® Infill Sheet 1190 WOODLAND GREY,1190,Woodland Grey,1190,12.03,13.23,
+colorbond,Metroll,Full panel,Full panel,Colorbond Pre-Made Panel 2365mm Cottage Green,ratified,SKU-230425015258,1800 Colorbond Std Panel 2365 COTTAGE GREEN,2365,Cottage Green,1800,83.0,91.3,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Manor Red,ratified,FNPMR27,Colorbond® CPost 2700 MANOR RED,2700,Manor Red,2700,9.63,10.59,
+colorbond,Metroll,Metzag profile,Infill Sheet,mm Metzag Colorbond Infill Sheet Surfmist,ratified,FZSSM24,Metzag Colorbond® Infill Sheet 2390 SURFMIST,,Surfmist,2390,24.0,26.4,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Cottage Green,ratified,FZSCG12,Metzag Colorbond® Infill Sheet 1190 COTTAGE GREEN,1190,Cottage Green,1190,12.01,13.21,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Domain,ratified,FZSDM12,Metzag Colorbond® Infill Sheet 1190 DOMAIN,1190,Domain,1190,12.03,13.23,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Dune,ratified,FZSDU12,Metzag Colorbond® Infill Sheet 1190 DUNE,1190,Dune,1190,12.01,13.21,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Evening Haze,ratified,FZSEH12,Metzag Colorbond® Infill Sheet 1190 EVENING HAZE,1190,Evening Haze,1190,12.01,13.21,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Ironstone,ratified,FZSIS12,Metzag Colorbond® Infill Sheet 1190 IRONSTONE,1190,Ironstone,1190,12.01,13.21,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Pale Eucalypt,ratified,FZSPE12,Metzag Colorbond® Infill Sheet 1190 PALE EUCALYPT,1190,Pale Eucalypt,1190,12.01,13.21,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Paperbark,ratified,FZSPB12,Metzag Colorbond® Infill Sheet 1190 PAPERBARK,1190,Paperbark,1190,12.01,13.21,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Riversand,ratified,FZSRS12,Metzag Colorbond® Infill Sheet 1190 RIVERSAND,1190,Riversand,1190,12.01,13.21,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Shale Grey,ratified,FZSSG12,Metzag Colorbond® Infill Sheet 1190 SHALE GREY,1190,Shale Grey,1190,12.01,13.21,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Surfmist,ratified,FZSSM12,Metzag Colorbond® Infill Sheet 1190 SURFMIST,1190,Surfmist,1190,12.03,13.23,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Wilderness,ratified,FZSWI12,Metzag Colorbond® Infill Sheet 1190 WILDERNESS,1190,Wilderness,1190,12.01,13.21,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Windspray,ratified,FZSWS12,Metzag Colorbond® Infill Sheet 1190 WINDSPRAY,1190,Windspray,1190,12.01,13.21,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Manor Red,ratified,FZSMR12,Metzag Colorbond® Infill Sheet 1190 MANOR RED,1190,Manor Red,1190,12.01,13.21,
+colorbond,Metroll,Metzag profile,Infill Sheet,1190mm Metzag Colorbond Infill Sheet Jasper,ratified,FZSJA12,Metzag Colorbond® Infill Sheet 1190 JASPER,1190,Jasper,1190,12.01,13.21,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Windspray,ratified,FNPWS21,Colorbond® CPost 2100 WINDSPRAY,2100,Windspray,2100,8.27,9.1,
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 3100mm Night Sky,ratified,,Colorbond® Fence Rail NIGHT SKY 3100 - CUSTOM CUT,3100,Night Sky,,12.3,13.53,
+colorbond,Metroll,Metline profile,Infill Sheet,1790mm Metline Colorbond Infill Sheet Jasper,ratified,FMSJA18,Metline Colorbond® Infill Sheet 1790 JASPER,1790,Jasper,1790,18.09,19.9,
+colorbond,Metroll,Metline profile,Infill Sheet,2090mm Metline Colorbond Infill Sheet Jasper,ratified,FMSJA21,Metline Colorbond® Infill Sheet 2090 JASPER,2090,Jasper,2090,19.4,21.34,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2700mm Jasper,ratified,FNPJA27,Colorbond® CPost 2700 JASPER,2700,Jasper,2700,10.01,11.01,
+colorbond,Metroll,Metzag profile,Infill Sheet,mm Metzag Colorbond Infill Sheet Woodland Grey,ratified,FZSWG24,Metzag Colorbond® Infill Sheet 2390 WOODLAND GREY,,Woodland Grey,2390,24.0,26.4,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Paperbark,ratified,FNPPB30,Colorbond® CPost 3000 PAPERBARK,3000,Paperbark,3000,11.8,12.98,
+colorbond,Metroll,Metline profile,Infill Sheet,1190mm Metline Colorbond Infill Sheet Windspray,ratified,FMSWS12,Metline Colorbond® Infill Sheet 1190 WINDSPRAY,1190,Windspray,1190,12.01,13.21,
+colorbond,Metroll,Metline profile,Infill Sheet,1490mm Metline Colorbond Infill Sheet Windspray,ratified,FMSWS15,Metline Colorbond® Infill Sheet 1490 WINDSPRAY,1490,Windspray,1490,15.03,16.53,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Basalt,ratified,FNPBA30,Colorbond® CPost 3000 BASALT,3000,Basalt,3000,11.77,12.95,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Cottage Green,ratified,FNPCG30,Colorbond® CPost 3000 COTTAGE GREEN,3000,Cottage Green,3000,11.77,12.95,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Domain,ratified,FNPDM30,Colorbond® CPost 3000 DOMAIN,3000,Domain,3000,11.77,12.95,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Dune,ratified,FNPDU30,Colorbond® CPost 3000 DUNE,3000,Dune,3000,11.77,12.95,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Evening Haze,ratified,FNPEH30,Colorbond® CPost 3000 EVENING HAZE,3000,Evening Haze,3000,11.77,12.95,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Ironstone,ratified,FNPIS30,Colorbond® CPost 3000 IRONSTONE,3000,Ironstone,3000,11.77,12.95,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Pale Eucalypt,ratified,FNPPE30,Colorbond® CPost 3000 PALE EUCALYPT,3000,Pale Eucalypt,3000,11.77,12.95,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Shale Grey,ratified,FNPSG30,Colorbond® CPost 3000 SHALE GREY,3000,Shale Grey,3000,11.77,12.95,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Surfmist,ratified,FNPSM30,Colorbond® CPost 3000 SURFMIST,3000,Surfmist,3000,11.8,12.98,
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail 2350mm Woodland Grey,ratified,,Colorbond® Fence Rail WOODLAND GREY 2350 - CUSTOM CUT,2350,Woodland Grey,,8.44,9.28,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1500mm Monument,ratified,,Colorbond® **CUSTOM** CPost 1500 MONUMENT,1500,Monument,1500,7.06,7.77,
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail Monument,ratified,,Colorbond® **CUSTOM** Fence Rail 2000 MONUMENT - 3x Day Lead Time,,Monument,2000,8.44,9.28,
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail Basalt,ratified,,Colorbond® Fence Rail BASALT 3100 - CUSTOM CUT,,Basalt,,10.0,11.0,
+colorbond,Metroll,Metzag profile,Infill Sheet,mm Metzag Colorbond Infill Sheet Surfmist,ratified,,Metzag Colorbond® Infill Sheet **CUSTOM**1390 SURFMIST,,Surfmist,1390,15.03,16.53,
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail Surfmist,ratified,,Colorbond® **CUSTOM** Fence Rail 2000 SURFMIST - 3x Day Lead Time,,Surfmist,2000,8.44,9.28,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1500mm Surfmist,ratified,,Colorbond® **CUSTOM** CPost 1500 SURFMIST,1500,Surfmist,1500,7.06,7.77,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Woodland Grey,ratified,,Colorbond® CPost 3000 Woodland Grey,3000,Woodland Grey,3000,11.8,12.98,
+colorbond,Metroll,Metzag profile,Infill Sheet,2390mm Metzag Colorbond Infill Sheet Basalt,ratified,SKU-040925020348,Metzag Colorbond® Infill Sheet 2390 BASALT,2390,Basalt,2390,24.0,26.4,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post Monument,ratified,,Colorbond® CPost 1850 MONUMENT *CUSTOM CUT*,,Monument,1850,8.24,9.06,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post Monument,ratified,,Colorbond® CPost 1550 MONUMENT *CUSTOM CUT*,,Monument,1550,7.09,7.8,
+colorbond,Metroll,Rail,Rail,Colorbond Fence Rail Cottage Green,ratified,,Colorbond® Fence Rail **CUSTOM 2350mm** COTTAGE GREEN,,Cottage Green,2350,8.0,8.8,
+colorbond,Metroll,Metzag profile,Infill Sheet,1490mm Metzag Colorbond Infill Sheet Jasper,ratified,,Metzag Colorbond® Infill Sheet 1490 JASPER,1490,Jasper,,15.09,16.6,
+colorbond,Metroll,Cap,Cap,Colorbond Post Cap Night Sky,ratified,OrigCCAPNS,ORIGINAL Double CPost Caps - NIGHT SKY,,Night Sky,60,2.25,2.48,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post Monument,ratified,,Colorbond® CPost 2000 Custom Cut MONUMENT - Minimum 3 day lead time - Prepay only,,Monument,2000,8.24,9.06,
+colorbond,Metroll,Metzag profile,Infill Sheet,mm Metzag Colorbond Infill Sheet Monument,ratified,,Metzag Colorbond® Infill Sheet Custom Cut 1990 MONUMENT - Minimum 3 day lead time - Prepay only,,Monument,1990,19.03,20.93,
+colorbond,Metroll,Infill,Infill Sheet,1790mm Colorbond Infill Sheet Jasper,ratified,FZSJA17,Trimclad Colorbond® Infill Sheet 1790 JASPER,1790,Jasper,,18.02,19.82,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 1800mm Jasper,ratified,FNPJA18,Colorbond® CPost 1800 JASPER,1800,Jasper,,7.09,7.8,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 2100mm Jasper,ratified,FNPJA21,Colorbond® CPost 2100 JASPER,2100,Jasper,,8.26,9.09,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3300mm Windspray,ratified,FNPWS33,Colorbond® CPost 3300 WINDSPRAY,3300,Windspray,,11.8,12.98,
+colorbond,Metroll,C POST,C POST,Colorbond C-Post 3000mm Windspray,ratified,FNPWS30,Colorbond® CPost 3000 WINDSPRAY,3000,Windspray,,11.8,12.98,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Basalt,ratified,1820OriginalGateStyleStripPreGalSetBasalt,1820x50 Original Gate Style With Strip Pre-Gal Each Set BASALT,1820,Basalt,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Cottage Green,ratified,1820OriginalGateStyleStripPreGalSetCottageGreen,1820x50 Original Gate Style With Strip Pre-Gal Each Set COTTAGE GREEN,1820,Cottage Green,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Domain,ratified,1820OriginalGateStyleStripPreGalSetDOMAIN,1820x50 Original Gate Style With Strip Pre-Gal Each Set DOMAIN,1820,Domain,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Dune,ratified,1820OriginalGateStyleStripPreGalSetDune,1820x50 Original Gate Style With Strip Pre-Gal Each Set DUNE,1820,Dune,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Evening Haze,ratified,1820OriginalGateStyleStripPreGalSetEveningHaze,1820x50 Original Gate Style With Strip Pre-Gal Each Set EVENING HAZE,1820,Evening Haze,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Mill Finish,ratified,1820OriginalGateStyleStripPreGalSetMill,1820x50 Original Gate Style With Strip Pre-Gal Each Set Galvanised,1820,Mill Finish,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Ironstone,ratified,1820OriginalGateStyleStripPreGalSetIRONSTONE,1820x50 Original Gate Style With Strip Pre-Gal Each Set IRONSTONE,1820,Ironstone,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Monument,ratified,1820OriginalGateStyleStripPreGalSetMONUMENT,1820x50 Original Gate Style With Strip Pre-Gal Each Set MONUMENT,1820,Monument,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Night Sky,ratified,1820OriginalGateStyleStripPreGalSetNIGHTSKY,1820x50 Original Gate Style With Strip Pre-Gal Each Set NIGHT SKY,1820,Night Sky,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Pale Eucalypt,ratified,1820OriginalGateStyleStripPreGalSetPALEEUCASLYPT,1820x50 Original Gate Style With Strip Pre-Gal Each Set PALE EUCALYPT,1820,Pale Eucalypt,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Paperbark,ratified,1820OriginalGateStyleStripPreGalSetPAPERBARK,1820x50 Original Gate Style With Strip Pre-Gal Each Set PAPERBARK,1820,Paperbark,1820,42.0,46.2,49
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Riversand,ratified,1820OriginalGateStyleStripPreGalSetRIVERSAND,1820x50 Original Gate Style With Strip Pre-Gal Each Set RIVERSAND,1820,Riversand,1820,42.0,46.2,49
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Shale Grey,ratified,1820OriginalGateStyleStripPreGalSetSHALEGREY,1820x50 Original Gate Style With Strip Pre-Gal Each Set SHALE GREY,1820,Shale Grey,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Surfmist,ratified,1820OriginalGateStyleStripPreGalSetSURFMIST,1820x50 Original Gate Style With Strip Pre-Gal Each Set SURFMIST,1820,Surfmist,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Wilderness,ratified,1820OriginalGateStyleStripPreGalSetWILDERNESS,1820x50 Original Gate Style With Strip Pre-Gal Each Set WILDERNESS,1820,Wilderness,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Woodland Grey,ratified,1820OriginalGateStyleStripPreGalSetWOODLANDGREY,1820x50 Original Gate Style With Strip Pre-Gal Each Set WOODLAND GREY,1820,Woodland Grey,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Deep Ocean,ratified,1820OriginalGateStyleStripPreGalSetDeepOcean,1820x50 Original Gate Style With Strip Pre-Gal Each Set DEEP OCEAN,1820,Deep Ocean,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Manor Red,ratified,1820OriginalGateStyleStripPreGalSetManorRed,1820x50 Original Gate Style With Strip Pre-Gal Each Set MANOR RED,1820,Manor Red,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Jasper,ratified,1820OriginalGateStyleStripPreGalSetJasper,1820x50 Original Gate Style With Strip Pre-Gal Each Set JASPER,1820,Jasper,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Pale Eucalypt,ratified,1220OriginalGateStyleStripPreGalSetPaleEucalypt,1220x50 Original Gate Style With Strip Pre-Gal Each Set PALE EUCALYPT,1220,Pale Eucalypt,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Monument,ratified,1220OriginalGateStyleStripPreGalSetMonument,1220x50 Original Gate Style With Strip Pre-Gal Each Set MONUMENT,1220,Monument,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Night Sky,ratified,1220OriginalGateStyleStripPreGalSetNightSky,1220x50 Original Gate Style With Strip Pre-Gal Each Set NIGHT SKY,1220,Night Sky,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Basalt,ratified,1220OriginalGateStyleStripPreGalSetBASALT,1220x50 Original Gate Style With Strip Pre-Gal Each Set BASALT,1220,Basalt,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1820 Colorbond Gate Windspray,ratified,820OriginalGateStyleStripPreGalSetWindspray,1820x50 Original Gate Style With Strip Pre-Gal Each Set WINDSPRAY,1820,Windspray,1820,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Surfmist,ratified,1220OriginalGateStyleStripPreGalSetSurfmist,1220x50 Original Gate Style With Strip Pre-Gal Each Set SURFMIST,1220,Surfmist,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Domain,ratified,1220OriginalGateStyleStripPreGalSetDomain,1220x50 Original Gate Style With Strip Pre-Gal Each Set DOMAIN,1220,Domain,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Evening Haze,ratified,1220OriginalGateStyleStripPreGalSetEveningHaze,1220x50 Original Gate Style With Strip Pre-Gal Each Set EVENING HAZE,1220,Evening Haze,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Riversand,ratified,1220OriginalGateStyleStripPreGalSetRiversand,1220x50 Original Gate Style With Strip Pre-Gal Each Set RIVERSAND,1220,Riversand,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Wilderness,ratified,1220OriginalGateStyleStripPreGalSetWilderness,1220x50 Original Gate Style With Strip Pre-Gal Each Set WILDERNESS,1220,Wilderness,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Cottage Green,ratified,1220OriginalGateStyleStripPreGalSetCottageGreen,1220x50 Original Gate Style With Strip Pre-Gal Each Set COTTAGE GREEN,1220,Cottage Green,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Shale Grey,ratified,1220OriginalGateStyleStripPreGalSetShaleGrey,1220x50 Original Gate Style With Strip Pre-Gal Each Set SHALE GREY,1220,Shale Grey,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Dune,ratified,1220OriginalGateStyleStripPreGalSetDune,1220x50 Original Gate Style With Strip Pre-Gal Each Set DUNE,1220,Dune,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Woodland Grey,ratified,1220OriginalGateStyleStripPreGalSetWoodlandGrey,1220x50 Original Gate Style With Strip Pre-Gal Each Set WOODLAND,1220,Woodland Grey,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Manor Red,ratified,1220OriginalGateStyleStripPreGalSetManorRed,1220x50 Original Gate Style With Strip Pre-Gal Each Set MANOR RED,1220,Manor Red,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Jasper,ratified,1220OriginalGateStyleStripPreGalSetJasper,1220x50 Original Gate Style With Strip Pre-Gal Each Set JASPER,1220,Jasper,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Deep Ocean,ratified,1220OriginalGateStyleStripPreGalSetDeepOcean,1220x50 Original Gate Style With Strip Pre-Gal Each Set DEEP OCEAN,1220,Deep Ocean,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Ironstone,ratified,1220OriginalGateStyleStripPreGalSetIronstone,1220x50 Original Gate Style With Strip Pre-Gal Each Set IRONSTONE,1220,Ironstone,1220,42.0,46.2,
+colorbond,Metroll,Gate,Gate Style,1220 Colorbond Gate Paperbark,ratified,1220OriginalGateStyleStripPreGalSetPaperbark,1220x50 Original Gate Style With Strip Pre-Gal Each Set PAPERBARK,1220,Paperbark,1220,42.0,46.2,

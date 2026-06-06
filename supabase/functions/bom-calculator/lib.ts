@@ -84,6 +84,7 @@ export interface EngineData {
     qty_formula: string;
     is_pack: boolean;
     priority: number;
+    is_suggestion?: boolean;
   }>;
   warnings: Array<{
     id: string;
@@ -141,7 +142,7 @@ export function matchesJSON(
         return false;
       if ("eq" in range && actual !== range.eq) return false;
       if ("neq" in range && actual === range.neq) return false;
-      if ("in" in range && !range.in.includes(actual)) return false;
+      if ("in" in range && Array.isArray(range.in) && !range.in.includes(actual)) return false;
     } else if (Array.isArray(expected)) {
       if (!expected.includes(actual)) return false;
     } else {
@@ -203,16 +204,24 @@ export function stocks(
 // Register stocks() as a math.js function so seed rules can call it.
 mathjs.import({ stocks }, { override: false });
 
+export function equalStrings(a: unknown, b: unknown): boolean {
+  return String(a) === String(b);
+}
+mathjs.import({ equalStrings }, { override: false });
+
 export function normaliseVariables(
   vars: Record<string, string | number | boolean>,
   engineData: Pick<EngineData, "variables">,
   colourCodes?: Record<string, string>,
+  includeDefaults = true,
 ): Record<string, unknown> {
   const ctx: Record<string, unknown> = {};
 
-  for (const v of engineData.variables) {
-    if (v.default_value_json !== null && v.default_value_json !== undefined) {
-      ctx[v.name] = v.default_value_json;
+  if (includeDefaults) {
+    for (const v of engineData.variables) {
+      if (v.default_value_json !== null && v.default_value_json !== undefined) {
+        ctx[v.name] = v.default_value_json;
+      }
     }
   }
 
@@ -229,4 +238,100 @@ export function normaliseVariables(
   }
 
   return ctx;
+}
+
+export function generateCanonicalCode(
+  sku: string,
+  name: string,
+  category: string,
+  metadata?: any,
+): string {
+  const compCategory = category?.toLowerCase();
+  const meta = metadata || {};
+  
+  // Try to normalize material/label:
+  let material = "Treated Pine";
+  const searchStr = `${name} ${sku}`.toLowerCase();
+  if (searchStr.includes("hardwood")) {
+    material = "Hardwood";
+  }
+
+  if (compCategory === "post") {
+    const width = meta.width_mm || meta.width || 100;
+    const depth = meta.depth_mm || meta.depth || 75;
+    // Extract length from sku or name
+    let length = meta.length_mm || meta.length || "";
+    if (!length) {
+      const match = sku.match(/\d+$/);
+      if (match) length = match[0];
+    }
+    return `${width}x${depth} ${material} Post${length ? ` ${length}mm` : ""}`;
+  }
+  
+  if (compCategory === "rail") {
+    const width = meta.width_mm || meta.width || 75;
+    const thickness = meta.thickness_mm || meta.thickness || 38;
+    const length = meta.length_mm || meta.length || 4800;
+    const isCapping = name.toLowerCase().includes("capping") || sku.toLowerCase().includes("cap");
+    if (isCapping) {
+      return `${width}x${thickness} ${material} Capping Rail ${length}mm`;
+    }
+    return `${width}x${thickness} ${material} Rail ${length}mm`;
+  }
+  
+  if (compCategory === "paling") {
+    const width = meta.width_mm || meta.width || 100;
+    const thickness = meta.thickness_mm || meta.thickness || 16;
+    let length = meta.length_mm || meta.length || "";
+    if (!length) {
+      const match = sku.match(/\d+$/);
+      if (match) length = match[0];
+    }
+    return `${width}x${thickness} Rough Sawn ${material} Paling${length ? ` ${length}mm` : ""}`;
+  }
+  
+  if (
+    ["fixing", "hardware", "accessory", "screw", "concrete", "fixing"].includes(compCategory)
+  ) {
+    // Concrete
+    if (
+      name.toLowerCase().includes("concrete") ||
+      sku.toLowerCase().includes("concrete") ||
+      compCategory === "concrete" ||
+      name.toLowerCase().includes("rapid set") ||
+      sku.toLowerCase().includes("-con-")
+    ) {
+      let weight = meta.weight_kg || meta.weight || "";
+      if (!weight) {
+        const match = sku.match(/\d+(?=kg)/i) || name.match(/\d+(?=kg)/i) || name.match(/rapid set (\d+)/i) || sku.match(/\d+$/);
+        weight = match ? match[1] || match[0] : "20";
+      }
+      return `Rapid Set Concrete ${weight}kg`;
+    }
+    // Batten screw
+    if (name.toLowerCase().includes("batten screw") || sku.toLowerCase().includes("screw") || compCategory === "screw") {
+      let len = meta.length_mm || meta.length || "";
+      if (!len) {
+        const match = sku.match(/\d+/) || name.match(/\d+/);
+        len = match ? match[0] : "100";
+      }
+      return `${len}mm Galvanised Batten Screw`;
+    }
+    // Nails
+    if (name.toLowerCase().includes("nail") || sku.toLowerCase().includes("nail")) {
+      let len = meta.length_mm || meta.length || "";
+      if (!len) {
+        const match = sku.match(/\d+/);
+        len = match ? match[0] : "57";
+      }
+      let shank = "Ring Shank";
+      if (material === "Hardwood") {
+        shank = "Smooth Shank";
+      }
+      return `${len}mm ${shank} Gal Nail`;
+    }
+  }
+
+  // Fallback to name or sku if we cannot parse
+  return name || sku;
 }

@@ -1,0 +1,1872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anyfence — Calculator entry page · v3 wireframe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-page: #FAFAF7;
+    --bg-canvas: #FFFFFF;
+    --bg-soft: #F4F2EC;
+    --ink: #0A0E14;
+    --ink-2: #2F3640;
+    --ink-3: #6B7280;
+    --ink-4: #9CA3AF;
+    --line: #E7E2D8;
+    --line-2: #D3CDC0;
+    --line-3: #B8B1A1;
+    --navy: #0F2942;
+    --navy-2: #1B3A57;
+    --navy-3: #14304B;
+    --ember: #DD6E1B;
+    --ember-d: #B85710;
+    --ember-soft: #FDF4E8;
+    --grass-1: #5E7B4A;
+    --grass-2: #4A6938;
+    --rooftop: #8A7F70;
+    --asphalt: #5A5A57;
+    --water: #6B89A8;
+    --success: #2D8F4B;
+    --warn-bg: #FFF5E5;
+    --warn-fg: #9A5800;
+    --proposed: #7C4FB8;
+    --proposed-soft: #F2EAFB;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg-page); color: var(--ink); font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  body { padding-bottom: 80px; }
+  .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-feature-settings: "tnum" 1; }
+
+  /* Page header */
+  .page-header { background: var(--bg-canvas); border-bottom: 1px solid var(--line); padding: 28px 5%; }
+  .page-header__eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ember-d); font-weight: 600; margin-bottom: 8px; }
+  .page-header__title { font-size: 32px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 10px; }
+  .page-header__sub { font-size: 16px; color: var(--ink-2); max-width: 800px; }
+  .page-header__changes { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .page-header__chip { font-size: 11.5px; padding: 4px 10px; border-radius: 999px; background: var(--bg-soft); border: 1px solid var(--line); color: var(--ink-2); font-weight: 500; }
+  .page-header__chip b { font-weight: 600; color: var(--ember-d); }
+  .page-header__chip--new b { color: var(--proposed); }
+
+  /* Stage nav */
+  .stage-nav { position: sticky; top: 0; background: rgba(250,250,247,0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); z-index: 50; padding: 14px 5%; display: flex; align-items: center; gap: 14px; overflow-x: auto; }
+  .stage-nav__label { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; flex-shrink: 0; }
+  .stage-nav__list { display: flex; gap: 4px; flex: 1; min-width: 0; }
+  .stage-nav__item { white-space: nowrap; font-size: 13px; color: var(--ink-2); text-decoration: none; padding: 6px 10px; border-radius: 6px; transition: background 0.15s; font-weight: 500; }
+  .stage-nav__item:hover { background: var(--bg-soft); }
+  .stage-nav__num { color: var(--ember-d); font-family: 'IBM Plex Mono', monospace; font-weight: 600; margin-right: 8px; }
+
+  /* Stage */
+  .stage { padding: 70px 5% 50px; border-bottom: 1px solid var(--line); }
+  .stage:nth-child(even) { background: var(--bg-page); }
+  .stage:nth-child(odd) { background: var(--bg-canvas); }
+  .stage__header { margin-bottom: 32px; max-width: 760px; }
+  .stage__eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ember-d); font-weight: 600; margin-bottom: 10px; }
+  .stage__num { font-family: 'IBM Plex Mono', monospace; background: var(--ember); color: white; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 12px; font-weight: 600; }
+  .stage__title { font-size: 28px; line-height: 1.15; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 8px; }
+  .stage__desc { font-size: 16px; color: var(--ink-2); }
+  .stage__diff { display: inline-block; margin-top: 12px; padding: 6px 12px; background: var(--ember); color: white; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; border-radius: 4px; }
+
+  .stage__grid { display: grid; grid-template-columns: 320px 1fr; gap: 36px; align-items: start; }
+  @media (max-width: 980px) { .stage__grid { grid-template-columns: 1fr; gap: 24px; } }
+
+  /* Annotations */
+  .annotations { position: sticky; top: 80px; }
+  @media (max-width: 980px) { .annotations { position: static; } }
+  .anno-block { margin-bottom: 22px; }
+  .anno-block h4 { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 8px; }
+  .anno-block h4 em { font-style: normal; color: var(--ember-d); font-weight: 700; padding-left: 4px; }
+  .anno-block h4 .new-tag { color: var(--proposed); }
+  .anno-block ul { list-style: none; padding: 0; }
+  .anno-block li { font-size: 13.5px; line-height: 1.55; color: var(--ink-2); padding: 7px 0; border-bottom: 1px dashed var(--line); }
+  .anno-block li:last-child { border-bottom: none; }
+  .anno-block li b { font-weight: 600; color: var(--ink); }
+  .anno-block li code { font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: var(--bg-soft); padding: 1px 5px; border-radius: 3px; color: var(--navy); }
+  .new-pill { background: var(--proposed-soft); color: var(--proposed); padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; margin-left: 4px; }
+
+  /* Browser frame */
+  .frame { background: white; border: 1px solid var(--line-2); border-radius: 14px; overflow: hidden; box-shadow: 0 24px 50px -20px rgba(15, 41, 66, 0.18), 0 4px 12px rgba(15, 41, 66, 0.05); }
+  .frame__chrome { background: linear-gradient(180deg, #F4F1EA 0%, #ECE7DC 100%); border-bottom: 1px solid var(--line-2); padding: 9px 14px; display: flex; align-items: center; gap: 10px; }
+  .frame__dots { display: flex; gap: 6px; }
+  .frame__dot { width: 11px; height: 11px; border-radius: 50%; }
+  .frame__dot:nth-child(1) { background: #E6716C; }
+  .frame__dot:nth-child(2) { background: #E5C45F; }
+  .frame__dot:nth-child(3) { background: #6CB36A; }
+  .frame__url { flex: 1; background: rgba(255,255,255,0.6); border: 1px solid var(--line-2); border-radius: 5px; padding: 4px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink-2); text-align: center; }
+  .frame__body { background: var(--bg-canvas); height: 780px; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* App header */
+  .af-top { border-bottom: 1px solid var(--line); background: var(--bg-canvas); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .af-brand { display: flex; align-items: center; gap: 14px; }
+  .af-logo { display: flex; align-items: center; gap: 9px; }
+  .af-logo__mark { width: 30px; height: 30px; background: var(--ember); color: white; display: flex; align-items: center; justify-content: center; border-radius: 5px; font-weight: 700; font-size: 14px; letter-spacing: -0.02em; }
+  .af-logo__word { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+  .af-platform-strip { font-size: 10px; color: var(--ink-3); padding-left: 12px; border-left: 1px solid var(--line); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+  .af-platform-strip b { color: var(--ink-2); font-weight: 700; letter-spacing: -0.01em; text-transform: none; font-size: 11px; }
+  .af-nav { display: flex; align-items: center; gap: 6px; }
+  .af-nav__item { font-size: 13px; color: var(--ink-2); padding: 6px 10px; border-radius: 5px; font-weight: 500; cursor: default; }
+  .af-nav__item--active { color: var(--ink); background: var(--bg-soft); }
+  .af-nav__btn { font-size: 12.5px; padding: 6px 12px; border: 1px solid var(--line-2); border-radius: 5px; background: white; color: var(--ink-2); font-weight: 500; }
+  .af-nav__btn--primary { background: var(--ember); color: white; border-color: var(--ember-d); }
+
+  /* App body */
+  .af-body { flex: 1; display: grid; min-height: 0; }
+  .af-body--full { grid-template-columns: 1fr; }
+  .af-body--sidebar { grid-template-columns: 300px 1fr; }
+  .af-sidebar { background: var(--bg-soft); border-right: 1px solid var(--line); display: flex; flex-direction: column; overflow: hidden; }
+  .af-canvas { background: var(--bg-canvas); position: relative; overflow: hidden; }
+
+  /* Map */
+  .map { position: absolute; inset: 0; background: linear-gradient(135deg, #2D4830 0%, #3F5C3C 25%, #5A7050 60%, #8A8266 100%); overflow: hidden; }
+  .map--continent { background: radial-gradient(ellipse at center, #C9A876 0%, #B89A6A 30%, #8B7758 55%, #4A5F4A 78%, #2D3F2F 100%); }
+  .map--live { background: linear-gradient(135deg, #3D5F38 0%, #557249 30%, #7A8B66 60%, #B5B084 100%); }
+  .map__grain { position: absolute; inset: 0; background-image: radial-gradient(circle at 17% 23%, rgba(0,0,0,0.15) 0%, transparent 9%), radial-gradient(circle at 73% 41%, rgba(0,0,0,0.18) 0%, transparent 12%), radial-gradient(circle at 38% 67%, rgba(255,255,255,0.06) 0%, transparent 14%), radial-gradient(circle at 84% 78%, rgba(0,0,0,0.12) 0%, transparent 10%); mix-blend-mode: multiply; }
+
+  /* Live-map watermark — to show this is "interactive Google" not "captured static" */
+  .map__live-tag {
+    position: absolute; top: 14px; right: 14px;
+    background: rgba(255,255,255,0.94);
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 600; color: var(--success);
+    display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    z-index: 6;
+  }
+  .map__live-tag::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 0.4; } 50% { opacity: 1; } }
+  .map__captured-tag {
+    position: absolute; top: 14px; right: 14px;
+    background: rgba(15,41,66,0.92); color: white;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    z-index: 6;
+    backdrop-filter: blur(6px);
+  }
+  .map__captured-tag::before { content: "🔒"; font-size: 10px; }
+
+  /* Google map attribution — for realism */
+  .map__attribution { position: absolute; bottom: 6px; left: 8px; font-size: 9px; color: rgba(0,0,0,0.5); background: rgba(255,255,255,0.7); padding: 1px 6px; border-radius: 2px; z-index: 4; font-family: Arial; }
+  .map__attribution--white { color: rgba(255,255,255,0.7); background: rgba(0,0,0,0.5); }
+
+  /* Google-style native map controls (zoom + map type) */
+  .gmap-controls { position: absolute; right: 14px; bottom: 30px; z-index: 6; display: flex; flex-direction: column; gap: 8px; }
+  .gmap-zoom { display: flex; flex-direction: column; background: white; border-radius: 3px; box-shadow: 0 1px 4px rgba(0,0,0,0.3); overflow: hidden; }
+  .gmap-zoom__btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--ink-2); cursor: default; border: none; background: transparent; }
+  .gmap-zoom__btn + .gmap-zoom__btn { border-top: 1px solid var(--line); }
+  .gmap-pan-tilt { display: flex; gap: 4px; }
+  .gmap-tile-toggle { position: absolute; top: 14px; left: 14px; background: white; border-radius: 3px; box-shadow: 0 1px 4px rgba(0,0,0,0.3); overflow: hidden; display: flex; font-size: 11.5px; font-weight: 500; z-index: 6; }
+  .gmap-tile-toggle__btn { padding: 8px 14px; cursor: default; color: var(--ink-2); }
+  .gmap-tile-toggle__btn--active { background: var(--bg-soft); color: var(--ink); font-weight: 600; }
+
+  /* "Use this view" big CTA */
+  .use-view-cta {
+    position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+    background: var(--ember); color: white;
+    padding: 14px 26px; border-radius: 10px;
+    font-size: 14px; font-weight: 600;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.4);
+    z-index: 7;
+    cursor: default;
+  }
+  .use-view-cta__icon { font-family: 'IBM Plex Mono', monospace; font-size: 16px; }
+  .use-view-cta__sub { font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 500; margin-left: 6px; padding-left: 10px; border-left: 1px solid rgba(255,255,255,0.3); }
+
+  /* Landing prompt */
+  .map-overlay-prompt { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; z-index: 4; }
+  .map-overlay-prompt__logo { background: var(--ember); color: white; padding: 18px 28px; border-radius: 14px; font-weight: 700; font-size: 28px; letter-spacing: -0.03em; box-shadow: 0 24px 50px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 12px; }
+  .map-overlay-prompt__logo small { font-size: 11px; font-weight: 500; opacity: 0.85; letter-spacing: 0.06em; text-transform: uppercase; padding-left: 14px; border-left: 1px solid rgba(255,255,255,0.3); margin-left: 4px; }
+  .map-overlay-prompt__text { background: rgba(15, 41, 66, 0.92); color: white; padding: 11px 22px; border-radius: 8px; font-size: 14px; font-weight: 500; backdrop-filter: blur(8px); }
+  .map-overlay-prompt__input { width: 80%; max-width: 460px; background: white; border-radius: 12px; padding: 6px 6px 6px 18px; display: flex; align-items: center; gap: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.25); }
+  .map-overlay-prompt__input input { flex: 1; border: 0; outline: 0; font-size: 14px; padding: 10px 0; font-family: inherit; color: var(--ink); background: transparent; }
+  .map-overlay-prompt__input button { background: var(--ember); color: white; border: 0; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 600; font-family: inherit; }
+  .map-overlay-prompt__skip { font-size: 12.5px; color: rgba(255,255,255,0.9); text-decoration: none; margin-top: 4px; background: rgba(15,41,66,0.6); padding: 7px 14px; border-radius: 6px; backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.15); font-weight: 500; cursor: default; display: inline-flex; align-items: center; gap: 6px; }
+  .map-overlay-prompt__skip-arrow { color: rgba(255,255,255,0.5); font-family: 'IBM Plex Mono', monospace; }
+
+  /* Address bar on captured map */
+  .map-address-bar { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); background: rgba(15, 41, 66, 0.96); color: white; padding: 8px 16px; border-radius: 8px; font-size: 12.5px; font-weight: 500; display: flex; align-items: center; gap: 10px; backdrop-filter: blur(8px); z-index: 6; box-shadow: 0 4px 14px rgba(0,0,0,0.2); }
+  .map-address-bar__check { color: #6CD295; }
+  .map-address-bar__edit { color: rgba(255,255,255,0.55); font-size: 11px; }
+
+  /* ───────── DRAWING TOOLBAR (captured-view mode) ───────── */
+  .draw-toolbar {
+    position: absolute; top: 56px; left: 14px; right: 14px;
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start;
+    z-index: 6;
+    pointer-events: none;
+  }
+  .draw-toolbar__group {
+    background: rgba(255,255,255,0.96);
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    padding: 6px;
+    display: flex; align-items: center; gap: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    pointer-events: auto;
+    backdrop-filter: blur(8px);
+  }
+  .draw-toolbar__group--proposed { border: 1.5px dashed var(--proposed); background: rgba(255,255,255,0.94); }
+  .draw-toolbar__label {
+    font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 700; padding: 0 6px;
+    align-self: center;
+  }
+  .draw-toolbar__label--proposed { color: var(--proposed); }
+  .tool-btn {
+    background: transparent; border: 0; padding: 6px 10px;
+    font-size: 11.5px; font-weight: 500; color: var(--ink-2);
+    border-radius: 6px; cursor: default; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .tool-btn__icon { font-size: 14px; line-height: 1; }
+  .tool-btn:hover { background: var(--bg-soft); }
+  .tool-btn--active { background: var(--ember); color: white; }
+  .tool-btn--proposed { color: var(--proposed); }
+  .tool-btn__key { font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 1px 4px; border: 1px solid currentColor; border-radius: 2px; opacity: 0.6; margin-left: 2px; }
+  .tool-btn--active .tool-btn__key { border-color: rgba(255,255,255,0.5); }
+
+  /* View options row (right side, vertical) */
+  .view-options {
+    position: absolute; top: 14px; right: 14px;
+    background: rgba(255,255,255,0.96);
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex; flex-direction: column; gap: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    z-index: 6;
+    backdrop-filter: blur(8px);
+    min-width: 180px;
+  }
+  .view-options__head { font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); font-weight: 700; margin-bottom: 2px; }
+  .view-options__row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--ink-2); }
+  .view-options__row label { display: flex; align-items: center; gap: 6px; cursor: default; flex: 1; }
+  .view-options__check { width: 11px; height: 11px; border: 1px solid var(--line-3); border-radius: 2px; background: white; }
+  .view-options__check--on { background: var(--ember); border-color: var(--ember-d); position: relative; }
+  .view-options__check--on::after { content: "✓"; position: absolute; top: -2px; left: 1px; font-size: 9px; color: white; font-weight: 700; }
+  .view-options__slider { display: flex; align-items: center; gap: 6px; font-size: 10.5px; color: var(--ink-3); }
+  .view-options__bar { flex: 1; height: 4px; background: var(--line); border-radius: 2px; position: relative; }
+  .view-options__bar-fill { position: absolute; top: 0; left: 0; bottom: 0; background: var(--ember); border-radius: 2px; }
+  .view-options__pct { font-family: 'IBM Plex Mono', monospace; font-size: 10px; min-width: 24px; text-align: right; }
+
+  /* Actions buttons floating — moved to top-right (vacated by view-options panel) */
+  .map-actions {
+    position: absolute; top: 14px; right: 14px;
+    display: flex; flex-direction: column; gap: 4px;
+    z-index: 6;
+    background: rgba(255,255,255,0.96);
+    border: 1px solid var(--line-2);
+    border-radius: 10px;
+    padding: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    backdrop-filter: blur(8px);
+  }
+  .map-action-btn {
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--ink-2);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: default;
+    font-family: inherit;
+    text-align: left;
+    min-width: 158px;
+  }
+  .map-action-btn:hover { background: var(--bg-soft); }
+  .map-action-btn__icon { font-size: 14px; width: 16px; text-align: center; }
+  .map-action-btn__key { font-family: 'IBM Plex Mono', monospace; font-size: 9px; padding: 1px 4px; border: 1px solid var(--line-2); border-radius: 2px; color: var(--ink-3); margin-left: auto; }
+
+  /* ANYFENCE platform branding on canvas */
+  .anyfence-watermark {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+  }
+  .anyfence-watermark__text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 132px;
+    letter-spacing: -0.04em;
+    color: white;
+    opacity: 0.07;
+    text-transform: lowercase;
+    transform: rotate(-6deg);
+    line-height: 1;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .anyfence-corner {
+    position: absolute; bottom: 14px; right: 14px;
+    z-index: 5;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid var(--line-2);
+    padding: 6px 10px 6px 7px;
+    border-radius: 7px;
+    display: inline-flex; align-items: center; gap: 7px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    backdrop-filter: blur(6px);
+  }
+  .anyfence-corner__mark {
+    width: 18px; height: 18px;
+    background: var(--ember);
+    color: white;
+    border-radius: 4px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 11px;
+    letter-spacing: -0.04em;
+  }
+  .anyfence-corner__word {
+    font-size: 11.5px; font-weight: 700; color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .anyfence-corner__tag {
+    font-size: 9px;
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding-left: 7px;
+    border-left: 1px solid var(--line);
+    margin-left: 1px;
+  }
+
+  /* ───────── SIDEBAR — fence list, run summary, variation form ───────── */
+  .sb-head { padding: 16px 18px 12px; border-bottom: 1px solid var(--line); }
+  .sb-head__eyebrow { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 2px; }
+  .sb-head__title { font-size: 15px; font-weight: 600; color: var(--ink); }
+
+  .sb-list { padding: 8px 10px; flex: 1; overflow-y: auto; }
+  .sb-item { display: flex; align-items: center; gap: 12px; padding: 10px 10px; border-radius: 8px; cursor: default; margin-bottom: 2px; }
+  .sb-item:hover { background: rgba(15,41,66,0.04); }
+  .sb-item--active { background: var(--navy) !important; color: white; }
+  .sb-item--active .sb-item__sub { color: rgba(255,255,255,0.7); }
+  .sb-item--disabled { opacity: 0.45; cursor: not-allowed; }
+  .sb-item__thumb { width: 38px; height: 38px; border-radius: 6px; background: var(--bg-canvas); border: 1px solid var(--line); flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .sb-item--active .sb-item__thumb { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.1); }
+  .sb-item__thumb svg { width: 100%; height: 100%; }
+  .sb-item__text { flex: 1; min-width: 0; }
+  .sb-item__title { font-size: 13.5px; font-weight: 600; line-height: 1.2; }
+  .sb-item__sub { font-size: 11px; color: var(--ink-3); margin-top: 2px; }
+  .sb-item__badge { font-size: 10px; padding: 2px 6px; border-radius: 3px; font-weight: 600; letter-spacing: 0.04em; }
+  .sb-item__badge--soon { background: var(--bg-canvas); color: var(--ink-3); border: 1px solid var(--line-2); }
+
+  /* Run recap card — copied from QuickScreen pattern */
+  .run-recap {
+    margin: 12px 14px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .run-recap__head {
+    padding: 12px 14px 10px;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 8px;
+  }
+  .run-recap__title {
+    font-size: 14px; font-weight: 600; color: var(--ink); display: flex; align-items: baseline; gap: 6px;
+  }
+  .run-recap__len { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ember-d); font-weight: 500; }
+  .run-recap__type { font-size: 11.5px; color: var(--ink-3); display: block; margin-top: 2px; }
+  .run-recap__open-btn {
+    background: var(--bg-soft); border: 1px solid var(--line); color: var(--ink-2);
+    border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 500; cursor: default;
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: inherit;
+    flex-shrink: 0;
+  }
+  .run-recap__specs {
+    padding: 8px 14px 10px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 4px 12px;
+    border-top: 1px solid var(--line);
+    background: var(--bg-soft);
+  }
+  .run-recap__spec { font-size: 11px; color: var(--ink-3); display: flex; gap: 4px; align-items: baseline; }
+  .run-recap__spec b { color: var(--ink); font-weight: 600; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; }
+  .run-recap__btns {
+    padding: 8px 14px 10px;
+    display: flex; gap: 4px;
+    border-top: 1px solid var(--line);
+  }
+  .run-recap__btn {
+    flex: 1;
+    background: white; border: 1px solid var(--line);
+    color: var(--ink-2);
+    font-size: 11px; font-weight: 500; padding: 6px;
+    border-radius: 5px; cursor: default; font-family: inherit;
+    display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  }
+  .run-recap__btn--danger { color: var(--ember-d); }
+  .run-recap__btn--add { background: var(--bg-soft); }
+
+  /* Inline-disclosure variation groups (copied from QuickScreen Open run settings pattern) */
+  .var-disclosure {
+    background: var(--navy);
+    color: white;
+    border-radius: 10px;
+    margin: 0 14px 14px;
+    overflow: hidden;
+  }
+  .var-disclosure__header {
+    padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12.5px; font-weight: 600;
+    cursor: default;
+  }
+  .var-disclosure__body { padding: 12px 16px 16px; }
+  .var-disc-section {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding: 12px 16px;
+  }
+  .var-disc-section:first-child { border-top: none; }
+  .var-disc-section__head {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(255,255,255,0.65); font-weight: 600;
+    margin-bottom: 8px;
+    cursor: default;
+  }
+  .var-disc-section__head .chevron { font-size: 12px; }
+  .var-disc-section__head--collapsed { color: rgba(255,255,255,0.55); margin-bottom: 0; }
+  .var-disc-section__body { padding-top: 0; }
+  .var-field { margin-bottom: 12px; }
+  .var-field:last-child { margin-bottom: 0; }
+  .var-field__label { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.85); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+  .var-field__hint { font-size: 10.5px; color: rgba(255,255,255,0.5); font-weight: 400; }
+
+  .pill-row { display: flex; gap: 4px; flex-wrap: wrap; }
+  .pill { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.85); border: 1px solid rgba(255,255,255,0.12); font-size: 12px; padding: 6px 10px; border-radius: 6px; font-weight: 500; cursor: default; font-family: inherit; }
+  .pill--active { background: var(--ember); color: white; border-color: var(--ember-d); }
+  .pill--mono { font-family: 'IBM Plex Mono', monospace; }
+  .var-select { width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); color: white; border-radius: 6px; padding: 8px 10px; font-size: 12.5px; font-family: inherit; display: flex; align-items: center; justify-content: space-between; }
+  .var-toggle { display: flex; align-items: center; gap: 10px; font-size: 12.5px; color: rgba(255,255,255,0.85); }
+  .toggle-switch { width: 32px; height: 18px; background: rgba(255,255,255,0.18); border-radius: 9px; position: relative; flex-shrink: 0; }
+  .toggle-switch::after { content: ""; position: absolute; width: 14px; height: 14px; background: white; border-radius: 50%; top: 2px; left: 2px; transition: left 0.15s; }
+  .toggle-switch--on { background: var(--ember); }
+  .toggle-switch--on::after { left: 16px; }
+
+  /* Colour swatches inside variation form */
+  .swatches { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+  .swatch { width: 26px; height: 26px; border-radius: 5px; cursor: default; border: 2px solid transparent; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2); }
+  .swatch--active { border-color: white; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2), 0 0 0 1px var(--ember); }
+
+  /* ───────── FLOATING PRICE BUBBLE ───────── */
+  .price-bubble {
+    position: absolute; top: 80px; right: 14px;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 18px 40px -10px rgba(15, 41, 66, 0.32), 0 4px 12px rgba(15, 41, 66, 0.12);
+    border: 1px solid rgba(15, 41, 66, 0.08);
+    z-index: 7;
+    overflow: hidden;
+    transition: all 0.25s ease;
+  }
+  .price-bubble--collapsed { width: 260px; }
+  .price-bubble--expanded { width: 460px; max-height: calc(100% - 100px); display: flex; flex-direction: column; }
+  .price-bubble__head { padding: 12px 14px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); background: white; }
+  .price-bubble__logo { width: 36px; height: 36px; border-radius: 8px; background: var(--ember); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; letter-spacing: -0.02em; flex-shrink: 0; }
+  .price-bubble__brand { flex: 1; min-width: 0; }
+  .price-bubble__name { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.1; }
+  .price-bubble__tag { font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.04em; margin-top: 1px; }
+  .price-bubble__total { text-align: right; flex-shrink: 0; }
+  .price-bubble__total-amount { font-family: 'IBM Plex Mono', monospace; font-size: 17px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); line-height: 1; }
+  .price-bubble__total-meta { font-size: 10px; color: var(--ink-3); font-family: 'IBM Plex Mono', monospace; margin-top: 2px; }
+  .price-bubble__chevron { flex-shrink: 0; font-size: 14px; color: var(--ink-3); padding: 4px 6px; }
+  .price-bubble__close { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(15,41,66,0.06); border-radius: 50%; cursor: default; color: var(--ink-2); font-size: 14px; border: 0; flex-shrink: 0; }
+
+  .pb-mode { padding: 12px 14px; background: var(--bg-soft); border-bottom: 1px solid var(--line); }
+  .pb-mode__label { font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 6px; }
+  .pb-mode__opts { display: flex; gap: 2px; background: white; padding: 3px; border-radius: 7px; border: 1px solid var(--line); }
+  .pb-mode__opt { flex: 1; text-align: center; padding: 7px 8px; font-size: 11.5px; font-weight: 600; color: var(--ink-3); border-radius: 4px; cursor: default; }
+  .pb-mode__opt--active { background: var(--navy); color: white; }
+
+  .pb-body { flex: 1; overflow-y: auto; min-height: 0; }
+  .pb-section { padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .pb-section__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .pb-section__title { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+  .pb-section__meta { font-size: 10.5px; color: var(--ink-3); font-family: 'IBM Plex Mono', monospace; }
+
+  .pb-run-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 8px 0; border-bottom: 1px dashed var(--line); align-items: center; }
+  .pb-run-row:last-child { border-bottom: none; }
+  .pb-run-row__label { font-size: 12.5px; color: var(--ink); }
+  .pb-run-row__label b { font-weight: 600; }
+  .pb-run-row__sub { font-size: 10.5px; color: var(--ink-3); margin-top: 1px; font-family: 'IBM Plex Mono', monospace; }
+  .pb-run-row__price { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600; color: var(--ink); text-align: right; }
+  .pb-run-row__price small { display: block; font-size: 10px; color: var(--ink-3); font-weight: 500; margin-top: 1px; }
+  .pb-icon-run, .pb-icon-gate { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; margin-right: 6px; flex-shrink: 0; }
+  .pb-icon-run { background: rgba(15,41,66,0.08); color: var(--navy); }
+  .pb-icon-gate { background: rgba(221,110,27,0.12); color: var(--ember-d); }
+
+  .pb-bom { font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
+  .pb-bom__cat { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ember-d); font-weight: 600; padding: 8px 0 4px; }
+  .pb-bom__row { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 5px 0; border-bottom: 1px dashed var(--line); }
+  .pb-bom__row:last-child { border-bottom: none; }
+  .pb-bom__canonical { font-size: 11px; color: var(--ink); font-weight: 500; }
+  .pb-bom__supplier { font-size: 10px; color: var(--ink-3); margin-top: 1px; }
+  .pb-bom__qty { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+  .pb-bom__price { text-align: right; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  .pb-total { padding: 14px 16px; background: var(--navy); color: white; flex-shrink: 0; }
+  .pb-total__label { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.65); font-weight: 600; margin-bottom: 3px; }
+  .pb-total__amount { font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.05; }
+  .pb-total__sub { font-size: 10.5px; color: rgba(255,255,255,0.7); margin-top: 4px; font-family: 'IBM Plex Mono', monospace; }
+  .pb-cta { padding: 12px 16px; background: var(--navy-2); flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; }
+  .pb-cta__btn { width: 100%; background: var(--ember); color: white; border: 0; border-radius: 8px; padding: 12px 16px; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; cursor: default; }
+  .pb-cta__btn--secondary { background: rgba(255,255,255,0.1); color: white; font-weight: 500; font-size: 12px; padding: 9px 16px; }
+
+  /* Helper map nudge */
+  .map-nudge { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--navy); color: white; padding: 11px 18px; border-radius: 8px; font-size: 12.5px; backdrop-filter: blur(8px); z-index: 6; display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+  .map-nudge b { font-weight: 600; }
+  .map-nudge__check { color: #6CD295; }
+
+  /* Dim labels */
+  .dim-label { position: absolute; background: var(--ink); color: white; padding: 2px 6px; border-radius: 4px; font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; font-weight: 500; z-index: 4; transform: translate(-50%, -50%); }
+  .dim-label--white { background: white; color: var(--ink); border: 1px solid var(--line); }
+
+  /* Tool reference table — for the new tool inventory */
+  .tool-table {
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 24px;
+    box-shadow: 0 8px 22px -8px rgba(15,41,66,0.15);
+  }
+  .tool-table__head {
+    padding: 16px 20px;
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--line);
+  }
+  .tool-table__head h3 { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+  .tool-table__head p { font-size: 13px; color: var(--ink-3); }
+  .tool-table__grid {
+    padding: 12px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  @media (max-width: 700px) { .tool-table__grid { grid-template-columns: 1fr; } }
+  .tool-table__row {
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    display: grid; grid-template-columns: 32px 1fr;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .tool-table__row--existing { background: white; }
+  .tool-table__row--proposed { background: var(--proposed-soft); border-color: var(--proposed); }
+  .tool-table__icon {
+    width: 32px; height: 32px; border-radius: 6px;
+    background: var(--bg-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .tool-table__row--proposed .tool-table__icon { background: white; }
+  .tool-table__body { min-width: 0; }
+  .tool-table__name { font-size: 13px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+  .tool-table__name code { font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 1px 4px; background: var(--bg-soft); color: var(--ink-3); border-radius: 3px; font-weight: 500; }
+  .tool-table__row--proposed .tool-table__name code { background: white; color: var(--proposed); }
+  .tool-table__hint { font-size: 11.5px; color: var(--ink-3); margin-top: 3px; line-height: 1.45; }
+  .tool-table__tag { font-size: 9.5px; font-weight: 700; padding: 1px 6px; border-radius: 2px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .tool-table__tag--ship { background: rgba(45,143,75,0.15); color: var(--success); }
+  .tool-table__tag--new { background: white; color: var(--proposed); border: 1px solid var(--proposed); }
+
+  /* Footer */
+  .page-footer { background: var(--navy); color: rgba(255,255,255,0.85); padding: 50px 5%; }
+  .page-footer__title { font-size: 22px; font-weight: 700; letter-spacing: -0.015em; color: white; margin-bottom: 14px; }
+  .page-footer__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 30px; }
+  @media (max-width: 780px) { .page-footer__cols { grid-template-columns: 1fr; } }
+  .page-footer__col h5 { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ember); font-weight: 600; margin-bottom: 10px; }
+  .page-footer__col p { font-size: 13px; line-height: 1.55; color: rgba(255,255,255,0.72); }
+  .page-footer__col code { background: rgba(255,255,255,0.08); padding: 1px 5px; border-radius: 3px; font-size: 11.5px; }
+
+  @media (max-width: 980px) {
+    .frame__body { height: 660px; }
+    .af-body--sidebar { grid-template-columns: 240px 1fr; }
+    .price-bubble--collapsed { width: 230px; }
+    .price-bubble--expanded { width: 360px; }
+  }
+  @media (max-width: 780px) {
+    .page-header { padding: 24px 5%; }
+    .page-header__title { font-size: 24px; }
+    .stage { padding: 50px 5% 36px; }
+    .stage__title { font-size: 22px; }
+    .frame__body { height: 580px; }
+    .af-body--sidebar { grid-template-columns: 200px 1fr; font-size: 12px; }
+    .af-platform-strip { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="page-header__eyebrow">v3 wireframe (updated) · 2026-06-04 · live map · approved toolset · Anyfence brand on canvas</div>
+  <h1 class="page-header__title">Anyfence calculator — entry page · v3</h1>
+  <p class="page-header__sub">Live Google Maps takes over the main canvas before drawing starts. Customer pans / zooms / toggles satellite to find the right view, hits <b>"Use this view"</b> — the snapshot becomes the static canvas the calculator draws on. The drawing toolbar then lights up: DRAW + SITE (with three approved new tools — Photo pin, Tree, North arrow). View settings stripped down to a small actions menu (Centre, Print Map, Reset View, Drawing to screen). Run-recap card and inline-disclosure variation pattern lifted from the live QuickScreen UX. Amazing Fencing primary brand on top, Anyfence platform watermark + corner logo subtly on the canvas.</p>
+  <div class="page-header__changes">
+    <div class="page-header__chip"><b>NEW</b> live Google Maps → "Use this view" snapshot</div>
+    <div class="page-header__chip page-header__chip--new"><b>+3</b> approved tools: Photo pin · Tree · North arrow</div>
+    <div class="page-header__chip"><b>NEW</b> compact actions menu (4 buttons)</div>
+    <div class="page-header__chip"><b>NEW</b> Anyfence canvas watermark + corner logo</div>
+    <div class="page-header__chip"><b>NEW</b> run-recap card pattern</div>
+    <div class="page-header__chip"><b>NEW</b> inline-disclosure variation form</div>
+    <div class="page-header__chip">v2 carried: skip-link, price bubble, posts rendered, brand swap</div>
+  </div>
+</header>
+
+<nav class="stage-nav">
+  <span class="stage-nav__label">Jump to stage</span>
+  <div class="stage-nav__list">
+    <a class="stage-nav__item" href="#stage-1"><span class="stage-nav__num">01</span>Landing</a>
+    <a class="stage-nav__item" href="#stage-2"><span class="stage-nav__num">02</span>Live Google Maps</a>
+    <a class="stage-nav__item" href="#stage-3"><span class="stage-nav__num">03</span>View captured · full toolbar</a>
+    <a class="stage-nav__item" href="#stage-4"><span class="stage-nav__num">04</span>Fence picked · recap + form</a>
+    <a class="stage-nav__item" href="#stage-5"><span class="stage-nav__num">05</span>Bubble · Supply only</a>
+    <a class="stage-nav__item" href="#stage-6"><span class="stage-nav__num">06</span>Bubble · Supply + Install</a>
+    <a class="stage-nav__item" href="#tools"><span class="stage-nav__num">📋</span>Tool inventory</a>
+  </div>
+</nav>
+
+<!-- ─────────────────────────────────────────────────────────
+     STAGE 1 — LANDING (unchanged from v2)
+     ───────────────────────────────────────────────────────── -->
+<section class="stage" id="stage-1">
+  <div class="stage__header">
+    <div class="stage__eyebrow"><span class="stage__num">1</span> Landing</div>
+    <h2 class="stage__title">Amazing Fencing brand front-and-centre. Address prompt. Quiet skip-link.</h2>
+    <p class="stage__desc">Same as v2 — Amazing Fencing's "AF" mark is the hero, Anyfence is the small "Powered by" platform strip. One primary CTA, one secondary "Skip the map" link for users who'd rather just draw on a blank canvas.</p>
+    <div class="stage__diff">UNCHANGED from v2</div>
+  </div>
+
+  <div class="stage__grid">
+    <aside class="annotations">
+      <div class="anno-block">
+        <h4>Branding hierarchy</h4>
+        <ul>
+          <li>Amazing Fencing's mark is the hero (visible logo, big wordmark)</li>
+          <li>Anyfence appears in 10px caps as <code>Powered by Anyfence</code></li>
+          <li>Header nav reads as Amazing Fencing's nav (Quote a fence · How it works · Contact)</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Skip link</h4>
+        <ul>
+          <li>"Skip the map · draw on a blank canvas instead"</li>
+          <li>Drops user into a non-satellite drawing canvas (Stage 3 layout without the satellite layer)</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="frame">
+      <div class="frame__chrome">
+        <div class="frame__dots"><span class="frame__dot"></span><span class="frame__dot"></span><span class="frame__dot"></span></div>
+        <div class="frame__url">amazingfencing.com.au/quote</div>
+      </div>
+      <div class="frame__body">
+        <div class="af-top">
+          <div class="af-brand">
+            <div class="af-logo"><div class="af-logo__mark">AF</div><div class="af-logo__word">Amazing Fencing</div></div>
+            <div class="af-platform-strip">Powered by <b>Anyfence</b></div>
+          </div>
+          <div class="af-nav">
+            <span class="af-nav__item">Quote a fence</span>
+            <span class="af-nav__item">How it works</span>
+            <span class="af-nav__item">Contact</span>
+            <button class="af-nav__btn af-nav__btn--primary">Get a quote →</button>
+          </div>
+        </div>
+        <div class="af-body af-body--full">
+          <div class="af-canvas">
+            <div class="map map--continent">
+              <div class="map__grain"></div>
+              <svg width="100%" height="100%" viewBox="0 0 800 540" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;opacity:0.45;">
+                <path d="M 180 180 Q 140 200 130 250 Q 120 290 140 340 Q 170 380 220 400 Q 280 415 350 420 Q 430 430 500 425 Q 570 420 620 400 Q 660 380 680 340 Q 690 290 680 240 Q 660 200 620 185 Q 580 175 540 175 Q 480 175 420 175 Q 340 170 270 175 Q 220 175 180 180 Z" fill="#7A6E5C" opacity="0.85" stroke="#3D3225" stroke-width="2"/>
+                <ellipse cx="400" cy="290" rx="180" ry="80" fill="#8E7559" opacity="0.5"/>
+              </svg>
+              <div class="map-overlay-prompt">
+                <div class="map-overlay-prompt__logo">AF<small>AMAZING FENCING</small></div>
+                <div class="map-overlay-prompt__text">Get an accurate fence quote in under 2 minutes.</div>
+                <div class="map-overlay-prompt__input">
+                  <span style="color: var(--ink-3); font-size: 13px;">📍</span>
+                  <input type="text" placeholder="Start with an Australian street address…" />
+                  <button>Find my property</button>
+                </div>
+                <div class="map-overlay-prompt__skip">
+                  <span class="map-overlay-prompt__skip-arrow">→</span>
+                  Skip the map · draw on a blank canvas instead
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     STAGE 2 — NEW: LIVE GOOGLE MAPS with "Use this view"
+     ───────────────────────────────────────────────────────── -->
+<section class="stage" id="stage-2">
+  <div class="stage__header">
+    <div class="stage__eyebrow"><span class="stage__num">2</span> Live Google Maps · "Use this view" <span class="new-pill">NEW</span></div>
+    <h2 class="stage__title">Map takes over. Native Google pan / zoom / satellite. No drawing yet.</h2>
+    <p class="stage__desc">Address geocoded → the customer drops into a fully interactive Google Maps view. Pan and zoom freely with the native Google controls. Toggle between satellite and roadmap. Tilt and rotate if useful. Find the angle that shows the fence line clearly — straight-on, slight tilt, full satellite, mix of satellite+roadmap. When the view's right, click <b>"Use this view"</b>. That snapshot becomes the static canvas the calculator draws on.</p>
+    <div class="stage__diff">NEW · live map first · capture-then-draw flow</div>
+  </div>
+
+  <div class="stage__grid">
+    <aside class="annotations">
+      <div class="anno-block">
+        <h4>Why live-first<em>v3</em></h4>
+        <ul>
+          <li>The current QuickScreen app already does this — the map IS Google Maps; user clicks "Use this view" to lock it</li>
+          <li>This is the only way to give a customer accurate roof/path/tree context — letting them choose the exact zoom + angle</li>
+          <li>Once captured, the snapshot is static (fast, no Google quota burn while drawing)</li>
+          <li>"Change view" link in the bar at top lets them go back and re-capture</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Native Google controls visible</h4>
+        <ul>
+          <li>Bottom-right: native Google zoom (+/−)</li>
+          <li>Top-left: Satellite / Map type toggle (same style as Google Maps)</li>
+          <li>The "Live" pulse-dot pill top-right reminds the user this is interactive</li>
+          <li>No Anyfence drawing toolbar appears yet — clean Google interaction</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>"Use this view" CTA</h4>
+        <ul>
+          <li>Bottom-centre, ember orange — primary call to action</li>
+          <li>Sub-label: "Locks this view into your canvas"</li>
+          <li>Click → screenshot taken via Google's snapshot API → loaded into canvas as static layer → drawing tools appear in Stage 3</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="frame">
+      <div class="frame__chrome">
+        <div class="frame__dots"><span class="frame__dot"></span><span class="frame__dot"></span><span class="frame__dot"></span></div>
+        <div class="frame__url">amazingfencing.com.au/quote</div>
+      </div>
+      <div class="frame__body">
+        <div class="af-top">
+          <div class="af-brand">
+            <div class="af-logo"><div class="af-logo__mark">AF</div><div class="af-logo__word">Amazing Fencing</div></div>
+            <div class="af-platform-strip">Powered by <b>Anyfence</b></div>
+          </div>
+          <div class="af-nav">
+            <span class="af-nav__item af-nav__item--active">Quote a fence</span>
+            <button class="af-nav__btn">Save</button>
+          </div>
+        </div>
+        <div class="af-body af-body--full">
+          <div class="af-canvas">
+            <div class="map map--live">
+              <div class="map__grain"></div>
+              <svg width="100%" height="100%" viewBox="0 0 700 540" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;">
+                <rect width="700" height="540" fill="#5E7B4A"/>
+                <circle cx="60" cy="80" r="18" fill="#3F5C36"/>
+                <circle cx="640" cy="120" r="22" fill="#3F5C36"/>
+                <circle cx="80" cy="430" r="15" fill="#3F5C36"/>
+                <circle cx="620" cy="450" r="20" fill="#3F5C36"/>
+                <rect x="0" y="60" width="700" height="22" fill="#5A5A57"/>
+                <rect x="0" y="460" width="700" height="22" fill="#5A5A57"/>
+                <line x1="0" y1="71" x2="700" y2="71" stroke="white" stroke-width="0.5" stroke-dasharray="8,8"/>
+                <line x1="0" y1="471" x2="700" y2="471" stroke="white" stroke-width="0.5" stroke-dasharray="8,8"/>
+                <rect x="120" y="100" width="170" height="160" fill="#7B8868" opacity="0.6"/>
+                <rect x="160" y="135" width="90" height="80" fill="#8A7F70"/>
+                <rect x="410" y="100" width="170" height="160" fill="#7B8868" opacity="0.6"/>
+                <rect x="450" y="140" width="100" height="80" fill="#9C907E"/>
+                <rect x="280" y="100" width="140" height="240" fill="#5E7B4A"/>
+                <rect x="280" y="100" width="140" height="240" fill="none" stroke="white" stroke-width="1" stroke-dasharray="3,3" opacity="0.55"/>
+                <rect x="305" y="135" width="90" height="65" fill="#756A5C"/>
+                <polygon points="305,135 350,115 395,135" fill="#5C4F3F"/>
+                <rect x="332" y="200" width="36" height="62" fill="#7C7B76"/>
+                <ellipse cx="350" cy="290" rx="36" ry="18" fill="#6B89A8"/>
+                <rect x="120" y="290" width="170" height="160" fill="#7B8868" opacity="0.6"/>
+                <rect x="170" y="320" width="100" height="80" fill="#8A7F70"/>
+                <rect x="410" y="290" width="170" height="160" fill="#7B8868" opacity="0.6"/>
+                <rect x="450" y="330" width="100" height="70" fill="#9C907E"/>
+              </svg>
+
+              <!-- Live pulse pill -->
+              <div class="map__live-tag">Live Google Maps</div>
+
+              <!-- Google native tile-type toggle -->
+              <div class="gmap-tile-toggle">
+                <div class="gmap-tile-toggle__btn gmap-tile-toggle__btn--active">Satellite</div>
+                <div class="gmap-tile-toggle__btn">Map</div>
+              </div>
+
+              <!-- Google native zoom -->
+              <div class="gmap-controls">
+                <div class="gmap-zoom">
+                  <button class="gmap-zoom__btn">+</button>
+                  <button class="gmap-zoom__btn">−</button>
+                </div>
+              </div>
+
+              <!-- Google attribution -->
+              <div class="map__attribution map__attribution--white">Map data ©2026 Google · Imagery ©2026 NASA, Airbus, Maxar</div>
+
+              <!-- Address bar -->
+              <div class="map-address-bar"><span class="map-address-bar__check">✓</span>42 Greenway Drive, Currimundi QLD 4551<span class="map-address-bar__edit">Change</span></div>
+
+              <!-- USE THIS VIEW CTA -->
+              <div class="use-view-cta">
+                <span class="use-view-cta__icon">⤓</span>
+                Use this view
+                <span class="use-view-cta__sub">locks this view into your canvas</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     STAGE 3 — VIEW CAPTURED + FULL TOOLBAR
+     ───────────────────────────────────────────────────────── -->
+<section class="stage" id="stage-3">
+  <div class="stage__header">
+    <div class="stage__eyebrow"><span class="stage__num">3</span> View captured · full toolbar lights up <span class="new-pill">NEW</span></div>
+    <h2 class="stage__title">Snapshot locks. Drawing tools appear. Sidebar reveals fence types.</h2>
+    <p class="stage__desc">The moment "Use this view" fires, three things happen at once: the Google interactivity freezes (now a static satellite layer), the full DRAW / SITE / ACTIONS / VIEW toolbar appears across the top, and the sidebar slides in with the fence-type catalogue. The "Live" pill turns into a "🔒 Captured" pill so the customer knows the map is now drawing-ready, not panning.</p>
+    <div class="stage__diff">NEW · full canvas toolbar · sidebar reveals</div>
+  </div>
+
+  <div class="stage__grid">
+    <aside class="annotations">
+      <div class="anno-block">
+        <h4>DRAW group <em>existing</em></h4>
+        <ul>
+          <li>Draw Fence <code>D</code>, Gate <code>G</code>, Move/Edit <code>E</code>, Undo, Redo, Clear</li>
+          <li>Active tool = ember-orange button (currently Draw Fence)</li>
+          <li>Keyboard hotkeys shown as small mono badges</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>SITE group <em>existing</em></h4>
+        <ul>
+          <li>Dotted line <code>B</code> · neighbour fence or future boundary</li>
+          <li>Arrow <code>A</code> · point to features</li>
+          <li>Building <code>U</code> · house, shed, structure rectangles</li>
+          <li>Free Draw <code>F</code> · pen tool with colour/width/style/opacity sub-controls</li>
+          <li>Existing post <code>P</code> · mark posts already on site</li>
+          <li>Pillar <code>I</code> · mark existing pillars/columns</li>
+          <li>Text <code>T</code> · text annotation labels</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>SITE additions <em><span class="new-tag">+3 new</span></em></h4>
+        <ul>
+          <li><b>Photo pin</b> <code>O</code> · drop a photo on a spot — contractor sees it before site visit</li>
+          <li><b>Tree</b> <code>R</code> · circle marker for trees that affect fence runs</li>
+          <li><b>North arrow</b> <code>N</code> · compass marker (auto-bearing from Google) — standard for site plans</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Compact actions menu <em>top-right</em></h4>
+        <ul>
+          <li><b>Centre</b> <code>C</code> · fit-to-content recentre on drawn fence</li>
+          <li><b>Print Map</b> <code>P</code> · installer-ready layout PDF</li>
+          <li><b>Reset View</b> · zoom + pan back to captured-view default</li>
+          <li><b>Drawing to screen</b> <code>F</code> · canvas takes over the whole viewport (was "Expand")</li>
+        </ul>
+        <p style="font-size: 11.5px; color: var(--ink-3); padding-top: 8px;">No satellite/roadmap layer toggles, no angle snap, no gate snap, no grid — dropped per your call. Captured view is locked.</p>
+      </div>
+      <div class="anno-block">
+        <h4>Anyfence brand on canvas</h4>
+        <ul>
+          <li><b>Large faint watermark</b> in the centre — "anyfence" in display weight, white at 7% opacity, rotated slightly</li>
+          <li><b>Corner pill</b> bottom-right — ember "A" mark + Anyfence wordmark + "Platform" tag</li>
+          <li>Both signal "Anyfence-powered" without competing with Amazing Fencing's branding above</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="frame">
+      <div class="frame__chrome">
+        <div class="frame__dots"><span class="frame__dot"></span><span class="frame__dot"></span><span class="frame__dot"></span></div>
+        <div class="frame__url">amazingfencing.com.au/quote</div>
+      </div>
+      <div class="frame__body">
+        <div class="af-top">
+          <div class="af-brand">
+            <div class="af-logo"><div class="af-logo__mark">AF</div><div class="af-logo__word">Amazing Fencing</div></div>
+            <div class="af-platform-strip">Powered by <b>Anyfence</b></div>
+          </div>
+          <div class="af-nav">
+            <span class="af-nav__item af-nav__item--active">Quote a fence</span>
+            <button class="af-nav__btn">Save</button>
+          </div>
+        </div>
+        <div class="af-body af-body--sidebar">
+          <aside class="af-sidebar">
+            <div class="sb-head">
+              <div class="sb-head__eyebrow">Step 3 of 4</div>
+              <div class="sb-head__title">Draw your fence</div>
+            </div>
+            <div class="sb-list">
+              <div style="font-size: 11px; color: var(--ink-3); padding: 8px 10px 6px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;">Available now</div>
+              <div class="sb-item">
+                <div class="sb-item__thumb">
+                  <svg viewBox="0 0 40 40"><rect x="6" y="6" width="3" height="28" fill="#8E6E3F"/><rect x="13" y="6" width="3" height="28" fill="#9D7E4F"/><rect x="20" y="6" width="3" height="28" fill="#8E6E3F"/><rect x="27" y="6" width="3" height="28" fill="#9D7E4F"/><rect x="0" y="12" width="40" height="2" fill="#6B5230"/><rect x="0" y="26" width="40" height="2" fill="#6B5230"/></svg>
+                </div>
+                <div class="sb-item__text">
+                  <div class="sb-item__title">Timber Paling</div>
+                  <div class="sb-item__sub">CCA pine · Hardwood</div>
+                </div>
+              </div>
+              <div style="font-size: 11px; color: var(--ink-3); padding: 14px 10px 6px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;">Coming soon</div>
+              <div class="sb-item sb-item--disabled">
+                <div class="sb-item__thumb" style="background: #DCD5C8;"><svg viewBox="0 0 40 40"><rect x="4" y="8" width="32" height="24" fill="#6F7E8A"/></svg></div>
+                <div class="sb-item__text"><div class="sb-item__title">Colorbond</div></div>
+                <span class="sb-item__badge sb-item__badge--soon">SOON</span>
+              </div>
+              <div class="sb-item sb-item--disabled">
+                <div class="sb-item__thumb" style="background: #E4DFD3;"><svg viewBox="0 0 40 40"><rect x="6" y="9" width="28" height="3" fill="#4A4A48"/><rect x="6" y="15" width="28" height="3" fill="#4A4A48"/><rect x="6" y="21" width="28" height="3" fill="#4A4A48"/></svg></div>
+                <div class="sb-item__text"><div class="sb-item__title">Aluminium slat</div></div>
+                <span class="sb-item__badge sb-item__badge--soon">SOON</span>
+              </div>
+              <div class="sb-item sb-item--disabled">
+                <div class="sb-item__thumb" style="background: #E4DFD3;"><svg viewBox="0 0 40 40"><rect x="6" y="8" width="28" height="24" fill="#B5D8E2" opacity="0.6"/></svg></div>
+                <div class="sb-item__text"><div class="sb-item__title">Pool glass</div></div>
+                <span class="sb-item__badge sb-item__badge--soon">SOON</span>
+              </div>
+              <div class="sb-item sb-item--disabled">
+                <div class="sb-item__thumb" style="background: #E4DFD3;"><svg viewBox="0 0 40 40"><polygon points="6,32 10,12 13,32" fill="#C8B68A"/><polygon points="14,32 18,12 21,32" fill="#A89668"/><polygon points="22,32 26,12 29,32" fill="#C8B68A"/></svg></div>
+                <div class="sb-item__text"><div class="sb-item__title">Picket</div></div>
+                <span class="sb-item__badge sb-item__badge--soon">SOON</span>
+              </div>
+            </div>
+          </aside>
+
+          <div class="af-canvas">
+            <div class="map">
+              <div class="map__grain"></div>
+              <svg width="100%" height="100%" viewBox="0 0 700 540" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;">
+                <rect width="700" height="540" fill="#5E7B4A"/>
+                <circle cx="60" cy="80" r="18" fill="#3F5C36"/>
+                <circle cx="640" cy="120" r="22" fill="#3F5C36"/>
+                <circle cx="80" cy="430" r="15" fill="#3F5C36"/>
+                <circle cx="620" cy="450" r="20" fill="#3F5C36"/>
+                <rect x="0" y="60" width="700" height="22" fill="#5A5A57"/>
+                <rect x="0" y="460" width="700" height="22" fill="#5A5A57"/>
+                <rect x="120" y="100" width="170" height="160" fill="#7B8868" opacity="0.6"/>
+                <rect x="160" y="135" width="90" height="80" fill="#8A7F70"/>
+                <rect x="410" y="100" width="170" height="160" fill="#7B8868" opacity="0.6"/>
+                <rect x="450" y="140" width="100" height="80" fill="#9C907E"/>
+                <rect x="280" y="100" width="140" height="240" fill="#5E7B4A"/>
+                <rect x="280" y="100" width="140" height="240" fill="none" stroke="white" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+                <rect x="305" y="135" width="90" height="65" fill="#756A5C"/>
+                <polygon points="305,135 350,115 395,135" fill="#5C4F3F"/>
+                <rect x="332" y="200" width="36" height="62" fill="#7C7B76"/>
+                <ellipse cx="350" cy="290" rx="36" ry="18" fill="#6B89A8"/>
+                <rect x="120" y="290" width="170" height="160" fill="#7B8868" opacity="0.6"/>
+                <rect x="170" y="320" width="100" height="80" fill="#8A7F70"/>
+                <rect x="410" y="290" width="170" height="160" fill="#7B8868" opacity="0.6"/>
+                <rect x="450" y="330" width="100" height="70" fill="#9C907E"/>
+              </svg>
+
+              <!-- Captured pill — top-LEFT, since top-right is now the actions menu -->
+              <div class="map__captured-tag" style="left: 14px; right: auto; top: 14px;">Captured · drawing-ready</div>
+
+              <!-- DRAWING TOOLBAR — DRAW + SITE only · right edge stops short of the actions menu -->
+              <div class="draw-toolbar" style="right: 200px;">
+                <div class="draw-toolbar__group">
+                  <span class="draw-toolbar__label">Draw</span>
+                  <button class="tool-btn tool-btn--active"><span class="tool-btn__icon">⟋</span>Draw Fence<span class="tool-btn__key">D</span></button>
+                  <button class="tool-btn"><span class="tool-btn__icon">⛩</span>Gate<span class="tool-btn__key">G</span></button>
+                  <button class="tool-btn"><span class="tool-btn__icon">✥</span>Move/Edit<span class="tool-btn__key">E</span></button>
+                  <button class="tool-btn"><span class="tool-btn__icon">↶</span>Undo</button>
+                  <button class="tool-btn"><span class="tool-btn__icon">↷</span>Redo</button>
+                  <button class="tool-btn"><span class="tool-btn__icon">⌫</span>Clear</button>
+                </div>
+                <div class="draw-toolbar__group">
+                  <span class="draw-toolbar__label">Site</span>
+                  <button class="tool-btn"><span class="tool-btn__icon">┄</span>Dotted line<span class="tool-btn__key">B</span></button>
+                  <button class="tool-btn"><span class="tool-btn__icon">→</span>Arrow<span class="tool-btn__key">A</span></button>
+                  <button class="tool-btn"><span class="tool-btn__icon">▭</span>Building<span class="tool-btn__key">U</span></button>
+                  <button class="tool-btn"><span class="tool-btn__icon">✎</span>Free Draw<span class="tool-btn__key">F</span></button>
+                  <button class="tool-btn"><span class="tool-btn__icon">◉</span>Existing post<span class="tool-btn__key">P</span></button>
+                  <button class="tool-btn"><span class="tool-btn__icon">▮</span>Pillar<span class="tool-btn__key">I</span></button>
+                  <button class="tool-btn"><span class="tool-btn__icon">T</span>Text<span class="tool-btn__key">T</span></button>
+                  <button class="tool-btn tool-btn--proposed"><span class="tool-btn__icon">📷</span>Photo pin<span class="tool-btn__key">O</span></button>
+                  <button class="tool-btn tool-btn--proposed"><span class="tool-btn__icon">🌳</span>Tree<span class="tool-btn__key">R</span></button>
+                  <button class="tool-btn tool-btn--proposed"><span class="tool-btn__icon">⊕</span>North<span class="tool-btn__key">N</span></button>
+                </div>
+              </div>
+
+              <!-- Compact actions menu top-right -->
+              <div class="map-actions">
+                <button class="map-action-btn"><span class="map-action-btn__icon">⊕</span>Centre<span class="map-action-btn__key">C</span></button>
+                <button class="map-action-btn"><span class="map-action-btn__icon">⎙</span>Print Map<span class="map-action-btn__key">P</span></button>
+                <button class="map-action-btn"><span class="map-action-btn__icon">↺</span>Reset View</button>
+                <button class="map-action-btn"><span class="map-action-btn__icon">⛶</span>Drawing to screen<span class="map-action-btn__key">F</span></button>
+              </div>
+
+              <!-- ANYFENCE platform watermark + corner logo -->
+              <div class="anyfence-watermark"><div class="anyfence-watermark__text">anyfence</div></div>
+              <div class="anyfence-corner">
+                <div class="anyfence-corner__mark">A</div>
+                <div class="anyfence-corner__word">Anyfence</div>
+                <div class="anyfence-corner__tag">Platform</div>
+              </div>
+
+              <!-- Address bar -->
+              <div class="map-address-bar"><span class="map-address-bar__check">✓</span>42 Greenway Drive, Currimundi QLD 4551<span class="map-address-bar__edit">Re-capture</span></div>
+
+              <div class="map-nudge">
+                <b>Tap each corner of your fence.</b> Double-tap to finish · drop gates with the gate tool.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     STAGE 4 — FENCE PICKED + RECAP CARD + DISCLOSURE
+     ───────────────────────────────────────────────────────── -->
+<section class="stage" id="stage-4">
+  <div class="stage__header">
+    <div class="stage__eyebrow"><span class="stage__num">4</span> Fence picked · run-recap + inline-disclosure variation form <span class="new-pill">NEW</span></div>
+    <h2 class="stage__title">Sidebar shows a recap card on top, then run-settings sections collapsed by default. Bubble pops with the running total.</h2>
+    <p class="stage__desc">Lifted directly from the live QuickScreen calc. Top of sidebar is a recap card ("Run 1 · 28.4m · Timber Paling · Butted 1800mm · CCA Pine in-ground · 17 posts"). Below it, run settings live as inline-disclosure sections — Style, Posts, Palings, Rails, Extras — each expandable. Customer can scroll through and tweak any one; the rest stay collapsed so the sidebar doesn't become a wall of pills.</p>
+    <div class="stage__diff">NEW · run-recap card · inline-disclosure variation pattern</div>
+  </div>
+
+  <div class="stage__grid">
+    <aside class="annotations">
+      <div class="anno-block">
+        <h4>Run-recap card</h4>
+        <ul>
+          <li>Top of sidebar — always visible</li>
+          <li>Header: <b>"Run 1"</b> with linear-metre value in mono</li>
+          <li>"Run Settings" button on the right toggles the disclosure body</li>
+          <li>Below header: 2-column spec grid (Height · Color · Slat size · Gap · Post mounting · Max spacing)</li>
+          <li>Bottom row: Add section · Add gate · Remove run buttons</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Variation disclosure sections</h4>
+        <ul>
+          <li>Dark navy block holds the variation form</li>
+          <li>Five sub-sections, each expandable (chevron right when collapsed, down when open):</li>
+          <li>· Style · Posts · Palings · Rails · Extras</li>
+          <li>Only the active section is expanded by default — others collapse to a one-line value summary</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Price bubble (collapsed)</h4>
+        <ul>
+          <li>Same as v2: top-right of map, soft-edged, 260px wide</li>
+          <li>Now sits below the captured-view pill (more vertical space than v2)</li>
+          <li>Shows live total · click chevron or anywhere on bubble to expand</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Toolbar simplifies once drawn</h4>
+        <ul>
+          <li>Once the fence is drawn, DRAW + SITE tools still available but dimmed by default</li>
+          <li>Customer can still re-edit / add gates / drop a photo pin / mark a tree / nudge the north arrow</li>
+          <li>Actions menu (top-right) tucks away when bubble is collapsed; visible when needed</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Anyfence brand on canvas</h4>
+        <ul>
+          <li>Big faint "anyfence" watermark behind everything</li>
+          <li>Small Anyfence pill bottom-right (Amazing Fencing's brand stays primary above)</li>
+          <li>North arrow visible top-right of the property (auto-placed)</li>
+          <li>Tree marker shown next to the rear-yard tree</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="frame">
+      <div class="frame__chrome">
+        <div class="frame__dots"><span class="frame__dot"></span><span class="frame__dot"></span><span class="frame__dot"></span></div>
+        <div class="frame__url">amazingfencing.com.au/quote</div>
+      </div>
+      <div class="frame__body">
+        <div class="af-top">
+          <div class="af-brand">
+            <div class="af-logo"><div class="af-logo__mark">AF</div><div class="af-logo__word">Amazing Fencing</div></div>
+            <div class="af-platform-strip">Powered by <b>Anyfence</b></div>
+          </div>
+          <div class="af-nav">
+            <span class="af-nav__item af-nav__item--active">Quote a fence</span>
+            <button class="af-nav__btn">Save</button>
+          </div>
+        </div>
+        <div class="af-body af-body--sidebar">
+          <aside class="af-sidebar">
+            <div class="sb-head">
+              <div class="sb-head__eyebrow">Run 1 · Timber Paling</div>
+              <div class="sb-head__title">Configure your fence</div>
+            </div>
+
+            <!-- RUN RECAP CARD -->
+            <div class="run-recap">
+              <div class="run-recap__head">
+                <div>
+                  <div class="run-recap__title">Run 1 <span class="run-recap__len">28.4m</span></div>
+                  <span class="run-recap__type">Timber Paling · Butted · CCA Pine H4</span>
+                </div>
+                <button class="run-recap__open-btn">Run Settings ▾</button>
+              </div>
+              <div class="run-recap__specs">
+                <div class="run-recap__spec">Height: <b>1800mm</b></div>
+                <div class="run-recap__spec">Color: <b>Natural</b></div>
+                <div class="run-recap__spec">Paling: <b>150×16</b></div>
+                <div class="run-recap__spec">Rail: <b>75×38</b></div>
+                <div class="run-recap__spec">Post: <b>100×75</b></div>
+                <div class="run-recap__spec">Mounting: <b>In-ground</b></div>
+                <div class="run-recap__spec">Max spacing: <b>2400mm</b></div>
+                <div class="run-recap__spec">Posts: <b>17</b> · Gates: <b>2</b></div>
+              </div>
+              <div class="run-recap__btns">
+                <button class="run-recap__btn run-recap__btn--add">+ Add section</button>
+                <button class="run-recap__btn run-recap__btn--add">+ Add gate</button>
+                <button class="run-recap__btn run-recap__btn--danger">Remove run</button>
+              </div>
+            </div>
+
+            <!-- VARIATION DISCLOSURE -->
+            <div class="var-disclosure">
+              <div class="var-disclosure__header">
+                <span>Run Settings</span>
+                <span style="font-size: 11px; color: rgba(255,255,255,0.5);">Sections inherit unless overridden</span>
+              </div>
+
+              <div class="var-disc-section">
+                <div class="var-disc-section__head"><span>Style</span><span class="chevron">▾</span></div>
+                <div class="var-disc-section__body">
+                  <div class="var-field">
+                    <div class="pill-row">
+                      <button class="pill pill--active">Butted</button>
+                      <button class="pill">Lapped + capped</button>
+                    </div>
+                  </div>
+                  <div class="var-field">
+                    <div class="var-field__label">Height <span class="var-field__hint">mm</span></div>
+                    <div class="pill-row">
+                      <button class="pill pill--mono">1200</button>
+                      <button class="pill pill--mono">1500</button>
+                      <button class="pill pill--mono pill--active">1800</button>
+                      <button class="pill pill--mono">2100</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="var-disc-section">
+                <div class="var-disc-section__head var-disc-section__head--collapsed">
+                  <span>Posts · CCA Pine H4 · 100×75 · In-ground</span>
+                  <span class="chevron">▸</span>
+                </div>
+              </div>
+
+              <div class="var-disc-section">
+                <div class="var-disc-section__head var-disc-section__head--collapsed">
+                  <span>Palings · 150×16 · 1800mm</span>
+                  <span class="chevron">▸</span>
+                </div>
+              </div>
+
+              <div class="var-disc-section">
+                <div class="var-disc-section__head var-disc-section__head--collapsed">
+                  <span>Rails · 75×38 × 4800mm · 3 per panel</span>
+                  <span class="chevron">▸</span>
+                </div>
+              </div>
+
+              <div class="var-disc-section">
+                <div class="var-disc-section__head var-disc-section__head--collapsed">
+                  <span>Extras · Ring shank nails · No plinth</span>
+                  <span class="chevron">▸</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <div class="af-canvas">
+            <div class="map">
+              <div class="map__grain"></div>
+              <svg width="100%" height="100%" viewBox="0 0 700 540" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;">
+                <rect width="700" height="540" fill="#5E7B4A"/>
+                <rect x="120" y="100" width="170" height="160" fill="#7B8868" opacity="0.6"/>
+                <rect x="160" y="135" width="90" height="80" fill="#8A7F70"/>
+                <rect x="410" y="100" width="170" height="160" fill="#7B8868" opacity="0.6"/>
+                <rect x="450" y="140" width="100" height="80" fill="#9C907E"/>
+                <rect x="280" y="100" width="140" height="240" fill="#5E7B4A"/>
+                <rect x="305" y="135" width="90" height="65" fill="#756A5C"/>
+                <polygon points="305,135 350,115 395,135" fill="#5C4F3F"/>
+                <rect x="332" y="200" width="36" height="62" fill="#7C7B76"/>
+                <ellipse cx="350" cy="290" rx="36" ry="18" fill="#6B89A8"/>
+                <path d="M 283 230 L 283 340 L 417 340 L 417 230" fill="none" stroke="#DD6E1B" stroke-width="3" stroke-linecap="round" opacity="0.65"/>
+                <line x1="283" y1="290" x2="283" y2="320" stroke="#FFB76E" stroke-width="6" stroke-linecap="round"/>
+                <line x1="370" y1="340" x2="395" y2="340" stroke="#FFB76E" stroke-width="6" stroke-linecap="round"/>
+                <!-- Posts -->
+                <circle cx="283" cy="248" r="3.5" fill="#0A0E14" stroke="white" stroke-width="1.5"/>
+                <circle cx="283" cy="265" r="3.5" fill="#0A0E14" stroke="white" stroke-width="1.5"/>
+                <circle cx="283" cy="282" r="4.5" fill="#0A0E14" stroke="#FFB76E" stroke-width="2.5"/>
+                <circle cx="283" cy="323" r="4.5" fill="#0A0E14" stroke="#FFB76E" stroke-width="2.5"/>
+                <circle cx="307" cy="340" r="3.5" fill="#0A0E14" stroke="white" stroke-width="1.5"/>
+                <circle cx="331" cy="340" r="3.5" fill="#0A0E14" stroke="white" stroke-width="1.5"/>
+                <circle cx="355" cy="340" r="3.5" fill="#0A0E14" stroke="white" stroke-width="1.5"/>
+                <circle cx="370" cy="340" r="4.5" fill="#0A0E14" stroke="#FFB76E" stroke-width="2.5"/>
+                <circle cx="395" cy="340" r="4.5" fill="#0A0E14" stroke="#FFB76E" stroke-width="2.5"/>
+                <circle cx="417" cy="322" r="3.5" fill="#0A0E14" stroke="white" stroke-width="1.5"/>
+                <circle cx="417" cy="304" r="3.5" fill="#0A0E14" stroke="white" stroke-width="1.5"/>
+                <circle cx="417" cy="286" r="3.5" fill="#0A0E14" stroke="white" stroke-width="1.5"/>
+                <circle cx="417" cy="268" r="3.5" fill="#0A0E14" stroke="white" stroke-width="1.5"/>
+                <circle cx="417" cy="250" r="3.5" fill="#0A0E14" stroke="white" stroke-width="1.5"/>
+                <!-- Corners -->
+                <circle cx="283" cy="230" r="6" fill="#DD6E1B" stroke="white" stroke-width="2.5"/>
+                <circle cx="283" cy="340" r="6" fill="#DD6E1B" stroke="white" stroke-width="2.5"/>
+                <circle cx="417" cy="340" r="6" fill="#DD6E1B" stroke="white" stroke-width="2.5"/>
+                <circle cx="417" cy="230" r="6" fill="#DD6E1B" stroke="white" stroke-width="2.5"/>
+                <circle cx="283" cy="305" r="4" fill="#FFB76E" stroke="#B85710" stroke-width="1.5"/>
+                <circle cx="382" cy="340" r="4" fill="#FFB76E" stroke="#B85710" stroke-width="1.5"/>
+                <!-- Example new tool markers (proposed) -->
+                <!-- Tree -->
+                <circle cx="320" cy="170" r="14" fill="rgba(74,105,56,0.55)" stroke="#4A6938" stroke-width="2"/>
+                <text x="320" y="174" font-family="Arial" font-size="14" text-anchor="middle" fill="white">🌳</text>
+                <!-- North arrow -->
+                <g transform="translate(630, 80)">
+                  <circle cx="0" cy="0" r="18" fill="white" stroke="var(--ink-2)" stroke-width="1.5" opacity="0.92"/>
+                  <polygon points="0,-12 -5,8 0,4 5,8" fill="#DD6E1B"/>
+                  <text x="0" y="-16" font-family="Arial" font-size="9" text-anchor="middle" fill="var(--ink)" font-weight="700">N</text>
+                </g>
+              </svg>
+
+              <!-- Address bar -->
+              <div class="map-address-bar"><span class="map-address-bar__check">✓</span>42 Greenway Drive · QLD 4551<span class="map-address-bar__edit">Re-capture</span></div>
+
+              <!-- Compact drawing toolbar (faded — fence already drawn) -->
+              <div class="draw-toolbar" style="opacity: 0.55; right: 290px;">
+                <div class="draw-toolbar__group">
+                  <span class="draw-toolbar__label">Draw</span>
+                  <button class="tool-btn"><span class="tool-btn__icon">⟋</span>Draw</button>
+                  <button class="tool-btn"><span class="tool-btn__icon">⛩</span>Gate</button>
+                  <button class="tool-btn"><span class="tool-btn__icon">✥</span>Edit</button>
+                  <button class="tool-btn"><span class="tool-btn__icon">↶</span>Undo</button>
+                </div>
+                <div class="draw-toolbar__group">
+                  <span class="draw-toolbar__label">Site</span>
+                  <button class="tool-btn"><span class="tool-btn__icon">▭</span>Building</button>
+                  <button class="tool-btn"><span class="tool-btn__icon">T</span>Text</button>
+                  <button class="tool-btn tool-btn--proposed"><span class="tool-btn__icon">📷</span>Photo</button>
+                  <button class="tool-btn tool-btn--proposed"><span class="tool-btn__icon">🌳</span>Tree</button>
+                  <button class="tool-btn tool-btn--proposed"><span class="tool-btn__icon">⊕</span>North</button>
+                </div>
+              </div>
+
+              <!-- ANYFENCE platform watermark + corner logo -->
+              <div class="anyfence-watermark"><div class="anyfence-watermark__text">anyfence</div></div>
+              <div class="anyfence-corner">
+                <div class="anyfence-corner__mark">A</div>
+                <div class="anyfence-corner__word">Anyfence</div>
+              </div>
+
+              <!-- COLLAPSED PRICE BUBBLE -->
+              <div class="price-bubble price-bubble--collapsed">
+                <div class="price-bubble__head">
+                  <div class="price-bubble__logo">AF</div>
+                  <div class="price-bubble__brand">
+                    <div class="price-bubble__name">Amazing Fencing</div>
+                    <div class="price-bubble__tag">Supply only · inc GST</div>
+                  </div>
+                  <div class="price-bubble__total">
+                    <div class="price-bubble__total-amount">$2,606.18</div>
+                    <div class="price-bubble__total-meta">ex GST $2,369</div>
+                  </div>
+                  <div class="price-bubble__chevron">▾</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     STAGE 5 — BUBBLE EXPANDED · SUPPLY ONLY
+     ───────────────────────────────────────────────────────── -->
+<section class="stage" id="stage-5">
+  <div class="stage__header">
+    <div class="stage__eyebrow"><span class="stage__num">5</span> Bubble expanded · Supply only · full itemised BOM</div>
+    <h2 class="stage__title">Same overlay pattern as v2: bubble grows, sidebar stays live, full line-item BOM.</h2>
+    <p class="stage__desc">No change from v2 — full itemised materials list with canonical name + Amazing Fencing SKU per line. Pulled forward into v3 unchanged.</p>
+    <div class="stage__diff">UNCHANGED from v2</div>
+  </div>
+
+  <div class="stage__grid">
+    <aside class="annotations">
+      <div class="anno-block">
+        <h4>Same as v2</h4>
+        <ul>
+          <li>Bubble grows from 260px → ~460px wide</li>
+          <li>Sidebar stays fully interactive (now uses the new run-recap + disclosure pattern)</li>
+          <li>Mode toggle at top: Supply only / Supply + install</li>
+          <li>BOM grouped: Posts · Palings · Rails · Fasteners + concrete · Gates</li>
+          <li>Canonical name + supplier SKU side-by-side per line</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="frame">
+      <div class="frame__chrome">
+        <div class="frame__dots"><span class="frame__dot"></span><span class="frame__dot"></span><span class="frame__dot"></span></div>
+        <div class="frame__url">amazingfencing.com.au/quote</div>
+      </div>
+      <div class="frame__body">
+        <div class="af-top">
+          <div class="af-brand">
+            <div class="af-logo"><div class="af-logo__mark">AF</div><div class="af-logo__word">Amazing Fencing</div></div>
+            <div class="af-platform-strip">Powered by <b>Anyfence</b></div>
+          </div>
+          <div class="af-nav"><span class="af-nav__item af-nav__item--active">Quote a fence</span><button class="af-nav__btn">Save</button></div>
+        </div>
+        <div class="af-body af-body--sidebar">
+          <aside class="af-sidebar">
+            <div class="sb-head">
+              <div class="sb-head__eyebrow">Run 1 · Timber Paling</div>
+              <div class="sb-head__title">Configure your fence</div>
+            </div>
+            <div class="run-recap">
+              <div class="run-recap__head">
+                <div>
+                  <div class="run-recap__title">Run 1 <span class="run-recap__len">28.4m</span></div>
+                  <span class="run-recap__type">Timber Paling · Butted · CCA Pine H4</span>
+                </div>
+                <button class="run-recap__open-btn">▾</button>
+              </div>
+              <div class="run-recap__specs">
+                <div class="run-recap__spec">Height: <b>1800mm</b></div>
+                <div class="run-recap__spec">Paling: <b>150×16</b></div>
+                <div class="run-recap__spec">Rail: <b>75×38</b></div>
+                <div class="run-recap__spec">Post: <b>100×75</b></div>
+                <div class="run-recap__spec">Posts: <b>17</b></div>
+                <div class="run-recap__spec">Gates: <b>2</b></div>
+              </div>
+              <div class="run-recap__btns">
+                <button class="run-recap__btn run-recap__btn--add">+ Add section</button>
+                <button class="run-recap__btn run-recap__btn--add">+ Add gate</button>
+              </div>
+            </div>
+            <div style="padding: 12px 16px; font-size: 11px; color: var(--ink-3); text-align: center;">
+              Bubble is open · sidebar still interactive · keep changing variations and the BOM moves
+            </div>
+          </aside>
+
+          <div class="af-canvas">
+            <div class="map">
+              <div class="map__grain"></div>
+              <svg width="100%" height="100%" viewBox="0 0 700 540" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;">
+                <rect width="700" height="540" fill="#5E7B4A"/>
+                <rect x="280" y="100" width="140" height="240" fill="#5E7B4A"/>
+                <rect x="305" y="135" width="90" height="65" fill="#756A5C"/>
+                <polygon points="305,135 350,115 395,135" fill="#5C4F3F"/>
+                <ellipse cx="350" cy="290" rx="36" ry="18" fill="#6B89A8"/>
+                <path d="M 283 230 L 283 340 L 417 340 L 417 230" fill="none" stroke="#DD6E1B" stroke-width="3" stroke-linecap="round" opacity="0.55"/>
+                <circle cx="283" cy="230" r="6" fill="#DD6E1B" stroke="white" stroke-width="2.5"/>
+                <circle cx="283" cy="340" r="6" fill="#DD6E1B" stroke="white" stroke-width="2.5"/>
+                <circle cx="417" cy="340" r="6" fill="#DD6E1B" stroke="white" stroke-width="2.5"/>
+                <circle cx="417" cy="230" r="6" fill="#DD6E1B" stroke="white" stroke-width="2.5"/>
+              </svg>
+
+              <!-- Anyfence watermark + corner -->
+              <div class="anyfence-watermark"><div class="anyfence-watermark__text">anyfence</div></div>
+              <div class="anyfence-corner">
+                <div class="anyfence-corner__mark">A</div>
+                <div class="anyfence-corner__word">Anyfence</div>
+              </div>
+
+              <div class="price-bubble price-bubble--expanded">
+                <div class="price-bubble__head">
+                  <div class="price-bubble__logo">AF</div>
+                  <div class="price-bubble__brand">
+                    <div class="price-bubble__name">Amazing Fencing</div>
+                    <div class="price-bubble__tag">Tap to collapse</div>
+                  </div>
+                  <button class="price-bubble__close">×</button>
+                </div>
+                <div class="pb-mode">
+                  <div class="pb-mode__label">How do you want this?</div>
+                  <div class="pb-mode__opts">
+                    <div class="pb-mode__opt pb-mode__opt--active">Supply only</div>
+                    <div class="pb-mode__opt">Supply + install</div>
+                  </div>
+                </div>
+                <div class="pb-body">
+                  <div class="pb-section">
+                    <div class="pb-section__head">
+                      <div class="pb-section__title">Materials</div>
+                      <div class="pb-section__meta">28.4m · 17 posts · 2 gates</div>
+                    </div>
+                    <div class="pb-bom">
+                      <div class="pb-bom__cat">Posts</div>
+                      <div class="pb-bom__row">
+                        <div><div class="pb-bom__canonical">100×75 Treated Pine Post H4 2400mm</div><div class="pb-bom__supplier">amf · CCAH4PST-100-75-2400</div></div>
+                        <div><div class="pb-bom__qty">17 ea</div><div class="pb-bom__price">$663.00</div></div>
+                      </div>
+                      <div class="pb-bom__cat">Palings</div>
+                      <div class="pb-bom__row">
+                        <div><div class="pb-bom__canonical">150×16 Treated Pine Paling 1800mm</div><div class="pb-bom__supplier">amf · PAL-150-1800</div></div>
+                        <div><div class="pb-bom__qty">211 ea</div><div class="pb-bom__price">$425.18</div></div>
+                      </div>
+                      <div class="pb-bom__cat">Rails</div>
+                      <div class="pb-bom__row">
+                        <div><div class="pb-bom__canonical">75×38 Treated Pine Rail 4800mm</div><div class="pb-bom__supplier">amf · RL-75-38-4800</div></div>
+                        <div><div class="pb-bom__qty">18 ea</div><div class="pb-bom__price">$396.00</div></div>
+                      </div>
+                      <div class="pb-bom__cat">Fasteners + concrete</div>
+                      <div class="pb-bom__row">
+                        <div><div class="pb-bom__canonical">57mm Ring Shank Gal Nail</div><div class="pb-bom__supplier">amf · NL-RS-57-GAL · 5kg box</div></div>
+                        <div><div class="pb-bom__qty">2 box</div><div class="pb-bom__price">$94.00</div></div>
+                      </div>
+                      <div class="pb-bom__row">
+                        <div><div class="pb-bom__canonical">Rapid Set Concrete 20kg</div><div class="pb-bom__supplier">amf · RPS-CON-20</div></div>
+                        <div><div class="pb-bom__qty">36 bag</div><div class="pb-bom__price">$378.00</div></div>
+                      </div>
+                      <div class="pb-bom__cat">Gates</div>
+                      <div class="pb-bom__row">
+                        <div><div class="pb-bom__canonical">Gate kit · 900mm pedestrian</div><div class="pb-bom__supplier">amf · GTKIT-900-TP</div></div>
+                        <div><div class="pb-bom__qty">1 ea</div><div class="pb-bom__price">$235.00</div></div>
+                      </div>
+                      <div class="pb-bom__row">
+                        <div><div class="pb-bom__canonical">Gate kit · 1500mm double</div><div class="pb-bom__supplier">amf · GTKIT-1500-TP</div></div>
+                        <div><div class="pb-bom__qty">1 ea</div><div class="pb-bom__price">$415.00</div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="pb-total">
+                  <div class="pb-total__label">Supply only · inc GST</div>
+                  <div class="pb-total__amount">$2,606.18</div>
+                  <div class="pb-total__sub">ex GST $2,369.25 · trade tier 2</div>
+                </div>
+                <div class="pb-cta">
+                  <button class="pb-cta__btn">Book materials pickup · Amazing Fencing →</button>
+                  <button class="pb-cta__btn pb-cta__btn--secondary">Email this quote to me</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     STAGE 6 — BUBBLE EXPANDED · SUPPLY + INSTALL
+     ───────────────────────────────────────────────────────── -->
+<section class="stage" id="stage-6">
+  <div class="stage__header">
+    <div class="stage__eyebrow"><span class="stage__num">6</span> Bubble expanded · Supply + install · per-run/per-gate</div>
+    <h2 class="stage__title">Flip mode → breakdown reshapes. Same v2 layout, carried forward.</h2>
+    <p class="stage__desc">Per-run + per-gate format with each line bundling supply + that piece's labour. "Show every item" expander stays hidden by default. Carried forward from v2 unchanged.</p>
+    <div class="stage__diff">UNCHANGED from v2</div>
+  </div>
+
+  <div class="stage__grid">
+    <aside class="annotations">
+      <div class="anno-block">
+        <h4>Same as v2</h4>
+        <ul>
+          <li>One line per run: <b>"Run 1 — 12.0m side fence · $X"</b></li>
+          <li>One line per gate: <b>"Gate 1 — 900mm pedestrian · $Y"</b></li>
+          <li>Each line bundles supply + that piece's install labour</li>
+          <li>Site labour + extras shown as their own section at the bottom</li>
+          <li>"Show every item" expander hidden by default</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="frame">
+      <div class="frame__chrome">
+        <div class="frame__dots"><span class="frame__dot"></span><span class="frame__dot"></span><span class="frame__dot"></span></div>
+        <div class="frame__url">amazingfencing.com.au/quote</div>
+      </div>
+      <div class="frame__body">
+        <div class="af-top">
+          <div class="af-brand">
+            <div class="af-logo"><div class="af-logo__mark">AF</div><div class="af-logo__word">Amazing Fencing</div></div>
+            <div class="af-platform-strip">Powered by <b>Anyfence</b></div>
+          </div>
+          <div class="af-nav"><span class="af-nav__item af-nav__item--active">Quote a fence</span><button class="af-nav__btn">Save</button></div>
+        </div>
+        <div class="af-body af-body--sidebar">
+          <aside class="af-sidebar">
+            <div class="sb-head">
+              <div class="sb-head__eyebrow">Run 1 · Timber Paling</div>
+              <div class="sb-head__title">Configure your fence</div>
+            </div>
+            <div class="run-recap">
+              <div class="run-recap__head">
+                <div>
+                  <div class="run-recap__title">Run 1 <span class="run-recap__len">28.4m</span></div>
+                  <span class="run-recap__type">Timber Paling · Butted · CCA Pine H4</span>
+                </div>
+                <button class="run-recap__open-btn">▾</button>
+              </div>
+              <div class="run-recap__specs">
+                <div class="run-recap__spec">Height: <b>1800mm</b></div>
+                <div class="run-recap__spec">Posts: <b>17</b></div>
+                <div class="run-recap__spec">Gates: <b>2</b></div>
+                <div class="run-recap__spec">Install: <b>2 days</b></div>
+              </div>
+            </div>
+            <div style="padding: 12px 16px; font-size: 11px; color: var(--ink-3); text-align: center;">
+              Supply + install mode shows per-run pricing in the bubble.
+            </div>
+          </aside>
+
+          <div class="af-canvas">
+            <div class="map">
+              <div class="map__grain"></div>
+              <svg width="100%" height="100%" viewBox="0 0 700 540" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;">
+                <rect width="700" height="540" fill="#5E7B4A"/>
+                <rect x="280" y="100" width="140" height="240" fill="#5E7B4A"/>
+                <rect x="305" y="135" width="90" height="65" fill="#756A5C"/>
+                <polygon points="305,135 350,115 395,135" fill="#5C4F3F"/>
+                <ellipse cx="350" cy="290" rx="36" ry="18" fill="#6B89A8"/>
+                <path d="M 283 230 L 283 340 L 417 340 L 417 230" fill="none" stroke="#DD6E1B" stroke-width="3" stroke-linecap="round" opacity="0.55"/>
+              </svg>
+
+              <!-- Anyfence watermark + corner -->
+              <div class="anyfence-watermark"><div class="anyfence-watermark__text">anyfence</div></div>
+              <div class="anyfence-corner">
+                <div class="anyfence-corner__mark">A</div>
+                <div class="anyfence-corner__word">Anyfence</div>
+              </div>
+
+              <div class="price-bubble price-bubble--expanded">
+                <div class="price-bubble__head">
+                  <div class="price-bubble__logo">AF</div>
+                  <div class="price-bubble__brand">
+                    <div class="price-bubble__name">Amazing Fencing</div>
+                    <div class="price-bubble__tag">Tap to collapse</div>
+                  </div>
+                  <button class="price-bubble__close">×</button>
+                </div>
+                <div class="pb-mode">
+                  <div class="pb-mode__label">How do you want this?</div>
+                  <div class="pb-mode__opts">
+                    <div class="pb-mode__opt">Supply only</div>
+                    <div class="pb-mode__opt pb-mode__opt--active">Supply + install</div>
+                  </div>
+                </div>
+                <div class="pb-body">
+                  <div class="pb-section">
+                    <div class="pb-section__head">
+                      <div class="pb-section__title">By run + gate</div>
+                      <div class="pb-section__meta">28.4m · 2 gates</div>
+                    </div>
+                    <div class="pb-run-row">
+                      <div><div class="pb-run-row__label"><span class="pb-icon-run">R1</span><b>Side run</b> — 12.0m</div><div class="pb-run-row__sub">8 posts · 87 palings · 6 rails</div></div>
+                      <div class="pb-run-row__price">$1,148<small>supply $720 · install $428</small></div>
+                    </div>
+                    <div class="pb-run-row">
+                      <div><div class="pb-run-row__label"><span class="pb-icon-run">R2</span><b>Rear run</b> — 8.4m</div><div class="pb-run-row__sub">5 posts · 51 palings · 4 rails</div></div>
+                      <div class="pb-run-row__price">$748<small>supply $452 · install $296</small></div>
+                    </div>
+                    <div class="pb-run-row">
+                      <div><div class="pb-run-row__label"><span class="pb-icon-run">R3</span><b>Side run</b> — 12.0m</div><div class="pb-run-row__sub">7 posts · 73 palings · 6 rails</div></div>
+                      <div class="pb-run-row__price">$1,098<small>supply $670 · install $428</small></div>
+                    </div>
+                    <div class="pb-run-row">
+                      <div><div class="pb-run-row__label"><span class="pb-icon-gate">G1</span><b>Gate 1</b> — 900mm pedestrian</div><div class="pb-run-row__sub">Kit + 2 jambs + hung</div></div>
+                      <div class="pb-run-row__price">$498<small>supply $355 · install $143</small></div>
+                    </div>
+                    <div class="pb-run-row">
+                      <div><div class="pb-run-row__label"><span class="pb-icon-gate">G2</span><b>Gate 2</b> — 1500mm double</div><div class="pb-run-row__sub">Kit + 3 jambs + drop bolt</div></div>
+                      <div class="pb-run-row__price">$754<small>supply $542 · install $212</small></div>
+                    </div>
+                  </div>
+                  <div class="pb-section">
+                    <div class="pb-section__head"><div class="pb-section__title">Site labour + extras</div></div>
+                    <div class="pb-run-row">
+                      <div><div class="pb-run-row__label">Old fence removal + tip</div></div>
+                      <div class="pb-run-row__price">$240</div>
+                    </div>
+                    <div class="pb-run-row">
+                      <div><div class="pb-run-row__label">Site travel</div><div class="pb-run-row__sub">14 km from depot</div></div>
+                      <div class="pb-run-row__price">$120</div>
+                    </div>
+                  </div>
+                  <div class="pb-section" style="background: var(--bg-soft);">
+                    <a href="#" style="font-size: 12px; color: var(--ember-d); text-decoration: none; font-weight: 600; display: flex; align-items: center; justify-content: space-between;">Show every item · canonical names + SKUs<span style="color: var(--ink-3);">↘</span></a>
+                  </div>
+                </div>
+                <div class="pb-total">
+                  <div class="pb-total__label">Supply + install · inc GST</div>
+                  <div class="pb-total__amount">$4,608</div>
+                  <div class="pb-total__sub">supply $2,739 · install $1,509 · extras $360</div>
+                </div>
+                <div class="pb-cta">
+                  <button class="pb-cta__btn">Book this job · 2 day install →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     TOOL INVENTORY APPENDIX
+     ───────────────────────────────────────────────────────── -->
+<section class="stage" id="tools" style="background: var(--bg-page); padding: 70px 5%;">
+  <div class="stage__header">
+    <div class="stage__eyebrow"><span class="stage__num">📋</span> Tool inventory</div>
+    <h2 class="stage__title">Every drawing tool in the wireframe — what's shipping today vs proposed.</h2>
+    <p class="stage__desc">All ten existing tools from the live QuickScreen calc, plus six new ones I'd recommend adding to make the canvas genuinely useful as a site survey + quoting tool. Each new tool justified below.</p>
+  </div>
+
+  <div class="tool-table">
+    <div class="tool-table__head">
+      <h3>DRAW · the fence + gate primitives</h3>
+      <p>Already shipping in <code>CanvasToolbar.tsx</code> on master.</p>
+    </div>
+    <div class="tool-table__grid">
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">⟋</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Draw Fence <code>D</code><span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">Tap corners to place fence-line nodes. Double-tap to finish a run.</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">⛩</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Gate <code>G</code><span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">Drops a gate onto the nearest fence segment. Nudge to position.</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">✥</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Move/Edit <code>E</code><span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">Drag nodes, reshape runs, reposition gates.</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">↶↷</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Undo / Redo / Clear <span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">Standard. Clear prompts confirmation.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-table">
+    <div class="tool-table__head">
+      <h3>SITE · existing site context markers</h3>
+      <p>Already shipping. Used to mark anything that's on the site but isn't a fence run.</p>
+    </div>
+    <div class="tool-table__grid">
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">┄</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Dotted line <code>B</code><span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">Neighbour fences, planned future fences, property boundary indicators.</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">→</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Arrow <code>A</code><span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">Point at features for installer notes ("water meter here").</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">▭</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Building <code>U</code><span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">House, shed, garage rectangles for context.</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">✎</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Free Draw <code>F</code><span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">Pen tool with colour / width / line-style / opacity sub-controls. For freeform site notes.</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">◉</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Existing post <code>P</code><span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">Posts already in the ground that the new fence will reuse.</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">▮</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Pillar <code>I</code><span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">Brick/concrete pillars that the fence must integrate with.</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">T</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Text <code>T</code><span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">Free-text labels for any annotation that needs words.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-table">
+    <div class="tool-table__head" style="background: var(--proposed-soft);">
+      <h3 style="color: var(--proposed);">SITE + · 3 approved new tools</h3>
+      <p>Cut from 6 proposed down to 3 — these go into the SITE group alongside the existing ones.</p>
+    </div>
+    <div class="tool-table__grid">
+      <div class="tool-table__row tool-table__row--proposed">
+        <div class="tool-table__icon">📷</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Photo pin <code>O</code><span class="tool-table__tag tool-table__tag--new">NEW</span></div>
+          <div class="tool-table__hint">Drop a photo on a specific spot. Installer sees the photo before site visit (existing fence's condition, tricky corner, neighbour's structure). Makes walkthrough videos optional in many cases.</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--proposed">
+        <div class="tool-table__icon">🌳</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Tree <code>R</code><span class="tool-table__tag tool-table__tag--new">NEW</span></div>
+          <div class="tool-table__hint">Circle marker for trees that affect fence runs (root impact, branches over the line). Helpful for installer prep.</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--proposed">
+        <div class="tool-table__icon">⊕</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">North arrow <code>N</code><span class="tool-table__tag tool-table__tag--new">NEW</span></div>
+          <div class="tool-table__hint">Auto-placed compass marker showing true north (Google Maps gives us the bearing). Standard for any site plan.</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding: 12px 16px; background: var(--bg-soft); border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-3); display: flex; flex-direction: column; gap: 4px;">
+      <div><b style="color: var(--ink-2);">Dropped from v3 proposal:</b> Measure (ruler), Council setback line, Vehicle turning circle.</div>
+      <div style="font-size: 11px; color: var(--ink-4);">If any of these turn out to matter later, easy to add back as a v4 increment.</div>
+    </div>
+  </div>
+
+  <div class="tool-table">
+    <div class="tool-table__head">
+      <h3>Compact actions menu · top-right</h3>
+      <p>Just four. No satellite/roadmap toggles, no angle snap, no gate snap, no grid — dropped per your call.</p>
+    </div>
+    <div class="tool-table__grid">
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">⊕</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Centre <code>C</code><span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">Fit-to-content; recentres on the drawn fence.</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">⎙</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Print Map <code>P</code><span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">Installer-ready layout PDF (map + drawing + dimensions + BOM).</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">↺</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Reset View<span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">Reset zoom and pan back to the captured-view default.</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon">⛶</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Drawing to screen <code>F</code><span class="tool-table__tag tool-table__tag--ship">SHIP</span></div>
+          <div class="tool-table__hint">Canvas takes over the whole viewport — for detailed drawing on a small screen. (Was "Expand" in QuickScreen; renamed per your call.)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-table">
+    <div class="tool-table__head">
+      <h3>Anyfence brand on canvas</h3>
+      <p>Subtle platform branding so the customer knows what's underneath, without competing with the supplier's brand.</p>
+    </div>
+    <div class="tool-table__grid">
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon" style="background: var(--navy); color: white; font-family: 'Inter', sans-serif; font-style: italic;">af</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Centre watermark</div>
+          <div class="tool-table__hint">Large faint "anyfence" wordmark behind the canvas content — Inter 132px, white at 7% opacity, rotated −6°. Visible only against the darker satellite areas.</div>
+        </div>
+      </div>
+      <div class="tool-table__row tool-table__row--existing">
+        <div class="tool-table__icon" style="background: var(--ember); color: white;">A</div>
+        <div class="tool-table__body">
+          <div class="tool-table__name">Bottom-right corner pill</div>
+          <div class="tool-table__hint">Small white pill with ember "A" mark + "Anyfence" wordmark + "Platform" tag. Always visible (88% opacity, subtle shadow). Sits over the canvas, well away from any tools.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="page-footer">
+  <div class="page-footer__title">v3 in summary</div>
+  <div class="page-footer__cols">
+    <div class="page-footer__col">
+      <h5>Carried from v2</h5>
+      <p>Amazing Fencing primary brand + Anyfence "powered by" strip. Skip-link under address input. Floating price bubble. Real posts and corner posts rendered on the satellite. Per-run/per-gate breakdown in Supply + install mode.</p>
+    </div>
+    <div class="page-footer__col">
+      <h5>New in v3</h5>
+      <p>Live Google Maps → "Use this view" snapshot before drawing. DRAW + SITE toolbar (10 existing tools + 3 approved new: <b>Photo pin · Tree · North arrow</b>). Compact 4-button actions menu top-right (Centre · Print Map · Reset View · Drawing to screen). Anyfence canvas branding (large faint watermark + bottom-right corner pill). Run-recap card and inline-disclosure variation form lifted from QuickScreen.</p>
+    </div>
+    <div class="page-footer__col">
+      <h5>Still next</h5>
+      <p>Booking flow after the CTA (walkthrough video → calendar → 10% deposit). Mobile-first wireframe (sidebar as bottom sheet, bubble docks bottom). The "Skip the map → blank canvas" flow's own wireframe. The "Build from scratch" path in the Calculator Builder. Repo cleanup PR plan.</p>
+    </div>
+  </div>
+  <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15); font-size: 12px; color: rgba(255,255,255,0.55); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div>Anyfence calculator entry-page wireframe · v3 · 2026-06-04</div>
+    <div>Pilot supplier: Amazing Fencing · <code style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 3px;">feature/anyfence-platform-expansion</code></div>
+  </div>
+</footer>
+
+</body>
+</html>

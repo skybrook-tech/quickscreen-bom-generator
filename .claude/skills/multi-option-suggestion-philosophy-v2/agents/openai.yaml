@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Multi-option suggestion philosophy'
+  short_description: 'Use when designing how a calculator app surfaces branching choices to the user. Triggers when the us'
+  default_prompt: 'Use this skill for: Use when designing how a calculator app surfaces branching choices to the user. Triggers when the user wants to (a) decide between auto-pick vs suggest, (b) place an option picker product-tied vs cross-cutting, (c) handle optional accessories with many-to-many parent links, (d) build a natural-language entry surface (description box, voice, sketch) with parse → preview → confirm flow, (e) avoid the "silent default" anti-pattern. Captures the 4-state rule taxonomy (auto_add / suggested / optional / warning), the inline-vs-bottom placement heuristic, the 4-state confidence chip vocabulary (stated / inferred / default / missing), the optional-accessory many-to-many schema (isOptionalAccessory + optionalChildOf), and the skip-persistence rule.'

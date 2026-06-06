@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Product Configuration UX Philosophy'
+  short_description: 'UX philosophy for product configurators: smart defaults over empty forms, multi-option suggestions o'
+  default_prompt: 'Use this skill for: UX philosophy for product configurators: smart defaults over empty forms, multi-option suggestions over open-ended questions, progressive disclosure over everything-at-once. Extracted from iterating on a tradie calculator with real user testing.'

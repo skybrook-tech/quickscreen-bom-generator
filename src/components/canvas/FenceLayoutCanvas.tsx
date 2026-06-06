@@ -8,6 +8,7 @@ import {
 } from "react";
 import { initCanvasEngine } from "./canvasEngine";
 import { CanvasToolbar } from "./CanvasToolbar";
+import { MapActionsMenu } from "./MapActionsMenu";
 import { MapControls } from "./MapControls";
 import type { MapUiState } from "./MapControls";
 import { HelpCheatSheet } from "./HelpCheatSheet";
@@ -53,7 +54,20 @@ import {
 } from "../../lib/gateOptionRules";
 
 const DEFAULT_GATE_WIDTH_FALLBACK = 900;
-export type CanvasTool = "draw" | "gate" | "move" | "boundary" | "building" | "text" | "post" | "pillar" | "freehand" | "arrow";
+export type CanvasTool =
+  | "draw"
+  | "gate"
+  | "move"
+  | "boundary"
+  | "building"
+  | "text"
+  | "post"
+  | "pillar"
+  | "freehand"
+  | "arrow"
+  | "photo"
+  | "tree"
+  | "north";
 type GateSessionRef = { flatSegIdx: number; gateIdx: number; gateId: string };
 type GateDraft = {
   widthMM: number;
@@ -736,9 +750,26 @@ export function FenceLayoutCanvas({
           ref={canvasRef}
           className="block h-full w-full bg-brand-bg"
           style={{
-            cursor: "crosshair",
+            cursor:
+              activeTool === "move"
+                ? "grab"
+                : activeTool === "photo"
+                  ? "copy"
+                  : activeTool === "tree"
+                    ? "cell"
+                    : activeTool === "north"
+                      ? "help"
+                      : "crosshair",
             touchAction: touchActionForCanvasTool(activeTool),
           }}
+        />
+
+        <MapActionsMenu
+          onCentre={() => engineRef.current?.fitToContent()}
+          onPrint={handlePrintMap}
+          onReset={() => engineRef.current?.resetView()}
+          onToggleExpand={() => setExpanded((prev) => !prev)}
+          expanded={expanded}
         />
 
         {/* Hint overlay */}
@@ -771,6 +802,13 @@ export function FenceLayoutCanvas({
             >
               Got it
             </button>
+          </div>
+        )}
+
+        {layeredMapSnapshot && (
+          <div className="absolute top-[14px] left-[14px] z-10 flex items-center gap-2 bg-brand-card/90 border border-brand-border/60 rounded-full px-3 py-1.5 text-xs font-bold shadow-lg backdrop-blur text-brand-text">
+            <span>🔒</span>
+            <span>Captured · drawing-ready</span>
           </div>
         )}
 

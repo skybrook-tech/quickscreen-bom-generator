@@ -12,6 +12,8 @@ import "../components/canvas/CanvasToolbar.layers.test";
 import "../components/canvas/canonicalAdapter.propertyAnchor.test";
 import "../components/canvas/staticSnapshotCanvas.test";
 import "../components/layout/Header.test";
+import "../components/admin/__tests__/SupplierForm.test";
+import "../components/admin/__tests__/SystemInstanceForm.test";
 import "../lib/geo/coordinates.test";
 import "../lib/googleMaps/staticSnapshot.test";
 import "../lib/manifestAssets.test";

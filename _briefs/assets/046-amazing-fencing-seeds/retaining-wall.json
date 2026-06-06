@@ -1,0 +1,36 @@
+{
+  "org_slug": "glass-outlet",
+  "supplier_slug": "amazing-fencing",
+  "system_instance_slug": "amazing-retaining-wall",
+  "_format_note": "Timber retaining wall sleepers from Amazing Fencing's Cin7 export 2026-05-26. Retaining walls are not fences but use the same supply pipeline (sleepers + posts). Modelled as a timber-fence archetype instance with metadata flagging 'retaining' use_case until a dedicated retaining-wall archetype is added in a future architectural iteration. Prices are TRADE (tier2 in our convention) from Cin7 BuyPriceEx.",
+  "_source": "Amazing Fencing Cin7 export (MassDownloadProducts_20260526_0305PM.xlsx) + amazingfencing.com.au/products/retaining-walls/",
+  "products": [
+    {
+      "system_type": "AF_RETAINING_WALL",
+      "product_type": "other",
+      "name": "Amazing Fencing — Timber Retaining Wall",
+      "description": "Timber retaining walls using treated pine OR hardwood sleepers with corresponding posts. Plantation-grown CCA pine + H4 hardwood. Compliant with QLD zoning and similar state regulations.",
+      "active": true,
+      "sort_order": 250,
+      "metadata": {
+        "_provenance": {"supplier_slug": "amazing-fencing", "system_instance_slug": "amazing-retaining-wall"},
+        "_archetype_note": "Modelled as timber-fence archetype with use_case='retaining_wall'. The fence_runs_v1 geometry isn't a perfect fit (retaining walls are typically single-segment linear runs) but works for v1. Future architecture: dedicated 'retaining-wall' archetype.",
+        "use_cases": ["correct_uneven_terrain", "garden_protection", "walkway_protection", "reclaim_sloped_land"],
+        "materials": ["treated_pine_H4", "treated_hardwood_H4"],
+        "compliance_notes": ["QLD zoning regulations (varies by state)", "AS 1604 for treated timber"]
+      }
+    }
+  ],
+  "product_components": [
+    {"sku": "AF-RW-SLEEPER-PINE-200x50-2400", "name": "CCA Pine Sleeper 200×50×2400mm", "description": "CCA treated pine retaining-wall sleeper, 200×50mm × 2400mm", "category": "sleeper", "unit": "each", "default_price": null, "system_types": ["AF_RETAINING_WALL"], "metadata": {"length_mm": 2400, "width_mm": 200, "thickness_mm": 50, "material": "CCA Pine", "treatment": "H4", "_pricing_note": "BuyPriceEx in Cin7 for pine sleepers needs separate lookup; defer until pricing run-2"}, "active": true, "subCategory": "sleepers", "sortPriority": 10},
+    {"sku": "AF-RW-SLEEPER-PINE-200x50-3000", "name": "CCA Pine Sleeper 200×50×3000mm", "description": "CCA treated pine retaining-wall sleeper, 200×50mm × 3000mm", "category": "sleeper", "unit": "each", "default_price": null, "system_types": ["AF_RETAINING_WALL"], "metadata": {"length_mm": 3000, "width_mm": 200, "thickness_mm": 50, "material": "CCA Pine", "treatment": "H4"}, "active": true, "subCategory": "sleepers", "sortPriority": 10},
+    {"sku": "AF-RW-SLEEPER-PINE-200x75-2400", "name": "CCA Pine Sleeper 200×75×2400mm", "description": "CCA treated pine retaining-wall sleeper, 200×75mm × 2400mm", "category": "sleeper", "unit": "each", "default_price": null, "system_types": ["AF_RETAINING_WALL"], "metadata": {"length_mm": 2400, "width_mm": 200, "thickness_mm": 75, "material": "CCA Pine", "treatment": "H4"}, "active": true, "subCategory": "sleepers", "sortPriority": 10},
+    {"sku": "AF-RW-SLEEPER-PINE-200x75-3000", "name": "CCA Pine Sleeper 200×75×3000mm", "description": "CCA treated pine retaining-wall sleeper, 200×75mm × 3000mm", "category": "sleeper", "unit": "each", "default_price": null, "system_types": ["AF_RETAINING_WALL"], "metadata": {"length_mm": 3000, "width_mm": 200, "thickness_mm": 75, "material": "CCA Pine", "treatment": "H4"}, "active": true, "subCategory": "sleepers", "sortPriority": 10},
+
+    {"sku": "AF-RW-SLEEPER-HWD-200x50-2400", "name": "H4 Hardwood Sleeper 200×50×2400mm", "description": "H4 treated hardwood retaining-wall sleeper, 200×50mm × 2400mm", "category": "sleeper", "unit": "each", "default_price": 24.98, "system_types": ["AF_RETAINING_WALL"], "metadata": {"length_mm": 2400, "width_mm": 200, "thickness_mm": 50, "material": "hardwood", "treatment": "H4", "manufacturer_sku": "HS200x50x2400"}, "active": true, "subCategory": "sleepers", "sortPriority": 20},
+    {"sku": "AF-RW-SLEEPER-HWD-200x50-3000", "name": "H4 Hardwood Sleeper 200×50×3000mm", "description": "H4 treated hardwood retaining-wall sleeper, 200×50mm × 3000mm", "category": "sleeper", "unit": "each", "default_price": 31.40, "system_types": ["AF_RETAINING_WALL"], "metadata": {"length_mm": 3000, "width_mm": 200, "thickness_mm": 50, "material": "hardwood", "treatment": "H4", "manufacturer_sku": "HS200x50x3000"}, "active": true, "subCategory": "sleepers", "sortPriority": 20},
+    {"sku": "AF-RW-SLEEPER-HWD-200x75-1800", "name": "H4 Hardwood Sleeper 200×75×1800mm", "description": "H4 treated hardwood retaining-wall sleeper, 200×75mm × 1800mm", "category": "sleeper", "unit": "each", "default_price": 30.00, "system_types": ["AF_RETAINING_WALL"], "metadata": {"length_mm": 1800, "width_mm": 200, "thickness_mm": 75, "material": "hardwood", "treatment": "H4", "manufacturer_sku": "HS200x75x1800"}, "active": true, "subCategory": "sleepers", "sortPriority": 20},
+    {"sku": "AF-RW-SLEEPER-HWD-200x75-2400", "name": "H4 Hardwood Sleeper 200×75×2400mm", "description": "H4 treated hardwood retaining-wall sleeper, 200×75mm × 2400mm", "category": "sleeper", "unit": "each", "default_price": 37.49, "system_types": ["AF_RETAINING_WALL"], "metadata": {"length_mm": 2400, "width_mm": 200, "thickness_mm": 75, "material": "hardwood", "treatment": "H4", "manufacturer_sku": "HS200x75x2400"}, "active": true, "subCategory": "sleepers", "sortPriority": 20},
+    {"sku": "AF-RW-SLEEPER-HWD-200x75-3000", "name": "H4 Hardwood Sleeper 200×75×3000mm", "description": "H4 treated hardwood retaining-wall sleeper, 200×75mm × 3000mm", "category": "sleeper", "unit": "each", "default_price": 48.61, "system_types": ["AF_RETAINING_WALL"], "metadata": {"length_mm": 3000, "width_mm": 200, "thickness_mm": 75, "material": "hardwood", "treatment": "H4", "manufacturer_sku": "HS200x75x3000"}, "active": true, "subCategory": "sleepers", "sortPriority": 20}
+  ]
+}

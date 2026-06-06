@@ -1,0 +1,62 @@
+{
+  "org_slug": "glass-outlet",
+  "supplier_slug": "discount-fencing",
+  "system_instance_slug": "dfsau-aluminium-slat-gate",
+  "_format_note": "Standalone instance for the $399 aluminium slat gate promoted on the Discount Fencing Colorbond page. Single SKU; gate companion product. Rules/variables wired via admin UI in brief 037 after this seeds.",
+  "_source": "https://www.dfsau.com.au/colorbond (public retail prices observed 2026-05-28: '930 X 1800 HIGH ALUMINIUM SLAT GATES $399 AVAILABLE IN 8 COLORS')",
+  "products": [
+    {
+      "system_type": "DF_AL_SLAT_GATE",
+      "product_type": "gate",
+      "name": "Discount Fencing — Aluminium Slat Gate (930 × 1800)",
+      "description": "Single-leaf aluminium slat swing gate, 930mm wide × 1800mm high. Available in 8 colours at $399. Promoted as a companion gate for ColorBond and Security fence installations.",
+      "active": true,
+      "sort_order": 130,
+      "metadata": {
+        "_provenance": {
+          "supplier_slug": "discount-fencing",
+          "system_instance_slug": "dfsau-aluminium-slat-gate"
+        },
+        "standard_size_mm": { "width": 930, "height": 1800 },
+        "available_colours_count": 8,
+        "gate_movement": "swing",
+        "_note": "Companion gate — pairs with dfsau-colorbond and dfsau-aluminium-security instances."
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "DF-ALG-930x1800-BLK",
+      "name": "Aluminium Slat Gate 930×1800 — Black",
+      "description": "Aluminium slat swing gate, 930mm wide × 1800mm high, Black",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 399.00,
+      "system_types": ["DF_AL_SLAT_GATE"],
+      "metadata": {
+        "width_mm": 930, "height_mm": 1800, "colour": "black", "gate_movement": "swing",
+        "price_source": "dfsau.com.au/colorbond promo banner", "price_verified_date": "2026-05-28"
+      },
+      "active": true,
+      "subCategory": "gates",
+      "sortPriority": 10
+    },
+    {
+      "sku": "DF-ALG-930x1800-COL",
+      "name": "Aluminium Slat Gate 930×1800 — Colour (any of 8)",
+      "description": "Aluminium slat swing gate, 930mm wide × 1800mm high, available in 8 powdercoat colours (specify on order)",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 399.00,
+      "system_types": ["DF_AL_SLAT_GATE"],
+      "metadata": {
+        "width_mm": 930, "height_mm": 1800, "colour": "powdercoat_choice_of_8", "gate_movement": "swing",
+        "price_source": "dfsau.com.au/colorbond promo banner", "price_verified_date": "2026-05-28",
+        "_note": "Confirm 8 specific colours from supplier on order. Price is the same across all 8 colours per the public promo."
+      },
+      "active": true,
+      "subCategory": "gates",
+      "sortPriority": 12
+    }
+  ]
+}

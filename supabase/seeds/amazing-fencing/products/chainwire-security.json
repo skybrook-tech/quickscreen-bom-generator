@@ -1,0 +1,29 @@
+{
+  "org_slug": "amazing-fencing",
+  "supplier_slug": "amazing-fencing",
+  "system_instance_slug": "amazing-chainwire-security",
+  "_format_note": "Chain wire / security fencing as supplied by Amazing Fencing. Galvanised + PVC-coated (green/black) options. SKU detail not enumerated on the install-side site; this seed is skeletal pending the supply-side chainwire catalogue.",
+  "_source": "https://amazingfencing.com.au/products/chainwire-security/ (2026-05-28)",
+  "products": [
+    {
+      "system_type": "AF_CHAINWIRE",
+      "product_type": "fence",
+      "name": "Amazing Fencing — Chain Wire & Security",
+      "description": "Chain wire fencing for residential and commercial. Raw galvanised + PVC-coated options (green or black). Customisable for unusual terrain or layouts. Optional aluminium garden-fence variant.",
+      "active": true,
+      "sort_order": 240,
+      "metadata": {
+        "_provenance": {"supplier_slug": "amazing-fencing", "system_instance_slug": "amazing-chainwire-security"},
+        "finishes": ["galvanised", "pvc_coated_green", "pvc_coated_black"],
+        "use_cases": ["residential", "commercial", "security"],
+        "customisable": true,
+        "_status_note": "Skeletal seed — SKU detail pending. The supply-side site doesn't enumerate chainwire SKUs publicly; full mesh / hardware / post / tensioner list to be added once the supplier provides catalogue data."
+      }
+    }
+  ],
+  "product_components": [
+    {"sku": "AF-CHW-MESH-GALV-15M", "name": "Chain Wire Mesh — Galvanised — 15m roll (PLACEHOLDER)", "description": "Galvanised chain wire mesh roll, dimensions TBC. Placeholder pending supplier catalogue.", "category": "panel", "unit": "roll", "default_price": null, "system_types": ["AF_CHAINWIRE"], "metadata": {"finish": "galvanised", "_placeholder": true}, "active": true, "subCategory": "mesh", "sortPriority": 10},
+    {"sku": "AF-CHW-MESH-PVC-GREEN-15M", "name": "Chain Wire Mesh — PVC Green — 15m roll (PLACEHOLDER)", "description": "PVC-coated green chain wire mesh roll. Placeholder pending supplier catalogue.", "category": "panel", "unit": "roll", "default_price": null, "system_types": ["AF_CHAINWIRE"], "metadata": {"finish": "pvc_coated_green", "_placeholder": true}, "active": true, "subCategory": "mesh", "sortPriority": 10},
+    {"sku": "AF-CHW-MESH-PVC-BLACK-15M", "name": "Chain Wire Mesh — PVC Black — 15m roll (PLACEHOLDER)", "description": "PVC-coated black chain wire mesh roll. Placeholder pending supplier catalogue.", "category": "panel", "unit": "roll", "default_price": null, "system_types": ["AF_CHAINWIRE"], "metadata": {"finish": "pvc_coated_black", "_placeholder": true}, "active": true, "subCategory": "mesh", "sortPriority": 10}
+  ]
+}

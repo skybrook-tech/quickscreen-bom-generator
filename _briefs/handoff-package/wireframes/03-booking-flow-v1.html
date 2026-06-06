@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anyfence — Booking flow · v1 wireframe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-page: #FAFAF7;
+    --bg-canvas: #FFFFFF;
+    --bg-soft: #F4F2EC;
+    --ink: #0A0E14;
+    --ink-2: #2F3640;
+    --ink-3: #6B7280;
+    --ink-4: #9CA3AF;
+    --line: #E7E2D8;
+    --line-2: #D3CDC0;
+    --line-3: #B8B1A1;
+    --navy: #0F2942;
+    --navy-2: #1B3A57;
+    --ember: #DD6E1B;
+    --ember-d: #B85710;
+    --ember-soft: #FBF1E4;
+    --success: #2D8F4B;
+    --success-soft: #E8F4EC;
+    --warn-bg: #FFF5E5;
+    --warn-fg: #9A5800;
+    --error-bg: #FEF2F2;
+    --error-fg: #B91C1C;
+    --grass-1: #5E7B4A;
+    --rooftop: #8A7F70;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg-page); color: var(--ink); font-family: 'Inter', system-ui, sans-serif; font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  body { padding-bottom: 80px; }
+  .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-feature-settings: "tnum" 1; }
+
+  /* Page header */
+  .page-header { background: var(--bg-canvas); border-bottom: 1px solid var(--line); padding: 28px 5%; }
+  .page-header__eyebrow { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ember-d); font-weight: 600; margin-bottom: 8px; }
+  .page-header__title { font-size: 32px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 10px; }
+  .page-header__sub { font-size: 16px; color: var(--ink-2); max-width: 800px; }
+  .page-header__meta { display: flex; gap: 20px; margin-top: 16px; font-size: 13px; color: var(--ink-3); flex-wrap: wrap; }
+  .page-header__meta b { font-weight: 600; color: var(--ink-2); }
+
+  /* Stage nav */
+  .stage-nav { position: sticky; top: 0; background: rgba(250,250,247,0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); z-index: 50; padding: 14px 5%; display: flex; align-items: center; gap: 14px; overflow-x: auto; }
+  .stage-nav__label { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; flex-shrink: 0; }
+  .stage-nav__list { display: flex; gap: 4px; flex: 1; min-width: 0; }
+  .stage-nav__item { white-space: nowrap; font-size: 13px; color: var(--ink-2); text-decoration: none; padding: 6px 10px; border-radius: 6px; transition: background 0.15s; font-weight: 500; }
+  .stage-nav__item:hover { background: var(--bg-soft); }
+  .stage-nav__num { color: var(--ember-d); font-family: 'IBM Plex Mono', monospace; font-weight: 600; margin-right: 8px; }
+
+  /* Stage */
+  .stage { padding: 70px 5% 50px; border-bottom: 1px solid var(--line); }
+  .stage:nth-child(even) { background: var(--bg-page); }
+  .stage:nth-child(odd) { background: var(--bg-canvas); }
+  .stage__header { margin-bottom: 32px; max-width: 760px; }
+  .stage__eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ember-d); font-weight: 600; margin-bottom: 10px; }
+  .stage__num { font-family: 'IBM Plex Mono', monospace; background: var(--ember); color: white; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 12px; font-weight: 600; }
+  .stage__title { font-size: 28px; line-height: 1.15; font-weight: 700; letter-spacing: -0.015em; color: var(--ink); margin-bottom: 8px; }
+  .stage__desc { font-size: 16px; color: var(--ink-2); }
+  .stage__grid { display: grid; grid-template-columns: 320px 1fr; gap: 36px; align-items: start; }
+  @media (max-width: 980px) { .stage__grid { grid-template-columns: 1fr; gap: 24px; } }
+
+  /* Annotations */
+  .annotations { position: sticky; top: 80px; }
+  @media (max-width: 980px) { .annotations { position: static; } }
+  .anno-block { margin-bottom: 22px; }
+  .anno-block h4 { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 8px; }
+  .anno-block ul { list-style: none; padding: 0; }
+  .anno-block li { font-size: 13.5px; line-height: 1.55; color: var(--ink-2); padding: 7px 0; border-bottom: 1px dashed var(--line); }
+  .anno-block li:last-child { border-bottom: none; }
+  .anno-block li b { font-weight: 600; color: var(--ink); }
+  .anno-block li code { font-family: 'IBM Plex Mono', monospace; font-size: 12px; background: var(--bg-soft); padding: 1px 5px; border-radius: 3px; color: var(--navy); }
+
+  /* Browser frame */
+  .frame { background: white; border: 1px solid var(--line-2); border-radius: 14px; overflow: hidden; box-shadow: 0 24px 50px -20px rgba(15, 41, 66, 0.18), 0 4px 12px rgba(15, 41, 66, 0.05); }
+  .frame__chrome { background: linear-gradient(180deg, #F4F1EA 0%, #ECE7DC 100%); border-bottom: 1px solid var(--line-2); padding: 9px 14px; display: flex; align-items: center; gap: 10px; }
+  .frame__dots { display: flex; gap: 6px; }
+  .frame__dot { width: 11px; height: 11px; border-radius: 50%; }
+  .frame__dot:nth-child(1) { background: #E6716C; }
+  .frame__dot:nth-child(2) { background: #E5C45F; }
+  .frame__dot:nth-child(3) { background: #6CB36A; }
+  .frame__url { flex: 1; background: rgba(255,255,255,0.6); border: 1px solid var(--line-2); border-radius: 5px; padding: 4px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--ink-2); text-align: center; }
+  .frame__body { background: var(--bg-canvas); height: 760px; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* App header */
+  .af-top { border-bottom: 1px solid var(--line); background: var(--bg-canvas); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .af-brand { display: flex; align-items: center; gap: 14px; }
+  .af-logo { display: flex; align-items: center; gap: 9px; }
+  .af-logo__mark { width: 30px; height: 30px; background: var(--ember); color: white; display: flex; align-items: center; justify-content: center; border-radius: 5px; font-weight: 700; font-size: 14px; letter-spacing: -0.02em; }
+  .af-logo__word { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+  .af-context { font-size: 11px; color: var(--ink-3); padding-left: 12px; border-left: 1px solid var(--line); letter-spacing: 0.04em; }
+  .af-context b { color: var(--ember-d); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  .af-platform-strip { font-size: 10px; color: var(--ink-3); padding-left: 12px; border-left: 1px solid var(--line); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+  .af-platform-strip b { color: var(--ink-2); font-weight: 700; letter-spacing: -0.01em; text-transform: none; font-size: 11px; }
+  .af-help { font-size: 13px; color: var(--ink-2); padding: 6px 10px; border-radius: 5px; font-weight: 500; cursor: default; }
+
+  /* Progress steps */
+  .progress { padding: 18px 32px; background: var(--bg-canvas); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; flex-shrink: 0; justify-content: center; }
+  .progress__step { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .progress__dot { width: 28px; height: 28px; border-radius: 50%; background: var(--bg-soft); border: 1.5px solid var(--line-2); display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-3); font-weight: 600; flex-shrink: 0; }
+  .progress__label { font-size: 12px; color: var(--ink-3); font-weight: 500; white-space: nowrap; }
+  .progress__step--done .progress__dot { background: var(--success); border-color: var(--success); color: white; }
+  .progress__step--done .progress__label { color: var(--ink); }
+  .progress__step--active .progress__dot { background: var(--ember); border-color: var(--ember-d); color: white; box-shadow: 0 0 0 4px rgba(221,110,27,0.18); }
+  .progress__step--active .progress__label { color: var(--ember-d); font-weight: 700; }
+  .progress__step--skipped .progress__dot { background: var(--bg-soft); border-color: var(--line-2); color: var(--ink-4); border-style: dashed; }
+  .progress__step--skipped .progress__label { color: var(--ink-4); text-decoration: line-through; font-style: italic; }
+  .progress__bar { flex: 1; height: 2px; background: var(--line); border-radius: 1px; min-width: 30px; max-width: 60px; }
+  .progress__bar--done { background: var(--success); }
+  .progress__bar--skipped { background: repeating-linear-gradient(to right, var(--line-3), var(--line-3) 3px, transparent 3px, transparent 6px); }
+
+  /* Body */
+  .booking-body { flex: 1; display: grid; grid-template-columns: 320px 1fr; min-height: 0; }
+
+  /* Quote summary sidebar */
+  .quote-summary { background: var(--bg-soft); border-right: 1px solid var(--line); padding: 20px; overflow-y: auto; }
+  .quote-summary__head { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 10px; }
+  .quote-summary__map {
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #2D4830 0%, #5A7050 100%);
+    position: relative;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    border: 1px solid var(--line);
+  }
+  .quote-summary__map svg { width: 100%; height: 100%; }
+  .quote-summary__map-tag { position: absolute; top: 6px; right: 6px; background: rgba(15,41,66,0.85); color: white; font-size: 9.5px; padding: 2px 6px; border-radius: 3px; backdrop-filter: blur(4px); }
+  .quote-summary__title { font-size: 16px; font-weight: 700; color: var(--ink); margin-bottom: 2px; line-height: 1.2; }
+  .quote-summary__sub { font-size: 12.5px; color: var(--ink-3); margin-bottom: 14px; font-family: 'IBM Plex Mono', monospace; }
+  .quote-summary__spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; padding: 10px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+  .quote-summary__spec { font-size: 11px; color: var(--ink-3); }
+  .quote-summary__spec b { color: var(--ink); font-weight: 600; font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; display: block; margin-top: 1px; }
+
+  .quote-summary__line { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; color: var(--ink-2); font-family: 'IBM Plex Mono', monospace; }
+  .quote-summary__line--total { font-size: 13.5px; font-weight: 700; color: var(--ink); padding-top: 10px; margin-top: 6px; border-top: 1px solid var(--line); }
+  .quote-summary__line--deposit { font-size: 12px; color: var(--ember-d); font-weight: 700; padding-top: 4px; }
+
+  .quote-summary__supplier { margin-top: 16px; padding: 12px; background: white; border: 1px solid var(--line); border-radius: 8px; display: flex; align-items: center; gap: 10px; }
+  .quote-summary__supplier-mark { width: 32px; height: 32px; background: var(--ember); color: white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+  .quote-summary__supplier-body { flex: 1; min-width: 0; }
+  .quote-summary__supplier-name { font-size: 12px; font-weight: 600; color: var(--ink); }
+  .quote-summary__supplier-sub { font-size: 10.5px; color: var(--ink-3); margin-top: 1px; }
+
+  /* Main step area */
+  .step-area { padding: 36px 44px; overflow-y: auto; background: white; }
+  .step-area__head { margin-bottom: 28px; }
+  .step-area__step-num { font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ember-d); font-weight: 600; margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; }
+  .step-area__title { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 6px; line-height: 1.15; }
+  .step-area__lede { font-size: 14.5px; color: var(--ink-2); max-width: 540px; }
+
+  /* Form fields */
+  .form-row { margin-bottom: 16px; }
+  .form-row__label { display: block; font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 5px; letter-spacing: 0.02em; }
+  .form-row__hint { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+  .form-row__input, .form-row__select {
+    width: 100%; background: white;
+    border: 1px solid var(--line-2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13.5px;
+    font-family: inherit;
+    color: var(--ink);
+    transition: border-color 0.15s;
+  }
+  .form-row__input--filled { background: var(--bg-soft); border-color: var(--line); color: var(--ink-2); }
+  .form-row__input--focused { border-color: var(--ember); box-shadow: 0 0 0 3px rgba(221,110,27,0.15); }
+  .form-row__input-with-icon { display: flex; align-items: center; gap: 10px; padding: 4px 4px 4px 12px; }
+  .form-row__input-with-icon input { flex: 1; border: 0; outline: 0; padding: 8px 0; font-size: 13.5px; font-family: inherit; }
+  .form-row__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* CTAs */
+  .cta-row { display: flex; gap: 10px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--line); }
+  .cta-btn {
+    background: var(--ember); color: white;
+    border: 0; border-radius: 8px;
+    padding: 13px 22px; font-size: 14px; font-weight: 600;
+    cursor: default; font-family: inherit;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .cta-btn--secondary { background: white; color: var(--ink-2); border: 1px solid var(--line-2); font-weight: 500; }
+  .cta-btn--full { flex: 1; justify-content: center; }
+  .cta-btn--lock::before { content: "🔒"; font-size: 12px; opacity: 0.9; }
+
+  /* Video upload zone */
+  .video-zone {
+    border: 2px dashed var(--ember);
+    border-radius: 14px;
+    padding: 36px 30px;
+    text-align: center;
+    background: var(--ember-soft);
+    margin-bottom: 16px;
+  }
+  .video-zone__icon { font-size: 40px; margin-bottom: 12px; }
+  .video-zone__title { font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+  .video-zone__sub { font-size: 13px; color: var(--ink-2); max-width: 440px; margin: 0 auto 16px; line-height: 1.5; }
+  .video-zone__btns { display: flex; gap: 10px; justify-content: center; }
+  .video-zone__btn { background: var(--ember); color: white; border: 0; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 600; cursor: default; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
+  .video-zone__btn--secondary { background: white; color: var(--ember-d); border: 1px solid var(--ember); }
+
+  .video-tips { background: white; border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; margin-bottom: 16px; }
+  .video-tips__title { font-size: 12px; font-weight: 700; color: var(--ink); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .video-tips__list { list-style: none; padding: 0; }
+  .video-tips__item { font-size: 12.5px; color: var(--ink-2); padding: 4px 0; display: flex; gap: 8px; align-items: flex-start; }
+  .video-tips__item::before { content: "✓"; color: var(--success); font-weight: 700; margin-right: 2px; }
+
+  .skip-row { text-align: center; padding-top: 14px; }
+  .skip-row__link { font-size: 12.5px; color: var(--ink-3); text-decoration: underline; cursor: default; }
+  .skip-row__note { font-size: 11px; color: var(--warn-fg); margin-top: 4px; }
+
+  /* Calendar */
+  .calendar { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .calendar__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .calendar__title { font-size: 15px; font-weight: 700; color: var(--ink); }
+  .calendar__nav { display: flex; gap: 4px; }
+  .calendar__nav-btn { width: 28px; height: 28px; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; color: var(--ink-2); cursor: default; }
+  .calendar__weekdays { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 4px; }
+  .calendar__weekday { text-align: center; font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; padding: 6px 0; }
+  .calendar__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .calendar__day {
+    aspect-ratio: 1;
+    background: white;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    color: var(--ink-2);
+    cursor: default;
+    position: relative;
+  }
+  .calendar__day-num { font-weight: 600; }
+  .calendar__day-tag { font-size: 9px; color: var(--ink-4); margin-top: 1px; }
+  .calendar__day--out { color: var(--ink-4); }
+  .calendar__day--available { background: var(--success-soft); color: var(--success); }
+  .calendar__day--available:hover { background: var(--success); color: white; }
+  .calendar__day--selected { background: var(--ember); color: white; box-shadow: 0 4px 10px rgba(221,110,27,0.35); }
+  .calendar__day--selected .calendar__day-tag { color: rgba(255,255,255,0.85); }
+  .calendar__day--booked { color: var(--ink-4); background: repeating-linear-gradient(45deg, transparent, transparent 3px, var(--line) 3px, var(--line) 4px); }
+  .calendar__day--closed { color: var(--error-fg); background: var(--error-bg); opacity: 0.7; }
+  .calendar__legend { display: flex; gap: 16px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+  .calendar__legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--ink-3); }
+  .calendar__legend-swatch { width: 12px; height: 12px; border-radius: 3px; }
+
+  /* Selected date confirmation card */
+  .booking-time-card { background: var(--ember-soft); border: 1px solid var(--ember); border-radius: 10px; padding: 14px 16px; margin-top: 16px; display: flex; gap: 14px; align-items: center; }
+  .booking-time-card__icon { font-size: 22px; }
+  .booking-time-card__body { flex: 1; min-width: 0; }
+  .booking-time-card__title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+  .booking-time-card__sub { font-size: 12px; color: var(--ink-2); }
+
+  /* Payment / review */
+  .review-card { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 18px; margin-bottom: 16px; }
+  .review-card__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+  .review-card__title { font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: 0.02em; }
+  .review-card__edit { font-size: 11.5px; color: var(--ember-d); text-decoration: underline; cursor: default; }
+  .review-card__row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; color: var(--ink-2); border-bottom: 1px dashed var(--line); }
+  .review-card__row:last-child { border-bottom: none; }
+  .review-card__row b { color: var(--ink); font-weight: 600; }
+  .review-card__row .mono-val { font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: var(--ink); }
+
+  .pay-card-form { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .pay-card-form__brand-row { display: flex; gap: 6px; justify-content: flex-end; align-items: center; margin-bottom: 10px; }
+  .pay-card-form__brand { width: 30px; height: 20px; background: var(--bg-soft); border: 1px solid var(--line); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: var(--ink-2); letter-spacing: 0.04em; }
+
+  .deposit-banner { background: var(--navy); color: white; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; display: flex; gap: 14px; align-items: center; }
+  .deposit-banner__icon { width: 38px; height: 38px; background: rgba(255,255,255,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .deposit-banner__body { flex: 1; min-width: 0; }
+  .deposit-banner__title { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.65); font-weight: 600; margin-bottom: 2px; }
+  .deposit-banner__amount { font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+  .deposit-banner__sub { font-size: 11.5px; color: rgba(255,255,255,0.65); margin-top: 2px; font-family: 'IBM Plex Mono', monospace; }
+
+  /* Confirmation */
+  .confirm-hero { text-align: center; padding: 40px 20px 20px; }
+  .confirm-hero__icon { width: 72px; height: 72px; background: var(--success); color: white; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 38px; margin-bottom: 18px; box-shadow: 0 12px 28px rgba(45,143,75,0.35); }
+  .confirm-hero__title { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); margin-bottom: 8px; line-height: 1.1; }
+  .confirm-hero__sub { font-size: 15px; color: var(--ink-2); max-width: 480px; margin: 0 auto; }
+
+  .next-steps { background: var(--bg-soft); border-radius: 12px; padding: 20px 22px; margin-bottom: 20px; }
+  .next-steps__title { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px; }
+  .next-step { display: flex; gap: 14px; align-items: flex-start; padding: 8px 0; }
+  .next-step__num { width: 26px; height: 26px; background: white; color: var(--ember-d); border: 1.5px solid var(--ember); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .next-step__body { flex: 1; min-width: 0; padding-top: 2px; }
+  .next-step__title { font-size: 13.5px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+  .next-step__sub { font-size: 12px; color: var(--ink-3); }
+
+  /* Trust strip */
+  .trust-strip { display: flex; align-items: center; justify-content: center; gap: 16px; padding-top: 18px; font-size: 11px; color: var(--ink-3); flex-wrap: wrap; }
+  .trust-strip__item { display: flex; align-items: center; gap: 6px; }
+
+  /* Anyfence brand on page */
+  .anyfence-tag-bottom { padding: 14px 32px; background: var(--bg-soft); border-top: 1px solid var(--line); font-size: 11px; color: var(--ink-3); text-align: center; letter-spacing: 0.04em; }
+  .anyfence-tag-bottom b { color: var(--ink-2); font-weight: 700; }
+
+  /* Footer */
+  .page-footer { background: var(--navy); color: rgba(255,255,255,0.85); padding: 50px 5%; }
+  .page-footer__title { font-size: 22px; font-weight: 700; letter-spacing: -0.015em; color: white; margin-bottom: 14px; }
+  .page-footer__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 30px; }
+  @media (max-width: 780px) { .page-footer__cols { grid-template-columns: 1fr; } }
+  .page-footer__col h5 { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ember); font-weight: 600; margin-bottom: 10px; }
+  .page-footer__col p { font-size: 13px; line-height: 1.55; color: rgba(255,255,255,0.72); }
+  .page-footer__col code { background: rgba(255,255,255,0.08); padding: 1px 5px; border-radius: 3px; font-size: 11.5px; }
+
+  @media (max-width: 980px) {
+    .frame__body { height: 640px; }
+    .booking-body { grid-template-columns: 260px 1fr; }
+    .step-area { padding: 28px 32px; }
+    .progress__label { display: none; }
+    .progress { padding: 18px 16px; }
+  }
+  @media (max-width: 780px) {
+    .page-header { padding: 24px 5%; }
+    .page-header__title { font-size: 24px; }
+    .stage { padding: 50px 5% 36px; }
+    .stage__title { font-size: 22px; }
+    .frame__body { height: 580px; }
+    .booking-body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+    .quote-summary { border-right: none; border-bottom: 1px solid var(--line); }
+    .step-area { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="page-header__eyebrow">Booking flow · v1 wireframe · 2026-06-04</div>
+  <h1 class="page-header__title">Anyfence — booking flow</h1>
+  <p class="page-header__sub">What happens after the customer hits <b>"Book this job"</b> or <b>"Book materials pickup"</b> on the calculator. Five steps: your details → walkthrough video → pick date → review &amp; deposit → booked. Single supplier (Amazing Fencing) so there's no contractor selection step — the moment they hit Book they're booking Amazing Fencing's install team or pickup desk. Stripe-Checkout-style layout: quote summary pinned on the left, active step on the right, persistent progress bar across the top.</p>
+  <div class="page-header__meta">
+    <div><b>Route:</b> /book/:quoteId</div>
+    <div><b>Entry from:</b> Entry-page bubble CTA (Stage 5 or 6)</div>
+    <div><b>Supplier:</b> Amazing Fencing</div>
+    <div><b>Two paths:</b> Supply + install (5 steps) · Supply only (4 steps, skips video)</div>
+  </div>
+</header>
+
+<nav class="stage-nav">
+  <span class="stage-nav__label">Jump to stage</span>
+  <div class="stage-nav__list">
+    <a class="stage-nav__item" href="#stage-1"><span class="stage-nav__num">01</span>Your details</a>
+    <a class="stage-nav__item" href="#stage-2"><span class="stage-nav__num">02</span>Walkthrough video</a>
+    <a class="stage-nav__item" href="#stage-3"><span class="stage-nav__num">03</span>Pick install date</a>
+    <a class="stage-nav__item" href="#stage-4"><span class="stage-nav__num">04</span>Review + deposit</a>
+    <a class="stage-nav__item" href="#stage-5"><span class="stage-nav__num">05</span>Booked!</a>
+    <a class="stage-nav__item" href="#supply-only"><span class="stage-nav__num">→</span>Supply-only diff</a>
+  </div>
+</nav>
+
+<!-- ─────────────────────────────────────────────────────────
+     STAGE 1 — YOUR DETAILS
+     ───────────────────────────────────────────────────────── -->
+<section class="stage" id="stage-1">
+  <div class="stage__header">
+    <div class="stage__eyebrow"><span class="stage__num">1</span> Your details</div>
+    <h2 class="stage__title">Quote on the left, contact form on the right.</h2>
+    <p class="stage__desc">Customer just clicked "Book this job" on the calculator. Now they're on <code>amazingfencing.com.au/book/q_4f9a2c</code>. Site address is autofilled from the address bar on the entry page. They fill in name, email, phone. Continue → walkthrough video.</p>
+  </div>
+
+  <div class="stage__grid">
+    <aside class="annotations">
+      <div class="anno-block">
+        <h4>Layout</h4>
+        <ul>
+          <li>Same header as calculator: Amazing Fencing brand + "BOOKING" tag + powered-by-Anyfence strip</li>
+          <li><b>Progress bar</b> across the top — 5 steps, current step is "Your details"</li>
+          <li>Left ~35%: quote summary (mini map + recap + line totals + Amazing Fencing supplier card)</li>
+          <li>Right ~65%: active step content (form fields)</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Quote summary card</h4>
+        <ul>
+          <li><b>Mini map thumbnail</b> showing the drawn fence with posts (same canvasEngine rendering as the entry page, scaled down to 200×150)</li>
+          <li>Fence type · dimensions · posts · gates · height — pulled from the canonical_payload</li>
+          <li>Line breakdown: Supply / Install / Extras / Total / 10% deposit</li>
+          <li>Amazing Fencing supplier strip at the bottom — branding consistency</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Form fields</h4>
+        <ul>
+          <li><b>Site address</b> — autofilled, greyed (the address bar from the entry page)</li>
+          <li><b>Full name</b> — required</li>
+          <li><b>Email</b> — required; receives quote PDF + booking confirmation</li>
+          <li><b>Phone</b> — required; installer texts an hour before arrival</li>
+          <li><b>Best time to call</b> — optional</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Persistence</h4>
+        <ul>
+          <li>If user backs out mid-flow, draft saves to <code>localStorage</code> + Postgres against the quoteId</li>
+          <li>Email of "quote saved · pick up where you left off" link if user provides email</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="frame">
+      <div class="frame__chrome">
+        <div class="frame__dots"><span class="frame__dot"></span><span class="frame__dot"></span><span class="frame__dot"></span></div>
+        <div class="frame__url">amazingfencing.com.au/book/q_4f9a2c</div>
+      </div>
+      <div class="frame__body">
+        <div class="af-top">
+          <div class="af-brand">
+            <div class="af-logo"><div class="af-logo__mark">AF</div><div class="af-logo__word">Amazing Fencing</div></div>
+            <div class="af-context"><b>Booking</b></div>
+            <div class="af-platform-strip">Powered by <b>Anyfence</b></div>
+          </div>
+          <div class="af-help">Need help? 1800 739 359</div>
+        </div>
+
+        <div class="progress">
+          <div class="progress__step progress__step--active"><div class="progress__dot">1</div><div class="progress__label">Your details</div></div>
+          <div class="progress__bar"></div>
+          <div class="progress__step"><div class="progress__dot">2</div><div class="progress__label">Walkthrough video</div></div>
+          <div class="progress__bar"></div>
+          <div class="progress__step"><div class="progress__dot">3</div><div class="progress__label">Pick install date</div></div>
+          <div class="progress__bar"></div>
+          <div class="progress__step"><div class="progress__dot">4</div><div class="progress__label">Review + deposit</div></div>
+          <div class="progress__bar"></div>
+          <div class="progress__step"><div class="progress__dot">5</div><div class="progress__label">Booked</div></div>
+        </div>
+
+        <div class="booking-body">
+          <!-- Quote summary -->
+          <aside class="quote-summary">
+            <div class="quote-summary__head">Your quote</div>
+            <div class="quote-summary__map">
+              <svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice">
+                <rect width="200" height="150" fill="#5E7B4A"/>
+                <rect x="80" y="20" width="40" height="80" fill="#5E7B4A"/>
+                <rect x="86" y="32" width="28" height="22" fill="#756A5C"/>
+                <polygon points="86,32 100,24 114,32" fill="#5C4F3F"/>
+                <ellipse cx="100" cy="76" rx="12" ry="6" fill="#6B89A8"/>
+                <path d="M 81 50 L 81 100 L 119 100 L 119 50" fill="none" stroke="#DD6E1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+                <circle cx="81" cy="50" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="81" cy="100" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="119" cy="100" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="119" cy="50" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <!-- line posts -->
+                <circle cx="81" cy="62" r="1.5" fill="#0A0E14"/>
+                <circle cx="81" cy="74" r="1.5" fill="#0A0E14"/>
+                <circle cx="81" cy="86" r="1.5" fill="#0A0E14"/>
+                <circle cx="92" cy="100" r="1.5" fill="#0A0E14"/>
+                <circle cx="103" cy="100" r="1.5" fill="#0A0E14"/>
+                <circle cx="119" cy="62" r="1.5" fill="#0A0E14"/>
+                <circle cx="119" cy="74" r="1.5" fill="#0A0E14"/>
+                <circle cx="119" cy="86" r="1.5" fill="#0A0E14"/>
+              </svg>
+              <div class="quote-summary__map-tag">42 Greenway Dr</div>
+            </div>
+            <div class="quote-summary__title">Timber Paling</div>
+            <div class="quote-summary__sub">Butted · 1800mm · 28.4m</div>
+            <div class="quote-summary__spec-grid">
+              <div class="quote-summary__spec">Posts<b>17</b></div>
+              <div class="quote-summary__spec">Gates<b>2</b></div>
+              <div class="quote-summary__spec">Palings<b>211</b></div>
+              <div class="quote-summary__spec">Install<b>2 days</b></div>
+            </div>
+            <div class="quote-summary__line"><span>Supply</span><span>$2,739</span></div>
+            <div class="quote-summary__line"><span>Install (32 hrs)</span><span>$1,509</span></div>
+            <div class="quote-summary__line"><span>Removal + tip</span><span>$240</span></div>
+            <div class="quote-summary__line"><span>Site travel</span><span>$120</span></div>
+            <div class="quote-summary__line quote-summary__line--total"><span>Total inc GST</span><span>$4,608</span></div>
+            <div class="quote-summary__line quote-summary__line--deposit"><span>10% deposit today</span><span>$461</span></div>
+            <div class="quote-summary__supplier">
+              <div class="quote-summary__supplier-mark">AF</div>
+              <div class="quote-summary__supplier-body">
+                <div class="quote-summary__supplier-name">Amazing Fencing</div>
+                <div class="quote-summary__supplier-sub">Currimundi depot · install team</div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Step area -->
+          <div class="step-area">
+            <div class="step-area__head">
+              <div class="step-area__step-num">STEP 1 OF 5</div>
+              <h2 class="step-area__title">Tell us a bit about you</h2>
+              <p class="step-area__lede">We'll send the quote PDF + booking confirmation to your email, and your installer will text on the day with their ETA.</p>
+            </div>
+
+            <div class="form-row">
+              <label class="form-row__label">Site address</label>
+              <input type="text" class="form-row__input form-row__input--filled" value="42 Greenway Drive, Currimundi QLD 4551" readonly />
+              <div class="form-row__hint">From the address you entered on the calculator. <a href="#" style="color: var(--ember-d); text-decoration: underline;">Change</a></div>
+            </div>
+
+            <div class="form-row__cols">
+              <div class="form-row">
+                <label class="form-row__label">Full name *</label>
+                <input type="text" class="form-row__input form-row__input--focused" placeholder="e.g. Liam Smith" />
+              </div>
+              <div class="form-row">
+                <label class="form-row__label">Phone *</label>
+                <div class="form-row__input form-row__input-with-icon">
+                  <span style="font-size: 11px; color: var(--ink-3); font-family: 'IBM Plex Mono', monospace;">🇦🇺 +61</span>
+                  <input type="tel" placeholder="412 345 678" />
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-row__label">Email *</label>
+              <input type="email" class="form-row__input" placeholder="you@example.com" />
+              <div class="form-row__hint">We'll send a quote PDF and your booking confirmation here.</div>
+            </div>
+
+            <div class="form-row">
+              <label class="form-row__label">Best time to call (optional)</label>
+              <select class="form-row__select">
+                <option>Any time during business hours</option>
+                <option>Morning (8am–12pm)</option>
+                <option>Afternoon (12–5pm)</option>
+                <option>After 5pm</option>
+              </select>
+              <div class="form-row__hint">Installer will text first, but call if there's a question.</div>
+            </div>
+
+            <div class="cta-row">
+              <button class="cta-btn cta-btn--secondary">← Back to calculator</button>
+              <button class="cta-btn cta-btn--full">Continue to walkthrough video →</button>
+            </div>
+          </div>
+        </div>
+        <div class="anyfence-tag-bottom">Booking secured by <b>Anyfence</b> · GST inc · 10% deposit · refundable until 48h before install</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     STAGE 2 — WALKTHROUGH VIDEO
+     ───────────────────────────────────────────────────────── -->
+<section class="stage" id="stage-2">
+  <div class="stage__header">
+    <div class="stage__eyebrow"><span class="stage__num">2</span> Walkthrough video</div>
+    <h2 class="stage__title">"Walk your fence line. Show the installer what they're walking into."</h2>
+    <p class="stage__desc">The trust step. Customer records a 60–90 second video showing fence line, neighbouring fences, slope, trees, access. Installer watches it before accepting — cuts site visits for ~70% of jobs and lets Amazing Fencing schedule a 2-day install with confidence. Supply-only skips this entire stage.</p>
+  </div>
+
+  <div class="stage__grid">
+    <aside class="annotations">
+      <div class="anno-block">
+        <h4>Why the video matters</h4>
+        <ul>
+          <li>Installer sees ground conditions, neighbour-fence condition, tree roots, access for materials</li>
+          <li>Cuts site visit out of the loop for ~70% of straightforward jobs</li>
+          <li>If installer flags issues after watching, deposit refunds + scheduling slot opens back up</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Upload UX</h4>
+        <ul>
+          <li>Big ember-orange drop-zone — primary action</li>
+          <li>Two ways to provide: <b>Record now</b> (camera in-browser) or <b>Upload</b> (file from camera roll)</li>
+          <li>While uploading: progress bar, file size, "uploading…" message</li>
+          <li>Once uploaded: thumbnail + replace / delete options + Continue button enables</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Skip option</h4>
+        <ul>
+          <li>"I'll send this later" link below the upload zone</li>
+          <li>Caveat shown: <b>installer requires the video before accepting</b> — skipping holds the booking until video lands</li>
+          <li>Reminder email goes out 24h later if still missing</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Supply-only skip</h4>
+        <ul>
+          <li>If the customer's mode is Supply only (pickup at depot), this entire step is skipped</li>
+          <li>Progress bar shows step 2 as dashed/struck-through</li>
+          <li>Flow goes directly: details → pickup date → review + deposit → booked</li>
+          <li>See <a href="#supply-only" style="color: var(--ember-d); text-decoration: underline;">Supply-only diff</a> at the bottom</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="frame">
+      <div class="frame__chrome">
+        <div class="frame__dots"><span class="frame__dot"></span><span class="frame__dot"></span><span class="frame__dot"></span></div>
+        <div class="frame__url">amazingfencing.com.au/book/q_4f9a2c</div>
+      </div>
+      <div class="frame__body">
+        <div class="af-top">
+          <div class="af-brand">
+            <div class="af-logo"><div class="af-logo__mark">AF</div><div class="af-logo__word">Amazing Fencing</div></div>
+            <div class="af-context"><b>Booking</b></div>
+            <div class="af-platform-strip">Powered by <b>Anyfence</b></div>
+          </div>
+          <div class="af-help">Need help? 1800 739 359</div>
+        </div>
+        <div class="progress">
+          <div class="progress__step progress__step--done"><div class="progress__dot">✓</div><div class="progress__label">Your details</div></div>
+          <div class="progress__bar progress__bar--done"></div>
+          <div class="progress__step progress__step--active"><div class="progress__dot">2</div><div class="progress__label">Walkthrough video</div></div>
+          <div class="progress__bar"></div>
+          <div class="progress__step"><div class="progress__dot">3</div><div class="progress__label">Pick install date</div></div>
+          <div class="progress__bar"></div>
+          <div class="progress__step"><div class="progress__dot">4</div><div class="progress__label">Review + deposit</div></div>
+          <div class="progress__bar"></div>
+          <div class="progress__step"><div class="progress__dot">5</div><div class="progress__label">Booked</div></div>
+        </div>
+
+        <div class="booking-body">
+          <aside class="quote-summary">
+            <div class="quote-summary__head">Your quote</div>
+            <div class="quote-summary__map">
+              <svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice">
+                <rect width="200" height="150" fill="#5E7B4A"/>
+                <rect x="80" y="20" width="40" height="80" fill="#5E7B4A"/>
+                <rect x="86" y="32" width="28" height="22" fill="#756A5C"/>
+                <polygon points="86,32 100,24 114,32" fill="#5C4F3F"/>
+                <ellipse cx="100" cy="76" rx="12" ry="6" fill="#6B89A8"/>
+                <path d="M 81 50 L 81 100 L 119 100 L 119 50" fill="none" stroke="#DD6E1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+                <circle cx="81" cy="50" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="81" cy="100" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="119" cy="100" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="119" cy="50" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+              </svg>
+              <div class="quote-summary__map-tag">42 Greenway Dr</div>
+            </div>
+            <div class="quote-summary__title">Timber Paling</div>
+            <div class="quote-summary__sub">Butted · 1800mm · 28.4m</div>
+            <div class="quote-summary__spec-grid">
+              <div class="quote-summary__spec">Posts<b>17</b></div>
+              <div class="quote-summary__spec">Gates<b>2</b></div>
+              <div class="quote-summary__spec">Mode<b>Supply + install</b></div>
+              <div class="quote-summary__spec">Install<b>2 days</b></div>
+            </div>
+            <div class="quote-summary__line"><span>Supply</span><span>$2,739</span></div>
+            <div class="quote-summary__line"><span>Install</span><span>$1,509</span></div>
+            <div class="quote-summary__line"><span>Extras</span><span>$360</span></div>
+            <div class="quote-summary__line quote-summary__line--total"><span>Total inc GST</span><span>$4,608</span></div>
+            <div class="quote-summary__line quote-summary__line--deposit"><span>10% deposit</span><span>$461</span></div>
+            <div class="quote-summary__supplier">
+              <div class="quote-summary__supplier-mark">AF</div>
+              <div class="quote-summary__supplier-body">
+                <div class="quote-summary__supplier-name">Amazing Fencing</div>
+                <div class="quote-summary__supplier-sub">Currimundi · install team</div>
+              </div>
+            </div>
+          </aside>
+
+          <div class="step-area">
+            <div class="step-area__head">
+              <div class="step-area__step-num">STEP 2 OF 5</div>
+              <h2 class="step-area__title">Walk your fence line on video</h2>
+              <p class="step-area__lede">Record 60–90 seconds showing what the installer will be walking into. They watch this before accepting and use it to plan the day. Most jobs don't need a site visit after this.</p>
+            </div>
+
+            <div class="video-zone">
+              <div class="video-zone__icon">🎥</div>
+              <div class="video-zone__title">Drop a video, or record one now</div>
+              <div class="video-zone__sub">MP4 or MOV · up to 250 MB · uploaded over your wifi · stays private to Amazing Fencing</div>
+              <div class="video-zone__btns">
+                <button class="video-zone__btn">📹 Record now</button>
+                <button class="video-zone__btn video-zone__btn--secondary">📁 Choose a file</button>
+              </div>
+            </div>
+
+            <div class="video-tips">
+              <div class="video-tips__title">📝 What to show in the video</div>
+              <ul class="video-tips__list">
+                <li class="video-tips__item">Walk the full fence line — corner to corner, including gates</li>
+                <li class="video-tips__item">Show neighbouring fences (condition, height, materials touching the boundary)</li>
+                <li class="video-tips__item">Point out any trees, sloped ground, or tight access for materials</li>
+                <li class="video-tips__item">Show where the materials can be dropped off (driveway, side gate, etc.)</li>
+                <li class="video-tips__item">If there's an existing fence to remove, walk along it once</li>
+              </ul>
+            </div>
+
+            <div class="skip-row">
+              <a href="#" class="skip-row__link">I'll send the video later</a>
+              <div class="skip-row__note">⚠ Heads up — Amazing Fencing won't confirm the install date until they've seen the video.</div>
+            </div>
+
+            <div class="cta-row">
+              <button class="cta-btn cta-btn--secondary">← Back</button>
+              <button class="cta-btn cta-btn--full" style="opacity: 0.5;">Upload a video to continue →</button>
+            </div>
+          </div>
+        </div>
+        <div class="anyfence-tag-bottom">Booking secured by <b>Anyfence</b> · video stays private to Amazing Fencing · deleted 30 days after install</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     STAGE 3 — PICK INSTALL DATE
+     ───────────────────────────────────────────────────────── -->
+<section class="stage" id="stage-3">
+  <div class="stage__header">
+    <div class="stage__eyebrow"><span class="stage__num">3</span> Pick install date</div>
+    <h2 class="stage__title">Amazing Fencing's actual calendar. Green days are open, hatched days are booked.</h2>
+    <p class="stage__desc">No third-party booking-tool. The calendar shows Amazing Fencing's own install team availability for the customer's postcode (travel time pre-baked). Picking a date locks a tentative slot for 24h — long enough for the installer to watch the video and confirm.</p>
+  </div>
+
+  <div class="stage__grid">
+    <aside class="annotations">
+      <div class="anno-block">
+        <h4>What's on the calendar</h4>
+        <ul>
+          <li><b>Available</b> (green) — installer has a 2-day window starting this date, and travel time from the depot is OK</li>
+          <li><b>Booked</b> (hatched grey) — already taken</li>
+          <li><b>Closed</b> (red-tinted) — public holidays, weekends if no Saturday team</li>
+          <li><b>Selected</b> (ember) — the customer's pick; locks tentatively for 24h</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Calendar drives the data</h4>
+        <ul>
+          <li>Pulled from Amazing Fencing's install team's <code>availability_windows</code> (per postcode-zone)</li>
+          <li>Pre-considers travel time from the depot (Currimundi) — far suburbs only show on Tue/Wed/Thu when full-day install crews go out</li>
+          <li>2-day jobs need 2 consecutive available days — calendar greys out single-day slots</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Booking confirmation card</h4>
+        <ul>
+          <li>Below the calendar: live readout of the selected slot</li>
+          <li><b>Tue 16 June</b> · 2 day install · finish by Thu 18 June</li>
+          <li>"Tentative — locks for 24h. Installer confirms after watching your video."</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="frame">
+      <div class="frame__chrome">
+        <div class="frame__dots"><span class="frame__dot"></span><span class="frame__dot"></span><span class="frame__dot"></span></div>
+        <div class="frame__url">amazingfencing.com.au/book/q_4f9a2c</div>
+      </div>
+      <div class="frame__body">
+        <div class="af-top">
+          <div class="af-brand">
+            <div class="af-logo"><div class="af-logo__mark">AF</div><div class="af-logo__word">Amazing Fencing</div></div>
+            <div class="af-context"><b>Booking</b></div>
+            <div class="af-platform-strip">Powered by <b>Anyfence</b></div>
+          </div>
+          <div class="af-help">Need help? 1800 739 359</div>
+        </div>
+        <div class="progress">
+          <div class="progress__step progress__step--done"><div class="progress__dot">✓</div><div class="progress__label">Your details</div></div>
+          <div class="progress__bar progress__bar--done"></div>
+          <div class="progress__step progress__step--done"><div class="progress__dot">✓</div><div class="progress__label">Walkthrough video</div></div>
+          <div class="progress__bar progress__bar--done"></div>
+          <div class="progress__step progress__step--active"><div class="progress__dot">3</div><div class="progress__label">Pick install date</div></div>
+          <div class="progress__bar"></div>
+          <div class="progress__step"><div class="progress__dot">4</div><div class="progress__label">Review + deposit</div></div>
+          <div class="progress__bar"></div>
+          <div class="progress__step"><div class="progress__dot">5</div><div class="progress__label">Booked</div></div>
+        </div>
+
+        <div class="booking-body">
+          <aside class="quote-summary">
+            <div class="quote-summary__head">Your quote</div>
+            <div class="quote-summary__map">
+              <svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice">
+                <rect width="200" height="150" fill="#5E7B4A"/>
+                <rect x="80" y="20" width="40" height="80" fill="#5E7B4A"/>
+                <rect x="86" y="32" width="28" height="22" fill="#756A5C"/>
+                <polygon points="86,32 100,24 114,32" fill="#5C4F3F"/>
+                <path d="M 81 50 L 81 100 L 119 100 L 119 50" fill="none" stroke="#DD6E1B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+                <circle cx="81" cy="50" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="81" cy="100" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="119" cy="100" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="119" cy="50" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+              </svg>
+              <div class="quote-summary__map-tag">42 Greenway Dr</div>
+            </div>
+            <div class="quote-summary__title">Timber Paling</div>
+            <div class="quote-summary__sub">Butted · 1800mm · 28.4m</div>
+            <div class="quote-summary__spec-grid">
+              <div class="quote-summary__spec">Posts<b>17</b></div>
+              <div class="quote-summary__spec">Gates<b>2</b></div>
+              <div class="quote-summary__spec">Install<b>2 days</b></div>
+              <div class="quote-summary__spec">Video<b>✓ Uploaded</b></div>
+            </div>
+            <div class="quote-summary__line"><span>Supply</span><span>$2,739</span></div>
+            <div class="quote-summary__line"><span>Install</span><span>$1,509</span></div>
+            <div class="quote-summary__line"><span>Extras</span><span>$360</span></div>
+            <div class="quote-summary__line quote-summary__line--total"><span>Total inc GST</span><span>$4,608</span></div>
+            <div class="quote-summary__line quote-summary__line--deposit"><span>10% deposit</span><span>$461</span></div>
+            <div class="quote-summary__supplier">
+              <div class="quote-summary__supplier-mark">AF</div>
+              <div class="quote-summary__supplier-body">
+                <div class="quote-summary__supplier-name">Amazing Fencing</div>
+                <div class="quote-summary__supplier-sub">Currimundi · install team</div>
+              </div>
+            </div>
+          </aside>
+
+          <div class="step-area">
+            <div class="step-area__head">
+              <div class="step-area__step-num">STEP 3 OF 5</div>
+              <h2 class="step-area__title">When should we start?</h2>
+              <p class="step-area__lede">Pick a start date — your 2-day install will run that day and the next. Days in green are open; hatched grey is already booked. We'll text you the morning of with the team's ETA.</p>
+            </div>
+
+            <div class="calendar">
+              <div class="calendar__head">
+                <div class="calendar__title">June 2026</div>
+                <div class="calendar__nav">
+                  <button class="calendar__nav-btn">‹</button>
+                  <button class="calendar__nav-btn">›</button>
+                </div>
+              </div>
+              <div class="calendar__weekdays">
+                <div class="calendar__weekday">Mon</div>
+                <div class="calendar__weekday">Tue</div>
+                <div class="calendar__weekday">Wed</div>
+                <div class="calendar__weekday">Thu</div>
+                <div class="calendar__weekday">Fri</div>
+                <div class="calendar__weekday">Sat</div>
+                <div class="calendar__weekday">Sun</div>
+              </div>
+              <div class="calendar__grid">
+                <!-- Week 1: 1 = Mon -->
+                <div class="calendar__day calendar__day--out"><div class="calendar__day-num">1</div></div>
+                <div class="calendar__day calendar__day--out"><div class="calendar__day-num">2</div></div>
+                <div class="calendar__day calendar__day--out"><div class="calendar__day-num">3</div></div>
+                <div class="calendar__day calendar__day--booked"><div class="calendar__day-num">4</div></div>
+                <div class="calendar__day calendar__day--booked"><div class="calendar__day-num">5</div></div>
+                <div class="calendar__day calendar__day--closed"><div class="calendar__day-num">6</div></div>
+                <div class="calendar__day calendar__day--closed"><div class="calendar__day-num">7</div></div>
+                <!-- Week 2 -->
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">8</div><div class="calendar__day-tag">2-day</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">9</div><div class="calendar__day-tag">2-day</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">10</div><div class="calendar__day-tag">2-day</div></div>
+                <div class="calendar__day calendar__day--booked"><div class="calendar__day-num">11</div></div>
+                <div class="calendar__day calendar__day--booked"><div class="calendar__day-num">12</div></div>
+                <div class="calendar__day calendar__day--closed"><div class="calendar__day-num">13</div></div>
+                <div class="calendar__day calendar__day--closed"><div class="calendar__day-num">14</div></div>
+                <!-- Week 3 -->
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">15</div><div class="calendar__day-tag">2-day</div></div>
+                <div class="calendar__day calendar__day--selected"><div class="calendar__day-num">16</div><div class="calendar__day-tag">START</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">17</div><div class="calendar__day-tag">Day 2</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">18</div><div class="calendar__day-tag">2-day</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">19</div><div class="calendar__day-tag">2-day</div></div>
+                <div class="calendar__day calendar__day--closed"><div class="calendar__day-num">20</div></div>
+                <div class="calendar__day calendar__day--closed"><div class="calendar__day-num">21</div></div>
+                <!-- Week 4 -->
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">22</div><div class="calendar__day-tag">2-day</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">23</div><div class="calendar__day-tag">2-day</div></div>
+                <div class="calendar__day calendar__day--booked"><div class="calendar__day-num">24</div></div>
+                <div class="calendar__day calendar__day--booked"><div class="calendar__day-num">25</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">26</div><div class="calendar__day-tag">2-day</div></div>
+                <div class="calendar__day calendar__day--closed"><div class="calendar__day-num">27</div></div>
+                <div class="calendar__day calendar__day--closed"><div class="calendar__day-num">28</div></div>
+                <!-- Week 5 -->
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">29</div><div class="calendar__day-tag">2-day</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">30</div><div class="calendar__day-tag">2-day</div></div>
+              </div>
+              <div class="calendar__legend">
+                <div class="calendar__legend-item"><span class="calendar__legend-swatch" style="background: var(--success-soft); border: 1px solid var(--success);"></span>Available 2-day slot</div>
+                <div class="calendar__legend-item"><span class="calendar__legend-swatch" style="background: var(--ember);"></span>Your pick</div>
+                <div class="calendar__legend-item"><span class="calendar__legend-swatch" style="background: repeating-linear-gradient(45deg, transparent, transparent 2px, var(--line) 2px, var(--line) 3px);"></span>Already booked</div>
+                <div class="calendar__legend-item"><span class="calendar__legend-swatch" style="background: var(--error-bg);"></span>Closed</div>
+              </div>
+            </div>
+
+            <div class="booking-time-card">
+              <div class="booking-time-card__icon">📅</div>
+              <div class="booking-time-card__body">
+                <div class="booking-time-card__title">Tentative — Tue 16 June, finishing Thu 18 June</div>
+                <div class="booking-time-card__sub">Locks for 24h. Installer confirms after watching your video — they'll usually accept within 4 working hours.</div>
+              </div>
+            </div>
+
+            <div class="cta-row">
+              <button class="cta-btn cta-btn--secondary">← Back</button>
+              <button class="cta-btn cta-btn--full">Continue to review + deposit →</button>
+            </div>
+          </div>
+        </div>
+        <div class="anyfence-tag-bottom">Booking secured by <b>Anyfence</b> · slot tentative until video reviewed · refundable until 48h before install</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     STAGE 4 — REVIEW + DEPOSIT
+     ───────────────────────────────────────────────────────── -->
+<section class="stage" id="stage-4">
+  <div class="stage__header">
+    <div class="stage__eyebrow"><span class="stage__num">4</span> Review + deposit</div>
+    <h2 class="stage__title">Everything in one screen. 10% deposit secures the date.</h2>
+    <p class="stage__desc">All four review cards (job · contact · schedule · video) shown collapsed — customer can tap any to edit. Big navy deposit banner makes the amount obvious. Stripe-style card form below. One CTA: <b>Pay $461 deposit · Book Tue 16 Jun</b>. Trust signals strip below.</p>
+  </div>
+
+  <div class="stage__grid">
+    <aside class="annotations">
+      <div class="anno-block">
+        <h4>Review cards</h4>
+        <ul>
+          <li><b>Your job</b> — Timber Paling, 28.4m, 17 posts, 2 gates · Edit → back to calculator</li>
+          <li><b>Your contact</b> — name, email, phone · Edit → back to Step 1</li>
+          <li><b>Your install date</b> — Tue 16 Jun, 2 day install · Edit → back to Step 3</li>
+          <li><b>Your video</b> — 1m 22s thumbnail · Edit → re-upload</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Deposit banner</h4>
+        <ul>
+          <li>Navy block at the top of the column. Large $461 in mono.</li>
+          <li>Sub-line: "10% of $4,608 · refundable until 48h before install"</li>
+          <li>Sets expectation BEFORE the card form</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Payment form</h4>
+        <ul>
+          <li>Stripe-style: card number, expiry, CVC, name on card</li>
+          <li>Card brand icons (Visa, Mastercard, Amex) right-aligned in the brand row</li>
+          <li>Apple Pay / Google Pay buttons above on supported browsers (not drawn here)</li>
+          <li>Postal code (matches site address) auto-filled</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Trust signals</h4>
+        <ul>
+          <li>"🔒 Secure payment via Stripe" · "Refundable up to 48h before install" · "AS3959 + AS1604 compliance"</li>
+          <li>Subtle strip below CTA, doesn't compete</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="frame">
+      <div class="frame__chrome">
+        <div class="frame__dots"><span class="frame__dot"></span><span class="frame__dot"></span><span class="frame__dot"></span></div>
+        <div class="frame__url">amazingfencing.com.au/book/q_4f9a2c</div>
+      </div>
+      <div class="frame__body">
+        <div class="af-top">
+          <div class="af-brand">
+            <div class="af-logo"><div class="af-logo__mark">AF</div><div class="af-logo__word">Amazing Fencing</div></div>
+            <div class="af-context"><b>Booking</b></div>
+            <div class="af-platform-strip">Powered by <b>Anyfence</b></div>
+          </div>
+          <div class="af-help">Need help? 1800 739 359</div>
+        </div>
+        <div class="progress">
+          <div class="progress__step progress__step--done"><div class="progress__dot">✓</div><div class="progress__label">Your details</div></div>
+          <div class="progress__bar progress__bar--done"></div>
+          <div class="progress__step progress__step--done"><div class="progress__dot">✓</div><div class="progress__label">Walkthrough video</div></div>
+          <div class="progress__bar progress__bar--done"></div>
+          <div class="progress__step progress__step--done"><div class="progress__dot">✓</div><div class="progress__label">Pick install date</div></div>
+          <div class="progress__bar progress__bar--done"></div>
+          <div class="progress__step progress__step--active"><div class="progress__dot">4</div><div class="progress__label">Review + deposit</div></div>
+          <div class="progress__bar"></div>
+          <div class="progress__step"><div class="progress__dot">5</div><div class="progress__label">Booked</div></div>
+        </div>
+
+        <div class="booking-body">
+          <aside class="quote-summary">
+            <div class="quote-summary__head">Your quote</div>
+            <div class="quote-summary__map">
+              <svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice">
+                <rect width="200" height="150" fill="#5E7B4A"/>
+                <rect x="80" y="20" width="40" height="80" fill="#5E7B4A"/>
+                <rect x="86" y="32" width="28" height="22" fill="#756A5C"/>
+                <path d="M 81 50 L 81 100 L 119 100 L 119 50" fill="none" stroke="#DD6E1B" stroke-width="2"/>
+                <circle cx="81" cy="50" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="81" cy="100" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="119" cy="100" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="119" cy="50" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+              </svg>
+              <div class="quote-summary__map-tag">42 Greenway Dr</div>
+            </div>
+            <div class="quote-summary__title">Timber Paling</div>
+            <div class="quote-summary__sub">Butted · 1800mm · 28.4m</div>
+            <div class="quote-summary__line"><span>Supply</span><span>$2,739</span></div>
+            <div class="quote-summary__line"><span>Install (32 hrs)</span><span>$1,509</span></div>
+            <div class="quote-summary__line"><span>Extras</span><span>$360</span></div>
+            <div class="quote-summary__line quote-summary__line--total"><span>Total inc GST</span><span>$4,608</span></div>
+            <div class="quote-summary__line quote-summary__line--deposit"><span>10% deposit today</span><span>$461</span></div>
+            <div class="quote-summary__line" style="color: var(--ink-3); font-size: 11px;"><span>Balance on completion</span><span>$4,147</span></div>
+            <div class="quote-summary__supplier">
+              <div class="quote-summary__supplier-mark">AF</div>
+              <div class="quote-summary__supplier-body">
+                <div class="quote-summary__supplier-name">Amazing Fencing</div>
+                <div class="quote-summary__supplier-sub">Currimundi · install team</div>
+              </div>
+            </div>
+          </aside>
+
+          <div class="step-area">
+            <div class="step-area__head">
+              <div class="step-area__step-num">STEP 4 OF 5</div>
+              <h2 class="step-area__title">Review &amp; secure with a 10% deposit</h2>
+              <p class="step-area__lede">Quick once-over of everything below — anything off, tap Edit. Deposit secures your install date and is refundable up to 48h before.</p>
+            </div>
+
+            <div class="deposit-banner">
+              <div class="deposit-banner__icon">🔒</div>
+              <div class="deposit-banner__body">
+                <div class="deposit-banner__title">10% deposit today</div>
+                <div class="deposit-banner__amount">$461.00</div>
+                <div class="deposit-banner__sub">of $4,608 total · refundable until 48h before install · balance on completion</div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+              <div class="review-card">
+                <div class="review-card__head">
+                  <div class="review-card__title">YOUR JOB</div>
+                  <a class="review-card__edit">Edit</a>
+                </div>
+                <div class="review-card__row"><span>Type</span><b>Timber Paling · Butted</b></div>
+                <div class="review-card__row"><span>Height</span><b>1800mm</b></div>
+                <div class="review-card__row"><span>Length</span><b class="mono-val">28.4m</b></div>
+                <div class="review-card__row"><span>Posts · Gates</span><b class="mono-val">17 · 2</b></div>
+              </div>
+              <div class="review-card">
+                <div class="review-card__head">
+                  <div class="review-card__title">YOUR CONTACT</div>
+                  <a class="review-card__edit">Edit</a>
+                </div>
+                <div class="review-card__row"><span>Name</span><b>Liam Smith</b></div>
+                <div class="review-card__row"><span>Email</span><b style="font-size: 11px;">liam@byronandbeyond…</b></div>
+                <div class="review-card__row"><span>Phone</span><b class="mono-val">+61 412 345 678</b></div>
+                <div class="review-card__row"><span>Site</span><b style="font-size: 11px;">42 Greenway Dr</b></div>
+              </div>
+              <div class="review-card">
+                <div class="review-card__head">
+                  <div class="review-card__title">YOUR INSTALL DATE</div>
+                  <a class="review-card__edit">Edit</a>
+                </div>
+                <div class="review-card__row"><span>Start</span><b style="color: var(--ember-d);">Tue 16 June 2026</b></div>
+                <div class="review-card__row"><span>Finish</span><b>Thu 18 June 2026</b></div>
+                <div class="review-card__row"><span>Crew</span><b>Amazing Fencing · 2-man</b></div>
+                <div class="review-card__row"><span>Status</span><b style="color: var(--warn-fg);">Tentative · awaits video review</b></div>
+              </div>
+              <div class="review-card">
+                <div class="review-card__head">
+                  <div class="review-card__title">YOUR WALKTHROUGH</div>
+                  <a class="review-card__edit">Edit</a>
+                </div>
+                <div style="display: flex; gap: 10px; padding: 4px 0;">
+                  <div style="width: 60px; height: 38px; background: var(--navy); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; flex-shrink: 0;">▶</div>
+                  <div style="font-size: 12px; color: var(--ink-2); flex: 1;">
+                    <div style="font-weight: 600; color: var(--ink);">walkthrough.mp4</div>
+                    <div style="font-size: 11px; color: var(--ink-3); font-family: 'IBM Plex Mono', monospace;">1m 22s · 84 MB · uploaded ✓</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pay-card-form">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <div style="font-size: 13px; font-weight: 700; color: var(--ink); letter-spacing: 0.04em; text-transform: uppercase;">Card details</div>
+                <div class="pay-card-form__brand-row">
+                  <div class="pay-card-form__brand" style="background: #1A1F71; color: white;">VISA</div>
+                  <div class="pay-card-form__brand" style="background: #EB001B; color: white;">MC</div>
+                  <div class="pay-card-form__brand" style="background: #006FCF; color: white;">AMEX</div>
+                </div>
+              </div>
+              <div class="form-row">
+                <label class="form-row__label">Card number</label>
+                <input type="text" class="form-row__input" placeholder="1234 5678 9012 3456" />
+              </div>
+              <div class="form-row__cols">
+                <div class="form-row">
+                  <label class="form-row__label">Expiry</label>
+                  <input type="text" class="form-row__input" placeholder="MM / YY" />
+                </div>
+                <div class="form-row">
+                  <label class="form-row__label">CVC</label>
+                  <input type="text" class="form-row__input" placeholder="123" />
+                </div>
+              </div>
+              <div class="form-row">
+                <label class="form-row__label">Name on card</label>
+                <input type="text" class="form-row__input" placeholder="Liam Smith" />
+              </div>
+            </div>
+
+            <div class="cta-row">
+              <button class="cta-btn cta-btn--secondary">← Back</button>
+              <button class="cta-btn cta-btn--full cta-btn--lock">Pay $461 deposit · Book Tue 16 Jun</button>
+            </div>
+
+            <div class="trust-strip">
+              <div class="trust-strip__item">🔒 Secure payment via Stripe</div>
+              <div class="trust-strip__item">↩ Refundable until 48h before install</div>
+              <div class="trust-strip__item">✓ H4 timber · council-compliant</div>
+            </div>
+          </div>
+        </div>
+        <div class="anyfence-tag-bottom">Booking secured by <b>Anyfence</b> · payment processed by Stripe · receipt emailed instantly</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     STAGE 5 — BOOKED
+     ───────────────────────────────────────────────────────── -->
+<section class="stage" id="stage-5">
+  <div class="stage__header">
+    <div class="stage__eyebrow"><span class="stage__num">5</span> Booked!</div>
+    <h2 class="stage__title">Big green tick. What happens next, in plain English.</h2>
+    <p class="stage__desc">The terminal screen. Customer sees the booking is locked, gets a receipt email, and has clear next steps so they don't sit there wondering "now what?". The "Add to calendar" + "View booking" links keep this surface useful long after the customer has tapped through.</p>
+  </div>
+
+  <div class="stage__grid">
+    <aside class="annotations">
+      <div class="anno-block">
+        <h4>Tone</h4>
+        <ul>
+          <li><b>Calm + clear</b>. Not over-celebratory (no confetti, no balloons)</li>
+          <li>Tradies booking a $4k job want confidence, not a party</li>
+          <li>Hero icon + headline does the celebrating; everything below is informational</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>What's on screen</h4>
+        <ul>
+          <li><b>Hero</b>: green tick + "Booked!" + sub-text confirming date</li>
+          <li><b>Next-steps block</b>: 4 numbered cards walking through what happens until install day</li>
+          <li><b>Reference number</b>: Q-4F9A2C — for support calls / emails</li>
+          <li><b>Three CTA buttons</b>: View booking · Add to calendar · Email a copy</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>"What happens next" — 4 cards</h4>
+        <ul>
+          <li>① <b>Now</b>: confirmation email + receipt sent</li>
+          <li>② <b>Within 4 working hours</b>: Amazing Fencing reviews the video + locks the slot or comes back with questions</li>
+          <li>③ <b>2 days before</b>: installer calls to confirm access + dropoff spot</li>
+          <li>④ <b>Day of install</b>: text with team's ETA + job site phone number</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>What's NOT here</h4>
+        <ul>
+          <li>No "Browse more fence types" or upsells — they've just booked, don't sell more</li>
+          <li>No share-on-social — tradies don't tweet about their fence</li>
+          <li>No newsletter signup — they're a customer now, that's enough</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="frame">
+      <div class="frame__chrome">
+        <div class="frame__dots"><span class="frame__dot"></span><span class="frame__dot"></span><span class="frame__dot"></span></div>
+        <div class="frame__url">amazingfencing.com.au/book/q_4f9a2c/confirmed</div>
+      </div>
+      <div class="frame__body">
+        <div class="af-top">
+          <div class="af-brand">
+            <div class="af-logo"><div class="af-logo__mark">AF</div><div class="af-logo__word">Amazing Fencing</div></div>
+            <div class="af-context"><b>Booking</b></div>
+            <div class="af-platform-strip">Powered by <b>Anyfence</b></div>
+          </div>
+          <div class="af-help">Need help? 1800 739 359</div>
+        </div>
+        <div class="progress">
+          <div class="progress__step progress__step--done"><div class="progress__dot">✓</div><div class="progress__label">Your details</div></div>
+          <div class="progress__bar progress__bar--done"></div>
+          <div class="progress__step progress__step--done"><div class="progress__dot">✓</div><div class="progress__label">Walkthrough video</div></div>
+          <div class="progress__bar progress__bar--done"></div>
+          <div class="progress__step progress__step--done"><div class="progress__dot">✓</div><div class="progress__label">Pick install date</div></div>
+          <div class="progress__bar progress__bar--done"></div>
+          <div class="progress__step progress__step--done"><div class="progress__dot">✓</div><div class="progress__label">Review + deposit</div></div>
+          <div class="progress__bar progress__bar--done"></div>
+          <div class="progress__step progress__step--active"><div class="progress__dot" style="background: var(--success); border-color: var(--success); color: white;">✓</div><div class="progress__label" style="color: var(--success); font-weight: 700;">Booked</div></div>
+        </div>
+
+        <div style="flex: 1; overflow-y: auto; padding: 0;">
+          <div class="confirm-hero">
+            <div class="confirm-hero__icon">✓</div>
+            <h1 class="confirm-hero__title">Booked!</h1>
+            <p class="confirm-hero__sub">Your timber paling fence is locked in for <b>Tue 16 June 2026</b>. Reference: <b style="font-family: 'IBM Plex Mono', monospace;">Q-4F9A2C</b>.</p>
+          </div>
+
+          <div style="max-width: 620px; margin: 0 auto; padding: 0 32px;">
+            <div class="next-steps">
+              <div class="next-steps__title">What happens next</div>
+              <div class="next-step">
+                <div class="next-step__num">1</div>
+                <div class="next-step__body">
+                  <div class="next-step__title">Confirmation email + receipt — right now</div>
+                  <div class="next-step__sub">Sent to liam@byronandbeyondfencing.com.au. Includes a PDF quote, your reference number, and a link back to this page.</div>
+                </div>
+              </div>
+              <div class="next-step">
+                <div class="next-step__num">2</div>
+                <div class="next-step__body">
+                  <div class="next-step__title">Amazing Fencing reviews your video — within 4 working hours</div>
+                  <div class="next-step__sub">If anything's tricky we'll call you. Otherwise the install slot locks and you'll get a "you're confirmed" email.</div>
+                </div>
+              </div>
+              <div class="next-step">
+                <div class="next-step__num">3</div>
+                <div class="next-step__body">
+                  <div class="next-step__title">Two days before — Mon 14 June</div>
+                  <div class="next-step__sub">Your installer calls to confirm access, materials drop-off spot, and any last-minute questions about gates or neighbour-fences.</div>
+                </div>
+              </div>
+              <div class="next-step">
+                <div class="next-step__num">4</div>
+                <div class="next-step__body">
+                  <div class="next-step__title">Day of install — Tue 16 June</div>
+                  <div class="next-step__sub">7am text with the team's ETA + a phone number for the job. They'll text again 30 min before arrival.</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+              <button class="cta-btn cta-btn--full">View your booking</button>
+              <button class="cta-btn cta-btn--secondary cta-btn--full">📅 Add to calendar</button>
+              <button class="cta-btn cta-btn--secondary cta-btn--full">📧 Email a copy</button>
+            </div>
+
+            <div style="text-align: center; padding: 20px 0; font-size: 12.5px; color: var(--ink-3);">
+              Need to change something? Call Amazing Fencing on <b style="color: var(--ink); font-family: 'IBM Plex Mono', monospace;">1800 739 359</b> or reply to your confirmation email. Refunds available up to 48h before install.
+            </div>
+          </div>
+        </div>
+        <div class="anyfence-tag-bottom">Booking <b style="font-family: 'IBM Plex Mono', monospace;">Q-4F9A2C</b> · secured by <b>Anyfence</b> · paid 10% deposit · balance on completion</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────
+     SUPPLY-ONLY DIFF
+     ───────────────────────────────────────────────────────── -->
+<section class="stage" id="supply-only" style="background: var(--bg-page);">
+  <div class="stage__header">
+    <div class="stage__eyebrow"><span class="stage__num">→</span> Supply-only diff</div>
+    <h2 class="stage__title">If they came in via "Book materials pickup" — four steps, no video.</h2>
+    <p class="stage__desc">When the customer's mode on the calculator is Supply only, they're picking up materials from the depot — no install crew, no video needed. The booking flow loses the walkthrough video step and the install date becomes a pickup date.</p>
+  </div>
+
+  <div class="stage__grid">
+    <aside class="annotations">
+      <div class="anno-block">
+        <h4>Step count drops to 4</h4>
+        <ul>
+          <li>① <b>Your details</b> — same as install path</li>
+          <li>② <b>Walkthrough video</b> — <b>SKIPPED</b> (progress dot shown dashed/struck-through)</li>
+          <li>③ <b>Pick pickup date</b> — pulled from Amazing Fencing's depot availability (no postcode-zone filtering)</li>
+          <li>④ <b>Review + deposit</b> — 10% deposit; balance on pickup</li>
+          <li>⑤ <b>Booked</b> — confirmation references pickup, not install</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>What changes per step</h4>
+        <ul>
+          <li><b>Step 3 calendar</b>: shows pickup slots (morning, afternoon, all-day), not 2-day install windows</li>
+          <li><b>Step 4 review cards</b>: "Your pickup date" replaces "Your install date"; no "Your walkthrough" card</li>
+          <li><b>Step 4 deposit copy</b>: "Refundable until 24h before pickup" instead of 48h</li>
+          <li><b>Step 5 next-steps</b>: shorter — just pickup-day text, no installer call</li>
+        </ul>
+      </div>
+      <div class="anno-block">
+        <h4>Progress bar visual</h4>
+        <ul>
+          <li>5 steps still visible in the progress bar (consistency)</li>
+          <li>Step 2 (walkthrough video) shows as <code>--skipped</code> — dashed border, italic struck-through label</li>
+          <li>Customer knows they skipped it (in case they switch modes)</li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="frame">
+      <div class="frame__chrome">
+        <div class="frame__dots"><span class="frame__dot"></span><span class="frame__dot"></span><span class="frame__dot"></span></div>
+        <div class="frame__url">amazingfencing.com.au/book/q_4f9a2c?mode=supply-only</div>
+      </div>
+      <div class="frame__body">
+        <div class="af-top">
+          <div class="af-brand">
+            <div class="af-logo"><div class="af-logo__mark">AF</div><div class="af-logo__word">Amazing Fencing</div></div>
+            <div class="af-context"><b>Booking · Supply only</b></div>
+            <div class="af-platform-strip">Powered by <b>Anyfence</b></div>
+          </div>
+          <div class="af-help">Need help? 1800 739 359</div>
+        </div>
+        <div class="progress">
+          <div class="progress__step progress__step--done"><div class="progress__dot">✓</div><div class="progress__label">Your details</div></div>
+          <div class="progress__bar progress__bar--done"></div>
+          <div class="progress__step progress__step--skipped"><div class="progress__dot">—</div><div class="progress__label">Walkthrough video</div></div>
+          <div class="progress__bar progress__bar--skipped"></div>
+          <div class="progress__step progress__step--active"><div class="progress__dot">3</div><div class="progress__label">Pick pickup date</div></div>
+          <div class="progress__bar"></div>
+          <div class="progress__step"><div class="progress__dot">4</div><div class="progress__label">Review + deposit</div></div>
+          <div class="progress__bar"></div>
+          <div class="progress__step"><div class="progress__dot">5</div><div class="progress__label">Booked</div></div>
+        </div>
+
+        <div class="booking-body">
+          <aside class="quote-summary">
+            <div class="quote-summary__head">Your quote · Supply only</div>
+            <div class="quote-summary__map">
+              <svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice">
+                <rect width="200" height="150" fill="#5E7B4A"/>
+                <rect x="80" y="20" width="40" height="80" fill="#5E7B4A"/>
+                <rect x="86" y="32" width="28" height="22" fill="#756A5C"/>
+                <path d="M 81 50 L 81 100 L 119 100 L 119 50" fill="none" stroke="#DD6E1B" stroke-width="2"/>
+                <circle cx="81" cy="50" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="81" cy="100" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="119" cy="100" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+                <circle cx="119" cy="50" r="3" fill="#DD6E1B" stroke="white" stroke-width="1.2"/>
+              </svg>
+              <div class="quote-summary__map-tag">Pickup · Currimundi</div>
+            </div>
+            <div class="quote-summary__title">Timber Paling</div>
+            <div class="quote-summary__sub">Butted · 1800mm · 28.4m</div>
+            <div class="quote-summary__spec-grid">
+              <div class="quote-summary__spec">Posts<b>17</b></div>
+              <div class="quote-summary__spec">Palings<b>211</b></div>
+              <div class="quote-summary__spec">Gates<b>2 kits</b></div>
+              <div class="quote-summary__spec">Concrete<b>36 bags</b></div>
+            </div>
+            <div class="quote-summary__line"><span>Posts + Rails</span><span>$1,059</span></div>
+            <div class="quote-summary__line"><span>Palings</span><span>$425</span></div>
+            <div class="quote-summary__line"><span>Concrete + nails</span><span>$472</span></div>
+            <div class="quote-summary__line"><span>Gate kits</span><span>$650</span></div>
+            <div class="quote-summary__line quote-summary__line--total"><span>Supply total inc GST</span><span>$2,606</span></div>
+            <div class="quote-summary__line quote-summary__line--deposit"><span>10% deposit today</span><span>$261</span></div>
+            <div class="quote-summary__supplier">
+              <div class="quote-summary__supplier-mark">AF</div>
+              <div class="quote-summary__supplier-body">
+                <div class="quote-summary__supplier-name">Amazing Fencing</div>
+                <div class="quote-summary__supplier-sub">Currimundi depot · pickup desk</div>
+              </div>
+            </div>
+          </aside>
+
+          <div class="step-area">
+            <div class="step-area__head">
+              <div class="step-area__step-num">STEP 3 OF 5 · SUPPLY ONLY</div>
+              <h2 class="step-area__title">When can you pick up?</h2>
+              <p class="step-area__lede">Pickup from Amazing Fencing's Currimundi depot. Bring a ute or trailer — posts are 2.4m long. You'll get a text 30 minutes before your slot.</p>
+            </div>
+
+            <div class="calendar">
+              <div class="calendar__head">
+                <div class="calendar__title">June 2026 · Depot pickup</div>
+                <div class="calendar__nav">
+                  <button class="calendar__nav-btn">‹</button>
+                  <button class="calendar__nav-btn">›</button>
+                </div>
+              </div>
+              <div class="calendar__weekdays">
+                <div class="calendar__weekday">Mon</div>
+                <div class="calendar__weekday">Tue</div>
+                <div class="calendar__weekday">Wed</div>
+                <div class="calendar__weekday">Thu</div>
+                <div class="calendar__weekday">Fri</div>
+                <div class="calendar__weekday">Sat</div>
+                <div class="calendar__weekday">Sun</div>
+              </div>
+              <div class="calendar__grid">
+                <div class="calendar__day calendar__day--out"><div class="calendar__day-num">1</div></div>
+                <div class="calendar__day calendar__day--out"><div class="calendar__day-num">2</div></div>
+                <div class="calendar__day calendar__day--out"><div class="calendar__day-num">3</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">4</div><div class="calendar__day-tag">3 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">5</div><div class="calendar__day-tag">5 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">6</div><div class="calendar__day-tag">2 slots</div></div>
+                <div class="calendar__day calendar__day--closed"><div class="calendar__day-num">7</div></div>
+                <div class="calendar__day calendar__day--selected"><div class="calendar__day-num">8</div><div class="calendar__day-tag">9am</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">9</div><div class="calendar__day-tag">5 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">10</div><div class="calendar__day-tag">4 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">11</div><div class="calendar__day-tag">5 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">12</div><div class="calendar__day-tag">3 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">13</div><div class="calendar__day-tag">2 slots</div></div>
+                <div class="calendar__day calendar__day--closed"><div class="calendar__day-num">14</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">15</div><div class="calendar__day-tag">5 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">16</div><div class="calendar__day-tag">5 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">17</div><div class="calendar__day-tag">4 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">18</div><div class="calendar__day-tag">5 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">19</div><div class="calendar__day-tag">3 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">20</div><div class="calendar__day-tag">2 slots</div></div>
+                <div class="calendar__day calendar__day--closed"><div class="calendar__day-num">21</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">22</div><div class="calendar__day-tag">5 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">23</div><div class="calendar__day-tag">4 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">24</div><div class="calendar__day-tag">5 slots</div></div>
+                <div class="calendar__day calendar__day--booked"><div class="calendar__day-num">25</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">26</div><div class="calendar__day-tag">3 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">27</div><div class="calendar__day-tag">2 slots</div></div>
+                <div class="calendar__day calendar__day--closed"><div class="calendar__day-num">28</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">29</div><div class="calendar__day-tag">5 slots</div></div>
+                <div class="calendar__day calendar__day--available"><div class="calendar__day-num">30</div><div class="calendar__day-tag">4 slots</div></div>
+              </div>
+              <div class="calendar__legend">
+                <div class="calendar__legend-item"><span class="calendar__legend-swatch" style="background: var(--success-soft); border: 1px solid var(--success);"></span>Pickup slots open</div>
+                <div class="calendar__legend-item"><span class="calendar__legend-swatch" style="background: var(--ember);"></span>Your pick</div>
+                <div class="calendar__legend-item"><span class="calendar__legend-swatch" style="background: var(--error-bg);"></span>Depot closed (Sundays)</div>
+              </div>
+            </div>
+
+            <div class="booking-time-card">
+              <div class="booking-time-card__icon">🛻</div>
+              <div class="booking-time-card__body">
+                <div class="booking-time-card__title">Mon 8 June · 9:00am pickup</div>
+                <div class="booking-time-card__sub">10-minute window. Bring a ute or trailer · drive into the loading bay · staff will help load. Pay balance ($2,345) on pickup.</div>
+              </div>
+            </div>
+
+            <div class="cta-row">
+              <button class="cta-btn cta-btn--secondary">← Back</button>
+              <button class="cta-btn cta-btn--full">Continue to review + deposit →</button>
+            </div>
+          </div>
+        </div>
+        <div class="anyfence-tag-bottom">Booking secured by <b>Anyfence</b> · slot locks for 24h · refundable until 24h before pickup</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="page-footer">
+  <div class="page-footer__title">What's not in v1 of the booking flow</div>
+  <div class="page-footer__cols">
+    <div class="page-footer__col">
+      <h5>Mobile breakpoint</h5>
+      <p>Quote summary collapses to a top-of-page accordion ("Tap to see your quote"). Calendar uses a date-picker rather than a full month grid. Form fields stack. The deposit banner stays visible above the card form. Separate wireframe pass.</p>
+    </div>
+    <div class="page-footer__col">
+      <h5>Customer-side post-booking surface</h5>
+      <p>The "View your booking" link from Stage 5 opens <code>/booking/Q-4F9A2C</code> — a persistent page customers come back to. Shows status (Confirmed / Installer-reviewing / Confirmed / Day-of-job / Complete), can re-upload video, message Amazing Fencing, cancel within refund window. Separate wireframe.</p>
+    </div>
+    <div class="page-footer__col">
+      <h5>Supplier-side review surface</h5>
+      <p>Amazing Fencing's installer team gets a notification with the BOM, video, calendar slot. They approve, request changes, or escalate. Lives at <code>/admin/bookings/queue</code>. Not in this customer-facing wireframe.</p>
+    </div>
+  </div>
+  <div style="margin-top: 40px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15); font-size: 12px; color: rgba(255,255,255,0.55); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div>Anyfence booking flow wireframe · v1 · 2026-06-04</div>
+    <div>Pilot supplier: Amazing Fencing · <code style="background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 3px;">feature/anyfence-platform-expansion</code></div>
+  </div>
+</footer>
+
+</body>
+</html>

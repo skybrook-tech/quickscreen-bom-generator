@@ -1,0 +1,7 @@
+{
+  "ok": false,
+  "errors": [
+    "post_spacing_mm must not exceed 2400"
+  ],
+  "warnings": []
+}

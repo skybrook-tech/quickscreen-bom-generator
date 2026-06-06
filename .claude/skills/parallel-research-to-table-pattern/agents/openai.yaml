@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Parallel Research → Single Table Pattern'
+  short_description: 'Pattern for large-scope structured research: dispatch N parallel sub-agents (one per market segment '
+  default_prompt: 'Use this skill for: Pattern for large-scope structured research: dispatch N parallel sub-agents (one per market segment / region / category), each returning structured JSON, then deduplicate and merge into a single sortable table. Battle-tested on the Anyfence 66→61 supplier database build — 6 parallel streams across fencing segments, table built in foreground while agents worked.'

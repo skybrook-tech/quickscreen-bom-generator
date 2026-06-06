@@ -1,0 +1,42 @@
+system,brand,style,category,canonical_name,canonical_status,supplier_sku,description,size,colour,length_mm,tier2_ex_gst,tier2_inc_gst,carton_qty
+composite,TUFFPOLY,Delivery,Delivery Service,TUFFPOLY Delivery,proposed,,TUFFPOLY Delivery to Yatala Yard Charge - Pick Up is available from Geebung to avoid this charge,,,,136.36,150.0,
+composite,SuperPost,C-Post,C POST,SuperPost C-Post 2400 Composite Grey,proposed,21T,SuperPost CPost Composite Grey 2400,2400,Composite Grey,2400,41.1,45.21,
+composite,SuperPost,H-Post,Post,SuperPost H-Post 2400 Composite Grey,proposed,21T001,SuperPost HPost Composite Grey 2400,2400,Composite Grey,2400,56.66,62.33,54
+composite,SuperPost,Bracket,Bracket,SuperPost Bracket  Composite Grey,proposed,21T002,SuperBracket 90 x 6 x 610mm Composite Grey,,Composite Grey,610,13.52,14.87,
+composite,SuperPost,Wedge,Bracket,SuperPost Wedge  Black,proposed,21T,SuperWedge Black,,Black,,0.22,0.24,
+composite,SuperPost,Plinth,Sleeper,SuperPost Plinth  Composite Grey,proposed,21T,SuperPLINTH 185 x 40 x 2380 Composite Grey,,Composite Grey,2380,28.1,30.91,150
+composite,SuperPost,Plinth,Sleeper,SuperPost Plinth 185 x 40 x 3160 Composite Grey,proposed,21T006,SuperPLINTH 185 x 40 x 3160 Composite Grey,185 x 40 x 3160,Composite Grey,3160,40.9,44.99,
+composite,SuperPost,Sleeper,Sleeper,SuperPost Sleeper 200 x 60 x 1950 Composite Grey,proposed,21T007,SuperSleeper Composite Grey 200 x 60 x 1950,200 x 60 x 1950,Composite Grey,1950,30.56,33.62,144
+composite,SuperPost,Sleeper,Sleeper,SuperPost Sleeper 200 x 60 x 2350 Composite Grey,proposed,21T008,SuperSleeper Composite Grey 200 x 60 x 2350,200 x 60 x 2350,Composite Grey,2350,36.01,39.61,144
+composite,SuperPost,Cap,Components,SuperPost Cap 2040 Composite Grey,proposed,21T009,SuperCap Composite Grey 2040,2040,Composite Grey,2040,17.88,19.67,25
+composite,SuperPost,Cap,Components,SuperPost Cap 2425 Composite Grey,proposed,21T010,SuperCap Composite Grey 2425,2425,Composite Grey,2425,22.19,24.41,25
+composite,SuperPost,Drain,Components,SuperPost Drain 15000,proposed,21T,SuperDrain 15000,15000,,15000,182.02,200.22,9
+composite,SuperPost,Bolt,Components,SuperPost Bolt  Mill Finish,proposed,SST012,SuperBolt Mill Finish,,Mill Finish,,0.4,0.44,500
+composite,SuperPost,Nut,Screw,SuperPost Nut  Mill Finish,proposed,SST013,SuperNut Mill Finish,,Mill Finish,,0.14,0.15,
+composite,SuperPost,Support,Bracket,SuperPost Support 250 Composite Grey,proposed,21T,SuperSupport Composite Grey 250mm,250,Composite Grey,250,11.49,12.64,
+composite,SuperPost,Plinth,Sleeper,SuperPost Plinth 185 x 40 x 2350 Monument,proposed,21T,SuperPLINTH 185 x 40 x 2350 Composite MONUMENT FINISH,185 x 40 x 2350,Monument,,39.9,43.89,
+composite,SuperPost,Plinth,Sleeper,SuperPost Plinth 185 x 40 x 3160 Monument,proposed,21T006MN,SuperPLINTH 185 x 40 x 3160 Composite MONUMENT FINISH,185 x 40 x 3160,Monument,,54.9,60.39,
+composite,TUFFPOLY,Sleeper,Sleeper,TUFFPOLY Sleeper 200x85x1585 Charcoal,proposed,TP200SLCH16,TUFFPOLY Sleeper 200x85x1585 Charcoal,200x85x1585,Charcoal,1585,38.0,41.8,
+composite,TUFFPOLY,Sleeper,Sleeper,TUFFPOLY Sleeper 200x85x1985 Charcoal,proposed,TP200SLCH120,TUFFPOLY Sleeper 200x85x1985 Charcoal,200x85x1985,Charcoal,1985,44.98,49.48,
+composite,TUFFPOLY,Sleeper,Sleeper,TUFFPOLY Sleeper 200x85x2385 Charcoal,proposed,TP200SLCH124,TUFFPOLY Sleeper 200x85x2385 Charcoal,200x85x2385,Charcoal,2385,54.49,59.94,
+composite,TUFFPOLY,Sleeper,Sleeper,TUFFPOLY Sleeper 200x85x1585 Drift,proposed,TP200SLDR16,TUFFPOLY Sleeper 200x85x1585 Drift,200x85x1585,Drift,1585,38.0,41.8,
+composite,TUFFPOLY,Sleeper,Sleeper,TUFFPOLY Sleeper 200x85x1985 Drift,proposed,TP200SLDR20,TUFFPOLY Sleeper 200x85x1985 Drift,200x85x1985,Drift,1985,44.98,49.48,
+composite,TUFFPOLY,Sleeper,Sleeper,TUFFPOLY Sleeper 200x85x2385 Drift,proposed,TP200SLDR24,TUFFPOLY Sleeper 200x85x2385 Drift,200x85x2385,Drift,2385,54.49,59.94,
+composite,TUFFPOLY,H-Post,H POST,TUFFPOLY H-Post 109x100x1200 Charcoal,proposed,TP100HPCH12,TUFFPOLY H Post 109x100x1200 Charcoal,109x100x1200,Charcoal,1200,47.23,51.95,
+composite,TUFFPOLY,H-Post,H POST,TUFFPOLY H-Post 109x100x1600 Charcoal,proposed,TP100HPCH16,TUFFPOLY H Post 109x100x1600 Charcoal,109x100x1600,Charcoal,1600,62.98,69.28,
+composite,TUFFPOLY,H-Post,H POST,TUFFPOLY H-Post 109x100x2000 Charcoal,proposed,TP100HPCH20,TUFFPOLY H Post 109x100x2000 Charcoal,109x100x2000,Charcoal,2000,78.72,86.59,
+composite,TUFFPOLY,H-Post,H POST,TUFFPOLY H-Post 109x100x2400 1 Charcoal,proposed,TP100HPCH224,TUFFPOLY H Post 109x100x2400 Charcoal,109x100x2400 1,Charcoal,2400,94.47,103.92,
+composite,TUFFPOLY,H-Post,H POST,TUFFPOLY H-Post 109x100x1200 Drift,proposed,TP100HPDR12,TUFFPOLLY H Post 109x100x1200 Drift,109x100x1200,Drift,1200,47.23,51.95,
+composite,TUFFPOLY,H-Post,H POST,TUFFPOLY H-Post 109x100x1600 Drift,proposed,TP100HPDR16,TUFFPOLLY H Post 109x100x1600 Drift,109x100x1600,Drift,1600,62.98,69.28,
+composite,TUFFPOLY,H-Post,H POST,TUFFPOLY H-Post 109x100x2000 Drift,proposed,TP100HPDR20,TUFFPOLLY H Post 109x100x2000 Drift,109x100x2000,Drift,2000,78.72,86.59,
+composite,TUFFPOLY,H-Post,H POST,TUFFPOLY H-Post 109x100x2400 1 Drift,proposed,TP100HPDR24,TUFFPOLLY H Post 109x100x2400 Drift,109x100x2400 1,Drift,2400,94.47,103.92,
+composite,TUFFPOLY,C-Post,C POST,TUFFPOLY C-Post 109x53x1200 Charcoal,proposed,TP100CPCH12,TUFFPOLY C POST 109x53x1200 Charcoal,109x53x1200,Charcoal,1200,36.45,40.1,
+composite,TUFFPOLY,C-Post,C POST,TUFFPOLY C-Post 109x53x1600 Charcoal,proposed,TP100CPCH16,TUFFPOLY C POST 109x53x1600 Charcoal,109x53x1600,Charcoal,1600,48.6,53.46,
+composite,TUFFPOLY,C-Post,C POST,TUFFPOLY C-Post 109x53x2000 Charcoal,proposed,TP100CPCH20,TUFFPOLY C POST 109x53x2000 Charcoal,109x53x2000,Charcoal,2000,60.75,66.83,
+composite,TUFFPOLY,C-Post,C POST,TUFFPOLY C-Post 109 x 53 x 2400 Charcoal,proposed,TP100CPCH24,TUFFPOLY C POST 109x53x2400 Charcoal,109 x 53 x 2400,Charcoal,2400,72.9,80.19,
+composite,TUFFPOLY,C-Post,C POST,TUFFPOLY C-Post 109x53x1200 Drift,proposed,TP100CPDR12,TUFFPOLY C Post Drift 109x53x1200,109x53x1200,Drift,1200,36.45,40.1,
+composite,TUFFPOLY,C-Post,C POST,TUFFPOLY C-Post 109x53x1600 Drift,proposed,TP100CPDR16,TUFFPOLY C Post Drift 109x53x1600,109x53x1600,Drift,1600,48.6,53.46,
+composite,TUFFPOLY,C-Post,C POST,TUFFPOLY C-Post 109x53x2000 Drift,proposed,TP100CPDR20,TUFFPOLY C Post Drift 109x53x2000,109x53x2000,Drift,2000,60.74,66.81,
+composite,TUFFPOLY,C-Post,C POST,TUFFPOLY C-Post 109 x 53 x 2400 Drift,proposed,TP100CPDR24,TUFFPOLY C Post Drift 109x53x2400,109 x 53 x 2400,Drift,2400,72.9,80.19,
+composite,TUFFPOLY,Bracket,Bracket,TUFFPOLY Bracket 580x100x3 Mill Finish,proposed,TPFBGAL3,TUFFPOLY Bracket 580x100x3 Mill Finish,580x100x3,Mill Finish,580,16.0,17.6,
+composite,TUFFPOLY,Bracket,Bracket,TUFFPOLY Bracket 580x100x6 Mill Finish,proposed,TPFBGAL6,TUFFPOLY Bracket 580x100x6 Mill Finish,580x100x6,Mill Finish,580,18.7,20.57,

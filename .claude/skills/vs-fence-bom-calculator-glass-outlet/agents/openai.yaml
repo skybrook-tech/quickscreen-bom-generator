@@ -1,0 +1,4 @@
+interface:
+  display_name: 'VS — Vertical Slat Fence Calculator'
+  short_description: 'Self-contained BOM calculator spec for The Glass Outlet''s VS (Vertical Slat) fence system: same ext'
+  default_prompt: 'Use this skill for: Self-contained BOM calculator spec for The Glass Outlet''s VS (Vertical Slat) fence system: same extrusions as QSHS rotated 90 degrees, U-channel rails, panel-width-driven slat count, dedicated code path. Includes schema, attributes, BOM math, SKU patterns, worked example, and gotchas.'

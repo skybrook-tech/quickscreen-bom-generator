@@ -1,7 +1,7 @@
 {
-  "name": "QuickScreen BOM Generator",
-  "short_name": "QuickScreen",
-  "description": "Create Glass Outlet QuickScreen quotes, maps, and bills of materials on site.",
+  "name": "Amazing Fencing",
+  "short_name": "Amazing Fencing",
+  "description": "Create Amazing Fencing quotes, maps, and bills of materials on site.",
   "start_url": "/fence-calculator",
   "scope": "/",
   "display": "standalone",

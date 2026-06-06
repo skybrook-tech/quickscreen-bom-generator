@@ -15,7 +15,7 @@ import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import Ajv from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, basename } from 'node:path';
 
@@ -200,6 +200,7 @@ async function upsertProductComponents(orgId, rows) {
     unit: r.unit,
     default_price: r.default_price ?? null,
     system_types: r.system_types ?? ['QSHS'],
+    canonical_code: r.canonical_code ?? null,
     metadata: {
       ...(r.metadata ?? {}),
       ...(r.subCategory ? { subCategory: r.subCategory } : {}),
@@ -309,10 +310,62 @@ async function upsertProductRules(orgId, rows) {
 
 async function upsertPricingRules(orgId, rows) {
   if (!rows?.length) return;
-  // pricing_rules' unique index is partial (WHERE active = true), so
-  // supabase-js .upsert() with onConflict can't target it. Use check-then-insert/update.
-  let inserted = 0;
-  let updated = 0;
+
+  // Pre-populate component ID cache to avoid sequential SELECT queries (paginated to bypass 1000 limit)
+  const allComponents = [];
+  let fromComp = 0;
+  let toComp = 999;
+  let hasMoreComps = true;
+  while (hasMoreComps) {
+    const { data, error } = await supabase
+      .from('product_components')
+      .select('id, sku')
+      .eq('org_id', orgId)
+      .range(fromComp, toComp);
+    if (error) throw new Error(`product_components cache pre-fill failed: ${error.message}`);
+    allComponents.push(...(data ?? []));
+    if ((data ?? []).length < 1000) {
+      hasMoreComps = false;
+    } else {
+      fromComp += 1000;
+      toComp += 1000;
+    }
+  }
+  for (const comp of allComponents) {
+    cache.componentIdBySku.set(`${orgId}|${comp.sku}`, comp.id);
+  }
+
+  // 1. Fetch all existing active pricing rules for this org in one query (paginated to bypass 1000 limit)
+  const existingRules = [];
+  let fromRules = 0;
+  let toRules = 999;
+  let hasMoreRules = true;
+  while (hasMoreRules) {
+    const { data, error } = await supabase
+      .from('pricing_rules')
+      .select('id, component_id, tier_code, priority')
+      .eq('org_id', orgId)
+      .eq('active', true)
+      .range(fromRules, toRules);
+    if (error) throw new Error(`pricing_rules fetch failed: ${error.message}`);
+    existingRules.push(...(data ?? []));
+    if ((data ?? []).length < 1000) {
+      hasMoreRules = false;
+    } else {
+      fromRules += 1000;
+      toRules += 1000;
+    }
+  }
+
+  // 2. Build a map of existing active pricing rules for O(1) lookup
+  const existingMap = new Map();
+  for (const row of existingRules) {
+    existingMap.set(`${row.component_id}|${row.tier_code}|${row.priority}`, row.id);
+  }
+
+  const inserts = [];
+  const updates = [];
+
   for (const r of rows) {
     const componentId = await resolveComponentId(orgId, r.sku);
     const row = {
@@ -326,47 +379,67 @@ async function upsertPricingRules(orgId, rows) {
       valid_to: r.valid_to ?? null,
       notes: r.notes ?? null,
       active: r.active,
+      canonical_code: r.canonical_code ?? null,
     };
-    const { data: existing, error: lookupErr } = await supabase
-      .from('pricing_rules')
-      .select('id')
-      .eq('component_id', componentId)
-      .eq('tier_code', r.tier_code)
-      .eq('priority', r.priority ?? 0)
-      .eq('active', true)
-      .maybeSingle();
-    if (lookupErr) throw new Error(`pricing_rules lookup (${r.sku} ${r.tier_code}): ${lookupErr.message}`);
-    if (existing) {
-      const { error } = await supabase.from('pricing_rules').update(row).eq('id', existing.id);
-      if (error) throw new Error(`pricing_rules update (${r.sku} ${r.tier_code}): ${error.message}`);
-      updated++;
+
+    const key = `${componentId}|${r.tier_code}|${row.priority}`;
+    if (existingMap.has(key)) {
+      updates.push({
+        id: existingMap.get(key),
+        ...row
+      });
     } else {
-      const { error } = await supabase.from('pricing_rules').insert(row);
-      if (error) throw new Error(`pricing_rules insert (${r.sku} ${r.tier_code}): ${error.message}`);
-      inserted++;
+      inserts.push(row);
     }
   }
-  console.log(`  pricing_rules: ${inserted} inserted, ${updated} updated`);
+
+  // 3. Batch upsert inserts and updates in chunks of 500 to avoid request size limits
+  const CHUNK_SIZE = 500;
+  
+  if (inserts.length > 0) {
+    for (let i = 0; i < inserts.length; i += CHUNK_SIZE) {
+      const chunk = inserts.slice(i, i + CHUNK_SIZE);
+      const { error } = await supabase.from('pricing_rules').upsert(chunk);
+      if (error) throw new Error(`pricing_rules batch insert error: ${error.message}`);
+    }
+  }
+
+  if (updates.length > 0) {
+    for (let i = 0; i < updates.length; i += CHUNK_SIZE) {
+      const chunk = updates.slice(i, i + CHUNK_SIZE);
+      const { error } = await supabase.from('pricing_rules').upsert(chunk);
+      if (error) throw new Error(`pricing_rules batch update error: ${error.message}`);
+    }
+  }
+
+  console.log(`  pricing_rules: ${inserts.length} inserted, ${updates.length} updated`);
 }
 
 // ── Colour options ──────────────────────────────────────────────────────────
 
 async function upsertColourOptions() {
-  let raw;
-  try {
-    raw = JSON.parse(readFileSync(COLOUR_OPTIONS_FILE, 'utf8'));
-  } catch {
-    console.log('colour-options.json not found — skipping');
-    return;
+  const dirs = readdirSync(ROOT).filter((name) => {
+    try {
+      return statSync(resolve(ROOT, name)).isDirectory() && name !== 'schemas' && name !== 'tools';
+    } catch {
+      return false;
+    }
+  });
+
+  for (const dirName of dirs) {
+    const file = resolve(ROOT, dirName, 'colour-options.json');
+    if (existsSync(file)) {
+      const raw = JSON.parse(readFileSync(file, 'utf8'));
+      const orgId = await resolveOrgId(raw.org_slug);
+      const rows = (raw.colour_options ?? []).map(r => ({ org_id: orgId, ...r }));
+      if (rows.length === 0) continue;
+      const { error } = await supabase
+        .from('colour_options')
+        .upsert(rows, { onConflict: 'org_id,value' });
+      if (error) throw new Error(`colour_options upsert in ${dirName}: ${error.message}`);
+      console.log(`${dirName}/colour-options.json: ${rows.length} colour options upserted`);
+    }
   }
-  const orgId = await resolveOrgId(raw.org_slug);
-  const rows = (raw.colour_options ?? []).map(r => ({ org_id: orgId, ...r }));
-  if (rows.length === 0) return;
-  const { error } = await supabase
-    .from('colour_options')
-    .upsert(rows, { onConflict: 'org_id,value' });
-  if (error) throw new Error(`colour_options upsert: ${error.message}`);
-  console.log(`colour-options.json: ${rows.length} upserted`);
 }
 
 // ── Main per-file loader ────────────────────────────────────────────────────
@@ -552,13 +625,28 @@ async function verifyRowCounts() {
 // ── Main ────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const files = readdirSync(PRODUCTS_DIR)
-    .filter((f) => f.endsWith('.json') && !f.startsWith('_'))
-    .sort()
-    .map((f) => resolve(PRODUCTS_DIR, f));
+  const dirs = readdirSync(ROOT).filter((name) => {
+    try {
+      return statSync(resolve(ROOT, name)).isDirectory() && name !== 'schemas' && name !== 'tools';
+    } catch {
+      return false;
+    }
+  });
+
+  let files = [];
+  for (const dirName of dirs) {
+    const productsDir = resolve(ROOT, dirName, 'products');
+    if (existsSync(productsDir)) {
+      const supplierFiles = readdirSync(productsDir)
+        .filter((f) => f.endsWith('.json') && !f.startsWith('_'))
+        .map((f) => resolve(productsDir, f));
+      files = files.concat(supplierFiles);
+    }
+  }
+  files.sort();
 
   if (files.length === 0) {
-    console.log(`No product files found in ${PRODUCTS_DIR}`);
+    console.log(`No product files found in seeds directory.`);
     return;
   }
 

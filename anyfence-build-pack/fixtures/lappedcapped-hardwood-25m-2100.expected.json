@@ -1,0 +1,134 @@
+{
+  "ok": true,
+  "inputs": {
+    "fence_length_m": 25,
+    "fence_height_mm": 2100,
+    "timber_type": "hardwood",
+    "post_spacing_mm": 2400,
+    "rail_count": 3,
+    "paling_gap_mm": 0,
+    "paling_style": "lapped_capped"
+  },
+  "derived": {
+    "length_mm": 25000,
+    "post_count": 12,
+    "bay_count": 11,
+    "rail_count": 3,
+    "rail_pieces": 33,
+    "rail_stock_lengths": 17,
+    "paling_count": 375,
+    "back_palings": 188,
+    "front_palings": 187,
+    "palings_with_wastage": 394,
+    "concrete_bags": 18,
+    "nails_front_count": 1122,
+    "nails_front_with_wastage": 1179,
+    "nails_front_rounded": 1250,
+    "nails_back_count": 564,
+    "nails_back_with_wastage": 593,
+    "nails_back_rounded": 750,
+    "batten_screws": 66,
+    "capping_pieces": 11,
+    "capping_stock_lengths": 6,
+    "post_height_mm": 2700
+  },
+  "bom": [
+    {
+      "line": 1,
+      "category": "Posts",
+      "canonical_name": "100x75 Hardwood Post",
+      "description": "100x75 Hardwood Post (2700mm)",
+      "qty": 12,
+      "unit": "ea",
+      "notes": "2700mm total (2100mm fence + 600mm in-ground)"
+    },
+    {
+      "line": 2,
+      "category": "Rails",
+      "canonical_name": "75x38 Hardwood Rail 4800mm",
+      "description": "75x38 Hardwood Rail 4800mm",
+      "qty": 17,
+      "unit": "length",
+      "notes": "3 rails/bay \u00d7 11 bays = 33 pieces \u2192 17 stock lengths"
+    },
+    {
+      "line": 3,
+      "category": "Palings",
+      "canonical_name": "100x16 Rough Sawn Hardwood Paling",
+      "description": "100x16 Rough Sawn Hardwood Paling (2100mm)",
+      "qty": 394,
+      "unit": "ea",
+      "notes": "15/m total \u2014 188 back layer + 187 front layer (+5% wastage applied to total)"
+    },
+    {
+      "line": 4,
+      "category": "Concrete",
+      "canonical_name": "Rapid Set Concrete 20kg",
+      "description": "Rapid Set Concrete 20kg",
+      "qty": 18,
+      "unit": "bag",
+      "notes": "1.5 bags/post"
+    },
+    {
+      "line": 5,
+      "category": "Fasteners",
+      "canonical_name": "57mm Smooth Shank Gal Nail",
+      "description": "57mm Smooth Shank Gal Nail",
+      "qty": 1250,
+      "unit": "ea",
+      "notes": "Front layer: 2 per rail per paling \u2014 rounded to nearest 250-pack"
+    },
+    {
+      "line": 6,
+      "category": "Fasteners",
+      "canonical_name": "45mm Smooth Shank Gal Nail",
+      "description": "45mm Smooth Shank Gal Nail",
+      "qty": 750,
+      "unit": "ea",
+      "notes": "Back layer: 1 per rail per paling \u2014 rounded to nearest 250-pack"
+    },
+    {
+      "line": 7,
+      "category": "Fasteners",
+      "canonical_name": "100mm Galvanised Batten Screw",
+      "description": "100mm Galvanised Batten Screw",
+      "qty": 66,
+      "unit": "ea",
+      "notes": "2 per rail piece"
+    },
+    {
+      "line": 8,
+      "category": "Capping",
+      "canonical_name": "75x50 Hardwood Capping Rail 4800mm",
+      "description": "75x50 Hardwood Capping Rail 4800mm",
+      "qty": 6,
+      "unit": "length",
+      "notes": "1 piece per bay \u00d7 11 bays = 11 pieces \u2192 6 stock lengths (2 pieces per 4800mm length)"
+    }
+  ],
+  "warnings": [],
+  "constants": {
+    "PALING_FACE_MM": 100,
+    "PALING_THICKNESS_MM": 16,
+    "POST_SIZE": "100x75",
+    "RAIL_SIZE": "75x38",
+    "RAIL_STOCK_LENGTH_MM": 4800,
+    "RAIL_PIECES_PER_STOCK": 2,
+    "POST_IN_GROUND_MM": 600,
+    "CONCRETE_BAGS_PER_POST": 1.5,
+    "CONCRETE_BAG_SIZE_KG": 20,
+    "NAILS_PER_PALING_PER_RAIL": 2,
+    "NAIL_SIZE_MM": 57,
+    "BACK_NAIL_SIZE_MM": 45,
+    "NAILS_PER_BACK_PALING_PER_RAIL": 1,
+    "NAIL_PACK_SIZE": 250,
+    "BATTEN_SCREW_LEN_MM": 100,
+    "WASTAGE_PALINGS": 0.05,
+    "WASTAGE_NAILS": 0.05,
+    "DEFAULT_PALINGS_PER_M": 10,
+    "LAPPED_PALINGS_PER_M": 15,
+    "CAPPING_SIZE": "75x50",
+    "CAPPING_STOCK_LENGTH_MM": 4800,
+    "CAPPING_PIECES_PER_STOCK": 2
+  }
+}

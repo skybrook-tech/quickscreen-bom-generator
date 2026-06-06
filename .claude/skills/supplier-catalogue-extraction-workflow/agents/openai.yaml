@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Supplier Catalogue Extraction Workflow'
+  short_description: 'Systematic procedure for extracting structured product data (SKUs, pricing, specifications) from sup'
+  default_prompt: 'Use this skill for: Systematic procedure for extracting structured product data (SKUs, pricing, specifications) from supplier web portals. Covers portal walking, data structuring, price-tier mapping, and seed JSON generation.'

@@ -1,0 +1,39 @@
+{
+  "org_slug": "glass-outlet",
+  "supplier_slug": "amazing-fencing",
+  "system_instance_slug": "amazing-timber-slat-screen",
+  "_format_note": "Timber slat screen fencing on galvanised steel posts. Slats in treated pine (H3 DAR) or hardwood (Merbau). Prices null pending trade pricing PDF.",
+  "_source": "https://amazingfencing.com.au/products/slat-screen-fence/ (2026-05-28)",
+  "products": [
+    {
+      "system_type": "AF_TIMBER_SLAT",
+      "product_type": "fence",
+      "name": "Amazing Fencing — Timber Slat Screen",
+      "description": "Modern timber slat screen fencing on galvanised steel posts. Slats in treated pine (H3 DAR) or hardwood (Merbau). For boundary fencing, area screening, aesthetic screening, garden privacy screens.",
+      "active": true,
+      "sort_order": 230,
+      "metadata": {
+        "_provenance": {"supplier_slug": "amazing-fencing", "system_instance_slug": "amazing-timber-slat-screen"},
+        "post_material": "galvanised steel (shared with amazing-colorbond posts)",
+        "slat_options": ["treated_pine", "hardwood"],
+        "use_cases": ["boundary_fencing", "area_screening", "aesthetic_screening", "garden_privacy_screen"]
+      }
+    }
+  ],
+  "product_components": [
+    {"sku": "AF-TSL-SLAT-70x22-DAR-LM", "name": "Slat 70×22 H3 T/P DAR — per metre", "description": "Treated pine DAR screening, 70×22mm, sold per linear metre", "category": "screening", "unit": "linear-metre", "default_price": null, "system_types": ["AF_TIMBER_SLAT"], "metadata": {"width_mm": 70, "thickness_mm": 22, "treatment": "H3", "finish": "DAR", "material": "treated_pine"}, "active": true, "subCategory": "screening", "sortPriority": 10},
+    {"sku": "AF-TSL-SLAT-90x22-DAR-LM", "name": "Slat 90×22 H3 T/P DAR — per metre", "description": "Treated pine DAR screening, 90×22mm, sold per linear metre", "category": "screening", "unit": "linear-metre", "default_price": null, "system_types": ["AF_TIMBER_SLAT"], "metadata": {"width_mm": 90, "thickness_mm": 22, "treatment": "H3", "finish": "DAR", "material": "treated_pine"}, "active": true, "subCategory": "screening", "sortPriority": 10},
+
+    {"sku": "AF-TSL-SLAT-90x19-MERBAU-LM", "name": "Slat 90×19 Merbau hardwood — per metre", "description": "Merbau hardwood screening slat, 90×19mm, sold per linear metre", "category": "screening", "unit": "linear-metre", "default_price": null, "system_types": ["AF_TIMBER_SLAT"], "metadata": {"width_mm": 90, "thickness_mm": 19, "material": "hardwood_merbau"}, "active": true, "subCategory": "screening", "sortPriority": 12},
+
+    {"sku": "AF-TSL-LATTSURR-70x35-4.8", "name": "Lattice Surround 70×35 H3 × 4.8m", "description": "H3 treated pine lattice surround / slat frame, 70×35mm × 4.8m", "category": "rail", "unit": "each", "default_price": null, "system_types": ["AF_TIMBER_SLAT", "AF_TIMBER_PALING"], "metadata": {"width_mm": 70, "thickness_mm": 35, "length_m": 4.8, "treatment": "H3"}, "active": true, "subCategory": "rails", "sortPriority": 20},
+    {"sku": "AF-TSL-LATTSURR-70x35-5.4", "name": "Lattice Surround 70×35 H3 × 5.4m", "description": "H3 treated pine lattice surround / slat frame, 70×35mm × 5.4m", "category": "rail", "unit": "each", "default_price": null, "system_types": ["AF_TIMBER_SLAT", "AF_TIMBER_PALING"], "metadata": {"width_mm": 70, "thickness_mm": 35, "length_m": 5.4, "treatment": "H3"}, "active": true, "subCategory": "rails", "sortPriority": 20},
+
+    {"sku": "AF-TSL-EDGE-100x25-4.8", "name": "Garden Edge 100×25 × 4.8m H4 T/P", "description": "Treated pine garden edge, 100×25mm × 4.8m, H4", "category": "accessory", "unit": "each", "default_price": null, "system_types": ["AF_TIMBER_SLAT"], "metadata": {"width_mm": 100, "thickness_mm": 25, "length_m": 4.8, "treatment": "H4"}, "active": true, "subCategory": "accessories", "sortPriority": 50},
+    {"sku": "AF-TSL-EDGE-100x25-5.4", "name": "Garden Edge 100×25 × 5.4m H4 T/P", "description": "Treated pine garden edge, 100×25mm × 5.4m, H4", "category": "accessory", "unit": "each", "default_price": null, "system_types": ["AF_TIMBER_SLAT"], "metadata": {"width_mm": 100, "thickness_mm": 25, "length_m": 5.4, "treatment": "H4"}, "active": true, "subCategory": "accessories", "sortPriority": 50},
+    {"sku": "AF-TSL-EDGE-150x25-4.8", "name": "Garden Edge 150×25 × 4.8m H4 T/P", "description": "Treated pine garden edge, 150×25mm × 4.8m, H4", "category": "accessory", "unit": "each", "default_price": null, "system_types": ["AF_TIMBER_SLAT"], "metadata": {"width_mm": 150, "thickness_mm": 25, "length_m": 4.8, "treatment": "H4"}, "active": true, "subCategory": "accessories", "sortPriority": 50},
+    {"sku": "AF-TSL-EDGE-150x25-5.4", "name": "Garden Edge 150×25 × 5.4m H4 T/P", "description": "Treated pine garden edge, 150×25mm × 5.4m, H4", "category": "accessory", "unit": "each", "default_price": null, "system_types": ["AF_TIMBER_SLAT"], "metadata": {"width_mm": 150, "thickness_mm": 25, "length_m": 5.4, "treatment": "H4"}, "active": true, "subCategory": "accessories", "sortPriority": 50},
+    {"sku": "AF-TSL-EDGE-200x25-4.8", "name": "Garden Edge 200×25 × 4.8m H4 T/P", "description": "Treated pine garden edge, 200×25mm × 4.8m, H4", "category": "accessory", "unit": "each", "default_price": null, "system_types": ["AF_TIMBER_SLAT"], "metadata": {"width_mm": 200, "thickness_mm": 25, "length_m": 4.8, "treatment": "H4"}, "active": true, "subCategory": "accessories", "sortPriority": 50},
+    {"sku": "AF-TSL-EDGE-200x25-5.4", "name": "Garden Edge 200×25 × 5.4m H4 T/P", "description": "Treated pine garden edge, 200×25mm × 5.4m, H4", "category": "accessory", "unit": "each", "default_price": null, "system_types": ["AF_TIMBER_SLAT"], "metadata": {"width_mm": 200, "thickness_mm": 25, "length_m": 5.4, "treatment": "H4"}, "active": true, "subCategory": "accessories", "sortPriority": 50}
+  ]
+}
