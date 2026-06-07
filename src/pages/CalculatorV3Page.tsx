@@ -2034,14 +2034,14 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             className={`${mapExpanded ? "fixed inset-0 z-50" : "relative"} flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row`}
           >
             <aside
-              className={`relative w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${mapExpanded || !paneVisibility.job ? "hidden" : "flex"
+              className={`af-sidebar relative w-full overflow-hidden border-b border-brand-border bg-brand-bg md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${mapExpanded || !paneVisibility.job ? "hidden" : "flex"
                 } ${mobileLayout ? "h-full min-h-0 max-h-none" : bomResultForTabs ? "max-h-[32vh]" : "min-h-[46vh]"
                 }`}
               style={mobileLayout ? undefined : { width: runPaneWidth }}
             >
               <div className="flex min-h-0 flex-1 flex-col">
                 <div className="flex-1 space-y-4 overflow-y-auto p-3 sm:p-5">
-                  <section className="-mx-3 border-b border-brand-border/70 bg-brand-card/95 px-3 pb-3 pt-3 shadow-sm sm:-mx-5 sm:px-5">
+                  <section className="-mx-3 border-b border-[#E9E5DD]/70 bg-white px-3 pb-3 pt-3 shadow-sm sm:-mx-5 sm:px-5">
                     <div className="mb-3 flex items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <JobNameEditor
@@ -2056,8 +2056,8 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
                   {/* Supplier Switcher Dropdown */}
                   {!isCypressSmokeTest() && (userType === "contractor" || !supplierSlug) && allSuppliers && allSuppliers.length > 0 && (
-                    <div className="rounded-xl border border-brand-border/60 bg-brand-card/30 p-3 space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-wider text-brand-muted block">
+                    <div className="rounded-xl border border-[#E9E5DD]/60 bg-white p-3 space-y-2 shadow-sm">
+                      <label className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6E7681] block">
                         Select Supplier
                       </label>
                       <select
@@ -2082,7 +2082,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                             }
                           }
                         }}
-                        className="w-full rounded-lg border border-brand-border bg-brand-bg px-3 py-2 text-xs font-semibold text-brand-text focus:border-brand-primary focus:outline-none"
+                        className="w-full rounded-lg border border-[#E9E5DD] bg-white px-3 py-2 text-xs font-semibold text-[#11161D] focus:border-[#DD6E1B] focus:outline-none focus:ring-2 focus:ring-[#DD6E1B]/20"
                       >
                         <option value="" disabled>Select a supplier...</option>
                         {allSuppliers.map((s) => (
@@ -2096,19 +2096,19 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
                   {/* Bunnings Toggle */}
                   {!isCypressSmokeTest() && (!supplierSlug || userType === "contractor") && (
-                    <div className="flex items-center justify-between gap-3 bg-brand-card/30 p-3 rounded-xl border border-brand-border/60 shadow-sm">
-                      <span className="text-xs font-black uppercase tracking-wide flex items-center gap-1.5 text-brand-muted">
+                    <div className="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-[#E9E5DD]/60 shadow-sm">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6E7681] flex items-center gap-1.5">
                         <Building className="text-brand-accent" size={16} />
                         Bunnings Pricing API
                       </span>
                       <button
                         type="button"
                         onClick={handleBunningsToggle}
-                        className="text-brand-primary hover:text-brand-primary/80 transition-colors focus:outline-none"
+                        className="text-[#DD6E1B] hover:text-[#c96215] transition-colors focus:outline-none"
                         title="When enabled, fallback items in the BOM lookup retail pricing from a mock Bunnings index."
                       >
                         {bunningsEnabled ? (
-                          <ToggleRight size={36} className="text-brand-primary" />
+                          <ToggleRight size={36} className="text-[#DD6E1B]" />
                         ) : (
                           <ToggleLeft size={36} className="text-brand-muted" />
                         )}
@@ -2125,7 +2125,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                         />
                       ) : null}
                       <PropertyAnchorFormGate anchorConfirmed={propertyAnchorConfirmed}>
-                        <hr className="border-brand-border/60" />
+                        <hr className="border-[#E9E5DD]/60" />
                         <section>
                           <RunListV3
                             autoOpenFirstRunId={autoOpenFirstSectionRunId}
@@ -2137,7 +2137,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
                         {payload.job?.pendingGates?.length ? (
                           <section className="space-y-2 rounded-2xl border border-brand-warning/35 bg-brand-warning/10 p-3">
-                            <p className="text-xs font-black uppercase tracking-wide text-brand-warning">
+                            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-brand-warning">
                               Parsed gates need positions
                             </p>
                             {payload.job.pendingGates.map((gate, index) => {

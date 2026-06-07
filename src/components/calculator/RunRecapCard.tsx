@@ -63,7 +63,7 @@ export function RunRecapCard({
   }
 
   return (
-    <div className="rounded-xl border border-brand-border bg-brand-bg/50 p-4 shadow-sm">
+    <div className="rounded-xl border border-brand-border bg-brand-card p-4 shadow-sm">
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-baseline gap-2">
@@ -88,35 +88,35 @@ export function RunRecapCard({
       <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2 text-xs border-t border-brand-border/40 pt-3">
         <div className="flex justify-between border-b border-brand-border/20 pb-1">
           <span className="text-brand-muted">Height</span>
-          <span className="font-semibold text-brand-text">{height}mm</span>
+          <span className="af-sidebar-mono font-semibold text-brand-text">{height}mm</span>
         </div>
         <div className="flex justify-between border-b border-brand-border/20 pb-1">
           <span className="text-brand-muted">Color</span>
-          <span className="font-semibold text-brand-text capitalize">{String(color).replace(/-/g, " ")}</span>
+          <span className="af-sidebar-mono font-semibold text-brand-text capitalize">{String(color).replace(/-/g, " ")}</span>
         </div>
         <div className="flex justify-between border-b border-brand-border/20 pb-1">
           <span className="text-brand-muted">Paling</span>
-          <span className="font-semibold text-brand-text">100x16mm</span>
+          <span className="af-sidebar-mono font-semibold text-brand-text">100x16mm</span>
         </div>
         <div className="flex justify-between border-b border-brand-border/20 pb-1">
           <span className="text-brand-muted">Rail</span>
-          <span className="font-semibold text-brand-text capitalize">{railProfile}</span>
+          <span className="af-sidebar-mono font-semibold text-brand-text capitalize">{railProfile}</span>
         </div>
         <div className="flex justify-between border-b border-brand-border/20 pb-1">
           <span className="text-brand-muted">Post</span>
-          <span className="font-semibold text-brand-text capitalize">{runVars.post_size || "100x75"} {runVars.timber_type === "hardwood" ? "HWD" : "Pine"}</span>
+          <span className="af-sidebar-mono font-semibold text-brand-text capitalize">{runVars.post_size || "100x75"} {runVars.timber_type === "hardwood" ? "HWD" : "Pine"}</span>
         </div>
         <div className="flex justify-between border-b border-brand-border/20 pb-1">
           <span className="text-brand-muted">Mounting</span>
-          <span className="font-semibold text-brand-text">{mounting}</span>
+          <span className="af-sidebar-mono font-semibold text-brand-text">{mounting}</span>
         </div>
         <div className="flex justify-between border-b border-brand-border/20 pb-1">
           <span className="text-brand-muted">Max spacing</span>
-          <span className="font-semibold text-brand-text">{maxSpacing}mm</span>
+          <span className="af-sidebar-mono font-semibold text-brand-text">{maxSpacing}mm</span>
         </div>
         <div className="flex justify-between border-b border-brand-border/20 pb-1">
           <span className="text-brand-muted">Posts × Gates</span>
-          <span className="font-semibold text-brand-text">
+          <span className="af-sidebar-mono font-semibold text-brand-text">
             {postsCount} Posts · {gatesCount} Gate{gatesCount === 1 ? "" : "s"}
           </span>
         </div>

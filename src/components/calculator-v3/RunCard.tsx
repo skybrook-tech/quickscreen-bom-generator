@@ -13,7 +13,6 @@ import {
   patchSegmentVariables,
 } from "../../lib/segmentTermination";
 import { systemDisplayName } from "../../lib/systemDisplay";
-import { Button } from "../shared/Button";
 import { SegmentRow } from "./SegmentRow";
 import { colourName } from "./ColourPalette";
 import { RunSettingsEditor } from "./RunSettingsEditor";
@@ -194,168 +193,247 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
     setExpandedId(segmentId);
   }
 
+  const gateCount = run.segments.filter((s) => s.segmentKind === "gate_opening").length;
+  const sectionCount = run.segments.filter((s) => s.segmentKind !== "gate_opening").length;
+  const postCount = isBayg ? 0 : (sectionCount + gateCount + 1 + (run.corners?.length ?? 0));
+
   return (
-    <div className="rounded-2xl border-2 border-brand-primary/20 bg-brand-card py-4 shadow-md">
-      <div className="px-4 mb-3 flex flex-wrap items-start justify-between gap-3">
-        <h3 className="grid min-w-0 flex-1 gap-1 text-brand-text">
-          <span className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5 leading-tight">
-            <span className="text-xl font-extrabold tracking-normal">Run {runIdx + 1}</span>
-            <span className="text-lg font-extrabold tracking-normal">{runLengthM}m</span>
-            <span className="text-sm font-semibold text-brand-muted">
-              {systemDisplayName(run.productCode)}
-            </span>
+    <div className="space-y-2">
+      {runIdx === 0 && (
+        <button
+          type="button"
+          onClick={() => {
+            if (state.payload) {
+              dispatch({
+                type: "SET_PAYLOAD",
+                payload: {
+                  ...state.payload,
+                  runs: [],
+                  productCode: "",
+                },
+              });
+            }
+          }}
+          className="text-xs font-semibold text-[#DD6E1B] hover:text-[#c96215] transition-colors mb-2 inline-flex items-center gap-1"
+        >
+          &larr; Change fence type
+        </button>
+      )}
+
+      <div className="rounded-xl border border-[#E9E5DD] bg-white p-4 shadow-sm space-y-4">
+        {/* Card Header */}
+        <div className="flex items-baseline justify-between border-b border-[#E9E5DD] pb-2.5">
+          <div className="flex items-baseline gap-2 min-w-0">
+            <span className="text-[15px] font-bold text-[#11161D]">Run {runIdx + 1}</span>
+            <span className="text-[12px] text-[#6E7681] truncate">({systemDisplayName(run.productCode)})</span>
+          </div>
+          <span className="af-sidebar-mono text-[#DD6E1B] font-semibold text-[13.5px] shrink-0">
+            {runLengthM}m
           </span>
-          <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-brand-muted">
-            <span className="inline-flex items-center gap-1.5">
-              Height:
-              <InlineHeightEditor
-                productCode={run.productCode}
-                variables={runVariables}
-                valueMm={runHeight}
-                ariaLabel={`Run ${runIdx + 1} default height`}
-                onChange={updateRunHeight}
-              />
-            </span>
-            <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
-            <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
-            <span>Gap size: <strong className="text-brand-text">{slatGap}mm</strong></span>
-            <span>Post mounting: <strong className="text-brand-text">{isBayg ? "Not required" : MOUNTING_LABELS[mounting] ?? mounting}</strong></span>
-            <span>Max post spacing: <strong className="text-brand-text">{jobMax}mm</strong></span>
-            <span>Corners: <strong className="text-brand-text">{run.corners?.length ?? 0}</strong></span>
-          </span>
-        </h3>
+        </div>
+
+        {/* Spec Grid */}
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs text-[#6E7681]">
+          {/* Left Column */}
+          <div className="space-y-1.5">
+            <div className="flex justify-between items-center gap-1">
+              <span className="font-medium">Height:</span>
+              <span className="af-sidebar-mono text-[#11161D] font-semibold">
+                <InlineHeightEditor
+                  productCode={run.productCode}
+                  variables={runVariables}
+                  valueMm={runHeight}
+                  ariaLabel={`Run ${runIdx + 1} default height`}
+                  onChange={updateRunHeight}
+                />
+              </span>
+            </div>
+            <div className="flex justify-between items-center gap-1">
+              <span className="font-medium">Colour:</span>
+              <span className="af-sidebar-mono text-[#11161D] font-semibold truncate max-w-[120px]" title={colourName(runVariables.colour_code)}>
+                {colourName(runVariables.colour_code)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center gap-1">
+              <span className="font-medium">
+                {run.productCode === "DF_CCA_PAL" ? "Paling:" : "Slat size:"}
+              </span>
+              <span className="af-sidebar-mono text-[#11161D] font-semibold">
+                {run.productCode === "DF_CCA_PAL" ? (runVariables.paling_type ? String(runVariables.paling_type) : "CCA Pine") : `${slatSize}mm`}
+              </span>
+            </div>
+            <div className="flex justify-between items-center gap-1">
+              <span className="font-medium">
+                {run.productCode === "DF_CCA_PAL" ? "Rail:" : "Gap size:"}
+              </span>
+              <span className="af-sidebar-mono text-[#11161D] font-semibold">
+                {run.productCode === "DF_CCA_PAL" ? (runVariables.rail_type ? String(runVariables.rail_type) : "3 Rails") : `${slatGap}mm`}
+              </span>
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="space-y-1.5">
+            <div className="flex justify-between items-center gap-1">
+              <span className="font-medium">Mounting:</span>
+              <span className="af-sidebar-mono text-[#11161D] font-semibold truncate max-w-[120px]" title={isBayg ? "Not required" : MOUNTING_LABELS[mounting] ?? mounting}>
+                {isBayg ? "Not required" : MOUNTING_LABELS[mounting] ?? mounting}
+              </span>
+            </div>
+            <div className="flex justify-between items-center gap-1">
+              <span className="font-medium">Max spacing:</span>
+              <span className="af-sidebar-mono text-[#11161D] font-semibold">{jobMax}mm</span>
+            </div>
+            <div className="flex justify-between items-center gap-1">
+              <span className="font-medium">Posts × Gates:</span>
+              <span className="af-sidebar-mono text-[#11161D] font-semibold">
+                {isBayg ? "0" : postCount} × {gateCount}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Run Settings Toggle Button */}
         <div
-          className="mb-3"
+          className="flex justify-end pt-1"
           onMouseEnter={keepRunSettingsOpen}
           onMouseLeave={scheduleRunSettingsCollapse}
         >
-          <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() =>
+              setRunSettingsOpen((value) => {
+                const next = !value;
+                if (next) setExpandedId(null);
+                return next;
+              })
+            }
+            className={`inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all ${
+              runSettingsOpen
+                ? "border-[#DD6E1B] bg-[#FCF1E6] text-[#DD6E1B] shadow-sm font-bold"
+                : "border-[#E9E5DD] bg-white text-[#6E7681] hover:border-[#DD6E1B]/50 hover:text-[#DD6E1B]"
+            }`}
+            aria-label={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
+            title={runSettingsOpen ? "Collapse run settings" : "Run settings"}
+          >
+            <span>Run Settings</span>
+            {runSettingsOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
+        </div>
 
-            <button
-              type="button"
-              onClick={() =>
-                setRunSettingsOpen((value) => {
-                  const next = !value;
-                  if (next) setExpandedId(null);
-                  return next;
-                })
-              }
-              className={`ml-auto mb-2 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-extrabold transition-colors ${runSettingsOpen
-                ? "border-brand-primary bg-brand-primary text-white"
-                : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
-                }`}
-              aria-label={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
-              title={runSettingsOpen ? "Collapse run settings" : "Run settings"}
-            >
-              <span>Run Settings</span>
-              {runSettingsOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-            </button>
+        {runSettingsOpen && (
+          <div
+            onPointerDown={resetRunSettingsCollapse}
+            onKeyDown={resetRunSettingsCollapse}
+            onScroll={resetRunSettingsCollapse}
+            onInput={resetRunSettingsCollapse}
+            onChange={resetRunSettingsCollapse}
+            className="border-t border-[#E9E5DD] pt-3"
+          >
+            <RunSettingsEditor run={run} onCollapse={() => setRunSettingsOpen(false)} />
           </div>
-        </div>
-      </div>
+        )}
 
-      {runSettingsOpen && (
-        <div
-          onPointerDown={resetRunSettingsCollapse}
-          onKeyDown={resetRunSettingsCollapse}
-          onScroll={resetRunSettingsCollapse}
-          onInput={resetRunSettingsCollapse}
-          onChange={resetRunSettingsCollapse}
-        >
-          <RunSettingsEditor run={run} onCollapse={() => setRunSettingsOpen(false)} />
-        </div>
-      )}
+        {!runSettingsOpen && (
+          <div className="border-t border-[#E9E5DD] pt-3 space-y-3">
+            {run.segments.length === 0 && (
+              <p className="text-xs italic text-[#6E7681]">
+                No sections yet. Draw on canvas or add manually.
+              </p>
+            )}
 
-
-      {!runSettingsOpen && (
-        <>
-
-          {run.segments.length === 0 && (
-            <p className="px-4 mb-3 text-xs italic text-brand-muted">
-              No sections yet. Draw on canvas or add manually.
-            </p>
-          )}
-
-          <div className="px-4 space-y-2">
-            {run.segments
-              .filter((segment) => segment.segmentKind !== "gate_opening")
-              .map((seg, segIdx) => (
-                <SegmentRow
-                  key={seg.segmentId}
-                  runId={run.runId}
-                  seg={seg}
-                  segIdx={segIdx}
-                  runIdx={runIdx}
-                  displayLabel={`R${runIdx + 1}S${segIdx + 1}`}
-                  open={expandedId === seg.segmentId}
-                  showRunDefaultsTeaching={
-                    expandedId === seg.segmentId &&
-                    seg.segmentId === firstSegment?.segmentId &&
-                    !teachingDismissed &&
-                    !state.bomResult
-                  }
-                  onDismissRunDefaultsTeaching={dismissRunDefaultsTeaching}
-                  onToggle={() =>
-                    setExpandedId((id) => {
-                      const next = id === seg.segmentId ? null : seg.segmentId;
-                      if (id === seg.segmentId && seg.segmentId === firstSegment?.segmentId) {
-                        dismissRunDefaultsTeaching();
-                      }
-                      return next;
-                    })
-                  }
-                />
-              ))}
-            {!isBayg && run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
-              <div className="pt-2">
-                <p className="mb-2 flex items-center gap-2 text-sm font-bold text-brand-muted">
-                  <CheckCircle2 size={16} />
-                  Gates
-                </p>
-                <div className="space-y-2">
-                  {run.segments
-                    .filter((segment) => segment.segmentKind === "gate_opening")
-                    .map((seg, gateIdx) => (
-                      <SegmentRow
-                        key={seg.segmentId}
-                        runId={run.runId}
-                        seg={seg}
-                        segIdx={gateIdx}
-                        runIdx={runIdx}
-                        displayLabel={`R${runIdx + 1}G${gateIdx + 1}`}
-                        open={expandedId === seg.segmentId}
-                        onToggle={() =>
-                          setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
+            <div className="space-y-2">
+              {run.segments
+                .filter((segment) => segment.segmentKind !== "gate_opening")
+                .map((seg, segIdx) => (
+                  <SegmentRow
+                    key={seg.segmentId}
+                    runId={run.runId}
+                    seg={seg}
+                    segIdx={segIdx}
+                    runIdx={runIdx}
+                    displayLabel={`R${runIdx + 1}S${segIdx + 1}`}
+                    open={expandedId === seg.segmentId}
+                    showRunDefaultsTeaching={
+                      expandedId === seg.segmentId &&
+                      seg.segmentId === firstSegment?.segmentId &&
+                      !teachingDismissed &&
+                      !state.bomResult
+                    }
+                    onDismissRunDefaultsTeaching={dismissRunDefaultsTeaching}
+                    onToggle={() =>
+                      setExpandedId((id) => {
+                        const next = id === seg.segmentId ? null : seg.segmentId;
+                        if (id === seg.segmentId && seg.segmentId === firstSegment?.segmentId) {
+                          dismissRunDefaultsTeaching();
                         }
-                      />
-                    ))}
+                        return next;
+                      })
+                    }
+                  />
+                ))}
+              {!isBayg && run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
+                <div className="pt-2 border-t border-[#E9E5DD]/60">
+                  <p className="mb-2 flex items-center gap-2 text-sm font-bold text-[#6E7681]">
+                    <CheckCircle2 size={16} />
+                    Gates
+                  </p>
+                  <div className="space-y-2">
+                    {run.segments
+                      .filter((segment) => segment.segmentKind === "gate_opening")
+                      .map((seg, gateIdx) => (
+                        <SegmentRow
+                          key={seg.segmentId}
+                          runId={run.runId}
+                          seg={seg}
+                          segIdx={gateIdx}
+                          runIdx={runIdx}
+                          displayLabel={`R${runIdx + 1}G${gateIdx + 1}`}
+                          open={expandedId === seg.segmentId}
+                          onToggle={() =>
+                            setExpandedId((id) => (id === seg.segmentId ? null : seg.segmentId))
+                          }
+                        />
+                      ))}
+                  </div>
                 </div>
+              )}
+            </div>
+
+            {/* Actions Row */}
+            <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[#E9E5DD]/60 pt-2">
+              <div className="flex flex-wrap gap-1">
+                <button
+                  type="button"
+                  onClick={addFenceSegment}
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#DD6E1B] hover:text-[#c96215] transition-colors px-2 py-1.5 rounded hover:bg-[#FCF1E6]/50"
+                >
+                  <Plus size={14} />
+                  {isBayg ? "Add panel" : "Add Section"}
+                </button>
+                {!isBayg && (
+                  <button
+                    type="button"
+                    onClick={addGateSegment}
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#DD6E1B] hover:text-[#c96215] transition-colors px-2 py-1.5 rounded hover:bg-[#FCF1E6]/50"
+                  >
+                    <Plus size={14} />
+                    Add Gate
+                  </button>
+                )}
               </div>
-            )}
+              <ConfirmButton
+                onConfirm={() => dispatch({ type: "REMOVE_RUN", runId: run.runId })}
+                confirmLabel="Confirm Remove"
+                className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-800 transition-colors px-2 py-1.5 rounded hover:bg-red-50"
+              >
+                <Trash2 size={14} />
+                Remove Run
+              </ConfirmButton>
+            </div>
           </div>
-
-          <div className="px-4 mt-3 flex flex-wrap justify-end gap-2">
-            <Button onClick={addFenceSegment} icon={Plus} variant="ghost" size="small">
-              {isBayg ? "Add panel size" : "Add section"}
-            </Button>
-            {!isBayg && (
-              <Button onClick={addGateSegment} icon={Plus} variant="ghost" size="small">
-                Add gate
-              </Button>
-            )}
-            <ConfirmButton
-              onConfirm={() => dispatch({ type: "REMOVE_RUN", runId: run.runId })}
-              confirmLabel={<><Trash2 size={16} /> Click again to confirm</>}
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-brand-danger/30 px-3 py-2 text-xs font-semibold text-brand-danger transition-colors hover:bg-brand-danger/10"
-            >
-              <Trash2 size={16} />
-              Remove run
-            </ConfirmButton>
-          </div>
-        </>
-      )}
-
-
+        )}
+      </div>
     </div>
   );
 }

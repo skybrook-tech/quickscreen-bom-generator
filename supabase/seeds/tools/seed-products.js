@@ -75,7 +75,7 @@ const cache = {
   ruleVersionIdByKey: new Map(),          // key: `${ruleSetId}|${versionLabel}` → id
   componentIdBySku: new Map(),            // key: `${orgId}|${sku}` → id
   supplierIdBySlug: new Map(),
-  systemInstanceIdBySlug: new Map(),
+  systemInstanceIdBySlug: new Map(),      // key: `${orgId}|${slug}` → id
 };
 
 async function resolveOrgId(slug) {
@@ -105,18 +105,21 @@ async function resolveSupplierId(slug) {
   return id;
 }
 
-async function resolveSystemInstanceId(slug) {
-  if (!slug) return null;
-  if (cache.systemInstanceIdBySlug.has(slug)) return cache.systemInstanceIdBySlug.get(slug);
+async function resolveSystemInstanceId(orgId, slug) {
+  const key = `${orgId}|${slug}`;
+  if (cache.systemInstanceIdBySlug.has(key)) return cache.systemInstanceIdBySlug.get(key);
   const { data, error } = await supabase
     .from('system_instances')
     .select('id')
     .eq('slug', slug)
     .maybeSingle();
   if (error) throw new Error(`resolveSystemInstanceId(${slug}): ${error.message}`);
-  const id = data?.id || null;
-  cache.systemInstanceIdBySlug.set(slug, id);
-  return id;
+  if (!data) {
+    console.warn(`  Warning: system_instance not found for slug: ${slug}`);
+    return null;
+  }
+  cache.systemInstanceIdBySlug.set(key, data.id);
+  return data.id;
 }
 
 async function resolveProductId(orgId, systemType) {
@@ -192,8 +195,21 @@ function invalidateRuleVersionCache() {
 function invalidateComponentCache() {
   cache.componentIdBySku.clear();
 }
+function invalidateSystemInstanceCache() {
+  cache.systemInstanceIdBySlug.clear();
+}
 
 // ── Per-section upserters ───────────────────────────────────────────────────
+
+const TABLES_WITH_SYSTEM_INSTANCE_ID = new Set([
+  'products',
+  'product_components',
+  'product_variables',
+  'product_rules',
+  'product_component_selectors',
+  'product_companion_rules',
+  'pricing_rules',
+]);
 
 async function upsertProducts(orgId, rows, supplierId, systemInstanceId) {
   if (!rows?.length) return;
@@ -211,7 +227,7 @@ async function upsertProducts(orgId, rows, supplierId, systemInstanceId) {
     sort_order: r.sort_order ?? 0,
     metadata: r.metadata ?? {},
     supplier_id: supplierId,
-    system_instance_id: systemInstanceId,
+    system_instance_id: systemInstanceId || null,
   }));
   const { error } = await supabase
     .from('products')
@@ -245,7 +261,7 @@ async function upsertProductComponents(orgId, rows, supplierId, systemInstanceId
     },
     active: r.active,
     supplier_id: supplierId,
-    system_instance_id: systemInstanceId,
+    system_instance_id: systemInstanceId || null,
   }));
   const { error } = await supabase
     .from('product_components')
@@ -303,7 +319,11 @@ async function upsertPerProduct(orgId, table, rows, mapper, conflict, systemInst
   const toUpsert = await Promise.all(
     rows.map(async (r) => {
       const productId = await resolveProductId(orgId, r.product_system_type);
-      return mapper(r, productId, systemInstanceId);
+      const mapped = mapper(r, productId, systemInstanceId);
+      if (TABLES_WITH_SYSTEM_INSTANCE_ID.has(table)) {
+        mapped.system_instance_id = systemInstanceId || null;
+      }
+      return mapped;
     }),
   );
   const { error } = await supabase
@@ -332,7 +352,7 @@ async function upsertProductRules(orgId, rows, systemInstanceId) {
         priority: r.priority,
         active: r.active,
         notes: r.notes ?? null,
-        system_instance_id: systemInstanceId,
+        system_instance_id: systemInstanceId || null,
       };
     }),
   );
@@ -356,6 +376,7 @@ async function upsertPricingRules(orgId, rows, supplierId, systemInstanceId) {
       .from('product_components')
       .select('id, sku')
       .eq('org_id', orgId)
+      .order('id')
       .range(fromComp, toComp);
     if (error) throw new Error(`product_components cache pre-fill failed: ${error.message}`);
     allComponents.push(...(data ?? []));
@@ -381,6 +402,7 @@ async function upsertPricingRules(orgId, rows, supplierId, systemInstanceId) {
       .select('id, component_id, tier_code, priority')
       .eq('org_id', orgId)
       .eq('active', true)
+      .order('id')
       .range(fromRules, toRules);
     if (error) throw new Error(`pricing_rules fetch failed: ${error.message}`);
     existingRules.push(...(data ?? []));
@@ -416,7 +438,7 @@ async function upsertPricingRules(orgId, rows, supplierId, systemInstanceId) {
       active: r.active,
       canonical_code: r.canonical_code ?? null,
       supplier_id: supplierId,
-      system_instance_id: systemInstanceId,
+      system_instance_id: systemInstanceId || null,
     };
 
     const key = `${componentId}|${r.tier_code}|${row.priority}`;
@@ -495,21 +517,23 @@ async function loadFile(path) {
   const supplierSlug = raw.supplier_slug || 'glass-outlet';
   const supplierId = await resolveSupplierId(supplierSlug);
   
-  let systemInstanceId = null;
-  if (raw.system_instance_slug) {
-    systemInstanceId = await resolveSystemInstanceId(raw.system_instance_slug);
-  } else {
-    // Try to guess from the first product's system_type
-    const systemType = raw.products?.[0]?.system_type;
-    if (systemType) {
-      let slug = systemType.toLowerCase();
-      if (systemType === 'QS_GATE') slug = 'qs-gate';
-      if (systemType === 'ColorBond') slug = 'go-colorbond';
-      systemInstanceId = await resolveSystemInstanceId(slug);
-    }
+  // Resolve system_instance_slug and systemInstanceId (PR #6 logic)
+  let systemInstanceSlug = raw.system_instance_slug;
+  if (!systemInstanceSlug && raw.products?.[0]?.system_type) {
+    const systemType = raw.products[0].system_type;
+    const lowerType = systemType.toLowerCase();
+    if (lowerType === 'qshs') systemInstanceSlug = 'qshs';
+    else if (lowerType === 'vs') systemInstanceSlug = 'vs';
+    else if (lowerType === 'xpl') systemInstanceSlug = 'xpl';
+    else if (lowerType === 'bayg') systemInstanceSlug = 'bayg';
+    else if (lowerType === 'colorbond') systemInstanceSlug = 'go-colorbond';
+    else if (lowerType === 'qs_gate') systemInstanceSlug = 'qs-gate';
+    else if (lowerType === 'xpsg_gate') systemInstanceSlug = 'xpsg-gate';
+    else systemInstanceSlug = lowerType;
   }
+  const systemInstanceId = systemInstanceSlug ? await resolveSystemInstanceId(orgId, systemInstanceSlug) : null;
 
-  console.log(`${basename(path)} (org=${raw.org_slug}, supplier=${supplierSlug}, systemInstance=${raw.system_instance_slug || 'guessed'}):`);
+  console.log(`${basename(path)} (org=${raw.org_slug}, supplier=${supplierSlug}, systemInstance=${systemInstanceSlug || 'none'}):`);
 
   // Idempotently approve system instance flags (Step 0)
   if (systemInstanceId && raw.system_instance_slug) {
@@ -574,6 +598,7 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,name',
+    systemInstanceId,
   );
 
   await upsertPerProduct(
@@ -590,6 +615,7 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,name',
+    systemInstanceId,
   );
 
   await upsertProductRules(orgId, raw.product_rules, systemInstanceId);
@@ -654,9 +680,10 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,warning_key',
+    systemInstanceId,
   );
 
-  await upsertPricingRules(orgId, raw.pricing_rules);
+  await upsertPricingRules(orgId, raw.pricing_rules, supplierId, systemInstanceId);
 }
 
 // ── Post-load row-count floors (replaces v3-verify-seeds.sql) ──────────────

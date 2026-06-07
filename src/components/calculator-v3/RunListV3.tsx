@@ -32,6 +32,100 @@ function isCypressSmokeTest(): boolean {
   return false;
 }
 
+const comingSoonProducts = [
+  { system_type: "Colorbond", name: "Colorbond", description: "Standard sheet steel boundary fencing" },
+  { system_type: "Pool glass", name: "Pool glass", description: "Semi-frameless and frameless glass fencing" },
+  { system_type: "Picket", name: "Picket", description: "Traditional timber picket fencing" },
+];
+
+function getSystemIcon(systemType: string) {
+  switch (systemType) {
+    case "QSHS":
+      return (
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <line x1="3" y1="8" x2="21" y2="8" />
+          <line x1="3" y1="13" x2="21" y2="13" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      );
+    case "VS":
+      return (
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <line x1="8" y1="3" x2="8" y2="21" />
+          <line x1="13" y1="3" x2="13" y2="21" />
+          <line x1="18" y1="3" x2="18" y2="21" />
+        </svg>
+      );
+    case "XPL":
+      return (
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+          <line x1="9" y1="6" x2="9" y2="18" />
+          <line x1="15" y1="6" x2="15" y2="18" />
+        </svg>
+      );
+    case "BAYG":
+      return (
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="12" y1="3" x2="12" y2="21" />
+        </svg>
+      );
+    case "DF_CCA_PAL":
+      return (
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M4 22V5l2-2 2 2v17M10 22V5l2-2 2 2v17M16 22V5l2-2 2 2v17" />
+        </svg>
+      );
+    case "Colorbond":
+      return (
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <path d="M6 3v18M10 3v18M14 3v18M18 3v18" />
+        </svg>
+      );
+    case "Pool glass":
+      return (
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="4" y="4" width="16" height="12" rx="1" strokeWidth="1.5" />
+          <line x1="8" y1="16" x2="8" y2="21" strokeWidth="3" />
+          <line x1="16" y1="16" x2="16" y2="21" strokeWidth="3" />
+        </svg>
+      );
+    case "Picket":
+      return (
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M5 20V6l2-2 2 2v14M11 20V6l2-2 2 2v14M17 20V6l2-2 2 2v14" />
+          <line x1="3" y1="9" x2="21" y2="9" />
+          <line x1="3" y1="15" x2="21" y2="15" />
+        </svg>
+      );
+    default:
+      return (
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+        </svg>
+      );
+  }
+}
+
+function getSystemStartingPrice(systemType: string) {
+  switch (systemType) {
+    case "QSHS": return "from $180/m";
+    case "VS": return "from $220/m";
+    case "XPL": return "from $280/m";
+    case "BAYG": return "from $160/m";
+    case "DF_CCA_PAL": return "from $90/m";
+    default: return "";
+  }
+}
+
 export function RunListV3({
   autoOpenFirstRunId,
   onAutoOpenConsumed,
@@ -166,41 +260,84 @@ export function RunListV3({
   return (
     <div className={compact ? "space-y-3" : "space-y-5"}>
       {!hasRuns && (
-        <section className="space-y-3 rounded-2xl border border-brand-primary/30 bg-brand-primary/5 p-3">
-          <p className="text-sm font-black text-brand-text">Choose a fence system</p>
+        <section className="space-y-4 p-4 bg-[#FCFBF9] rounded-xl border border-[#E9E5DD]">
+          <h3 className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6E7681]">Choose a fence system</h3>
           <div className="grid gap-2">
             {productsToRender.map((product) => (
               <button
                 key={product.system_type}
                 type="button"
                 onClick={() => startFirstRun(product.system_type)}
-                className={
-                  compact
-                    ? "flex min-h-[58px] items-center justify-between gap-3 rounded-lg border border-brand-primary bg-brand-primary px-4 py-2 text-left text-white shadow-sm transition hover:bg-brand-primary/90 hover:shadow-md"
-                    : "flex min-h-[88px] items-center justify-between gap-3 rounded-lg border border-brand-primary bg-brand-primary px-4 py-4 text-left text-white shadow-sm transition hover:bg-brand-primary/90 hover:shadow-md"
-                }
+                className="flex items-center justify-between gap-3 p-3 rounded-lg border border-[#E9E5DD] bg-white text-left transition-all hover:border-[#DD6E1B]/50 hover:shadow-sm group"
                 data-testid={`landing-system-${product.system_type}`}
               >
-                <span className="grid gap-1">
-                  <span className={compact ? "text-lg font-black" : "text-2xl font-black"}>{product.system_type}</span>
-                  <span className="text-sm font-extrabold leading-tight">
-                    {product.system_type === "QSHS"
-                      ? "Quick Screen Horizontal Slats"
-                      : product.system_type === "VS"
-                        ? "Vertical Slats"
-                        : product.system_type === "XPL"
-                          ? "Xpress Plus"
-                          : product.system_type === "BAYG"
-                            ? "Build As You Go"
-                            : product.name}
+                <span className="flex items-center gap-3 min-w-0">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-[#FCF1E6]/50 text-[#DD6E1B]">
+                    {getSystemIcon(product.system_type)}
+                  </span>
+                  <span className="grid min-w-0">
+                    <span className="text-[13.5px] font-semibold text-[#11161D]">
+                      {product.system_type === "QSHS"
+                        ? "Quick Screen Horizontal Slats"
+                        : product.system_type === "VS"
+                          ? "Vertical Slats"
+                          : product.system_type === "XPL"
+                            ? "Xpress Plus"
+                            : product.system_type === "BAYG"
+                              ? "Build As You Go"
+                              : product.system_type === "DF_CCA_PAL"
+                                ? "Treated Pine Paling"
+                                : product.name}
+                    </span>
+                    <span className="text-[11.5px] text-[#6E7681] truncate">
+                      {product.description || (
+                        product.system_type === "QSHS"
+                          ? "Horizontal slats, adjustable gap"
+                          : product.system_type === "VS"
+                            ? "Clean, modern vertical look"
+                            : product.system_type === "XPL"
+                              ? "Premium heavy duty slats"
+                              : product.system_type === "BAYG"
+                                ? "Custom panel configurations"
+                                : product.system_type === "DF_CCA_PAL"
+                                  ? "Traditional timber boundary"
+                                  : "Aluminium fencing system"
+                      )}
+                    </span>
                   </span>
                 </span>
-                <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs">{product.system_type}</span>
+                <span className="af-sidebar-mono text-[#DD6E1B] shrink-0 font-medium">
+                  {getSystemStartingPrice(product.system_type)}
+                </span>
               </button>
+            ))}
+
+            {/* Coming Soon Products */}
+            {comingSoonProducts.map((product) => (
+              <div
+                key={product.system_type}
+                className="flex items-center justify-between gap-3 p-3 rounded-lg border border-[#E9E5DD] bg-white/60 text-left opacity-50 select-none"
+              >
+                <span className="flex items-center gap-3 min-w-0">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-gray-100 text-gray-400">
+                    {getSystemIcon(product.system_type)}
+                  </span>
+                  <span className="grid min-w-0">
+                    <span className="text-[13.5px] font-semibold text-[#11161D] flex items-center gap-1.5">
+                      {product.name}
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold tracking-wider bg-gray-200 text-gray-600 uppercase">SOON</span>
+                    </span>
+                    <span className="text-[11.5px] text-[#6E7681] truncate">
+                      {product.description}
+                    </span>
+                  </span>
+                </span>
+                <span className="text-xs text-gray-400 font-semibold uppercase">Soon</span>
+              </div>
             ))}
           </div>
           {onDescribeApply && (
-            <div className="pt-2 text-center">
+            <div className="pt-2 text-center border-t border-[#E9E5DD]">
               <DescribeFenceBox
                 title="Describe your fence"
                 compact
@@ -227,7 +364,7 @@ export function RunListV3({
         <button
           type="button"
           onClick={addRun}
-          className="min-h-11 w-full rounded-lg border border-brand-primary/50 bg-brand-primary px-4 py-3 text-sm font-black text-white shadow-sm transition-all hover:bg-brand-primary/90 hover:shadow-md"
+          className="min-h-11 w-full rounded-lg border border-[#E9E5DD] bg-white px-4 py-3 text-sm font-semibold text-[#11161D] shadow-sm transition-all hover:border-[#DD6E1B]/50 hover:bg-[#FCF1E6]/10"
         >
           + Add run
         </button>

@@ -128,7 +128,7 @@ export function TimberPalingVariationSidebar({
   };
 
   return (
-    <aside className="w-80 bg-[#0B1528] text-brand-text h-full border-r border-brand-border/60 flex flex-col shrink-0">
+    <aside className="af-sidebar w-80 bg-brand-bg text-brand-text h-full border-r border-brand-border/60 flex flex-col shrink-0">
       {/* Sidebar Header */}
       <div className="p-4 border-b border-brand-border/40 shrink-0">
         <button

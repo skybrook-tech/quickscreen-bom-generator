@@ -49,7 +49,7 @@ export function InlineHeightEditor({
   }
 
   const sharedClasses =
-    "inline-flex h-8 max-w-full rounded-lg border border-brand-border bg-brand-card px-2 text-xs font-extrabold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20";
+    "inline-flex h-8 max-w-full rounded-lg border border-brand-border bg-brand-card px-2 af-sidebar-mono font-bold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20";
 
   if (productCode === "VS") {
     return (

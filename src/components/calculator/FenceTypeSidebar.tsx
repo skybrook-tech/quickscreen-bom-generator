@@ -68,7 +68,7 @@ export function FenceTypeSidebar({ activeType = "timber-paling", onSelectType }:
   ];
 
   return (
-    <aside className="w-64 bg-brand-card border-r border-brand-border/60 flex flex-col shrink-0 text-brand-text h-full">
+    <aside className="af-sidebar w-64 bg-brand-card border-r border-brand-border/60 flex flex-col shrink-0 text-brand-text h-full">
       <div className="p-4 border-b border-brand-border/60">
         <div className="text-[10px] font-black uppercase tracking-[0.14em] text-brand-muted mb-1">
           Step 3 of 4
