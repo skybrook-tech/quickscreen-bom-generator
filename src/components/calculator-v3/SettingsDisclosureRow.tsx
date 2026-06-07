@@ -8,7 +8,6 @@ interface SettingsDisclosureRowProps {
   id: string;
   label: string;
   value?: ReactNode;
-  placeholder?: string;
   children: ReactNode;
   defaultOpen?: boolean;
 }
@@ -17,7 +16,6 @@ export function SettingsDisclosureRow({
   id,
   label,
   value,
-  placeholder = "Choose",
   children,
   defaultOpen = false,
 }: SettingsDisclosureRowProps) {
@@ -58,22 +56,26 @@ export function SettingsDisclosureRow({
   }
 
   return (
-    <div className="rounded-2xl border border-brand-border/60 bg-brand-bg/60 transition-all duration-[220ms]">
+    <div className={`rounded-lg border transition-all duration-[220ms] ${
+      open ? "border-[#DD6E1B] bg-white shadow-sm" : "border-[#E9E5DD] bg-white"
+    }`}>
       <button
         type="button"
         onClick={toggle}
-        className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm font-extrabold text-brand-text"
+        className={`flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-sm font-semibold text-[#11161D] transition-colors ${
+          open ? "bg-[#FCF1E6]/50" : "bg-white hover:bg-[#FCF1E6]/10"
+        }`}
       >
-        <span>{label}</span>
-        <span className="flex min-w-0 items-center gap-2 text-xs font-bold text-brand-primary">
-          {!open && (
-            <span className="max-w-[13rem] truncate rounded-full bg-brand-card px-2 py-0.5 font-extrabold text-brand-text">
-              {value ?? <span className="font-semibold text-brand-muted">{placeholder}</span>}
+        <span className="truncate">
+          <span className="font-semibold text-[#11161D]">{label}</span>
+          {!open && value && (
+            <span className="text-[#6E7681] font-normal">
+              {" · "}{value}
             </span>
           )}
-          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full text-brand-primary" aria-hidden>
-            {open ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </span>
+        </span>
+        <span className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${open ? "text-[#DD6E1B]" : "text-[#6E7681]"}`} aria-hidden>
+          {open ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
         </span>
       </button>
       <div
@@ -85,7 +87,7 @@ export function SettingsDisclosureRow({
         onChange={resetTimer}
       >
         <div className="overflow-hidden">
-          <div className="space-y-3 border-t border-brand-border/50 p-3">
+          <div className="space-y-4 border-t border-[#E9E5DD] p-4 bg-white">
             {children}
           </div>
         </div>

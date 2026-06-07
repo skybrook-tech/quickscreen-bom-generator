@@ -1,14 +1,16 @@
+import type { ReactNode } from "react";
+
 interface FormFieldProps {
-  label: string;
+  label: ReactNode;
   note?: string;
   error?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export function FormField({ label, note, error, children }: FormFieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-bold text-brand-muted">
+      <label className="text-sm font-bold text-brand-muted block">
         {label}
       </label>
       {children}

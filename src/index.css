@@ -262,3 +262,16 @@ html, body, #root {
   height: 100dvh;
   overflow: hidden;
 }
+
+/* Custom classes for sidebar cleanup */
+.af-sidebar-field-label {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #11161D !important;
+}
+
+.af-sidebar-mono {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace !important;
+  font-size: 11.5px !important;
+  font-feature-settings: "tnum" 1 !important;
+}

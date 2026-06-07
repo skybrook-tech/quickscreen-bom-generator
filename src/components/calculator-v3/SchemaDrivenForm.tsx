@@ -1,5 +1,4 @@
 import { FormField } from "../shared/FormField";
-import { Check } from "lucide-react";
 import { ColourPalette, COLOUR_LABELS } from "./ColourPalette";
 import { DerivationChip } from "../ui/DerivationChip";
 
@@ -98,7 +97,7 @@ export function SchemaDrivenForm({
   variables,
 }: SchemaDrivenFormProps) {
   return (
-    <div className="flex flex-wrap gap-3">
+    <div className="w-full space-y-4">
       {fields.map((field) => {
         if (!isVisible(field.visible_when_json ?? {}, variables)) return null;
 
@@ -109,6 +108,8 @@ export function SchemaDrivenForm({
         ) {
           const currentValue = String(variables[field.field_key] ?? "");
           const isColourField = field.field_key === "colour_code" || field.field_key === "post_colour_code";
+          const useDropdown = field.options_json.length > 5;
+
           return (
             <div
               key={field.id}
@@ -116,7 +117,14 @@ export function SchemaDrivenForm({
               className={FIELD_WRAPPER}
             >
               <FormField
-                label={field.label}
+                label={
+                  <span className="flex items-center justify-between w-full af-sidebar-field-label">
+                    <span>{field.label}</span>
+                    {field.unit && (
+                      <span className="text-[10px] font-normal text-[#6E7681]">({field.unit})</span>
+                    )}
+                  </span>
+                }
               >
                 {field.field_key === "target_height_mm" && (
                   <div className="mb-2">
@@ -138,31 +146,48 @@ export function SchemaDrivenForm({
                       onChange(field.field_key, coerceValue(field, value))
                     }
                   />
+                ) : useDropdown ? (
+                  <select
+                    value={currentValue}
+                    onChange={(e) =>
+                      onChange(field.field_key, coerceValue(field, e.target.value))
+                    }
+                    className="w-full rounded-lg border border-[#E9E5DD] bg-white px-3 py-2 text-sm font-semibold text-[#11161D] shadow-sm outline-none transition-colors focus:border-[#DD6E1B] focus:ring-2 focus:ring-[#DD6E1B]/20"
+                  >
+                    <option value="" disabled>Select...</option>
+                    {field.options_json.map((opt) => {
+                      const value = optionValue(opt);
+                      return (
+                        <option key={value} value={value}>
+                          {optionLabel(field, opt)}
+                        </option>
+                      );
+                    })}
+                  </select>
                 ) : (
-                <div className="flex flex-wrap gap-2">
-                  {field.options_json.map((opt) => {
-                    const value = optionValue(opt);
-                    const selected = value === currentValue;
-                    return (
-                      <button
-                        key={value}
-                        type="button"
-                        onClick={() =>
-                          onChange(field.field_key, coerceValue(field, value))
-                        }
-                        aria-pressed={selected}
-                        className={`inline-flex min-h-9 items-center gap-2 rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${
-                          selected
-                            ? "border-brand-primary bg-brand-primary text-white shadow-sm"
-                            : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-                        }`}
-                      >
-                        {selected && <Check size={16} aria-hidden />}
-                        {optionLabel(field, opt)}
-                      </button>
-                    );
-                  })}
-                </div>
+                  <div className="flex flex-wrap gap-2">
+                    {field.options_json.map((opt) => {
+                      const value = optionValue(opt);
+                      const selected = value === currentValue;
+                      return (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() =>
+                            onChange(field.field_key, coerceValue(field, value))
+                          }
+                          aria-pressed={selected}
+                          className={`inline-flex min-h-9 items-center justify-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all ${
+                            selected
+                              ? "border-[#DD6E1B] bg-[#DD6E1B] text-white shadow-sm font-bold"
+                              : "border-[#E9E5DD] bg-white text-[#11161D] hover:border-[#DD6E1B]/50 hover:bg-[#FCF1E6]/10"
+                          }`}
+                        >
+                          {optionLabel(field, opt)}
+                        </button>
+                      );
+                    })}
+                  </div>
                 )}
               </FormField>
             </div>
@@ -177,7 +202,14 @@ export function SchemaDrivenForm({
               className={FIELD_WRAPPER}
             >
               <FormField
-                label={field.label}
+                label={
+                  <span className="flex items-center justify-between w-full af-sidebar-field-label">
+                    <span>{field.label}</span>
+                    {field.unit && (
+                      <span className="text-[10px] font-normal text-[#6E7681]">({field.unit})</span>
+                    )}
+                  </span>
+                }
               >
                 {field.field_key === "target_height_mm" && (
                   <div className="mb-2">
@@ -200,7 +232,7 @@ export function SchemaDrivenForm({
                         : parseFloat(e.target.value),
                     )
                   }
-                  className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+                  className="w-full rounded-lg border border-[#E9E5DD] bg-white px-3 py-2 text-sm font-semibold text-[#11161D] shadow-sm outline-none transition-colors focus:border-[#DD6E1B] focus:ring-2 focus:ring-[#DD6E1B]/20"
                 />
               </FormField>
             </div>
@@ -208,19 +240,21 @@ export function SchemaDrivenForm({
         }
 
         if (field.control_type === "toggle") {
+          const isChecked = Boolean(variables[field.field_key]);
           return (
             <div
               key={field.id}
               data-testid={field.field_key}
-              className={`${FIELD_WRAPPER} flex items-center gap-3`}
+              className={`${FIELD_WRAPPER} flex items-center gap-2.5 py-1.5`}
             >
               <input
+                id={field.id}
                 type="checkbox"
-                checked={Boolean(variables[field.field_key])}
+                checked={isChecked}
                 onChange={(e) => onChange(field.field_key, e.target.checked)}
-                className="rounded border-brand-border bg-brand-card text-brand-accent"
+                className="rounded border-[#E9E5DD] text-[#DD6E1B] focus:ring-[#DD6E1B]/20 h-4 w-4 bg-white"
               />
-              <label className="text-sm font-medium text-brand-text">
+              <label htmlFor={field.id} className="text-xs font-semibold text-[#11161D] select-none">
                 {field.label}
               </label>
             </div>
@@ -234,14 +268,21 @@ export function SchemaDrivenForm({
             className={FIELD_WRAPPER}
           >
             <FormField
-              label={field.label}
+              label={
+                <span className="flex items-center justify-between w-full af-sidebar-field-label">
+                  <span>{field.label}</span>
+                  {field.unit && (
+                    <span className="text-[10px] font-normal text-[#6E7681]">({field.unit})</span>
+                  )}
+                </span>
+              }
             >
               <input
                 type="text"
                 aria-label={field.label}
                 value={String(variables[field.field_key] ?? "")}
                 onChange={(e) => onChange(field.field_key, e.target.value)}
-                className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+                className="w-full rounded-lg border border-[#E9E5DD] bg-white px-3 py-2 text-sm font-semibold text-[#11161D] shadow-sm outline-none transition-colors focus:border-[#DD6E1B] focus:ring-2 focus:ring-[#DD6E1B]/20"
               />
             </FormField>
           </div>
