@@ -100,10 +100,10 @@ async function loadPricing(
 
 
 async function loadComponentNames(
-  orgId: string,
+  orgIds: string[],
   systemTypes: string[],
 ): Promise<Map<string, { sku: string; name: string; description: string; defaultPrice: number | null; canonicalCode: string | null }>> {
-  if (systemTypes.length === 0) return new Map();
+  if (systemTypes.length === 0 || orgIds.length === 0) return new Map();
   const supabaseAdmin = createClient(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
@@ -118,7 +118,7 @@ async function loadComponentNames(
     const { data, error } = await supabaseAdmin
       .from("product_components")
       .select("sku, name, description, default_price, canonical_code, category, metadata")
-      .eq("org_id", orgId)
+      .in("org_id", orgIds)
       .eq("active", true)
       .overlaps("system_types", systemTypes)
       .range(from, to);
@@ -188,8 +188,8 @@ interface BomLineItemV3 {
   quantity: number;
   unit: BOMUnit;
   category: string;
-  unitPrice: number;
-  lineTotal: number;
+  unitPrice: number | null;
+  lineTotal: number | null;
   notes?: string;
   runId?: string;
   segmentId?: string;
@@ -323,25 +323,49 @@ Deno.serve(async (req: Request) => {
 
     const engineDataMap = new Map<string, EngineData>();
 
+    const productOrgIds = new Set<string>();
+
     await Promise.all(
       uniqueProductCodes.map(async (code) => {
         // Flat products model (post migration 022): one row per (org, system_type).
-        const { data: actualProduct } = await supabaseAdmin
+        let actualProduct = null;
+        const { data: productWithOrg } = await supabaseAdmin
           .from("products")
-          .select("id, system_type, product_type")
+          .select("id, system_type, product_type, org_id")
           .eq("org_id", effectiveOrgId)
           .eq("system_type", code)
           .maybeSingle();
+
+        if (productWithOrg) {
+          actualProduct = productWithOrg;
+        } else {
+          // Fallback: search for a public/active system instance product
+          const { data: publicProduct } = await supabaseAdmin
+            .from("products")
+            .select("id, system_type, product_type, org_id")
+            .eq("system_type", code)
+            .eq("active", true)
+            .not("system_instance_id", "is", null)
+            .limit(1)
+            .maybeSingle();
+
+          if (publicProduct) {
+            actualProduct = publicProduct;
+          }
+        }
 
         if (!actualProduct) {
           throw new Error(`Unknown productCode: ${code}`);
         }
 
+        const productOrgId = actualProduct.org_id;
+        productOrgIds.add(productOrgId);
+
         // Load current rule version via rule_set
         const { data: ruleSet } = await supabaseAdmin
           .from("rule_sets")
           .select("id")
-          .eq("org_id", effectiveOrgId)
+          .eq("org_id", productOrgId)
           .eq("product_id", actualProduct.id)
           .maybeSingle();
 
@@ -352,7 +376,7 @@ Deno.serve(async (req: Request) => {
         const { data: ruleVersion } = await supabaseAdmin
           .from("rule_versions")
           .select("id")
-          .eq("org_id", effectiveOrgId)
+          .eq("org_id", productOrgId)
           .eq("rule_set_id", ruleSet.id)
           .eq("is_current", true)
           .maybeSingle();
@@ -1021,7 +1045,7 @@ Deno.serve(async (req: Request) => {
     );
 
     // Step 12 — pricing + component name lookup (sequential dependencies due to SKU filtering)
-    const componentNames = await loadComponentNames(effectiveOrgId, uniqueProductCodes);
+    const componentNames = await loadComponentNames(Array.from(productOrgIds), uniqueProductCodes);
 
     // Dynamic canonical mapping: resolve canonical codes to the supplier's actual SKU
     for (const line of [...aggregatedLines, ...allLines, ...aggregatedSuggestions]) {
@@ -1056,7 +1080,7 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    function resolveLinePrice(sku: string, quantity: number): number {
+    function resolveLinePrice(sku: string, quantity: number): number | null {
       let rules = pricingMap.get(sku) ?? [];
       if (rules.length === 0) {
         const canonical = componentNames.get(sku)?.canonicalCode;
@@ -1072,18 +1096,20 @@ Deno.serve(async (req: Request) => {
         return defaultPrice;
       }
       allWarnings.push(`No pricing rule found for SKU: ${sku}`);
-      return 0;
+      return null;
     }
 
     for (const line of aggregatedLines) {
-      line.unitPrice = resolveLinePrice(line.sku, line.quantity);
-      line.lineTotal = parseFloat((line.quantity * line.unitPrice).toFixed(2));
+      const price = resolveLinePrice(line.sku, line.quantity);
+      line.unitPrice = price;
+      line.lineTotal = price !== null ? parseFloat((line.quantity * price).toFixed(2)) : null;
     }
 
     // Price suggestions (informational — not included in totals)
     for (const line of aggregatedSuggestions) {
-      line.unitPrice = resolveLinePrice(line.sku, line.quantity);
-      line.lineTotal = parseFloat((line.quantity * line.unitPrice).toFixed(2));
+      const price = resolveLinePrice(line.sku, line.quantity);
+      line.unitPrice = price;
+      line.lineTotal = price !== null ? parseFloat((line.quantity * price).toFixed(2)) : null;
     }
 
     // Propagate pricing back into per-run items for the UI tabs
@@ -1093,14 +1119,15 @@ Deno.serve(async (req: Request) => {
         if (comp && item.sku !== comp.sku) {
           item.sku = comp.sku;
         }
-        item.unitPrice = resolveLinePrice(item.sku, item.quantity);
-        item.lineTotal = parseFloat((item.quantity * item.unitPrice).toFixed(2));
+        const price = resolveLinePrice(item.sku, item.quantity);
+        item.unitPrice = price;
+        item.lineTotal = price !== null ? parseFloat((item.quantity * price).toFixed(2)) : null;
       }
     }
 
     // Step 13 — totals + response
     const subtotal = parseFloat(
-      aggregatedLines.reduce((s, l) => s + l.lineTotal, 0).toFixed(2),
+      aggregatedLines.reduce((s, l) => s + (l.lineTotal ?? 0), 0).toFixed(2),
     );
     const gst = parseFloat((subtotal * 0.1).toFixed(2));
     const grandTotal = parseFloat((subtotal + gst).toFixed(2));

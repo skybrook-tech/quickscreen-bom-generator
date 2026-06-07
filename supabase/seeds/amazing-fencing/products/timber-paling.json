@@ -74,13 +74,14 @@
     {
       "product_system_type": "AF_TIMBER_PALING",
       "name": "timber_type",
-      "label": "Timber Type",
+      "label": "Post Material",
       "data_type": "enum",
       "required": true,
       "default_value_json": "treated_pine",
       "options_json": ["treated_pine", "hardwood"],
       "scope": "job",
-      "sort_order": 10,
+      "options_group": "posts",
+      "sort_order": 30,
       "active": true
     },
     {
@@ -92,7 +93,8 @@
       "default_value_json": "butted",
       "options_json": ["butted", "lapped_capped"],
       "scope": "job",
-      "sort_order": 20,
+      "options_group": "style",
+      "sort_order": 10,
       "active": true
     },
     {
@@ -128,19 +130,21 @@
       "default_value_json": "75x38",
       "options_json": ["75x38", "100x38", "100x38_arrissed"],
       "scope": "run",
-      "sort_order": 50,
+      "options_group": "rails",
+      "sort_order": 70,
       "active": true
     },
     {
       "product_system_type": "AF_TIMBER_PALING",
       "name": "rail_count",
       "label": "Rail Count",
-      "data_type": "integer",
+      "data_type": "enum",
       "required": false,
       "default_value_json": 0,
-      "options_json": [],
+      "options_json": [0, 2, 3, 4],
       "scope": "run",
-      "sort_order": 60,
+      "options_group": "rails",
+      "sort_order": 80,
       "active": true
     },
     {
@@ -152,7 +156,73 @@
       "default_value_json": 1800,
       "options_json": [1200, 1500, 1800, 2100, 2400],
       "scope": "segment",
-      "sort_order": 70,
+      "options_group": "style",
+      "sort_order": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_TIMBER_PALING",
+      "name": "post_size",
+      "label": "Post Size",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "100x75",
+      "options_json": ["100x75", "100x100"],
+      "scope": "run",
+      "options_group": "posts",
+      "sort_order": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_TIMBER_PALING",
+      "name": "post_mounting",
+      "label": "Post Mounting",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "in_ground",
+      "options_json": ["in_ground", "core_drilled"],
+      "scope": "run",
+      "options_group": "posts",
+      "sort_order": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_TIMBER_PALING",
+      "name": "paling_width_mm",
+      "label": "Paling Width",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": 100,
+      "options_json": [100, 125, 150],
+      "scope": "job",
+      "options_group": "palings",
+      "sort_order": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_TIMBER_PALING",
+      "name": "plinth_enabled",
+      "label": "Include Bottom Plinth Board",
+      "data_type": "boolean",
+      "required": false,
+      "default_value_json": false,
+      "options_json": [],
+      "scope": "job",
+      "options_group": "extras",
+      "sort_order": 90,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_TIMBER_PALING",
+      "name": "nail_type",
+      "label": "Nail Type",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "ring_shank",
+      "options_json": ["ring_shank", "smooth_shank"],
+      "scope": "job",
+      "options_group": "extras",
+      "sort_order": 100,
       "active": true
     }
   ],

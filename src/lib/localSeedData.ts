@@ -5,6 +5,7 @@ import xplRaw from "../../supabase/seeds/glass-outlet/products/xpl.json?raw";
 import qsGateRaw from "../../supabase/seeds/glass-outlet/products/qs_gate.json?raw";
 import priceCatalogueRaw from "../../supabase/seeds/glass-outlet/products/price_catalogue.json?raw";
 import ccaPinePalingRaw from "../../supabase/seeds/discount-fencing/products/cca-pine-paling.json?raw";
+import timberPalingRaw from "../../supabase/seeds/amazing-fencing/products/timber-paling.json?raw";
 import type { Product } from "../hooks/useProducts";
 import type { SchemaField } from "../components/calculator-v3/SchemaDrivenForm";
 import type { ProductSearchItem } from "../hooks/useProductSearch";
@@ -41,6 +42,7 @@ type SeedVariable = {
   options_json?: unknown[];
   scope: "job" | "run" | "segment";
   sort_order?: number;
+  options_group?: string | null;
   active?: boolean;
 };
 
@@ -68,6 +70,7 @@ const seedFiles: SeedFile[] = [
   JSON.parse(qsGateRaw) as SeedFile,
   JSON.parse(priceCatalogueRaw) as SeedFile,
   JSON.parse(ccaPinePalingRaw) as SeedFile,
+  JSON.parse(timberPalingRaw) as SeedFile,
 ];
 
 function component(
@@ -994,6 +997,7 @@ export function getLocalVariables(
       options_json: Array.isArray(field.options_json) ? field.options_json : [],
       visible_when_json: {},
       sort_order: field.sort_order ?? 0,
+      options_group: field.options_group ?? undefined,
     }));
 }
 
