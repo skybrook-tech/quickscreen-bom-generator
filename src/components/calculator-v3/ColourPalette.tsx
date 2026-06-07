@@ -1,3 +1,5 @@
+import { Check } from "lucide-react";
+
 export const COLOUR_LABELS: Record<string, string> = {
   B: "Black Satin",
   "black-satin": "Black Satin",
@@ -74,7 +76,7 @@ export function ColourPalette({
   onChange,
   size = "md",
 }: ColourPaletteProps) {
-  const buttonSize = size === "sm" ? "h-8 w-8" : "h-9 w-9";
+  const buttonSize = size === "sm" ? "h-8 w-8" : "h-[38px] w-[38px]";
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -90,17 +92,21 @@ export function ColourPalette({
             aria-pressed={selected}
             className={`${buttonSize} relative inline-flex items-center justify-center rounded-full border text-[10px] font-black uppercase tabular-nums transition-all ${
               selected
-                ? "border-brand-primary ring-2 ring-brand-primary/45 ring-offset-2 ring-offset-brand-card"
-                : "border-brand-border hover:border-brand-primary hover:ring-2 hover:ring-brand-primary/20"
+                ? "border-[#DD6E1B] ring-2 ring-[#DD6E1B] ring-offset-2 ring-offset-white"
+                : "border-[#E9E5DD] hover:border-[#DD6E1B] hover:ring-2 hover:ring-[#DD6E1B]/20"
             }`}
             style={{ background: COLOUR_SWATCHES[option] ?? "#ddd" }}
           >
-            <span
-              className="select-none text-white"
-              style={{ textShadow: "0 1px 2px rgba(0,0,0,.95), 0 0 2px rgba(0,0,0,.75)" }}
-            >
-              {option}
-            </span>
+            {selected ? (
+              <Check size={16} className="text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]" />
+            ) : (
+              <span
+                className="select-none text-white text-[10px]"
+                style={{ textShadow: "0 1px 2px rgba(0,0,0,.95), 0 0 2px rgba(0,0,0,.75)" }}
+              >
+                {option}
+              </span>
+            )}
           </button>
         );
       })}

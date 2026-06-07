@@ -43,24 +43,28 @@ export function VariationDisclosure({
         <button
           type="button"
           onClick={() => toggleSection("style")}
-          className="w-full flex items-center justify-between p-3 text-xs font-bold text-brand-text hover:bg-brand-border/10 transition-colors text-left"
+          className={`w-full flex items-center justify-between p-3 text-left transition-colors ${
+            activeSection === "style" ? "bg-[#FCF1E6]/50" : "hover:bg-[#FCF1E6]/10"
+          }`}
         >
-          <span>Style & Height</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6E7681]">Style & Height</span>
           <div className="flex items-center gap-2">
             {activeSection !== "style" && (
-              <span className="text-[10px] text-brand-muted font-normal capitalize">
+              <span className="af-sidebar-mono text-[#11161D] font-semibold capitalize">
                 {String(palingStyle).replace("_", " & ")} · {String(targetHeight)}mm
               </span>
             )}
-            {activeSection === "style" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            <span className={activeSection === "style" ? "text-[#DD6E1B]" : "text-[#6E7681]"}>
+              {activeSection === "style" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </span>
           </div>
         </button>
 
         {activeSection === "style" && (
-          <div className="p-3 bg-brand-bg/50 space-y-3 border-t border-brand-border/20 text-xs">
+          <div className="p-3 bg-brand-bg space-y-3 border-t border-brand-border/20 text-xs">
             {/* Style selector */}
             <div className="space-y-1">
-              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-wider">Style</span>
+              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.12em]">Style</span>
               <div className="flex gap-2">
                 {[
                   { value: "butted", label: "Butted" },
@@ -84,7 +88,7 @@ export function VariationDisclosure({
 
             {/* Height selector */}
             <div className="space-y-1">
-              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-wider">Height</span>
+              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.12em]">Height</span>
               <div className="flex flex-wrap gap-1.5">
                 {[1200, 1500, 1800, 2100, 2400].map((h) => (
                   <button
@@ -111,24 +115,28 @@ export function VariationDisclosure({
         <button
           type="button"
           onClick={() => toggleSection("posts")}
-          className="w-full flex items-center justify-between p-3 text-xs font-bold text-brand-text hover:bg-brand-border/10 transition-colors text-left"
+          className={`w-full flex items-center justify-between p-3 text-left transition-colors ${
+            activeSection === "posts" ? "bg-[#FCF1E6]/50" : "hover:bg-[#FCF1E6]/10"
+          }`}
         >
-          <span>Posts Specification</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6E7681]">Posts Specification</span>
           <div className="flex items-center gap-2">
             {activeSection !== "posts" && (
-              <span className="text-[10px] text-brand-muted font-normal capitalize">
+              <span className="af-sidebar-mono text-[#11161D] font-semibold capitalize">
                 {timberType === "hardwood" ? "Hardwood" : "CCA Pine"} · {postSize} · {postMounting === "core_drilled" ? "Core-drill" : "In-ground"}
               </span>
             )}
-            {activeSection === "posts" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            <span className={activeSection === "posts" ? "text-[#DD6E1B]" : "text-[#6E7681]"}>
+              {activeSection === "posts" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </span>
           </div>
         </button>
 
         {activeSection === "posts" && (
-          <div className="p-3 bg-brand-bg/50 space-y-3 border-t border-brand-border/20 text-xs">
+          <div className="p-3 bg-brand-bg space-y-3 border-t border-brand-border/20 text-xs">
             {/* Post Material */}
             <div className="space-y-1">
-              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-wider">Post Material</span>
+              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.12em]">Post Material</span>
               <div className="flex gap-2">
                 {[
                   { value: "treated_pine", label: "CCA Pine H4" },
@@ -152,7 +160,7 @@ export function VariationDisclosure({
 
             {/* Post Size Dropdown */}
             <div className="space-y-1">
-              <label htmlFor="post-size-select" className="text-[10px] font-bold text-brand-muted uppercase tracking-wider block">
+              <label htmlFor="post-size-select" className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.12em] block">
                 Post Size
               </label>
               <select
@@ -168,7 +176,7 @@ export function VariationDisclosure({
 
             {/* Mounting Method */}
             <div className="space-y-1">
-              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-wider">Mounting</span>
+              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.12em]">Mounting</span>
               <div className="flex gap-2">
                 {[
                   { value: "in_ground", label: "In Ground (Concrete)" },
@@ -198,24 +206,28 @@ export function VariationDisclosure({
         <button
           type="button"
           onClick={() => toggleSection("palings")}
-          className="w-full flex items-center justify-between p-3 text-xs font-bold text-brand-text hover:bg-brand-border/10 transition-colors text-left"
+          className={`w-full flex items-center justify-between p-3 text-left transition-colors ${
+            activeSection === "palings" ? "bg-[#FCF1E6]/50" : "hover:bg-[#FCF1E6]/10"
+          }`}
         >
-          <span>Palings Specification</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6E7681]">Palings Specification</span>
           <div className="flex items-center gap-2">
             {activeSection !== "palings" && (
-              <span className="text-[10px] text-brand-muted font-normal">
+              <span className="af-sidebar-mono text-[#11161D] font-semibold">
                 {palingWidth}mm width · {targetHeight}mm length
               </span>
             )}
-            {activeSection === "palings" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            <span className={activeSection === "palings" ? "text-[#DD6E1B]" : "text-[#6E7681]"}>
+              {activeSection === "palings" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </span>
           </div>
         </button>
 
         {activeSection === "palings" && (
-          <div className="p-3 bg-brand-bg/50 space-y-3 border-t border-brand-border/20 text-xs">
+          <div className="p-3 bg-brand-bg space-y-3 border-t border-brand-border/20 text-xs">
             {/* Paling Width */}
             <div className="space-y-1">
-              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-wider">Paling Width</span>
+              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.12em]">Paling Width</span>
               <div className="flex gap-2">
                 {[100, 125, 150].map((w) => (
                   <button
@@ -236,7 +248,7 @@ export function VariationDisclosure({
 
             {/* Paling Length (calculated) */}
             <div className="space-y-1">
-              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-wider">Paling Length</span>
+              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.12em]">Paling Length</span>
               <div className="flex gap-2">
                 <div className="flex-1 min-h-9 px-3 py-2 rounded-lg border border-brand-border bg-brand-bg/50 text-center font-semibold text-brand-muted">
                   {targetHeight}mm (Matches height)
@@ -252,24 +264,28 @@ export function VariationDisclosure({
         <button
           type="button"
           onClick={() => toggleSection("rails")}
-          className="w-full flex items-center justify-between p-3 text-xs font-bold text-brand-text hover:bg-brand-border/10 transition-colors text-left"
+          className={`w-full flex items-center justify-between p-3 text-left transition-colors ${
+            activeSection === "rails" ? "bg-[#FCF1E6]/50" : "hover:bg-[#FCF1E6]/10"
+          }`}
         >
-          <span>Rails Specification</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6E7681]">Rails Specification</span>
           <div className="flex items-center gap-2">
             {activeSection !== "rails" && (
-              <span className="text-[10px] text-brand-muted font-normal capitalize">
+              <span className="af-sidebar-mono text-[#11161D] font-semibold capitalize">
                 {String(railProfile).replace("_", " ")} · {railCount === 0 ? "Auto" : `${railCount} Rails`}
               </span>
             )}
-            {activeSection === "rails" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            <span className={activeSection === "rails" ? "text-[#DD6E1B]" : "text-[#6E7681]"}>
+              {activeSection === "rails" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </span>
           </div>
         </button>
 
         {activeSection === "rails" && (
-          <div className="p-3 bg-brand-bg/50 space-y-3 border-t border-brand-border/20 text-xs">
+          <div className="p-3 bg-brand-bg space-y-3 border-t border-brand-border/20 text-xs">
             {/* Rail Size dropdown */}
             <div className="space-y-1">
-              <label htmlFor="rail-size-select" className="text-[10px] font-bold text-brand-muted uppercase tracking-wider block">
+              <label htmlFor="rail-size-select" className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.12em] block">
                 Rail Size
               </label>
               <select
@@ -286,7 +302,7 @@ export function VariationDisclosure({
 
             {/* Rails per panel */}
             <div className="space-y-1">
-              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-wider">Rails per panel</span>
+              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.12em]">Rails per panel</span>
               <div className="flex gap-1.5">
                 {[
                   { value: 0, label: "Auto" },
@@ -318,21 +334,25 @@ export function VariationDisclosure({
         <button
           type="button"
           onClick={() => toggleSection("extras")}
-          className="w-full flex items-center justify-between p-3 text-xs font-bold text-brand-text hover:bg-brand-border/10 transition-colors text-left"
+          className={`w-full flex items-center justify-between p-3 text-left transition-colors ${
+            activeSection === "extras" ? "bg-[#FCF1E6]/50" : "hover:bg-[#FCF1E6]/10"
+          }`}
         >
-          <span>Extras & Fasteners</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6E7681]">Extras & Fasteners</span>
           <div className="flex items-center gap-2">
             {activeSection !== "extras" && (
-              <span className="text-[10px] text-brand-muted font-normal capitalize">
+              <span className="af-sidebar-mono text-[#11161D] font-semibold capitalize">
                 Plinth: {plinthEnabled ? "Yes" : "No"} · Nails: {String(nailType).replace("_", " ")}
               </span>
             )}
-            {activeSection === "extras" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            <span className={activeSection === "extras" ? "text-[#DD6E1B]" : "text-[#6E7681]"}>
+              {activeSection === "extras" ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </span>
           </div>
         </button>
 
         {activeSection === "extras" && (
-          <div className="p-3 bg-brand-bg/50 space-y-3 border-t border-brand-border/20 text-xs">
+          <div className="p-3 bg-brand-bg space-y-3 border-t border-brand-border/20 text-xs">
             {/* Plinth toggle */}
             <div className="flex items-center justify-between">
               <span className="font-semibold text-brand-text">Include Bottom Plinth Board</span>
@@ -353,7 +373,7 @@ export function VariationDisclosure({
 
             {/* Nail type toggle */}
             <div className="space-y-1">
-              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-wider">Nail Type</span>
+              <span className="text-[10px] font-bold text-brand-muted uppercase tracking-[0.12em]">Nail Type</span>
               <div className="flex gap-2">
                 {[
                   { value: "ring_shank", label: "Ring Shank" },
