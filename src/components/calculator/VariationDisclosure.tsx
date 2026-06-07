@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type { CanonicalRun, CanonicalPayload } from "../../types/canonical.types";
 import { useProductVariables } from "../../hooks/useProductVariables";
+import { useBranding } from "../../hooks/useBranding";
 
 interface VariationDisclosureProps {
   run: CanonicalRun;
@@ -61,9 +62,13 @@ export function VariationDisclosure({
 
   // Fetch variables from all scopes for this productCode
   const productCode = payload.productCode;
-  const { data: jobFields = [] } = useProductVariables(productCode, "job");
-  const { data: runFields = [] } = useProductVariables(productCode, "run");
-  const { data: segmentFields = [] } = useProductVariables(productCode, "segment");
+  const activeSupplierSlug = jobVars.supplier_slug as string | undefined || "amazing-fencing";
+  const { supplier } = useBranding(activeSupplierSlug);
+  const orgId = supplier?.orgId || null;
+
+  const { data: jobFields = [] } = useProductVariables(productCode, "job", orgId);
+  const { data: runFields = [] } = useProductVariables(productCode, "run", orgId);
+  const { data: segmentFields = [] } = useProductVariables(productCode, "segment", orgId);
 
   // Merge the fields
   const fields = [...jobFields, ...runFields, ...segmentFields];

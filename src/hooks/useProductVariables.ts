@@ -8,20 +8,25 @@ type Scope = 'job' | 'run' | 'segment';
 // Fetches product_variables rows for the given product + scope and shapes
 // them into SchemaField[] that the v3 SchemaDrivenForm can render directly.
 // RLS on product_variables allows authenticated SELECT (migration 012).
-export function useProductVariables(systemType: string | null, scope: Scope) {
+export function useProductVariables(systemType: string | null, scope: Scope, orgId?: string | null) {
   return useQuery<SchemaField[]>({
-    queryKey: ['product-variables', systemType, scope],
+    queryKey: ['product-variables', systemType, scope, orgId],
     enabled: !!systemType,
     staleTime: 5 * 60_000,
     queryFn: async () => {
       if (!systemType) return [];
       if (!isSupabaseConfigured) return getLocalVariables(systemType, scope);
 
-      const { data: product, error: prodErr } = await supabase
+      let query = supabase
         .from('products')
         .select('id')
-        .eq('system_type', systemType)
-        .maybeSingle();
+        .eq('system_type', systemType);
+
+      if (orgId) {
+        query = query.eq('org_id', orgId);
+      }
+
+      const { data: product, error: prodErr } = await query.maybeSingle();
       if (prodErr) return getLocalVariables(systemType, scope);
       if (!product) return getLocalVariables(systemType, scope);
 
