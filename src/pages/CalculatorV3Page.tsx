@@ -2034,7 +2034,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             className={`${mapExpanded ? "fixed inset-0 z-50" : "relative"} flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row`}
           >
             <aside
-              className={`relative w-full overflow-hidden border-b border-[#E9E5DD] bg-[#FCFBF9] md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${mapExpanded || !paneVisibility.job ? "hidden" : "flex"
+              className={`af-sidebar relative w-full overflow-hidden border-b border-brand-border bg-brand-bg md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${mapExpanded || !paneVisibility.job ? "hidden" : "flex"
                 } ${mobileLayout ? "h-full min-h-0 max-h-none" : bomResultForTabs ? "max-h-[32vh]" : "min-h-[46vh]"
                 }`}
               style={mobileLayout ? undefined : { width: runPaneWidth }}

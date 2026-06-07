@@ -67,11 +67,14 @@ export function SettingsDisclosureRow({
         }`}
       >
         <span className="truncate">
-          <span className="font-semibold text-[#11161D]">{label}</span>
+          <span className="font-semibold text-[#6E7681]">{label}</span>
           {!open && value && (
-            <span className="text-[#6E7681] font-normal">
-              {" · "}{value}
-            </span>
+            <>
+              <span className="text-[#6E7681] font-normal">{" · "}</span>
+              <span className="text-[#11161D] font-semibold">
+                {value}
+              </span>
+            </>
           )}
         </span>
         <span className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${open ? "text-[#DD6E1B]" : "text-[#6E7681]"}`} aria-hidden>
