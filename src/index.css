@@ -264,7 +264,8 @@ html, body, #root {
 }
 
 /* Custom classes for sidebar cleanup */
-.af-sidebar {
+.af-sidebar,
+.af-sidebar * {
   --brand-bg:           #FCFBF9 !important;
   --brand-card:         #ffffff !important;
   --brand-border:       #E9E5DD !important;
@@ -275,6 +276,23 @@ html, body, #root {
   --brand-accent-hover: #c96215 !important;
   --brand-run-bg:       #FCF1E6 !important;
   --brand-run-border:   #DD6E1B !important;
+}
+
+[data-theme="dark"] .af-sidebar,
+[data-theme="dark"] .af-sidebar * {
+  --brand-bg:           #FCFBF9 !important;
+  --brand-card:         #ffffff !important;
+  --brand-border:       #E9E5DD !important;
+  --brand-muted:        #6E7681 !important;
+  --brand-text:         #11161D !important;
+  --brand-primary:      221 110 27 !important;
+  --brand-accent:       221 110 27 !important;
+  --brand-accent-hover: #c96215 !important;
+  --brand-run-bg:       #FCF1E6 !important;
+  --brand-run-border:   #DD6E1B !important;
+}
+
+.af-sidebar {
   color-scheme: light !important;
 }
 

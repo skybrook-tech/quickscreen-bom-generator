@@ -67,11 +67,11 @@ export function SettingsDisclosureRow({
         }`}
       >
         <span className="truncate">
-          <span className="font-semibold text-[#6E7681]">{label}</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6E7681]">{label}</span>
           {!open && value && (
             <>
               <span className="text-[#6E7681] font-normal">{" · "}</span>
-              <span className="text-[#11161D] font-semibold">
+              <span className="af-sidebar-mono text-[#11161D] font-semibold">
                 {value}
               </span>
             </>

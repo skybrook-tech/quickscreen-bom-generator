@@ -238,7 +238,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           <div className="space-y-1.5">
             <div className="flex justify-between items-center gap-1">
               <span className="font-medium">Height:</span>
-              <span className="text-[#11161D] font-semibold">
+              <span className="af-sidebar-mono text-[#11161D] font-semibold">
                 <InlineHeightEditor
                   productCode={run.productCode}
                   variables={runVariables}
@@ -250,7 +250,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
             </div>
             <div className="flex justify-between items-center gap-1">
               <span className="font-medium">Colour:</span>
-              <span className="text-[#11161D] font-semibold truncate max-w-[120px]" title={colourName(runVariables.colour_code)}>
+              <span className="af-sidebar-mono text-[#11161D] font-semibold truncate max-w-[120px]" title={colourName(runVariables.colour_code)}>
                 {colourName(runVariables.colour_code)}
               </span>
             </div>
@@ -258,7 +258,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
               <span className="font-medium">
                 {run.productCode === "DF_CCA_PAL" ? "Paling:" : "Slat size:"}
               </span>
-              <span className="text-[#11161D] font-semibold">
+              <span className="af-sidebar-mono text-[#11161D] font-semibold">
                 {run.productCode === "DF_CCA_PAL" ? (runVariables.paling_type ? String(runVariables.paling_type) : "CCA Pine") : `${slatSize}mm`}
               </span>
             </div>
@@ -266,7 +266,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
               <span className="font-medium">
                 {run.productCode === "DF_CCA_PAL" ? "Rail:" : "Gap size:"}
               </span>
-              <span className="text-[#11161D] font-semibold">
+              <span className="af-sidebar-mono text-[#11161D] font-semibold">
                 {run.productCode === "DF_CCA_PAL" ? (runVariables.rail_type ? String(runVariables.rail_type) : "3 Rails") : `${slatGap}mm`}
               </span>
             </div>
@@ -276,17 +276,17 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           <div className="space-y-1.5">
             <div className="flex justify-between items-center gap-1">
               <span className="font-medium">Mounting:</span>
-              <span className="text-[#11161D] font-semibold truncate max-w-[120px]" title={isBayg ? "Not required" : MOUNTING_LABELS[mounting] ?? mounting}>
+              <span className="af-sidebar-mono text-[#11161D] font-semibold truncate max-w-[120px]" title={isBayg ? "Not required" : MOUNTING_LABELS[mounting] ?? mounting}>
                 {isBayg ? "Not required" : MOUNTING_LABELS[mounting] ?? mounting}
               </span>
             </div>
             <div className="flex justify-between items-center gap-1">
               <span className="font-medium">Max spacing:</span>
-              <span className="text-[#11161D] font-semibold">{jobMax}mm</span>
+              <span className="af-sidebar-mono text-[#11161D] font-semibold">{jobMax}mm</span>
             </div>
             <div className="flex justify-between items-center gap-1">
               <span className="font-medium">Posts × Gates:</span>
-              <span className="text-[#11161D] font-semibold">
+              <span className="af-sidebar-mono text-[#11161D] font-semibold">
                 {isBayg ? "0" : postCount} × {gateCount}
               </span>
             </div>

@@ -2057,7 +2057,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                   {/* Supplier Switcher Dropdown */}
                   {!isCypressSmokeTest() && (userType === "contractor" || !supplierSlug) && allSuppliers && allSuppliers.length > 0 && (
                     <div className="rounded-xl border border-[#E9E5DD]/60 bg-white p-3 space-y-2 shadow-sm">
-                      <label className="text-[10px] font-black uppercase tracking-wider text-brand-muted block">
+                      <label className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6E7681] block">
                         Select Supplier
                       </label>
                       <select
@@ -2097,7 +2097,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                   {/* Bunnings Toggle */}
                   {!isCypressSmokeTest() && (!supplierSlug || userType === "contractor") && (
                     <div className="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-[#E9E5DD]/60 shadow-sm">
-                      <span className="text-xs font-black uppercase tracking-wide flex items-center gap-1.5 text-brand-muted">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#6E7681] flex items-center gap-1.5">
                         <Building className="text-brand-accent" size={16} />
                         Bunnings Pricing API
                       </span>
@@ -2137,7 +2137,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
                         {payload.job?.pendingGates?.length ? (
                           <section className="space-y-2 rounded-2xl border border-brand-warning/35 bg-brand-warning/10 p-3">
-                            <p className="text-xs font-black uppercase tracking-wide text-brand-warning">
+                            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-brand-warning">
                               Parsed gates need positions
                             </p>
                             {payload.job.pendingGates.map((gate, index) => {

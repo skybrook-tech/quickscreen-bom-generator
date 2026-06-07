@@ -627,7 +627,7 @@ export function SegmentRow({
                 <span className="font-bold text-[#11161D]">{titleLabel}</span>
                 {!gate && (
                   <span className="text-[#6E7681] font-normal">
-                    <strong className="font-semibold text-[#11161D]">{(segmentLength / 1000).toFixed(2)}m</strong>
+                    <strong className="af-sidebar-mono font-semibold text-[#11161D]">{(segmentLength / 1000).toFixed(2)}m</strong>
                   </span>
                 )}
                 <span className="inline-flex items-center gap-1 text-[#6E7681] text-xs font-normal">
@@ -847,7 +847,7 @@ export function SegmentRow({
               </div>
             )}
             <div className="rounded-lg border border-brand-border/60 bg-brand-card/70 p-3">
-              <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[#6E7681]">
                 {matchesMaster ? "Settings match run settings" : "Settings that differ from run settings"}
               </p>
               {!matchesMaster && (
