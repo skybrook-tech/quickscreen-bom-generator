@@ -258,22 +258,21 @@ Deno.serve(async (req: Request) => {
     }
 
     // Step 3 — parse + minimally validate payload
-    const body = (await req.json()) as {
-      payload: CanonicalPayload;
-      pricingTier?: PricingTier;
-      debug?: boolean;
-      supplierId?: string;
-      supplierSlug?: string;
-    };
+    const body = (await req.json()) as any;
+    const { payload: bodyPayload, pricingTier: reqTier, debug, supplierId, supplierSlug } = body || {};
 
-    const { payload, pricingTier: reqTier, debug, supplierId, supplierSlug } = body;
+    let payload = bodyPayload;
+    if (!payload && body && (body.productCode || body.runs)) {
+      payload = body as any;
+    }
+
     const pricingTier: PricingTier = reqTier ?? defaultTier ?? "tier1";
     const wantTrace = isAdmin && debug === true;
 
     // Resolve supplier scoping to get the effective orgId
     let effectiveOrgId = orgId;
-    const resolvedSupplierId = payload.variables?.supplier_id as string ?? supplierId;
-    const resolvedSupplierSlug = payload.variables?.supplier_slug as string ?? supplierSlug;
+    const resolvedSupplierId = payload?.variables?.supplier_id as string ?? supplierId;
+    const resolvedSupplierSlug = payload?.variables?.supplier_slug as string ?? supplierSlug;
     if (resolvedSupplierId || resolvedSupplierSlug) {
       let q = supabaseAdmin.from("suppliers").select("org_id");
       if (resolvedSupplierId) {
