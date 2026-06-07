@@ -74,6 +74,7 @@ const cache = {
   ruleSetIdByKey: new Map(),              // key: `${orgId}|${productId}|${name}` → id
   ruleVersionIdByKey: new Map(),          // key: `${ruleSetId}|${versionLabel}` → id
   componentIdBySku: new Map(),            // key: `${orgId}|${sku}` → id
+  systemInstanceIdBySlug: new Map(),      // key: `${orgId}|${slug}` → id
 };
 
 async function resolveOrgId(slug) {
@@ -150,6 +151,23 @@ async function resolveComponentId(orgId, sku) {
   return data.id;
 }
 
+async function resolveSystemInstanceId(orgId, slug) {
+  const key = `${orgId}|${slug}`;
+  if (cache.systemInstanceIdBySlug.has(key)) return cache.systemInstanceIdBySlug.get(key);
+  const { data, error } = await supabase
+    .from('system_instances')
+    .select('id')
+    .eq('slug', slug)
+    .maybeSingle();
+  if (error) throw new Error(`resolveSystemInstanceId(${slug}): ${error.message}`);
+  if (!data) {
+    console.warn(`  Warning: system_instance not found for slug: ${slug}`);
+    return null;
+  }
+  cache.systemInstanceIdBySlug.set(key, data.id);
+  return data.id;
+}
+
 function invalidateProductCache() {
   cache.productIdBySystemType.clear();
 }
@@ -162,10 +180,23 @@ function invalidateRuleVersionCache() {
 function invalidateComponentCache() {
   cache.componentIdBySku.clear();
 }
+function invalidateSystemInstanceCache() {
+  cache.systemInstanceIdBySlug.clear();
+}
 
 // ── Per-section upserters ───────────────────────────────────────────────────
 
-async function upsertProducts(orgId, rows) {
+const TABLES_WITH_SYSTEM_INSTANCE_ID = new Set([
+  'products',
+  'product_components',
+  'product_variables',
+  'product_rules',
+  'product_component_selectors',
+  'product_companion_rules',
+  'pricing_rules',
+]);
+
+async function upsertProducts(orgId, rows, systemInstanceId) {
   if (!rows?.length) return;
   // Flat model (post-migration 022): every product is top-level, keyed by
   // (org_id, system_type). supabase-js upsert with onConflict works directly.
@@ -180,6 +211,7 @@ async function upsertProducts(orgId, rows) {
     active: r.active,
     sort_order: r.sort_order ?? 0,
     metadata: r.metadata ?? {},
+    system_instance_id: systemInstanceId || null,
   }));
   const { error } = await supabase
     .from('products')
@@ -189,7 +221,7 @@ async function upsertProducts(orgId, rows) {
   console.log(`  products: ${toUpsert.length} upserted`);
 }
 
-async function upsertProductComponents(orgId, rows) {
+async function upsertProductComponents(orgId, rows, systemInstanceId) {
   if (!rows?.length) return;
   const toUpsert = rows.map((r) => ({
     org_id: orgId,
@@ -201,6 +233,7 @@ async function upsertProductComponents(orgId, rows) {
     default_price: r.default_price ?? null,
     system_types: r.system_types ?? ['QSHS'],
     canonical_code: r.canonical_code ?? null,
+    system_instance_id: systemInstanceId || null,
     metadata: {
       ...(r.metadata ?? {}),
       ...(r.subCategory ? { subCategory: r.subCategory } : {}),
@@ -264,12 +297,16 @@ async function upsertRuleVersions(orgId, rows) {
   console.log(`  rule_versions: ${toUpsert.length} upserted`);
 }
 
-async function upsertPerProduct(orgId, table, rows, mapper, conflict) {
+async function upsertPerProduct(orgId, table, rows, mapper, conflict, systemInstanceId) {
   if (!rows?.length) return;
   const toUpsert = await Promise.all(
     rows.map(async (r) => {
       const productId = await resolveProductId(orgId, r.product_system_type);
-      return mapper(r, productId);
+      const mapped = mapper(r, productId);
+      if (TABLES_WITH_SYSTEM_INSTANCE_ID.has(table)) {
+        mapped.system_instance_id = systemInstanceId || null;
+      }
+      return mapped;
     }),
   );
   const { error } = await supabase
@@ -279,7 +316,7 @@ async function upsertPerProduct(orgId, table, rows, mapper, conflict) {
   console.log(`  ${table}: ${toUpsert.length} upserted`);
 }
 
-async function upsertProductRules(orgId, rows) {
+async function upsertProductRules(orgId, rows, systemInstanceId) {
   if (!rows?.length) return;
   const toUpsert = await Promise.all(
     rows.map(async (r) => {
@@ -298,6 +335,7 @@ async function upsertProductRules(orgId, rows) {
         priority: r.priority,
         active: r.active,
         notes: r.notes ?? null,
+        system_instance_id: systemInstanceId || null,
       };
     }),
   );
@@ -308,7 +346,7 @@ async function upsertProductRules(orgId, rows) {
   console.log(`  product_rules: ${toUpsert.length} upserted`);
 }
 
-async function upsertPricingRules(orgId, rows) {
+async function upsertPricingRules(orgId, rows, systemInstanceId) {
   if (!rows?.length) return;
 
   // Pre-populate component ID cache to avoid sequential SELECT queries (paginated to bypass 1000 limit)
@@ -321,6 +359,7 @@ async function upsertPricingRules(orgId, rows) {
       .from('product_components')
       .select('id, sku')
       .eq('org_id', orgId)
+      .order('id')
       .range(fromComp, toComp);
     if (error) throw new Error(`product_components cache pre-fill failed: ${error.message}`);
     allComponents.push(...(data ?? []));
@@ -346,6 +385,7 @@ async function upsertPricingRules(orgId, rows) {
       .select('id, component_id, tier_code, priority')
       .eq('org_id', orgId)
       .eq('active', true)
+      .order('id')
       .range(fromRules, toRules);
     if (error) throw new Error(`pricing_rules fetch failed: ${error.message}`);
     existingRules.push(...(data ?? []));
@@ -380,6 +420,7 @@ async function upsertPricingRules(orgId, rows) {
       notes: r.notes ?? null,
       active: r.active,
       canonical_code: r.canonical_code ?? null,
+      system_instance_id: systemInstanceId || null,
     };
 
     const key = `${componentId}|${r.tier_code}|${row.priority}`;
@@ -455,9 +496,25 @@ async function loadFile(path) {
   const orgId = await resolveOrgId(raw.org_slug);
   console.log(`${basename(path)} (org=${raw.org_slug}):`);
 
+  // Resolve system_instance_slug and systemInstanceId
+  let systemInstanceSlug = raw.system_instance_slug;
+  if (!systemInstanceSlug && raw.products?.[0]?.system_type) {
+    const systemType = raw.products[0].system_type;
+    const lowerType = systemType.toLowerCase();
+    if (lowerType === 'qshs') systemInstanceSlug = 'qshs';
+    else if (lowerType === 'vs') systemInstanceSlug = 'vs';
+    else if (lowerType === 'xpl') systemInstanceSlug = 'xpl';
+    else if (lowerType === 'bayg') systemInstanceSlug = 'bayg';
+    else if (lowerType === 'colorbond') systemInstanceSlug = 'go-colorbond';
+    else if (lowerType === 'qs_gate') systemInstanceSlug = 'qs-gate';
+    else if (lowerType === 'xpsg_gate') systemInstanceSlug = 'xpsg-gate';
+    else systemInstanceSlug = lowerType;
+  }
+  const systemInstanceId = systemInstanceSlug ? await resolveSystemInstanceId(orgId, systemInstanceSlug) : null;
+
   // dependency order
-  await upsertProducts(orgId, raw.products);
-  await upsertProductComponents(orgId, raw.product_components);
+  await upsertProducts(orgId, raw.products, systemInstanceId);
+  await upsertProductComponents(orgId, raw.product_components, systemInstanceId);
   await upsertRuleSets(orgId, raw.rule_sets);
   await upsertRuleVersions(orgId, raw.rule_versions);
 
@@ -481,6 +538,7 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,name',
+    systemInstanceId,
   );
 
   await upsertPerProduct(
@@ -500,6 +558,7 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,name',
+    systemInstanceId,
   );
 
   await upsertPerProduct(
@@ -516,9 +575,10 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,name',
+    systemInstanceId,
   );
 
-  await upsertProductRules(orgId, raw.product_rules);
+  await upsertProductRules(orgId, raw.product_rules, systemInstanceId);
 
   await upsertPerProduct(
     orgId,
@@ -538,6 +598,7 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,selector_key',
+    systemInstanceId,
   );
 
   await upsertPerProduct(
@@ -560,6 +621,7 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,rule_key',
+    systemInstanceId,
   );
 
   await upsertPerProduct(
@@ -576,9 +638,10 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,warning_key',
+    systemInstanceId,
   );
 
-  await upsertPricingRules(orgId, raw.pricing_rules);
+  await upsertPricingRules(orgId, raw.pricing_rules, systemInstanceId);
 }
 
 // ── Post-load row-count floors (replaces v3-verify-seeds.sql) ──────────────
