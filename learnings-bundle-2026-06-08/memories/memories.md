@@ -1,0 +1,601 @@
+# Memories — full snapshot (exported 2026-06-08)
+Total: 46 memories — user_fact: 1, preference: 3, project_context: 14, domain_knowledge: 13, people: 1, active_work: 2, tools_and_workflows: 12
+
+## user_fact
+
+### User operates in Australia. Pricing should be in AUD with GST handled (ex/inc...
+- id: cmpozz4wm002t07adhu8u1utr · importance: 4 · tags: aud, gst, bunnings, stratco, bluescope, lysaght, protectoral, specrite, as1926, as3959, as1604, as2208, pool fencing, bushfire, timber treatment, glass fence, neighbour consent, fences act, australian standards
+- when to use: Use this memory whenever a user is asking about fencing regulations, supplier options, pricing formats, or compliance standards within an Australian context.
+
+User operates in Australia. Pricing should be in AUD with GST handled (ex/inc shown separately). Key Australian fencing suppliers: Bunnings, Stratco, BlueScope, Lysaght, ProtectorAl, SpecRite, Parkside Timber, STS Timber. Relevant compliance standards: AS1926.1-2012 (pool barriers — 1200mm min height, 100mm max gaps, self-closing/latching outward-opening gates), AS3959-2018 (BAL bushfire ratings — BAL-FZ prohibits combustible fencing within 6m of habitable buildings), AS/NZS 1604 (timber treatment H3 above-ground / H4 in-ground), AS2208 (Grade A toughened safety glass), and state Fences Acts for neighbour consent.
+
+---
+
+## preference
+
+### For significant technical/architecture decisions (stack choices, build approa...
+- id: cmpozuhck003407ad3s9nq34a · importance: 4 · tags: tradeoffs, architecture-alternatives, multi-plan, stack-selection, build-approach, vendor-selection, decision-framework, pro-con, options-comparison, technical-proposal, system-design-options, engineering-decisions, blueprint-comparison, multi-option-design, solution-architecture, alternative-scenarios
+- when to use: Use when a user or project stakeholder asks for an architectural recommendation, tech stack selection, build strategy, or vendor decision, requiring multiple concrete, fully-formed paths rather than a single biased option.
+
+For significant technical/architecture decisions (stack choices, build approach, vendor selection), present two or more distinct, fully-developed end-to-end alternative plans with explicit tradeoffs, rather than a single recommendation. Each plan should be self-contained: stack, foundation, build phases/timeline, and honest pros/cons. A default recommendation between them is welcome, but never collapse to a single plan without alternatives.
+
+---
+
+### For non-trivial work, use a plan-first workflow: (1) ask clarifying multi-cho...
+- id: cmpoztsp3002h07ad72y4j2p5 · importance: 4 · tags: plan-first, clarifying-questions, working-doc, thread-context, approval-gate, tradeoffs, scoping-work, multi-choice-questions, execution-plan, honest-estimation, pre-flight-checklist, subagent-dispatch, deep-research-prep, architecture-planning, task-checkboxes, project-setup, requirements-gathering
+- when to use: Apply this workflow before starting any complex, non-trivial, or multi-step engineering, research, or design tasks to ensure alignment, clear documentation of constraints, and explicit user sign-off on the execution plan.
+
+For non-trivial work, use a plan-first workflow: (1) ask clarifying multi-choice questions to scope the request, (2) write a structured plan in the Thread Context / Working Doc with sections like Plan Overview, Plan Tasks (checkboxes), and Key Considerations that honestly flag constraints, (3) get explicit approval before executing deep research, subagent dispatch, or build work. Surface tradeoffs honestly rather than over-promising.
+
+---
+
+### User prefers direct, opinionated pushback with concrete alternatives rather t...
+- id: cmpp1dwjp00fl07ade6icysk9 · importance: 3 · tags: communication-style, pushback, direct-feedback, opinionated-response, critique, constructive-criticism, alternative-solutions, deliverable-audit, quality-assurance, work-completion, thoroughness, proactive-recommender, problem-identification, no-hedging, decisive, honest-opinion
+- when to use: Apply this memory when the user presents a plan with potential flaws, asks for feedback, or requests that a multi-step task be completed thoroughly and audited for gaps.
+
+User prefers direct, opinionated pushback with concrete alternatives rather than hedged 'here are all your options' responses. Wants the assistant to identify problems with proposed approaches and recommend better paths (e.g. mail merge over BCC). Also values comprehensive completion of multi-step work and re-auditing deliverables for gaps when asked to 'make it complete'.
+
+---
+
+## project_context
+
+### Anyfence supplier-data playbook — resolved open decisions (June 2026, resolve...
+- id: cmq4uxab20rvc07adiwvdn2ia · importance: 5 · tags: anyfence, supplier-data, playbook, strategic-decisions, pricing-tool, single-player-wedge, regional-densification, northern-rivers, gold-coast, gated-pricing, phased-roadmap, price-freshness, api-integrations, xero-connector, spreadsheet-importer, supply-chain, monetization-strategy, b2b-marketplace
+- when to use: Use when reviewing Anyfence's regional roll-out strategy, product roadmap sequence, or technical decisions regarding supplier software integrations (like Xero and Cin7) and the pricing-tool wedge.
+
+Anyfence supplier-data playbook — resolved open decisions (June 2026, resolves the 3 'open decisions' from m27): (1) Build own tool vs integrate vs both → BOTH, but LEAD with own lightweight pricing+ordering tool — it is the single-player wedge, the answer to the paper/spreadsheet tail, AND the freshness guarantee; ERP/accounting connectors come second. (2) Densify one region vs own one category nationally → DENSIFY ONE REGION (owner's Northern Rivers / Gold Coast turf). (3) Trade pricing public vs gated → GATED to verified contractors; public sees indicative/RRP (Xometry model), near-non-negotiable. Phased sequence: Phase 0 dense beachhead → Phase 1 single-player enablement tool (hand-onboard 10-20 independents, OpenTable-style) → Phase 2 integration lanes (Cin7/Unleashed/MYOB/Xero connectors + spreadsheet importer) → Phase 3 syndication (dual retail/trade API keys, wire own calculators+marketplace as first consumers) → Phase 4 majors+governance. Price-freshness mechanism (3 lanes): NEVER ask suppliers to update Anyfence separately — always pull from where they already keep prices: Lane 1 their software via authorised API connector (Xero is gold-standard — products in 'Items' list with code/name/sell price, authorise-once sync; stock only if they run 'tracked inventory'; Thryv REST v2 gives price+product cleanly but maybe not live stock; also MYOB, Cin7, Unleashed); Lane 2 their spreadsheet via live link; Lane 3 the free Anyfence tool they quote/order through (live price is a side effect of running their business — these become the most valuable suppliers since you sit inside the transaction). Throughline: tool is the trojan horse, relationship is the moat, freshness-by-integration keeps the moat full.
+
+---
+
+### Anyfence monetization & marketplace model — clarified June 2026 (supersedes e...
+- id: cmq1p1cpb00sc07adttko1td9 · importance: 5 · tags: anyfence, monetization, strategy, marketplace, pricing-data-layer
+- when to use: Use whenever working on Anyfence business model, monetization, marketplace design, supplier/contractor onboarding, or the pricing-data-layer vision. This is the canonical monetization strategy and supersedes earlier default-supplier/paid-placement framing.
+
+Anyfence monetization & marketplace model — clarified June 2026 (supersedes earlier "default supplier / paid placement" thinking):
+
+- The AnyFence consumer website is NEUTRAL: it lists ALL suppliers and ALL contractors equally and favours none. Paid default-supplier placement is explicitly REJECTED because it breaks the trust a data utility requires.
+- The core vision is a neutral, real-time PRICING + PRODUCT-DATA LAYER for the entire Australian fencing AND hardware supply trade — like Bunnings price-lookup but cross-vendor across every fencing/hardware supplier (price, stock, store/location). Contractors, consumers, calculators, and Amazon listings all query it for live pricing.
+- Mechanism: help suppliers get their price list into their accounting/inventory system and keep it updated, then syndicate via API keys — SEPARATE keys for retail price (consumers) vs trade price (contractors).
+- Monetization: a percentage of every supplier sale AND every contractor sale that flows through the platform (dual-sided transaction take-rate). The pricing DATA is the moat — it neutralises competitor QuoteMate. Calculators and the marketplace are downstream CONSUMERS of the data layer, not the product itself.
+- Recommended go-to-market wedge: be a supplier-ENABLEMENT tool first (free inventory/pricing digitisation + online ordering + fewer price-check phone calls; pay only on sale), network second — solves cold-start + supplier-incentive problems together (Square/Toast/Shopify playbook). Owner wants to start with smaller suppliers/resellers, not large manufacturers.
+- The 3 previously-open decisions are now RESOLVED (June 2026 research synthesis — see the 'Anyfence supplier-data playbook — resolved open decisions' memory): (1) build BOTH but lead with own lightweight tool; (2) densify one region (Northern Rivers/Gold Coast); (3) gate trade pricing to verified contractors, public sees RRP. Reality check still holds: big chains (Bunnings) won't expose a pricing API — integrate independents directly, scrape/partner for majors.
+
+---
+
+### The Build Forge embed target is the calculator builder page at https://fork-o...
+- id: cmq4ugi0m0s5808adrcz3tl8w · importance: 5 · tags: build-forge, anyfence, builder-embed, quickscreen, netlify, calculator-builder, visual-builder, skybrookai, amazing-fencing, rules-engine, mathjs, sku-selector, regression-test, system-archetype, ecosystem-visibility, integration-model, chat-as-front-end, configuration-sync, url-endpoint, auth-login
+- when to use: Use this memory when identifying the correct URL and configuration for the Build Forge builder embed, distinguishing it from anyfence.com.au, or understanding how the conversational chat interface integrates with the visual calculator builder backend.
+
+The Build Forge embed target is the calculator builder page at https://fork-o-quickscreen.netlify.app/builder (titled 'Amazing Fencing — Trade & DIY Supplies, Powered by Anyfence', behind a SkybrookAI email/password sign-in) — NOT anyfence.com.au/builder. As of June 2026 that page is the app's own Visual Calculator Builder: a form-driven wizard with tabs (details, variables, rules, selectors, tests), a math.js rules engine, SKU selectors, regression tests, an org dropdown (Amazing Fencing, Discount Fencing Supplies, Glass Outlet), a System Archetype dropdown, and Ecosystem Visibility (Private/Shared/Submit to National Network). The conversational Build Forge chat is NOT embedded there yet. User's chosen integration model is chat-as-front-end that fills the same config the visual builder uses (one config, two views).
+
+---
+
+### User is building Anyfence (anyfence.com.au), an Australian fencing platform w...
+- id: cmpozzapo005c07ad4lfn2o4j · importance: 5 · tags: anyfence, fencing, australian-fencing, saas, glass-outlet, quickscreen, bom-generator, bill-of-materials, colorbond, treated-pine, pool-fencing, chain-wire, hardwood, bunnings, fence-system-config, map-calculator, aluminum-slats, job-management, contractor-portal, marketplace
+- when to use: Retrieve this memory when the user is discussing the architecture, product roadmap, or calculation logic for Anyfence, including BOM engines, fence systems like QuickScreen or Colorbond, and JSON configuration schemas.
+
+User is building Anyfence (anyfence.com.au), an Australian fencing platform with three distribution channels: (1) free generic embed calculators for trade websites, (2) a Job Management SaaS where contractors upload price lists and customize calculators, (3) a consumer marketplace where customers draw a fence on a map, get a price, pick a vetted contractor, and book. Pilot calculator is The Glass Outlet's QuickScreen BOM Generator (aluminium slat systems: QSHS, VS, XPL, BAYG at deploy-preview-2--tiny-kangaroo-8f7016.netlify.app/calculator). Roadmap covers Colorbond, treated pine, pool fencing, chain wire, picket, hardwood, and the full Bunnings fence range via a configurable fence_system_config.json schema.
+
+---
+
+### User is building Anyfence, a professional Australian product: a network of pe...
+- id: cmpozubmx002c07adff36h6vj · importance: 5 · tags: anyfence, project, australia, fencing, drawing-tool
+- when to use: Any thread about Anyfence product strategy, fence calculators, drawing tool, AU fence standards, or related supplier/buyer flows
+
+User is building Anyfence, a professional Australian product: a network of per-fence-type calculators (Colorbond, aluminium slat, glass pool fencing per AS 1926.1:2012, treated pine paling, chain mesh) connecting AU buyers to suppliers, plus a mobile/cross-platform drawing tool for landscaping and fencing site plans. Drawing tool target capabilities: 2D top-down plans with measurements, 3D perspective view, drag-and-drop plant/object library, fence segment tools (panels, posts, gates), layer management with PDF/PNG/DXF export. Defaults: metric units, AU fence standards.
+
+---
+
+### Anyfence drawing tool — chosen architecture (May 2026)
+- id: cmpnh89o900wq07adinawsr3n · importance: 5 · tags: anyfence, drawing-tool, architecture, capacitor, arcada-planner, flutter, plan-a, plan-b
+- when to use: Any thread about Anyfence's drawing tool, site-plan editor, fence-segment UX, mobile build choices, or implementation roadmap. Use this as the canonical architecture decision until superseded.
+
+**Anyfence drawing tool — chosen architecture (May 2026)**
+
+**Default plan: Plan A — Capacitor + arcada-planner v2 (~12 weeks to MVP)**
+
+Stack:
+- React 18 + TypeScript + Vite (from arcada-planner)
+- Konva.js (2D canvas) + Three.js (optional 3D preview)
+- Zustand for state
+- Capacitor 6 for native iOS/Android shells
+- jsPDF + dxf-writer for export
+- SunCalc for solar shadow simulation
+- Mapbox GL JS or Leaflet for satellite background
+
+Foundation:
+- Fork `fedepaj/arcada-planner` (closest reference: walls→fence segments, furniture catalog→plant/post/gate library, measurement tool already works)
+- Borrow from `planorama` (satellite background overlay), `open3dFloorplan` (DXF/PDF/3D export), `blueprint-js` (wall-graph data model), `pickles976/GardenPlanner` (solar shadows)
+
+Build phases:
+1. Domain transform (wk 1–3): rename wall→FenceSegment, build fence-type registry (Colorbond, glass pool, aluminium slat, timber paling, chain mesh), replace catalog with plants/posts/gates
+2. Landscape specifics (wk 4–6): satellite background, auto-snap to property boundaries, auto-calc panels/posts/linear meters, plant growth circles
+3. 3D + export (wk 7–9): 2D↔3D toggle, solar shadows, PDF + DXF + PNG export
+4. Mobile wrap + launch (wk 10–12): Capacitor iOS/Android, touch palette, offline sync, store submission
+
+**Alternative: Plan B — Flutter + flame (~14 weeks, for v2 native polish)**
+- flame + flutter_drawing_board + flame_forge2d + Riverpod + flutter_3d_controller + Drift + pdf package
+- Better for Apple Pencil/S-Pen, ~10MB bundle, premium native feel
+- Costs: no free web build, less mature 3D, must write Dart DXF writer
+
+**Rationale for Plan A default:** Anyfence is the on-ramp to fence-type calculators; speed-to-market and a free web version win over native polish in v1. Graduate to Plan B for v2 if mobile-native polish becomes the differentiator.
+
+**Australia-specific:** Metric default, AS 1926 compliance for glass pool fencing, AU fence types in the registry, AU climate-zone planting data.
+
+---
+
+### Anyfence is a network of per-fence-type calculators (one per category — Color...
+- id: cmpnfxyrd00oy06adj6li9wc8 · importance: 5 · tags: anyfence, fence-calculators, australian-fencing, bill-of-materials, bom-generator, glass-outlet, quickscreen, colorbond-fencing, aluminium-slat, pool-fencing, material-suppliers, sku-mapping, contractor-quoting, fencing-contractors, supplier-outreach, fencing-quote-software
+- when to use: Use this memory as the foundational reference when working on Anyfence business strategy, developing the pilot calculators, coordinating supplier outreach, or analyzing the Australian fencing market.
+
+Anyfence is a network of per-fence-type calculators (one per category — Colorbond, aluminium slat, glass pool fencing, etc.) connecting Australian fencing contractors with local material suppliers. A contractor enters dimensions/height/style; the system returns a materials list and quote built around the participating supplier's own product codes (no SKU re-mapping). Status: 61 national suppliers catalogued, outreach pack drafted, pilot calculator is The Glass Outlet QuickScreen BOM Generator. Priority launch categories: aluminium slat/louvre, post & rail, Colorbond/steel sheet (22-23 national suppliers each).
+
+---
+
+### Anyfence three-channel distribution model:
+- id: cmpnfxt5800i808advn141pfz · importance: 5 · tags: anyfence, distribution-model, gtm-strategy, calculator-engine, lead-generation, fencing-contractors, saas-marketplace, bom-generator, cut-optimization, bunnings-integration, colorbond, aluminum-slats, google-maps-drawing, quote-builder, estimating-software, material-takeoff, fence-designer, pricing-rules
+- when to use: Use when reviewing or planning the Anyfence go-to-market strategy, channel distribution models, or technical capabilities of the reference calculator engine and its product roadmap.
+
+Anyfence three-channel distribution model:
+1. Free generic calculators — embed widgets on trade websites (lead-gen funnel into the marketplace)
+2. Trades SaaS / Job Management — contractors upload price lists, customize calculators, send branded quotes
+3. Consumer marketplace at anyfence.com.au — draw → quote → pick contractor → book in one flow
+
+The reference calculator engine (built for aluminium slats) supports 4 fence systems (QSHS, VS, XPL, BAYG), natural-language describe-your-fence parsing, Google Maps satellite underlay with drawing tools, component-level BOM tied to real SKUs, stock-length cut optimization, quantity-break pricing, GST ex/inc totals, print, CSV export. Roadmap: treated pine → Colorbond → pool (glass + aluminium) → full Bunnings range.
+
+---
+
+### QuickScreen by The Glass Outlet — the pilot calculator and reference template...
+- id: cmpnfxpx900jd06adlhob8skn · importance: 5 · tags: quickscreen, glass-outlet, anyfence, pilot, qshs
+- when to use: When working on The Glass Outlet QuickScreen calculator, adding new fence systems to the Anyfence reference engine, or onboarding a new supplier under a similar system.
+
+QuickScreen by The Glass Outlet — the pilot calculator and reference template for the Anyfence platform. Built around 4 fence systems:
+
+- QSHS — QuickScreen Horizontal Slat
+- VS — Vertical Slat
+- XPL — Xpress Plus
+- BAYG — Build As You Go
+
+Capabilities (all already shipped):
+- Natural-language "describe-your-fence" parsing (regex v1 → LLM v2 progressive enhancement)
+- Google Maps satellite underlay with fence/gate drawing tools
+- Component-level BOM tied to real product SKUs
+- Stock-length cut optimisation
+- Quantity-break pricing suggestions
+- GST ex/inc totals, print, CSV export
+
+Repository: `skybrook-tech/quickscreen-bom-generator`. Skill `QSHS Fence BOM Calculator (Glass Outlet)` already documents the QSHS rules, SKU patterns, BOM math, and gotchas.
+
+---
+
+### Anyfence fence_system_config.json schema (the universal config the calculator...
+- id: cmpnfxjve00kg06ad0jl1nn17 · importance: 5 · tags: anyfence, schema, config, calculator-engine, bom
+- when to use: When extending the Anyfence calculator engine, adding a new fence type, building a fence_system_config.json, or designing a new BOM schema.
+
+Anyfence fence_system_config.json schema (the universal config the calculator engine consumes — single source of truth across all fence types):
+
+Core categories: panel, post, rail, post_cap, capping, gate_kit, infill_sheet, glass_panel, spigot, handrail, paling, plinth, pole, hinge, latch, accessory.
+
+Critical fields per component:
+- price_aud (per piece)
+- price_per_metre_aud (when supplier publishes both totals — captured for run-length math)
+- paling_width_mm (drives the 6mm-overlap cuts_per_run formula)
+- unit ("each" vs "length")
+- stock_length_mm (for cut optimisation)
+- colour (string from colour palette)
+- compliance_class (e.g. AS1926, BAL-29)
+- qty_break_pricing (array of {min_qty, unit_price} tiers)
+
+Category split-outs that matter:
+- post_cap (per-post, "each") vs capping (per-metre, "length") — separate categories so fence top-capping isn't billed per post.
+- glass_panel separate from panel — glass has fixed 1200mm height and width-by-width pricing.
+- gate_kit separate from hinge/latch — bundles MagnaLatch + TruClose into one AS1926-compliant line item.
+
+Cuts-per-run convention: cuts_per_run_fn is a per-category formula. Default is ceil(run_length_mm / stock_length_mm). Palings use ceil(run_length_mm / (paling_width_mm - 6)) for the 6mm overlap.
+
+Compliance JSON injection: pass --compliance-json with rules tagged by enforcement level (block_quote / warn / advisory) so the engine refuses non-compliant quotes before they reach the customer.
+
+---
+
+### Anyfence entry page (AnyfenceCalculatorPage) UX — map-first, staged reveal: (...
+- id: cmq4utspr0yib07adyih5nql3 · importance: 4 · tags: anyfence, calculator, fencing, map-first, staged-reveal, canvas-engine, drawing-tool, supply-only, bill-of-materials, quote-builder, interactive-map, onboarding-flow, ux-blueprint, price-bubble, gate-tool, bom-calculation, product-configurator, australian-fencing
+- when to use: Use this memory as the definitive UX and functional specification when building, designing, or QA-testing the Anyfence interactive calculator entry page and its staged map-to-drawing canvas transition.
+
+Anyfence entry page (AnyfenceCalculatorPage) UX — map-first, staged reveal: (1) Landing = Amazing Fencing brand hero + address prompt + small 'skip the map / blank canvas' link; landing map tightly framed on Australia with a thin ocean buffer (~fitBounds [-44.5,110] to [-9,156], or center lat -26 lng 134 zoom 4); (2) live interactive Google Maps takes over the canvas, customer hits 'Use this view' to snapshot it into a static drawing canvas; (3) captured view = drawing toolbar (DRAW + SITE groups), fence-type sidebar reveals WITH the toolbar (sidebar hidden until address entered — LOCKED), map renders real POSTS and SPACINGS reusing the QuickScreen canvasEngine; (4) pick fence type → sidebar shows run-recap card + inline-disclosure variation form (Style/Posts/Palings/Rails/Extras); (5) right pane is a floating soft-edged PRICE BUBBLE over the map (collapsed=brand+price; expands while sidebar stays interactive); (6) mode toggle — supply-only = full itemised BOM (canonical name + supplier SKU + qty + price per line), supply+install = ONE LINE PER RUN + ONE LINE PER GATE plus a labour block; (7) book → walkthrough video → calendar → 10% deposit. Approved canvas tools: existing DRAW+SITE plus Photo pin, Tree, North arrow (Measure/Setback/Turning dropped). Actions menu: Centre, Print Map, Reset View, 'Drawing to screen' (renamed from Expand). NO satellite/roadmap layer toggles, angle snap, gate snap, or grid. Anyfence brand on canvas = large faint centre watermark + small bottom-right corner pill.
+
+---
+
+### The correct Build Forge embed target is the calculator builder page at https:...
+- id: cmq4ui79s0qmd06ad8amzw13o · importance: 4 · tags: build-forge, embed, builder, anyfence, quickscreen, netlify, skybrookai, bom-generator, fencing-quote, login-credentials, wrong-url, embed-target, fencing-calculator, integration, chat-widget
+- when to use: Use this memory when configuring, testing, or verifying the Build Forge embed location, specifically to avoid using the incorrect anyfence.com.au URL and to ensure the correct Netlify builder page is targeted.
+
+The correct Build Forge embed target is the calculator builder page at https://fork-o-quickscreen.netlify.app/builder (titled 'Amazing Fencing — Get a Fence Quote' / QuickScreen BOM Generator, behind a SkybrookAI email/password sign-in) — NOT anyfence.com.au/builder. As of June 2026 the page is live but it's unverified whether the Build Forge chat is embedded behind the login. User wants Build Forge embedded there so it improves over real supplier sessions.
+
+---
+
+### Build Forge portability decision (June 2026): User maintains a versioned, pla...
+- id: cmq4ugcof0s7d07adradsgphc · importance: 4 · tags: build-forge, portability, anyfence, cost, platform-migration
+- when to use: When working on Build Forge portability, platform-migration decisions (Hyperagent vs Antigravity), the export bundle, or usage-cost questions.
+
+Build Forge portability decision (June 2026): User maintains a versioned, platform-portable 'Build Forge bundle' (BUILD_FORGE.md persona/wizard/contract/compliance/engine reference, memories.md export, skills-inventory.md, real calculator.py scripts, manifest.json with checksums) so the agent's IP is owned outside Hyperagent. It lives BOTH in the repo (skybrookai-atlas/quickscreen-colorbond-bom-generator, under anyfence-build-pack/build-forge/) AND as a global Hyperagent doc mirror. The 'brain' (calculator engine + AU domain knowledge + canonical-name contract + compliance rules) is portable and is the moat; runtime 'plumbing' (knowledge retrieval, wizard card UI, tools, draft-gated skill-save) is rebuilt per platform. Cost model: agents bill on use not idle; session length is the biggest lever (context re-sent each turn, ~3-4x for a 40-turn build); browser scraping + image generation push the top end; authoritative figures live in Command Center.
+
+---
+
+### User is building Anyfence, which includes a mobile/cross-platform drawing too...
+- id: cmpozyiwj003g07adi1zanmap · importance: 4 · tags: anyfence, fencing, landscaping, cad-drawing, blueprint, site-plan, 2d-layout, 3d-rendering, cross-platform, mobile-app, vector-graphics, canvas-editor, measurement-tool, pdf-export, layer-management, drag-drop-library
+- when to use: Use this memory when discussing the technical architecture, feature set, or development roadmap of the Anyfence mobile drawing application, particularly regarding its 2D/3D canvas, vector tools, and export capabilities.
+
+User is building Anyfence, which includes a mobile/cross-platform drawing tool for landscaping and fence site plans. Target capabilities: 2D top-down plans with measurements, 3D perspective view, drag-and-drop plant/object library, fence segment tools (panels, posts, gates), and layer management with PDF/PNG export.
+
+---
+
+## domain_knowledge
+
+### Canonical-name design decisions (ratified 2026-06-05, Amazing Fencing review)...
+- id: cmq4v0kiy0scd07adxj71i03f · importance: 5 · tags: anyfence, canonical-names, contract, colorbond, composite
+- when to use: When designing or ratifying canonical product names for any Anyfence fence calculator or archetype.
+
+Canonical-name design decisions (ratified 2026-06-05, Amazing Fencing review): (1) PROFILE goes IN the canonical name string, NOT as a separate config variable — visually-distinct products (Metzag vs Metline Colorbond infill) would otherwise be mis-ordered ~half the time, and the canonical name must remain the single-field key for the supplier-mapper. The config-driven calculator's profile enum (GO-Line/GO-Zag/GO-Trim) operates upstream of the canonical layer; both coexist. Example: '1490mm Metline Colorbond Infill Sheet Monument'. (2) COLOUR is always part of the canonical name for coloured products (Colorbond, aluminium, composite) to keep the supplier-mapper interface single-field across all archetypes. (3) For brand-only composite lines (SuperPost, TUFFPOLY) the product-line name carries the material implicitly — do NOT add the word 'Composite'. (4) Coil-fed nails are a distinct product from loose/hand nails — keep '2.5x57mm Ring Shank Gal Coil Nail' separate from '57mm Ring Shank Gal Nail'.
+
+---
+
+### Anyfence supplier-data strategy research (June 2026) — findings across 5 stre...
+- id: cmq4uxeu50rso07adlouz4juq · importance: 5 · tags: anyfence, supplier data, b2b marketplace, data syndication, industry data warehouse, idw, tra-ser, bmdg, opentable model, cin7, unleashed, myob, codat, rutter, aroflo, simpro, pricing api, fencing industry australia, stratco, infrabuild, hbt, onboarding strategy, price scraping
+- when to use: Use when designing Anyfence's supplier onboarding strategy, architecting the pricing API integration layer, mitigating pricing staleness, or analyzing competitors and distributors in the Australian hardware and fencing landscape.
+
+Anyfence supplier-data strategy research (June 2026) — findings across 5 streams: (1) PRECEDENT: Electrical industry's IDEA/Industry Data Warehouse (IDW) is the closest analogue — manufacturers upload price files once instead of bilateral emails; distributors pull via one API; neutral not-for-profit governance. TRA-SER (Trade Service) runs this live for AU electrical; BMDG is the European HVAC version. (2) WEDGE: OpenTable model — true onboarding cost ~$5K/venue, charged ~$600, ate the loss, field sales city-by-city; network/data fall out as exhaust. Same play as Square/Toast/Shopify/Faire. (3) TECH: Cin7 Core + Unleashed return retail price + trade price + live stock in ONE API call (validates dual retail/trade key design); MYOB AccountRight has native 6-tier pricing; use Codat/Rutter/Merge-style connectors for Xero/MYOB/Cin7/Unleashed/simPRO; spreadsheet/paper tail needs a lightweight upload+ordering tool. (4) GRAVEYARD: staleness death spiral (~30% prices wrong by month 6 on manual portals → force data from systems suppliers already run on); platform-dependency (Google killed Nextag, Amazon killed PriceZombie → own the relationship, don't just scrape); race-to-bottom holdout fear (never show price as only axis; segment visibility public RRP vs gated trade — Xometry model); MAP/trade-pricing confidentiality (onboarding terms must include explicit syndication authorisation). (5) AU LANDSCAPE: AroFlo + simPRO already pull live pricing from Reece (plumbing) and Lawrence & Hanson (electrical) — proven in AU but NOT in fencing/hardware; Stratco/InfraBuild still on PDF price lists; hardware buying groups (HBT, Natbuild, IHG/Mitre 10) are both a distribution channel and a potential competitor.
+
+---
+
+### Best OSS reference repos for cross-platform drawing tools (May 2026 — verified)
+- id: cmpnh8c1900x106adc4m7lc1n · importance: 5 · tags: drawing-tools, open-source, github-repos, landscape-design, fence-design, cad, mobile, flutter, react-native, capacitor
+- when to use: When researching or building any cross-platform 2D/3D drawing, CAD-lite, floor-planner, site-plan, garden-planner, or fence-design app. Use this shortlist as the starting point for repo selection rather than re-searching GitHub.
+
+**Best OSS reference repos for cross-platform drawing tools (May 2026 — verified)**
+
+**Tier 1 — Closest fit for landscape/fence drawing (all MIT):**
+- `fedepaj/arcada-planner` (fork of `mehanix/arcada`) — React + Konva 2D floor planner with wall nodes, furniture catalog, scale-accurate measurement tool, PDF export. Closest open reference to a fencing UX.
+- `maciej-webpassion/planorama` — TS + Konva, explicitly designed for gardens, parking lots, playgrounds. Background-image + SVG-overlay pattern.
+- `theLodgeBots/open3dFloorplan` — SvelteKit + Three.js, 2D↔3D toggle, exports SVG/DXF/PDF/PNG, 140+ objects.
+- `aalavandhaann/blueprint-js` — active ES6 fork of blueprint3d, PixiJS 2D + Three.js 3D, wall-corner graph model.
+
+**Mobile foundations (all MIT):**
+- `flame-engine/flame` — Flutter 2D engine, ~11k★
+- `Shopify/react-native-skia` — Skia renderer for React Native, ~8.3k★
+- `fluttercandies/flutter_drawing_board` — extensible PaintContent base class
+- `akhilnasim1123/industrial-drawing` — Flutter measurement + headless DrawingController pattern
+
+**Architecture references (read-only inspiration):**
+- `excalidraw/excalidraw` (MIT, 122k★) — best shape-tool state machine source
+- `tldraw/tldraw` (47k★) — best canvas SDK BUT non-OSI license, commercial use requires paid license
+- `mrdoob/three.js` (the `editor/` directory, MIT) — canonical Command + History undo/redo pattern
+
+**CAD-grade (GPL — patterns only, do not embed):**
+- `LibreCAD/LibreCAD` (GPLv2), `qcad/qcad` (GPLv3) — production snapping, constraints, DXF
+- `libdxfrw` — standard DXF library
+
+**Differentiator candidate:**
+- `pickles976/GardenPlanner` — Three.js + SunCalc, accurate solar shadows by lat/long + time-of-day + season (license unstated — verify before forking).
+
+**Skip:** `furnishup/blueprint3d` (abandoned 2021, jQuery), `polotno-studio` (real SDK is paid), Sweet Home 3D (Java desktop only).
+
+---
+
+### QuoteMate is Anyfence's biggest competitive threat — AI-driven quote generati...
+- id: cmpnfwhpk00k907adfcbxukg5 · importance: 5 · tags: anyfence, competitive-intel, quotemate, oxworks, positioning
+- when to use: When working on Anyfence sales pitches, positioning, competitive analysis, or supplier outreach — especially Oxworks (warm) vs other suppliers (cold).
+
+QuoteMate is Anyfence's biggest competitive threat — AI-driven quote generation from plain-English job descriptions with real-time AU supplier pricing. They DON'T yet have fence-specific calculation or supplier-specific SKU routing — those are Anyfence's defensible gaps. Speed to launch matters because QuoteMate could add these features.
+
+Oxworks already runs a Fencing Contractor Referral Program — philosophically aligned with the calculator-network concept. Go in expecting warm reception, not a cold pitch.
+
+Market positioning gap nobody fills: "fence-type calculation + supplier-specific SKUs + local order routing" — every other AU calculator is locked to a single supplier; every contractor quoting tool requires manual material counting. Anyfence closes both gaps.
+
+---
+
+### Anyfence supplier database (May 2026): 61 national Australian fencing materia...
+- id: cmpnfvger00i406adzb2xjw8e · importance: 5 · tags: fencing manufacturers, australian suppliers, b2b lead list, calculator pilot, stratco, bluescope, bunnings trade, oxworks, mitre 10, steeline, waratah, decision makers, linkedin profiles, fencing industry, materials sourcing, partner recruitment, industry database, market segmentation, australia wide
+- when to use: Use when identifying high-priority Australian fencing suppliers for outreach, targeting decision-makers at tier-A companies like Stratco and Bunnings, or analyzing market distribution across material categories and states.
+
+Anyfence supplier database (May 2026): 61 national Australian fencing material suppliers tier-tagged across 12 fence categories. Tier distribution: 15 A / 31 B / 15 C.
+
+HQ skew: NSW 28, VIC 16, QLD 15, WA 4, SA 3 (no national suppliers HQ'd in TAS, ACT, NT). Business type mix: 33 manufacturers, 14 distributors, 10 retailers, 9 combination businesses — manufacturers are the strongest calculator-pilot target since they own the pricing logic.
+
+Category supplier counts: Aluminium Slat/Louvre 23, Post & Rail 23, Colorbond/Steel Sheet 22, Pool Aluminium 16, Rural Post & Wire 16, Aluminium Tubular 15, Pool Glass 14, Treated Pine Paling 13, Chain Wire 11, Hardwood Paling 9, PVC/Vinyl 7, Brushwood/Bamboo 4. Brushwood is niche but only 4 competitors — easy to win as the default calculator.
+
+Top 15 Tier A decision-makers identified with LinkedIn URLs include: Kristopher Powell (Stratco), Robert Evans (BlueScope), Elissa Cunsolo (Bunnings Trade), Adam Barrack (Oxworks), Sarah Hewson (Mitre 10 Trade Marketing), Kirsty Chivell (Steeline), Kaye Nugent (Waratah).
+
+Sub-national suppliers dropped from list: Bowens Timber (VIC), Probuild Technologies (WA), Ausiports (NSW), Narangba Timbers (QLD+NSW), Steeline FNW (QLD+NSW).
+
+---
+
+### Australian pool fence compliance — AS1926.1-2012 (non-negotiable for swimming...
+- id: cmpnfv3si00jp07adud4j9y24 · importance: 5 · tags: pool-fence, compliance, as1926, australia, regulations
+- when to use: When designing pool fencing, building pool-fence calculators, validating quotes for pool barriers, or advising on Australian residential pool barrier law.
+
+Australian pool fence compliance — AS1926.1-2012 (non-negotiable for swimming pool barriers):
+
+- Minimum height: 1200mm
+- Maximum gap below barrier: 100mm
+- Maximum vertical gap between members: 100mm
+- Non-climbable zone: 900mm horizontal arc on outside of barrier (no climbable footholds within)
+- Gates: self-closing AND self-latching, MUST open OUTWARD away from pool
+- Latch height: minimum 1500mm above ground (or shielded)
+- Glass panels: 12mm Grade A toughened, 1200mm fixed height standard
+- Standard Bunnings/ProtectorAl spigot configuration: 95×95 chisel (SS $169 / Black $199) or 60×128 slimline ($189)
+- MagnaLatch + TruClose gate kit ($99.55) is the AS1926-compliant default for every pool gate
+
+Calculator enforcement levels should be: block_quote (height, latch height, outward swing), warn (gap >90mm), advisory (non-climbable zone calculation).
+
+---
+
+### Australian paling/timber boundary fence compliance:
+- id: cmpnfuzo400jm07ad82wwy908 · importance: 5 · tags: paling-fence, timber, compliance, fences-act, bal, australia
+- when to use: When designing timber boundary fences, building paling-fence calculators, advising on Australian fencing law, or calculating BOM with overlap conventions.
+
+Australian paling/timber boundary fence compliance:
+
+- Treatment: H3 (CCA) above-ground; H4 in-ground (for posts)
+- Bushfire (AS3959): BAL-FZ prohibits combustible timber fences within 6m of the home; BAL-29/40 cautions on timber; BAL-12.5/19 timber generally permitted
+- Council height caps (most LGAs): 1200mm front boundary, 1800mm side/rear boundary — taller requires Development Application
+- Fences Act (state-specific — NSW Dividing Fences Act 1991, VIC Fences Act 1968, QLD Neighbourhood Disputes Act 2011, etc.): neighbour notice/consent required for new dividing fences and material changes; cost-share typically 50/50 for "sufficient dividing fence" standard
+- Footings: minimum 600mm post-hole depth (more in expansive clay or windy zones)
+- Paling overlap convention: 6mm lap. cuts_per_run_metre = ceil(run_length_mm / (paling_width_mm - 6)). 30m run with 150mm palings = ⌈30000/144⌉ = 209 palings.
+
+---
+
+### Bunnings pool fence catalogue (May 2026) — ProtectorAl is the dominant brand:
+- id: cmpnfurm800k207adf3gculj6 · importance: 5 · tags: pool-fence, protectoral, bunnings, pricing, glass, aluminium
+- when to use: When quoting pool fencing materials, building pool-fence calculators, or seeding pricing defaults for Australian pool-fence projects.
+
+Bunnings pool fence catalogue (May 2026) — ProtectorAl is the dominant brand:
+
+- Glass panels: 12mm Grade A toughened, 1200mm fixed height, widths 250mm–2000mm. $56.70 (250mm) to $332.84 (2000mm). Hinge panels pre-drilled.
+- Aluminium panels: 2400mm standard width, 1200/1500/1800mm heights, $109–$391. 7 colours observed: Black, White (Pearl White), Monument, Pale Eucalypt, Deep Ocean, Primrose, Woodland Grey. Styles: flat top, loop top, radiator, mid-rail, square picket.
+- Spigots: 95×95 chisel ($169 SS / $199 black), 60×128 slimline ($189), wall-to-glass clamp ($59.50), flanged white matt ($126.14).
+- Pool gate hardware: MagnaLatch + TruClose kit $99.55; TruClose hinges $38.60 (30kg) / $60.77 (70kg HD); MagnaLatch+KwikFit combo $84; ProtectorAl glass-to-glass latch $103.
+
+The MagnaLatch + TruClose Hinges Safety Kit ($99.55) is the AS1926-compliant default for every pool gate quote.
+
+---
+
+### Bunnings treated pine paling fence catalogue (May 2026):
+- id: cmpnfujwd00go06adkjjqq5q4 · importance: 5 · tags: paling-fence, treated-pine, bunnings, pricing, timber
+- when to use: When quoting treated pine paling fences, building paling calculators, or seeding pricing defaults for Australian timber boundary fences.
+
+Bunnings treated pine paling fence catalogue (May 2026):
+
+- Palings: 100/125/150mm widths × 1.5/1.65/1.8/2.1m lengths. $1.32–$3.14 per piece; $0.88–$1.50 per linear metre. All H3 CCA.
+- Posts: 88/90/100/112/125mm square × 1.8–6.0m lengths. $22 (100×100×2.4m H4) to $127.69 (112×112×2.4m H3 LOSP primed laminated).
+- Rails: 72×47mm or 90×45mm, typically 5.4m stock. $22 ($4.07/m).
+- Plinths: 150×25mm, 2.4–6.0m lengths. $7.33–$16.50 ($3.05/m).
+- Capping rail: 90×45mm rebated, 5.4m stock, $39 ($7.22/m).
+- 75mm 2.4m round pole as alternative post: $18.
+- Brands: STS Timber Wholesale (palings/plinths/rails/capping), Australian Treated Pine (100×100 posts), Kaituna / TasmanKB (premium F7 posts), Woodhouse Weatherproof (primed laminated FJ posts).
+
+Bunnings publishes both total and per-linear-metre prices for timber — capture BOTH because the calculator engine needs $/m for run-length math AND $/piece for the line-item BOM.
+
+---
+
+### Concrete BOM math in Anyfence fence calculators is parameterised by bag size,...
+- id: cmq4uupv60ruq07adce0h8bd1 · importance: 4 · tags: bom, bill-of-materials, anyfence, fence-calculator, concrete-math, bag-size, rapid-set, post-mix, post-hole, bunnings, amazing-fencing, concrete_helpers, weight-calculation, kilograms, fence-post, formula, canonical-names, parameterised
+- when to use: Use when modifying concrete calculations, adding new bag sizes or concrete types, or editing the anyfence calculators and concrete_helpers.py file to ensure BOM logic remains consistent across archetypes.
+
+Concrete BOM math in Anyfence fence calculators is parameterised by bag size, NOT hardcoded. Target is ~30kg of concrete per fence post (300mm×600mm hole). bags_per_post = CONCRETE_TARGET_PER_POST_KG (30) / concrete_bag_size_kg. So 20kg bags = 1.5 bags/post (Bunnings retail default, backward-compatible), 30kg bags = 1.0 bag/post (Amazing Fencing trade). Inputs concrete_bag_size_kg (20 or 30) and concrete_product_type (Rapid Set or Post Mix) are per-call/per-system_instance. New canonical names added (additive, non-breaking): 'Rapid Set Concrete 30kg', 'Post Mix Concrete 30kg'. Logic lives in concrete_helpers.py co-located with treated-pine-paling-fence-calculator; extract to a shared util once a second archetype needs it. Each archetype calculator keeps three artifacts in lockstep (spec doc + calculator.py + registered skill) and must stay byte-identical on the default path.
+
+---
+
+### Anyfence fence-calculator concrete math is parameterised by bag size, not har...
+- id: cmq4usx0n0sb007ady0phhkk4 · importance: 4 · tags: anyfence, calculator, concrete, canonical-names, engineering-convention
+- when to use: When extending any Anyfence calculator archetype's concrete math or adding new archetypes that pour posts.
+
+Anyfence fence-calculator concrete math is parameterised by bag size, not hardcoded. Target ~30kg of concrete per post (300mm×600mm hole). bags_per_post = CONCRETE_TARGET_PER_POST_KG (30) / concrete_bag_size_kg → 20kg bags = 1.5/post (Bunnings retail default, backward-compatible byte-identical to old output), 30kg bags = 1.0/post (Amazing Fencing trade). Inputs concrete_bag_size_kg (20 or 30) and concrete_product_type ('Rapid Set' or 'Post Mix') are per-call / per-system_instance. New additive canonical names (2026-06-05): 'Rapid Set Concrete 30kg', 'Post Mix Concrete 30kg'. Logic lives in concrete_helpers.py co-located with treated-pine-paling-fence-calculator; extract to a shared util once a 2nd archetype (slat/Colorbond/composite retaining) needs it. Each archetype keeps spec doc + calculator.py + registered skill in lockstep and must stay byte-identical on the default path.
+
+---
+
+### Anyfence canonical product name contract: calculators emit supplier-agnostic ...
+- id: cmpp0o5qp009a07ad8u2xsgzn · importance: 4 · tags: product-naming-standard, bom-naming-rules, fence-material-naming, anyfence-canonical-product, bom-output-schema, material-description-pattern, supplier-agnostic-names, treated-pine-naming, fence-calculator-contract, product-name-stability, breaking-changes-renaming, bill-of-materials-specification
+- when to use: Use this memory when writing code for fence calculators, defining output materials, or creating new product name definitions to ensure compatibility with supplier mapping engines.
+
+Anyfence canonical product name contract: calculators emit supplier-agnostic names that follow the pattern — sizing first (e.g. 100x75, 57mm, 75x50), descriptive type next (Ring Shank, Smooth Shank, Rough Sawn), material label always present (Treated Pine, Hardwood), stock length for length-sold items (e.g. 4800mm). Examples: '100x75 Treated Pine Post', '75x38 Treated Pine Rail 4800mm', '57mm Ring Shank Gal Nail', '75x50 Treated Pine Capping Rail 4800mm'. These names are STABLE — no renames without an explicit version bump. Adding new canonical names is fine; renaming existing ones is a breaking change for downstream supplier-mappers.
+
+---
+
+### Anyfence calculator engine consumes fence_system_config.json files with: syst...
+- id: cmpozyzi2003i06adqa4d6kss · importance: 4 · tags: fence_system_config, bom-calculator, anyfence-engine, component-categories, cuts_per_run_fn, fence-components, materials-bill, pricing-rules, compliance-rules, bunnings-skus, gate-options, post-spacing, post-mounting, plinth-capping, glass-spigots, picket-palings, fence-schema, anyfence-json
+- when to use: Use this memory when configuring, debugging, or extending the Anyfence calculator engine's JSON schema, component categories, pricing structures, or cutting calculations.
+
+Anyfence calculator engine consumes fence_system_config.json files with: system_id, display_name, manufacturer, heights_mm[], colours[{code,name,hex,swatch_url,surcharge_pct}], post_spacing_mm, post_mounting_options[], components[{sku,external_sku=Bunnings I/N,category,unit,stock_length_mm,base_price_aud,price_per_metre_aud,qty_breaks,cuts_per_run_fn,paling_width_mm,picket_width_mm,board_width_mm}], gate_options[], compliance[{rule_id,standard,value,enforcement,user_message}], labour_rules, visual_assets, metadata. cuts_per_run_fn values are documented string expressions the engine interprets safely (not live Python). 25+ component categories supported (panel, glass_panel, post, paling, picket, picket_panel, screen_board, mesh_roll, mesh_panel, tension_band, spigot, gate_kit, hinge, latch, capping, plinth, fence_tie, etc.).
+
+---
+
+## people
+
+### Anyfence agent owner is Liam (liam@byronandbeyondfencing.com.au), a real fenc...
+- id: cmq4uj8480rhq06adabveq67r · importance: 4 · tags: anyfence, liam, owner, byron-and-beyond-fencing, calculation-status
+- when to use: When referencing the project owner, validating calculator output against real-world use, or interpreting the 'user verified' calculation status.
+
+Anyfence agent owner is Liam (liam@byronandbeyondfencing.com.au), a real fencing contractor — Byron & Beyond Fencing, Northern Rivers / Gold Coast region. 'User verified' in the 5-state calculation-status model means Liam has confirmed a calculator's output against a real job.
+
+---
+
+## active_work
+
+### Anyfence Fence Calculator Skill Library — current roster (as of 2026-06-05):
+- id: cmpnh7en6010q06adz19kcve8 · importance: 5 · tags: anyfence, fence-calculator, skill-library, roster, canonical-names
+- when to use: Reference this when starting a new fence calculator skill, when asked about the state of the calculator library, or when deciding whether a capability already exists vs. needs to be built.
+
+Anyfence Fence Calculator Skill Library — current roster (as of 2026-06-05):
+
+**Built and live:**
+- treated-pine-paling-fence-calculator — now at v3. Supports butted + lapped & capped styles, PLUS concrete bag-size parameterisation (concrete_bag_size_kg ∈ {20,30}; concrete_product_type ∈ {Rapid Set, Post Mix}). Has concrete_helpers.py co-located (bags_per_post, total_concrete_bags, canonical_concrete_name) and 4 golden fixtures. Skill ID: cmpfg5qc00j3k07ada43xqfnv. Spec doc: cmpfevj5a0i7k07adamdq570v (v19).
+
+**Specs drafted (no calculator.py / no skill registration yet):**
+- Composite Retaining Wall (SuperPost + TUFFPOLY) — doc cmpzn6sxz09dr06adhzgbazjh. A3 canonical names ratified.
+- Aluminium Slat Fence (horizontal, 65/90mm; post_size {50,65}) — doc cmpzn6t2m09xy06adwrpgc8pt. Conditional on Build Forge B3 confirm of Amazing slat profile.
+
+**Specs pending (not drafted):**
+- Aluminium Gate (Quickscreen Gate System, 20 SKUs) — Build Forge's most urgent ask.
+- Colorbond fence — canonical names (A2/C2) + engine_params (D3) ratified.
+- Pool barrier validator (AS1926.1-2012, cross-cutting).
+- Pool glass fence.
+
+**Planned:** picket, tubular, chain wire, hardwood paling variants.
+
+**Cross-cutting (not started):** Supplier-mapper (canonical_name → SKU+price+pack+availability) — critical-path blocker; contract is stable across 4 archetypes.
+
+---
+
+### A consolidated 'Fence Forge Knowledge Pack' (FENCEFORGE_KNOWLEDGE_PACK.md, v1...
+- id: cmq4uabqy0qyu07adpki8q7x8 · importance: 3 · tags: fenceforge, knowledge-pack, export, anyfence, portability
+- when to use: When asked to refresh, extend, re-export, or reference the consolidated Fence Forge knowledge pack, or when onboarding a new agent/runtime to the Anyfence project.
+
+A consolidated 'Fence Forge Knowledge Pack' (FENCEFORGE_KNOWLEDGE_PACK.md, v1.0.0, ~238KB) was assembled on 2026-06-08 in the /agent/workspace/fenceforge/ folder. It inlines everything: all 18 skills (3 project + 15 platform), all 29 memories verbatim, 5 project docs (paling spec v19, aluminium slat draft, composite retaining draft, Amazing Fencing review, Build Forge Portable Bundle), the agent system prompt, canonical-name registry, and JSON exports (manifest, canonical_names, memories_index, skills_index, agent_config). The fence-calculator scripts live at /agent/workspace/skills/<skill-name>/.
+
+---
+
+## tools_and_workflows
+
+### Build Forge supplier-build operating rules (from user, June 2026): (1) Accoun...
+- id: cmq4uh4vk0rhe06ad3hv0kx29 · importance: 5 · tags: build-forge, anyfence, wizard, bom, canonical-names
+- when to use: When running any Build Forge supplier calculator build — driving the wizard, mapping canonical components to supplier SKUs, suggesting variables, or publishing.
+
+Build Forge supplier-build operating rules (from user, June 2026): (1) Account for EVERY nail and screw — full BOM granularity including fasteners, concrete, and gate hardware; nothing hand-waved. (2) Build the BOM in canonical component names FIRST, then link the supplier's own products; if a supplier product is a close match to a canonical, link it and flag the variance rather than forcing an exact match or inventing one. (3) Reuse the supplier's existing products where close matches exist rather than adding new lines. (4) Constantly learn as you go — when you hit a reusable pattern, propose a memory/skill draft so the next supplier goes faster ('becoming a master fence builder'). (5) When a supplier finishes a calculator, submit it for approval to be added to the national database (Ecosystem Visibility → 'Submit to National Network').
+
+---
+
+### Build Forge supplier-build operating rules (from user, June 2026): (1) Accoun...
+- id: cmq4ugr9m0rbh06ad5gr8l9qy · importance: 5 · tags: build-forge, anyfence, wizard, bom, operating-rules
+- when to use: When running any supplier calculator build in Build Forge — variable selection, BOM construction, product linking, and submission for approval.
+
+Build Forge supplier-build operating rules (from user, June 2026): (1) Account for EVERY nail and screw — full BOM granularity including fasteners, concrete, and gate hardware; nothing hand-waved. (2) Build the BOM in canonical component names FIRST, then link the supplier's own products; if a supplier product is a close match to a canonical, link it and flag the variance rather than forcing an exact match or inventing one. (3) Reuse the supplier's existing products where close matches exist rather than adding new lines. (4) Constantly learn as you go — when you hit a reusable pattern, propose a memory/skill draft so the next supplier goes faster ('becoming a master fence builder'). (5) When a supplier finishes a calculator, submit it for approval to the national database (Ecosystem Visibility → 'Submit to National Network').
+
+---
+
+### Workflow for adding or extending a fence calculator skill in the Anyfence lib...
+- id: cmpp0ocf1009b07adt06xjslx · importance: 5 · tags: anyfence, workflow, skill-building, lockstep, spec-driven
+- when to use: When building, extending, or modifying any fence calculator skill in the Anyfence library.
+
+Workflow for adding or extending a fence calculator skill in the Anyfence library: (1) the project-scoped spec doc is the source of truth — update it first or in parallel; (2) calculator.py lives at /agent/workspace/skills/<skill-name>/calculator.py; (3) smoke-test the script against the spec's worked example and surface any diff before reconciling — do not silently change either side; (4) update spec doc, script, and skill documentation IN LOCKSTEP; (5) use CreateSkill/UpdateSkillAndScripts to produce a SKILLCONFIG draft — never claim a skill is saved until the user clicks Save. Note: skill changes are draft-gated in the UI, but spec docs save directly.
+
+---
+
+### Bunnings data ingestion (May 2026):
+- id: cmpnfuwhj00jf06adokongqrm · importance: 5 · tags: bunnings, scraping, cloudflare, exa, anti-bot, fence-pricing
+- when to use: When scraping Bunnings or any Cloudflare-protected AU retailer; when refreshing Colorbond pricing data; when extending the bunnings-fence-scraper skill.
+
+Bunnings data ingestion (May 2026):
+
+- Direct HTTP scraping is BLOCKED by Cloudflare (challenge page).
+- Exa search infrastructure handles the JS challenge and returns clean structured text — that's the working ingestion path.
+- Bunnings Item Numbers (I/N) are 6-8 digit codes, format-stable.
+- Use the `bunnings-fence-scraper` skill — three-layer pipeline (ExaSearch discovery → Python parser → schema mapper) producing fence_system_config.json.
+
+Pricing snapshot for Colorbond fence components: posts $15-$22.76, panels $135, rails $15-$16.08, infill sheets $25, post caps $2.65, ProtectorAl gate kits $116-$157. Standard panel format: 1800mm H × 2360mm W (3 infill sheets + 2 posts + 2 rails). Standard post lengths: 2400mm and 2700mm.
+
+10+ Colorbond colours observed: Monument, Woodland Grey, Domain, Wilderness, Ironstone, Basalt, Evening Haze, Pale Eucalypt, Night Sky, Riversand.
+
+---
+
+### Anyfence skill update lockstep convention: when extending a calculator skill,...
+- id: cmpnfu8u400iq06adxjpni3b3 · importance: 5 · tags: anyfence, skill-development, workflow, lockstep, calculator
+- when to use: When extending any Anyfence calculator skill or any skill where documentation, script, and metadata must stay in sync. The lockstep convention prevents drift between spec, code, and what's saved in the library.
+
+Anyfence skill update lockstep convention: when extending a calculator skill, update all three artifacts in the same turn:
+
+1. Spec doc (project-scoped — source of truth for skill documentation)
+2. Script (the executable engine, e.g. calculator.py in workspace)
+3. Skill registration (UpdateSkillAndScripts — documentation and scripts together)
+
+NEVER ship one without the others. Smoke-test the script against the spec's worked example BEFORE registering the skill update; if results diverge, surface the diff and ask which to trust (don't unilaterally change either).
+
+Backward compatibility rule: when adding new inputs to an existing calculator (e.g. paling_style), default to the prior behaviour ("butted" was the default added when "lapped_capped" became the second option). Regression test confirms byte-identical BOM output for the default-path call.
+
+Drafts are gated: UpdateSkillAndScripts returns a SKILLCONFIG card the user must click to save. Until then, the saved skill in the library is the previous version — FetchSkillScripts reads from the last confirmed save, not from pending drafts.
+
+---
+
+### B2B email discovery fallback strategy when direct contact isn't published:
+- id: cmpnfu1c700ip06adehbsb07i · importance: 5 · tags: email-hunting, lead-generation, contact-info, email-patterns, prospecting, cold-outreach, b2b-sales, email-scraping, b2b-marketing, data-enrichment, fallback-strategy, address-validation, generic-emails, sales-leads, linkedin-search, domain-search, email-verification
+- when to use: Use this strategy when you are building a B2B prospect list and need a systematic, tiered backup plan for finding or guessing contact emails when direct individual addresses are not publicly listed.
+
+B2B email discovery fallback strategy when direct contact isn't published:
+
+Pattern hierarchy (try in order, flag in output which pattern was used so the user knows to verify before sending):
+1. Direct named contact found on site → use it
+2. Role-based public address: sales@, info@, contact@, hello@, marketing@ (use the one most likely to route — sales@ for vendor pitches, info@ for general inquiry)
+3. Department address: trade@, wholesale@, b2b@ (relevant for trade-targeted outreach)
+4. Generic: webmaster@, admin@ (only if nothing else)
+
+For the Anyfence campaign, 23/61 suppliers had verified direct emails; 38/61 used the safe info@/sales@ pattern. Always tag each row with `email_source: verified | pattern` so the sender knows which to double-check.
+
+Best for personal outreach to senior contacts: search "{first_name} {last_name} {company} site:linkedin.com" then look at the company directory pages — many marketing/sales managers list their email format publicly on conference pages, podcast appearances, or press releases.
+
+---
+
+### Cin7 'MassDownloadProducts' xlsx parsing (standard Anyfence supplier price-li...
+- id: cmq4uz5go0qr406adjcl8klve · importance: 4 · tags: cin7, xlsx, ingestion, anyfence, price-book
+- when to use: When parsing a supplier's Cin7 mass-download export into an Anyfence price book.
+
+Cin7 'MassDownloadProducts' xlsx parsing (standard Anyfence supplier price-list ingestion): Sheet 'Product Master'. Row 1 = title, rows 2-9 = type/format hints, HEADER is row 10, data from row 11. Key columns (0-indexed): 0 ProductId, 1 ManufacturerSKU, 2 SupplierSKU, 3 ShortDescription, 4 Size, 5 Colour, 8 Custom2, 11 BuyPriceEx, 13 RRP, 15 POSPrice, 19 ProductType, 24 CartonQty, 27 Brand, 29 Length. Convention: BuyPriceEx = tier-2 (trade) ex-GST; GST inc = ex x 1.10; RRP/tier-1 often blank. Dedupe across multiple exports by ProductId; dedupe rows by (ManufacturerSKU, Colour, Size, Description) to preserve profile/style variants. Use openpyxl. Watch for false-positive keyword matches ('Pale Eucalypt' is a Colorbond colour, not pine). Sanity-check prices (flag $0.00 or out-of-trend) and surface for confirmation. Price books use supplier's OWN SKUs (own-SKU passthrough) + optional canonical_name join, shipped as a new APPEND-ONLY version so existing quotes stay pinned.
+
+---
+
+### Anyfence Calculator Builder page (/builder, /builder/:instanceId) lets non-te...
+- id: cmq4utfr60ski07aditn1wr46 · importance: 4 · tags: anyfence, build-forge, calculator-builder, fence-forge, supplier-calculator, custom-calculators, wizard-builder, calculator-scoping, calculator-publishing, bom-math, canonical-names, price-book-pinning, hybrid-calculators, system-instance, archetype-builder, preview-calculator, cross-agent-coordination, builder-route
+- when to use: Use this memory when working on the Calculator Builder page (/builder), defining boundaries and coordination workflows between Fence Forge and Build Forge, or understanding the hybrid calculator scoping and publishing lifecycle.
+
+Anyfence Calculator Builder page (/builder, /builder/:instanceId) lets non-technical suppliers/contractors build their own fence calculators via a guided ~20-minute wizard. A dedicated agent 'Build Forge' (saved in the user's library, sonnet-latest, high effort) is the wizard inside it. Locked scoping: (1) target user = non-technical supplier, guided wizard, no jargon; (2) custom calculators are HYBRID — supplier picks 'tweak existing' (system_instance under an archetype) or 'build from scratch' (new archetype); (3) scope = FULL power (catalogue + variation form + new canonical names + BOM math/cuts-per-run), with the AI doing the translation. Boundary: Fence Forge (this agent) owns base canonical-name calculators + the math kernel + canonical-name contract; Build Forge proposes new canonical names (reviewed by Fence Forge) and customises supplier-side instances. Publish flow: draft → preview at /s/{supplier}/calculator/{instance} → publish, price-book version pinned. Cross-agent coordination via shared docs (e.g. 'Fence Forge → Build Forge — Amazing Fencing review response').
+
+---
+
+### A consolidated Anyfence knowledge base lives at /agent/workspace/anyfence-kno...
+- id: cmq4ujnrg0sgj06adyk8hdzs4 · importance: 4 · tags: anyfence, knowledge-base, workspace, reference, business-model, suppliers, calculators, compliance-standards, bunnings-products, architecture-design, workflows, readme-index, documentation-directory, project-specs, system-design, fencing-standards
+- when to use: Use this memory at the start of any Anyfence-related task to locate the central documentation repository and avoid duplicating existing research, business logic, or architectural decisions.
+
+A consolidated Anyfence knowledge base lives at /agent/workspace/anyfence-knowledge/ with a README.md master index and 7 subdirectories: business/ (model-and-monetisation, competitive-landscape), suppliers/ (national-supplier-database, outreach-strategy), calculators/ (engine-architecture, skill-library-status, quickscreen-pilot, ui-and-ux-conventions), compliance/ (australian-standards), products/ (bunnings-pool-fencing, bunnings-treated-pine, bunnings-colorbond), architecture/ (drawing-tool, oss-reference-repos), workflows/ (calculator-build-process, bunnings-data-ingestion). Read and incrementally update these files rather than rebuilding context from scratch.
+
+---
+
+### User is migrating the Anyfence/Fencewright project to Google Antigravity. Fut...
+- id: cmq4ujbg40sp207ad7oxs4f81 · importance: 4 · tags: anyfence, migration, antigravity, export, agent-bundle
+- when to use: When exporting agent assets, packaging skills/memories, or planning where Anyfence work will run.
+
+User is migrating the Anyfence/Fencewright project to Google Antigravity. Future work may target Antigravity conventions (system prompt file, skill registry, long-term memory) rather than this platform. When exporting agent assets, produce a self-contained bundle: system prompt as a markdown file, each skill as a SKILL.md (plus any stdlib-only Python scripts), and memories grouped by category in a single dossier.
+
+---
+
+### Liam (Anyfence owner) works as an ORCHESTRATOR / director of AI coding agents...
+- id: cmq4rqy1q0r8k07adk2y3jqe1 · importance: 4 · tags: anyfence, orchestration, working-style, antigravity, agent-briefs
+- when to use: When Liam asks for any Anyfence build, feature, or technical work — frame it as dispatchable agent briefs and the spec-to-review loop, with this agent as chief-of-staff, rather than proposing to hand-code.
+
+Liam (Anyfence owner) works as an ORCHESTRATOR / director of AI coding agents — he does not hand-code. Frame all Anyfence build and technical work as dispatchable agent briefs with measurable acceptance criteria + golden fixtures, following a spec → dispatch → review → merge loop.
+
+Division of labour:
+- The Antigravity (+ Jules for background tasks) fleet owns the codebases (data layer, calculator engine, supplier-mapper, calculator/embed widget, tradie app, marketplace).
+- This agent (Anyfence Platform Partner) is the CHIEF OF STAFF: owns strategy, specs, golden fixtures, the canonical-name contract, supplier data, and reviews agent output (with Gemini 3 Deep Think as architecture reviewer) before merge.
+
+Agents stay coordinated by fixed shared CONTRACTS — the data-layer API shape, the canonical-name contract, the fence_system_config schema, and golden fixtures — not by negotiating with each other. The quality gate (tight specs + Deep Think reviewing plans before/after) is non-negotiable because there is no human tech lead in the loop.
+
+So: when Liam asks for a feature or build, respond with agent briefs and the dispatch/review loop, not raw code.
+
+---
+
+### Google AI Ultra toolkit for the Anyfence build (verified June 2026):
+- id: cmq4rqv5n0qhl06ad8ttlca8w · importance: 4 · tags: anyfence, google-ai-ultra, antigravity, jules, tooling
+- when to use: When planning how to build or orchestrate Anyfence with AI agents, choosing which Google AI Ultra tool fits a task, or assessing tool availability from Australia.
+
+Google AI Ultra toolkit for the Anyfence build (verified June 2026):
+- Antigravity 2.0 — agent-first build IDE; "Manager Surface" orchestrates parallel agents, plus CLI + SDK + scheduled background tasks. The primary build engine for all Anyfence codebases.
+- Jules — async GitHub coding agent. Ultra tier = 300 tasks/day, 60 concurrent, priority Gemini 3 Pro; label a GitHub issue "jules" to assign; has a GitHub Action for scheduled/CI-triggered runs. The background fleet.
+- Google AI Studio — Gemini-API prototyping; now Antigravity-powered with native Android build + Play-track publish. For "describe your fence" NL parsing, price-list/PDF vision parsing, Maps.
+- Gemini 3 Deep Think — heavy reasoning + architecture reviewer (schema, BOM/cut math, compliance logic).
+- NotebookLM — source-grounded research brain (standards + supplier API docs + catalogues corpus). Hallucination firewall.
+- Flow (Veo 3.1) — AI film; available in AU on Ultra (125+/mo, highest limits, watermark-free); only credit top-up PURCHASES are US-gated. Flow Music + Photos GenAI (photo-to-video reels) for content.
+- AI Inbox (Gmail triage), 20–30TB storage.
+
+US-ONLY, unusable from Australia: AI-powered calling (the painful loss — it was the ideal cold-start for the pricing-data layer), Auto-browse in Chrome, Gemini in Earth, Gemini Spark, Google TV Create Hub, Dreambeans.
+Watch-list / weak fit: Project Genie (now global on the $200/20x Ultra tier but experimental world-model); Hypothesis Generation (DeepMind Co-Scientist — a science tool, wrong shape for product/market work).
+Consumer extras to ignore for the build: Google Health, Google Home, YouTube Premium.
+
+---

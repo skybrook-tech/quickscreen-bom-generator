@@ -1,0 +1,686 @@
+{
+  "bundle": "hyperagent-learnings-export",
+  "exported": "2026-06-08",
+  "source_thread": "cmq4v4r051bh807adh9do82fm",
+  "counts": {
+    "skills_total": 48,
+    "skills_user": 33,
+    "skills_platform": 15,
+    "memories": 46,
+    "rubrics": 16
+  },
+  "file_count": 134,
+  "total_bytes": 1062338,
+  "files": [
+    {
+      "path": "PROJECT-OVERVIEW.md",
+      "bytes": 9260,
+      "sha256": "3909aec0b4811216d51693bb6f3cd32632e34bbe3c6bf8f74a7d88d7dfbdcc4e"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4302,
+      "sha256": "5be17bd7381dea78fc2c79bcf22b57c5de0bb9bd59fcacf66d4404fbeec47bbb"
+    },
+    {
+      "path": "memories/memories.json",
+      "bytes": 70947,
+      "sha256": "dbe4a9ad305d60ead5a1a2fa5c087f81c4aebba1a5dfdf80a8ff093201ce6647"
+    },
+    {
+      "path": "memories/memories.md",
+      "bytes": 67041,
+      "sha256": "e641cbc3939da817e1ed6df3784b049e6678c9ff59250d11daf374a4b2ab2cd6"
+    },
+    {
+      "path": "rubrics/agent-portability-bundle-embed-integration-scoping.md",
+      "bytes": 1872,
+      "sha256": "54112731da506e52819d60e7e84d455f85b2f9cb3bec2361e15b439624bef3e1"
+    },
+    {
+      "path": "rubrics/agent-portability-bundle-live-app-integration-recon.md",
+      "bytes": 1879,
+      "sha256": "0adf12be8603a88f42b3d746a51f271901a963e0db3eec859b170e83bc393b35"
+    },
+    {
+      "path": "rubrics/agent-portability-bundle-live-integration-execution.md",
+      "bytes": 2095,
+      "sha256": "22d121ea087dd0887f4f91e7b42c913ff3ffc149a5ca7c56753fffb4eeadcf8f"
+    },
+    {
+      "path": "rubrics/b2b-supplier-outreach-campaign-build.md",
+      "bytes": 1867,
+      "sha256": "4c46e795c4431234a9a0ffafcf038ce7eae2567205c82f7bc133d0795fa8704f"
+    },
+    {
+      "path": "rubrics/bunnings-catalogue-scraping-fence-config-generation.md",
+      "bytes": 1699,
+      "sha256": "6c150b65965c4e83702100449bf1c0088721e331cfd0205d901d6b97f2d20793"
+    },
+    {
+      "path": "rubrics/catalogue-scraping-schema-mapping-pipeline.md",
+      "bytes": 1748,
+      "sha256": "e724763e3cf7f43932c2c2c493c9fe009437ee197e83deb869c48bcb0c2c6619"
+    },
+    {
+      "path": "rubrics/domain-specific-data-pipeline-extension.md",
+      "bytes": 1921,
+      "sha256": "e78cdadc54d394a36d8c27dc4b70d6dd12c4bd4f469c7fa6cc7ee6ead1d29738"
+    },
+    {
+      "path": "rubrics/knowledge-extraction-agent-synthesis-quality.md",
+      "bytes": 1698,
+      "sha256": "dfa2fbbea5508e3d7c42b1955e7996a7912115381b0f9c264db7a6fc30fe2d63"
+    },
+    {
+      "path": "rubrics/multi-artifact-lockstep-skill-extension.md",
+      "bytes": 1477,
+      "sha256": "f33d38e551fbf64e1a44e693e9333e7297afa452ae3e39a1b9c739a8e58bdd82"
+    },
+    {
+      "path": "rubrics/named-agent-configuration-quality.md",
+      "bytes": 1521,
+      "sha256": "e7e144834749a75cdeb9f0b7116066dd343b74052a9dc4d51e4ad176df32a334"
+    },
+    {
+      "path": "rubrics/open-source-repository-landscape-research.md",
+      "bytes": 1508,
+      "sha256": "2ce8a23179f0e8ee11948ec7009e573db124d9de427e1891b77521f608f1f9a0"
+    },
+    {
+      "path": "rubrics/open-source-tech-stack-research-implementation-planning.md",
+      "bytes": 1395,
+      "sha256": "7b440035b71d391079829bd309314f85a71ebf4049492836a4af5dceee7d9217"
+    },
+    {
+      "path": "rubrics/portable-agent-bundle-export-platform-portability-packaging.md",
+      "bytes": 1756,
+      "sha256": "bc9fbaef8e71f758eeca15d2405684c606b1106fc7ed87560d36a9160a50966c"
+    },
+    {
+      "path": "rubrics/research-planning-scoping-quality.md",
+      "bytes": 1295,
+      "sha256": "a40f89ec81335573740712147e693dc62af614e99f866c16e3ba953d09d93d9e"
+    },
+    {
+      "path": "rubrics/rubrics.json",
+      "bytes": 33359,
+      "sha256": "137dabf9fdf448d7e17de3913059034c28b2f364d3855142276d30b54453a8ce"
+    },
+    {
+      "path": "rubrics/skillscript-extension-with-spec-doc-code-lockstep.md",
+      "bytes": 1654,
+      "sha256": "0084806336c49cecc6c49a5fc3169c04a0d8d3c2d48b4efbc59826795d08dd97"
+    },
+    {
+      "path": "rubrics/technical-architecture-research-agent-synthesis.md",
+      "bytes": 1664,
+      "sha256": "4c3c49cb7c60a6ee96d45d8cb3eed87de30316a4cc56e257b2de50811b7297a3"
+    },
+    {
+      "path": "skills-inventory.md",
+      "bytes": 18233,
+      "sha256": "b7d1e6f492591c0aae9cb2eef6892ada45bb78adff6511ceed826b3866a4fbd7"
+    },
+    {
+      "path": "skills/_platform-builtin/advanced-image-techniques/SKILL.md",
+      "bytes": 6040,
+      "sha256": "8ecbf4675fd136a903e24fb661dceaca4bb8b827ab57862d9fbcb773ba53ee19"
+    },
+    {
+      "path": "skills/_platform-builtin/connection-setup-wizard/SKILL.md",
+      "bytes": 4127,
+      "sha256": "bb80d507f8a542c3bb469fec006a2ea9da7c7f5991b84f80fcf7e9cbf5b54bd4"
+    },
+    {
+      "path": "skills/_platform-builtin/context-builder/SKILL.md",
+      "bytes": 5141,
+      "sha256": "6efa6ab3322cfdb68c53e3589118f2d25160040bb97c294616039e72b66d464b"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/SKILL.md",
+      "bytes": 22887,
+      "sha256": "9866c85f4b9e113cb76c0f07cd226d94cf418291be05a45e5145c08867f9737c"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/__init__.py",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/accept_changes.py",
+      "bytes": 4051,
+      "sha256": "0c991d2bc7304a1248e9f3bf9b1498f0b6e76641fc457e7cbd73c99b4eef3a74"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/comment.py",
+      "bytes": 10694,
+      "sha256": "e86e4e17ec5805780325206d20d3ed5a8f7024f1e4641ac8f46ef5df0b564f63"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/office/helpers/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/office/helpers/merge_runs.py",
+      "bytes": 5567,
+      "sha256": "7c40ed838b88639c51f9ffdcfd564b568f26832b78fe44008c0e01b742669ca7"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/office/helpers/simplify_redlines.py",
+      "bytes": 5754,
+      "sha256": "560cb55978a834c505406eb18e2c61f62f998fc7a2d8e9721b9c563b42597896"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/office/pack.py",
+      "bytes": 4991,
+      "sha256": "b1800987e568261a31f462df8e1303d386e9e6ccc11a75ef46e60cc528c20683"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/office/soffice.py",
+      "bytes": 5301,
+      "sha256": "a3e21840e29e32f947d5286028931b96eaf2dee63f75d883b8eb19c943c80aa0"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/office/unpack.py",
+      "bytes": 4052,
+      "sha256": "83f69cecc87910183654c06345837244402e8a99edbf3bdddc1cf72f11304b62"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/office/validate.py",
+      "bytes": 3668,
+      "sha256": "1aef24f8e316965a0584c30859776bd2c82a9fb69f72d79cfed041119cf95514"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/office/validators/__init__.py",
+      "bytes": 336,
+      "sha256": "83e0f035c5abea238d3f2c3968afbd511ed022b527b7c9cb60a9434cc34ff987"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/office/validators/base.py",
+      "bytes": 32651,
+      "sha256": "d6358b67252df4dbfe4fa6647423a765960c949346ef6a8c4eb8722bb1108d25"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/office/validators/docx.py",
+      "bytes": 16376,
+      "sha256": "0ef04ce86b2e6b6a1cb088c0276fd0bd5b770d96fdfe7a6cc73d005feb3f0345"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/office/validators/pptx.py",
+      "bytes": 9824,
+      "sha256": "f937961e62a5fa0d002b8dc51a4c4e2cd8fcd59fe65853fa54edaca3fe99eccc"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/office/validators/redlining.py",
+      "bytes": 8918,
+      "sha256": "f4c33fdb9da0651d1d9aa76f0d5294cc9955869339ae131b2f75f3b2e366cb40"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/templates/comments.xml",
+      "bytes": 2603,
+      "sha256": "a08ba83ee8790ac9e3dc61921f4988f19edd7e06ac09d6f1897a877c1581818d"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/templates/commentsExtended.xml",
+      "bytes": 2611,
+      "sha256": "544eeecfeceed4b468fff163cd9c366d33641c8b8ab691ce002576197846afe8"
+    },
+    {
+      "path": "skills/_platform-builtin/docx/templates/commentsExtensible.xml",
+      "bytes": 2707,
+      "sha256": "bad10b3283e6ad6e7ef6d1ca5169683721ed690ee331282c65df04017e080631"
+    },
+    {
+      "path": "skills/_platform-builtin/gsap/SKILL.md",
+      "bytes": 8087,
+      "sha256": "4b1f33e82a519bd01f8d1888c0555de39f751cc482c16921815ae9956253ba82"
+    },
+    {
+      "path": "skills/_platform-builtin/gsap/extract-audio-data.py",
+      "bytes": 6463,
+      "sha256": "7709b60d42730fc93a348c205ab565158d240b70051d109fcc844b215d56fa4f"
+    },
+    {
+      "path": "skills/_platform-builtin/hyperframes-cli/SKILL.md",
+      "bytes": 7616,
+      "sha256": "f72af99cd61981d55734fc9a59030193b4f8ec52a3f7dfc13fe2a47a9014a844"
+    },
+    {
+      "path": "skills/_platform-builtin/hyperframes-registry/SKILL.md",
+      "bytes": 4632,
+      "sha256": "292570c3d739f9155469c77cf752c9dc41be5115bbbac1e944225463c3e1aa9a"
+    },
+    {
+      "path": "skills/_platform-builtin/hyperframes/SKILL.md",
+      "bytes": 26975,
+      "sha256": "2f5650cda80cff655e6e4033f0876ed25c15461d3d9608bcc1ecc345c1252120"
+    },
+    {
+      "path": "skills/_platform-builtin/hyperframes/animation-map.mjs",
+      "bytes": 19405,
+      "sha256": "eacb3cc40fbabadd66b673d145f2423996abdfc398c62275cbadf677065bb215"
+    },
+    {
+      "path": "skills/_platform-builtin/hyperframes/contrast-report.mjs",
+      "bytes": 12192,
+      "sha256": "2781315d7be8f58040a36b2cc0d16e25b99dfb24496593e7cb19b6f88c9b4081"
+    },
+    {
+      "path": "skills/_platform-builtin/hyperframes/package-loader.mjs",
+      "bytes": 8328,
+      "sha256": "278067c09711a20c014f5e8d2e5a358c42a5d49b054503516a693a37b9829ad6"
+    },
+    {
+      "path": "skills/_platform-builtin/hyperframes/render.py",
+      "bytes": 1656,
+      "sha256": "bb39aa149ac1c5f4e49e937f88055a55f65120f305c4f5d49dac2c146730bd53"
+    },
+    {
+      "path": "skills/_platform-builtin/pdf/SKILL.md",
+      "bytes": 8456,
+      "sha256": "e257e7978648245100d1275c7eea779b16ec4b0c9630ff83345259d5b42cabb0"
+    },
+    {
+      "path": "skills/_platform-builtin/pdf/check_bounding_boxes.py",
+      "bytes": 2774,
+      "sha256": "0ced522402dd7b3c82a0be9518cf4e485fa9cc0467d7beab6ddb04cb36fcc3e1"
+    },
+    {
+      "path": "skills/_platform-builtin/pdf/check_fillable_fields.py",
+      "bytes": 268,
+      "sha256": "1fe10b9980a5493c9bbec8c20630c603eaa475b45403751c08f26738736647b8"
+    },
+    {
+      "path": "skills/_platform-builtin/pdf/convert_pdf_to_images.py",
+      "bytes": 1008,
+      "sha256": "7f58e292a67e18a8ff000d30bad2469389546731f7e8a698cc1d0aed001ea15d"
+    },
+    {
+      "path": "skills/_platform-builtin/pdf/create_validation_image.py",
+      "bytes": 1258,
+      "sha256": "8fa9fd7962c9f940045b81cf6b991e7c1057c1838e3f9cc6d305007a222ffebf"
+    },
+    {
+      "path": "skills/_platform-builtin/pdf/extract_form_field_info.py",
+      "bytes": 4300,
+      "sha256": "bb235b36f497bbb1c7c6821cecf527bbba7213520de11219da99f7b13a38c109"
+    },
+    {
+      "path": "skills/_platform-builtin/pdf/extract_form_structure.py",
+      "bytes": 3945,
+      "sha256": "6814e3fe8f78c2b16d766c132b5a727ff7a31b71d76a7d46bd6e40fe50bc97c5"
+    },
+    {
+      "path": "skills/_platform-builtin/pdf/fill_fillable_fields.py",
+      "bytes": 3819,
+      "sha256": "d140872c2e92e41b1e05370ae8d270c5b7f5ebdf55d9905f03bc974a9c708ff5"
+    },
+    {
+      "path": "skills/_platform-builtin/pdf/fill_pdf_form_with_annotations.py",
+      "bytes": 3235,
+      "sha256": "8a56e063a49ed53c0b0e1d312ecf8023af76816ed139486ec3b539873de202fd"
+    },
+    {
+      "path": "skills/_platform-builtin/pptx/SKILL.md",
+      "bytes": 9486,
+      "sha256": "f9717b54f2cbfb833cab4592d6b69abbc21296fc5180d1118aa57fac94d80076"
+    },
+    {
+      "path": "skills/_platform-builtin/pptx/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "skills/_platform-builtin/pptx/add_slide.py",
+      "bytes": 6872,
+      "sha256": "04233ba3932c6b8611677347891616456e243cc09b7f9769408b8c83d9acfe64"
+    },
+    {
+      "path": "skills/_platform-builtin/pptx/clean.py",
+      "bytes": 9583,
+      "sha256": "3e3966a17f488a1ddc7145f0b7ec9f25595afa1f3a427ab05e610f1a328feea9"
+    },
+    {
+      "path": "skills/_platform-builtin/pptx/office/helpers/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "skills/_platform-builtin/pptx/office/helpers/merge_runs.py",
+      "bytes": 5567,
+      "sha256": "7c40ed838b88639c51f9ffdcfd564b568f26832b78fe44008c0e01b742669ca7"
+    },
+    {
+      "path": "skills/_platform-builtin/pptx/office/helpers/simplify_redlines.py",
+      "bytes": 5754,
+      "sha256": "560cb55978a834c505406eb18e2c61f62f998fc7a2d8e9721b9c563b42597896"
+    },
+    {
+      "path": "skills/_platform-builtin/pptx/office/pack.py",
+      "bytes": 4991,
+      "sha256": "b1800987e568261a31f462df8e1303d386e9e6ccc11a75ef46e60cc528c20683"
+    },
+    {
+      "path": "skills/_platform-builtin/remotion-to-hyperframes/SKILL.md",
+      "bytes": 8861,
+      "sha256": "169488fcdc619b460072b4dc400fef563dc70637d7b4f36abc26ca89b98dc983"
+    },
+    {
+      "path": "skills/_platform-builtin/remotion-to-hyperframes/frame_strip.sh",
+      "bytes": 3731,
+      "sha256": "0fa3be24da059beef23ee28b7e6a4640fa1e707594a6253f781c74fbe19e357f"
+    },
+    {
+      "path": "skills/_platform-builtin/remotion-to-hyperframes/lint_source.py",
+      "bytes": 12162,
+      "sha256": "d76a3059cb9cf905d47a1b8b3498d3dc81aae37f409e1428cde7219b96bb324d"
+    },
+    {
+      "path": "skills/_platform-builtin/remotion-to-hyperframes/render_diff.sh",
+      "bytes": 3066,
+      "sha256": "516be1130a6edbe5927106905349bafba3d8ff1a99b3f0e0394b6d0ecf7a223b"
+    },
+    {
+      "path": "skills/_platform-builtin/remotion-to-hyperframes/tests/fixtures/blocker.tsx",
+      "bytes": 1853,
+      "sha256": "e12bc7d06340b71cebbdbc8aae9f948a21f7487dbccafcdea6be9f1936f7e4c0"
+    },
+    {
+      "path": "skills/_platform-builtin/remotion-to-hyperframes/tests/fixtures/clean.tsx",
+      "bytes": 1379,
+      "sha256": "912f5a176e8b4eee7acbdf9a9334e1edcb14f6859cab397846ed8a63f13d080d"
+    },
+    {
+      "path": "skills/_platform-builtin/remotion-to-hyperframes/tests/smoke.sh",
+      "bytes": 3635,
+      "sha256": "9a51cadfe9b6fe645096fc2e05d80849c6985abd3a92bd27cb985b3cdd3ce7b0"
+    },
+    {
+      "path": "skills/_platform-builtin/video-continuation-patterns/SKILL.md",
+      "bytes": 4340,
+      "sha256": "1f5e6c7f52721df7891572bb52f99c6618092116004650a5f9ec8d4309a755aa"
+    },
+    {
+      "path": "skills/_platform-builtin/video-prompting/SKILL.md",
+      "bytes": 7015,
+      "sha256": "e477ef95a0266b51b4ea5902af1a11c93f72af6b8ef4272daba23eacacec0ac0"
+    },
+    {
+      "path": "skills/_platform-builtin/website-to-hyperframes/SKILL.md",
+      "bytes": 7195,
+      "sha256": "fba1e4c929528962bfb424082479a6838f3517bd07e3cac8238cccac1b1aedc7"
+    },
+    {
+      "path": "skills/_platform-builtin/xlsx/SKILL.md",
+      "bytes": 11953,
+      "sha256": "1163214e568528804df751eede53fac0ef18f0cbf54e43a52efe78fabe7b8e38"
+    },
+    {
+      "path": "skills/_platform-builtin/xlsx/office/helpers/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "skills/_platform-builtin/xlsx/office/helpers/merge_runs.py",
+      "bytes": 5567,
+      "sha256": "7c40ed838b88639c51f9ffdcfd564b568f26832b78fe44008c0e01b742669ca7"
+    },
+    {
+      "path": "skills/_platform-builtin/xlsx/office/helpers/simplify_redlines.py",
+      "bytes": 5754,
+      "sha256": "560cb55978a834c505406eb18e2c61f62f998fc7a2d8e9721b9c563b42597896"
+    },
+    {
+      "path": "skills/_platform-builtin/xlsx/office/pack.py",
+      "bytes": 4991,
+      "sha256": "b1800987e568261a31f462df8e1303d386e9e6ccc11a75ef46e60cc528c20683"
+    },
+    {
+      "path": "skills/_platform-builtin/xlsx/office/soffice.py",
+      "bytes": 5301,
+      "sha256": "a3e21840e29e32f947d5286028931b96eaf2dee63f75d883b8eb19c943c80aa0"
+    },
+    {
+      "path": "skills/_platform-builtin/xlsx/office/unpack.py",
+      "bytes": 4052,
+      "sha256": "83f69cecc87910183654c06345837244402e8a99edbf3bdddc1cf72f11304b62"
+    },
+    {
+      "path": "skills/_platform-builtin/xlsx/office/validate.py",
+      "bytes": 3668,
+      "sha256": "1aef24f8e316965a0584c30859776bd2c82a9fb69f72d79cfed041119cf95514"
+    },
+    {
+      "path": "skills/_platform-builtin/xlsx/office/validators/__init__.py",
+      "bytes": 336,
+      "sha256": "83e0f035c5abea238d3f2c3968afbd511ed022b527b7c9cb60a9434cc34ff987"
+    },
+    {
+      "path": "skills/_platform-builtin/xlsx/office/validators/base.py",
+      "bytes": 32651,
+      "sha256": "d6358b67252df4dbfe4fa6647423a765960c949346ef6a8c4eb8722bb1108d25"
+    },
+    {
+      "path": "skills/_platform-builtin/xlsx/office/validators/docx.py",
+      "bytes": 16376,
+      "sha256": "0ef04ce86b2e6b6a1cb088c0276fd0bd5b770d96fdfe7a6cc73d005feb3f0345"
+    },
+    {
+      "path": "skills/_platform-builtin/xlsx/office/validators/pptx.py",
+      "bytes": 9824,
+      "sha256": "f937961e62a5fa0d002b8dc51a4c4e2cd8fcd59fe65853fa54edaca3fe99eccc"
+    },
+    {
+      "path": "skills/_platform-builtin/xlsx/office/validators/redlining.py",
+      "bytes": 8918,
+      "sha256": "f4c33fdb9da0651d1d9aa76f0d5294cc9955869339ae131b2f75f3b2e366cb40"
+    },
+    {
+      "path": "skills/_platform-builtin/xlsx/recalc.py",
+      "bytes": 5782,
+      "sha256": "cf419d15e02965aeaec17773c05b61303f7f520f67fa2696547e7da07502eac7"
+    },
+    {
+      "path": "skills/ai-agent-iterative-development-workflow/SKILL.md",
+      "bytes": 6118,
+      "sha256": "2d7996d86e05a8119426e38568b473360e42650808074ec7e1dfab4bb26f2d9d"
+    },
+    {
+      "path": "skills/anyfence-fence-config-schema/SKILL.md",
+      "bytes": 6645,
+      "sha256": "feb38efc3d33d3eb7b2bf0e93fa8662144026fa4a81ef60c0405408506bafe31"
+    },
+    {
+      "path": "skills/anyfence-strategic-playbook/SKILL.md",
+      "bytes": 7115,
+      "sha256": "233341413a5ff0a2a300e155649f44cc41086f350b408f2a3d83cc21c4dfac0f"
+    },
+    {
+      "path": "skills/anyfence-supplier-wireframe-pattern/SKILL.md",
+      "bytes": 6257,
+      "sha256": "0a4d3b78a1eb6316699a6bf382871441fe7dccd9db20cd161eda3e943a66ff2c"
+    },
+    {
+      "path": "skills/au-fence-compliance-rules/SKILL.md",
+      "bytes": 6733,
+      "sha256": "ff482c1613ad860e0b030bb1658944172bc0e3c6bd74350ccc5a039c7a105de6"
+    },
+    {
+      "path": "skills/au-fencing-supplier-tier-tagger/SKILL.md",
+      "bytes": 5305,
+      "sha256": "511cbd14b65cd2833a0f67f204bec6a79f82ffa8ec832a8e3da6299d6934c0ec"
+    },
+    {
+      "path": "skills/b2b-tiered-cold-outreach-playbook/SKILL.md",
+      "bytes": 7114,
+      "sha256": "f2b0c4dcf52cbb06fd27f2154aa5acd9762d38883d6b0e59894dc96790c1ec5e"
+    },
+    {
+      "path": "skills/bayg-fence-bom-calculator-alumawood-glass-outlet/SKILL.md",
+      "bytes": 16175,
+      "sha256": "5400cc435a4067bf3792e944f2292e0893a10974b1cb68bf1d0db9396ba4cfaa"
+    },
+    {
+      "path": "skills/bunnings-fence-scraper/README.md",
+      "bytes": 6991,
+      "sha256": "d55acc337f1dea4553dd135cb4b104f2e0ea91a11ae511b8c0153cb385c50ff6"
+    },
+    {
+      "path": "skills/bunnings-fence-scraper/SKILL.md",
+      "bytes": 6006,
+      "sha256": "9ea218e4fc8fe5bb352f0877b0d6f8c157196d3c1d57e7ee1f16ab7e57006faf"
+    },
+    {
+      "path": "skills/bunnings-fence-scraper/bunnings_parser.py",
+      "bytes": 13847,
+      "sha256": "ba9f0a9a2584cd19bc5c887a0bb447ab7b97e7f4761aa9f169ec9c085acba2b7"
+    },
+    {
+      "path": "skills/bunnings-fence-scraper/fence_config_mapper.py",
+      "bytes": 11497,
+      "sha256": "9c72e3d61563403519dbc3be1090e978ccbc84d84d5800f8b0d9e5b610a93918"
+    },
+    {
+      "path": "skills/bunnings-fence-scraper/pipeline.py",
+      "bytes": 4088,
+      "sha256": "c2e6b4b3365829e63a61577325c5c3ed180ae0ad0516c1ca0a53352968276e9b"
+    },
+    {
+      "path": "skills/calculator-project-coordination-playbook/SKILL.md",
+      "bytes": 6805,
+      "sha256": "d3534362a9d3aff26cfd34d765ace8ab42e23fb55d922775d4e2f40b40822eb4"
+    },
+    {
+      "path": "skills/canvas-drawing-tool-ux-patterns/SKILL.md",
+      "bytes": 7679,
+      "sha256": "1e0f9820afb13d30a54ccedd24da9968fd1eb9a518d3fc412c1acac71d04c473"
+    },
+    {
+      "path": "skills/codex-pr-brief-template/SKILL.md",
+      "bytes": 8958,
+      "sha256": "b6bd65ceed9c19e9a7d9b66271e3683eb4432516ed0ed149217b0bb4fbdf4ebd"
+    },
+    {
+      "path": "skills/deploy-preview-qa-verification/SKILL.md",
+      "bytes": 4789,
+      "sha256": "90cab6312398f603ef454188361c84ca86258386a934e13ad498f5d42b37004e"
+    },
+    {
+      "path": "skills/editorial-design-system-v2/SKILL.md",
+      "bytes": 11595,
+      "sha256": "50b084854150733fab3bc11bda0b8fc2c2179e1f4531fe91c3757aada8927076"
+    },
+    {
+      "path": "skills/fence-calculator-qa-tester/SKILL.md",
+      "bytes": 7430,
+      "sha256": "e581bfdf08e28b50d4b15e113617a93250e780a1c184c04fda9031b372a3e77c"
+    },
+    {
+      "path": "skills/fence-calculator-ui-conventions/SKILL.md",
+      "bytes": 8282,
+      "sha256": "b5e40f728f31c735554526cce2bd6840be5e13ac1f4df3d0d2b97c4de3fe0f9b"
+    },
+    {
+      "path": "skills/github-repo-commit/SKILL.md",
+      "bytes": 1907,
+      "sha256": "f1331dca95733b2324c96e843ef87bed8d789919fcc98d66084de6a1a13bbfb2"
+    },
+    {
+      "path": "skills/github-repo-commit/gh_commit.py",
+      "bytes": 5344,
+      "sha256": "f6803df4dc8b789a357c963e63c01f12bb0394074e7c19b28b0f25d04bbbe900"
+    },
+    {
+      "path": "skills/multi-option-suggestion-philosophy-v2/SKILL.md",
+      "bytes": 10079,
+      "sha256": "cfd6d87ecb8c5742dc70f7e04196fbf532127fae96af761de47bbe34a157a440"
+    },
+    {
+      "path": "skills/natural-language-product-configurator/SKILL.md",
+      "bytes": 5634,
+      "sha256": "f9339a7a69baffb3fa790f4c242d85443ed647dbaf949441940e1a302e845618"
+    },
+    {
+      "path": "skills/parallel-research-to-table-pattern/SKILL.md",
+      "bytes": 6547,
+      "sha256": "a2d2a31b71b6f2367ead8eb8bfe02bf63853287e55071d35c67355f0ba38cd11"
+    },
+    {
+      "path": "skills/product-configuration-ux-philosophy/SKILL.md",
+      "bytes": 5381,
+      "sha256": "8d8269b381a284a562513aea7c74f8652646fcf86b9455fd28c9be6e231278d1"
+    },
+    {
+      "path": "skills/qshs-fence-bom-calculator-glass-outlet/SKILL.md",
+      "bytes": 18481,
+      "sha256": "f4c2183dde4d55cf09b55362f2706c85f6832b8f1eca18bf1ee7d76ba64886d1"
+    },
+    {
+      "path": "skills/quickscreen-seed-data-conventions/SKILL.md",
+      "bytes": 10562,
+      "sha256": "8c2b01f5bb21e3c00106c3d2954e1827f56914c56d842bed4bb1c81a39d562b6"
+    },
+    {
+      "path": "skills/react-vite-tailwind-supabase-netlify-stack/SKILL.md",
+      "bytes": 6387,
+      "sha256": "210b190a1ae33b192206e3a6da6060dd5975ced003063f958dec6f8d18e642a0"
+    },
+    {
+      "path": "skills/sidebar-settings-panel-patterns/SKILL.md",
+      "bytes": 6819,
+      "sha256": "832502f47bda2e3fd3e1dc39f9559aa30fab9161509c6dc0cd1d5647c31b9231"
+    },
+    {
+      "path": "skills/supplier-catalogue-extraction-workflow/SKILL.md",
+      "bytes": 5689,
+      "sha256": "d8fcb176c2a9300f68984f669a132122d6840138181be3b4e4a05e0e82a1c626"
+    },
+    {
+      "path": "skills/supplier-catalogue-extractor/SKILL.md",
+      "bytes": 6447,
+      "sha256": "c96c890d5183251679324d6612113a273d02072baadb0b0e1dfdf7bbf7439f07"
+    },
+    {
+      "path": "skills/tradie-saas-calculator-architecture-v2/SKILL.md",
+      "bytes": 12291,
+      "sha256": "265adf1e19010b955994fb95ca495fb334a4bd41658614fa578936ad7e0d904b"
+    },
+    {
+      "path": "skills/tradie-saas-calculator-architecture/SKILL.md",
+      "bytes": 8409,
+      "sha256": "32c93067ec0532a8e608e69c96ee15aa99cbe5035f0e5cdff79350ba61049c26"
+    },
+    {
+      "path": "skills/treated-pine-paling-fence-calculator/SKILL.md",
+      "bytes": 7912,
+      "sha256": "edd25db7987742485d95530df48f60536a94c3ba676eb732616f1ff027450fea"
+    },
+    {
+      "path": "skills/treated-pine-paling-fence-calculator/calculator.py",
+      "bytes": 22784,
+      "sha256": "81f4d88b474964e9083a4d91beac0e455cb8d652e2dc029ee440d6b9a4e4f822"
+    },
+    {
+      "path": "skills/treated-pine-paling-fence-calculator/concrete_helpers.py",
+      "bytes": 7663,
+      "sha256": "61bdf57b1dfd1d4c3388f91ea77e6f553128727aaff80e81e856a7c0c86b618f"
+    },
+    {
+      "path": "skills/vs-fence-bom-calculator-glass-outlet/SKILL.md",
+      "bytes": 12459,
+      "sha256": "4c73d8b0b8a39c6d72eec7188fe5862e7438849663659b23542d1cc4b444411a"
+    },
+    {
+      "path": "skills/xero-supplier-price-connector/SKILL.md",
+      "bytes": 6092,
+      "sha256": "72e67d8f2c26a488188a6b4196803b01e83b9d501de43c310c7764d979793b7e"
+    },
+    {
+      "path": "skills/xpl-fence-bom-calculator-glass-outlet/SKILL.md",
+      "bytes": 12451,
+      "sha256": "5a8cf126553ab365a9243f79b80adc882e63a76ec4926b2771ac3fe3f5dbde7b"
+    }
+  ]
+}
