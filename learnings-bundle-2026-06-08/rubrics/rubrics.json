@@ -1,0 +1,616 @@
+[
+  {
+    "id": "cmq4uiiif0so407adfe53u0gu",
+    "name": "Portable Agent Bundle Export & Platform-Portability Packaging",
+    "description": "This work is specifically about packaging an agent's durable IP into a version-controlled, platform-portable bundle plus a doc mirror — a distinct deliverable type (export/decoupling) not fully captured by extraction or agent-config rubrics, with unique quality signals around portability framing, manifest integrity, and honest blocker reporting.",
+    "taskType": "coding",
+    "criteria": [
+      {
+        "name": "Faithfulness of exported persona/wizard/contract to the source agent",
+        "weight": 0.2,
+        "description": "Evaluates faithfulness of exported persona/wizard/contract to the source agent",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Completeness of bundle assets (master doc, memories, skills inventory, real code, manifest)",
+        "weight": 0.2,
+        "description": "Evaluates completeness of bundle assets (master doc, memories, skills inventory, real code, manifest)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Clear brain-vs-plumbing portability separation for runtime independence",
+        "weight": 0.2,
+        "description": "Evaluates clear brain-vs-plumbing portability separation for runtime independence",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Domain accuracy of compliance, pricing, and canonical-name details",
+        "weight": 0.2,
+        "description": "Evaluates domain accuracy of compliance, pricing, and canonical-name details",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Honest status reporting of unverified/blocked steps (embed gate, repo access) with actionable next steps",
+        "weight": 0.2,
+        "description": "Evaluates honest status reporting of unverified/blocked steps (embed gate, repo access) with actionable next steps",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmq4uhjqm0shu07adh042wfiu",
+    "name": "Agent Portability Bundle & Live-App Integration Recon",
+    "description": "This thread blends agent-IP extraction, a custom GitHub-commit skill build, live-app browser reconnaissance, and scoping of a chat-to-form embed—a multi-modal portability/integration task not fully captured by existing knowledge-extraction or agent-config rubrics.",
+    "taskType": "coding",
+    "criteria": [
+      {
+        "name": "Portability completeness (persona, wizard logic, contract, compliance, skills/memories all captured as owned files)",
+        "weight": 0.2,
+        "description": "Evaluates portability completeness (persona, wizard logic, contract, compliance, skills/memories all captured as owned files)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Faithfulness to source facts (no invented IDs, prices, or compliance rules)",
+        "weight": 0.2,
+        "description": "Evaluates faithfulness to source facts (no invented ids, prices, or compliance rules)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Tooling correctness (GitHub commit skill, browser recon, doc mirror function as intended)",
+        "weight": 0.2,
+        "description": "Evaluates tooling correctness (github commit skill, browser recon, doc mirror function as intended)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Honest status reporting (verified vs unverified embed state, draft-gated saves, pending user actions)",
+        "weight": 0.2,
+        "description": "Evaluates honest status reporting (verified vs unverified embed state, draft-gated saves, pending user actions)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Operating-rule fidelity for downstream wizard runs (canonical-first, full BOM granularity, approval flow, Fence Forge boundary)",
+        "weight": 0.2,
+        "description": "Evaluates operating-rule fidelity for downstream wizard runs (canonical-first, full bom granularity, approval flow, fence forge boundary)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmq4uha7b0qwx07adfm0c3zmb",
+    "name": "Agent Portability Bundle & Embed Integration Scoping",
+    "description": "This thread blends agent knowledge export, a custom GitHub-commit skill build, live browser recon, and front-end embed scoping — a distinct portability/integration workflow not fully captured by knowledge-extraction or agent-config rubrics, especially the emphasis on honest blocker reporting and tooling resilience.",
+    "taskType": "coding",
+    "criteria": [
+      {
+        "name": "Completeness and fidelity of the portable export bundle (persona, wizard logic, contract, compliance, memories, skills)",
+        "weight": 0.2,
+        "description": "Evaluates completeness and fidelity of the portable export bundle (persona, wizard logic, contract, compliance, memories, skills)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Brain/plumbing decoupling clarity and platform-portability rationale",
+        "weight": 0.2,
+        "description": "Evaluates brain/plumbing decoupling clarity and platform-portability rationale",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Honest status reporting on blockers (login wall, PAT scope, missing modules) without overclaiming success",
+        "weight": 0.2,
+        "description": "Evaluates honest status reporting on blockers (login wall, pat scope, missing modules) without overclaiming success",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Robustness of the GitHub commit tooling and recovery from runtime failures (path, deps, permissions)",
+        "weight": 0.2,
+        "description": "Evaluates robustness of the github commit tooling and recovery from runtime failures (path, deps, permissions)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Quality of embed integration scoping and faithful recon of the live /builder app state",
+        "weight": 0.2,
+        "description": "Evaluates quality of embed integration scoping and faithful recon of the live /builder app state",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmq4ugvck0rmn07adh5372dh1",
+    "name": "Agent Portability Bundle & Live Integration Execution",
+    "description": "This thread is a multi-step operational build—creating a portable export, standing up a GitHub commit skill, and driving live browser-based onboarding—that isn't captured by the research/data-pipeline rubrics in the library; it needs criteria around integration robustness, blocker honesty, and adherence to detailed user constraints.",
+    "taskType": "coding",
+    "criteria": [
+      {
+        "name": "Completeness and fidelity of the portable agent bundle (persona, wizard logic, domain knowledge, skills, manifest)",
+        "weight": 0.2,
+        "description": "Evaluates completeness and fidelity of the portable agent bundle (persona, wizard logic, domain knowledge, skills, manifest)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Robustness of integration tooling built on the fly (GitHub commit skill, dependency handling, error recovery)",
+        "weight": 0.2,
+        "description": "Evaluates robustness of integration tooling built on the fly (github commit skill, dependency handling, error recovery)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Honest diagnosis of blockers (login failures, token scope, missing embed) with actionable unblock paths",
+        "weight": 0.2,
+        "description": "Evaluates honest diagnosis of blockers (login failures, token scope, missing embed) with actionable unblock paths",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Faithful adherence to user's operating rules (canonical-first BOM, every-fastener granularity, draft-gated learning, approval flow)",
+        "weight": 0.2,
+        "description": "Evaluates faithful adherence to user's operating rules (canonical-first bom, every-fastener granularity, draft-gated learning, approval flow)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Verification rigor before claiming success (browser state checks, embed presence confirmation, no premature 'done' claims)",
+        "weight": 0.2,
+        "description": "Evaluates verification rigor before claiming success (browser state checks, embed presence confirmation, no premature 'done' claims)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmpp1ewmi00fz07adr9v7uirv",
+    "name": "B2B Supplier Outreach Campaign Build",
+    "description": "This work combines large-scale supplier research, data hygiene, decision-maker identification, competitive intelligence, and multi-asset deliverable production for a B2B outreach campaign — a recurring pattern that benefits from structured quality evaluation across accuracy, completeness, and operational usefulness.",
+    "taskType": "research",
+    "criteria": [
+      {
+        "name": "Supplier data accuracy and verification (real companies, correct categorization, working contact details)",
+        "weight": 0.2,
+        "description": "Evaluates supplier data accuracy and verification (real companies, correct categorization, working contact details)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Tier prioritization quality (logical segmentation with named decision-makers for top tier)",
+        "weight": 0.2,
+        "description": "Evaluates tier prioritization quality (logical segmentation with named decision-makers for top tier)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Outreach asset completeness (email templates, follow-ups, NDA, mail-merge CSV, wireframes)",
+        "weight": 0.2,
+        "description": "Evaluates outreach asset completeness (email templates, follow-ups, nda, mail-merge csv, wireframes)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Competitive positioning depth (identifies real gaps, names specific competitors, sharpens differentiation)",
+        "weight": 0.2,
+        "description": "Evaluates competitive positioning depth (identifies real gaps, names specific competitors, sharpens differentiation)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Operational realism (honest reply-rate expectations, concrete playbook, handles objections)",
+        "weight": 0.2,
+        "description": "Evaluates operational realism (honest reply-rate expectations, concrete playbook, handles objections)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmpp1bsbm00fg07adwxkchfd3",
+    "name": "Skill/Script Extension with Spec-Doc-Code Lockstep",
+    "description": "This work involves coordinated multi-artifact updates (script + project spec doc + skill registration) where consistency, backward compatibility, and clear communication about draft/save state are critical. A rubric would help evaluate whether the agent maintained discipline across all three surfaces, tested regressions, and was honest about what was actually persisted vs. pending.",
+    "taskType": "coding",
+    "criteria": [
+      {
+        "name": "Backward compatibility preservation (regression testing of existing behavior)",
+        "weight": 0.2,
+        "description": "Evaluates backward compatibility preservation (regression testing of existing behavior)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Lockstep synchronization across spec doc, script, and skill documentation",
+        "weight": 0.2,
+        "description": "Evaluates lockstep synchronization across spec doc, script, and skill documentation",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Smoke testing coverage including edge cases and new functionality",
+        "weight": 0.2,
+        "description": "Evaluates smoke testing coverage including edge cases and new functionality",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Surfacing of unilateral design decisions and pending user actions",
+        "weight": 0.2,
+        "description": "Evaluates surfacing of unilateral design decisions and pending user actions",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Output schema consistency and canonical naming discipline",
+        "weight": 0.2,
+        "description": "Evaluates output schema consistency and canonical naming discipline",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmpp1atl700he06adjxhwxp8t",
+    "name": "Multi-Artifact Lockstep Skill Extension",
+    "description": "This work involves extending a calculator skill across three coupled artifacts (spec doc, Python script, registered skill documentation) with a strict lockstep update flow. Evaluation should check whether all three stay synchronized, whether backward compatibility is preserved via default enum values, whether smoke tests cover both regression and new paths, and whether the agent honestly reports draft-vs-saved state rather than overclaiming completion.",
+    "taskType": "coding",
+    "criteria": [
+      {
+        "name": "Spec/script/documentation consistency",
+        "weight": 0.2,
+        "description": "Evaluates spec/script/documentation consistency",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Backward compatibility preservation",
+        "weight": 0.2,
+        "description": "Evaluates backward compatibility preservation",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Smoke test coverage (regression + new + edge cases)",
+        "weight": 0.2,
+        "description": "Evaluates smoke test coverage (regression + new + edge cases)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Explicit surfacing of unilateral design decisions",
+        "weight": 0.2,
+        "description": "Evaluates explicit surfacing of unilateral design decisions",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Honest status reporting (draft vs saved state)",
+        "weight": 0.2,
+        "description": "Evaluates honest status reporting (draft vs saved state)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmpp01qo4004f07advvrwiwgq",
+    "name": "Named Agent Configuration Quality",
+    "description": "This work involves designing a named agent config from thread context — selecting skills, memories, writing a system prompt, and positioning the agent relative to existing ones. A rubric would help evaluate whether such agent drafts are well-scoped, accurate, and properly equipped.",
+    "taskType": "agent-design",
+    "criteria": [
+      {
+        "name": "Scope clarity and complementarity with existing agents",
+        "weight": 0.2,
+        "description": "Evaluates scope clarity and complementarity with existing agents",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "System prompt completeness (identity, mission, operating principles, domain constraints)",
+        "weight": 0.2,
+        "description": "Evaluates system prompt completeness (identity, mission, operating principles, domain constraints)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Relevance and coverage of attached skills and memories",
+        "weight": 0.2,
+        "description": "Evaluates relevance and coverage of attached skills and memories",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Domain accuracy (compliance facts, technical details, project context)",
+        "weight": 0.2,
+        "description": "Evaluates domain accuracy (compliance facts, technical details, project context)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Appropriate model and learning settings for the agent's role",
+        "weight": 0.2,
+        "description": "Evaluates appropriate model and learning settings for the agent's role",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmpp0191x004b07adjqz6hbfp",
+    "name": "Catalogue Scraping & Schema Mapping Pipeline",
+    "description": "This work involves building a multi-stage data pipeline (search → parse → map → validate) with domain-specific classification logic, schema design for a downstream calculator engine, and embedded regulatory compliance. Quality hinges on catching misclassifications (e.g., hinge panel vs hinge hardware), correct unit semantics (per-piece vs per-metre), and producing outputs the downstream engine can actually consume.",
+    "taskType": "coding",
+    "criteria": [
+      {
+        "name": "Data extraction accuracy (correct prices, dimensions, categories)",
+        "weight": 0.2,
+        "description": "Evaluates data extraction accuracy (correct prices, dimensions, categories)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Classification taxonomy completeness (handles edge cases and priority ordering)",
+        "weight": 0.2,
+        "description": "Evaluates classification taxonomy completeness (handles edge cases and priority ordering)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Schema extensibility (new categories integrate cleanly with existing config)",
+        "weight": 0.2,
+        "description": "Evaluates schema extensibility (new categories integrate cleanly with existing config)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Output validation and audit (verifies correctness before delivery)",
+        "weight": 0.2,
+        "description": "Evaluates output validation and audit (verifies correctness before delivery)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Domain compliance integration (regulatory rules embedded with enforcement levels)",
+        "weight": 0.2,
+        "description": "Evaluates domain compliance integration (regulatory rules embedded with enforcement levels)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmpp0133j004o07adqyln5a89",
+    "name": "Bunnings catalogue scraping & fence-config generation",
+    "description": "This work involves a multi-stage data pipeline (search, parse, map, audit, enrich) producing structured configs consumed by a calculator engine. Quality hinges on subtle classification ordering, domain-specific formulas (paling overlap math), and regulatory accuracy — none of which are captured by generic research/coding rubrics.",
+    "taskType": "data-pipeline",
+    "criteria": [
+      {
+        "name": "Product classification accuracy (correct category assignment with priority ordering)",
+        "weight": 0.2,
+        "description": "Evaluates product classification accuracy (correct category assignment with priority ordering)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Schema extension correctness (new categories, units, cuts_per_run_fn formulas)",
+        "weight": 0.2,
+        "description": "Evaluates schema extension correctness (new categories, units, cuts_per_run_fn formulas)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Price extraction fidelity (per-item vs per-linear-metre disambiguation)",
+        "weight": 0.2,
+        "description": "Evaluates price extraction fidelity (per-item vs per-linear-metre disambiguation)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Compliance rule completeness and accuracy (AS1926.1, AS/NZS 1604, BAL, council)",
+        "weight": 0.2,
+        "description": "Evaluates compliance rule completeness and accuracy (as1926.1, as/nzs 1604, bal, council)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Output config validity and downstream usability by calculator engine",
+        "weight": 0.2,
+        "description": "Evaluates output config validity and downstream usability by calculator engine",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmpp00mwb003807adarydfns7",
+    "name": "Domain-Specific Data Pipeline Extension",
+    "description": "This work extends a structured data pipeline (Bunnings fence scraper) with three new fence-type families, adding ~13 new component categories, new BOM quantity formulas, and parser improvements. Quality hinges on domain accuracy (do the formulas match installer specs?), classification precision (keyword collisions caused real bugs that needed fixing mid-flight), and regression discipline (verifying old configs still work). A dedicated rubric would help evaluate similar iterative pipeline-extension work.",
+    "taskType": "coding",
+    "criteria": [
+      {
+        "name": "Schema extension correctness (new categories cover the domain without overlap)",
+        "weight": 0.2,
+        "description": "Evaluates schema extension correctness (new categories cover the domain without overlap)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Classification accuracy (keyword ordering avoids substring collisions and misclassifications)",
+        "weight": 0.2,
+        "description": "Evaluates classification accuracy (keyword ordering avoids substring collisions and misclassifications)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Quantity formula correctness (cuts-per-run expressions reflect real-world install specs)",
+        "weight": 0.2,
+        "description": "Evaluates quantity formula correctness (cuts-per-run expressions reflect real-world install specs)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Regression safety (changes don't break previously-working configs)",
+        "weight": 0.2,
+        "description": "Evaluates regression safety (changes don't break previously-working configs)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Deliverable completeness (configs saved, skill updated, documentation reflects new state)",
+        "weight": 0.2,
+        "description": "Evaluates deliverable completeness (configs saved, skill updated, documentation reflects new state)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmpozyky2003m07adr62pwrg7",
+    "name": "Research Planning & Scoping Quality",
+    "description": "This work is a pre-research planning phase: clarifying user needs, structuring a repository scouting plan, documenting considerations, and seeking approval. A rubric focused on planning rigor (rather than final research output) would evaluate whether the agent set up the research effectively before executing.",
+    "taskType": "research",
+    "criteria": [
+      {
+        "name": "Clarifying question quality before research",
+        "weight": 0.2,
+        "description": "Evaluates clarifying question quality before research",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Plan structure and feasibility",
+        "weight": 0.2,
+        "description": "Evaluates plan structure and feasibility",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Honest framing of constraints and limitations",
+        "weight": 0.2,
+        "description": "Evaluates honest framing of constraints and limitations",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Use of working document for context persistence",
+        "weight": 0.2,
+        "description": "Evaluates use of working document for context persistence",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Approval checkpoint before deep work",
+        "weight": 0.2,
+        "description": "Evaluates approval checkpoint before deep work",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmpozybvt003y07admiur7q00",
+    "name": "Open-Source Repository Landscape Research",
+    "description": "This work involved scouting GitHub repos as inspiration for a specific product (landscaping/fencing drawing tool), evaluating each across multiple dimensions (license, activity, tech stack, fit), and synthesizing into tiered recommendations with a concrete stack proposal. A rubric specific to OSS landscape research would evaluate whether the shortlist is genuinely useful for product decisions versus padded or superficial.",
+    "taskType": "research",
+    "criteria": [
+      {
+        "name": "Relevance and fit to stated use case",
+        "weight": 0.2,
+        "description": "Evaluates relevance and fit to stated use case",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Coverage of viable alternatives across tech stacks",
+        "weight": 0.2,
+        "description": "Evaluates coverage of viable alternatives across tech stacks",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Accuracy of repo metadata (stars, license, activity)",
+        "weight": 0.2,
+        "description": "Evaluates accuracy of repo metadata (stars, license, activity)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Honest quality assessment (flagging abandoned/low-quality repos)",
+        "weight": 0.2,
+        "description": "Evaluates honest quality assessment (flagging abandoned/low-quality repos)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Actionable synthesis and stack recommendation",
+        "weight": 0.2,
+        "description": "Evaluates actionable synthesis and stack recommendation",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmpozxtt0006h07adb33tumx1",
+    "name": "Open-Source Tech Stack Research & Implementation Planning",
+    "description": "This work involved deep research into open-source repositories for a specific product domain (landscaping/fencing drawing tool), followed by synthesizing two complete implementation plans. Evaluation should check whether recommended repos actually fit the use case, whether metadata is current/accurate, and whether plans are concrete and honest about tradeoffs.",
+    "taskType": "research",
+    "criteria": [
+      {
+        "name": "Repository coverage and relevance to domain",
+        "weight": 0.2,
+        "description": "Evaluates repository coverage and relevance to domain",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Accuracy of repo metadata (stars, license, activity)",
+        "weight": 0.2,
+        "description": "Evaluates accuracy of repo metadata (stars, license, activity)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Quality of architectural fit analysis",
+        "weight": 0.2,
+        "description": "Evaluates quality of architectural fit analysis",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Actionability of implementation plans",
+        "weight": 0.2,
+        "description": "Evaluates actionability of implementation plans",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Honest tradeoff and licensing risk assessment",
+        "weight": 0.2,
+        "description": "Evaluates honest tradeoff and licensing risk assessment",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmpozuld4003607adhdajt1cz",
+    "name": "Technical Architecture Research & Agent Synthesis",
+    "description": "This thread combined deep open-source repo research, multi-plan architecture synthesis, and creation of persistent agent/memory artifacts for a specific product (Anyfence). A rubric should evaluate whether the recommendations are evidence-based, honest about licensing/maturity tradeoffs, tailored to the domain, and whether the resulting agent configuration is genuinely useful rather than generic.",
+    "taskType": "research",
+    "criteria": [
+      {
+        "name": "Repo shortlist accuracy and currency (stars, license, activity verified)",
+        "weight": 0.2,
+        "description": "Evaluates repo shortlist accuracy and currency (stars, license, activity verified)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Tradeoff honesty across implementation paths",
+        "weight": 0.2,
+        "description": "Evaluates tradeoff honesty across implementation paths",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Domain-specific applicability (fits the user's actual product context)",
+        "weight": 0.2,
+        "description": "Evaluates domain-specific applicability (fits the user's actual product context)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Actionability of plans (concrete phases, stack choices, week estimates)",
+        "weight": 0.2,
+        "description": "Evaluates actionability of plans (concrete phases, stack choices, week estimates)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Quality of synthesized agent/memory artifacts (self-contained, non-redundant)",
+        "weight": 0.2,
+        "description": "Evaluates quality of synthesized agent/memory artifacts (self-contained, non-redundant)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  },
+  {
+    "id": "cmpozsia0002707ad2angb9sl",
+    "name": "Knowledge Extraction & Agent Synthesis Quality",
+    "description": "This task involved mining an entire project's thread history to extract reusable skills and memories, then synthesizing them into a specialist agent. It needs evaluation on whether extractions are faithful to source material, sufficiently specific to be reusable, non-duplicative, and whether the resulting agent prompt coherently bundles the domain knowledge.",
+    "taskType": "analysis",
+    "criteria": [
+      {
+        "name": "Coverage breadth across source material",
+        "weight": 0.16666666666666666,
+        "description": "Evaluates coverage breadth across source material",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Specificity and reusability of extracted skills/memories",
+        "weight": 0.16666666666666666,
+        "description": "Evaluates specificity and reusability of extracted skills/memories",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Avoidance of duplication with existing artifacts",
+        "weight": 0.16666666666666666,
+        "description": "Evaluates avoidance of duplication with existing artifacts",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Quality of agent system prompt synthesis",
+        "weight": 0.16666666666666666,
+        "description": "Evaluates quality of agent system prompt synthesis",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Faithfulness to source facts (no hallucinated details)",
+        "weight": 0.16666666666666666,
+        "description": "Evaluates faithfulness to source facts (no hallucinated details)",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      },
+      {
+        "name": "Actionable triggers and whenToUse clarity",
+        "weight": 0.16666666666666666,
+        "description": "Evaluates actionable triggers and whenToUse clarity",
+        "scoringGuide": "1: Poor, 3: Acceptable, 5: Excellent"
+      }
+    ]
+  }
+]
