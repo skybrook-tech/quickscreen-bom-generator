@@ -20,6 +20,10 @@ jobs:
 
       - run: npm run build
 
+      # Pure unit tests for the multi-supplier + pricing libs ported in salvage
+      # Phase A. No DB / DOM dependency — safe to run in the build job.
+      - run: npm run test:lib
+
   integration:
     name: Deno integration tests
     runs-on: ubuntu-latest
@@ -54,6 +58,11 @@ jobs:
 
       - name: Reset DB + seed
         run: npm run db:reset
+
+      # Salvage Phase A: assert supplier/org data isolation across the catalogue +
+      # pricing surface (anon / org-A / org-B / admin). Business-ending if it fails.
+      - name: RLS matrix
+        run: npm run test:rls
 
       - name: Serve edge functions
         run: supabase functions serve --no-verify-jwt &
