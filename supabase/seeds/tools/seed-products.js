@@ -15,9 +15,10 @@ import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import Ajv from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, basename } from 'node:path';
+import { assertNotProd } from './guard.js';
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || 'local'}`, override: true });
 
@@ -26,6 +27,8 @@ const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl) throw new Error('Missing VITE_SUPABASE_URL');
 if (!serviceRoleKey) throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY');
+
+assertNotProd(supabaseUrl, 'seed:products');
 
 const supabase = createClient(supabaseUrl, serviceRoleKey, {
   auth: { persistSession: false },
@@ -74,6 +77,8 @@ const cache = {
   ruleSetIdByKey: new Map(),              // key: `${orgId}|${productId}|${name}` → id
   ruleVersionIdByKey: new Map(),          // key: `${ruleSetId}|${versionLabel}` → id
   componentIdBySku: new Map(),            // key: `${orgId}|${sku}` → id
+  supplierIdBySlug: new Map(),
+  systemInstanceIdBySlug: new Map(),      // key: `${orgId}|${slug}` → id
 };
 
 async function resolveOrgId(slug) {
@@ -86,6 +91,37 @@ async function resolveOrgId(slug) {
   if (error) throw new Error(`resolveOrgId(${slug}): ${error.message}`);
   if (!data) throw new Error(`org not found: ${slug}`);
   cache.orgIdBySlug.set(slug, data.id);
+  return data.id;
+}
+
+async function resolveSupplierId(slug) {
+  if (!slug) return null;
+  if (cache.supplierIdBySlug.has(slug)) return cache.supplierIdBySlug.get(slug);
+  const { data, error } = await supabase
+    .from('suppliers')
+    .select('id')
+    .eq('slug', slug)
+    .maybeSingle();
+  if (error) throw new Error(`resolveSupplierId(${slug}): ${error.message}`);
+  const id = data?.id || null;
+  cache.supplierIdBySlug.set(slug, id);
+  return id;
+}
+
+async function resolveSystemInstanceId(supplierId, slug) {
+  // The unique constraint is (supplier_id, slug), so filter by both — otherwise
+  // .maybeSingle() errors once multiple suppliers have instances sharing a slug.
+  const key = `${supplierId}|${slug}`;
+  if (cache.systemInstanceIdBySlug.has(key)) return cache.systemInstanceIdBySlug.get(key);
+  let q = supabase.from('system_instances').select('id').eq('slug', slug);
+  if (supplierId) q = q.eq('supplier_id', supplierId);
+  const { data, error } = await q.maybeSingle();
+  if (error) throw new Error(`resolveSystemInstanceId(${slug}): ${error.message}`);
+  if (!data) {
+    console.warn(`  Warning: system_instance not found for slug: ${slug}`);
+    return null;
+  }
+  cache.systemInstanceIdBySlug.set(key, data.id);
   return data.id;
 }
 
@@ -162,10 +198,23 @@ function invalidateRuleVersionCache() {
 function invalidateComponentCache() {
   cache.componentIdBySku.clear();
 }
+function invalidateSystemInstanceCache() {
+  cache.systemInstanceIdBySlug.clear();
+}
 
 // ── Per-section upserters ───────────────────────────────────────────────────
 
-async function upsertProducts(orgId, rows) {
+const TABLES_WITH_SYSTEM_INSTANCE_ID = new Set([
+  'products',
+  'product_components',
+  'product_variables',
+  'product_rules',
+  'product_component_selectors',
+  'product_companion_rules',
+  'pricing_rules',
+]);
+
+async function upsertProducts(orgId, rows, supplierId, systemInstanceId) {
   if (!rows?.length) return;
   // Flat model (post-migration 022): every product is top-level, keyed by
   // (org_id, system_type). supabase-js upsert with onConflict works directly.
@@ -180,6 +229,8 @@ async function upsertProducts(orgId, rows) {
     active: r.active,
     sort_order: r.sort_order ?? 0,
     metadata: r.metadata ?? {},
+    supplier_id: supplierId,
+    system_instance_id: systemInstanceId || null,
   }));
   const { error } = await supabase
     .from('products')
@@ -189,7 +240,7 @@ async function upsertProducts(orgId, rows) {
   console.log(`  products: ${toUpsert.length} upserted`);
 }
 
-async function upsertProductComponents(orgId, rows) {
+async function upsertProductComponents(orgId, rows, supplierId, systemInstanceId) {
   if (!rows?.length) return;
   const toUpsert = rows.map((r) => ({
     org_id: orgId,
@@ -200,6 +251,7 @@ async function upsertProductComponents(orgId, rows) {
     unit: r.unit,
     default_price: r.default_price ?? null,
     system_types: r.system_types ?? ['QSHS'],
+    canonical_code: r.canonical_code ?? null,
     metadata: {
       ...(r.metadata ?? {}),
       ...(r.subCategory ? { subCategory: r.subCategory } : {}),
@@ -211,6 +263,8 @@ async function upsertProductComponents(orgId, rows) {
       ...(r.qtyFormula !== undefined ? { qtyFormula: r.qtyFormula } : {}),
     },
     active: r.active,
+    supplier_id: supplierId,
+    system_instance_id: systemInstanceId || null,
   }));
   const { error } = await supabase
     .from('product_components')
@@ -263,12 +317,16 @@ async function upsertRuleVersions(orgId, rows) {
   console.log(`  rule_versions: ${toUpsert.length} upserted`);
 }
 
-async function upsertPerProduct(orgId, table, rows, mapper, conflict) {
+async function upsertPerProduct(orgId, table, rows, mapper, conflict, systemInstanceId) {
   if (!rows?.length) return;
   const toUpsert = await Promise.all(
     rows.map(async (r) => {
       const productId = await resolveProductId(orgId, r.product_system_type);
-      return mapper(r, productId);
+      const mapped = mapper(r, productId, systemInstanceId);
+      if (TABLES_WITH_SYSTEM_INSTANCE_ID.has(table)) {
+        mapped.system_instance_id = systemInstanceId || null;
+      }
+      return mapped;
     }),
   );
   const { error } = await supabase
@@ -278,7 +336,7 @@ async function upsertPerProduct(orgId, table, rows, mapper, conflict) {
   console.log(`  ${table}: ${toUpsert.length} upserted`);
 }
 
-async function upsertProductRules(orgId, rows) {
+async function upsertProductRules(orgId, rows, systemInstanceId) {
   if (!rows?.length) return;
   const toUpsert = await Promise.all(
     rows.map(async (r) => {
@@ -297,6 +355,7 @@ async function upsertProductRules(orgId, rows) {
         priority: r.priority,
         active: r.active,
         notes: r.notes ?? null,
+        system_instance_id: systemInstanceId || null,
       };
     }),
   );
@@ -307,12 +366,66 @@ async function upsertProductRules(orgId, rows) {
   console.log(`  product_rules: ${toUpsert.length} upserted`);
 }
 
-async function upsertPricingRules(orgId, rows) {
+async function upsertPricingRules(orgId, rows, supplierId, systemInstanceId) {
   if (!rows?.length) return;
-  // pricing_rules' unique index is partial (WHERE active = true), so
-  // supabase-js .upsert() with onConflict can't target it. Use check-then-insert/update.
-  let inserted = 0;
-  let updated = 0;
+
+  // Pre-populate component ID cache to avoid sequential SELECT queries (paginated to bypass 1000 limit)
+  const allComponents = [];
+  let fromComp = 0;
+  let toComp = 999;
+  let hasMoreComps = true;
+  while (hasMoreComps) {
+    const { data, error } = await supabase
+      .from('product_components')
+      .select('id, sku')
+      .eq('org_id', orgId)
+      .order('id')
+      .range(fromComp, toComp);
+    if (error) throw new Error(`product_components cache pre-fill failed: ${error.message}`);
+    allComponents.push(...(data ?? []));
+    if ((data ?? []).length < 1000) {
+      hasMoreComps = false;
+    } else {
+      fromComp += 1000;
+      toComp += 1000;
+    }
+  }
+  for (const comp of allComponents) {
+    cache.componentIdBySku.set(`${orgId}|${comp.sku}`, comp.id);
+  }
+
+  // 1. Fetch all existing active pricing rules for this org in one query (paginated to bypass 1000 limit)
+  const existingRules = [];
+  let fromRules = 0;
+  let toRules = 999;
+  let hasMoreRules = true;
+  while (hasMoreRules) {
+    const { data, error } = await supabase
+      .from('pricing_rules')
+      .select('id, component_id, tier_code, priority')
+      .eq('org_id', orgId)
+      .eq('active', true)
+      .order('id')
+      .range(fromRules, toRules);
+    if (error) throw new Error(`pricing_rules fetch failed: ${error.message}`);
+    existingRules.push(...(data ?? []));
+    if ((data ?? []).length < 1000) {
+      hasMoreRules = false;
+    } else {
+      fromRules += 1000;
+      toRules += 1000;
+    }
+  }
+
+  // 2. Build a map of existing active pricing rules for O(1) lookup
+  const existingMap = new Map();
+  for (const row of existingRules) {
+    existingMap.set(`${row.component_id}|${row.tier_code}|${row.priority}`, row.id);
+  }
+
+  const inserts = [];
+  const updates = [];
+
   for (const r of rows) {
     const componentId = await resolveComponentId(orgId, r.sku);
     const row = {
@@ -326,47 +439,69 @@ async function upsertPricingRules(orgId, rows) {
       valid_to: r.valid_to ?? null,
       notes: r.notes ?? null,
       active: r.active,
+      canonical_code: r.canonical_code ?? null,
+      supplier_id: supplierId,
+      system_instance_id: systemInstanceId || null,
     };
-    const { data: existing, error: lookupErr } = await supabase
-      .from('pricing_rules')
-      .select('id')
-      .eq('component_id', componentId)
-      .eq('tier_code', r.tier_code)
-      .eq('priority', r.priority ?? 0)
-      .eq('active', true)
-      .maybeSingle();
-    if (lookupErr) throw new Error(`pricing_rules lookup (${r.sku} ${r.tier_code}): ${lookupErr.message}`);
-    if (existing) {
-      const { error } = await supabase.from('pricing_rules').update(row).eq('id', existing.id);
-      if (error) throw new Error(`pricing_rules update (${r.sku} ${r.tier_code}): ${error.message}`);
-      updated++;
+
+    const key = `${componentId}|${r.tier_code}|${row.priority}`;
+    if (existingMap.has(key)) {
+      updates.push({
+        id: existingMap.get(key),
+        ...row
+      });
     } else {
-      const { error } = await supabase.from('pricing_rules').insert(row);
-      if (error) throw new Error(`pricing_rules insert (${r.sku} ${r.tier_code}): ${error.message}`);
-      inserted++;
+      inserts.push(row);
     }
   }
-  console.log(`  pricing_rules: ${inserted} inserted, ${updated} updated`);
+
+  // 3. Batch upsert inserts and updates in chunks of 500 to avoid request size limits
+  const CHUNK_SIZE = 500;
+  
+  if (inserts.length > 0) {
+    for (let i = 0; i < inserts.length; i += CHUNK_SIZE) {
+      const chunk = inserts.slice(i, i + CHUNK_SIZE);
+      const { error } = await supabase.from('pricing_rules').upsert(chunk);
+      if (error) throw new Error(`pricing_rules batch insert error: ${error.message}`);
+    }
+  }
+
+  if (updates.length > 0) {
+    for (let i = 0; i < updates.length; i += CHUNK_SIZE) {
+      const chunk = updates.slice(i, i + CHUNK_SIZE);
+      const { error } = await supabase.from('pricing_rules').upsert(chunk);
+      if (error) throw new Error(`pricing_rules batch update error: ${error.message}`);
+    }
+  }
+
+  console.log(`  pricing_rules: ${inserts.length} inserted, ${updates.length} updated`);
 }
 
 // ── Colour options ──────────────────────────────────────────────────────────
 
 async function upsertColourOptions() {
-  let raw;
-  try {
-    raw = JSON.parse(readFileSync(COLOUR_OPTIONS_FILE, 'utf8'));
-  } catch {
-    console.log('colour-options.json not found — skipping');
-    return;
+  const dirs = readdirSync(ROOT).filter((name) => {
+    try {
+      return statSync(resolve(ROOT, name)).isDirectory() && name !== 'schemas' && name !== 'tools';
+    } catch {
+      return false;
+    }
+  });
+
+  for (const dirName of dirs) {
+    const file = resolve(ROOT, dirName, 'colour-options.json');
+    if (existsSync(file)) {
+      const raw = JSON.parse(readFileSync(file, 'utf8'));
+      const orgId = await resolveOrgId(raw.org_slug);
+      const rows = (raw.colour_options ?? []).map(r => ({ org_id: orgId, ...r }));
+      if (rows.length === 0) continue;
+      const { error } = await supabase
+        .from('colour_options')
+        .upsert(rows, { onConflict: 'org_id,value' });
+      if (error) throw new Error(`colour_options upsert in ${dirName}: ${error.message}`);
+      console.log(`${dirName}/colour-options.json: ${rows.length} colour options upserted`);
+    }
   }
-  const orgId = await resolveOrgId(raw.org_slug);
-  const rows = (raw.colour_options ?? []).map(r => ({ org_id: orgId, ...r }));
-  if (rows.length === 0) return;
-  const { error } = await supabase
-    .from('colour_options')
-    .upsert(rows, { onConflict: 'org_id,value' });
-  if (error) throw new Error(`colour_options upsert: ${error.message}`);
-  console.log(`colour-options.json: ${rows.length} upserted`);
 }
 
 // ── Main per-file loader ────────────────────────────────────────────────────
@@ -380,11 +515,62 @@ async function loadFile(path) {
     throw new Error(`${basename(path)} failed schema validation:\n${errs}`);
   }
   const orgId = await resolveOrgId(raw.org_slug);
-  console.log(`${basename(path)} (org=${raw.org_slug}):`);
+
+  // Resolve supplier and system instance if specified
+  const supplierSlug = raw.supplier_slug || 'glass-outlet';
+  const supplierId = await resolveSupplierId(supplierSlug);
+
+  // Link the supplier to its organisation at SEED time. The migration that
+  // creates suppliers (031/032) runs before the org is seeded by
+  // organizations.sql, so it cannot populate suppliers.org_id on a fresh
+  // `db reset`. Price-book RLS scopes by suppliers.org_id, so set it here where
+  // the org definitely exists. Idempotent: only fills a NULL org_id.
+  if (supplierId && orgId) {
+    const { error: linkErr } = await supabase
+      .from('suppliers')
+      .update({ org_id: orgId })
+      .eq('id', supplierId)
+      .is('org_id', null);
+    if (linkErr) throw new Error(`link supplier ${supplierSlug} → org: ${linkErr.message}`);
+  }
+
+  // Resolve system_instance_slug and systemInstanceId (PR #6 logic)
+  let systemInstanceSlug = raw.system_instance_slug;
+  if (!systemInstanceSlug && raw.products?.[0]?.system_type) {
+    const systemType = raw.products[0].system_type;
+    const lowerType = systemType.toLowerCase();
+    if (lowerType === 'qshs') systemInstanceSlug = 'qshs';
+    else if (lowerType === 'vs') systemInstanceSlug = 'vs';
+    else if (lowerType === 'xpl') systemInstanceSlug = 'xpl';
+    else if (lowerType === 'bayg') systemInstanceSlug = 'bayg';
+    else if (lowerType === 'colorbond') systemInstanceSlug = 'go-colorbond';
+    else if (lowerType === 'qs_gate') systemInstanceSlug = 'qs-gate';
+    else if (lowerType === 'xpsg_gate') systemInstanceSlug = 'xpsg-gate';
+    else systemInstanceSlug = lowerType;
+  }
+  const systemInstanceId = systemInstanceSlug ? await resolveSystemInstanceId(supplierId, systemInstanceSlug) : null;
+
+  console.log(`${basename(path)} (org=${raw.org_slug}, supplier=${supplierSlug}, systemInstance=${systemInstanceSlug || 'none'}):`);
+
+  // Idempotently approve system instance flags (Step 0)
+  if (systemInstanceId && raw.system_instance_slug) {
+    const { error: updateErr } = await supabase
+      .from('system_instances')
+      .update({
+        status: 'active',
+        visibility: 'public',
+        readiness_status: 'approved'
+      })
+      .eq('id', systemInstanceId);
+    if (updateErr) {
+      throw new Error(`Failed to update system_instance flags for ${raw.system_instance_slug}: ${updateErr.message}`);
+    }
+    console.log(`  system_instances: approved '${raw.system_instance_slug}'`);
+  }
 
   // dependency order
-  await upsertProducts(orgId, raw.products);
-  await upsertProductComponents(orgId, raw.product_components);
+  await upsertProducts(orgId, raw.products, supplierId, systemInstanceId);
+  await upsertProductComponents(orgId, raw.product_components, supplierId, systemInstanceId);
   await upsertRuleSets(orgId, raw.rule_sets);
   await upsertRuleVersions(orgId, raw.rule_versions);
 
@@ -408,6 +594,7 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,name',
+    systemInstanceId,
   );
 
   await upsertPerProduct(
@@ -427,6 +614,7 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,name',
+    systemInstanceId,
   );
 
   await upsertPerProduct(
@@ -443,9 +631,10 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,name',
+    systemInstanceId,
   );
 
-  await upsertProductRules(orgId, raw.product_rules);
+  await upsertProductRules(orgId, raw.product_rules, systemInstanceId);
 
   await upsertPerProduct(
     orgId,
@@ -465,6 +654,7 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,selector_key',
+    systemInstanceId,
   );
 
   await upsertPerProduct(
@@ -487,6 +677,7 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,rule_key',
+    systemInstanceId,
   );
 
   await upsertPerProduct(
@@ -503,9 +694,10 @@ async function loadFile(path) {
       active: r.active,
     }),
     'org_id,product_id,warning_key',
+    systemInstanceId,
   );
 
-  await upsertPricingRules(orgId, raw.pricing_rules);
+  await upsertPricingRules(orgId, raw.pricing_rules, supplierId, systemInstanceId);
 }
 
 // ── Post-load row-count floors (replaces v3-verify-seeds.sql) ──────────────
@@ -552,13 +744,28 @@ async function verifyRowCounts() {
 // ── Main ────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const files = readdirSync(PRODUCTS_DIR)
-    .filter((f) => f.endsWith('.json') && !f.startsWith('_'))
-    .sort()
-    .map((f) => resolve(PRODUCTS_DIR, f));
+  const dirs = readdirSync(ROOT).filter((name) => {
+    try {
+      return statSync(resolve(ROOT, name)).isDirectory() && name !== 'schemas' && name !== 'tools';
+    } catch {
+      return false;
+    }
+  });
+
+  let files = [];
+  for (const dirName of dirs) {
+    const productsDir = resolve(ROOT, dirName, 'products');
+    if (existsSync(productsDir)) {
+      const supplierFiles = readdirSync(productsDir)
+        .filter((f) => f.endsWith('.json') && !f.startsWith('_'))
+        .map((f) => resolve(productsDir, f));
+      files = files.concat(supplierFiles);
+    }
+  }
+  files.sort();
 
   if (files.length === 0) {
-    console.log(`No product files found in ${PRODUCTS_DIR}`);
+    console.log(`No product files found in seeds directory.`);
     return;
   }
 

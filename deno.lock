@@ -178,7 +178,7 @@
         "npm:autoprefixer@^10.4.27",
         "npm:clsx@^2.1.1",
         "npm:color-contrast@1",
-        "npm:cypress@^13.17.0",
+        "npm:cypress@^15.15.0",
         "npm:dotenv@^17.4.0",
         "npm:jsdom@^29.1.1",
         "npm:lucide-react@^1.7.0",

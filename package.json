@@ -19,6 +19,8 @@
     "cy:run:html": "CYPRESS_IS_HTML_APP=true CYPRESS_BASE_URL=http://localhost:3124 cypress run",
     "cy:run:react": "CYPRESS_BASE_URL=http://localhost:5173 cypress run",
     "test": "vitest run --environment jsdom src/hooks/useGoogleMaps.test.tsx",
+    "test:lib": "vitest run --environment jsdom src/lib/multiSupplier src/lib/pricing",
+    "test:rls": "npx deno test --allow-net --allow-env supabase/tests/rls_matrix_test.ts",
     "test:e2e": "npm run cy:run",
     "test:unit": "npx deno test --allow-read --allow-env supabase/functions/bom-calculator/index_test.ts",
     "test:integration": "scripts/test-integration.sh",
@@ -30,10 +32,10 @@
     "prices:import": "node scripts/import-glassoutlet-prices.mjs",
     "prices:brief-at": "node scripts/build-brief-at-pricing-seed.mjs",
     "seed:dump": "node supabase/seeds/tools/dump-to-json.js",
-    "db:reset": "npx supabase@latest db reset && npm run seed:products && npm run seed:auth",
-    "db:push-remote": "npx supabase@latest db push",
+    "db:reset": "npx supabase@2.104.0 db reset && npm run seed:products && npm run seed:auth",
+    "db:push-remote": "npx supabase@2.104.0 db push",
     "db:seed-remote": "npm run db:push-remote && npm run seed:products:remote",
-    "setup": "npx supabase@latest start && npm run db:reset"
+    "setup": "npx supabase@2.104.0 start && npm run db:reset"
   },
   "devDependencies": {
     "@types/google.maps": "^3.64.1",
