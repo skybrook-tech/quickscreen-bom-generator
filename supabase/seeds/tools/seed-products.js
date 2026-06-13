@@ -18,6 +18,7 @@ import addFormats from 'ajv-formats';
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, basename } from 'node:path';
+import { assertNotProd } from './guard.js';
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || 'local'}`, override: true });
 
@@ -26,6 +27,8 @@ const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl) throw new Error('Missing VITE_SUPABASE_URL');
 if (!serviceRoleKey) throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY');
+
+assertNotProd(supabaseUrl, 'seed:products');
 
 const supabase = createClient(supabaseUrl, serviceRoleKey, {
   auth: { persistSession: false },

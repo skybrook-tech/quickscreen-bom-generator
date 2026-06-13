@@ -41,6 +41,20 @@ if (!SERVICE || !ANON) {
   Deno.exit(1);
 }
 
+// Production guard: this test creates + deletes orgs, users, and pricing rows.
+// Refuse to run it against a known production project. Mirror of
+// supabase/seeds/tools/guard.js (kept inline — Deno cannot import the Node CJS/ESM
+// guard cleanly). Override with ALLOW_PROD_DB=1 only if you truly mean it.
+const PROD_SUPABASE_REFS = ["dsjtihvefcteftuxvowt"];
+const prodMatch = PROD_SUPABASE_REFS.find((ref) => URL.includes(ref));
+if (prodMatch && Deno.env.get("ALLOW_PROD_DB") !== "1") {
+  console.error(
+    `REFUSING to run the RLS matrix against PRODUCTION Supabase project "${prodMatch}" (${URL}). ` +
+      `Set ALLOW_PROD_DB=1 to override.`,
+  );
+  Deno.exit(1);
+}
+
 const svc = createClient(URL, SERVICE, { auth: { persistSession: false } });
 
 /** Rows a client can SELECT, or [] when blocked (permission denied / RLS). */

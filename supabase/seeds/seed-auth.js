@@ -1,6 +1,7 @@
 // seed-auth.ts
 import { createClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
+import { assertNotProd } from "./tools/guard.js";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "local"}`, override: true });
 
@@ -13,6 +14,8 @@ if (!supabaseUrl) {
 if (!serviceRoleKey) {
   throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY");
 }
+
+assertNotProd(supabaseUrl, "seed:auth");
 
 const supabase = createClient(supabaseUrl, serviceRoleKey);
 
