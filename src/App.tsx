@@ -16,6 +16,13 @@ import { ProductsIndexPage } from "./pages/admin/ProductsIndexPage";
 import { ProductDetailPage } from "./pages/admin/ProductDetailPage";
 import { ComponentsIndexPage } from "./pages/admin/ComponentsIndexPage";
 import { ColoursAdminPage } from "./pages/admin/ColoursAdminPage";
+import { SuppliersListPage } from "./pages/admin/SuppliersListPage";
+import { SupplierEditPage } from "./pages/admin/SupplierEditPage";
+import { SystemInstancesListPage } from "./pages/admin/SystemInstancesListPage";
+import { SystemInstanceEditPage } from "./pages/admin/SystemInstanceEditPage";
+import { ProductsListPage } from "./pages/admin/ProductsListPage";
+import { ProductEditPage } from "./pages/admin/ProductEditPage";
+import { ImportPage } from "./pages/admin/ImportPage";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { ProfileProvider } from "./context/ProfileContext";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -69,6 +76,105 @@ const router = createBrowserRouter([
           <AuthGuard>
             <CalculatorV3Page />
           </AuthGuard>
+        ),
+      },
+      // ── Salvage Phase B: multi-supplier admin CRUD + import pipeline ──────
+      {
+        path: "/admin/suppliers",
+        element: (
+          <AdminGuard>
+            <SuppliersListPage />
+          </AdminGuard>
+        ),
+      },
+      {
+        path: "/admin/suppliers/new",
+        element: (
+          <AdminGuard>
+            <SupplierEditPage />
+          </AdminGuard>
+        ),
+      },
+      {
+        path: "/admin/suppliers/:slug/edit",
+        element: (
+          <AdminGuard>
+            <SupplierEditPage />
+          </AdminGuard>
+        ),
+      },
+      {
+        path: "/admin/system-instances",
+        element: (
+          <AdminGuard>
+            <SystemInstancesListPage />
+          </AdminGuard>
+        ),
+      },
+      {
+        path: "/admin/system-instances/new",
+        element: (
+          <AdminGuard>
+            <SystemInstanceEditPage />
+          </AdminGuard>
+        ),
+      },
+      {
+        path: "/admin/system-instances/:id/edit",
+        element: (
+          <AdminGuard>
+            <SystemInstanceEditPage />
+          </AdminGuard>
+        ),
+      },
+      {
+        // New supplier-catalogue product CRUD. Mounted at /admin/catalog to avoid
+        // colliding with the existing v3 product admin at /admin/products.
+        path: "/admin/catalog",
+        element: (
+          <AdminGuard>
+            <ProductsListPage />
+          </AdminGuard>
+        ),
+      },
+      {
+        path: "/admin/catalog/new",
+        element: (
+          <AdminGuard>
+            <ProductEditPage />
+          </AdminGuard>
+        ),
+      },
+      {
+        path: "/admin/catalog/:id/edit",
+        element: (
+          <AdminGuard>
+            <ProductEditPage />
+          </AdminGuard>
+        ),
+      },
+      {
+        path: "/admin/catalog/:id",
+        element: (
+          <AdminGuard>
+            <ProductEditPage />
+          </AdminGuard>
+        ),
+      },
+      {
+        path: "/admin/imports/new",
+        element: (
+          <AdminGuard>
+            <ImportPage />
+          </AdminGuard>
+        ),
+      },
+      {
+        path: "/admin/imports/:runId/review",
+        element: (
+          <AdminGuard>
+            <ImportPage />
+          </AdminGuard>
         ),
       },
       {
