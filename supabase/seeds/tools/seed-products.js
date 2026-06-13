@@ -108,14 +108,14 @@ async function resolveSupplierId(slug) {
   return id;
 }
 
-async function resolveSystemInstanceId(orgId, slug) {
-  const key = `${orgId}|${slug}`;
+async function resolveSystemInstanceId(supplierId, slug) {
+  // The unique constraint is (supplier_id, slug), so filter by both — otherwise
+  // .maybeSingle() errors once multiple suppliers have instances sharing a slug.
+  const key = `${supplierId}|${slug}`;
   if (cache.systemInstanceIdBySlug.has(key)) return cache.systemInstanceIdBySlug.get(key);
-  const { data, error } = await supabase
-    .from('system_instances')
-    .select('id')
-    .eq('slug', slug)
-    .maybeSingle();
+  let q = supabase.from('system_instances').select('id').eq('slug', slug);
+  if (supplierId) q = q.eq('supplier_id', supplierId);
+  const { data, error } = await q.maybeSingle();
   if (error) throw new Error(`resolveSystemInstanceId(${slug}): ${error.message}`);
   if (!data) {
     console.warn(`  Warning: system_instance not found for slug: ${slug}`);
@@ -548,7 +548,7 @@ async function loadFile(path) {
     else if (lowerType === 'xpsg_gate') systemInstanceSlug = 'xpsg-gate';
     else systemInstanceSlug = lowerType;
   }
-  const systemInstanceId = systemInstanceSlug ? await resolveSystemInstanceId(orgId, systemInstanceSlug) : null;
+  const systemInstanceId = systemInstanceSlug ? await resolveSystemInstanceId(supplierId, systemInstanceSlug) : null;
 
   console.log(`${basename(path)} (org=${raw.org_slug}, supplier=${supplierSlug}, systemInstance=${systemInstanceSlug || 'none'}):`);
 
@@ -578,7 +578,7 @@ async function loadFile(path) {
     orgId,
     'product_variables',
     raw.product_variables,
-    (r, productId, sysInstId) => ({
+    (r, productId) => ({
       org_id: orgId,
       product_id: productId,
       name: r.name,
@@ -592,7 +592,6 @@ async function loadFile(path) {
       scope: r.scope,
       sort_order: r.sort_order ?? 0,
       active: r.active,
-      system_instance_id: sysInstId,
     }),
     'org_id,product_id,name',
     systemInstanceId,
@@ -641,7 +640,7 @@ async function loadFile(path) {
     orgId,
     'product_component_selectors',
     raw.product_component_selectors,
-    (r, productId, sysInstId) => ({
+    (r, productId) => ({
       org_id: orgId,
       product_id: productId,
       selector_key: r.selector_key,
@@ -653,7 +652,6 @@ async function loadFile(path) {
       priority: r.priority ?? 100,
       notes: r.notes ?? null,
       active: r.active,
-      system_instance_id: sysInstId,
     }),
     'org_id,product_id,selector_key',
     systemInstanceId,
@@ -663,7 +661,7 @@ async function loadFile(path) {
     orgId,
     'product_companion_rules',
     raw.product_companion_rules,
-    (r, productId, sysInstId) => ({
+    (r, productId) => ({
       org_id: orgId,
       product_id: productId,
       rule_key: r.rule_key,
@@ -677,7 +675,6 @@ async function loadFile(path) {
       priority: r.priority ?? 100,
       notes: r.notes ?? null,
       active: r.active,
-      system_instance_id: sysInstId,
     }),
     'org_id,product_id,rule_key',
     systemInstanceId,

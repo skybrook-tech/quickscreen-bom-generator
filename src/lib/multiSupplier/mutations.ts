@@ -86,10 +86,6 @@ function systemInstanceToRow(instance: Partial<SystemInstance>) {
   if (instance.approvedAt !== undefined) row.approved_at = instance.approvedAt;
   if (instance.readinessNotes !== undefined) row.readiness_notes = instance.readinessNotes;
   if (instance.metadata !== undefined) row.metadata = instance.metadata;
-  if (instance.aiVettingStatus !== undefined) row.ai_vetting_status = instance.aiVettingStatus;
-  if (instance.aiVettingNotes !== undefined) row.ai_vetting_notes = instance.aiVettingNotes;
-  if (instance.isPublicLibrary !== undefined) row.is_public_library = instance.isPublicLibrary;
-  if (instance.isNewProduct !== undefined) row.is_new_product = instance.isNewProduct;
   return row;
 }
 
@@ -129,10 +125,6 @@ function rowToSystemInstance(row: any): SystemInstance {
     approvedAt: row.approved_at ?? undefined,
     readinessNotes: row.readiness_notes ?? undefined,
     metadata: row.metadata ?? undefined,
-    aiVettingStatus: row.ai_vetting_status ?? undefined,
-    aiVettingNotes: row.ai_vetting_notes ?? undefined,
-    isPublicLibrary: row.is_public_library ?? false,
-    isNewProduct: row.is_new_product ?? false,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

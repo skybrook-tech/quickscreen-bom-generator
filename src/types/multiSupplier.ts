@@ -21,11 +21,6 @@ export interface Supplier {
   orgId?: string;
   status: EntityStatus;
   metadata?: Record<string, unknown>;
-  customBrandingLogo?: string;
-  customBrandingBanner?: string;
-  customBrandingStyles?: Record<string, string>;
-  installs_enabled?: boolean;
-  postcodes_serviced?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -62,11 +57,6 @@ export interface SystemInstance {
   approvedAt?: string;
   readinessNotes?: string;
   metadata?: Record<string, unknown>;
-  calculatorClonedFrom?: string;
-  aiVettingStatus?: 'pending' | 'passed' | 'failed' | 'skipped';
-  aiVettingNotes?: string;
-  isPublicLibrary?: boolean;
-  isNewProduct?: boolean;
   createdAt: string;
   updatedAt: string;
 }

@@ -71,15 +71,13 @@ CREATE TRIGGER trigger_price_books_updated_at
 ALTER TABLE price_books      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE price_book_items ENABLE ROW LEVEL SECURITY;
 
--- price_books: read published books for any supplier the user can see; read all books
--- for own org; admin reads everything.
-CREATE POLICY "price_books_read_published" ON price_books FOR SELECT TO authenticated
-  USING (
-    status = 'published'
-    OR authored_by = auth.uid()
-    OR (SELECT role FROM profiles WHERE id = auth.uid()) = 'admin'
-  );
-
+-- NOTE (salvage Phase A): the SELECT (read) policy for price_books is created in
+-- 037_multi_supplier_rls.sql, NOT here. The fork's original read policy made every
+-- PUBLISHED book world-readable to any authenticated user, leaking one supplier's
+-- pricing to another. We deliberately do NOT create that policy. With RLS enabled
+-- and no SELECT policy, price_books is deny-by-default for reads — so even a
+-- migration run that stops before 037 leaves the table SECURE (unreadable), never
+-- world-readable. 037 then adds the org-scoped read policy.
 CREATE POLICY "price_books_insert" ON price_books FOR INSERT TO authenticated
   WITH CHECK (
     auth.uid() IS NOT NULL
@@ -99,17 +97,8 @@ CREATE POLICY "price_books_delete_admin" ON price_books FOR DELETE TO authentica
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON price_books TO authenticated;
 
--- price_book_items: read follows the parent book; admin writes only.
-CREATE POLICY "price_book_items_read" ON price_book_items FOR SELECT TO authenticated
-  USING (
-    price_book_id IN (
-      SELECT id FROM price_books
-      WHERE status = 'published'
-        OR authored_by = auth.uid()
-        OR (SELECT role FROM profiles WHERE id = auth.uid()) = 'admin'
-    )
-  );
-
+-- price_book_items: SELECT (read) policy is likewise created in 037 (org-scoped,
+-- following the parent book). Deny-by-default for reads until then. Admin writes only.
 CREATE POLICY "price_book_items_write_admin" ON price_book_items FOR ALL TO authenticated
   USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin')
   WITH CHECK ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
@@ -151,11 +140,17 @@ BEGIN
   -- Path 2: legacy pricing_rules fallback. Join via pricing_rules_with_sku VIEW
   -- (created in migration 008) which exposes sku via product_components.
   -- Price is NUMERIC(10,2) dollars → multiply by 100 to return cents.
+  --
+  -- Scoped to the requested supplier's org so that, if two suppliers ever share a
+  -- SKU, the fallback returns the right supplier's price instead of whichever row
+  -- wins on priority. (suppliers.org_id is populated at seed time; this runs at
+  -- request time, by which point it is set.)
   SELECT prws.price INTO v_price_dollars
     FROM pricing_rules_with_sku prws
    WHERE prws.sku = p_sku
      AND prws.tier_code = p_tier_code
      AND prws.active = TRUE
+     AND prws.org_id = (SELECT org_id FROM suppliers WHERE id = p_supplier_id)
      AND (prws.valid_from IS NULL OR prws.valid_from <= p_at)
      AND (prws.valid_to   IS NULL OR prws.valid_to   >  p_at)
    ORDER BY prws.priority DESC

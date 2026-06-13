@@ -215,15 +215,26 @@ CREATE POLICY "suppliers_read" ON suppliers FOR SELECT TO authenticated
     OR (SELECT role FROM profiles WHERE id = auth.uid()) = 'admin'
   );
 
+-- Salvage Phase A hardening: constrain org_id on insert. Without this, any
+-- authenticated user could insert a supplier with org_id = <victim-org>, and
+-- because price-book RLS gates on suppliers.org_id, that would expose their
+-- price books to the victim org. A user may only create suppliers in their own
+-- org (or org-less / platform-tier suppliers with org_id NULL).
 CREATE POLICY "suppliers_insert" ON suppliers FOR INSERT TO authenticated
   WITH CHECK (
     auth.uid() IS NOT NULL
     AND (authored_by IS NULL OR authored_by = auth.uid())
+    AND (org_id IS NULL OR org_id = public.user_org_id())
   );
 
+-- UPDATE author path also pins org_id so an author cannot re-home a supplier
+-- into another org after creation.
 CREATE POLICY "suppliers_update_author" ON suppliers FOR UPDATE TO authenticated
   USING (authored_by = auth.uid())
-  WITH CHECK (authored_by = auth.uid());
+  WITH CHECK (
+    authored_by = auth.uid()
+    AND (org_id IS NULL OR org_id = public.user_org_id())
+  );
 
 CREATE POLICY "suppliers_update_admin" ON suppliers FOR UPDATE TO authenticated
   USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin')
@@ -262,15 +273,22 @@ CREATE POLICY "system_instances_read" ON system_instances FOR SELECT TO authenti
     OR (SELECT role FROM profiles WHERE id = auth.uid()) = 'admin'
   );
 
+-- Salvage Phase A hardening: same org_id pinning as suppliers. The read policy
+-- below keys on org_id = user_org_id(), so an unconstrained insert would let a
+-- user inject a system instance into another org's calculator picker.
 CREATE POLICY "system_instances_insert" ON system_instances FOR INSERT TO authenticated
   WITH CHECK (
     auth.uid() IS NOT NULL
     AND (authored_by IS NULL OR authored_by = auth.uid())
+    AND (org_id IS NULL OR org_id = public.user_org_id())
   );
 
 CREATE POLICY "system_instances_update_author" ON system_instances FOR UPDATE TO authenticated
   USING (authored_by = auth.uid())
-  WITH CHECK (authored_by = auth.uid());
+  WITH CHECK (
+    authored_by = auth.uid()
+    AND (org_id IS NULL OR org_id = public.user_org_id())
+  );
 
 CREATE POLICY "system_instances_update_admin" ON system_instances FOR UPDATE TO authenticated
   USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin')

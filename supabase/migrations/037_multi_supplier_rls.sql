@@ -52,11 +52,12 @@ CREATE POLICY "pricing_rules_select_own_org" ON pricing_rules
   FOR SELECT TO authenticated
   USING (org_id = public.user_org_id());
 
--- ─── price_books: replace fork's "published → world" with org-scoped read ───
--- The fork (migration 033 port) created price_books_read_published which made
--- every PUBLISHED price book readable by ANY authenticated user — i.e. supplier
--- A could read supplier B's published pricing. Drop it and re-scope by org via
--- suppliers.org_id, keeping author + admin access.
+-- ─── price_books: org-scoped read ──────────────────────────────────────────
+-- 033 intentionally creates NO read policy for price_books (the fork's leaky
+-- "published → world" policy was dropped at source), so the table is
+-- deny-by-default for reads until this migration. The DROP below is defensive
+-- only — a no-op on a clean chain, but it cleans up a DB previously migrated
+-- from the fork where the leaky policy existed.
 
 DROP POLICY IF EXISTS "price_books_read_published" ON price_books;
 
@@ -70,9 +71,15 @@ CREATE POLICY "price_books_read_own_org" ON price_books
     )
   );
 
--- ─── price_book_items: follow the (now org-scoped) parent book ──────────────
--- The fork's price_book_items_read mirrored the published→world rule via the
--- parent. Replace it with one that follows the org-scoped parent policy above.
+-- ─── price_book_items: follow the org-scoped parent book ───────────────────
+-- 033 creates no read policy here either (deny-by-default until now). The DROP
+-- is defensive against a fork-migrated DB.
+--
+-- PERF (revisit in Phase B): this is a two-level correlated subquery
+-- (price_book_items → price_books → suppliers). Fine at Phase A volumes (the
+-- import pipeline doesn't populate these tables yet), but once Phase B starts
+-- filling price_book_items at scale, consider a JOIN-based policy or a
+-- denormalised org_id column on price_book_items to avoid the nested IN.
 
 DROP POLICY IF EXISTS "price_book_items_read" ON price_book_items;
 

@@ -35,7 +35,9 @@ jobs:
           # Pinned: supabase CLI 2.106.0 regressed service_role access to
           # RLS-enabled tables (db:reset seed fails with "permission denied for
           # table organisations"). 2.104.0 is the last known-good for this repo's
-          # seed flow. db:reset is pinned to the same version in package.json.
+          # seed flow. db:reset/setup/db:push-remote are pinned to the same
+          # version in package.json — keep all four in sync.
+          # Tracking issue: #97 (revisit when the upstream regression is fixed).
           version: 2.104.0
 
       - uses: denoland/setup-deno@v2

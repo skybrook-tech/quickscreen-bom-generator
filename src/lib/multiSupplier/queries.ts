@@ -63,11 +63,6 @@ function rowToSupplier(row: any): Supplier {
     authoredBy: row.authored_by ?? undefined,
     orgId: row.org_id ?? undefined,
     status: row.status, metadata: row.metadata ?? undefined,
-    customBrandingLogo: row.custom_branding_logo ?? undefined,
-    customBrandingBanner: row.custom_branding_banner ?? undefined,
-    customBrandingStyles: row.custom_branding_styles ?? undefined,
-    installs_enabled: row.installs_enabled ?? false,
-    postcodes_serviced: row.postcodes_serviced ?? undefined,
     createdAt: row.created_at, updatedAt: row.updated_at,
   };
 }
@@ -100,11 +95,6 @@ function rowToSystemInstance(row: any): SystemInstance {
     approvedAt: row.approved_at ?? undefined,
     readinessNotes: row.readiness_notes ?? undefined,
     metadata: row.metadata ?? undefined,
-    calculatorClonedFrom: row.calculator_cloned_from ?? undefined,
-    aiVettingStatus: row.ai_vetting_status ?? undefined,
-    aiVettingNotes: row.ai_vetting_notes ?? undefined,
-    isPublicLibrary: row.is_public_library ?? false,
-    isNewProduct: row.is_new_product ?? false,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

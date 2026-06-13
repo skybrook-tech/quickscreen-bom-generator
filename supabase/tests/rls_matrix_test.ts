@@ -145,7 +145,7 @@ async function setup() {
   bProductId = bProd!.id;
 
   const { data: bComp, error: compErr } = await svc.from("product_components")
-    .insert({ org_id: orgBId, sku: B_SKU, name: "RLS Test Component B", category: "accessory", supplier_id: bSupplierId })
+    .insert({ org_id: orgBId, sku: B_SKU, name: "RLS Test Component B", category: "accessory", unit: "each", supplier_id: bSupplierId })
     .select("id").single();
   if (compErr) throw compErr;
   bComponentId = bComp!.id;
