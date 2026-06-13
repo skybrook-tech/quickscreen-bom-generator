@@ -2,7 +2,12 @@ name: CI
 
 on:
   pull_request:
-    branches: [master]
+    # Salvage workflow: phase PRs target `staging`; master stays frozen until
+    # Phase E is proven on staging. Run CI for PRs into either branch.
+    branches: [master, staging]
+  push:
+    # Validate the integrated state whenever a phase merges into staging.
+    branches: [staging]
 
 jobs:
   build:
