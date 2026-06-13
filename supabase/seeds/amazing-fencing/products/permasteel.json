@@ -1,0 +1,58 @@
+{
+  "org_slug": "amazing-fencing",
+  "supplier_slug": "amazing-fencing",
+  "system_instance_slug": "amazing-permasteel",
+  "_format_note": "PermaSteel is Amazing Fencing's proprietary modular fencing brand. Sold as GP bundles in standard heights (1.5/1.8/2.1/2.4m). Distinct from generic ColorBond — PermaSteel has its own C-post profile and sheet thicknesses. Prices null pending trade pricing PDF.",
+  "_source": "https://amazingfencing.com.au/products/permasteel-fencing/ + https://www.fencing-supplies.com.au/colorbond-steel-fencing-supplies/ (SKU list 2026-05-28)",
+  "products": [
+    {
+      "system_type": "AF_PERMASTEEL",
+      "product_type": "fence",
+      "name": "Amazing Fencing — PermaSteel",
+      "description": "PermaSteel modular fencing system — Amazing Fencing's proprietary brand. Sold as GP bundles in 1.5/1.8/2.1/2.4m heights with proprietary C posts (0.95mm), rails (0.8mm), and sheets (0.35mm).",
+      "active": true,
+      "sort_order": 210,
+      "metadata": {
+        "_provenance": {"supplier_slug": "amazing-fencing", "system_instance_slug": "amazing-permasteel"},
+        "brand": "PermaSteel (proprietary)",
+        "standard_heights_m": [1.5, 1.8, 2.1, 2.4],
+        "post_bm_thickness_mm": 0.95,
+        "rail_bm_thickness_mm": 0.8,
+        "sheet_bm_thickness_mm": 0.35,
+        "sold_as": "GP bundles"
+      }
+    }
+  ],
+  "product_components": [
+    {"sku": "AF-PMS-CPOST-2.4", "name": "PERMA-STEEL C Post 2.4m × 0.95mm", "description": "PermaSteel proprietary C post, 2.4m × 0.95mm BMT", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"length_m": 2.4, "bm_thickness_mm": 0.95, "post_type": "C"}, "active": true, "subCategory": "posts", "sortPriority": 10},
+    {"sku": "AF-PMS-CPOST-2.7", "name": "PERMA-STEEL C Post 2.7m × 0.95mm", "description": "PermaSteel proprietary C post, 2.7m × 0.95mm BMT", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"length_m": 2.7, "bm_thickness_mm": 0.95, "post_type": "C"}, "active": true, "subCategory": "posts", "sortPriority": 10},
+    {"sku": "AF-PMS-CPOST-3.0", "name": "PERMA-STEEL C Post 3.0m × 0.95mm", "description": "PermaSteel proprietary C post, 3.0m × 0.95mm BMT", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"length_m": 3.0, "bm_thickness_mm": 0.95, "post_type": "C"}, "active": true, "subCategory": "posts", "sortPriority": 10},
+
+    {"sku": "AF-PMS-RAIL-2.35", "name": "PERMA-STEEL Rail 2.35m × 0.8mm", "description": "PermaSteel proprietary rail, 2.35m × 0.8mm BMT", "category": "rail", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"length_m": 2.35, "bm_thickness_mm": 0.8}, "active": true, "subCategory": "rails", "sortPriority": 20},
+    {"sku": "AF-PMS-RAIL-3.10", "name": "PERMA-STEEL Rail 3.10m × 0.8mm", "description": "PermaSteel proprietary rail, 3.10m × 0.8mm BMT", "category": "rail", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"length_m": 3.10, "bm_thickness_mm": 0.8}, "active": true, "subCategory": "rails", "sortPriority": 20},
+
+    {"sku": "AF-PMS-SHEET-1190", "name": "PERMA-STEEL Sheet 1190mm × 0.35mm", "description": "PermaSteel new-style sheet, 1190mm wide × 0.35mm BMT", "category": "sheet", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_mm": 1190, "bm_thickness_mm": 0.35, "raked": true}, "active": true, "subCategory": "sheets", "sortPriority": 30},
+    {"sku": "AF-PMS-SHEET-1490", "name": "PERMA-STEEL Sheet 1490mm × 0.35mm", "description": "PermaSteel new-style sheet, 1490mm wide × 0.35mm BMT", "category": "sheet", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_mm": 1490, "bm_thickness_mm": 0.35}, "active": true, "subCategory": "sheets", "sortPriority": 30},
+    {"sku": "AF-PMS-SHEET-1790", "name": "PERMA-STEEL Sheet 1790mm × 0.35mm", "description": "PermaSteel new-style sheet, 1790mm wide × 0.35mm BMT", "category": "sheet", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_mm": 1790, "bm_thickness_mm": 0.35}, "active": true, "subCategory": "sheets", "sortPriority": 30},
+    {"sku": "AF-PMS-SHEET-2090", "name": "PERMA-STEEL Sheet 2090mm × 0.35mm", "description": "PermaSteel new-style sheet, 2090mm wide × 0.35mm BMT", "category": "sheet", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_mm": 2090, "bm_thickness_mm": 0.35}, "active": true, "subCategory": "sheets", "sortPriority": 30},
+    {"sku": "AF-PMS-SHEET-2390", "name": "PERMA-STEEL Sheet 2390mm × 0.35mm", "description": "PermaSteel new-style sheet, 2390mm wide × 0.35mm BMT", "category": "sheet", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_mm": 2390, "bm_thickness_mm": 0.35}, "active": true, "subCategory": "sheets", "sortPriority": 30},
+
+    {"sku": "AF-PMS-BUNDLE-1.5", "name": "Permasteel GP Bundle 1.5m", "description": "Permasteel GP fencing bundle, 1.5m height (panels + posts + rails + sheets + screws)", "category": "panel", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"height_m": 1.5, "bundle_type": "GP", "_note": "Complete panel bundle; quantity per linear metre depends on supplier rules"}, "active": true, "subCategory": "panels", "sortPriority": 5},
+    {"sku": "AF-PMS-BUNDLE-1.8", "name": "Permasteel GP Bundle 1.8m", "description": "Permasteel GP fencing bundle, 1.8m height", "category": "panel", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"height_m": 1.8, "bundle_type": "GP"}, "active": true, "subCategory": "panels", "sortPriority": 5},
+    {"sku": "AF-PMS-BUNDLE-2.1", "name": "Permasteel GP Bundle 2.1m", "description": "Permasteel GP fencing bundle, 2.1m height", "category": "panel", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"height_m": 2.1, "bundle_type": "GP"}, "active": true, "subCategory": "panels", "sortPriority": 5},
+    {"sku": "AF-PMS-BUNDLE-2.4", "name": "Permasteel GP Bundle 2.4m", "description": "Permasteel GP fencing bundle, 2.4m height", "category": "panel", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"height_m": 2.4, "bundle_type": "GP"}, "active": true, "subCategory": "panels", "sortPriority": 5},
+
+    {"sku": "AF-PMS-GATE-SGL-0.9", "name": "Permasteel Single Gate 0.9m (GP Bundle)", "description": "Permasteel single swing gate, 0.9m wide, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_m": 0.9, "gate_movement": "swing", "bundle": "GP"}, "active": true, "subCategory": "gates", "sortPriority": 40},
+    {"sku": "AF-PMS-GATE-SGL-1.5", "name": "Permasteel Single Gate 1.5m (GP Bundle)", "description": "Permasteel single swing gate, 1.5m wide, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_m": 1.5, "gate_movement": "swing", "bundle": "GP"}, "active": true, "subCategory": "gates", "sortPriority": 40},
+    {"sku": "AF-PMS-GATE-SGL-1.8", "name": "Permasteel Single Gate 1.8m (GP Bundle)", "description": "Permasteel single swing gate, 1.8m wide, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_m": 1.8, "gate_movement": "swing", "bundle": "GP"}, "active": true, "subCategory": "gates", "sortPriority": 40},
+    {"sku": "AF-PMS-GATE-SGL-2.1", "name": "Permasteel Single Gate 2.1m (GP Bundle)", "description": "Permasteel single swing gate, 2.1m wide, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_m": 2.1, "gate_movement": "swing", "bundle": "GP"}, "active": true, "subCategory": "gates", "sortPriority": 40},
+
+    {"sku": "AF-PMS-GATE-DBL-1.2", "name": "Permasteel Double Gate 1.2m (GP Bundle)", "description": "Permasteel double swing gate, 1.2m total, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_m": 1.2, "gate_movement": "swing", "bundle": "GP", "leaves": 2}, "active": true, "subCategory": "gates", "sortPriority": 42},
+    {"sku": "AF-PMS-GATE-DBL-1.5", "name": "Permasteel Double Gate 1.5m (GP Bundle)", "description": "Permasteel double swing gate, 1.5m total, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_m": 1.5, "gate_movement": "swing", "bundle": "GP", "leaves": 2}, "active": true, "subCategory": "gates", "sortPriority": 42},
+    {"sku": "AF-PMS-GATE-DBL-1.8", "name": "Permasteel Double Gate 1.8m (GP Bundle)", "description": "Permasteel double swing gate, 1.8m total, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_m": 1.8, "gate_movement": "swing", "bundle": "GP", "leaves": 2}, "active": true, "subCategory": "gates", "sortPriority": 42},
+    {"sku": "AF-PMS-GATE-DBL-2.1", "name": "Permasteel Double Gate 2.1m (GP Bundle)", "description": "Permasteel double swing gate, 2.1m total, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_m": 2.1, "gate_movement": "swing", "bundle": "GP", "leaves": 2}, "active": true, "subCategory": "gates", "sortPriority": 42},
+
+    {"sku": "AF-PMS-LATTICE-2.35", "name": "PERMA-STEEL Lattice 300mm × 2.35m DIA", "description": "PermaSteel diamond lattice, 300mm wide × 2.35m", "category": "lattice", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_mm": 300, "length_m": 2.35, "pattern": "diamond"}, "active": true, "subCategory": "lattice", "sortPriority": 60},
+    {"sku": "AF-PMS-LATTICE-3.10", "name": "PERMA-STEEL Lattice 300mm × 3.10m DIA", "description": "PermaSteel diamond lattice, 300mm wide × 3.10m", "category": "lattice", "unit": "each", "default_price": null, "system_types": ["AF_PERMASTEEL"], "metadata": {"width_mm": 300, "length_m": 3.10, "pattern": "diamond"}, "active": true, "subCategory": "lattice", "sortPriority": 60}
+  ]
+}

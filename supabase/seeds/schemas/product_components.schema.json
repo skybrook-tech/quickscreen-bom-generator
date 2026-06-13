@@ -82,18 +82,18 @@
         ],
         "description": "Fallback per-unit price in AUD, used when no pricing_rules row matches. Usually mirrors the tier1 price."
       },
+      "canonical_code": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Cross-supplier normalised SKU/identifier (product_components.canonical_code, migration 035). Lets the same physical component across different suppliers be matched. Optional."
+      },
       "system_types": {
         "type": "array",
-        "description": "Which fencing systems this SKU applies to. Must be a subset of ['QSHS','VS','XPL','BAYG','GATE'] per the DB CHECK constraint.",
+        "description": "Which fencing systems this SKU applies to (e.g. QSHS/VS/XPL/BAYG/GATE for Glass Outlet, or supplier-specific codes like AF_COLORBOND, DF_CCA_PAL). Free-form since migration 047 dropped the DB CHECK constraint to allow multi-supplier system types.",
         "items": {
-          "type": "string",
-          "enum": [
-            "QSHS",
-            "VS",
-            "XPL",
-            "BAYG",
-            "GATE"
-          ]
+          "type": "string"
         }
       },
       "metadata": {

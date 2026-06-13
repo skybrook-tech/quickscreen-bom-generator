@@ -11,6 +11,22 @@
       "type": "string",
       "description": "Business key for the owning organisation. Applied to every row in this file — do NOT repeat org_slug on individual rows."
     },
+    "supplier_slug": {
+      "type": "string",
+      "description": "Business key for the owning supplier (suppliers.slug). Resolved by seed-products.js to set supplier_id provenance and link suppliers.org_id at seed time. Defaults to 'glass-outlet' when absent."
+    },
+    "system_instance_slug": {
+      "type": "string",
+      "description": "Business key for the owning system_instance (system_instances.slug, unique per supplier). Resolved by seed-products.js to set system_instance_id provenance; when set, the instance's status/visibility/readiness flags are approved on seed."
+    },
+    "_format_note": {
+      "type": "string",
+      "description": "Free-text authoring note about the file's format/provenance. Ignored by the upserter."
+    },
+    "_source": {
+      "type": "string",
+      "description": "Free-text note on the data source (e.g. supplier price list). Ignored by the upserter."
+    },
     "products":                     { "$ref": "products.schema.json" },
     "product_components":           { "$ref": "product_components.schema.json" },
     "rule_sets":                    { "$ref": "rule_sets.schema.json" },
