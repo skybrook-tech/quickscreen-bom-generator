@@ -516,7 +516,21 @@ async function loadFile(path) {
   // Resolve supplier and system instance if specified
   const supplierSlug = raw.supplier_slug || 'glass-outlet';
   const supplierId = await resolveSupplierId(supplierSlug);
-  
+
+  // Link the supplier to its organisation at SEED time. The migration that
+  // creates suppliers (031/032) runs before the org is seeded by
+  // organizations.sql, so it cannot populate suppliers.org_id on a fresh
+  // `db reset`. Price-book RLS scopes by suppliers.org_id, so set it here where
+  // the org definitely exists. Idempotent: only fills a NULL org_id.
+  if (supplierId && orgId) {
+    const { error: linkErr } = await supabase
+      .from('suppliers')
+      .update({ org_id: orgId })
+      .eq('id', supplierId)
+      .is('org_id', null);
+    if (linkErr) throw new Error(`link supplier ${supplierSlug} → org: ${linkErr.message}`);
+  }
+
   // Resolve system_instance_slug and systemInstanceId (PR #6 logic)
   let systemInstanceSlug = raw.system_instance_slug;
   if (!systemInstanceSlug && raw.products?.[0]?.system_type) {

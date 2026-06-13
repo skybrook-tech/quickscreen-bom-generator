@@ -33,7 +33,7 @@
     "prices:brief-at": "node scripts/build-brief-at-pricing-seed.mjs",
     "seed:dump": "node supabase/seeds/tools/dump-to-json.js",
     "db:reset": "npx supabase@2.104.0 db reset && npm run seed:products && npm run seed:auth",
-    "db:push-remote": "npx supabase@latest db push",
+    "db:push-remote": "npx supabase@2.104.0 db push",
     "db:seed-remote": "npm run db:push-remote && npm run seed:products:remote",
     "setup": "npx supabase@2.104.0 start && npm run db:reset"
   },

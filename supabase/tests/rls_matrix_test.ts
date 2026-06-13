@@ -50,8 +50,16 @@ async function rows(client: SupabaseClient, table: string, select = "*"): Promis
   return data ?? [];
 }
 
-function ids(list: any[]): Set<string> {
-  return new Set(list.map((r) => r.id));
+/**
+ * Whether a client can read ONE specific row by id. Targeted by-id reads are
+ * robust against PostgREST's default 1000-row page cap — the seeded Glass Outlet
+ * catalogue is large, so an unfiltered fetch may not contain a given fixture row
+ * even when RLS would allow it. RLS-blocked rows return 0 rows ⇒ false.
+ */
+async function canRead(client: SupabaseClient, table: string, id: string): Promise<boolean> {
+  const { data, error } = await client.from(table).select("id").eq("id", id).maybeSingle();
+  if (error) return false;
+  return !!data;
 }
 
 // ── fixture ids, resolved/created in setup ──────────────────────────────────
@@ -178,58 +186,53 @@ Deno.test("RLS matrix — supplier/org isolation across catalogue + pricing", as
     });
 
     await t.step("org-A user reads own org only; cannot read org-B pricing", async () => {
+      // Sanity: org-A sees its own (large) catalogue, and every visible row is org-A's.
       const comps = await rows(userA, "product_components", "id,org_id");
       assert(comps.length > 0, "org-A user should see org-A components");
       assert(comps.every((r) => r.org_id === orgAId), "org-A user must see only org-A components");
-      assert(!ids(comps).has(bComponentId), "org-A user must NOT see org-B component");
-
       const prules = await rows(userA, "pricing_rules", "id,org_id");
       assert(prules.length > 0, "org-A user should see org-A pricing");
       assert(prules.every((r) => r.org_id === orgAId), "org-A user must see only org-A pricing");
-      assert(!ids(prules).has(bPricingRuleId), "org-A user must NOT see org-B pricing rule");
-
       const prods = await rows(userA, "products", "id,org_id");
       assert(prods.every((r) => r.org_id === orgAId), "org-A user must see only org-A products");
-      assert(!ids(prods).has(bProductId), "org-A user must NOT see org-B product");
-
-      const books = await rows(userA, "price_books", "id,supplier_id");
-      assert(ids(books).has(aPriceBookId), "org-A user should see org-A price book");
-      assert(!ids(books).has(bPriceBookId), "org-A user must NOT see org-B price book");
-
-      const items = await rows(userA, "price_book_items", "id");
-      assert(!ids(items).has(bPriceBookItemId), "org-A user must NOT see org-B price book items");
-
       const rrules = await rows(userA, "product_rules", "id,org_id");
       assert(rrules.length > 0 && rrules.every((r) => r.org_id === orgAId), "org-A user must see only org-A product_rules");
+
+      // Isolation (by-id, leak check): org-A must NOT read any org-B row.
+      assert(!(await canRead(userA, "product_components", bComponentId)), "org-A user must NOT see org-B component");
+      assert(!(await canRead(userA, "pricing_rules", bPricingRuleId)), "org-A user must NOT see org-B pricing rule");
+      assert(!(await canRead(userA, "products", bProductId)), "org-A user must NOT see org-B product");
+      assert(!(await canRead(userA, "price_books", bPriceBookId)), "org-A user must NOT see org-B price book");
+      assert(!(await canRead(userA, "price_book_items", bPriceBookItemId)), "org-A user must NOT see org-B price book items");
+
+      // Own price book IS visible (supplier→org linkage populated at seed time).
+      assert(await canRead(userA, "price_books", aPriceBookId), "org-A user should see org-A price book");
+      assert(await canRead(userA, "price_book_items", aPriceBookItemId), "org-A user should see org-A price book items");
     });
 
     await t.step("org-B user reads own org only; cannot read org-A pricing", async () => {
       const comps = await rows(userB, "product_components", "id,org_id");
-      assert(ids(comps).has(bComponentId), "org-B user should see org-B component");
       assert(comps.every((r) => r.org_id === orgBId), "org-B user must see only org-B components");
-
       const prules = await rows(userB, "pricing_rules", "id,org_id");
-      assert(ids(prules).has(bPricingRuleId), "org-B user should see org-B pricing");
       assert(prules.every((r) => r.org_id === orgBId), "org-B user must NOT see any org-A pricing");
-
-      const books = await rows(userB, "price_books", "id");
-      assert(ids(books).has(bPriceBookId), "org-B user should see org-B price book");
-      assert(!ids(books).has(aPriceBookId), "org-B user must NOT see org-A price book");
-
-      const items = await rows(userB, "price_book_items", "id");
-      assert(ids(items).has(bPriceBookItemId), "org-B user should see own price book items");
-      assert(!ids(items).has(aPriceBookItemId), "org-B user must NOT see org-A price book items");
-
       const rrules = await rows(userB, "product_rules", "id,org_id");
       assertEquals(rrules.length, 0, "org-B user has no product_rules and must see none");
+
+      // Own rows visible (by-id).
+      assert(await canRead(userB, "product_components", bComponentId), "org-B user should see org-B component");
+      assert(await canRead(userB, "pricing_rules", bPricingRuleId), "org-B user should see org-B pricing");
+      assert(await canRead(userB, "price_books", bPriceBookId), "org-B user should see org-B price book");
+      assert(await canRead(userB, "price_book_items", bPriceBookItemId), "org-B user should see own price book items");
+
+      // Isolation (by-id, leak check): org-B must NOT read org-A price books.
+      assert(!(await canRead(userB, "price_books", aPriceBookId)), "org-B user must NOT see org-A price book");
+      assert(!(await canRead(userB, "price_book_items", aPriceBookItemId)), "org-B user must NOT see org-A price book items");
     });
 
     await t.step("admin can read across orgs (pricing_rules + product_components)", async () => {
-      const comps = ids(await rows(admin, "product_components", "id,org_id"));
-      assert(comps.has(bComponentId), "admin should see org-B component");
-
-      const prules = ids(await rows(admin, "pricing_rules", "id,org_id"));
-      assert(prules.has(bPricingRuleId), "admin should see org-B pricing rule");
+      // By-id reads — admin's unfiltered catalogue exceeds the 1000-row page cap.
+      assert(await canRead(admin, "product_components", bComponentId), "admin should see org-B component");
+      assert(await canRead(admin, "pricing_rules", bPricingRuleId), "admin should see org-B pricing rule");
     });
   } finally {
     await cleanup();
