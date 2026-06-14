@@ -10,3 +10,22 @@
   from   = "/*"
   to     = "/index.html"
   status = 200
+
+# ── Framing policy (brief 032) ──────────────────────────────────────────────
+# Deny framing everywhere by default (anti-clickjacking for the app + admin),
+# using CSP frame-ancestors (modern, override-able by a more-specific rule).
+# We deliberately do NOT set X-Frame-Options: it is not override-able per-path and
+# would block the embed even where CSP allows it.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "frame-ancestors 'none'"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# The embed route is the ONE surface third-party sites may iframe. More specific
+# than /*, so Netlify uses this frame-ancestors value for /embed/* responses.
+[[headers]]
+  for = "/embed/*"
+  [headers.values]
+    Content-Security-Policy = "frame-ancestors *"
