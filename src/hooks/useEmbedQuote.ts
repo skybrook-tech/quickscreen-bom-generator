@@ -35,7 +35,15 @@ export function useEmbedQuote(embedOrgSlug: string) {
         body: { embedOrgSlug, ...input },
       });
       if (error || !data || isEdgeFailurePayload(data)) {
-        throw new Error("Could not save your enquiry — please try again");
+        // supabase-js puts the HTTP Response on FunctionsHttpError.context;
+        // surface a friendlier hint when we've been rate-limited (429).
+        const status = (error as { context?: { status?: number } } | null)?.context
+          ?.status;
+        throw new Error(
+          status === 429
+            ? "You're sending requests too quickly — please wait a moment and try again"
+            : "Could not save your enquiry — please try again",
+        );
       }
       return data as EmbedQuoteResult;
     },

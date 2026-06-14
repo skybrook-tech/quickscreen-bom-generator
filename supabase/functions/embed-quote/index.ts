@@ -19,6 +19,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { resolveEmbedOrg } from "../_shared/auth.ts";
+import { enforceEmbedRateLimit, RATE_LIMIT_MESSAGE } from "../_shared/rateLimit.ts";
 
 function asString(v: unknown): string {
   return typeof v === "string" ? v : "";
@@ -39,6 +40,9 @@ Deno.serve(async (req: Request) => {
     }
 
     const { orgId } = await resolveEmbedOrg(embedOrgSlug);
+
+    // Writes are the highest-value abuse target — keep this tight.
+    await enforceEmbedRateLimit(orgId, req, { limit: 5, windowSeconds: 60 });
 
     const payload = body?.payload ?? null;
     const bomResult = body?.bomResult ?? null;
@@ -102,7 +106,11 @@ Deno.serve(async (req: Request) => {
     );
   } catch (err) {
     const message = err instanceof Error ? err.message : "Internal error";
-    const status = message.includes("Embedding is not enabled") ? 403 : 500;
+    const status = message === RATE_LIMIT_MESSAGE
+      ? 429
+      : message.includes("Embedding is not enabled")
+        ? 403
+        : 500;
     return new Response(JSON.stringify({ error: message }), {
       status,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

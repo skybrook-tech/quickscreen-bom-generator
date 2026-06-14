@@ -284,6 +284,7 @@ Deno.test("RLS matrix — supplier/org isolation across catalogue + pricing", as
         const table of [
           "product_components", "pricing_rules", "price_books", "price_book_items",
           "product_rules", "product_component_selectors", "system_instances", "suppliers", "quotes",
+          "embed_rate_limits",
         ]
       ) {
         assertEquals((await rows(anon, table)).length, 0, `anon must NOT read ${table} even with an org embed-enabled`);

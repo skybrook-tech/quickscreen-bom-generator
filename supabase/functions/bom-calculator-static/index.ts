@@ -14,6 +14,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { extractJwt, resolveEmbedOrg, resolveUserProfile } from "../_shared/auth.ts";
+import { enforceEmbedRateLimit, RATE_LIMIT_MESSAGE } from "../_shared/rateLimit.ts";
 import type { PricingTier, SeedComponent, LocalPricingRule } from "./engine.ts";
 import {
   calculateLocalBom,
@@ -63,11 +64,17 @@ Deno.serve(async (req: Request) => {
     //   • Authenticated app — resolve org + pricing tier from the JWT's profile.
     //   • Anonymous embed — resolve org from the slug, gated on embed_enabled,
     //     and force retail (tier1) pricing. Never expose trade tiers anonymously.
-    const { orgId, pricingTier } =
-      typeof embedOrgSlug === "string" && embedOrgSlug.length > 0
-        ? await resolveEmbedOrg(embedOrgSlug)
-        : await resolveUserProfile(extractJwt(req));
+    const isEmbed = typeof embedOrgSlug === "string" && embedOrgSlug.length > 0;
+    const { orgId, pricingTier } = isEmbed
+      ? await resolveEmbedOrg(embedOrgSlug)
+      : await resolveUserProfile(extractJwt(req));
     const tier = pricingTier as PricingTier;
+
+    // Anon compute is cheaper to abuse than a write but still spammable — looser
+    // window than embed-quote. Authenticated calls are not limited here.
+    if (isEmbed) {
+      await enforceEmbedRateLimit(orgId, req, { limit: 30, windowSeconds: 60 });
+    }
 
     if (!payload || typeof payload !== "object") {
       return new Response(
@@ -109,9 +116,11 @@ Deno.serve(async (req: Request) => {
     const status =
       message.includes("Authorization") || message.includes("JWT")
         ? 401
-        : message.includes("Embedding is not enabled")
-          ? 403
-          : 500;
+        : message === RATE_LIMIT_MESSAGE
+          ? 429
+          : message.includes("Embedding is not enabled")
+            ? 403
+            : 500;
     return new Response(
       JSON.stringify({ error: message }),
       { status, headers: { ...corsHeaders, "Content-Type": "application/json" } },
