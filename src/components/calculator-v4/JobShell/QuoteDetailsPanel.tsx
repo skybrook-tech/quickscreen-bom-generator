@@ -71,6 +71,17 @@ export function QuoteDetailsPanel() {
           />
         </div>
         <div>
+          <label className={LABEL_CLASS}>Phone</label>
+          <input
+            type="tel"
+            value={quoteDetails.phone ?? ""}
+            onChange={(e) => set("phone", e.target.value)}
+            placeholder="04xx xxx xxx"
+            className={INPUT_CLASS}
+            data-testid="v4-quote-phone"
+          />
+        </div>
+        <div>
           <label className={LABEL_CLASS}>Site address</label>
           <input
             type="text"

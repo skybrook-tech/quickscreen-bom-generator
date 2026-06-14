@@ -53,3 +53,42 @@ export async function resolveUserProfile(jwt: string): Promise<{
       | "tier3",
   };
 }
+
+/**
+ * Resolve the org for an ANONYMOUS embed request, by slug.
+ *
+ * The customer embed (/embed/:orgSlug) has no authenticated user, so the calling
+ * client only carries the anon key. Instead of a user→profile lookup we resolve
+ * the org directly from its slug and REQUIRE `embed_enabled = true` — that flag
+ * is the single server-side gate that authorises anonymous BOM calculation for
+ * an org. Embed quotes are always retail-priced (tier1); trade pricing tiers are
+ * never exposed through an anon path.
+ */
+export async function resolveEmbedOrg(slug: string): Promise<{
+  orgId: string;
+  pricingTier: "tier1";
+}> {
+  if (!slug || typeof slug !== "string") {
+    throw new Error("Missing embed org slug");
+  }
+
+  const supabaseAdmin = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+  );
+
+  const { data: org, error } = await supabaseAdmin
+    .from("organisations")
+    .select("id, embed_enabled")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (error) throw new Error(`Embed org lookup failed: ${error.message}`);
+  if (!org || org.embed_enabled !== true) {
+    // Same message whether the org is missing or just not opted in — don't leak
+    // which orgs exist to anonymous callers.
+    throw new Error("Embedding is not enabled for this organisation");
+  }
+
+  return { orgId: org.id as string, pricingTier: "tier1" };
+}

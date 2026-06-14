@@ -42,13 +42,15 @@ REVOKE ALL ON FUNCTION public.is_embed_enabled_org(uuid) FROM public;
 GRANT EXECUTE ON FUNCTION public.is_embed_enabled_org(uuid) TO anon, authenticated;
 
 -- ─── organisations: anon reads branding for embed-enabled orgs only ─────────
--- Column-restricted: anon may read only id/slug/name/branding (never settings or
--- other columns). Branding is public-facing for an org that has opted into embed.
+-- Column-restricted: anon may read only id/slug/name/branding/embed_domains
+-- (never settings or other columns). Branding is public-facing for an org that
+-- has opted into embed; embed_domains drives the loader's advisory referrer
+-- check (it is an allowlist of the supplier's own public domains — not secret).
 CREATE POLICY "organisations_anon_embed_read" ON organisations
   FOR SELECT TO anon
   USING (embed_enabled = true);
 
-GRANT SELECT (id, slug, name, branding) ON organisations TO anon;
+GRANT SELECT (id, slug, name, branding, embed_domains) ON organisations TO anon;
 
 -- ─── products: anon reads metadata for embed-enabled orgs only ──────────────
 -- products has no pricing columns; the picker + form need name/system_type/etc.

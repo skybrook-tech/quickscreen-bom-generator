@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useProfile } from "../context/ProfileContext";
 import { AppShell } from "../components/layout/AppShell";
@@ -15,26 +15,74 @@ import { LayoutMapPane } from "../components/calculator-v4/LayoutMap/LayoutMapPa
 import { LayoutSegmentHighlightProvider } from "../components/calculator-v4/LayoutMap/LayoutSegmentHighlightContext";
 import { useLayoutSegmentHighlight } from "../components/calculator-v4/LayoutMap/LayoutSegmentHighlightContext";
 import { BomPanel } from "../components/calculator-v4/Bom/BomPanel";
+import { toast } from "sonner";
 import { useBomCalculator } from "../hooks/useBomCalculator";
+import { useEmbedBridge } from "../hooks/useEmbedBridge";
+import { useEmbedQuote } from "../hooks/useEmbedQuote";
+import { PoweredBySkybrook } from "../components/embed/PoweredBySkybrook";
 import { ProductSelectV4 } from "../components/calculator-v4/JobShell/ProductSelectV4";
 import {
   createInitialMasterFenceSegment,
   syncRunVariablesFromMaster,
 } from "../lib/masterFenceSegment";
+import type { TenantTheme } from "../lib/tenantThemes";
 import type { CanonicalPayload, CanonicalSegment } from "../types/canonical.types";
+
+/**
+ * Embed render config — present only when CalculatorV4Page is mounted on the
+ * anonymous `/embed/:orgSlug` route. When set, the page renders chromeless
+ * (no AppShell header/nav), themes from the resolved org instead of the
+ * signed-in profile, calculates the BOM anonymously, and posts lifecycle
+ * events to the parent window.
+ */
+export interface EmbedRenderConfig {
+  orgSlug: string;
+  theme: TenantTheme | null;
+}
 
 /**
  * v4 calculator. Two-column layout: job/runs on the left, BOM on the right.
  * Layout map and gate forms surface as right-side slide-out panes.
  *
- * Routing: /fence-calculator-v4 (v3 stays at /fence-calculator).
+ * Routing: /fence-calculator-v4 (authenticated) and /embed/:orgSlug (anon embed).
  */
-function CalculatorV4Content() {
+function CalculatorV4Content({ embed }: { embed?: EmbedRenderConfig }) {
+  const embedMode = !!embed;
   const { state, dispatch } = useCalculatorV4();
   const payload = state.payload;
-  const bomMutation = useBomCalculator();
+  const bomMutation = useBomCalculator(embed?.orgSlug);
   const location = useLocation();
   const { tenantTheme } = useProfile();
+  const theme = embed ? embed.theme : tenantTheme;
+
+  const embedRootRef = useRef<HTMLDivElement>(null);
+  const { postQuoteCreated } = useEmbedBridge(embedRootRef, embedMode);
+  const embedQuote = useEmbedQuote(embed?.orgSlug ?? "");
+
+  // Embed save path: anon can't write `quotes` directly, so persist via the
+  // service-role edge function, then notify the host page (totals only).
+  async function handleEmbedSave() {
+    if (!embed) return;
+    if (!state.payload) {
+      toast.warning("Add a fence run before requesting a quote.");
+      return;
+    }
+    try {
+      const result = await embedQuote.mutateAsync({
+        jobName: state.jobName,
+        quoteDetails: state.quoteDetails,
+        payload: state.payload,
+        bomResult: state.bomResult,
+      });
+      dispatch({ type: "SET_SAVED_QUOTE_ID", id: result.quoteId });
+      postQuoteCreated(result.quoteId, result.totalIncGst, result.productCount);
+      toast.success("Your enquiry has been sent.");
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "Could not send your enquiry.",
+      );
+    }
+  }
 
   // Load a job that was navigated in from the Quotes history page
   useEffect(() => {
@@ -130,71 +178,105 @@ function CalculatorV4Content() {
     dispatch({ type: "UPSERT_SEGMENT", runId, segment: newSegment });
     layoutHl?.requestOpenSegment(runId, newSegmentId);
   }
-  return (
-    <div style={tenantTheme?.cssVars as React.CSSProperties | undefined}>
-      <AppShell branding={tenantTheme?.branding}>
-        <div className="h-full min-h-0 grid grid-cols-1 lg:grid-cols-[40%,60%] lg:grid-rows-1 gap-4 p-4 max-w-[1600px] mx-auto">
-          {/* Left column — JobShell + JobActions pin; runs list scrolls.
-            Cap height so inner scroll works even when the BOM column is shorter than the runs list. */}
-          <div className="flex h-full max-h-[calc(100dvh-5.5rem)] min-h-0 flex-col">
-            <div className="shrink-0">
-              <JobShell
-                onOpenLayoutMap={() => setLayoutOpen(true)}
-                hasPayload={!!payload}
-              />
-            </div>
-            {payload ? (
-              <>
-                <div className="min-h-0 flex-1 overflow-y-auto pr-1 py-3 space-y-4">
-                  <RunList onAddGate={handleAddGate} />
-                  {bomMutation.isError && (
-                    <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-500">
-                      Error:{" "}
-                      {bomMutation.error instanceof Error
-                        ? bomMutation.error.message
-                        : String(bomMutation.error)}
-                    </div>
-                  )}
-                </div>
-                <div className="shrink-0 border-t border-brand-border/50 bg-brand-bg pt-3 pb-1">
-                  <JobActions />
-                </div>
-              </>
-            ) : (
-              <div className="min-h-0 flex-1 flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-brand-border p-8 text-center text-sm text-brand-muted">
-                <p className="text-brand-text">Pick a fence product to begin.</p>
-                <ProductSelectV4
-                  value={state.payload?.productCode ?? ""}
-                  onChange={handleProductChange}
-                  separated={true}
-                />
-              </div>
-            )}
-          </div>
 
-          {/* Right column — BOM panel */}
-          <div className="lg:sticky lg:top-0 lg:h-full min-h-[640px]">
-            <BomPanel
-              isPending={bomMutation.isPending}
-              onGenerate={handleGenerate}
-              canGenerate={canGenerate}
-              errors={errors}
-              warnings={warnings}
+  // In embed mode the calculator must flow to its natural height so the iframe
+  // auto-resizes (no viewport-height caps / inner scroll). The authenticated app
+  // keeps the fixed-viewport, inner-scrolling shell.
+  const gridClass = embedMode
+    ? "grid grid-cols-1 lg:grid-cols-[40%,60%] gap-4 p-4 max-w-[1600px] mx-auto"
+    : "h-full min-h-0 grid grid-cols-1 lg:grid-cols-[40%,60%] lg:grid-rows-1 gap-4 p-4 max-w-[1600px] mx-auto";
+  const leftColClass = embedMode
+    ? "flex flex-col"
+    : "flex h-full max-h-[calc(100dvh-5.5rem)] min-h-0 flex-col";
+  const runsRegionClass = embedMode
+    ? "pr-1 py-3 space-y-4"
+    : "min-h-0 flex-1 overflow-y-auto pr-1 py-3 space-y-4";
+  const rightColClass = embedMode
+    ? "min-h-[640px]"
+    : "lg:sticky lg:top-0 lg:h-full min-h-[640px]";
+
+  const calculatorBody = (
+    <>
+      <div className={gridClass}>
+        {/* Left column — JobShell + JobActions pin; runs list scrolls.
+          Cap height so inner scroll works even when the BOM column is shorter than the runs list. */}
+        <div className={leftColClass}>
+          <div className="shrink-0">
+            <JobShell
+              onOpenLayoutMap={() => setLayoutOpen(true)}
+              hasPayload={!!payload}
             />
           </div>
+          {payload ? (
+            <>
+              <div className={runsRegionClass}>
+                <RunList onAddGate={handleAddGate} />
+                {bomMutation.isError && (
+                  <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-sm text-red-500">
+                    Error:{" "}
+                    {bomMutation.error instanceof Error
+                      ? bomMutation.error.message
+                      : String(bomMutation.error)}
+                  </div>
+                )}
+              </div>
+              <div className="shrink-0 border-t border-brand-border/50 bg-brand-bg pt-3 pb-1">
+                <JobActions onSave={embedMode ? handleEmbedSave : undefined} />
+              </div>
+            </>
+          ) : (
+            <div className="min-h-0 flex-1 flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-brand-border p-8 text-center text-sm text-brand-muted">
+              <p className="text-brand-text">Pick a fence product to begin.</p>
+              <ProductSelectV4
+                value={state.payload?.productCode ?? ""}
+                onChange={handleProductChange}
+                separated={true}
+              />
+            </div>
+          )}
         </div>
 
-        <LayoutMapPane
-          open={layoutOpen}
-          onClose={() => setLayoutOpen(false)}
-          onAddGate={handleAddGate}
-        />
-      </AppShell>
+        {/* Right column — BOM panel */}
+        <div className={rightColClass}>
+          <BomPanel
+            isPending={bomMutation.isPending}
+            onGenerate={handleGenerate}
+            canGenerate={canGenerate}
+            errors={errors}
+            warnings={warnings}
+          />
+        </div>
+      </div>
+
+      <LayoutMapPane
+        open={layoutOpen}
+        onClose={() => setLayoutOpen(false)}
+        onAddGate={handleAddGate}
+      />
+    </>
+  );
+
+  if (embedMode) {
+    return (
+      <div
+        ref={embedRootRef}
+        style={theme?.cssVars as React.CSSProperties | undefined}
+        className="min-h-[480px] bg-brand-bg text-brand-text"
+      >
+        {calculatorBody}
+        <PoweredBySkybrook />
+      </div>
+    );
+  }
+
+  return (
+    <div style={theme?.cssVars as React.CSSProperties | undefined}>
+      <AppShell branding={theme?.branding}>{calculatorBody}</AppShell>
     </div>
   );
 }
 
-export function CalculatorV4Page() {
+export function CalculatorV4Page({ embed }: { embed?: EmbedRenderConfig } = {}) {
   return (
     <CalculatorV4Provider>
       {/* FenceConfigProvider + GateProvider required by the shared canvas
@@ -203,7 +285,7 @@ export function CalculatorV4Page() {
       <FenceConfigProvider>
         <GateProvider>
           <LayoutSegmentHighlightProvider>
-            <CalculatorV4Content />
+            <CalculatorV4Content embed={embed} />
           </LayoutSegmentHighlightProvider>
         </GateProvider>
       </FenceConfigProvider>

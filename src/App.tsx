@@ -12,6 +12,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { QuotesHistoryPage } from "./pages/QuotesHistoryPage";
 import { CalculatorV3Page } from "./pages/CalculatorV3Page";
 import { CalculatorV4Page } from "./pages/CalculatorV4Page";
+import { EmbedCalculatorPage } from "./pages/EmbedCalculatorPage";
 import { ProductsIndexPage } from "./pages/admin/ProductsIndexPage";
 import { ProductDetailPage } from "./pages/admin/ProductDetailPage";
 import { ComponentsIndexPage } from "./pages/admin/ComponentsIndexPage";
@@ -37,6 +38,9 @@ const router = createBrowserRouter([
     errorElement: <NotFoundPage />,
     children: [
       { path: "/login", element: <LoginPage /> },
+      // Anonymous embeddable calculator (brief 032). NO AuthGuard — this route
+      // is framed into supplier sites and resolves the org from the URL slug.
+      { path: "/embed/:orgSlug", element: <EmbedCalculatorPage /> },
       { path: "/", element: <Navigate to="/fence-calculator" replace /> },
       {
         path: "/fence-calculator",

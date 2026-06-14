@@ -44,6 +44,7 @@ export interface AddedSuggestion {
 export interface QuoteDetails {
   customer: string;
   email: string;
+  phone: string;
   siteAddress: string;
   validUntil: string;
 }
@@ -82,6 +83,7 @@ const initialState: CalculatorV4State = {
   quoteDetails: {
     customer: "",
     email: "",
+    phone: "",
     siteAddress: "",
     validUntil: defaultValidUntil(),
   },

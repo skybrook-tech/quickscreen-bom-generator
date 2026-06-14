@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import { queryClient } from '../lib/queryClient';
+import { useEmbed } from '../context/EmbedContext';
 import type { SavedQuote, NewQuote, QuoteListItem } from '../types/quote.types';
 import {
   formatCreatorLabel,
@@ -32,8 +33,14 @@ function toQuoteListItem(
 }
 
 export function useQuotes() {
+  // On the anon embed route there's no quote-history access (RLS denies anon
+  // SELECT on quotes); skip the list query. Embed quotes are written via the
+  // service-role edge function (see useEmbedQuote), not these mutations.
+  const { orgId: embedOrgId } = useEmbed();
+
   const quotesQuery = useQuery({
     queryKey: ['quotes'],
+    enabled: !embedOrgId,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('quotes')
