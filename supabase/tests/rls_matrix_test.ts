@@ -102,6 +102,8 @@ async function cleanup() {
   // Delete profile + org last (profile FK → org).
   if (bUserId) await svc.from("profiles").delete().eq("id", bUserId);
   await svc.from("organisations").delete().eq("slug", B_ORG_SLUG);
+  // Reset the embed flag the embed step toggles on glass-outlet (org-A).
+  await svc.from("organisations").update({ embed_enabled: false }).eq("slug", "glass-outlet");
 }
 
 async function setup() {
@@ -247,6 +249,47 @@ Deno.test("RLS matrix — supplier/org isolation across catalogue + pricing", as
       // By-id reads — admin's unfiltered catalogue exceeds the 1000-row page cap.
       assert(await canRead(admin, "product_components", bComponentId), "admin should see org-B component");
       assert(await canRead(admin, "pricing_rules", bPricingRuleId), "admin should see org-B pricing rule");
+    });
+
+    // ── Embed (brief 032) — anon reads ONLY embed-enabled orgs' safe metadata ──
+    await t.step("anon embed access is scoped to embed-enabled orgs", async () => {
+      // Enable embedding on org-A (glass-outlet — has seeded products/variables/
+      // colours). org-B stays embed-disabled (default false).
+      await svc.from("organisations").update({ embed_enabled: true }).eq("id", orgAId);
+
+      const anonOrgRows = async (table: string, orgId: string): Promise<any[]> => {
+        const { data, error } = await anon.from(table).select("id").eq("org_id", orgId);
+        return error ? [] : (data ?? []);
+      };
+
+      // Anon CAN read the embed-enabled org's safe metadata...
+      assert((await anonOrgRows("products", orgAId)).length > 0, "anon should read embed org products");
+      assert((await anonOrgRows("product_variables", orgAId)).length > 0, "anon should read embed org product_variables");
+      assert((await anonOrgRows("colour_options", orgAId)).length > 0, "anon should read embed org colour_options");
+
+      // ...but NOTHING from the embed-disabled org.
+      assertEquals((await anonOrgRows("products", orgBId)).length, 0, "anon must NOT read embed-disabled org products");
+      assert(!(await canRead(anon, "products", bProductId)), "anon must NOT read embed-disabled org product by id");
+      assertEquals((await anonOrgRows("product_variables", orgBId)).length, 0, "anon must NOT read embed-disabled product_variables");
+      assertEquals((await anonOrgRows("colour_options", orgBId)).length, 0, "anon must NOT read embed-disabled colour_options");
+
+      // Org branding: anon reads ONLY the embed-enabled org (column-restricted).
+      const { data: orgARow } = await anon.from("organisations").select("id,slug,name,branding").eq("id", orgAId).maybeSingle();
+      assert(orgARow, "anon should read embed org branding");
+      const { data: orgBRow } = await anon.from("organisations").select("id,slug,name,branding").eq("id", orgBId).maybeSingle();
+      assert(!orgBRow, "anon must NOT read embed-disabled org row");
+
+      // Sensitive tables stay anon-denied EVEN for the embed-enabled org.
+      for (
+        const table of [
+          "product_components", "pricing_rules", "price_books", "price_book_items",
+          "product_rules", "product_component_selectors", "system_instances", "suppliers", "quotes",
+        ]
+      ) {
+        assertEquals((await rows(anon, table)).length, 0, `anon must NOT read ${table} even with an org embed-enabled`);
+      }
+
+      await svc.from("organisations").update({ embed_enabled: false }).eq("id", orgAId);
     });
   } finally {
     await cleanup();
