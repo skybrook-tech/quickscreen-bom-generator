@@ -59,7 +59,7 @@ jobs:
         # (useBomCalculator.ts). It was missing from the deploy list, so the
         # calculator's "Generate" failed. bom-calculator / calculate-pricing are
         # kept for now though the client no longer calls them directly.
-        run: supabase functions deploy --no-verify-jwt bom-calculator-static bom-calculator calculate-pricing search-products
+        run: supabase functions deploy --no-verify-jwt bom-calculator-static bom-calculator calculate-pricing search-products embed-quote
 
       - name: Seed products + pricing (idempotent upsert)
         run: npm run seed:products
