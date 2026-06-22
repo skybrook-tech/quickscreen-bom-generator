@@ -19,7 +19,8 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
-import { extractJwt, resolveUserProfile } from "../_shared/auth.ts";
+import { extractJwt, resolveEmbedOrg, resolveUserProfile } from "../_shared/auth.ts";
+import { enforceEmbedRateLimit, RATE_LIMIT_MESSAGE } from "../_shared/rateLimit.ts";
 import type {
   CanonicalPayload,
   CanonicalRun,
@@ -46,22 +47,35 @@ async function loadPricing(
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
 
-  const { data, error } = await supabaseAdmin
-    .from("pricing_rules_with_sku")
-    .select("sku, price, rule, priority")
-    .eq("org_id", orgId)
-    .eq("tier_code", tier)
-    .eq("active", true)
-    .order("priority", { ascending: false });
-
-  if (error) throw new Error(`Pricing lookup failed: ${error.message}`);
-
   const map = new Map<string, PricingRule[]>();
-  for (const row of data ?? []) {
-    const existing = map.get(row.sku) ?? [];
-    existing.push(row as PricingRule);
-    map.set(row.sku, existing);
+  let from = 0;
+  let hasMore = true;
+
+  while (hasMore) {
+    const { data, error } = await supabaseAdmin
+      .from("pricing_rules_with_sku")
+      .select("sku, price, rule, priority")
+      .eq("org_id", orgId)
+      .eq("tier_code", tier)
+      .eq("active", true)
+      .order("priority", { ascending: false })
+      .range(from, from + 999);
+
+    if (error) throw new Error(`Pricing lookup failed: ${error.message}`);
+
+    for (const row of data ?? []) {
+      const existing = map.get(row.sku) ?? [];
+      existing.push(row as PricingRule);
+      map.set(row.sku, existing);
+    }
+
+    if ((data ?? []).length < 1000) {
+      hasMore = false;
+    } else {
+      from += 1000;
+    }
   }
+
   return map;
 }
 
@@ -72,19 +86,36 @@ async function loadComponentNames(
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
   );
-  const { data } = await supabaseAdmin
-    .from("product_components")
-    .select("sku, name, description, default_price")
-    .eq("org_id", orgId)
-    .eq("active", true);
+
   const map = new Map<string, { name: string; description: string; defaultPrice: number | null }>();
-  for (const row of data ?? []) {
-    map.set(row.sku, {
-      name: row.name ?? "",
-      description: row.description ?? "",
-      defaultPrice: row.default_price ?? null,
-    });
+  let from = 0;
+  let hasMore = true;
+
+  while (hasMore) {
+    const { data, error } = await supabaseAdmin
+      .from("product_components")
+      .select("sku, name, description, default_price")
+      .eq("org_id", orgId)
+      .eq("active", true)
+      .range(from, from + 999);
+
+    if (error) throw new Error(`Component names lookup failed: ${error.message}`);
+
+    for (const row of data ?? []) {
+      map.set(row.sku, {
+        name: row.name ?? "",
+        description: row.description ?? "",
+        defaultPrice: row.default_price ?? null,
+      });
+    }
+
+    if ((data ?? []).length < 1000) {
+      hasMore = false;
+    } else {
+      from += 1000;
+    }
   }
+
   return map;
 }
 
@@ -143,9 +174,28 @@ Deno.serve(async (req: Request) => {
   if (corsResponse) return corsResponse;
 
   try {
-    // Step 1b — JWT + profile
-    const jwt = extractJwt(req);
-    const { orgId, pricingTier: defaultTier } = await resolveUserProfile(jwt);
+    // Step 1b — Parse payload & detect embed mode
+    const body = (await req.json()) as {
+      payload: CanonicalPayload;
+      pricingTier?: PricingTier;
+      debug?: boolean;
+      embedOrgSlug?: string;
+    };
+
+    const { payload, pricingTier: reqTier, debug, embedOrgSlug } = body;
+    const isEmbed = typeof embedOrgSlug === "string" && embedOrgSlug.length > 0;
+
+    // Two auth modes:
+    const jwt = isEmbed ? null : extractJwt(req);
+    const { orgId, pricingTier: profileTier } = isEmbed
+      ? await resolveEmbedOrg(embedOrgSlug)
+      : await resolveUserProfile(jwt!);
+
+    const pricingTier: PricingTier = reqTier ?? profileTier ?? "tier1";
+
+    if (isEmbed) {
+      await enforceEmbedRateLimit(orgId, req, { limit: 30, windowSeconds: 60 });
+    }
 
     // Step 2 — resolve role for admin trace gating
     const supabaseAdmin = createClient(
@@ -153,29 +203,22 @@ Deno.serve(async (req: Request) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    const {
-      data: { user },
-    } = await supabaseAdmin.auth.getUser(jwt);
-    const { data: profileWithRole } = user
-      ? await supabaseAdmin
-          .from("profiles")
-          .select("role")
-          .eq("id", user.id)
-          .single()
-      : { data: null };
+    let isAdmin = false;
+    if (!isEmbed && jwt) {
+      const {
+        data: { user },
+      } = await supabaseAdmin.auth.getUser(jwt);
+      const { data: profileWithRole } = user
+        ? await supabaseAdmin
+            .from("profiles")
+            .select("role")
+            .eq("id", user.id)
+            .single()
+        : { data: null };
+      const role: string = profileWithRole?.role ?? "user";
+      isAdmin = role === "admin";
+    }
 
-    const role: string = profileWithRole?.role ?? "user";
-    const isAdmin = role === "admin";
-
-    // Step 3 — parse + minimally validate payload
-    const body = (await req.json()) as {
-      payload: CanonicalPayload;
-      pricingTier?: PricingTier;
-      debug?: boolean;
-    };
-
-    const { payload, pricingTier: reqTier, debug } = body;
-    const pricingTier: PricingTier = reqTier ?? defaultTier ?? "tier1";
     const wantTrace = isAdmin && debug === true;
 
     if (
@@ -339,16 +382,21 @@ Deno.serve(async (req: Request) => {
     }
 
     for (const run of payload.runs as CanonicalRun[]) {
+      // Normalize segment kind for V3/V4 backward compatibility
+      for (const seg of run.segments) {
+        seg.kind = seg.kind ?? (seg.segmentKind === "gate_opening" ? "gate" : "fence");
+      }
+
       // Backward-compat shim: upgrade old segment_join{angleDeg>5} to system_corner.
       // Old saved quotes stored the turn angle in segment_join; we convert to a positive
       // (right-turn) interior angle. Remove once all production quotes have been re-saved.
       for (const seg of run.segments) {
-        const lt = seg.leftTermination as SegmentTermination & { angleDeg?: number };
-        if (lt.kind === "segment_join" && typeof lt.angleDeg === "number" && lt.angleDeg > 5) {
+        const lt = seg.leftTermination as (SegmentTermination & { angleDeg?: number }) | undefined;
+        if (lt && lt.kind === "segment_join" && typeof lt.angleDeg === "number" && lt.angleDeg > 5) {
           seg.leftTermination = { kind: "system_corner", angleDeg: 180 - lt.angleDeg };
         }
-        const rt = seg.rightTermination as SegmentTermination & { angleDeg?: number };
-        if (rt.kind === "segment_join" && typeof rt.angleDeg === "number" && rt.angleDeg > 5) {
+        const rt = seg.rightTermination as (SegmentTermination & { angleDeg?: number }) | undefined;
+        if (rt && rt.kind === "segment_join" && typeof rt.angleDeg === "number" && rt.angleDeg > 5) {
           seg.rightTermination = { kind: "system_corner", angleDeg: 180 - rt.angleDeg };
         }
       }
@@ -442,7 +490,7 @@ Deno.serve(async (req: Request) => {
       for (const seg of sortedSegs) {
         if (
           seg.kind === "fence" &&
-          seg.leftTermination.kind === "system_corner"
+          seg.leftTermination?.kind === "system_corner"
         ) {
           runCornerCount++;
         }
@@ -451,16 +499,15 @@ Deno.serve(async (req: Request) => {
       // ─── Process segments ────────────────────────────────────────────────────
 
       for (const segment of run.segments as CanonicalSegment[]) {
-        const activeEngineData = engineDataMap.get(segment.productCode);
+        const activeProductCode = segment.productCode ?? run.productCode ?? payload.productCode;
+        const activeEngineData = engineDataMap.get(activeProductCode);
 
         if (!activeEngineData) {
           allAssumptions.push(
-            `No engine data loaded for product: ${segment.productCode} — segment skipped`,
+            `No engine data loaded for product: ${activeProductCode} — segment skipped`,
           );
           continue;
         }
-
-        const activeProductCode = segment.productCode;
 
         // Build segment context: job ctx + segment overrides + geometry helpers
         const segVarsNorm = segment.variables
@@ -468,8 +515,8 @@ Deno.serve(async (req: Request) => {
           : {};
 
         // Termination flags from structured SegmentTermination objects
-        const lt = segment.leftTermination;
-        const rt = segment.rightTermination;
+        const lt = segment.leftTermination || { kind: "system" };
+        const rt = segment.rightTermination || { kind: "system" };
 
         const leftIsSystem = lt.kind === "system" ? 1 : 0;
         const rightIsSystem = rt.kind === "system" ? 1 : 0;
@@ -997,7 +1044,11 @@ Deno.serve(async (req: Request) => {
     console.error("bom-calculator error:", err);
     const message = err instanceof Error ? err.message : String(err);
     const status =
-      message.includes("Authorization") || message.includes("Invalid JWT")
+      message === RATE_LIMIT_MESSAGE
+        ? 429
+        : message.includes("Embedding is not enabled")
+        ? 403
+        : message.includes("Authorization") || message.includes("JWT")
         ? 401
         : 500;
     return Response.json({ error: message }, { status, headers: corsHeaders });

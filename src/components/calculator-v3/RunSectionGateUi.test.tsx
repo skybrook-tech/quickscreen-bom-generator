@@ -77,6 +77,21 @@ vi.mock("../../hooks/useProductVariables", () => ({
   useProductVariables: productVariablesMock.useProductVariables,
 }));
 
+vi.mock("../../hooks/useProducts", () => ({
+  useProducts: () => ({
+    data: [
+      { id: "qshs-id", system_type: "QSHS" },
+      { id: "vs-id", system_type: "VS" }
+    ],
+  }),
+}));
+
+vi.mock("../../context/ProfileContext", () => ({
+  useProfile: () => ({
+    isAdmin: true,
+  }),
+}));
+
 function render(ui: ReactNode) {
   const container = document.createElement("div");
   document.body.appendChild(container);

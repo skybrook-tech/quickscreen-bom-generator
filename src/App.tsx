@@ -13,6 +13,7 @@ import { QuotesHistoryPage } from "./pages/QuotesHistoryPage";
 import { CalculatorV3Page } from "./pages/CalculatorV3Page";
 import { CalculatorV4Page } from "./pages/CalculatorV4Page";
 import { EmbedCalculatorPage } from "./pages/EmbedCalculatorPage";
+import { CalculatorBuilderPage } from "./pages/CalculatorBuilderPage";
 import { ProductsIndexPage } from "./pages/admin/ProductsIndexPage";
 import { ProductDetailPage } from "./pages/admin/ProductDetailPage";
 import { ComponentsIndexPage } from "./pages/admin/ComponentsIndexPage";
@@ -63,6 +64,14 @@ const router = createBrowserRouter([
         element: (
           <AuthGuard>
             <CalculatorV4Page />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: "/builder",
+        element: (
+          <AuthGuard>
+            <CalculatorBuilderPage />
           </AuthGuard>
         ),
       },

@@ -4,6 +4,7 @@ import { useProductVariables } from "../../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import { patchSegmentVariables } from "../../../lib/segmentTermination";
 import { useSegmentHeightOptions } from "../../../hooks/useSegmentHeightOptions";
+import { findHeightVariableKey, formatHeightForVariable } from "../../../lib/customCalculators";
 import { SchemaDrivenFormV4 } from "../RunCard/SchemaDrivenFormV4";
 import { TerminationControl } from "./TerminationControl";
 import NumberInput from "../../ui/NumberInput";
@@ -106,8 +107,28 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
 
   function onJobOverrideChange(key: string, value: string | number | boolean) {
     const base = state.payload?.variables[key];
+    const patchValue = value === base ? null : value;
+    const patch: Record<string, any> = { [key]: patchValue };
+
+    // Sync to targetHeightMm if the key is the height variable key
+    const heightKey = findHeightVariableKey(jobFields);
+    if (key === heightKey && heightKey && patchValue !== null) {
+      const numVal = Number(String(patchValue).replace(/[^0-9]/g, ""));
+      if (Number.isFinite(numVal) && numVal > 0) {
+        upsertSegment({
+          ...seg,
+          targetHeightMm: numVal,
+          variables: {
+            ...(seg.variables ?? {}),
+            ...patch,
+          }
+        });
+        return;
+      }
+    }
+
     upsertSegment(
-      patchSegmentVariables(seg, { [key]: value === base ? null : value }),
+      patchSegmentVariables(seg, patch),
     );
   }
 
@@ -196,24 +217,46 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
                 min={freeformBounds.minMm}
                 max={freeformBounds.maxMm}
                 step={1}
-                onChange={(v) =>
+                onChange={(v) => {
+                  const val = clampFreeform(v);
+                  const heightKey = findHeightVariableKey(jobFields);
+                  const patch: Record<string, any> = {};
+                  if (heightKey) {
+                    const field = jobFields.find((f) => f.field_key === heightKey);
+                    patch[heightKey] = formatHeightForVariable(val, field);
+                  }
                   upsertSegment({
                     ...seg,
-                    targetHeightMm: clampFreeform(v),
-                  })
-                }
+                    targetHeightMm: val,
+                    variables: {
+                      ...(seg.variables ?? {}),
+                      ...patch,
+                    },
+                  });
+                }}
                 disabled={locked}
               />
             </div>
           ) : (
             <Select
               value={heightSelectValue}
-              onChange={(e) =>
+              onChange={(e) => {
+                const val = Number(e.target.value);
+                const heightKey = findHeightVariableKey(jobFields);
+                const patch: Record<string, any> = {};
+                if (heightKey) {
+                  const field = jobFields.find((f) => f.field_key === heightKey);
+                  patch[heightKey] = formatHeightForVariable(val, field);
+                }
                 upsertSegment({
                   ...seg,
-                  targetHeightMm: Number(e.target.value),
-                })
-              }
+                  targetHeightMm: val,
+                  variables: {
+                    ...(seg.variables ?? {}),
+                    ...patch,
+                  },
+                });
+              }}
               disabled={locked}
               data-testid={`v4-seg-height-${seg.segmentId}`}
             >

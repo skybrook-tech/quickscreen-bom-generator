@@ -7,7 +7,7 @@ import { LegacyQuoteError, type SavedQuote } from '../types/quote.types';
 
 export type LoadedQuote = {
   quote: SavedQuote;
-  payload: CanonicalPayload;
+  payload: CanonicalPayload | null;
 };
 
 export function useQuote(quoteId: string | undefined) {

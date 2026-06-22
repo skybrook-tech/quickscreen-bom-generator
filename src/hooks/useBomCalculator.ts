@@ -2,6 +2,8 @@ import { useMutation } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
 import type { CanonicalPayload, CanonicalRun, CanonicalSegment } from '../types/canonical.types';
 import type { PricingTier } from '../types/bom.types';
+import { calculateCustomBOM } from '../lib/customBOMCalculator';
+import { isCustomCalculator } from '../lib/customCalculators';
 
 export function isEdgeFailurePayload(data: unknown): data is { error: string } {
   return (
@@ -63,8 +65,12 @@ function expandSectionSystemOverrides(payload: CanonicalPayload): CanonicalPaylo
  */
 export function useBomCalculator(embedOrgSlug?: string) {
   return useMutation({
-    mutationFn: async ({ payload }: { payload: CanonicalPayload; pricingTier?: PricingTier }) => {
+    mutationFn: async ({ payload, pricingTier }: { payload: CanonicalPayload; pricingTier?: PricingTier }) => {
       const calculatorPayload = expandSectionSystemOverrides(payload);
+
+      if (isCustomCalculator(payload.productCode)) {
+        return calculateCustomBOM(calculatorPayload, pricingTier) as unknown as Record<string, unknown>;
+      }
 
       if (embedOrgSlug) {
         // Anonymous embed: no session. supabase-js sends the anon key as the

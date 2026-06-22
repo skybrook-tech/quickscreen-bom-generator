@@ -56,6 +56,9 @@ export interface BOMLineItem {
   runId?: string;
   segmentId?: string;
   productCode?: string;
+  availableSuppliers?: Array<{ id: string; name: string; slug?: string; price: number }>;
+  supplierId?: string;
+  supplierName?: string;
 }
 
 export interface PostPosition {
@@ -142,4 +145,17 @@ export interface ExtraItem {
   quantity: number;
   unitPrice: number;    // ex-GST
   sku?: string;         // set when selected from autocomplete; undefined for free-text entries
+}
+
+export interface LocalBomResult {
+  lines: BOMLineItem[];
+  runResults: Array<{ runId: string; items: BOMLineItem[] }>;
+  gateItems: BOMLineItem[];
+  totals: { subtotal: number; gst: number; grandTotal: number };
+  warnings: string[];
+  errors: string[];
+  assumptions: string[];
+  computed: Record<string, Record<string, { actual_height_mm: number; num_panels: number; panel_width_mm: number }>>;
+  pricingTier: PricingTier;
+  generatedAt: string;
 }

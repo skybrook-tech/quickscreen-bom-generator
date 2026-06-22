@@ -3,6 +3,7 @@ import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { getLocalVariables } from '../lib/localSeedData';
 import { useEmbed } from '../context/EmbedContext';
 import type { SchemaField } from '../components/calculator-v3/SchemaDrivenForm';
+import { getCustomCalculators } from '../lib/customCalculators';
 
 type Scope = 'job' | 'run' | 'segment';
 
@@ -19,6 +20,13 @@ export function useProductVariables(systemType: string | null, scope: Scope) {
     staleTime: 5 * 60_000,
     queryFn: async () => {
       if (!systemType) return [];
+
+      const customCalcs = getCustomCalculators();
+      const customCalc = customCalcs.find((c) => c.id === systemType);
+      if (customCalc) {
+        return scope === 'job' ? customCalc.variables : [];
+      }
+
       if (!isSupabaseConfigured) return getLocalVariables(systemType, scope);
 
       let productQuery = supabase

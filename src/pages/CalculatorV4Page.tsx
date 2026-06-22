@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useProfile } from "../context/ProfileContext";
 import { AppShell } from "../components/layout/AppShell";
@@ -21,6 +21,9 @@ import { useEmbedBridge } from "../hooks/useEmbedBridge";
 import { useEmbedQuote } from "../hooks/useEmbedQuote";
 import { PoweredBySkybrook } from "../components/embed/PoweredBySkybrook";
 import { ProductSelectV4 } from "../components/calculator-v4/JobShell/ProductSelectV4";
+import { CalculatorLogicModal } from "../components/calculator-v4/RunCard/CalculatorLogicModal";
+import { supabase } from "../lib/supabase";
+import { useQuote } from "../hooks/useQuote";
 import {
   createInitialMasterFenceSegment,
   syncRunVariablesFromMaster,
@@ -58,6 +61,53 @@ function CalculatorV4Content({ embed }: { embed?: EmbedRenderConfig }) {
   const embedRootRef = useRef<HTMLDivElement>(null);
   const { postQuoteCreated } = useEmbedBridge(embedRootRef, embedMode);
   const embedQuote = useEmbedQuote(embed?.orgSlug ?? "");
+
+  // Load from query parameters if present
+  const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const paramJobId = queryParams.get("jobId") || queryParams.get("job_id");
+  const paramQuoteId = queryParams.get("quoteId") || queryParams.get("quote_id");
+  
+  const [resolvedQuoteId, setResolvedQuoteId] = useState<string | null>(paramQuoteId);
+  const [loadingQuoteId, setLoadingQuoteId] = useState(false);
+  const [checkedQuote, setCheckedQuote] = useState(false);
+
+  // Fetch quote ID from jobId if no quoteId was explicitly passed
+  useEffect(() => {
+    if (!paramJobId || resolvedQuoteId || loadingQuoteId || checkedQuote) return;
+    
+    async function fetchQuoteId() {
+      setLoadingQuoteId(true);
+      try {
+        const { data, error } = await supabase
+          .from("quotes")
+          .select("id")
+          .eq("job_id", paramJobId)
+          .maybeSingle();
+        if (error) throw error;
+        if (data?.id) {
+          setResolvedQuoteId(data.id);
+        }
+      } catch (err) {
+        console.error("Failed to fetch quote for job:", err);
+      } finally {
+        setLoadingQuoteId(false);
+        setCheckedQuote(true);
+      }
+    }
+    
+    fetchQuoteId();
+  }, [paramJobId, resolvedQuoteId, loadingQuoteId, checkedQuote]);
+
+  // Use the useQuote hook to load the resolved quote data
+  const { data: quoteData, isLoading: quoteLoading } = useQuote(resolvedQuoteId || undefined);
+
+  useEffect(() => {
+    if (!quoteData) return;
+    if (quoteData.payload) {
+      dispatch({ type: "INIT_PAYLOAD", payload: quoteData.payload });
+    }
+    dispatch({ type: "SET_SAVED_QUOTE_ID", id: quoteData.quote.id });
+  }, [quoteData, dispatch]);
 
   // Embed save path: anon can't write `quotes` directly, so persist via the
   // service-role edge function, then notify the host page (totals only).
@@ -99,6 +149,19 @@ function CalculatorV4Content({ embed }: { embed?: EmbedRenderConfig }) {
 
   const layoutHl = useLayoutSegmentHighlight();
   const [layoutOpen, setLayoutOpen] = useState(false);
+
+  const showLoader = quoteLoading || (paramJobId && !resolvedQuoteId && loadingQuoteId);
+
+  if (showLoader) {
+    return (
+      <div className="h-screen w-screen flex flex-col items-center justify-center bg-brand-bg text-brand-text">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8.5 h-8.5 border-4 border-brand-accent border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm font-semibold text-brand-muted">Loading Visual Calculator...</span>
+        </div>
+      </div>
+    );
+  }
 
   const errors = (state.bomResult?.errors as string[]) ?? [];
   const warnings = (state.bomResult?.warnings as string[]) ?? [];
@@ -221,7 +284,7 @@ function CalculatorV4Content({ embed }: { embed?: EmbedRenderConfig }) {
                 )}
               </div>
               <div className="shrink-0 border-t border-brand-border/50 bg-brand-bg pt-3 pb-1">
-                <JobActions onSave={embedMode ? handleEmbedSave : undefined} />
+                <JobActions onSave={embedMode ? handleEmbedSave : undefined} jobId={paramJobId} />
               </div>
             </>
           ) : (
@@ -265,6 +328,12 @@ function CalculatorV4Content({ embed }: { embed?: EmbedRenderConfig }) {
       >
         {calculatorBody}
         <PoweredBySkybrook />
+        {state.openLogicEditorProductCode && (
+          <CalculatorLogicModal
+            productCode={state.openLogicEditorProductCode}
+            onClose={() => dispatch({ type: "CLOSE_LOGIC_EDITOR" })}
+          />
+        )}
       </div>
     );
   }
@@ -272,6 +341,12 @@ function CalculatorV4Content({ embed }: { embed?: EmbedRenderConfig }) {
   return (
     <div style={theme?.cssVars as React.CSSProperties | undefined}>
       <AppShell branding={theme?.branding}>{calculatorBody}</AppShell>
+      {state.openLogicEditorProductCode && (
+        <CalculatorLogicModal
+          productCode={state.openLogicEditorProductCode}
+          onClose={() => dispatch({ type: "CLOSE_LOGIC_EDITOR" })}
+        />
+      )}
     </div>
   );
 }

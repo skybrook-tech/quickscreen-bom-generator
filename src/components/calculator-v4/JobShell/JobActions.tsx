@@ -13,6 +13,7 @@ import type { CanonicalPayload } from "../../../types/canonical.types";
 
 interface JobActionsProps {
   onSave?: () => void;
+  jobId?: string | null;
 }
 
 interface ClearSnapshot {
@@ -26,7 +27,7 @@ interface ClearSnapshot {
   qtyOverrides: Record<string, number>;
 }
 
-export function JobActions({ onSave }: JobActionsProps) {
+export function JobActions({ onSave, jobId }: JobActionsProps) {
   const { state, dispatch } = useCalculatorV4();
   const { saveQuote, updateQuote } = useQuotes();
   const clearSnapshotRef = useRef<ClearSnapshot | null>(null);
@@ -83,7 +84,8 @@ export function JobActions({ onSave }: JobActionsProps) {
           status: "draft",
           org_id: "",
           user_id: "",
-        });
+          job_id: jobId || undefined,
+        } as any);
         dispatch({ type: "SET_SAVED_QUOTE_ID", id: saved.id });
       }
 
