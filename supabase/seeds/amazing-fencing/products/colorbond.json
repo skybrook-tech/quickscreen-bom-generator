@@ -1,0 +1,383 @@
+{
+  "org_slug": "amazing-fencing",
+  "supplier_slug": "amazing-fencing",
+  "system_instance_slug": "amazing-colorbond",
+  "_format_note": "ColorBond steel panel fencing as sold by Amazing Fencing using multi-brand sheets (Gramline / Lysaght / Oxworks / ColorMAX). Standard galvanised + coloured posts/rails/sheets. Prices null — trade pricing PDF required.",
+  "_source": "https://amazingfencing.com.au/products/colorbond-fencing/ + https://www.fencing-supplies.com.au/colorbond-steel-fencing-supplies/ (SKU list 2026-05-28)",
+  "products": [
+    {
+      "system_type": "AF_COLORBOND",
+      "product_type": "fence",
+      "name": "Amazing Fencing — ColorBond Steel",
+      "description": "Standard ColorBond steel panel fence using sheets + posts + rails. Multi-brand sourcing (Gramline / Lysaght / Oxworks / ColorMAX). C posts in 2.1/2.4/2.7/3.0m; sheets in 1.5/1.8/2.1/2.4m heights.",
+      "active": true,
+      "sort_order": 200,
+      "metadata": {
+        "_provenance": {"supplier_slug": "amazing-fencing", "system_instance_slug": "amazing-colorbond"},
+        "brand_partners": ["Gramline", "Lysaght", "Oxworks", "ColorMAX"],
+        "standard_heights_m": [1.5, 1.8, 2.1, 2.4]
+      }
+    }
+  ],
+  "product_components": [
+    {"sku": "AF-CBD-CPOST-2.1", "name": "C Post 2.1m (ColorBond)", "description": "C post 2.1m, generic steel", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 2.1, "post_type": "C"}, "active": true, "subCategory": "posts", "sortPriority": 10},
+    {"sku": "AF-CBD-CPOST-2.4", "name": "C Post 2.4m (ColorBond)", "description": "C post 2.4m, generic steel", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 2.4, "post_type": "C"}, "active": true, "subCategory": "posts", "sortPriority": 10},
+    {"sku": "AF-CBD-CPOST-2.7", "name": "C Post 2.7m (ColorBond)", "description": "C post 2.7m, generic steel", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 2.7, "post_type": "C"}, "active": true, "subCategory": "posts", "sortPriority": 10},
+    {"sku": "AF-CBD-CPOST-3.0", "name": "C Post 3.0m (ColorBond)", "description": "C post 3.0m, generic steel", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 3.0, "post_type": "C"}, "active": true, "subCategory": "posts", "sortPriority": 10},
+
+    {"sku": "AF-CBD-COLPOST-50x50-2.4", "name": "Coloured Post 50×50 × 2.4m", "description": "Coloured steel post, 50×50mm × 2.4m", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 2.4, "width_mm": 50, "depth_mm": 50, "finish": "powdercoat"}, "active": true, "subCategory": "posts", "sortPriority": 12},
+    {"sku": "AF-CBD-COLPOST-50x50-3.0", "name": "Coloured Post 50×50 × 3.0m", "description": "Coloured steel post, 50×50mm × 3.0m", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 3.0, "width_mm": 50, "depth_mm": 50, "finish": "powdercoat"}, "active": true, "subCategory": "posts", "sortPriority": 12},
+    {"sku": "AF-CBD-COLPOST-65x65-2.4", "name": "Coloured Post 65×65 × 2.4m", "description": "Coloured steel post, 65×65mm × 2.4m", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 2.4, "width_mm": 65, "depth_mm": 65, "finish": "powdercoat"}, "active": true, "subCategory": "posts", "sortPriority": 12},
+    {"sku": "AF-CBD-COLPOST-65x65-3.0", "name": "Coloured Post 65×65 × 3.0m", "description": "Coloured steel post, 65×65mm × 3.0m", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 3.0, "width_mm": 65, "depth_mm": 65, "finish": "powdercoat"}, "active": true, "subCategory": "posts", "sortPriority": 12},
+
+    {"sku": "AF-CBD-GALVPOST-50x50-2.4", "name": "P/Coated Galv Post 50×50 × 2.4m", "description": "Powdercoated galvanised post, 50×50mm × 2.4m", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 2.4, "width_mm": 50, "depth_mm": 50, "finish": "p_coated_galv"}, "active": true, "subCategory": "posts", "sortPriority": 14},
+    {"sku": "AF-CBD-GALVPOST-50x50-3.0", "name": "P/Coated Galv Post 50×50 × 3.0m", "description": "Powdercoated galvanised post, 50×50mm × 3.0m", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 3.0, "width_mm": 50, "depth_mm": 50, "finish": "p_coated_galv"}, "active": true, "subCategory": "posts", "sortPriority": 14},
+    {"sku": "AF-CBD-GALVPOST-65x65-2.4", "name": "P/Coated Galv Post 65×65 × 2.4m", "description": "Powdercoated galvanised post, 65×65mm × 2.4m", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 2.4, "width_mm": 65, "depth_mm": 65, "finish": "p_coated_galv"}, "active": true, "subCategory": "posts", "sortPriority": 14},
+    {"sku": "AF-CBD-GALVPOST-65x65-3.0", "name": "P/Coated Galv Post 65×65 × 3.0m", "description": "Powdercoated galvanised post, 65×65mm × 3.0m", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND", "AF_TIMBER_SLAT"], "metadata": {"length_m": 3.0, "width_mm": 65, "depth_mm": 65, "finish": "p_coated_galv"}, "active": true, "subCategory": "posts", "sortPriority": 14},
+    {"sku": "AF-CBD-GALVPOST-65x65-4.0", "name": "P/Coated Galv Post 65×65 × 4.0m", "description": "Powdercoated galvanised post, 65×65mm × 4.0m", "category": "post", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 4.0, "width_mm": 65, "depth_mm": 65, "finish": "p_coated_galv"}, "active": true, "subCategory": "posts", "sortPriority": 14},
+
+    {"sku": "AF-CBD-RAIL-2.35", "name": "Rail 2.35m", "description": "Standard rail 2.35m", "category": "rail", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 2.35}, "active": true, "subCategory": "rails", "sortPriority": 20},
+    {"sku": "AF-CBD-RAIL-3.10", "name": "Rail 3.10m", "description": "Standard rail 3.10m", "category": "rail", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 3.10}, "active": true, "subCategory": "rails", "sortPriority": 20},
+
+    {"sku": "AF-CBD-SHEET-1.5", "name": "Sheet 1.5m height", "description": "ColorBond sheet, 1.5m height", "category": "sheet", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"height_m": 1.5}, "active": true, "subCategory": "sheets", "sortPriority": 30},
+    {"sku": "AF-CBD-SHEET-1.8", "name": "Sheet 1.8m height", "description": "ColorBond sheet, 1.8m height", "category": "sheet", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"height_m": 1.8}, "active": true, "subCategory": "sheets", "sortPriority": 30},
+    {"sku": "AF-CBD-SHEET-2.1", "name": "Sheet 2.1m height", "description": "ColorBond sheet, 2.1m height", "category": "sheet", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"height_m": 2.1}, "active": true, "subCategory": "sheets", "sortPriority": 30},
+    {"sku": "AF-CBD-SHEET-2.4", "name": "Sheet 2.4m height", "description": "ColorBond sheet, 2.4m height", "category": "sheet", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"height_m": 2.4}, "active": true, "subCategory": "sheets", "sortPriority": 30},
+
+    {"sku": "AF-CBD-GATE-STD-SGL-0.9", "name": "Standard Single Gate 0.9m (GP Bundle)", "description": "Standard single gate, 0.9m wide, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"width_m": 0.9, "gate_movement": "swing", "bundle": "GP"}, "active": true, "subCategory": "gates", "sortPriority": 40},
+    {"sku": "AF-CBD-GATE-STD-SGL-1.2", "name": "Standard Single Gate 1.2m (GP Bundle)", "description": "Standard single gate, 1.2m wide, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"width_m": 1.2, "gate_movement": "swing", "bundle": "GP"}, "active": true, "subCategory": "gates", "sortPriority": 40},
+    {"sku": "AF-CBD-GATE-STD-SGL-1.5", "name": "Standard Single Gate 1.5m (GP Bundle)", "description": "Standard single gate, 1.5m wide, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"width_m": 1.5, "gate_movement": "swing", "bundle": "GP"}, "active": true, "subCategory": "gates", "sortPriority": 40},
+    {"sku": "AF-CBD-GATE-STD-SGL-1.8", "name": "Standard Single Gate 1.8m (GP Bundle)", "description": "Standard single gate, 1.8m wide, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"width_m": 1.8, "gate_movement": "swing", "bundle": "GP"}, "active": true, "subCategory": "gates", "sortPriority": 40},
+    {"sku": "AF-CBD-GATE-STD-SGL-2.1", "name": "Standard Single Gate 2.1m (GP Bundle)", "description": "Standard single gate, 2.1m wide, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"width_m": 2.1, "gate_movement": "swing", "bundle": "GP"}, "active": true, "subCategory": "gates", "sortPriority": 40},
+
+    {"sku": "AF-CBD-GATE-STD-DBL-0.9", "name": "Standard Double Gate 0.9m (GP Bundle)", "description": "Standard double gate, 0.9m total, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"width_m": 0.9, "gate_movement": "swing", "bundle": "GP", "leaves": 2}, "active": true, "subCategory": "gates", "sortPriority": 42},
+    {"sku": "AF-CBD-GATE-STD-DBL-1.2", "name": "Standard Double Gate 1.2m (GP Bundle)", "description": "Standard double gate, 1.2m total, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"width_m": 1.2, "gate_movement": "swing", "bundle": "GP", "leaves": 2}, "active": true, "subCategory": "gates", "sortPriority": 42},
+    {"sku": "AF-CBD-GATE-STD-DBL-1.5", "name": "Standard Double Gate 1.5m (GP Bundle)", "description": "Standard double gate, 1.5m total, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"width_m": 1.5, "gate_movement": "swing", "bundle": "GP", "leaves": 2}, "active": true, "subCategory": "gates", "sortPriority": 42},
+    {"sku": "AF-CBD-GATE-STD-DBL-1.8", "name": "Standard Double Gate 1.8m (GP Bundle)", "description": "Standard double gate, 1.8m total, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"width_m": 1.8, "gate_movement": "swing", "bundle": "GP", "leaves": 2}, "active": true, "subCategory": "gates", "sortPriority": 42},
+    {"sku": "AF-CBD-GATE-STD-DBL-2.1", "name": "Standard Double Gate 2.1m (GP Bundle)", "description": "Standard double gate, 2.1m total, GP bundle", "category": "gate", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"width_m": 2.1, "gate_movement": "swing", "bundle": "GP", "leaves": 2}, "active": true, "subCategory": "gates", "sortPriority": 42},
+
+    {"sku": "AF-CBD-GATEHW-BUTT-HINGE", "name": "Gate Hardware — Butt Hinges", "description": "Pair of butt hinges for gate", "category": "hardware", "unit": "pack", "default_price": null, "system_types": ["AF_COLORBOND", "AF_PERMASTEEL"], "metadata": {}, "active": true, "subCategory": "hardware", "sortPriority": 50},
+    {"sku": "AF-CBD-GATEHW-D-LATCH", "name": "Gate Hardware — D Latch + Striker + Handle", "description": "D-latch kit including striker and handle", "category": "hardware", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND", "AF_PERMASTEEL"], "metadata": {}, "active": true, "subCategory": "hardware", "sortPriority": 50},
+    {"sku": "AF-CBD-GATEHW-DOUBLE-SET", "name": "Gate Hardware — Double Gate Set", "description": "Hardware kit for double swing gate", "category": "hardware", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND", "AF_PERMASTEEL"], "metadata": {}, "active": true, "subCategory": "hardware", "sortPriority": 50},
+    {"sku": "AF-CBD-GATEHW-DROP-BOLT", "name": "Gate Hardware — Drop Bolt", "description": "Drop bolt for double gates", "category": "hardware", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND", "AF_PERMASTEEL"], "metadata": {}, "active": true, "subCategory": "hardware", "sortPriority": 50},
+
+    {"sku": "AF-CBD-LATTICE-2.35", "name": "Lattice Sheet 2.35m", "description": "Lattice sheet 2.35m", "category": "lattice", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 2.35}, "active": true, "subCategory": "lattice", "sortPriority": 60},
+    {"sku": "AF-CBD-LATTICE-3.10", "name": "Lattice Sheet 3.10m", "description": "Lattice sheet 3.10m", "category": "lattice", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_m": 3.10}, "active": true, "subCategory": "lattice", "sortPriority": 60},
+
+    {"sku": "AF-CBD-CAP-100x100", "name": "100×100 Square Metal Cap", "description": "Post cap for 100×100 posts", "category": "cap", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND", "AF_PERMASTEEL"], "metadata": {}, "active": true, "subCategory": "caps", "sortPriority": 70},
+
+    {"sku": "AF-CBD-SCREW-BUGEL-50", "name": "Bugel Batten Screw 50mm", "description": "Bugel batten screw 50mm", "category": "screw", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND", "AF_TIMBER_PALING", "AF_TIMBER_SLAT"], "metadata": {"length_mm": 50, "type": "bugel_batten"}, "active": true, "subCategory": "screws", "sortPriority": 80},
+    {"sku": "AF-CBD-SCREW-BUGEL-75", "name": "Bugel Batten Screw 75mm", "description": "Bugel batten screw 75mm", "category": "screw", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND", "AF_TIMBER_PALING", "AF_TIMBER_SLAT"], "metadata": {"length_mm": 75, "type": "bugel_batten"}, "active": true, "subCategory": "screws", "sortPriority": 80},
+    {"sku": "AF-CBD-SCREW-BUGEL-100", "name": "Bugel Batten Screw 100mm", "description": "Bugel batten screw 100mm", "category": "screw", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND", "AF_TIMBER_PALING"], "metadata": {"length_mm": 100, "type": "bugel_batten"}, "active": true, "subCategory": "screws", "sortPriority": 80},
+    {"sku": "AF-CBD-SCREW-TEK-20", "name": "Metal Tek Screw 20mm", "description": "Tek screw 20mm for metal", "category": "screw", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_mm": 20, "type": "tek"}, "active": true, "subCategory": "screws", "sortPriority": 80},
+    {"sku": "AF-CBD-SCREW-TEK-35", "name": "Metal Tek Screw 35mm", "description": "Tek screw 35mm for metal", "category": "screw", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"length_mm": 35, "type": "tek"}, "active": true, "subCategory": "screws", "sortPriority": 80},
+    {"sku": "AF-CBD-SCREW-COLOURED-SD10", "name": "Coloured Screw SD 10-16 × 16mm Hex", "description": "Coloured hex screw, SD 10-16 × 16mm", "category": "screw", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND"], "metadata": {"type": "hex_coloured"}, "active": true, "subCategory": "screws", "sortPriority": 82},
+
+    {"sku": "AF-CBD-TOUCHUP-PAINT", "name": "Touch-up Paint", "description": "Colour-matched touch-up paint for steel fence", "category": "accessory", "unit": "each", "default_price": null, "system_types": ["AF_COLORBOND", "AF_PERMASTEEL"], "metadata": {}, "active": true, "subCategory": "accessories", "sortPriority": 90}
+  ],
+  "rule_sets": [
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "Amazing Colorbond Rules",
+      "description": "Calculation rules for Colorbond steel panel fence",
+      "active": true
+    }
+  ],
+  "rule_versions": [
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "is_current": true,
+      "effective_from": "2026-06-03",
+      "notes": "Initial rules for Colorbond steel fence"
+    }
+  ],
+  "product_constraints": [
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "min_panel_width_mm",
+      "constraint_type": "min",
+      "value_text": "100",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Panel width must be at least 100mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "max_panel_width_mm",
+      "constraint_type": "max",
+      "value_text": "3125",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Panel width cannot exceed 3125mm.",
+      "active": true
+    }
+  ],
+  "product_variables": [
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "colour",
+      "label": "Colour",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "Monument",
+      "options_json": [
+        "Monument",
+        "Woodland Grey",
+        "Surfmist",
+        "Basalt",
+        "Dune",
+        "Riversand",
+        "Cottage Green",
+        "Paperbark",
+        "Primrose",
+        "Shale Grey",
+        "Jasper",
+        "Windspray",
+        "Evening Haze",
+        "Pale Eucalypt",
+        "Deep Ocean",
+        "Manor Red",
+        "Domain",
+        "Wilderness",
+        "Night Sky"
+      ],
+      "scope": "job",
+      "sort_order": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "max_panel_width_mm",
+      "label": "Max Panel Width",
+      "data_type": "number",
+      "required": true,
+      "default_value_json": 2365,
+      "options_json": [],
+      "scope": "run",
+      "sort_order": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "target_height_mm",
+      "label": "Target Height",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": 1800,
+      "options_json": [1500, 1800, 2100, 2400],
+      "scope": "segment",
+      "sort_order": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "mounting_type",
+      "label": "Mounting Type",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "concreted-in-ground",
+      "options_json": ["concreted-in-ground", "base-plated", "core-drilled"],
+      "scope": "run",
+      "sort_order": 40,
+      "active": true
+    }
+  ],
+  "product_validations": [
+    {
+      "product_system_type": "AF_COLORBOND",
+      "name": "post_spacing_in_range",
+      "expression": "max_panel_width_mm >= 100 and max_panel_width_mm <= 3125",
+      "severity": "error",
+      "message": "Panel width must be between 100mm and 3125mm.",
+      "active": true
+    }
+  ],
+  "product_rules": [
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "actual_height_mm",
+      "expression": "target_height_mm",
+      "output_key": "actual_height_mm",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "post_height_mm",
+      "expression": "target_height_mm + 600",
+      "output_key": "post_height_mm",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "post_height_suffix",
+      "expression": "post_height_mm / 100",
+      "output_key": "post_height_suffix",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "sheet_height_suffix",
+      "expression": "target_height_mm == 1200 ? 11 : (target_height_mm == 1500 ? 15 : (target_height_mm == 1800 ? 17 : (target_height_mm == 2100 ? 21 : 24)))",
+      "output_key": "sheet_height_suffix",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "rail_suffix",
+      "expression": "max_panel_width_mm <= 2400 ? 23 : 31",
+      "output_key": "rail_suffix",
+      "priority": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "concrete_bags",
+      "expression": "equalStrings(mounting_type, \"concreted-in-ground\") ? num_posts : 0",
+      "output_key": "concrete_bags",
+      "priority": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_post",
+      "expression": "num_posts",
+      "output_key": "qty_post",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_rail",
+      "expression": "num_panels * 2",
+      "output_key": "qty_rail",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_infill",
+      "expression": "num_panels * 3",
+      "output_key": "qty_infill",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_cap",
+      "expression": "num_posts",
+      "output_key": "qty_cap",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "rule_set_name": "Amazing Colorbond Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_concrete",
+      "expression": "concrete_bags",
+      "output_key": "qty_concrete",
+      "priority": 50,
+      "active": true
+    }
+  ],
+  "product_component_selectors": [
+    {
+      "product_system_type": "AF_COLORBOND",
+      "selector_key": "af_cb_post",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_post",
+      "sku_pattern": "FNP{colour}{post_height_suffix}",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "selector_key": "af_cb_rail",
+      "component_category": "rail",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_rail",
+      "sku_pattern": "FRM{colour}{rail_suffix}",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "selector_key": "af_cb_infill",
+      "component_category": "sheet",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_infill",
+      "sku_pattern": "FZS{colour}{sheet_height_suffix}",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "selector_key": "af_cb_cap",
+      "component_category": "cap",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_cap",
+      "sku_pattern": "CCAP{colour}",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "AF_COLORBOND",
+      "selector_key": "af_cb_concrete",
+      "component_category": "fixing",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_concrete",
+      "sku_pattern": "AF-CON-POSTMIX-30",
+      "priority": 10,
+      "active": true
+    }
+  ],
+  "product_companion_rules": [],
+  "product_warnings": [],
+  "pricing_rules": []
+}

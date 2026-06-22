@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../lib/supabase';
+import { useEmbed } from '../context/EmbedContext';
 
 export interface ColourOption {
   value: string;
@@ -29,16 +30,22 @@ const COLOUR_PLACEHOLDER: ColourOption[] = [
 ];
 
 export function useColourOptions() {
+  // Embed route: scope to this org so anon RLS doesn't merge colour lists across
+  // every embed-enabled org.
+  const { orgId } = useEmbed();
   return useQuery<ColourOption[]>({
-    queryKey: ['colour-options'],
+    queryKey: ['colour-options', orgId],
     staleTime: 30 * 60_000,
     placeholderData: COLOUR_PLACEHOLDER,
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('colour_options')
         .select('value, label, finish_group, limited, sort_order')
         .eq('active', true)
         .order('sort_order');
+      if (orgId) query = query.eq('org_id', orgId);
+
+      const { data, error } = await query;
       if (error) throw error;
       return data ?? [];
     },

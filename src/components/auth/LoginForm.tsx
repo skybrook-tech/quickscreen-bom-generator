@@ -77,6 +77,12 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         <p className="text-sm text-brand-danger">{serverError}</p>
       )}
 
+      <div className="text-xs text-brand-muted bg-brand-bg/50 border border-brand-border/60 p-2.5 rounded-lg space-y-1">
+        <div className="font-bold text-brand-text">Demo Credentials:</div>
+        <div>Email: <code className="text-brand-accent select-all">admin@glass-outlet.com</code></div>
+        <div>Password: <code className="text-brand-accent select-all">123456</code></div>
+      </div>
+
       <button
         type="submit"
         disabled={isSubmitting}

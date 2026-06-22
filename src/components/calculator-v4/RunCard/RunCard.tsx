@@ -12,6 +12,10 @@ import { RunHeader } from "./RunHeader";
 import { RunSubHeader } from "./RunSubHeader";
 import { useRunSummary } from "./useRunSummary";
 import { Tabs } from "../shared/Tabs";
+import { isCustomCalculator } from "../../../lib/customCalculators";
+import { useProductVariables } from "../../../hooks/useProductVariables";
+import { SchemaDrivenFormV4 } from "./SchemaDrivenFormV4";
+import { Sparkles } from "lucide-react";
 
 interface Props {
   run: CanonicalRun;
@@ -63,6 +67,9 @@ export function RunCard({
   const runProductCode = run.productCode ?? "—";
   const fenceProductCode =
     run.productCode ?? state.payload?.productCode ?? "";
+
+  const { data: jobFields = [] } = useProductVariables(fenceProductCode, "job");
+  const isCustom = isCustomCalculator(fenceProductCode);
 
   const fenceCount = run.segments.filter((s) => s.kind === "fence").length;
   const gateCount = run.segments.filter((s) => s.kind === "gate").length;
@@ -154,6 +161,40 @@ export function RunCard({
             effectiveVars={effectiveVars}
             productCode={fenceProductCode || null}
           />
+
+          {isCustom && (
+            <div className="px-4 py-3 border-t border-brand-border bg-slate-500/5 space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-brand-muted">
+                  Run Settings Defaults
+                </h4>
+                <button
+                  type="button"
+                  onClick={() => dispatch({ type: "OPEN_LOGIC_EDITOR", productCode: fenceProductCode })}
+                  className="text-xs text-brand-accent hover:text-brand-accent/80 font-semibold flex items-center gap-1.5 transition-colors"
+                >
+                  <Sparkles size={12} /> Edit Calculator Logic
+                </button>
+              </div>
+              {jobFields.length > 0 ? (
+                <SchemaDrivenFormV4
+                  fields={jobFields}
+                  variables={run.variables ?? {}}
+                  onChange={(key, value) => {
+                    dispatch({
+                      type: "UPSERT_RUN_VARIABLES",
+                      runId: run.runId,
+                      variables: { [key]: value },
+                    });
+                  }}
+                />
+              ) : (
+                <p className="text-xs text-brand-muted italic">
+                  No variables defined. Click "Edit Calculator Logic" to add options.
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="border-t border-brand-border  pt-1">
             <Tabs tabs={tabs} activeId={browseTab} onChange={(id) => setBrowseTab(id as BrowseTab)} />

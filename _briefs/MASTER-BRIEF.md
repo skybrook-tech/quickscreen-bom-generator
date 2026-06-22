@@ -51,14 +51,17 @@ This guards against compounding bad code on a broken baseline.
 5. Open the brief file. Execute its instructions verbatim:
    - Make ALL code changes in the "What to implement" section
    - Honor ALL items in "Constraints":
-     - DO NOT modify `src/lib/localBomCalculator.ts`
+     - (REMOVED — salvage Phase D) `src/lib/localBomCalculator.ts` does not exist
+       in this repo and never has; the protection was a phantom. BOM math has a
+       single source of truth: the `bom-calculator-static` Supabase edge function,
+       invoked by `src/hooks/useBomCalculator.ts` (used by both v3 and v4). There
+       is NO client-side BOM calculator, so no conformance test is required.
      - DO NOT modify `canonicalAdapter.ts` public function signatures
      - DO NOT modify `canvasEngine.ts` public types unless the brief says so
      - DO NOT touch `package.json` beyond strictly necessary
      - Use npm 10.x when touching `package-lock.json`
      - Skip the Deno integration job (pre-existing red, out of scope)
    - Run `npm run typecheck`, `npm run test`, `npm run build`
-   - Confirm `localBomCalculator.test.ts` passes UNCHANGED
    - **If any check fails** → STOP. Move file from `01-in-progress/` to `03-paused/`. Report which check failed. Continue to Phase D for the next brief (or exit if this is the last).
 
 ### Phase D — Open the PR, DO NOT merge
@@ -111,7 +114,7 @@ If a previous invocation of this Master Brief was interrupted:
 - **NEVER** work on more than one brief at a time (max 1 file in `01-in-progress/`).
 - **NEVER** improvise architectural changes. If a brief surfaces something deeper, move to `03-paused/` and report.
 - **ALWAYS** verify the PR base branch is `master`.
-- **ALWAYS** keep `localBomCalculator.test.ts` passing unchanged. If a brief breaks it, STOP, move to `03-paused/`, report.
+- (REMOVED — salvage Phase D) `localBomCalculator.test.ts` does not exist; this guard is moot. The protected calc-related files that DO exist are `src/components/canvas/canonicalAdapter.ts` and `canvasEngine.ts`.
 
 ## Final report
 

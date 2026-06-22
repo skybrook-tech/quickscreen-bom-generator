@@ -53,13 +53,13 @@ describe("RunListV3 propertyAnchor wiring", () => {
       root.render(<RunListV3 />);
     });
 
-    const qshsButton = container.querySelector(
-      '[data-testid="landing-system-QSHS"]',
+    const palingButton = container.querySelector(
+      '[data-testid="landing-system-tp-butted-palings"]',
     ) as HTMLButtonElement | null;
-    expect(qshsButton).not.toBeNull();
+    expect(palingButton).not.toBeNull();
 
     await act(async () => {
-      qshsButton?.click();
+      palingButton?.click();
       await new Promise((resolve) => window.setTimeout(resolve, 90));
     });
 

@@ -49,7 +49,7 @@ export function walkRunForPosts(
     let posts = numPanels - 1;
 
     // ── Left end ──────────────────────────────────────────────────────────
-    const lt = seg.leftTermination;
+    const lt = seg.leftTermination || { kind: "system" };
     if (lt.kind === "system") {
       posts += 1;
     } else if (lt.kind === "segment_join" || lt.kind === "system_corner") {
@@ -57,7 +57,7 @@ export function walkRunForPosts(
     }
 
     // ── Right end ─────────────────────────────────────────────────────────
-    const rt = seg.rightTermination;
+    const rt = seg.rightTermination || { kind: "system" };
     if (rt.kind === "system") {
       posts += 1;
     } else if (rt.kind === "segment_join" || rt.kind === "system_corner") {

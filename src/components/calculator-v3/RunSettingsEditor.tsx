@@ -12,6 +12,7 @@ import {
 } from "../../lib/productOptionRules";
 import { GATE_SEGMENT_STUB_KEYS } from "../../lib/segmentTermination";
 import { localFenceProducts } from "../../lib/localSeedData";
+import { getCustomCalculators, isCustomCalculator, findHeightVariableKey } from "../../lib/customCalculators";
 import {
   POST_FIXING_MATERIALS,
   isPreferredGroutSku,
@@ -128,6 +129,8 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
   });
   const [fixingsOpen, setFixingsOpen] = useState(false);
   const productCode = run.productCode;
+  const customCalculators = useMemo(() => getCustomCalculators(), []);
+  const isCustom = isCustomCalculator(productCode);
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
   const { data: runFields = [] } = useProductVariables(productCode, "run");
   const variables = {
@@ -261,33 +264,50 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
       return Object.keys(next).length ? next : undefined;
     };
 
+    let nextSegments = run.segments;
+    if (isCustom) {
+      const heightKey = findHeightVariableKey(jobFields);
+      if (heightKey && key === heightKey) {
+        const newHeight = Number(String(value).replace(/[^0-9]/g, ""));
+        if (!isNaN(newHeight) && newHeight > 0) {
+          normalised.target_height_mm = newHeight;
+          nextSegments = run.segments.map((segment) => ({
+            ...segment,
+            targetHeightMm: newHeight,
+          }));
+        }
+      }
+    }
+
     dispatch({
       type: "UPSERT_RUN",
       run: {
         ...run,
         productCode: nextProductCode,
         variables: normalised,
-        segments: syncKeys.has(key)
+        segments: isCustom
+          ? nextSegments
+          : syncKeys.has(key)
           ? run.segments.map((segment) => {
-            if (segment.segmentKind === "gate_opening") {
-              const movement = gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+              if (segment.segmentKind === "gate_opening") {
+                const movement = gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+                return {
+                  ...segment,
+                  variables: {
+                    ...(clearKeys(segment.variables) ?? {}),
+                    [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(movement, nextProductCode === "VS"),
+                    [GATE_SEGMENT_STUB_KEYS.colourCode]: String(normalised.colour_code ?? "B"),
+                    [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(normalised.slat_size_mm ?? 65),
+                    [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(normalised.slat_gap_mm ?? 9),
+                    [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(normalised.post_size ?? 50),
+                  },
+                };
+              }
               return {
                 ...segment,
-                variables: {
-                  ...(clearKeys(segment.variables) ?? {}),
-                  [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(movement, nextProductCode === "VS"),
-                  [GATE_SEGMENT_STUB_KEYS.colourCode]: String(normalised.colour_code ?? "B"),
-                  [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(normalised.slat_size_mm ?? 65),
-                  [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(normalised.slat_gap_mm ?? 9),
-                  [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(normalised.post_size ?? 50),
-                },
+                variables: clearKeys(segment.variables),
               };
-            }
-            return {
-              ...segment,
-              variables: clearKeys(segment.variables),
-            };
-          })
+            })
           : run.segments,
       },
     });
@@ -339,6 +359,10 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
     });
   }
 
+  const selectList = customCalculators.length > 0
+    ? customCalculators.map(c => ({ system_type: c.id, name: c.name }))
+    : localFenceProducts.map(p => ({ system_type: p.system_type, name: p.name }));
+
   return (
     <div className="mb-3 space-y-2 border-t border-brand-border/70 bg-brand-bg/55 p-3">
       <p className="text-xs font-semibold text-brand-muted">
@@ -350,143 +374,167 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
         value={run.productCode}
       >
         <div className="flex flex-wrap gap-2 border-t border-brand-border/50 p-3">
-          {localFenceProducts.map((product) => (
+          {selectList.map((product) => (
             <button
               key={product.system_type}
               type="button"
               onClick={() => changeRunProduct(product.system_type)}
               aria-pressed={product.system_type === run.productCode}
-              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${product.system_type === run.productCode
-                ? "border-brand-primary bg-brand-primary text-white shadow-sm"
-                : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-                }`}
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${
+                product.system_type === run.productCode
+                  ? "border-brand-primary bg-brand-primary text-white shadow-sm"
+                  : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
+              }`}
             >
               {product.system_type === run.productCode && <Check size={16} aria-hidden />}
-              {product.system_type}
+              {product.name}
             </button>
           ))}
         </div>
       </SettingsDisclosureRow>
-      <SettingsDisclosureRow
-        id={`${run.runId}-slats-colours-spacings`}
-        label="Slats, colors, and spacings"
-        value={`${valueFor("finish_family")} / ${colourName(variables.colour_code)} / ${valueFor("slat_size_mm")} / ${combinedGapLabel(gapMode, gapMm)}`}
-      >
-        <div className="space-y-4">
-          {renderField("finish_family")}
-          {renderField("colour_code")}
-          {showPostColourControl && (
-            <>
-              <button
-                type="button"
-                onClick={() => setPostColourOpen((value) => !value)}
-                className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-              >
-                {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
-              </button>
-              {postColourOpen && renderField("post_colour_code")}
-            </>
-          )}
-          {renderField("slat_size_mm")}
-          <CombinedGapSelect
-            productCode={productCode}
-            mode={variables.slat_gap_mode}
-            gapMm={variables.slat_gap_mm}
-            onChange={updateRunGap}
-          />
-          {productCode === "QSHS" && (
-            <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
-              <input
-                type="checkbox"
-                checked={louvreEnabled && slatSize === 65}
-                disabled={slatSize !== 65}
-                onChange={(event) =>
-                  updateRunVariables("louvre_treatment", event.target.checked)
-                }
-                className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
-              />
-              <span>
-                <span className="block text-sm font-extrabold text-brand-text">
-                  Louvre treatment
-                </span>
-                <span className="mt-1 block text-xs font-semibold text-brand-muted">
-                  40 degree slat angle. Available with 65mm slats.
-                </span>
-                {slatSize !== 65 && (
-                  <span className="mt-1 block text-xs font-bold text-brand-warning">
-                    Switch run slats to 65mm to use louvre brackets.
-                  </span>
-                )}
-              </span>
-            </label>
+
+      {isCustom ? (
+        <div className="space-y-4 rounded-xl border border-brand-border/60 bg-brand-card/75 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
+            Calculator parameters
+          </p>
+          {fields.length > 0 ? (
+            <SchemaDrivenForm
+              fields={fields}
+              variables={variables}
+              onChange={updateRunVariables}
+            />
+          ) : (
+            <p className="text-xs text-brand-muted italic">
+              No options defined for this calculator.
+            </p>
           )}
         </div>
-      </SettingsDisclosureRow>
-      {productCode !== "BAYG" && (
-        <SettingsDisclosureRow
-          id={`${run.runId}-post-mounting`}
-          label="Post size, mounting and spacing"
-          value={`${valueFor("post_system", postLabel(productCode, variables))} / ${colourName(variables.post_colour_code ?? variables.colour_code)} / ${valueFor("max_panel_width_mm", "2600mm")}`}
-        >
-          <div className="space-y-4">
-            {renderField("post_system")}
-            {renderField("post_size")}
-            {mountingField && (
-              <SchemaDrivenForm
-                fields={[mountingField]}
-                variables={variables}
-                onChange={updateRunVariables}
-              />
-            )}
-            <button
-              type="button"
-              onClick={() => setFixingsOpen((value) => !value)}
-              className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-            >
-              Choose fixings
-            </button>
-            {fixingsOpen && (
-              <div className="grid gap-3 rounded-xl border border-brand-border/60 bg-brand-card/70 p-3 md:grid-cols-2">
-                <label className="flex flex-col gap-1">
-                  <span className="text-sm font-bold text-brand-muted">Post-fixing material</span>
-                  <select
-                    value={postFixingSku}
-                    onChange={(event) =>
-                      updateRunVariables("post_fixing_material_sku", event.target.value)
-                    }
-                    className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+      ) : (
+        <>
+          <SettingsDisclosureRow
+            id={`${run.runId}-slats-colours-spacings`}
+            label="Slats, colors, and spacings"
+            value={`${valueFor("finish_family")} / ${colourName(variables.colour_code)} / ${valueFor("slat_size_mm")} / ${combinedGapLabel(gapMode, gapMm)}`}
+          >
+            <div className="space-y-4">
+              {renderField("finish_family")}
+              {renderField("colour_code")}
+              {showPostColourControl && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setPostColourOpen((value) => !value)}
+                    className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
                   >
-                    {POST_FIXING_MATERIALS.map((item) => (
-                      <option key={item.sku} value={item.sku}>
-                        {item.label}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="text-xs font-semibold text-brand-muted">
-                    Defaults apply automatically per mounting method unless changed here.
+                    {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
+                  </button>
+                  {postColourOpen && renderField("post_colour_code")}
+                </>
+              )}
+              {renderField("slat_size_mm")}
+              <CombinedGapSelect
+                productCode={productCode}
+                mode={variables.slat_gap_mode}
+                gapMm={variables.slat_gap_mm}
+                onChange={updateRunGap}
+              />
+              {productCode === "QSHS" && (
+                <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
+                  <input
+                    type="checkbox"
+                    checked={louvreEnabled && slatSize === 65}
+                    disabled={slatSize !== 65}
+                    onChange={(event) =>
+                      updateRunVariables("louvre_treatment", event.target.checked)
+                    }
+                    className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
+                  />
+                  <span>
+                    <span className="block text-sm font-extrabold text-brand-text">
+                      Louvre treatment
+                    </span>
+                    <span className="mt-1 block text-xs font-semibold text-brand-muted">
+                      40 degree slat angle. Available with 65mm slats.
+                    </span>
+                    {slatSize !== 65 && (
+                      <span className="mt-1 block text-xs font-bold text-brand-warning">
+                        Switch run slats to 65mm to use louvre brackets.
+                      </span>
+                    )}
                   </span>
                 </label>
-                {mountingType === "base_plate" && (
-                  <label className="flex flex-col gap-1">
-                    <span className="text-sm font-bold text-brand-muted">Substrate</span>
-                    <select
-                      value={substrate}
-                      onChange={(event) =>
-                        updateRunVariables("base_plate_substrate", event.target.value)
-                      }
-                      className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-                    >
-                      <option value="concrete">Concrete</option>
-                      <option value="timber">Timber</option>
-                    </select>
-                  </label>
+              )}
+            </div>
+          </SettingsDisclosureRow>
+          {productCode !== "BAYG" && (
+            <SettingsDisclosureRow
+              id={`${run.runId}-post-mounting`}
+              label="Post size, mounting and spacing"
+              value={`${valueFor("post_system", postLabel(productCode, variables))} / ${colourName(variables.post_colour_code ?? variables.colour_code)} / ${valueFor("max_panel_width_mm", "2600mm")}`}
+            >
+              <div className="space-y-4">
+                {renderField("post_system")}
+                {renderField("post_size")}
+                {mountingField && (
+                  <SchemaDrivenForm
+                    fields={[mountingField]}
+                    variables={variables}
+                    onChange={updateRunVariables}
+                  />
                 )}
+                <button
+                  type="button"
+                  onClick={() => setFixingsOpen((value) => !value)}
+                  className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+                >
+                  Choose fixings
+                </button>
+                {fixingsOpen && (
+                  <div className="grid gap-3 rounded-xl border border-brand-border/60 bg-brand-card/70 p-3 md:grid-cols-2">
+                    <label className="flex flex-col gap-1">
+                      <span className="text-sm font-bold text-brand-muted">Post-fixing material</span>
+                      <select
+                        value={postFixingSku}
+                        onChange={(event) =>
+                          updateRunVariables("post_fixing_material_sku", event.target.value)
+                        }
+                        className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+                      >
+                        {POST_FIXING_MATERIALS.map((item) => (
+                          <option key={item.sku} value={item.sku}>
+                            {item.label}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="text-xs font-semibold text-brand-muted">
+                        Defaults apply automatically per mounting method unless changed here.
+                      </span>
+                    </label>
+                    {mountingType === "base_plate" && (
+                      <label className="flex flex-col gap-1">
+                        <span className="text-sm font-bold text-brand-muted">Substrate</span>
+                        <select
+                          value={substrate}
+                          onChange={(event) =>
+                            updateRunVariables("base_plate_substrate", event.target.value)
+                          }
+                          className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+                        >
+                          <option value="concrete">Concrete</option>
+                          <option value="timber">Timber</option>
+                        </select>
+                      </label>
+                    )}
+                  </div>
+                )}
+                {renderField("max_panel_width_mm")}
               </div>
-            )}
-            {renderField("max_panel_width_mm")}
-          </div>
-        </SettingsDisclosureRow>
+            </SettingsDisclosureRow>
+          )}
+        </>
       )}
+
       {onCollapse && (
         <div className="pt-2">
           <button

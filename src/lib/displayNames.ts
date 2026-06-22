@@ -54,5 +54,19 @@ export const GATE_DIRECTION_DISPLAY_NAMES: Record<string, string> = {
 export function displayName(map: Record<string, string>, value: unknown, fallback = "Default") {
   const key = String(value ?? "");
   if (!key) return fallback;
-  return map[key] ?? key;
+  if (map[key]) return map[key];
+
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem("CUSTOM_CALCULATORS");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        const found = parsed.find((c: any) => c.id === key);
+        if (found) return found.name;
+      } catch (e) {
+        // ignore
+      }
+    }
+  }
+  return key;
 }

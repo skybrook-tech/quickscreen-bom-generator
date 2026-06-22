@@ -61,6 +61,7 @@ import {
   buildV3FenceConfig,
   buildV3QuoteBom,
   replaceV3QuoteRuns,
+  syncQuoteLineItems,
 } from "../lib/persistV3Quote";
 import { queryClient } from "../lib/queryClient";
 import { LegacyQuoteError } from "../types/quote.types";
@@ -74,7 +75,8 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
+import { useProfile } from "../context/ProfileContext";
 import { toast } from "sonner";
 import Papa from "papaparse";
 import { pdf } from "@react-pdf/renderer";
@@ -490,8 +492,10 @@ function useAnimatedNumber(target: number) {
   return value;
 }
 
-function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
+function CalculatorV3Content({ quoteId, jobId }: { quoteId?: string; jobId?: string | null }) {
   const { state, dispatch } = useCalculator();
+  const { tenantTheme } = useProfile();
+  const theme = tenantTheme;
   const payload = state.payload;
   const bomMutation = useBomCalculator();
   const navigate = useNavigate();
@@ -541,23 +545,54 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     [],
   );
 
+  const [fetchedJobTitle, setFetchedJobTitle] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!jobId) return;
+    async function fetchJobDetails() {
+      try {
+        const { data, error } = await supabase
+          .from("jobs")
+          .select("title, job_number")
+          .eq("id", jobId)
+          .single();
+        if (error) throw error;
+        if (data) {
+          setFetchedJobTitle(data.title || `Job #${data.job_number}`);
+        }
+      } catch (err) {
+        console.error("Failed to fetch job details:", err);
+      }
+    }
+    fetchJobDetails();
+  }, [jobId]);
+
   useEffect(() => {
     if (!quoteId || !quoteQuery.data) return;
-    if (hydratedQuoteIdRef.current === quoteId) return;
+    if (hydratedQuoteIdRef.current === quoteId) {
+      if (jobName && jobName !== "New Quote") return;
+      if (!fetchedJobTitle) return;
+    }
     hydratedQuoteIdRef.current = quoteId;
     const { quote, payload: loadedPayload } = quoteQuery.data;
-    dispatch({ type: "SET_PAYLOAD", payload: loadedPayload });
-    setJobName(jobNameFromQuote(quote.fence_config, quote.customer_ref));
-    const bomResult = savedBomToEngineResult(quote.bom, quote.updated_at);
-    if (bomResult) {
-      dispatch({ type: "SET_BOM_RESULT", result: bomResult });
-      skipAutoBomRef.current = true;
-      lastCalcPayloadKeyRef.current = payloadBomKey(loadedPayload);
+    if (loadedPayload) {
+      dispatch({ type: "SET_PAYLOAD", payload: loadedPayload });
+      const bomResult = savedBomToEngineResult(quote.bom, quote.updated_at);
+      if (bomResult) {
+        dispatch({ type: "SET_BOM_RESULT", result: bomResult });
+        skipAutoBomRef.current = true;
+        lastCalcPayloadKeyRef.current = payloadBomKey(loadedPayload);
+      }
+    } else {
+      dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
     }
+    const rawName = jobNameFromQuote(quote.fence_config, quote.customer_ref);
+    const finalName = (!rawName || rawName === "New Quote") && fetchedJobTitle ? fetchedJobTitle : rawName;
+    setJobName(finalName || "");
     setIntroDismissed(true);
     setRightPaneView("bom");
     setMobileTab("bom");
-  }, [quoteId, quoteQuery.data, dispatch]);
+  }, [quoteId, quoteQuery.data, dispatch, fetchedJobTitle, jobName]);
 
   useEffect(() => {
     if (quoteId || payload || introDismissed) return;
@@ -1161,6 +1196,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
           .from("quotes")
           .update({
             customer_ref: customerRef,
+            title: customerRef,
             property_anchor: propertyAnchor,
             fence_config: fenceConfig,
             gates: [],
@@ -1171,6 +1207,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
         if (updateError) throw updateError;
 
         await replaceV3QuoteRuns(supabase, orgId, quoteId, payload);
+        await syncQuoteLineItems(supabase, quoteId, quoteBom);
 
         await queryClient.invalidateQueries({ queryKey: ["quote", quoteId] });
         await queryClient.invalidateQueries({ queryKey: ["quotes"] });
@@ -1183,6 +1220,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             org_id: orgId,
             user_id: user.id,
             customer_ref: customerRef,
+            title: customerRef,
             property_anchor: propertyAnchor,
             fence_config: fenceConfig,
             gates: [],
@@ -1190,17 +1228,19 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
             contact: {},
             notes: "Saved from v3 job calculator",
             status: "draft",
+            job_id: jobId || undefined,
           })
           .select("id")
           .single();
         if (quoteError) throw quoteError;
 
         await replaceV3QuoteRuns(supabase, orgId, quote.id, payload);
+        await syncQuoteLineItems(supabase, quote.id, quoteBom);
 
         await queryClient.invalidateQueries({ queryKey: ["quotes"] });
         setJobName(customerRef);
         toast.success("Job saved");
-        navigate(`/quote/${quote.id}`);
+        navigate(`/quote/${quote.id}${jobId ? `?jobId=${jobId}` : ""}`);
       }
       return true;
     } catch (error) {
@@ -1707,15 +1747,18 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   ) : null;
 
   return (
-    <AppShell
-      headerActions={headerActions}
-      jobTitle={headerJobTitle}
-      headerPriceLabel={headerPriceLabel}
-      customerMode={customerMode}
-      onCustomerModeChange={setCustomerMode}
-      onClearJobRequest={() => setClearJobDialogOpen(true)}
-      clearJobDisabled={!payload && !jobName}
-    >
+    <div style={theme?.cssVars as React.CSSProperties | undefined}>
+      <AppShell
+        branding={theme?.branding}
+        headerActions={headerActions}
+        jobTitle={headerJobTitle}
+        headerPriceLabel={headerPriceLabel}
+        customerMode={customerMode}
+        onCustomerModeChange={setCustomerMode}
+        onClearJobRequest={() => setClearJobDialogOpen(true)}
+        clearJobDisabled={!payload && !jobName}
+        jobId={jobId}
+      >
       {gatePositionTarget && gateTargetRunLength > 0 && (
         <GatePositionModal
           gateLabel={gatePositionTarget.kind.replace("_", " ")}
@@ -1731,11 +1774,20 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
           <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:44px_44px]" />
           <div className="relative mx-auto flex min-h-full max-w-5xl flex-col items-center justify-center gap-8 px-5 py-12 text-center">
             <div className="space-y-8">
-              <GlassOutletLogo
-                className="justify-center text-brand-primary"
-                iconClassName="h-20 w-24 sm:h-24 sm:w-28 lg:h-28 lg:w-32"
-                textClassName="text-5xl sm:text-7xl lg:text-8xl"
-              />
+              {theme?.branding ? (
+                <div className="flex flex-col items-center gap-1 justify-center">
+                  <h1 className="text-4xl sm:text-5xl font-black text-brand-primary">
+                    {theme.branding.title}{theme.branding.titleItalic && <em>{theme.branding.titleItalic}</em>}
+                  </h1>
+                  <p className="text-sm font-semibold text-brand-muted">{theme.branding.subtitle}</p>
+                </div>
+              ) : (
+                <GlassOutletLogo
+                  className="justify-center text-brand-primary"
+                  iconClassName="h-20 w-24 sm:h-24 sm:w-28 lg:h-28 lg:w-32"
+                  textClassName="text-5xl sm:text-7xl lg:text-8xl"
+                />
+              )}
               <form
                 className="mx-auto w-full max-w-xl rounded-3xl border border-brand-border/70 bg-brand-card/80 p-5 text-left shadow-2xl backdrop-blur"
                 onSubmit={(event) => {
@@ -1972,11 +2024,19 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
                   <div className="mb-4 flex flex-col gap-4 border-b border-brand-border pb-5 sm:flex-row sm:items-start sm:justify-between">
                     <div className="min-w-0">
                       <div className="mb-3 flex flex-wrap items-center gap-3">
-                        <GlassOutletLogo
-                          className="text-brand-primary"
-                          iconClassName="h-10 w-12"
-                          textClassName="text-2xl"
-                        />
+                        {theme?.branding ? (
+                          <div className="flex flex-col">
+                            <h2 className="text-xl font-black text-brand-primary">
+                              {theme.branding.title}
+                            </h2>
+                          </div>
+                        ) : (
+                          <GlassOutletLogo
+                            className="text-brand-primary"
+                            iconClassName="h-10 w-12"
+                            textClassName="text-2xl"
+                          />
+                        )}
                         <div className="h-10 w-px bg-brand-border" />
                         <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-muted">
                           {customerMode ? "Customer Quote" : "Bill of Materials"}
@@ -2202,17 +2262,66 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
           )}
         </>
       )}
-    </AppShell>
+      </AppShell>
+    </div>
   );
 }
 
 export function CalculatorV3Page() {
-  const { quoteId } = useParams<{ quoteId: string }>();
+  const { quoteId: routeQuoteId } = useParams<{ quoteId: string }>();
+  const location = useLocation();
+  const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const paramJobId = queryParams.get("jobId") || queryParams.get("job_id");
+  const paramQuoteId = queryParams.get("quoteId") || queryParams.get("quote_id");
+  
+  const [resolvedQuoteId, setResolvedQuoteId] = useState<string | null>(routeQuoteId || paramQuoteId);
+  const [loadingQuoteId, setLoadingQuoteId] = useState(false);
+  const [checkedQuote, setCheckedQuote] = useState(false);
+
+  useEffect(() => {
+    if (!paramJobId || resolvedQuoteId || loadingQuoteId || checkedQuote) return;
+    
+    async function fetchQuoteId() {
+      setLoadingQuoteId(true);
+      try {
+        const { data, error } = await supabase
+          .from("quotes")
+          .select("id")
+          .eq("job_id", paramJobId)
+          .maybeSingle();
+        if (error) throw error;
+        if (data?.id) {
+          setResolvedQuoteId(data.id);
+        }
+      } catch (err) {
+        console.error("Failed to fetch quote for job:", err);
+      } finally {
+        setLoadingQuoteId(false);
+        setCheckedQuote(true);
+      }
+    }
+    
+    fetchQuoteId();
+  }, [paramJobId, resolvedQuoteId, loadingQuoteId, checkedQuote]);
+
+  const showLoader = paramJobId && !resolvedQuoteId && loadingQuoteId;
+
+  if (showLoader) {
+    return (
+      <div className="h-screen w-screen flex flex-col items-center justify-center bg-brand-bg text-brand-text">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8.5 h-8.5 border-4 border-brand-accent border-t-transparent rounded-full animate-spin" />
+          <span className="text-sm font-semibold text-brand-muted">Loading Visual Calculator...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <CalculatorProvider key={quoteId ?? "new"}>
+    <CalculatorProvider key={resolvedQuoteId ?? "new"}>
       <FenceConfigProvider>
         <GateProvider>
-          <CalculatorV3Content quoteId={quoteId} />
+          <CalculatorV3Content quoteId={resolvedQuoteId || undefined} jobId={paramJobId} />
         </GateProvider>
       </FenceConfigProvider>
     </CalculatorProvider>

@@ -40,6 +40,9 @@ import {
 } from "../../lib/heights";
 import { colourName } from "./ColourPalette";
 import { InlineHeightEditor } from "./InlineHeightEditor";
+import { getCustomCalculators, isCustomCalculator, findHeightVariableKey } from "../../lib/customCalculators";
+import { useSegmentHeightOptions } from "../../hooks/useSegmentHeightOptions";
+import { isVisible } from "./SchemaDrivenForm";
 
 interface Props {
   runId: string;
@@ -183,10 +186,14 @@ export function SegmentRow({
   const heightEntries = run
     ? heightEntriesForSystem(productCode, segmentVariables)
     : [];
-  const heightInputsReady =
-    productCode === "VS" ||
-    (Number.isFinite(Number(segmentVariables.slat_size_mm)) &&
-      Number.isFinite(Number(segmentVariables.slat_gap_mm)));
+  const heightInfo = useSegmentHeightOptions(productCode, segmentVariables, seg.targetHeightMm);
+  const isCustom = isCustomCalculator(productCode);
+  const customCalc = isCustom
+    ? getCustomCalculators().find((c) => c.id === productCode)
+    : null;
+  const heightKey = isCustom
+    ? (findHeightVariableKey(customCalc?.variables ?? []) ?? "target_height_mm")
+    : "target_height_mm";
   const selectedHeightEntry =
     derivedHeightForSlatCount(heightEntries, seg.variables?.slat_count ?? segmentVariables.slat_count) ??
     nearestDerivedHeight(
@@ -346,48 +353,70 @@ export function SegmentRow({
         value: productCode,
         changed: !sameValue(productCode, runProductCode),
       },
-      { label: "Colour", value: colourName(fenceColour), changed: !sameValue(fenceColour, masterFenceColour) },
-      ...(postColour !== fenceColour
-        ? [
-          {
-            label: "Post colour",
-            value: colourName(postColour),
-            changed: !sameValue(postColour, masterPostColour),
-          },
-        ]
-        : []),
-      {
-        label: "Slat",
-        value: `${segmentVariables.slat_size_mm ?? 65}mm`,
-        changed: !sameValue(segmentVariables.slat_size_mm ?? 65, masterVariables.slat_size_mm ?? 65),
-      },
-      {
-        label: "Gap",
-        value: `${segmentVariables.slat_gap_mm ?? 9}mm`,
-        changed: !sameValue(segmentVariables.slat_gap_mm ?? 9, masterVariables.slat_gap_mm ?? 9),
-      },
-      {
-        label: "Post",
-        value: postLabel(productCode, segmentVariables),
-        changed:
-          !isBayg &&
-          (!sameValue(segmentVariables.post_system, masterVariables.post_system) ||
-            !sameValue(segmentVariables.post_size ?? 50, masterVariables.post_size ?? 50)),
-      },
-      {
-        label: "Mounting",
-        value:
-          MOUNTING_LABELS[String(segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground")] ??
-          "Concreted",
-        changed:
-          !isBayg &&
-          !sameValue(
-            segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground",
-            masterVariables.mounting_method ?? masterVariables.mounting_type ?? "in_ground",
-          ),
-      },
-      { label: "Panel Count", value: panelCount, changed: !isBayg && !sameValue(panelCount, masterPanelCount) },
-      { label: "Panel width", value: panelWidthSummary, changed: !isBayg && !sameValue(maxSpacing, masterMaxSpacing) },
+      ...(isCustom
+        ? (customCalc?.variables ?? [])
+            .filter((v) => v.field_key !== heightKey && isVisible(v.visible_when_json ?? {}, segmentVariables))
+            .map((v) => {
+              const val = segmentVariables[v.field_key] ?? v.default_value_json;
+              const masterVal = runVariables[v.field_key] ?? v.default_value_json;
+              let displayVal = "";
+              if (typeof val === "boolean") {
+                displayVal = val ? "Yes" : "No";
+              } else if (v.field_key === "colour_code" || v.field_key === "color" || v.field_key === "colour") {
+                displayVal = colourName(String(val));
+              } else {
+                displayVal = String(val);
+              }
+              return {
+                label: v.label,
+                value: displayVal,
+                changed: !sameValue(val, masterVal),
+              };
+            })
+        : [
+            { label: "Colour", value: colourName(fenceColour), changed: !sameValue(fenceColour, masterFenceColour) },
+            ...(postColour !== fenceColour
+              ? [
+                  {
+                    label: "Post colour",
+                    value: colourName(postColour),
+                    changed: !sameValue(postColour, masterPostColour),
+                  },
+                ]
+              : []),
+            {
+              label: "Slat",
+              value: `${segmentVariables.slat_size_mm ?? 65}mm`,
+              changed: !sameValue(segmentVariables.slat_size_mm ?? 65, masterVariables.slat_size_mm ?? 65),
+            },
+            {
+              label: "Gap",
+              value: `${segmentVariables.slat_gap_mm ?? 9}mm`,
+              changed: !sameValue(segmentVariables.slat_gap_mm ?? 9, masterVariables.slat_gap_mm ?? 9),
+            },
+            {
+              label: "Post",
+              value: postLabel(productCode, segmentVariables),
+              changed:
+                !isBayg &&
+                (!sameValue(segmentVariables.post_system, masterVariables.post_system) ||
+                  !sameValue(segmentVariables.post_size ?? 50, masterVariables.post_size ?? 50)),
+            },
+            {
+              label: "Mounting",
+              value:
+                MOUNTING_LABELS[String(segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground")] ??
+                "Concreted",
+              changed:
+                !isBayg &&
+                !sameValue(
+                  segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground",
+                  masterVariables.mounting_method ?? masterVariables.mounting_type ?? "in_ground",
+                ),
+            },
+            { label: "Panel Count", value: panelCount, changed: !isBayg && !sameValue(panelCount, masterPanelCount) },
+            { label: "Panel width", value: panelWidthSummary, changed: !isBayg && !sameValue(maxSpacing, masterMaxSpacing) },
+          ]),
     ];
   const differenceBits =
     matchesMaster ? [] : rawDifferenceBits.filter((item) => item.changed && item.label !== "Height");
@@ -464,14 +493,14 @@ export function SegmentRow({
           ? {
             ...patchSegmentVariables(seg, {
               [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: entry.height,
-              target_height_mm: entry.height,
+              [heightKey]: entry.height,
               slat_count: entry.N,
             }),
             targetHeightMm: entry.height,
           }
           : {
             ...patchSegmentVariables(seg, {
-              target_height_mm: entry.height,
+              [heightKey]: entry.height,
               slat_count: entry.N,
             }),
             targetHeightMm: entry.height,
@@ -487,7 +516,7 @@ export function SegmentRow({
         segment: {
           ...patchSegmentVariables(seg, {
             [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: null,
-            target_height_mm: null,
+            [heightKey]: null,
             slat_count: null,
           }),
           targetHeightMm: heightMm,
@@ -507,14 +536,14 @@ export function SegmentRow({
           ? {
             ...patchSegmentVariables(seg, {
               [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: heightMm,
-              target_height_mm: heightMm,
+              [heightKey]: heightMm,
               slat_count: null,
             }),
             targetHeightMm: heightMm,
           }
           : {
             ...patchSegmentVariables(seg, {
-              target_height_mm: heightMm,
+              [heightKey]: heightMm,
               slat_count: null,
             }),
             targetHeightMm: heightMm,
@@ -762,38 +791,36 @@ export function SegmentRow({
               </label>
               <label className="flex flex-col gap-1">
                 <div className="flex items-center gap-1">
-
                   <span className="text-sm font-bold text-brand-muted">Height (mm)</span>
-
                 </div>
-                {productCode === "VS" ? (
+                {heightInfo.freeform ? (
                   <>
-
                     <NumberInput
                       value={seg.targetHeightMm ?? 1800}
                       className="w-24 px-2 py-1.5 text-center tabular-nums"
-                      onChange={(v) => updateGeometry("targetHeightMm", Number(v))}
+                      onChange={(v) => updateGeometry("targetHeightMm", heightInfo.clampFreeform(Number(v)))}
                     />
                   </>
-                ) : heightEntries.length > 0 && heightInputsReady ? (
+                ) : heightInfo.optionsMm.length > 0 ? (
                   <>
                     <select
                       value={selectedHeight}
                       onChange={(event) => {
-                        const entry = heightEntries.find(
-                          (item) => item.height === Number(event.target.value),
-                        );
-                        if (entry) updateDerivedHeight(entry);
+                        const val = Number(event.target.value);
+                        updateInlineHeight(val);
                       }}
                       className="w-44 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
                     >
-                      {heightEntries.map((entry) => (
-                        <option key={entry.N} value={entry.height}>
-                          {entry.height}mm - {entry.N} slats
-                        </option>
-                      ))}
+                      {heightInfo.optionsMm.map((opt) => {
+                        const entry = heightEntries.find((e) => e.height === opt);
+                        const label = entry ? `${opt}mm - ${entry.N} slats` : `${opt}mm`;
+                        return (
+                          <option key={opt} value={opt}>
+                            {label}
+                          </option>
+                        );
+                      })}
                     </select>
-
                   </>
                 ) : (
                   <select
@@ -803,11 +830,11 @@ export function SegmentRow({
                     <option>Select slat size and gap first</option>
                   </select>
                 )}
-                {productCode === "VS" ? (
+                {heightInfo.freeform ? (
                   <span className="text-xs text-brand-muted/70">Custom height</span>
-                ) : (
+                ) : !isCustom ? (
                   <span className="text-xs text-brand-muted">Calculated for {segmentVariables.slat_size_mm ?? "?"}mm x {segmentVariables.slat_gap_mm ?? "?"}mm gap</span>
-                )}
+                ) : null}
               </label>
               {isBayg && !gate && (
                 <label className="flex flex-col gap-1">

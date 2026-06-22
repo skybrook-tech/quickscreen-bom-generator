@@ -122,7 +122,7 @@ export function resolveCanonicalPayload(
   fenceConfig: QuoteFenceConfig,
   runs: QuoteRunRow[],
   segments: QuoteRunSegmentRow[],
-): CanonicalPayload {
+): CanonicalPayload | null {
   if (isLegacyFenceConfig(fenceConfig)) {
     throw new LegacyQuoteError();
   }
@@ -135,7 +135,7 @@ export function resolveCanonicalPayload(
   const fromRuns = canonicalPayloadFromQuoteRuns(runs, segments);
   if (fromRuns) return fromRuns;
 
-  throw new Error('Quote has no v3 payload or run data to load.');
+  return null;
 }
 
 export function jobNameFromQuote(

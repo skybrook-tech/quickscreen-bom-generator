@@ -309,6 +309,7 @@ function expandSegmentWithGates(
   runIdx: number,
   stableIds: StableIdMap,
   sortOrderBase: number,
+  defaultHeight: number,
 ): { canonSegments: CanonicalSegment[]; nextSortOrder: number } {
   // Sort gates left-to-right along the segment
   const sorted = [...gates].sort((a, b) => a.positionOnSegment - b.positionOnSegment);
@@ -349,6 +350,7 @@ function expandSegmentWithGates(
         segmentWidthMm: Math.round(panelBeforeMm),
         canvasSegmentIndex: localSegIdx,
         sourceSegmentLengthMm: Math.round(totalMm),
+        targetHeightMm: defaultHeight,
         variables,
       });
     }
@@ -372,6 +374,7 @@ function expandSegmentWithGates(
       gateAnchor: gate.anchor,
       canvasSegmentIndex: localSegIdx,
       sourceSegmentLengthMm: Math.round(totalMm),
+      targetHeightMm: defaultHeight,
       variables: {
         ...(gate.variables ?? {}),
         ...(parentSectionId ? { parent_section_id: parentSectionId } : {}),
@@ -415,6 +418,7 @@ function expandSegmentWithGates(
       segmentWidthMm: Math.round(trailingMm),
       canvasSegmentIndex: localSegIdx,
       sourceSegmentLengthMm: Math.round(totalMm),
+      targetHeightMm: defaultHeight,
       variables,
     });
   }
@@ -566,6 +570,7 @@ export function canvasLayoutToCanonical(
           slice.runIdx,
           stableIds,
           sortOrder,
+          Number(variables.target_height_mm ?? 1800),
         );
         canonSegments.push(...expanded);
         sortOrder = nextSortOrder;
@@ -584,6 +589,7 @@ export function canvasLayoutToCanonical(
           segmentWidthMm: Math.round(seg.lengthMM),
           canvasSegmentIndex: si,
           sourceSegmentLengthMm: Math.round(seg.lengthMM),
+          targetHeightMm: Number(variables.target_height_mm ?? 1800),
           variables: {
             ...(terminationVariablesForSegment(seg) ?? {}),
             geometry_angle_deg: Math.round(seg.angleDeg),
@@ -640,6 +646,7 @@ export function canvasLayoutToCanonical(
     return {
       runId,
       productCode,
+      variables,
       leftBoundary,
       rightBoundary,
       segments: canonSegments,

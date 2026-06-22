@@ -1,6 +1,8 @@
 import { useId, useMemo, useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalSegment } from "../../types/canonical.types";
+import { useProfile } from "../../context/ProfileContext";
+import { useProducts } from "../../hooks/useProducts";
 import {
   GATE_SEGMENT_STUB_KEYS,
   patchSegmentVariables,
@@ -489,6 +491,9 @@ function LatchPicker({
 
 export function GateSegmentDetails({ runId, seg }: Props) {
   const { state, dispatch } = useCalculator();
+  const { isAdmin } = useProfile();
+  const { data: products } = useProducts();
+  const gateProduct = products?.find((p) => p.system_type === "QS_GATE");
   const v = seg.variables ?? {};
   const run = state.payload?.runs.find((item) => item.runId === runId);
   const runVars = { ...(state.payload?.variables ?? {}), ...(run?.variables ?? {}) };
@@ -1041,6 +1046,21 @@ export function GateSegmentDetails({ runId, seg }: Props) {
           latchSku={currentLatchValue}
         />
       </GateSettingsSection>
+      
+      {isAdmin && gateProduct && (
+        <div className="flex justify-end pt-4 border-t border-brand-border/40 mt-4">
+          <a
+            href={`/admin/products/${gateProduct.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-[36px] items-center justify-center gap-1.5 rounded-lg border border-brand-border bg-brand-card px-3 py-1.5 text-xs font-extrabold text-brand-muted hover:border-brand-primary hover:text-brand-primary transition-colors"
+            title="Edit calculator logic / rules for gates"
+          >
+            Edit Gate Calculator Logic
+          </a>
+        </div>
+      )}
+
     </div>
   );
 }

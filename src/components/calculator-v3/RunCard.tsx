@@ -20,6 +20,9 @@ import { RunSettingsEditor } from "./RunSettingsEditor";
 import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
 import { ConfirmButton } from "../shared/ConfirmButton";
 import { InlineHeightEditor } from "./InlineHeightEditor";
+import { useProfile } from "../../context/ProfileContext";
+import { useProducts } from "../../hooks/useProducts";
+import { getCustomCalculators, isCustomCalculator, findHeightVariableKey } from "../../lib/customCalculators";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 const RUN_SETTINGS_AUTO_COLLAPSE_MS = 60000;
@@ -62,6 +65,8 @@ function runMasterVariables(
 
 export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenConsumed }: Props) {
   const { state, dispatch } = useCalculator();
+  const { isAdmin } = useProfile();
+  const { data: products } = useProducts();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [runSettingsOpen, setRunSettingsOpen] = useState(false);
   const [teachingDismissed, setTeachingDismissed] = useState(
@@ -84,6 +89,36 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   const slatGap = Number(runVariables.slat_gap_mm ?? 5);
   const mounting = String(runVariables.mounting_method ?? runVariables.mounting_type ?? "in_ground").replace(/_/g, " ");
   const isBayg = run.productCode === "BAYG";
+  const product = products?.find((p) => p.system_type === run.productCode);
+
+  const customCalcs = useMemo(() => getCustomCalculators(), []);
+  const isCustom = isCustomCalculator(run.productCode);
+  const customCalc = isCustom ? customCalcs.find(c => c.id === run.productCode) : null;
+
+  const hasColor = !isCustom || customCalc?.variables.some(v => ["color", "colour_code", "colour"].includes(v.field_key));
+  const hasSlatSize = !isCustom || customCalc?.variables.some(v => ["slat_size_mm", "slat_size"].includes(v.field_key));
+  const hasGapSize = !isCustom || customCalc?.variables.some(v => ["slat_gap_mm", "gap_size", "gap"].includes(v.field_key));
+  const hasMounting = (!isCustom && run.productCode !== "BAYG") || (isCustom && customCalc?.variables.some(v => ["mounting_method", "mounting_type", "mounting"].includes(v.field_key)));
+  const hasMaxSpacing = (!isCustom && run.productCode !== "BAYG") || (isCustom && customCalc?.variables.some(v => ["max_panel_width_mm", "max_post_spacing", "post_spacing"].includes(v.field_key)));
+
+  const customFieldsToRender = useMemo(() => {
+    if (!customCalc) return [];
+    const standardKeys = new Set([
+      "target_height_mm", "paling_height", "height", "paling_height_mm",
+      "color", "colour_code", "colour",
+      "slat_size_mm", "slat_size",
+      "slat_gap_mm", "gap_size", "gap",
+      "mounting_method", "mounting_type", "mounting",
+      "max_panel_width_mm", "max_post_spacing", "post_spacing"
+    ]);
+    return customCalc.variables.filter(v => !standardKeys.has(v.field_key));
+  }, [customCalc]);
+
+  function getVariableValue(field_key: string, defaultValue: any) {
+    const val = runVariables[field_key] ?? defaultValue;
+    if (typeof val === "boolean") return val ? "Yes" : "No";
+    return String(val);
+  }
 
   useEffect(
     () => () => {
@@ -139,10 +174,17 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   }
 
   function updateRunHeight(heightMm: number, entry?: DerivedHeight) {
+    const heightKey = isCustom
+      ? (findHeightVariableKey(customCalc?.variables ?? []) ?? "target_height_mm")
+      : "target_height_mm";
+
     const nextVariables: CanonicalRun["variables"] = {
       ...(run.variables ?? {}),
       target_height_mm: heightMm,
     };
+    if (isCustom && heightKey && heightKey !== "target_height_mm") {
+      nextVariables[heightKey] = String(heightMm);
+    }
     if (entry) nextVariables.slat_count = entry.N;
     else delete nextVariables.slat_count;
 
@@ -155,6 +197,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           if (!segmentInheritsRunHeight(segment)) return segment;
           const cleared = patchSegmentVariables(segment, {
             target_height_mm: null,
+            [heightKey]: null,
             slat_count: null,
             [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: null,
           });
@@ -216,11 +259,26 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
                 onChange={updateRunHeight}
               />
             </span>
-            <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
-            <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
-            <span>Gap size: <strong className="text-brand-text">{slatGap}mm</strong></span>
-            <span>Post mounting: <strong className="text-brand-text">{isBayg ? "Not required" : MOUNTING_LABELS[mounting] ?? mounting}</strong></span>
-            <span>Max post spacing: <strong className="text-brand-text">{jobMax}mm</strong></span>
+            {hasColor && (
+              <span>Color: <strong className="text-brand-text">{colourName(String(runVariables.colour_code ?? runVariables.color ?? runVariables.colour ?? "B"))}</strong></span>
+            )}
+            {hasSlatSize && (
+              <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
+            )}
+            {hasGapSize && (
+              <span>Gap size: <strong className="text-brand-text">{runVariables.slat_gap_mm ?? runVariables.gap_size ?? runVariables.gap ?? slatGap}mm</strong></span>
+            )}
+            {hasMounting && (
+              <span>Post mounting: <strong className="text-brand-text">{isBayg ? "Not required" : MOUNTING_LABELS[mounting] ?? mounting}</strong></span>
+            )}
+            {hasMaxSpacing && (
+              <span>Max post spacing: <strong className="text-brand-text">{jobMax}mm</strong></span>
+            )}
+            {customFieldsToRender.map((v) => (
+              <span key={v.field_key}>
+                {v.label}: <strong className="text-brand-text">{getVariableValue(v.field_key, v.default_value_json)}</strong>
+              </span>
+            ))}
             <span>Corners: <strong className="text-brand-text">{run.corners?.length ?? 0}</strong></span>
           </span>
         </h3>
@@ -230,6 +288,17 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           onMouseLeave={scheduleRunSettingsCollapse}
         >
           <div className="flex justify-end">
+            {isAdmin && product && (
+              <a
+                href={`/admin/products/${product.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mb-2 mr-2 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-xs font-extrabold text-brand-muted hover:border-brand-primary hover:text-brand-primary transition-colors"
+                title="Edit calculator logic / rules"
+              >
+                Edit Calculator Logic
+              </a>
+            )}
 
             <button
               type="button"
@@ -240,7 +309,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
                   return next;
                 })
               }
-              className={`ml-auto mb-2 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-extrabold transition-colors ${runSettingsOpen
+              className={`mb-2 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-extrabold transition-colors ${runSettingsOpen
                 ? "border-brand-primary bg-brand-primary text-white"
                 : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
                 }`}

@@ -21,6 +21,7 @@ interface HeaderProps {
   onCustomerModeChange?: (enabled: boolean) => void;
   onClearJobRequest?: () => void;
   clearJobDisabled?: boolean;
+  jobId?: string | null;
 }
 
 export function Header({
@@ -35,6 +36,7 @@ export function Header({
   onCustomerModeChange,
   onClearJobRequest,
   clearJobDisabled = false,
+  jobId,
 }: HeaderProps = {}) {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
@@ -114,10 +116,22 @@ export function Header({
             <NavLink to="/quotes" className={navLinkCls}>
               Quotes
             </NavLink>
+            <NavLink to="/builder" className={navLinkCls}>
+              Calculator Builder
+            </NavLink>
             <NavLink to="/fence-calculator" className={newQuoteLinkCls}>
               <Plus size={16} />
               New Quote
             </NavLink>
+            {jobId && (
+              <a
+                href={`http://localhost:3000/jobs/${jobId}`}
+                target="_top"
+                className="text-xs font-semibold px-3 py-1.5 rounded-md text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/30 transition-colors ml-4 shadow-sm border border-emerald-200/50 dark:border-emerald-800/30 flex items-center gap-1.5"
+              >
+                ← Back to Job
+              </a>
+            )}
           </nav>
         )}
       </div>
@@ -235,6 +249,15 @@ export function Header({
                 <WifiOff size={18} />
                 Offline - quotes can't save
               </div>
+            )}
+            {jobId && (
+              <a
+                href={`http://localhost:3000/jobs/${jobId}`}
+                target="_top"
+                className="flex min-h-11 items-center gap-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-left text-sm font-bold text-emerald-600 dark:text-emerald-400"
+              >
+                ← Back to Runsheet Job
+              </a>
             )}
             {onClearJobRequest && (
               <button

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<!--
+  Internal demo / Cypress fixture: a believable "supplier website" with the
+  QuickScreen embed dropped in. The live embed below uses a same-origin
+  /embed.js so it works wherever this file is served (Vite dev, staging, prod).
+  The "paste this" block shows the real production snippet a supplier copies.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Coastline Fencing Co — Quality Fencing, Gold Coast</title>
+    <style>
+      :root { --ink:#15324a; --muted:#5b7186; --accent:#0d8ecf; --bg:#f4f7fa; }
+      * { box-sizing: border-box; }
+      body { margin:0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color:var(--ink); background:var(--bg); }
+      header { background:#fff; border-bottom:1px solid #e2e8f0; }
+      .bar { max-width:1080px; margin:0 auto; padding:18px 24px; display:flex; align-items:center; justify-content:space-between; }
+      .logo { font-weight:800; font-size:20px; letter-spacing:.02em; }
+      .logo span { color:var(--accent); }
+      nav a { color:var(--muted); text-decoration:none; margin-left:22px; font-size:14px; }
+      .hero { background:linear-gradient(135deg,#0d8ecf 0%, #0b5e87 100%); color:#fff; }
+      .hero .inner { max-width:1080px; margin:0 auto; padding:64px 24px; }
+      .hero h1 { font-size:40px; margin:0 0 12px; line-height:1.1; }
+      .hero p { font-size:18px; max-width:620px; opacity:.92; margin:0; }
+      main { max-width:1080px; margin:0 auto; padding:40px 24px 80px; }
+      .lead { font-size:18px; color:var(--muted); max-width:720px; }
+      h2 { font-size:26px; margin:48px 0 8px; }
+      .calc-wrap { margin-top:18px; background:#fff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; box-shadow:0 6px 24px rgba(16,42,67,.06); }
+      .calc-wrap .cap { padding:14px 18px; border-bottom:1px solid #eef2f6; font-size:13px; color:var(--muted); }
+      footer { background:#0b1c2a; color:#9fb3c4; }
+      footer .inner { max-width:1080px; margin:0 auto; padding:28px 24px; font-size:13px; }
+      pre { background:#0b1c2a; color:#cfe6f5; padding:16px; border-radius:8px; overflow:auto; font-size:13px; }
+      .grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+      @media (max-width:720px){ .grid{ grid-template-columns:1fr; } .hero h1{ font-size:30px; } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="bar">
+        <div class="logo">Coastline <span>Fencing Co</span></div>
+        <nav>
+          <a href="#fencing">Fencing</a>
+          <a href="#quote">Get a Quote</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="inner">
+        <h1>Fencing that lasts a lifetime.</h1>
+        <p>Aluminium slat, glass pool, and Colorbond fencing supplied and installed across the Gold Coast and northern NSW since 1998.</p>
+      </div>
+    </section>
+
+    <main>
+      <p class="lead">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. We pride ourselves on premium materials,
+        compliant installs, and a no-surprises quote. Sed do eiusmod tempor incididunt ut labore et dolore
+        magna aliqua — ask us about our 10-year workmanship guarantee.
+      </p>
+
+      <h2 id="quote">Price your fence in 60 seconds</h2>
+      <p class="lead">Draw your run, pick your colours, and get an instant materials quote — no obligation.</p>
+
+      <!-- ── The embed. One tag. ───────────────────────────────────────────── -->
+      <div class="calc-wrap" id="fencing">
+        <div class="cap">Instant fence quote · powered by your supplier’s live pricing</div>
+        <script src="/embed.js" data-org="glass-outlet" defer></script>
+      </div>
+
+      <h2 id="contact">Add this calculator to your own site</h2>
+      <div class="grid">
+        <div>
+          <p class="lead">Suppliers: paste this two-line snippet anywhere on your site. It themes to your brand and the quotes land in your dashboard.</p>
+          <pre>&lt;script
+  src="https://app.skybrook.com.au/embed.js"
+  data-org="glass-outlet"
+  defer&gt;&lt;/script&gt;</pre>
+        </div>
+        <div>
+          <p class="lead">Quat. Ut enim ad minim veniam, quis nostrud exercitation ullamco. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="inner">© 1998–2026 Coastline Fencing Co · ABN 00 000 000 000 · Burleigh Heads QLD</div>
+    </footer>
+
+    <!-- Demo-only: log the postMessage events the host page receives. -->
+    <script>
+      window.addEventListener("quickscreen:ready", function (e) { console.log("[demo] embed ready", e.detail); });
+      window.addEventListener("quickscreen:quote-created", function (e) { console.log("[demo] quote created", e.detail); });
+    </script>
+  </body>
+</html>

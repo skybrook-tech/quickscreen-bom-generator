@@ -15,6 +15,7 @@ interface AppShellProps {
   onCustomerModeChange?: (enabled: boolean) => void;
   onClearJobRequest?: () => void;
   clearJobDisabled?: boolean;
+  jobId?: string | null;
 }
 
 export function AppShell({
@@ -31,6 +32,7 @@ export function AppShell({
   onCustomerModeChange,
   onClearJobRequest,
   clearJobDisabled,
+  jobId,
 }: AppShellProps) {
   return (
     <div className="flex h-screen h-dvh flex-col overflow-hidden bg-brand-bg text-brand-text">
@@ -46,6 +48,7 @@ export function AppShell({
         onCustomerModeChange={onCustomerModeChange}
         onClearJobRequest={onClearJobRequest}
         clearJobDisabled={clearJobDisabled}
+        jobId={jobId}
       />
       {topBar && (
         <div className="shrink-0 bg-brand-bg border-b border-brand-border/60">
