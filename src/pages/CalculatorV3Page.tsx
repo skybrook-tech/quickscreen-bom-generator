@@ -61,6 +61,7 @@ import {
   buildV3FenceConfig,
   buildV3QuoteBom,
   replaceV3QuoteRuns,
+  syncQuoteLineItems,
 } from "../lib/persistV3Quote";
 import { queryClient } from "../lib/queryClient";
 import { LegacyQuoteError } from "../types/quote.types";
@@ -544,9 +545,34 @@ function CalculatorV3Content({ quoteId, jobId }: { quoteId?: string; jobId?: str
     [],
   );
 
+  const [fetchedJobTitle, setFetchedJobTitle] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!jobId) return;
+    async function fetchJobDetails() {
+      try {
+        const { data, error } = await supabase
+          .from("jobs")
+          .select("title, job_number")
+          .eq("id", jobId)
+          .single();
+        if (error) throw error;
+        if (data) {
+          setFetchedJobTitle(data.title || `Job #${data.job_number}`);
+        }
+      } catch (err) {
+        console.error("Failed to fetch job details:", err);
+      }
+    }
+    fetchJobDetails();
+  }, [jobId]);
+
   useEffect(() => {
     if (!quoteId || !quoteQuery.data) return;
-    if (hydratedQuoteIdRef.current === quoteId) return;
+    if (hydratedQuoteIdRef.current === quoteId) {
+      if (jobName && jobName !== "New Quote") return;
+      if (!fetchedJobTitle) return;
+    }
     hydratedQuoteIdRef.current = quoteId;
     const { quote, payload: loadedPayload } = quoteQuery.data;
     if (loadedPayload) {
@@ -560,11 +586,13 @@ function CalculatorV3Content({ quoteId, jobId }: { quoteId?: string; jobId?: str
     } else {
       dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
     }
-    setJobName(jobNameFromQuote(quote.fence_config, quote.customer_ref));
+    const rawName = jobNameFromQuote(quote.fence_config, quote.customer_ref);
+    const finalName = (!rawName || rawName === "New Quote") && fetchedJobTitle ? fetchedJobTitle : rawName;
+    setJobName(finalName || "");
     setIntroDismissed(true);
     setRightPaneView("bom");
     setMobileTab("bom");
-  }, [quoteId, quoteQuery.data, dispatch]);
+  }, [quoteId, quoteQuery.data, dispatch, fetchedJobTitle, jobName]);
 
   useEffect(() => {
     if (quoteId || payload || introDismissed) return;
@@ -1168,6 +1196,7 @@ function CalculatorV3Content({ quoteId, jobId }: { quoteId?: string; jobId?: str
           .from("quotes")
           .update({
             customer_ref: customerRef,
+            title: customerRef,
             property_anchor: propertyAnchor,
             fence_config: fenceConfig,
             gates: [],
@@ -1178,6 +1207,7 @@ function CalculatorV3Content({ quoteId, jobId }: { quoteId?: string; jobId?: str
         if (updateError) throw updateError;
 
         await replaceV3QuoteRuns(supabase, orgId, quoteId, payload);
+        await syncQuoteLineItems(supabase, quoteId, quoteBom);
 
         await queryClient.invalidateQueries({ queryKey: ["quote", quoteId] });
         await queryClient.invalidateQueries({ queryKey: ["quotes"] });
@@ -1190,6 +1220,7 @@ function CalculatorV3Content({ quoteId, jobId }: { quoteId?: string; jobId?: str
             org_id: orgId,
             user_id: user.id,
             customer_ref: customerRef,
+            title: customerRef,
             property_anchor: propertyAnchor,
             fence_config: fenceConfig,
             gates: [],
@@ -1204,6 +1235,7 @@ function CalculatorV3Content({ quoteId, jobId }: { quoteId?: string; jobId?: str
         if (quoteError) throw quoteError;
 
         await replaceV3QuoteRuns(supabase, orgId, quote.id, payload);
+        await syncQuoteLineItems(supabase, quote.id, quoteBom);
 
         await queryClient.invalidateQueries({ queryKey: ["quotes"] });
         setJobName(customerRef);
@@ -1719,13 +1751,14 @@ function CalculatorV3Content({ quoteId, jobId }: { quoteId?: string; jobId?: str
       <AppShell
         branding={theme?.branding}
         headerActions={headerActions}
-      jobTitle={headerJobTitle}
-      headerPriceLabel={headerPriceLabel}
-      customerMode={customerMode}
-      onCustomerModeChange={setCustomerMode}
-      onClearJobRequest={() => setClearJobDialogOpen(true)}
-      clearJobDisabled={!payload && !jobName}
-    >
+        jobTitle={headerJobTitle}
+        headerPriceLabel={headerPriceLabel}
+        customerMode={customerMode}
+        onCustomerModeChange={setCustomerMode}
+        onClearJobRequest={() => setClearJobDialogOpen(true)}
+        clearJobDisabled={!payload && !jobName}
+        jobId={jobId}
+      >
       {gatePositionTarget && gateTargetRunLength > 0 && (
         <GatePositionModal
           gateLabel={gatePositionTarget.kind.replace("_", " ")}
