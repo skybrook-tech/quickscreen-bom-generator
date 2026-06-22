@@ -13,7 +13,8 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
-import { extractJwt, resolveUserProfile } from "../_shared/auth.ts";
+import { extractJwt, resolveEmbedOrg, resolveUserProfile } from "../_shared/auth.ts";
+import { enforceEmbedRateLimit, RATE_LIMIT_MESSAGE } from "../_shared/rateLimit.ts";
 import type { PricingTier, SeedComponent, LocalPricingRule } from "./engine.ts";
 import {
   calculateLocalBom,
@@ -55,12 +56,25 @@ Deno.serve(async (req: Request) => {
   if (corsResponse) return corsResponse;
 
   try {
-    const jwt = extractJwt(req);
-    const { orgId, pricingTier } = await resolveUserProfile(jwt);
-    const tier = pricingTier as PricingTier;
-
     const body = await req.json();
     const payload = body?.payload;
+    const embedOrgSlug = body?.embedOrgSlug;
+
+    // Two auth modes:
+    //   • Authenticated app — resolve org + pricing tier from the JWT's profile.
+    //   • Anonymous embed — resolve org from the slug, gated on embed_enabled,
+    //     and force retail (tier1) pricing. Never expose trade tiers anonymously.
+    const isEmbed = typeof embedOrgSlug === "string" && embedOrgSlug.length > 0;
+    const { orgId, pricingTier } = isEmbed
+      ? await resolveEmbedOrg(embedOrgSlug)
+      : await resolveUserProfile(extractJwt(req));
+    const tier = pricingTier as PricingTier;
+
+    // Anon compute is cheaper to abuse than a write but still spammable — looser
+    // window than embed-quote. Authenticated calls are not limited here.
+    if (isEmbed) {
+      await enforceEmbedRateLimit(orgId, req, { limit: 30, windowSeconds: 60 });
+    }
 
     if (!payload || typeof payload !== "object") {
       return new Response(
@@ -99,7 +113,14 @@ Deno.serve(async (req: Request) => {
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Internal error";
-    const status = message.includes("Authorization") || message.includes("JWT") ? 401 : 500;
+    const status =
+      message.includes("Authorization") || message.includes("JWT")
+        ? 401
+        : message === RATE_LIMIT_MESSAGE
+          ? 429
+          : message.includes("Embedding is not enabled")
+            ? 403
+            : 500;
     return new Response(
       JSON.stringify({ error: message }),
       { status, headers: { ...corsHeaders, "Content-Type": "application/json" } },

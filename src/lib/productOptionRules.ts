@@ -5,6 +5,7 @@ import {
   nearestDerivedHeight,
   type DerivedHeight,
 } from "./heights";
+import { getCustomCalculators, isCustomCalculator, findHeightVariableKey } from "./customCalculators";
 
 type Variables = Record<string, string | number | boolean>;
 
@@ -116,6 +117,22 @@ export function postColourOptionsForSystem(variables: Variables) {
 }
 
 export function initialVariablesForSystem(productCode: string): Variables {
+  const customCalcs = getCustomCalculators();
+  const customCalc = customCalcs.find((c) => c.id === productCode);
+  if (customCalc) {
+    const defaults: Record<string, any> = {};
+    for (const v of customCalc.variables) {
+      if (v.default_value_json !== undefined) {
+        defaults[v.field_key] = v.default_value_json;
+      }
+    }
+    const heightKey = findHeightVariableKey(customCalc.variables);
+    if (heightKey && defaults[heightKey] !== undefined) {
+      defaults.target_height_mm = Number(String(defaults[heightKey]).replace(/[^0-9]/g, ""));
+    }
+    return defaults;
+  }
+
   const maxPanelWidth = maxPanelWidthForSystem(productCode);
   return normaliseVariablesForSystem(productCode, {
     finish_family: "standard",
@@ -136,6 +153,9 @@ export function normaliseVariablesForSystem(
   productCode: string,
   variables: Variables,
 ): Variables {
+  if (isCustomCalculator(productCode)) {
+    return variables;
+  }
   const finishOptions = finishOptionsForSystem(productCode);
   const finish = finishOptions.includes(String(variables.finish_family))
     ? String(variables.finish_family)

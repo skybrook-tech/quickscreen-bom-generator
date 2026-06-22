@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import pluralize from "pluralize";
 import type { CalculatorBOMResult, BOMLineItem } from "../../types/bom.types";
@@ -9,6 +9,90 @@ import {
   PRICE_SOURCE_LABEL,
   PRICE_SOURCE_VERIFIED_DATE,
 } from "../../lib/pricingMetadata";
+import { supabase } from "../../lib/supabase";
+
+function getDefaultSupplier(sku: string, productCode: string | undefined): { id: string; name: string } {
+  if (productCode === "QSHS" || productCode === "VS" || productCode === "XPL" || productCode === "BAYG" || sku.startsWith("XP-") || sku.startsWith("PF-AL") || sku.startsWith("PF-GLASS") || sku.startsWith("ZEUS")) {
+    return { id: "e8553ddc-8140-48db-8148-913adbdf32c7", name: "Glass Outlet" };
+  }
+  if (sku.startsWith("TP-")) {
+    return { id: "3ffe92fa-c529-4622-92e6-febfda247307", name: "Our Town Fencing" };
+  }
+  if (sku.startsWith("CB-")) {
+    return { id: "f251f668-b4f5-43af-aa4e-7a5aba42f3e0", name: "Stratco" };
+  }
+  if (sku.startsWith("MW-")) {
+    return { id: "b14ddcd4-c3ce-4287-a53f-33d7e692347a", name: "Modular Walls" };
+  }
+  if (sku.startsWith("RW-")) {
+    return { id: "2fafb8a1-0f69-422a-b200-5e3e2666feb3", name: "Amazing Fencing" };
+  }
+  if (sku.startsWith("CW-") || sku.startsWith("WM-")) {
+    return { id: "1d224b9b-0fc2-47d6-a6cc-b2ce64b89a09", name: "Metroll" };
+  }
+  return { id: "e8553ddc-8140-48db-8148-913adbdf32c7", name: "Glass Outlet" };
+}
+
+function getAvailableSuppliersForSku(
+  sku: string,
+  productCode: string | undefined,
+  allSuppliers: { id: string; name: string; slug: string }[],
+  dbPrices: { sku: string; price_cents: number; supplier_id: string }[],
+  defaultPrice: number
+): { id: string; name: string; price: number }[] {
+  const defaultSupp = getDefaultSupplier(sku, productCode);
+  
+  const skuDbPrices = dbPrices.filter((p) => p.sku === sku);
+  if (skuDbPrices.length > 0) {
+    return skuDbPrices.map((pbi) => {
+      const s = allSuppliers.find((x) => x.id === pbi.supplier_id) || defaultSupp;
+      return {
+        id: pbi.supplier_id,
+        name: s.name,
+        price: pbi.price_cents / 100,
+      };
+    });
+  }
+
+  const list: { id: string; name: string; price: number }[] = [
+    { id: defaultSupp.id, name: defaultSupp.name, price: defaultPrice }
+  ];
+
+  const addMockSupplier = (slug: string, priceMult: number) => {
+    const s = allSuppliers.find((x) => x.slug === slug);
+    if (s && s.id !== defaultSupp.id) {
+      list.push({
+        id: s.id,
+        name: s.name,
+        price: parseFloat((defaultPrice * priceMult).toFixed(2)),
+      });
+    }
+  };
+
+  if (productCode === "QSHS" || productCode === "VS" || productCode === "XPL" || productCode === "BAYG" || sku.startsWith("XP-")) {
+    addMockSupplier("glass-outlet-byron", 1.05);
+  } else if (sku.startsWith("TP-")) {
+    addMockSupplier("amazing-fencing", 0.98);
+    addMockSupplier("discount-fencing", 1.03);
+  } else if (sku.startsWith("CB-")) {
+    addMockSupplier("metroll", 0.97);
+    addMockSupplier("oxworks", 1.02);
+  } else if (sku.startsWith("PF-AL")) {
+    addMockSupplier("amazing-fencing", 1.04);
+    addMockSupplier("oxworks", 0.95);
+  } else if (sku.startsWith("PF-GLASS")) {
+    addMockSupplier("oxworks", 1.02);
+  } else if (sku.startsWith("RW-")) {
+    addMockSupplier("discount-fencing", 1.05);
+  } else if (sku.startsWith("CW-") || sku.startsWith("WM-")) {
+    addMockSupplier("cut-price-fencing", 0.96);
+    addMockSupplier("oxworks", 1.03);
+  } else if (sku.startsWith("ZEUS")) {
+    addMockSupplier("oxworks", 1.04);
+  }
+
+  return list;
+}
 import { BOM_CATEGORY_ORDER } from "../../lib/bomMetadata";
 import {
   gateDiagramNumbersForSku,
@@ -199,14 +283,16 @@ function BOMTable({
   onSwitchEconomyToStandard,
   customerMode,
   showWorkings,
+  onSupplierChange,
 }: {
-  items: BOMLineItem[];
+  items: any[];
   editable?: boolean;
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
   customerMode?: boolean;
   showWorkings: boolean;
+  onSupplierChange?: (sku: string, supplierId: string) => void;
 }) {
   const sorted = sortItems(items);
   const groups = groupByCategory(sorted);
@@ -231,6 +317,7 @@ function BOMTable({
       hoveredGateDiagramNumber={hoveredGateDiagramNumber}
       customerMode={customerMode}
       showWorkings={showWorkings}
+      onSupplierChange={onSupplierChange}
     />
     <div
       className="hidden overflow-x-auto md:block print:block print:overflow-visible"
@@ -244,6 +331,9 @@ function BOMTable({
             </th>
             <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider">
               Description
+            </th>
+            <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider">
+              Supplier
             </th>
             <th className="hidden py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-center sm:table-cell">
               Unit
@@ -281,6 +371,7 @@ function BOMTable({
               hoveredGateDiagramNumber={hoveredGateDiagramNumber}
               customerMode={customerMode}
               showWorkings={showWorkings}
+              onSupplierChange={onSupplierChange}
             />
           ))}
         </tbody>
@@ -299,8 +390,9 @@ function BOMMobileCards({
   hoveredGateDiagramNumber,
   customerMode,
   showWorkings,
+  onSupplierChange,
 }: {
-  groups: [string, BOMLineItem[]][];
+  groups: [string, any[]][];
   editable?: boolean;
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
@@ -308,6 +400,7 @@ function BOMMobileCards({
   hoveredGateDiagramNumber: GateDiagramNumber | null;
   customerMode?: boolean;
   showWorkings: boolean;
+  onSupplierChange?: (sku: string, supplierId: string) => void;
 }) {
   return (
     <div className="space-y-4 md:hidden print:hidden" data-testid="bom-mobile-cards">
@@ -331,6 +424,7 @@ function BOMMobileCards({
                 }
                 customerMode={customerMode}
                 showWorkings={showWorkings}
+                onSupplierChange={onSupplierChange}
               />
             ))}
           </div>
@@ -349,8 +443,9 @@ function BOMMobileCard({
   highlighted,
   customerMode,
   showWorkings,
+  onSupplierChange,
 }: {
-  item: BOMLineItem;
+  item: any;
   editable?: boolean;
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
@@ -358,6 +453,7 @@ function BOMMobileCard({
   highlighted: boolean;
   customerMode?: boolean;
   showWorkings: boolean;
+  onSupplierChange?: (sku: string, supplierId: string) => void;
 }) {
   const cartonHint = cartonHintForLine(item);
   const sourceText = sourceBreakdown(item);
@@ -385,6 +481,24 @@ function BOMMobileCard({
           <p className="mt-1 text-base font-black leading-snug text-brand-text">
             {stripParentheticalDispatchCode(item.description)}
           </p>
+          <div className="mt-2 flex items-center gap-2">
+            <span className="text-xs font-bold text-brand-muted">Supplier:</span>
+            {item.availableSuppliers && item.availableSuppliers.length > 1 ? (
+              <select
+                value={item.supplierId}
+                onChange={(e) => onSupplierChange?.(item.sku, e.target.value)}
+                className="rounded-lg border border-brand-border bg-brand-card px-2 py-1 text-xs font-semibold text-brand-text outline-none focus:border-brand-accent"
+              >
+                {item.availableSuppliers.map((s: any) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <span className="text-xs text-brand-text font-semibold">{item.supplierName}</span>
+            )}
+          </div>
           {showWorkings && sourceText && (
             <p className="mt-2 rounded-full bg-brand-card px-2 py-1 text-[11px] font-bold text-brand-muted">
               {sourceText}
@@ -468,9 +582,10 @@ function ItemGroup({
   hoveredGateDiagramNumber,
   customerMode,
   showWorkings,
+  onSupplierChange,
 }: {
   category: string;
-  items: BOMLineItem[];
+  items: any[];
   editable?: boolean;
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
@@ -478,6 +593,7 @@ function ItemGroup({
   hoveredGateDiagramNumber: GateDiagramNumber | null;
   customerMode?: boolean;
   showWorkings: boolean;
+  onSupplierChange?: (sku: string, supplierId: string) => void;
 }) {
   const orderedItems = orderCompanions(items);
   let lastSubCategory = "";
@@ -485,7 +601,7 @@ function ItemGroup({
     <>
       <tr className="border-t border-brand-border">
         <td
-          colSpan={editable ? (customerMode ? 5 : 7) : (customerMode ? 4 : 6)}
+          colSpan={editable ? (customerMode ? 6 : 8) : (customerMode ? 5 : 7)}
           className="px-3 py-1.5 bg-slate-300/15 border-b border-brand-border capitalize text-xs font-semibold text-brand-muted tracking-wider"
         >
           {humanizeCategory(category)}
@@ -509,7 +625,7 @@ function ItemGroup({
             rows.push(
               <tr key={`${category}-${subCategory}-heading`}>
                 <td
-                  colSpan={editable ? (customerMode ? 5 : 7) : (customerMode ? 4 : 6)}
+                  colSpan={editable ? (customerMode ? 6 : 8) : (customerMode ? 5 : 7)}
                   className="px-3 pt-3 pb-1 text-[11px] font-extrabold uppercase tracking-wide text-brand-muted"
                 >
                   {humanizeSubCategory(subCategory)}
@@ -583,6 +699,23 @@ function ItemGroup({
               </p>
             )}
           </td>
+          <td className="py-2.5 px-3 text-xs">
+            {item.availableSuppliers && item.availableSuppliers.length > 1 ? (
+              <select
+                value={item.supplierId}
+                onChange={(e) => onSupplierChange?.(item.sku, e.target.value)}
+                className="rounded-lg border border-brand-border bg-brand-card px-2 py-1 text-xs font-semibold text-brand-text outline-none focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+              >
+                {item.availableSuppliers.map((s: any) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <span className="text-xs text-brand-text font-semibold">{item.supplierName}</span>
+            )}
+          </td>
           <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-center sm:table-cell">
             {unitLabel(item)}
           </td>
@@ -648,30 +781,114 @@ export function BOMResultTabs({
   const [viewMode, setViewMode] = useState<"line_items" | "cut_list">("line_items");
   const [showWorkings, setShowWorkings] = useState(true);
 
+  const [suppliers, setSuppliers] = useState<{ id: string; name: string; slug: string }[]>([]);
+  const [priceBookItems, setPriceBookItems] = useState<{ sku: string; price_cents: number; supplier_id: string }[]>([]);
+  const [supplierOverrides, setSupplierOverrides] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    async function loadSuppliersAndPrices() {
+      try {
+        const { data: sData } = await supabase
+          .from("suppliers")
+          .select("id, name, slug")
+          .eq("status", "active");
+        if (sData) {
+          setSuppliers(sData);
+        }
+
+        const skus = Array.from(new Set(result.allItems.map((item) => item.sku)));
+        if (skus.length > 0) {
+          const { data: pbiData } = await supabase
+            .from("price_book_items")
+            .select("sku, price_cents, price_books!inner(supplier_id)")
+            .in("sku", skus)
+            .eq("price_books.status", "published");
+          if (pbiData) {
+            setPriceBookItems(
+              pbiData.map((x: any) => ({
+                sku: x.sku,
+                price_cents: x.price_cents,
+                supplier_id: x.price_books.supplier_id,
+              }))
+            );
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load suppliers and prices:", err);
+      }
+    }
+    loadSuppliersAndPrices();
+  }, [result]);
+
+  const overriddenItems = useMemo(() => {
+    return result.allItems.map((item) => {
+      const available = getAvailableSuppliersForSku(
+        item.sku,
+        item.productCode,
+        suppliers,
+        priceBookItems,
+        item.unitPrice
+      );
+      const defaultSupp = getDefaultSupplier(item.sku, item.productCode);
+      const chosenId = supplierOverrides[item.sku] ?? defaultSupp.id;
+      const chosen = available.find((a) => a.id === chosenId) || available[0] || { id: defaultSupp.id, name: defaultSupp.name, price: item.unitPrice };
+      return {
+        ...item,
+        unitPrice: chosen.price,
+        lineTotal: parseFloat((item.quantity * chosen.price).toFixed(2)),
+        supplierId: chosen.id,
+        supplierName: chosen.name,
+        availableSuppliers: available,
+      };
+    });
+  }, [result.allItems, suppliers, priceBookItems, supplierOverrides]);
+
+  const overriddenRunResults = useMemo(() => {
+    return result.runResults.map((r) => {
+      const items = overriddenItems.filter((item) => item.runId === r.runId);
+      return { ...r, items };
+    });
+  }, [result.runResults, overriddenItems]);
+
+  const overriddenGateItems = useMemo(() => {
+    return overriddenItems.filter((item) =>
+      item.sources?.some((s) => s.scopeKind === "gate")
+    );
+  }, [overriddenItems]);
+
   const gateResults = result.gateResults ?? [];
+  const overriddenGateResults = useMemo(() => {
+    return gateResults.map((gate) => {
+      return {
+        ...gate,
+        items: overriddenItems.filter((i) => gate.items.some((gi) => gi.sku === i.sku && gi.runId === i.runId)),
+      };
+    });
+  }, [gateResults, overriddenItems]);
+
+  const activeItems =
+    activeTab === "all"
+      ? overriddenItems
+      : activeTab === "gates"
+        ? overriddenGateItems
+        : overriddenGateResults.find((gate) => gate.id === activeTab)?.items ??
+          overriddenRunResults.find((r) => r.runId === activeTab)?.items ??
+          [];
+
   const tabs = [
-    { id: "all", label: "All Items", count: result.allItems.length },
-    ...result.runResults.map((r, i) => ({
+    { id: "all", label: "All Items", count: overriddenItems.length },
+    ...overriddenRunResults.map((r, i) => ({
       id: r.runId,
       label: `Run ${i + 1}`,
       count: r.items.length,
     })),
-    { id: "gates", label: "Gates", count: result.gateItems.length },
-    ...gateResults.map((gate) => ({
+    { id: "gates", label: "Gates", count: overriddenGateItems.length },
+    ...overriddenGateResults.map((gate) => ({
       id: gate.id,
       label: gate.label,
       count: gate.items.length,
     })),
   ];
-
-  const activeItems =
-    activeTab === "all"
-      ? result.allItems
-      : activeTab === "gates"
-        ? result.gateItems
-        : gateResults.find((gate) => gate.id === activeTab)?.items ??
-          result.runResults.find((r) => r.runId === activeTab)?.items ??
-          [];
 
   const activeTotal = parseFloat(
     activeItems.reduce((s, i) => s + i.lineTotal, 0).toFixed(2),
@@ -759,6 +976,37 @@ export function BOMResultTabs({
         </div>
       </div>
 
+      {/* Bulk Supplier Selector */}
+      {viewMode !== "cut_list" && overriddenItems.length > 0 && (
+        <div className="mb-4 flex items-center gap-2 border-b border-brand-border/30 pb-4 print:hidden">
+          <span className="text-xs font-extrabold uppercase tracking-wide text-brand-muted">
+            Bulk Supplier:
+          </span>
+          <select
+            value=""
+            onChange={(e) => {
+              const bulkSupplierId = e.target.value;
+              if (!bulkSupplierId) return;
+              const newOverrides = { ...supplierOverrides };
+              overriddenItems.forEach((item) => {
+                if (item.availableSuppliers.some((s: any) => s.id === bulkSupplierId)) {
+                  newOverrides[item.sku] = bulkSupplierId;
+                }
+              });
+              setSupplierOverrides(newOverrides);
+            }}
+            className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-bold text-brand-muted outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-accent/20"
+          >
+            <option value="">Choose a supplier to apply to all offered items...</option>
+            {suppliers.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {viewMode === "cut_list" ? (
         <BomCutList items={activeItems} />
       ) : (
@@ -770,6 +1018,9 @@ export function BOMResultTabs({
           onSwitchEconomyToStandard={onSwitchEconomyToStandard}
           customerMode={customerMode}
           showWorkings={showWorkings}
+          onSupplierChange={(sku, supplierId) => {
+            setSupplierOverrides((prev) => ({ ...prev, [sku]: supplierId }));
+          }}
         />
       )}
 

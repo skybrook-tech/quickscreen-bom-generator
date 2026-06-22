@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { searchLocalProducts } from '../lib/localSeedData';
+import { useEmbed } from '../context/EmbedContext';
 
 export interface ProductSearchItem {
   sku: string;
@@ -18,10 +19,15 @@ export interface ProductSearchItem {
  */
 export function useProductSearch(query: string) {
   const trimmed = query.trim();
-  const enabled = trimmed.length >= 2;
+  // The catalog typeahead hits product_components (SKUs + cost pricing) via a
+  // service-role edge function — staff/trade only. On the anon embed route there
+  // is no such access, and we must never surface SKU/pricing data there, so the
+  // typeahead returns nothing (the create-custom-line flow still works).
+  const { orgId: embedOrgId } = useEmbed();
+  const enabled = trimmed.length >= 2 && !embedOrgId;
 
   return useQuery<ProductSearchItem[]>({
-    queryKey: ['product-search', trimmed],
+    queryKey: ['product-search', trimmed, embedOrgId],
     queryFn: async () => {
       if (!isSupabaseConfigured) return searchLocalProducts(trimmed, 10);
 

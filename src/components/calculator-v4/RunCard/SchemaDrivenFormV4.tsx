@@ -89,13 +89,27 @@ function FieldRenderer({
   onChange,
   allowedColours,
 }: FieldRendererProps) {
-  if (field.field_key === "colour_code") {
+  const isColorField =
+    field.field_key === "colour_code" ||
+    field.field_key === "color" ||
+    field.field_key.toLowerCase().includes("color") ||
+    field.field_key.toLowerCase().includes("colour");
+
+  if (isColorField) {
+    const swatches =
+      Array.isArray(field.options_json) && field.options_json.length > 0
+        ? field.options_json.map((opt) => ({
+            value: String(opt),
+            label: String(opt),
+          }))
+        : allowedColours;
+
     return (
       <FieldWrap label={field.label} testId={field.field_key}>
         <ColourSwatches
           value={String(variables[field.field_key] ?? "")}
           onChange={(v) => onChange(field.field_key, v)}
-          colours={allowedColours}
+          colours={swatches}
         />
       </FieldWrap>
     );

@@ -1,0 +1,1590 @@
+{
+  "org_slug": "discount-fencing",
+  "supplier_slug": "discount-fencing",
+  "system_instance_slug": "dfsau-cca-pine-paling",
+  "_format_note": "Matches the canonical seed shape used by Glass Outlet seed files (org_slug + products[] + product_components[]). Rules, variables, selectors, validations are NOT in this seed file — they are wired up via the admin Rule-Authoring UI (brief 037) after this seed lands, with the system_instance moving from 'imported' to 'calculator_ready' once that's done.",
+  "_source": "https://www.dfsau.com.au/timber-fencing (public retail prices observed 2026-05-28)",
+  "products": [
+    {
+      "system_type": "DF_CCA_PAL",
+      "product_type": "fence",
+      "name": "Discount Fencing — CCA Pine Paling Fence",
+      "description": "CCA Pine paling fence using 100×16 palings, 100×75 pine posts, 75×38 or 100×38 pine rails. Sourced from Discount Fencing Supplies (Burleigh Heads, QLD). Seed-time the seed loader resolves supplier_id from supplier_slug + system_instance_id from (supplier_slug, system_instance_slug) and stamps the row.",
+      "active": true,
+      "sort_order": 100,
+      "metadata": {
+        "_provenance": {
+          "supplier_slug": "discount-fencing",
+          "system_instance_slug": "dfsau-cca-pine-paling"
+        },
+        "allowedAngles": [
+          90,
+          135,
+          180
+        ],
+        "options": {
+          "fenceHeight": [
+            "1200",
+            "1500",
+            "1800",
+            "2100",
+            "2400"
+          ],
+          "railCount": [
+            "2",
+            "3"
+          ],
+          "railProfile": [
+            "75x38",
+            "100x38_arrissed"
+          ]
+        },
+        "notes": "Concrete bags for post setting are sold under a separate 'consumable' category that lives outside this seed (Discount Fencing doesn't ship concrete in their public price list — sourced separately)."
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "DF-PAL-100x16-1200",
+      "name": "CCA Pine Paling 100×16×1200mm",
+      "description": "CCA Treated Pine paling, 100mm wide × 16mm thick, 1200mm length",
+      "canonical_code": "100x16 Rough Sawn Treated Pine Paling 1200mm",
+      "category": "paling",
+      "unit": "each",
+      "default_price": 1.74,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "height_mm": 1200,
+        "width_mm": 100,
+        "thickness_mm": 16,
+        "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-05-28"
+      },
+      "active": true,
+      "subCategory": "palings",
+      "sortPriority": 10
+    },
+    {
+      "sku": "DF-PAL-100x16-1800",
+      "name": "CCA Pine Paling 100×16×1800mm",
+      "description": "CCA Treated Pine paling, 100mm wide × 16mm thick, 1800mm length",
+      "canonical_code": "100x16 Rough Sawn Treated Pine Paling 1800mm",
+      "category": "paling",
+      "unit": "each",
+      "default_price": 2.15,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "height_mm": 1800,
+        "width_mm": 100,
+        "thickness_mm": 16,
+        "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-05-28"
+      },
+      "active": true,
+      "subCategory": "palings",
+      "sortPriority": 10
+    },
+    {
+      "sku": "DF-PAL-100x16-2100",
+      "name": "CCA Pine Paling 100×16×2100mm",
+      "description": "CCA Treated Pine paling, 100mm wide × 16mm thick, 2100mm length",
+      "canonical_code": "100x16 Rough Sawn Treated Pine Paling 2100mm",
+      "category": "paling",
+      "unit": "each",
+      "default_price": 2.9,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "height_mm": 2100,
+        "width_mm": 100,
+        "thickness_mm": 16,
+        "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-05-28"
+      },
+      "active": true,
+      "subCategory": "palings",
+      "sortPriority": 10
+    },
+    {
+      "sku": "DF-PAL-100x16-2400",
+      "name": "CCA Pine Paling 100×16×2400mm",
+      "description": "CCA Treated Pine paling, 100mm wide × 16mm thick, 2400mm length",
+      "canonical_code": "100x16 Rough Sawn Treated Pine Paling 2400mm",
+      "category": "paling",
+      "unit": "each",
+      "default_price": 3.4,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "height_mm": 2400,
+        "width_mm": 100,
+        "thickness_mm": 16,
+        "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-05-28"
+      },
+      "active": true,
+      "subCategory": "palings",
+      "sortPriority": 10
+    },
+    {
+      "sku": "DF-POST-100x75-1800",
+      "name": "CCA Pine Post 100×75×1800mm",
+      "description": "CCA Treated Pine post, 100×75mm, 1800mm length",
+      "canonical_code": "100x75 Treated Pine Post 1800mm",
+      "category": "post",
+      "unit": "each",
+      "default_price": 14.7,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "length_mm": 1800,
+        "width_mm": 100,
+        "depth_mm": 75,
+        "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-05-28"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 20
+    },
+    {
+      "sku": "DF-POST-100x75-2400",
+      "name": "CCA Pine Post 100×75×2400mm",
+      "description": "CCA Treated Pine post, 100×75mm, 2400mm length",
+      "canonical_code": "100x75 Treated Pine Post 2400mm",
+      "category": "post",
+      "unit": "each",
+      "default_price": 19.6,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "length_mm": 2400,
+        "width_mm": 100,
+        "depth_mm": 75,
+        "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-05-28"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 20
+    },
+    {
+      "sku": "DF-POST-100x75-3000",
+      "name": "CCA Pine Post 100×75×3000mm",
+      "description": "CCA Treated Pine post, 100×75mm, 3000mm length",
+      "canonical_code": "100x75 Treated Pine Post 3000mm",
+      "category": "post",
+      "unit": "each",
+      "default_price": 24.5,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "length_mm": 3000,
+        "width_mm": 100,
+        "depth_mm": 75,
+        "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-05-28"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 20
+    },
+    {
+      "sku": "DF-RAIL-75x38-4800",
+      "name": "CCA Pine Rail 75×38×4800mm",
+      "description": "CCA Treated Pine rail, 75×38mm, 4800mm stock length",
+      "canonical_code": "75x38 Treated Pine Rail 4800mm",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 12.1,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "length_mm": 4800,
+        "width_mm": 75,
+        "thickness_mm": 38,
+        "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-05-28"
+      },
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 30
+    },
+    {
+      "sku": "DF-RAIL-100x38-ARR-4800",
+      "name": "CCA Pine Rail Arrissed 100×38×4800mm",
+      "description": "CCA Treated Pine arrissed (eased-edge) rail, 100×38mm, 4800mm stock length",
+      "canonical_code": "100x38 Treated Pine Rail 4800mm",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 17,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "length_mm": 4800,
+        "width_mm": 100,
+        "thickness_mm": 38,
+        "material": "CCA Pine",
+        "profile": "arrissed",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-05-28"
+      },
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 30
+    },
+    {
+      "sku": "DF-SLEEPER-200x50-2400",
+      "name": "CCA Pine Arrissed Sleeper 200×50×2400mm",
+      "description": "CCA Treated Pine retaining-wall sleeper, arrissed edges, 200×50mm, 2400mm length",
+      "canonical_code": "200x50 Treated Pine Sleeper 2400mm",
+      "category": "sleeper",
+      "unit": "each",
+      "default_price": 24.8,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "length_mm": 2400,
+        "width_mm": 200,
+        "thickness_mm": 50,
+        "material": "CCA Pine",
+        "profile": "arrissed",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-05-28"
+      },
+      "active": true,
+      "subCategory": "sleepers",
+      "sortPriority": 40
+    },
+    {
+      "sku": "DF-SLEEPER-200x50-3000",
+      "name": "CCA Pine Arrissed Sleeper 200×50×3000mm",
+      "description": "CCA Treated Pine retaining-wall sleeper, arrissed edges, 200×50mm, 3000mm length",
+      "canonical_code": "200x50 Treated Pine Sleeper 3000mm",
+      "category": "sleeper",
+      "unit": "each",
+      "default_price": 30,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "length_mm": 3000,
+        "width_mm": 200,
+        "thickness_mm": 50,
+        "material": "CCA Pine",
+        "profile": "arrissed",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-05-28"
+      },
+      "active": true,
+      "subCategory": "sleepers",
+      "sortPriority": 40
+    },
+    {
+      "sku": "DF-SLEEPER-200x75-2400",
+      "name": "CCA Pine Arrissed Sleeper 200×75×2400mm",
+      "description": "CCA Treated Pine retaining-wall sleeper, arrissed edges, 200×75mm, 2400mm length",
+      "canonical_code": "200x75 Treated Pine Sleeper 2400mm",
+      "category": "sleeper",
+      "unit": "each",
+      "default_price": 33,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "length_mm": 2400,
+        "width_mm": 200,
+        "thickness_mm": 75,
+        "material": "CCA Pine",
+        "profile": "arrissed",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-05-28"
+      },
+      "active": true,
+      "subCategory": "sleepers",
+      "sortPriority": 40
+    },
+    {
+      "sku": "DF-SLEEPER-200x75-3000",
+      "name": "CCA Pine Arrissed Sleeper 200×75×3000mm",
+      "description": "CCA Treated Pine retaining-wall sleeper, arrissed edges, 200×75mm, 3000mm length",
+      "canonical_code": "200x75 Treated Pine Sleeper 3000mm",
+      "category": "sleeper",
+      "unit": "each",
+      "default_price": 40,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "length_mm": 3000,
+        "width_mm": 200,
+        "thickness_mm": 75,
+        "material": "CCA Pine",
+        "profile": "arrissed",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-05-28"
+      },
+      "active": true,
+      "subCategory": "sleepers",
+      "sortPriority": 40
+    },
+    {
+      "sku": "DF-NAIL-57-RS",
+      "name": "57mm Ring Shank Gal Nail",
+      "description": "57mm Ring Shank Gal Nail for paling fixing",
+      "canonical_code": "57mm Ring Shank Gal Nail",
+      "category": "fixing",
+      "unit": "each",
+      "default_price": 0.15,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "material": "Galvanised Steel",
+        "size_mm": 57,
+        "type": "Ring Shank",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-06-03",
+        "bomCategory": "fasteners_and_screws"
+      },
+      "active": true,
+      "subCategory": "fasteners_and_screws",
+      "sortPriority": 100
+    },
+    {
+      "sku": "DF-NAIL-45-RS",
+      "name": "45mm Ring Shank Gal Nail",
+      "description": "45mm Ring Shank Gal Nail for back paling fixing",
+      "canonical_code": "45mm Ring Shank Gal Nail",
+      "category": "fixing",
+      "unit": "each",
+      "default_price": 0.12,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "material": "Galvanised Steel",
+        "size_mm": 45,
+        "type": "Ring Shank",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-06-03",
+        "bomCategory": "fasteners_and_screws"
+      },
+      "active": true,
+      "subCategory": "fasteners_and_screws",
+      "sortPriority": 100
+    },
+    {
+      "sku": "DF-SCREW-100",
+      "name": "100mm Galvanised Batten Screw",
+      "description": "100mm Galvanised Batten Screw for rail fixing",
+      "canonical_code": "100mm Galvanised Batten Screw",
+      "category": "fixing",
+      "unit": "each",
+      "default_price": 0.8,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "material": "Galvanised Steel",
+        "size_mm": 100,
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-06-03",
+        "bomCategory": "fasteners_and_screws"
+      },
+      "active": true,
+      "subCategory": "fasteners_and_screws",
+      "sortPriority": 110
+    },
+    {
+      "sku": "DF-CONCRETE-20KG",
+      "name": "Rapid Set Concrete 20kg",
+      "description": "Rapid Set Concrete 20kg bag",
+      "canonical_code": "Rapid Set Concrete 20kg",
+      "category": "fixing",
+      "unit": "bag",
+      "default_price": 9.5,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "material": "Concrete",
+        "weight_kg": 20,
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-06-03",
+        "bomCategory": "fixings"
+      },
+      "active": true,
+      "subCategory": "fixings",
+      "sortPriority": 120
+    },
+    {
+      "sku": "DF-CAP-75x50-4800",
+      "name": "75x50 Treated Pine Capping Rail 4800mm",
+      "description": "75x50 Treated Pine Capping Rail, 4800mm length",
+      "canonical_code": "75x50 Treated Pine Capping Rail 4800mm",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 16.5,
+      "system_types": [
+        "DF_CCA_PAL"
+      ],
+      "metadata": {
+        "length_mm": 4800,
+        "width_mm": 75,
+        "thickness_mm": 50,
+        "material": "CCA Pine",
+        "price_source": "dfsau.com.au/timber-fencing",
+        "price_verified_date": "2026-06-03",
+        "bomCategory": "rails"
+      },
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 35
+    }
+  ],
+  "rule_sets": [
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "name": "CCA Pine Paling Rules",
+      "description": "Calculation rules for Treated Pine Paling Fence",
+      "active": true
+    }
+  ],
+  "rule_versions": [
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "is_current": true,
+      "effective_from": "2026-06-03",
+      "notes": "Initial seed rules for timber boundary paling fence",
+      "active": true
+    }
+  ],
+  "product_variables": [
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "name": "timber_type",
+      "label": "Timber Type",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "treated_pine",
+      "options_json": [
+        "treated_pine"
+      ],
+      "scope": "job",
+      "sort_order": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "name": "paling_style",
+      "label": "Paling Style",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "butted",
+      "options_json": [
+        "butted",
+        "lapped_capped"
+      ],
+      "scope": "job",
+      "sort_order": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "name": "max_panel_width_mm",
+      "label": "Post Spacing",
+      "data_type": "number",
+      "required": true,
+      "default_value_json": 2400,
+      "options_json": [],
+      "scope": "run",
+      "sort_order": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "name": "paling_gap_mm",
+      "label": "Paling Gap",
+      "data_type": "number",
+      "required": true,
+      "default_value_json": 0,
+      "options_json": [],
+      "scope": "job",
+      "sort_order": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "name": "rail_profile",
+      "label": "Rail Profile",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "75x38",
+      "options_json": [
+        "75x38",
+        "100x38_arrissed"
+      ],
+      "scope": "run",
+      "sort_order": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "name": "rail_count",
+      "label": "Rail Count",
+      "data_type": "integer",
+      "required": false,
+      "default_value_json": 0,
+      "options_json": [],
+      "scope": "run",
+      "sort_order": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "name": "target_height_mm",
+      "label": "Target Height",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": 1800,
+      "options_json": [
+        1200,
+        1500,
+        1800,
+        2100,
+        2400
+      ],
+      "scope": "segment",
+      "sort_order": 70,
+      "active": true
+    }
+  ],
+  "product_constraints": [
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "name": "min_panel_width_mm",
+      "constraint_type": "min",
+      "value_text": "100",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Post spacing must be at least 100mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "name": "max_panel_width_mm",
+      "constraint_type": "max",
+      "value_text": "2400",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Post spacing cannot exceed 2400mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "name": "min_height_mm",
+      "constraint_type": "min",
+      "value_text": "1200",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Treated pine fence height must be at least 1200mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "name": "max_height_mm",
+      "constraint_type": "max",
+      "value_text": "2400",
+      "unit": "mm",
+      "severity": "error",
+      "applies_when_json": {},
+      "message": "Treated pine fence height must be at most 2400mm.",
+      "active": true
+    }
+  ],
+  "product_validations": [
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "name": "post_spacing_in_range",
+      "expression": "max_panel_width_mm >= 100 and max_panel_width_mm <= 2400",
+      "severity": "error",
+      "message": "Post spacing must be between 100mm and 2400mm.",
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "name": "gap_non_negative",
+      "expression": "paling_gap_mm >= 0",
+      "severity": "error",
+      "message": "Paling gap must be non-negative.",
+      "active": true
+    }
+  ],
+  "product_rules": [
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "actual_height_mm",
+      "expression": "target_height_mm",
+      "output_key": "actual_height_mm",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "rail_count_derived",
+      "expression": "rail_count > 0 ? rail_count : (target_height_mm < 1500 ? 2 : (target_height_mm < 2400 ? 3 : 4))",
+      "output_key": "rail_count",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "post_height_mm",
+      "expression": "target_height_mm + 600",
+      "output_key": "post_height_mm",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "bay_count",
+      "expression": "num_panels",
+      "output_key": "bay_count",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "rail_pieces",
+      "expression": "num_panels * rail_count",
+      "output_key": "rail_pieces",
+      "priority": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "concrete_bags",
+      "expression": "ceil(num_posts * 1.5)",
+      "output_key": "concrete_bags",
+      "priority": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "batten_screws",
+      "expression": "rail_pieces * 2",
+      "output_key": "batten_screws",
+      "priority": 70,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "paling_count",
+      "expression": "equalStrings(paling_style, \"butted\") ? ceil(segment_width_mm / (100 + paling_gap_mm)) : ceil((segment_width_mm / 1000) * 15)",
+      "output_key": "paling_count",
+      "priority": 80,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "palings_with_wastage",
+      "expression": "ceil(paling_count * 1.05)",
+      "output_key": "palings_with_wastage",
+      "priority": 90,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "back_palings",
+      "expression": "equalStrings(paling_style, \"butted\") ? 0 : ceil(paling_count / 2)",
+      "output_key": "back_palings",
+      "priority": 100,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "derive",
+      "name": "front_palings",
+      "expression": "equalStrings(paling_style, \"butted\") ? paling_count : paling_count - back_palings",
+      "output_key": "front_palings",
+      "priority": 110,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "rail_stock_lengths",
+      "expression": "ceil(rail_pieces / 2)",
+      "output_key": "rail_stock_lengths",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "stock",
+      "name": "capping_stock_lengths",
+      "expression": "equalStrings(paling_style, \"lapped_capped\") ? ceil(num_panels / 2) : 0",
+      "output_key": "capping_stock_lengths",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "nails_front_count",
+      "expression": "front_palings * rail_count * 2",
+      "output_key": "nails_front_count",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "nails_front_with_wastage",
+      "expression": "ceil(nails_front_count * 1.05)",
+      "output_key": "nails_front_with_wastage",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "nails_front_rounded",
+      "expression": "ceil(nails_front_with_wastage / 250) * 250",
+      "output_key": "nails_front_rounded",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "nails_back_count",
+      "expression": "equalStrings(paling_style, \"butted\") ? 0 : back_palings * rail_count * 1",
+      "output_key": "nails_back_count",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "nails_back_with_wastage",
+      "expression": "equalStrings(paling_style, \"butted\") ? 0 : ceil(nails_back_count * 1.05)",
+      "output_key": "nails_back_with_wastage",
+      "priority": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "accessory",
+      "name": "nails_back_rounded",
+      "expression": "equalStrings(paling_style, \"butted\") ? 0 : ceil(nails_back_with_wastage / 250) * 250",
+      "output_key": "nails_back_rounded",
+      "priority": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_post",
+      "expression": "num_posts",
+      "output_key": "qty_post",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_rail",
+      "expression": "rail_stock_lengths",
+      "output_key": "qty_rail",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_paling",
+      "expression": "palings_with_wastage",
+      "output_key": "qty_paling",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_concrete",
+      "expression": "concrete_bags",
+      "output_key": "qty_concrete",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_nails_front",
+      "expression": "nails_front_rounded",
+      "output_key": "qty_nails_front",
+      "priority": 50,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_nails_back",
+      "expression": "nails_back_rounded",
+      "output_key": "qty_nails_back",
+      "priority": 60,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_batten_screws",
+      "expression": "batten_screws",
+      "output_key": "qty_batten_screws",
+      "priority": 70,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "rule_set_name": "CCA Pine Paling Rules",
+      "version_label": "v1.0.0",
+      "stage": "component",
+      "name": "qty_capping",
+      "expression": "capping_stock_lengths",
+      "output_key": "qty_capping",
+      "priority": 80,
+      "active": true
+    }
+  ],
+  "product_component_selectors": [
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "selector_key": "df_post_1800",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "post_height_mm": {
+          "lte": 1800
+        }
+      },
+      "qty_key": "qty_post",
+      "sku_pattern": "100x75 Treated Pine Post 1800mm",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "selector_key": "df_post_2400",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "post_height_mm": {
+          "lte": 2400
+        }
+      },
+      "qty_key": "qty_post",
+      "sku_pattern": "100x75 Treated Pine Post 2400mm",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "selector_key": "df_post_3000",
+      "component_category": "post",
+      "selector_type": "exact",
+      "match_json": {
+        "post_height_mm": {
+          "lte": 3000
+        }
+      },
+      "qty_key": "qty_post",
+      "sku_pattern": "100x75 Treated Pine Post 3000mm",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "selector_key": "df_rail_75x38",
+      "component_category": "rail",
+      "selector_type": "exact",
+      "match_json": {
+        "rail_profile": "75x38"
+      },
+      "qty_key": "qty_rail",
+      "sku_pattern": "75x38 Treated Pine Rail 4800mm",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "selector_key": "df_rail_100x38",
+      "component_category": "rail",
+      "selector_type": "exact",
+      "match_json": {
+        "rail_profile": "100x38_arrissed"
+      },
+      "qty_key": "qty_rail",
+      "sku_pattern": "100x38 Treated Pine Rail 4800mm",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "selector_key": "df_paling_1200",
+      "component_category": "paling",
+      "selector_type": "exact",
+      "match_json": {
+        "target_height_mm": {
+          "lte": 1200
+        }
+      },
+      "qty_key": "qty_paling",
+      "sku_pattern": "100x16 Rough Sawn Treated Pine Paling 1200mm",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "selector_key": "df_paling_1800",
+      "component_category": "paling",
+      "selector_type": "exact",
+      "match_json": {
+        "target_height_mm": {
+          "lte": 1800
+        }
+      },
+      "qty_key": "qty_paling",
+      "sku_pattern": "100x16 Rough Sawn Treated Pine Paling 1800mm",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "selector_key": "df_paling_2100",
+      "component_category": "paling",
+      "selector_type": "exact",
+      "match_json": {
+        "target_height_mm": {
+          "lte": 2100
+        }
+      },
+      "qty_key": "qty_paling",
+      "sku_pattern": "100x16 Rough Sawn Treated Pine Paling 2100mm",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "selector_key": "df_paling_2400",
+      "component_category": "paling",
+      "selector_type": "exact",
+      "match_json": {
+        "target_height_mm": {
+          "lte": 2400
+        }
+      },
+      "qty_key": "qty_paling",
+      "sku_pattern": "100x16 Rough Sawn Treated Pine Paling 2400mm",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "selector_key": "df_concrete",
+      "component_category": "fixing",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_concrete",
+      "sku_pattern": "Rapid Set Concrete 20kg",
+      "priority": 10,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "selector_key": "df_nails_57",
+      "component_category": "fixing",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_nails_front",
+      "sku_pattern": "57mm Ring Shank Gal Nail",
+      "priority": 20,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "selector_key": "df_nails_45",
+      "component_category": "fixing",
+      "selector_type": "exact",
+      "match_json": {
+        "paling_style": "lapped_capped"
+      },
+      "qty_key": "qty_nails_back",
+      "sku_pattern": "45mm Ring Shank Gal Nail",
+      "priority": 30,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "selector_key": "df_batten_screws",
+      "component_category": "fixing",
+      "selector_type": "exact",
+      "match_json": {},
+      "qty_key": "qty_batten_screws",
+      "sku_pattern": "100mm Galvanised Batten Screw",
+      "priority": 40,
+      "active": true
+    },
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "selector_key": "df_capping",
+      "component_category": "rail",
+      "selector_type": "exact",
+      "match_json": {
+        "paling_style": "lapped_capped"
+      },
+      "qty_key": "qty_capping",
+      "sku_pattern": "75x50 Treated Pine Capping Rail 4800mm",
+      "priority": 30,
+      "active": true
+    }
+  ],
+  "product_companion_rules": [],
+  "product_warnings": [
+    {
+      "product_system_type": "DF_CCA_PAL",
+      "warning_key": "timber_gap_ignored_lapped_capped",
+      "severity": "warning",
+      "condition_json": {
+        "paling_style": "lapped_capped",
+        "paling_gap_mm": {
+          "gt": 0
+        }
+      },
+      "message": "Paling gap is ignored in lapped & capped style (palings overlap).",
+      "active": true
+    }
+  ],
+  "pricing_rules": [
+    {
+      "sku": "DF-PAL-100x16-1200",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 1.74,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-PAL-100x16-1200",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 1.48,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-PAL-100x16-1200",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 1.25,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-PAL-100x16-1800",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.15,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-PAL-100x16-1800",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 1.83,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-PAL-100x16-1800",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 1.55,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-PAL-100x16-2100",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 2.9,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-PAL-100x16-2100",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.47,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-PAL-100x16-2100",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.09,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-PAL-100x16-2400",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 3.4,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-PAL-100x16-2400",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 2.89,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-PAL-100x16-2400",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 2.45,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-POST-100x75-1800",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 14.7,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-POST-100x75-1800",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 12.5,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-POST-100x75-1800",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 10.58,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-POST-100x75-2400",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 19.6,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-POST-100x75-2400",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 16.66,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-POST-100x75-2400",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 14.11,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-POST-100x75-3000",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.5,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-POST-100x75-3000",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 20.83,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-POST-100x75-3000",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 17.64,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-RAIL-75x38-4800",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 12.1,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-RAIL-75x38-4800",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 10.29,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-RAIL-75x38-4800",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 8.71,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-RAIL-100x38-ARR-4800",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 17,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-RAIL-100x38-ARR-4800",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 14.45,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-RAIL-100x38-ARR-4800",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 12.24,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SLEEPER-200x50-2400",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 24.8,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SLEEPER-200x50-2400",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 21.08,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SLEEPER-200x50-2400",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 17.86,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SLEEPER-200x50-3000",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 30,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SLEEPER-200x50-3000",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 25.5,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SLEEPER-200x50-3000",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 21.6,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SLEEPER-200x75-2400",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 33,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SLEEPER-200x75-2400",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 28.05,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SLEEPER-200x75-2400",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 23.76,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SLEEPER-200x75-3000",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 40,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SLEEPER-200x75-3000",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 34,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SLEEPER-200x75-3000",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 28.8,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-NAIL-57-RS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 0.15,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-NAIL-57-RS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.13,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-NAIL-57-RS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.11,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-NAIL-45-RS",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 0.12,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-NAIL-45-RS",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.1,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-NAIL-45-RS",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.09,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SCREW-100",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 0.8,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SCREW-100",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 0.68,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-SCREW-100",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 0.58,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-CONCRETE-20KG",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 9.5,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-CONCRETE-20KG",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 8.07,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-CONCRETE-20KG",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 6.84,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-CAP-75x50-4800",
+      "tier_code": "tier1",
+      "rule": null,
+      "price": 16.5,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-CAP-75x50-4800",
+      "tier_code": "tier2",
+      "rule": null,
+      "price": 14.03,
+      "priority": 0,
+      "active": true
+    },
+    {
+      "sku": "DF-CAP-75x50-4800",
+      "tier_code": "tier3",
+      "rule": null,
+      "price": 11.88,
+      "priority": 0,
+      "active": true
+    }
+  ]
+}

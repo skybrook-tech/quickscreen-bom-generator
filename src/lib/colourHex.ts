@@ -14,6 +14,16 @@ export const COLOUR_HEX: Record<string, string> = {
   "primrose": "#e8d89a",
   "paperbark": "#c8b89c",
   "palladium-silver-pearl": "#9ea0a0",
+
+  // Custom calculator alias mapping
+  "Monument": "#4a4a48",
+  "Woodland Grey": "#585c54",
+  "Surfmist": "#e6e4df",
+  "Paperbark": "#c8b89c",
+  "Classic Cream": "#e8d89a",
+  "Black": "#1a1a1a",
+  "Primrose": "#e8d89a",
+  "Black Satin": "#1a1a1a",
 };
 
 /** Returns true for colours with limited availability (visible warning dot). */

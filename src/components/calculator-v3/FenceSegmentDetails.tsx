@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
 import { useProductVariables } from "../../hooks/useProductVariables";
 import type { CanonicalSegment } from "../../types/canonical.types";
+import { useProfile } from "../../context/ProfileContext";
+import { useProducts } from "../../hooks/useProducts";
 import {
   applyProductOptionRules,
   clampPostSpacing,
@@ -12,6 +14,7 @@ import {
   normaliseVariablesForSystem,
 } from "../../lib/productOptionRules";
 import { localFenceProducts } from "../../lib/localSeedData";
+import { getCustomCalculators, isCustomCalculator, findHeightVariableKey } from "../../lib/customCalculators";
 import {
   SEGMENT_OPTION_KEYS,
   patchSegmentVariables,
@@ -91,9 +94,13 @@ function fieldValueLabel(field: SchemaField, variables: Record<string, string | 
 
 export function FenceSegmentDetails({ runId, seg }: Props) {
   const { state, dispatch } = useCalculator();
+  const { isAdmin } = useProfile();
+  const { data: products } = useProducts();
   const run = state.payload?.runs.find((item) => item.runId === runId);
   const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
   const productCode = String(seg.variables?.product_code ?? runProductCode);
+  const customCalculators = useMemo(() => getCustomCalculators(), []);
+  const isCustom = isCustomCalculator(productCode);
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
   const { data: runFields = [] } = useProductVariables(productCode, "run");
 
@@ -112,6 +119,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   const postSize = String((displayVariables[SEGMENT_OPTION_KEYS.postSize] as string | number) ?? "");
   const isCustomPost = postSize === "custom";
   const isBayg = productCode === "BAYG";
+  const product = products?.find((p) => p.system_type === productCode);
   const [postColourOpen, setPostColourOpen] = useState(() => {
     const colour = String(displayVariables.colour_code ?? "B");
     return Boolean(v.post_colour_code && String(v.post_colour_code) !== colour);
@@ -126,6 +134,19 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
   function onJobOverrideChange(key: string, value: string | number | boolean) {
     const base = runVariables[key];
+    if (isCustom) {
+      const heightKey = findHeightVariableKey(optionFields);
+      if (heightKey && key === heightKey) {
+        const newHeight = Number(String(value).replace(/[^0-9]/g, ""));
+        if (!isNaN(newHeight) && newHeight > 0) {
+          upsertSegment({
+            ...patchSegmentVariables(seg, { [key]: value === base ? null : value }),
+            targetHeightMm: newHeight,
+          });
+          return;
+        }
+      }
+    }
     const nextPatch: Record<string, string | number | boolean | null> = {
       [key]: value === base ? null : value,
     };
@@ -165,22 +186,26 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
       ...v,
       product_code: nextProductCode,
     });
-    upsertSegment(
-      patchSegmentVariables(seg, {
-        product_code: nextProductCode === runProductCode ? null : nextProductCode,
-        finish_family: normalised.finish_family,
-        colour_code: normalised.colour_code,
-        post_colour_code: normalised.post_colour_code,
-        slat_size_mm: normalised.slat_size_mm,
-        slat_gap_mode: normalised.slat_gap_mode,
-        slat_gap_mm: normalised.slat_gap_mm,
-        post_system: normalised.post_system,
-        post_size: normalised.post_size,
-        mounting_type: normalised.mounting_type,
-        mounting_method: normalised.mounting_method,
-        max_panel_width_mm: normalised.max_panel_width_mm,
-      }),
-    );
+    const nextPatch = isCustomCalculator(nextProductCode)
+      ? {
+          product_code: nextProductCode === runProductCode ? null : nextProductCode,
+          ...normalised,
+        }
+      : {
+          product_code: nextProductCode === runProductCode ? null : nextProductCode,
+          finish_family: normalised.finish_family,
+          colour_code: normalised.colour_code,
+          post_colour_code: normalised.post_colour_code,
+          slat_size_mm: normalised.slat_size_mm,
+          slat_gap_mode: normalised.slat_gap_mode,
+          slat_gap_mm: normalised.slat_gap_mm,
+          post_system: normalised.post_system,
+          post_size: normalised.post_size,
+          mounting_type: normalised.mounting_type,
+          mounting_method: normalised.mounting_method,
+          max_panel_width_mm: normalised.max_panel_width_mm,
+        };
+    upsertSegment(patchSegmentVariables(seg, nextPatch));
   }
 
   const jobMax = clampPostSpacing(
@@ -243,21 +268,23 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   }
 
   const optionFields = useMemo(
-    () =>
-      productCode
-        ? applyProductOptionRules(
-            productCode,
-            jobFields.filter(
-              (field) =>
-                !field.field_key.endsWith("_stock_length_mm") &&
-                field.field_key !== "max_panel_width_mm" &&
-                field.field_key !== "target_height_mm" &&
-                field.field_key !== "post_colour_code" &&
-                field.field_key !== "louvre_treatment",
-            ),
-            mergedJobDisplay,
-          )
-        : [],
+    () => {
+      if (!productCode) return [];
+      const heightKey = findHeightVariableKey(jobFields);
+      return applyProductOptionRules(
+        productCode,
+        jobFields.filter(
+          (field) =>
+            !field.field_key.endsWith("_stock_length_mm") &&
+            field.field_key !== "max_panel_width_mm" &&
+            field.field_key !== "target_height_mm" &&
+            field.field_key !== heightKey &&
+            field.field_key !== "post_colour_code" &&
+            field.field_key !== "louvre_treatment",
+        ),
+        mergedJobDisplay,
+      );
+    },
     [jobFields, mergedJobDisplay, productCode],
   );
   const postFields = useMemo(
@@ -332,11 +359,15 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   const postSummary = `${POST_SIZE_LABELS[postSystem] ?? POST_SIZE_LABELS[postSize] ?? (postSize ? `${postSize}mm Post` : "Run default")} / ${colourName(mergedJobDisplay.post_colour_code ?? mergedJobDisplay.colour_code)} / ${effectiveMax}mm`;
   const slatSummary = `${valueFor("finish_family")} / ${colourName(mergedJobDisplay.colour_code)} / ${valueFor("slat_size_mm")} / ${combinedGapLabel(gapMode, gapMm)}`;
 
+  const selectList = customCalculators.length > 0
+    ? customCalculators.map(c => ({ system_type: c.id, name: c.name }))
+    : localFenceProducts.map(p => ({ system_type: p.system_type, name: p.name }));
+
   return (
     <div className="space-y-4">
       <SettingsDisclosureRow id={`${seg.segmentId}-section-system-type`} label="System type" value={productCode}>
         <div className="flex flex-wrap gap-2">
-          {localFenceProducts.map((product) => (
+          {selectList.map((product) => (
             <button
               key={product.system_type}
               type="button"
@@ -348,120 +379,155 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                   : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
               }`}
             >
-              {product.system_type}
+              {product.name}
             </button>
           ))}
         </div>
       </SettingsDisclosureRow>
 
-      {slatOptionFields.length > 0 || postColourField ? (
-        <SettingsDisclosureRow id={`${seg.segmentId}-section-style`} label="Slats, colors, and spacings" value={slatSummary || "Run defaults"}>
-          <div className="space-y-4">
-            {renderSlatField("finish_family")}
-            {renderSlatField("colour_code")}
-            {postColourField && !isBayg && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setPostColourOpen((value) => !value)}
-                  className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-                >
-                  {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
-                </button>
-                {postColourOpen && renderSlatField("post_colour_code")}
-              </>
-            )}
-            {renderSlatField("slat_size_mm")}
-            {remainingOptionFields.length > 0 && (
-              <SchemaDrivenForm
-                fields={remainingOptionFields}
-                variables={mergedJobDisplay}
-                onChange={handleOptionChange}
-              />
-            )}
-            <CombinedGapSelect
-              productCode={productCode}
-              mode={mergedJobDisplay.slat_gap_mode}
-              gapMm={mergedJobDisplay.slat_gap_mm}
-              onChange={handleGapChange}
+      {isCustom ? (
+        <div className="space-y-4 rounded-xl border border-brand-border/60 bg-brand-card/75 p-4">
+          <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
+            Segment overrides
+          </p>
+          {optionFields.length > 0 ? (
+            <SchemaDrivenForm
+              fields={optionFields}
+              variables={mergedJobDisplay}
+              onChange={handleOptionChange}
             />
-            {productCode === "QSHS" && (
-              <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
-                <input
-                  type="checkbox"
-                  checked={mergedJobDisplay.louvre_treatment === true || mergedJobDisplay.louvre_treatment === "true"}
-                  disabled={Number(mergedJobDisplay.slat_size_mm ?? 65) !== 65}
-                  onChange={(event) => onJobOverrideChange("louvre_treatment", event.target.checked)}
-                  className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
+          ) : (
+            <p className="text-xs text-brand-muted italic">
+              No override options defined.
+            </p>
+          )}
+        </div>
+      ) : (
+        <>
+          {slatOptionFields.length > 0 || postColourField ? (
+            <SettingsDisclosureRow id={`${seg.segmentId}-section-style`} label="Slats, colors, and spacings" value={slatSummary || "Run defaults"}>
+              <div className="space-y-4">
+                {renderSlatField("finish_family")}
+                {renderSlatField("colour_code")}
+                {postColourField && !isBayg && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setPostColourOpen((value) => !value)}
+                      className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
+                    >
+                      {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
+                    </button>
+                    {postColourOpen && renderSlatField("post_colour_code")}
+                  </>
+                )}
+                {renderSlatField("slat_size_mm")}
+                {remainingOptionFields.length > 0 && (
+                  <SchemaDrivenForm
+                    fields={remainingOptionFields}
+                    variables={mergedJobDisplay}
+                    onChange={handleOptionChange}
+                  />
+                )}
+                <CombinedGapSelect
+                  productCode={productCode}
+                  mode={mergedJobDisplay.slat_gap_mode}
+                  gapMm={mergedJobDisplay.slat_gap_mm}
+                  onChange={handleGapChange}
                 />
-                <span>
-                  <span className="block text-sm font-extrabold text-brand-text">Louvre treatment</span>
-                  <span className="mt-1 block text-xs font-semibold text-brand-muted">
-                    40 degree slat angle. Available with 65mm slats.
-                  </span>
-                </span>
+                {productCode === "QSHS" && (
+                  <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
+                    <input
+                      type="checkbox"
+                      checked={mergedJobDisplay.louvre_treatment === true || mergedJobDisplay.louvre_treatment === "true"}
+                      disabled={Number(mergedJobDisplay.slat_size_mm ?? 65) !== 65}
+                      onChange={(event) => onJobOverrideChange("louvre_treatment", event.target.checked)}
+                      className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
+                    />
+                    <span>
+                      <span className="block text-sm font-extrabold text-brand-text">Louvre treatment</span>
+                      <span className="mt-1 block text-xs font-semibold text-brand-muted">
+                        40 degree slat angle. Available with 65mm slats.
+                      </span>
+                    </span>
+                  </label>
+                )}
+              </div>
+            </SettingsDisclosureRow>
+          ) : null}
+
+          {!isBayg && (
+            <SettingsDisclosureRow id={`${seg.segmentId}-section-posts`} label="Post size, mounting and spacing" value={postSummary}>
+              <div className="space-y-4">
+                {renderPostField("post_system")}
+                {renderPostField("post_size")}
+                {mountingField && (
+                  <SchemaDrivenForm
+                    fields={[mountingField]}
+                    variables={mergedJobDisplay}
+                    onChange={handleOptionChange}
+                  />
+                )}
+                {remainingPostFields.length > 0 && (
+                  <SchemaDrivenForm
+                    fields={remainingPostFields}
+                    variables={mergedJobDisplay}
+                    onChange={handleOptionChange}
+                  />
+                )}
+                <label className="flex flex-col gap-1">
+                  <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
+                  <input
+                    type="number"
+                    value={maxSpacingDraft}
+                    onChange={(event) => setMaxSpacingDraft(event.target.value)}
+                    onBlur={() => commitMaxPanelWidth()}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") event.currentTarget.blur();
+                    }}
+                    min={MIN_POST_SPACING_MM}
+                    max={MAX_POST_SPACING_MM}
+                    step={50}
+                    className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+                  />
+                </label>
+              </div>
+            </SettingsDisclosureRow>
+          )}
+
+          {!isBayg && isCustomPost && (
+            <SettingsDisclosureRow
+              id={`${seg.segmentId}-section-custom-post`}
+              label="Custom post width"
+              value={`${v[SEGMENT_OPTION_KEYS.postWidthMm] ?? "Not set"}mm`}
+            >
+              <label className="flex flex-col gap-1">
+                <span className="text-sm font-bold text-brand-muted">Post width (mm)</span>
+                <NumberInput
+                  value={(v[SEGMENT_OPTION_KEYS.postWidthMm] as number | null) ?? null}
+                  onChange={(val) =>
+                    setScalar(SEGMENT_OPTION_KEYS.postWidthMm, val)
+                  }
+                  min={1}
+                />
               </label>
-            )}
-          </div>
-        </SettingsDisclosureRow>
-      ) : null}
-
-      {!isBayg && (
-        <SettingsDisclosureRow id={`${seg.segmentId}-section-posts`} label="Post size, mounting and spacing" value={postSummary}>
-          <div className="space-y-4">
-            {renderPostField("post_system")}
-            {renderPostField("post_size")}
-            {mountingField && (
-              <SchemaDrivenForm
-                fields={[mountingField]}
-                variables={mergedJobDisplay}
-                onChange={handleOptionChange}
-              />
-            )}
-            {remainingPostFields.length > 0 && (
-              <SchemaDrivenForm
-                fields={remainingPostFields}
-                variables={mergedJobDisplay}
-                onChange={handleOptionChange}
-              />
-            )}
-            <label className="flex flex-col gap-1">
-              <span className="text-sm font-bold text-brand-muted">Max Post Spacing (mm)</span>
-              <input
-                type="number"
-                value={maxSpacingDraft}
-                onChange={(event) => setMaxSpacingDraft(event.target.value)}
-                onBlur={() => commitMaxPanelWidth()}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") event.currentTarget.blur();
-                }}
-                min={MIN_POST_SPACING_MM}
-                max={MAX_POST_SPACING_MM}
-                step={50}
-                className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-              />
-            </label>
-          </div>
-        </SettingsDisclosureRow>
+            </SettingsDisclosureRow>
+          )}
+        </>
       )}
-
-      {!isBayg && isCustomPost && (
-        <SettingsDisclosureRow
-          id={`${seg.segmentId}-section-custom-post`}
-          label="Custom post width"
-          value={`${v[SEGMENT_OPTION_KEYS.postWidthMm] ?? "Not set"}mm`}
-        >
-          <label className="flex flex-col gap-1">
-            <span className="text-sm font-bold text-brand-muted">Post width (mm)</span>
-            <NumberInput
-              value={(v[SEGMENT_OPTION_KEYS.postWidthMm] as number | null) ?? null}
-              onChange={(val) =>
-                setScalar(SEGMENT_OPTION_KEYS.postWidthMm, val)
-              }
-              min={1}
-            />
-          </label>
-        </SettingsDisclosureRow>
+      
+      {isAdmin && product && (
+        <div className="flex justify-end pt-4 border-t border-brand-border/40 mt-4">
+          <a
+            href={`/admin/products/${product.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex min-h-[36px] items-center justify-center gap-1.5 rounded-lg border border-brand-border bg-brand-card px-3 py-1.5 text-xs font-extrabold text-brand-muted hover:border-brand-primary hover:text-brand-primary transition-colors"
+            title="Edit calculator logic / rules"
+          >
+            Edit Calculator Logic
+          </a>
+        </div>
       )}
 
     </div>

@@ -19,6 +19,7 @@ import {
   normalizeV4PayloadRuns,
   syncRunVariablesFromMaster,
 } from "../lib/masterFenceSegment";
+import { getCustomCalculators } from "../lib/customCalculators";
 import type {
   CanonicalPayload,
   CanonicalSegment,
@@ -44,6 +45,7 @@ export interface AddedSuggestion {
 export interface QuoteDetails {
   customer: string;
   email: string;
+  phone: string;
   siteAddress: string;
   validUntil: string;
 }
@@ -75,6 +77,8 @@ export interface CalculatorV4State {
   extraItems: ExtraItem[];
   /** Per-line qty edits (SKU for engine lines; `extra:${id}` for manual extras). */
   qtyOverrides: Record<string, number>;
+  /** If set, render the logic editor overlay for this custom calculator product. */
+  openLogicEditorProductCode: string | null;
 }
 
 const initialState: CalculatorV4State = {
@@ -82,6 +86,7 @@ const initialState: CalculatorV4State = {
   quoteDetails: {
     customer: "",
     email: "",
+    phone: "",
     siteAddress: "",
     validUntil: defaultValidUntil(),
   },
@@ -95,6 +100,7 @@ const initialState: CalculatorV4State = {
   removedSkus: new Set(),
   extraItems: [],
   qtyOverrides: {},
+  openLogicEditorProductCode: null,
 };
 
 // ─── Actions ─────────────────────────────────────────────────────────────────
@@ -134,6 +140,8 @@ export type CalculatorV4Action =
   | { type: "REMOVE_EXTRA"; id: string }
   | { type: "SET_QTY_OVERRIDE"; lineKey: string; qty: number }
   | { type: "SET_SAVED_QUOTE_ID"; id: string }
+  | { type: "OPEN_LOGIC_EDITOR"; productCode: string }
+  | { type: "CLOSE_LOGIC_EDITOR" }
   | {
     type: "HYDRATE_V4_DRAFT";
     snapshot: {
@@ -196,10 +204,34 @@ function reducer(
             variables: { ...(r.variables ?? {}), ...action.variables },
           };
         }
+
+        const productCode = r.productCode ?? state.payload?.productCode ?? "";
+        const customCalcs = getCustomCalculators();
+        const customCalc = customCalcs.find((c) => c.id === productCode);
+        let targetHeightMm = master.targetHeightMm;
+
+        if (customCalc) {
+          const heightVar = customCalc.variables.find(
+            (v) =>
+              v.field_key === "target_height_mm" ||
+              v.field_key === "paling_height" ||
+              v.field_key === "height" ||
+              v.field_key.toLowerCase().includes("height") ||
+              v.label.toLowerCase().includes("height")
+          );
+          if (heightVar && action.variables[heightVar.field_key] !== undefined) {
+            const rawVal = action.variables[heightVar.field_key];
+            const numVal = Number(String(rawVal).replace(/[^0-9]/g, ""));
+            if (Number.isFinite(numVal) && numVal > 0) {
+              targetHeightMm = numVal;
+            }
+          }
+        }
+
         const mergedVars = { ...(master.variables ?? {}), ...action.variables };
         const nextSegs = r.segments.map((s) =>
           s.segmentId === master.segmentId
-            ? { ...s, variables: mergedVars }
+            ? { ...s, variables: mergedVars, targetHeightMm }
             : s,
         );
         return syncRunVariablesFromMaster({ ...r, segments: nextSegs });
@@ -509,8 +541,13 @@ function reducer(
         removedSkus: new Set(s.removedSkus),
         extraItems: s.extraItems,
         qtyOverrides: { ...s.qtyOverrides },
+        openLogicEditorProductCode: null,
       };
     }
+    case "OPEN_LOGIC_EDITOR":
+      return { ...state, openLogicEditorProductCode: action.productCode };
+    case "CLOSE_LOGIC_EDITOR":
+      return { ...state, openLogicEditorProductCode: null, bomStale: true };
     default:
       return state;
   }
