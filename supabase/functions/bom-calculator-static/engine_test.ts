@@ -1,0 +1,238 @@
+// engine_test.ts — regression safety net for the static BOM engine.
+//
+// These are OFFLINE snapshot tests: they import calculateLocalBom directly and
+// run it against the engine's built-in SYNTHETIC component/pricing data (no DB,
+// no network). Output is deterministic, so we lock it with assertSnapshot.
+//
+// What this locks: calculation LOGIC — quantities, SKUs, units, notes, computed
+// geometry, warnings, and the totals math. SKUs that only exist in the DB price
+// at 0 here (synthetic-only), which is fine and consistent: pricing correctness
+// is a separate, DB-seeded integration concern. The goal of this suite is to
+// prove later refactors (config extraction, internal-SKU layer, per-run routing)
+// do not change the engine's logic.
+//
+// Run:
+//   npx deno test --allow-read --allow-write \
+//     supabase/functions/bom-calculator-static/engine_test.ts
+//
+// Update snapshots after an INTENTIONAL change (review the diff!):
+//   npx deno test --allow-read --allow-write \
+//     supabase/functions/bom-calculator-static/engine_test.ts -- --update
+//
+// See docs/configurable-static-calculator-plan.md (Phase 0 + scenario matrix).
+
+import { assertSnapshot } from "https://deno.land/std@0.224.0/testing/snapshot.ts";
+import {
+  calculateLocalBom,
+  type CanonicalPayload,
+  type CanonicalRun,
+  type CanonicalSegment,
+  type LocalBomResult,
+  type PricingTier,
+} from "./engine.ts";
+
+// ─── Builders ─────────────────────────────────────────────────────────────────
+
+type Vars = Record<string, string | number | boolean>;
+
+const BASE_QSHS: Vars = {
+  colour_code: "B",
+  slat_size_mm: 65,
+  slat_gap_mm: 9,
+  finish_family: "standard",
+  mounting_type: "in_ground",
+  post_size: 50,
+  target_height_mm: 1800,
+  max_panel_width_mm: 2600,
+};
+
+function seg(
+  segmentId: string,
+  segmentWidthMm: number,
+  opts: { height?: number; vars?: Vars } = {},
+): CanonicalSegment {
+  return {
+    segmentId,
+    segmentKind: "panel",
+    segmentWidthMm,
+    targetHeightMm: opts.height ?? 1800,
+    variables: opts.vars,
+  };
+}
+
+function gateSeg(segmentId: string, segmentWidthMm: number, vars: Vars): CanonicalSegment {
+  return {
+    segmentId,
+    segmentKind: "gate_opening",
+    segmentWidthMm,
+    targetHeightMm: Number(vars.gate_height_mm ?? 1800),
+    variables: vars,
+  };
+}
+
+function run(
+  runId: string,
+  productCode: string,
+  segments: CanonicalSegment[],
+  opts: {
+    left?: CanonicalRun["leftBoundary"];
+    right?: CanonicalRun["rightBoundary"];
+    corners?: unknown[];
+    vars?: Record<string, unknown>;
+  } = {},
+): CanonicalRun {
+  return {
+    runId,
+    productCode,
+    segments,
+    leftBoundary: opts.left ?? { type: "product_post" },
+    rightBoundary: opts.right ?? { type: "product_post" },
+    corners: opts.corners ?? [],
+    variables: opts.vars ?? {},
+  };
+}
+
+function payload(runs: CanonicalRun[], variables: Record<string, unknown> = {}): CanonicalPayload {
+  return { runs, variables };
+}
+
+// Trim to the deterministic, logic-bearing projection. `generatedAt` is excluded
+// (non-deterministic). Lines are sorted by sku+unit so internal aggregation
+// order changes that don't affect content don't churn the snapshot.
+function project(r: LocalBomResult) {
+  return {
+    lines: r.lines
+      .map((l) => ({
+        sku: l.sku,
+        category: l.category,
+        quantity: l.quantity,
+        unit: l.unit,
+        unitPrice: l.unitPrice,
+        lineTotal: l.lineTotal,
+        notes: l.notes,
+      }))
+      .sort((a, b) => a.sku.localeCompare(b.sku) || a.unit.localeCompare(b.unit)),
+    totals: r.totals,
+    warnings: [...r.warnings].sort(),
+    assumptions: [...r.assumptions].sort(),
+    computed: r.computed,
+  };
+}
+
+function snap(t: Deno.TestContext, p: CanonicalPayload, tier: PricingTier = "tier1") {
+  return assertSnapshot(t, project(calculateLocalBom(p, tier)));
+}
+
+// ─── Scenarios (see plan §7) ────────────────────────────────────────────────────
+
+Deno.test("S01 QSHS straight 10m horizontal baseline", async (t) => {
+  await snap(t, payload([run("r1", "QSHS", [seg("s1", 10000)])], { ...BASE_QSHS }));
+});
+
+Deno.test("S02 QSHS 90mm slats", async (t) => {
+  await snap(t, payload([run("r1", "QSHS", [seg("s1", 8000)])], { ...BASE_QSHS, slat_size_mm: 90 }));
+});
+
+Deno.test("S03 QSHS base_plate mounting", async (t) => {
+  await snap(t, payload([run("r1", "QSHS", [seg("s1", 6000)])], { ...BASE_QSHS, mounting_type: "base_plate", base_plate_substrate: "concrete" }));
+});
+
+Deno.test("S04 QSHS core_drill mounting", async (t) => {
+  await snap(t, payload([run("r1", "QSHS", [seg("s1", 6000)])], { ...BASE_QSHS, mounting_type: "core_drill" }));
+});
+
+Deno.test("S05 QSHS wall terminations both ends", async (t) => {
+  const s = seg("s1", 6000, {
+    vars: { left_termination_kind: "non_system_termination", right_termination_kind: "non_system_termination" },
+  });
+  await snap(t, payload([run("r1", "QSHS", [s], { left: { type: "wall" }, right: { type: "wall" } })], { ...BASE_QSHS }));
+});
+
+Deno.test("S06 QSHS custom corner 110deg", async (t) => {
+  const s = seg("s1", 6000, { vars: { left_corner_degrees: 110 } });
+  await snap(t, payload([run("r1", "QSHS", [s])], { ...BASE_QSHS }));
+});
+
+Deno.test("S07 QSHS economy slats pack-of-96", async (t) => {
+  await snap(t, payload([run("r1", "QSHS", [seg("s1", 10000)])], { ...BASE_QSHS, finish_family: "economy" }));
+});
+
+Deno.test("S08 QSHS alumawood KWI", async (t) => {
+  await snap(t, payload([run("r1", "QSHS", [seg("s1", 6000)])], { ...BASE_QSHS, finish_family: "alumawood", colour_code: "KWI", post_colour_code: "KWI" }));
+});
+
+Deno.test("S09 QSHS multi-panel split with CSR", async (t) => {
+  await snap(t, payload([run("r1", "QSHS", [seg("s1", 6000, { height: 2100 })])], { ...BASE_QSHS, max_panel_width_mm: 2000, target_height_mm: 2100 }));
+});
+
+Deno.test("S10 QSHS louvre treatment 65mm", async (t) => {
+  await snap(t, payload([run("r1", "QSHS", [seg("s1", 6000)])], { ...BASE_QSHS, slat_size_mm: 65, louvre_treatment: true }));
+});
+
+Deno.test("S11 VS vertical run", async (t) => {
+  await snap(t, payload([run("r1", "VS", [seg("s1", 6000)])], { ...BASE_QSHS, slat_gap_mm: 20 }));
+});
+
+Deno.test("S12 BAYG panel", async (t) => {
+  await snap(t, payload([run("r1", "BAYG", [seg("s1", 2400)])], { ...BASE_QSHS, panel_quantity: 2 }));
+});
+
+Deno.test("S13 single swing gate", async (t) => {
+  const gv: Vars = {
+    gate_movement: "single_swing",
+    gate_build: "qsg_hinged_horizontal",
+    colour_code: "B",
+    slat_size_mm: 65,
+    slat_gap_mm: 9,
+    gate_height_mm: 1800,
+  };
+  await snap(t, payload([run("r1", "QSHS", [seg("s1", 2000), gateSeg("g1", 1000, gv)])], { ...BASE_QSHS }));
+});
+
+Deno.test("S14 double swing gate", async (t) => {
+  const gv: Vars = {
+    gate_movement: "double_swing",
+    gate_build: "qsg_hinged_horizontal",
+    colour_code: "B",
+    slat_size_mm: 65,
+    slat_gap_mm: 9,
+    gate_height_mm: 1800,
+  };
+  await snap(t, payload([run("r1", "QSHS", [seg("s1", 2000), gateSeg("g1", 2000, gv)])], { ...BASE_QSHS }));
+});
+
+Deno.test("S15 sliding gate with automation", async (t) => {
+  const gv: Vars = {
+    gate_movement: "sliding",
+    gate_build: "qsg_hinged_horizontal",
+    colour_code: "B",
+    slat_size_mm: 65,
+    slat_gap_mm: 9,
+    gate_height_mm: 1800,
+    automation_enabled: true,
+    automation_power_source: "mains",
+    automation_cable_distance_m: 10,
+  };
+  await snap(t, payload([run("r1", "QSHS", [seg("s1", 2000), gateSeg("g1", 4000, gv)])], { ...BASE_QSHS }));
+});
+
+Deno.test("S16 multi-run QSHS + VS", async (t) => {
+  await snap(
+    t,
+    payload(
+      [
+        run("r1", "QSHS", [seg("s1", 6000)]),
+        run("r2", "VS", [seg("s2", 4000, { vars: { slat_gap_mm: 20 } })]),
+      ],
+      { ...BASE_QSHS },
+    ),
+  );
+});
+
+Deno.test("S17a QSHS baseline tier2 pricing", async (t) => {
+  await snap(t, payload([run("r1", "QSHS", [seg("s1", 10000)])], { ...BASE_QSHS }), "tier2");
+});
+
+Deno.test("S17b QSHS baseline tier3 pricing", async (t) => {
+  await snap(t, payload([run("r1", "QSHS", [seg("s1", 10000)])], { ...BASE_QSHS }), "tier3");
+});

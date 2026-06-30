@@ -1,0 +1,36 @@
+{
+  "id": "X1",
+  "description": "XPL baseline: 10m straight run, 65mm/9mm, black-satin, in-ground, 1800mm, standard_50 post system.",
+  "payload": {
+    "productCode": "XPL",
+    "schemaVersion": "v2",
+    "variables": {
+      "colour_code": "black-satin",
+      "slat_size_mm": 65,
+      "slat_gap_mm": 9,
+      "mounting_type": "in_ground",
+      "mounting_method": "in_ground",
+      "post_system": "standard_50",
+      "max_panel_width_mm": 2600
+    },
+    "runs": [
+      {
+        "runId": "run-001",
+        "productCode": "XPL",
+        "segments": [
+          {
+            "segmentId": "seg-001",
+            "sortOrder": 0,
+            "kind": "fence",
+            "productCode": "XPL",
+            "segmentWidthMm": 10000,
+            "targetHeightMm": 1800,
+            "postSize": "50",
+            "leftTermination": { "kind": "system" },
+            "rightTermination": { "kind": "system" }
+          }
+        ]
+      }
+    ]
+  }
+}
