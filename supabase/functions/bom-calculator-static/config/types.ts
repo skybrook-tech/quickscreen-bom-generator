@@ -202,6 +202,15 @@ export type CalculatorConfig = {
     mountingType: string;
   };
 
+  // Form field definitions for the v3 run/section/gate UI. Single source of
+  // truth for what the client renders — see config/forms/*.ts for the actual
+  // field arrays. The engine itself ignores this section entirely.
+  formFields: {
+    job: FormFieldDef[];
+    run: FormFieldDef[];
+    segment: FormFieldDef[];
+  };
+
   // Typed extension rules that suppliers can parameterise.
   // New rule TYPES are added in code + tested; suppliers only supply values.
   extraRules?: Array<
@@ -220,6 +229,22 @@ export type CalculatorConfig = {
         message: string;
       }
   >;
+};
+
+// Mirrors the client `SchemaField` shape (src/components/calculator-v3/SchemaDrivenForm.tsx)
+// so the UI-projection endpoint can hand these straight to the form with no remapping.
+export type FormFieldDef = {
+  field_key: string;
+  label: string;
+  control_type: string; // select | number | toggle | text | combined_gap | hardware_ranked | ...
+  data_type: "enum" | "number" | "integer" | "boolean" | "string";
+  options_json?: unknown[];
+  default_value_json?: unknown;
+  visible_when_json?: Record<string, unknown>;
+  unit?: string;
+  required?: boolean;
+  sort_order: number;
+  options_group?: string;
 };
 
 // ─── Canonical payload types (shared by engine, calculator, and canvas adapter) ──

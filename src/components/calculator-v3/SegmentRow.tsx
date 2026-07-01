@@ -1,10 +1,12 @@
 import { useEffect, useRef } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
+import { useCalculatorConfig } from "../../hooks/useCalculatorConfig";
 import type { CanonicalSegment } from "../../types/canonical.types";
 import { ChevronDown, ChevronUp, Plus, X } from "lucide-react";
 import { ConfirmButton } from "../shared/ConfirmButton";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
+import { valueLabel, type SchemaField } from "./SchemaDrivenForm";
 import NumberInput from "../shared/NumberInput";
 import {
   GATE_SEGMENT_STUB_KEYS,
@@ -54,27 +56,16 @@ interface Props {
   onDismissRunDefaultsTeaching?: () => void;
 }
 
-const MOUNTING_LABELS: Record<string, string> = {
-  in_ground: "Concreted",
-  base_plate: "Base plate",
-  core_drill: "Core drill",
-};
-
-const POST_SYSTEM_LABELS: Record<string, string> = {
-  xpl: "XPress Plus post",
-  standard_50: "50mm Post Standard",
-  standard_65: "65mm Post Standard HD",
-};
-
-function postLabel(productCode: string, variables: Record<string, unknown>) {
+function postLabel(
+  postSizeField: SchemaField | undefined,
+  productCode: string,
+  variables: Record<string, unknown>,
+) {
   const postSystem = String(
     variables.post_system ?? (productCode === "XPL" ? "xpl" : "standard_50"),
   );
-  if (productCode === "XPL" || postSystem === "xpl") {
-    return POST_SYSTEM_LABELS[postSystem] ?? "XPress Plus post";
-  }
-  const postSize = String(variables.post_size ?? "50");
-  return postSize === "65" ? "65mm Post Standard HD" : "50mm Post Standard";
+  if (productCode === "XPL" || postSystem === "xpl") return "XPress Plus post";
+  return valueLabel(postSizeField, variables.post_size ?? "50", "50mm Post Standard");
 }
 
 function gateMovementLabel(value: unknown) {
@@ -180,6 +171,11 @@ export function SegmentRow({
   const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
   const productCode = String(seg.variables?.product_code ?? runProductCode);
   const isBayg = productCode === "BAYG";
+  const config = useCalculatorConfig(productCode);
+  const mountingField = config.formFields.run.find(
+    (field) => field.field_key === "mounting_type" || field.field_key === "mounting_method",
+  );
+  const postSizeField = config.formFields.run.find((field) => field.field_key === "post_size");
   const heightEntries = run
     ? heightEntriesForSystem(productCode, segmentVariables)
     : [];
@@ -368,7 +364,7 @@ export function SegmentRow({
       },
       {
         label: "Post",
-        value: postLabel(productCode, segmentVariables),
+        value: postLabel(postSizeField, productCode, segmentVariables),
         changed:
           !isBayg &&
           (!sameValue(segmentVariables.post_system, masterVariables.post_system) ||
@@ -376,9 +372,11 @@ export function SegmentRow({
       },
       {
         label: "Mounting",
-        value:
-          MOUNTING_LABELS[String(segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground")] ??
-          "Concreted",
+        value: valueLabel(
+          mountingField,
+          segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground",
+          "Concreted in ground",
+        ),
         changed:
           !isBayg &&
           !sameValue(

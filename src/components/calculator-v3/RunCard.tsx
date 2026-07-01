@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
 import { useCalculator } from "../../context/CalculatorContext";
+import { useCalculatorConfig } from "../../hooks/useCalculatorConfig";
 import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
 import { defaultGateVariables } from "../../lib/gateOptionRules";
+import { defaultVariablesFromFields } from "../../hooks/useProductVariables";
 import {
   clampPostSpacing,
   maxPanelWidthForSystem,
@@ -20,15 +22,10 @@ import { RunSettingsEditor } from "./RunSettingsEditor";
 import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
 import { ConfirmButton } from "../shared/ConfirmButton";
 import { InlineHeightEditor } from "./InlineHeightEditor";
+import { valueLabel } from "./SchemaDrivenForm";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 const RUN_SETTINGS_AUTO_COLLAPSE_MS = 60000;
-
-const MOUNTING_LABELS: Record<string, string> = {
-  in_ground: "Concreted in ground",
-  base_plate: "Base plated",
-  core_drill: "Core drilled",
-};
 
 interface Props {
   run: CanonicalRun;
@@ -69,6 +66,18 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   );
   const runCollapseRef = useRef<number | null>(null);
 
+  // Prefetch/warm the shared TanStack cache (['calculator-config', productCode])
+  // so RunSettingsEditor / FenceSegmentDetails / GateSegmentDetails have their
+  // form field config ready the moment a section or run settings is expanded,
+  // instead of a fetch firing (and forms flashing empty) on first expand.
+  const config = useCalculatorConfig(run.productCode);
+  const hasGateSegments = run.segments.some((segment) => segment.segmentKind === "gate_opening");
+  useCalculatorConfig(hasGateSegments ? GATE_PRODUCT_CODE : "");
+  const segmentDefaults = useMemo(
+    () => defaultVariablesFromFields(config.formFields.segment),
+    [config.formFields.segment],
+  );
+
   const runVariables = useMemo(
     () => runMasterVariables(run, state.payload?.variables),
     [run, state.payload?.variables],
@@ -82,7 +91,11 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
   const slatSize = Number(runVariables.slat_size_mm ?? 65);
   const slatGap = Number(runVariables.slat_gap_mm ?? 5);
-  const mounting = String(runVariables.mounting_method ?? runVariables.mounting_type ?? "in_ground").replace(/_/g, " ");
+  const mountingRaw = runVariables.mounting_method ?? runVariables.mounting_type ?? "in_ground";
+  const mountingField = config.formFields.run.find(
+    (field) => field.field_key === "mounting_type" || field.field_key === "mounting_method",
+  );
+  const mounting = valueLabel(mountingField, mountingRaw);
   const isBayg = run.productCode === "BAYG";
 
   useEffect(
@@ -174,7 +187,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
       segmentKind: "panel",
       segmentWidthMm: 0,
       targetHeightMm: Number(runVariables.target_height_mm ?? 1800),
-      variables: isBayg ? { panel_quantity: 1 } : undefined,
+      variables: isBayg ? (segmentDefaults as Record<string, string | number | boolean>) : undefined,
     });
   }
 
@@ -219,7 +232,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
             <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
             <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
             <span>Gap size: <strong className="text-brand-text">{slatGap}mm</strong></span>
-            <span>Post mounting: <strong className="text-brand-text">{isBayg ? "Not required" : MOUNTING_LABELS[mounting] ?? mounting}</strong></span>
+            <span>Post mounting: <strong className="text-brand-text">{isBayg ? "Not required" : mounting}</strong></span>
             <span>Max post spacing: <strong className="text-brand-text">{jobMax}mm</strong></span>
             <span>Corners: <strong className="text-brand-text">{run.corners?.length ?? 0}</strong></span>
           </span>

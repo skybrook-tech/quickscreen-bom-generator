@@ -1,7 +1,19 @@
 import { FormField } from "../shared/FormField";
 import { Check } from "lucide-react";
-import { ColourPalette, COLOUR_LABELS } from "./ColourPalette";
+import { COLOUR_LABELS } from "./ColourPalette";
 import { DerivationChip } from "../ui/DerivationChip";
+import { combinedGapRenderer } from "./formRenderers/combinedGap";
+import { postFixingSelectRenderer } from "./formRenderers/postFixingSelect";
+import { colourPaletteRenderer } from "./formRenderers/colourPalette";
+import { hardwareRankedRenderer } from "./formRenderers/hardwareRanked";
+import { hardwareDropdownRenderer } from "./formRenderers/hardwareDropdown";
+import { leafWidthPairRenderer } from "./formRenderers/leafWidthPair";
+import { kitToggleRenderer } from "./formRenderers/kitToggle";
+import { optionalAddonsRenderer } from "./formRenderers/optionalAddons";
+import { automationGroupRenderer } from "./formRenderers/automationGroup";
+import type { FieldRenderer } from "./formRenderers/types";
+
+export type { FieldRenderer, FieldRendererContext } from "./formRenderers/types";
 
 export interface SchemaField {
   id: string;
@@ -22,38 +34,69 @@ interface SchemaDrivenFormProps {
   fields: SchemaField[];
   onChange: (key: string, value: string | number | boolean) => void;
   variables: Record<string, string | number | boolean>;
+  /** Multi-key atomic writes, for controls that touch more than one variable (combined_gap, leaf pairs, hardware pickers). Defaults to sequential onChange calls. */
+  onPatch?: (patch: Record<string, string | number | boolean | null | undefined>) => void;
+  /** Free-form context bag consumed by custom control-type renderers (productCode, segment, leaves, etc). */
+  extra?: Record<string, unknown>;
+  /** Extra/override control-type renderers, merged over the built-in registry. */
+  renderers?: Record<string, FieldRenderer>;
 }
 
+/**
+ * `visible_when_json` supports:
+ *   { field: value }              — exact match
+ *   { field: [v1, v2] }           — value is one of
+ *   { field: { not: value } }     — value is not
+ *   { field: { not_in: [v1,v2] } } — value is not one of
+ * All entries are AND-ed together.
+ */
 export function isVisible(
   visibleWhen: Record<string, unknown>,
   variables: Record<string, unknown>,
 ): boolean {
   for (const [k, v] of Object.entries(visibleWhen)) {
+    const actual = variables[k];
     if (Array.isArray(v)) {
-      if (!v.includes(variables[k])) return false;
-    } else {
-      if (variables[k] !== v) return false;
+      if (!v.includes(actual)) return false;
+      continue;
     }
+    if (v && typeof v === "object") {
+      const condition = v as { not?: unknown; not_in?: unknown[] };
+      if ("not" in condition && actual === condition.not) return false;
+      if (Array.isArray(condition.not_in) && condition.not_in.includes(actual)) return false;
+      continue;
+    }
+    if (actual !== v) return false;
   }
   return true;
 }
 
+const DEFAULT_RENDERERS: Record<string, FieldRenderer> = {
+  combined_gap: combinedGapRenderer,
+  post_fixing_select: postFixingSelectRenderer,
+  colour_palette: colourPaletteRenderer,
+  hardware_ranked: hardwareRankedRenderer,
+  hardware_dropdown: hardwareDropdownRenderer,
+  leaf_width_pair: leafWidthPairRenderer,
+  kit_toggle: kitToggleRenderer,
+  optional_addons: optionalAddonsRenderer,
+  automation_group: automationGroupRenderer,
+};
+
 const FIELD_WRAPPER = "w-full";
 
+// Labels for values that are NOT backed by a config-defined {value,label}
+// option — either client-only synthetic fields (finish_family, slat_gap_mode)
+// or forced/non-selectable values (XPL's "xpl" post system, never offered as
+// a dropdown choice). Anything selectable from config should carry its own
+// label in options_json instead of being added here — see config/forms/*.ts.
 const ENUM_LABELS: Record<string, string> = {
   standard: "Standard slats",
   economy: "Economy slats",
   alumawood: "Alumawood timber-look",
   spacer: "Preset spacer gaps",
   custom: "Custom gap",
-  in_ground: "Concreted in ground",
-  base_plate: "Base-plated to slab",
-  core_drill: "Core-drilled into concrete",
   xpl: "XPress Plus post",
-  standard_50: "50mm Post Standard",
-  standard_65: "65mm Post Standard HD",
-  "50": "50mm Post Standard",
-  "65": "65mm Post Standard HD",
 };
 
 function optionValue(option: unknown): string {
@@ -84,6 +127,31 @@ function optionLabel(field: SchemaField, option: unknown): string {
   return ENUM_LABELS[value] ?? value.replace(/_/g, " ");
 }
 
+/**
+ * Human-readable label for a raw variable value, given the SchemaField it
+ * belongs to. Looks up a matching `{value,label}` pair in `field.options_json`
+ * first (the config-driven, single-source-of-truth path) and falls back to
+ * `optionLabel`'s generic handling (colour names, units, ENUM_LABELS) when no
+ * match is found. Use this instead of ad-hoc label dictionaries in summary/
+ * display code outside the form itself (RunCard, SegmentRow, etc).
+ */
+export function valueLabel(
+  field: SchemaField | undefined,
+  rawValue: unknown,
+  fallback = "Default",
+): string {
+  if (!field) return fallback;
+  if (rawValue === undefined || rawValue === null || rawValue === "") return fallback;
+  const options = Array.isArray(field.options_json) ? field.options_json : [];
+  const match = options.find((opt) => optionValue(opt) === String(rawValue));
+  if (match !== undefined) return optionLabel(field, match);
+  const generic = optionLabel(field, rawValue);
+  // optionLabel's field-key-specific branches already append units for slat
+  // size/gap/height; for everything else without a config-defined option
+  // match, fall back to the field's declared unit (e.g. max_panel_width_mm).
+  return generic === String(rawValue) && field.unit ? `${rawValue}${field.unit}` : generic;
+}
+
 function coerceValue(field: SchemaField, value: string): string | number | boolean {
   if (field.data_type === "number" || field.data_type === "integer") {
     return Number(value);
@@ -95,12 +163,33 @@ function coerceValue(field: SchemaField, value: string): string | number | boole
 export function SchemaDrivenForm({
   fields,
   onChange,
+  onPatch,
   variables,
+  extra = {},
+  renderers,
 }: SchemaDrivenFormProps) {
+  const registry = renderers ? { ...DEFAULT_RENDERERS, ...renderers } : DEFAULT_RENDERERS;
+  const patch =
+    onPatch ??
+    ((p: Record<string, string | number | boolean | null | undefined>) => {
+      for (const [key, value] of Object.entries(p)) {
+        if (value !== null && value !== undefined) onChange(key, value);
+      }
+    });
+
   return (
     <div className="flex flex-wrap gap-3">
       {fields.map((field) => {
         if (!isVisible(field.visible_when_json ?? {}, variables)) return null;
+
+        const customRenderer = registry[field.control_type];
+        if (customRenderer) {
+          return (
+            <div key={field.id} data-testid={field.field_key} className={FIELD_WRAPPER}>
+              {customRenderer({ field, variables, onChange, onPatch: patch, extra })}
+            </div>
+          );
+        }
 
         if (
           field.control_type === "select" &&
@@ -108,7 +197,6 @@ export function SchemaDrivenForm({
           field.options_json.length > 0
         ) {
           const currentValue = String(variables[field.field_key] ?? "");
-          const isColourField = field.field_key === "colour_code" || field.field_key === "post_colour_code";
           return (
             <div
               key={field.id}
@@ -130,15 +218,6 @@ export function SchemaDrivenForm({
                     )}
                   </div>
                 )}
-                {isColourField ? (
-                  <ColourPalette
-                    value={currentValue}
-                    options={field.options_json.map(String)}
-                    onChange={(value) =>
-                      onChange(field.field_key, coerceValue(field, value))
-                    }
-                  />
-                ) : (
                 <div className="flex flex-wrap gap-2">
                   {field.options_json.map((opt) => {
                     const value = optionValue(opt);
@@ -163,7 +242,6 @@ export function SchemaDrivenForm({
                     );
                   })}
                 </div>
-                )}
               </FormField>
             </div>
           );

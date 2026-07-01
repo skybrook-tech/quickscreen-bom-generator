@@ -2,9 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { getLocalVariables } from '../lib/localSeedData';
 import { initialVariablesForSystem } from '../lib/productOptionRules';
+import { useCalculatorConfig } from './useCalculatorConfig';
 import type { SchemaField } from '../components/calculator-v3/SchemaDrivenForm';
 
-/** Builds a variables object from product_variables.default_value_json. */
+/** Builds a variables object from a field list's default_value_json. */
 export function defaultVariablesFromFields(
   fields: SchemaField[],
 ): Record<string, unknown> {
@@ -16,23 +17,22 @@ export function defaultVariablesFromFields(
 }
 
 /**
- * Returns DB-driven default variables for a product, falling back to
- * `initialVariablesForSystem()` if fields are not yet loaded or Supabase is
- * not configured. Scope defaults to "run".
+ * Returns config-driven default variables for a product (job + run scope
+ * fields from `useCalculatorConfig` — the same single source of truth the
+ * run/section forms render from), falling back to
+ * `initialVariablesForSystem()` if the config hasn't loaded yet or has no
+ * fields for this product.
  */
-export function useDefaultVariables(
-  productCode: string,
-  scope: 'job' | 'run' | 'segment' = 'run',
-): Record<string, unknown> {
-  const query = useProductVariables(productCode, scope);
-  if (!query.data || query.data.length === 0) {
+export function useDefaultVariables(productCode: string): Record<string, unknown> {
+  const config = useCalculatorConfig(productCode);
+  const fromConfig = defaultVariablesFromFields([
+    ...config.formFields.job,
+    ...config.formFields.run,
+  ]);
+  if (Object.keys(fromConfig).length === 0) {
     return initialVariablesForSystem(productCode) as Record<string, unknown>;
   }
-  const fromDb = defaultVariablesFromFields(query.data);
-  if (Object.keys(fromDb).length === 0) {
-    return initialVariablesForSystem(productCode) as Record<string, unknown>;
-  }
-  return fromDb;
+  return fromConfig;
 }
 
 type Scope = 'job' | 'run' | 'segment';

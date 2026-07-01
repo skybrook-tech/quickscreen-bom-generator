@@ -8,6 +8,8 @@
 // Adding a new supplier = deep-merge a patch over one of these.
 
 import type { CalculatorConfig } from "./types.ts";
+import { fenceFormFields } from "./forms/fence.ts";
+import { GATE_FORM_FIELDS } from "./forms/gate.ts";
 
 // ─── Shared colour palette ────────────────────────────────────────────────────
 // Keeping colours here for now (Phase 5 will move them to DB).
@@ -204,6 +206,7 @@ export const BASE_QSHS_CONFIG: CalculatorConfig = {
     slatSizeMm: 65, slatGapMm: 9, targetHeightMm: 1800,
     postSizeMm: 50, finishFamily: "standard", colour: "B", mountingType: "in_ground",
   },
+  formFields: fenceFormFields("QSHS", STANDARD_COLOURS),
 };
 
 export const BASE_BAYG_CONFIG: CalculatorConfig = {
@@ -212,6 +215,7 @@ export const BASE_BAYG_CONFIG: CalculatorConfig = {
   strategy: { fence: "panel", gate: "qsg_swing_sliding" },
   panelRules: { ...PANEL_RULES_STD, maxPanelWidthMm: 3000 },
   defaults: { ...BASE_QSHS_CONFIG.defaults, colour: "B" },
+  formFields: fenceFormFields("BAYG", STANDARD_COLOURS),
 };
 
 export const BASE_VS_CONFIG: CalculatorConfig = {
@@ -219,6 +223,7 @@ export const BASE_VS_CONFIG: CalculatorConfig = {
   productCode: "VS",
   strategy: { fence: "vertical_slat", gate: "qsg_swing_sliding" },
   defaults: { ...BASE_QSHS_CONFIG.defaults, slatGapMm: 20 },
+  formFields: fenceFormFields("VS", STANDARD_COLOURS),
 };
 
 export const BASE_XPL_CONFIG: CalculatorConfig = {
@@ -226,6 +231,17 @@ export const BASE_XPL_CONFIG: CalculatorConfig = {
   productCode: "XPL",
   strategy: { fence: "horizontal_slat", gate: "qsg_swing_sliding" },
   defaults: { ...BASE_QSHS_CONFIG.defaults, slatSizeMm: 65 },
+  formFields: fenceFormFields("XPL", STANDARD_COLOURS),
+};
+
+// QS_GATE has no fence calculation strategy of its own — gates are calculated
+// inline by the fence run's calculator (see calculators/quickscreen.ts). This
+// entry exists purely so get-calculator-config can serve formFields.segment
+// for the shared gate UI under a stable productCode.
+export const BASE_QS_GATE_CONFIG: CalculatorConfig = {
+  ...BASE_QSHS_CONFIG,
+  productCode: "QS_GATE",
+  formFields: GATE_FORM_FIELDS,
 };
 
 export const BASE_CONFIGS: Record<string, CalculatorConfig> = {
@@ -233,4 +249,5 @@ export const BASE_CONFIGS: Record<string, CalculatorConfig> = {
   BAYG: BASE_BAYG_CONFIG,
   VS:   BASE_VS_CONFIG,
   XPL:  BASE_XPL_CONFIG,
+  QS_GATE: BASE_QS_GATE_CONFIG,
 };

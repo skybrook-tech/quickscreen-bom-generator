@@ -1,3 +1,5 @@
+// @vitest-environment jsdom
+
 import { act } from "react";
 import type { ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
@@ -24,7 +26,7 @@ const contextMock = vi.hoisted(() => ({
   dispatch: vi.fn(),
 }));
 
-const productVariablesMock = vi.hoisted(() => {
+const calculatorConfigMock = vi.hoisted(() => {
   const field = (
     fieldKey: string,
     label: string,
@@ -60,8 +62,22 @@ const productVariablesMock = vi.hoisted(() => {
   ];
 
   return {
-    useProductVariables: vi.fn((_productCode: string, scope: string) => ({
-      data: scope === "run" ? runFields : jobFields,
+    useCalculatorConfig: vi.fn((_productCode: string) => ({
+      productCode: _productCode,
+      strategy: { fence: "horizontal_slat" },
+      colours: { standard: ["B", "SM"], alumawood: [], gate: ["B", "SM"], names: {}, fallback: "MN" },
+      panelRules: { maxPanelWidthMm: 2600, minPostSpacingMm: 100, maxPostSpacingMm: 3000 },
+      postRules: { longPostThresholdMm: 2400 },
+      defaults: {
+        slatSizeMm: 65,
+        slatGapMm: 9,
+        targetHeightMm: 1800,
+        postSizeMm: 50,
+        finishFamily: "standard",
+        colour: "B",
+        mountingType: "in_ground",
+      },
+      formFields: { job: jobFields, run: runFields, segment: [] },
     })),
   };
 });
@@ -73,8 +89,8 @@ vi.mock("../../context/CalculatorContext", () => ({
   }),
 }));
 
-vi.mock("../../hooks/useProductVariables", () => ({
-  useProductVariables: productVariablesMock.useProductVariables,
+vi.mock("../../hooks/useCalculatorConfig", () => ({
+  useCalculatorConfig: calculatorConfigMock.useCalculatorConfig,
 }));
 
 function render(ui: ReactNode) {

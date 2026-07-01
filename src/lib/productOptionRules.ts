@@ -5,7 +5,7 @@ import {
   nearestDerivedHeight,
   type DerivedHeight,
 } from "./heights";
-import type { ClientCalculatorConfig } from "./baseCalculatorConfigs";
+import type { UiCalculatorConfig } from "../types/calculatorConfig.types";
 
 type Variables = Record<string, string | number | boolean>;
 
@@ -29,7 +29,7 @@ const SYSTEM_MAX_PANEL_WIDTH: Record<string, number> = {
  */
 export function maxPanelWidthForSystem(
   productCode: string | null | undefined,
-  config?: ClientCalculatorConfig,
+  config?: UiCalculatorConfig,
 ) {
   if (config) return config.panelRules.maxPanelWidthMm;
   return productCode ? (SYSTEM_MAX_PANEL_WIDTH[productCode] ?? 2600) : 2600;
@@ -111,7 +111,7 @@ export function heightEntriesForSystem(productCode: string, variables: Variables
  * Colour options for a product, respecting finish family.
  * Pass an optional config from `useCalculatorConfig()` for DB-driven colour lists.
  */
-export function colourOptionsForSystem(variables: Variables, config?: ClientCalculatorConfig) {
+export function colourOptionsForSystem(variables: Variables, config?: UiCalculatorConfig) {
   const finish = String(variables.finish_family ?? "standard");
   const slatSize = Number(variables.slat_size_mm ?? 65);
 
@@ -123,7 +123,7 @@ export function colourOptionsForSystem(variables: Variables, config?: ClientCalc
   return config?.colours.standard ?? STANDARD_COLOURS;
 }
 
-export function postColourOptionsForSystem(variables: Variables, config?: ClientCalculatorConfig) {
+export function postColourOptionsForSystem(variables: Variables, config?: UiCalculatorConfig) {
   const finish = String(variables.finish_family ?? "standard");
   const alumawood = config?.colours.alumawood ?? ALUMAWOOD_COLOURS;
   const standard = config?.colours.standard ?? STANDARD_COLOURS;
@@ -321,96 +321,11 @@ export function applyProductOptionRules(
       continue;
     }
 
-    if (field.field_key === "slat_gap_mm") {
-      const gapOptions = gapOptionsForSystem(productCode);
-      if (productCode === "QSHS" || productCode === "VS") {
-        result.push(
-          optionField(
-            productCode,
-            "slat_gap_mode",
-            "Gap type",
-            ["spacer", "custom"],
-            "spacer",
-            field.sort_order - 1,
-          ),
-        );
-      }
-      result.push(
-        cloneField(field, {
-          control_type:
-            (productCode === "QSHS" || productCode === "VS") && variables.slat_gap_mode === "custom"
-              ? "number"
-              : gapOptions.length > 0
-                ? "select"
-                : "number",
-          data_type: "number",
-          options_json:
-            (productCode === "QSHS" || productCode === "VS") && variables.slat_gap_mode === "custom"
-              ? []
-              : gapOptions,
-          label:
-            (productCode === "QSHS" || productCode === "VS") && variables.slat_gap_mode === "custom"
-              ? "Custom slat gap"
-              : productCode === "VS"
-                ? "Slat gap"
-                : field.label,
-          unit: "mm",
-        }),
-      );
-      continue;
-    }
-
-    if (field.field_key === "target_height_mm") {
-      const heightOptions = heightEntriesForSystem(productCode, variables);
-      result.push(
-        cloneField(field, {
-          control_type: heightOptions.length > 0 ? "select" : field.control_type,
-          data_type: "number",
-          options_json:
-            heightOptions.length > 0
-              ? heightOptions.map((item) => ({
-                  value: item.height,
-                  label: `${item.height}mm - ${item.N} slats`,
-                }))
-              : field.options_json,
-          label: heightOptions.length > 0 ? "Actual fence height" : field.label,
-          unit: "mm",
-        }),
-      );
-      continue;
-    }
-
-    if (field.field_key === "mounting_type" || field.field_key === "mounting_method") {
-      result.push(
-        cloneField(field, {
-          label: "Post mounting type",
-          default_value_json: "in_ground",
-          options_json: ["in_ground", "base_plate", "core_drill"],
-        }),
-      );
-      continue;
-    }
-
-    if (field.field_key === "post_system") {
-      result.push(
-        cloneField(field, {
-          label: "Post size",
-          default_value_json: productCode === "XPL" ? "xpl" : "standard_50",
-        }),
-      );
-      continue;
-    }
-
-    if (field.field_key === "post_size") {
-      result.push(
-        cloneField(field, {
-          label: "Standard post size",
-          default_value_json: "50",
-        }),
-      );
-      continue;
-    }
-
+    // slat_gap_mm, mounting_type/method, post_system, post_size, target_height_mm
+    // are fully defined by config/forms/fence.ts now (control_type, label,
+    // default, options). Nothing left to filter here — pass them through as-is
+    // so the combined_gap renderer (and everything else config-driven) isn't
+    // clobbered by a stale override.
     if (field.field_key !== "finish_family") result.push(field);
   }
 
@@ -427,16 +342,18 @@ export function applyProductOptionRules(
     );
   }
 
-  result.push(
-    optionField(
-      productCode,
-      "post_colour_code",
-      "Post colour",
-      postColourOptionsForSystem(variables),
-      "B",
-      25,
-    ),
-  );
+  if (!byKey.has("post_colour_code")) {
+    result.push(
+      optionField(
+        productCode,
+        "post_colour_code",
+        "Post colour",
+        postColourOptionsForSystem(variables),
+        "B",
+        25,
+      ),
+    );
+  }
 
   return result.sort((a, b) => a.sort_order - b.sort_order);
 }

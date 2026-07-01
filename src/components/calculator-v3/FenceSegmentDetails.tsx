@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
-import { useProductVariables } from "../../hooks/useProductVariables";
+import { useCalculatorConfig } from "../../hooks/useCalculatorConfig";
 import type { CanonicalSegment } from "../../types/canonical.types";
 import {
   applyProductOptionRules,
@@ -16,44 +16,18 @@ import {
   SEGMENT_OPTION_KEYS,
   patchSegmentVariables,
 } from "../../lib/segmentTermination";
-import { SchemaDrivenForm, type SchemaField } from "./SchemaDrivenForm";
+import { SchemaDrivenForm, valueLabel, type SchemaField } from "./SchemaDrivenForm";
 import NumberInput from "../shared/NumberInput";
 import { SettingsDisclosureRow } from "./SettingsDisclosureRow";
 import { colourName } from "./ColourPalette";
-import { CombinedGapSelect } from "./CombinedGapSelect";
-import {
-  combinedGapLabel,
-  normaliseGapMode,
-  type GapMode,
-} from "../../lib/gapChoices";
-
-const POST_SIZE_LABELS: Record<string, string> = {
-  "50": "50mm Post Standard",
-  "65": "65mm Post Standard HD",
-  standard_50: "50mm Post Standard",
-  standard_65: "65mm Post Standard HD",
-  xpl: "XPress Plus post",
-};
-
-const VALUE_LABELS: Record<string, string> = {
-  standard: "Standard slats",
-  economy: "Economy slats",
-  alumawood: "Alumawood timber-look",
-  spacer: "Preset spacer gaps",
-  custom: "Custom gap",
-  in_ground: "Concreted in ground",
-  base_plate: "Base plated",
-  core_drill: "Core drilled",
-  xpl: "XPress Plus post",
-  standard_50: "50mm Post Standard",
-  standard_65: "65mm Post Standard HD",
-};
+import { combinedGapLabel, normaliseGapMode } from "../../lib/gapChoices";
 
 const SECTION_POST_FIELD_KEYS = new Set([
   "mounting_method",
   "mounting_type",
   "post_system",
   "post_size",
+  "louvre_treatment",
 ]);
 
 const CORE_SLAT_FIELD_KEYS = new Set([
@@ -70,6 +44,7 @@ const CORE_POST_FIELD_KEYS = new Set([
   "mounting_type",
   "post_system",
   "post_size",
+  "louvre_treatment",
 ]);
 
 interface Props {
@@ -84,9 +59,7 @@ function fieldValueLabel(field: SchemaField, variables: Record<string, string | 
   }
   if (raw === true) return "Yes";
   if (raw === false) return "No";
-  if (raw === undefined || raw === null || raw === "") return "Default";
-  if (VALUE_LABELS[String(raw)]) return VALUE_LABELS[String(raw)];
-  return `${raw}${field.unit ? field.unit : ""}`;
+  return valueLabel(field, raw);
 }
 
 export function FenceSegmentDetails({ runId, seg }: Props) {
@@ -94,8 +67,9 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   const run = state.payload?.runs.find((item) => item.runId === runId);
   const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
   const productCode = String(seg.variables?.product_code ?? runProductCode);
-  const { data: jobFields = [] } = useProductVariables(productCode, "job");
-  const { data: runFields = [] } = useProductVariables(productCode, "run");
+  const config = useCalculatorConfig(productCode);
+  const jobFields = config.formFields.job;
+  const runFields = config.formFields.run;
 
   const v = seg.variables ?? {};
   const runVariables = {
@@ -150,9 +124,10 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     );
   }
 
-  function onJobOverridePatch(patch: Record<string, string | number | boolean>) {
+  function onJobOverridePatch(patch: Record<string, string | number | boolean | null | undefined>) {
     const nextPatch: Record<string, string | number | boolean | null> = {};
     for (const [key, value] of Object.entries(patch)) {
+      if (value === null || value === undefined) continue;
       nextPatch[key] = value === runVariables[key] ? null : value;
     }
     upsertSegment(patchSegmentVariables(seg, nextPatch));
@@ -214,32 +189,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   };
   function shapePostField(field: SchemaField): SchemaField | null {
     if (!SECTION_POST_FIELD_KEYS.has(field.field_key)) return null;
-    if (
-      field.field_key === "mounting_method" ||
-      field.field_key === "mounting_type"
-    ) {
-      return {
-        ...field,
-        label: "Post mounting type",
-        default_value_json: "in_ground",
-        options_json: ["in_ground", "base_plate", "core_drill"],
-      };
-    }
-    if (field.field_key === "post_system") {
-      return {
-        ...field,
-        label: "Post size",
-        default_value_json: productCode === "XPL" ? "xpl" : "standard_50",
-      };
-    }
-    if (field.field_key === "post_size") {
-      return {
-        ...field,
-        label: "Standard post size",
-        default_value_json: 50,
-      };
-    }
-    return null;
+    return field;
   }
 
   const optionFields = useMemo(
@@ -302,6 +252,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         fields={[field]}
         variables={mergedJobDisplay}
         onChange={handleOptionChange}
+        onPatch={onJobOverridePatch}
+        extra={{ productCode }}
       />
     );
   }
@@ -313,6 +265,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         fields={[field]}
         variables={mergedJobDisplay}
         onChange={handleOptionChange}
+        onPatch={onJobOverridePatch}
+        extra={{ productCode }}
       />
     );
   }
@@ -323,13 +277,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   function handleOptionChange(key: string, value: string | number | boolean) {
     onJobOverrideChange(key, value);
   }
-  function handleGapChange(mode: GapMode, gap: number) {
-    onJobOverridePatch({
-      slat_gap_mode: mode,
-      slat_gap_mm: gap,
-    });
-  }
-  const postSummary = `${POST_SIZE_LABELS[postSystem] ?? POST_SIZE_LABELS[postSize] ?? (postSize ? `${postSize}mm Post` : "Run default")} / ${colourName(mergedJobDisplay.post_colour_code ?? mergedJobDisplay.colour_code)} / ${effectiveMax}mm`;
+  const postSummary = `${valueLabel(postFieldMap.get("post_system"), postSystem, "Run default")} / ${colourName(mergedJobDisplay.post_colour_code ?? mergedJobDisplay.colour_code)} / ${effectiveMax}mm`;
   const slatSummary = `${valueFor("finish_family")} / ${colourName(mergedJobDisplay.colour_code)} / ${valueFor("slat_size_mm")} / ${combinedGapLabel(gapMode, gapMm)}`;
 
   return (
@@ -379,29 +327,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                 onChange={handleOptionChange}
               />
             )}
-            <CombinedGapSelect
-              productCode={productCode}
-              mode={mergedJobDisplay.slat_gap_mode}
-              gapMm={mergedJobDisplay.slat_gap_mm}
-              onChange={handleGapChange}
-            />
-            {productCode === "QSHS" && (
-              <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
-                <input
-                  type="checkbox"
-                  checked={mergedJobDisplay.louvre_treatment === true || mergedJobDisplay.louvre_treatment === "true"}
-                  disabled={Number(mergedJobDisplay.slat_size_mm ?? 65) !== 65}
-                  onChange={(event) => onJobOverrideChange("louvre_treatment", event.target.checked)}
-                  className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
-                />
-                <span>
-                  <span className="block text-sm font-extrabold text-brand-text">Louvre treatment</span>
-                  <span className="mt-1 block text-xs font-semibold text-brand-muted">
-                    40 degree slat angle. Available with 65mm slats.
-                  </span>
-                </span>
-              </label>
-            )}
+            {renderSlatField("slat_gap_mm")}
+            {productCode === "QSHS" && renderPostField("louvre_treatment")}
           </div>
         </SettingsDisclosureRow>
       ) : null}
@@ -416,6 +343,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                 fields={[mountingField]}
                 variables={mergedJobDisplay}
                 onChange={handleOptionChange}
+                onPatch={onJobOverridePatch}
+                extra={{ productCode }}
               />
             )}
             {remainingPostFields.length > 0 && (
@@ -423,6 +352,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                 fields={remainingPostFields}
                 variables={mergedJobDisplay}
                 onChange={handleOptionChange}
+                onPatch={onJobOverridePatch}
+                extra={{ productCode }}
               />
             )}
             <label className="flex flex-col gap-1">

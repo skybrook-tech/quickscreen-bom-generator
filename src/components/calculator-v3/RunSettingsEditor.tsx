@@ -1,7 +1,7 @@
 import { Check, ChevronUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useCalculator } from "../../context/CalculatorContext";
-import { useProductVariables } from "../../hooks/useProductVariables";
+import { useCalculatorConfig } from "../../hooks/useCalculatorConfig";
 import type { CanonicalRun } from "../../types/canonical.types";
 import { defaultGateBuildForMovement, gateMovementOrDefault } from "../../lib/gateOptionRules";
 import {
@@ -12,20 +12,13 @@ import {
 } from "../../lib/productOptionRules";
 import { GATE_SEGMENT_STUB_KEYS } from "../../lib/segmentTermination";
 import { localFenceProducts } from "../../lib/localSeedData";
-import {
-  POST_FIXING_MATERIALS,
-  isPreferredGroutSku,
-} from "../../lib/postFixingOptions";
+import { defaultVariablesFromFields } from "../../hooks/useProductVariables";
+import { isPreferredGroutSku } from "../../lib/postFixingOptions";
 import { getPreferredGroutSku, setPreferredGroutSku } from "../../lib/userPrefs";
-import { SchemaDrivenForm, type SchemaField } from "./SchemaDrivenForm";
+import { SchemaDrivenForm, valueLabel, type SchemaField } from "./SchemaDrivenForm";
 import { colourName } from "./ColourPalette";
 import { SettingsDisclosureRow } from "./SettingsDisclosureRow";
-import { CombinedGapSelect } from "./CombinedGapSelect";
-import {
-  combinedGapLabel,
-  normaliseGapMode,
-  type GapMode,
-} from "../../lib/gapChoices";
+import { combinedGapLabel, normaliseGapMode } from "../../lib/gapChoices";
 
 interface Props {
   run: CanonicalRun;
@@ -33,73 +26,11 @@ interface Props {
 }
 
 const HIDDEN_FIELD_KEYS = new Set([
-  "left_boundary_type",
-  "right_boundary_type",
   "target_height_mm",
   "slat_stock_length_mm",
   "rail_stock_length_mm",
   "side_frame_stock_length_mm",
-  "louvre_treatment",
 ]);
-
-const VALUE_LABELS: Record<string, string> = {
-  standard: "Standard slats",
-  economy: "Economy slats",
-  alumawood: "Alumawood timber-look",
-  spacer: "Preset spacer gaps",
-  custom: "Custom gap",
-  in_ground: "Concreted in ground",
-  base_plate: "Base plated",
-  core_drill: "Core drilled",
-  xpl: "XPress Plus post",
-  standard_50: "50mm Post Standard",
-  standard_65: "65mm Post Standard HD",
-};
-
-function shapeRunField(field: SchemaField, productCode: string): SchemaField | null {
-  if (HIDDEN_FIELD_KEYS.has(field.field_key)) return null;
-  if (
-    field.field_key === "mounting_method" &&
-    field.label.toLowerCase().includes("mounting")
-  ) {
-    return {
-      ...field,
-      label: "Post mounting type",
-      default_value_json: "in_ground",
-      options_json: ["in_ground", "base_plate", "core_drill"],
-    };
-  }
-  if (field.field_key === "mounting_type") {
-    return {
-      ...field,
-      label: "Post mounting type",
-      default_value_json: "in_ground",
-      options_json: ["in_ground", "base_plate", "core_drill"],
-    };
-  }
-  if (field.field_key === "post_system") {
-    return {
-      ...field,
-      label: "Post size",
-      default_value_json: productCode === "XPL" ? "xpl" : "standard_50",
-    };
-  }
-  if (field.field_key === "post_size") {
-    return {
-      ...field,
-      label: "Standard post size",
-      default_value_json: "50",
-    };
-  }
-  if (field.field_key === "max_panel_width_mm") {
-    return {
-      ...field,
-      label: "Max Post Spacing",
-      default_value_json: 2600,
-    };
-  }
-  return field;
-}
 
 function fieldValueLabel(field: SchemaField, variables: Record<string, string | number | boolean>) {
   const raw = variables[field.field_key] ?? field.default_value_json;
@@ -108,9 +39,7 @@ function fieldValueLabel(field: SchemaField, variables: Record<string, string | 
   }
   if (raw === true) return "Yes";
   if (raw === false) return "No";
-  if (raw === undefined || raw === null || raw === "") return "Default";
-  if (VALUE_LABELS[String(raw)]) return VALUE_LABELS[String(raw)];
-  return `${raw}${field.unit ? field.unit : ""}`;
+  return valueLabel(field, raw);
 }
 
 function postLabel(productCode: string, variables: Record<string, string | number | boolean>) {
@@ -126,10 +55,13 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
     const colour = String(run.variables?.colour_code ?? "B");
     return Boolean(run.variables?.post_colour_code && run.variables.post_colour_code !== colour);
   });
-  const [fixingsOpen, setFixingsOpen] = useState(false);
   const productCode = run.productCode;
-  const { data: jobFields = [] } = useProductVariables(productCode, "job");
-  const { data: runFields = [] } = useProductVariables(productCode, "run");
+  const config = useCalculatorConfig(productCode);
+  // Needed by changeRunProduct() below when switching TO BAYG — segment
+  // defaults (panel_quantity) live under BAYG's config regardless of which
+  // product is currently active, so fetch it unconditionally (cheap: shares
+  // the same TanStack cache key RunCard already warms).
+  const baygConfig = useCalculatorConfig("BAYG");
   const variables = {
     ...(state.payload?.variables ?? {}),
     ...(run.variables ?? {}),
@@ -138,27 +70,25 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
   const fields = applyProductOptionRules(
     productCode,
     [
-      ...jobFields.filter((field) => !HIDDEN_FIELD_KEYS.has(field.field_key)),
-      ...runFields
-        .map((field) => shapeRunField(field, productCode))
-        .filter((field): field is SchemaField => Boolean(field)),
+      ...config.formFields.job.filter((field) => !HIDDEN_FIELD_KEYS.has(field.field_key)),
+      ...config.formFields.run.filter((field) => !HIDDEN_FIELD_KEYS.has(field.field_key)),
     ],
     variables,
   );
-  const mountingType = String(
-    variables.mounting_type ?? variables.mounting_method ?? "in_ground",
-  );
-  const postFixingSku = isPreferredGroutSku(variables.post_fixing_material_sku)
-    ? variables.post_fixing_material_sku
-    : getPreferredGroutSku();
-  const substrate = String(variables.base_plate_substrate ?? "concrete");
-  const slatSize = Number(variables.slat_size_mm ?? 65);
-  const louvreEnabled = variables.louvre_treatment === true || variables.louvre_treatment === "true";
   const gapMode = normaliseGapMode(productCode, variables.slat_gap_mode);
   const gapMm = Number(variables.slat_gap_mm ?? 9);
   const fieldMap = useMemo(() => new Map(fields.map((field) => [field.field_key, field])), [fields]);
-  const mountingField = fieldMap.get("mounting_method") ?? fieldMap.get("mounting_type");
+  const mountingField = fieldMap.get("mounting_type") ?? fieldMap.get("mounting_method");
   const showPostColourControl = productCode !== "BAYG" && fieldMap.has("post_colour_code");
+
+  function patchRunVariables(patch: Record<string, string | number | boolean | null | undefined>) {
+    const entries = Object.entries(patch).filter(
+      (entry): entry is [string, string | number | boolean] => entry[1] !== null && entry[1] !== undefined,
+    );
+    if (entries.length === 0) return;
+    const [[firstKey, firstValue], ...rest] = entries;
+    updateRunVariables(firstKey, firstValue, productCode, Object.fromEntries(rest));
+  }
 
   function renderField(key: string) {
     const field = fieldMap.get(key);
@@ -168,6 +98,8 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
         fields={[field]}
         variables={variables}
         onChange={updateRunVariables}
+        onPatch={patchRunVariables}
+        extra={{ productCode }}
       />
     );
   }
@@ -293,12 +225,6 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
     });
   }
 
-  function updateRunGap(mode: GapMode, gapMm: number) {
-    updateRunVariables("slat_gap_mode", mode, productCode, {
-      slat_gap_mm: gapMm,
-    });
-  }
-
   function changeRunProduct(nextProductCode: string) {
     const nextVariables = normaliseVariablesForSystem(nextProductCode, {
       ...initialVariablesForSystem(nextProductCode),
@@ -331,7 +257,10 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
                 : {
                   ...(segment.variables ?? {}),
                   ...(nextProductCode === "BAYG" && segment.variables?.panel_quantity == null
-                    ? { panel_quantity: 1 }
+                    ? (defaultVariablesFromFields(baygConfig.formFields.segment) as Record<
+                        string,
+                        string | number | boolean
+                      >)
                     : {}),
                 },
           })),
@@ -388,38 +317,8 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
             </>
           )}
           {renderField("slat_size_mm")}
-          <CombinedGapSelect
-            productCode={productCode}
-            mode={variables.slat_gap_mode}
-            gapMm={variables.slat_gap_mm}
-            onChange={updateRunGap}
-          />
-          {productCode === "QSHS" && (
-            <label className="flex items-start gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3">
-              <input
-                type="checkbox"
-                checked={louvreEnabled && slatSize === 65}
-                disabled={slatSize !== 65}
-                onChange={(event) =>
-                  updateRunVariables("louvre_treatment", event.target.checked)
-                }
-                className="mt-1 h-4 w-4 rounded border-brand-border text-brand-primary focus:ring-brand-primary"
-              />
-              <span>
-                <span className="block text-sm font-extrabold text-brand-text">
-                  Louvre treatment
-                </span>
-                <span className="mt-1 block text-xs font-semibold text-brand-muted">
-                  40 degree slat angle. Available with 65mm slats.
-                </span>
-                {slatSize !== 65 && (
-                  <span className="mt-1 block text-xs font-bold text-brand-warning">
-                    Switch run slats to 65mm to use louvre brackets.
-                  </span>
-                )}
-              </span>
-            </label>
-          )}
+          {renderField("slat_gap_mm")}
+          {productCode === "QSHS" && renderField("louvre_treatment")}
         </div>
       </SettingsDisclosureRow>
       {productCode !== "BAYG" && (
@@ -436,54 +335,15 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
                 fields={[mountingField]}
                 variables={variables}
                 onChange={updateRunVariables}
+                onPatch={patchRunVariables}
+                extra={{ productCode }}
               />
             )}
-            <button
-              type="button"
-              onClick={() => setFixingsOpen((value) => !value)}
-              className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-            >
-              Choose fixings
-            </button>
-            {fixingsOpen && (
-              <div className="grid gap-3 rounded-xl border border-brand-border/60 bg-brand-card/70 p-3 md:grid-cols-2">
-                <label className="flex flex-col gap-1">
-                  <span className="text-sm font-bold text-brand-muted">Post-fixing material</span>
-                  <select
-                    value={postFixingSku}
-                    onChange={(event) =>
-                      updateRunVariables("post_fixing_material_sku", event.target.value)
-                    }
-                    className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-                  >
-                    {POST_FIXING_MATERIALS.map((item) => (
-                      <option key={item.sku} value={item.sku}>
-                        {item.label}
-                      </option>
-                    ))}
-                  </select>
-                  <span className="text-xs font-semibold text-brand-muted">
-                    Defaults apply automatically per mounting method unless changed here.
-                  </span>
-                </label>
-                {mountingType === "base_plate" && (
-                  <label className="flex flex-col gap-1">
-                    <span className="text-sm font-bold text-brand-muted">Substrate</span>
-                    <select
-                      value={substrate}
-                      onChange={(event) =>
-                        updateRunVariables("base_plate_substrate", event.target.value)
-                      }
-                      className="rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-                    >
-                      <option value="concrete">Concrete</option>
-                      <option value="timber">Timber</option>
-                    </select>
-                  </label>
-                )}
-              </div>
-            )}
+            {renderField("post_fixing_material_sku")}
+            {renderField("base_plate_substrate")}
             {renderField("max_panel_width_mm")}
+            {renderField("left_boundary_type")}
+            {renderField("right_boundary_type")}
           </div>
         </SettingsDisclosureRow>
       )}
