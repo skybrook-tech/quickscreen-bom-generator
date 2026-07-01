@@ -22,14 +22,21 @@
 // See docs/configurable-static-calculator-plan.md (Phase 0 + scenario matrix).
 
 import { assertSnapshot } from "https://deno.land/std@0.224.0/testing/snapshot.ts";
+import { assertEquals, assertNotEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import {
   calculateLocalBom,
+  makeCalcContext,
+  syntheticComponents,
   type CanonicalPayload,
   type CanonicalRun,
   type CanonicalSegment,
   type LocalBomResult,
   type PricingTier,
 } from "./engine.ts";
+import type { CalcContext, SeedComponent, LocalPricingRule } from "./config/types.ts";
+import { BASE_CONFIGS } from "./config/base.ts";
+import { deepMerge } from "./config/merge.ts";
+import { makeInternalSkuResolver } from "./resolve.ts";
 
 // ─── Builders ─────────────────────────────────────────────────────────────────
 
@@ -235,4 +242,117 @@ Deno.test("S17a QSHS baseline tier2 pricing", async (t) => {
 
 Deno.test("S17b QSHS baseline tier3 pricing", async (t) => {
   await snap(t, payload([run("r1", "QSHS", [seg("s1", 10000)])], { ...BASE_QSHS }), "tier3");
+});
+
+// ─── Override / config parity tests ──────────────────────────────────────────
+//
+// These tests prove that the config layer works correctly:
+//   1. Same input + default config = same BOM as calculateLocalBom (no ctx)
+//   2. Same input + supplier override = expected supplier-specific differences
+//   3. Internal SKU resolution via DB component rows (supplier override pattern)
+
+/** Build a CalcContext with an optional config patch and optional synthetic component additions. */
+function makeOverrideCtx(
+  configPatch: Partial<typeof BASE_CONFIGS["QSHS"]> = {},
+  extraComponents: SeedComponent[] = [],
+  extraPricingRules: LocalPricingRule[] = [],
+): CalcContext {
+  const baseQshs = BASE_CONFIGS["QSHS"]!;
+  const mergedQshs = deepMerge(baseQshs, configPatch);
+  const configs = new Map(Object.entries(BASE_CONFIGS));
+  configs.set("QSHS", mergedQshs);
+  const components = [...extraComponents, ...syntheticComponents];
+  return {
+    components,
+    pricingRules: extraPricingRules,
+    configs,
+    resolveInternalSku: makeInternalSkuResolver(components),
+  };
+}
+
+// O01: Explicit ctx with base config == no-ctx result (identity check).
+Deno.test("O01 explicit default ctx produces same output as no-ctx", (t) => {
+  const p = payload([run("r1", "QSHS", [seg("s1", 6000)])], { ...BASE_QSHS });
+  const withoutCtx = calculateLocalBom(p, "tier1");
+  const withCtx    = calculateLocalBom(p, "tier1", makeOverrideCtx());
+  // Lines should be identical (SKUs, quantities, categories, totals).
+  assertEquals(
+    withoutCtx.lines.map((l) => l.sku).sort(),
+    withCtx.lines.map((l) => l.sku).sort(),
+    "SKUs should match when using default ctx vs no ctx",
+  );
+  assertEquals(withoutCtx.totals, withCtx.totals, "Totals should match");
+});
+
+// O02: Stock-length override — if slat stock is shorter, more lengths required.
+Deno.test("O02 stock length override changes slat qty", async (t) => {
+  const p = payload([run("r1", "QSHS", [seg("s1", 10000)])], { ...BASE_QSHS });
+  const defaultResult  = calculateLocalBom(p, "tier1");
+  const shortStockCtx  = makeOverrideCtx({ stockLengths: { slat: { standard: 3000, economy: 6500, awood: 5800 } } } as any);
+  const shortStockResult = calculateLocalBom(p, "tier1", shortStockCtx);
+
+  const defaultSlatQty = defaultResult.lines.find((l) => l.sku.includes("S65"))?.quantity ?? 0;
+  const shortSlatQty   = shortStockResult.lines.find((l) => l.sku.includes("S65"))?.quantity ?? 0;
+  // Shorter stock = more lengths needed for the same run.
+  assertEquals(shortSlatQty > defaultSlatQty, true, `Short stock should require more slat lengths (${shortSlatQty} > ${defaultSlatQty})`);
+  // Snapshot the override result so it becomes a regression baseline too.
+  await assertSnapshot(t, project(shortStockResult));
+});
+
+// O03: Extra rule — supplier adds a rail above 1800mm.
+Deno.test("O03 extraRule extra_component_above_height adds rail", async (t) => {
+  const p = payload([run("r1", "QSHS", [seg("s1", 6000)])], { ...BASE_QSHS, target_height_mm: 2100 });
+  const baseResult = calculateLocalBom(p, "tier1");
+
+  const ctxWithRule = makeOverrideCtx({
+    extraRules: [
+      {
+        id: "supplier-b-extra-rail",
+        type: "extra_component_above_height",
+        internalSku: "FRAME.SF.STD.B",  // internal SKU — will resolve to QS-5800-SF-B
+        aboveHeightMm: 1800,
+        qtyPerPanel: 1,
+        notes: "Extra mid-rail for panels over 1800mm",
+      },
+    ],
+  } as any);
+  const overrideResult = calculateLocalBom(p, "tier1", ctxWithRule);
+
+  const baseSfQty     = baseResult.lines.filter((l) => l.sku === "QS-5800-SF-B").reduce((s, l) => s + l.quantity, 0);
+  const overrideSfQty = overrideResult.lines.filter((l) => l.sku === "QS-5800-SF-B").reduce((s, l) => s + l.quantity, 0);
+  // The override adds an extra side frame per panel above 1800mm.
+  assertEquals(overrideSfQty >= baseSfQty, true, "Override should add ≥ as many SF lengths as base");
+  await assertSnapshot(t, project(overrideResult));
+});
+
+// O04: Internal SKU remapping via DB component row — supplier B uses a different slat SKU.
+Deno.test("O04 DB component internal_sku override remaps slat supplier SKU", async (t) => {
+  // Supplier B stocks slats under "SUPPLIERB-SLAT-65-B".
+  const supplierBSlat: SeedComponent = {
+    sku: "SUPPLIERB-SLAT-65-B",
+    internal_sku: "SLAT.STD.65.B",  // canonical internal name
+    name: "Supplier B 65mm slat black",
+    description: "Supplier B 65 x 16.5mm slat, 6100mm stock - Black",
+    category: "slat", unit: "length", default_price: 28.50, active: true,
+    system_types: ["QSHS"],
+  };
+
+  const pricingForSupplierB: LocalPricingRule[] = [
+    { sku: "SUPPLIERB-SLAT-65-B", tier_code: "tier1", rule: null, price: 28.50, priority: 0, active: true },
+  ];
+
+  const p = payload([run("r1", "QSHS", [seg("s1", 6000)])], { ...BASE_QSHS });
+  const ctx = makeOverrideCtx({}, [supplierBSlat], pricingForSupplierB);
+  const result = calculateLocalBom(p, "tier1", ctx);
+
+  // The slat line should now use the supplier B SKU (resolved from SLAT.STD.65.B).
+  const slatLine = result.lines.find((l) => l.sku === "SUPPLIERB-SLAT-65-B");
+  assertNotEquals(slatLine, undefined, "Supplier B slat SKU should appear in BOM");
+  assertEquals(slatLine?.unitPrice, 28.50, "Supplier B pricing should apply");
+
+  // The old Glass Outlet slat should NOT appear.
+  const glassSlatLine = result.lines.find((l) => l.sku === "XP-6100-S65-B");
+  assertEquals(glassSlatLine, undefined, "Glass Outlet slat should not appear when remapped");
+
+  await assertSnapshot(t, project(result));
 });

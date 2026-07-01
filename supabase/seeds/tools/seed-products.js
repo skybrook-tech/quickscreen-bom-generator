@@ -31,6 +31,9 @@ const supabase = createClient(supabaseUrl, serviceRoleKey, {
   auth: { persistSession: false },
 });
 
+console.log('VITE_SUPABASE_URL', supabaseUrl);
+console.log('SUPABASE_SERVICE_ROLE_KEY', serviceRoleKey);
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 const PRODUCTS_DIR = resolve(ROOT, 'glass-outlet', 'products');
@@ -199,6 +202,7 @@ async function upsertProductComponents(orgId, rows) {
     category: r.category,
     unit: r.unit,
     default_price: r.default_price ?? null,
+    internal_sku: r.internal_sku ?? null,
     system_types: r.system_types ?? ['QSHS'],
     metadata: {
       ...(r.metadata ?? {}),

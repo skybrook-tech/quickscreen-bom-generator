@@ -18,9 +18,10 @@ import type { PricingTier, SeedComponent, LocalPricingRule } from "./engine.ts";
 import {
   calculateLocalBom,
   computeGateHardwareHints,
-  initEngineData,
+  makeCalcContext,
   suggestAccessories,
 } from "./engine.ts";
+import { loadCalculatorConfigs } from "./config/merge.ts";
 
 async function loadDbComponents(
   supabaseAdmin: ReturnType<typeof createClient>,
@@ -28,7 +29,7 @@ async function loadDbComponents(
 ): Promise<SeedComponent[]> {
   const { data, error } = await supabaseAdmin
     .from("product_components")
-    .select("sku, name, description, category, unit, default_price, system_types, active")
+    .select("sku, name, description, category, unit, default_price, system_types, active, internal_sku")
     .eq("org_id", orgId)
     .eq("active", true);
   if (error) throw new Error(`Components lookup failed: ${error.message}`);
@@ -74,15 +75,16 @@ Deno.serve(async (req: Request) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    const [dbComponents, dbPricing] = await Promise.all([
+    const [dbComponents, dbPricing, configs] = await Promise.all([
       loadDbComponents(supabaseAdmin, orgId),
       loadDbPricing(supabaseAdmin, orgId),
+      loadCalculatorConfigs(supabaseAdmin, orgId),
     ]);
 
-    initEngineData(dbComponents, dbPricing);
+    const ctx = makeCalcContext({ dbComponents, dbPricingRules: dbPricing, configs });
 
-    const bomResult = calculateLocalBom(payload, tier);
-    const suggestedItems = suggestAccessories(payload, bomResult.lines ?? [], tier);
+    const bomResult = calculateLocalBom(payload, tier, ctx);
+    const suggestedItems = suggestAccessories(payload, bomResult.lines ?? [], tier, ctx);
     const gateHardwareHints = computeGateHardwareHints(payload);
 
     const response = {

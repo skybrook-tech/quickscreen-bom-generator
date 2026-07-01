@@ -82,6 +82,13 @@
         ],
         "description": "Fallback per-unit price in AUD, used when no pricing_rules row matches. Usually mirrors the tier1 price."
       },
+      "internal_sku": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "description": "Canonical internal SKU key (e.g. SLAT.STD.65.B). When set, the bom-calculator-static engine resolves this component's supplier SKU by matching internal_sku in resolveInternalSku(). Takes precedence over DEFAULT_INTERNAL_SKU_MAP for this org."
+      },
       "system_types": {
         "type": "array",
         "description": "Which fencing systems this SKU applies to. Must be a subset of ['QSHS','VS','XPL','BAYG','GATE'] per the DB CHECK constraint.",
