@@ -944,10 +944,7 @@ export const localFenceProducts = localProducts.filter((product) => {
   const seedProduct = seedFiles
     .flatMap((seed) => seed.products ?? [])
     .find((p) => p.system_type === product.system_type);
-  return (
-    seedProduct?.product_type !== "gate" &&
-    ["QSHS", "VS", "XPL", "BAYG"].includes(product.system_type)
-  );
+  return seedProduct?.product_type === "fence";
 });
 
 export const localComponents: SeedComponent[] = seedFiles

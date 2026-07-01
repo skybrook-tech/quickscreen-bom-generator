@@ -5,6 +5,7 @@ import {
   nearestDerivedHeight,
   type DerivedHeight,
 } from "./heights";
+import type { ClientCalculatorConfig } from "./baseCalculatorConfigs";
 
 type Variables = Record<string, string | number | boolean>;
 
@@ -22,7 +23,15 @@ const SYSTEM_MAX_PANEL_WIDTH: Record<string, number> = {
   BAYG: 3000,
 };
 
-export function maxPanelWidthForSystem(productCode: string | null | undefined) {
+/**
+ * Max panel width for a product code. Accepts an optional config override —
+ * pass the result of `useCalculatorConfig(productCode)` to get DB-driven values.
+ */
+export function maxPanelWidthForSystem(
+  productCode: string | null | undefined,
+  config?: ClientCalculatorConfig,
+) {
+  if (config) return config.panelRules.maxPanelWidthMm;
   return productCode ? (SYSTEM_MAX_PANEL_WIDTH[productCode] ?? 2600) : 2600;
 }
 
@@ -98,21 +107,28 @@ export function heightEntriesForSystem(productCode: string, variables: Variables
   });
 }
 
-export function colourOptionsForSystem(variables: Variables) {
+/**
+ * Colour options for a product, respecting finish family.
+ * Pass an optional config from `useCalculatorConfig()` for DB-driven colour lists.
+ */
+export function colourOptionsForSystem(variables: Variables, config?: ClientCalculatorConfig) {
   const finish = String(variables.finish_family ?? "standard");
   const slatSize = Number(variables.slat_size_mm ?? 65);
 
   if (finish === "economy") return ECONOMY_COLOURS;
   if (finish === "alumawood") {
-    return slatSize === 90 ? ["WRC"] : ALUMAWOOD_COLOURS;
+    const alumawood = config?.colours.alumawood ?? ALUMAWOOD_COLOURS;
+    return slatSize === 90 ? alumawood.filter((c) => c === "WRC") : alumawood;
   }
-  return STANDARD_COLOURS;
+  return config?.colours.standard ?? STANDARD_COLOURS;
 }
 
-export function postColourOptionsForSystem(variables: Variables) {
+export function postColourOptionsForSystem(variables: Variables, config?: ClientCalculatorConfig) {
   const finish = String(variables.finish_family ?? "standard");
-  if (finish === "alumawood") return [...ALUMAWOOD_COLOURS, ...STANDARD_COLOURS];
-  return STANDARD_COLOURS;
+  const alumawood = config?.colours.alumawood ?? ALUMAWOOD_COLOURS;
+  const standard = config?.colours.standard ?? STANDARD_COLOURS;
+  if (finish === "alumawood") return [...alumawood, ...standard];
+  return standard;
 }
 
 export function initialVariablesForSystem(productCode: string): Variables {

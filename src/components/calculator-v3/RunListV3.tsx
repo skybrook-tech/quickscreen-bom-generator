@@ -2,6 +2,8 @@ import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalPayload, CanonicalRun } from "../../types/canonical.types";
 import { initialVariablesForSystem } from "../../lib/productOptionRules";
 import { localFenceProducts } from "../../lib/localSeedData";
+import { useFenceProducts } from "../../hooks/useProducts";
+import { useDefaultVariables } from "../../hooks/useProductVariables";
 import type { ParseResult } from "../../lib/describeFenceParser";
 import { DescribeFenceBox } from "../calculator/DescribeFenceBox";
 import { RunCard } from "./RunCard";
@@ -20,12 +22,22 @@ export function RunListV3({
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
   const hasRuns = Boolean(payload?.runs.length);
+  const fenceProductsQuery = useFenceProducts();
+  const fenceProducts = fenceProductsQuery.data ?? localFenceProducts;
+
+  // DB-driven defaults for the active product (falls back to hardcoded defaults)
+  const activeProductCode = payload?.productCode ?? "QSHS";
+  const dbDefaultVariables = useDefaultVariables(activeProductCode);
 
   if (!payload) return null;
   const currentPayload = payload;
 
   function createPayloadForSystem(productCode: string): CanonicalPayload {
-    const variables = initialVariablesForSystem(productCode);
+    // Prefer DB-driven defaults for the selected product; fall back to hardcoded
+    const variables =
+      productCode === activeProductCode && Object.keys(dbDefaultVariables).length > 0
+        ? (dbDefaultVariables as ReturnType<typeof initialVariablesForSystem>)
+        : initialVariablesForSystem(productCode);
     const runId = crypto.randomUUID();
     return {
       productCode,
@@ -101,7 +113,7 @@ export function RunListV3({
         <section className="space-y-3 rounded-2xl border border-brand-primary/30 bg-brand-primary/5 p-3">
           <p className="text-sm font-black text-brand-text">Choose a fence system</p>
           <div className="grid gap-2">
-            {localFenceProducts.map((product) => (
+            {fenceProducts.map((product) => (
               <button
                 key={product.system_type}
                 type="button"

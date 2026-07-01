@@ -1,7 +1,39 @@
 import { useQuery } from '@tanstack/react-query';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { getLocalVariables } from '../lib/localSeedData';
+import { initialVariablesForSystem } from '../lib/productOptionRules';
 import type { SchemaField } from '../components/calculator-v3/SchemaDrivenForm';
+
+/** Builds a variables object from product_variables.default_value_json. */
+export function defaultVariablesFromFields(
+  fields: SchemaField[],
+): Record<string, unknown> {
+  return Object.fromEntries(
+    fields
+      .filter((f) => f.default_value_json !== undefined)
+      .map((f) => [f.field_key, f.default_value_json]),
+  );
+}
+
+/**
+ * Returns DB-driven default variables for a product, falling back to
+ * `initialVariablesForSystem()` if fields are not yet loaded or Supabase is
+ * not configured. Scope defaults to "run".
+ */
+export function useDefaultVariables(
+  productCode: string,
+  scope: 'job' | 'run' | 'segment' = 'run',
+): Record<string, unknown> {
+  const query = useProductVariables(productCode, scope);
+  if (!query.data || query.data.length === 0) {
+    return initialVariablesForSystem(productCode) as Record<string, unknown>;
+  }
+  const fromDb = defaultVariablesFromFields(query.data);
+  if (Object.keys(fromDb).length === 0) {
+    return initialVariablesForSystem(productCode) as Record<string, unknown>;
+  }
+  return fromDb;
+}
 
 type Scope = 'job' | 'run' | 'segment';
 
