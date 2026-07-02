@@ -10,8 +10,23 @@
 
 import type { CalculatorConfig, FormFieldDef } from "../types.ts";
 
-function jobFields(colours: string[], slatSizeOptions: number[], slatGapOptions: number[]): FormFieldDef[] {
+function jobFields(
+  colours: string[],
+  slatSizeOptions: number[],
+  slatGapOptions: number[],
+  finishFamilies: string[],
+): FormFieldDef[] {
   return [
+    {
+      field_key: "finish_family",
+      label: "Slat range",
+      control_type: "select",
+      data_type: "enum",
+      options_json: finishFamilies,
+      default_value_json: finishFamilies[0] ?? "standard",
+      required: true,
+      sort_order: 5,
+    },
     {
       field_key: "colour_code",
       label: "Colour",
@@ -186,8 +201,14 @@ export function fenceFormFields(
 ): CalculatorConfig["formFields"] {
   const slatSizeOptions = productCode === "XPL" ? [65] : [65, 90];
   const slatGapOptions = productCode === "QSHS" ? [5, 9, 12, 15, 20, 30] : [5, 9, 20];
+  const finishFamilies =
+    productCode === "XPL"
+      ? ["standard", "alumawood"]
+      : productCode === "BAYG"
+        ? ["standard"]
+        : ["standard", "economy", "alumawood"];
   return {
-    job: jobFields(colours, slatSizeOptions, slatGapOptions),
+    job: jobFields(colours, slatSizeOptions, slatGapOptions, finishFamilies),
     run: runFields({
       includeLouvre: productCode === "QSHS",
       defaultPostSystem: productCode === "XPL" ? "xpl" : "standard_50",

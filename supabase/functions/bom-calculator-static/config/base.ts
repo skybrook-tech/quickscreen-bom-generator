@@ -15,6 +15,7 @@ import { GATE_FORM_FIELDS } from "./forms/gate.ts";
 // Keeping colours here for now (Phase 5 will move them to DB).
 
 const STANDARD_COLOURS = ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"];
+const ECONOMY_COLOURS = ["B", "MN", "SM"];
 const ALUMAWOOD_COLOURS = ["KWI", "WRC"];
 const GATE_COLOURS = ["B", "BS", "D", "G", "M", "MN", "P", "PB", "S", "SM", "W"];
 const CSR_CAP_COLOURS = ["B", "G", "MN", "S", "SM", "W"];
@@ -183,6 +184,48 @@ const GATE_RULES: CalculatorConfig["gateRules"] = {
   doubleSwingMaxLeafWidthMm: 2100,
   heightMinMm: 600,
   heightMaxMm: 2100,
+  supported: true,
+  defaultInfill: "horizontal",
+};
+
+const GAP_RULES_SPACER_ONLY: CalculatorConfig["gapRules"] = {
+  allowCustom: false,
+  customMinMm: 1,
+  customMaxMm: 50,
+};
+const GAP_RULES_CUSTOM: CalculatorConfig["gapRules"] = {
+  allowCustom: true,
+  customMinMm: 1,
+  customMaxMm: 50,
+};
+
+const HEIGHT_UI_LADDER: CalculatorConfig["heightUi"] = { mode: "ladder" };
+const HEIGHT_UI_VS_FREEFORM: CalculatorConfig["heightUi"] = {
+  mode: "freeform",
+  freeformMinMm: 300,
+  freeformMaxMm: 2400,
+  freeformStepMm: 50,
+};
+
+const DISPLAY_QSHS: CalculatorConfig["display"] = {
+  name: "QuickScreen Horizontal Slat",
+  shortName: "Horizontal Slats",
+  description: "Quick Screen Horizontal Slats",
+};
+const DISPLAY_VS: CalculatorConfig["display"] = {
+  name: "Vertical Slat",
+  shortName: "Vertical Slats",
+  description: "Vertical Slats",
+};
+const DISPLAY_XPL: CalculatorConfig["display"] = {
+  name: "XPress Plus Premium",
+  shortName: "XPress Plus",
+  description: "Xpress Plus",
+};
+const DISPLAY_BAYG: CalculatorConfig["display"] = {
+  name: "Buy As You Go",
+  shortName: "BAY-G Infill",
+  description: "Build As You Go",
 };
 
 const POST_FIXING_MATERIALS: CalculatorConfig["postFixingMaterials"] = [
@@ -201,6 +244,7 @@ export const BASE_QSHS_CONFIG: CalculatorConfig = {
   strategy: { fence: "horizontal_slat", gate: "qsg_swing_sliding" },
   colours: {
     standard: STANDARD_COLOURS,
+    economy: ECONOMY_COLOURS,
     alumawood: ALUMAWOOD_COLOURS,
     gate: GATE_COLOURS,
     csrCap: CSR_CAP_COLOURS,
@@ -210,6 +254,10 @@ export const BASE_QSHS_CONFIG: CalculatorConfig = {
     names: COLOUR_NAMES,
     louvreBracketFallback: "MN",
   },
+  display: DISPLAY_QSHS,
+  finishFamilies: ["standard", "economy", "alumawood"],
+  gapRules: GAP_RULES_CUSTOM,
+  heightUi: HEIGHT_UI_LADDER,
   internalSkus: INTERNAL_SKUS,
   stockLengths: {
     slat:  { standard: 6100, economy: 6500, awood: 5800 },
@@ -238,6 +286,10 @@ export const BASE_BAYG_CONFIG: CalculatorConfig = {
   strategy: { fence: "panel", gate: "qsg_swing_sliding" },
   panelRules: { ...PANEL_RULES_STD, maxPanelWidthMm: 3000 },
   defaults: { ...BASE_QSHS_CONFIG.defaults, colour: "B" },
+  display: DISPLAY_BAYG,
+  finishFamilies: ["standard"],
+  gapRules: GAP_RULES_SPACER_ONLY,
+  gateRules: { ...GATE_RULES, supported: false },
   formFields: fenceFormFields("BAYG", STANDARD_COLOURS),
 };
 
@@ -246,6 +298,9 @@ export const BASE_VS_CONFIG: CalculatorConfig = {
   productCode: "VS",
   strategy: { fence: "vertical_slat", gate: "qsg_swing_sliding" },
   defaults: { ...BASE_QSHS_CONFIG.defaults, slatGapMm: 20 },
+  display: DISPLAY_VS,
+  heightUi: HEIGHT_UI_VS_FREEFORM,
+  gateRules: { ...GATE_RULES, defaultInfill: "vertical" },
   formFields: fenceFormFields("VS", STANDARD_COLOURS),
 };
 
@@ -254,6 +309,9 @@ export const BASE_XPL_CONFIG: CalculatorConfig = {
   productCode: "XPL",
   strategy: { fence: "horizontal_slat", gate: "qsg_swing_sliding" },
   defaults: { ...BASE_QSHS_CONFIG.defaults, slatSizeMm: 65 },
+  display: DISPLAY_XPL,
+  finishFamilies: ["standard", "alumawood"],
+  gapRules: GAP_RULES_SPACER_ONLY,
   formFields: fenceFormFields("XPL", STANDARD_COLOURS),
 };
 

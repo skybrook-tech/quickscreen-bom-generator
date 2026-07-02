@@ -1,3 +1,16 @@
+// productOptionRules.ts — LEGACY / v4-only.
+//
+// The v3 calculator no longer branches on product codes: it sends the current
+// variables to get-calculator-config and renders the resolved option lists /
+// height ladder / normalisedVariables returned by the backend (see
+// supabase/functions/bom-calculator-static/config/optionRules.ts + resolve.ts).
+//
+// The product-code-keyed helpers below (finishOptionsForSystem,
+// slatOptionsForSystem, normaliseVariablesForSystem, applyProductOptionRules,
+// etc.) remain ONLY because calculator-v4, calculatorV3Helpers, and the gap
+// choices test still import them. Do NOT add new v3 call sites — use the
+// resolved `UiCalculatorConfig` instead.
+
 import type { SchemaField } from "../components/calculator-v3/SchemaDrivenForm";
 import {
   deriveHeights,
@@ -33,6 +46,19 @@ export function maxPanelWidthForSystem(
 ) {
   if (config) return config.panelRules.maxPanelWidthMm;
   return productCode ? (SYSTEM_MAX_PANEL_WIDTH[productCode] ?? 2600) : 2600;
+}
+
+const PANEL_STRATEGY_CODES = new Set(["BAYG"]);
+const VERTICAL_GATE_CODES = new Set(["VS"]);
+
+/** @deprecated prefer `config.strategy.fence === "panel"`; kept for the product-switch path. */
+export function isPanelStrategyCode(productCode: string) {
+  return PANEL_STRATEGY_CODES.has(productCode);
+}
+
+/** @deprecated prefer `config.gateRules.defaultInfill`; kept for the product-switch path. */
+export function defaultGateInfillForCode(productCode: string): "horizontal" | "vertical" {
+  return VERTICAL_GATE_CODES.has(productCode) ? "vertical" : "horizontal";
 }
 
 export function clampPostSpacing(value: unknown, fallback = 2600) {

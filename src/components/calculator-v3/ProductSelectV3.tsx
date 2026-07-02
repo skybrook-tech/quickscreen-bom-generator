@@ -3,6 +3,7 @@ import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 import { localFenceProducts } from "../../lib/localSeedData";
 import {
   initialVariablesForSystem,
+  isPanelStrategyCode,
 } from "../../lib/productOptionRules";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalPayload } from "../../types/canonical.types";
@@ -17,10 +18,6 @@ interface FenceProduct {
 }
 
 function shortLabel(product: FenceProduct): string {
-  if (product.system_type === "QSHS") return "QSHS - Horizontal Slat";
-  if (product.system_type === "VS") return "VS - Vertical Slat";
-  if (product.system_type === "XPL") return "XPL - Premium";
-  if (product.system_type === "BAYG") return "BAY-G - Infill Screens";
   return `${product.system_type} - ${product.name}`;
 }
 
@@ -96,7 +93,7 @@ export function ProductSelectV3({
               segmentKind: "panel",
               segmentWidthMm: 0,
               targetHeightMm: initialHeight,
-              variables: p.system_type === "BAYG" ? { panel_quantity: 1 } : undefined,
+              variables: isPanelStrategyCode(p.system_type) ? { panel_quantity: 1 } : undefined,
             },
           ],
           corners: [],

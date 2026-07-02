@@ -277,17 +277,60 @@ export function defaultGateBuildForMovement(
   return vertical ? "qsg_hinged_vertical" : "qsg_hinged_horizontal";
 }
 
+/**
+ * Config-driven default gate build: `infill` is the fence system's
+ * `gateRules.defaultInfill` ("horizontal" | "vertical"). Replaces the
+ * `isVS` boolean so callers don't branch on product codes.
+ */
+export function defaultGateBuildForMovementInfill(
+  movement: GateMovement,
+  infill: "horizontal" | "vertical" = "horizontal",
+): GateBuild {
+  return defaultGateBuildForMovement(movement, infill === "vertical");
+}
+
 export function defaultGateVariables(
   runVariables: Record<string, unknown> = {},
   targetHeightMm = 1800,
-) {
+): {
+  [GATE_SEGMENT_STUB_KEYS.gateMovement]: GateMovement;
+  [GATE_SEGMENT_STUB_KEYS.gateBuild]: GateBuild;
+  [GATE_SEGMENT_STUB_KEYS.leafCount]: number;
+  [GATE_SEGMENT_STUB_KEYS.matchRunHeight]: boolean;
+  [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: number;
+  [GATE_SEGMENT_STUB_KEYS.colourCode]: string;
+  [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: number;
+  [GATE_SEGMENT_STUB_KEYS.slatGapMm]: number;
+  [GATE_SEGMENT_STUB_KEYS.hingeType]: string;
+  [GATE_SEGMENT_STUB_KEYS.latchType]: string;
+  [GATE_SEGMENT_STUB_KEYS.dropBoltType]: string;
+  [GATE_SEGMENT_STUB_KEYS.gateStopType]: string;
+  [GATE_SEGMENT_STUB_KEYS.hardwareKitSku]: string;
+  [GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit]: boolean;
+  [GATE_SEGMENT_STUB_KEYS.includeLockBox]: boolean;
+  [GATE_SEGMENT_STUB_KEYS.lockBoxType]: string;
+  [GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination]: boolean;
+  [GATE_SEGMENT_STUB_KEYS.openingDirection]: string;
+  [GATE_SEGMENT_STUB_KEYS.slidingSide]: string;
+  [GATE_SEGMENT_STUB_KEYS.slidingTrackType]: string;
+  [GATE_SEGMENT_STUB_KEYS.slidingGuideType]: string;
+  [GATE_SEGMENT_STUB_KEYS.slidingCatchType]: string;
+  [GATE_SEGMENT_STUB_KEYS.slidingMotorType]: string;
+  [GATE_SEGMENT_STUB_KEYS.automationEnabled]: boolean;
+  [GATE_SEGMENT_STUB_KEYS.automationPowerSource]: string;
+  [GATE_SEGMENT_STUB_KEYS.automationCableDistanceM]: number;
+  [GATE_SEGMENT_STUB_KEYS.automationBattery]: boolean;
+  [GATE_SEGMENT_STUB_KEYS.automationKeypad]: boolean;
+  [GATE_SEGMENT_STUB_KEYS.automationExtraRemotes]: number;
+  [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: number;
+} {
   const colour = String(runVariables.colour_code ?? runVariables.colour ?? "B");
   const slatGap = Number(runVariables.slat_gap_mm ?? 9);
-  const vertical = runVariables.productCode === "VS";
+  const infill = (runVariables.gateDefaultInfill as "horizontal" | "vertical" | undefined) ?? "horizontal";
   const postSize = Number(runVariables.post_size ?? 50);
   return {
     [GATE_SEGMENT_STUB_KEYS.gateMovement]: "single_swing",
-    [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement("single_swing", vertical),
+    [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovementInfill("single_swing", infill),
     [GATE_SEGMENT_STUB_KEYS.leafCount]: 1,
     [GATE_SEGMENT_STUB_KEYS.matchRunHeight]: true,
     [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: targetHeightMm,

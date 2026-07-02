@@ -6,9 +6,13 @@
 > **v3 Engine** — V3-1 through V3-6 complete. V3-7 (docs cross-linking) is the only remaining item.
 > Start here for an overview: [`docs/how_it_works.md`](./how_it_works.md).
 
+Latest v3 RunCard provider removal + segment product override restore: the `RunCardProvider`/`RunCardContext` centralisation has been reverted. Each `RunCard` subtree component now fetches its own variables-aware config via `useCalculatorConfig(productCode, variables)` (TanStack dedupes by query key), and the one genuinely central piece — the run-level cascade reconciliation effect — lives in a standalone `src/hooks/useRunReconciliation.ts` called once in `RunCardInner`. Segment-level product/system overrides are restored: segments may again carry `seg.variables.product_code` to use a different fence system than their run, with a "System type" selector re-added to `FenceSegmentDetails` (driven by `useFenceProducts()` + `localFenceProducts` fallback) and a "System: <code>" difference bit re-added to the `SegmentRow` collapsed header (`matchesMaster` now accounts for it). `InlineHeightEditor` takes its `config` as an explicit prop from `RunCardInner`. `npm run build` and `tsc` pass; acceptance grep for `RunCardProvider|useRunCardConfig|useRunConfig|useGateConfig` is clean.
+
 Latest print BOM header pass: printed BOMs no longer show the mobile subtotal/GST/total strip at the top, the job name prints as a large bold heading, and the Glass Outlet three-square mark uses explicit print-safe styling.
 
 Latest v3 RunCard folder refactor: the v3 run/segment UI is now grouped under `src/components/calculator-v3/RunCard/` mirroring the v4 folder convention. `RunCard` (shell), `RunCardSettings` (renamed from `RunSettingsEditor`), `SegmentRow` (collapsed header), and `SegmentRowSettings` (new — the expanded settings panel) are the four components; `InlineHeightEditor`, `FenceSegmentDetails`, `GateSegmentDetails` moved into the same folder, and shared summary helpers were extracted into `segmentSummary.tsx`. `RunListV3` and `RunSectionGateUi.test.tsx` import paths updated; `npm run build` passes.
+
+Latest PWA install-banner cleanup: the `/fence-calculator` top bar no longer mounts the custom install-for-offline-access prompt or iPhone home-screen hint, and mobile QA now verifies those install banners stay absent.
 
 Latest PWA install-banner cleanup: the `/fence-calculator` top bar no longer mounts the custom install-for-offline-access prompt or iPhone home-screen hint, and mobile QA now verifies those install banners stay absent.
 

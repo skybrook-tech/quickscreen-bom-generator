@@ -138,7 +138,7 @@ export function InlineEdit({
   );
 
   const sharedInputClass = cn(
-    "font-mono text-sm tabular-nums rounded-[var(--brand-radius-sm)] border px-1 py-0.5 max-w-[5.5rem] outline-none focus:ring-2",
+    "font-mono text-sm tabular-nums rounded-[var(--brand-radius-sm)] border px-1 py-0.5 max-w-[12.5rem] outline-none focus:ring-2",
     onAccentSurface
       ? "border-white/40 bg-white/10 text-white focus:ring-white/35"
       : "border-brand-border bg-brand-card text-brand-text focus:ring-brand-accent/30",

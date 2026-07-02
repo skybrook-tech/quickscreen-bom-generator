@@ -13,7 +13,7 @@ import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { extractJwt, resolveUserProfile } from "../_shared/auth.ts";
 import { loadCalculatorConfigs } from "../bom-calculator-static/config/merge.ts";
 import { BASE_CONFIGS } from "../bom-calculator-static/config/base.ts";
-import { projectUiConfig } from "../bom-calculator-static/config/project.ts";
+import { resolveUiConfig } from "../bom-calculator-static/config/resolve.ts";
 
 function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -31,12 +31,16 @@ Deno.serve(async (req: Request) => {
     const { orgId } = await resolveUserProfile(jwt);
 
     let productCode: string | null = null;
+    let variables: Record<string, string | number | boolean> | undefined;
     const url = new URL(req.url);
     productCode = url.searchParams.get("productCode");
     if (!productCode && req.method === "POST") {
       try {
         const body = await req.json();
         productCode = typeof body?.productCode === "string" ? body.productCode : null;
+        if (body?.variables && typeof body.variables === "object") {
+          variables = body.variables as Record<string, string | number | boolean>;
+        }
       } catch {
         // no body — fall through to "all products"
       }
@@ -58,12 +62,12 @@ Deno.serve(async (req: Request) => {
     if (productCode) {
       const merged = configs.get(productCode);
       if (!merged) return jsonResponse({ error: `Unknown productCode: ${productCode}` }, 400);
-      return jsonResponse(projectUiConfig(merged));
+      return jsonResponse(resolveUiConfig(merged, variables));
     }
 
-    const result: Record<string, ReturnType<typeof projectUiConfig>> = {};
+    const result: Record<string, ReturnType<typeof resolveUiConfig>> = {};
     for (const [code, merged] of configs) {
-      result[code] = projectUiConfig(merged);
+      result[code] = resolveUiConfig(merged);
     }
     return jsonResponse(result);
   } catch (error) {

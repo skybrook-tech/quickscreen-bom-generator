@@ -36,13 +36,10 @@ export function SummaryBit({
 
 export function postLabel(
   postSizeField: SchemaField | undefined,
-  productCode: string,
   variables: Record<string, unknown>,
 ) {
-  const postSystem = String(
-    variables.post_system ?? (productCode === "XPL" ? "xpl" : "standard_50"),
-  );
-  if (productCode === "XPL" || postSystem === "xpl") return "XPress Plus post";
+  const postSystem = String(variables.post_system ?? "standard_50");
+  if (postSystem === "xpl") return "XPress Plus post";
   return valueLabel(postSizeField, variables.post_size ?? "50", "50mm Post Standard");
 }
 

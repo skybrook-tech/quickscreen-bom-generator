@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { useCalculator } from "../../../context/CalculatorContext";
-import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import {
   GATE_SEGMENT_STUB_KEYS,
@@ -8,7 +7,7 @@ import {
 } from "../../../lib/segmentTermination";
 import {
   clearGateOpeningWidthMm,
-  defaultGateBuildForMovement,
+  defaultGateBuildForMovementInfill,
   gateBuildsForMovement,
   gateLeafGeometry,
   gateMovementOrDefault,
@@ -28,6 +27,7 @@ import {
 import { OPTIONAL_ACCESSORY_KEY, selectedOptionalAddOns } from "../../../lib/bomMetadata";
 import { GateSettingsSection, rankedLabel } from "../gateHardwareControls";
 import { SchemaDrivenForm, valueLabel, type SchemaField } from "../SchemaDrivenForm";
+import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 
 interface Props {
   runId: string;
@@ -36,23 +36,25 @@ interface Props {
 
 export function GateSegmentDetails({ runId, seg }: Props) {
   const { state, dispatch } = useCalculator();
+  const run = state.payload?.runs.find((item) => item.runId === runId);
+  const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
+  const v = seg.variables ?? {};
+  const runVars = { ...(state.payload?.variables ?? {}), ...(run?.variables ?? {}) };
+  const runConfig = useCalculatorConfig(runProductCode, runVars);
   const config = useCalculatorConfig("QS_GATE");
   const fieldMap = useMemo(
-    () => new Map(config.formFields.segment.map((field) => [field.field_key, field])),
-    [config.formFields.segment],
+    () => new Map((config?.formFields.segment ?? []).map((field) => [field.field_key, field])),
+    [config?.formFields.segment],
   );
 
-  const v = seg.variables ?? {};
-  const run = state.payload?.runs.find((item) => item.runId === runId);
-  const runVars = { ...(state.payload?.variables ?? {}), ...(run?.variables ?? {}) };
+  if (!runConfig || !config) return null;
+
   const movement = gateMovementOrDefault(v[GATE_SEGMENT_STUB_KEYS.gateMovement]);
   const buildOptions = gateBuildsForMovement(movement);
-  const prefersVerticalGate =
-    run?.productCode === "VS" ||
-    String(v[GATE_SEGMENT_STUB_KEYS.gateBuild] ?? "").includes("vertical");
+  const verticalDefault = runConfig.gateRules.defaultInfill === "vertical";
   const build = buildOptions.some((option) => option.value === v[GATE_SEGMENT_STUB_KEYS.gateBuild])
     ? String(v[GATE_SEGMENT_STUB_KEYS.gateBuild])
-    : defaultGateBuildForMovement(movement, prefersVerticalGate);
+    : defaultGateBuildForMovementInfill(movement, verticalDefault ? "vertical" : "horizontal");
   const isSwing = isSwingGateMovement(movement);
   const currentDirection = String(
     v[GATE_SEGMENT_STUB_KEYS.openingDirection] ??
@@ -147,7 +149,10 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   function setMovement(value: string) {
     const nextMovement = gateMovementOrDefault(value);
     const currentMovement = movement;
-    const nextBuild = defaultGateBuildForMovement(nextMovement, prefersVerticalGate);
+    const nextBuild = defaultGateBuildForMovementInfill(
+      nextMovement,
+      verticalDefault ? "vertical" : "horizontal",
+    );
     const currentLeafTotal = leafWidthsMm.reduce((sum, width) => sum + width, 0);
     const nextOpeningWidthMm =
       currentMovement !== "double_swing" && nextMovement === "double_swing"
@@ -319,6 +324,8 @@ export function GateSegmentDetails({ runId, seg }: Props) {
       />
     );
   }
+
+  if (!config) return null;
 
   return (
     <div className="space-y-4 text-sm font-semibold">

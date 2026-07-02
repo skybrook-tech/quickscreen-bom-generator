@@ -10,8 +10,8 @@ import { GateSegmentDetails } from "./GateSegmentDetails";
 interface Props {
   runId: string;
   seg: CanonicalSegment;
-  productCode: string;
-  isBayg: boolean;
+  isPanelStrategy: boolean;
+  isFreeform: boolean;
   gate: boolean;
   segmentVariables: CanonicalVariables;
   heightEntries: DerivedHeight[];
@@ -31,8 +31,8 @@ interface Props {
 export function SegmentRowSettings({
   runId,
   seg,
-  productCode,
-  isBayg,
+  isPanelStrategy,
+  isFreeform,
   gate,
   segmentVariables,
   heightEntries,
@@ -77,7 +77,7 @@ export function SegmentRowSettings({
             <span className="text-sm font-bold text-brand-muted">Height (mm)</span>
 
           </div>
-          {productCode === "VS" ? (
+          {isFreeform ? (
             <>
 
               <NumberInput
@@ -115,13 +115,13 @@ export function SegmentRowSettings({
               <option>Select slat size and gap first</option>
             </select>
           )}
-          {productCode === "VS" ? (
+          {isFreeform ? (
             <span className="text-xs text-brand-muted/70">Custom height</span>
           ) : (
             <span className="text-xs text-brand-muted">Calculated for {segmentVariables.slat_size_mm ?? "?"}mm x {segmentVariables.slat_gap_mm ?? "?"}mm gap</span>
           )}
         </label>
-        {isBayg && !gate && (
+        {isPanelStrategy && !gate && (
           <label className="flex flex-col gap-1">
             <span className="text-sm font-bold text-brand-muted">Quantity</span>
             <NumberInput

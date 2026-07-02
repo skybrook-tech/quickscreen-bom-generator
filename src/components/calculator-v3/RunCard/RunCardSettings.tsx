@@ -1,24 +1,27 @@
 import { Check, ChevronUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useCalculator } from "../../../context/CalculatorContext";
-import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import type { CanonicalRun } from "../../../types/canonical.types";
-import { defaultGateBuildForMovement, gateMovementOrDefault } from "../../../lib/gateOptionRules";
 import {
-  applyProductOptionRules,
+  defaultGateBuildForMovementInfill,
+  gateMovementOrDefault,
+} from "../../../lib/gateOptionRules";
+import {
+  defaultGateInfillForCode,
   initialVariablesForSystem,
+  isPanelStrategyCode,
   maxPanelWidthForSystem,
   normaliseVariablesForSystem,
 } from "../../../lib/productOptionRules";
 import { GATE_SEGMENT_STUB_KEYS } from "../../../lib/segmentTermination";
 import { localFenceProducts } from "../../../lib/localSeedData";
-import { defaultVariablesFromFields } from "../../../hooks/useProductVariables";
 import { isPreferredGroutSku } from "../../../lib/postFixingOptions";
 import { getPreferredGroutSku, setPreferredGroutSku } from "../../../lib/userPrefs";
 import { SchemaDrivenForm, valueLabel, type SchemaField } from "../SchemaDrivenForm";
 import { colourName } from "../ColourPalette";
 import { SettingsDisclosureRow } from "../SettingsDisclosureRow";
-import { combinedGapLabel, normaliseGapMode } from "../../../lib/gapChoices";
+import { combinedGapLabel, normaliseGapModeConfig } from "../../../lib/gapChoices";
+import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 
 interface Props {
   run: CanonicalRun;
@@ -42,8 +45,8 @@ function fieldValueLabel(field: SchemaField, variables: Record<string, string | 
   return valueLabel(field, raw);
 }
 
-function postLabel(productCode: string, variables: Record<string, string | number | boolean>) {
-  const postSystem = String(variables.post_system ?? (productCode === "XPL" ? "xpl" : "standard_50"));
+function postLabel(variables: Record<string, string | number | boolean>) {
+  const postSystem = String(variables.post_system ?? "standard_50");
   if (postSystem === "xpl") return "XPress Plus post";
   if (postSystem === "standard_65" || Number(variables.post_size ?? 50) === 65) return "65mm Post Standard HD";
   return "50mm Post Standard";
@@ -51,35 +54,37 @@ function postLabel(productCode: string, variables: Record<string, string | numbe
 
 export function RunCardSettings({ run, onCollapse }: Props) {
   const { state, dispatch } = useCalculator();
-  const [postColourOpen, setPostColourOpen] = useState(() => {
-    const colour = String(run.variables?.colour_code ?? "B");
-    return Boolean(run.variables?.post_colour_code && run.variables.post_colour_code !== colour);
-  });
   const productCode = run.productCode;
-  const config = useCalculatorConfig(productCode);
-  // Needed by changeRunProduct() below when switching TO BAYG — segment
-  // defaults (panel_quantity) live under BAYG's config regardless of which
-  // product is currently active, so fetch it unconditionally (cheap: shares
-  // the same TanStack cache key RunCard already warms).
-  const baygConfig = useCalculatorConfig("BAYG");
   const variables = {
     ...(state.payload?.variables ?? {}),
     ...(run.variables ?? {}),
   } as Record<string, string | number | boolean>;
+  const config = useCalculatorConfig(productCode, variables);
+  const [postColourOpen, setPostColourOpen] = useState(() => {
+    const colour = String(run.variables?.colour_code ?? "B");
+    return Boolean(run.variables?.post_colour_code && run.variables.post_colour_code !== colour);
+  });
 
-  const fields = applyProductOptionRules(
-    productCode,
-    [
-      ...config.formFields.job.filter((field) => !HIDDEN_FIELD_KEYS.has(field.field_key)),
-      ...config.formFields.run.filter((field) => !HIDDEN_FIELD_KEYS.has(field.field_key)),
-    ],
-    variables,
+  // formFields arrive from the backend already resolved for `variables`
+  // (finish family → slat/colour lists, etc.) — render them directly, no
+  // client-side option filtering.
+  const fields = useMemo(
+    () =>
+      [
+        ...(config?.formFields.job ?? []),
+        ...(config?.formFields.run ?? []),
+      ]
+        .filter((field) => !HIDDEN_FIELD_KEYS.has(field.field_key))
+        .sort((a, b) => a.sort_order - b.sort_order),
+    [config?.formFields.job, config?.formFields.run],
   );
-  const gapMode = normaliseGapMode(productCode, variables.slat_gap_mode);
+  const isPanelStrategy = config?.strategy.fence === "panel";
+  const gapMode = normaliseGapModeConfig(config, variables.slat_gap_mode);
   const gapMm = Number(variables.slat_gap_mm ?? 9);
   const fieldMap = useMemo(() => new Map(fields.map((field) => [field.field_key, field])), [fields]);
   const mountingField = fieldMap.get("mounting_type") ?? fieldMap.get("mounting_method");
-  const showPostColourControl = productCode !== "BAYG" && fieldMap.has("post_colour_code");
+  const showPostColourControl = !isPanelStrategy && fieldMap.has("post_colour_code");
+  const louvreField = fieldMap.get("louvre_treatment");
 
   function patchRunVariables(patch: Record<string, string | number | boolean | null | undefined>) {
     const entries = Object.entries(patch).filter(
@@ -99,7 +104,7 @@ export function RunCardSettings({ run, onCollapse }: Props) {
         variables={variables}
         onChange={updateRunVariables}
         onPatch={patchRunVariables}
-        extra={{ productCode, postFixingMaterials: config.postFixingMaterials }}
+        extra={{ productCode, postFixingMaterials: cfg.postFixingMaterials, config: cfg }}
       />
     );
   }
@@ -122,6 +127,9 @@ export function RunCardSettings({ run, onCollapse }: Props) {
       },
     });
   }, [dispatch, run]);
+
+  if (!config) return null;
+  const cfg = config;
 
   function updateRunVariables(
     key: string,
@@ -146,7 +154,7 @@ export function RunCardSettings({ run, onCollapse }: Props) {
         nextVariables.post_fixing_material_sku = getPreferredGroutSku();
       }
     }
-    if (key === "post_fixing_material_sku" && isPreferredGroutSku(value, config.postFixingMaterials)) {
+    if (key === "post_fixing_material_sku" && isPreferredGroutSku(value, cfg.postFixingMaterials)) {
       setPreferredGroutSku(value);
     }
     if (key === "post_system") {
@@ -155,7 +163,9 @@ export function RunCardSettings({ run, onCollapse }: Props) {
     if (key === "colour_code" && (!run.variables?.post_colour_code || previousPostColour === previousColour)) {
       nextVariables.post_colour_code = value;
     }
-    const normalised = normaliseVariablesForSystem(nextProductCode, nextVariables);
+    // Dispatch the raw edit — the useRunReconciliation hook
+    // normalises via the backend (cascade corrections like economy → slat 65,
+    // colour subset) so this component stays product-agnostic.
     const syncKeys = new Set([
       "finish_family",
       "slat_size_mm",
@@ -198,7 +208,7 @@ export function RunCardSettings({ run, onCollapse }: Props) {
       run: {
         ...run,
         productCode: nextProductCode,
-        variables: normalised,
+        variables: nextVariables,
         segments: syncKeys.has(key)
           ? run.segments.map((segment) => {
             if (segment.segmentKind === "gate_opening") {
@@ -207,11 +217,14 @@ export function RunCardSettings({ run, onCollapse }: Props) {
                 ...segment,
                 variables: {
                   ...(clearKeys(segment.variables) ?? {}),
-                  [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(movement, nextProductCode === "VS"),
-                  [GATE_SEGMENT_STUB_KEYS.colourCode]: String(normalised.colour_code ?? "B"),
-                  [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(normalised.slat_size_mm ?? 65),
-                  [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(normalised.slat_gap_mm ?? 9),
-                  [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(normalised.post_size ?? 50),
+                  [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovementInfill(
+                    movement,
+                    defaultGateInfillForCode(nextProductCode),
+                  ),
+                  [GATE_SEGMENT_STUB_KEYS.colourCode]: String(nextVariables.colour_code ?? "B"),
+                  [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(nextVariables.slat_size_mm ?? 65),
+                  [GATE_SEGMENT_STUB_KEYS.slatGapMm]: Number(nextVariables.slat_gap_mm ?? 9),
+                  [GATE_SEGMENT_STUB_KEYS.gatePostSizeMm]: Number(nextVariables.post_size ?? 50),
                 },
               };
             }
@@ -226,6 +239,10 @@ export function RunCardSettings({ run, onCollapse }: Props) {
   }
 
   function changeRunProduct(nextProductCode: string) {
+    // Product-switch is the one path that is legitimately product-aware (the
+    // user is explicitly choosing a system), so it uses the legacy
+    // normaliser + product-code maps. The useRunReconciliation hook
+    // then re-normalises against the new product's resolved config.
     const nextVariables = normaliseVariablesForSystem(nextProductCode, {
       ...initialVariablesForSystem(nextProductCode),
       ...variables,
@@ -238,16 +255,16 @@ export function RunCardSettings({ run, onCollapse }: Props) {
         productCode: nextProductCode,
         variables: nextVariables,
         segments: run.segments
-          .filter((segment) => nextProductCode !== "BAYG" || segment.segmentKind !== "gate_opening")
+          .filter((segment) => !isPanelStrategyCode(nextProductCode) || segment.segmentKind !== "gate_opening")
           .map((segment) => ({
             ...segment,
             variables:
               segment.segmentKind === "gate_opening"
                 ? {
                   ...(segment.variables ?? {}),
-                  [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
+                  [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovementInfill(
                     gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]),
-                    nextProductCode === "VS",
+                    defaultGateInfillForCode(nextProductCode),
                   ),
                   [GATE_SEGMENT_STUB_KEYS.colourCode]: String(nextVariables.colour_code ?? "B"),
                   [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(nextVariables.slat_size_mm ?? 65),
@@ -256,11 +273,8 @@ export function RunCardSettings({ run, onCollapse }: Props) {
                 }
                 : {
                   ...(segment.variables ?? {}),
-                  ...(nextProductCode === "BAYG" && segment.variables?.panel_quantity == null
-                    ? (defaultVariablesFromFields(baygConfig.formFields.segment) as Record<
-                        string,
-                        string | number | boolean
-                      >)
+                  ...(isPanelStrategyCode(nextProductCode) && segment.variables?.panel_quantity == null
+                    ? { panel_quantity: 1 }
                     : {}),
                 },
           })),
@@ -276,7 +290,7 @@ export function RunCardSettings({ run, onCollapse }: Props) {
       <SettingsDisclosureRow
         id={`${run.runId}-system-type`}
         label="System type"
-        value={run.productCode}
+        value={config.display.shortName}
       >
         <div className="flex flex-wrap gap-2 border-t border-brand-border/50 p-3">
           {localFenceProducts.map((product) => (
@@ -318,14 +332,14 @@ export function RunCardSettings({ run, onCollapse }: Props) {
           )}
           {renderField("slat_size_mm")}
           {renderField("slat_gap_mm")}
-          {productCode === "QSHS" && renderField("louvre_treatment")}
+          {louvreField && renderField("louvre_treatment")}
         </div>
       </SettingsDisclosureRow>
-      {productCode !== "BAYG" && (
+      {!isPanelStrategy && (
         <SettingsDisclosureRow
           id={`${run.runId}-post-mounting`}
           label="Post size, mounting and spacing"
-          value={`${valueFor("post_system", postLabel(productCode, variables))} / ${colourName(variables.post_colour_code ?? variables.colour_code)} / ${valueFor("max_panel_width_mm", "2600mm")}`}
+          value={`${valueFor("post_system", postLabel(variables))} / ${colourName(variables.post_colour_code ?? variables.colour_code)} / ${valueFor("max_panel_width_mm", "2600mm")}`}
         >
           <div className="space-y-4">
             {renderField("post_system")}
@@ -336,7 +350,7 @@ export function RunCardSettings({ run, onCollapse }: Props) {
                 variables={variables}
                 onChange={updateRunVariables}
                 onPatch={patchRunVariables}
-                extra={{ productCode }}
+                extra={{ productCode, config }}
               />
             )}
             {renderField("post_fixing_material_sku")}

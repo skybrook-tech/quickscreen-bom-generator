@@ -9,6 +9,8 @@ import type {
   CanonicalRun,
   CanonicalSegment,
 } from "../../types/canonical.types";
+import type { UiCalculatorConfig } from "../../types/calculatorConfig.types";
+import { localFenceProducts } from "../../lib/localSeedData";
 import { InlineHeightEditor } from "./RunCard/InlineHeightEditor";
 import { FenceSegmentDetails } from "./RunCard/FenceSegmentDetails";
 import { RunCard } from "./RunCard/RunCard";
@@ -49,6 +51,7 @@ const calculatorConfigMock = vi.hoisted(() => {
   });
 
   const jobFields = [
+    field("finish_family", "Slat range", "select", "enum", "standard", ["standard", "economy", "alumawood"], 5),
     field("colour_code", "Colour", "select", "enum", "B", ["B", "SM"], 10),
     field("post_colour_code", "Post colour", "select", "enum", "B", ["B", "SM"], 11),
     field("slat_size_mm", "Slat size", "select", "number", 65, [65, 90], 20),
@@ -61,40 +64,72 @@ const calculatorConfigMock = vi.hoisted(() => {
     field("max_panel_width_mm", "Max Post Spacing", "number", "number", 2600, [], 60),
   ];
 
-  return {
-    useCalculatorConfig: vi.fn((_productCode: string) => ({
-      productCode: _productCode,
-      strategy: { fence: "horizontal_slat" },
-      colours: { standard: ["B", "SM"], alumawood: [], gate: ["B", "SM"], names: {}, fallback: "MN" },
-      panelRules: { maxPanelWidthMm: 2600, minPostSpacingMm: 100, maxPostSpacingMm: 3000 },
-      postRules: { longPostThresholdMm: 2400 },
-      defaults: {
-        slatSizeMm: 65,
-        slatGapMm: 9,
-        targetHeightMm: 1800,
-        postSizeMm: 50,
-        finishFamily: "standard",
-        colour: "B",
-        mountingType: "in_ground",
+  const baseConfig: UiCalculatorConfig = {
+    productCode: "QSHS",
+    display: { name: "QuickScreen Horizontal Slat", shortName: "Horizontal Slats", description: "Quick Screen Horizontal Slats" },
+    strategy: { fence: "horizontal_slat" },
+    colours: { standard: ["B", "SM"], economy: ["B", "SM"], alumawood: [], gate: ["B", "SM"], names: {}, fallback: "MN" },
+    finishFamilies: ["standard", "economy", "alumawood"],
+    panelRules: { maxPanelWidthMm: 2600, minPostSpacingMm: 100, maxPostSpacingMm: 3000 },
+    postRules: { longPostThresholdMm: 2400 },
+    defaults: {
+      slatSizeMm: 65,
+      slatGapMm: 9,
+      targetHeightMm: 1800,
+      postSizeMm: 50,
+      finishFamily: "standard",
+      colour: "B",
+      mountingType: "in_ground",
+    },
+    formFields: { job: jobFields, run: runFields, segment: [] },
+    postFixingMaterials: [
+      { sku: "GROUT-RSC", label: "Rapid set concrete", description: "20kg bag" },
+    ],
+    gapRules: { allowCustom: true, customMinMm: 1, customMaxMm: 50 },
+    heightUi: { mode: "ladder" },
+    heightLadder: {
+      slatHeightDeductionMm: 3,
+      entries: [{ N: 20, height: 1808 }],
+    },
+    gateRules: {
+      maxWidthMm: {
+        pedestrianHorizontal: 2100,
+        pedestrianVertical: 2100,
+        slidingHorizontal: 6150,
+        slidingVertical: 6166,
       },
-      formFields: { job: jobFields, run: runFields, segment: [] },
-      postFixingMaterials: [
-        { sku: "GROUT-RSC", label: "Rapid set concrete", description: "20kg bag" },
-      ],
-      heightLadder: { slatHeightDeductionMm: 3 },
-      gateRules: {
-        maxWidthMm: {
-          pedestrianHorizontal: 2100,
-          pedestrianVertical: 2100,
-          slidingHorizontal: 6150,
-          slidingVertical: 6166,
-        },
-        doubleSwingMaxLeafWidthMm: 2100,
-        heightMinMm: 600,
-        heightMaxMm: 2100,
-      },
-    })),
+      doubleSwingMaxLeafWidthMm: 2100,
+      heightMinMm: 600,
+      heightMaxMm: 2100,
+      supported: true,
+      defaultInfill: "horizontal",
+    },
+    normalisedVariables: {
+      finish_family: "standard",
+      colour_code: "B",
+      post_colour_code: "B",
+      slat_size_mm: 65,
+      slat_gap_mm: 9,
+      slat_gap_mode: "spacer",
+      post_system: "standard_50",
+      post_size: 50,
+      mounting_type: "in_ground",
+      mounting_method: "in_ground",
+      max_panel_width_mm: 2600,
+      target_height_mm: 1808,
+      slat_count: 20,
+    },
   };
+
+  const vsConfig: UiCalculatorConfig = {
+    ...baseConfig,
+    productCode: "VS",
+    display: { name: "Vertical Slat", shortName: "Vertical Slats", description: "Vertical Slats" },
+    heightUi: { mode: "freeform", freeformMinMm: 300, freeformMaxMm: 2400, freeformStepMm: 50 },
+    heightLadder: { slatHeightDeductionMm: 3, entries: [] },
+  };
+
+  return { baseConfig, vsConfig };
 });
 
 vi.mock("../../context/CalculatorContext", () => ({
@@ -105,7 +140,17 @@ vi.mock("../../context/CalculatorContext", () => ({
 }));
 
 vi.mock("../../hooks/useCalculatorConfig", () => ({
-  useCalculatorConfig: calculatorConfigMock.useCalculatorConfig,
+  useCalculatorConfig: vi.fn((productCode: string) =>
+    productCode === "VS" ? calculatorConfigMock.vsConfig : calculatorConfigMock.baseConfig,
+  ),
+  useCalculatorConfigQuery: vi.fn((productCode: string) => ({
+    data: productCode === "VS" ? calculatorConfigMock.vsConfig : calculatorConfigMock.baseConfig,
+    isFetching: false,
+  })),
+}));
+
+vi.mock("../../hooks/useProducts", () => ({
+  useFenceProducts: () => ({ data: localFenceProducts }),
 }));
 
 function render(ui: ReactNode) {
@@ -133,7 +178,7 @@ const baseRun: CanonicalRun = {
   runId: "run-1",
   productCode: "QSHS",
   variables: {
-    target_height_mm: 1800,
+    target_height_mm: 1808,
     slat_size_mm: 65,
     slat_gap_mm: 9,
     colour_code: "B",
@@ -174,7 +219,7 @@ describe("Run, section, and gate UI consistency", () => {
     setPayload(baseRun);
     const { container, root } = render(<RunCard run={baseRun} runIdx={0} />);
 
-    expect(container.textContent).toContain("QuickScreen Horizontal Slat");
+    expect(container.textContent).toContain("Horizontal Slats");
     expect(container.textContent).toContain("Run Settings");
     expect(
       container.querySelector('[aria-label="Run 1 default height"]')?.tagName,
@@ -183,10 +228,10 @@ describe("Run, section, and gate UI consistency", () => {
     cleanup(root, container);
   });
 
-  it("renders inline height dropdowns for horizontal systems and number input for VS", () => {
+  it("renders inline height dropdowns for ladder systems and number input for freeform", () => {
     const qshs = render(
       <InlineHeightEditor
-        productCode="QSHS"
+        config={calculatorConfigMock.baseConfig}
         variables={{ slat_size_mm: 65, slat_gap_mm: 9 }}
         valueMm={1808}
         ariaLabel="QSHS height"
@@ -198,7 +243,7 @@ describe("Run, section, and gate UI consistency", () => {
 
     const vs = render(
       <InlineHeightEditor
-        productCode="VS"
+        config={calculatorConfigMock.vsConfig}
         variables={{ slat_size_mm: 65, slat_gap_mm: 9 }}
         valueMm={1800}
         ariaLabel="VS height"
@@ -215,7 +260,7 @@ describe("Run, section, and gate UI consistency", () => {
       sortOrder: 1,
       segmentKind: "panel",
       segmentWidthMm: 3000,
-      targetHeightMm: 1800,
+      targetHeightMm: 1808,
       variables: {
         colour_code: "SM",
         slat_gap_mm: 20,
@@ -242,9 +287,40 @@ describe("Run, section, and gate UI consistency", () => {
     cleanup(root, container);
   });
 
+  it("flags a segment-level system override in the closed subheading", () => {
+    const segment: CanonicalSegment = {
+      segmentId: "seg-vs",
+      sortOrder: 1,
+      segmentKind: "panel",
+      segmentWidthMm: 3000,
+      targetHeightMm: 1808,
+      variables: {
+        product_code: "VS",
+      },
+    };
+    const run = { ...baseRun, segments: [segment] };
+    setPayload(run);
+    const { container, root } = render(
+      <SegmentRow
+        runId={run.runId}
+        seg={segment}
+        segIdx={0}
+        runIdx={0}
+        open={false}
+        onToggle={() => undefined}
+      />,
+    );
+
+    expect(container.textContent).toContain("System: VS");
+
+    cleanup(root, container);
+  });
+
   it("places alternate post colour inside the run slats and colours dropdown", () => {
     setPayload(baseRun);
-    const { container, root } = render(<RunCardSettings run={baseRun} />);
+    const { container, root } = render(
+      <RunCardSettings run={baseRun} />,
+    );
 
     const slatsRow = disclosureRow(container, "Slats, colors, and spacings");
     const postsRow = disclosureRow(container, "Post size, mounting and spacing");
@@ -261,7 +337,7 @@ describe("Run, section, and gate UI consistency", () => {
       sortOrder: 1,
       segmentKind: "panel",
       segmentWidthMm: 3000,
-      targetHeightMm: 1800,
+      targetHeightMm: 1808,
       variables: {},
     };
     const run = { ...baseRun, segments: [segment] };
@@ -288,7 +364,7 @@ describe("Run, section, and gate UI consistency", () => {
       sortOrder: 2,
       segmentKind: "gate_opening",
       segmentWidthMm: 900,
-      targetHeightMm: 1800,
+      targetHeightMm: 1808,
       gateProductCode: "QS_GATE",
       variables: {},
     };

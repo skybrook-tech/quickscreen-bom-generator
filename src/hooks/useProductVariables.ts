@@ -25,6 +25,12 @@ export function defaultVariablesFromFields(
  */
 export function useDefaultVariables(productCode: string): Record<string, unknown> {
   const config = useCalculatorConfig(productCode);
+  if (!config) {
+    // Config still loading — fall back to the legacy normaliser so callers get
+    // a complete variables object (used by landing/list surfaces before the
+    // resolved config arrives). The resolved config replaces this once loaded.
+    return initialVariablesForSystem(productCode) as Record<string, unknown>;
+  }
   const fromConfig = defaultVariablesFromFields([
     ...config.formFields.job,
     ...config.formFields.run,

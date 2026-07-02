@@ -1,20 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
 import { useCalculator } from "../../../context/CalculatorContext";
-import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import type { CanonicalRun, CanonicalSegment } from "../../../types/canonical.types";
 import { defaultGateVariables } from "../../../lib/gateOptionRules";
 import { defaultVariablesFromFields } from "../../../hooks/useProductVariables";
-import {
-  clampPostSpacing,
-  maxPanelWidthForSystem,
-} from "../../../lib/productOptionRules";
+import { clampPostSpacing } from "../../../lib/productOptionRules";
 import type { DerivedHeight } from "../../../lib/heights";
 import {
   GATE_SEGMENT_STUB_KEYS,
   patchSegmentVariables,
 } from "../../../lib/segmentTermination";
-import { systemDisplayName } from "../../../lib/systemDisplay";
 import { Button } from "../../shared/Button";
 import { SegmentRow } from "./SegmentRow";
 import { colourName } from "../ColourPalette";
@@ -23,6 +18,10 @@ import { RUN_DEFAULTS_TEACHING_KEY } from "../../../lib/uiCopy";
 import { ConfirmButton } from "../../shared/ConfirmButton";
 import { InlineHeightEditor } from "./InlineHeightEditor";
 import { valueLabel } from "../SchemaDrivenForm";
+import { InlineEdit } from "./InlineEdit";
+import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
+import { useRunReconciliation } from "../../../hooks/useRunReconciliation";
+import type { UiCalculatorConfig } from "../../../types/calculatorConfig.types";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 const RUN_SETTINGS_AUTO_COLLAPSE_MS = 60000;
@@ -34,10 +33,10 @@ interface Props {
   onAutoOpenConsumed?: () => void;
 }
 
-const calcTotalLength = (run: CanonicalRun) =>
+const calcTotalLength = (run: CanonicalRun, isPanelStrategy: boolean) =>
   run.segments.reduce((acc, seg) => {
     const qty =
-      run.productCode === "BAYG" && seg.segmentKind !== "gate_opening"
+      isPanelStrategy && seg.segmentKind !== "gate_opening"
         ? Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1)))
         : 1;
     return acc + (seg.segmentWidthMm ?? 0) * qty;
@@ -45,16 +44,6 @@ const calcTotalLength = (run: CanonicalRun) =>
 
 function firstFenceSegment(run: CanonicalRun) {
   return run.segments.find((segment) => segment.segmentKind !== "gate_opening");
-}
-
-function runMasterVariables(
-  run: CanonicalRun,
-  jobVariables: Record<string, string | number | boolean> | undefined,
-) {
-  return {
-    ...(jobVariables ?? {}),
-    ...(run.variables ?? {}),
-  };
 }
 
 // mounting_type has a legacy mounting_method alias written by some payloads —
@@ -65,43 +54,46 @@ function summaryVariableValue(fieldKey: string, vars: Record<string, unknown>) {
   return vars[fieldKey];
 }
 
-export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenConsumed }: Props) {
+function RunCardSkeleton() {
+  return (
+    <div className="rounded-2xl border-2 border-brand-primary/50 bg-brand-card py-4 shadow-md">
+      <div className="px-4 mb-3 h-20 animate-pulse rounded-lg bg-brand-bg/60" />
+      <div className="px-4 mb-3 h-32 animate-pulse rounded-lg bg-brand-bg/60" />
+    </div>
+  );
+}
+
+function RunCardInner({
+  run,
+  runIdx,
+  autoOpenFirstSection = false,
+  onAutoOpenConsumed,
+}: Omit<Props, "run"> & { run: CanonicalRun }) {
   const { state, dispatch } = useCalculator();
+  const runVariables = useMemo<Record<string, string | number | boolean>>(
+    () => ({ ...(state.payload?.variables ?? {}), ...(run.variables ?? {}) }),
+    [run, state.payload?.variables],
+  );
+  const config = useCalculatorConfig(run.productCode, runVariables) as
+    | UiCalculatorConfig
+    | undefined;
+  // Run-scoped cascade corrections (economy finish snap, etc.). Side-effect
+  // only; never touches segment-level overrides.
+  useRunReconciliation(run);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [runSettingsOpen, setRunSettingsOpen] = useState(false);
   const [teachingDismissed, setTeachingDismissed] = useState(
     () => typeof window !== "undefined" && window.localStorage.getItem(RUN_DEFAULTS_TEACHING_KEY) === "true",
   );
   const runCollapseRef = useRef<number | null>(null);
-
-  // Prefetch/warm the shared TanStack cache (['calculator-config', productCode])
-  // so RunCardSettings / FenceSegmentDetails / GateSegmentDetails have their
-  // form field config ready the moment a section or run settings is expanded,
-  // instead of a fetch firing (and forms flashing empty) on first expand.
-  const config = useCalculatorConfig(run.productCode);
-  const hasGateSegments = run.segments.some((segment) => segment.segmentKind === "gate_opening");
-  useCalculatorConfig(hasGateSegments ? GATE_PRODUCT_CODE : "");
-  const segmentDefaults = useMemo(
-    () => defaultVariablesFromFields(config.formFields.segment),
-    [config.formFields.segment],
-  );
-
-  const runVariables = useMemo(
-    () => runMasterVariables(run, state.payload?.variables),
-    [run, state.payload?.variables],
-  );
-  const jobMax = clampPostSpacing(
-    runVariables.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode, config),
-    maxPanelWidthForSystem(run.productCode, config),
-  );
   const firstSegment = firstFenceSegment(run);
-  const runLengthM = (calcTotalLength(run) / 1000).toFixed(2);
-  const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
-  const isBayg = run.productCode === "BAYG";
-  const isPanelStrategy = config.strategy.fence === "panel";
+  const segmentDefaults = useMemo(
+    () => defaultVariablesFromFields(config?.formFields.segment ?? []),
+    [config?.formFields.segment],
+  );
   const summaryChips = useMemo(
     () =>
-      [...config.formFields.job, ...config.formFields.run]
+      [...(config?.formFields.job ?? []), ...(config?.formFields.run ?? [])]
         .filter((field) => field.show_in_run_summary)
         .sort((a, b) => a.sort_order - b.sort_order)
         .map((field) => ({
@@ -109,7 +101,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           label: field.label,
           value: valueLabel(field, summaryVariableValue(field.field_key, runVariables)),
         })),
-    [config.formFields.job, config.formFields.run, runVariables],
+    [config?.formFields.job, config?.formFields.run, runVariables],
   );
 
   useEffect(
@@ -131,6 +123,19 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
     setExpandedId(firstSegment.segmentId);
     onAutoOpenConsumed?.();
   }, [autoOpenFirstSection, firstSegment, onAutoOpenConsumed]);
+
+  if (!config) {
+    return <RunCardSkeleton />;
+  }
+
+  const isPanelStrategy = config.strategy.fence === "panel";
+
+  const jobMax = clampPostSpacing(
+    runVariables.max_panel_width_mm ?? config.panelRules.maxPanelWidthMm,
+    config.panelRules.maxPanelWidthMm,
+  );
+  const runLengthM = (calcTotalLength(run, config.strategy.fence === "panel") / 1000).toFixed(2);
+  const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
 
   function dismissRunDefaultsTeaching() {
     setTeachingDismissed(true);
@@ -201,13 +206,12 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
       segmentKind: "panel",
       segmentWidthMm: 0,
       targetHeightMm: Number(runVariables.target_height_mm ?? 1800),
-      variables: isBayg ? (segmentDefaults as Record<string, string | number | boolean>) : undefined,
+      variables: isPanelStrategy ? (segmentDefaults as Record<string, string | number | boolean>) : undefined,
     });
   }
 
   function addGateSegment() {
-    const masterVariables = runMasterVariables(run, state.payload?.variables);
-    const targetHeight = Number(masterVariables.target_height_mm ?? 1800);
+    const targetHeight = Number(runVariables.target_height_mm ?? 1800);
     const segmentId = crypto.randomUUID();
     upsertSegment({
       segmentId,
@@ -216,46 +220,62 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
       segmentWidthMm: 900,
       targetHeightMm: targetHeight,
       gateProductCode: GATE_PRODUCT_CODE,
-      variables: defaultGateVariables({ ...masterVariables, productCode: run.productCode }, targetHeight),
+      variables: defaultGateVariables(
+        { ...runVariables, gateDefaultInfill: config!.gateRules.defaultInfill },
+        targetHeight,
+      ),
     });
     setExpandedId(segmentId);
   }
 
   const sectionSegments = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
   const gateSegments = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
+  const gatesSupported = config.gateRules.supported;
 
   return (
     <div className="rounded-2xl border-2 border-brand-primary/50 bg-brand-card py-4 shadow-md">
       <div className="px-4 mb-3 flex flex-wrap items-start justify-between gap-3">
-        <h3 className="grid min-w-0 flex-1 gap-1 text-brand-text">
-          <span className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5 leading-tight">
-            <span className="text-xl font-extrabold tracking-normal">Run {runIdx + 1}</span>
-            <span className="text-lg font-extrabold tracking-normal">{runLengthM}m</span>
-            <span className="text-sm font-semibold text-brand-muted">
-              {systemDisplayName(run.productCode)}
-            </span>
-          </span>
-          <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-brand-muted">
-            <span className="inline-flex items-center gap-1.5">
-              Height:
-              <InlineHeightEditor
-                productCode={run.productCode}
-                variables={runVariables}
-                valueMm={runHeight}
-                ariaLabel={`Run ${runIdx + 1} default height`}
-                onChange={updateRunHeight}
-              />
-            </span>
-            <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
-            {summaryChips.map((chip) => (
-              <span key={chip.key}>
-                {chip.label}: <strong className="text-brand-text">{isBayg && chip.key === "mounting_type" ? "Not required" : chip.value}</strong>
+        <div>
+
+          <h3 className="grid min-w-0 flex-1 gap-1 text-brand-text">
+            <span className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5 leading-tight">
+              <span className="text-xl font-extrabold tracking-normal">Run {runIdx + 1}</span>
+              <span className="text-lg font-extrabold tracking-normal">{runLengthM}m</span>
+              <span className="text-sm font-semibold text-brand-muted">
+                {config.display.shortName}
               </span>
-            ))}
-            <span>{isPanelStrategy ? "Max panel spacing" : "Max post spacing"}: <strong className="text-brand-text">{jobMax}mm</strong></span>
-            <span>Corners: <strong className="text-brand-text">{run.corners?.length ?? 0}</strong></span>
-          </span>
-        </h3>
+            </span>
+            <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-brand-muted">
+              <span className="inline-flex items-center gap-1.5">
+                Height:
+                <InlineHeightEditor
+                  config={config}
+                  variables={runVariables}
+                  valueMm={runHeight}
+                  ariaLabel={`Run ${runIdx + 1} default height`}
+                  onChange={updateRunHeight}
+                />
+              </span>
+              <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
+              {summaryChips.map((chip) => (
+                <span key={chip.key}>
+                  {chip.label}: <strong className="text-brand-text">{isPanelStrategy && chip.key === "mounting_type" ? "Not required" : chip.value}</strong>
+                </span>
+              ))}
+              <span>{isPanelStrategy ? "Max panel spacing" : "Max post spacing"}: <strong className="text-brand-text">{jobMax}mm</strong></span>
+              <span>Corners: <strong className="text-brand-text">{run.corners?.length ?? 0}</strong></span>
+            </span>
+          </h3>
+
+          <InlineEdit
+            label="Height"
+            value={runHeight}
+            suffix="mm"
+            displayValue={runHeight.toFixed(2)}
+            onCommit={updateRunHeight}
+            disabled={false}
+          />
+        </div>
         <div
           className="mb-3"
           onMouseEnter={keepRunSettingsOpen}
@@ -338,7 +358,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
                   }
                 />
               ))}
-            {!isBayg && run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
+            {gatesSupported && run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
               <div className="">
                 <div className="px-4 bg-brand-accent/5">
                   <p className="py-2 flex items-center gap-2 text-sm font-bold text-brand-muted">
@@ -370,9 +390,9 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
 
           <div className="px-4 mt-3 flex flex-wrap justify-end gap-2">
             <Button onClick={addFenceSegment} icon={Plus} variant="ghost" size="small">
-              {isBayg ? "Add panel size" : "Add section"}
+              {isPanelStrategy ? "Add panel size" : "Add section"}
             </Button>
-            {!isBayg && (
+            {gatesSupported && (
               <Button onClick={addGateSegment} icon={Plus} variant="ghost" size="small">
                 Add gate
               </Button>
@@ -391,5 +411,16 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
 
 
     </div>
+  );
+}
+
+export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenConsumed }: Props) {
+  return (
+    <RunCardInner
+      run={run}
+      runIdx={runIdx}
+      autoOpenFirstSection={autoOpenFirstSection}
+      onAutoOpenConsumed={onAutoOpenConsumed}
+    />
   );
 }

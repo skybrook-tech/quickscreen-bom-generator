@@ -1,11 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useCalculator } from "../../../context/CalculatorContext";
 import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import type { CanonicalSegment } from "../../../types/canonical.types";
-import { ChevronDown, ChevronUp, Plus, RulerDimensionLine, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, X } from "lucide-react";
 import { ConfirmButton } from "../../shared/ConfirmButton";
 import { valueLabel } from "../SchemaDrivenForm";
-import NumberInput from "../../shared/NumberInput";
 import {
   GATE_SEGMENT_STUB_KEYS,
   SEGMENT_TERMINATION_KEYS,
@@ -13,7 +12,7 @@ import {
 } from "../../../lib/segmentTermination";
 import {
   clearGateOpeningWidthMm,
-  defaultGateBuildForMovement,
+  defaultGateBuildForMovementInfill,
   gateMovementOrDefault,
 } from "../../../lib/gateOptionRules";
 import { hingeGapForSku, latchGapForSku } from "../../../lib/gateHardware";
@@ -21,11 +20,7 @@ import {
   gatePatchForAlternative,
   validateGateWidth,
 } from "../../../lib/gateConstraints";
-import {
-  clampPostSpacing,
-  heightEntriesForSystem,
-  maxPanelWidthForSystem,
-} from "../../../lib/productOptionRules";
+import { clampPostSpacing } from "../../../lib/productOptionRules";
 import {
   derivedHeightForSlatCount,
   nearestDerivedHeight,
@@ -80,38 +75,43 @@ export function SegmentRow({
   const gate = seg.segmentKind === "gate_opening";
 
   const run = state.payload?.runs.find((r) => r.runId === runId);
-  const runVariables = {
-    ...(state.payload?.variables ?? {}),
-    ...(run?.variables ?? {}),
-  };
-  const masterVariables = {
-    ...runVariables,
-  };
+  const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
+  const segProductCode = String(seg.variables?.product_code ?? runProductCode);
+  const masterVariables = useMemo<Record<string, string | number | boolean>>(
+    () => ({ ...(state.payload?.variables ?? {}), ...(run?.variables ?? {}) }),
+    [state.payload?.variables, run],
+  );
+  const gateConfig = useCalculatorConfig(gate ? "QS_GATE" : "");
+
   const runDefaultHeight = Number(masterVariables.target_height_mm ?? 1800);
   const segmentVariables = {
-    ...runVariables,
+    ...masterVariables,
     ...(seg.variables ?? {}),
   };
-  const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
-  const productCode = String(seg.variables?.product_code ?? runProductCode);
-  const isBayg = productCode === "BAYG";
-  const config = useCalculatorConfig(productCode);
+  // Segment-resolved config: height ladder + option lists resolved for this
+  // segment's merged variables (segment overrides — including a per-segment
+  // product_code — included). Cache-keyed, cheap; shares data with the run-
+  // level fetch when the segment inherits the run product + variables.
+  const config = useCalculatorConfig(segProductCode, segmentVariables);
+  if (!config) {
+    // Still resolving the segment-specific config (e.g. a segment override
+    // changed the variables key). Render nothing rather than a malformed row.
+    return null;
+  }
+
+  const isPanelStrategy = config.strategy.fence === "panel";
+  const isFreeform = config.heightUi.mode === "freeform";
   const mountingField = config.formFields.run.find(
     (field) => field.field_key === "mounting_type" || field.field_key === "mounting_method",
   );
   const postSizeField = config.formFields.run.find((field) => field.field_key === "post_size");
   const slatSizeField = config.formFields.job.find((field) => field.field_key === "slat_size_mm");
   const slatGapField = config.formFields.job.find((field) => field.field_key === "slat_gap_mm");
-  // Shares RunCard's already-warmed ['calculator-config', 'QS_GATE'] cache —
-  // gate width/height bounds live on the QS_GATE config, not the fence's.
-  const gateConfig = useCalculatorConfig(gate ? "QS_GATE" : "");
   const segmentNumber = segIdx + 1;
 
-  const heightEntries = run
-    ? heightEntriesForSystem(productCode, segmentVariables, config)
-    : [];
+  const heightEntries: DerivedHeight[] = config.heightLadder.entries;
   const heightInputsReady =
-    productCode === "VS" ||
+    isFreeform ||
     (Number.isFinite(Number(segmentVariables.slat_size_mm)) &&
       Number.isFinite(Number(segmentVariables.slat_gap_mm)));
   const selectedHeightEntry =
@@ -125,8 +125,8 @@ export function SegmentRow({
   const fenceColour = String(segmentVariables.colour_code ?? "B");
   const postColour = String(segmentVariables.post_colour_code ?? fenceColour);
   const maxSpacing = clampPostSpacing(
-    segmentVariables.max_panel_width_mm ?? maxPanelWidthForSystem(productCode, config),
-    maxPanelWidthForSystem(productCode, config),
+    segmentVariables.max_panel_width_mm ?? config.panelRules.maxPanelWidthMm,
+    config.panelRules.maxPanelWidthMm,
   );
   const segmentLength = Number(seg.segmentWidthMm ?? 0);
   const panelCount = segmentLength > 0 ? Math.max(1, Math.ceil(segmentLength / maxSpacing)) : 0;
@@ -138,15 +138,16 @@ export function SegmentRow({
         : `${panelCount} x ${Math.round(segmentLength / panelCount)}mm`;
   const gateVars = seg.variables ?? {};
   const gateWidthValidation = gate ? validateGateWidth(seg, gateConfig) : null;
+  const gateInfill = config.gateRules.defaultInfill;
   const gateBuild = String(
     gateVars[GATE_SEGMENT_STUB_KEYS.gateBuild] ??
-    (productCode === "VS" ? "qsg_hinged_vertical" : "qsg_hinged_horizontal"),
+      defaultGateBuildForMovementInfill("single_swing", gateInfill),
   );
   const expectedGateBuild =
     gateBuild ===
-    defaultGateBuildForMovement(
+    defaultGateBuildForMovementInfill(
       gateMovementOrDefault(gateVars[GATE_SEGMENT_STUB_KEYS.gateMovement]),
-      runProductCode === "VS",
+      gateInfill,
     );
   const compactLabel =
     displayLabel?.replace(/\s+/g, "") ??
@@ -154,12 +155,9 @@ export function SegmentRow({
 
   const titleLabel = gate
     ? `Gate ${segmentNumber}`
-    : isBayg
+    : isPanelStrategy
       ? `Panel ${segmentNumber}`
       : `Section ${segmentNumber}`;
-
-  const afterTitleLabel = gate
-    ? `${Math.round(segmentLength)}mm` : `${(segmentLength / 1000).toFixed(2)}m`;
 
 
   const matchesMaster = (() => {
@@ -186,6 +184,7 @@ export function SegmentRow({
       SEGMENT_TERMINATION_KEYS.rightNonSystemSubtype,
     ];
     return (
+      sameValue(segProductCode, runProductCode) &&
       settingsKindMatches(SEGMENT_TERMINATION_KEYS.leftKind) &&
       settingsKindMatches(SEGMENT_TERMINATION_KEYS.rightKind) &&
       terminationSubtypeKeys.every((key) => unsetOrSame(vars, key, masterVariables[key])) &&
@@ -195,8 +194,8 @@ export function SegmentRow({
   const masterFenceColour = String(masterVariables.colour_code ?? "B");
   const masterPostColour = String(masterVariables.post_colour_code ?? masterFenceColour);
   const masterMaxSpacing = clampPostSpacing(
-    masterVariables.max_panel_width_mm ?? maxPanelWidthForSystem(productCode, config),
-    maxPanelWidthForSystem(productCode, config),
+    masterVariables.max_panel_width_mm ?? config.panelRules.maxPanelWidthMm,
+    config.panelRules.maxPanelWidthMm,
   );
   const masterPanelCount = segmentLength > 0 ? Math.max(1, Math.ceil(segmentLength / masterMaxSpacing)) : 0;
   const summaryBitsBase = [
@@ -204,7 +203,7 @@ export function SegmentRow({
       ? { label: "Type", value: gateMovementLabel(gateVars[GATE_SEGMENT_STUB_KEYS.gateMovement]), emphasis: true }
       : null,
     ...(gate ? gateHardwareSummaryItems(gateVars) : []),
-    ...(isBayg && !gate
+    ...(isPanelStrategy && !gate
       ? [{ label: "Qty", value: Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1))), emphasis: true }]
       : []),
   ].filter(Boolean) as SummaryItem[];
@@ -275,17 +274,17 @@ export function SegmentRow({
     ]
     : [
       {
+        label: "System",
+        value: segProductCode,
+        changed: !sameValue(segProductCode, runProductCode),
+      },
+      {
         label: "Height",
         value: `${selectedHeight}mm`,
         changed: !sameValue(
           selectedHeight,
           masterVariables.target_height_mm ?? 1800,
         ),
-      },
-      {
-        label: "System",
-        value: productCode,
-        changed: !sameValue(productCode, runProductCode),
       },
       { label: "Colour", value: colourName(fenceColour), changed: !sameValue(fenceColour, masterFenceColour) },
       ...(postColour !== fenceColour
@@ -309,9 +308,9 @@ export function SegmentRow({
       },
       {
         label: "Post",
-        value: postLabel(postSizeField, productCode, segmentVariables),
+        value: postLabel(postSizeField, segmentVariables),
         changed:
-          !isBayg &&
+          !isPanelStrategy &&
           (!sameValue(segmentVariables.post_system, masterVariables.post_system) ||
             !sameValue(segmentVariables.post_size ?? 50, masterVariables.post_size ?? 50)),
       },
@@ -323,14 +322,14 @@ export function SegmentRow({
           "Concreted in ground",
         ),
         changed:
-          !isBayg &&
+          !isPanelStrategy &&
           !sameValue(
             segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground",
             masterVariables.mounting_method ?? masterVariables.mounting_type ?? "in_ground",
           ),
       },
-      { label: "Panel Count", value: panelCount, changed: !isBayg && !sameValue(panelCount, masterPanelCount) },
-      { label: "Panel width", value: panelWidthSummary, changed: !isBayg && !sameValue(maxSpacing, masterMaxSpacing) },
+      { label: "Panel Count", value: panelCount, changed: !isPanelStrategy && !sameValue(panelCount, masterPanelCount) },
+      { label: "Panel width", value: panelWidthSummary, changed: !isPanelStrategy && !sameValue(maxSpacing, masterMaxSpacing) },
       // Any other job/run-scope field this product declares (e.g. post-fixing
       // material, base-plate substrate, boundary types, louvre treatment) that
       // doesn't have a bespoke bit above — kept generic so a new product's own
@@ -350,7 +349,7 @@ export function SegmentRow({
 
   const visibleSettings = rawDifferenceBits.filter((item) => {
     if (item.label === "Height") return false;
-    if (isBayg && ["Post", "Mounting", "Panel Count", "Panel width"].includes(item.label)) {
+    if (isPanelStrategy && ["Post", "Mounting", "Panel Count", "Panel width"].includes(item.label)) {
       return false;
     }
     return true;
@@ -508,9 +507,9 @@ export function SegmentRow({
         runId,
         segment: {
           ...patchSegmentVariables(seg, {
-            [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
+            [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovementInfill(
               movement,
-              run.productCode === "VS",
+              config!.gateRules.defaultInfill,
             ),
             [GATE_SEGMENT_STUB_KEYS.colourCode]: String(masterVariables.colour_code ?? "B"),
             [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(masterVariables.slat_size_mm ?? 65),
@@ -529,7 +528,7 @@ export function SegmentRow({
           // slat_count is a height-ladder derivation artifact, not a
           // job/run form field — clear it alongside the config-driven keys.
           slat_count: null,
-          ...clearSegmentOverridePatch(config),
+          ...clearSegmentOverridePatch(config!),
         }),
       },
     });
@@ -549,16 +548,24 @@ export function SegmentRow({
     [],
   );
 
-  const lengthValue = gate || isBayg ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))
-  const lengthSuffix = gate || isBayg ? "mm" : "m"
+  const lengthValue = gate || isPanelStrategy ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))
+  const lengthSuffix = gate || isPanelStrategy ? "mm" : "m"
 
   const onValueChange = (v: number) => {
-    if (gate || isBayg) {
+    if (gate || isPanelStrategy) {
       updateGeometry("segmentWidthMm", v);
     } else {
       updateGeometry("segmentWidthMm", v * 1000);
     }
   }
+
+  const freeformBounds = isFreeform
+    ? {
+        min: config.heightUi.freeformMinMm ?? 300,
+        max: config.heightUi.freeformMaxMm ?? 2400,
+        step: config.heightUi.freeformStepMm ?? 50,
+      }
+    : undefined;
 
   return (
     <div className={`border-t py-1 ${isLastSegment ? "border-b" : ""}`}>
@@ -577,7 +584,7 @@ export function SegmentRow({
               <p className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-left text-lg font-black text-brand-text">
                 {titleLabel}
                 <div className="flex items-center gap-2">
-                  
+
                   <InlineEdit
                     label="Length"
                     value={lengthValue}
@@ -590,14 +597,35 @@ export function SegmentRow({
                   <InlineEdit
                     label="Height"
                     value={selectedHeight}
-                    suffix={heightInputsReady ? "mm" : ""}
-                    displayValue={heightInputsReady ? undefined : "Set slat & gap"}
+                    suffix={
+                      !heightInputsReady
+                        ? ""
+                        : isFreeform
+                          ? "mm"
+                          : ""
+                    }
+                    displayValue={
+                      !heightInputsReady
+                        ? "Set slat & gap"
+                        : isFreeform
+                          ? undefined
+                          : selectedHeightEntry
+                            ? `${selectedHeight}mm - ${selectedHeightEntry.N} slats`
+                            : undefined
+                    }
                     disabled={!heightInputsReady}
                     min={300}
-                    selectOptions={heightEntries.length > 0 ? heightEntries.map((entry) => entry.height) : undefined}
-                    boundedInput={productCode === "VS" ? { min: 300, max: 2400, step: 50 } : undefined}
+                    selectOptions={
+                      heightEntries.length > 0
+                        ? heightEntries.map((entry) => ({
+                            value: entry.height,
+                            label: `${entry.height}mm - ${entry.N} slats`,
+                          }))
+                        : undefined
+                    }
+                    boundedInput={freeformBounds}
                     onCommit={(h) => {
-                      if (productCode === "VS") {
+                      if (isFreeform) {
                         updateInlineHeight(h);
                         return;
                       }
@@ -628,7 +656,7 @@ export function SegmentRow({
                   </span>
                 </button>
               </div>
-              {!gate && !isBayg && onAddGate && (
+              {!gate && !isPanelStrategy && onAddGate && (
                 <button
                   type="button"
                   onClick={(event) => {
@@ -693,8 +721,8 @@ export function SegmentRow({
           <SegmentRowSettings
             runId={runId}
             seg={seg}
-            productCode={productCode}
-            isBayg={isBayg}
+            isPanelStrategy={isPanelStrategy}
+            isFreeform={isFreeform}
             gate={gate}
             segmentVariables={segmentVariables}
             heightEntries={heightEntries}

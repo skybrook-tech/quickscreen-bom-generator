@@ -1,61 +1,62 @@
 import { useEffect, useMemo, useState } from "react";
-import { heightEntriesForSystem } from "../../../lib/productOptionRules";
-import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import {
   derivedHeightForSlatCount,
   nearestDerivedHeight,
   type DerivedHeight,
 } from "../../../lib/heights";
+import type { UiCalculatorConfig } from "../../../types/calculatorConfig.types";
 
 type Variables = Record<string, string | number | boolean>;
 
 interface InlineHeightEditorProps {
-  productCode: string;
+  config: UiCalculatorConfig;
   variables: Variables;
   valueMm: number;
   ariaLabel: string;
   onChange: (heightMm: number, entry?: DerivedHeight) => void;
 }
 
-function clampHeight(value: number) {
-  if (!Number.isFinite(value)) return 1800;
-  return Math.max(300, Math.min(2400, Math.round(value)));
+function clampHeight(value: number, min: number, max: number) {
+  if (!Number.isFinite(value)) return min;
+  return Math.max(min, Math.min(max, Math.round(value)));
 }
 
 export function InlineHeightEditor({
-  productCode,
+  config,
   variables,
   valueMm,
   ariaLabel,
   onChange,
 }: InlineHeightEditorProps) {
-  const [draft, setDraft] = useState(String(clampHeight(valueMm)));
-  // Shares the ['calculator-config', productCode] TanStack cache already
-  // warmed by RunCard — cheap, no extra fetch.
-  const config = useCalculatorConfig(productCode);
-  const heightEntries = useMemo(
-    () => heightEntriesForSystem(productCode, variables, config),
-    [productCode, variables, config],
+  const isFreeform = config.heightUi.mode === "freeform";
+  const freeMin = config.heightUi.freeformMinMm ?? 300;
+  const freeMax = config.heightUi.freeformMaxMm ?? 2400;
+  const freeStep = config.heightUi.freeformStepMm ?? 50;
+  const [draft, setDraft] = useState(String(clampHeight(valueMm, freeMin, freeMax)));
+
+  const heightEntries = useMemo<DerivedHeight[]>(
+    () => config.heightLadder.entries,
+    [config.heightLadder.entries],
   );
   const selectedEntry =
     derivedHeightForSlatCount(heightEntries, variables.slat_count) ??
     nearestDerivedHeight(heightEntries, valueMm);
-  const selectedHeight = selectedEntry?.height ?? clampHeight(valueMm);
+  const selectedHeight = selectedEntry?.height ?? clampHeight(valueMm, freeMin, freeMax);
 
   useEffect(() => {
-    setDraft(String(clampHeight(valueMm)));
-  }, [valueMm]);
+    setDraft(String(clampHeight(valueMm, freeMin, freeMax)));
+  }, [valueMm, freeMin, freeMax]);
 
   function commitDraft(value = draft) {
-    const next = clampHeight(Number(value));
+    const next = clampHeight(Number(value), freeMin, freeMax);
     setDraft(String(next));
-    if (next !== clampHeight(valueMm)) onChange(next);
+    if (next !== clampHeight(valueMm, freeMin, freeMax)) onChange(next);
   }
 
   const sharedClasses =
     "inline-flex h-8 max-w-full rounded-lg border border-brand-border bg-brand-card px-2 text-xs font-extrabold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20";
 
-  if (productCode === "VS") {
+  if (isFreeform) {
     return (
       <span
         className="inline-flex items-center gap-1"
@@ -66,9 +67,9 @@ export function InlineHeightEditor({
           type="number"
           aria-label={ariaLabel}
           inputMode="numeric"
-          min={300}
-          max={2400}
-          step={50}
+          min={freeMin}
+          max={freeMax}
+          step={freeStep}
           value={draft}
           onChange={(event) => setDraft(event.target.value)}
           onBlur={() => commitDraft()}

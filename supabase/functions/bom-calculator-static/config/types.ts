@@ -29,6 +29,7 @@ export type CalculatorConfig = {
   // in Phase 5. Kept here so supplier overrides can restrict/extend colours.
   colours: {
     standard: string[];  // full Colorbond set (code shortcuts like "B", "MN")
+    economy: string[];   // economy finish subset (e.g. ["B","MN","SM"])
     alumawood: string[]; // finish-specific (KWI, WRC)
     gate: string[];      // allowed on gate components
     csrCap: string[];    // subset available for CSR cap SKUs
@@ -37,6 +38,37 @@ export type CalculatorConfig = {
     fallback: string;    // e.g. "MN" — used when colour not in set
     names: Record<string, string>; // display names: { B: "Black Satin", ... }
     louvreBracketFallback: string; // colour used when louvre bracket SKU absent
+  };
+
+  // Display metadata for landing/selector/run-header surfaces. Replaces the
+  // client-side `systemDisplayName` fallback maps and the hardcoded name
+  // ternaries in RunListV3 / ProductSelectV3 / calculatorV3Helpers.
+  display: {
+    name: string;        // long form, e.g. "QuickScreen Horizontal Slat"
+    shortName: string;   // chip/selector label, e.g. "Horizontal Slats"
+    description: string; // landing-card copy, e.g. "Quick Screen Horizontal Slats"
+  };
+
+  // Finish families this product offers (drives the `finish_family` field's
+  // option list). Replaces client `finishOptionsForSystem`.
+  finishFamilies: string[];
+
+  // Slatted-gap capability. Replaces `supportsCustomGap` /
+  // `CUSTOM_GAP_MIN_MM` / `CUSTOM_GAP_MAX_MM` in src/lib/gapChoices.ts.
+  gapRules: {
+    allowCustom: boolean;
+    customMinMm: number;
+    customMaxMm: number;
+  };
+
+  // Height picker UI mode. Replaces `productCode === "VS"` branches across
+  // SegmentRow / InlineHeightEditor. Aligns with the v4 `target_height_ui`
+  // concept (src/lib/targetHeightOptions.ts).
+  heightUi: {
+    mode: "ladder" | "freeform";
+    freeformMinMm?: number;
+    freeformMaxMm?: number;
+    freeformStepMm?: number;
   };
 
   // Internal SKU templates. The calculator substitutes {colour}, {slatSize},
@@ -220,6 +252,12 @@ export type CalculatorConfig = {
     doubleSwingMaxLeafWidthMm: number;
     heightMinMm: number;
     heightMaxMm: number;
+    // Whether gates can be added to runs of this product (BAYG → false).
+    // Replaces the `!isBayg` gate-exclusion checks in RunCard/RunCardSettings.
+    supported: boolean;
+    // Default gate infill orientation for this fence system (VS → vertical).
+    // Replaces the `isVS` arg to `defaultGateBuildForMovement`.
+    defaultInfill: "horizontal" | "vertical";
   };
 
   defaults: {

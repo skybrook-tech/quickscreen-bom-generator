@@ -3,15 +3,10 @@ import { useCalculator } from "../../../context/CalculatorContext";
 import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import {
-  applyProductOptionRules,
   clampPostSpacing,
-  initialVariablesForSystem,
   MAX_POST_SPACING_MM,
-  maxPanelWidthForSystem,
   MIN_POST_SPACING_MM,
-  normaliseVariablesForSystem,
 } from "../../../lib/productOptionRules";
-import { localFenceProducts } from "../../../lib/localSeedData";
 import {
   SEGMENT_OPTION_KEYS,
   patchSegmentVariables,
@@ -20,7 +15,11 @@ import { SchemaDrivenForm, valueLabel, type SchemaField } from "../SchemaDrivenF
 import NumberInput from "../../shared/NumberInput";
 import { SettingsDisclosureRow } from "../SettingsDisclosureRow";
 import { colourName } from "../ColourPalette";
-import { combinedGapLabel, normaliseGapMode } from "../../../lib/gapChoices";
+import { combinedGapLabel, normaliseGapModeConfig } from "../../../lib/gapChoices";
+import { useFenceProducts } from "../../../hooks/useProducts";
+import { localFenceProducts } from "../../../lib/localSeedData";
+import { isPanelStrategyCode } from "../../../lib/productOptionRules";
+import { Check } from "lucide-react";
 
 const SECTION_POST_FIELD_KEYS = new Set([
   "mounting_method",
@@ -64,32 +63,32 @@ function fieldValueLabel(field: SchemaField, variables: Record<string, string | 
 
 export function FenceSegmentDetails({ runId, seg }: Props) {
   const { state, dispatch } = useCalculator();
-  const run = state.payload?.runs.find((item) => item.runId === runId);
+  const run = state.payload?.runs.find((r) => r.runId === runId);
   const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
-  const productCode = String(seg.variables?.product_code ?? runProductCode);
-  const config = useCalculatorConfig(productCode);
-  const jobFields = config.formFields.job;
-  const runFields = config.formFields.run;
+  const segProductCode = String(seg.variables?.product_code ?? runProductCode);
 
   const v = seg.variables ?? {};
-  const runVariables = {
-    ...initialVariablesForSystem(productCode),
-    ...(state.payload?.variables ?? {}),
-    ...(run?.variables ?? {}),
-  };
-  const displayVariables = normaliseVariablesForSystem(productCode, {
+  const runVariables = useMemo<Record<string, string | number | boolean>>(
+    () => ({ ...(state.payload?.variables ?? {}), ...(run?.variables ?? {}) }),
+    [state.payload?.variables, run],
+  );
+  const displayVariables: Record<string, string | number | boolean> = {
     ...runVariables,
     ...v,
-    product_code: productCode,
-  });
-  const postSystem = String(displayVariables.post_system ?? (productCode === "XPL" ? "xpl" : "standard_50"));
-  const postSize = String((displayVariables[SEGMENT_OPTION_KEYS.postSize] as string | number) ?? "");
-  const isCustomPost = postSize === "custom";
-  const isBayg = productCode === "BAYG";
+  };
+  // Run + segment-resolved configs. The segment config is keyed on the
+  // segment's own product (when product_code is overridden) + merged variables,
+  // so option lists / height ladder re-resolve for whatever system this
+  // segment uses. runConfig supplies the run's panelRules / display name.
+  const runConfig = useCalculatorConfig(runProductCode, runVariables);
+  const config = useCalculatorConfig(segProductCode, displayVariables);
+  const fenceProductsQuery = useFenceProducts();
+  const fenceProducts = fenceProductsQuery.data ?? localFenceProducts;
   const [postColourOpen, setPostColourOpen] = useState(() => {
     const colour = String(displayVariables.colour_code ?? "B");
     return Boolean(v.post_colour_code && String(v.post_colour_code) !== colour);
   });
+
   function upsertSegment(s: CanonicalSegment) {
     dispatch({ type: "UPSERT_SEGMENT", runId, segment: s });
   }
@@ -119,9 +118,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         nextPatch.post_colour_code = value === runVariables.colour_code ? null : value;
       }
     }
-    upsertSegment(
-      patchSegmentVariables(seg, nextPatch),
-    );
+    upsertSegment(patchSegmentVariables(seg, nextPatch));
   }
 
   function onJobOverridePatch(patch: Record<string, string | number | boolean | null | undefined>) {
@@ -133,40 +130,55 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     upsertSegment(patchSegmentVariables(seg, nextPatch));
   }
 
+  // Switch this segment's fence system. Stores product_code as a structural
+  // override (null = inherit run product) and seeds panel_quantity for
+  // panel-strategy products so the segment isn't left invalid. Full cascade
+  // normalisation is backend-driven on the next resolve; this only bridges the
+  // one structural + quantity gap the run-scoped reconciliation won't touch.
   function onSystemTypeChange(nextProductCode: string) {
-    const normalised = normaliseVariablesForSystem(nextProductCode, {
-      ...initialVariablesForSystem(nextProductCode),
-      ...runVariables,
-      ...v,
-      product_code: nextProductCode,
-    });
+    const productOverride = nextProductCode === runProductCode ? null : nextProductCode;
+    const panelQuantityPatch = isPanelStrategyCode(nextProductCode)
+      ? { panel_quantity: seg.variables?.panel_quantity ?? 1 }
+      : {};
     upsertSegment(
       patchSegmentVariables(seg, {
-        product_code: nextProductCode === runProductCode ? null : nextProductCode,
-        finish_family: normalised.finish_family,
-        colour_code: normalised.colour_code,
-        post_colour_code: normalised.post_colour_code,
-        slat_size_mm: normalised.slat_size_mm,
-        slat_gap_mode: normalised.slat_gap_mode,
-        slat_gap_mm: normalised.slat_gap_mm,
-        post_system: normalised.post_system,
-        post_size: normalised.post_size,
-        mounting_type: normalised.mounting_type,
-        mounting_method: normalised.mounting_method,
-        max_panel_width_mm: normalised.max_panel_width_mm,
+        product_code: productOverride,
+        ...panelQuantityPatch,
       }),
     );
   }
 
   const jobMax = clampPostSpacing(
     runVariables.max_panel_width_mm,
-    maxPanelWidthForSystem(productCode, config),
+    runConfig?.panelRules.maxPanelWidthMm ?? 2600,
   );
   const effectiveMax = clampPostSpacing(v.max_panel_width_mm, jobMax);
   const [maxSpacingDraft, setMaxSpacingDraft] = useState(String(effectiveMax));
   useEffect(() => {
     setMaxSpacingDraft(String(effectiveMax));
   }, [effectiveMax]);
+
+  const jobFields = config?.formFields.job ?? [];
+  const runFields = config?.formFields.run ?? [];
+  const slatOptionFields = jobFields.filter(
+    (field) =>
+      !field.field_key.endsWith("_stock_length_mm") &&
+      field.field_key !== "max_panel_width_mm" &&
+      field.field_key !== "target_height_mm" &&
+      field.field_key !== "post_colour_code" &&
+      field.field_key !== "louvre_treatment",
+  );
+  const postFields = runFields
+    .map(shapePostField)
+    .filter((field): field is SchemaField => Boolean(field));
+  const slatFieldMap = useMemo(
+    () => new Map(slatOptionFields.map((field) => [field.field_key, field])),
+    [slatOptionFields],
+  );
+  const postFieldMap = useMemo(
+    () => new Map(postFields.map((field) => [field.field_key, field])),
+    [postFields],
+  );
 
   function updateMaxPanelWidth(value: number | null) {
     const nextValue = value === null ? null : clampPostSpacing(value, jobMax);
@@ -184,6 +196,18 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     updateMaxPanelWidth(clamped);
   }
 
+  if (!config || !runConfig) return null;
+  const resolvedConfig = config;
+  const productCode = segProductCode;
+
+  const isPanelStrategy = resolvedConfig.strategy.fence === "panel";
+  const postSystemField = resolvedConfig.formFields.run.find((field) => field.field_key === "post_system");
+  const postSystem = String(
+    displayVariables.post_system ?? postSystemField?.default_value_json ?? "standard_50",
+  );
+  const postSize = String((displayVariables[SEGMENT_OPTION_KEYS.postSize] as string | number) ?? "");
+  const isCustomPost = postSize === "custom";
+
   const mergedJobDisplay: Record<string, string | number | boolean> = {
     ...displayVariables,
   };
@@ -192,60 +216,23 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
     return field;
   }
 
-  const optionFields = useMemo(
-    () =>
-      productCode
-        ? applyProductOptionRules(
-            productCode,
-            jobFields.filter(
-              (field) =>
-                !field.field_key.endsWith("_stock_length_mm") &&
-                field.field_key !== "max_panel_width_mm" &&
-                field.field_key !== "target_height_mm" &&
-                field.field_key !== "post_colour_code" &&
-                field.field_key !== "louvre_treatment",
-            ),
-            mergedJobDisplay,
-          )
-        : [],
-    [jobFields, mergedJobDisplay, productCode],
-  );
-  const postFields = useMemo(
-    () =>
-      productCode
-        ? applyProductOptionRules(
-          productCode,
-          runFields
-            .map(shapePostField)
-            .filter((field): field is SchemaField => Boolean(field)),
-          mergedJobDisplay,
-        )
-        : [],
-    [mergedJobDisplay, productCode, runFields],
-  );
-  const slatOptionFields = optionFields;
-  const slatFieldMap = useMemo(
-    () => new Map(slatOptionFields.map((field) => [field.field_key, field])),
-    [slatOptionFields],
-  );
-  const postFieldMap = useMemo(
-    () => new Map(postFields.map((field) => [field.field_key, field])),
-    [postFields],
-  );
-  const gapMode = normaliseGapMode(productCode, mergedJobDisplay.slat_gap_mode);
+  const slatFieldMapReady = slatFieldMap;
+  const postFieldMapReady = postFieldMap;
+  const gapMode = normaliseGapModeConfig(resolvedConfig, mergedJobDisplay.slat_gap_mode);
   const gapMm = Number(mergedJobDisplay.slat_gap_mm ?? 9);
-  const postColourField = slatFieldMap.get("post_colour_code");
+  const postColourField = slatFieldMapReady.get("post_colour_code");
   const remainingOptionFields = slatOptionFields.filter(
     (field) => !CORE_SLAT_FIELD_KEYS.has(field.field_key),
   );
-  const mountingField = postFieldMap.get("mounting_method") ?? postFieldMap.get("mounting_type");
+  const mountingField = postFieldMapReady.get("mounting_method") ?? postFieldMapReady.get("mounting_type");
   const remainingPostFields = postFields.filter(
     (field) =>
       !CORE_POST_FIELD_KEYS.has(field.field_key) &&
       !CORE_SLAT_FIELD_KEYS.has(field.field_key),
   );
+  const louvreField = jobFields.find((field) => field.field_key === "louvre_treatment");
   function renderSlatField(key: string) {
-    const field = slatFieldMap.get(key);
+    const field = slatFieldMapReady.get(key);
     if (!field) return null;
     return (
       <SchemaDrivenForm
@@ -253,12 +240,12 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         variables={mergedJobDisplay}
         onChange={handleOptionChange}
         onPatch={onJobOverridePatch}
-        extra={{ productCode }}
+        extra={{ productCode, postFixingMaterials: resolvedConfig.postFixingMaterials, config: resolvedConfig }}
       />
     );
   }
   function renderPostField(key: string) {
-    const field = postFieldMap.get(key);
+    const field = postFieldMapReady.get(key);
     if (!field) return null;
     return (
       <SchemaDrivenForm
@@ -266,48 +253,51 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         variables={mergedJobDisplay}
         onChange={handleOptionChange}
         onPatch={onJobOverridePatch}
-        extra={{ productCode }}
+        extra={{ productCode, config: resolvedConfig }}
       />
     );
   }
   function valueFor(key: string, fallback = "Default") {
-    const field = slatFieldMap.get(key) ?? postFieldMap.get(key);
+    const field = slatFieldMapReady.get(key) ?? postFieldMapReady.get(key);
     return field ? fieldValueLabel(field, mergedJobDisplay) : fallback;
   }
   function handleOptionChange(key: string, value: string | number | boolean) {
     onJobOverrideChange(key, value);
   }
-  const postSummary = `${valueLabel(postFieldMap.get("post_system"), postSystem, "Run default")} / ${colourName(mergedJobDisplay.post_colour_code ?? mergedJobDisplay.colour_code)} / ${effectiveMax}mm`;
+  const postSummary = `${valueLabel(postFieldMapReady.get("post_system"), postSystem, "Run default")} / ${colourName(mergedJobDisplay.post_colour_code ?? mergedJobDisplay.colour_code)} / ${effectiveMax}mm`;
   const slatSummary = `${valueFor("finish_family")} / ${colourName(mergedJobDisplay.colour_code)} / ${valueFor("slat_size_mm")} / ${combinedGapLabel(gapMode, gapMm)}`;
 
   return (
     <div className="space-y-4">
-      <SettingsDisclosureRow id={`${seg.segmentId}-section-system-type`} label="System type" value={productCode}>
-        <div className="flex flex-wrap gap-2">
-          {localFenceProducts.map((product) => (
+      <SettingsDisclosureRow
+        id={`${seg.segmentId}-section-system-type`}
+        label="System type"
+        value={config.display.shortName}
+      >
+        <div className="flex flex-wrap gap-2 border-t border-brand-border/50 p-3">
+          {fenceProducts.map((product) => (
             <button
               key={product.system_type}
               type="button"
               onClick={() => onSystemTypeChange(product.system_type)}
-              aria-pressed={product.system_type === productCode}
-              className={`inline-flex items-center rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${
-                product.system_type === productCode
-                  ? "border-brand-primary bg-brand-primary text-white shadow-sm"
-                  : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-              }`}
+              aria-pressed={product.system_type === segProductCode}
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${product.system_type === segProductCode
+                ? "border-brand-primary bg-brand-primary text-white shadow-sm"
+                : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
+                }`}
             >
+              {product.system_type === segProductCode && <Check size={16} aria-hidden />}
               {product.system_type}
             </button>
           ))}
         </div>
       </SettingsDisclosureRow>
-
       {slatOptionFields.length > 0 || postColourField ? (
         <SettingsDisclosureRow id={`${seg.segmentId}-section-style`} label="Slats, colors, and spacings" value={slatSummary || "Run defaults"}>
           <div className="space-y-4">
             {renderSlatField("finish_family")}
             {renderSlatField("colour_code")}
-            {postColourField && !isBayg && (
+            {postColourField && !isPanelStrategy && (
               <>
                 <button
                   type="button"
@@ -328,12 +318,12 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
               />
             )}
             {renderSlatField("slat_gap_mm")}
-            {productCode === "QSHS" && renderPostField("louvre_treatment")}
+            {louvreField && renderSlatField("louvre_treatment")}
           </div>
         </SettingsDisclosureRow>
       ) : null}
 
-      {!isBayg && (
+      {!isPanelStrategy && (
         <SettingsDisclosureRow id={`${seg.segmentId}-section-posts`} label="Post size, mounting and spacing" value={postSummary}>
           <div className="space-y-4">
             {renderPostField("post_system")}
@@ -344,7 +334,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                 variables={mergedJobDisplay}
                 onChange={handleOptionChange}
                 onPatch={onJobOverridePatch}
-                extra={{ productCode }}
+                extra={{ productCode, config }}
               />
             )}
             {remainingPostFields.length > 0 && (
@@ -353,7 +343,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                 variables={mergedJobDisplay}
                 onChange={handleOptionChange}
                 onPatch={onJobOverridePatch}
-                extra={{ productCode }}
+                extra={{ productCode, config }}
               />
             )}
             <label className="flex flex-col gap-1">
@@ -376,7 +366,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
         </SettingsDisclosureRow>
       )}
 
-      {!isBayg && isCustomPost && (
+      {!isPanelStrategy && isCustomPost && (
         <SettingsDisclosureRow
           id={`${seg.segmentId}-section-custom-post`}
           label="Custom post width"
