@@ -173,6 +173,26 @@ const MOUNTING_RULES: CalculatorConfig["mountingRules"] = {
   },
 };
 
+const GATE_RULES: CalculatorConfig["gateRules"] = {
+  maxWidthMm: {
+    pedestrianHorizontal: 2100,
+    pedestrianVertical: 2100,
+    slidingHorizontal: 6150,
+    slidingVertical: 6166,
+  },
+  doubleSwingMaxLeafWidthMm: 2100,
+  heightMinMm: 600,
+  heightMaxMm: 2100,
+};
+
+const POST_FIXING_MATERIALS: CalculatorConfig["postFixingMaterials"] = [
+  { sku: "GROUT-RSC", label: "Rapid set concrete", description: "20kg bag, common 30 minute post footing mix" },
+  { sku: "GROUT-CONCRETE", label: "General concrete mix", description: "20kg bag, cheap slow-cure option" },
+  { sku: "GROUT-POL-10KG", label: "Polaris non-shrink grout", description: "10kg high-strength expansion grout" },
+  { sku: "GROUT-BOS", label: "Bostik HES grout", description: "20kg high early strength grout" },
+  { sku: "GROUT-SIKA", label: "Sika HES grout", description: "20kg premium water-resistant HES grout" },
+];
+
 // ─── Per-product base configs ─────────────────────────────────────────────────
 
 export const BASE_QSHS_CONFIG: CalculatorConfig = {
@@ -202,6 +222,9 @@ export const BASE_QSHS_CONFIG: CalculatorConfig = {
   panelRules: PANEL_RULES_STD,
   postRules: POST_RULES,
   mountingRules: MOUNTING_RULES,
+  postFixingMaterials: POST_FIXING_MATERIALS,
+  heightLadder: { slatHeightDeductionMm: GEOMETRY.slatHeightDeduction },
+  gateRules: GATE_RULES,
   defaults: {
     slatSizeMm: 65, slatGapMm: 9, targetHeightMm: 1800,
     postSizeMm: 50, finishFamily: "standard", colour: "B", mountingType: "in_ground",

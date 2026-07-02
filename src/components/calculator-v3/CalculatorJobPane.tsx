@@ -89,7 +89,6 @@ export function CalculatorJobPane({
               />
             ) : null}
             <PropertyAnchorFormGate anchorConfirmed={propertyAnchorConfirmed}>
-              <hr className="border-brand-border/60" />
               <section>
                 <RunListV3
                   autoOpenFirstRunId={autoOpenFirstSectionRunId}

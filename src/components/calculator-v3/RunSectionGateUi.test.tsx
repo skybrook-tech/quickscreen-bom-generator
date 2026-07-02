@@ -78,6 +78,21 @@ const calculatorConfigMock = vi.hoisted(() => {
         mountingType: "in_ground",
       },
       formFields: { job: jobFields, run: runFields, segment: [] },
+      postFixingMaterials: [
+        { sku: "GROUT-RSC", label: "Rapid set concrete", description: "20kg bag" },
+      ],
+      heightLadder: { slatHeightDeductionMm: 3 },
+      gateRules: {
+        maxWidthMm: {
+          pedestrianHorizontal: 2100,
+          pedestrianVertical: 2100,
+          slidingHorizontal: 6150,
+          slidingVertical: 6166,
+        },
+        doubleSwingMaxLeafWidthMm: 2100,
+        heightMinMm: 600,
+        heightMaxMm: 2100,
+      },
     })),
   };
 });

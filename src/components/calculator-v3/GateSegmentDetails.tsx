@@ -7,7 +7,6 @@ import {
   patchSegmentVariables,
 } from "../../lib/segmentTermination";
 import {
-  GATE_MOVEMENTS,
   clearGateOpeningWidthMm,
   defaultGateBuildForMovement,
   gateBuildsForMovement,
@@ -28,7 +27,7 @@ import {
 } from "../../lib/gateHardware";
 import { OPTIONAL_ACCESSORY_KEY, selectedOptionalAddOns } from "../../lib/bomMetadata";
 import { GateSettingsSection, rankedLabel } from "./gateHardwareControls";
-import { SchemaDrivenForm, type SchemaField } from "./SchemaDrivenForm";
+import { SchemaDrivenForm, valueLabel, type SchemaField } from "./SchemaDrivenForm";
 
 interface Props {
   runId: string;
@@ -325,7 +324,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
     <div className="space-y-4 text-sm font-semibold">
       <GateSettingsSection
         title="Gate Type & Direction"
-        summary={`${optionLabel(buildOptions, build)} / ${optionLabel(GATE_MOVEMENTS, movement)}`}
+        summary={`${optionLabel(buildOptions, build)} / ${valueLabel(fieldMap.get("gate_movement"), movement)}`}
       >
         {renderField("gate_build", {
           options_json: buildOptions.map((option) => ({ value: option.value, label: option.label })),

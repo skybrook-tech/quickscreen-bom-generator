@@ -28,6 +28,9 @@ export interface SchemaField {
   visible_when_json: Record<string, unknown>;
   sort_order: number;
   options_group?: string;
+  // Show this job/run field as an always-visible chip in the run header
+  // strip (RunCard.tsx), instead of only inside the Run Settings drawer.
+  show_in_run_summary?: boolean;
 }
 
 interface SchemaDrivenFormProps {

@@ -42,4 +42,17 @@ export type UiCalculatorConfig = {
     run: SchemaField[];
     segment: SchemaField[];
   };
+  postFixingMaterials: Array<{ sku: string; label: string; description: string }>;
+  heightLadder: { slatHeightDeductionMm: number };
+  gateRules: {
+    maxWidthMm: {
+      pedestrianHorizontal: number;
+      pedestrianVertical: number;
+      slidingHorizontal: number;
+      slidingVertical: number;
+    };
+    doubleSwingMaxLeafWidthMm: number;
+    heightMinMm: number;
+    heightMaxMm: number;
+  };
 };

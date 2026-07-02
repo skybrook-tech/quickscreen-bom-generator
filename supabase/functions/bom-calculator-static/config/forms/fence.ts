@@ -32,6 +32,7 @@ function jobFields(colours: string[], slatSizeOptions: number[], slatGapOptions:
       default_value_json: slatSizeOptions[0] ?? 65,
       required: true,
       sort_order: 20,
+      show_in_run_summary: true,
     },
     {
       field_key: "slat_gap_mm",
@@ -43,11 +44,16 @@ function jobFields(colours: string[], slatSizeOptions: number[], slatGapOptions:
       default_value_json: slatGapOptions[0] ?? 9,
       required: true,
       sort_order: 30,
+      show_in_run_summary: true,
     },
   ];
 }
 
-function runFields(opts: { includeLouvre: boolean; defaultPostSystem: string }): FormFieldDef[] {
+function runFields(opts: {
+  includeLouvre: boolean;
+  defaultPostSystem: string;
+  panelStrategy: boolean;
+}): FormFieldDef[] {
   return [
     {
       field_key: "mounting_type",
@@ -62,6 +68,7 @@ function runFields(opts: { includeLouvre: boolean; defaultPostSystem: string }):
       default_value_json: "in_ground",
       required: true,
       sort_order: 40,
+      show_in_run_summary: true,
     },
     {
       field_key: "post_system",
@@ -117,7 +124,7 @@ function runFields(opts: { includeLouvre: boolean; defaultPostSystem: string }):
     },
     {
       field_key: "max_panel_width_mm",
-      label: "Max Post Spacing",
+      label: opts.panelStrategy ? "Max Panel Spacing" : "Max Post Spacing",
       control_type: "number",
       data_type: "number",
       unit: "mm",
@@ -184,6 +191,7 @@ export function fenceFormFields(
     run: runFields({
       includeLouvre: productCode === "QSHS",
       defaultPostSystem: productCode === "XPL" ? "xpl" : "standard_50",
+      panelStrategy: productCode === "BAYG",
     }),
     segment: segmentFields({ includePanelQuantity: productCode === "BAYG" }),
   };

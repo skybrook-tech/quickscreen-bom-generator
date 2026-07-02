@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { heightEntriesForSystem } from "../../lib/productOptionRules";
+import { useCalculatorConfig } from "../../hooks/useCalculatorConfig";
 import {
   derivedHeightForSlatCount,
   nearestDerivedHeight,
@@ -29,9 +30,12 @@ export function InlineHeightEditor({
   onChange,
 }: InlineHeightEditorProps) {
   const [draft, setDraft] = useState(String(clampHeight(valueMm)));
+  // Shares the ['calculator-config', productCode] TanStack cache already
+  // warmed by RunCard — cheap, no extra fetch.
+  const config = useCalculatorConfig(productCode);
   const heightEntries = useMemo(
-    () => heightEntriesForSystem(productCode, variables),
-    [productCode, variables],
+    () => heightEntriesForSystem(productCode, variables, config),
+    [productCode, variables, config],
   );
   const selectedEntry =
     derivedHeightForSlatCount(heightEntries, variables.slat_count) ??

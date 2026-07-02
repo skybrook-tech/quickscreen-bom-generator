@@ -1,4 +1,5 @@
 import type { CanonicalSegment } from "../types/canonical.types";
+import type { UiCalculatorConfig } from "../types/calculatorConfig.types";
 import { GATE_SEGMENT_STUB_KEYS } from "./segmentTermination";
 import { gateMovementOrDefault, type GateBuild, type GateMovement } from "./gateOptionRules";
 
@@ -8,6 +9,9 @@ export type GateConstraintType =
   | "sliding-horizontal"
   | "sliding-vertical";
 
+// Fallback used only if a QS_GATE CalculatorConfig isn't available yet — the
+// real values come from config.gateRules (get-calculator-config), see
+// useCalculatorConfig's fallbackConfig for the offline mirror of these.
 export const GATE_MAX_WIDTH_MM = {
   "pedestrian-horizontal": 2100,
   "pedestrian-vertical": 2100,
@@ -16,6 +20,16 @@ export const GATE_MAX_WIDTH_MM = {
 } as const;
 
 const DOUBLE_SWING_MAX_LEAF_WIDTH_MM = 2100;
+
+function maxWidthMmFor(gateType: GateConstraintType, config?: UiCalculatorConfig): number {
+  if (!config) return GATE_MAX_WIDTH_MM[gateType];
+  switch (gateType) {
+    case "pedestrian-horizontal": return config.gateRules.maxWidthMm.pedestrianHorizontal;
+    case "pedestrian-vertical": return config.gateRules.maxWidthMm.pedestrianVertical;
+    case "sliding-horizontal": return config.gateRules.maxWidthMm.slidingHorizontal;
+    case "sliding-vertical": return config.gateRules.maxWidthMm.slidingVertical;
+  }
+}
 
 export type GateWidthValidation = {
   gateType: GateConstraintType;
@@ -34,8 +48,8 @@ export function gateConstraintTypeFromSegment(segment: CanonicalSegment): GateCo
   return vertical ? "pedestrian-vertical" : "pedestrian-horizontal";
 }
 
-export function getMaxGateWidth(gateType: GateConstraintType): number {
-  return GATE_MAX_WIDTH_MM[gateType];
+export function getMaxGateWidth(gateType: GateConstraintType, config?: UiCalculatorConfig): number {
+  return maxWidthMmFor(gateType, config);
 }
 
 export function gateTypeLabel(gateType: GateConstraintType): string {
@@ -45,26 +59,28 @@ export function gateTypeLabel(gateType: GateConstraintType): string {
 export function getGateWidthAlternative(
   gateType: GateConstraintType,
   widthMm: number,
+  config?: UiCalculatorConfig,
 ): GateConstraintType | undefined {
   if (gateType === "pedestrian-horizontal") {
-    return widthMm <= GATE_MAX_WIDTH_MM["sliding-horizontal"] ? "sliding-horizontal" : undefined;
+    return widthMm <= maxWidthMmFor("sliding-horizontal", config) ? "sliding-horizontal" : undefined;
   }
   if (gateType === "pedestrian-vertical") {
-    if (widthMm <= GATE_MAX_WIDTH_MM["pedestrian-horizontal"]) return "pedestrian-horizontal";
-    return widthMm <= GATE_MAX_WIDTH_MM["sliding-vertical"] ? "sliding-vertical" : undefined;
+    if (widthMm <= maxWidthMmFor("pedestrian-horizontal", config)) return "pedestrian-horizontal";
+    return widthMm <= maxWidthMmFor("sliding-vertical", config) ? "sliding-vertical" : undefined;
   }
   return undefined;
 }
 
-export function validateGateWidth(segment: CanonicalSegment): GateWidthValidation {
+export function validateGateWidth(segment: CanonicalSegment, config?: UiCalculatorConfig): GateWidthValidation {
   const gateType = gateConstraintTypeFromSegment(segment);
   const movement = gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+  const doubleSwingMaxLeafWidthMm = config?.gateRules.doubleSwingMaxLeafWidthMm ?? DOUBLE_SWING_MAX_LEAF_WIDTH_MM;
   const maxWidthMm =
     movement === "double_swing"
-      ? DOUBLE_SWING_MAX_LEAF_WIDTH_MM * 2
-      : getMaxGateWidth(gateType);
+      ? doubleSwingMaxLeafWidthMm * 2
+      : getMaxGateWidth(gateType, config);
   const widthMm = Number(segment.segmentWidthMm ?? 0);
-  const alternative = getGateWidthAlternative(gateType, widthMm);
+  const alternative = getGateWidthAlternative(gateType, widthMm, config);
   if (!Number.isFinite(widthMm) || widthMm <= maxWidthMm) {
     return { gateType, maxWidthMm, widthMm, status: "ok", alternative };
   }
@@ -86,7 +102,7 @@ export function validateGateWidth(segment: CanonicalSegment): GateWidthValidatio
       widthMm,
       status: "error",
       alternative,
-      message: "Each leaf must be <= 2100mm. Reduce the opening or switch to Sliding.",
+      message: `Each leaf must be <= ${doubleSwingMaxLeafWidthMm}mm. Reduce the opening or switch to Sliding.`,
     };
   }
   return {
@@ -95,7 +111,7 @@ export function validateGateWidth(segment: CanonicalSegment): GateWidthValidatio
     widthMm,
     status: "error",
     alternative,
-    message: "Pedestrian gate width above 2100mm - try Double swing (2 leaves) or Sliding.",
+    message: `Pedestrian gate width above ${maxWidthMm}mm - try Double swing (2 leaves) or Sliding.`,
   };
 }
 

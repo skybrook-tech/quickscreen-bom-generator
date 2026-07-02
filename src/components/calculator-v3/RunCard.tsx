@@ -57,6 +57,14 @@ function runMasterVariables(
   };
 }
 
+// mounting_type has a legacy mounting_method alias written by some payloads —
+// config only declares one field_key, so resolve both here rather than baking
+// the alias into every future summary field.
+function summaryVariableValue(fieldKey: string, vars: Record<string, unknown>) {
+  if (fieldKey === "mounting_type") return vars.mounting_method ?? vars.mounting_type ?? "in_ground";
+  return vars[fieldKey];
+}
+
 export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenConsumed }: Props) {
   const { state, dispatch } = useCalculator();
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -83,20 +91,26 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
     [run, state.payload?.variables],
   );
   const jobMax = clampPostSpacing(
-    runVariables.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode),
-    maxPanelWidthForSystem(run.productCode),
+    runVariables.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode, config),
+    maxPanelWidthForSystem(run.productCode, config),
   );
   const firstSegment = firstFenceSegment(run);
   const runLengthM = (calcTotalLength(run) / 1000).toFixed(2);
   const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
-  const slatSize = Number(runVariables.slat_size_mm ?? 65);
-  const slatGap = Number(runVariables.slat_gap_mm ?? 5);
-  const mountingRaw = runVariables.mounting_method ?? runVariables.mounting_type ?? "in_ground";
-  const mountingField = config.formFields.run.find(
-    (field) => field.field_key === "mounting_type" || field.field_key === "mounting_method",
-  );
-  const mounting = valueLabel(mountingField, mountingRaw);
   const isBayg = run.productCode === "BAYG";
+  const isPanelStrategy = config.strategy.fence === "panel";
+  const summaryChips = useMemo(
+    () =>
+      [...config.formFields.job, ...config.formFields.run]
+        .filter((field) => field.show_in_run_summary)
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map((field) => ({
+          key: field.field_key,
+          label: field.label,
+          value: valueLabel(field, summaryVariableValue(field.field_key, runVariables)),
+        })),
+    [config.formFields.job, config.formFields.run, runVariables],
+  );
 
   useEffect(
     () => () => {
@@ -207,8 +221,11 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
     setExpandedId(segmentId);
   }
 
+  const sectionSegments = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
+  const gateSegments = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
+
   return (
-    <div className="rounded-2xl border-2 border-brand-primary/20 bg-brand-card py-4 shadow-md">
+    <div className="rounded-2xl border-2 border-brand-primary/50 bg-brand-card py-4 shadow-md">
       <div className="px-4 mb-3 flex flex-wrap items-start justify-between gap-3">
         <h3 className="grid min-w-0 flex-1 gap-1 text-brand-text">
           <span className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5 leading-tight">
@@ -230,10 +247,12 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
               />
             </span>
             <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
-            <span>Slat size: <strong className="text-brand-text">{slatSize}mm</strong></span>
-            <span>Gap size: <strong className="text-brand-text">{slatGap}mm</strong></span>
-            <span>Post mounting: <strong className="text-brand-text">{isBayg ? "Not required" : mounting}</strong></span>
-            <span>Max post spacing: <strong className="text-brand-text">{jobMax}mm</strong></span>
+            {summaryChips.map((chip) => (
+              <span key={chip.key}>
+                {chip.label}: <strong className="text-brand-text">{isBayg && chip.key === "mounting_type" ? "Not required" : chip.value}</strong>
+              </span>
+            ))}
+            <span>{isPanelStrategy ? "Max panel spacing" : "Max post spacing"}: <strong className="text-brand-text">{jobMax}mm</strong></span>
             <span>Corners: <strong className="text-brand-text">{run.corners?.length ?? 0}</strong></span>
           </span>
         </h3>
@@ -289,11 +308,11 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
             </p>
           )}
 
-          <div className="px-4 space-y-2">
-            {run.segments
-              .filter((segment) => segment.segmentKind !== "gate_opening")
+          <div className="">
+            {sectionSegments
               .map((seg, segIdx) => (
                 <SegmentRow
+                  isLastSegment={segIdx === sectionSegments.length - 1}
                   key={seg.segmentId}
                   runId={run.runId}
                   seg={seg}
@@ -320,16 +339,18 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
                 />
               ))}
             {!isBayg && run.segments.some((segment) => segment.segmentKind === "gate_opening") && (
-              <div className="pt-2">
-                <p className="mb-2 flex items-center gap-2 text-sm font-bold text-brand-muted">
-                  <CheckCircle2 size={16} />
-                  Gates
-                </p>
+              <div className="">
+                <div className="px-4 bg-brand-accent/5">
+                  <p className="py-2 flex items-center gap-2 text-sm font-bold text-brand-muted">
+                    <CheckCircle2 size={16} />
+                    Gates
+                  </p>
+                </div>
                 <div className="space-y-2">
-                  {run.segments
-                    .filter((segment) => segment.segmentKind === "gate_opening")
+                  {gateSegments
                     .map((seg, gateIdx) => (
                       <SegmentRow
+                        isLastSegment={gateIdx === gateSegments.length - 1}
                         key={seg.segmentId}
                         runId={run.runId}
                         seg={seg}

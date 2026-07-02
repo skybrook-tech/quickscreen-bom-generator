@@ -21,10 +21,13 @@ export function deriveHeights(
   slat: 65 | 90,
   gap: number,
   range: HeightRange = DEFAULT_HEIGHT_RANGE,
+  // Mirrors CalculatorConfig.geometry.slatHeightDeduction server-side —
+  // pass config.heightLadder.slatHeightDeductionMm to stay in sync with it.
+  slatHeightDeductionMm = 3,
 ): DerivedHeight[] {
   const heights: DerivedHeight[] = [];
   for (let N = range.minN; N <= range.maxN; N++) {
-    const height = (slat + gap) * N - gap + 3;
+    const height = (slat + gap) * N - gap + slatHeightDeductionMm;
     if (height >= range.minHeight && height <= range.maxHeight) {
       heights.push({ N, height });
     }

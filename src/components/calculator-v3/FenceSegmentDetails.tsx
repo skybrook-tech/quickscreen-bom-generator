@@ -160,7 +160,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
   const jobMax = clampPostSpacing(
     runVariables.max_panel_width_mm,
-    maxPanelWidthForSystem(productCode),
+    maxPanelWidthForSystem(productCode, config),
   );
   const effectiveMax = clampPostSpacing(v.max_panel_width_mm, jobMax);
   const [maxSpacingDraft, setMaxSpacingDraft] = useState(String(effectiveMax));

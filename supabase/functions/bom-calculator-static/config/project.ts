@@ -15,6 +15,9 @@ export type UiCalculatorConfig = {
   postRules: Pick<CalculatorConfig["postRules"], "longPostThresholdMm">;
   defaults: CalculatorConfig["defaults"];
   formFields: CalculatorConfig["formFields"];
+  postFixingMaterials: CalculatorConfig["postFixingMaterials"];
+  heightLadder: CalculatorConfig["heightLadder"];
+  gateRules: CalculatorConfig["gateRules"];
 };
 
 export function projectUiConfig(config: CalculatorConfig): UiCalculatorConfig {
@@ -38,5 +41,8 @@ export function projectUiConfig(config: CalculatorConfig): UiCalculatorConfig {
     },
     defaults: config.defaults,
     formFields: config.formFields,
+    postFixingMaterials: config.postFixingMaterials,
+    heightLadder: config.heightLadder,
+    gateRules: config.gateRules,
   };
 }

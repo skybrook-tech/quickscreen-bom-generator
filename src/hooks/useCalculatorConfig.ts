@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import type { UiCalculatorConfig } from "../types/calculatorConfig.types";
 import type { SchemaField } from "../components/calculator-v3/SchemaDrivenForm";
+import { FALLBACK_POST_FIXING_MATERIALS } from "../lib/postFixingOptions";
 
 const STANDARD_COLOURS = ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"];
 const ALUMAWOOD_COLOURS = ["KWI", "WRC"];
@@ -46,8 +47,96 @@ function fallbackConfig(productCode: string): UiCalculatorConfig {
       mountingType: "in_ground",
     },
     formFields: {
-      job: [],
-      run: [],
+      job: [
+        {
+          id: "colour_code",
+          field_key: "colour_code",
+          label: "Colour",
+          control_type: "colour_palette",
+          data_type: "enum",
+          required: true,
+          default_value_json: "B",
+          options_json: STANDARD_COLOURS,
+          visible_when_json: {},
+          sort_order: 10,
+        },
+        {
+          id: "slat_size_mm",
+          field_key: "slat_size_mm",
+          label: "Slat Size",
+          control_type: "select",
+          data_type: "enum",
+          unit: "mm",
+          required: true,
+          default_value_json: 65,
+          options_json: [65, 90],
+          visible_when_json: {},
+          sort_order: 20,
+          show_in_run_summary: true,
+        },
+        {
+          id: "slat_gap_mm",
+          field_key: "slat_gap_mm",
+          label: "Slat gap",
+          control_type: "combined_gap",
+          data_type: "number",
+          unit: "mm",
+          required: true,
+          default_value_json: productCode === "VS" ? 20 : 9,
+          options_json: [5, 9, 12, 15, 20, 30],
+          visible_when_json: {},
+          sort_order: 30,
+          show_in_run_summary: true,
+        },
+      ],
+      run: [
+        {
+          id: "mounting_type",
+          field_key: "mounting_type",
+          label: "Post mounting type",
+          control_type: "select",
+          data_type: "enum",
+          required: true,
+          default_value_json: "in_ground",
+          options_json: [
+            { value: "in_ground", label: "Concreted in ground" },
+            { value: "base_plate", label: "Base-plated to slab" },
+            { value: "core_drill", label: "Core-drilled into concrete" },
+          ],
+          visible_when_json: {},
+          sort_order: 40,
+          show_in_run_summary: true,
+        },
+        {
+          id: "post_size",
+          field_key: "post_size",
+          label: "Standard post size",
+          control_type: "select",
+          data_type: "enum",
+          unit: "mm",
+          required: false,
+          default_value_json: "50",
+          options_json: [
+            { value: "50", label: "50mm Post Standard" },
+            { value: "65", label: "65mm Post Standard HD" },
+          ],
+          visible_when_json: {},
+          sort_order: 45,
+        },
+        {
+          id: "max_panel_width_mm",
+          field_key: "max_panel_width_mm",
+          label: "Max Post Spacing",
+          control_type: "number",
+          data_type: "number",
+          unit: "mm",
+          required: false,
+          default_value_json: productCode === "BAYG" ? 3000 : 2600,
+          options_json: [],
+          visible_when_json: {},
+          sort_order: 60,
+        },
+      ],
       segment:
         productCode === "BAYG"
           ? [
@@ -65,6 +154,19 @@ function fallbackConfig(productCode: string): UiCalculatorConfig {
               },
             ]
           : [],
+    },
+    postFixingMaterials: FALLBACK_POST_FIXING_MATERIALS,
+    heightLadder: { slatHeightDeductionMm: 3 },
+    gateRules: {
+      maxWidthMm: {
+        pedestrianHorizontal: 2100,
+        pedestrianVertical: 2100,
+        slidingHorizontal: 6150,
+        slidingVertical: 6166,
+      },
+      doubleSwingMaxLeafWidthMm: 2100,
+      heightMinMm: 600,
+      heightMaxMm: 2100,
     },
   };
 }

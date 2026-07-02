@@ -90,21 +90,30 @@ export function gapOptionsForSystem(productCode: string) {
   return [];
 }
 
-export function heightOptionsForSystem(productCode: string, variables: Variables) {
-  return heightEntriesForSystem(productCode, variables).map((item) => item.height);
+export function heightOptionsForSystem(productCode: string, variables: Variables, config?: UiCalculatorConfig) {
+  return heightEntriesForSystem(productCode, variables, config).map((item) => item.height);
 }
 
-export function heightEntriesForSystem(productCode: string, variables: Variables): DerivedHeight[] {
+export function heightEntriesForSystem(
+  productCode: string,
+  variables: Variables,
+  config?: UiCalculatorConfig,
+): DerivedHeight[] {
   if (productCode === "VS") return [];
   const slatSize = Number(variables.slat_size_mm ?? 65);
   const slatGap = Number(variables.slat_gap_mm ?? DEFAULT_SLAT_GAP_MM);
   if ((slatSize !== 65 && slatSize !== 90) || !Number.isFinite(slatGap) || slatGap < 0) return [];
-  return deriveHeights(slatSize, slatGap, {
-    minN: 5,
-    maxN: 40,
-    minHeight: 300,
-    maxHeight: 2400,
-  });
+  return deriveHeights(
+    slatSize,
+    slatGap,
+    {
+      minN: 5,
+      maxN: 40,
+      minHeight: 300,
+      maxHeight: 2400,
+    },
+    config?.heightLadder?.slatHeightDeductionMm,
+  );
 }
 
 /**

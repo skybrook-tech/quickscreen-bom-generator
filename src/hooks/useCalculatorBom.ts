@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { useCalculator } from "../context/CalculatorContext";
 import { useBomCalculator } from "./useBomCalculator";
+import { useCalculatorConfig } from "./useCalculatorConfig";
 import { validateGateWidth } from "../lib/gateConstraints";
 import {
   roundMoney,
@@ -63,6 +64,9 @@ export function useCalculatorBom(
   const payload = state.payload;
   const bomMutation = useBomCalculator();
   const lastBom = state.bomResult;
+  // Gate width/height bounds live on the QS_GATE config, not the fence's —
+  // shares the same TanStack cache key other components warm.
+  const gateConfig = useCalculatorConfig("QS_GATE");
 
   const [extraItems, setExtraItems] = useState<ExtraItem[]>([]);
   const [lineEdits, setLineEdits] = useState<Record<string, number | null>>({});
@@ -126,10 +130,10 @@ export function useCalculatorBom(
           .map((segment) => ({
             runId: run.runId,
             segmentId: segment.segmentId,
-            ...validateGateWidth(segment),
+            ...validateGateWidth(segment, gateConfig),
           })),
       ) ?? [],
-    [payload],
+    [payload, gateConfig],
   );
 
   const gateWidthErrors = useMemo(
@@ -314,7 +318,7 @@ export function useCalculatorBom(
     const gateErrors = payload.runs.flatMap((run) =>
       run.segments
         .filter((segment) => segment.segmentKind === "gate_opening")
-        .map((segment) => validateGateWidth(segment))
+        .map((segment) => validateGateWidth(segment, gateConfig))
         .filter((result) => result.status === "error"),
     );
     if (emptyRuns || economyErrors.length > 0 || gateErrors.length > 0) {
@@ -331,7 +335,7 @@ export function useCalculatorBom(
     } catch {
       // Error available via bomMutation.error
     }
-  }, [payload, payloadCalcKey, dispatch]);
+  }, [payload, payloadCalcKey, dispatch, gateConfig]);
 
   const runBomRecalcRef = useRef(runBomRecalculation);
   runBomRecalcRef.current = runBomRecalculation;

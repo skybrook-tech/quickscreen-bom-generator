@@ -99,7 +99,7 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
         variables={variables}
         onChange={updateRunVariables}
         onPatch={patchRunVariables}
-        extra={{ productCode }}
+        extra={{ productCode, postFixingMaterials: config.postFixingMaterials }}
       />
     );
   }
@@ -146,7 +146,7 @@ export function RunSettingsEditor({ run, onCollapse }: Props) {
         nextVariables.post_fixing_material_sku = getPreferredGroutSku();
       }
     }
-    if (key === "post_fixing_material_sku" && isPreferredGroutSku(value)) {
+    if (key === "post_fixing_material_sku" && isPreferredGroutSku(value, config.postFixingMaterials)) {
       setPreferredGroutSku(value);
     }
     if (key === "post_system") {

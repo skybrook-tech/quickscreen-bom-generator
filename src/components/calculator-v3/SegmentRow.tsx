@@ -42,6 +42,11 @@ import {
 } from "../../lib/heights";
 import { colourName } from "./ColourPalette";
 import { InlineHeightEditor } from "./InlineHeightEditor";
+import {
+  clearSegmentOverridePatch,
+  segmentDifferenceBits,
+  segmentMatchesRun,
+} from "../../lib/runFieldOverrides";
 
 interface Props {
   runId: string;
@@ -54,6 +59,7 @@ interface Props {
   onAddGate?: (sectionId: string) => void;
   showRunDefaultsTeaching?: boolean;
   onDismissRunDefaultsTeaching?: () => void;
+  isLastSegment?: boolean;
 }
 
 function postLabel(
@@ -150,6 +156,7 @@ export function SegmentRow({
   onAddGate,
   showRunDefaultsTeaching = false,
   onDismissRunDefaultsTeaching,
+  isLastSegment = false,
 }: Props) {
   const { state, dispatch } = useCalculator();
   const collapseTimerRef = useRef<number | null>(null);
@@ -176,8 +183,15 @@ export function SegmentRow({
     (field) => field.field_key === "mounting_type" || field.field_key === "mounting_method",
   );
   const postSizeField = config.formFields.run.find((field) => field.field_key === "post_size");
+  const slatSizeField = config.formFields.job.find((field) => field.field_key === "slat_size_mm");
+  const slatGapField = config.formFields.job.find((field) => field.field_key === "slat_gap_mm");
+  // Shares RunCard's already-warmed ['calculator-config', 'QS_GATE'] cache —
+  // gate width/height bounds live on the QS_GATE config, not the fence's.
+  const gateConfig = useCalculatorConfig(gate ? "QS_GATE" : "");
+  const segmentNumber = segIdx + 1;
+
   const heightEntries = run
-    ? heightEntriesForSystem(productCode, segmentVariables)
+    ? heightEntriesForSystem(productCode, segmentVariables, config)
     : [];
   const heightInputsReady =
     productCode === "VS" ||
@@ -194,8 +208,8 @@ export function SegmentRow({
   const fenceColour = String(segmentVariables.colour_code ?? "B");
   const postColour = String(segmentVariables.post_colour_code ?? fenceColour);
   const maxSpacing = clampPostSpacing(
-    segmentVariables.max_panel_width_mm ?? maxPanelWidthForSystem(productCode),
-    maxPanelWidthForSystem(productCode),
+    segmentVariables.max_panel_width_mm ?? maxPanelWidthForSystem(productCode, config),
+    maxPanelWidthForSystem(productCode, config),
   );
   const segmentLength = Number(seg.segmentWidthMm ?? 0);
   const panelCount = segmentLength > 0 ? Math.max(1, Math.ceil(segmentLength / maxSpacing)) : 0;
@@ -206,7 +220,7 @@ export function SegmentRow({
         ? `${Math.round(segmentLength)}mm`
         : `${panelCount} x ${Math.round(segmentLength / panelCount)}mm`;
   const gateVars = seg.variables ?? {};
-  const gateWidthValidation = gate ? validateGateWidth(seg) : null;
+  const gateWidthValidation = gate ? validateGateWidth(seg, gateConfig) : null;
   const gateBuild = String(
     gateVars[GATE_SEGMENT_STUB_KEYS.gateBuild] ??
     (productCode === "VS" ? "qsg_hinged_vertical" : "qsg_hinged_horizontal"),
@@ -219,12 +233,18 @@ export function SegmentRow({
     );
   const compactLabel =
     displayLabel?.replace(/\s+/g, "") ??
-    `R${runIdx + 1}${gate ? "G" : "S"}${segIdx + 1}`;
+    `R${runIdx + 1}${gate ? "G" : "S"}${segmentNumber}`;
+
   const titleLabel = gate
-    ? `Gate ${segIdx + 1} — ${Math.round(segmentLength)}mm`
+    ? `Gate ${segmentNumber}`
     : isBayg
-      ? `Panel ${segIdx + 1} — ${Math.round(segmentLength)}mm`
-      : `Section ${segIdx + 1}`;
+      ? `Panel ${segmentNumber}`
+      : `Section ${segmentNumber}`;
+
+  const afterTitleLabel = gate
+    ? `${Math.round(segmentLength)}mm` : `${(segmentLength / 1000).toFixed(2)}m`
+
+
   const matchesMaster = (() => {
     if (!run) return true;
     if (gate) {
@@ -244,32 +264,22 @@ export function SegmentRow({
       if (structural && masterStructural) return true;
       return sameValue(value, master);
     };
-    const keys = [
-      "product_code",
-      "colour_code",
-      "post_colour_code",
-      "slat_size_mm",
-      "slat_gap_mm",
-      "slat_gap_mode",
-      "post_size",
-      "post_system",
-      "mounting_type",
-      "mounting_method",
-      "max_panel_width_mm",
+    const terminationSubtypeKeys = [
       SEGMENT_TERMINATION_KEYS.leftNonSystemSubtype,
       SEGMENT_TERMINATION_KEYS.rightNonSystemSubtype,
     ];
     return (
       settingsKindMatches(SEGMENT_TERMINATION_KEYS.leftKind) &&
       settingsKindMatches(SEGMENT_TERMINATION_KEYS.rightKind) &&
-      keys.every((key) => unsetOrSame(vars, key, masterVariables[key]))
+      terminationSubtypeKeys.every((key) => unsetOrSame(vars, key, masterVariables[key])) &&
+      segmentMatchesRun(config, vars, masterVariables)
     );
   })();
   const masterFenceColour = String(masterVariables.colour_code ?? "B");
   const masterPostColour = String(masterVariables.post_colour_code ?? masterFenceColour);
   const masterMaxSpacing = clampPostSpacing(
-    masterVariables.max_panel_width_mm ?? maxPanelWidthForSystem(productCode),
-    maxPanelWidthForSystem(productCode),
+    masterVariables.max_panel_width_mm ?? maxPanelWidthForSystem(productCode, config),
+    maxPanelWidthForSystem(productCode, config),
   );
   const masterPanelCount = segmentLength > 0 ? Math.max(1, Math.ceil(segmentLength / masterMaxSpacing)) : 0;
   const summaryBitsBase = [
@@ -281,6 +291,24 @@ export function SegmentRow({
       ? [{ label: "Qty", value: Math.max(1, Math.round(Number(seg.variables?.panel_quantity ?? 1))), emphasis: true }]
       : []),
   ].filter(Boolean) as SummaryItem[];
+
+  const BESPOKE_DIFFERENCE_FIELD_KEYS = new Set([
+    "colour_code",
+    "post_colour_code",
+    "slat_size_mm",
+    "slat_gap_mm",
+    "post_system",
+    "post_size",
+    "mounting_type",
+    "mounting_method",
+    "max_panel_width_mm",
+  ]);
+
+  const genericExtraDifferenceBits = gate
+    ? []
+    : segmentDifferenceBits(config, segmentVariables, masterVariables).filter(
+      (bit) => !BESPOKE_DIFFERENCE_FIELD_KEYS.has(bit.field_key),
+    );
 
   const rawDifferenceBits = gate
     ? [
@@ -354,12 +382,12 @@ export function SegmentRow({
         : []),
       {
         label: "Slat",
-        value: `${segmentVariables.slat_size_mm ?? 65}mm`,
+        value: valueLabel(slatSizeField, segmentVariables.slat_size_mm ?? 65),
         changed: !sameValue(segmentVariables.slat_size_mm ?? 65, masterVariables.slat_size_mm ?? 65),
       },
       {
         label: "Gap",
-        value: `${segmentVariables.slat_gap_mm ?? 9}mm`,
+        value: valueLabel(slatGapField, segmentVariables.slat_gap_mm ?? 9),
         changed: !sameValue(segmentVariables.slat_gap_mm ?? 9, masterVariables.slat_gap_mm ?? 9),
       },
       {
@@ -386,15 +414,23 @@ export function SegmentRow({
       },
       { label: "Panel Count", value: panelCount, changed: !isBayg && !sameValue(panelCount, masterPanelCount) },
       { label: "Panel width", value: panelWidthSummary, changed: !isBayg && !sameValue(maxSpacing, masterMaxSpacing) },
+      // Any other job/run-scope field this product declares (e.g. post-fixing
+      // material, base-plate substrate, boundary types, louvre treatment) that
+      // doesn't have a bespoke bit above — kept generic so a new product's own
+      // fields surface here automatically instead of being silently invisible.
+      ...genericExtraDifferenceBits,
     ];
+
   const differenceBits =
     matchesMaster ? [] : rawDifferenceBits.filter((item) => item.changed && item.label !== "Height");
+
   const summaryText = [
     ...(gate
       ? summaryBitsBase.map((item) => `${item.label}: ${item.value}`)
       : []),
     ...differenceBits.map((item) => `${item.label}: ${item.value}`),
   ].join(", ");
+
   const visibleSettings = rawDifferenceBits.filter((item) => {
     if (item.label === "Height") return false;
     if (isBayg && ["Post", "Mounting", "Panel Count", "Panel width"].includes(item.label)) {
@@ -547,6 +583,7 @@ export function SegmentRow({
 
   function resetToMaster() {
     if (!run) return;
+
     if (gate) {
       const movement = gateMovementOrDefault(seg.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]);
       dispatch({
@@ -572,18 +609,10 @@ export function SegmentRow({
       runId,
       segment: {
         ...patchSegmentVariables(seg, {
+          // slat_count is a height-ladder derivation artifact, not a
+          // job/run form field — clear it alongside the config-driven keys.
           slat_count: null,
-          product_code: null,
-          colour_code: null,
-          post_colour_code: null,
-          slat_size_mm: null,
-          slat_gap_mm: null,
-          slat_gap_mode: null,
-          post_size: null,
-          post_system: null,
-          mounting_type: null,
-          mounting_method: null,
-          max_panel_width_mm: null,
+          ...clearSegmentOverridePatch(config),
         }),
       },
     });
@@ -606,8 +635,8 @@ export function SegmentRow({
 
 
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-brand-primary via-brand-primary/70 to-brand-primary/15 p-[2px] shadow-md">
-      <div className="relative cursor-pointer overflow-hidden rounded-[0.9rem] bg-brand-card text-sm font-semibold shadow-inner"
+    <div className={`border-t py-1 ${isLastSegment ? "border-b" : ""}`}>
+      <div className="relative cursor-pointer overflow-hidden rounded-[0.9rem] text-sm font-semibold"
         onDoubleClick={(event) => {
           const target = event.target as HTMLElement;
           if (target.closest("button,input,select,textarea,a")) return;
@@ -621,21 +650,42 @@ export function SegmentRow({
             <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2">
               <p className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-left text-lg font-black text-brand-text">
                 {titleLabel}
-                {!gate && (
+                {afterTitleLabel && (
                   <span className="text-sm font-semibold text-brand-muted">
-                    <strong className="font-extrabold text-brand-text">{(segmentLength / 1000).toFixed(2)}m</strong>
+                    <strong className="font-extrabold text-brand-text">{afterTitleLabel}</strong>
                   </span>
                 )}
-                <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-muted">
-                  Height:
-                  <InlineHeightEditor
-                    productCode={productCode}
-                    variables={segmentVariables}
-                    valueMm={selectedHeight}
-                    ariaLabel={`${titleLabel} height`}
-                    onChange={updateInlineHeight}
-                  />
-                </span>
+                <div className="flex items-center gap-2">
+
+                  <label className="flex flex-col gap-1">
+                    <span className="text-sm font-bold text-brand-muted">
+                      {gate || isBayg ? "Width (mm)" : "Length (m)"}
+                    </span>
+                    <NumberInput
+                      value={gate || isBayg ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
+                      step={gate || isBayg ? 50 : 0.01}
+                      min={0}
+                      className="w-28 px-2 py-1.5 text-center tabular-nums"
+                      onChange={(v) =>
+                        updateGeometry(
+                          "segmentWidthMm",
+                          gate || isBayg ? Math.round(Number(v)) : Math.round(Number(v) * 1000),
+                        )
+                      }
+                    />
+                  </label>
+
+                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-muted">
+                    Height:
+                    <InlineHeightEditor
+                      productCode={productCode}
+                      variables={segmentVariables}
+                      valueMm={selectedHeight}
+                      ariaLabel={`${titleLabel} height`}
+                      onChange={updateInlineHeight}
+                    />
+                  </span>
+                </div>
               </p>
               <div className="flex items-center justify-center">
                 <button
@@ -684,7 +734,7 @@ export function SegmentRow({
                   aria-label={open ? `Collapse ${gate ? "gate" : "section"} settings` : `Open ${gate ? "gate" : "section"} settings`}
                   title={open ? `Collapse ${gate ? "gate" : "section"} settings` : `${gate ? "Gate" : "Section"} settings`}
                 >
-                  <span>{gate ? "Gate Settings" : "Section Settings"}</span>
+                  <span>Settings</span>
                   {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                 </button>
               </div>
@@ -741,23 +791,7 @@ export function SegmentRow({
               </div>
             )}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <label className="flex flex-col gap-1">
-                <span className="text-sm font-bold text-brand-muted">
-                  {gate || isBayg ? "Width (mm)" : "Length (m)"}
-                </span>
-                <NumberInput
-                  value={gate || isBayg ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
-                  step={gate || isBayg ? 50 : 0.01}
-                  min={0}
-                  className="w-28 px-2 py-1.5 text-center tabular-nums"
-                  onChange={(v) =>
-                    updateGeometry(
-                      "segmentWidthMm",
-                      gate || isBayg ? Math.round(Number(v)) : Math.round(Number(v) * 1000),
-                    )
-                  }
-                />
-              </label>
+
               <label className="flex flex-col gap-1">
                 <div className="flex items-center gap-1">
 

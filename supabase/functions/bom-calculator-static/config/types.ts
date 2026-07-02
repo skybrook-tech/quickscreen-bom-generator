@@ -192,6 +192,36 @@ export type CalculatorConfig = {
     };
   };
 
+  // Post-fixing/grout material catalogue offered by the post_fixing_select
+  // control (in-ground mounting only). UI-safe — sku/label/description, no
+  // pricing. Overridable per supplier if their grout range differs.
+  postFixingMaterials: Array<{ sku: string; label: string; description: string }>;
+
+  // Minimal, UI-safe slice of `geometry` — the achieved-height ladder formula
+  // ((slat + gap) * N - gap + slatHeightDeductionMm) needs this one constant
+  // client-side to derive selectable heights. The rest of `geometry` stays
+  // proprietary (see AGENTS.md §10) and is never projected.
+  heightLadder: { slatHeightDeductionMm: number };
+
+  // QS_GATE opening-width/height bounds enforced client-side in
+  // src/lib/gateConstraints.ts (v3). Only meaningful on the QS_GATE config
+  // (fence configs carry the same default values but never read them).
+  // src/lib/gateFenceResolve.ts carries an unwired duplicate of the height
+  // bounds but is v4-only (calculator-v4 is slated for removal) — not
+  // pointed at this config. No live server-side enforcement of these
+  // bounds yet — see AGENTS.md business rules / phase-6 plan notes.
+  gateRules: {
+    maxWidthMm: {
+      pedestrianHorizontal: number;
+      pedestrianVertical: number;
+      slidingHorizontal: number;
+      slidingVertical: number;
+    };
+    doubleSwingMaxLeafWidthMm: number;
+    heightMinMm: number;
+    heightMaxMm: number;
+  };
+
   defaults: {
     slatSizeMm: number;
     slatGapMm: number;
@@ -245,6 +275,9 @@ export type FormFieldDef = {
   required?: boolean;
   sort_order: number;
   options_group?: string;
+  // Show this job/run field as an always-visible chip in the run header
+  // strip (RunCard.tsx), instead of only inside the Run Settings drawer.
+  show_in_run_summary?: boolean;
 };
 
 // ─── Canonical payload types (shared by engine, calculator, and canvas adapter) ──
