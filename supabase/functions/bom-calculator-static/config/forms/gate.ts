@@ -2,7 +2,7 @@
 //
 // Encodes all GATE_SEGMENT_STUB_KEYS (src/lib/segmentTermination.ts) as
 // segment-scope fields. GateSegmentDetails only actually mounts a curated
-// subset of these per section (mirroring how RunSettingsEditor/
+// subset of these per section (mirroring how RunCardSettings/
 // FenceSegmentDetails pick fields out of formFields by key) — a few keys
 // (match_run_height, gate_height_mm, include_lock_box, lock_box_type,
 // hinge_side, sliding_motor_type, leaf_2_width_mm, and the individual

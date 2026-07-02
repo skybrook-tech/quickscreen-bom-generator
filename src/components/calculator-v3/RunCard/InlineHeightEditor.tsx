@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
-import { heightEntriesForSystem } from "../../lib/productOptionRules";
-import { useCalculatorConfig } from "../../hooks/useCalculatorConfig";
+import { heightEntriesForSystem } from "../../../lib/productOptionRules";
+import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import {
   derivedHeightForSlatCount,
   nearestDerivedHeight,
   type DerivedHeight,
-} from "../../lib/heights";
+} from "../../../lib/heights";
 
 type Variables = Record<string, string | number | boolean>;
 

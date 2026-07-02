@@ -9,11 +9,11 @@ import type {
   CanonicalRun,
   CanonicalSegment,
 } from "../../types/canonical.types";
-import { InlineHeightEditor } from "./InlineHeightEditor";
-import { FenceSegmentDetails } from "./FenceSegmentDetails";
-import { RunCard } from "./RunCard";
-import { RunSettingsEditor } from "./RunSettingsEditor";
-import { SegmentRow } from "./SegmentRow";
+import { InlineHeightEditor } from "./RunCard/InlineHeightEditor";
+import { FenceSegmentDetails } from "./RunCard/FenceSegmentDetails";
+import { RunCard } from "./RunCard/RunCard";
+import { RunCardSettings } from "./RunCard/RunCardSettings";
+import { SegmentRow } from "./RunCard/SegmentRow";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -244,7 +244,7 @@ describe("Run, section, and gate UI consistency", () => {
 
   it("places alternate post colour inside the run slats and colours dropdown", () => {
     setPayload(baseRun);
-    const { container, root } = render(<RunSettingsEditor run={baseRun} />);
+    const { container, root } = render(<RunCardSettings run={baseRun} />);
 
     const slatsRow = disclosureRow(container, "Slats, colors, and spacings");
     const postsRow = disclosureRow(container, "Post size, mounting and spacing");

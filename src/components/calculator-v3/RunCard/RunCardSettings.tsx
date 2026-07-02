@@ -1,24 +1,24 @@
 import { Check, ChevronUp } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { useCalculator } from "../../context/CalculatorContext";
-import { useCalculatorConfig } from "../../hooks/useCalculatorConfig";
-import type { CanonicalRun } from "../../types/canonical.types";
-import { defaultGateBuildForMovement, gateMovementOrDefault } from "../../lib/gateOptionRules";
+import { useCalculator } from "../../../context/CalculatorContext";
+import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
+import type { CanonicalRun } from "../../../types/canonical.types";
+import { defaultGateBuildForMovement, gateMovementOrDefault } from "../../../lib/gateOptionRules";
 import {
   applyProductOptionRules,
   initialVariablesForSystem,
   maxPanelWidthForSystem,
   normaliseVariablesForSystem,
-} from "../../lib/productOptionRules";
-import { GATE_SEGMENT_STUB_KEYS } from "../../lib/segmentTermination";
-import { localFenceProducts } from "../../lib/localSeedData";
-import { defaultVariablesFromFields } from "../../hooks/useProductVariables";
-import { isPreferredGroutSku } from "../../lib/postFixingOptions";
-import { getPreferredGroutSku, setPreferredGroutSku } from "../../lib/userPrefs";
-import { SchemaDrivenForm, valueLabel, type SchemaField } from "./SchemaDrivenForm";
-import { colourName } from "./ColourPalette";
-import { SettingsDisclosureRow } from "./SettingsDisclosureRow";
-import { combinedGapLabel, normaliseGapMode } from "../../lib/gapChoices";
+} from "../../../lib/productOptionRules";
+import { GATE_SEGMENT_STUB_KEYS } from "../../../lib/segmentTermination";
+import { localFenceProducts } from "../../../lib/localSeedData";
+import { defaultVariablesFromFields } from "../../../hooks/useProductVariables";
+import { isPreferredGroutSku } from "../../../lib/postFixingOptions";
+import { getPreferredGroutSku, setPreferredGroutSku } from "../../../lib/userPrefs";
+import { SchemaDrivenForm, valueLabel, type SchemaField } from "../SchemaDrivenForm";
+import { colourName } from "../ColourPalette";
+import { SettingsDisclosureRow } from "../SettingsDisclosureRow";
+import { combinedGapLabel, normaliseGapMode } from "../../../lib/gapChoices";
 
 interface Props {
   run: CanonicalRun;
@@ -49,7 +49,7 @@ function postLabel(productCode: string, variables: Record<string, string | numbe
   return "50mm Post Standard";
 }
 
-export function RunSettingsEditor({ run, onCollapse }: Props) {
+export function RunCardSettings({ run, onCollapse }: Props) {
   const { state, dispatch } = useCalculator();
   const [postColourOpen, setPostColourOpen] = useState(() => {
     const colour = String(run.variables?.colour_code ?? "B");

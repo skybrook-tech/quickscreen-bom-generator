@@ -8,6 +8,8 @@
 
 Latest print BOM header pass: printed BOMs no longer show the mobile subtotal/GST/total strip at the top, the job name prints as a large bold heading, and the Glass Outlet three-square mark uses explicit print-safe styling.
 
+Latest v3 RunCard folder refactor: the v3 run/segment UI is now grouped under `src/components/calculator-v3/RunCard/` mirroring the v4 folder convention. `RunCard` (shell), `RunCardSettings` (renamed from `RunSettingsEditor`), `SegmentRow` (collapsed header), and `SegmentRowSettings` (new — the expanded settings panel) are the four components; `InlineHeightEditor`, `FenceSegmentDetails`, `GateSegmentDetails` moved into the same folder, and shared summary helpers were extracted into `segmentSummary.tsx`. `RunListV3` and `RunSectionGateUi.test.tsx` import paths updated; `npm run build` passes.
+
 Latest PWA install-banner cleanup: the `/fence-calculator` top bar no longer mounts the custom install-for-offline-access prompt or iPhone home-screen hint, and mobile QA now verifies those install banners stay absent.
 
 Latest print BOM map-options merge fix: `codex/print-bom-map-options` is synced with current master, keeps the print dialog/map option and print BOM cleanup, and retains the BOM workings toggle plus PR #79 BOM-generation fixes.

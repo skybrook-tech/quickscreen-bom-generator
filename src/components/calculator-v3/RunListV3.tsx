@@ -6,7 +6,7 @@ import { useFenceProducts } from "../../hooks/useProducts";
 import { useDefaultVariables } from "../../hooks/useProductVariables";
 import type { ParseResult } from "../../lib/describeFenceParser";
 import { DescribeFenceBox } from "../calculator/DescribeFenceBox";
-import { RunCard } from "./RunCard";
+import { RunCard } from "./RunCard/RunCard";
 
 export function RunListV3({
   autoOpenFirstRunId,

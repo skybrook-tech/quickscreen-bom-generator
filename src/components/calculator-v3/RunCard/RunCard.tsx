@@ -1,28 +1,28 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, ChevronDown, ChevronUp, Plus, Trash2 } from "lucide-react";
-import { useCalculator } from "../../context/CalculatorContext";
-import { useCalculatorConfig } from "../../hooks/useCalculatorConfig";
-import type { CanonicalRun, CanonicalSegment } from "../../types/canonical.types";
-import { defaultGateVariables } from "../../lib/gateOptionRules";
-import { defaultVariablesFromFields } from "../../hooks/useProductVariables";
+import { useCalculator } from "../../../context/CalculatorContext";
+import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
+import type { CanonicalRun, CanonicalSegment } from "../../../types/canonical.types";
+import { defaultGateVariables } from "../../../lib/gateOptionRules";
+import { defaultVariablesFromFields } from "../../../hooks/useProductVariables";
 import {
   clampPostSpacing,
   maxPanelWidthForSystem,
-} from "../../lib/productOptionRules";
-import type { DerivedHeight } from "../../lib/heights";
+} from "../../../lib/productOptionRules";
+import type { DerivedHeight } from "../../../lib/heights";
 import {
   GATE_SEGMENT_STUB_KEYS,
   patchSegmentVariables,
-} from "../../lib/segmentTermination";
-import { systemDisplayName } from "../../lib/systemDisplay";
-import { Button } from "../shared/Button";
+} from "../../../lib/segmentTermination";
+import { systemDisplayName } from "../../../lib/systemDisplay";
+import { Button } from "../../shared/Button";
 import { SegmentRow } from "./SegmentRow";
-import { colourName } from "./ColourPalette";
-import { RunSettingsEditor } from "./RunSettingsEditor";
-import { RUN_DEFAULTS_TEACHING_KEY } from "../../lib/uiCopy";
-import { ConfirmButton } from "../shared/ConfirmButton";
+import { colourName } from "../ColourPalette";
+import { RunCardSettings } from "./RunCardSettings";
+import { RUN_DEFAULTS_TEACHING_KEY } from "../../../lib/uiCopy";
+import { ConfirmButton } from "../../shared/ConfirmButton";
 import { InlineHeightEditor } from "./InlineHeightEditor";
-import { valueLabel } from "./SchemaDrivenForm";
+import { valueLabel } from "../SchemaDrivenForm";
 
 const GATE_PRODUCT_CODE = "QS_GATE";
 const RUN_SETTINGS_AUTO_COLLAPSE_MS = 60000;
@@ -75,7 +75,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
   const runCollapseRef = useRef<number | null>(null);
 
   // Prefetch/warm the shared TanStack cache (['calculator-config', productCode])
-  // so RunSettingsEditor / FenceSegmentDetails / GateSegmentDetails have their
+  // so RunCardSettings / FenceSegmentDetails / GateSegmentDetails have their
   // form field config ready the moment a section or run settings is expanded,
   // instead of a fetch firing (and forms flashing empty) on first expand.
   const config = useCalculatorConfig(run.productCode);
@@ -294,7 +294,7 @@ export function RunCard({ run, runIdx, autoOpenFirstSection = false, onAutoOpenC
           onInput={resetRunSettingsCollapse}
           onChange={resetRunSettingsCollapse}
         >
-          <RunSettingsEditor run={run} onCollapse={() => setRunSettingsOpen(false)} />
+          <RunCardSettings run={run} onCollapse={() => setRunSettingsOpen(false)} />
         </div>
       )}
 

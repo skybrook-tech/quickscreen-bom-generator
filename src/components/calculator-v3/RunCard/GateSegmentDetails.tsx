@@ -1,11 +1,11 @@
 import { useMemo } from "react";
-import { useCalculator } from "../../context/CalculatorContext";
-import { useCalculatorConfig } from "../../hooks/useCalculatorConfig";
-import type { CanonicalSegment } from "../../types/canonical.types";
+import { useCalculator } from "../../../context/CalculatorContext";
+import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
+import type { CanonicalSegment } from "../../../types/canonical.types";
 import {
   GATE_SEGMENT_STUB_KEYS,
   patchSegmentVariables,
-} from "../../lib/segmentTermination";
+} from "../../../lib/segmentTermination";
 import {
   clearGateOpeningWidthMm,
   defaultGateBuildForMovement,
@@ -14,8 +14,8 @@ import {
   gateMovementOrDefault,
   isSwingGateMovement,
   optionLabel,
-} from "../../lib/gateOptionRules";
-import { GateComponentList } from "./GateComponentList";
+} from "../../../lib/gateOptionRules";
+import { GateComponentList } from "../GateComponentList";
 import {
   baseHardwareSku,
   hingeGapForSku,
@@ -24,10 +24,10 @@ import {
   latchGapForSku,
   listHinges,
   listLatches,
-} from "../../lib/gateHardware";
-import { OPTIONAL_ACCESSORY_KEY, selectedOptionalAddOns } from "../../lib/bomMetadata";
-import { GateSettingsSection, rankedLabel } from "./gateHardwareControls";
-import { SchemaDrivenForm, valueLabel, type SchemaField } from "./SchemaDrivenForm";
+} from "../../../lib/gateHardware";
+import { OPTIONAL_ACCESSORY_KEY, selectedOptionalAddOns } from "../../../lib/bomMetadata";
+import { GateSettingsSection, rankedLabel } from "../gateHardwareControls";
+import { SchemaDrivenForm, valueLabel, type SchemaField } from "../SchemaDrivenForm";
 
 interface Props {
   runId: string;

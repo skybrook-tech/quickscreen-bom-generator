@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { useCalculator } from "../../context/CalculatorContext";
-import { useCalculatorConfig } from "../../hooks/useCalculatorConfig";
-import type { CanonicalSegment } from "../../types/canonical.types";
+import { useCalculator } from "../../../context/CalculatorContext";
+import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
+import type { CanonicalSegment } from "../../../types/canonical.types";
 import {
   applyProductOptionRules,
   clampPostSpacing,
@@ -10,17 +10,17 @@ import {
   maxPanelWidthForSystem,
   MIN_POST_SPACING_MM,
   normaliseVariablesForSystem,
-} from "../../lib/productOptionRules";
-import { localFenceProducts } from "../../lib/localSeedData";
+} from "../../../lib/productOptionRules";
+import { localFenceProducts } from "../../../lib/localSeedData";
 import {
   SEGMENT_OPTION_KEYS,
   patchSegmentVariables,
-} from "../../lib/segmentTermination";
-import { SchemaDrivenForm, valueLabel, type SchemaField } from "./SchemaDrivenForm";
-import NumberInput from "../shared/NumberInput";
-import { SettingsDisclosureRow } from "./SettingsDisclosureRow";
-import { colourName } from "./ColourPalette";
-import { combinedGapLabel, normaliseGapMode } from "../../lib/gapChoices";
+} from "../../../lib/segmentTermination";
+import { SchemaDrivenForm, valueLabel, type SchemaField } from "../SchemaDrivenForm";
+import NumberInput from "../../shared/NumberInput";
+import { SettingsDisclosureRow } from "../SettingsDisclosureRow";
+import { colourName } from "../ColourPalette";
+import { combinedGapLabel, normaliseGapMode } from "../../../lib/gapChoices";
 
 const SECTION_POST_FIELD_KEYS = new Set([
   "mounting_method",
@@ -369,7 +369,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
                 min={MIN_POST_SPACING_MM}
                 max={MAX_POST_SPACING_MM}
                 step={50}
-                className="w-28 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
+                className="w-28 rounded-lg border border-brand-border bg-brand-card px-2 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
               />
             </label>
           </div>
