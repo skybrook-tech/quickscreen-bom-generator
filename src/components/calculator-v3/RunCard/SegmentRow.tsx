@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useCalculator } from "../../../context/CalculatorContext";
 import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import type { CanonicalSegment } from "../../../types/canonical.types";
-import { ChevronDown, ChevronUp, Plus, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, RulerDimensionLine, X } from "lucide-react";
 import { ConfirmButton } from "../../shared/ConfirmButton";
 import { valueLabel } from "../SchemaDrivenForm";
 import NumberInput from "../../shared/NumberInput";
@@ -32,7 +32,7 @@ import {
   type DerivedHeight,
 } from "../../../lib/heights";
 import { colourName } from "../ColourPalette";
-import { InlineHeightEditor } from "./InlineHeightEditor";
+import { InlineEdit } from "./InlineEdit";
 import {
   clearSegmentOverridePatch,
   segmentDifferenceBits,
@@ -549,7 +549,16 @@ export function SegmentRow({
     [],
   );
 
+  const lengthValue = gate || isBayg ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))
+  const lengthSuffix = gate || isBayg ? "mm" : "m"
 
+  const onValueChange = (v: number) => {
+    if (gate || isBayg) {
+      updateGeometry("segmentWidthMm", v);
+    } else {
+      updateGeometry("segmentWidthMm", v * 1000);
+    }
+  }
 
   return (
     <div className={`border-t py-1 ${isLastSegment ? "border-b" : ""}`}>
@@ -561,47 +570,41 @@ export function SegmentRow({
         }}
         title="Double-click to edit options"
       >
-        <div className="p-2">
+        <div className="p-2 ">
 
-          <div className="min-w-0 space-y-3 w-full">
+          <div className="min-w-0 space-y-3 w-full pl-2 ">
             <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2">
               <p className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-left text-lg font-black text-brand-text">
                 {titleLabel}
-                {afterTitleLabel && (
-                  <span className="text-sm font-semibold text-brand-muted">
-                    <strong className="font-extrabold text-brand-text">{afterTitleLabel}</strong>
-                  </span>
-                )}
                 <div className="flex items-center gap-2">
+                  
+                  <InlineEdit
+                    label="Length"
+                    value={lengthValue}
+                    suffix={lengthSuffix}
+                    displayValue={lengthValue.toFixed(2)}
+                    onCommit={onValueChange}
+                    disabled={false}
+                  />
 
-                  <label className="flex flex-col gap-1">
-                    <span className="text-sm font-bold text-brand-muted">
-                      {gate || isBayg ? "Width (mm)" : "Length (m)"}
-                    </span>
-                    <NumberInput
-                      value={gate || isBayg ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))}
-                      step={gate || isBayg ? 50 : 0.01}
-                      min={0}
-                      className="w-28 px-2 py-1.5 text-center tabular-nums"
-                      onChange={(v) =>
-                        updateGeometry(
-                          "segmentWidthMm",
-                          gate || isBayg ? Math.round(Number(v)) : Math.round(Number(v) * 1000),
-                        )
+                  <InlineEdit
+                    label="Height"
+                    value={selectedHeight}
+                    suffix={heightInputsReady ? "mm" : ""}
+                    displayValue={heightInputsReady ? undefined : "Set slat & gap"}
+                    disabled={!heightInputsReady}
+                    min={300}
+                    selectOptions={heightEntries.length > 0 ? heightEntries.map((entry) => entry.height) : undefined}
+                    boundedInput={productCode === "VS" ? { min: 300, max: 2400, step: 50 } : undefined}
+                    onCommit={(h) => {
+                      if (productCode === "VS") {
+                        updateInlineHeight(h);
+                        return;
                       }
-                    />
-                  </label>
-
-                  <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-muted">
-                    Height:
-                    <InlineHeightEditor
-                      productCode={productCode}
-                      variables={segmentVariables}
-                      valueMm={selectedHeight}
-                      ariaLabel={`${titleLabel} height`}
-                      onChange={updateInlineHeight}
-                    />
-                  </span>
+                      const entry = heightEntries.find((e) => e.height === h);
+                      updateInlineHeight(h, entry);
+                    }}
+                  />
                 </div>
               </p>
               <div className="flex items-center justify-center">

@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import { Edit2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { cn } from "../../lib/index";
+import { cn } from "../../../lib/index";
 
 interface BoundedInputConfig {
   min: number;
@@ -26,9 +26,11 @@ interface InlineEditProps {
   onAccentSurface?: boolean;
   /**
    * When provided (non-empty), edit mode uses a dropdown instead of a text field
-   * (e.g. pitch-ladder heights in mm).
+   * (e.g. pitch-ladder heights in mm). Accepts plain numbers (labelled with the
+   * number itself) or `{ value, label }` pairs for richer labels like
+   * "1800mm - 12 slats".
    */
-  selectOptions?: number[];
+  selectOptions?: number[] | { value: number; label: string }[];
   /**
    * When set, edit mode uses a bounded number input (e.g. freeform height mm).
    * Ignored if `selectOptions` is non-empty.
@@ -56,10 +58,13 @@ export function InlineEdit({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const selectRef = useRef<HTMLSelectElement | null>(null);
 
-  const useSelect = Boolean(selectOptions && selectOptions.length > 0);
+  const opts = selectOptions?.map((o) =>
+    typeof o === "number" ? { value: o, label: String(o) } : o,
+  );
+  const useSelect = Boolean(opts && opts.length > 0);
   const useBounded = Boolean(boundedInput) && !useSelect;
 
-  const optionsKey = selectOptions?.join(",") ?? "";
+  const optionsKey = opts?.map((o) => o.value).join(",") ?? "";
   const boundedKey = boundedInput
     ? `${boundedInput.min}-${boundedInput.max}-${boundedInput.step ?? ""}`
     : "";
@@ -158,7 +163,7 @@ export function InlineEdit({
     );
   }
 
-  if (editing && useSelect && selectOptions) {
+  if (editing && useSelect && opts) {
     return (
       <span
         className="inline-flex items-center gap-0.5"
@@ -169,7 +174,7 @@ export function InlineEdit({
         <select
           ref={selectRef}
           value={String(
-            selectOptions.includes(value) ? value : selectOptions[0],
+            opts.some((o) => o.value === value) ? value : opts[0].value,
           )}
           onChange={(e) => {
             onCommit(Number(e.target.value));
@@ -184,9 +189,9 @@ export function InlineEdit({
           }}
           className={sharedInputClass}
         >
-          {selectOptions.map((h) => (
-            <option key={h} value={h}>
-              {h}
+          {opts.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
             </option>
           ))}
         </select>
