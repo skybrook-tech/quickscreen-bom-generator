@@ -16,8 +16,6 @@ import {
   type GateDiagramNumber,
 } from "../../lib/gateDiagramMapping";
 import { setGateDiagramHover, useGateDiagramHover } from "../../lib/gateDiagramHover";
-import { InstallVideoQR } from "../calculator-v3/InstallVideoQR";
-import type { InstallVideoKey } from "../../lib/installVideos";
 import { BomCutList } from "./BomCutList";
 import { NumberedBadge } from "./NumberedBadge";
 import { stripParentheticalDispatchCode } from "../../lib/displayText";
@@ -146,18 +144,7 @@ function PageChip({ sku }: { sku: string }) {
   );
 }
 
-function installVideoKeysForItems(items: BOMLineItem[]): InstallVideoKey[] {
-  const keys = new Set<InstallVideoKey>();
-  if (items.some((item) => item.productCode === "QSHS")) keys.add("QSHS");
-  if (items.some((item) => item.productCode === "VS")) keys.add("VS");
-  if (items.some((item) => item.sku.startsWith("XPSG-") || item.sku.startsWith("QSG-S-"))) {
-    keys.add("QS_GATE_SLIDE");
-  }
-  if (items.some((item) => item.sku.startsWith("QSG-") && !item.sku.startsWith("QSG-S-"))) {
-    keys.add("QS_GATE_PED");
-  }
-  return [...keys];
-}
+
 
 function isGateDiagramLine(item: BOMLineItem) {
   return (
@@ -222,70 +209,70 @@ function BOMTable({
 
   return (
     <>
-    <BOMMobileCards
-      groups={groups}
-      editable={editable}
-      onQuantityChange={onQuantityChange}
-      onRemoveLine={onRemoveLine}
-      onSwitchEconomyToStandard={onSwitchEconomyToStandard}
-      hoveredGateDiagramNumber={hoveredGateDiagramNumber}
-      customerMode={customerMode}
-      showWorkings={showWorkings}
-    />
-    <div
-      className="hidden overflow-x-auto md:block print:block print:overflow-visible"
-      data-testid="bom-desktop-table"
-    >
-      <table className="w-full text-left border-collapse">
-        <thead>
-          <tr className="bg-brand-bg/80">
-            <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider whitespace-nowrap">
-              Code
-            </th>
-            <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider">
-              Description
-            </th>
-            <th className="hidden py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-center sm:table-cell">
-              Unit
-            </th>
-            <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
-              Qty
-            </th>
-            {!customerMode && (
-              <>
-                <th className="hidden py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right whitespace-nowrap sm:table-cell">
-                  Unit $
-                </th>
-                <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
-                  Line $
-                </th>
-              </>
-            )}
-            {editable && (
-              <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right print:hidden">
-                Edit
+      <BOMMobileCards
+        groups={groups}
+        editable={editable}
+        onQuantityChange={onQuantityChange}
+        onRemoveLine={onRemoveLine}
+        onSwitchEconomyToStandard={onSwitchEconomyToStandard}
+        hoveredGateDiagramNumber={hoveredGateDiagramNumber}
+        customerMode={customerMode}
+        showWorkings={showWorkings}
+      />
+      <div
+        className="hidden overflow-x-auto md:block print:block print:overflow-visible"
+        data-testid="bom-desktop-table"
+      >
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-brand-bg/80">
+              <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider whitespace-nowrap">
+                Code
               </th>
-            )}
-          </tr>
-        </thead>
-        <tbody className="bg-brand-card">
-          {groups.map(([category, categoryItems]) => (
-            <ItemGroup
-              key={category}
-              category={category}
-              items={categoryItems}
-              editable={editable}
-              onQuantityChange={onQuantityChange}
-              onRemoveLine={onRemoveLine}
-              onSwitchEconomyToStandard={onSwitchEconomyToStandard}
-              hoveredGateDiagramNumber={hoveredGateDiagramNumber}
-              customerMode={customerMode}
-              showWorkings={showWorkings}
-            />
-          ))}
-        </tbody>
-      </table>
-    </div>
+              <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider">
+                Description
+              </th>
+              <th className="hidden py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-center sm:table-cell">
+                Unit
+              </th>
+              <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
+                Qty
+              </th>
+              {!customerMode && (
+                <>
+                  <th className="hidden py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right whitespace-nowrap sm:table-cell">
+                    Unit $
+                  </th>
+                  <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
+                    Line $
+                  </th>
+                </>
+              )}
+              {editable && (
+                <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right print:hidden">
+                  Edit
+                </th>
+              )}
+            </tr>
+          </thead>
+          <tbody className="bg-brand-card">
+            {groups.map(([category, categoryItems]) => (
+              <ItemGroup
+                key={category}
+                category={category}
+                items={categoryItems}
+                editable={editable}
+                onQuantityChange={onQuantityChange}
+                onRemoveLine={onRemoveLine}
+                onSwitchEconomyToStandard={onSwitchEconomyToStandard}
+                hoveredGateDiagramNumber={hoveredGateDiagramNumber}
+                customerMode={customerMode}
+                showWorkings={showWorkings}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }
@@ -368,9 +355,8 @@ function BOMMobileCard({
 
   return (
     <article
-      className={`rounded-lg border border-brand-border/70 bg-brand-bg/60 p-3 shadow-sm transition-colors ${
-        highlighted ? "ring-1 ring-brand-warning/60" : ""
-      }`}
+      className={`rounded-lg border border-brand-border/70 bg-brand-bg/60 p-3 shadow-sm transition-colors ${highlighted ? "ring-1 ring-brand-warning/60" : ""
+        }`}
       title={showWorkings && sourceText ? `Source breakdown: ${sourceText}` : undefined}
     >
       <div className="grid grid-cols-[1fr_auto] gap-3">
@@ -492,144 +478,143 @@ function ItemGroup({
         </td>
       </tr>
       {orderedItems.flatMap((item, itemIndex) => {
-          const cartonHint = cartonHintForLine(item);
-          const bulkBuySku = bulkBuyVariantForSku(item.sku);
-          const canSwitchEconomy =
-            item.sku.startsWith("XP-6500-E65") &&
-            item.notes?.includes("Switch to Standard slats?");
-          const sourceText = sourceBreakdown(item);
-          const diagramNumbers = isGateDiagramLine(item) ? gateDiagramNumbersForSku(item.sku) : [];
-          const diagramHighlighted =
-            hoveredGateDiagramNumber !== null && diagramNumbers.includes(hoveredGateDiagramNumber);
-          const subCategory = item.subCategory ?? "";
-          const showSubCategory = subCategory && subCategory !== lastSubCategory && !item.companionOf;
-          if (subCategory) lastSubCategory = subCategory;
-          const rows = [];
-          if (showSubCategory) {
-            rows.push(
-              <tr key={`${category}-${subCategory}-heading`}>
-                <td
-                  colSpan={editable ? (customerMode ? 5 : 7) : (customerMode ? 4 : 6)}
-                  className="px-3 pt-3 pb-1 text-[11px] font-extrabold uppercase tracking-wide text-brand-muted"
-                >
-                  {humanizeSubCategory(subCategory)}
-                </td>
-              </tr>,
-            );
-          }
+        const cartonHint = cartonHintForLine(item);
+        const bulkBuySku = bulkBuyVariantForSku(item.sku);
+        const canSwitchEconomy =
+          item.sku.startsWith("XP-6500-E65") &&
+          item.notes?.includes("Switch to Standard slats?");
+        const sourceText = sourceBreakdown(item);
+        const diagramNumbers = isGateDiagramLine(item) ? gateDiagramNumbersForSku(item.sku) : [];
+        const diagramHighlighted =
+          hoveredGateDiagramNumber !== null && diagramNumbers.includes(hoveredGateDiagramNumber);
+        const subCategory = item.subCategory ?? "";
+        const showSubCategory = subCategory && subCategory !== lastSubCategory && !item.companionOf;
+        if (subCategory) lastSubCategory = subCategory;
+        const rows = [];
+        if (showSubCategory) {
           rows.push(
-        <tr
-          key={`${category}-${item.sku}-${item.category}-${item.description}-${itemIndex}`}
-          title={showWorkings && sourceText ? `Source breakdown: ${sourceText}` : undefined}
-          onMouseEnter={() => {
-            if (diagramNumbers[0]) setGateDiagramHover(diagramNumbers[0]);
-          }}
-          onMouseLeave={() => {
-            if (diagramNumbers.length > 0) setGateDiagramHover(null);
-          }}
-          className={`border-b border-brand-border last:border-0 transition-colors ${
-            diagramHighlighted
+            <tr key={`${category}-${subCategory}-heading`}>
+              <td
+                colSpan={editable ? (customerMode ? 5 : 7) : (customerMode ? 4 : 6)}
+                className="px-3 pt-3 pb-1 text-[11px] font-extrabold uppercase tracking-wide text-brand-muted"
+              >
+                {humanizeSubCategory(subCategory)}
+              </td>
+            </tr>,
+          );
+        }
+        rows.push(
+          <tr
+            key={`${category}-${item.sku}-${item.category}-${item.description}-${itemIndex}`}
+            title={showWorkings && sourceText ? `Source breakdown: ${sourceText}` : undefined}
+            onMouseEnter={() => {
+              if (diagramNumbers[0]) setGateDiagramHover(diagramNumbers[0]);
+            }}
+            onMouseLeave={() => {
+              if (diagramNumbers.length > 0) setGateDiagramHover(null);
+            }}
+            className={`border-b border-brand-border last:border-0 transition-colors ${diagramHighlighted
               ? "bg-brand-warning/15 ring-1 ring-inset ring-brand-warning/50"
               : "hover:bg-brand-accent/5"
-          }`}
-        >
-          <td className="py-2.5 px-3 text-xs font-mono text-brand-accent whitespace-nowrap">
-            <span className="inline-flex flex-wrap items-center gap-1.5">
-              <GateDiagramBadges numbers={diagramNumbers} />
-              {item.sku}
-              <PageChip sku={item.sku} />
-            </span>
-          </td>
-          <td className="py-2.5 px-3 text-sm text-brand-text">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span>{stripParentheticalDispatchCode(item.description)}</span>
-              {item.unitPrice <= 0 && (
-                <span className="rounded-full border border-brand-warning/40 bg-brand-warning/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-warning print:hidden">
-                  Price not set
-                </span>
+              }`}
+          >
+            <td className="py-2.5 px-3 text-xs font-mono text-brand-accent whitespace-nowrap">
+              <span className="inline-flex flex-wrap items-center gap-1.5">
+                <GateDiagramBadges numbers={diagramNumbers} />
+                {item.sku}
+                <PageChip sku={item.sku} />
+              </span>
+            </td>
+            <td className="py-2.5 px-3 text-sm text-brand-text">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span>{stripParentheticalDispatchCode(item.description)}</span>
+                {item.unitPrice <= 0 && (
+                  <span className="rounded-full border border-brand-warning/40 bg-brand-warning/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-brand-warning print:hidden">
+                    Price not set
+                  </span>
+                )}
+                {showWorkings && item.notes && (
+                  <span className="text-xs text-brand-warning print:hidden">
+                    {item.notes}
+                  </span>
+                )}
+                {canSwitchEconomy && (
+                  <button
+                    type="button"
+                    onClick={() => onSwitchEconomyToStandard?.(item)}
+                    className="rounded-full border border-brand-warning/40 bg-brand-warning/10 px-2 py-0.5 text-[11px] font-bold text-brand-warning transition-colors hover:bg-brand-warning/20"
+                  >
+                    Switch
+                  </button>
+                )}
+              </div>
+              {cartonHint && (
+                <p className="mt-1 inline-flex rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-0.5 text-[11px] font-bold text-brand-success print:hidden">
+                  {cartonHint.more} more for a carton ({cartonHint.cartonQty} {cartonHint.label})
+                  {cartonHint.saving > 0 ? ` - save ~$${cartonHint.saving}` : ""}
+                </p>
               )}
-              {showWorkings && item.notes && (
-                <span className="text-xs text-brand-warning print:hidden">
-                  {item.notes}
-                </span>
+              {bulkBuySku && (
+                <p
+                  className="mt-1 inline-flex rounded-full border border-brand-border bg-brand-bg px-2 py-0.5 text-[11px] font-bold text-brand-muted print:hidden"
+                  title={`Bulk-buy variant: ${bulkBuySku}`}
+                >
+                  Bulk buy {bulkBuySku} available
+                </p>
               )}
-              {canSwitchEconomy && (
+              {showWorkings && sourceText && item.sources && item.sources.length > 1 && (
+                <p className="mt-1 text-[11px] font-semibold text-brand-muted print:hidden">
+                  Sources: {sourceText}
+                </p>
+              )}
+            </td>
+            <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-center sm:table-cell">
+              {unitLabel(item)}
+            </td>
+            <td className="py-2.5 px-3 text-sm text-brand-text text-right tabular-nums">
+              {editable ? (
+                <>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={item.quantity}
+                    onChange={(event) =>
+                      onQuantityChange?.(item, Number(event.target.value))
+                    }
+                    className="w-20 rounded-lg border border-brand-border bg-brand-card px-2 py-1 text-right text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 print:hidden"
+                    aria-label={`Quantity for ${item.sku}`}
+                  />
+                  <span className="hidden print:inline">{item.quantity}</span>
+                </>
+              ) : (
+                item.quantity
+              )}
+            </td>
+            {!customerMode && (
+              <>
+                <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-right tabular-nums sm:table-cell">
+                  {item.unitPrice > 0 ? `$${formatMoney(item.unitPrice)}` : "-"}
+                </td>
+                <td className="py-2.5 px-3 text-sm text-brand-text font-medium text-right tabular-nums">
+                  {item.unitPrice > 0 ? `$${formatMoney(item.lineTotal)}` : "-"}
+                </td>
+              </>
+            )}
+            {editable && (
+              <td className="py-2.5 px-3 text-right print:hidden">
                 <button
                   type="button"
-                  onClick={() => onSwitchEconomyToStandard?.(item)}
-                  className="rounded-full border border-brand-warning/40 bg-brand-warning/10 px-2 py-0.5 text-[11px] font-bold text-brand-warning transition-colors hover:bg-brand-warning/20"
+                  onClick={() => onRemoveLine?.(item)}
+                  className="rounded px-2 py-1 text-xs font-medium text-brand-danger transition-colors hover:bg-brand-danger/10"
                 >
-                  Switch
+                  Remove
                 </button>
-              )}
-            </div>
-            {cartonHint && (
-              <p className="mt-1 inline-flex rounded-full border border-brand-success/30 bg-brand-success/10 px-2 py-0.5 text-[11px] font-bold text-brand-success print:hidden">
-                {cartonHint.more} more for a carton ({cartonHint.cartonQty} {cartonHint.label})
-                {cartonHint.saving > 0 ? ` - save ~$${cartonHint.saving}` : ""}
-              </p>
-            )}
-            {bulkBuySku && (
-              <p
-                className="mt-1 inline-flex rounded-full border border-brand-border bg-brand-bg px-2 py-0.5 text-[11px] font-bold text-brand-muted print:hidden"
-                title={`Bulk-buy variant: ${bulkBuySku}`}
-              >
-                Bulk buy {bulkBuySku} available
-              </p>
-            )}
-            {showWorkings && sourceText && item.sources && item.sources.length > 1 && (
-              <p className="mt-1 text-[11px] font-semibold text-brand-muted print:hidden">
-                Sources: {sourceText}
-              </p>
-            )}
-          </td>
-          <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-center sm:table-cell">
-            {unitLabel(item)}
-          </td>
-          <td className="py-2.5 px-3 text-sm text-brand-text text-right tabular-nums">
-            {editable ? (
-              <>
-                <input
-                  type="number"
-                  min="0"
-                  step="1"
-                  value={item.quantity}
-                  onChange={(event) =>
-                    onQuantityChange?.(item, Number(event.target.value))
-                  }
-                  className="w-20 rounded-lg border border-brand-border bg-brand-card px-2 py-1 text-right text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20 print:hidden"
-                  aria-label={`Quantity for ${item.sku}`}
-                />
-                <span className="hidden print:inline">{item.quantity}</span>
-              </>
-            ) : (
-              item.quantity
-            )}
-          </td>
-          {!customerMode && (
-            <>
-              <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-right tabular-nums sm:table-cell">
-                {item.unitPrice > 0 ? `$${formatMoney(item.unitPrice)}` : "-"}
               </td>
-              <td className="py-2.5 px-3 text-sm text-brand-text font-medium text-right tabular-nums">
-                {item.unitPrice > 0 ? `$${formatMoney(item.lineTotal)}` : "-"}
-              </td>
-            </>
-          )}
-          {editable && (
-            <td className="py-2.5 px-3 text-right print:hidden">
-              <button
-                type="button"
-                onClick={() => onRemoveLine?.(item)}
-                className="rounded px-2 py-1 text-xs font-medium text-brand-danger transition-colors hover:bg-brand-danger/10"
-              >
-                Remove
-              </button>
-            </td>
-          )}
-        </tr>
-          );
-          return rows;
+            )}
+          </tr>
+        );
+        return rows;
       })}
     </>
   );
@@ -670,8 +655,8 @@ export function BOMResultTabs({
       : activeTab === "gates"
         ? result.gateItems
         : gateResults.find((gate) => gate.id === activeTab)?.items ??
-          result.runResults.find((r) => r.runId === activeTab)?.items ??
-          [];
+        result.runResults.find((r) => r.runId === activeTab)?.items ??
+        [];
 
   const activeTotal = parseFloat(
     activeItems.reduce((s, i) => s + i.lineTotal, 0).toFixed(2),
@@ -679,7 +664,6 @@ export function BOMResultTabs({
   const activeGst = parseFloat((activeTotal * 0.1).toFixed(2));
   const activeGrandTotal = parseFloat((activeTotal + activeGst).toFixed(2));
   const activeLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? "All Items";
-  const activeInstallVideoKeys = installVideoKeysForItems(activeItems);
 
   useEffect(() => {
     onActiveSummaryChange?.({
@@ -699,19 +683,17 @@ export function BOMResultTabs({
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors flex items-center gap-1.5 whitespace-nowrap ${
-              activeTab === tab.id
-                ? "border-brand-accent text-brand-accent"
-                : "border-transparent text-brand-muted hover:text-brand-text hover:border-brand-border"
-            }`}
+            className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors flex items-center gap-1.5 whitespace-nowrap ${activeTab === tab.id
+              ? "border-brand-accent text-brand-accent"
+              : "border-transparent text-brand-muted hover:text-brand-text hover:border-brand-border"
+              }`}
           >
             {tab.label}
             <span
-              className={`ml-1 inline-flex items-center rounded-full border px-2 py-0.5 font-mono text-[11px] font-black leading-none tabular-nums shadow-sm ${
-                activeTab === tab.id
-                  ? "border-brand-warning/45 bg-brand-warning/15 text-brand-warning"
-                  : "border-brand-primary/25 bg-brand-primary/10 text-brand-primary"
-              }`}
+              className={`ml-1 inline-flex items-center rounded-full border px-2 py-0.5 font-mono text-[11px] font-black leading-none tabular-nums shadow-sm ${activeTab === tab.id
+                ? "border-brand-warning/45 bg-brand-warning/15 text-brand-warning"
+                : "border-brand-primary/25 bg-brand-primary/10 text-brand-primary"
+                }`}
               aria-label={`${pluralize("item", tab.count, true)} in ${tab.label}`}
               title={`${pluralize("item", tab.count, true)} in ${tab.label}`}
             >
@@ -738,11 +720,10 @@ export function BOMResultTabs({
             onClick={() => setShowWorkings((value) => !value)}
             aria-pressed={showWorkings}
             data-testid="bom-workings-toggle"
-            className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors hover:shadow-sm ${
-              showWorkings
-                ? "border-brand-warning/40 bg-brand-warning/10 text-brand-warning hover:bg-brand-warning/15"
-                : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
-            }`}
+            className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors hover:shadow-sm ${showWorkings
+              ? "border-brand-warning/40 bg-brand-warning/10 text-brand-warning hover:bg-brand-warning/15"
+              : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
+              }`}
           >
             {showWorkings ? <EyeOff size={15} /> : <Eye size={15} />}
             {showWorkings ? "Hide workings" : "Show workings"}
@@ -773,59 +754,46 @@ export function BOMResultTabs({
         />
       )}
 
-      {activeInstallVideoKeys.length > 0 && (
-        <div className="mt-5 rounded-2xl border border-brand-border/70 bg-brand-bg/50 p-3 print:hidden">
-          <p className="mb-3 text-xs font-extrabold uppercase tracking-wide text-brand-muted">
-            Install video QR codes
-          </p>
-          <div className="flex flex-wrap gap-3">
-            {activeInstallVideoKeys.map((key) => (
-              <InstallVideoQR key={key} videoKey={key} compact />
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Summary */}
       {!customerMode && (
-      <div className="mt-6 pt-4 border-t border-brand-border">
-        <div className="mb-3 inline-flex rounded-full border border-brand-success/30 bg-brand-success/10 px-3 py-1 text-xs font-bold text-brand-success print:hidden">
-          {PRICE_SOURCE_LABEL} · {PRICE_SOURCE_VERIFIED_DATE}
-        </div>
-        <div className="space-y-1 mb-3">
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-brand-muted">Subtotal (ex-GST)</span>
-            <span className="tabular-nums text-brand-text">
-              ${formatMoney(activeTotal)}
+        <div className="mt-6 pt-4 border-t border-brand-border">
+          <div className="mb-3 inline-flex rounded-full border border-brand-success/30 bg-brand-success/10 px-3 py-1 text-xs font-bold text-brand-success print:hidden">
+            {PRICE_SOURCE_LABEL} · {PRICE_SOURCE_VERIFIED_DATE}
+          </div>
+          <div className="space-y-1 mb-3">
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-brand-muted">Subtotal (ex-GST)</span>
+              <span className="tabular-nums text-brand-text">
+                ${formatMoney(activeTotal)}
+              </span>
+            </div>
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-brand-muted">GST (10%)</span>
+              <span className="tabular-nums text-brand-text">
+                ${formatMoney(activeGst)}
+              </span>
+            </div>
+          </div>
+          <div className="flex justify-between items-center border-t border-brand-border pt-3">
+            <div>
+              <p className="text-sm font-semibold text-brand-text">
+                Total (inc. GST)
+              </p>
+              <p className="text-xs text-brand-muted mt-0.5">
+                Generated{" "}
+                {new Date(result.generatedAt).toLocaleString("en-AU", {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                })}
+                {" · "}
+                Auto quantity-break pricing
+              </p>
+            </div>
+            <span className="text-2xl font-bold text-brand-accent tabular-nums">
+              ${formatMoney(activeGrandTotal)}
             </span>
           </div>
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-brand-muted">GST (10%)</span>
-            <span className="tabular-nums text-brand-text">
-              ${formatMoney(activeGst)}
-            </span>
-          </div>
         </div>
-        <div className="flex justify-between items-center border-t border-brand-border pt-3">
-          <div>
-            <p className="text-sm font-semibold text-brand-text">
-              Total (inc. GST)
-            </p>
-            <p className="text-xs text-brand-muted mt-0.5">
-              Generated{" "}
-              {new Date(result.generatedAt).toLocaleString("en-AU", {
-                dateStyle: "medium",
-                timeStyle: "short",
-              })}
-              {" · "}
-              Auto quantity-break pricing
-            </p>
-          </div>
-          <span className="text-2xl font-bold text-brand-accent tabular-nums">
-            ${formatMoney(activeGrandTotal)}
-          </span>
-        </div>
-      </div>
       )}
     </div>
   );

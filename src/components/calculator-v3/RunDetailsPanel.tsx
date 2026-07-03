@@ -101,6 +101,7 @@ export function RunDetailsPanel({ payload }: RunDetailsPanelProps) {
               Run {runIdx + 1} - {(runLength(run) / 1000).toFixed(2)}m - {stats.panels} panel{stats.panels === 1 ? "" : "s"} - {gateCountLabel(gates.length)}
             </button>
             <dl className="mt-3 grid gap-x-4 gap-y-1 text-xs font-semibold text-brand-muted sm:grid-cols-2">
+
               <div><dt className="inline">System: </dt><dd className="inline text-brand-text">{displayName(SYSTEM_NAMES, run.productCode)}</dd></div>
               <div><dt className="inline">Slat size: </dt><dd className="inline text-brand-text">{Number(runVariables.slat_size_mm ?? 65)}mm</dd></div>
               <div><dt className="inline">Gap: </dt><dd className="inline text-brand-text">{Number(runVariables.slat_gap_mm ?? 9)}mm</dd></div>

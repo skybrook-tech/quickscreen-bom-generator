@@ -33,6 +33,7 @@
     },
     {
       "field_key": "colour_code",
+      "render_hint": "colour",
       "label": "Colour",
       "group": "slats_colours",
       "control_type": "colour_palette",
@@ -195,6 +196,7 @@
     },
     {
       "field_key": "post_colour_code",
+      "render_hint": "colour",
       "label": "Post colour",
       "group": "slats_colours",
       "control_type": "colour_palette_optional",

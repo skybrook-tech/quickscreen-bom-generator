@@ -6,11 +6,16 @@
  */
 
 import { useState, useRef, useEffect } from "react";
-import { initialVariablesForSystem, normaliseVariablesForSystem } from "./productOptionRules";
+import {
+  initialVariablesForSystem,
+  normaliseVariablesForSystem,
+  isPanelStrategyCode,
+  defaultGateInfillForCode,
+} from "./productOptionRules";
 import { GATE_SEGMENT_STUB_KEYS } from "./segmentTermination";
 import {
   clearGateOpeningWidthMm,
-  defaultGateBuildForMovement,
+  defaultGateBuildForMovementInfill,
   defaultGateVariables,
   gateMovementOrDefault,
   optionLabel,
@@ -311,7 +316,7 @@ export function runLengthMm(run: CanonicalRun) {
   return run.segments.reduce((sum, segment) => {
     if (segment.segmentKind === "gate_opening") return sum;
     const qty =
-      run.productCode === "BAYG"
+      isPanelStrategyCode(run.productCode)
         ? Math.max(1, Math.round(Number(segment.variables?.panel_quantity ?? 1)))
         : 1;
     return sum + Number(segment.segmentWidthMm ?? 0) * qty;
@@ -479,7 +484,7 @@ export function buildRunFromDescription(
     segmentWidthMm: Math.max(0, Math.round(widthMm)),
     targetHeightMm,
     ...canvasMeta,
-    variables: productCode === "BAYG" ? { panel_quantity: 1 } : undefined,
+    variables: isPanelStrategyCode(productCode) ? { panel_quantity: 1 } : undefined,
   });
 
   if (parsedGates.length === 0) {
@@ -503,9 +508,9 @@ export function buildRunFromDescription(
       const gateVariables = {
         ...defaultGateVariables({ ...variables, productCode }, targetHeightMm),
         [GATE_SEGMENT_STUB_KEYS.gateMovement]: movement,
-        [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(
+        [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovementInfill(
           movement,
-          productCode === "VS",
+          defaultGateInfillForCode(productCode),
         ),
         [GATE_SEGMENT_STUB_KEYS.leafCount]:
           movement === "double_swing" ? 2 : 1,
@@ -601,7 +606,7 @@ export function buildBomRunDetails(payload: CanonicalPayload): BomRunDetail[] {
     const sections = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
     const lengthMm = run.segments.reduce((sum, segment) => {
       const qty =
-        run.productCode === "BAYG" && segment.segmentKind !== "gate_opening"
+        isPanelStrategyCode(run.productCode) && segment.segmentKind !== "gate_opening"
           ? Math.max(1, Math.round(Number(segment.variables?.panel_quantity ?? 1)))
           : 1;
       return sum + Number(segment.segmentWidthMm ?? 0) * qty;
@@ -612,7 +617,7 @@ export function buildBomRunDetails(payload: CanonicalPayload): BomRunDetail[] {
       colourName(vars.colour_code),
       `${Number(vars.slat_size_mm ?? 65)}mm slat`,
       `${Number(vars.slat_gap_mm ?? 9)}mm gap`,
-      run.productCode === "BAYG"
+      isPanelStrategyCode(run.productCode)
         ? null
         : mountingLabel(vars.mounting_method ?? vars.mounting_type),
       `${maxPanelWidth}mm spacing`,
@@ -765,7 +770,7 @@ export function buildConfirmGatePayload(
     const gateVariables = {
       ...defaultGateVariables(baseVars, targetHeightMm),
       [GATE_SEGMENT_STUB_KEYS.gateMovement]: movement,
-      [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovement(movement, run.productCode === "VS"),
+      [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovementInfill(movement, defaultGateInfillForCode(run.productCode)),
       [GATE_SEGMENT_STUB_KEYS.leafCount]: movement === "double_swing" ? 2 : 1,
       [GATE_SEGMENT_STUB_KEYS.dropBoltType]: movement === "double_swing" ? "SS-0300DB-B" : "none",
     };

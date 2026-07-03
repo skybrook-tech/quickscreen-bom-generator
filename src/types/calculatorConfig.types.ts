@@ -80,6 +80,7 @@ export type UiCalculatorConfig = {
     heightMaxMm: number;
     supported: boolean;
     defaultInfill: "horizontal" | "vertical";
+    gateProductCode: string;
   };
   normalisedVariables: CanonicalVariables;
 };

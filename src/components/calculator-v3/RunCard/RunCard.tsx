@@ -24,7 +24,6 @@ import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import { useRunReconciliation } from "../../../hooks/useRunReconciliation";
 import type { UiCalculatorConfig } from "../../../types/calculatorConfig.types";
 
-const GATE_PRODUCT_CODE = "QS_GATE";
 const RUN_SETTINGS_AUTO_COLLAPSE_MS = 60000;
 
 interface Props {
@@ -220,7 +219,7 @@ function RunCardInner({
       segmentKind: "gate_opening",
       segmentWidthMm: 900,
       targetHeightMm: targetHeight,
-      gateProductCode: GATE_PRODUCT_CODE,
+      gateProductCode: config!.gateRules.gateProductCode,
       variables: defaultGateVariables(
         { ...runVariables, gateDefaultInfill: config!.gateRules.defaultInfill },
         targetHeight,

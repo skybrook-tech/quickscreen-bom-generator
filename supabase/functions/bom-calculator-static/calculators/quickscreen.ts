@@ -298,7 +298,7 @@ function calculateGateSegment(
   const lines: QtyLine[] = [];
   const vars = { ...mergedRunVars, ...(segment.variables ?? {}) };
   const movement = gateMovementOrDefault(vars[GATE_SEGMENT_STUB_KEYS.gateMovement]);
-  const build = String(vars[GATE_SEGMENT_STUB_KEYS.gateBuild] ?? (run.productCode === "VS" ? "qsg_hinged_vertical" : "qsg_hinged_horizontal"));
+  const build = String(vars[GATE_SEGMENT_STUB_KEYS.gateBuild] ?? (cfg.gateRules.defaultInfill === "vertical" ? "qsg_hinged_vertical" : "qsg_hinged_horizontal"));
   const colour = String(vars[GATE_SEGMENT_STUB_KEYS.colourCode] ?? vars.colour_code ?? "B");
   const slatGap = toNumber(vars[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? vars.slat_gap_mm, 9);
   const slatSize = toNumber(vars[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? vars.slat_size_mm, 65);
@@ -555,7 +555,7 @@ function calculateHorizontalSlatRun(
     const targetHeightMm = toNumber(segment.targetHeightMm ?? vars.target_height_mm, 1800);
     if (segmentWidthMm <= 0) continue;
 
-    const slatDesignWidth = designSlatWidthMm(run.productCode, slatSize);
+    const slatDesignWidth = designSlatWidthMm(cfg, slatSize);
     const numSlats = Math.max(1, Math.floor((targetHeightMm + slatGap - cfg.geometry.slatHeightDeduction) / (slatDesignWidth + slatGap)));
     const actualHeightMm = Math.round(numSlats * (slatDesignWidth + slatGap) - slatGap + cfg.geometry.slatHeightDeduction);
     const baygPanelQty = isBayg ? Math.max(1, Math.round(toNumber(vars.panel_quantity, 1))) : 1;
@@ -569,8 +569,8 @@ function calculateHorizontalSlatRun(
     const csrCutMm = Math.max(1, actualHeightMm - cfg.geometry.csrCutDeduction);
     const numCsrPerPanel = csrCountForPanel(panelWidthMm, cfg.panelRules.csrThresholds);
 
-    const runLeftT = (run.leftBoundary?.type as typeof run.leftBoundary.type) ?? "product_post";
-    const runRightT = (run.rightBoundary?.type as typeof run.rightBoundary.type) ?? "product_post";
+    const runLeftT = run.leftBoundary?.type ?? "product_post";
+    const runRightT = run.rightBoundary?.type ?? "product_post";
     const leftEff = effectiveLegacyBoundaryType(runLeftT as "product_post", segment.variables, "left");
     const rightEff = effectiveLegacyBoundaryType(runRightT as "product_post", segment.variables, "right");
     const leftSideFrames = leftEff === "product_post" ? 1 : 0;
@@ -589,10 +589,11 @@ function calculateHorizontalSlatRun(
     const spacerEachQty = 2 * Math.max(0, numSlats - 1) * numPanels;
     const spacerPacks = isBayg || !usesPresetSpacers ? 0 : Math.ceil(spacerEachQty / cfg.packSizes.spacers);
     const baygSpacers = isBayg ? spacerEachQty : 0;
-    const louvreTreatment = run.productCode === "QSHS" && slatSize === 65
+    const hasLouvreField = cfg.fields.some((f) => f.field_key === "louvre_treatment");
+    const louvreTreatment = hasLouvreField && slatSize === 65
       && (vars.louvre_treatment === true || vars.louvre_treatment === "true");
     if ((vars.louvre_treatment === true || vars.louvre_treatment === "true") && !louvreTreatment) {
-      sink.warnings.push("Louvre treatment is only available for QSHS with 65mm horizontal slats.");
+      sink.warnings.push("Louvre treatment is only available for horizontal slat systems with 65mm slats.");
     }
     const slatFixingScrews = louvreTreatment ? 0 : numSlats * 2 * numPanels * cfg.packSizes.screwWasteFactor;
     const screwPacks = Math.ceil((slatFixingScrews + numCsrPerPanel * numPanels * 4) / cfg.packSizes.slatScrews);

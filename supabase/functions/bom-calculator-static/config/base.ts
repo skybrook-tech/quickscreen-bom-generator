@@ -202,6 +202,7 @@ const GATE_RULES: CalculatorConfig["gateRules"] = {
   heightMaxMm: 2100,
   supported: true,
   defaultInfill: "horizontal",
+  gateProductCode: "QS_GATE",
 };
 
 const GAP_RULES_SPACER_ONLY: CalculatorConfig["gapRules"] = {

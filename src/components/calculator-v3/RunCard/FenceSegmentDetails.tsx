@@ -23,7 +23,7 @@ interface Props {
 export function FenceSegmentDetails({ runId, seg }: Props) {
   const { state, dispatch } = useCalculator();
   const run = state.payload?.runs.find((r) => r.runId === runId);
-  const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
+  const runProductCode = run?.productCode ?? state.payload?.productCode ?? "";
   const segProductCode = String(seg.variables?.product_code ?? runProductCode);
 
   const v = seg.variables ?? {};

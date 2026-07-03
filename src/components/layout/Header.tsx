@@ -1,4 +1,4 @@
-import { Eye, EyeOff, LogOut, Menu, Moon, Plus, PlayCircle, Sun, Trash2, WifiOff, X } from 'lucide-react';
+import { Eye, EyeOff, LogOut, Menu, Moon, Plus, Sun, Trash2, WifiOff, X } from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -6,8 +6,7 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../context/ThemeContext';
 import type { TenantBranding } from '../../lib/tenantThemes';
-import { INSTALL_VIDEOS, type InstallVideoKey } from '../../lib/installVideos';
-import { InstallVideoQR } from '../calculator-v3/InstallVideoQR';
+
 
 interface HeaderProps {
   branding?: TenantBranding;
@@ -38,7 +37,6 @@ export function Header({
 }: HeaderProps = {}) {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
-  const [installVideosOpen, setInstallVideosOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [offline, setOffline] = useState(() => navigator.onLine === false);
 
@@ -135,14 +133,7 @@ export function Header({
             {actions}
           </div>
         )}
-        <button
-          type="button"
-          onClick={() => setInstallVideosOpen(true)}
-          title="Install videos"
-          className="hidden rounded-md p-2 text-brand-muted transition-colors hover:bg-brand-border/30 hover:text-brand-text sm:inline-flex"
-        >
-          <PlayCircle size={16} />
-        </button>
+
         <button
           onClick={toggle}
           title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
@@ -250,17 +241,7 @@ export function Header({
                 Clear Job
               </button>
             )}
-            <button
-              type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setInstallVideosOpen(true);
-              }}
-              className="flex min-h-11 items-center gap-3 rounded-lg border border-brand-border px-3 py-2 text-left text-sm font-bold text-brand-text"
-            >
-              <PlayCircle size={18} />
-              Install videos
-            </button>
+
             <button
               type="button"
               onClick={toggle}
@@ -292,44 +273,7 @@ export function Header({
           </div>
         </div>
       )}
-      {installVideosOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Install videos"
-          onClick={() => setInstallVideosOpen(false)}
-        >
-          <div
-            className="w-full max-w-xl rounded-2xl border border-brand-border bg-brand-card p-5 shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="mb-4 flex items-start justify-between gap-3">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-brand-muted">
-                  Install videos
-                </p>
-                <h2 className="mt-1 text-lg font-black text-brand-text">
-                  Glass Outlet installation help
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => setInstallVideosOpen(false)}
-                className="rounded-lg border border-brand-border p-2 text-brand-muted hover:border-brand-danger hover:text-brand-danger"
-                title="Close install videos"
-              >
-                <X size={16} />
-              </button>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {(Object.keys(INSTALL_VIDEOS) as InstallVideoKey[]).map((key) => (
-                <InstallVideoQR key={key} videoKey={key} />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+
     </header>
   );
 }

@@ -3,7 +3,7 @@
 // Nothing here depends on module-level mutable state. Functions that need
 // component/pricing data take it as explicit parameters.
 
-import type { SeedComponent } from "./config/types.ts";
+import type { SeedComponent, CalculatorConfig } from "./config/types.ts";
 
 // ─── Basic math helpers ───────────────────────────────────────────────────────
 
@@ -443,7 +443,20 @@ export function knownSelectedSku(value: unknown): string | undefined {
 
 // ─── designSlatWidthMm (product-specific slat design dimension) ───────────────
 
-export function designSlatWidthMm(productCode: string, slatSize: number): number {
-  if (productCode === "QSHS" || productCode === "BAYG") return slatSize === 90 ? 90 : 65;
-  return slatSize;
+/**
+ * Returns the slat design width for height calculation. For products with an
+ * explicit slat_size_mm options list (QSHS, BAYG), snaps to the nearest
+ * declared valid size so a stale/unexpected value doesn't corrupt the count.
+ * For products with no declared sizes (VS), passes slatSize through unchanged.
+ */
+export function designSlatWidthMm(cfg: Pick<CalculatorConfig, "fields">, slatSize: number): number {
+  const slatField = cfg.fields.find((f) => f.field_key === "slat_size_mm");
+  const valid = (slatField?.options_json ?? [])
+    .map((o) => o !== null && typeof o === "object" && "value" in o
+      ? Number((o as { value: unknown }).value)
+      : Number(o))
+    .filter((n) => Number.isFinite(n) && n > 0);
+  if (!valid.length || valid.includes(slatSize)) return slatSize;
+  // Snap to largest valid size ≤ slatSize; if none, use smallest valid size.
+  return valid.filter((s) => s <= slatSize).pop() ?? valid[0];
 }

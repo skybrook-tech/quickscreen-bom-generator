@@ -235,6 +235,7 @@
     },
     {
       "field_key": "colour_code",
+      "render_hint": "colour",
       "label": "Gate colour",
       "group": "slats_post_colour",
       "control_type": "colour_palette",

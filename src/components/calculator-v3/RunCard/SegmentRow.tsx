@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import { useCalculator } from "../../../context/CalculatorContext";
 import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import type { CanonicalSegment } from "../../../types/canonical.types";
@@ -71,17 +71,16 @@ export function SegmentRow({
   isLastSegment = false,
 }: Props) {
   const { state, dispatch } = useCalculator();
-  const collapseTimerRef = useRef<number | null>(null);
   const gate = seg.segmentKind === "gate_opening";
 
   const run = state.payload?.runs.find((r) => r.runId === runId);
-  const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
+  const runProductCode = run?.productCode ?? state.payload?.productCode ?? "";
   const segProductCode = String(seg.variables?.product_code ?? runProductCode);
   const masterVariables = useMemo<Record<string, string | number | boolean>>(
     () => ({ ...(run?.variables ?? {}) }),
     [run],
   );
-  const gateConfig = useCalculatorConfig(gate ? "QS_GATE" : "");
+  const gateConfig = useCalculatorConfig(gate ? (seg.gateProductCode ?? "QS_GATE") : "");
 
   const runDefaultHeight = Number(masterVariables.target_height_mm ?? 1800);
   const segmentVariables = {
@@ -94,6 +93,7 @@ export function SegmentRow({
   // product_code — included). Cache-keyed, cheap; shares data with the run-
   // level fetch when the segment inherits the run product + variables.
   const config = useCalculatorConfig(segProductCode, segmentVariables);
+
   if (!config) {
     // Still resolving the segment-specific config (e.g. a segment override
     // changed the variables key). Render nothing rather than a malformed row.
@@ -541,13 +541,6 @@ export function SegmentRow({
       new CustomEvent("qsbom:hover-map-label", { detail: value }),
     );
   }
-
-  useEffect(
-    () => () => {
-      if (collapseTimerRef.current) window.clearTimeout(collapseTimerRef.current);
-    },
-    [],
-  );
 
   const lengthValue = gate || isPanelStrategy ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))
   const lengthSuffix = gate || isPanelStrategy ? "mm" : "m"

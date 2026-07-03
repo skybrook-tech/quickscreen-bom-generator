@@ -31,12 +31,12 @@ export function CombinedGapSelect({
     () =>
       config
         ? combinedGapChoicesForConfig(config, mode, gapMm)
-        : combinedGapChoicesForSystem(productCode ?? "QSHS", mode, gapMm),
+        : combinedGapChoicesForSystem(productCode ?? "", mode, gapMm),
     [config, gapMm, mode, productCode],
   );
   const currentMode = config
     ? normaliseGapModeConfig(config, mode)
-    : normaliseGapMode(productCode ?? "QSHS", mode);
+    : normaliseGapMode(productCode ?? "", mode);
   const currentGap = Math.max(0, Math.round(Number(gapMm) || 9));
   const currentId = gapChoiceId(currentMode, currentGap);
   const value = choices.some((choice) => choice.id === currentId)

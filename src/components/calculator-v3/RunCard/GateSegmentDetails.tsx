@@ -36,7 +36,7 @@ interface Props {
 export function GateSegmentDetails({ runId, seg }: Props) {
   const { state, dispatch } = useCalculator();
   const run = state.payload?.runs.find((item) => item.runId === runId);
-  const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
+  const runProductCode = run?.productCode ?? state.payload?.productCode ?? "";
   const v = seg.variables ?? {};
   const runVars = { ...(run?.variables ?? {}) };
   const runConfig = useCalculatorConfig(runProductCode, runVars);
@@ -132,7 +132,7 @@ export function GateSegmentDetails({ runId, seg }: Props) {
 
   // Variables-resolved QS_GATE config — segment field options (gate_build per
   // movement, opening_direction swing/sliding swap) arrive already resolved.
-  const config = useCalculatorConfig("QS_GATE", mergedVariables);
+  const config = useCalculatorConfig(seg.gateProductCode ?? "QS_GATE", mergedVariables);
 
   const rendererExtra: Record<string, unknown> = {
     rankedHinges,

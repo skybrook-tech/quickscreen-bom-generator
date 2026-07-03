@@ -111,6 +111,7 @@ const calculatorConfigMock = vi.hoisted(() => {
       heightMaxMm: 2100,
       supported: true,
       defaultInfill: "horizontal",
+      gateProductCode: "QS_GATE",
     },
     normalisedVariables: {
       finish_family: "standard",

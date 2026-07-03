@@ -671,9 +671,9 @@ function postPlugSku(vars: Record<string, unknown>): string {
   return "SS-POSTPLUG-4PK";
 }
 
-function postCountForRun(run: CanonicalRun): number {
+function postCountForRun(run: CanonicalRun, defaultMaxPanelMm?: number): number {
   const runVars = run.variables ?? {};
-  const baseMaxPanel = clampPostSpacing(runVars.max_panel_width_mm, maxPanelWidthForSystem(run.productCode));
+  const baseMaxPanel = clampPostSpacing(runVars.max_panel_width_mm, defaultMaxPanelMm ?? maxPanelWidthForSystem(run.productCode));
   const internal = run.segments.filter((s) => s.segmentKind !== "gate_opening").reduce((sum, seg) => {
     const maxP = clampPostSpacing(seg.variables?.max_panel_width_mm, baseMaxPanel);
     return sum + Math.max(0, Math.max(1, Math.ceil(Number(seg.segmentWidthMm ?? 0) / maxP)) - 1);
@@ -696,7 +696,8 @@ export function suggestAccessories(payload: CanonicalPayload, bomLines: BOMLineI
 
   for (const run of payload.runs) {
     const vars: Record<string, unknown> = { ...payload.variables, ...(run.variables ?? {}) };
-    const postCount = postCountForRun(run);
+    const runCfg = ctx?.configs.get(run.productCode);
+    const postCount = postCountForRun(run, runCfg?.panelRules.maxPanelWidthMm);
     const mountingType = String(vars.mounting_type ?? vars.mounting_method ?? "in_ground");
     const postSize = Number(vars.post_size ?? 50), postColour = postColourFromVars(vars);
     const finishFamily = String(vars.finish_family ?? "standard");
@@ -735,14 +736,14 @@ export function suggestAccessories(payload: CanonicalPayload, bomLines: BOMLineI
       suggestions.push(suggest(longPostSku, Math.ceil((postCount * cutLengthMm) / 6000), "catalogue_gap", "Optional: full-length post stock if the installer wants to cut posts on site.", "Full-length post stock"));
     }
 
-    const baseMaxPanel = clampPostSpacing(vars.max_panel_width_mm, maxPanelWidthForSystem(run.productCode));
+    const baseMaxPanel = clampPostSpacing(vars.max_panel_width_mm, runCfg?.panelRules.maxPanelWidthMm ?? maxPanelWidthForSystem(run.productCode));
     const panelCounts = run.segments.filter((s) => s.segmentKind !== "gate_opening").map((seg) => {
       const maxP = clampPostSpacing(seg.variables?.max_panel_width_mm, baseMaxPanel);
       const w = Number(seg.segmentWidthMm ?? 0), panels = w > 0 ? Math.max(1, Math.ceil(w / maxP)) : 0;
       return { panels, panelWidthMm: panels > 0 ? w / panels : 0 };
     });
 
-    if (run.productCode === "VS") {
+    if (runCfg?.strategy.fence === "vertical_slat") {
       const vertPanelCount = panelCounts.reduce((s, i) => s + i.panels, 0);
       suggestions.push(suggest("XP-FOOT-ADJ", vertPanelCount, "post_accessory", "Suggested for vertical slat panels as a 100mm adjustable support foot.", "100mm adjustable support foot"));
     } else {

@@ -258,6 +258,8 @@ export type CalculatorConfig = {
     // Default gate infill orientation for this fence system (VS → vertical).
     // Replaces the `isVS` arg to `defaultGateBuildForMovement`.
     defaultInfill: "horizontal" | "vertical";
+    // Product code used when creating/loading gate segments for this fence system.
+    gateProductCode: string;
   };
 
   defaults: {
@@ -344,6 +346,9 @@ export type FormFieldDef = {
   follows_field?: string;
   /** Legacy variable keys that read/write alongside this field. */
   aliases?: string[];
+  /** Hint to the form renderer for non-generic presentation (e.g. "colour").
+   *  Replaces field_key branches in SchemaDrivenForm — add here, check there. */
+  render_hint?: string;
 };
 
 /** One conditional-options entry for options_when_json. First matching entry wins. */

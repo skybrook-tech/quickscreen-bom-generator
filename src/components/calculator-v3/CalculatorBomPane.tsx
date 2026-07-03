@@ -8,6 +8,7 @@ import { JobNameEditor } from "../calculator/JobNameEditor";
 import { formatMoney, lineKey } from "../../lib/calculatorV3Helpers";
 import type { CalculatorBOMResult, BOMLineItem, ExtraItem, SuggestedAccessory } from "../../types/bom.types";
 import type { ActiveBomSummary } from "../../hooks/useCalculatorBom";
+import { Loader2 } from "lucide-react";
 
 interface BomRunSection {
   label: string;
@@ -127,10 +128,8 @@ export function CalculatorBomPane({
               key={index}
               className="grid gap-3 rounded-xl border border-brand-border/60 bg-brand-bg/50 p-3 sm:grid-cols-[8rem_1fr_5rem_6rem]"
             >
-              <span className="h-4 animate-pulse rounded bg-brand-border/70" />
-              <span className="h-4 animate-pulse rounded bg-brand-border/60" />
-              <span className="h-4 animate-pulse rounded bg-brand-border/50" />
-              <span className="h-4 animate-pulse rounded bg-brand-border/50" />
+              <Loader2 className="h-4 w-4 animate-spin" />
+
             </div>
           ))}
         </div>
@@ -140,10 +139,10 @@ export function CalculatorBomPane({
             <div className="mb-5 space-y-3 rounded-2xl border border-brand-border/70 bg-brand-bg/45 p-3 print:hidden">
               {bomRunDetails.map((runDetail) => (
                 <section key={runDetail.hero} className="space-y-2">
-                  <p className="text-sm font-black text-brand-text print:text-black">
+                  <p className="text-sm font-black text-red-500 print:text-black">
                     {runDetail.hero}
                   </p>
-                  <p className="text-xs font-semibold text-brand-muted print:text-slate-700">
+                  <p className="text-xs font-semibold text-red-900 print:text-slate-700">
                     {runDetail.settings}
                   </p>
                   <div className="space-y-1 pl-3 text-xs font-semibold text-brand-muted print:text-slate-700">

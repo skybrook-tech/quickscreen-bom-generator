@@ -41,6 +41,9 @@ export interface SchemaField {
   // Show this run field as an always-visible chip in the run header strip
   // (RunCard.tsx), instead of only inside the Run Settings drawer.
   show_in_run_summary?: boolean;
+  // Renderer hint for non-generic presentation — set in fields.json, read here.
+  // Replaces field_key switches: "colour" → colour label+limited badge.
+  render_hint?: string;
 }
 
 interface SchemaDrivenFormProps {
@@ -125,17 +128,9 @@ function optionLabel(field: SchemaField, option: unknown): string {
     return String((option as { label: unknown }).label);
   }
   const value = optionValue(option);
-  if (field.field_key === "finish_family") return ENUM_LABELS[value] ?? value;
-  if (field.field_key === "colour_code" || field.field_key === "post_colour_code") {
+  if (field.render_hint === "colour") {
     const limited = value === "P" || value === "PB" ? " - limited" : "";
     return `${COLOUR_LABELS[value] ?? value} (${value})${limited}`;
-  }
-  if (field.field_key === "slat_size_mm") return `${value}mm slat`;
-  if (field.field_key === "slat_gap_mm") {
-    if (value === "5") return "5mm - near privacy";
-    if (value === "9") return "9mm - standard";
-    if (value === "20") return "20mm - open";
-    return `${value}mm`;
   }
   if (field.field_key === "target_height_mm") return `${value}mm`;
   return ENUM_LABELS[value] ?? value.replace(/_/g, " ");
