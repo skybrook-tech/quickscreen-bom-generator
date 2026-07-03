@@ -1,5 +1,5 @@
-import { Check, ChevronUp } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { ChevronUp, Check } from "lucide-react";
+import { useEffect } from "react";
 import { useCalculator } from "../../../context/CalculatorContext";
 import type { CanonicalRun } from "../../../types/canonical.types";
 import {
@@ -17,102 +17,23 @@ import { GATE_SEGMENT_STUB_KEYS } from "../../../lib/segmentTermination";
 import { localFenceProducts } from "../../../lib/localSeedData";
 import { isPreferredGroutSku } from "../../../lib/postFixingOptions";
 import { getPreferredGroutSku, setPreferredGroutSku } from "../../../lib/userPrefs";
-import { SchemaDrivenForm, valueLabel, type SchemaField } from "../SchemaDrivenForm";
-import { colourName } from "../ColourPalette";
-import { SettingsDisclosureRow } from "../SettingsDisclosureRow";
-import { combinedGapLabel, normaliseGapModeConfig } from "../../../lib/gapChoices";
+import { SchemaSettingsForm } from "../SchemaSettingsForm";
 import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
+import { runFields } from "../../../lib/runFieldOverrides";
 
 interface Props {
   run: CanonicalRun;
   onCollapse?: () => void;
 }
 
-const HIDDEN_FIELD_KEYS = new Set([
-  "target_height_mm",
-  "slat_stock_length_mm",
-  "rail_stock_length_mm",
-  "side_frame_stock_length_mm",
-]);
-
-function fieldValueLabel(field: SchemaField, variables: Record<string, string | number | boolean>) {
-  const raw = variables[field.field_key] ?? field.default_value_json;
-  if (field.field_key === "colour_code" || field.field_key === "post_colour_code") {
-    return colourName(raw);
-  }
-  if (raw === true) return "Yes";
-  if (raw === false) return "No";
-  return valueLabel(field, raw);
-}
-
-function postLabel(variables: Record<string, string | number | boolean>) {
-  const postSystem = String(variables.post_system ?? "standard_50");
-  if (postSystem === "xpl") return "XPress Plus post";
-  if (postSystem === "standard_65" || Number(variables.post_size ?? 50) === 65) return "65mm Post Standard HD";
-  return "50mm Post Standard";
-}
-
 export function RunCardSettings({ run, onCollapse }: Props) {
-  const { state, dispatch } = useCalculator();
+  const { dispatch } = useCalculator();
   const productCode = run.productCode;
   const variables = {
-    ...(state.payload?.variables ?? {}),
     ...(run.variables ?? {}),
   } as Record<string, string | number | boolean>;
   const config = useCalculatorConfig(productCode, variables);
-  const [postColourOpen, setPostColourOpen] = useState(() => {
-    const colour = String(run.variables?.colour_code ?? "B");
-    return Boolean(run.variables?.post_colour_code && run.variables.post_colour_code !== colour);
-  });
-
-  // formFields arrive from the backend already resolved for `variables`
-  // (finish family → slat/colour lists, etc.) — render them directly, no
-  // client-side option filtering.
-  const fields = useMemo(
-    () =>
-      [
-        ...(config?.formFields.job ?? []),
-        ...(config?.formFields.run ?? []),
-      ]
-        .filter((field) => !HIDDEN_FIELD_KEYS.has(field.field_key))
-        .sort((a, b) => a.sort_order - b.sort_order),
-    [config?.formFields.job, config?.formFields.run],
-  );
-  const isPanelStrategy = config?.strategy.fence === "panel";
-  const gapMode = normaliseGapModeConfig(config, variables.slat_gap_mode);
-  const gapMm = Number(variables.slat_gap_mm ?? 9);
-  const fieldMap = useMemo(() => new Map(fields.map((field) => [field.field_key, field])), [fields]);
-  const mountingField = fieldMap.get("mounting_type") ?? fieldMap.get("mounting_method");
-  const showPostColourControl = !isPanelStrategy && fieldMap.has("post_colour_code");
-  const louvreField = fieldMap.get("louvre_treatment");
-
-  function patchRunVariables(patch: Record<string, string | number | boolean | null | undefined>) {
-    const entries = Object.entries(patch).filter(
-      (entry): entry is [string, string | number | boolean] => entry[1] !== null && entry[1] !== undefined,
-    );
-    if (entries.length === 0) return;
-    const [[firstKey, firstValue], ...rest] = entries;
-    updateRunVariables(firstKey, firstValue, productCode, Object.fromEntries(rest));
-  }
-
-  function renderField(key: string) {
-    const field = fieldMap.get(key);
-    if (!field) return null;
-    return (
-      <SchemaDrivenForm
-        fields={[field]}
-        variables={variables}
-        onChange={updateRunVariables}
-        onPatch={patchRunVariables}
-        extra={{ productCode, postFixingMaterials: cfg.postFixingMaterials, config: cfg }}
-      />
-    );
-  }
-
-  function valueFor(key: string, fallback = "Default") {
-    const field = fieldMap.get(key);
-    return field ? fieldValueLabel(field, variables) : fallback;
-  }
+  console.log("config", config);
 
   useEffect(() => {
     if (run.variables?.post_fixing_material_sku) return;
@@ -130,6 +51,17 @@ export function RunCardSettings({ run, onCollapse }: Props) {
 
   if (!config) return null;
   const cfg = config;
+
+  const fields = runFields(cfg);
+
+  function patchRunVariables(patch: Record<string, string | number | boolean | null | undefined>) {
+    const entries = Object.entries(patch).filter(
+      (entry): entry is [string, string | number | boolean] => entry[1] !== null && entry[1] !== undefined,
+    );
+    if (entries.length === 0) return;
+    const [[firstKey, firstValue], ...rest] = entries;
+    updateRunVariables(firstKey, firstValue, productCode, Object.fromEntries(rest));
+  }
 
   function updateRunVariables(
     key: string,
@@ -163,9 +95,9 @@ export function RunCardSettings({ run, onCollapse }: Props) {
     if (key === "colour_code" && (!run.variables?.post_colour_code || previousPostColour === previousColour)) {
       nextVariables.post_colour_code = value;
     }
-    // Dispatch the raw edit — the useRunReconciliation hook
-    // normalises via the backend (cascade corrections like economy → slat 65,
-    // colour subset) so this component stays product-agnostic.
+    // Dispatch the raw edit — the useRunReconciliation hook normalises via the
+    // backend (cascade corrections like economy → slat 65, colour subset) so
+    // this component stays product-agnostic.
     const syncKeys = new Set([
       "finish_family",
       "slat_size_mm",
@@ -283,16 +215,16 @@ export function RunCardSettings({ run, onCollapse }: Props) {
   }
 
   return (
-    <div className="mb-3 space-y-2 border-t border-brand-border/70 bg-brand-bg/55 p-3">
+    <div className="mb-3 space-y-4 border-t border-brand-border/70 bg-brand-bg/55 p-3">
       <p className="text-xs font-semibold text-brand-muted">
         Sections inherit these settings unless overridden.
       </p>
-      <SettingsDisclosureRow
-        id={`${run.runId}-system-type`}
-        label="System type"
-        value={config.display.shortName}
-      >
-        <div className="flex flex-wrap gap-2 border-t border-brand-border/50 p-3">
+
+      <div className="space-y-3">
+        <h4 className="text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
+          System type
+        </h4>
+        <div className="flex flex-wrap gap-2">
           {localFenceProducts.map((product) => (
             <button
               key={product.system_type}
@@ -309,58 +241,17 @@ export function RunCardSettings({ run, onCollapse }: Props) {
             </button>
           ))}
         </div>
-      </SettingsDisclosureRow>
-      <SettingsDisclosureRow
-        id={`${run.runId}-slats-colours-spacings`}
-        label="Slats, colors, and spacings"
-        value={`${valueFor("finish_family")} / ${colourName(variables.colour_code)} / ${valueFor("slat_size_mm")} / ${combinedGapLabel(gapMode, gapMm)}`}
-      >
-        <div className="space-y-4">
-          {renderField("finish_family")}
-          {renderField("colour_code")}
-          {showPostColourControl && (
-            <>
-              <button
-                type="button"
-                onClick={() => setPostColourOpen((value) => !value)}
-                className="rounded-lg border border-brand-border px-3 py-2 text-sm font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-              >
-                {postColourOpen ? "Hide alternate post colour" : "Alternate post colour"}
-              </button>
-              {postColourOpen && renderField("post_colour_code")}
-            </>
-          )}
-          {renderField("slat_size_mm")}
-          {renderField("slat_gap_mm")}
-          {louvreField && renderField("louvre_treatment")}
-        </div>
-      </SettingsDisclosureRow>
-      {!isPanelStrategy && (
-        <SettingsDisclosureRow
-          id={`${run.runId}-post-mounting`}
-          label="Post size, mounting and spacing"
-          value={`${valueFor("post_system", postLabel(variables))} / ${colourName(variables.post_colour_code ?? variables.colour_code)} / ${valueFor("max_panel_width_mm", "2600mm")}`}
-        >
-          <div className="space-y-4">
-            {renderField("post_system")}
-            {renderField("post_size")}
-            {mountingField && (
-              <SchemaDrivenForm
-                fields={[mountingField]}
-                variables={variables}
-                onChange={updateRunVariables}
-                onPatch={patchRunVariables}
-                extra={{ productCode, config }}
-              />
-            )}
-            {renderField("post_fixing_material_sku")}
-            {renderField("base_plate_substrate")}
-            {renderField("max_panel_width_mm")}
-            {renderField("left_boundary_type")}
-            {renderField("right_boundary_type")}
-          </div>
-        </SettingsDisclosureRow>
-      )}
+      </div>
+
+      <SchemaSettingsForm
+        fields={fields}
+        groups={cfg.formGroups}
+        variables={variables}
+        onChange={updateRunVariables}
+        onPatch={patchRunVariables}
+        extra={{ productCode, postFixingMaterials: cfg.postFixingMaterials, config: cfg }}
+      />
+
       {onCollapse && (
         <div className="pt-2">
           <button

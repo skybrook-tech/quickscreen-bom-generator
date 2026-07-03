@@ -7,9 +7,25 @@
 // Changing calculation behaviour for Glass Outlet = edit these objects.
 // Adding a new supplier = deep-merge a patch over one of these.
 
-import type { CalculatorConfig } from "./types.ts";
-import { fenceFormFields } from "./forms/fence.ts";
-import { GATE_FORM_FIELDS } from "./forms/gate.ts";
+import type { CalculatorConfig, FormFieldDef } from "./types.ts";
+import qshsFields from "./products/qshs/fields.json" with { type: "json" };
+import vsFields from "./products/vs/fields.json" with { type: "json" };
+import xplFields from "./products/xpl/fields.json" with { type: "json" };
+import baygFields from "./products/bayg/fields.json" with { type: "json" };
+import qsGateFields from "./products/qs_gate/fields.json" with { type: "json" };
+
+type ProductFieldFile = {
+  fields: FormFieldDef[];
+  fieldGroups: CalculatorConfig["formGroups"];
+};
+
+const PRODUCT_FIELD_FILES: Record<string, ProductFieldFile> = {
+  QSHS: qshsFields,
+  VS: vsFields,
+  XPL: xplFields,
+  BAYG: baygFields,
+  QS_GATE: qsGateFields,
+};
 
 // ─── Shared colour palette ────────────────────────────────────────────────────
 // Keeping colours here for now (Phase 5 will move them to DB).
@@ -277,7 +293,8 @@ export const BASE_QSHS_CONFIG: CalculatorConfig = {
     slatSizeMm: 65, slatGapMm: 9, targetHeightMm: 1800,
     postSizeMm: 50, finishFamily: "standard", colour: "B", mountingType: "in_ground",
   },
-  formFields: fenceFormFields("QSHS", STANDARD_COLOURS),
+  fields: PRODUCT_FIELD_FILES.QSHS.fields,
+  formGroups: PRODUCT_FIELD_FILES.QSHS.fieldGroups,
 };
 
 export const BASE_BAYG_CONFIG: CalculatorConfig = {
@@ -290,7 +307,8 @@ export const BASE_BAYG_CONFIG: CalculatorConfig = {
   finishFamilies: ["standard"],
   gapRules: GAP_RULES_SPACER_ONLY,
   gateRules: { ...GATE_RULES, supported: false },
-  formFields: fenceFormFields("BAYG", STANDARD_COLOURS),
+  fields: PRODUCT_FIELD_FILES.BAYG.fields,
+  formGroups: PRODUCT_FIELD_FILES.BAYG.fieldGroups,
 };
 
 export const BASE_VS_CONFIG: CalculatorConfig = {
@@ -301,7 +319,8 @@ export const BASE_VS_CONFIG: CalculatorConfig = {
   display: DISPLAY_VS,
   heightUi: HEIGHT_UI_VS_FREEFORM,
   gateRules: { ...GATE_RULES, defaultInfill: "vertical" },
-  formFields: fenceFormFields("VS", STANDARD_COLOURS),
+  fields: PRODUCT_FIELD_FILES.VS.fields,
+  formGroups: PRODUCT_FIELD_FILES.VS.fieldGroups,
 };
 
 export const BASE_XPL_CONFIG: CalculatorConfig = {
@@ -312,17 +331,19 @@ export const BASE_XPL_CONFIG: CalculatorConfig = {
   display: DISPLAY_XPL,
   finishFamilies: ["standard", "alumawood"],
   gapRules: GAP_RULES_SPACER_ONLY,
-  formFields: fenceFormFields("XPL", STANDARD_COLOURS),
+  fields: PRODUCT_FIELD_FILES.XPL.fields,
+  formGroups: PRODUCT_FIELD_FILES.XPL.fieldGroups,
 };
 
 // QS_GATE has no fence calculation strategy of its own — gates are calculated
 // inline by the fence run's calculator (see calculators/quickscreen.ts). This
-// entry exists purely so get-calculator-config can serve formFields.segment
-// for the shared gate UI under a stable productCode.
+// entry exists purely so get-calculator-config can serve the segment-visible
+// fields for the shared gate UI under a stable productCode.
 export const BASE_QS_GATE_CONFIG: CalculatorConfig = {
   ...BASE_QSHS_CONFIG,
   productCode: "QS_GATE",
-  formFields: GATE_FORM_FIELDS,
+  fields: PRODUCT_FIELD_FILES.QS_GATE.fields,
+  formGroups: PRODUCT_FIELD_FILES.QS_GATE.fieldGroups,
 };
 
 export const BASE_CONFIGS: Record<string, CalculatorConfig> = {

@@ -99,7 +99,10 @@ export function canonicalPayloadFromQuoteRuns(
   return {
     productCode: first.productCode,
     schemaVersion: 'v1',
-    variables: first.variables ?? {},
+    // v3: runs carry their own variables (persisted via quote_runs); the
+    // payload-level variables bag is empty. (The shared canonical schema
+    // keeps the field for v4 compatibility.)
+    variables: {},
     runs: canonicalRuns,
   };
 }

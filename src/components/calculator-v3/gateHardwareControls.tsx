@@ -1,5 +1,4 @@
-import { useId, useState } from "react";
-import type { ReactNode } from "react";
+import { useState } from "react";
 import { optionLabel, type GateOption } from "../../lib/gateOptionRules";
 import {
   baseHardwareSku,
@@ -10,7 +9,6 @@ import {
 } from "../../lib/gateHardware";
 import { useProductSearch } from "../../hooks/useProductSearch";
 import { optionalAccessoriesForParent } from "../../lib/bomMetadata";
-import { SettingsDisclosureRow } from "./SettingsDisclosureRow";
 
 /**
  * Presentational gate hardware pickers, shared between `GateSegmentDetails`
@@ -59,30 +57,6 @@ export function HardwareReasonTags({
         </span>
       ))}
     </div>
-  );
-}
-
-export function GateSettingsSection({
-  title,
-  summary,
-  children,
-  defaultOpen = false,
-}: {
-  title: string;
-  summary?: string;
-  children: ReactNode;
-  defaultOpen?: boolean;
-}) {
-  const componentId = useId();
-  return (
-    <SettingsDisclosureRow
-      id={`${componentId}-gate-settings-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}
-      label={title}
-      value={summary}
-      defaultOpen={defaultOpen}
-    >
-      {children}
-    </SettingsDisclosureRow>
   );
 }
 

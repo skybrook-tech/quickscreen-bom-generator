@@ -1,40 +1,23 @@
 // config/resolve.ts — variables-aware UI config resolver.
 //
-// Replaces the static `projectUiConfig(config)` projection with a resolver
-// that takes the current variables and returns a fully RESOLVED UiCalculatorConfig:
-//   - formFields with options_json resolved for the current variables
-//     (finish family → slat/colour lists, etc.), so the client renders fields
-//     directly with no product-code branching or live option filtering;
-//   - heightLadder.entries computed for the exact current slat/gap (custom gaps
-//     included), so the client no longer derives heights;
-//   - normalisedVariables echoed back so the client can reconcile cascade
-//     corrections (economy finish snapping slat 90→65, colour subset, etc.);
-//   - display names + capability flags (gapRules, heightUi, gateRules) so the
-//     client never compares product codes.
-//
-// IP posture unchanged: only resolved option lists and already-public flags
-// are projected; geometry (other than slatHeightDeductionMm), internal SKU
-// templates, pack sizes, stock lengths, and pricing stay server-side.
+// Replaces the static projectUiConfig with a fully generic resolver: field
+// options are resolved via the declarative options_when_json mechanism (no
+// field_key or productCode switch). Authoring-only keys (options_when_json,
+// snap_to_options, snap_unless_json, follows_field, aliases) are stripped
+// before the payload is returned so the wire shape is identical to before.
 
 import type { CalculatorConfig, FormFieldDef } from "./types.ts";
 import type { DerivedHeight } from "./heights.ts";
+import { heightEntries } from "./heights.ts";
+import { resolveOptionsForField } from "./optionsWhen.ts";
 import {
-  colourOptions,
-  finishOptions,
-  gapOptions,
-  heightEntries,
+  defaultVariablesFromFields,
   initialVariables,
   normaliseVariables,
-  postColourOptions,
-  slatOptions,
   type Variables,
-} from "./optionRules.ts";
+} from "./normalise.ts";
 
-export type UiFormFields = {
-  job: FormFieldDef[];
-  run: FormFieldDef[];
-  segment: FormFieldDef[];
-};
+export type UiFormGroup = { key: string; label: string; sort_order: number };
 
 export type UiCalculatorConfig = {
   productCode: string;
@@ -45,10 +28,14 @@ export type UiCalculatorConfig = {
     "standard" | "economy" | "alumawood" | "gate" | "names" | "fallback"
   >;
   finishFamilies: string[];
-  panelRules: Pick<CalculatorConfig["panelRules"], "maxPanelWidthMm" | "minPostSpacingMm" | "maxPostSpacingMm">;
+  panelRules: Pick<
+    CalculatorConfig["panelRules"],
+    "maxPanelWidthMm" | "minPostSpacingMm" | "maxPostSpacingMm"
+  >;
   postRules: Pick<CalculatorConfig["postRules"], "longPostThresholdMm">;
   defaults: CalculatorConfig["defaults"];
-  formFields: UiFormFields;
+  fields: FormFieldDef[];
+  formGroups: UiFormGroup[];
   postFixingMaterials: CalculatorConfig["postFixingMaterials"];
   gapRules: CalculatorConfig["gapRules"];
   heightUi: CalculatorConfig["heightUi"];
@@ -57,43 +44,43 @@ export type UiCalculatorConfig = {
   normalisedVariables: Variables;
 };
 
-function resolveFieldOptions(
-  config: CalculatorConfig,
-  field: FormFieldDef,
-  variables: Variables,
-): unknown[] {
-  switch (field.field_key) {
-    case "finish_family":
-      return finishOptions(config);
-    case "slat_size_mm":
-      return slatOptions(config, variables);
-    case "slat_gap_mm":
-      return gapOptions(config);
-    case "colour_code":
-      return colourOptions(config, variables);
-    case "post_colour_code":
-      return postColourOptions(config, variables);
-    default:
-      return Array.isArray(field.options_json) ? field.options_json : [];
-  }
+/** Fields visible in Run Settings (also the source of run.variables defaults). */
+export function runVisibleFields(fields: FormFieldDef[]): FormFieldDef[] {
+  return fields.filter((f) => (f.settings_for ?? ["run", "segment"]).includes("run"));
 }
+
+/** Fields visible in the per-segment override UI. */
+export function segmentVisibleFields(fields: FormFieldDef[]): FormFieldDef[] {
+  return fields.filter((f) => (f.settings_for ?? ["run", "segment"]).includes("segment"));
+}
+
+// Re-export for callers that imported from resolve.ts (e.g. get-calculator-config)
+export { defaultVariablesFromFields, initialVariables, normaliseVariables };
+export type { Variables };
 
 function resolveFields(
   config: CalculatorConfig,
   fields: FormFieldDef[],
   variables: Variables,
 ): FormFieldDef[] {
-  return fields.map((field) => ({
-    ...field,
-    options_json: resolveFieldOptions(config, field, variables),
-  }));
+  return fields.map((field) => {
+    const { options, set } = resolveOptionsForField(config, field, variables);
+    // Strip authoring-only keys so wire payload is shape-identical to before.
+    const {
+      options_when_json: _owj,
+      snap_to_options: _sto,
+      snap_unless_json: _suj,
+      follows_field: _ff,
+      aliases: _al,
+      ...rest
+    } = field;
+    return { ...rest, ...set, options_json: options };
+  });
 }
 
 /**
- * Resolve a UI config for the given variables. When `variables` is omitted
- * (or empty), the product's declared field defaults are normalised — used by
- * landing/product-select surfaces that need display names + default options
- * without a concrete run.
+ * Resolve a UI config for the given variables. When variables is omitted,
+ * uses the product's declared field defaults — used by landing surfaces.
  */
 export function resolveUiConfig(
   config: CalculatorConfig,
@@ -121,11 +108,8 @@ export function resolveUiConfig(
     },
     postRules: { longPostThresholdMm: config.postRules.longPostThresholdMm },
     defaults: config.defaults,
-    formFields: {
-      job: resolveFields(config, config.formFields.job, normalised),
-      run: resolveFields(config, config.formFields.run, normalised),
-      segment: config.formFields.segment,
-    },
+    fields: resolveFields(config, config.fields, normalised),
+    formGroups: config.formGroups,
     postFixingMaterials: config.postFixingMaterials,
     gapRules: config.gapRules,
     heightUi: config.heightUi,

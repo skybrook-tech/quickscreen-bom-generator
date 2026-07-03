@@ -105,7 +105,7 @@ export function combinedGapChoicesForConfig(
   currentMode: unknown,
   currentGap: unknown,
 ): CombinedGapChoice[] {
-  const gapField = config.formFields.job.find((f) => f.field_key === "slat_gap_mm");
+  const gapField = config.fields.find((f) => f.field_key === "slat_gap_mm");
   const gaps = Array.isArray(gapField?.options_json)
     ? (gapField!.options_json as number[])
     : [];

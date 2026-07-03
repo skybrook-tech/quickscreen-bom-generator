@@ -78,16 +78,17 @@ export function calculatorReducer(
     }
     case "UPSERT_SEGMENT": {
       if (!state.payload) return state;
-      const vars = state.payload.variables;
+      const targetRun = state.payload.runs.find((r) => r.runId === action.runId);
+      const runVars = targetRun?.variables ?? {};
 
-      // Auto-fill top-level geometry fields from job-level variables so
+      // Auto-fill top-level geometry fields from the target run's variables so
       // canvas-drawn and form-created segments produce identical BOM inputs.
       // The spread puts the default first; action.segment wins if it has an
       // explicit value, preserving per-segment overrides set in SegmentRow.
       const segment: CanonicalSegment = {
         targetHeightMm:
-          vars.target_height_mm != null
-            ? Number(vars.target_height_mm)
+          runVars.target_height_mm != null
+            ? Number(runVars.target_height_mm)
             : 1800,
         ...action.segment,
       };

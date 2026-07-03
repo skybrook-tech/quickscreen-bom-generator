@@ -20,17 +20,16 @@ function normaliseField(raw: Partial<SchemaField> & { field_key: string }): Sche
     visible_when_json: raw.visible_when_json ?? {},
     sort_order: raw.sort_order ?? 0,
     options_group: raw.options_group,
+    group: raw.group,
+    settings_for: raw.settings_for ?? ["run", "segment"],
+    show_in_run_summary: raw.show_in_run_summary,
   };
 }
 
 function normaliseConfig(raw: UiCalculatorConfig): UiCalculatorConfig {
   return {
     ...raw,
-    formFields: {
-      job: (raw.formFields?.job ?? []).map(normaliseField),
-      run: (raw.formFields?.run ?? []).map(normaliseField),
-      segment: (raw.formFields?.segment ?? []).map(normaliseField),
-    },
+    fields: (raw.fields ?? []).map(normaliseField),
   };
 }
 

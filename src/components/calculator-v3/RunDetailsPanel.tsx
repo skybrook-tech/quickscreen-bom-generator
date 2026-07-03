@@ -23,8 +23,8 @@ function mm(segment: CanonicalSegment) {
   return Number(segment.segmentWidthMm ?? 0);
 }
 
-function varsFor(run: CanonicalRun, payload: CanonicalPayload) {
-  return { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
+function varsFor(run: CanonicalRun) {
+  return { ...(run.variables ?? {}) };
 }
 
 function runLength(run: CanonicalRun) {
@@ -83,7 +83,7 @@ export function RunDetailsPanel({ payload }: RunDetailsPanelProps) {
         Run details
       </h3>
       {payload.runs.map((run, runIdx) => {
-        const runVariables = varsFor(run, payload);
+        const runVariables = varsFor(run);
         const stats = calcRunStats(
           run,
           Number(runVariables.max_panel_width_mm ?? maxPanelWidthForSystem(run.productCode)),

@@ -41,16 +41,13 @@ function reconcileDiff(
   return diff;
 }
 
-function mergeRunVariables(
-  run: CanonicalRun,
-  jobVariables: CanonicalVariables | undefined,
-): CanonicalVariables {
-  return { ...(jobVariables ?? {}), ...(run.variables ?? {}) };
+function mergeRunVariables(run: CanonicalRun): CanonicalVariables {
+  return { ...(run.variables ?? {}) };
 }
 
 /**
  * Run-scoped reconciliation: diffs the resolved config's `normalisedVariables`
- * against the run's current merged variables and dispatches cascade corrections
+ * against the run's current variables and dispatches cascade corrections
  * (e.g. economy finish snapping slat 90→65 + colour to the economy set) so the
  * client no longer needs product-specific normalisation logic. Only ever
  * dispatches `UPSERT_RUN` against `run.variables` — segment-level overrides
@@ -59,12 +56,9 @@ function mergeRunVariables(
  * Call once per run (in `RunCardInner`). Side-effect only; returns nothing.
  */
 export function useRunReconciliation(run: CanonicalRun) {
-  const { state, dispatch } = useCalculator();
+  const { dispatch } = useCalculator();
 
-  const runVariables = useMemo(
-    () => mergeRunVariables(run, state.payload?.variables as CanonicalVariables | undefined),
-    [run, state.payload?.variables],
-  );
+  const runVariables = useMemo(() => mergeRunVariables(run), [run]);
 
   const configQuery = useCalculatorConfigQuery(run.productCode, runVariables);
   const config = configQuery.data;

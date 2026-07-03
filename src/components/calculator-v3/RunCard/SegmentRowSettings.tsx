@@ -32,19 +32,12 @@ export function SegmentRowSettings({
   runId,
   seg,
   isPanelStrategy,
-  isFreeform,
   gate,
-  segmentVariables,
-  heightEntries,
-  heightInputsReady,
-  selectedHeight,
   gateWidthValidation,
   matchesMaster,
   visibleSettings,
   showRunDefaultsTeaching,
   onDismissRunDefaultsTeaching,
-  updateGeometry,
-  updateDerivedHeight,
   updatePanelQuantity,
   switchGateToAlternative,
 }: Props) {
@@ -70,57 +63,6 @@ export function SegmentRowSettings({
         </div>
       )}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-
-        <label className="flex flex-col gap-1">
-          <div className="flex items-center gap-1">
-
-            <span className="text-sm font-bold text-brand-muted">Height (mm)</span>
-
-          </div>
-          {isFreeform ? (
-            <>
-
-              <NumberInput
-                value={seg.targetHeightMm ?? 1800}
-                className="w-24 px-2 py-1.5 text-center tabular-nums"
-                onChange={(v) => updateGeometry("targetHeightMm", Number(v))}
-              />
-            </>
-          ) : heightEntries.length > 0 && heightInputsReady ? (
-            <>
-
-              <select
-                value={selectedHeight}
-                onChange={(event) => {
-                  const entry = heightEntries.find(
-                    (item) => item.height === Number(event.target.value),
-                  );
-                  if (entry) updateDerivedHeight(entry);
-                }}
-                className="w-44 rounded-lg border border-brand-border bg-brand-card px-3 py-2 text-sm font-semibold text-brand-text shadow-sm outline-none transition-colors focus:border-brand-accent focus:ring-2 focus:ring-brand-accent/20"
-              >
-                {heightEntries.map((entry) => (
-                  <option key={entry.N} value={entry.height}>
-                    {entry.height}mm - {entry.N} slats
-                  </option>
-                ))}
-              </select>
-
-            </>
-          ) : (
-            <select
-              disabled
-              className="w-52 rounded-lg border border-brand-border bg-brand-card/70 px-3 py-2 text-sm font-semibold text-brand-muted shadow-sm"
-            >
-              <option>Select slat size and gap first</option>
-            </select>
-          )}
-          {isFreeform ? (
-            <span className="text-xs text-brand-muted/70">Custom height</span>
-          ) : (
-            <span className="text-xs text-brand-muted">Calculated for {segmentVariables.slat_size_mm ?? "?"}mm x {segmentVariables.slat_gap_mm ?? "?"}mm gap</span>
-          )}
-        </label>
         {isPanelStrategy && !gate && (
           <label className="flex flex-col gap-1">
             <span className="text-sm font-bold text-brand-muted">Quantity</span>

@@ -7,28 +7,9 @@ import { useSegmentHeightOptions } from "../../../hooks/useSegmentHeightOptions"
 import { SchemaDrivenFormV4 } from "../RunCard/SchemaDrivenFormV4";
 import { TerminationControl } from "./TerminationControl";
 import NumberInput from "../../ui/NumberInput";
-import { Select } from "../../ui/Select";
-import { Segmented } from "../../ui/Segmented";
-import { ColourSwatches, type ColourOption } from "../../ui/ColourSwatches";
-import { COLOUR_HEX } from "../../../lib/colourHex";
 import { cn } from "../../../lib";
 import { ProductSelectV4 } from "../JobShell/ProductSelectV4";
 import { GateSegmentDetails } from "./GateSegmentDetails";
-
-const POST_COLOUR_KEY = "post_colour_code";
-
-const COLOUR_OPTIONS: ColourOption[] = Object.keys(COLOUR_HEX).map((key) => ({
-  value: key,
-  label: key.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-}));
-
-const POST_SIZE_KEY = "post_size";
-const POST_WIDTH_MM_KEY = "post_width_mm";
-
-const POST_SIZE_LABELS: Record<string, string> = {
-  "50": "50×50 System Post",
-  "65": "65×65 HD Post",
-};
 
 interface Props {
   runId: string;
@@ -44,23 +25,12 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
   const productCode = run?.productCode ?? state.payload?.productCode ?? null;
 
   const { data: jobFields = [] } = useProductVariables(productCode, "job");
-  const { data: runFields = [] } = useProductVariables(productCode, "run");
+  useProductVariables(productCode, "run");
 
   const jobFieldKeys = useMemo(
     () => new Set(jobFields.map((f) => f.field_key)),
     [jobFields],
   );
-
-  const postSizeOptions = useMemo(() => {
-    const v = runFields.find((f) => f.field_key === "post_size");
-    const raw = v?.options_json ?? ["50", "65"];
-    return raw.map(String);
-  }, [runFields]);
-
-  const slatSizeOptions = useMemo(() => {
-    const f = jobFields.find((f) => f.field_key === "slat_size_mm");
-    return (f?.options_json ?? ["65", "90"]).map(String);
-  }, [jobFields]);
 
   const mergedForHeights = useMemo(
     () => ({
@@ -71,37 +41,12 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
     [state.payload?.variables, run?.variables, seg.variables],
   );
 
-  const {
-    freeform,
-    freeformBounds,
-    optionsMm: heightOptionsMm,
-    clampFreeform,
-  } = useSegmentHeightOptions(
-    productCode,
-    mergedForHeights,
-    seg.targetHeightMm,
-  );
-
-  const heightSelectValue = String(
-    seg.targetHeightMm ??
-    heightOptionsMm[0] ??
-    freeformBounds?.minMm ??
-    1800,
-  );
-
-  const freeformHeightValue =
-    seg.targetHeightMm ?? freeformBounds?.minMm ?? 300;
+  useSegmentHeightOptions(productCode, mergedForHeights, seg.targetHeightMm);
 
   const v = seg.variables ?? {};
-  const postSize = (v[POST_SIZE_KEY] as string) ?? "";
-  const isCustomPost = postSize === "custom";
 
   function upsertSegment(s: CanonicalSegment) {
     dispatch({ type: "UPSERT_SEGMENT", runId, segment: s });
-  }
-
-  function setScalar(key: string, value: string | number | boolean | null) {
-    upsertSegment(patchSegmentVariables(seg, { [key]: value }));
   }
 
   function onJobOverrideChange(key: string, value: string | number | boolean) {
@@ -109,13 +54,6 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
     upsertSegment(
       patchSegmentVariables(seg, { [key]: value === base ? null : value }),
     );
-  }
-
-  const jobMax = Number(state.payload?.variables.max_panel_width_mm ?? 2600);
-  const effectiveMax = Number(v.max_panel_width_mm ?? jobMax);
-
-  function updateMaxPanelWidth(value: number | null) {
-    upsertSegment(patchSegmentVariables(seg, { max_panel_width_mm: value }));
   }
 
   const mergedJobDisplay: Record<string, string | number | boolean> = {
@@ -132,14 +70,7 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
     return <GateSegmentDetails runId={runId} seg={seg} locked={locked} />;
   }
 
-  const lenMm = seg.segmentWidthMm ?? 0;
-  const panelsForSpacing =
-    effectiveMax > 0 && lenMm > 0
-      ? Math.max(1, Math.ceil(lenMm / effectiveMax))
-      : 1;
-  const actualPostSpacingMm =
-    panelsForSpacing > 0 ? Math.round(lenMm / panelsForSpacing) : 0;
-
+  return null;
   return (
     <div
       className={cn(
@@ -187,7 +118,7 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
             </span>
           </div>
         </div>
-        <div className="space-y-2">
+        {/* <div className="space-y-2">
           <label className={labelClass}>Height (mm)</label>
           {freeform && freeformBounds ? (
             <div data-testid={`v4-seg-height-${seg.segmentId}`}>
@@ -224,10 +155,10 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
               ))}
             </Select>
           )}
-        </div>
+        </div> */}
       </div>
 
-      {isFence && slatSizeOptions.length > 1 && (
+      {/* {isFence && slatSizeOptions.length > 1 && (
         <div className="space-y-2">
           <label className={labelClass}>Slat size</label>
           <Segmented
@@ -237,9 +168,9 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
             size="sm"
           />
         </div>
-      )}
+      )} */}
 
-      {isFence && (
+      {/* {isFence && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label className="flex flex-col gap-1">
             <span className="text-brand-muted text-xs">
@@ -294,9 +225,9 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
             </label>
           )}
         </div>
-      )}
+      )} */}
 
-      {isFence && (
+      {/* {isFence && (
         <div className="space-y-1">
           <div className="flex items-center justify-between">
             <span className={labelClass}>Post colour</span>
@@ -330,7 +261,7 @@ export function SegmentDetails({ runId, seg, locked = false, isMaster }: Props) 
             </p>
           )}
         </div>
-      )}
+      )} */}
 
       {isFence && jobFields.length > 0 && (
         <fieldset disabled={locked} className="min-w-0 border-0 p-0 m-0">

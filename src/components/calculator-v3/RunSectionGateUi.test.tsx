@@ -37,6 +37,8 @@ const calculatorConfigMock = vi.hoisted(() => {
     defaultValue: unknown,
     options: unknown[],
     sortOrder: number,
+    group: string | undefined,
+    settingsFor: ("run" | "segment")[] = ["run", "segment"],
   ) => ({
     id: `${fieldKey}-field`,
     field_key: fieldKey,
@@ -48,20 +50,22 @@ const calculatorConfigMock = vi.hoisted(() => {
     options_json: options,
     visible_when_json: {},
     sort_order: sortOrder,
+    group,
+    settings_for: settingsFor,
   });
 
-  const jobFields = [
-    field("finish_family", "Slat range", "select", "enum", "standard", ["standard", "economy", "alumawood"], 5),
-    field("colour_code", "Colour", "select", "enum", "B", ["B", "SM"], 10),
-    field("post_colour_code", "Post colour", "select", "enum", "B", ["B", "SM"], 11),
-    field("slat_size_mm", "Slat size", "select", "number", 65, [65, 90], 20),
-    field("slat_gap_mm", "Slat gap", "select", "number", 9, [5, 9, 20], 30),
-  ];
-  const runFields = [
-    field("post_system", "Post size", "select", "enum", "standard_50", ["standard_50", "standard_65"], 40),
-    field("post_size", "Standard post size", "select", "number", 50, [50, 65], 41),
-    field("mounting_method", "Post mounting type", "select", "enum", "in_ground", ["in_ground", "base_plate", "core_drill"], 50),
-    field("max_panel_width_mm", "Max Post Spacing", "number", "number", 2600, [], 60),
+  // v3: a single flat fields[] array. Former job+run fields are
+  // settings_for ["run","segment"] (run default + segment override).
+  const fields = [
+    field("finish_family", "Slat range", "select", "enum", "standard", ["standard", "economy", "alumawood"], 5, "slats_colours"),
+    field("colour_code", "Colour", "select", "enum", "B", ["B", "SM"], 10, "slats_colours"),
+    field("post_colour_code", "Post colour", "colour_palette_optional", "enum", "B", ["B", "SM"], 11, "slats_colours"),
+    field("slat_size_mm", "Slat size", "select", "number", 65, [65, 90], 20, "slats_colours"),
+    field("slat_gap_mm", "Slat gap", "select", "number", 9, [5, 9, 20], 30, "slats_colours"),
+    field("post_system", "Post size", "select", "enum", "standard_50", ["standard_50", "standard_65"], 40, "posts_mounting"),
+    field("post_size", "Standard post size", "select", "number", 50, [50, 65], 41, "posts_mounting"),
+    field("mounting_method", "Post mounting type", "select", "enum", "in_ground", ["in_ground", "base_plate", "core_drill"], 50, "posts_mounting"),
+    field("max_panel_width_mm", "Max Post Spacing", "number", "number", 2600, [], 60, "posts_mounting"),
   ];
 
   const baseConfig: UiCalculatorConfig = {
@@ -81,7 +85,11 @@ const calculatorConfigMock = vi.hoisted(() => {
       colour: "B",
       mountingType: "in_ground",
     },
-    formFields: { job: jobFields, run: runFields, segment: [] },
+    fields,
+    formGroups: [
+      { key: "slats_colours", label: "Slats, colours and spacings", sort_order: 20 },
+      { key: "posts_mounting", label: "Post size, mounting and spacing", sort_order: 30 },
+    ],
     postFixingMaterials: [
       { sku: "GROUT-RSC", label: "Rapid set concrete", description: "20kg bag" },
     ],
@@ -166,12 +174,12 @@ function cleanup(root?: Root, container?: HTMLElement) {
   container?.remove();
 }
 
-function disclosureRow(container: HTMLElement, label: string) {
-  const button = Array.from(container.querySelectorAll("button")).find((item) =>
+function groupSection(container: HTMLElement, label: string): HTMLElement {
+  const h4 = Array.from(container.querySelectorAll("h4")).find((item) =>
     item.textContent?.includes(label),
   );
-  expect(button).toBeTruthy();
-  return button!.parentElement as HTMLElement;
+  expect(h4).toBeTruthy();
+  return h4!.parentElement as HTMLElement;
 }
 
 const baseRun: CanonicalRun = {
@@ -316,14 +324,14 @@ describe("Run, section, and gate UI consistency", () => {
     cleanup(root, container);
   });
 
-  it("places alternate post colour inside the run slats and colours dropdown", () => {
+  it("places alternate post colour inside the run slats and colours group", () => {
     setPayload(baseRun);
     const { container, root } = render(
       <RunCardSettings run={baseRun} />,
     );
 
-    const slatsRow = disclosureRow(container, "Slats, colors, and spacings");
-    const postsRow = disclosureRow(container, "Post size, mounting and spacing");
+    const slatsRow = groupSection(container, "Slats, colours and spacings");
+    const postsRow = groupSection(container, "Post size, mounting and spacing");
 
     expect(slatsRow.textContent).toContain("Alternate post colour");
     expect(postsRow.textContent).not.toContain("Alternate post colour");
@@ -331,7 +339,7 @@ describe("Run, section, and gate UI consistency", () => {
     cleanup(root, container);
   });
 
-  it("mirrors run dropdown grouping in section settings", () => {
+  it("mirrors run group layout in section settings", () => {
     const segment: CanonicalSegment = {
       segmentId: "seg-1",
       sortOrder: 1,
@@ -346,8 +354,8 @@ describe("Run, section, and gate UI consistency", () => {
       <FenceSegmentDetails runId={run.runId} seg={segment} />,
     );
 
-    const slatsRow = disclosureRow(container, "Slats, colors, and spacings");
-    const postsRow = disclosureRow(container, "Post size, mounting and spacing");
+    const slatsRow = groupSection(container, "Slats, colours and spacings");
+    const postsRow = groupSection(container, "Post size, mounting and spacing");
 
     expect(slatsRow.textContent).toContain("Alternate post colour");
     expect(slatsRow.textContent?.match(/Post colour/g) ?? []).toHaveLength(0);

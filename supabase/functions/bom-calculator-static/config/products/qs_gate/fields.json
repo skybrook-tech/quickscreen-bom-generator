@@ -1,0 +1,633 @@
+{
+  "fields": [
+    {
+      "field_key": "gate_build",
+      "label": "QSG gate system",
+      "group": "type_direction",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "qsg_hinged_horizontal",
+      "options_json": [
+        {
+          "value": "qsg_hinged_horizontal",
+          "label": "QSG hinged horizontal"
+        },
+        {
+          "value": "qsg_hinged_vertical",
+          "label": "QSG hinged vertical"
+        },
+        {
+          "value": "qsg_sliding_horizontal",
+          "label": "QSG sliding horizontal"
+        },
+        {
+          "value": "qsg_sliding_vertical",
+          "label": "QSG sliding vertical"
+        }
+      ],
+      "options_when_json": [
+        { "when": { "gate_movement": "sliding" }, "intersect": ["qsg_sliding_horizontal", "qsg_sliding_vertical"] },
+        { "when": { "gate_movement": ["single_swing", "double_swing"] }, "intersect": ["qsg_hinged_horizontal", "qsg_hinged_vertical"] }
+      ],
+      "visible_when_json": {},
+      "sort_order": 5,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "gate_movement",
+      "label": "Gate type",
+      "group": "type_direction",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "single_swing",
+      "options_json": [
+        {
+          "value": "single_swing",
+          "label": "Single swing"
+        },
+        {
+          "value": "double_swing",
+          "label": "Double swing"
+        },
+        {
+          "value": "sliding",
+          "label": "Sliding"
+        }
+      ],
+      "visible_when_json": {},
+      "sort_order": 10,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "opening_direction",
+      "label": "Opening direction",
+      "group": "type_direction",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "out",
+      "options_json": [
+        {
+          "value": "out",
+          "label": "Swing out"
+        },
+        {
+          "value": "in",
+          "label": "Swing in"
+        }
+      ],
+      "visible_when_json": {},
+      "sort_order": 20,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "sliding_side",
+      "label": "Sliding side",
+      "group": "type_direction",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "front",
+      "options_json": [
+        {
+          "value": "front",
+          "label": "Slide in front of fence"
+        },
+        {
+          "value": "back",
+          "label": "Slide behind fence"
+        }
+      ],
+      "visible_when_json": {
+        "gate_movement": "sliding"
+      },
+      "sort_order": 25,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "leaf_1_width_mm",
+      "label": "Leaf widths",
+      "group": "type_direction",
+      "control_type": "leaf_width_pair",
+      "data_type": "number",
+      "unit": "mm",
+      "visible_when_json": {
+        "gate_movement": "double_swing"
+      },
+      "sort_order": 30,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "leaf_2_width_mm",
+      "label": "Leaf 2 width",
+      "control_type": "leaf_width_pair",
+      "data_type": "number",
+      "unit": "mm",
+      "visible_when_json": {
+        "gate_movement": "double_swing"
+      },
+      "sort_order": 31,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "leaf_count",
+      "label": "Leaf count",
+      "control_type": "number",
+      "data_type": "integer",
+      "default_value_json": 1,
+      "visible_when_json": {},
+      "sort_order": 32,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "match_run_height",
+      "label": "Match run height",
+      "control_type": "toggle",
+      "data_type": "boolean",
+      "default_value_json": true,
+      "visible_when_json": {},
+      "sort_order": 33,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "gate_height_mm",
+      "label": "Gate height",
+      "control_type": "number",
+      "data_type": "number",
+      "unit": "mm",
+      "visible_when_json": {},
+      "sort_order": 34,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "slat_size_mm",
+      "label": "Gate slat size",
+      "group": "slats_post_colour",
+      "control_type": "select",
+      "data_type": "number",
+      "options_json": [
+        65,
+        90
+      ],
+      "default_value_json": 65,
+      "unit": "mm",
+      "visible_when_json": {},
+      "sort_order": 40,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "slat_gap_mm",
+      "label": "Gate slat gap",
+      "group": "slats_post_colour",
+      "control_type": "select",
+      "data_type": "number",
+      "options_json": [
+        5,
+        9,
+        12,
+        15,
+        20,
+        30
+      ],
+      "default_value_json": 9,
+      "unit": "mm",
+      "visible_when_json": {},
+      "sort_order": 41,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "gate_post_size_mm",
+      "label": "Gate post",
+      "group": "slats_post_colour",
+      "control_type": "select",
+      "data_type": "number",
+      "options_json": [
+        50,
+        65
+      ],
+      "default_value_json": 50,
+      "unit": "mm",
+      "visible_when_json": {},
+      "sort_order": 42,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "colour_code",
+      "label": "Gate colour",
+      "group": "slats_post_colour",
+      "control_type": "colour_palette",
+      "data_type": "enum",
+      "options_json": [],
+      "options_when_json": [{ "options_ref": "colours.gate" }],
+      "default_value_json": "B",
+      "visible_when_json": {},
+      "sort_order": 43,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "use_gate_posts_as_fence_termination",
+      "label": "Use gate posts as fence termination posts",
+      "group": "slats_post_colour",
+      "control_type": "toggle",
+      "data_type": "boolean",
+      "default_value_json": true,
+      "visible_when_json": {},
+      "sort_order": 44,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "hinge_type",
+      "label": "Hinge / closer",
+      "group": "hardware_weight",
+      "control_type": "hardware_ranked",
+      "data_type": "string",
+      "default_value_json": "TC-H-AT-HD-B",
+      "visible_when_json": {
+        "gate_movement": [
+          "single_swing",
+          "double_swing"
+        ]
+      },
+      "sort_order": 50,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "latch_type",
+      "label": "Latch / lock",
+      "group": "hardware_weight",
+      "control_type": "hardware_ranked",
+      "data_type": "string",
+      "default_value_json": "LL-DL-KA",
+      "visible_when_json": {
+        "gate_movement": [
+          "single_swing",
+          "double_swing"
+        ]
+      },
+      "sort_order": 51,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "optional_add_ons",
+      "label": "Optional add-ons",
+      "group": "hardware_weight",
+      "control_type": "optional_addons",
+      "data_type": "string",
+      "visible_when_json": {
+        "gate_movement": [
+          "single_swing",
+          "double_swing"
+        ]
+      },
+      "sort_order": 52,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "hardware_kit_sku",
+      "label": "Hardware kit",
+      "group": "hardware_weight",
+      "control_type": "kit_toggle",
+      "data_type": "string",
+      "default_value_json": "",
+      "visible_when_json": {
+        "gate_movement": [
+          "single_swing",
+          "double_swing"
+        ]
+      },
+      "sort_order": 53,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "include_external_access_kit",
+      "label": "Add external access kit (LLB)",
+      "group": "hardware_weight",
+      "control_type": "toggle",
+      "data_type": "boolean",
+      "default_value_json": false,
+      "visible_when_json": {
+        "gate_movement": [
+          "single_swing",
+          "double_swing"
+        ],
+        "latch_type": [
+          "LLAA",
+          "LLAA-W",
+          "LL-DL",
+          "LL-DL-KA",
+          "LL-DL-W"
+        ]
+      },
+      "sort_order": 54,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "drop_bolt_type",
+      "label": "Drop bolt",
+      "group": "hardware_weight",
+      "control_type": "hardware_dropdown",
+      "data_type": "string",
+      "default_value_json": "none",
+      "options_group": "gate,drop,bolt",
+      "visible_when_json": {
+        "gate_movement": [
+          "single_swing",
+          "double_swing"
+        ]
+      },
+      "sort_order": 55,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "gate_stop_type",
+      "label": "Gate stop",
+      "group": "hardware_weight",
+      "control_type": "hardware_dropdown",
+      "data_type": "string",
+      "default_value_json": "none",
+      "options_group": "gate,stop",
+      "visible_when_json": {
+        "gate_movement": [
+          "single_swing",
+          "double_swing"
+        ]
+      },
+      "sort_order": 56,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "include_lock_box",
+      "label": "Include lock box",
+      "control_type": "toggle",
+      "data_type": "boolean",
+      "default_value_json": false,
+      "visible_when_json": {
+        "gate_movement": [
+          "single_swing",
+          "double_swing"
+        ]
+      },
+      "sort_order": 57,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "lock_box_type",
+      "label": "Lock box type",
+      "control_type": "text",
+      "data_type": "string",
+      "visible_when_json": {
+        "gate_movement": [
+          "single_swing",
+          "double_swing"
+        ]
+      },
+      "sort_order": 58,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "hinge_side",
+      "label": "Hinge side",
+      "control_type": "select",
+      "data_type": "enum",
+      "options_json": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "visible_when_json": {
+        "gate_movement": [
+          "single_swing",
+          "double_swing"
+        ]
+      },
+      "sort_order": 59,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "sliding_track_type",
+      "label": "Track",
+      "group": "hardware_weight",
+      "control_type": "hardware_dropdown",
+      "data_type": "string",
+      "default_value_json": "XPSG-6000-TRACK-ST",
+      "options_group": "track",
+      "visible_when_json": {
+        "gate_movement": "sliding"
+      },
+      "sort_order": 60,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "sliding_guide_type",
+      "label": "Top guide system",
+      "group": "hardware_weight",
+      "control_type": "hardware_dropdown",
+      "data_type": "string",
+      "default_value_json": "XPSG-GUIDE",
+      "options_group": "guide,roller",
+      "visible_when_json": {
+        "gate_movement": "sliding"
+      },
+      "sort_order": 61,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "sliding_catch_type",
+      "label": "Catch type",
+      "group": "hardware_weight",
+      "control_type": "hardware_dropdown",
+      "data_type": "string",
+      "default_value_json": "XPSG-CATCH-U",
+      "options_group": "catch",
+      "visible_when_json": {
+        "gate_movement": "sliding"
+      },
+      "sort_order": 62,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "sliding_motor_type",
+      "label": "Motor kit",
+      "control_type": "select",
+      "data_type": "string",
+      "default_value_json": "none",
+      "visible_when_json": {
+        "gate_movement": "sliding"
+      },
+      "sort_order": 63,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "automation_enabled",
+      "label": "Add automation kit?",
+      "group": "hardware_weight",
+      "control_type": "automation_group",
+      "data_type": "boolean",
+      "default_value_json": false,
+      "visible_when_json": {
+        "gate_movement": "sliding"
+      },
+      "sort_order": 64,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "automation_power_source",
+      "label": "Power source",
+      "group": "hardware_weight",
+      "control_type": "select",
+      "data_type": "enum",
+      "options_json": [
+        {
+          "value": "mains",
+          "label": "Mains"
+        },
+        {
+          "value": "solar",
+          "label": "Solar"
+        }
+      ],
+      "default_value_json": "mains",
+      "visible_when_json": {},
+      "sort_order": 65,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "automation_cable_distance_m",
+      "label": "Motor distance from mains outlet",
+      "group": "hardware_weight",
+      "control_type": "number",
+      "data_type": "number",
+      "unit": "m",
+      "default_value_json": 0,
+      "visible_when_json": {},
+      "sort_order": 66,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "automation_battery",
+      "label": "Add backup battery for power outages",
+      "group": "hardware_weight",
+      "control_type": "toggle",
+      "data_type": "boolean",
+      "default_value_json": false,
+      "visible_when_json": {},
+      "sort_order": 67,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "automation_keypad",
+      "label": "Wireless keypad",
+      "group": "hardware_weight",
+      "control_type": "toggle",
+      "data_type": "boolean",
+      "default_value_json": false,
+      "visible_when_json": {},
+      "sort_order": 68,
+      "settings_for": [
+        "segment"
+      ]
+    },
+    {
+      "field_key": "automation_extra_remotes",
+      "label": "Extra remotes",
+      "group": "hardware_weight",
+      "control_type": "number",
+      "data_type": "integer",
+      "default_value_json": 0,
+      "visible_when_json": {},
+      "sort_order": 69,
+      "settings_for": [
+        "segment"
+      ]
+    }
+  ],
+  "fieldGroups": [
+    {
+      "key": "type_direction",
+      "label": "Gate Type & Direction",
+      "sort_order": 10
+    },
+    {
+      "key": "slats_post_colour",
+      "label": "Slat, Post & Colour",
+      "sort_order": 20
+    },
+    {
+      "key": "hardware_weight",
+      "label": "Hardware & Weight",
+      "sort_order": 30
+    },
+    {
+      "key": "components",
+      "label": "Gate Components",
+      "sort_order": 40
+    }
+  ]
+}

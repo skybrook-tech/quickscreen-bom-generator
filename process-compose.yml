@@ -7,7 +7,7 @@ processes:
     is_tty: true
 
   cursor:
-    command: zsh -l -i -c 'echo "Cursor is not supported yet"'
+    command: zsh -l -i -c '/Applications/Cursor_personal.app/Contents/MacOS/Cursor --user-data-dir=$HOME/.cursor_personal --extensions-dir=$HOME/.curso_personal/extensions'
     working_dir: ./
     is_tty: true
 

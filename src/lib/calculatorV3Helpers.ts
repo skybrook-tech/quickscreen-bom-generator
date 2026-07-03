@@ -270,7 +270,9 @@ export function createInitialPayload(systemType = "QSHS"): CanonicalPayload {
   return {
     productCode: systemType,
     schemaVersion: "v1",
-    variables: initialVariables,
+    // v3: runs + segments are the sole source of truth — payload.variables
+    // is kept as {} (the shared canonical schema still has the field for v4).
+    variables: {},
     runs: [
       {
         runId: crypto.randomUUID(),
@@ -298,7 +300,7 @@ export function createEmptyPayload(systemType = "QSHS"): CanonicalPayload {
   return {
     productCode: systemType,
     schemaVersion: "v1",
-    variables: initialVariablesForSystem(systemType),
+    variables: {},
     runs: [],
   };
 }
@@ -386,7 +388,6 @@ export function buildRunFromDescription(
   const initialVariables = initialVariablesForSystem(productCode);
   const variables = normaliseVariablesForSystem(productCode, {
     ...initialVariables,
-    ...(base.variables ?? {}),
     ...(baseRun.variables ?? {}),
     ...(result.attributes.heightMm?.value
       ? { target_height_mm: result.attributes.heightMm.value }
@@ -595,7 +596,7 @@ export function buildBomRunDetails(payload: CanonicalPayload): BomRunDetail[] {
   };
 
   return payload.runs.map((run, runIndex) => {
-    const vars = { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
+    const vars = { ...(run.variables ?? {}) };
     const gates = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
     const sections = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
     const lengthMm = run.segments.reduce((sum, segment) => {
@@ -755,12 +756,12 @@ export function buildConfirmGatePayload(
     if (!firstSegment || totalLength <= gateWidth) return run;
     const leftWidth = Math.max(1, Math.round(distanceFromStartMm - gateWidth / 2));
     const rightWidth = Math.max(1, Math.round(totalLength - distanceFromStartMm - gateWidth / 2));
-    const baseVars = { ...(payload.variables ?? {}), ...(run.variables ?? {}), productCode: run.productCode };
+    const baseVars = { ...(run.variables ?? {}), productCode: run.productCode };
     const movement: "sliding" | "double_swing" | "single_swing" =
       gate.kind === "sliding" ? "sliding" : gate.kind === "double_swing" ? "double_swing" : "single_swing";
     const targetHeightMm =
       firstSegment.targetHeightMm ??
-      Number(run.variables?.target_height_mm ?? payload.variables.target_height_mm ?? 1800);
+      Number(run.variables?.target_height_mm ?? 1800);
     const gateVariables = {
       ...defaultGateVariables(baseVars, targetHeightMm),
       [GATE_SEGMENT_STUB_KEYS.gateMovement]: movement,

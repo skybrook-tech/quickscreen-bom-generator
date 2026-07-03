@@ -6,7 +6,7 @@
  * variables-resolved + IP-stripped server-side before being sent here.
  *
  * The config is FULLY RESOLVED for the variables passed in the request:
- * formFields carry concrete option lists, heightLadder.entries is computed for
+ * `fields` carries concrete option lists, heightLadder.entries is computed for
  * the current slat/gap, and normalisedVariables echoes the cascade-corrected
  * variables so the client can reconcile. No product-code branching needed.
  */
@@ -53,11 +53,8 @@ export type UiCalculatorConfig = {
     colour: string;
     mountingType: string;
   };
-  formFields: {
-    job: SchemaField[];
-    run: SchemaField[];
-    segment: SchemaField[];
-  };
+  fields: SchemaField[];
+  formGroups: Array<{ key: string; label: string; sort_order: number }>;
   postFixingMaterials: Array<{ sku: string; label: string; description: string }>;
   gapRules: {
     allowCustom: boolean;

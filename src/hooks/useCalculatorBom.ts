@@ -106,7 +106,7 @@ export function useCalculatorBom(
   const economySlatErrors = useMemo(
     () =>
       payload?.runs.flatMap((run, runIndex) => {
-        const runVars = { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
+        const runVars = { ...(run.variables ?? {}) };
         return run.segments
           .filter((segment) => segment.segmentKind !== "gate_opening")
           .flatMap((segment, segmentIndex) => {
@@ -304,7 +304,7 @@ export function useCalculatorBom(
     }
     const emptyRuns = payload.runs.every((run) => run.segments.length === 0);
     const economyErrors = payload.runs.flatMap((run, runIndex) => {
-      const runVars = { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
+      const runVars = { ...(run.variables ?? {}) };
       return run.segments
         .filter((segment) => segment.segmentKind !== "gate_opening")
         .flatMap((segment, segmentIndex) => {

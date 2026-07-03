@@ -1,16 +1,40 @@
-// runFieldOverrides.ts — generic "can a segment override this job/run field"
-// helpers, derived entirely from CalculatorConfig.formFields (job + run scope).
+// runFieldOverrides.ts — generic "can a segment override this run field"
+// helpers, derived entirely from CalculatorConfig.fields (run-scope fields).
 //
-// Segments are the finest-grain scope in the canonical payload and may
-// override any job- or run-level default. Previously this set of overridable
-// keys was hand-typed in three separate places in SegmentRow.tsx (matchesMaster,
-// rawDifferenceBits, resetToMaster) using QSHS-specific field names — any new
-// product's own fields silently fell through all three. Deriving from
-// config.formFields keeps this correct for any product without touching
-// SegmentRow.tsx again.
+// The v3 config now ships a single flat `fields` array; each field carries a
+// `settings_for` list declaring which UI surfaces it renders on. Segments
+// inherit run values and may override any run-visible field. Previously this
+// set of overridable keys was hand-typed in three separate places in
+// SegmentRow.tsx (matchesMaster, rawDifferenceBits, resetToMaster) using
+// QSHS-specific field names — any new product's own fields silently fell
+// through all three. Deriving from `runFields(config)` keeps this correct for
+// any product without touching SegmentRow.tsx again.
 
 import type { UiCalculatorConfig } from "../types/calculatorConfig.types";
 import { valueLabel, type SchemaField } from "../components/calculator-v3/SchemaDrivenForm";
+
+/** Fields visible in Run Settings (also the source of run.variables defaults). */
+export function runFields(config: Pick<UiCalculatorConfig, "fields">): SchemaField[] {
+  return config.fields.filter((f) => (f.settings_for ?? ["run", "segment"]).includes("run"));
+}
+
+/** Fields visible in the per-segment override UI. */
+export function segmentFields(config: Pick<UiCalculatorConfig, "fields">): SchemaField[] {
+  return config.fields.filter((f) => (f.settings_for ?? ["run", "segment"]).includes("segment"));
+}
+
+/**
+ * Fields that exist ONLY at segment scope (no run default to inherit). These
+ * are the fields a freshly-added segment must be seeded with itself — e.g.
+ * BAYG `panel_quantity`, or QS_GATE gate fields. Replaces the former
+ * `config.formFields.segment` bucket.
+ */
+export function segmentOnlyFields(config: Pick<UiCalculatorConfig, "fields">): SchemaField[] {
+  return config.fields.filter((f) => {
+    const sf = f.settings_for ?? ["run", "segment"];
+    return sf.includes("segment") && !sf.includes("run");
+  });
+}
 
 /**
  * Some control types write an extra "companion" variable alongside their
@@ -29,10 +53,10 @@ const CONTROL_TYPE_COMPANION_KEYS: Record<string, string[]> = {
 const STRUCTURAL_OVERRIDE_KEYS = ["product_code"];
 
 function masterScopeFields(config: UiCalculatorConfig): SchemaField[] {
-  return [...config.formFields.job, ...config.formFields.run];
+  return runFields(config);
 }
 
-/** All variable keys (including companions) a segment may override from job/run defaults. */
+/** All variable keys (including companions) a segment may override from run defaults. */
 export function segmentOverrideKeys(config: UiCalculatorConfig): string[] {
   const keys = new Set<string>(STRUCTURAL_OVERRIDE_KEYS);
   for (const field of masterScopeFields(config)) {
@@ -44,7 +68,7 @@ export function segmentOverrideKeys(config: UiCalculatorConfig): string[] {
   return Array.from(keys);
 }
 
-/** Null-patch clearing every job/run-scope override (+ companions) on a segment. */
+/** Null-patch clearing every run-scope override (+ companions) on a segment. */
 export function clearSegmentOverridePatch(config: UiCalculatorConfig): Record<string, null> {
   return Object.fromEntries(segmentOverrideKeys(config).map((key) => [key, null]));
 }
@@ -60,7 +84,7 @@ export function unsetOrSame(vars: Record<string, unknown>, key: string, defaultV
   return vars[key] === undefined || vars[key] === null || sameValue(vars[key], defaultValue);
 }
 
-/** True if none of the segment's job/run-scope keys diverge from the master (job+run) defaults. */
+/** True if none of the segment's run-scope keys diverge from the master (run) defaults. */
 export function segmentMatchesRun(
   config: UiCalculatorConfig,
   segVars: Record<string, unknown>,
@@ -77,7 +101,7 @@ export type FieldDifferenceBit = {
 };
 
 /**
- * Per-field {field_key, label, value, changed} bits for every job/run-scope
+ * Per-field {field_key, label, value, changed} bits for every run-scope
  * field, for display in a "settings that differ from run defaults" list.
  * Callers that already have a better bespoke presentation for a given field
  * (composite values, dedicated formatters like colour swatches, derived

@@ -271,13 +271,19 @@ export type CalculatorConfig = {
   };
 
   // Form field definitions for the v3 run/section/gate UI. Single source of
-  // truth for what the client renders — see config/forms/*.ts for the actual
-  // field arrays. The engine itself ignores this section entirely.
-  formFields: {
-    job: FormFieldDef[];
-    run: FormFieldDef[];
-    segment: FormFieldDef[];
-  };
+  // truth for what the client renders — see config/products/<code>/fields.json
+  // for the actual field array. The engine itself ignores this section
+  // entirely. Each field carries a `settings_for` list declaring which UI
+  // surfaces it renders on: "run" (Run Settings, also seeds run.variables
+  // defaults) and/or "segment" (per-segment override UI). Segments inherit
+  // run values unless they carry their own override — `settings_for` only
+  // governs visibility, not merge semantics.
+  fields: FormFieldDef[];
+
+  // Non-collapsible group headings the client renders above buckets of fields
+  // (see SchemaSettingsForm). A field's `group` key must match one of these.
+  // Fields without a group are schema-only (declared but not rendered).
+  formGroups: Array<{ key: string; label: string; sort_order: number }>;
 
   // Typed extension rules that suppliers can parameterise.
   // New rule TYPES are added in code + tested; suppliers only supply values.
@@ -302,6 +308,7 @@ export type CalculatorConfig = {
 // Mirrors the client `SchemaField` shape (src/components/calculator-v3/SchemaDrivenForm.tsx)
 // so the UI-projection endpoint can hand these straight to the form with no remapping.
 export type FormFieldDef = {
+  id?: string;
   field_key: string;
   label: string;
   control_type: string; // select | number | toggle | text | combined_gap | hardware_ranked | ...
@@ -313,9 +320,49 @@ export type FormFieldDef = {
   required?: boolean;
   sort_order: number;
   options_group?: string;
-  // Show this job/run field as an always-visible chip in the run header
-  // strip (RunCard.tsx), instead of only inside the Run Settings drawer.
+  // Groups this field under one of the config's formGroups headings. Fields
+  // without a group are schema-only (declared but not rendered by
+  // SchemaSettingsForm).
+  group?: string;
+  // Which UI surfaces this field renders on. "run" = Run Settings (and the
+  // source of run.variables defaults); "segment" = per-segment override UI.
+  // Defaults to ["run","segment"] when omitted. Visibility only — merge
+  // semantics (run -> segment inheritance) are unchanged.
+  settings_for?: ("run" | "segment")[];
+  // Show this run field as an always-visible chip in the run header strip
+  // (RunCard.tsx), instead of only inside the Run Settings drawer.
   show_in_run_summary?: boolean;
+  /** Conditional options list — first matching entry wins. When absent,
+   *  options_json is used as-is (unchanged behaviour). */
+  options_when_json?: OptionsWhenEntry[];
+  /** Whether invalid values are snapped into the resolved options.
+   *  Defaults to true for enum/number fields with non-empty resolved options. */
+  snap_to_options?: boolean;
+  /** Skip snapping when this condition matches (matchesWhen semantics). */
+  snap_unless_json?: Record<string, unknown>;
+  /** This field mirrors another field's value until explicitly diverged. */
+  follows_field?: string;
+  /** Legacy variable keys that read/write alongside this field. */
+  aliases?: string[];
+};
+
+/** One conditional-options entry for options_when_json. First matching entry wins. */
+export type OptionsWhenEntry = {
+  /** Same semantics as visible_when_json: {k:v} exact, {k:[..]} in-array,
+   *  {k:{not:v}}, {k:{not_in:[...]}}, all AND-ed. String-coerced comparison
+   *  on the server (unlike client isVisible which is strict-equality). */
+  when?: Record<string, unknown>;
+  /** Inline literal options — takes priority over options_ref. */
+  options?: unknown[];
+  /** Dotted path(s) into the UI-safe config slice (colours.*, finishFamilies,
+   *  postFixingMaterials). Array = concatenation. Invalid path → []. */
+  options_ref?: string | string[];
+  /** Keep only options whose resolved value is in this list. */
+  intersect?: unknown[];
+  /** Same as intersect, but values sourced from a config ref. */
+  intersect_ref?: string;
+  /** Field-level overrides applied when this entry matches. */
+  set?: Partial<Pick<FormFieldDef, "label" | "default_value_json" | "unit">>;
 };
 
 // ─── Canonical payload types (shared by engine, calculator, and canvas adapter) ──

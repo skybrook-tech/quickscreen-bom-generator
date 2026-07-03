@@ -1,0 +1,182 @@
+{
+  "fields": [
+    {
+      "field_key": "finish_family",
+      "label": "Slat range",
+      "group": "slats_colours",
+      "control_type": "select",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "standard",
+      "options_json": [
+        {
+          "value": "standard",
+          "label": "Standard slats"
+        }
+      ],
+      "options_when_json": [{ "intersect_ref": "finishFamilies" }],
+      "visible_when_json": {},
+      "sort_order": 5,
+      "show_in_run_summary": true,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "colour_code",
+      "label": "Colour",
+      "group": "slats_colours",
+      "control_type": "colour_palette",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "B",
+      "options_json": [],
+      "options_when_json": [{ "options_ref": "colours.standard" }],
+      "visible_when_json": {},
+      "sort_order": 10,
+      "show_in_run_summary": true,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "slat_size_mm",
+      "label": "Slat Size",
+      "group": "slats_colours",
+      "control_type": "select",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 65,
+      "options_json": [
+        {
+          "value": 65,
+          "label": "65mm slat"
+        },
+        {
+          "value": 90,
+          "label": "90mm slat"
+        }
+      ],
+      "visible_when_json": {},
+      "sort_order": 20,
+      "show_in_run_summary": true,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "slat_gap_mm",
+      "label": "Slat gap",
+      "group": "slats_colours",
+      "control_type": "combined_gap",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 9,
+      "options_json": [
+        5,
+        9,
+        20
+      ],
+      "visible_when_json": {},
+      "sort_order": 30,
+      "show_in_run_summary": true,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "max_panel_width_mm",
+      "label": "Max Panel Spacing",
+      "group": "panel_layout",
+      "control_type": "number",
+      "data_type": "number",
+      "unit": "mm",
+      "default_value_json": 3000,
+      "visible_when_json": {},
+      "sort_order": 60,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "left_boundary_type",
+      "label": "Left Boundary",
+      "group": "panel_layout",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "post",
+      "options_json": [
+        {
+          "value": "post",
+          "label": "Post"
+        },
+        {
+          "value": "wall",
+          "label": "Wall"
+        }
+      ],
+      "visible_when_json": {},
+      "sort_order": 70,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "right_boundary_type",
+      "label": "Right Boundary",
+      "group": "panel_layout",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "post",
+      "options_json": [
+        {
+          "value": "post",
+          "label": "Post"
+        },
+        {
+          "value": "wall",
+          "label": "Wall"
+        }
+      ],
+      "visible_when_json": {},
+      "sort_order": 80,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "panel_quantity",
+      "label": "Quantity",
+      "group": "panel_layout",
+      "control_type": "number",
+      "data_type": "integer",
+      "default_value_json": 1,
+      "visible_when_json": {},
+      "sort_order": 10,
+      "settings_for": [
+        "segment"
+      ]
+    }
+  ],
+  "fieldGroups": [
+    {
+      "key": "slats_colours",
+      "label": "Slats, colours and spacings",
+      "sort_order": 20
+    },
+    {
+      "key": "panel_layout",
+      "label": "Panel layout and boundaries",
+      "sort_order": 30
+    }
+  ]
+}

@@ -761,14 +761,22 @@ export function suggestAccessories(payload: CanonicalPayload, bomLines: BOMLineI
     }
   }
 
-  const finishColours = new Set<string>([String(payload.variables.colour_code ?? "B"), postColourFromVars(payload.variables)]);
+  // Accessory touch-up paint colours are collected from every run's own
+  // variables (v3 no longer carries job-level payload.variables). Each run
+  // contributes its slat colour + resolved post colour; gate segments
+  // contribute their gate colour. Falls back to "B" if nothing is set.
+  const finishColours = new Set<string>();
   for (const run of payload.runs) {
+    const runVars = run.variables ?? {};
+    finishColours.add(String(runVars.colour_code ?? "B"));
+    finishColours.add(postColourFromVars(runVars));
     for (const seg of run.segments) {
       if (seg.segmentKind !== "gate_opening") continue;
       const gc = String(seg.variables?.[GATE_SEGMENT_STUB_KEYS.colourCode] ?? "");
       if (gc) finishColours.add(gc);
     }
   }
+  if (finishColours.size === 0) finishColours.add("B");
   for (const colour of finishColours) suggestions.push(suggest(`PAINT-${colour}`, 1, "finish", "Suggested for colour-matched touch-ups after cutting and installation.", `Touch up paint - ${colour}`));
 
   if (bomSkus.has("SOUD-CA1400")) suggestions.push(suggest("SOUD-GUN", 1, "fixing", "Heavy duty cartridge gun for SOUD-CA1400.", "Soudafix cartridge gun"));

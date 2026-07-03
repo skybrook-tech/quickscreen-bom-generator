@@ -78,8 +78,8 @@ export function SegmentRow({
   const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
   const segProductCode = String(seg.variables?.product_code ?? runProductCode);
   const masterVariables = useMemo<Record<string, string | number | boolean>>(
-    () => ({ ...(state.payload?.variables ?? {}), ...(run?.variables ?? {}) }),
-    [state.payload?.variables, run],
+    () => ({ ...(run?.variables ?? {}) }),
+    [run],
   );
   const gateConfig = useCalculatorConfig(gate ? "QS_GATE" : "");
 
@@ -88,6 +88,7 @@ export function SegmentRow({
     ...masterVariables,
     ...(seg.variables ?? {}),
   };
+
   // Segment-resolved config: height ladder + option lists resolved for this
   // segment's merged variables (segment overrides — including a per-segment
   // product_code — included). Cache-keyed, cheap; shares data with the run-
@@ -101,12 +102,12 @@ export function SegmentRow({
 
   const isPanelStrategy = config.strategy.fence === "panel";
   const isFreeform = config.heightUi.mode === "freeform";
-  const mountingField = config.formFields.run.find(
+  const mountingField = config.fields.find(
     (field) => field.field_key === "mounting_type" || field.field_key === "mounting_method",
   );
-  const postSizeField = config.formFields.run.find((field) => field.field_key === "post_size");
-  const slatSizeField = config.formFields.job.find((field) => field.field_key === "slat_size_mm");
-  const slatGapField = config.formFields.job.find((field) => field.field_key === "slat_gap_mm");
+  const postSizeField = config.fields.find((field) => field.field_key === "post_size");
+  const slatSizeField = config.fields.find((field) => field.field_key === "slat_size_mm");
+  const slatGapField = config.fields.find((field) => field.field_key === "slat_gap_mm");
   const segmentNumber = segIdx + 1;
 
   const heightEntries: DerivedHeight[] = config.heightLadder.entries;
@@ -141,7 +142,7 @@ export function SegmentRow({
   const gateInfill = config.gateRules.defaultInfill;
   const gateBuild = String(
     gateVars[GATE_SEGMENT_STUB_KEYS.gateBuild] ??
-      defaultGateBuildForMovementInfill("single_swing", gateInfill),
+    defaultGateBuildForMovementInfill("single_swing", gateInfill),
   );
   const expectedGateBuild =
     gateBuild ===
@@ -561,10 +562,10 @@ export function SegmentRow({
 
   const freeformBounds = isFreeform
     ? {
-        min: config.heightUi.freeformMinMm ?? 300,
-        max: config.heightUi.freeformMaxMm ?? 2400,
-        step: config.heightUi.freeformStepMm ?? 50,
-      }
+      min: config.heightUi.freeformMinMm ?? 300,
+      max: config.heightUi.freeformMaxMm ?? 2400,
+      step: config.heightUi.freeformStepMm ?? 50,
+    }
     : undefined;
 
   return (
@@ -618,9 +619,9 @@ export function SegmentRow({
                     selectOptions={
                       heightEntries.length > 0
                         ? heightEntries.map((entry) => ({
-                            value: entry.height,
-                            label: `${entry.height}mm - ${entry.N} slats`,
-                          }))
+                          value: entry.height,
+                          label: `${entry.height}mm - ${entry.N} slats`,
+                        }))
                         : undefined
                     }
                     boundedInput={freeformBounds}

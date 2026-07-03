@@ -60,3 +60,30 @@ export function derivedHeightForSlatCount(
   if (!Number.isFinite(n)) return undefined;
   return heights.find((item) => item.N === Math.round(n));
 }
+
+import type { CalculatorConfig } from "./types.ts";
+
+const DEFAULT_SLAT_GAP_MM = 9;
+
+/**
+ * Derive the height ladder for the current slat/gap variables.
+ * Used by resolveUiConfig to send the pre-computed ladder to the client.
+ * Returns [] for freeform-mode products (config.heightUi.mode === "freeform").
+ */
+export function heightEntries(
+  config: CalculatorConfig,
+  variables: Record<string, unknown>,
+): DerivedHeight[] {
+  if (config.heightUi.mode === "freeform") return [];
+  const slatSize = Number(variables.slat_size_mm ?? 65);
+  const slatGap = Number(variables.slat_gap_mm ?? DEFAULT_SLAT_GAP_MM);
+  if ((slatSize !== 65 && slatSize !== 90) || !Number.isFinite(slatGap) || slatGap < 0) {
+    return [];
+  }
+  return deriveHeights(
+    slatSize as 65 | 90,
+    slatGap,
+    { minN: 5, maxN: 40, minHeight: 300, maxHeight: 2400 },
+    config.heightLadder.slatHeightDeductionMm,
+  );
+}

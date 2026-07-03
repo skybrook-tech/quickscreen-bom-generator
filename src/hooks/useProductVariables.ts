@@ -3,6 +3,7 @@ import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { getLocalVariables } from '../lib/localSeedData';
 import { initialVariablesForSystem } from '../lib/productOptionRules';
 import { useCalculatorConfig } from './useCalculatorConfig';
+import { runFields } from '../lib/runFieldOverrides';
 import type { SchemaField } from '../components/calculator-v3/SchemaDrivenForm';
 
 /** Builds a variables object from a field list's default_value_json. */
@@ -17,11 +18,10 @@ export function defaultVariablesFromFields(
 }
 
 /**
- * Returns config-driven default variables for a product (job + run scope
- * fields from `useCalculatorConfig` — the same single source of truth the
- * run/section forms render from), falling back to
- * `initialVariablesForSystem()` if the config hasn't loaded yet or has no
- * fields for this product.
+ * Returns config-driven default variables for a product (run-scope fields from
+ * `useCalculatorConfig` — the same single source of truth the Run Settings
+ * form renders from), falling back to `initialVariablesForSystem()` if the
+ * config hasn't loaded yet or has no run-scope fields for this product.
  */
 export function useDefaultVariables(productCode: string): Record<string, unknown> {
   const config = useCalculatorConfig(productCode);
@@ -31,10 +31,7 @@ export function useDefaultVariables(productCode: string): Record<string, unknown
     // resolved config arrives). The resolved config replaces this once loaded.
     return initialVariablesForSystem(productCode) as Record<string, unknown>;
   }
-  const fromConfig = defaultVariablesFromFields([
-    ...config.formFields.job,
-    ...config.formFields.run,
-  ]);
+  const fromConfig = defaultVariablesFromFields(runFields(config));
   if (Object.keys(fromConfig).length === 0) {
     return initialVariablesForSystem(productCode) as Record<string, unknown>;
   }

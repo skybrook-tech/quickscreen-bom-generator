@@ -5,6 +5,7 @@ import { DerivationChip } from "../ui/DerivationChip";
 import { combinedGapRenderer } from "./formRenderers/combinedGap";
 import { postFixingSelectRenderer } from "./formRenderers/postFixingSelect";
 import { colourPaletteRenderer } from "./formRenderers/colourPalette";
+import { colourPaletteOptionalRenderer } from "./formRenderers/colourPaletteOptional";
 import { hardwareRankedRenderer } from "./formRenderers/hardwareRanked";
 import { hardwareDropdownRenderer } from "./formRenderers/hardwareDropdown";
 import { leafWidthPairRenderer } from "./formRenderers/leafWidthPair";
@@ -28,8 +29,17 @@ export interface SchemaField {
   visible_when_json: Record<string, unknown>;
   sort_order: number;
   options_group?: string;
-  // Show this job/run field as an always-visible chip in the run header
-  // strip (RunCard.tsx), instead of only inside the Run Settings drawer.
+  // Groups this field under one of the config's formGroups headings. Fields
+  // without a group are schema-only (declared but not rendered by
+  // SchemaSettingsForm).
+  group?: string;
+  // Which UI surfaces this field renders on: "run" (Run Settings, also seeds
+  // run.variables defaults) and/or "segment" (per-segment override UI).
+  // Defaults to ["run","segment"] when omitted. Visibility only — merge
+  // semantics (run -> segment inheritance) are unchanged.
+  settings_for?: ("run" | "segment")[];
+  // Show this run field as an always-visible chip in the run header strip
+  // (RunCard.tsx), instead of only inside the Run Settings drawer.
   show_in_run_summary?: boolean;
 }
 
@@ -78,6 +88,7 @@ const DEFAULT_RENDERERS: Record<string, FieldRenderer> = {
   combined_gap: combinedGapRenderer,
   post_fixing_select: postFixingSelectRenderer,
   colour_palette: colourPaletteRenderer,
+  colour_palette_optional: colourPaletteOptionalRenderer,
   hardware_ranked: hardwareRankedRenderer,
   hardware_dropdown: hardwareDropdownRenderer,
   leaf_width_pair: leafWidthPairRenderer,

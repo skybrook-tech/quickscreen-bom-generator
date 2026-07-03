@@ -5,6 +5,7 @@ import type { CanonicalRun, CanonicalSegment } from "../../../types/canonical.ty
 import { defaultGateVariables } from "../../../lib/gateOptionRules";
 import { defaultVariablesFromFields } from "../../../hooks/useProductVariables";
 import { clampPostSpacing } from "../../../lib/productOptionRules";
+import { runFields, segmentOnlyFields } from "../../../lib/runFieldOverrides";
 import type { DerivedHeight } from "../../../lib/heights";
 import {
   GATE_SEGMENT_STUB_KEYS,
@@ -71,8 +72,8 @@ function RunCardInner({
 }: Omit<Props, "run"> & { run: CanonicalRun }) {
   const { state, dispatch } = useCalculator();
   const runVariables = useMemo<Record<string, string | number | boolean>>(
-    () => ({ ...(state.payload?.variables ?? {}), ...(run.variables ?? {}) }),
-    [run, state.payload?.variables],
+    () => ({ ...(run.variables ?? {}) }),
+    [run],
   );
   const config = useCalculatorConfig(run.productCode, runVariables) as
     | UiCalculatorConfig
@@ -88,12 +89,12 @@ function RunCardInner({
   const runCollapseRef = useRef<number | null>(null);
   const firstSegment = firstFenceSegment(run);
   const segmentDefaults = useMemo(
-    () => defaultVariablesFromFields(config?.formFields.segment ?? []),
-    [config?.formFields.segment],
+    () => defaultVariablesFromFields(config ? segmentOnlyFields(config) : []),
+    [config],
   );
   const summaryChips = useMemo(
     () =>
-      [...(config?.formFields.job ?? []), ...(config?.formFields.run ?? [])]
+      (config ? runFields(config) : [])
         .filter((field) => field.show_in_run_summary)
         .sort((a, b) => a.sort_order - b.sort_order)
         .map((field) => ({
@@ -101,7 +102,7 @@ function RunCardInner({
           label: field.label,
           value: valueLabel(field, summaryVariableValue(field.field_key, runVariables)),
         })),
-    [config?.formFields.job, config?.formFields.run, runVariables],
+    [config, runVariables],
   );
 
   useEffect(

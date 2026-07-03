@@ -12,7 +12,6 @@ import {
   gateLeafGeometry,
   gateMovementOrDefault,
   isSwingGateMovement,
-  optionLabel,
 } from "../../../lib/gateOptionRules";
 import { GateComponentList } from "../GateComponentList";
 import {
@@ -25,9 +24,9 @@ import {
   listLatches,
 } from "../../../lib/gateHardware";
 import { OPTIONAL_ACCESSORY_KEY, selectedOptionalAddOns } from "../../../lib/bomMetadata";
-import { GateSettingsSection, rankedLabel } from "../gateHardwareControls";
-import { SchemaDrivenForm, valueLabel, type SchemaField } from "../SchemaDrivenForm";
+import { SchemaSettingsForm } from "../SchemaSettingsForm";
 import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
+import { segmentFields } from "../../../lib/runFieldOverrides";
 
 interface Props {
   runId: string;
@@ -39,19 +38,12 @@ export function GateSegmentDetails({ runId, seg }: Props) {
   const run = state.payload?.runs.find((item) => item.runId === runId);
   const runProductCode = run?.productCode ?? state.payload?.productCode ?? "QSHS";
   const v = seg.variables ?? {};
-  const runVars = { ...(state.payload?.variables ?? {}), ...(run?.variables ?? {}) };
+  const runVars = { ...(run?.variables ?? {}) };
   const runConfig = useCalculatorConfig(runProductCode, runVars);
-  const config = useCalculatorConfig("QS_GATE");
-  const fieldMap = useMemo(
-    () => new Map((config?.formFields.segment ?? []).map((field) => [field.field_key, field])),
-    [config?.formFields.segment],
-  );
-
-  if (!runConfig || !config) return null;
 
   const movement = gateMovementOrDefault(v[GATE_SEGMENT_STUB_KEYS.gateMovement]);
   const buildOptions = gateBuildsForMovement(movement);
-  const verticalDefault = runConfig.gateRules.defaultInfill === "vertical";
+  const verticalDefault = runConfig?.gateRules.defaultInfill === "vertical";
   const build = buildOptions.some((option) => option.value === v[GATE_SEGMENT_STUB_KEYS.gateBuild])
     ? String(v[GATE_SEGMENT_STUB_KEYS.gateBuild])
     : defaultGateBuildForMovementInfill(movement, verticalDefault ? "vertical" : "horizontal");
@@ -110,6 +102,53 @@ export function GateSegmentDetails({ runId, seg }: Props) {
     ...(extraRemoteCount > 0 ? [{ sku: "XPSG-FILO-REMOTE", qty: extraRemoteCount }] : []),
     { sku: "XPSG-FILO-RACK", qty: rackCount },
   ];
+
+  const mergedVariables: Record<string, string | number | boolean> = {
+    gate_movement: movement,
+    gate_build: build,
+    opening_direction: currentDirection,
+    sliding_side: String(v[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? "front"),
+    colour_code: gateColour,
+    slat_size_mm: slatSizeMm,
+    slat_gap_mm: slatGapMm,
+    gate_post_size_mm: Number(v[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm] ?? runVars.post_size ?? masterPostSize),
+    use_gate_posts_as_fence_termination: v[GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination] !== false,
+    hinge_type: currentHingeValue,
+    latch_type: currentLatchValue,
+    hardware_kit_sku: selectedKitSku,
+    include_external_access_kit: v[GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit] === true,
+    drop_bolt_type: String(v[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? (movement === "double_swing" ? "SS-0300DB-B" : "none")),
+    gate_stop_type: String(v[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "none"),
+    sliding_track_type: String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST"),
+    sliding_guide_type: String(v[GATE_SEGMENT_STUB_KEYS.slidingGuideType] ?? "XPSG-GUIDE"),
+    sliding_catch_type: String(v[GATE_SEGMENT_STUB_KEYS.slidingCatchType] ?? "XPSG-CATCH-U"),
+    automation_enabled: automationEnabled,
+    automation_power_source: automationPower,
+    automation_cable_distance_m: cableDistanceM,
+    automation_battery: v[GATE_SEGMENT_STUB_KEYS.automationBattery] === true,
+    automation_keypad: v[GATE_SEGMENT_STUB_KEYS.automationKeypad] === true,
+    automation_extra_remotes: extraRemoteCount,
+  };
+
+  // Variables-resolved QS_GATE config — segment field options (gate_build per
+  // movement, opening_direction swing/sliding swap) arrive already resolved.
+  const config = useCalculatorConfig("QS_GATE", mergedVariables);
+
+  const rendererExtra: Record<string, unknown> = {
+    rankedHinges,
+    rankedLatches,
+    matchingHardwareKit,
+    hingeParentSku,
+    optionalAddOnsForHinge: optionalAddOns[hingeParentSku] ?? [],
+    onOptionalAddOnsChange: setOptionalAddOns,
+    leafWidthsMm,
+    clearOpeningMm,
+    gateWidthMm,
+    hingeGapMm,
+    latchGapMm,
+    updateLeafWidth,
+    automationSummary,
+  };
 
   function upsertSegmentPatch({
     patch,
@@ -267,151 +306,45 @@ export function GateSegmentDetails({ runId, seg }: Props) {
     upsertVariables(patch);
   }
 
-  const mergedVariables: Record<string, string | number | boolean> = {
-    gate_movement: movement,
-    gate_build: build,
-    opening_direction: currentDirection,
-    sliding_side: String(v[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? "front"),
-    colour_code: gateColour,
-    slat_size_mm: slatSizeMm,
-    slat_gap_mm: slatGapMm,
-    gate_post_size_mm: Number(v[GATE_SEGMENT_STUB_KEYS.gatePostSizeMm] ?? runVars.post_size ?? masterPostSize),
-    use_gate_posts_as_fence_termination: v[GATE_SEGMENT_STUB_KEYS.useGatePostsAsFenceTermination] !== false,
-    hinge_type: currentHingeValue,
-    latch_type: currentLatchValue,
-    hardware_kit_sku: selectedKitSku,
-    include_external_access_kit: v[GATE_SEGMENT_STUB_KEYS.includeExternalAccessKit] === true,
-    drop_bolt_type: String(v[GATE_SEGMENT_STUB_KEYS.dropBoltType] ?? (movement === "double_swing" ? "SS-0300DB-B" : "none")),
-    gate_stop_type: String(v[GATE_SEGMENT_STUB_KEYS.gateStopType] ?? "none"),
-    sliding_track_type: String(v[GATE_SEGMENT_STUB_KEYS.slidingTrackType] ?? "XPSG-6000-TRACK-ST"),
-    sliding_guide_type: String(v[GATE_SEGMENT_STUB_KEYS.slidingGuideType] ?? "XPSG-GUIDE"),
-    sliding_catch_type: String(v[GATE_SEGMENT_STUB_KEYS.slidingCatchType] ?? "XPSG-CATCH-U"),
-    automation_enabled: automationEnabled,
-    automation_power_source: automationPower,
-    automation_cable_distance_m: cableDistanceM,
-    automation_battery: v[GATE_SEGMENT_STUB_KEYS.automationBattery] === true,
-    automation_keypad: v[GATE_SEGMENT_STUB_KEYS.automationKeypad] === true,
-    automation_extra_remotes: extraRemoteCount,
-  };
+  if (!runConfig || !config) return null;
 
-  const rendererExtra: Record<string, unknown> = {
-    rankedHinges,
-    rankedLatches,
-    matchingHardwareKit,
-    hingeParentSku,
-    optionalAddOnsForHinge: optionalAddOns[hingeParentSku] ?? [],
-    onOptionalAddOnsChange: setOptionalAddOns,
-    leafWidthsMm,
-    clearOpeningMm,
-    gateWidthMm,
-    hingeGapMm,
-    latchGapMm,
-    updateLeafWidth,
-    automationSummary,
-  };
+  const leafGeometryInfo = isSwing ? (
+    <div className="w-full rounded-lg border border-brand-border/70 bg-brand-card p-3 text-xs font-bold text-brand-muted">
+      <span className="text-brand-text">{leafCount}</span> leaf{leafCount === 1 ? "" : "s"} from a{" "}
+      <span className="text-brand-text">{Math.round(gateWidthMm)}mm</span> opening.{" "}
+      {leafCount === 2
+        ? `Each leaf is calculated after ${Math.round(hingeGapMm)}mm hinge gap on each side and ${Math.round(latchGapMm)}mm shared latch gap: `
+        : `Leaf width after ${Math.round(hingeGapMm)}mm hinge gap and ${Math.round(latchGapMm)}mm latch gap: `}
+      <span className="text-brand-text">{leafWidthsMm.map((width) => `${Math.round(width)}mm`).join(" + ")}</span>.
+    </div>
+  ) : null;
 
-  function renderField(key: string, overrides?: Partial<SchemaField>) {
-    const base = fieldMap.get(key);
-    if (!base) return null;
-    const field = overrides ? { ...base, ...overrides } : base;
-    return (
-      <SchemaDrivenForm
-        fields={[field]}
+  const componentList = (
+    <GateComponentList
+      orientation={build.includes("vertical") ? "vertical" : "horizontal"}
+      movement={movement}
+      slatSizeMm={slatSizeMm}
+      slatGapMm={slatGapMm}
+      colourCode={gateColour}
+      hingeSku={currentHingeValue}
+      latchSku={currentLatchValue}
+    />
+  );
+
+  return (
+    <div className="space-y-5 text-sm font-semibold">
+      <SchemaSettingsForm
+        fields={segmentFields(config)}
+        groups={config.formGroups}
         variables={mergedVariables}
         onChange={handleFieldChange}
         onPatch={handleFieldPatch}
         extra={rendererExtra}
+        extraGroupContent={{
+          hardware_weight: leafGeometryInfo,
+          components: componentList,
+        }}
       />
-    );
-  }
-
-  if (!config) return null;
-
-  return (
-    <div className="space-y-4 text-sm font-semibold">
-      <GateSettingsSection
-        title="Gate Type & Direction"
-        summary={`${optionLabel(buildOptions, build)} / ${valueLabel(fieldMap.get("gate_movement"), movement)}`}
-      >
-        {renderField("gate_build", {
-          options_json: buildOptions.map((option) => ({ value: option.value, label: option.label })),
-        })}
-        {renderField("gate_movement")}
-        {renderField("opening_direction", {
-          label: isSwing ? "Opening direction" : "Slide direction",
-          options_json: isSwing
-            ? [
-                { value: "out", label: "Swing out" },
-                { value: "in", label: "Swing in" },
-              ]
-            : [
-                { value: "left", label: "Slide left" },
-                { value: "right", label: "Slide right" },
-              ],
-          default_value_json: isSwing ? "out" : "right",
-        })}
-        {renderField("sliding_side")}
-        {renderField("leaf_1_width_mm")}
-      </GateSettingsSection>
-
-      <GateSettingsSection
-        title="Slat, Post & Colour"
-        summary={`${slatSizeMm}mm / ${slatGapMm}mm / ${gateColour}`}
-      >
-        {renderField("slat_size_mm")}
-        {renderField("slat_gap_mm")}
-        {renderField("gate_post_size_mm")}
-        {renderField("colour_code")}
-        {renderField("use_gate_posts_as_fence_termination")}
-      </GateSettingsSection>
-
-      <GateSettingsSection
-        title="Hardware & Weight"
-        summary={
-          isSwing
-            ? `${rankedLabel(rankedHinges, currentHingeValue)} / ${rankedLabel(rankedLatches, currentLatchValue)}`
-            : `${mergedVariables.sliding_track_type} / ${automationEnabled ? "Automation on" : "Manual"}`
-        }
-      >
-        {isSwing ? (
-          <>
-            <div className="w-full rounded-lg border border-brand-border/70 bg-brand-card p-3 text-xs font-bold text-brand-muted">
-              <span className="text-brand-text">{leafCount}</span> leaf{leafCount === 1 ? "" : "s"} from a{" "}
-              <span className="text-brand-text">{Math.round(gateWidthMm)}mm</span> opening.{" "}
-              {leafCount === 2
-                ? `Each leaf is calculated after ${Math.round(hingeGapMm)}mm hinge gap on each side and ${Math.round(latchGapMm)}mm shared latch gap: `
-                : `Leaf width after ${Math.round(hingeGapMm)}mm hinge gap and ${Math.round(latchGapMm)}mm latch gap: `}
-              <span className="text-brand-text">{leafWidthsMm.map((width) => `${Math.round(width)}mm`).join(" + ")}</span>.
-            </div>
-            {renderField("hinge_type")}
-            {renderField("optional_add_ons")}
-            {renderField("latch_type")}
-            {renderField("hardware_kit_sku")}
-            {renderField("include_external_access_kit")}
-            {renderField("drop_bolt_type")}
-            {renderField("gate_stop_type")}
-          </>
-        ) : (
-          <>
-            {renderField("sliding_track_type")}
-            {renderField("sliding_guide_type")}
-            {renderField("sliding_catch_type")}
-            {renderField("automation_enabled")}
-          </>
-        )}
-      </GateSettingsSection>
-
-      <GateSettingsSection title="Gate Components" summary="Checklist">
-        <GateComponentList
-          orientation={build.includes("vertical") ? "vertical" : "horizontal"}
-          movement={movement}
-          slatSizeMm={slatSizeMm}
-          slatGapMm={slatGapMm}
-          colourCode={gateColour}
-          hingeSku={currentHingeValue}
-          latchSku={currentLatchValue}
-        />
-      </GateSettingsSection>
     </div>
   );
 }

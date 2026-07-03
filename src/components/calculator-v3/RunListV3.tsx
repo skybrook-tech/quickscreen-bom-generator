@@ -45,7 +45,8 @@ export function RunListV3({
     return {
       productCode,
       schemaVersion: "v1",
-      variables,
+      // v3: runs carry the variables; payload.variables stays empty.
+      variables: {},
       ...(currentPayload.propertyAnchor
         ? { propertyAnchor: currentPayload.propertyAnchor }
         : {}),
@@ -85,8 +86,9 @@ export function RunListV3({
   function addRun() {
     const firstRun = payload!.runs[0];
     const productCode = firstRun?.productCode ?? payload!.productCode;
+    // Copy defaults from the first run only (v3: runs are the sole source of
+    // truth; payload.variables is empty).
     const variables = {
-      ...(payload!.variables ?? {}),
       ...(firstRun?.variables ?? {}),
     };
     const newRun: CanonicalRun = {

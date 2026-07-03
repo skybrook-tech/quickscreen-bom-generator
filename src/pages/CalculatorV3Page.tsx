@@ -121,13 +121,14 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   function handleApplyDescription(result: ParseResult) {
     const productCode = productCodeFromParsedSystem(result.attributes.systemType?.value);
     const base = payload ?? createEmptyPayload(productCode);
-    const { run, variables } = buildRunFromDescription(result, base);
+    const { run } = buildRunFromDescription(result, base);
     dispatch({
       type: "SET_PAYLOAD",
       payload: {
         ...base,
         productCode,
-        variables,
+        // v3: runs carry the variables; payload.variables stays empty.
+        variables: {},
         job: { ...(base.job ?? {}), description: result.description, pendingGates: [] },
         runs: [run, ...base.runs.slice(1)],
       },

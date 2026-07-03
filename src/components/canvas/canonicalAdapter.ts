@@ -640,6 +640,10 @@ export function canvasLayoutToCanonical(
     return {
       runId,
       productCode,
+      // v3: runs carry the variables. The passed-in `variables` bag (the
+      // current first-run defaults) seeds newly-drawn runs; existing runs
+      // keep their own variables via mergeCanonicalPreservingSegmentMeta.
+      variables: { ...variables },
       leftBoundary,
       rightBoundary,
       segments: canonSegments,
@@ -651,7 +655,8 @@ export function canvasLayoutToCanonical(
   return {
     productCode,
     schemaVersion: 'v1',
-    variables,
+    // v3: payload.variables is empty; runs + segments are the source of truth.
+    variables: {},
     ...(annotations.length > 0 ? { annotations } : {}),
     runs: canonicalRuns.length > 0 ? canonicalRuns : [
       // Fallback: empty payload still needs at least one run to be valid.
@@ -659,6 +664,7 @@ export function canvasLayoutToCanonical(
       {
         runId: stableIds['run:0'] ?? (stableIds['run:0'] = newId()),
         productCode,
+        variables: { ...variables },
         leftBoundary: { type: 'product_post' },
         rightBoundary: { type: 'product_post' },
         segments: [],
@@ -694,7 +700,10 @@ export function mergeCanonicalPreservingSegmentMeta(
       const prevSegMap = new Map(prevRun.segments.map((s) => [s.segmentId, s]));
       return {
         ...anchoredRun,
-        variables: { ...(prevRun.variables ?? {}), ...(genRun.variables ?? {}) },
+        // Existing run variables (user edits) win over the generated defaults
+        // canvasLayoutToCanonical seeded from the first run; new runs (no
+        // prevRun) keep their generated defaults via the early return above.
+        variables: { ...(genRun.variables ?? {}), ...(prevRun.variables ?? {}) },
         leftBoundary: prevRun.leftBoundary,
         rightBoundary: prevRun.rightBoundary,
         segments: anchoredRun.segments.map((gs) => {

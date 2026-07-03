@@ -74,7 +74,8 @@ export function ProductSelectV3({
     const initialPayload: CanonicalPayload = {
       productCode: p.system_type,
       schemaVersion: "v1",
-      variables: initialVariables,
+      // v3: runs carry the variables; payload.variables stays empty.
+      variables: {},
       ...(state.payload?.propertyAnchor
         ? { propertyAnchor: state.payload.propertyAnchor }
         : {}),
