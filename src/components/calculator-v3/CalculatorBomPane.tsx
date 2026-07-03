@@ -29,7 +29,6 @@ interface CalculatorBomPaneProps {
   bomRunDetails: BomRunDetail[];
   isCalculating: boolean;
   hasBlockingErrors: boolean;
-  customerMode: boolean;
   activeBomSummary: ActiveBomSummary | null;
   animatedGrandTotal: number;
   mobileBomTotals: { subtotal: number; gst: number; grandTotal: number } | null;
@@ -48,7 +47,6 @@ export function CalculatorBomPane({
   bomRunDetails,
   isCalculating,
   hasBlockingErrors,
-  customerMode,
   activeBomSummary,
   animatedGrandTotal,
   mobileBomTotals,
@@ -76,7 +74,7 @@ export function CalculatorBomPane({
             />
             <div className="h-10 w-px bg-brand-border" />
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-muted">
-              {customerMode ? "Customer Quote" : "Bill of Materials"}
+              Bill of Materials
             </p>
           </div>
           {jobName.trim() && (
@@ -91,9 +89,7 @@ export function CalculatorBomPane({
         </div>
         <div className="text-left sm:text-right" data-print-hide>
           <p className="text-xs font-bold uppercase tracking-wider text-brand-muted">
-            {customerMode ? (
-              "Customer view"
-            ) : isCalculating ? (
+            {isCalculating ? (
               "Recalculating…"
             ) : (
               activeBomSummary?.label ??
@@ -101,12 +97,12 @@ export function CalculatorBomPane({
             )}
           </p>
           <p className="font-mono text-4xl font-black tabular-nums text-brand-primary sm:text-5xl">
-            {customerMode ? "No pricing" : `$${formatMoney(animatedGrandTotal)}`}
+            {`$${formatMoney(animatedGrandTotal)}`}
           </p>
         </div>
       </div>
 
-      {!customerMode && mobileBomTotals && (
+      {mobileBomTotals && (
         <MobileBomTotals
           subtotal={mobileBomTotals.subtotal}
           gst={mobileBomTotals.gst}
@@ -181,7 +177,6 @@ export function CalculatorBomPane({
             }
             onSwitchEconomyToStandard={onSwitchEconomyToStandard}
             onActiveSummaryChange={onActiveSummaryChange}
-            customerMode={customerMode}
           />
 
           <div data-print-hide>

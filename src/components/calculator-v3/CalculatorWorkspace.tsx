@@ -50,7 +50,6 @@ interface CalculatorWorkspaceProps {
   bomRunDetails: BomRunDetail[];
   isCalculating: boolean;
   hasBlockingErrors: boolean;
-  customerMode: boolean;
   activeBomSummary: ActiveBomSummary | null;
   animatedGrandTotal: number;
   mobileBomTotals: { subtotal: number; gst: number; grandTotal: number } | null;
@@ -98,7 +97,6 @@ export function CalculatorWorkspace({
   bomRunDetails,
   isCalculating,
   hasBlockingErrors,
-  customerMode,
   activeBomSummary,
   animatedGrandTotal,
   mobileBomTotals,
@@ -218,7 +216,6 @@ export function CalculatorWorkspace({
                 bomRunDetails={bomRunDetails}
                 isCalculating={isCalculating}
                 hasBlockingErrors={hasBlockingErrors}
-                customerMode={customerMode}
                 activeBomSummary={activeBomSummary}
                 animatedGrandTotal={animatedGrandTotal}
                 mobileBomTotals={mobileBomTotals}

@@ -16,7 +16,6 @@ import {
   createEmptyPayload,
   defaultSaveJobName,
   formatHeaderMoney,
-  initialCustomerMode,
   isAngleDrawingWarning,
   buildRunFromDescription,
   buildBomRunDetails,
@@ -25,7 +24,6 @@ import {
   payloadBomKey,
   productCodeFromParsedSystem,
   useAnimatedNumber,
-  CUSTOMER_MODE_KEY,
   type PendingParsedGate,
 } from "../lib/calculatorV3Helpers";
 import { useQuote } from "../hooks/useQuote";
@@ -46,7 +44,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
   // ── UI state ──────────────────────────────────────────────────────────────
   const [jobName, setJobName] = useState("");
-  const [customerMode, setCustomerMode] = useState(initialCustomerMode);
   const [introDismissed, setIntroDismissed] = useState(false);
   const [autoOpenFirstSectionRunId, setAutoOpenFirstSectionRunId] = useState<string | null>(null);
 
@@ -72,11 +69,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     onExportCsv: () => bom.bomResultForTabs && persistence.exportCsv(bom.bomResultForTabs),
     onToggleShortcuts: () => setShortcutsOpen((o) => !o),
   });
-
-  // ── Persist customer mode preference ──────────────────────────────────────
-  useEffect(() => {
-    window.localStorage.setItem(CUSTOMER_MODE_KEY, customerMode ? "true" : "false");
-  }, [customerMode]);
 
   // ── Quote loading ─────────────────────────────────────────────────────────
   useEffect(() => {
@@ -221,7 +213,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
   const headerGrandTotal = bom.activeBomSummary?.grandTotal ?? bom.bomResultForTabs?.grandTotal ?? 0;
   const animatedGrandTotal = useAnimatedNumber(headerGrandTotal);
-  const headerPriceLabel = !customerMode && headerGrandTotal > 0 ? formatHeaderMoney(headerGrandTotal) : null;
+  const headerPriceLabel = headerGrandTotal > 0 ? formatHeaderMoney(headerGrandTotal) : null;
   const mobileBomTotals = bom.bomResultForTabs
     ? {
       subtotal: bom.activeBomSummary?.subtotal ?? bom.bomResultForTabs.total,
@@ -289,8 +281,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
       headerActions={headerActions}
       jobTitle={jobName.trim() || "New Quote"}
       headerPriceLabel={headerPriceLabel}
-      customerMode={customerMode}
-      onCustomerModeChange={setCustomerMode}
       onClearJobRequest={() => setClearJobDialogOpen(true)}
       clearJobDisabled={!payload && !jobName}
     >
@@ -357,7 +347,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
           bomRunDetails={bomRunDetails}
           isCalculating={bom.isCalculating}
           hasBlockingErrors={bom.hasBlockingErrors}
-          customerMode={customerMode}
           activeBomSummary={bom.activeBomSummary}
           animatedGrandTotal={animatedGrandTotal}
           mobileBomTotals={mobileBomTotals}

@@ -225,13 +225,6 @@ export function initialRunPaneWidth() {
   return Math.round(Math.min(680, Math.max(390, window.innerWidth / 3)));
 }
 
-export const CUSTOMER_MODE_KEY = "qsbom-customer-mode";
-
-export function initialCustomerMode() {
-  if (typeof window === "undefined") return false;
-  return window.localStorage.getItem(CUSTOMER_MODE_KEY) === "true";
-}
-
 // ─── Warnings ─────────────────────────────────────────────────────────────────
 
 export function isAngleDrawingWarning(warning: string): boolean {

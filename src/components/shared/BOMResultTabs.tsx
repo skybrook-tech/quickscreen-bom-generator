@@ -32,7 +32,6 @@ interface BOMResultTabsProps {
     gst: number;
     grandTotal: number;
   }) => void;
-  customerMode?: boolean;
 }
 
 const CATEGORY_ORDER = BOM_CATEGORY_ORDER;
@@ -184,7 +183,6 @@ function BOMTable({
   onQuantityChange,
   onRemoveLine,
   onSwitchEconomyToStandard,
-  customerMode,
   showWorkings,
 }: {
   items: BOMLineItem[];
@@ -192,7 +190,6 @@ function BOMTable({
   onQuantityChange?: (item: BOMLineItem, quantity: number) => void;
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
-  customerMode?: boolean;
   showWorkings: boolean;
 }) {
   const sorted = sortItems(items);
@@ -216,7 +213,6 @@ function BOMTable({
         onRemoveLine={onRemoveLine}
         onSwitchEconomyToStandard={onSwitchEconomyToStandard}
         hoveredGateDiagramNumber={hoveredGateDiagramNumber}
-        customerMode={customerMode}
         showWorkings={showWorkings}
       />
       <div
@@ -238,16 +234,14 @@ function BOMTable({
               <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
                 Qty
               </th>
-              {!customerMode && (
-                <>
-                  <th className="hidden py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right whitespace-nowrap sm:table-cell">
-                    Unit $
-                  </th>
-                  <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
-                    Line $
-                  </th>
-                </>
-              )}
+              <>
+                <th className="hidden py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right whitespace-nowrap sm:table-cell">
+                  Unit $
+                </th>
+                <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right">
+                  Line $
+                </th>
+              </>
               {editable && (
                 <th className="py-2.5 px-3 text-xs font-semibold text-brand-muted uppercase tracking-wider text-right print:hidden">
                   Edit
@@ -266,7 +260,6 @@ function BOMTable({
                 onRemoveLine={onRemoveLine}
                 onSwitchEconomyToStandard={onSwitchEconomyToStandard}
                 hoveredGateDiagramNumber={hoveredGateDiagramNumber}
-                customerMode={customerMode}
                 showWorkings={showWorkings}
               />
             ))}
@@ -284,7 +277,6 @@ function BOMMobileCards({
   onRemoveLine,
   onSwitchEconomyToStandard,
   hoveredGateDiagramNumber,
-  customerMode,
   showWorkings,
 }: {
   groups: [string, BOMLineItem[]][];
@@ -293,7 +285,6 @@ function BOMMobileCards({
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
   hoveredGateDiagramNumber: GateDiagramNumber | null;
-  customerMode?: boolean;
   showWorkings: boolean;
 }) {
   return (
@@ -316,7 +307,6 @@ function BOMMobileCards({
                   hoveredGateDiagramNumber !== null &&
                   gateDiagramNumbersForSku(item.sku).includes(hoveredGateDiagramNumber)
                 }
-                customerMode={customerMode}
                 showWorkings={showWorkings}
               />
             ))}
@@ -334,7 +324,6 @@ function BOMMobileCard({
   onRemoveLine,
   onSwitchEconomyToStandard,
   highlighted,
-  customerMode,
   showWorkings,
 }: {
   item: BOMLineItem;
@@ -343,7 +332,6 @@ function BOMMobileCard({
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
   highlighted: boolean;
-  customerMode?: boolean;
   showWorkings: boolean;
 }) {
   const cartonHint = cartonHintForLine(item);
@@ -396,16 +384,14 @@ function BOMMobileCard({
           ) : (
             <p className="text-xl font-black text-brand-text">{item.quantity}</p>
           )}
-          {!customerMode && (
-            <>
-              <p className="mt-2 text-xs font-semibold text-brand-muted">
-                {item.unitPrice > 0 ? `$${formatMoney(item.unitPrice)}` : "-"} / {unitLabel(item)}
-              </p>
-              <p className="mt-1 text-base font-black text-brand-primary">
-                {item.unitPrice > 0 ? `$${formatMoney(item.lineTotal)}` : "-"}
-              </p>
-            </>
-          )}
+          <>
+            <p className="mt-2 text-xs font-semibold text-brand-muted">
+              {item.unitPrice > 0 ? `$${formatMoney(item.unitPrice)}` : "-"} / {unitLabel(item)}
+            </p>
+            <p className="mt-1 text-base font-black text-brand-primary">
+              {item.unitPrice > 0 ? `$${formatMoney(item.lineTotal)}` : "-"}
+            </p>
+          </>
         </div>
       </div>
       {(cartonHint || (showWorkings && item.notes) || canSwitchEconomy || editable) && (
@@ -452,7 +438,6 @@ function ItemGroup({
   onRemoveLine,
   onSwitchEconomyToStandard,
   hoveredGateDiagramNumber,
-  customerMode,
   showWorkings,
 }: {
   category: string;
@@ -462,7 +447,6 @@ function ItemGroup({
   onRemoveLine?: (item: BOMLineItem) => void;
   onSwitchEconomyToStandard?: (item: BOMLineItem) => void;
   hoveredGateDiagramNumber: GateDiagramNumber | null;
-  customerMode?: boolean;
   showWorkings: boolean;
 }) {
   const orderedItems = orderCompanions(items);
@@ -471,7 +455,7 @@ function ItemGroup({
     <>
       <tr className="border-t border-brand-border">
         <td
-          colSpan={editable ? (customerMode ? 5 : 7) : (customerMode ? 4 : 6)}
+          colSpan={editable ? 7 : 6}
           className="px-3 py-1.5 bg-slate-300/15 border-b border-brand-border capitalize text-xs font-semibold text-brand-muted tracking-wider"
         >
           {humanizeCategory(category)}
@@ -495,7 +479,7 @@ function ItemGroup({
           rows.push(
             <tr key={`${category}-${subCategory}-heading`}>
               <td
-                colSpan={editable ? (customerMode ? 5 : 7) : (customerMode ? 4 : 6)}
+                colSpan={editable ? 7 : 6}
                 className="px-3 pt-3 pb-1 text-[11px] font-extrabold uppercase tracking-wide text-brand-muted"
               >
                 {humanizeSubCategory(subCategory)}
@@ -591,16 +575,14 @@ function ItemGroup({
                 item.quantity
               )}
             </td>
-            {!customerMode && (
-              <>
-                <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-right tabular-nums sm:table-cell">
-                  {item.unitPrice > 0 ? `$${formatMoney(item.unitPrice)}` : "-"}
-                </td>
-                <td className="py-2.5 px-3 text-sm text-brand-text font-medium text-right tabular-nums">
-                  {item.unitPrice > 0 ? `$${formatMoney(item.lineTotal)}` : "-"}
-                </td>
-              </>
-            )}
+            <>
+              <td className="hidden py-2.5 px-3 text-sm text-brand-muted text-right tabular-nums sm:table-cell">
+                {item.unitPrice > 0 ? `$${formatMoney(item.unitPrice)}` : "-"}
+              </td>
+              <td className="py-2.5 px-3 text-sm text-brand-text font-medium text-right tabular-nums">
+                {item.unitPrice > 0 ? `$${formatMoney(item.lineTotal)}` : "-"}
+              </td>
+            </>
             {editable && (
               <td className="py-2.5 px-3 text-right print:hidden">
                 <button
@@ -627,7 +609,6 @@ export function BOMResultTabs({
   onRemoveLine,
   onSwitchEconomyToStandard,
   onActiveSummaryChange,
-  customerMode,
 }: BOMResultTabsProps) {
   const [activeTab, setActiveTab] = useState("all");
   const [viewMode, setViewMode] = useState<"line_items" | "cut_list">("line_items");
@@ -749,52 +730,49 @@ export function BOMResultTabs({
           onQuantityChange={onQuantityChange}
           onRemoveLine={onRemoveLine}
           onSwitchEconomyToStandard={onSwitchEconomyToStandard}
-          customerMode={customerMode}
           showWorkings={showWorkings}
         />
       )}
 
       {/* Summary */}
-      {!customerMode && (
-        <div className="mt-6 pt-4 border-t border-brand-border">
-          <div className="mb-3 inline-flex rounded-full border border-brand-success/30 bg-brand-success/10 px-3 py-1 text-xs font-bold text-brand-success print:hidden">
-            {PRICE_SOURCE_LABEL} · {PRICE_SOURCE_VERIFIED_DATE}
+      <div className="mt-6 pt-4 border-t border-brand-border">
+        <div className="mb-3 inline-flex rounded-full border border-brand-success/30 bg-brand-success/10 px-3 py-1 text-xs font-bold text-brand-success print:hidden">
+          {PRICE_SOURCE_LABEL} · {PRICE_SOURCE_VERIFIED_DATE}
+        </div>
+        <div className="space-y-1 mb-3">
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-brand-muted">Subtotal (ex-GST)</span>
+            <span className="tabular-nums text-brand-text">
+              ${formatMoney(activeTotal)}
+            </span>
           </div>
-          <div className="space-y-1 mb-3">
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-brand-muted">Subtotal (ex-GST)</span>
-              <span className="tabular-nums text-brand-text">
-                ${formatMoney(activeTotal)}
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-brand-muted">GST (10%)</span>
-              <span className="tabular-nums text-brand-text">
-                ${formatMoney(activeGst)}
-              </span>
-            </div>
-          </div>
-          <div className="flex justify-between items-center border-t border-brand-border pt-3">
-            <div>
-              <p className="text-sm font-semibold text-brand-text">
-                Total (inc. GST)
-              </p>
-              <p className="text-xs text-brand-muted mt-0.5">
-                Generated{" "}
-                {new Date(result.generatedAt).toLocaleString("en-AU", {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })}
-                {" · "}
-                Auto quantity-break pricing
-              </p>
-            </div>
-            <span className="text-2xl font-bold text-brand-accent tabular-nums">
-              ${formatMoney(activeGrandTotal)}
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-brand-muted">GST (10%)</span>
+            <span className="tabular-nums text-brand-text">
+              ${formatMoney(activeGst)}
             </span>
           </div>
         </div>
-      )}
+        <div className="flex justify-between items-center border-t border-brand-border pt-3">
+          <div>
+            <p className="text-sm font-semibold text-brand-text">
+              Total (inc. GST)
+            </p>
+            <p className="text-xs text-brand-muted mt-0.5">
+              Generated{" "}
+              {new Date(result.generatedAt).toLocaleString("en-AU", {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
+              {" · "}
+              Auto quantity-break pricing
+            </p>
+          </div>
+          <span className="text-2xl font-bold text-brand-accent tabular-nums">
+            ${formatMoney(activeGrandTotal)}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

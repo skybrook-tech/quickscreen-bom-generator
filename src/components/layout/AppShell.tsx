@@ -11,8 +11,6 @@ interface AppShellProps {
   brandLogoSrc?: string;
   brandLogoAlt?: string;
   headerPriceLabel?: string | null;
-  customerMode?: boolean;
-  onCustomerModeChange?: (enabled: boolean) => void;
   onClearJobRequest?: () => void;
   clearJobDisabled?: boolean;
 }
@@ -27,8 +25,6 @@ export function AppShell({
   brandLogoSrc,
   brandLogoAlt,
   headerPriceLabel,
-  customerMode,
-  onCustomerModeChange,
   onClearJobRequest,
   clearJobDisabled,
 }: AppShellProps) {
@@ -42,8 +38,6 @@ export function AppShell({
         brandLogoSrc={brandLogoSrc}
         brandLogoAlt={brandLogoAlt}
         priceLabel={headerPriceLabel}
-        customerMode={customerMode}
-        onCustomerModeChange={onCustomerModeChange}
         onClearJobRequest={onClearJobRequest}
         clearJobDisabled={clearJobDisabled}
       />

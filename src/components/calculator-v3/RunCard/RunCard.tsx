@@ -91,6 +91,7 @@ function RunCardInner({
     () => defaultVariablesFromFields(config ? segmentOnlyFields(config) : []),
     [config],
   );
+
   const summaryChips = useMemo(
     () =>
       (config ? runFields(config) : [])
@@ -240,21 +241,11 @@ function RunCardInner({
           <h3 className="grid min-w-0 flex-1 gap-1 text-brand-text">
             <span className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5 leading-tight">
               <span className="text-xl font-extrabold tracking-normal">Run {runIdx + 1}</span>
-              <span className="text-lg font-extrabold tracking-normal">{runLengthM}m</span>
-              <span className="text-sm font-semibold text-brand-muted">
-                {config.display.shortName}
-              </span>
+              <span className="text-lg text-brand-muted tracking-normal">Total length <span className="text-brand-text">{runLengthM}m</span></span>
             </span>
             <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-brand-muted">
               <span className="inline-flex items-center gap-1.5">
-                Height:
-                <InlineHeightEditor
-                  config={config}
-                  variables={runVariables}
-                  valueMm={runHeight}
-                  ariaLabel={`Run ${runIdx + 1} default height`}
-                  onChange={updateRunHeight}
-                />
+                Height: <strong className="text-brand-text">{runHeight}mm</strong>
               </span>
               <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code, config?.colours.names)}</strong></span>
               {summaryChips.map((chip) => (
@@ -266,15 +257,6 @@ function RunCardInner({
               <span>Corners: <strong className="text-brand-text">{run.corners?.length ?? 0}</strong></span>
             </span>
           </h3>
-
-          <InlineEdit
-            label="Height"
-            value={runHeight}
-            suffix="mm"
-            displayValue={runHeight.toFixed(2)}
-            onCommit={updateRunHeight}
-            disabled={false}
-          />
         </div>
         <div
           className="mb-3"

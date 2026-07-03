@@ -20,6 +20,7 @@ import { getPreferredGroutSku, setPreferredGroutSku } from "../../../lib/userPre
 import { SchemaSettingsForm } from "../SchemaSettingsForm";
 import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import { runFields } from "../../../lib/runFieldOverrides";
+import { InlineHeightEditor } from "./InlineHeightEditor";
 
 interface Props {
   run: CanonicalRun;
@@ -218,7 +219,19 @@ export function RunCardSettings({ run, onCollapse }: Props) {
       <p className="text-xs font-semibold text-brand-muted">
         Sections inherit these settings unless overridden.
       </p>
+      <div className="space-y-2">
+        <h4 className="text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
+          Height
+        </h4>
 
+        <InlineHeightEditor
+          config={config}
+          variables={variables}
+          valueMm={Number(variables.target_height_mm ?? 1800)}
+          ariaLabel={`Run default height`}
+          onChange={(heightMm) => updateRunVariables("target_height_mm", heightMm)}
+        />
+      </div>
       <div className="space-y-3">
         <h4 className="text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
           System type
@@ -241,6 +254,7 @@ export function RunCardSettings({ run, onCollapse }: Props) {
           ))}
         </div>
       </div>
+
 
       <SchemaSettingsForm
         fields={fields}
