@@ -37,6 +37,7 @@ export type CalculatorConfig = {
     post: string[];      // subset available for post accessories
     fallback: string;    // e.g. "MN" — used when colour not in set
     names: Record<string, string>; // display names: { B: "Black Satin", ... }
+    swatches: Record<string, string>; // hex values: { B: "#1a1a1a", ... }
     louvreBracketFallback: string; // colour used when louvre bracket SKU absent
   };
 
@@ -314,7 +315,7 @@ export type FormFieldDef = {
   field_key: string;
   label: string;
   control_type: string; // select | number | toggle | text | combined_gap | hardware_ranked | ...
-  data_type: "enum" | "number" | "integer" | "boolean" | "string";
+  data_type: "enum" | "number" | "integer" | "boolean" | "string" | "boolean_string";
   options_json?: unknown[];
   default_value_json?: unknown;
   visible_when_json?: Record<string, unknown>;

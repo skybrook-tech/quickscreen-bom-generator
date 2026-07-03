@@ -17,27 +17,20 @@ import { optionalAccessoriesForParent } from "../../lib/bomMetadata";
  * pre-computed ranked/option lists and a plain `onChange`.
  */
 
-export function statusClasses(status: GateHardwareStatus) {
+function statusClasses(status: GateHardwareStatus) {
   if (status === "fit") return "border-brand-success/50 bg-brand-success/10 text-brand-success";
   if (status === "tight") return "border-brand-warning/60 bg-brand-warning/10 text-brand-warning";
   return "border-brand-danger/50 bg-brand-danger/10 text-brand-danger";
 }
 
-export function statusLabel(status: GateHardwareStatus) {
+function statusLabel(status: GateHardwareStatus) {
   if (status === "fit") return "Fits";
   if (status === "tight") return "Tight fit";
   return "Does not fit";
 }
 
-export function rankedLabel<T extends { sku: string; label: string }>(
-  options: Array<RankedHardware<T>>,
-  value: string,
-) {
-  const match = options.find((option) => option.effectiveSku === value || option.sku === value);
-  return match?.label ?? value;
-}
 
-export function HardwareReasonTags({
+function HardwareReasonTags({
   status,
   reasons,
 }: {

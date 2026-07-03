@@ -20,11 +20,11 @@ type ProductFieldFile = {
 };
 
 const PRODUCT_FIELD_FILES: Record<string, ProductFieldFile> = {
-  QSHS: qshsFields,
-  VS: vsFields,
-  XPL: xplFields,
-  BAYG: baygFields,
-  QS_GATE: qsGateFields,
+  QSHS: qshsFields as ProductFieldFile,
+  VS: vsFields as ProductFieldFile,
+  XPL: xplFields as ProductFieldFile,
+  BAYG: baygFields as ProductFieldFile,
+  QS_GATE: qsGateFields as ProductFieldFile,
 };
 
 // ─── Shared colour palette ────────────────────────────────────────────────────
@@ -43,6 +43,13 @@ const COLOUR_NAMES: Record<string, string> = {
   D: "Dune Satin", M: "Mill", P: "Primrose", PB: "Paperbark",
   S: "Palladium Silver Pearl", KWI: "Kwila", WRC: "Western Red Cedar",
   IG: "Island Grey", TR: "Terrain",
+};
+
+const COLOUR_SWATCHES: Record<string, string> = {
+  B: "#1a1a1a", MN: "#5a5c5e", G: "#6b7264", SM: "#d6d2c8",
+  W: "#f5f3ea", BS: "#4a4d52", D: "#bca98a", M: "#c8c4bc",
+  P: "#f5e8c0", PB: "#c0a882", S: "#b8bec6",
+  KWI: "#7a5c3a", WRC: "#a07850", IG: "#9fa8a8", TR: "#8c7055",
 };
 
 // ─── Shared internal SKU templates ───────────────────────────────────────────
@@ -269,6 +276,7 @@ export const BASE_QSHS_CONFIG: CalculatorConfig = {
     post: STANDARD_COLOURS,
     fallback: "MN",
     names: COLOUR_NAMES,
+    swatches: COLOUR_SWATCHES,
     louvreBracketFallback: "MN",
   },
   display: DISPLAY_QSHS,

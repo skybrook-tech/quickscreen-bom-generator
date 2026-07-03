@@ -28,7 +28,7 @@ import {
   SLIDING_GUIDE_OPTIONS,
 } from "./gateOptionRules";
 import { hingeGapForSku, latchGapForSku } from "./gateHardware";
-import { stripParentheticalDispatchCode } from "./displayText";
+import { colourName } from "../components/calculator-v3/ColourPalette";
 import type { BOMLineItem, BOMSource } from "../types/bom.types";
 import type { CanonicalPayload, CanonicalRun, CanonicalSegment, CanonicalVariables } from "../types/canonical.types";
 import type { ParseResult, ParsedSystemType } from "./describeFenceParser";
@@ -167,26 +167,6 @@ export function gateLabel(runIndex: number, gateIndex: number) {
   return `R${runIndex + 1} G${gateIndex + 1}`;
 }
 
-export const COLOUR_NAMES: Record<string, string> = {
-  B: "Black Satin",
-  MN: "Monument Matt",
-  G: "Woodland Grey Matt",
-  SM: "Surfmist Matt",
-  W: "Pearl White Gloss",
-  BS: "Basalt Satin",
-  D: "Dune Satin",
-  M: "Mill",
-  P: "Primrose",
-  PB: "Paperbark",
-  S: "Palladium Silver Pearl",
-  KWI: "Kwila",
-  WRC: "Western Red Cedar",
-};
-
-export function colourName(code: unknown) {
-  const value = String(code ?? "B");
-  return stripParentheticalDispatchCode(COLOUR_NAMES[value] ?? value);
-}
 
 export const MOUNTING_LABELS: Record<string, string> = {
   in_ground: "Concreted in ground",

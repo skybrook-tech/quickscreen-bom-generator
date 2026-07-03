@@ -35,7 +35,6 @@ interface CalculatorBomPaneProps {
   mobileBomTotals: { subtotal: number; gst: number; grandTotal: number } | null;
   jobName: string;
   onJobNameChange: (name: string) => void;
-  summaryText: string;
   extraItems: ExtraItem[];
   setExtraItems: React.Dispatch<React.SetStateAction<ExtraItem[]>>;
   setLineEdits: React.Dispatch<React.SetStateAction<Record<string, number | null>>>;
@@ -55,7 +54,6 @@ export function CalculatorBomPane({
   mobileBomTotals,
   jobName,
   onJobNameChange,
-  summaryText,
   extraItems,
   setExtraItems,
   setLineEdits,
@@ -89,11 +87,6 @@ export function CalculatorBomPane({
               textClassName="px-0 text-4xl font-black leading-tight"
               inputClassName="max-w-xl"
             />
-          )}
-          {summaryText && (
-            <p className="mt-2 max-w-3xl text-sm font-semibold text-brand-text">
-              {summaryText}
-            </p>
           )}
         </div>
         <div className="text-left sm:text-right" data-print-hide>

@@ -1,7 +1,7 @@
 import { FormField } from "../shared/FormField";
 import { Check } from "lucide-react";
-import { COLOUR_LABELS } from "./ColourPalette";
 import { DerivationChip } from "../ui/DerivationChip";
+import type { UiCalculatorConfig } from "../../types/calculatorConfig.types";
 import { combinedGapRenderer } from "./formRenderers/combinedGap";
 import { postFixingSelectRenderer } from "./formRenderers/postFixingSelect";
 import { colourPaletteRenderer } from "./formRenderers/colourPalette";
@@ -123,14 +123,15 @@ function optionValue(option: unknown): string {
   return String(option);
 }
 
-function optionLabel(field: SchemaField, option: unknown): string {
+function optionLabel(field: SchemaField, option: unknown, colourNames?: Record<string, string>): string {
   if (option && typeof option === "object" && "label" in option) {
     return String((option as { label: unknown }).label);
   }
   const value = optionValue(option);
   if (field.render_hint === "colour") {
     const limited = value === "P" || value === "PB" ? " - limited" : "";
-    return `${COLOUR_LABELS[value] ?? value} (${value})${limited}`;
+    const label = colourNames?.[value] ?? value;
+    return `${label} (${value})${limited}`;
   }
   if (field.field_key === "target_height_mm") return `${value}mm`;
   return ENUM_LABELS[value] ?? value.replace(/_/g, " ");
@@ -148,13 +149,14 @@ export function valueLabel(
   field: SchemaField | undefined,
   rawValue: unknown,
   fallback = "Default",
+  colourNames?: Record<string, string>,
 ): string {
   if (!field) return fallback;
   if (rawValue === undefined || rawValue === null || rawValue === "") return fallback;
   const options = Array.isArray(field.options_json) ? field.options_json : [];
   const match = options.find((opt) => optionValue(opt) === String(rawValue));
-  if (match !== undefined) return optionLabel(field, match);
-  const generic = optionLabel(field, rawValue);
+  if (match !== undefined) return optionLabel(field, match, colourNames);
+  const generic = optionLabel(field, rawValue, colourNames);
   // optionLabel's field-key-specific branches already append units for slat
   // size/gap/height; for everything else without a config-defined option
   // match, fall back to the field's declared unit (e.g. max_panel_width_mm).
@@ -178,6 +180,7 @@ export function SchemaDrivenForm({
   renderers,
 }: SchemaDrivenFormProps) {
   const registry = renderers ? { ...DEFAULT_RENDERERS, ...renderers } : DEFAULT_RENDERERS;
+  const colourNames = (extra.config as UiCalculatorConfig | undefined)?.colours.names;
   const patch =
     onPatch ??
     ((p: Record<string, string | number | boolean | null | undefined>) => {
@@ -246,7 +249,7 @@ export function SchemaDrivenForm({
                         }`}
                       >
                         {selected && <Check size={16} aria-hidden />}
-                        {optionLabel(field, opt)}
+                        {optionLabel(field, opt, colourNames)}
                       </button>
                     );
                   })}

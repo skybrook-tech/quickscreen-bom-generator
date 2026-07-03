@@ -33,7 +33,6 @@ export function RunCardSettings({ run, onCollapse }: Props) {
     ...(run.variables ?? {}),
   } as Record<string, string | number | boolean>;
   const config = useCalculatorConfig(productCode, variables);
-  console.log("config", config);
 
   useEffect(() => {
     if (run.variables?.post_fixing_material_sku) return;

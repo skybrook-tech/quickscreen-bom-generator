@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FormField } from "../../shared/FormField";
 import { ColourPalette } from "../ColourPalette";
+import type { UiCalculatorConfig } from "../../../types/calculatorConfig.types";
 import type { FieldRenderer } from "./types";
 
 /**
@@ -9,7 +10,8 @@ import type { FieldRenderer } from "./types";
  * grid; the palette starts revealed when the current value already diverges
  * from the matching fence colour (variables.colour_code).
  */
-export const colourPaletteOptionalRenderer: FieldRenderer = ({ field, variables, onChange }) => {
+export const colourPaletteOptionalRenderer: FieldRenderer = ({ field, variables, onChange, extra }) => {
+  const config = extra.config as UiCalculatorConfig | undefined;
   const fenceColour = String(variables["colour_code"] ?? "");
   const currentValue = String(variables[field.field_key] ?? field.default_value_json ?? fenceColour);
   const [open, setOpen] = useState(
@@ -32,6 +34,8 @@ export const colourPaletteOptionalRenderer: FieldRenderer = ({ field, variables,
               value={currentValue}
               options={field.options_json.map(String)}
               onChange={(next) => onChange(field.field_key, next)}
+              swatches={config?.colours.swatches}
+              labels={config?.colours.names}
             />
           </FormField>
         </div>

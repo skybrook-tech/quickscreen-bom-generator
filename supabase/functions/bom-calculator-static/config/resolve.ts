@@ -25,7 +25,7 @@ export type UiCalculatorConfig = {
   strategy: { fence: CalculatorConfig["strategy"]["fence"] };
   colours: Pick<
     CalculatorConfig["colours"],
-    "standard" | "economy" | "alumawood" | "gate" | "names" | "fallback"
+    "standard" | "economy" | "alumawood" | "gate" | "names" | "swatches" | "fallback"
   >;
   finishFamilies: string[];
   panelRules: Pick<
@@ -98,6 +98,7 @@ export function resolveUiConfig(
       alumawood: config.colours.alumawood,
       gate: config.colours.gate,
       names: config.colours.names,
+      swatches: config.colours.swatches,
       fallback: config.colours.fallback,
     },
     finishFamilies: config.finishFamilies,

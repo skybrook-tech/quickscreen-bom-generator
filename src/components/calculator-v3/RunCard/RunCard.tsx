@@ -99,7 +99,7 @@ function RunCardInner({
         .map((field) => ({
           key: field.field_key,
           label: field.label,
-          value: valueLabel(field, summaryVariableValue(field.field_key, runVariables)),
+          value: valueLabel(field, summaryVariableValue(field.field_key, runVariables), "Default", config?.colours.names),
         })),
     [config, runVariables],
   );
@@ -256,7 +256,7 @@ function RunCardInner({
                   onChange={updateRunHeight}
                 />
               </span>
-              <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code)}</strong></span>
+              <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code, config?.colours.names)}</strong></span>
               {summaryChips.map((chip) => (
                 <span key={chip.key}>
                   {chip.label}: <strong className="text-brand-text">{isPanelStrategy && chip.key === "mounting_type" ? "Not required" : chip.value}</strong>

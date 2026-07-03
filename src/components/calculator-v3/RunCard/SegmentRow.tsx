@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { useCalculator } from "../../../context/CalculatorContext";
 import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import type { CanonicalSegment } from "../../../types/canonical.types";
@@ -244,7 +244,7 @@ export function SegmentRow({
       },
       {
         label: "Colour",
-        value: colourName(fenceColour),
+        value: colourName(fenceColour, config.colours.names),
         changed: !sameValue(fenceColour, masterFenceColour),
       },
       {
@@ -267,7 +267,7 @@ export function SegmentRow({
         ? [
           {
             label: "Post colour",
-            value: colourName(postColour),
+            value: colourName(postColour, config.colours.names),
             changed: !sameValue(postColour, masterPostColour),
           },
         ]
@@ -292,7 +292,7 @@ export function SegmentRow({
         ? [
           {
             label: "Post colour",
-            value: colourName(postColour),
+            value: colourName(postColour, config.colours.names),
             changed: !sameValue(postColour, masterPostColour),
           },
         ]
@@ -716,19 +716,12 @@ export function SegmentRow({
             runId={runId}
             seg={seg}
             isPanelStrategy={isPanelStrategy}
-            isFreeform={isFreeform}
             gate={gate}
-            segmentVariables={segmentVariables}
-            heightEntries={heightEntries}
-            heightInputsReady={heightInputsReady}
-            selectedHeight={selectedHeight}
             gateWidthValidation={gateWidthValidation}
             matchesMaster={matchesMaster}
             visibleSettings={visibleSettings}
             showRunDefaultsTeaching={showRunDefaultsTeaching}
             onDismissRunDefaultsTeaching={onDismissRunDefaultsTeaching}
-            updateGeometry={updateGeometry}
-            updateDerivedHeight={updateDerivedHeight}
             updatePanelQuantity={updatePanelQuantity}
             switchGateToAlternative={switchGateToAlternative}
           />

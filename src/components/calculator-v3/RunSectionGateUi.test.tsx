@@ -72,7 +72,7 @@ const calculatorConfigMock = vi.hoisted(() => {
     productCode: "QSHS",
     display: { name: "QuickScreen Horizontal Slat", shortName: "Horizontal Slats", description: "Quick Screen Horizontal Slats" },
     strategy: { fence: "horizontal_slat" },
-    colours: { standard: ["B", "SM"], economy: ["B", "SM"], alumawood: [], gate: ["B", "SM"], names: {}, fallback: "MN" },
+    colours: { standard: ["B", "SM"], economy: ["B", "SM"], alumawood: [], gate: ["B", "SM"], names: {}, swatches: {}, fallback: "MN" },
     finishFamilies: ["standard", "economy", "alumawood"],
     panelRules: { maxPanelWidthMm: 2600, minPostSpacingMm: 100, maxPostSpacingMm: 3000 },
     postRules: { longPostThresholdMm: 2400 },

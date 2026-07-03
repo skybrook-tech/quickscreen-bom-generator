@@ -33,6 +33,7 @@ export type UiCalculatorConfig = {
     alumawood: string[];
     gate: string[];
     names: Record<string, string>;
+    swatches: Record<string, string>;
     fallback: string;
   };
   finishFamilies: string[];

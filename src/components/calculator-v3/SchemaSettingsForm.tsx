@@ -51,7 +51,6 @@ export function SchemaSettingsForm({
 
   const orderedGroups = [...groups].sort((a, b) => a.sort_order - b.sort_order);
 
-  console.log("fields", fields);
   return (
     <div className="space-y-5">
       {orderedGroups.map((group) => {

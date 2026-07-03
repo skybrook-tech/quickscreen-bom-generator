@@ -212,8 +212,8 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const gateTargetRunLength = gateTargetRun ? runLengthMm(gateTargetRun) : 0;
 
   const saveJobLabel = quoteId
-    ? jobName.trim() ? `Update ${jobName.trim()}` : "Update Job"
-    : jobName.trim() ? `Save ${jobName.trim()}` : "Save Job";
+    ? "Update Job"
+    : "Save Job";
 
   const saveDialogInitialName = jobName.trim() || defaultSaveJobName();
 
@@ -224,10 +224,10 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const headerPriceLabel = !customerMode && headerGrandTotal > 0 ? formatHeaderMoney(headerGrandTotal) : null;
   const mobileBomTotals = bom.bomResultForTabs
     ? {
-        subtotal: bom.activeBomSummary?.subtotal ?? bom.bomResultForTabs.total,
-        gst: bom.activeBomSummary?.gst ?? bom.bomResultForTabs.gst,
-        grandTotal: bom.activeBomSummary?.grandTotal ?? bom.bomResultForTabs.grandTotal,
-      }
+      subtotal: bom.activeBomSummary?.subtotal ?? bom.bomResultForTabs.total,
+      gst: bom.activeBomSummary?.gst ?? bom.bomResultForTabs.gst,
+      grandTotal: bom.activeBomSummary?.grandTotal ?? bom.bomResultForTabs.grandTotal,
+    }
     : null;
 
   const showIntro = !quoteId && !payload && !introDismissed;
@@ -376,6 +376,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
 export function CalculatorV3Page() {
   const { quoteId } = useParams<{ quoteId: string }>();
+
   return (
     <CalculatorProvider key={quoteId ?? "new"}>
       <FenceConfigProvider>

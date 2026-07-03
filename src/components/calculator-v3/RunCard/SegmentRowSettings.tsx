@@ -1,7 +1,6 @@
 import { X } from "lucide-react";
-import type { CanonicalSegment, CanonicalVariables } from "../../../types/canonical.types";
+import type { CanonicalSegment } from "../../../types/canonical.types";
 import { gateTypeLabel, validateGateWidth } from "../../../lib/gateConstraints";
-import type { DerivedHeight } from "../../../lib/heights";
 import NumberInput from "../../shared/NumberInput";
 import { SummaryBit } from "./segmentSummary";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
@@ -11,19 +10,12 @@ interface Props {
   runId: string;
   seg: CanonicalSegment;
   isPanelStrategy: boolean;
-  isFreeform: boolean;
   gate: boolean;
-  segmentVariables: CanonicalVariables;
-  heightEntries: DerivedHeight[];
-  heightInputsReady: boolean;
-  selectedHeight: number;
   gateWidthValidation: ReturnType<typeof validateGateWidth> | null;
   matchesMaster: boolean;
   visibleSettings: Array<{ label: string; value: string | number; changed: boolean }>;
   showRunDefaultsTeaching: boolean;
   onDismissRunDefaultsTeaching?: () => void;
-  updateGeometry: (key: "segmentWidthMm" | "targetHeightMm", value: number) => void;
-  updateDerivedHeight: (entry: DerivedHeight) => void;
   updatePanelQuantity: (value: number) => void;
   switchGateToAlternative: () => void;
 }

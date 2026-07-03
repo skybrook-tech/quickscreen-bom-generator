@@ -118,15 +118,13 @@ export function CalculatorWorkspace({
         className={`${mapExpanded ? "fixed inset-0 z-50" : "relative"} flex h-full min-h-0 flex-col overflow-hidden bg-brand-bg md:flex-row`}
       >
         <aside
-          className={`relative w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${
-            mapExpanded || !paneVisibility.job ? "hidden" : "flex"
-          } ${
-            mobileLayout
+          className={`relative w-full overflow-hidden border-b border-brand-border bg-brand-card md:min-h-0 md:max-h-none md:shrink-0 md:border-b-0 md:border-r ${mapExpanded || !paneVisibility.job ? "hidden" : "flex"
+            } ${mobileLayout
               ? "h-full min-h-0 max-h-none"
               : bomResultForTabs
                 ? "max-h-[32vh]"
                 : "min-h-[46vh]"
-          }`}
+            }`}
           style={mobileLayout ? undefined : { width: runPaneWidth }}
         >
           <CalculatorJobPane
@@ -164,11 +162,10 @@ export function CalculatorWorkspace({
 
         <main
           data-print-bom-main
-          className={`min-h-0 min-w-0 flex-1 overflow-y-auto ${
-            mapExpanded
+          className={`min-h-0 min-w-0 flex-1 overflow-y-auto ${mapExpanded
               ? "p-0"
               : "p-3 pb-[calc(var(--safe-bottom)+6rem)] sm:p-5 lg:p-8"
-          } ${mobileLayout && paneVisibility.job ? "hidden" : ""}`}
+            } ${mobileLayout && paneVisibility.job ? "hidden" : ""}`}
         >
           <div
             data-print-right-pane
@@ -176,17 +173,15 @@ export function CalculatorWorkspace({
           >
             <section
               data-print-map-section
-              className={`${
-                mobileLayout
+              className={`${mobileLayout
                   ? paneVisibility.map
                     ? "block"
                     : "hidden"
                   : rightPaneView === "map"
                     ? "block"
                     : "hidden"
-              } overflow-hidden border border-brand-border/60 bg-brand-card ${
-                mapExpanded ? "rounded-xl" : "rounded-2xl"
-              }`}
+                } overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"
+                }`}
             >
               <div className={`${mapExpanded ? "p-2" : "p-3 sm:p-4"}`}>
                 <div data-print-map-panel className="block">
@@ -209,15 +204,14 @@ export function CalculatorWorkspace({
             </section>
 
             <div
-              className={`${
-                mobileLayout
+              className={`${mobileLayout
                   ? paneVisibility.bom && !mapExpanded
                     ? "block"
                     : "hidden"
                   : rightPaneView === "bom" && !mapExpanded
                     ? "block"
                     : "hidden"
-              }`}
+                }`}
             >
               <CalculatorBomPane
                 bomResultForTabs={bomResultForTabs}
@@ -230,7 +224,6 @@ export function CalculatorWorkspace({
                 mobileBomTotals={mobileBomTotals}
                 jobName={jobName}
                 onJobNameChange={onJobNameChange}
-                summaryText={jobName.trim()}
                 extraItems={extraItems}
                 setExtraItems={setExtraItems}
                 setLineEdits={setLineEdits}
