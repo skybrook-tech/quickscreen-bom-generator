@@ -161,8 +161,8 @@ export function CalculatorWorkspace({
         <main
           data-print-bom-main
           className={`min-h-0 min-w-0 flex-1 overflow-y-auto ${mapExpanded
-              ? "p-0"
-              : "p-3 pb-[calc(var(--safe-bottom)+6rem)] sm:p-5 lg:p-8"
+            ? "p-0"
+            : "p-3 pb-[calc(var(--safe-bottom)+6rem)] sm:p-5 lg:p-8"
             } ${mobileLayout && paneVisibility.job ? "hidden" : ""}`}
         >
           <div
@@ -172,12 +172,12 @@ export function CalculatorWorkspace({
             <section
               data-print-map-section
               className={`${mobileLayout
-                  ? paneVisibility.map
-                    ? "block"
-                    : "hidden"
-                  : rightPaneView === "map"
-                    ? "block"
-                    : "hidden"
+                ? paneVisibility.map
+                  ? "block"
+                  : "hidden"
+                : rightPaneView === "map"
+                  ? "block"
+                  : "hidden"
                 } overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"
                 }`}
             >
@@ -187,7 +187,6 @@ export function CalculatorWorkspace({
                     <LayoutCanvasV3
                       mapExpanded={mapExpanded}
                       onMapExpandedChange={onMapExpandedChange}
-                      showRunDetails={!mapExpanded}
                       propertyAnchor={payload.propertyAnchor ?? null}
                       mapSnapshot={payload.snapshot ?? null}
                       onMapSnapshotChange={onMapSnapshotChange}
@@ -203,12 +202,12 @@ export function CalculatorWorkspace({
 
             <div
               className={`${mobileLayout
-                  ? paneVisibility.bom && !mapExpanded
-                    ? "block"
-                    : "hidden"
-                  : rightPaneView === "bom" && !mapExpanded
-                    ? "block"
-                    : "hidden"
+                ? paneVisibility.bom && !mapExpanded
+                  ? "block"
+                  : "hidden"
+                : rightPaneView === "bom" && !mapExpanded
+                  ? "block"
+                  : "hidden"
                 }`}
             >
               <CalculatorBomPane

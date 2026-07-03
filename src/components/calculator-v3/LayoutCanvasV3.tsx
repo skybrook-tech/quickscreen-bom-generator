@@ -19,7 +19,6 @@ import {
 import type { CanvasGateVisual, CanvasLayout, CanvasPrintRunSummary } from '../canvas/canvasEngine';
 import type { initCanvasEngine } from '../canvas/canvasEngine';
 import type { CanonicalMapSnapshot } from '../../types/canonical.types';
-import { RunDetailsPanel } from './RunDetailsPanel';
 
 interface LayoutCanvasV3Props {
   mapExpanded?: boolean;
@@ -34,7 +33,6 @@ interface LayoutCanvasV3Props {
 export function LayoutCanvasV3({
   mapExpanded = false,
   onMapExpandedChange,
-  showRunDetails = true,
   jobName,
   propertyAnchor,
   mapSnapshot,
@@ -172,7 +170,7 @@ export function LayoutCanvasV3({
             gateType,
             swingDirection: String(
               segment.variables?.[GATE_SEGMENT_STUB_KEYS.openingDirection] ??
-                fallbackDirection,
+              fallbackDirection,
             ) as CanvasGateVisual['swingDirection'],
             slidingSide: String(
               segment.variables?.[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? 'front',
@@ -275,7 +273,7 @@ export function LayoutCanvasV3({
     } catch {
       // Invalid payload shape — ignore
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [payload]);
 
   return (
@@ -297,7 +295,6 @@ export function LayoutCanvasV3({
         onMapSnapshotChange={onMapSnapshotChange}
         printRuns={printRuns}
       />
-      {showRunDetails && !mapExpanded && <RunDetailsPanel payload={payload} />}
     </div>
   );
 }
