@@ -6,25 +6,17 @@ import { defaultGateVariables } from "../../../lib/gateOptionRules";
 import { defaultVariablesFromFields } from "../../../hooks/useProductVariables";
 import { clampPostSpacing } from "../../../lib/productOptionRules";
 import { runFields, segmentOnlyFields } from "../../../lib/runFieldOverrides";
-import type { DerivedHeight } from "../../../lib/heights";
-import {
-  GATE_SEGMENT_STUB_KEYS,
-  patchSegmentVariables,
-} from "../../../lib/segmentTermination";
 import { Button } from "../../shared/Button";
 import { SegmentRow } from "./SegmentRow";
 import { colourName } from "../ColourPalette";
 import { RunCardSettings } from "./RunCardSettings";
 import { RUN_DEFAULTS_TEACHING_KEY } from "../../../lib/uiCopy";
 import { ConfirmButton } from "../../shared/ConfirmButton";
-import { InlineHeightEditor } from "./InlineHeightEditor";
 import { valueLabel } from "../SchemaDrivenForm";
-import { InlineEdit } from "./InlineEdit";
 import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import { useRunReconciliation } from "../../../hooks/useRunReconciliation";
 import type { UiCalculatorConfig } from "../../../types/calculatorConfig.types";
 
-const RUN_SETTINGS_AUTO_COLLAPSE_MS = 60000;
 
 interface Props {
   run: CanonicalRun;
@@ -74,6 +66,7 @@ function RunCardInner({
     () => ({ ...(run.variables ?? {}) }),
     [run],
   );
+
   const config = useCalculatorConfig(run.productCode, runVariables) as
     | UiCalculatorConfig
     | undefined;
@@ -87,21 +80,54 @@ function RunCardInner({
   );
   const runCollapseRef = useRef<number | null>(null);
   const firstSegment = firstFenceSegment(run);
+
+  const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
+
   const segmentDefaults = useMemo(
     () => defaultVariablesFromFields(config ? segmentOnlyFields(config) : []),
     [config],
   );
 
+  const isPanelStrategy = config?.strategy.fence === "panel";
+
+  const jobMax = clampPostSpacing(
+    runVariables.max_panel_width_mm ?? config?.panelRules.maxPanelWidthMm ?? 0,
+    config?.panelRules.maxPanelWidthMm ?? 0,
+  );
+
   const summaryChips = useMemo(
-    () =>
-      (config ? runFields(config) : [])
+    () => {
+      const fieldsToRender = config ? runFields(config as UiCalculatorConfig) : []
+
+      const chips = fieldsToRender
         .filter((field) => field.show_in_run_summary)
         .sort((a, b) => a.sort_order - b.sort_order)
         .map((field) => ({
           key: field.field_key,
           label: field.label,
-          value: valueLabel(field, summaryVariableValue(field.field_key, runVariables), "Default", config?.colours.names),
-        })),
+          value: field.control_type === "colour_palette" ? colourName(runVariables.colour_code, config?.colours.names) : valueLabel(field, summaryVariableValue(field.field_key, runVariables), "Default", config?.colours.names),
+        }));
+
+      chips.unshift({
+        key: "height",
+        label: "Height",
+        value: runHeight.toString() + "mm",
+      });
+
+      chips.push({
+        key: "corners",
+        label: "Corners",
+        value: (run.corners?.length ?? 0).toString() + " corners",
+      });
+
+      chips.push({
+        key: "max_spacing",
+        label: isPanelStrategy ? "Max panel spacing" : "Max post spacing",
+        value: jobMax.toString() + "mm",
+      });
+
+      return chips;
+    },
     [config, runVariables],
   );
 
@@ -111,12 +137,6 @@ function RunCardInner({
     },
     [],
   );
-
-  useEffect(() => {
-    if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
-    if (!runSettingsOpen) return;
-    runCollapseRef.current = window.setTimeout(() => setRunSettingsOpen(false), RUN_SETTINGS_AUTO_COLLAPSE_MS);
-  }, [runSettingsOpen]);
 
   useEffect(() => {
     if (!autoOpenFirstSection || !firstSegment) return;
@@ -129,76 +149,20 @@ function RunCardInner({
     return <RunCardSkeleton />;
   }
 
-  const isPanelStrategy = config.strategy.fence === "panel";
 
-  const jobMax = clampPostSpacing(
-    runVariables.max_panel_width_mm ?? config.panelRules.maxPanelWidthMm,
-    config.panelRules.maxPanelWidthMm,
-  );
+
   const runLengthM = (calcTotalLength(run, config.strategy.fence === "panel") / 1000).toFixed(2);
-  const runHeight = Number(runVariables.target_height_mm ?? firstSegment?.targetHeightMm ?? 1800);
 
   function dismissRunDefaultsTeaching() {
     setTeachingDismissed(true);
     window.localStorage.setItem(RUN_DEFAULTS_TEACHING_KEY, "true");
   }
 
-  function keepRunSettingsOpen() {
-    if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
-  }
-
-  function scheduleRunSettingsCollapse() {
-    if (runCollapseRef.current) window.clearTimeout(runCollapseRef.current);
-    runCollapseRef.current = window.setTimeout(() => setRunSettingsOpen(false), RUN_SETTINGS_AUTO_COLLAPSE_MS);
-  }
-
-  function resetRunSettingsCollapse() {
-    if (!runSettingsOpen) return;
-    scheduleRunSettingsCollapse();
-  }
 
   function upsertSegment(segment: CanonicalSegment) {
     dispatch({ type: "UPSERT_SEGMENT", runId: run.runId, segment });
   }
 
-  function segmentInheritsRunHeight(segment: CanonicalSegment) {
-    const segmentHeight = Number(segment.targetHeightMm ?? runHeight);
-    const variables = segment.variables ?? {};
-    const hasHeightOverride =
-      variables.target_height_mm != null ||
-      variables.slat_count != null ||
-      variables[GATE_SEGMENT_STUB_KEYS.gateHeightMm] != null;
-    return !hasHeightOverride || segmentHeight === runHeight;
-  }
-
-  function updateRunHeight(heightMm: number, entry?: DerivedHeight) {
-    const nextVariables: CanonicalRun["variables"] = {
-      ...(run.variables ?? {}),
-      target_height_mm: heightMm,
-    };
-    if (entry) nextVariables.slat_count = entry.N;
-    else delete nextVariables.slat_count;
-
-    dispatch({
-      type: "UPSERT_RUN",
-      run: {
-        ...run,
-        variables: nextVariables,
-        segments: run.segments.map((segment) => {
-          if (!segmentInheritsRunHeight(segment)) return segment;
-          const cleared = patchSegmentVariables(segment, {
-            target_height_mm: null,
-            slat_count: null,
-            [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: null,
-          });
-          return {
-            ...cleared,
-            targetHeightMm: heightMm,
-          };
-        }),
-      },
-    });
-  }
 
   function addFenceSegment() {
     upsertSegment({
@@ -233,71 +197,52 @@ function RunCardInner({
   const gateSegments = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
   const gatesSupported = config.gateRules.supported;
 
+
   return (
     <div className="rounded-2xl border-2 border-brand-primary/50 bg-brand-card py-4 shadow-md">
       <div className="px-4 mb-3 flex flex-wrap items-start justify-between gap-3">
-        <div>
+        <div className="flex items-center justify-between w-full">
 
           <h3 className="grid min-w-0 flex-1 gap-1 text-brand-text">
             <span className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5 leading-tight">
               <span className="text-xl font-extrabold tracking-normal">Run {runIdx + 1}</span>
               <span className="text-lg text-brand-muted tracking-normal">Total length <span className="text-brand-text">{runLengthM}m</span></span>
             </span>
-            <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-brand-muted">
-              <span className="inline-flex items-center gap-1.5">
-                Height: <strong className="text-brand-text">{runHeight}mm</strong>
-              </span>
-              <span>Color: <strong className="text-brand-text">{colourName(runVariables.colour_code, config?.colours.names)}</strong></span>
-              {summaryChips.map((chip) => (
-                <span key={chip.key}>
-                  {chip.label}: <strong className="text-brand-text">{isPanelStrategy && chip.key === "mounting_type" ? "Not required" : chip.value}</strong>
-                </span>
-              ))}
-              <span>{isPanelStrategy ? "Max panel spacing" : "Max post spacing"}: <strong className="text-brand-text">{jobMax}mm</strong></span>
-              <span>Corners: <strong className="text-brand-text">{run.corners?.length ?? 0}</strong></span>
-            </span>
           </h3>
-        </div>
-        <div
-          className="mb-3"
-          onMouseEnter={keepRunSettingsOpen}
-          onMouseLeave={scheduleRunSettingsCollapse}
-        >
-          <div className="flex justify-end">
 
-            <button
-              type="button"
-              onClick={() =>
-                setRunSettingsOpen((value) => {
-                  const next = !value;
-                  if (next) setExpandedId(null);
-                  return next;
-                })
-              }
-              className={`ml-auto mb-2 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-extrabold transition-colors ${runSettingsOpen
-                ? "border-brand-primary bg-brand-primary text-white"
-                : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
-                }`}
-              aria-label={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
-              title={runSettingsOpen ? "Collapse run settings" : "Run settings"}
-            >
-              <span>Run Settings</span>
-              {runSettingsOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-            </button>
-          </div>
+
+          <Button
+            iconPosition="right"
+            size="medium"
+            onClick={() =>
+              setRunSettingsOpen((value) => {
+                const next = !value;
+                if (next) setExpandedId(null);
+                return next;
+              })
+            }
+            variant={runSettingsOpen ? "primary" : "secondary"}
+            ariaLabel={runSettingsOpen ? "Collapse run settings" : "Open run settings"}
+            icon={runSettingsOpen ? ChevronUp : ChevronDown}
+          >
+            <span>Run Settings</span>
+          </Button>
         </div>
+
+        {!runSettingsOpen && (
+          <p className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-brand-muted">
+            {summaryChips.map((chip) => (
+              <span key={chip.key}>
+                {chip.label}: <strong className="text-brand-text">{isPanelStrategy && chip.key === "mounting_type" ? "Not required" : chip.value}</strong>
+              </span>
+            ))}
+          </p>
+        )}
       </div>
 
       {runSettingsOpen && (
-        <div
-          onPointerDown={resetRunSettingsCollapse}
-          onKeyDown={resetRunSettingsCollapse}
-          onScroll={resetRunSettingsCollapse}
-          onInput={resetRunSettingsCollapse}
-          onChange={resetRunSettingsCollapse}
-        >
-          <RunCardSettings run={run} onCollapse={() => setRunSettingsOpen(false)} />
-        </div>
+
+        <RunCardSettings run={run} onCollapse={() => setRunSettingsOpen(false)} />
       )}
 
 

@@ -13,7 +13,7 @@ import {
   maxPanelWidthForSystem,
   normaliseVariablesForSystem,
 } from "../../../lib/productOptionRules";
-import { GATE_SEGMENT_STUB_KEYS } from "../../../lib/segmentTermination";
+import { GATE_SEGMENT_STUB_KEYS, patchSegmentVariables } from "../../../lib/segmentTermination";
 import { localFenceProducts } from "../../../lib/localSeedData";
 import { isPreferredGroutSku } from "../../../lib/postFixingOptions";
 import { getPreferredGroutSku, setPreferredGroutSku } from "../../../lib/userPrefs";
@@ -21,6 +21,8 @@ import { SchemaSettingsForm } from "../SchemaSettingsForm";
 import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import { runFields } from "../../../lib/runFieldOverrides";
 import { InlineHeightEditor } from "./InlineHeightEditor";
+import { DerivedHeight } from "../../../types/calculatorConfig.types";
+import { CanonicalSegment } from "../../../types/canonical.types";
 
 interface Props {
   run: CanonicalRun;
@@ -214,8 +216,50 @@ export function RunCardSettings({ run, onCollapse }: Props) {
     });
   }
 
+  const runHeight = Number(variables.target_height_mm ?? 1800)
+
+  function segmentInheritsRunHeight(segment: CanonicalSegment) {
+    const segmentHeight = Number(segment.targetHeightMm ?? runHeight);
+    const variables = segment.variables ?? {};
+    const hasHeightOverride =
+      variables.target_height_mm != null ||
+      variables.slat_count != null ||
+      variables[GATE_SEGMENT_STUB_KEYS.gateHeightMm] != null;
+    return !hasHeightOverride || segmentHeight === runHeight;
+  }
+
+  function updateRunHeight(heightMm: number, entry?: DerivedHeight) {
+    const nextVariables: CanonicalRun["variables"] = {
+      ...(run.variables ?? {}),
+      target_height_mm: heightMm,
+    };
+    if (entry) nextVariables.slat_count = entry.N;
+    else delete nextVariables.slat_count;
+
+    dispatch({
+      type: "UPSERT_RUN",
+      run: {
+        ...run,
+        variables: nextVariables,
+        segments: run.segments.map((segment) => {
+          if (!segmentInheritsRunHeight(segment)) return segment;
+          const cleared = patchSegmentVariables(segment, {
+            target_height_mm: null,
+            slat_count: null,
+            [GATE_SEGMENT_STUB_KEYS.gateHeightMm]: null,
+          });
+          return {
+            ...cleared,
+            targetHeightMm: heightMm,
+          };
+        }),
+      },
+    });
+  }
+
+
   return (
-    <div className="mb-3 space-y-4 border-t border-brand-border/70 bg-brand-bg/55 p-3">
+    <div className="mb-3 space-y-4 border-brand-border/70 bg-brand-bg/55 p-3">
       <p className="text-xs font-semibold text-brand-muted">
         Sections inherit these settings unless overridden.
       </p>
@@ -229,7 +273,7 @@ export function RunCardSettings({ run, onCollapse }: Props) {
           variables={variables}
           valueMm={Number(variables.target_height_mm ?? 1800)}
           ariaLabel={`Run default height`}
-          onChange={(heightMm) => updateRunVariables("target_height_mm", heightMm)}
+          onChange={(heightMm) => updateRunHeight(heightMm)}
         />
       </div>
       <div className="space-y-3">

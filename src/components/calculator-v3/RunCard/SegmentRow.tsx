@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useCalculator } from "../../../context/CalculatorContext";
 import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import type { CanonicalSegment } from "../../../types/canonical.types";
-import { ChevronDown, ChevronUp, Plus, X } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Plus, RefreshCcw, X } from "lucide-react";
 import { ConfirmButton } from "../../shared/ConfirmButton";
 import { valueLabel } from "../SchemaDrivenForm";
 import {
@@ -42,6 +42,7 @@ import {
   type SummaryItem,
 } from "./segmentSummary";
 import { SegmentRowSettings } from "./SegmentRowSettings";
+import { Button } from "../../ui/Button";
 
 interface Props {
   runId: string;
@@ -637,48 +638,29 @@ export function SegmentRow({
                   aria-label={matchesMaster ? `${compactLabel} settings match run settings` : `${compactLabel} differs from run settings. Click to restore.`}
                   className={`rounded-full px-2 py-1 text-center shadow-sm ring-1 ring-inset transition-colors ${matchesMaster
                     ? "bg-brand-success text-white ring-brand-success"
-                    : "bg-brand-warning/15 text-black ring-brand-warning/30 hover:bg-brand-primary hover:text-white"
+                    : "bg-brand-warning/15 text-brand-warning ring-brand-warning/30 hover:bg-brand-warning/40 hover:text-brand-warning"
                     }`}
                 >
-                  <span
-                    onMouseEnter={() => setMapHover(compactLabel)}
-                    onMouseLeave={() => setMapHover(null)}
-                    title={matchesMaster ? "Settings match run settings" : "Click to restore to run settings"}
-                    className="text-base font-black leading-none tracking-normal"
-                  >
-                    {compactLabel}
-                  </span>
+                  {matchesMaster ? (
+                    <Check size={16} strokeWidth={3} />
+                  ) : (
+                    <RefreshCcw size={16} strokeWidth={3} />
+                  )}
+
                 </button>
               </div>
-              {!gate && !isPanelStrategy && onAddGate && (
-                <button
-                  type="button"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onAddGate(seg.segmentId);
-                  }}
-                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border border-brand-border px-3 text-xs font-extrabold text-brand-muted transition-colors hover:border-brand-primary hover:text-brand-primary"
-                  title="Add gate to this section"
-                  aria-label="Add gate to this section"
-                >
-                  <Plus size={15} />
-                  Gate
-                </button>
-              )}
+
               <div className="flex items-center justify-center gap-1 ml-auto">
-                <button
+                <Button
                   type="button"
                   onClick={onToggle}
-                  className={`inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-extrabold transition-colors ${open
-                    ? "border-brand-primary bg-brand-primary text-white"
-                    : "border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary"
-                    }`}
+                  variant={open ? "primary" : "secondary"}
                   aria-label={open ? `Collapse ${gate ? "gate" : "section"} settings` : `Open ${gate ? "gate" : "section"} settings`}
-                  title={open ? `Collapse ${gate ? "gate" : "section"} settings` : `${gate ? "Gate" : "Section"} settings`}
+                  icon={open ? ChevronUp : ChevronDown}
+                  iconPosition="right"
                 >
-                  <span>Settings</span>
-                  {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                </button>
+                  Settings
+                </Button>
               </div>
               <div className="flex justify-end">
                 <ConfirmButton
@@ -690,7 +672,7 @@ export function SegmentRow({
                     })
                   }
                   confirmLabel={<X size={16} strokeWidth={3} />}
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full text-brand-danger transition-colors hover:bg-brand-danger/10 hover:text-brand-danger/90"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full text-brand-danger transition-colors hover:bg-brand-danger/10 hover:text-brand-danger/90"
                   aria-label={gate ? "Remove gate" : "Remove section"}
                   title={gate ? "Remove gate" : "Remove section"}
                 >
@@ -698,7 +680,7 @@ export function SegmentRow({
                 </ConfirmButton>
               </div>
             </div>
-            {summaryText && (
+            {!open && summaryText && (
               <div
                 className="min-w-0 truncate text-[11px] font-semibold leading-tight text-brand-muted"
                 title={summaryText}

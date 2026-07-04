@@ -2,29 +2,31 @@ import { cn } from "../../lib";
 import { type LucideIcon } from "lucide-react";
 
 interface ButtonProps {
-  children?: React.ReactNode;
-  onClick?: () => void;
+  children: React.ReactNode;
+  onClick: () => void;
   className?: string;
   variant?: keyof typeof variants;
   icon?: LucideIcon;
   size?: keyof typeof sizes;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
+  title?: string;
+  ariaLabel?: string;
+  iconPosition?: "left" | "right";
 }
 
-const sharedStyles =
-  "rounded-[var(--brand-radius-sm)] flex items-center gap-2 hover:opacity-70 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed";
+const sharedStyles = "rounded-lg flex items-center gap-2 hover:opacity-70";
 
 const variants = {
   secondary:
-    "bg-brand-bg border border-brand-border text-brand-text hover:bg-brand-border/20",
-  primary: "bg-brand-accent text-white hover:bg-brand-accent/80",
-  danger: "bg-red-500 text-white hover:bg-red-600",
-  warning: "bg-yellow-500 text-white hover:bg-yellow-600",
-  info: "bg-blue-500 text-white hover:bg-blue-600",
-  success: "bg-green-500 text-white hover:bg-green-600",
+    "border border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary",
+  primary: "bg-brand-accent border border-brand-primary text-brand-bg hover:bg-brand-accent/80",
+  danger: "bg-brand-danger text-white hover:bg-brand-danger/90",
+  warning: "bg-brand-warning text-white hover:bg-brand-warning/90",
+  info: "bg-brand-primary text-white hover:bg-brand-primary/90",
+  success: "bg-brand-success text-white hover:bg-brand-success/90",
   ghost: "bg-transparent text-brand-accent border border-brand-accent",
-  "ghost-danger": "bg-transparent text-red-500 border border-red-500",
+  "ghost-danger": "bg-transparent text-brand-danger border border-brand-danger",
   link: "text-brand-accent hover:text-brand-accent/80",
 };
 
@@ -42,17 +44,23 @@ export function Button({
   icon: IconNode,
   size = "medium",
   type = "button",
-  disabled,
+  disabled = false,
+  title,
+  ariaLabel,
+  iconPosition = "left",
 }: ButtonProps) {
   return (
     <button
-      type={type}
-      disabled={disabled}
       className={cn(sharedStyles, variants[variant], sizes[size], className)}
       onClick={onClick}
+      type={type}
+      disabled={disabled}
+      title={title}
+      aria-label={ariaLabel}
     >
-      {IconNode && <IconNode size={14} />}
+      {iconPosition === "left" && IconNode && <IconNode size={16} />}
       {children}
+      {iconPosition === "right" && IconNode && <IconNode size={16} />}
     </button>
   );
 }
