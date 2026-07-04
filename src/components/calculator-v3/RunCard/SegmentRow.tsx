@@ -4,7 +4,6 @@ import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import { Check, ChevronDown, ChevronUp, Plus, RefreshCcw, X } from "lucide-react";
 import { ConfirmButton } from "../../shared/ConfirmButton";
-import { valueLabel } from "../SchemaDrivenForm";
 import {
   GATE_SEGMENT_STUB_KEYS,
   SEGMENT_TERMINATION_KEYS,
@@ -26,19 +25,18 @@ import {
   nearestDerivedHeight,
   type DerivedHeight,
 } from "../../../lib/heights";
-import { colourName } from "../ColourPalette";
 import { InlineEdit } from "./InlineEdit";
 import {
   clearSegmentOverridePatch,
-  segmentDifferenceBits,
   segmentMatchesRun,
 } from "../../../lib/runFieldOverrides";
 import {
+  SegmentSummary,
   gateHardwareSummaryItems,
   gateMovementLabel,
-  postLabel,
   sameValue,
   unsetOrSame,
+  type DiffCtx,
   type SummaryItem,
 } from "./segmentSummary";
 import { SegmentRowSettings } from "./SegmentRowSettings";
@@ -66,7 +64,6 @@ export function SegmentRow({
   open,
   onToggle,
   displayLabel,
-  onAddGate,
   showRunDefaultsTeaching = false,
   onDismissRunDefaultsTeaching,
   isLastSegment = false,
@@ -210,152 +207,35 @@ export function SegmentRow({
       : []),
   ].filter(Boolean) as SummaryItem[];
 
-  const BESPOKE_DIFFERENCE_FIELD_KEYS = new Set([
-    "colour_code",
-    "post_colour_code",
-    "slat_size_mm",
-    "slat_gap_mm",
-    "post_system",
-    "post_size",
-    "mounting_type",
-    "mounting_method",
-    "max_panel_width_mm",
-  ]);
-
-  const genericExtraDifferenceBits = gate
-    ? []
-    : segmentDifferenceBits(config, segmentVariables, masterVariables).filter(
-      (bit) => !BESPOKE_DIFFERENCE_FIELD_KEYS.has(bit.field_key),
-    );
-
-  const rawDifferenceBits = gate
-    ? [
-      {
-        label: "Height",
-        value: `${selectedHeight}mm`,
-        changed: !sameValue(
-          selectedHeight,
-          masterVariables.target_height_mm ?? 1800,
-        ),
-      },
-      {
-        label: "Gate style",
-        value: gateBuild.includes("vertical") ? "Vertical slat" : "Horizontal slat",
-        changed: !expectedGateBuild,
-      },
-      {
-        label: "Colour",
-        value: colourName(fenceColour, config.colours.names),
-        changed: !sameValue(fenceColour, masterFenceColour),
-      },
-      {
-        label: "Slat",
-        value: `${segmentVariables[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVariables.slat_size_mm ?? 65}mm`,
-        changed: !sameValue(
-          segmentVariables[GATE_SEGMENT_STUB_KEYS.slatSizeMm] ?? masterVariables.slat_size_mm ?? 65,
-          masterVariables.slat_size_mm ?? 65,
-        ),
-      },
-      {
-        label: "Gap",
-        value: `${segmentVariables[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVariables.slat_gap_mm ?? 9}mm`,
-        changed: !sameValue(
-          segmentVariables[GATE_SEGMENT_STUB_KEYS.slatGapMm] ?? masterVariables.slat_gap_mm ?? 9,
-          masterVariables.slat_gap_mm ?? 9,
-        ),
-      },
-      ...(postColour !== fenceColour
-        ? [
-          {
-            label: "Post colour",
-            value: colourName(postColour, config.colours.names),
-            changed: !sameValue(postColour, masterPostColour),
-          },
-        ]
-        : []),
-    ]
-    : [
-      {
-        label: "System",
-        value: segProductCode,
-        changed: !sameValue(segProductCode, runProductCode),
-      },
-      {
-        label: "Height",
-        value: `${selectedHeight}mm`,
-        changed: !sameValue(
-          selectedHeight,
-          masterVariables.target_height_mm ?? 1800,
-        ),
-      },
-      { label: "Colour", value: colourName(fenceColour), changed: !sameValue(fenceColour, masterFenceColour) },
-      ...(postColour !== fenceColour
-        ? [
-          {
-            label: "Post colour",
-            value: colourName(postColour, config.colours.names),
-            changed: !sameValue(postColour, masterPostColour),
-          },
-        ]
-        : []),
-      {
-        label: "Slat",
-        value: valueLabel(slatSizeField, segmentVariables.slat_size_mm ?? 65),
-        changed: !sameValue(segmentVariables.slat_size_mm ?? 65, masterVariables.slat_size_mm ?? 65),
-      },
-      {
-        label: "Gap",
-        value: valueLabel(slatGapField, segmentVariables.slat_gap_mm ?? 9),
-        changed: !sameValue(segmentVariables.slat_gap_mm ?? 9, masterVariables.slat_gap_mm ?? 9),
-      },
-      {
-        label: "Post",
-        value: postLabel(postSizeField, segmentVariables),
-        changed:
-          !isPanelStrategy &&
-          (!sameValue(segmentVariables.post_system, masterVariables.post_system) ||
-            !sameValue(segmentVariables.post_size ?? 50, masterVariables.post_size ?? 50)),
-      },
-      {
-        label: "Mounting",
-        value: valueLabel(
-          mountingField,
-          segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground",
-          "Concreted in ground",
-        ),
-        changed:
-          !isPanelStrategy &&
-          !sameValue(
-            segmentVariables.mounting_method ?? segmentVariables.mounting_type ?? "in_ground",
-            masterVariables.mounting_method ?? masterVariables.mounting_type ?? "in_ground",
-          ),
-      },
-      { label: "Panel Count", value: panelCount, changed: !isPanelStrategy && !sameValue(panelCount, masterPanelCount) },
-      { label: "Panel width", value: panelWidthSummary, changed: !isPanelStrategy && !sameValue(maxSpacing, masterMaxSpacing) },
-      // Any other job/run-scope field this product declares (e.g. post-fixing
-      // material, base-plate substrate, boundary types, louvre treatment) that
-      // doesn't have a bespoke bit above — kept generic so a new product's own
-      // fields surface here automatically instead of being silently invisible.
-      ...genericExtraDifferenceBits,
-    ];
-
-  const differenceBits =
-    matchesMaster ? [] : rawDifferenceBits.filter((item) => item.changed && item.label !== "Height");
-
-  const summaryText = [
-    ...(gate
-      ? summaryBitsBase.map((item) => `${item.label}: ${item.value}`)
-      : []),
-    ...differenceBits.map((item) => `${item.label}: ${item.value}`),
-  ].join(", ");
-
-  const visibleSettings = rawDifferenceBits.filter((item) => {
-    if (item.label === "Height") return false;
-    if (isPanelStrategy && ["Post", "Mounting", "Panel Count", "Panel width"].includes(item.label)) {
-      return false;
-    }
-    return true;
-  });
+  // All inputs the data-driven difference-bit table reads. <SegmentSummary>
+  // builds the bits (buildDifferenceBits) and renders them — the collapsed
+  // one-liner and the expanded "differs from run settings" chips both derive
+  // from this ctx, so no summary strings/arrays are assembled here.
+  const summaryCtx: DiffCtx = {
+    gate,
+    config,
+    segmentVariables,
+    masterVariables,
+    segProductCode,
+    runProductCode,
+    selectedHeight,
+    fenceColour,
+    masterFenceColour,
+    postColour,
+    masterPostColour,
+    isPanelStrategy,
+    maxSpacing,
+    masterMaxSpacing,
+    panelCount,
+    masterPanelCount,
+    panelWidthSummary,
+    gateBuild,
+    expectedGateBuild,
+    slatSizeField,
+    slatGapField,
+    postSizeField,
+    mountingField,
+  };
 
   function updateGeometry(
     key: "segmentWidthMm" | "targetHeightMm",
@@ -680,13 +560,13 @@ export function SegmentRow({
                 </ConfirmButton>
               </div>
             </div>
-            {!open && summaryText && (
-              <div
-                className="min-w-0 truncate text-[11px] font-semibold leading-tight text-brand-muted"
-                title={summaryText}
-              >
-                {summaryText}
-              </div>
+            {!open && (
+              <SegmentSummary
+                mode="line"
+                ctx={summaryCtx}
+                matchesMaster={matchesMaster}
+                baseItems={summaryBitsBase}
+              />
             )}
 
           </div>
@@ -701,7 +581,7 @@ export function SegmentRow({
             gate={gate}
             gateWidthValidation={gateWidthValidation}
             matchesMaster={matchesMaster}
-            visibleSettings={visibleSettings}
+            summaryCtx={summaryCtx}
             showRunDefaultsTeaching={showRunDefaultsTeaching}
             onDismissRunDefaultsTeaching={onDismissRunDefaultsTeaching}
             updatePanelQuantity={updatePanelQuantity}

@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import { gateTypeLabel, validateGateWidth } from "../../../lib/gateConstraints";
 import NumberInput from "../../shared/NumberInput";
-import { SummaryBit } from "./segmentSummary";
+import { SegmentSummary, type DiffCtx } from "./segmentSummary";
 import { FenceSegmentDetails } from "./FenceSegmentDetails";
 import { GateSegmentDetails } from "./GateSegmentDetails";
 
@@ -13,7 +13,7 @@ interface Props {
   gate: boolean;
   gateWidthValidation: ReturnType<typeof validateGateWidth> | null;
   matchesMaster: boolean;
-  visibleSettings: Array<{ label: string; value: string | number; changed: boolean }>;
+  summaryCtx: DiffCtx;
   showRunDefaultsTeaching: boolean;
   onDismissRunDefaultsTeaching?: () => void;
   updatePanelQuantity: (value: number) => void;
@@ -27,7 +27,7 @@ export function SegmentRowSettings({
   gate,
   gateWidthValidation,
   matchesMaster,
-  visibleSettings,
+  summaryCtx,
   showRunDefaultsTeaching,
   onDismissRunDefaultsTeaching,
   updatePanelQuantity,
@@ -87,19 +87,7 @@ export function SegmentRowSettings({
           )}
         </div>
       )}
-      {!matchesMaster && (
-        <div className="rounded-lg border border-brand-border/60 bg-brand-card/70 p-3">
-          <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
-            Settings that differ from run settings
-          </p>
-
-          <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] leading-tight">
-            {visibleSettings.filter((item) => item.changed).map((item) => (
-              <SummaryBit key={item.label} label={item.label} value={item.value} />
-            ))}
-          </div>
-        </div>
-      )}
+      <SegmentSummary mode="chips" ctx={summaryCtx} matchesMaster={matchesMaster} />
 
       {gate ? (
         <GateSegmentDetails runId={runId} seg={seg} />
