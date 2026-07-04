@@ -5,6 +5,15 @@ import {
 } from "../context/CalculatorContext";
 import { FenceConfigProvider } from "../context/FenceConfigContext";
 import { GateProvider } from "../context/GateContext";
+import { CalculatorLayoutProvider } from "../context/CalculatorLayoutContext";
+import {
+  CalculatorBomStateProvider,
+  type CalculatorBomContextValue,
+} from "../context/CalculatorBomStateContext";
+import {
+  CalculatorJobProvider,
+  type CalculatorJobContextValue,
+} from "../context/CalculatorJobContext";
 import { CalculatorIntro } from "../components/calculator-v3/CalculatorIntro";
 import { CalculatorDialogs } from "../components/calculator-v3/CalculatorDialogs";
 import { CalculatorHeaderActions } from "../components/calculator-v3/CalculatorHeaderActions";
@@ -160,10 +169,6 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     toast.success("Property view captured");
   }
 
-  function handleMapSnapshotChange(snapshot: NonNullable<CanonicalPayload["snapshot"]>) {
-    dispatch({ type: "SET_MAP_SNAPSHOT", snapshot });
-  }
-
   function clearToFreshWorkspace() {
     dispatch({ type: "CLEAR_QUOTE" });
     bom.setExtraItems([]);
@@ -223,6 +228,32 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     : null;
 
   const showIntro = !quoteId && !payload && !introDismissed;
+
+  // ── Context values (published to the workspace subtree) ─────────────────────
+  const bomCtx: CalculatorBomContextValue = {
+    ...bom,
+    bomRunDetails,
+    animatedGrandTotal,
+    mobileBomTotals,
+    errors,
+    warnings,
+    isCalcError: !!bom.calcError,
+  };
+
+  const jobCtx: CalculatorJobContextValue = {
+    jobName,
+    onJobNameChange: setJobName,
+    autoOpenFirstSectionRunId,
+    onAutoOpenConsumed: () => setAutoOpenFirstSectionRunId(null),
+    hasLegacyConfiguredPayload,
+    propertyAnchorConfirmed,
+    onAnchorConfirmed: handlePropertyAnchorConfirmed,
+    onDescribeApply: handleApplyDescription,
+    onGatePositionRequest: setGatePositionTarget,
+    saving: persistence.saving,
+    saveJobLabel,
+    onSaveJob: () => void persistence.saveJobWithName(jobName),
+  };
 
   // ── Loading / error states ────────────────────────────────────────────────
   if (quoteId && quoteQuery.isLoading) {
@@ -312,52 +343,13 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
       {showIntro ? (
         <CalculatorIntro jobName={jobName} onJobNameChange={setJobName} onStart={startWorkspaceFromLanding} />
       ) : (
-        <CalculatorWorkspace
-          payload={payload}
-          jobName={jobName}
-          onJobNameChange={setJobName}
-          autoOpenFirstSectionRunId={autoOpenFirstSectionRunId}
-          onAutoOpenConsumed={() => setAutoOpenFirstSectionRunId(null)}
-          hasLegacyConfiguredPayload={hasLegacyConfiguredPayload}
-          propertyAnchorConfirmed={propertyAnchorConfirmed}
-          onAnchorConfirmed={handlePropertyAnchorConfirmed}
-          onDescribeApply={handleApplyDescription}
-          onGatePositionRequest={setGatePositionTarget}
-          errors={errors}
-          warnings={warnings}
-          economySlatErrors={bom.economySlatErrors}
-          gateWidthErrors={bom.gateWidthErrors}
-          gateWidthWarnings={bom.gateWidthWarnings}
-          isCalcError={!!bom.calcError}
-          calcError={bom.calcError}
-          saving={persistence.saving}
-          saveJobLabel={saveJobLabel}
-          onSaveJob={() => void persistence.saveJobWithName(jobName)}
-          keyboardOffset={layout.keyboardOffset}
-          mobileLayout={layout.mobileLayout}
-          runPaneWidth={layout.runPaneWidth}
-          onResizeStart={layout.handleResizeStart}
-          rightPaneView={layout.rightPaneView}
-          mapExpanded={layout.mapExpanded}
-          onMapExpandedChange={layout.setMapExpanded}
-          mobileTab={layout.mobileTab}
-          onMobileTabChange={layout.handleMobileTabChange}
-          onSaveDialogOpen={() => setSaveJobDialogOpen(true)}
-          bomResultForTabs={bom.bomResultForTabs}
-          bomRunDetails={bomRunDetails}
-          isCalculating={bom.isCalculating}
-          hasBlockingErrors={bom.hasBlockingErrors}
-          activeBomSummary={bom.activeBomSummary}
-          animatedGrandTotal={animatedGrandTotal}
-          mobileBomTotals={mobileBomTotals}
-          extraItems={bom.extraItems}
-          setExtraItems={bom.setExtraItems}
-          setLineEdits={bom.setLineEdits}
-          suggestedAccessories={bom.suggestedAccessories}
-          onSwitchEconomyToStandard={bom.handleSwitchEconomyToStandard}
-          onActiveSummaryChange={bom.handleActiveBomSummaryChange}
-          onMapSnapshotChange={handleMapSnapshotChange}
-        />
+        <CalculatorLayoutProvider value={layout}>
+          <CalculatorBomStateProvider value={bomCtx}>
+            <CalculatorJobProvider value={jobCtx}>
+              <CalculatorWorkspace onSaveDialogOpen={() => setSaveJobDialogOpen(true)} />
+            </CalculatorJobProvider>
+          </CalculatorBomStateProvider>
+        </CalculatorLayoutProvider>
       )}
     </AppShell>
   );

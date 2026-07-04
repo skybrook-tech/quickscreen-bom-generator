@@ -4,65 +4,39 @@ import { JobNameEditor } from "../calculator/JobNameEditor";
 import { PropertyAnchorFormGate, PropertyMap } from "../calculator/PropertyMap";
 import { gateTypeLabel, type GateConstraintType } from "../../lib/gateConstraints";
 import { runLengthMm } from "../../lib/calculatorV3Helpers";
-import type { CanonicalPayload } from "../../types/canonical.types";
-import type { ParseResult } from "../../lib/describeFenceParser";
-import type { PendingParsedGate } from "../../lib/calculatorV3Helpers";
-import type { GateWidthValidation } from "../../hooks/useCalculatorBom";
+import { useCalculator } from "../../context/CalculatorContext";
+import { useCalculatorJob } from "../../context/CalculatorJobContext";
+import { useCalculatorBomState } from "../../context/CalculatorBomStateContext";
+import { useCalculatorLayoutContext } from "../../context/CalculatorLayoutContext";
 
-interface CalculatorJobPaneProps {
-  payload: CanonicalPayload | null;
-  jobName: string;
-  onJobNameChange: (name: string) => void;
-  autoOpenFirstSectionRunId: string | null;
-  onAutoOpenConsumed: () => void;
-  hasLegacyConfiguredPayload: boolean;
-  propertyAnchorConfirmed: boolean;
-  onAnchorConfirmed: (anchor: {
-    anchorLat: number;
-    anchorLng: number;
-    formattedAddress: string;
-    snapshot: NonNullable<CanonicalPayload["snapshot"]>;
-  }) => void;
-  onDescribeApply: (result: ParseResult) => void;
-  onGatePositionRequest: (gate: PendingParsedGate) => void;
-  errors: string[];
-  warnings: string[];
-  economySlatErrors: string[];
-  gateWidthErrors: GateWidthValidation[];
-  gateWidthWarnings: GateWidthValidation[];
-  isCalcError: boolean;
-  calcError: Error | null;
-  saving: boolean;
-  saveJobLabel: string;
-  onSaveJob: () => void;
-  keyboardOffset: number;
-  mobileLayout: boolean;
-}
+export function CalculatorJobPane() {
+  const { state } = useCalculator();
+  const payload = state.payload;
+  const {
+    jobName,
+    onJobNameChange,
+    autoOpenFirstSectionRunId,
+    onAutoOpenConsumed,
+    hasLegacyConfiguredPayload,
+    propertyAnchorConfirmed,
+    onAnchorConfirmed,
+    onDescribeApply,
+    onGatePositionRequest,
+    saving,
+    saveJobLabel,
+    onSaveJob,
+  } = useCalculatorJob();
+  const {
+    errors,
+    warnings,
+    economySlatErrors,
+    gateWidthErrors,
+    gateWidthWarnings,
+    isCalcError,
+    calcError,
+  } = useCalculatorBomState();
+  const { keyboardOffset, mobileLayout } = useCalculatorLayoutContext();
 
-export function CalculatorJobPane({
-  payload,
-  jobName,
-  onJobNameChange,
-  autoOpenFirstSectionRunId,
-  onAutoOpenConsumed,
-  hasLegacyConfiguredPayload,
-  propertyAnchorConfirmed,
-  onAnchorConfirmed,
-  onDescribeApply,
-  onGatePositionRequest,
-  errors,
-  warnings,
-  economySlatErrors,
-  gateWidthErrors,
-  gateWidthWarnings,
-  isCalcError,
-  calcError,
-  saving,
-  saveJobLabel,
-  onSaveJob,
-  keyboardOffset,
-  mobileLayout,
-}: CalculatorJobPaneProps) {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex-1 space-y-4 overflow-y-auto p-3 sm:p-5">

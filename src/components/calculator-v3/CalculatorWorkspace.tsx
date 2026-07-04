@@ -2,112 +2,33 @@ import { LayoutCanvasV3 } from "./LayoutCanvasV3";
 import { MobileCalculatorTabs } from "./MobileCalculatorTabs";
 import { CalculatorJobPane } from "./CalculatorJobPane";
 import { CalculatorBomPane } from "./CalculatorBomPane";
-import { calculatorPaneVisibility, type MobileCalculatorTab } from "../../lib/mobileShell";
-import type { RightPaneView } from "./RightPaneTabs";
-import type { CanonicalPayload } from "../../types/canonical.types";
-import type { CalculatorBOMResult, ExtraItem, BOMLineItem, SuggestedAccessory } from "../../types/bom.types";
-import type { ActiveBomSummary, GateWidthValidation } from "../../hooks/useCalculatorBom";
-import type { BomRunDetail, PendingParsedGate } from "../../lib/calculatorV3Helpers";
-import type { ParseResult } from "../../lib/describeFenceParser";
+import { calculatorPaneVisibility } from "../../lib/mobileShell";
+import { useCalculator } from "../../context/CalculatorContext";
+import { useCalculatorLayoutContext } from "../../context/CalculatorLayoutContext";
+import { useCalculatorBomState } from "../../context/CalculatorBomStateContext";
+import { useCalculatorJob } from "../../context/CalculatorJobContext";
 
 interface CalculatorWorkspaceProps {
-  payload: CanonicalPayload | null;
-  jobName: string;
-  onJobNameChange: (name: string) => void;
-  autoOpenFirstSectionRunId: string | null;
-  onAutoOpenConsumed: () => void;
-  hasLegacyConfiguredPayload: boolean;
-  propertyAnchorConfirmed: boolean;
-  onAnchorConfirmed: (anchor: {
-    anchorLat: number;
-    anchorLng: number;
-    formattedAddress: string;
-    snapshot: NonNullable<CanonicalPayload["snapshot"]>;
-  }) => void;
-  onDescribeApply: (result: ParseResult) => void;
-  onGatePositionRequest: (gate: PendingParsedGate) => void;
-  errors: string[];
-  warnings: string[];
-  economySlatErrors: string[];
-  gateWidthErrors: GateWidthValidation[];
-  gateWidthWarnings: GateWidthValidation[];
-  isCalcError: boolean;
-  calcError: Error | null;
-  saving: boolean;
-  saveJobLabel: string;
-  onSaveJob: () => void;
-  keyboardOffset: number;
-  mobileLayout: boolean;
-  runPaneWidth: number;
-  onResizeStart: () => void;
-  rightPaneView: RightPaneView;
-  mapExpanded: boolean;
-  onMapExpandedChange: (v: boolean) => void;
-  mobileTab: MobileCalculatorTab;
-  onMobileTabChange: (tab: MobileCalculatorTab) => void;
+  /** Opens the save-job dialog (page-owned dialog state, out of context scope). */
   onSaveDialogOpen: () => void;
-  bomResultForTabs: CalculatorBOMResult | null;
-  bomRunDetails: BomRunDetail[];
-  isCalculating: boolean;
-  hasBlockingErrors: boolean;
-  activeBomSummary: ActiveBomSummary | null;
-  animatedGrandTotal: number;
-  mobileBomTotals: { subtotal: number; gst: number; grandTotal: number } | null;
-  extraItems: ExtraItem[];
-  setExtraItems: React.Dispatch<React.SetStateAction<ExtraItem[]>>;
-  setLineEdits: React.Dispatch<React.SetStateAction<Record<string, number | null>>>;
-  suggestedAccessories: SuggestedAccessory[];
-  onSwitchEconomyToStandard: (item: BOMLineItem) => void;
-  onActiveSummaryChange: (summary: ActiveBomSummary) => void;
-  onMapSnapshotChange: (snapshot: NonNullable<CanonicalPayload["snapshot"]>) => void;
 }
 
-export function CalculatorWorkspace({
-  payload,
-  jobName,
-  onJobNameChange,
-  autoOpenFirstSectionRunId,
-  onAutoOpenConsumed,
-  hasLegacyConfiguredPayload,
-  propertyAnchorConfirmed,
-  onAnchorConfirmed,
-  onDescribeApply,
-  onGatePositionRequest,
-  errors,
-  warnings,
-  economySlatErrors,
-  gateWidthErrors,
-  gateWidthWarnings,
-  isCalcError,
-  calcError,
-  saving,
-  saveJobLabel,
-  onSaveJob,
-  keyboardOffset,
-  mobileLayout,
-  runPaneWidth,
-  onResizeStart,
-  rightPaneView,
-  mapExpanded,
-  onMapExpandedChange,
-  mobileTab,
-  onMobileTabChange,
-  onSaveDialogOpen,
-  bomResultForTabs,
-  bomRunDetails,
-  isCalculating,
-  hasBlockingErrors,
-  activeBomSummary,
-  animatedGrandTotal,
-  mobileBomTotals,
-  extraItems,
-  setExtraItems,
-  setLineEdits,
-  suggestedAccessories,
-  onSwitchEconomyToStandard,
-  onActiveSummaryChange,
-  onMapSnapshotChange,
-}: CalculatorWorkspaceProps) {
+export function CalculatorWorkspace({ onSaveDialogOpen }: CalculatorWorkspaceProps) {
+  const { state, dispatch } = useCalculator();
+  const payload = state.payload;
+  const {
+    mobileLayout,
+    mobileTab,
+    mapExpanded,
+    setMapExpanded,
+    runPaneWidth,
+    handleResizeStart,
+    rightPaneView,
+    handleMobileTabChange,
+  } = useCalculatorLayoutContext();
+  const { bomResultForTabs } = useCalculatorBomState();
+  const { saving } = useCalculatorJob();
+
   const paneVisibility = calculatorPaneVisibility(mobileLayout, mobileTab);
 
   return (
@@ -125,44 +46,21 @@ export function CalculatorWorkspace({
             }`}
           style={mobileLayout ? undefined : { width: runPaneWidth }}
         >
-          <CalculatorJobPane
-            payload={payload}
-            jobName={jobName}
-            onJobNameChange={onJobNameChange}
-            autoOpenFirstSectionRunId={autoOpenFirstSectionRunId}
-            onAutoOpenConsumed={onAutoOpenConsumed}
-            hasLegacyConfiguredPayload={hasLegacyConfiguredPayload}
-            propertyAnchorConfirmed={propertyAnchorConfirmed}
-            onAnchorConfirmed={onAnchorConfirmed}
-            onDescribeApply={onDescribeApply}
-            onGatePositionRequest={onGatePositionRequest}
-            errors={errors}
-            warnings={warnings}
-            economySlatErrors={economySlatErrors}
-            gateWidthErrors={gateWidthErrors}
-            gateWidthWarnings={gateWidthWarnings}
-            isCalcError={isCalcError}
-            calcError={calcError}
-            saving={saving}
-            saveJobLabel={saveJobLabel}
-            onSaveJob={onSaveJob}
-            keyboardOffset={keyboardOffset}
-            mobileLayout={mobileLayout}
-          />
+          <CalculatorJobPane />
         </aside>
 
         <button
           type="button"
           aria-label="Resize panels"
-          onMouseDown={onResizeStart}
+          onMouseDown={handleResizeStart}
           className="hidden w-1.5 shrink-0 cursor-col-resize bg-brand-border/60 transition-colors hover:bg-brand-primary/40 md:block"
         />
 
         <main
           data-print-bom-main
           className={`min-h-0 min-w-0 flex-1 overflow-y-auto ${mapExpanded
-            ? "p-0"
-            : "p-3 pb-[calc(var(--safe-bottom)+6rem)] sm:p-5 lg:p-8"
+              ? "p-0"
+              : "p-3 pb-[calc(var(--safe-bottom)+6rem)] sm:p-5 lg:p-8"
             } ${mobileLayout && paneVisibility.job ? "hidden" : ""}`}
         >
           <div
@@ -172,12 +70,12 @@ export function CalculatorWorkspace({
             <section
               data-print-map-section
               className={`${mobileLayout
-                ? paneVisibility.map
-                  ? "block"
-                  : "hidden"
-                : rightPaneView === "map"
-                  ? "block"
-                  : "hidden"
+                  ? paneVisibility.map
+                    ? "block"
+                    : "hidden"
+                  : rightPaneView === "map"
+                    ? "block"
+                    : "hidden"
                 } overflow-hidden border border-brand-border/60 bg-brand-card ${mapExpanded ? "rounded-xl" : "rounded-2xl"
                 }`}
             >
@@ -186,10 +84,13 @@ export function CalculatorWorkspace({
                   {payload ? (
                     <LayoutCanvasV3
                       mapExpanded={mapExpanded}
-                      onMapExpandedChange={onMapExpandedChange}
+                      onMapExpandedChange={setMapExpanded}
+                      showRunDetails={!mapExpanded}
                       propertyAnchor={payload.propertyAnchor ?? null}
                       mapSnapshot={payload.snapshot ?? null}
-                      onMapSnapshotChange={onMapSnapshotChange}
+                      onMapSnapshotChange={(snapshot) =>
+                        dispatch({ type: "SET_MAP_SNAPSHOT", snapshot })
+                      }
                     />
                   ) : (
                     <div className="rounded-2xl border border-dashed border-brand-border bg-brand-bg/50 p-6 text-center text-sm font-bold text-brand-muted">
@@ -202,31 +103,15 @@ export function CalculatorWorkspace({
 
             <div
               className={`${mobileLayout
-                ? paneVisibility.bom && !mapExpanded
-                  ? "block"
-                  : "hidden"
-                : rightPaneView === "bom" && !mapExpanded
-                  ? "block"
-                  : "hidden"
+                  ? paneVisibility.bom && !mapExpanded
+                    ? "block"
+                    : "hidden"
+                  : rightPaneView === "bom" && !mapExpanded
+                    ? "block"
+                    : "hidden"
                 }`}
             >
-              <CalculatorBomPane
-                bomResultForTabs={bomResultForTabs}
-                bomRunDetails={bomRunDetails}
-                isCalculating={isCalculating}
-                hasBlockingErrors={hasBlockingErrors}
-                activeBomSummary={activeBomSummary}
-                animatedGrandTotal={animatedGrandTotal}
-                mobileBomTotals={mobileBomTotals}
-                jobName={jobName}
-                onJobNameChange={onJobNameChange}
-                extraItems={extraItems}
-                setExtraItems={setExtraItems}
-                setLineEdits={setLineEdits}
-                suggestedAccessories={suggestedAccessories}
-                onSwitchEconomyToStandard={onSwitchEconomyToStandard}
-                onActiveSummaryChange={onActiveSummaryChange}
-              />
+              <CalculatorBomPane />
             </div>
           </div>
         </main>
@@ -235,7 +120,7 @@ export function CalculatorWorkspace({
       {mobileLayout && !mapExpanded && (
         <MobileCalculatorTabs
           activeTab={mobileTab}
-          onChange={onMobileTabChange}
+          onChange={handleMobileTabChange}
           onSave={onSaveDialogOpen}
           saveDisabled={!payload || saving}
         />

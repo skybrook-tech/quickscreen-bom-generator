@@ -6,59 +6,28 @@ import { MobileBomTotals } from "../shared/MobileBomTotals";
 import { GlassOutletLogo } from "../brand/GlassOutletLogo";
 import { JobNameEditor } from "../calculator/JobNameEditor";
 import { formatMoney, lineKey } from "../../lib/calculatorV3Helpers";
-import type { CalculatorBOMResult, BOMLineItem, ExtraItem, SuggestedAccessory } from "../../types/bom.types";
-import type { ActiveBomSummary } from "../../hooks/useCalculatorBom";
+import { useCalculatorBomState } from "../../context/CalculatorBomStateContext";
+import { useCalculatorJob } from "../../context/CalculatorJobContext";
 import { Loader2 } from "lucide-react";
 
-interface BomRunSection {
-  label: string;
-  panelLine: string;
-  overrides: string[];
-  gates: string[];
-}
+export function CalculatorBomPane() {
+  const {
+    bomResultForTabs,
+    bomRunDetails,
+    isCalculating,
+    hasBlockingErrors,
+    activeBomSummary,
+    animatedGrandTotal,
+    mobileBomTotals,
+    extraItems,
+    setExtraItems,
+    setLineEdits,
+    suggestedAccessories,
+    handleSwitchEconomyToStandard: onSwitchEconomyToStandard,
+    handleActiveBomSummaryChange: onActiveSummaryChange,
+  } = useCalculatorBomState();
+  const { jobName, onJobNameChange } = useCalculatorJob();
 
-interface BomRunDetail {
-  hero: string;
-  printHeading: string;
-  settings: string;
-  sections: BomRunSection[];
-}
-
-interface CalculatorBomPaneProps {
-  bomResultForTabs: CalculatorBOMResult | null;
-  bomRunDetails: BomRunDetail[];
-  isCalculating: boolean;
-  hasBlockingErrors: boolean;
-  activeBomSummary: ActiveBomSummary | null;
-  animatedGrandTotal: number;
-  mobileBomTotals: { subtotal: number; gst: number; grandTotal: number } | null;
-  jobName: string;
-  onJobNameChange: (name: string) => void;
-  extraItems: ExtraItem[];
-  setExtraItems: React.Dispatch<React.SetStateAction<ExtraItem[]>>;
-  setLineEdits: React.Dispatch<React.SetStateAction<Record<string, number | null>>>;
-  suggestedAccessories: SuggestedAccessory[];
-  onSwitchEconomyToStandard: (item: BOMLineItem) => void;
-  onActiveSummaryChange: (summary: ActiveBomSummary) => void;
-}
-
-export function CalculatorBomPane({
-  bomResultForTabs,
-  bomRunDetails,
-  isCalculating,
-  hasBlockingErrors,
-  activeBomSummary,
-  animatedGrandTotal,
-  mobileBomTotals,
-  jobName,
-  onJobNameChange,
-  extraItems,
-  setExtraItems,
-  setLineEdits,
-  suggestedAccessories,
-  onSwitchEconomyToStandard,
-  onActiveSummaryChange,
-}: CalculatorBomPaneProps) {
   return (
     <section
       data-print-bom-section
