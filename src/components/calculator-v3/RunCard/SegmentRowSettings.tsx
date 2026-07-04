@@ -87,18 +87,20 @@ export function SegmentRowSettings({
           )}
         </div>
       )}
-      <div className="rounded-lg border border-brand-border/60 bg-brand-card/70 p-3">
-        <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
-          {matchesMaster ? "Settings match run settings" : "Settings that differ from run settings"}
-        </p>
-        {!matchesMaster && (
+      {!matchesMaster && (
+        <div className="rounded-lg border border-brand-border/60 bg-brand-card/70 p-3">
+          <p className="mb-2 text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
+            Settings that differ from run settings
+          </p>
+
           <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] leading-tight">
             {visibleSettings.filter((item) => item.changed).map((item) => (
               <SummaryBit key={item.label} label={item.label} value={item.value} />
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
       {gate ? (
         <GateSegmentDetails runId={runId} seg={seg} />
       ) : (

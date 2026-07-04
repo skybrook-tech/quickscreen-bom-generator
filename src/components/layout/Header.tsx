@@ -1,12 +1,107 @@
-import { LogOut, Menu, Moon, Plus, Sun, Trash2, WifiOff, X } from 'lucide-react';
+import {
+  LogOut,
+  Menu,
+  Moon,
+  Plus,
+  Sun,
+  Trash2,
+  WifiOff,
+  X,
+  type LucideIcon,
+} from 'lucide-react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 
+import { cn } from '../../lib';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
 import { useTheme } from '../../context/ThemeContext';
 import type { TenantBranding } from '../../lib/tenantThemes';
 
+/**
+ * Every interactive element in the header is described as data and rendered via
+ * `.map()`. `styleFor` is the single style-selector that turns a variant key into
+ * the Tailwind class string for that visual style.
+ */
+type ButtonVariant =
+  | 'nav'
+  | 'navAccent'
+  | 'iconControl'
+  | 'signOut'
+  | 'menuTrigger'
+  | 'menuClose'
+  | 'mobileItem'
+  | 'mobileDanger';
+
+function styleFor(variant: ButtonVariant, isActive = false): string {
+  switch (variant) {
+    case 'nav':
+      return cn(
+        'text-xs font-medium px-3 py-1.5 rounded-md transition-colors',
+        isActive
+          ? 'text-brand-text bg-brand-border/40'
+          : 'text-brand-muted hover:text-brand-text hover:bg-brand-border/20',
+      );
+    case 'navAccent':
+      return cn(
+        'flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-md transition-colors ml-1',
+        isActive
+          ? 'text-brand-accent bg-brand-accent/15'
+          : 'text-brand-accent hover:bg-brand-accent/10',
+      );
+    case 'iconControl':
+      return 'hidden rounded-md p-2 text-brand-muted transition-colors hover:bg-brand-border/30 hover:text-brand-text sm:inline-flex';
+    case 'signOut':
+      return 'hidden items-center gap-1.5 rounded-md px-2.5 py-2 text-xs text-brand-muted transition-colors hover:bg-brand-border/30 hover:text-brand-text sm:flex';
+    case 'menuTrigger':
+      return 'inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg text-brand-muted transition-colors hover:bg-brand-border/30 hover:text-brand-text sm:hidden';
+    case 'menuClose':
+      return 'rounded-lg p-2 text-brand-muted hover:bg-brand-border/30 hover:text-brand-text';
+    case 'mobileItem':
+      return 'flex min-h-11 items-center gap-3 rounded-lg border border-brand-border px-3 py-2 text-left text-sm font-bold text-brand-text';
+    case 'mobileDanger':
+      return 'flex min-h-11 items-center gap-3 rounded-lg border border-brand-danger/45 px-3 py-2 text-left text-sm font-bold text-brand-danger transition-colors hover:bg-brand-danger/10 disabled:cursor-not-allowed disabled:opacity-40';
+  }
+}
+
+/** Static desktop nav links (router links — need `to` + active-state styling). */
+type NavItem = {
+  to: string;
+  label: string;
+  icon?: LucideIcon;
+  variant: ButtonVariant;
+  end?: boolean;
+};
+
+const navItems: NavItem[] = [
+  { to: '/', label: 'Home', variant: 'nav', end: true },
+  { to: '/quotes', label: 'Quotes', variant: 'nav' },
+  { to: '/fence-calculator', label: 'New Quote', icon: Plus, variant: 'navAccent' },
+];
+
+/** Desktop control buttons (theme toggle, sign out). */
+type ControlButton = {
+  key: string;
+  icon: LucideIcon;
+  onClick: () => void;
+  variant: ButtonVariant;
+  /** `display` renders before the user avatar, `account` after it. */
+  group: 'display' | 'account';
+  title?: string;
+  label?: string;
+  show?: boolean;
+};
+
+/** Mobile drawer buttons (Clear Job, theme toggle, sign out). */
+type MobileMenuItem = {
+  key: string;
+  icon: LucideIcon;
+  label: string;
+  onClick: () => void;
+  variant: ButtonVariant;
+  disabled?: boolean;
+  show?: boolean;
+};
 
 interface HeaderProps {
   branding?: TenantBranding;
@@ -54,17 +149,68 @@ export function Header({
   const initials = user?.email?.[0].toUpperCase() ?? '?';
   const compactJobTitle = jobTitle?.trim();
 
-  const navLinkCls = ({ isActive }: { isActive: boolean }) =>
-    `text-xs font-medium px-3 py-1.5 rounded-md transition-colors ${isActive
-      ? 'text-brand-text bg-brand-border/40'
-      : 'text-brand-muted hover:text-brand-text hover:bg-brand-border/20'
-    }`;
+  const desktopControls: ControlButton[] = [
+    {
+      key: 'theme',
+      icon: theme === 'light' ? Moon : Sun,
+      onClick: toggle,
+      variant: 'iconControl',
+      group: 'display',
+      title: theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode',
+    },
+    {
+      key: 'sign-out',
+      icon: LogOut,
+      label: 'Sign out',
+      onClick: handleSignOut,
+      variant: 'signOut',
+      group: 'account',
+      title: 'Sign out',
+      show: !!user,
+    },
+  ];
 
-  const newQuoteLinkCls = ({ isActive }: { isActive: boolean }) =>
-    `flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-md transition-colors ml-1 ${isActive
-      ? 'text-brand-accent bg-brand-accent/15'
-      : 'text-brand-accent hover:bg-brand-accent/10'
-    }`;
+  const mobileMenuItems: MobileMenuItem[] = [
+    {
+      key: 'clear-job',
+      icon: Trash2,
+      label: 'Clear Job',
+      onClick: () => {
+        setMobileMenuOpen(false);
+        onClearJobRequest?.();
+      },
+      variant: 'mobileDanger',
+      disabled: clearJobDisabled,
+    },
+    {
+      key: 'theme',
+      icon: theme === 'light' ? Moon : Sun,
+      label: theme === 'light' ? 'Dark mode' : 'Light mode',
+      onClick: toggle,
+      variant: 'mobileItem',
+    },
+    {
+      key: 'sign-out',
+      icon: LogOut,
+      label: 'Sign out',
+      onClick: handleSignOut,
+      variant: 'mobileItem',
+      show: !!user,
+    },
+  ];
+
+  const renderControl = ({ key, icon: Icon, label, onClick, title, variant }: ControlButton) => (
+    <button
+      key={key}
+      type="button"
+      onClick={onClick}
+      title={title}
+      className={styleFor(variant)}
+    >
+      <Icon size={16} />
+      {label && <span className="hidden sm:inline">{label}</span>}
+    </button>
+  );
 
   return (
     <header className="sticky top-0 z-40 flex min-h-[calc(var(--safe-top)+3.25rem)] flex-wrap items-stretch justify-between border-b border-brand-border bg-brand-card px-3 py-0 pt-[var(--safe-top)] sm:px-6">
@@ -102,16 +248,17 @@ export function Header({
 
         {user && (
           <nav className="hidden sm:flex items-center gap-0.5 ml-2">
-            <NavLink to="/" end className={navLinkCls}>
-              Home
-            </NavLink>
-            <NavLink to="/quotes" className={navLinkCls}>
-              Quotes
-            </NavLink>
-            <NavLink to="/fence-calculator" className={newQuoteLinkCls}>
-              <Plus size={16} />
-              New Quote
-            </NavLink>
+            {navItems.map(({ to, label, icon: Icon, variant, end }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                className={({ isActive }) => styleFor(variant, isActive)}
+              >
+                {Icon && <Icon size={16} />}
+                {label}
+              </NavLink>
+            ))}
           </nav>
         )}
       </div>
@@ -130,32 +277,23 @@ export function Header({
           </div>
         )}
 
-        <button
-          onClick={toggle}
-          title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-          className="hidden rounded-md p-2 text-brand-muted transition-colors hover:bg-brand-border/30 hover:text-brand-text sm:inline-flex"
-        >
-          {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
-        </button>
+        {desktopControls
+          .filter((control) => control.show !== false && control.group === 'display')
+          .map(renderControl)}
 
         {user && (
-          <>
-            <div
-              title={user.email ?? ''}
-              className="hidden h-7 w-7 select-none items-center justify-center rounded-full border border-brand-accent/30 bg-brand-accent/15 text-xs font-semibold text-brand-accent sm:flex"
-            >
-              {initials}
-            </div>
-            <button
-              onClick={handleSignOut}
-              title="Sign out"
-              className="hidden items-center gap-1.5 rounded-md px-2.5 py-2 text-xs text-brand-muted transition-colors hover:bg-brand-border/30 hover:text-brand-text sm:flex"
-            >
-              <LogOut size={16} />
-              <span className="hidden sm:inline">Sign out</span>
-            </button>
-          </>
+          <div
+            title={user.email ?? ''}
+            className="hidden h-7 w-7 select-none items-center justify-center rounded-full border border-brand-accent/30 bg-brand-accent/15 text-xs font-semibold text-brand-accent sm:flex"
+          >
+            {initials}
+          </div>
         )}
+
+        {desktopControls
+          .filter((control) => control.show !== false && control.group === 'account')
+          .map(renderControl)}
+
         {priceLabel && (
           <div
             className="shrink-0 whitespace-nowrap rounded-lg border border-brand-primary/25 bg-brand-primary/10 px-2 py-1 text-right font-mono text-sm font-black tabular-nums text-brand-primary sm:px-3 sm:text-base"
@@ -168,7 +306,7 @@ export function Header({
         <button
           type="button"
           onClick={() => setMobileMenuOpen(true)}
-          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg text-brand-muted transition-colors hover:bg-brand-border/30 hover:text-brand-text sm:hidden"
+          className={styleFor('menuTrigger')}
           aria-label="Open mobile menu"
         >
           <Menu size={20} />
@@ -197,7 +335,7 @@ export function Header({
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
-                className="rounded-lg p-2 text-brand-muted hover:bg-brand-border/30 hover:text-brand-text"
+                className={styleFor('menuClose')}
                 aria-label="Close mobile menu"
               >
                 <X size={18} />
@@ -212,39 +350,20 @@ export function Header({
                 Offline - quotes can't save
               </div>
             )}
-            {onClearJobRequest && (
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onClearJobRequest();
-                }}
-                disabled={clearJobDisabled}
-                className="flex min-h-11 items-center gap-3 rounded-lg border border-brand-danger/45 px-3 py-2 text-left text-sm font-bold text-brand-danger transition-colors hover:bg-brand-danger/10 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                <Trash2 size={18} />
-                Clear Job
-              </button>
-            )}
-
-            <button
-              type="button"
-              onClick={toggle}
-              className="flex min-h-11 items-center gap-3 rounded-lg border border-brand-border px-3 py-2 text-left text-sm font-bold text-brand-text"
-            >
-              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-              {theme === 'light' ? 'Dark mode' : 'Light mode'}
-            </button>
-            {user && (
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="flex min-h-11 items-center gap-3 rounded-lg border border-brand-border px-3 py-2 text-left text-sm font-bold text-brand-text"
-              >
-                <LogOut size={18} />
-                Sign out
-              </button>
-            )}
+            {mobileMenuItems
+              .filter((item) => item.show !== false)
+              .map(({ key, icon: Icon, label, onClick, disabled, variant }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={onClick}
+                  disabled={disabled}
+                  className={styleFor(variant)}
+                >
+                  <Icon size={18} />
+                  {label}
+                </button>
+              ))}
           </div>
         </div>
       )}
