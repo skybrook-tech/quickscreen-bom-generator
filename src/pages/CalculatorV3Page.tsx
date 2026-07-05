@@ -36,6 +36,7 @@ import {
   type PendingParsedGate,
 } from "../lib/calculatorV3Helpers";
 import { useQuote } from "../hooks/useQuote";
+import { useAllCalculatorConfigs, configForProduct } from "../hooks/useCalculatorConfig";
 import { savedBomToEngineResult } from "../lib/savedBomToEngineResult";
 import { jobNameFromQuote } from "../lib/quotePayload";
 import { LegacyQuoteError } from "../types/quote.types";
@@ -50,6 +51,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
   const quoteQuery = useQuote(quoteId);
+  const allConfigs = useAllCalculatorConfigs();
 
   // ── UI state ──────────────────────────────────────────────────────────────
   const [jobName, setJobName] = useState("");
@@ -122,7 +124,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   function handleApplyDescription(result: ParseResult) {
     const productCode = productCodeFromParsedSystem(result.attributes.systemType?.value);
     const base = payload ?? createEmptyPayload(productCode);
-    const { run } = buildRunFromDescription(result, base);
+    const { run } = buildRunFromDescription(result, base, configForProduct(allConfigs, productCode));
     dispatch({
       type: "SET_PAYLOAD",
       payload: {
@@ -145,7 +147,16 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
 
   function handleConfirmGatePosition(gate: PendingParsedGate, distanceFromStartMm: number) {
     if (!payload) return;
-    dispatch({ type: "SET_PAYLOAD", payload: buildConfirmGatePayload(payload, gate, distanceFromStartMm) });
+    const gateRunCode = payload.runs.find((r) => r.runId === gate.runId)?.productCode;
+    dispatch({
+      type: "SET_PAYLOAD",
+      payload: buildConfirmGatePayload(
+        payload,
+        gate,
+        distanceFromStartMm,
+        configForProduct(allConfigs, gateRunCode),
+      ),
+    });
     setGatePositionTarget(null);
     toast.success("Gate position confirmed");
   }

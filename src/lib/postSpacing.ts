@@ -1,8 +1,7 @@
 // postSpacing.ts — product-neutral post/panel-spacing clamp.
 //
-// Pure numeric helper with no product-code knowledge. Extracted from the legacy
-// productOptionRules module so it survives that module's retirement. The backend
-// keeps its own independent copy in bom-calculator-static/engine-utils.ts.
+// Pure numeric helper with no product-code knowledge. The backend keeps its own
+// independent copy in bom-calculator-static/engine-utils.ts.
 
 export const MIN_POST_SPACING_MM = 100;
 export const MAX_POST_SPACING_MM = 3000;

@@ -1,10 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { isSupabaseConfigured, supabase } from "../../lib/supabase";
 import { localFenceProducts } from "../../lib/localSeedData";
-import {
-  initialVariablesForSystem,
-  isPanelStrategyCode,
-} from "../../lib/productOptionRules";
+import { useAllCalculatorConfigs, configForProduct } from "../../hooks/useCalculatorConfig";
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalPayload } from "../../types/canonical.types";
 import type { ReactNode } from "react";
@@ -43,6 +40,7 @@ export function ProductSelectV3({
   onProductSelected?: (payload: CanonicalPayload) => void;
 }) {
   const { state, dispatch } = useCalculator();
+  const allConfigs = useAllCalculatorConfigs();
 
   const { data: products = [] } = useQuery<FenceProduct[]>({
     queryKey: ["v3FenceProducts"],
@@ -69,7 +67,10 @@ export function ProductSelectV3({
   };
 
   function selectProduct(p: FenceProduct) {
-    const initialVariables = initialVariablesForSystem(p.system_type);
+    const cfg = configForProduct(allConfigs, p.system_type);
+    // Seed from the target product's resolved defaults (full cascade);
+    // useRunReconciliation finalises once the run mounts.
+    const initialVariables = cfg?.normalisedVariables ?? {};
     const initialHeight = Number(initialVariables.target_height_mm ?? 1800);
     const initialPayload: CanonicalPayload = {
       productCode: p.system_type,
@@ -94,7 +95,7 @@ export function ProductSelectV3({
               segmentKind: "panel",
               segmentWidthMm: 0,
               targetHeightMm: initialHeight,
-              variables: isPanelStrategyCode(p.system_type) ? { panel_quantity: 1 } : undefined,
+              variables: cfg?.strategy.fence === "panel" ? { panel_quantity: 1 } : undefined,
             },
           ],
           corners: [],
@@ -116,8 +117,9 @@ export function ProductSelectV3({
                 key={product.id}
                 type="button"
                 onClick={() => selectProduct(product)}
+                disabled={!allConfigs}
                 aria-pressed={selected}
-                className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-3 py-2 text-center text-sm font-bold transition-all ${
+                className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-3 py-2 text-center text-sm font-bold transition-all disabled:cursor-not-allowed disabled:opacity-50 ${
                   selected
                     ? "border-brand-primary bg-brand-primary text-white shadow-sm"
                     : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"

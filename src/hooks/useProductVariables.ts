@@ -1,9 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { getLocalVariables } from '../lib/localSeedData';
-import { initialVariablesForSystem } from '../lib/productOptionRules';
-import { useCalculatorConfig } from './useCalculatorConfig';
-import { runFields } from '../lib/runFieldOverrides';
 import type { SchemaField } from '../components/calculator-v3/SchemaDrivenForm';
 
 /** Builds a variables object from a field list's default_value_json. */
@@ -15,27 +12,6 @@ export function defaultVariablesFromFields(
       .filter((f) => f.default_value_json !== undefined)
       .map((f) => [f.field_key, f.default_value_json]),
   );
-}
-
-/**
- * Returns config-driven default variables for a product (run-scope fields from
- * `useCalculatorConfig` — the same single source of truth the Run Settings
- * form renders from), falling back to `initialVariablesForSystem()` if the
- * config hasn't loaded yet or has no run-scope fields for this product.
- */
-export function useDefaultVariables(productCode: string): Record<string, unknown> {
-  const config = useCalculatorConfig(productCode);
-  if (!config) {
-    // Config still loading — fall back to the legacy normaliser so callers get
-    // a complete variables object (used by landing/list surfaces before the
-    // resolved config arrives). The resolved config replaces this once loaded.
-    return initialVariablesForSystem(productCode) as Record<string, unknown>;
-  }
-  const fromConfig = defaultVariablesFromFields(runFields(config));
-  if (Object.keys(fromConfig).length === 0) {
-    return initialVariablesForSystem(productCode) as Record<string, unknown>;
-  }
-  return fromConfig;
 }
 
 type Scope = 'job' | 'run' | 'segment';

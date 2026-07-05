@@ -116,3 +116,57 @@ export function useCalculatorConfigQuery(
     },
   });
 }
+
+/**
+ * Fetches the resolved config for EVERY product in one request (the
+ * `get-calculator-config` no-`productCode` branch returns a
+ * `{ [productCode]: UiCalculatorConfig }` map, each entry resolved with that
+ * product's declared defaults — so `normalisedVariables` is a usable
+ * fresh-product seed).
+ *
+ * This is the client's way to read a *target* product's config (strategy,
+ * gate/panel rules, `normalisedVariables`) synchronously — needed by the
+ * seed/product-switch paths where the in-scope single-product config is for the
+ * current product, not the one being switched to. Cheap, cached 5 min, fetched
+ * once on mount. Returns `undefined` while loading.
+ */
+export function useAllCalculatorConfigs(): Record<string, UiCalculatorConfig> | undefined {
+  return useQuery({
+    queryKey: ["calculator-config", "__all__"],
+    enabled: isSupabaseConfigured,
+    staleTime: 5 * 60 * 1000,
+    queryFn: async (): Promise<Record<string, UiCalculatorConfig>> => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("No authenticated session for calculator config (all products).");
+      }
+
+      const { data, error } = await supabase.functions.invoke<Record<string, UiCalculatorConfig>>(
+        "get-calculator-config",
+        {
+          body: {},
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        },
+      );
+
+      if (error || !data || typeof data !== "object") {
+        throw new Error(
+          `get-calculator-config (all products) failed: ${error?.message ?? "no data"}`,
+        );
+      }
+      return Object.fromEntries(
+        Object.entries(data).map(([code, config]) => [code, normaliseConfig(config)]),
+      );
+    },
+  }).data;
+}
+
+/** Reads one product's resolved config from the all-products map (or undefined). */
+export function configForProduct(
+  all: Record<string, UiCalculatorConfig> | undefined,
+  productCode: string | null | undefined,
+): UiCalculatorConfig | undefined {
+  return all && productCode ? all[productCode] : undefined;
+}

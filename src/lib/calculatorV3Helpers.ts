@@ -6,12 +6,6 @@
  */
 
 import { useState, useRef, useEffect } from "react";
-import {
-  initialVariablesForSystem,
-  normaliseVariablesForSystem,
-  isPanelStrategyCode,
-  defaultGateInfillForCode,
-} from "./productOptionRules";
 import { GATE_SEGMENT_STUB_KEYS } from "./segmentTermination";
 import {
   clearGateOpeningWidthMm,
@@ -31,6 +25,7 @@ import { hingeGapForSku, latchGapForSku } from "./gateHardware";
 import { colourName } from "../components/calculator-v3/ColourPalette";
 import type { BOMLineItem, BOMSource } from "../types/bom.types";
 import type { CanonicalPayload, CanonicalRun, CanonicalSegment, CanonicalVariables } from "../types/canonical.types";
+import type { UiCalculatorConfig } from "../types/calculatorConfig.types";
 import type { ParseResult, ParsedSystemType } from "./describeFenceParser";
 
 // ─── Money ────────────────────────────────────────────────────────────────────
@@ -242,8 +237,13 @@ export type PendingParsedGate = NonNullable<
   NonNullable<CanonicalPayload["job"]>["pendingGates"]
 >[number];
 
-export function createInitialPayload(systemType = "QSHS"): CanonicalPayload {
-  const initialVariables = initialVariablesForSystem(systemType);
+export function createInitialPayload(
+  systemType = "QSHS",
+  config?: UiCalculatorConfig,
+): CanonicalPayload {
+  // Seed from the target product's resolved defaults (full cascade);
+  // useRunReconciliation finalises once the run mounts.
+  const initialVariables = { ...(config?.normalisedVariables ?? {}) };
   const initialHeight = Number(initialVariables.target_height_mm ?? 1800);
   return {
     productCode: systemType,
@@ -265,7 +265,7 @@ export function createInitialPayload(systemType = "QSHS"): CanonicalPayload {
             segmentKind: "panel",
             segmentWidthMm: 0,
             targetHeightMm: initialHeight,
-            variables: systemType === "BAYG" ? { panel_quantity: 1 } : undefined,
+            variables: config?.strategy.fence === "panel" ? { panel_quantity: 1 } : undefined,
           },
         ],
         corners: [],
@@ -288,10 +288,9 @@ export function createEmptyPayload(systemType = "QSHS"): CanonicalPayload {
 export function runLengthMm(run: CanonicalRun) {
   return run.segments.reduce((sum, segment) => {
     if (segment.segmentKind === "gate_opening") return sum;
-    const qty =
-      isPanelStrategyCode(run.productCode)
-        ? Math.max(1, Math.round(Number(segment.variables?.panel_quantity ?? 1)))
-        : 1;
+    // Only panel-strategy products ever seed panel_quantity, so a missing value
+    // (→ 1) is exactly the non-panel case — no product-code branch needed.
+    const qty = Math.max(1, Math.round(Number(segment.variables?.panel_quantity ?? 1)));
     return sum + Number(segment.segmentWidthMm ?? 0) * qty;
   }, 0);
 }
@@ -358,13 +357,16 @@ export function gateLeavesForOpening(
 export function buildRunFromDescription(
   result: ParseResult,
   base: CanonicalPayload,
+  config?: UiCalculatorConfig,
 ): { run: CanonicalRun; variables: CanonicalVariables } {
   const parsedSystem = result.attributes.systemType?.value;
   const productCode = productCodeFromParsedSystem(parsedSystem);
-  const baseRun = base.runs[0] ?? createInitialPayload(productCode).runs[0];
+  const baseRun = base.runs[0] ?? createInitialPayload(productCode, config).runs[0];
   const runId = baseRun.runId;
-  const initialVariables = initialVariablesForSystem(productCode);
-  const variables = normaliseVariablesForSystem(productCode, {
+  // Seed from the target product's resolved defaults; the parsed overrides are
+  // merged on top and useRunReconciliation snaps the cascade afterwards.
+  const initialVariables = config?.normalisedVariables ?? {};
+  const variables = {
     ...initialVariables,
     ...(baseRun.variables ?? {}),
     ...(result.attributes.heightMm?.value
@@ -392,7 +394,7 @@ export function buildRunFromDescription(
           ),
         }
       : {}),
-  }) as CanonicalVariables;
+  } as CanonicalVariables;
 
   const boundaries = boundariesFromTermination(result.attributes.termination?.value);
   const firstSegment = baseRun.segments.find(
@@ -457,7 +459,7 @@ export function buildRunFromDescription(
     segmentWidthMm: Math.max(0, Math.round(widthMm)),
     targetHeightMm,
     ...canvasMeta,
-    variables: isPanelStrategyCode(productCode) ? { panel_quantity: 1 } : undefined,
+    variables: config?.strategy.fence === "panel" ? { panel_quantity: 1 } : undefined,
   });
 
   if (parsedGates.length === 0) {
@@ -483,7 +485,7 @@ export function buildRunFromDescription(
         [GATE_SEGMENT_STUB_KEYS.gateMovement]: movement,
         [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovementInfill(
           movement,
-          defaultGateInfillForCode(productCode),
+          config?.gateRules.defaultInfill ?? "horizontal",
         ),
         [GATE_SEGMENT_STUB_KEYS.leafCount]:
           movement === "double_swing" ? 2 : 1,
@@ -577,11 +579,13 @@ export function buildBomRunDetails(payload: CanonicalPayload): BomRunDetail[] {
     const vars = { ...(run.variables ?? {}) };
     const gates = run.segments.filter((segment) => segment.segmentKind === "gate_opening");
     const sections = run.segments.filter((segment) => segment.segmentKind !== "gate_opening");
+    // panel_quantity is seeded only on panel-strategy products, so its presence
+    // is the panel-strategy signal (no product-code branch).
+    const runIsPanelStrategy = run.segments.some(
+      (segment) => segment.variables?.panel_quantity != null,
+    );
     const lengthMm = run.segments.reduce((sum, segment) => {
-      const qty =
-        isPanelStrategyCode(run.productCode) && segment.segmentKind !== "gate_opening"
-          ? Math.max(1, Math.round(Number(segment.variables?.panel_quantity ?? 1)))
-          : 1;
+      const qty = Math.max(1, Math.round(Number(segment.variables?.panel_quantity ?? 1)));
       return sum + Number(segment.segmentWidthMm ?? 0) * qty;
     }, 0);
     const maxPanelWidth = Number(vars.max_panel_width_mm ?? 2600);
@@ -590,7 +594,7 @@ export function buildBomRunDetails(payload: CanonicalPayload): BomRunDetail[] {
       colourName(vars.colour_code),
       `${Number(vars.slat_size_mm ?? 65)}mm slat`,
       `${Number(vars.slat_gap_mm ?? 9)}mm gap`,
-      isPanelStrategyCode(run.productCode)
+      runIsPanelStrategy
         ? null
         : mountingLabel(vars.mounting_method ?? vars.mounting_type),
       `${maxPanelWidth}mm spacing`,
@@ -724,6 +728,7 @@ export function buildConfirmGatePayload(
   payload: CanonicalPayload,
   gate: PendingParsedGate,
   distanceFromStartMm: number,
+  config?: UiCalculatorConfig,
 ): CanonicalPayload {
   const nextRuns = payload.runs.map((run) => {
     if (run.runId !== gate.runId) return run;
@@ -743,7 +748,7 @@ export function buildConfirmGatePayload(
     const gateVariables = {
       ...defaultGateVariables(baseVars, targetHeightMm),
       [GATE_SEGMENT_STUB_KEYS.gateMovement]: movement,
-      [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovementInfill(movement, defaultGateInfillForCode(run.productCode)),
+      [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovementInfill(movement, config?.gateRules.defaultInfill ?? "horizontal"),
       [GATE_SEGMENT_STUB_KEYS.leafCount]: movement === "double_swing" ? 2 : 1,
       [GATE_SEGMENT_STUB_KEYS.dropBoltType]: movement === "double_swing" ? "SS-0300DB-B" : "none",
     };

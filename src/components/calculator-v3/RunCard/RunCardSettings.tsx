@@ -6,19 +6,16 @@ import {
   defaultGateBuildForMovementInfill,
   gateMovementOrDefault,
 } from "../../../lib/gateOptionRules";
-import {
-  defaultGateInfillForCode,
-  initialVariablesForSystem,
-  isPanelStrategyCode,
-  maxPanelWidthForSystem,
-  normaliseVariablesForSystem,
-} from "../../../lib/productOptionRules";
 import { GATE_SEGMENT_STUB_KEYS, patchSegmentVariables } from "../../../lib/segmentTermination";
 import { localFenceProducts } from "../../../lib/localSeedData";
 import { isPreferredGroutSku } from "../../../lib/postFixingOptions";
 import { getPreferredGroutSku, setPreferredGroutSku } from "../../../lib/userPrefs";
 import { SchemaSettingsForm } from "../SchemaSettingsForm";
-import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
+import {
+  useCalculatorConfig,
+  useAllCalculatorConfigs,
+  configForProduct,
+} from "../../../hooks/useCalculatorConfig";
 import { runFields } from "../../../lib/runFieldOverrides";
 import { InlineHeightEditor } from "./InlineHeightEditor";
 import { DerivedHeight } from "../../../types/calculatorConfig.types";
@@ -36,6 +33,7 @@ export function RunCardSettings({ run, onCollapse }: Props) {
     ...(run.variables ?? {}),
   } as Record<string, string | number | boolean>;
   const config = useCalculatorConfig(productCode, variables);
+  const allConfigs = useAllCalculatorConfigs();
 
   useEffect(() => {
     if (run.variables?.post_fixing_material_sku) return;
@@ -153,7 +151,7 @@ export function RunCardSettings({ run, onCollapse }: Props) {
                   ...(clearKeys(segment.variables) ?? {}),
                   [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovementInfill(
                     movement,
-                    defaultGateInfillForCode(nextProductCode),
+                    cfg.gateRules.defaultInfill,
                   ),
                   [GATE_SEGMENT_STUB_KEYS.colourCode]: String(nextVariables.colour_code ?? "B"),
                   [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(nextVariables.slat_size_mm ?? 65),
@@ -173,15 +171,17 @@ export function RunCardSettings({ run, onCollapse }: Props) {
   }
 
   function changeRunProduct(nextProductCode: string) {
-    // Product-switch is the one path that is legitimately product-aware (the
-    // user is explicitly choosing a system), so it uses the legacy
-    // normaliser + product-code maps. The useRunReconciliation hook
-    // then re-normalises against the new product's resolved config.
-    const nextVariables = normaliseVariablesForSystem(nextProductCode, {
-      ...initialVariablesForSystem(nextProductCode),
+    // Product-switch: seed from the target product's resolved defaults, carrying
+    // over the current run's settings where they exist. The useRunReconciliation
+    // hook then snaps the cascade (RECONCILE_KEYS) against the new product's
+    // resolved config, so this stays product-agnostic.
+    const nextCfg = configForProduct(allConfigs, nextProductCode);
+    const nextIsPanel = nextCfg?.strategy.fence === "panel";
+    const nextVariables = {
+      ...(nextCfg?.normalisedVariables ?? {}),
       ...variables,
-      max_panel_width_mm: variables.max_panel_width_mm ?? maxPanelWidthForSystem(nextProductCode),
-    });
+      max_panel_width_mm: variables.max_panel_width_mm ?? nextCfg?.panelRules.maxPanelWidthMm,
+    } as Record<string, string | number | boolean>;
     dispatch({
       type: "UPSERT_RUN",
       run: {
@@ -189,7 +189,7 @@ export function RunCardSettings({ run, onCollapse }: Props) {
         productCode: nextProductCode,
         variables: nextVariables,
         segments: run.segments
-          .filter((segment) => !isPanelStrategyCode(nextProductCode) || segment.segmentKind !== "gate_opening")
+          .filter((segment) => !nextIsPanel || segment.segmentKind !== "gate_opening")
           .map((segment) => ({
             ...segment,
             variables:
@@ -198,7 +198,7 @@ export function RunCardSettings({ run, onCollapse }: Props) {
                   ...(segment.variables ?? {}),
                   [GATE_SEGMENT_STUB_KEYS.gateBuild]: defaultGateBuildForMovementInfill(
                     gateMovementOrDefault(segment.variables?.[GATE_SEGMENT_STUB_KEYS.gateMovement]),
-                    defaultGateInfillForCode(nextProductCode),
+                    nextCfg?.gateRules.defaultInfill ?? "horizontal",
                   ),
                   [GATE_SEGMENT_STUB_KEYS.colourCode]: String(nextVariables.colour_code ?? "B"),
                   [GATE_SEGMENT_STUB_KEYS.slatSizeMm]: Number(nextVariables.slat_size_mm ?? 65),
@@ -207,7 +207,7 @@ export function RunCardSettings({ run, onCollapse }: Props) {
                 }
                 : {
                   ...(segment.variables ?? {}),
-                  ...(isPanelStrategyCode(nextProductCode) && segment.variables?.panel_quantity == null
+                  ...(nextIsPanel && segment.variables?.panel_quantity == null
                     ? { panel_quantity: 1 }
                     : {}),
                 },
@@ -286,8 +286,9 @@ export function RunCardSettings({ run, onCollapse }: Props) {
               key={product.system_type}
               type="button"
               onClick={() => changeRunProduct(product.system_type)}
+              disabled={!allConfigs}
               aria-pressed={product.system_type === run.productCode}
-              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${product.system_type === run.productCode
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${product.system_type === run.productCode
                 ? "border-brand-primary bg-brand-primary text-white shadow-sm"
                 : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
                 }`}

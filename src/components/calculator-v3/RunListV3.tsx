@@ -1,12 +1,8 @@
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalPayload, CanonicalRun } from "../../types/canonical.types";
-import {
-  initialVariablesForSystem,
-  isPanelStrategyCode,
-} from "../../lib/productOptionRules";
 import { localFenceProducts } from "../../lib/localSeedData";
 import { useFenceProducts } from "../../hooks/useProducts";
-import { useDefaultVariables } from "../../hooks/useProductVariables";
+import { useAllCalculatorConfigs, configForProduct } from "../../hooks/useCalculatorConfig";
 import type { ParseResult } from "../../lib/describeFenceParser";
 import { DescribeFenceBox } from "../calculator/DescribeFenceBox";
 import { RunCard } from "./RunCard/RunCard";
@@ -28,19 +24,19 @@ export function RunListV3({
   const fenceProductsQuery = useFenceProducts();
   const fenceProducts = fenceProductsQuery.data ?? localFenceProducts;
 
-  // DB-driven defaults for the active product (falls back to hardcoded defaults)
-  const activeProductCode = payload?.productCode ?? "QSHS";
-  const dbDefaultVariables = useDefaultVariables(activeProductCode);
+  // Resolved config for every product; used to seed a fresh run's variables
+  // from the target product's normalised defaults.
+  const allConfigs = useAllCalculatorConfigs();
 
   if (!payload) return null;
   const currentPayload = payload;
 
   function createPayloadForSystem(productCode: string): CanonicalPayload {
-    // Prefer DB-driven defaults for the selected product; fall back to hardcoded
-    const variables =
-      productCode === activeProductCode && Object.keys(dbDefaultVariables).length > 0
-        ? (dbDefaultVariables as ReturnType<typeof initialVariablesForSystem>)
-        : initialVariablesForSystem(productCode);
+    const cfg = configForProduct(allConfigs, productCode);
+    // Seed from the target product's resolved defaults (full cascade);
+    // useRunReconciliation finalises once the run mounts.
+    const variables = { ...(cfg?.normalisedVariables ?? {}) };
+    const isPanel = cfg?.strategy.fence === "panel";
     const runId = crypto.randomUUID();
     return {
       productCode,
@@ -65,7 +61,7 @@ export function RunListV3({
               segmentKind: "panel",
               segmentWidthMm: 0,
               targetHeightMm: 1800,
-              variables: isPanelStrategyCode(productCode) ? { panel_quantity: 1 } : undefined,
+              variables: isPanel ? { panel_quantity: 1 } : undefined,
             },
           ],
           corners: [],
@@ -104,7 +100,10 @@ export function RunListV3({
           segmentKind: "panel",
           segmentWidthMm: 0,
           targetHeightMm: 1800,
-          variables: isPanelStrategyCode(productCode) ? { panel_quantity: 1 } : undefined,
+          variables:
+            configForProduct(allConfigs, productCode)?.strategy.fence === "panel"
+              ? { panel_quantity: 1 }
+              : undefined,
         },
       ],
       corners: [],
@@ -123,7 +122,8 @@ export function RunListV3({
                 key={product.system_type}
                 type="button"
                 onClick={() => startFirstRun(product.system_type)}
-                className="flex min-h-[88px] items-center justify-between gap-3 rounded-lg border border-brand-primary bg-brand-primary px-4 py-4 text-left text-white shadow-sm transition hover:bg-brand-primary/90 hover:shadow-md"
+                disabled={!allConfigs}
+                className="flex min-h-[88px] items-center justify-between gap-3 rounded-lg border border-brand-primary bg-brand-primary px-4 py-4 text-left text-white shadow-sm transition hover:bg-brand-primary/90 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
                 data-testid={`landing-system-${product.system_type}`}
               >
                 <span className="grid gap-1">

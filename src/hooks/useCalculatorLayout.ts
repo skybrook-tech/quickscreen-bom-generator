@@ -8,6 +8,7 @@ import type { RightPaneView } from "../components/calculator-v3/RightPaneTabs";
 import { INITIAL_MOBILE_CALCULATOR_TAB, type MobileCalculatorTab } from "../lib/mobileShell";
 import { MOBILE_BREAKPOINT } from "../lib/layoutBreakpoints";
 import { initialRunPaneWidth, createInitialPayload } from "../lib/calculatorV3Helpers";
+import { useAllCalculatorConfigs, configForProduct } from "./useCalculatorConfig";
 import type { CanonicalPayload } from "../types/canonical.types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,6 +50,7 @@ export function useCalculatorLayout({
   const [rightPaneView, setRightPaneView] = useState<RightPaneView>("bom");
   const [mapExpanded, setMapExpanded] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileCalculatorTab>(INITIAL_MOBILE_CALCULATOR_TAB);
+  const allConfigs = useAllCalculatorConfigs();
 
   // Mobile layout detection
   useEffect(() => {
@@ -142,7 +144,10 @@ export function useCalculatorLayout({
       setMobileTab(tab);
       if (tab === "map") {
         if (!payload) {
-          dispatch({ type: "SET_PAYLOAD", payload: createInitialPayload("QSHS") });
+          dispatch({
+            type: "SET_PAYLOAD",
+            payload: createInitialPayload("QSHS", configForProduct(allConfigs, "QSHS")),
+          });
           dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "draw" });
         }
         setIntroDismissed(true);
@@ -153,7 +158,7 @@ export function useCalculatorLayout({
       setRightPaneView("bom");
       setMapExpanded(false);
     },
-    [payload, dispatch, setIntroDismissed],
+    [payload, dispatch, setIntroDismissed, allConfigs],
   );
 
   const handleResizeStart = useCallback(() => {

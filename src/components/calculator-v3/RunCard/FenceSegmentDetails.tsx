@@ -1,6 +1,10 @@
 import { useMemo } from "react";
 import { useCalculator } from "../../../context/CalculatorContext";
-import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
+import {
+  useCalculatorConfig,
+  useAllCalculatorConfigs,
+  configForProduct,
+} from "../../../hooks/useCalculatorConfig";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import { clampPostSpacing } from "../../../lib/postSpacing";
 import {
@@ -9,7 +13,6 @@ import {
 import { SchemaSettingsForm } from "../SchemaSettingsForm";
 import { useFenceProducts } from "../../../hooks/useProducts";
 import { localFenceProducts } from "../../../lib/localSeedData";
-import { isPanelStrategyCode } from "../../../lib/productOptionRules";
 import { segmentFields } from "../../../lib/runFieldOverrides";
 import { Check } from "lucide-react";
 
@@ -37,6 +40,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   const config = useCalculatorConfig(segProductCode, displayVariables);
   const fenceProductsQuery = useFenceProducts();
   const fenceProducts = fenceProductsQuery.data ?? localFenceProducts;
+  const allConfigs = useAllCalculatorConfigs();
 
   function upsertSegment(s: CanonicalSegment) {
     dispatch({ type: "UPSERT_SEGMENT", runId, segment: s });
@@ -101,7 +105,8 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   // one structural + quantity gap the run-scoped reconciliation won't touch.
   function onSystemTypeChange(nextProductCode: string) {
     const productOverride = nextProductCode === runProductCode ? null : nextProductCode;
-    const panelQuantityPatch = isPanelStrategyCode(nextProductCode)
+    const isPanel = configForProduct(allConfigs, nextProductCode)?.strategy.fence === "panel";
+    const panelQuantityPatch = isPanel
       ? { panel_quantity: seg.variables?.panel_quantity ?? 1 }
       : {};
     upsertSegment(
@@ -131,8 +136,9 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
               key={product.system_type}
               type="button"
               onClick={() => onSystemTypeChange(product.system_type)}
+              disabled={!allConfigs}
               aria-pressed={product.system_type === segProductCode}
-              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${product.system_type === segProductCode
+              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${product.system_type === segProductCode
                 ? "border-brand-primary bg-brand-primary text-white shadow-sm"
                 : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
                 }`}
