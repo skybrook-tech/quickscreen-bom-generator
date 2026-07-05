@@ -1,4 +1,4 @@
-import { ChevronUp, Check } from "lucide-react";
+import { ChevronUp } from "lucide-react";
 import { useEffect } from "react";
 import { useCalculator } from "../../../context/CalculatorContext";
 import type { CanonicalRun } from "../../../types/canonical.types";
@@ -7,7 +7,6 @@ import {
   gateMovementOrDefault,
 } from "../../../lib/gateOptionRules";
 import { GATE_SEGMENT_STUB_KEYS, patchSegmentVariables } from "../../../lib/segmentTermination";
-import { localFenceProducts } from "../../../lib/localSeedData";
 import { isPreferredGroutSku } from "../../../lib/postFixingOptions";
 import { getPreferredGroutSku, setPreferredGroutSku } from "../../../lib/userPrefs";
 import { SchemaSettingsForm } from "../SchemaSettingsForm";
@@ -20,6 +19,7 @@ import { runFields } from "../../../lib/runFieldOverrides";
 import { InlineHeightEditor } from "./InlineHeightEditor";
 import { DerivedHeight } from "../../../types/calculatorConfig.types";
 import { CanonicalSegment } from "../../../types/canonical.types";
+import ProductSelector from "../formRenderers/ProductSelector";
 
 interface Props {
   run: CanonicalRun;
@@ -276,29 +276,8 @@ export function RunCardSettings({ run, onCollapse }: Props) {
           onChange={(heightMm) => updateRunHeight(heightMm)}
         />
       </div>
-      <div className="space-y-3">
-        <h4 className="text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
-          System type
-        </h4>
-        <div className="flex flex-wrap gap-2">
-          {localFenceProducts.map((product) => (
-            <button
-              key={product.system_type}
-              type="button"
-              onClick={() => changeRunProduct(product.system_type)}
-              disabled={!allConfigs}
-              aria-pressed={product.system_type === run.productCode}
-              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${product.system_type === run.productCode
-                ? "border-brand-primary bg-brand-primary text-white shadow-sm"
-                : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-                }`}
-            >
-              {product.system_type === run.productCode && <Check size={16} aria-hidden />}
-              {product.system_type}
-            </button>
-          ))}
-        </div>
-      </div>
+
+      <ProductSelector onSystemTypeChange={changeRunProduct} value={run.productCode} disabled={!config} />
 
 
       <SchemaSettingsForm

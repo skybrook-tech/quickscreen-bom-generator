@@ -11,10 +11,8 @@ import {
   patchSegmentVariables,
 } from "../../../lib/segmentTermination";
 import { SchemaSettingsForm } from "../SchemaSettingsForm";
-import { useFenceProducts } from "../../../hooks/useProducts";
-import { localFenceProducts } from "../../../lib/localSeedData";
 import { segmentFields } from "../../../lib/runFieldOverrides";
-import { Check } from "lucide-react";
+import ProductSelector from "../formRenderers/ProductSelector";
 
 interface Props {
   runId: string;
@@ -38,8 +36,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   };
   const runConfig = useCalculatorConfig(runProductCode, runVariables);
   const config = useCalculatorConfig(segProductCode, displayVariables);
-  const fenceProductsQuery = useFenceProducts();
-  const fenceProducts = fenceProductsQuery.data ?? localFenceProducts;
+
   const allConfigs = useAllCalculatorConfigs();
 
   function upsertSegment(s: CanonicalSegment) {
@@ -126,29 +123,7 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
 
   return (
     <div className="space-y-5">
-      <div className="space-y-3">
-        <h4 className="text-xs font-extrabold uppercase tracking-[0.12em] text-brand-muted">
-          System type
-        </h4>
-        <div className="flex flex-wrap gap-2">
-          {fenceProducts.map((product) => (
-            <button
-              key={product.system_type}
-              type="button"
-              onClick={() => onSystemTypeChange(product.system_type)}
-              disabled={!allConfigs}
-              aria-pressed={product.system_type === segProductCode}
-              className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${product.system_type === segProductCode
-                ? "border-brand-primary bg-brand-primary text-white shadow-sm"
-                : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-                }`}
-            >
-              {product.system_type === segProductCode && <Check size={16} aria-hidden />}
-              {product.system_type}
-            </button>
-          ))}
-        </div>
-      </div>
+      <ProductSelector onSystemTypeChange={onSystemTypeChange} value={segProductCode} disabled={!allConfigs} />
 
       <SchemaSettingsForm
         fields={fields}

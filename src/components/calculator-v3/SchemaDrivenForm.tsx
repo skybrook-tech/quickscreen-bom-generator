@@ -13,6 +13,7 @@ import { kitToggleRenderer } from "./formRenderers/kitToggle";
 import { optionalAddonsRenderer } from "./formRenderers/optionalAddons";
 import { automationGroupRenderer } from "./formRenderers/automationGroup";
 import type { FieldRenderer } from "./formRenderers/types";
+import { Button } from "../ui/Button";
 
 export type { FieldRenderer, FieldRendererContext } from "./formRenderers/types";
 
@@ -235,22 +236,19 @@ export function SchemaDrivenForm({
                     const value = optionValue(opt);
                     const selected = value === currentValue;
                     return (
-                      <button
+                      <Button
                         key={value}
                         type="button"
+                        size="medium"
                         onClick={() =>
                           onChange(field.field_key, coerceValue(field, value))
                         }
                         aria-pressed={selected}
-                        className={`inline-flex min-h-9 items-center gap-2 rounded-lg border px-3 py-2 text-sm font-bold transition-colors ${
-                          selected
-                            ? "border-brand-primary bg-brand-primary text-white shadow-sm"
-                            : "border-brand-border bg-brand-card text-brand-text hover:border-brand-primary hover:text-brand-primary hover:shadow-sm"
-                        }`}
+                        variant={selected ? "primary" : "ghost"}
                       >
                         {selected && <Check size={16} aria-hidden />}
                         {optionLabel(field, opt, colourNames)}
-                      </button>
+                      </Button>
                     );
                   })}
                 </div>
