@@ -109,8 +109,12 @@ export function SegmentRow({
   const segmentNumber = segIdx + 1;
 
   const heightEntries: DerivedHeight[] = config.heightLadder.entries;
+  // Height is ready when it's freeform, or resolved entries exist (slat ladder
+  // OR discrete "options" heights for non-slat products like Colorbond), or the
+  // slat inputs are present (ladder awaiting slat size/gap).
   const heightInputsReady =
     isFreeform ||
+    heightEntries.length > 0 ||
     (Number.isFinite(Number(segmentVariables.slat_size_mm)) &&
       Number.isFinite(Number(segmentVariables.slat_gap_mm)));
   const selectedHeightEntry =
@@ -478,7 +482,9 @@ export function SegmentRow({
                         : isFreeform
                           ? undefined
                           : selectedHeightEntry
-                            ? `${selectedHeight}mm - ${selectedHeightEntry.N} slats`
+                            ? selectedHeightEntry.N
+                              ? `${selectedHeight}mm - ${selectedHeightEntry.N} slats`
+                              : `${selectedHeight}mm`
                             : undefined
                     }
                     disabled={!heightInputsReady}
@@ -487,7 +493,7 @@ export function SegmentRow({
                       heightEntries.length > 0
                         ? heightEntries.map((entry) => ({
                           value: entry.height,
-                          label: `${entry.height}mm - ${entry.N} slats`,
+                          label: entry.N ? `${entry.height}mm - ${entry.N} slats` : `${entry.height}mm`,
                         }))
                         : undefined
                     }

@@ -75,6 +75,11 @@ export function heightEntries(
   variables: Record<string, unknown>,
 ): DerivedHeight[] {
   if (config.heightUi.mode === "freeform") return [];
+  // Discrete manufactured heights (e.g. Colorbond) — not slat-derived. N is 0
+  // (no slats); the client renders these as a plain height dropdown.
+  if (config.heightUi.mode === "options") {
+    return (config.heightUi.heightOptions ?? []).map((height) => ({ N: 0, height }));
+  }
   const slatSize = Number(variables.slat_size_mm ?? 65);
   const slatGap = Number(variables.slat_gap_mm ?? DEFAULT_SLAT_GAP_MM);
   if ((slatSize !== 65 && slatSize !== 90) || !Number.isFinite(slatGap) || slatGap < 0) {

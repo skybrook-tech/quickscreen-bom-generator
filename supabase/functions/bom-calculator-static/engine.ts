@@ -267,6 +267,37 @@ export const syntheticComponents: SeedComponent[] = [
     ["FB-V60", "Bostik V60 glazing silicone", "Bostik V60 glazing silicone", "fixing", "each", 12.24],
     ["SOUD-EPOFIX", "Soudal Epofix epoxy", "Soudal Epofix epoxy for core-drilled post fixing", "fixing", "each", 8.42],
   ].map(([sku, name, description, category, unit, price]) => component(String(sku), String(name), String(description), String(category), String(unit), Number(price), ["QSHS", "VS", "XPL", "BAYG", "GATE", "QS_GATE"])),
+  // ── Colorbond steel fencing (unpriced MVP) — descriptions only, price 0 so
+  //    lines resolve to $0 + a "no local price found" note until a price list
+  //    is seeded. GROUT-CONCRETE already exists above (shared).
+  ...((): SeedComponent[] => {
+    const sheetColours = ["MN", "G", "SM", "BS", "PB", "P"];
+    const steelColours = [...sheetColours, "B", "M"]; // rails/posts/hardware also allow Night Sky (B) + Mill (M)
+    const out: SeedComponent[] = [];
+    for (const [prof, tok, heights] of [
+      ["GO-Line", "GLINE", [1490, 1790, 2090]],
+      ["GO-Zag", "GZAG", [1490, 1790, 2090]],
+      ["GO-Trim", "GTRIM", [1790, 2090]],
+    ] as const) {
+      for (const h of heights) for (const c of sheetColours) {
+        out.push(component(`CB-${tok}-${h}-${c}`, `${prof} sheet ${h}mm ${c}`, `Colorbond ${prof} infill sheet, ${h}mm high - ${c}`, "sheet", "each", 0, ["COLORBOND"]));
+      }
+    }
+    for (const w of [2365, 3125]) for (const c of steelColours) {
+      out.push(component(`CB-RAIL-${w}-${c}`, `Colorbond rail ${w}mm ${c}`, `Colorbond top/bottom rail 47x51mm, ${w}mm - ${c}`, "rail", "each", 0, ["COLORBOND"]));
+    }
+    for (const h of [1800, 2400, 3000]) for (const c of steelColours) {
+      out.push(component(`CB-CPOST-${h}-${c}`, `Colorbond channel post ${h}mm ${c}`, `Colorbond "C" channel post 70x65mm, ${h}mm - ${c}`, "post", "each", 0, ["COLORBOND"]));
+    }
+    for (const c of steelColours) {
+      out.push(component(`XPSG-2700-ST65-${c}`, `65x65 steel post 2700mm ${c}`, `65x65mm steel post, 2700mm, welded 8mm base plate, top cover included - ${c}`, "post", "each", 0, ["COLORBOND"]));
+      out.push(component(`CB-TS-${c}-15PK`, `Colorbond tek screws 15pk ${c}`, `Colorbond tek screws 10-16x16 powder-coated head, 15 pack - ${c}`, "fixing", "pack", 0, ["COLORBOND"]));
+      out.push(component(`CB-SHARKFIN-${c}`, `Colorbond shark-fin base plate ${c}`, `Colorbond shark-fin base plate, bolt-down - ${c}`, "post_accessory", "each", 0, ["COLORBOND"]));
+    }
+    out.push(component("CB-POSTCAP-SGL", "Post cap single sided", "Colorbond channel post cap, single sided - Black", "cap", "each", 0, ["COLORBOND"]));
+    out.push(component("CB-POSTCAP-DBL", "Post cap double sided", "Colorbond channel post cap, double sided - Black", "cap", "each", 0, ["COLORBOND"]));
+    return out;
+  })(),
 ];
 
 const syntheticPricingRules: LocalPricingRule[] = [
@@ -409,6 +440,8 @@ const LEGACY_CATEGORY_MAP: Record<string, string> = {
   hardware: "gate_hardware", automation: "automation", post: "posts_and_mounting",
   post_accessory: "posts_and_mounting", bracket: "frames_and_covers", screw: "fasteners_and_screws",
   accessory: "tools_and_consumables", mounting: "fixings",
+  // Colorbond bay-based categories
+  sheet: "screening", cap: "caps_and_plugs", fixing: "fixings",
 };
 const SUBCATEGORY_MAP: Record<string, string> = {
   slat: "slats", gate: "gate_blades", rail: "rails", rail_insert: "rail_inserts",
@@ -417,6 +450,8 @@ const SUBCATEGORY_MAP: Record<string, string> = {
   hardware: "hinges_latches_and_hardware", automation: "automation", post: "posts",
   post_accessory: "post_mounting_accessories", bracket: "brackets", screw: "screws",
   mounting: "grout_concrete_and_anchors", accessory: "tools_and_consumables",
+  // Colorbond bay-based categories
+  sheet: "sheets", cap: "caps", fixing: "fixings",
 };
 const CATEGORY_NAME_OVERRIDES: Array<[RegExp, string]> = [
   [/spacer/i, "spacers"], [/screw|anchor|wafer|tek|csk/i, "fasteners_and_screws"], [/cap|plug/i, "caps_and_plugs"],
@@ -627,7 +662,7 @@ export function calculateLocalBom(
 // ─── Suggested accessories ────────────────────────────────────────────────────
 
 export function maxPanelWidthForSystem(productCode: string | null | undefined): number {
-  const map: Record<string, number> = { QSHS: 2600, VS: 2600, XPL: 2600, BAYG: 3000 };
+  const map: Record<string, number> = { QSHS: 2600, VS: 2600, XPL: 2600, BAYG: 3000, COLORBOND: 3125 };
   return productCode ? (map[productCode] ?? 2600) : 2600;
 }
 

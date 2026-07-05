@@ -1,0 +1,118 @@
+{
+  "fields": [
+    {
+      "field_key": "profile",
+      "label": "Sheet profile",
+      "group": "profile_colour",
+      "control_type": "select",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "GO-LINE",
+      "options_json": [
+        { "value": "GO-LINE", "label": "GO-Line (ribbed, double-sided)" },
+        { "value": "GO-ZAG", "label": "GO-Zag (zigzag, double-sided)" },
+        { "value": "GO-TRIM", "label": "GO-Trim (single-sided)" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 5,
+      "show_in_run_summary": true,
+      "settings_for": ["run", "segment"]
+    },
+    {
+      "field_key": "colour_code",
+      "render_hint": "colour",
+      "label": "Colour",
+      "group": "profile_colour",
+      "control_type": "colour_palette",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "MN",
+      "options_json": [],
+      "options_when_json": [{ "options_ref": "colours.standard" }],
+      "visible_when_json": {},
+      "sort_order": 10,
+      "show_in_run_summary": true,
+      "settings_for": ["run", "segment"]
+    },
+    {
+      "field_key": "max_panel_width_mm",
+      "label": "Bay width",
+      "group": "bay_mounting",
+      "control_type": "select",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 2365,
+      "options_json": [
+        { "value": 2365, "label": "2365mm bay (3 sheets)" },
+        { "value": 3125, "label": "3125mm bay (4 sheets)" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 40,
+      "show_in_run_summary": true,
+      "settings_for": ["run", "segment"]
+    },
+    {
+      "field_key": "mounting_type",
+      "label": "Post mounting",
+      "group": "bay_mounting",
+      "control_type": "select",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "in_ground",
+      "options_json": [
+        { "value": "in_ground", "label": "Concreted in ground" },
+        { "value": "sharkfin_baseplate", "label": "Shark-fin base plate (bolt-down)" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 50,
+      "show_in_run_summary": true,
+      "settings_for": ["run", "segment"]
+    },
+    {
+      "field_key": "post_cap",
+      "label": "Include post caps",
+      "group": "bay_mounting",
+      "control_type": "toggle",
+      "data_type": "boolean",
+      "default_value_json": true,
+      "visible_when_json": {},
+      "sort_order": 55,
+      "settings_for": ["run", "segment"]
+    },
+    {
+      "field_key": "left_boundary_type",
+      "label": "Left Boundary",
+      "group": "bay_mounting",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "post",
+      "options_json": [
+        { "value": "post", "label": "Post" },
+        { "value": "wall", "label": "Wall" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 70,
+      "settings_for": ["run", "segment"]
+    },
+    {
+      "field_key": "right_boundary_type",
+      "label": "Right Boundary",
+      "group": "bay_mounting",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "post",
+      "options_json": [
+        { "value": "post", "label": "Post" },
+        { "value": "wall", "label": "Wall" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 80,
+      "settings_for": ["run", "segment"]
+    }
+  ],
+  "fieldGroups": [
+    { "key": "profile_colour", "label": "Profile and colour", "sort_order": 20 },
+    { "key": "bay_mounting", "label": "Bay width, mounting and boundaries", "sort_order": 30 }
+  ]
+}

@@ -1,8 +1,9 @@
 import { useCalculator } from "../../context/CalculatorContext";
-import type { CanonicalPayload, CanonicalRun } from "../../types/canonical.types";
+import type { CanonicalRun } from "../../types/canonical.types";
 import { localFenceProducts } from "../../lib/localSeedData";
 import { useFenceProducts } from "../../hooks/useProducts";
 import { useAllCalculatorConfigs, configForProduct } from "../../hooks/useCalculatorConfig";
+import { buildInitialFencePayload } from "../../lib/newQuotePayload";
 import type { ParseResult } from "../../lib/describeFenceParser";
 import { DescribeFenceBox } from "../calculator/DescribeFenceBox";
 import { RunCard } from "./RunCard/RunCard";
@@ -31,47 +32,12 @@ export function RunListV3({
   if (!payload) return null;
   const currentPayload = payload;
 
-  function createPayloadForSystem(productCode: string): CanonicalPayload {
-    const cfg = configForProduct(allConfigs, productCode);
-    // Seed from the target product's resolved defaults (full cascade);
-    // useRunReconciliation finalises once the run mounts.
-    const variables = { ...(cfg?.normalisedVariables ?? {}) };
-    const isPanel = cfg?.strategy.fence === "panel";
-    const runId = crypto.randomUUID();
-    return {
-      productCode,
-      schemaVersion: "v1",
-      // v3: runs carry the variables; payload.variables stays empty.
-      variables: {},
-      ...(currentPayload.propertyAnchor
-        ? { propertyAnchor: currentPayload.propertyAnchor }
-        : {}),
-      ...(currentPayload.snapshot ? { snapshot: currentPayload.snapshot } : {}),
-      runs: [
-        {
-          runId,
-          productCode,
-          variables,
-          leftBoundary: { type: "product_post" },
-          rightBoundary: { type: "product_post" },
-          segments: [
-            {
-              segmentId: crypto.randomUUID(),
-              sortOrder: 1,
-              segmentKind: "panel",
-              segmentWidthMm: 0,
-              targetHeightMm: 1800,
-              variables: isPanel ? { panel_quantity: 1 } : undefined,
-            },
-          ],
-          corners: [],
-        },
-      ],
-    };
-  }
-
   function startFirstRun(productCode: string) {
-    const nextPayload = createPayloadForSystem(productCode);
+    const nextPayload = buildInitialFencePayload(
+      productCode,
+      configForProduct(allConfigs, productCode),
+      currentPayload,
+    );
     const firstRun = nextPayload.runs[0];
     dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
     window.setTimeout(() => {

@@ -3,6 +3,7 @@ import baygRaw from "../../supabase/seeds/glass-outlet/products/bayg.json?raw";
 import vsRaw from "../../supabase/seeds/glass-outlet/products/vs.json?raw";
 import xplRaw from "../../supabase/seeds/glass-outlet/products/xpl.json?raw";
 import qsGateRaw from "../../supabase/seeds/glass-outlet/products/qs_gate.json?raw";
+import colorbondRaw from "../../supabase/seeds/glass-outlet/products/colorbond.json?raw";
 import priceCatalogueRaw from "../../supabase/seeds/glass-outlet/products/price_catalogue.json?raw";
 import type { Product } from "../hooks/useProducts";
 import type { SchemaField } from "../components/calculator-v3/SchemaDrivenForm";
@@ -65,6 +66,7 @@ const seedFiles: SeedFile[] = [
   JSON.parse(vsRaw) as SeedFile,
   JSON.parse(xplRaw) as SeedFile,
   JSON.parse(qsGateRaw) as SeedFile,
+  JSON.parse(colorbondRaw) as SeedFile,
   JSON.parse(priceCatalogueRaw) as SeedFile,
 ];
 

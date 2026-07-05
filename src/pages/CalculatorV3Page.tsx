@@ -14,7 +14,8 @@ import {
   CalculatorJobProvider,
   type CalculatorJobContextValue,
 } from "../context/CalculatorJobContext";
-import { CalculatorIntro } from "../components/calculator-v3/CalculatorIntro";
+import { ProductCatalog } from "../components/calculator-v3/ProductCatalog";
+import { buildInitialFencePayload } from "../lib/newQuotePayload";
 import { CalculatorDialogs } from "../components/calculator-v3/CalculatorDialogs";
 import { CalculatorHeaderActions } from "../components/calculator-v3/CalculatorHeaderActions";
 import { CalculatorWorkspace } from "../components/calculator-v3/CalculatorWorkspace";
@@ -110,12 +111,18 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   }, [dispatch, introDismissed, payload, quoteId]);
 
   // ── Handlers ──────────────────────────────────────────────────────────────
-  function startWorkspaceFromLanding() {
-    if (!payload) {
-      dispatch({ type: "SET_PAYLOAD", payload: createEmptyPayload("QSHS") });
-      dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "select" });
-    }
+  // Catalogue → start a quote with the chosen product. Seeds one run/segment
+  // from the product's resolved defaults and drops into the workspace.
+  function handlePickProduct(productCode: string) {
+    const nextPayload = buildInitialFencePayload(
+      productCode,
+      configForProduct(allConfigs, productCode),
+      payload,
+    );
+    dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
+    dispatch({ type: "SET_ENTRY_METHOD", entryMethod: "select" });
     setIntroDismissed(true);
+    setAutoOpenFirstSectionRunId(nextPayload.runs[0].runId);
     layout.setRightPaneView("bom");
     layout.setMapExpanded(false);
     layout.setMobileTab("job");
@@ -238,7 +245,9 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
     }
     : null;
 
-  const showIntro = !quoteId && !payload && !introDismissed;
+  // Show the full-screen product catalogue for a new quote until a product is
+  // picked (which seeds the first run). Loaded quotes (quoteId) skip it.
+  const showCatalog = !quoteId && (payload?.runs?.length ?? 0) === 0;
 
   // ── Context values (published to the workspace subtree) ─────────────────────
   const bomCtx: CalculatorBomContextValue = {
@@ -299,7 +308,7 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
-  const headerActions = !showIntro && !layout.mapExpanded ? (
+  const headerActions = !showCatalog && !layout.mapExpanded ? (
     <CalculatorHeaderActions
       rightPaneView={layout.rightPaneView}
       runPaneWidth={layout.runPaneWidth}
@@ -351,8 +360,12 @@ function CalculatorV3Content({ quoteId }: { quoteId?: string }) {
         onGatePositionConfirm={handleConfirmGatePosition}
       />
 
-      {showIntro ? (
-        <CalculatorIntro jobName={jobName} onJobNameChange={setJobName} onStart={startWorkspaceFromLanding} />
+      {showCatalog ? (
+        <ProductCatalog
+          onPick={handlePickProduct}
+          onDescribeApply={handleApplyDescription}
+          initialDescription={payload?.job?.description ?? ""}
+        />
       ) : (
         <CalculatorLayoutProvider value={layout}>
           <CalculatorBomStateProvider value={bomCtx}>

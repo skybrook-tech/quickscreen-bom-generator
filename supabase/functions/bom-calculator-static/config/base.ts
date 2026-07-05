@@ -7,12 +7,13 @@
 // Changing calculation behaviour for Glass Outlet = edit these objects.
 // Adding a new supplier = deep-merge a patch over one of these.
 
-import type { CalculatorConfig, FormFieldDef } from "./types.ts";
+import type { CalculatorConfig, ColorbondConfig, FormFieldDef } from "./types.ts";
 import qshsFields from "./products/qshs/fields.json" with { type: "json" };
 import vsFields from "./products/vs/fields.json" with { type: "json" };
 import xplFields from "./products/xpl/fields.json" with { type: "json" };
 import baygFields from "./products/bayg/fields.json" with { type: "json" };
 import qsGateFields from "./products/qs_gate/fields.json" with { type: "json" };
+import colorbondFields from "./products/colorbond/fields.json" with { type: "json" };
 
 type ProductFieldFile = {
   fields: FormFieldDef[];
@@ -25,6 +26,7 @@ const PRODUCT_FIELD_FILES: Record<string, ProductFieldFile> = {
   XPL: xplFields as ProductFieldFile,
   BAYG: baygFields as ProductFieldFile,
   QS_GATE: qsGateFields as ProductFieldFile,
+  COLORBOND: colorbondFields as ProductFieldFile,
 };
 
 // ─── Shared colour palette ────────────────────────────────────────────────────
@@ -230,6 +232,54 @@ const HEIGHT_UI_VS_FREEFORM: CalculatorConfig["heightUi"] = {
   freeformMaxMm: 2400,
   freeformStepMm: 50,
 };
+const HEIGHT_UI_COLORBOND: CalculatorConfig["heightUi"] = {
+  mode: "options",
+  heightOptions: [1500, 1800, 2100],
+};
+
+// ─── Colorbond steel fencing (bay-based, non-slat) ───────────────────────────
+// The 6 Colorbond steel colours available on infill sheets. Night Sky ("B") is
+// rails/posts-only and Black/Mill are powder-coat hardware finishes — excluded
+// from the MVP fence colour picker (see plan assumptions).
+const COLORBOND_COLOURS = ["MN", "G", "SM", "BS", "PB", "P"];
+
+const DISPLAY_COLORBOND: CalculatorConfig["display"] = {
+  name: "Colorbond Steel Fence",
+  shortName: "Colorbond",
+  description: "Colorbond steel sheet fencing",
+};
+
+const COLORBOND_DATA: ColorbondConfig = {
+  bayWidths: [2365, 3125],
+  sheetsPerBay: { "2365": 3, "3125": 4 },
+  railsPerBay: 2,
+  channelPostsPerBay: 2,
+  tekPacksPerBay: 1,
+  bagsPerInGroundPost: 1,
+  sheetHeightOffsetMm: 10, // sheetHeight = finishedHeight - 10
+  postSpacingExtraMm: 10,  // post centres = bayWidth + 10
+  profiles: [
+    { code: "GO-LINE", skuToken: "GLINE", heights: [1500, 1800, 2100] },
+    { code: "GO-ZAG", skuToken: "GZAG", heights: [1500, 1800, 2100] },
+    { code: "GO-TRIM", skuToken: "GTRIM", heights: [1800, 2100] },
+  ],
+  postHeightByFinished: {
+    "1500": { in_ground: 2400, sharkfin_baseplate: 1800 },
+    "1800": { in_ground: 2400 },
+    "2100": { in_ground: 3000 },
+  },
+  skus: {
+    sheet: "CB-{profile}-{sheetHeight}-{colour}",
+    rail: "CB-RAIL-{bayWidth}-{colour}",
+    channelPost: "CB-CPOST-{postHeight}-{colour}",
+    terminalPost: "XPSG-2700-ST65-{colour}",
+    capSingle: "CB-POSTCAP-SGL",
+    capDouble: "CB-POSTCAP-DBL",
+    tekScrewPack: "CB-TS-{colour}-15PK",
+    sharkfin: "CB-SHARKFIN-{colour}",
+    concrete: "GROUT-CONCRETE",
+  },
+};
 
 const DISPLAY_QSHS: CalculatorConfig["display"] = {
   name: "QuickScreen Horizontal Slat",
@@ -355,10 +405,36 @@ export const BASE_QS_GATE_CONFIG: CalculatorConfig = {
   formGroups: PRODUCT_FIELD_FILES.QS_GATE.fieldGroups,
 };
 
+// Colorbond steel fencing. Bay-based, non-slat — its own registered calculator
+// (calculators/colorbond.ts) reads `colorbond`. It spreads BASE_QSHS_CONFIG only
+// to satisfy the slat-shaped required blocks (internalSkus/stockLengths/geometry/
+// heightLadder/packSizes) which the Colorbond calculator never reads.
+export const BASE_COLORBOND_CONFIG: CalculatorConfig = {
+  ...BASE_QSHS_CONFIG,
+  productCode: "COLORBOND",
+  strategy: { fence: "colorbond_sheet", gate: "qsg_swing_sliding" },
+  colours: { ...BASE_QSHS_CONFIG.colours, standard: COLORBOND_COLOURS, fallback: "MN" },
+  display: DISPLAY_COLORBOND,
+  finishFamilies: ["standard"],
+  gapRules: GAP_RULES_SPACER_ONLY,
+  heightUi: HEIGHT_UI_COLORBOND,
+  // Bay widths go up to 3125mm; keep spacing headroom above that.
+  panelRules: { ...PANEL_RULES_STD, maxPanelWidthMm: 3125, maxPostSpacingMm: 3200 },
+  gateRules: { ...GATE_RULES, supported: false },
+  defaults: {
+    slatSizeMm: 65, slatGapMm: 0, targetHeightMm: 1800,
+    postSizeMm: 65, finishFamily: "standard", colour: "MN", mountingType: "in_ground",
+  },
+  colorbond: COLORBOND_DATA,
+  fields: PRODUCT_FIELD_FILES.COLORBOND.fields,
+  formGroups: PRODUCT_FIELD_FILES.COLORBOND.fieldGroups,
+};
+
 export const BASE_CONFIGS: Record<string, CalculatorConfig> = {
   QSHS: BASE_QSHS_CONFIG,
   BAYG: BASE_BAYG_CONFIG,
   VS:   BASE_VS_CONFIG,
   XPL:  BASE_XPL_CONFIG,
   QS_GATE: BASE_QS_GATE_CONFIG,
+  COLORBOND: BASE_COLORBOND_CONFIG,
 };

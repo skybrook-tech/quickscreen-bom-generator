@@ -21,7 +21,10 @@ export type CalculatorConfig = {
   // Which calculation strategy to use for fence panels and gates.
   // Controls dispatch inside the QuickScreen calculator.
   strategy: {
-    fence: "horizontal_slat" | "vertical_slat" | "panel";
+    // "colorbond_sheet" is a non-slat, bay-based steel-fence strategy handled by
+    // its own registered calculator (calculators/colorbond.ts) — it never enters
+    // quickScreenCalculator's slat branches.
+    fence: "horizontal_slat" | "vertical_slat" | "panel" | "colorbond_sheet";
     gate: "qsg_swing_sliding";
   };
 
@@ -66,10 +69,13 @@ export type CalculatorConfig = {
   // SegmentRow / InlineHeightEditor. Aligns with the v4 `target_height_ui`
   // concept (src/lib/targetHeightOptions.ts).
   heightUi: {
-    mode: "ladder" | "freeform";
+    // "options" = a fixed discrete list of achievable heights (heightOptions),
+    // for products whose heights are manufactured, not slat-derived (Colorbond).
+    mode: "ladder" | "freeform" | "options";
     freeformMinMm?: number;
     freeformMaxMm?: number;
     freeformStepMm?: number;
+    heightOptions?: number[]; // used when mode === "options"
   };
 
   // Internal SKU templates. The calculator substitutes {colour}, {slatSize},
@@ -306,6 +312,46 @@ export type CalculatorConfig = {
         message: string;
       }
   >;
+
+  // Colorbond steel-fencing data (bay-based, non-slat). Only present on the
+  // COLORBOND config; read exclusively by calculators/colorbond.ts. Slat products
+  // leave this undefined. See docs / the catalogue recipe for the source rules.
+  colorbond?: ColorbondConfig;
+};
+
+// Colorbond steel fencing — SKU templates + quantity rules for the bay-based
+// calculator. Placeholders substituted by calculators/colorbond.ts:
+// {profile} (SKU token e.g. GLINE), {sheetHeight}, {bayWidth}, {postHeight}, {colour}.
+export type ColorbondConfig = {
+  bayWidths: number[];                       // e.g. [2365, 3125]
+  sheetsPerBay: Record<string, number>;      // { "2365": 3, "3125": 4 }
+  railsPerBay: number;                       // 2 (top + bottom)
+  // Channel posts per bay (catalogue p6 recipe: 2 — each bay's sheets slot into
+  // its own C-channel each side; interior joins are back-to-back pairs, run
+  // ends are one-way posts affixed to the 65×65 terminal post — p14 configs).
+  channelPostsPerBay: number;
+  tekPacksPerBay: number;                    // 1 pack of 15 per bay
+  bagsPerInGroundPost: number;               // concrete bags per in-ground post
+  sheetHeightOffsetMm: number;               // sheetHeight = finishedHeight - offset (10)
+  postSpacingExtraMm: number;                // post centres = bayWidth + this (10)
+  profiles: Array<{
+    code: string;      // "GO-LINE"
+    skuToken: string;  // "GLINE" (used in the sheet SKU)
+    heights: number[]; // allowed FINISHED heights, e.g. [1500, 1800, 2100]
+  }>;
+  // Finished height → channel-post stock height, per mounting method.
+  postHeightByFinished: Record<string, { in_ground: number; sharkfin_baseplate?: number }>;
+  skus: {
+    sheet: SkuTemplate;        // "CB-{profile}-{sheetHeight}-{colour}"
+    rail: SkuTemplate;         // "CB-RAIL-{bayWidth}-{colour}"
+    channelPost: SkuTemplate;  // "CB-CPOST-{postHeight}-{colour}"
+    terminalPost: SkuTemplate; // "XPSG-2700-ST65-{colour}"
+    capSingle: SkuTemplate;    // "CB-POSTCAP-SGL"
+    capDouble: SkuTemplate;    // "CB-POSTCAP-DBL"
+    tekScrewPack: SkuTemplate; // "CB-TS-{colour}-15PK"
+    sharkfin: SkuTemplate;     // "CB-SHARKFIN-{colour}"
+    concrete: SkuTemplate;     // "GROUT-CONCRETE"
+  };
 };
 
 // Mirrors the client `SchemaField` shape (src/components/calculator-v3/SchemaDrivenForm.tsx)

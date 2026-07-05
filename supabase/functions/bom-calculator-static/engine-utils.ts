@@ -284,7 +284,9 @@ export function gateLeafGeometry({ movement, openingWidthMm, hingeGapMm, latchGa
 
 // ─── Product / panel helpers ──────────────────────────────────────────────────
 
-export const MIN_POST_SPACING_MM = 100, MAX_POST_SPACING_MM = 3000;
+// Ceiling raised to 3200 to accommodate the Colorbond 3125mm bay width (which
+// is stored in max_panel_width_mm); slat products never exceed 3000mm spacing.
+export const MIN_POST_SPACING_MM = 100, MAX_POST_SPACING_MM = 3200;
 
 export function clampPostSpacing(value: unknown, fallback = 2600): number {
   const s = Number(value), r = Number.isFinite(s) ? s : fallback;

@@ -5,6 +5,7 @@
 
 import type { CalcContext, CanonicalRun, CanonicalPayload, QtyLine } from "../config/types.ts";
 import { quickScreenCalculator } from "./quickscreen.ts";
+import { colorbondCalculator } from "./colorbond.ts";
 
 type Sink = { warnings: string[]; computed: Record<string, Record<string, Record<string, unknown>>> };
 
@@ -22,6 +23,8 @@ const CALCULATORS: Record<string, Calculator> = {
   BAYG: quickScreenCalculator,
   VS:   quickScreenCalculator,
   XPL:  quickScreenCalculator,
+  // Colorbond steel fencing — bay-based, its own (non-slat) calculator.
+  COLORBOND: colorbondCalculator,
 };
 
 function unsupportedCalculator(productCode: string): Calculator {

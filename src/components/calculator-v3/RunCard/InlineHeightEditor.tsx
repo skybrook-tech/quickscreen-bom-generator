@@ -112,8 +112,8 @@ export function InlineHeightEditor({
       className={`${sharedClasses} w-44`}
     >
       {heightEntries.map((entry) => (
-        <option key={entry.N} value={entry.height}>
-          {entry.height}mm - {entry.N} slats
+        <option key={entry.height} value={entry.height}>
+          {entry.N ? `${entry.height}mm - ${entry.N} slats` : `${entry.height}mm`}
         </option>
       ))}
     </select>

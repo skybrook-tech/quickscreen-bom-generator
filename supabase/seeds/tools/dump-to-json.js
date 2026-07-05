@@ -5,13 +5,13 @@
 // supabase/seeds/schemas/product-file.schema.json. Files emitted:
 //
 //   qshs.json        — QSHS fence + engine rules + QSHS-scoped SKUs/pricing
+//   colorbond.json   — Colorbond fence + Colorbond-scoped SKUs/pricing
 //   vs.json          — VS fence + VS-scoped SKUs/pricing (no engine yet)
 //   xpl.json         — XPL fence + XPL-scoped SKUs/pricing
 //   bayg.json        — BAYG fence + BAYG-scoped SKUs/pricing
 //   gate_legacy.json — v1/v2 'GATE' variant + its SKUs/pricing (no engine)
 //   qs_gate.json     — v3 QS_GATE product + engine rules + QSG/DD SKUs +
 //                      compatible_with_system_types list
-//   other.json       — inactive non-fence families (balustrade, colorbond,
 //                      glass, hamptons, etc.) — product rows only
 //
 // FK UUIDs are translated back to business keys (org_slug at the file
@@ -445,19 +445,7 @@ async function main() {
     }
   }
 
-  // ── Other inactive product families ───────────────────────────────────────
-  {
-    const FENCE_AND_GATE = new Set(['QSHS', 'VS', 'XPL', 'BAYG', 'GATE', 'QSHS_GATE', 'QS_GATE', 'QUICKSCREEN']);
-    const others = allProducts.filter((p) => !FENCE_AND_GATE.has(p.system_type));
-    if (others.length) {
-      const out = { org_slug: ORG_SLUG };
-      out.products = others
-        .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
-        .map((p) => productRow(p, { product_type: 'other' }));
-      writeFile('other.json', out);
-    }
-  }
-
+ 
   console.log('Done.');
 }
 
