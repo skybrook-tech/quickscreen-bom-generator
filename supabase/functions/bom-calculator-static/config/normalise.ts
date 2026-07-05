@@ -238,7 +238,7 @@ export function normaliseVariables(
   const slatGapField = config.fields.find((f) => f.field_key === "slat_gap_mm");
   if (slatGapField) {
     const gapOpts = Array.isArray(slatGapField.options_json) ? slatGapField.options_json : [];
-    const supportsCustom = config.gapRules.allowCustom;
+    const supportsCustom = config.slat?.gapRules.allowCustom ?? false;
     const customGapMode = supportsCustom && next.slat_gap_mode === "custom";
 
     if (customGapMode) {

@@ -32,12 +32,13 @@ export type UiCalculatorConfig = {
     CalculatorConfig["panelRules"],
     "maxPanelWidthMm" | "minPostSpacingMm" | "maxPostSpacingMm"
   >;
-  postRules: Pick<CalculatorConfig["postRules"], "longPostThresholdMm">;
   defaults: CalculatorConfig["defaults"];
   fields: FormFieldDef[];
   formGroups: UiFormGroup[];
   postFixingMaterials: CalculatorConfig["postFixingMaterials"];
-  gapRules: CalculatorConfig["gapRules"];
+  // Flat UI shape: synthesized from the slat block (no-custom default for
+  // slat-less products) so the client never sees the server's config split.
+  gapRules: { allowCustom: boolean; customMinMm: number; customMaxMm: number };
   heightUi: CalculatorConfig["heightUi"];
   heightLadder: { slatHeightDeductionMm: number; entries: DerivedHeight[] };
   gateRules: CalculatorConfig["gateRules"];
@@ -107,15 +108,16 @@ export function resolveUiConfig(
       minPostSpacingMm: config.panelRules.minPostSpacingMm,
       maxPostSpacingMm: config.panelRules.maxPostSpacingMm,
     },
-    postRules: { longPostThresholdMm: config.postRules.longPostThresholdMm },
     defaults: config.defaults,
     fields: resolveFields(config, config.fields, normalised),
     formGroups: config.formGroups,
     postFixingMaterials: config.postFixingMaterials,
-    gapRules: config.gapRules,
+    // Synthesized flat slices: slat-less products get a no-custom-gap default
+    // and a nominal deduction (their `entries` come from heightUi.heightOptions).
+    gapRules: config.slat?.gapRules ?? { allowCustom: false, customMinMm: 1, customMaxMm: 50 },
     heightUi: config.heightUi,
     heightLadder: {
-      slatHeightDeductionMm: config.heightLadder.slatHeightDeductionMm,
+      slatHeightDeductionMm: config.slat?.slatHeightDeductionMm ?? 3,
       entries: heightEntries(config, normalised),
     },
     gateRules: config.gateRules,

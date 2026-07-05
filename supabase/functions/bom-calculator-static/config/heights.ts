@@ -89,6 +89,6 @@ export function heightEntries(
     slatSize as 65 | 90,
     slatGap,
     { minN: 5, maxN: 40, minHeight: 300, maxHeight: 2400 },
-    config.heightLadder.slatHeightDeductionMm,
+    config.slat?.slatHeightDeductionMm ?? 3,
   );
 }

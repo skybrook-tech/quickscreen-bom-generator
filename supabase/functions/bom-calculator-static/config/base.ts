@@ -7,7 +7,7 @@
 // Changing calculation behaviour for Glass Outlet = edit these objects.
 // Adding a new supplier = deep-merge a patch over one of these.
 
-import type { CalculatorConfig, ColorbondConfig, FormFieldDef } from "./types.ts";
+import type { CalculatorConfig, ColorbondConfig, SlatConfig, FormFieldDef } from "./types.ts";
 import qshsFields from "./products/qshs/fields.json" with { type: "json" };
 import vsFields from "./products/vs/fields.json" with { type: "json" };
 import xplFields from "./products/xpl/fields.json" with { type: "json" };
@@ -36,7 +36,6 @@ const STANDARD_COLOURS = ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", 
 const ECONOMY_COLOURS = ["B", "MN", "SM"];
 const ALUMAWOOD_COLOURS = ["KWI", "WRC"];
 const GATE_COLOURS = ["B", "BS", "D", "G", "M", "MN", "P", "PB", "S", "SM", "W"];
-const CSR_CAP_COLOURS = ["B", "G", "MN", "S", "SM", "W"];
 const CSR_PLATE_COLOURS = ["B", "BS", "D", "G", "M", "MN", "S", "SM", "W"];
 
 const COLOUR_NAMES: Record<string, string> = {
@@ -58,7 +57,7 @@ const COLOUR_SWATCHES: Record<string, string> = {
 // These canonical names are PRODUCT-NEUTRAL — they identify WHAT a component
 // is, not which supplier makes it. The resolution layer maps them to real SKUs.
 
-const INTERNAL_SKUS: CalculatorConfig["internalSkus"] = {
+const INTERNAL_SKUS: SlatConfig["internalSkus"] = {
   slat: {
     standard:  "SLAT.STD.{slatSize}.{colour}",
     economy:   "SLAT.ECO.{slatSize}.{colour}",
@@ -137,7 +136,7 @@ const INTERNAL_SKUS: CalculatorConfig["internalSkus"] = {
 
 // ─── Shared geometry & pack constants ────────────────────────────────────────
 
-const GEOMETRY: CalculatorConfig["geometry"] = {
+const GEOMETRY: SlatConfig["geometry"] = {
   slatHeightDeduction:  3,  // (targetH + gap - 3) / (slatDesign + gap)
   slatCutDeduction:     15, // panelWidth - 15
   sideFrameCutDeduction: 3, // actualHeight - 3
@@ -160,7 +159,7 @@ const GEOMETRY: CalculatorConfig["geometry"] = {
   fSectionScrewStartOffset:  30,
 };
 
-const PACK_SIZES: CalculatorConfig["packSizes"] = {
+const PACK_SIZES: SlatConfig["packSizes"] = {
   slatScrews:      50,
   xpScrews:        100,
   spacers:         50,
@@ -174,21 +173,22 @@ const PANEL_RULES_STD: CalculatorConfig["panelRules"] = {
   maxPanelWidthMm:  2600,
   minPostSpacingMm: 100,
   maxPostSpacingMm: 3000,
-  csrThresholds: [
-    { underMm: 2000, count: 0 },
-    { underMm: 4000, count: 1 },
-    { underMm: 6000, count: 2 },
-    { underMm: Infinity, count: 3 },
-  ],
 };
 
-const POST_RULES: CalculatorConfig["postRules"] = {
+const CSR_THRESHOLDS: SlatConfig["csrThresholds"] = [
+  { underMm: 2000, count: 0 },
+  { underMm: 4000, count: 1 },
+  { underMm: 6000, count: 2 },
+  { underMm: Infinity, count: 3 },
+];
+
+const POST_RULES: SlatConfig["postRules"] = {
   longPostThresholdMm:          2400,
   inGroundShortPostMaxHeightMm: 1200,
   shortPostColours:             ["W", "MN"],
 };
 
-const MOUNTING_RULES: CalculatorConfig["mountingRules"] = {
+const MOUNTING_RULES: SlatConfig["mountingRules"] = {
   inGround: {
     defaultGroutSku: "GROUT-RSC",
     bagsPerPost: 1.5,
@@ -207,19 +207,17 @@ const GATE_RULES: CalculatorConfig["gateRules"] = {
     slidingVertical: 6166,
   },
   doubleSwingMaxLeafWidthMm: 2100,
-  heightMinMm: 600,
-  heightMaxMm: 2100,
   supported: true,
   defaultInfill: "horizontal",
   gateProductCode: "QS_GATE",
 };
 
-const GAP_RULES_SPACER_ONLY: CalculatorConfig["gapRules"] = {
+const GAP_RULES_SPACER_ONLY: SlatConfig["gapRules"] = {
   allowCustom: false,
   customMinMm: 1,
   customMaxMm: 50,
 };
-const GAP_RULES_CUSTOM: CalculatorConfig["gapRules"] = {
+const GAP_RULES_CUSTOM: SlatConfig["gapRules"] = {
   allowCustom: true,
   customMinMm: 1,
   customMaxMm: 50,
@@ -310,29 +308,13 @@ const POST_FIXING_MATERIALS: CalculatorConfig["postFixingMaterials"] = [
   { sku: "GROUT-SIKA", label: "Sika HES grout", description: "20kg premium water-resistant HES grout" },
 ];
 
-// ─── Per-product base configs ─────────────────────────────────────────────────
+// ─── Shared slat-strategy block ──────────────────────────────────────────────
+// Everything only the QuickScreen calculator (incl. its gate path) reads.
+// Products that are not slat systems (Colorbond) omit `slat` entirely.
 
-export const BASE_QSHS_CONFIG: CalculatorConfig = {
-  productCode: "QSHS",
-  configVersion: "1.0.0",
-  strategy: { fence: "horizontal_slat", gate: "qsg_swing_sliding" },
-  colours: {
-    standard: STANDARD_COLOURS,
-    economy: ECONOMY_COLOURS,
-    alumawood: ALUMAWOOD_COLOURS,
-    gate: GATE_COLOURS,
-    csrCap: CSR_CAP_COLOURS,
-    csrPlate: CSR_PLATE_COLOURS,
-    post: STANDARD_COLOURS,
-    fallback: "MN",
-    names: COLOUR_NAMES,
-    swatches: COLOUR_SWATCHES,
-    louvreBracketFallback: "MN",
-  },
-  display: DISPLAY_QSHS,
-  finishFamilies: ["standard", "economy", "alumawood"],
+const SLAT_STD: SlatConfig = {
+  colours: { csrPlate: CSR_PLATE_COLOURS, louvreBracketFallback: "MN" },
   gapRules: GAP_RULES_CUSTOM,
-  heightUi: HEIGHT_UI_LADDER,
   internalSkus: INTERNAL_SKUS,
   stockLengths: {
     slat:  { standard: 6100, economy: 6500, awood: 5800 },
@@ -342,16 +324,36 @@ export const BASE_QSHS_CONFIG: CalculatorConfig = {
   },
   geometry: GEOMETRY,
   packSizes: PACK_SIZES,
-  panelRules: PANEL_RULES_STD,
+  csrThresholds: CSR_THRESHOLDS,
+  economySlatSkuPrefix: "XP-6500-E65",
   postRules: POST_RULES,
   mountingRules: MOUNTING_RULES,
-  postFixingMaterials: POST_FIXING_MATERIALS,
-  heightLadder: { slatHeightDeductionMm: GEOMETRY.slatHeightDeduction },
-  gateRules: GATE_RULES,
-  defaults: {
-    slatSizeMm: 65, slatGapMm: 9, targetHeightMm: 1800,
-    postSizeMm: 50, finishFamily: "standard", colour: "B", mountingType: "in_ground",
+  slatHeightDeductionMm: GEOMETRY.slatHeightDeduction,
+};
+
+// ─── Per-product base configs ─────────────────────────────────────────────────
+
+export const BASE_QSHS_CONFIG: CalculatorConfig = {
+  productCode: "QSHS",
+  configVersion: "1.0.0",
+  strategy: { fence: "horizontal_slat" },
+  colours: {
+    standard: STANDARD_COLOURS,
+    economy: ECONOMY_COLOURS,
+    alumawood: ALUMAWOOD_COLOURS,
+    gate: GATE_COLOURS,
+    fallback: "MN",
+    names: COLOUR_NAMES,
+    swatches: COLOUR_SWATCHES,
   },
+  display: DISPLAY_QSHS,
+  finishFamilies: ["standard", "economy", "alumawood"],
+  heightUi: HEIGHT_UI_LADDER,
+  panelRules: PANEL_RULES_STD,
+  postFixingMaterials: POST_FIXING_MATERIALS,
+  gateRules: GATE_RULES,
+  defaults: { targetHeightMm: 1800, colour: "B", mountingType: "in_ground" },
+  slat: SLAT_STD,
   fields: PRODUCT_FIELD_FILES.QSHS.fields,
   formGroups: PRODUCT_FIELD_FILES.QSHS.fieldGroups,
 };
@@ -359,12 +361,11 @@ export const BASE_QSHS_CONFIG: CalculatorConfig = {
 export const BASE_BAYG_CONFIG: CalculatorConfig = {
   ...BASE_QSHS_CONFIG,
   productCode: "BAYG",
-  strategy: { fence: "panel", gate: "qsg_swing_sliding" },
+  strategy: { fence: "panel" },
   panelRules: { ...PANEL_RULES_STD, maxPanelWidthMm: 3000 },
-  defaults: { ...BASE_QSHS_CONFIG.defaults, colour: "B" },
   display: DISPLAY_BAYG,
   finishFamilies: ["standard"],
-  gapRules: GAP_RULES_SPACER_ONLY,
+  slat: { ...SLAT_STD, gapRules: GAP_RULES_SPACER_ONLY },
   gateRules: { ...GATE_RULES, supported: false },
   fields: PRODUCT_FIELD_FILES.BAYG.fields,
   formGroups: PRODUCT_FIELD_FILES.BAYG.fieldGroups,
@@ -373,8 +374,7 @@ export const BASE_BAYG_CONFIG: CalculatorConfig = {
 export const BASE_VS_CONFIG: CalculatorConfig = {
   ...BASE_QSHS_CONFIG,
   productCode: "VS",
-  strategy: { fence: "vertical_slat", gate: "qsg_swing_sliding" },
-  defaults: { ...BASE_QSHS_CONFIG.defaults, slatGapMm: 20 },
+  strategy: { fence: "vertical_slat" },
   display: DISPLAY_VS,
   heightUi: HEIGHT_UI_VS_FREEFORM,
   gateRules: { ...GATE_RULES, defaultInfill: "vertical" },
@@ -385,11 +385,10 @@ export const BASE_VS_CONFIG: CalculatorConfig = {
 export const BASE_XPL_CONFIG: CalculatorConfig = {
   ...BASE_QSHS_CONFIG,
   productCode: "XPL",
-  strategy: { fence: "horizontal_slat", gate: "qsg_swing_sliding" },
-  defaults: { ...BASE_QSHS_CONFIG.defaults, slatSizeMm: 65 },
+  strategy: { fence: "horizontal_slat" },
   display: DISPLAY_XPL,
   finishFamilies: ["standard", "alumawood"],
-  gapRules: GAP_RULES_SPACER_ONLY,
+  slat: { ...SLAT_STD, gapRules: GAP_RULES_SPACER_ONLY },
   fields: PRODUCT_FIELD_FILES.XPL.fields,
   formGroups: PRODUCT_FIELD_FILES.XPL.fieldGroups,
 };
@@ -406,26 +405,46 @@ export const BASE_QS_GATE_CONFIG: CalculatorConfig = {
 };
 
 // Colorbond steel fencing. Bay-based, non-slat — its own registered calculator
-// (calculators/colorbond.ts) reads `colorbond`. It spreads BASE_QSHS_CONFIG only
-// to satisfy the slat-shaped required blocks (internalSkus/stockLengths/geometry/
-// heightLadder/packSizes) which the Colorbond calculator never reads.
+// (calculators/colorbond.ts) reads `colorbond`. Built standalone: it carries NO
+// slat block (the god-type split's payoff).
 export const BASE_COLORBOND_CONFIG: CalculatorConfig = {
-  ...BASE_QSHS_CONFIG,
   productCode: "COLORBOND",
-  strategy: { fence: "colorbond_sheet", gate: "qsg_swing_sliding" },
-  colours: { ...BASE_QSHS_CONFIG.colours, standard: COLORBOND_COLOURS, fallback: "MN" },
+  configVersion: "1.0.0",
+  strategy: { fence: "colorbond_sheet" },
+  colours: {
+    standard: COLORBOND_COLOURS,
+    economy: [],
+    alumawood: [],
+    gate: COLORBOND_COLOURS,
+    fallback: "MN",
+    names: COLOUR_NAMES,
+    swatches: COLOUR_SWATCHES,
+  },
   display: DISPLAY_COLORBOND,
   finishFamilies: ["standard"],
-  gapRules: GAP_RULES_SPACER_ONLY,
   heightUi: HEIGHT_UI_COLORBOND,
   // Bay widths go up to 3125mm; keep spacing headroom above that.
   panelRules: { ...PANEL_RULES_STD, maxPanelWidthMm: 3125, maxPostSpacingMm: 3200 },
+  postFixingMaterials: POST_FIXING_MATERIALS,
   gateRules: { ...GATE_RULES, supported: false },
-  defaults: {
-    slatSizeMm: 65, slatGapMm: 0, targetHeightMm: 1800,
-    postSizeMm: 65, finishFamily: "standard", colour: "MN", mountingType: "in_ground",
-  },
+  defaults: { targetHeightMm: 1800, colour: "MN", mountingType: "in_ground" },
   colorbond: COLORBOND_DATA,
+  // Depot availability from the catalogue (p10-11): GO-Line = Brisbane & Gold
+  // Coast; GO-Trim = Newcastle only; GO-Zag = all three (no warning).
+  extraRules: [
+    {
+      id: "colorbond-goline-depots",
+      type: "variable_warning",
+      when: { variable: "profile", in: ["GO-LINE"] },
+      message: "GO-Line infill sheets are stocked at the Brisbane & Gold Coast depots only — confirm availability for other regions.",
+    },
+    {
+      id: "colorbond-gotrim-depots",
+      type: "variable_warning",
+      when: { variable: "profile", in: ["GO-TRIM"] },
+      message: "GO-Trim infill sheets are stocked at the Newcastle depot only — confirm availability for other regions.",
+    },
+  ],
   fields: PRODUCT_FIELD_FILES.COLORBOND.fields,
   formGroups: PRODUCT_FIELD_FILES.COLORBOND.fieldGroups,
 };

@@ -25,7 +25,6 @@ export type CalculatorConfig = {
     // its own registered calculator (calculators/colorbond.ts) — it never enters
     // quickScreenCalculator's slat branches.
     fence: "horizontal_slat" | "vertical_slat" | "panel" | "colorbond_sheet";
-    gate: "qsg_swing_sliding";
   };
 
   // Colour availability & fallback. Currently in code; will move to a DB table
@@ -35,13 +34,9 @@ export type CalculatorConfig = {
     economy: string[];   // economy finish subset (e.g. ["B","MN","SM"])
     alumawood: string[]; // finish-specific (KWI, WRC)
     gate: string[];      // allowed on gate components
-    csrCap: string[];    // subset available for CSR cap SKUs
-    csrPlate: string[];  // subset available for CSR plate SKUs (XP-BTP-{c})
-    post: string[];      // subset available for post accessories
     fallback: string;    // e.g. "MN" — used when colour not in set
     names: Record<string, string>; // display names: { B: "Black Satin", ... }
     swatches: Record<string, string>; // hex values: { B: "#1a1a1a", ... }
-    louvreBracketFallback: string; // colour used when louvre bracket SKU absent
   };
 
   // Display metadata for landing/selector/run-header surfaces. Replaces the
@@ -57,14 +52,6 @@ export type CalculatorConfig = {
   // option list). Replaces client `finishOptionsForSystem`.
   finishFamilies: string[];
 
-  // Slatted-gap capability. Replaces `supportsCustomGap` /
-  // `CUSTOM_GAP_MIN_MM` / `CUSTOM_GAP_MAX_MM` in src/lib/gapChoices.ts.
-  gapRules: {
-    allowCustom: boolean;
-    customMinMm: number;
-    customMaxMm: number;
-  };
-
   // Height picker UI mode. Replaces `productCode === "VS"` branches across
   // SegmentRow / InlineHeightEditor. Aligns with the v4 `target_height_ui`
   // concept (src/lib/targetHeightOptions.ts).
@@ -76,6 +63,121 @@ export type CalculatorConfig = {
     freeformMaxMm?: number;
     freeformStepMm?: number;
     heightOptions?: number[]; // used when mode === "options"
+  };
+
+  panelRules: {
+    maxPanelWidthMm: number;
+    minPostSpacingMm: number;
+    maxPostSpacingMm: number;
+  };
+
+  // Post-fixing/grout material catalogue offered by the post_fixing_select
+  // control (in-ground mounting only). UI-safe — sku/label/description, no
+  // pricing. Overridable per supplier if their grout range differs.
+  postFixingMaterials: Array<{ sku: string; label: string; description: string }>;
+
+  // QS_GATE opening-width/height bounds enforced client-side in
+  // src/lib/gateConstraints.ts (v3). Only meaningful on the QS_GATE config
+  // (fence configs carry the same default values but never read them).
+  // src/lib/gateFenceResolve.ts carries an unwired duplicate of the height
+  // bounds but is v4-only (calculator-v4 is slated for removal) — not
+  // pointed at this config. No live server-side enforcement of these
+  // bounds yet — see AGENTS.md business rules / phase-6 plan notes.
+  gateRules: {
+    maxWidthMm: {
+      pedestrianHorizontal: number;
+      pedestrianVertical: number;
+      slidingHorizontal: number;
+      slidingVertical: number;
+    };
+    doubleSwingMaxLeafWidthMm: number;
+    // Whether gates can be added to runs of this product (BAYG → false).
+    // Replaces the `!isBayg` gate-exclusion checks in RunCard/RunCardSettings.
+    supported: boolean;
+    // Default gate infill orientation for this fence system (VS → vertical).
+    // Replaces the `isVS` arg to `defaultGateBuildForMovement`.
+    defaultInfill: "horizontal" | "vertical";
+    // Product code used when creating/loading gate segments for this fence system.
+    gateProductCode: string;
+  };
+
+  // Cross-product defaults actually read by calculators (colorbond reads
+  // targetHeightMm + mountingType; colour is the generic seed). Slat-specific
+  // defaults flow through fields[].default_value_json, not here.
+  defaults: {
+    targetHeightMm: number;
+    colour: string;
+    mountingType: string;
+  };
+
+  // Form field definitions for the v3 run/section/gate UI. Single source of
+  // truth for what the client renders — see config/products/<code>/fields.json
+  // for the actual field array. The engine itself ignores this section
+  // entirely. Each field carries a `settings_for` list declaring which UI
+  // surfaces it renders on: "run" (Run Settings, also seeds run.variables
+  // defaults) and/or "segment" (per-segment override UI). Segments inherit
+  // run values unless they carry their own override — `settings_for` only
+  // governs visibility, not merge semantics.
+  fields: FormFieldDef[];
+
+  // Non-collapsible group headings the client renders above buckets of fields
+  // (see SchemaSettingsForm). A field's `group` key must match one of these.
+  // Fields without a group are schema-only (declared but not rendered).
+  formGroups: Array<{ key: string; label: string; sort_order: number }>;
+
+  // Typed extension rules that suppliers can parameterise.
+  // New rule TYPES are added in code + tested; suppliers only supply values.
+  extraRules?: Array<
+    | {
+        id: string;
+        type: "extra_component_above_height";
+        internalSku: string;
+        aboveHeightMm: number;
+        qtyPerPanel: number;
+        notes?: string;
+      }
+    | {
+        id: string;
+        type: "warning";
+        when: { field: "panelWidthMm" | "gateWidthMm"; op: ">" | ">=" | "<"; value: number };
+        message: string;
+      }
+    | {
+        id: string;
+        // Fires when a run/segment variable matches one of the listed values
+        // (string-coerced). e.g. depot-availability notes keyed on `profile`.
+        type: "variable_warning";
+        when: { variable: string; in: Array<string | number | boolean> };
+        message: string;
+      }
+  >;
+
+  // Per-strategy blocks — exactly one should be present per product.
+  // Slat screening (QSHS/VS/XPL/BAYG + the shared QS gate path):
+  slat?: SlatConfig;
+
+  // Colorbond steel-fencing data (bay-based, non-slat). Only present on the
+  // COLORBOND config; read exclusively by calculators/colorbond.ts. Slat products
+  // leave this undefined. See docs / the catalogue recipe for the source rules.
+  colorbond?: ColorbondConfig;
+};
+
+// Slat-screening strategy block — everything only the QuickScreen calculator
+// (calculators/quickscreen.ts, including its gate path) reads. Products that
+// are not slat systems (e.g. Colorbond) simply omit this block.
+export type SlatConfig = {
+  // Slat-only colour subsets.
+  colours: {
+    csrPlate: string[];            // subset available for CSR plate SKUs (XP-BTP-{c})
+    louvreBracketFallback: string; // colour used when louvre bracket SKU absent
+  };
+
+  // Slatted-gap capability. Replaces `supportsCustomGap` /
+  // `CUSTOM_GAP_MIN_MM` / `CUSTOM_GAP_MAX_MM` in src/lib/gapChoices.ts.
+  gapRules: {
+    allowCustom: boolean;
+    customMinMm: number;
+    customMaxMm: number;
   };
 
   // Internal SKU templates. The calculator substitutes {colour}, {slatSize},
@@ -206,13 +308,12 @@ export type CalculatorConfig = {
     screwWasteFactor: number; // e.g. 1.01
   };
 
-  panelRules: {
-    maxPanelWidthMm: number;
-    minPostSpacingMm: number;
-    maxPostSpacingMm: number;
-    // csrPerPanel thresholds: [{underMm: 2000, count:0}, {underMm:4000, count:1}, ...]
-    csrThresholds: Array<{ underMm: number; count: number }>;
-  };
+  // csrPerPanel thresholds: [{underMm: 2000, count:0}, {underMm:4000, count:1}, ...]
+  csrThresholds: Array<{ underMm: number; count: number }>;
+
+  // Supplier-SKU prefix identifying economy slats sold in fixed packs
+  // (pack size = packSizes.economySlat). Drives applyEconomySlatPackRule.
+  economySlatSkuPrefix: string;
 
   postRules: {
     longPostThresholdMm: number;       // above this height → use "tall" stock
@@ -231,92 +332,9 @@ export type CalculatorConfig = {
     };
   };
 
-  // Post-fixing/grout material catalogue offered by the post_fixing_select
-  // control (in-ground mounting only). UI-safe — sku/label/description, no
-  // pricing. Overridable per supplier if their grout range differs.
-  postFixingMaterials: Array<{ sku: string; label: string; description: string }>;
-
-  // Minimal, UI-safe slice of `geometry` — the achieved-height ladder formula
-  // ((slat + gap) * N - gap + slatHeightDeductionMm) needs this one constant
-  // client-side to derive selectable heights. The rest of `geometry` stays
-  // proprietary (see AGENTS.md §10) and is never projected.
-  heightLadder: { slatHeightDeductionMm: number };
-
-  // QS_GATE opening-width/height bounds enforced client-side in
-  // src/lib/gateConstraints.ts (v3). Only meaningful on the QS_GATE config
-  // (fence configs carry the same default values but never read them).
-  // src/lib/gateFenceResolve.ts carries an unwired duplicate of the height
-  // bounds but is v4-only (calculator-v4 is slated for removal) — not
-  // pointed at this config. No live server-side enforcement of these
-  // bounds yet — see AGENTS.md business rules / phase-6 plan notes.
-  gateRules: {
-    maxWidthMm: {
-      pedestrianHorizontal: number;
-      pedestrianVertical: number;
-      slidingHorizontal: number;
-      slidingVertical: number;
-    };
-    doubleSwingMaxLeafWidthMm: number;
-    heightMinMm: number;
-    heightMaxMm: number;
-    // Whether gates can be added to runs of this product (BAYG → false).
-    // Replaces the `!isBayg` gate-exclusion checks in RunCard/RunCardSettings.
-    supported: boolean;
-    // Default gate infill orientation for this fence system (VS → vertical).
-    // Replaces the `isVS` arg to `defaultGateBuildForMovement`.
-    defaultInfill: "horizontal" | "vertical";
-    // Product code used when creating/loading gate segments for this fence system.
-    gateProductCode: string;
-  };
-
-  defaults: {
-    slatSizeMm: number;
-    slatGapMm: number;
-    targetHeightMm: number;
-    postSizeMm: number;
-    finishFamily: string;
-    colour: string;
-    mountingType: string;
-  };
-
-  // Form field definitions for the v3 run/section/gate UI. Single source of
-  // truth for what the client renders — see config/products/<code>/fields.json
-  // for the actual field array. The engine itself ignores this section
-  // entirely. Each field carries a `settings_for` list declaring which UI
-  // surfaces it renders on: "run" (Run Settings, also seeds run.variables
-  // defaults) and/or "segment" (per-segment override UI). Segments inherit
-  // run values unless they carry their own override — `settings_for` only
-  // governs visibility, not merge semantics.
-  fields: FormFieldDef[];
-
-  // Non-collapsible group headings the client renders above buckets of fields
-  // (see SchemaSettingsForm). A field's `group` key must match one of these.
-  // Fields without a group are schema-only (declared but not rendered).
-  formGroups: Array<{ key: string; label: string; sort_order: number }>;
-
-  // Typed extension rules that suppliers can parameterise.
-  // New rule TYPES are added in code + tested; suppliers only supply values.
-  extraRules?: Array<
-    | {
-        id: string;
-        type: "extra_component_above_height";
-        internalSku: string;
-        aboveHeightMm: number;
-        qtyPerPanel: number;
-        notes?: string;
-      }
-    | {
-        id: string;
-        type: "warning";
-        when: { field: "panelWidthMm" | "gateWidthMm"; op: ">" | ">=" | "<"; value: number };
-        message: string;
-      }
-  >;
-
-  // Colorbond steel-fencing data (bay-based, non-slat). Only present on the
-  // COLORBOND config; read exclusively by calculators/colorbond.ts. Slat products
-  // leave this undefined. See docs / the catalogue recipe for the source rules.
-  colorbond?: ColorbondConfig;
+  // The achieved-height ladder deduction ((slat + gap) * N - gap + this).
+  // Projected to the client inside the flat `heightLadder` UI slice.
+  slatHeightDeductionMm: number;
 };
 
 // Colorbond steel fencing — SKU templates + quantity rules for the bay-based

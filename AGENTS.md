@@ -25,7 +25,7 @@ Staff and trade customers can:
 
 **Phases 0–7 are complete (Phase 7 included V1 removal). The live calculator is the "static engine" — a code-configured (not DB-driven) BOM engine.** The React app is the primary codebase.
 
-> **⚠️ Architecture note.** An earlier plan built a *fully data-driven* engine (`bom-calculator` reading rules from seeded Postgres tables). **That is NOT the live path** and has been parked — see [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/). The live engine is `bom-calculator-static` + `get-calculator-config`, configured by TypeScript + per-product JSON **field files** under `supabase/functions/bom-calculator-static/config/`. The canonical live-architecture reference is [`docs/configurable-static-calculator-plan.md`](docs/configurable-static-calculator-plan.md).
+> **⚠️ Architecture note.** An earlier plan built a *fully data-driven* engine (`bom-calculator` reading rules from seeded Postgres tables). That approach was abandoned and **its code has been deleted** — specs remain in [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/); its rule tables persist only until migration compaction. The live engine is `bom-calculator-static` + `get-calculator-config`, configured by TypeScript + per-product JSON **field files** under `supabase/functions/bom-calculator-static/config/`. The canonical live-architecture reference is [`docs/configurable-static-calculator-plan.md`](docs/configurable-static-calculator-plan.md).
 
 - See `docs/tasks.md` for the full current task status.
 
@@ -75,18 +75,20 @@ v2 was retired in an earlier cleanup. v1 was removed — the `/new` route, `Main
 
 Source lives in `src/` with these top-level directories: `components/` (auth, bom, calculator, calculator-v3, canvas, contact, fence, gate, layout, quote, shared, wizard), `context/`, `hooks/`, `lib/`, `pages/`, `schemas/`, `types/`, `utils/`.
 
-Edge functions are in `supabase/functions/`. **Live:** `bom-calculator-static` (the BOM engine), `get-calculator-config` (resolves field/option config for the client), `search-products`. **Parked/dead** (no client references, kept for possible revival): `bom-calculator` (the fully data-driven engine) and `calculate-pricing` — see [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/). `_shared` holds cross-function helpers.
+Edge functions are in `supabase/functions/`: `bom-calculator-static` (the BOM engine), `get-calculator-config` (resolves field/option config for the client), `search-products`, plus `_shared` (auth + CORS helpers). The old data-driven engine functions (`bom-calculator`, `calculate-pricing`) have been **deleted** — specs live in [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/).
 
 The live engine's configuration lives entirely under `supabase/functions/bom-calculator-static/`:
 - `config/base.ts` — `BASE_CONFIGS` (one `CalculatorConfig` per product) + `PRODUCT_FIELD_FILES` registry
-- `config/products/<code>/fields.json` — per-product field/option definitions (QSHS, VS, XPL, BAYG, QS_GATE)
-- `config/resolve.ts`, `config/normalise.ts`, `config/merge.ts` — resolve base config + variables into the UI-safe projection returned by `get-calculator-config`
-- `calculators/registry.ts` + `calculators/quickscreen.ts` — product-agnostic calculators keyed by `productCode`
-- `engine.ts` — component catalogue, aggregation, pricing
+- `config/types.ts` — **`CalculatorConfig` is a common core + optional per-strategy blocks**: `slat?: SlatConfig` (internal SKUs, stock lengths, geometry, pack sizes, post/mounting/gap rules — everything only the QuickScreen calculator reads) and `colorbond?: ColorbondConfig`. A new product kind adds its own optional block; it never carries another strategy's fields.
+- `config/products/<code>/fields.json` — per-product field/option definitions (QSHS, VS, XPL, BAYG, QS_GATE, COLORBOND)
+- `config/resolve.ts`, `config/normalise.ts`, `config/merge.ts` — resolve base config + variables into the UI-safe projection returned by `get-calculator-config`. The client wire shape (`UiCalculatorConfig`) stays FLAT — slat-only slices (`gapRules`, `heightLadder`) are synthesized with defaults for slat-less products, so the client never sees the server's config split.
+- `calculators/registry.ts` + `calculators/quickscreen.ts` + `calculators/colorbond.ts` — calculators keyed by `productCode`; each guards on its strategy block (`cfg.slat` / `cfg.colorbond`)
+- `calculators/shared.ts` — `applyExtraRules`, the **typed extension hook**: new rule TYPES (e.g. `extra_component_above_height`, `warning`, `variable_warning`) are added in code with tests; products/suppliers only supply values via `config.extraRules` (e.g. Colorbond depot-availability warnings). Never reintroduce a generic expression language here.
+- `engine.ts` — aggregation, pricing, BOM metadata, suggested accessories (slat-gated). **DB-only**: components + pricing come exclusively from the DB ctx; with no ctx (offline/tests) runs are UNPRICED ($0, correct SKUs/quantities). The former "synthetic" catalogue lives in `engine_test_fixtures.ts` (test-only) so the snapshot suite stays price-bearing.
 
-Database migrations are in `supabase/migrations/` (001–010 are shared catalog + pricing infrastructure; 011–014, 018–022 relate to the **parked** data-driven engine — see the deprecated docs — except migration 022's product flattening, which the catalog still uses).
+Database migrations are in `supabase/migrations/` (001–010 are shared catalog + pricing infrastructure; the rule tables from 011–014 belonged to the deleted data-driven engine and are slated for removal in a future **migration compaction** — 018's `quote_runs`/`quote_run_segments` are LIVE (quote persistence), and 022's product flattening is used by the catalog).
 
-**DB seeds** (via `supabase db reset`): `supabase/seeds/organizations.sql` (the org) plus catalog/pricing rows. The **per-product JSON files** under `supabase/seeds/glass-outlet/products/*.json` (`qshs.json`, `qs_gate.json`, etc.), the `seed-products.js` upserter, and `docs/_deprecated/data-driven-approach/seed-data-mapping-spec.md` feed the **parked** data-driven engine — they are NOT how the live calculator is configured. To change live calculation behaviour, edit the static engine config (above), not these seeds.
+**DB seeds** (via `supabase db reset`): `supabase/seeds/organizations.sql` (the org) plus the **per-product JSON files** under `supabase/seeds/glass-outlet/products/*.json` and `price_catalogue.json`, applied by `seed-products.js`. The LIVE sections are `products`, `product_components`, and `pricing_rules` (the static engine reads these from the DB). The rule-engine sections still present in older files (`rule_sets`, `product_rules`, selectors, companions, …) feed dead tables and will be stripped during migration compaction. To change live calculation behaviour, edit the static engine config (above); to change catalogue/pricing facts, edit the seed JSON.
 
 `seed-auth.js` and `seed-images.js` handle auth users and image uploads respectively.
 
@@ -149,7 +151,7 @@ Every table includes `org_id`. RLS policies use `public.user_org_id()` (a `SECUR
 | 008       | `pricing_rules_with_sku`    | View joining `pricing_rules` + `product_components`. Used by edge functions for sku-based lookups. No RLS (service role only).                       |
 | 009       | `products` + image_url      | Adds `image_url` to products. Populated via `seed-images.js`.                                                                                        |
 | 010       | `products` RLS              | `authenticated` SELECT on products (metadata only, no pricing).                                                                                      |
-| 011–014   | `rule_sets`/`rule_versions`, `product_rules`/`_constraints`/`_validations`/`_variables`, `product_component_selectors`, `product_companion_rules`/`product_warnings` | **Parked data-driven engine** — tables exist but the live calculator does not read them. See [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/). |
+| 011–014   | `rule_sets`/`rule_versions`, `product_rules`/`_constraints`/`_validations`/`_variables`, `product_component_selectors`, `product_companion_rules`/`product_warnings` | **Dead** (the data-driven engine was deleted) — tables remain only until migration compaction. See [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/). |
 | 018       | `quote_runs`, `quote_run_segments` | Persistent canonical payload for quotes. FK → `quotes.id`. RLS matches `quotes` pattern.                                                   |
 | 019       | `user_role` enum            | Adds `admin` value for trace/debug panel access.                                                                                                     |
 
@@ -210,9 +212,9 @@ See [`docs/configurable-static-calculator-plan.md`](docs/configurable-static-cal
 
 `POST /functions/v1/get-calculator-config` — accepts `{ productCode?, variables? }`, returns the resolved `UiCalculatorConfig` (fields with concrete `options_json`, `strategy`, `gapRules`, `panelRules`, `gateRules`, height ladder, and `normalisedVariables`). Reads `BASE_CONFIGS` + per-product field files, resolves against the passed variables, and strips authoring-only keys. Consumed by `src/hooks/useCalculatorConfig.ts`; it is the single source of truth for form fields and option lists in the client. `useRunReconciliation` uses its `normalisedVariables` to correct run variables after load — so no client-side per-product normalisation is needed.
 
-### Parked functions
+### Removed functions
 
-`bom-calculator` (the fully data-driven engine) and `calculate-pricing` are **not called by the client**. Their pipeline specs live in [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/). Do not wire the client to them without a deliberate decision to revive the data-driven approach.
+`bom-calculator` (the fully data-driven engine) and `calculate-pricing` have been **deleted from the repo** (2026-07). Their pipeline specs live in [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/) for reference. Their DB rule tables (migrations 011–014) still exist and will be dropped in a future migration compaction.
 
 ---
 
@@ -271,7 +273,7 @@ Responsive: desktop-first. Canvas section hidden on mobile (`md:block`). BOM tab
 
 ## 11. Development Phases
 
-**v1 Phases 0–7 complete** (Phase 7 included V1 code removal). The live calculator is the static engine; the fully data-driven engine was parked (see [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/)). See `docs/tasks.md` for current status.
+**v1 Phases 0–7 complete** (Phase 7 included V1 code removal). The live calculator is the static engine; the fully data-driven engine was removed (see [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/)). See `docs/tasks.md` for current status.
 
 ---
 
@@ -281,12 +283,12 @@ Adding a fence system (e.g. HSSG, QSGH, a patio-as-fence) touches these registra
 
 **Edge (the calculation):**
 1. `supabase/functions/bom-calculator-static/config/products/<code>/fields.json` — field + option definitions (copy an existing family as the template).
-2. `config/base.ts` — register the field file in `PRODUCT_FIELD_FILES`, add a `BASE_<CODE>_CONFIG` (defaults, `strategy`, panel/gate rules, display), and add it to `BASE_CONFIGS`.
-3. `calculators/registry.ts` — map the `productCode` to a calculator. Reuse `quickScreenCalculator` if `strategy.fence` fits (horizontal/vertical slat or panel); otherwise add a new calculator file.
-4. `engine.ts` — extend the max-panel-width map and tag any new `COMPONENTS` rows with the new `system_types`.
-5. `supabase/functions/_shared/types.ts` — add the code to the `SystemType` union.
+2. `config/types.ts` — if it's a new *kind* of product, add an optional per-strategy block (like `slat?` / `colorbond?`) holding its SKU templates + quantity rules; slat-likes reuse `SlatConfig`.
+3. `config/base.ts` — register the field file in `PRODUCT_FIELD_FILES`, add a `BASE_<CODE>_CONFIG` (core fields + its strategy block; no other strategy's blocks), and add it to `BASE_CONFIGS`.
+4. `calculators/registry.ts` — map the `productCode` to a calculator. Reuse `quickScreenCalculator` if `strategy.fence` fits (it guards on `cfg.slat`); otherwise add a new calculator file that guards on its own block. Use `calculators/shared.ts` `applyExtraRules` for typed warnings/add-ons.
+5. Components + pricing are **seed data**, not engine code: add rows to the product's seed JSON (`supabase/seeds/glass-outlet/products/<code>.json`) and reseed.
 
-**Client (display only — no calculation logic):** the calculator UI is product-agnostic (it renders the resolved config). The only per-product client touchpoints are the **label maps**: `src/lib/displayNames.ts`, `systemDisplay.ts`, `constants.ts`, `slugLabels.ts`, `installVideos.ts`. (`src/lib/productOptionRules.ts` still holds a legacy per-product normaliser core being retired — do not extend it.)
+**Client (display only — no calculation logic):** the calculator UI is product-agnostic (it renders the resolved config). The only per-product client touchpoints are the **label maps**: `src/lib/displayNames.ts`, `systemDisplay.ts`, `constants.ts`, `slugLabels.ts`, `installVideos.ts`.
 
 **Gates** are a separate product (`QS_GATE`) shared across fences via `compatible_with_system_types`; a new fence pairs with the existing gate, no new gate config needed unless the hardware differs.
 
@@ -328,7 +330,7 @@ VITE_SUPABASE_ANON_KEY=your-local-anon-key
 
 Cypress E2E coverage is a follow-up phase. `SchemaDrivenForm` emits `data-testid={field_key}` so future selectors can be written against the `/fence-calculator` route.
 
-> The Deno tests for the parked `bom-calculator` function (`index_test.ts`, TC-V3-1…8) belong to the data-driven engine — see [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/).
+> The data-driven engine and its Deno tests (TC-V3-1…8) were deleted with the function — see [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/).
 
 ---
 

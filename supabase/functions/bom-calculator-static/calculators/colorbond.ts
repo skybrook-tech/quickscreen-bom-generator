@@ -11,6 +11,7 @@ import type {
   CalcContext, CanonicalRun, CanonicalPayload, QtyLine,
 } from "../config/types.ts";
 import { isku, toNumber } from "../engine-utils.ts";
+import { applyExtraRules } from "./shared.ts";
 
 type Sink = {
   warnings: string[];
@@ -135,6 +136,16 @@ export function colorbondCalculator(
       category: "fixing", quantity: cb.tekPacksPerBay * numBays, unit: "pack",
       notes: `tek-screw pack (15) per bay × ${numBays} bay(s)`,
     });
+
+    // Extra rules (typed extension hook — depot-availability warnings etc.)
+    applyExtraRules(cfg.extraRules, {
+      runId: run.runId,
+      segmentId: segId,
+      actualHeightMm: finished,
+      numPanels: numBays,
+      panelWidthMm: bayWidth,
+      variables: vars,
+    }, lines, sink.warnings);
   }
 
   // Terminal 65×65 steel posts (run ends + corners) — carry the run colour.

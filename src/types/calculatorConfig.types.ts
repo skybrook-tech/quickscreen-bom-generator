@@ -25,7 +25,7 @@ export type UiCalculatorConfig = {
     description: string;
   };
   strategy: {
-    fence: "horizontal_slat" | "vertical_slat" | "panel";
+    fence: "horizontal_slat" | "vertical_slat" | "panel" | "colorbond_sheet";
   };
   colours: {
     standard: string[];
@@ -42,15 +42,8 @@ export type UiCalculatorConfig = {
     minPostSpacingMm: number;
     maxPostSpacingMm: number;
   };
-  postRules: {
-    longPostThresholdMm: number;
-  };
   defaults: {
-    slatSizeMm: number;
-    slatGapMm: number;
     targetHeightMm: number;
-    postSizeMm: number;
-    finishFamily: string;
     colour: string;
     mountingType: string;
   };
@@ -63,10 +56,12 @@ export type UiCalculatorConfig = {
     customMaxMm: number;
   };
   heightUi: {
-    mode: "ladder" | "freeform";
+    // "options" = discrete manufactured heights (heightOptions), e.g. Colorbond.
+    mode: "ladder" | "freeform" | "options";
     freeformMinMm?: number;
     freeformMaxMm?: number;
     freeformStepMm?: number;
+    heightOptions?: number[];
   };
   heightLadder: { slatHeightDeductionMm: number; entries: DerivedHeight[] };
   gateRules: {
@@ -77,8 +72,6 @@ export type UiCalculatorConfig = {
       slidingVertical: number;
     };
     doubleSwingMaxLeafWidthMm: number;
-    heightMinMm: number;
-    heightMaxMm: number;
     supported: boolean;
     defaultInfill: "horizontal" | "vertical";
     gateProductCode: string;

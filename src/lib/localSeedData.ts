@@ -6,7 +6,6 @@ import qsGateRaw from "../../supabase/seeds/glass-outlet/products/qs_gate.json?r
 import colorbondRaw from "../../supabase/seeds/glass-outlet/products/colorbond.json?raw";
 import priceCatalogueRaw from "../../supabase/seeds/glass-outlet/products/price_catalogue.json?raw";
 import type { Product } from "../hooks/useProducts";
-import type { SchemaField } from "../components/calculator-v3/SchemaDrivenForm";
 import type { ProductSearchItem } from "../hooks/useProductSearch";
 
 type SeedProduct = Product & { product_type?: string };
@@ -30,20 +29,6 @@ type SeedComponent = {
   active?: boolean;
 };
 
-type SeedVariable = {
-  product_system_type: string;
-  name: string;
-  label: string;
-  data_type: string;
-  unit?: string | null;
-  required?: boolean;
-  default_value_json?: unknown;
-  options_json?: unknown[];
-  scope: "job" | "run" | "segment";
-  sort_order?: number;
-  active?: boolean;
-};
-
 export type LocalPricingRule = {
   sku: string;
   tier_code: "tier1" | "tier2" | "tier3";
@@ -56,7 +41,6 @@ export type LocalPricingRule = {
 type SeedFile = {
   products?: SeedProduct[];
   product_components?: SeedComponent[];
-  product_variables?: SeedVariable[];
   pricing_rules?: LocalPricingRule[];
 };
 
@@ -958,41 +942,6 @@ export const localPricingRules: LocalPricingRule[] = seedFiles
   .flatMap((seed) => seed.pricing_rules ?? [])
   .concat(syntheticPricingRules)
   .filter((rule) => rule.active !== false);
-
-export function getLocalVariables(
-  systemType: string,
-  scope: "job" | "run" | "segment",
-): SchemaField[] {
-  return seedFiles
-    .flatMap((seed) => seed.product_variables ?? [])
-    .filter(
-      (field) =>
-        field.active !== false &&
-        field.product_system_type === systemType &&
-        field.scope === scope,
-    )
-    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
-    .map((field) => ({
-      id: `${field.product_system_type}-${field.name}-${field.scope}`,
-      field_key: field.name,
-      label: field.label,
-      control_type:
-        field.data_type === "enum"
-          ? "select"
-          : field.data_type === "number" || field.data_type === "integer"
-            ? "number"
-            : field.data_type === "boolean"
-              ? "toggle"
-              : "text",
-      data_type: field.data_type,
-      unit: field.unit ?? undefined,
-      required: Boolean(field.required),
-      default_value_json: field.default_value_json,
-      options_json: Array.isArray(field.options_json) ? field.options_json : [],
-      visible_when_json: {},
-      sort_order: field.sort_order ?? 0,
-    }));
-}
 
 export function searchLocalProducts(query: string, limit = 10): ProductSearchItem[] {
   const terms = query

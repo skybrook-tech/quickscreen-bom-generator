@@ -203,7 +203,7 @@ function preferredHingeOrder(sku: string): number {
 export function rankHinges({ requiredRatingKg, gateGapMm, whiteFinish, requireSelfClosing = true }: {
   requiredRatingKg: number; gateGapMm: number; whiteFinish: boolean; requireSelfClosing?: boolean;
 }): RankedHardware<HingeHardware>[] {
-  const ranked = HINGE_HARDWARE.map((h) => {
+  const ranked: RankedHardware<HingeHardware>[] = HINGE_HARDWARE.map((h) => {
     const reasons: string[] = [];
     if (h.ratingKg < requiredRatingKg) reasons.push(`Rated ${h.ratingKg}kg, needs ${requiredRatingKg}kg`);
     if (gateGapMm < h.gapMinMm || gateGapMm > h.gapMaxMm) reasons.push(`Suits ${h.gapMinMm}-${h.gapMaxMm}mm hinge gap`);
@@ -225,7 +225,7 @@ export function rankHinges({ requiredRatingKg, gateGapMm, whiteFinish, requireSe
 export function rankLatches({ movement, whiteFinish, poolSafePreferred = false }: {
   movement: string; whiteFinish: boolean; poolSafePreferred?: boolean;
 }): RankedHardware<LatchHardware>[] {
-  const ranked = LATCH_HARDWARE.map((l) => {
+  const ranked: RankedHardware<LatchHardware>[] = LATCH_HARDWARE.map((l) => {
     const reasons: string[] = [];
     if (movement === "sliding" && l.swingOnly && l.sku !== "none") reasons.push("Swing gates only");
     if (whiteFinish && !l.hasWhite && l.sku !== "none") reasons.push("No white finish");

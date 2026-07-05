@@ -14,7 +14,7 @@ export function deepMerge<T>(base: T, override: Partial<T>): T {
   if (typeof base !== "object" || base === null || Array.isArray(base)) {
     return (override as T) ?? base;
   }
-  const result = { ...base };
+  const result = { ...base } as T;
   for (const key of Object.keys(override) as (keyof T)[]) {
     const ov = override[key];
     const bv = base[key];
@@ -22,7 +22,7 @@ export function deepMerge<T>(base: T, override: Partial<T>): T {
     if (Array.isArray(ov) || typeof ov !== "object" || ov === null) {
       result[key] = ov as T[keyof T];
     } else {
-      result[key] = deepMerge(bv, ov as Partial<T[keyof T]>);
+      result[key] = deepMerge(bv, ov as Partial<T[keyof T]>) as T[keyof T];
     }
   }
   return result;

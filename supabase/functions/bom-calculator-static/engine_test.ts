@@ -26,13 +26,15 @@ import { assertEquals, assertNotEquals } from "https://deno.land/std@0.224.0/ass
 import {
   calculateLocalBom,
   makeCalcContext,
-  syntheticComponents,
   type CanonicalPayload,
   type CanonicalRun,
   type CanonicalSegment,
   type LocalBomResult,
   type PricingTier,
 } from "./engine.ts";
+// Frozen test catalogue+pricing (the former engine synthetic block, moved out
+// so the runtime engine is DB-only). Keeps these snapshots price-bearing.
+import { syntheticComponents, syntheticPricingRules } from "./engine_test_fixtures.ts";
 import type { CalcContext, SeedComponent, LocalPricingRule } from "./config/types.ts";
 import { BASE_CONFIGS } from "./config/base.ts";
 import { deepMerge } from "./config/merge.ts";
@@ -126,8 +128,18 @@ function project(r: LocalBomResult) {
   };
 }
 
+// Explicit fixture ctx: identical content to the engine's former synthetic
+// default ctx, so these snapshots are unchanged by the engine going DB-only.
+function makeFixtureCtx(): CalcContext {
+  return makeCalcContext({
+    dbComponents: syntheticComponents,
+    dbPricingRules: syntheticPricingRules,
+    configs: new Map(Object.entries(BASE_CONFIGS)),
+  });
+}
+
 function snap(t: Deno.TestContext, p: CanonicalPayload, tier: PricingTier = "tier1") {
-  return assertSnapshot(t, project(calculateLocalBom(p, tier)));
+  return assertSnapshot(t, project(calculateLocalBom(p, tier, makeFixtureCtx())));
 }
 
 // ─── Scenarios (see plan §7) ────────────────────────────────────────────────────
@@ -270,25 +282,26 @@ function makeOverrideCtx(
   };
 }
 
-// O01: Explicit ctx with base config == no-ctx result (identity check).
-Deno.test("O01 explicit default ctx produces same output as no-ctx", (t) => {
+// O01: The engine is DB-only — no-ctx runs are UNPRICED but quantity-identical.
+// (Same SKUs and quantities as a priced fixture ctx; every price is $0.)
+Deno.test("O01 no-ctx run is unpriced but quantity-identical to fixture ctx", () => {
   const p = payload([run("r1", "QSHS", [seg("s1", 6000)])], { ...BASE_QSHS });
-  const withoutCtx = calculateLocalBom(p, "tier1");
-  const withCtx    = calculateLocalBom(p, "tier1", makeOverrideCtx());
-  // Lines should be identical (SKUs, quantities, categories, totals).
+  const unpriced = calculateLocalBom(p, "tier1");
+  const priced   = calculateLocalBom(p, "tier1", makeFixtureCtx());
   assertEquals(
-    withoutCtx.lines.map((l) => l.sku).sort(),
-    withCtx.lines.map((l) => l.sku).sort(),
-    "SKUs should match when using default ctx vs no ctx",
+    unpriced.lines.map((l) => `${l.sku}|${l.quantity}`).sort(),
+    priced.lines.map((l) => `${l.sku}|${l.quantity}`).sort(),
+    "SKUs + quantities should match with and without ctx",
   );
-  assertEquals(withoutCtx.totals, withCtx.totals, "Totals should match");
+  assertEquals(unpriced.totals, { subtotal: 0, gst: 0, grandTotal: 0 }, "No-ctx totals should be $0");
+  assertNotEquals(priced.totals.grandTotal, 0, "Fixture ctx should price the run");
 });
 
 // O02: Stock-length override — if slat stock is shorter, more lengths required.
 Deno.test("O02 stock length override changes slat qty", async (t) => {
   const p = payload([run("r1", "QSHS", [seg("s1", 10000)])], { ...BASE_QSHS });
-  const defaultResult  = calculateLocalBom(p, "tier1");
-  const shortStockCtx  = makeOverrideCtx({ stockLengths: { slat: { standard: 3000, economy: 6500, awood: 5800 } } } as any);
+  const defaultResult  = calculateLocalBom(p, "tier1", makeFixtureCtx());
+  const shortStockCtx  = makeOverrideCtx({ slat: { stockLengths: { slat: { standard: 3000, economy: 6500, awood: 5800 } } } } as any);
   const shortStockResult = calculateLocalBom(p, "tier1", shortStockCtx);
 
   const defaultSlatQty = defaultResult.lines.find((l) => l.sku.includes("S65"))?.quantity ?? 0;
@@ -302,7 +315,7 @@ Deno.test("O02 stock length override changes slat qty", async (t) => {
 // O03: Extra rule — supplier adds a rail above 1800mm.
 Deno.test("O03 extraRule extra_component_above_height adds rail", async (t) => {
   const p = payload([run("r1", "QSHS", [seg("s1", 6000)])], { ...BASE_QSHS, target_height_mm: 2100 });
-  const baseResult = calculateLocalBom(p, "tier1");
+  const baseResult = calculateLocalBom(p, "tier1", makeFixtureCtx());
 
   const ctxWithRule = makeOverrideCtx({
     extraRules: [

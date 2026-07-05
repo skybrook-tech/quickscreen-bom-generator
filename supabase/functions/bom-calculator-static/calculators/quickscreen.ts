@@ -8,7 +8,12 @@
 //   • Returns QtyLine[] with internal SKUs; the orchestrator in engine.ts resolves
 //     them to supplier SKUs before aggregation.
 
-import type { CalculatorConfig, CalcContext, CanonicalRun, CanonicalPayload, CanonicalSegment, QtyLine } from "../config/types.ts";
+import type { CalculatorConfig, SlatConfig, CalcContext, CanonicalRun, CanonicalPayload, CanonicalSegment, QtyLine } from "../config/types.ts";
+
+// A config guaranteed to carry the slat strategy block (guarded at entry).
+type SlatProductConfig = CalculatorConfig & { slat: SlatConfig };
+
+import { applyExtraRules } from "./shared.ts";
 import {
   toNumber, gapCode, isku,
   standardAccessoryColour, csrCapColour, colourSkuSuffix, ALUMAWOOD_CORE_COLOURS,
@@ -70,7 +75,7 @@ function emitCornerLines(
   vars: Record<string, string | number | boolean> | undefined,
   side: "left" | "right",
   finishFamily: string, colour: string, runHeightMm: number,
-  cfg: CalculatorConfig,
+  cfg: SlatProductConfig,
 ) {
   const explicitType = cornerTypeFromVars(vars, side), degrees = cornerDegreesFromVars(vars, side);
   const type = explicitType ?? cornerTypeFromDegrees(degrees);
@@ -79,33 +84,33 @@ function emitCornerLines(
   if (type === "custom") {
     const msg = `Custom angle (${Math.round(degrees ?? 0)} degrees) at ${label} - verify components with supplier before ordering.`;
     warnings.push(msg);
-    emit(lines, { ...base, sku: cfg.internalSkus.customCorner, category: "accessory", quantity: 1, unit: "each", notes: msg });
+    emit(lines, { ...base, sku: cfg.slat.internalSkus.customCorner, category: "accessory", quantity: 1, unit: "each", notes: msg });
     return;
   }
   const adapterTemplate = (finishFamily === "alumawood" && ALUMAWOOD_CORE_COLOURS.has(colour))
-    ? cfg.internalSkus.angleAdapter.awood
-    : cfg.internalSkus.angleAdapter.std;
+    ? cfg.slat.internalSkus.angleAdapter.awood
+    : cfg.slat.internalSkus.angleAdapter.std;
   emit(lines, { ...base, sku: isku(adapterTemplate, { colour }), category: "accessory", quantity: 1, unit: "length", notes: `135 degree angle adapter at ${label}, cut to ${Math.round(runHeightMm)}mm` });
-  emit(lines, { ...base, sku: isku(cfg.internalSkus.screws.xpFixing, { colour: standardAccessoryColour(colour) }), category: "screw", quantity: 1, unit: "pack", notes: `Extra screws for 135 degree angle adapter at ${label}` });
+  emit(lines, { ...base, sku: isku(cfg.slat.internalSkus.screws.xpFixing, { colour: standardAccessoryColour(colour) }), category: "screw", quantity: 1, unit: "pack", notes: `Extra screws for 135 degree angle adapter at ${label}` });
 }
 
 // ─── Post emission ────────────────────────────────────────────────────────────
 
 function postInternalSku(
-  cfg: CalculatorConfig,
+  cfg: SlatProductConfig,
   finishFamily: string, postSize: number, postHeight: number, postColour: string, mountingType: string,
   components: CalcContext["components"],
 ): string {
-  const t = cfg.internalSkus.post;
+  const t = cfg.slat.internalSkus.post;
   const isAW = finishFamily === "alumawood" && ALUMAWOOD_CORE_COLOURS.has(postColour);
   if (isAW) {
-    const tall = postHeight > cfg.postRules.longPostThresholdMm;
+    const tall = postHeight > cfg.slat.postRules.longPostThresholdMm;
     if (postSize === 65) return isku(tall ? t.awHd65Tall : t.awHd65Std, { colour: postColour });
     return isku(tall ? t.awFullTall : t.awFullStd, { colour: postColour });
   }
   // Short in-ground post: only where that stock colour exists
-  if (mountingType === "in_ground" && postSize === 50 && postHeight <= cfg.postRules.inGroundShortPostMaxHeightMm) {
-    if (cfg.postRules.shortPostColours.includes(postColour)) {
+  if (mountingType === "in_ground" && postSize === 50 && postHeight <= cfg.slat.postRules.inGroundShortPostMaxHeightMm) {
+    if (cfg.slat.postRules.shortPostColours.includes(postColour)) {
       // Verify via DB/synthetic that the short post exists (preserves existing behaviour)
       const shortSku = isku(t.fullShort, { colour: postColour });
       // We can't call resolveInternalSku here, so check if the short post is mapped
@@ -117,18 +122,18 @@ function postInternalSku(
       return shortSku; // resolveInternalSku will return QS-1800 or fall through
     }
   }
-  const tall = postHeight > cfg.postRules.longPostThresholdMm;
+  const tall = postHeight > cfg.slat.postRules.longPostThresholdMm;
   if (postSize === 65) return isku(tall ? t.hd65Tall : t.hd65Std, { colour: postColour });
   return isku(tall ? t.fullTall : t.fullStd, { colour: postColour });
 }
 
 function postAccInternalSku(
-  cfg: CalculatorConfig,
+  cfg: SlatProductConfig,
   finishFamily: string,
   kind: "top_plate" | "base_plate" | "domical_cover" | "dress_ring",
   postSize: number, postColour: string,
 ): string {
-  const t = cfg.internalSkus.postAcc;
+  const t = cfg.slat.internalSkus.postAcc;
   const isAW = finishFamily === "alumawood" && ALUMAWOOD_CORE_COLOURS.has(postColour);
   if (isAW) {
     if (kind === "top_plate")     return postSize === 65 ? t.awTopPlate65 : t.awTopPlate50;
@@ -146,12 +151,12 @@ function emitPostLines(
   lines: QtyLine[], run: CanonicalRun, segmentId: string,
   postCount: number, finishFamily: string, postSize: number,
   postHeight: number, postColour: string, mountingType: string,
-  cfg: CalculatorConfig, components: CalcContext["components"],
+  cfg: SlatProductConfig, components: CalcContext["components"],
 ) {
   if (postCount <= 0) return;
   const sk = postInternalSku(cfg, finishFamily, postSize, postHeight, postColour, mountingType, components);
   emit(lines, { runId: run.runId, segmentId, sku: sk, category: "post", quantity: postCount, unit: "each", notes: `${postSize}mm posts from run boundaries/corners and internal panel joins` });
-  if (postHeight > cfg.postRules.longPostThresholdMm) {
+  if (postHeight > cfg.slat.postRules.longPostThresholdMm) {
     emit(lines, { runId: run.runId, segmentId, sku: postAccInternalSku(cfg, finishFamily, "top_plate", postSize, postColour), category: "post_accessory", quantity: postCount, unit: "each", notes: "Top plates for long posts" });
   }
   if (mountingType === "base_plate") {
@@ -166,22 +171,22 @@ function emitPostLines(
 function emitPostFixingLines(
   lines: QtyLine[], run: CanonicalRun, segmentId: string,
   postCount: number, vars: Record<string, unknown>, mountingType: string,
-  cfg: CalculatorConfig,
+  cfg: SlatProductConfig,
 ) {
   if (postCount <= 0) return;
   if (mountingType === "in_ground") {
     emit(lines, {
       runId: run.runId, segmentId,
-      sku: String(vars.post_fixing_material_sku ?? cfg.mountingRules.inGround.defaultGroutSku),
-      category: "accessory", quantity: postCount * cfg.mountingRules.inGround.bagsPerPost,
-      unit: "bag", notes: `Post-fixing material at ${cfg.mountingRules.inGround.bagsPerPost} bags per concreted-in post`,
+      sku: String(vars.post_fixing_material_sku ?? cfg.slat.mountingRules.inGround.defaultGroutSku),
+      category: "accessory", quantity: postCount * cfg.slat.mountingRules.inGround.bagsPerPost,
+      unit: "bag", notes: `Post-fixing material at ${cfg.slat.mountingRules.inGround.bagsPerPost} bags per concreted-in post`,
     });
   }
   if (mountingType === "base_plate") {
     const isTimber = vars.base_plate_substrate === "timber";
     emit(lines, {
       runId: run.runId, segmentId,
-      sku: isTimber ? cfg.mountingRules.basePlate.timberKitSku : cfg.mountingRules.basePlate.concreteKitSku,
+      sku: isTimber ? cfg.slat.mountingRules.basePlate.timberKitSku : cfg.slat.mountingRules.basePlate.concreteKitSku,
       category: "accessory", quantity: postCount, unit: "pack",
       notes: isTimber ? "Timber fixing kit, one 4-pack per base-plated post" : "Concrete fixing kit, one 4-pack per base-plated post",
     });
@@ -197,22 +202,22 @@ function runPostBoundaryCount(run: CanonicalRun): number {
 // ─── Slat internal SKU helpers ────────────────────────────────────────────────
 
 function slatInternalSku(
-  cfg: CalculatorConfig, finishFamily: string, economySlats: boolean, slatSize: number, colour: string,
+  cfg: SlatProductConfig, finishFamily: string, economySlats: boolean, slatSize: number, colour: string,
 ): string {
-  if (economySlats) return isku(cfg.internalSkus.slat.economy, { slatSize, colour });
+  if (economySlats) return isku(cfg.slat.internalSkus.slat.economy, { slatSize, colour });
   if (finishFamily === "alumawood") {
-    return isku(slatSize === 90 ? cfg.internalSkus.slat.awood90 : cfg.internalSkus.slat.awood65, { colour });
+    return isku(slatSize === 90 ? cfg.slat.internalSkus.slat.awood90 : cfg.slat.internalSkus.slat.awood65, { colour });
   }
-  return isku(cfg.internalSkus.slat.standard, { slatSize, colour });
+  return isku(cfg.slat.internalSkus.slat.standard, { slatSize, colour });
 }
 
 function gateBladeSlatInternalSku(
-  cfg: CalculatorConfig, finishFamily: string, economySlats: boolean, slatSize: number, colour: string, verticalBuild = false,
+  cfg: SlatProductConfig, finishFamily: string, economySlats: boolean, slatSize: number, colour: string, verticalBuild = false,
 ): string {
   if (verticalBuild) return slatInternalSku(cfg, finishFamily, economySlats, slatSize, colour);
   if (slatSize === 90) return slatInternalSku(cfg, finishFamily, economySlats, 90, colour);
   // Swing gate 65mm blades use gate colour suffix (fallback to MN for unsupported)
-  return isku(cfg.internalSkus.slat.standard, { slatSize: 65, colour: colourSkuSuffix(colour) });
+  return isku(cfg.slat.internalSkus.slat.standard, { slatSize: 65, colour: colourSkuSuffix(colour) });
 }
 
 function stockLengthForSlidingTrack(sku: string): number {
@@ -226,30 +231,30 @@ function emitQsgGateFrameLines(
   slatSize: number, colour: string, leafCount: number,
   frameCutMm: number, railCutMm: number, verticalBuild: boolean,
   numGateBlades: number, slatGap: number,
-  cfg: CalculatorConfig,
+  cfg: SlatProductConfig,
 ) {
-  const gf = cfg.internalSkus.gate;
-  const gfStockMm = cfg.stockLengths.frame.gateFrame; // 4200
+  const gf = cfg.slat.internalSkus.gate;
+  const gfStockMm = cfg.slat.stockLengths.frame.gateFrame; // 4200
   const sfPerStock = Math.max(1, Math.floor(gfStockMm / frameCutMm));
   const sfPieces = 2 * leafCount;
-  const railScrewPacks = Math.ceil((4 * leafCount) / cfg.packSizes.gateRailScrews);
-  const infillStock = verticalBuild ? gfStockMm : cfg.stockLengths.rail.gateHoriz; // 4200 or 4800
+  const railScrewPacks = Math.ceil((4 * leafCount) / cfg.slat.packSizes.gateRailScrews);
+  const infillStock = verticalBuild ? gfStockMm : cfg.slat.stockLengths.rail.gateHoriz; // 4200 or 4800
   const infillCut = verticalBuild ? frameCutMm : railCutMm;
   const infillsPerStock = Math.max(1, Math.floor(infillStock / infillCut));
   const coverPieces = 2 * leafCount;
   const coversPerStock = Math.max(1, Math.floor(gfStockMm / frameCutMm));
-  const spacerPacks = Math.ceil((Math.max(0, numGateBlades - 1) * 2 * leafCount) / cfg.packSizes.spacers);
-  const waferScrewPacks = Math.ceil((numGateBlades * 2 * leafCount) / cfg.packSizes.slatScrews);
+  const spacerPacks = Math.ceil((Math.max(0, numGateBlades - 1) * 2 * leafCount) / cfg.slat.packSizes.spacers);
+  const waferScrewPacks = Math.ceil((numGateBlades * 2 * leafCount) / cfg.slat.packSizes.slatScrews);
   const c = colourSkuSuffix(colour);
 
   emit(lines, { ...base, sku: isku(gf.sideFrame, { colour: c }), category: "gate_side_frame", quantity: Math.ceil(sfPieces / sfPerStock), unit: "length", notes: `${sfPieces} QSG side-frame pieces, ${Math.round(frameCutMm)}mm cuts from ${gfStockMm}mm stock` });
   emit(lines, { ...base, sku: slatSize === 90 ? "QSG-JOINER90-4PK" : "QSG-JOINER65-4PK", category: "hardware", quantity: leafCount, unit: "pack", notes: `${slatSize === 90 ? "90mm" : "65mm"} joiner blocks for QSG gate rails` });
   emit(lines, { ...base, sku: isku(gf.cover, { colour: c }), category: "hardware", quantity: Math.ceil(coverPieces / coversPerStock), unit: "length", notes: `Gate screw cover, ${Math.round(frameCutMm)}mm cuts from ${gfStockMm}mm stock` });
-  emit(lines, { ...base, sku: cfg.internalSkus.screws.gateRail, category: "screw", quantity: railScrewPacks, unit: "pack", notes: "QSG rail screws for top and bottom rails" });
+  emit(lines, { ...base, sku: cfg.slat.internalSkus.screws.gateRail, category: "screw", quantity: railScrewPacks, unit: "pack", notes: "QSG rail screws for top and bottom rails" });
   emit(lines, { ...base, sku: isku(gf.cap, { colour: c }), category: "accessory", quantity: 4 * leafCount, unit: "each", notes: "Gate top caps for 50mm x 50mm side frame, 4 per leaf" });
   emit(lines, { ...base, sku: isku(verticalBuild ? gf.infillVert : gf.infillHoriz, { colour: c }), category: "accessory", quantity: Math.ceil((2 * leafCount) / infillsPerStock), unit: "length", notes: `${verticalBuild ? "Channel infill" : "Gate infill"} for gate frame void, ${Math.round(infillCut)}mm cuts from ${infillStock}mm stock` });
-  emit(lines, { ...base, sku: isku(cfg.internalSkus.spacer, { gapCode: gapCode(slatGap) }), category: "spacer", quantity: spacerPacks, unit: "pack", notes: `${Math.max(0, numGateBlades - 1)} gaps/leaf, one spacer at each end of each gap` });
-  emit(lines, { ...base, sku: cfg.internalSkus.screws.slatFixing, category: "screw", quantity: waferScrewPacks, unit: "pack", notes: "16mm wafer screws for fixing slats to gate rails/side frames" });
+  emit(lines, { ...base, sku: isku(cfg.slat.internalSkus.spacer, { gapCode: gapCode(slatGap) }), category: "spacer", quantity: spacerPacks, unit: "pack", notes: `${Math.max(0, numGateBlades - 1)} gaps/leaf, one spacer at each end of each gap` });
+  emit(lines, { ...base, sku: cfg.slat.internalSkus.screws.slatFixing, category: "screw", quantity: waferScrewPacks, unit: "pack", notes: "16mm wafer screws for fixing slats to gate rails/side frames" });
 }
 
 function emitQsgSlidingGateFrameLines(
@@ -257,19 +262,19 @@ function emitQsgSlidingGateFrameLines(
   slatSize: number, colour: string,
   frameCutMm: number, railCutMm: number, verticalBuild: boolean,
   numGateBlades: number, slatGap: number,
-  cfg: CalculatorConfig,
+  cfg: SlatProductConfig,
 ) {
-  const gf = cfg.internalSkus.gate;
-  const gfStockMm = cfg.stockLengths.frame.gateFrame; // 4200
+  const gf = cfg.slat.internalSkus.gate;
+  const gfStockMm = cfg.slat.stockLengths.frame.gateFrame; // 4200
   const sfPerStock = Math.max(1, Math.floor(gfStockMm / frameCutMm));
-  const infillStock = verticalBuild ? gfStockMm : cfg.stockLengths.rail.gateHoriz;
+  const infillStock = verticalBuild ? gfStockMm : cfg.slat.stockLengths.rail.gateHoriz;
   const infillCut = verticalBuild ? frameCutMm : railCutMm;
   const infillsPerStock = Math.max(1, Math.floor(infillStock / infillCut));
   const coversPerStock = Math.max(1, Math.floor(gfStockMm / frameCutMm));
-  const slidingRailStock = cfg.stockLengths.rail.gateSliding; // 6100
+  const slidingRailStock = cfg.slat.stockLengths.rail.gateSliding; // 6100
   const railsPerStock = Math.max(1, Math.floor(slidingRailStock / railCutMm));
-  const spacerPacks = Math.ceil((Math.max(0, numGateBlades - 1) * 2) / cfg.packSizes.spacers);
-  const waferScrewPacks = Math.ceil((numGateBlades * 2) / cfg.packSizes.slatScrews);
+  const spacerPacks = Math.ceil((Math.max(0, numGateBlades - 1) * 2) / cfg.slat.packSizes.spacers);
+  const waferScrewPacks = Math.ceil((numGateBlades * 2) / cfg.slat.packSizes.slatScrews);
   const railSize = verticalBuild ? 65 : slatSize === 90 ? 90 : 65;
   const c = colourSkuSuffix(colour);
   const topRailTemplate = verticalBuild ? gf.slideTopRail65 : slatSize === 90 ? gf.slideTopRail90 : gf.slideTopRail65;
@@ -280,9 +285,9 @@ function emitQsgSlidingGateFrameLines(
   emit(lines, { ...base, sku: railSize === 90 ? "QSG-JOINER90-4PK" : "QSG-JOINER65-4PK", category: "hardware", quantity: 1, unit: "pack", notes: `${railSize}mm joiner blocks for sliding gate rails` });
   emit(lines, { ...base, sku: isku(gf.cover, { colour: c }), category: "hardware", quantity: Math.ceil(2 / coversPerStock), unit: "length", notes: `Gate screw cover, ${Math.round(frameCutMm)}mm cuts from ${gfStockMm}mm stock` });
   emit(lines, { ...base, sku: isku(verticalBuild ? gf.infillVert : gf.infillHoriz, { colour: c }), category: "accessory", quantity: Math.ceil(2 / infillsPerStock), unit: "length", notes: `${verticalBuild ? "Gate channel infill" : "Gate infill"} for side-frame void, ${Math.round(infillCut)}mm cuts from ${infillStock}mm stock` });
-  emit(lines, { ...base, sku: cfg.internalSkus.screws.gateRail, category: "screw", quantity: 1, unit: "pack", notes: "QSG rail screws for sliding top and bottom rails" });
-  emit(lines, { ...base, sku: isku(cfg.internalSkus.spacer, { gapCode: gapCode(slatGap) }), category: "spacer", quantity: spacerPacks, unit: "pack", notes: `${Math.max(0, numGateBlades - 1)} gaps, one spacer at each end of each gap` });
-  emit(lines, { ...base, sku: cfg.internalSkus.screws.slatFixing, category: "screw", quantity: waferScrewPacks, unit: "pack", notes: "16mm wafer screws for fixing slats to sliding gate rails/side frames" });
+  emit(lines, { ...base, sku: cfg.slat.internalSkus.screws.gateRail, category: "screw", quantity: 1, unit: "pack", notes: "QSG rail screws for sliding top and bottom rails" });
+  emit(lines, { ...base, sku: isku(cfg.slat.internalSkus.spacer, { gapCode: gapCode(slatGap) }), category: "spacer", quantity: spacerPacks, unit: "pack", notes: `${Math.max(0, numGateBlades - 1)} gaps, one spacer at each end of each gap` });
+  emit(lines, { ...base, sku: cfg.slat.internalSkus.screws.slatFixing, category: "screw", quantity: waferScrewPacks, unit: "pack", notes: "16mm wafer screws for fixing slats to sliding gate rails/side frames" });
   emit(lines, { ...base, sku: isku(gf.cap, { colour: c }), category: "accessory", quantity: 2, unit: "each", notes: "Gate top caps for the two sliding gate side frames" });
 }
 
@@ -291,7 +296,7 @@ function emitQsgSlidingGateFrameLines(
 function calculateGateSegment(
   run: CanonicalRun, segment: CanonicalSegment,
   mergedRunVars: Record<string, unknown>,
-  sink: Sink, cfg: CalculatorConfig,
+  sink: Sink, cfg: SlatProductConfig,
   components: CalcContext["components"],
   resolveInternalSku: CalcContext["resolveInternalSku"],
 ): QtyLine[] {
@@ -315,7 +320,7 @@ function calculateGateSegment(
   const totalLeafClearanceMm = gateGeometry.totalClearanceMm;
   const base = { runId: run.runId, segmentId: segment.segmentId };
   const verticalBuild = build.includes("vertical");
-  const g = cfg.geometry;
+  const g = cfg.slat.geometry;
 
   sink.computed[run.runId] = sink.computed[run.runId] ?? {};
   sink.computed[run.runId][segment.segmentId] = {
@@ -334,26 +339,26 @@ function calculateGateSegment(
     const numGateBlades = Math.max(1, verticalBuild
       ? Math.floor((openingWidthMm - g.slidingBladeVertWidthDeduction + slatGap) / (slatSize + slatGap))
       : Math.floor((gateHeightMm - slatGap - 216) / (slatSize + slatGap)));
-    const bladesPerStock = Math.max(1, Math.floor(cfg.stockLengths.rail.gateSliding / bladeCutMm));
+    const bladesPerStock = Math.max(1, Math.floor(cfg.slat.stockLengths.rail.gateSliding / bladeCutMm));
     const csrRequired = openingWidthMm > g.slidingCsrAboveMm;
     const csrCutMm = Math.max(1, frameCutMm - g.slidingCsrCutDeduction);
-    const csrsPerStock = Math.max(1, Math.floor(cfg.stockLengths.frame.sideFrame / csrCutMm));
+    const csrsPerStock = Math.max(1, Math.floor(cfg.slat.stockLengths.frame.sideFrame / csrCutMm));
     const csrColour = colourSkuSuffix(colour);
 
-    emit(lines, { ...base, sku: gateBladeSlatInternalSku(cfg, finishFamily, economySlats, slatSize, colour, verticalBuild), category: "gate", quantity: Math.ceil(numGateBlades / bladesPerStock), unit: "length", notes: `${numGateBlades} gate blades, ${Math.round(bladeCutMm)}mm cuts from ${cfg.stockLengths.rail.gateSliding}mm stock` });
+    emit(lines, { ...base, sku: gateBladeSlatInternalSku(cfg, finishFamily, economySlats, slatSize, colour, verticalBuild), category: "gate", quantity: Math.ceil(numGateBlades / bladesPerStock), unit: "length", notes: `${numGateBlades} gate blades, ${Math.round(bladeCutMm)}mm cuts from ${cfg.slat.stockLengths.rail.gateSliding}mm stock` });
     emitQsgSlidingGateFrameLines(lines, base, slatSize, colour, frameCutMm, railCutMm, verticalBuild, numGateBlades, slatGap, cfg);
 
     if (csrRequired) {
       const csrInternal = ALUMAWOOD_CORE_COLOURS.has(colour)
-        ? isku(cfg.internalSkus.frame.csrAW, { colour })
-        : isku(cfg.internalSkus.frame.csr, { colour: csrColour });
-      const csrCapInternal = isku(cfg.internalSkus.frame.csrCap, { colour: csrCapColour(csrColour) });
+        ? isku(cfg.slat.internalSkus.frame.csrAW, { colour })
+        : isku(cfg.slat.internalSkus.frame.csr, { colour: csrColour });
+      const csrCapInternal = isku(cfg.slat.internalSkus.frame.csrCap, { colour: csrCapColour(csrColour) });
       // CSR plate: resolve then check component exists — fallback to MN if the colour SKU isn't stocked.
-      const csrPlateCandidateInternal = isku(cfg.internalSkus.frame.csrPlate, { colour: csrColour });
+      const csrPlateCandidateInternal = isku(cfg.slat.internalSkus.frame.csrPlate, { colour: csrColour });
       const csrPlateCandidateSku = resolveInternalSku(csrPlateCandidateInternal);
       const csrPlateInternal = components.some((c) => c.sku === csrPlateCandidateSku)
         ? csrPlateCandidateInternal
-        : isku(cfg.internalSkus.frame.csrPlate, { colour: "MN" });
+        : isku(cfg.slat.internalSkus.frame.csrPlate, { colour: "MN" });
       emit(lines, { ...base, sku: csrInternal, category: "centre_support_rail", quantity: Math.ceil(1 / csrsPerStock), unit: "length", notes: `1 centre support rail(s) for sliding gate over ${g.slidingCsrAboveMm}mm` });
       emit(lines, { ...base, sku: csrCapInternal, category: "accessory", quantity: 1, unit: "each", notes: "Centre support rail cap" });
       emit(lines, { ...base, sku: csrPlateInternal, category: "accessory", quantity: 2, unit: "each", notes: "Top and bottom plates for sliding gate centre support rails" });
@@ -398,12 +403,12 @@ function calculateGateSegment(
   const numGateBlades = Math.max(1, verticalBuild
     ? Math.floor((leafWidthMm - g.swingBladeCutHorizDeduction + slatGap) / (slatSize + slatGap))
     : Math.floor((gateHeightMm - g.swingBladeCutVertDeduction + slatGap) / (slatSize + slatGap)));
-  const bladesPerStock = Math.max(1, Math.floor(cfg.stockLengths.rail.gateSliding / bladeCutMm));
-  const railsPerStock = Math.max(1, Math.floor(cfg.stockLengths.rail.gateHoriz / railCutMm));
+  const bladesPerStock = Math.max(1, Math.floor(cfg.slat.stockLengths.rail.gateSliding / bladeCutMm));
+  const railsPerStock = Math.max(1, Math.floor(cfg.slat.stockLengths.rail.gateHoriz / railCutMm));
   const c = colourSkuSuffix(colour);
 
-  emit(lines, { ...base, sku: gateBladeSlatInternalSku(cfg, finishFamily, economySlats, slatSize, colour, verticalBuild), category: "gate", quantity: Math.ceil((numGateBlades * leafCount) / bladesPerStock), unit: "length", notes: `${numGateBlades} gate blades/leaf, ${Math.round(bladeCutMm)}mm cuts from ${cfg.stockLengths.rail.gateSliding}mm stock` });
-  emit(lines, { ...base, sku: isku(slatSize === 90 ? cfg.internalSkus.gate.rail90 : cfg.internalSkus.gate.rail65, { colour: c }), category: "gate", quantity: Math.ceil((2 * leafCount) / railsPerStock), unit: "length", notes: `Top/bottom QSG gate rails, ${Math.round(railCutMm)}mm cuts from ${cfg.stockLengths.rail.gateHoriz}mm stock` });
+  emit(lines, { ...base, sku: gateBladeSlatInternalSku(cfg, finishFamily, economySlats, slatSize, colour, verticalBuild), category: "gate", quantity: Math.ceil((numGateBlades * leafCount) / bladesPerStock), unit: "length", notes: `${numGateBlades} gate blades/leaf, ${Math.round(bladeCutMm)}mm cuts from ${cfg.slat.stockLengths.rail.gateSliding}mm stock` });
+  emit(lines, { ...base, sku: isku(slatSize === 90 ? cfg.slat.internalSkus.gate.rail90 : cfg.slat.internalSkus.gate.rail65, { colour: c }), category: "gate", quantity: Math.ceil((2 * leafCount) / railsPerStock), unit: "length", notes: `Top/bottom QSG gate rails, ${Math.round(railCutMm)}mm cuts from ${cfg.slat.stockLengths.rail.gateHoriz}mm stock` });
   emitQsgGateFrameLines(lines, base, slatSize, colour, leafCount, Math.max(1, gateHeightMm), railCutMm, verticalBuild, numGateBlades, slatGap, cfg);
 
   const stopSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.gateStopType]);
@@ -437,7 +442,7 @@ function calculateGateSegment(
 
 function calculateVerticalSlatRun(
   payload: CanonicalPayload, run: CanonicalRun,
-  sink: Sink, cfg: CalculatorConfig,
+  sink: Sink, cfg: SlatProductConfig,
   components: CalcContext["components"],
   resolveInternalSku: CalcContext["resolveInternalSku"],
 ): QtyLine[] {
@@ -461,7 +466,7 @@ function calculateVerticalSlatRun(
     const slatSize = toNumber(vars.slat_size_mm, 65), slatGap = toNumber(vars.slat_gap_mm, 5);
     const finishFamily = String(vars.finish_family ?? runFinishFamily), economySlats = finishFamily === "economy";
     // VS uses the same stock lengths as horizontal slats
-    const slatStockLengthMm = economySlats ? cfg.stockLengths.slat.economy : finishFamily === "alumawood" ? cfg.stockLengths.slat.awood : cfg.stockLengths.slat.standard;
+    const slatStockLengthMm = economySlats ? cfg.slat.stockLengths.slat.economy : finishFamily === "alumawood" ? cfg.slat.stockLengths.slat.awood : cfg.slat.stockLengths.slat.standard;
     const segmentWidthMm = toNumber(segment.segmentWidthMm, 0);
     const targetHeightMm = toNumber(segment.targetHeightMm ?? vars.target_height_mm, 1800);
     if (segmentWidthMm <= 0) continue;
@@ -475,14 +480,14 @@ function calculateVerticalSlatRun(
     const railCutMm = Math.max(1, panelWidthMm);             // no deduction on VS rails
     const fSectionCutMm = Math.max(1, targetHeightMm);
     const slatsPerStock = Math.max(1, Math.floor(slatStockLengthMm / slatCutMm));
-    const railsPerStock = Math.max(1, Math.floor(cfg.stockLengths.frame.vsRail / railCutMm));
-    const railInsertsPSt = Math.max(1, Math.floor(cfg.stockLengths.frame.vsRailInsert / railCutMm));
-    const fSectPSt = Math.max(1, Math.floor(cfg.stockLengths.frame.vsFSection / fSectionCutMm));
+    const railsPerStock = Math.max(1, Math.floor(cfg.slat.stockLengths.frame.vsRail / railCutMm));
+    const railInsertsPSt = Math.max(1, Math.floor(cfg.slat.stockLengths.frame.vsRailInsert / railCutMm));
+    const fSectPSt = Math.max(1, Math.floor(cfg.slat.stockLengths.frame.vsFSection / fSectionCutMm));
     const slatStocks = Math.ceil((numVertSlats * numPanels) / slatsPerStock);
     const railStocks = Math.ceil((2 * numPanels) / railsPerStock);
     const railInsertStocks = Math.ceil((2 * numPanels) / railInsertsPSt);
     const fSectionStocks = Math.ceil((2 * numPanels) / fSectPSt);
-    const screwPacks = Math.ceil((Math.ceil((numVertSlats * numPanels * cfg.packSizes.screwWasteFactor) / 10) * 10) / cfg.packSizes.slatScrews);
+    const screwPacks = Math.ceil((Math.ceil((numVertSlats * numPanels * cfg.slat.packSizes.screwWasteFactor) / 10) * 10) / cfg.slat.packSizes.slatScrews);
 
     sink.computed[run.runId] = sink.computed[run.runId] ?? {};
     sink.computed[run.runId][segment.segmentId] = {
@@ -493,10 +498,10 @@ function calculateVerticalSlatRun(
     const base = { runId: run.runId, segmentId: segment.segmentId };
     const isAW = finishFamily === "alumawood" && ALUMAWOOD_CORE_COLOURS.has(colour);
     emit(lines, { ...base, sku: slatInternalSku(cfg, finishFamily, economySlats, slatSize, colour), category: "slat", quantity: slatStocks, unit: "length", notes: `${numVertSlats} vertical slats/panel, ${Math.round(slatCutMm)}mm cuts from ${slatStockLengthMm}mm stock` });
-    emit(lines, { ...base, sku: isku(cfg.internalSkus.frame.vertRail, { colour }), category: "rail", quantity: railStocks, unit: "length", notes: `Top/bottom U-channel rails, ${Math.round(railCutMm)}mm cuts from ${cfg.stockLengths.frame.vsRail}mm stock` });
-    emit(lines, { ...base, sku: isku(isAW ? cfg.internalSkus.frame.sideFrameAW : cfg.internalSkus.frame.sideFrame, { colour }), category: "rail_insert", quantity: railInsertStocks, unit: "length", notes: `QS-SF inserts inside top/bottom rails, ${Math.round(railCutMm)}mm cuts from ${cfg.stockLengths.frame.vsRailInsert}mm stock` });
-    emit(lines, { ...base, sku: isku(isAW ? cfg.internalSkus.frame.fSectionAW : cfg.internalSkus.frame.fSection, { colour }), category: "f_section", quantity: fSectionStocks, unit: "length", notes: `2 vertical side F-sections/panel, ${Math.round(fSectionCutMm)}mm cuts from ${cfg.stockLengths.frame.vsFSection}mm stock` });
-    emit(lines, { ...base, sku: cfg.internalSkus.screws.slatFixing, category: "screw", quantity: screwPacks, unit: "pack", notes: "Vertical slat fixing screws" });
+    emit(lines, { ...base, sku: isku(cfg.slat.internalSkus.frame.vertRail, { colour }), category: "rail", quantity: railStocks, unit: "length", notes: `Top/bottom U-channel rails, ${Math.round(railCutMm)}mm cuts from ${cfg.slat.stockLengths.frame.vsRail}mm stock` });
+    emit(lines, { ...base, sku: isku(isAW ? cfg.slat.internalSkus.frame.sideFrameAW : cfg.slat.internalSkus.frame.sideFrame, { colour }), category: "rail_insert", quantity: railInsertStocks, unit: "length", notes: `QS-SF inserts inside top/bottom rails, ${Math.round(railCutMm)}mm cuts from ${cfg.slat.stockLengths.frame.vsRailInsert}mm stock` });
+    emit(lines, { ...base, sku: isku(isAW ? cfg.slat.internalSkus.frame.fSectionAW : cfg.slat.internalSkus.frame.fSection, { colour }), category: "f_section", quantity: fSectionStocks, unit: "length", notes: `2 vertical side F-sections/panel, ${Math.round(fSectionCutMm)}mm cuts from ${cfg.slat.stockLengths.frame.vsFSection}mm stock` });
+    emit(lines, { ...base, sku: cfg.slat.internalSkus.screws.slatFixing, category: "screw", quantity: screwPacks, unit: "pack", notes: "Vertical slat fixing screws" });
     emitCornerLines(lines, sink.warnings, base, segment.variables, "left", finishFamily, colour, targetHeightMm, cfg);
     emitCornerLines(lines, sink.warnings, base, segment.variables, "right", finishFamily, colour, targetHeightMm, cfg);
     if (panelWidthMm > cfg.panelRules.maxPanelWidthMm) sink.warnings.push(`VS panel width ${Math.round(panelWidthMm)}mm exceeds recommended ${cfg.panelRules.maxPanelWidthMm}mm; split into more panels.`);
@@ -510,24 +515,20 @@ function calculateVerticalSlatRun(
 }
 
 // ─── Horizontal slat run calculator (QSHS / BAYG / XPL) ──────────────────────
+// (Product support is determined by the presence of a `slat` config block —
+// guarded at the quickScreenCalculator entry — not a hardcoded product list.)
 
-const SUPPORTED_PRODUCTS = new Set(["QSHS", "BAYG", "VS", "XPL"]);
-
-function csrCountForPanel(panelWidthMm: number, thresholds: CalculatorConfig["panelRules"]["csrThresholds"]): number {
+function csrCountForPanel(panelWidthMm: number, thresholds: SlatConfig["csrThresholds"]): number {
   return thresholds.find((t) => panelWidthMm < t.underMm)?.count ?? 0;
 }
 
 function calculateHorizontalSlatRun(
   payload: CanonicalPayload, run: CanonicalRun,
-  sink: Sink, cfg: CalculatorConfig,
+  sink: Sink, cfg: SlatProductConfig,
   components: CalcContext["components"],
   resolveInternalSku: CalcContext["resolveInternalSku"],
 ): QtyLine[] {
   const lines: QtyLine[] = [];
-  if (!SUPPORTED_PRODUCTS.has(run.productCode)) {
-    sink.warnings.push(`${run.productCode} is available in product search but the local fallback BOM engine currently calculates QSHS, BAYG, and VS only.`);
-    return lines;
-  }
   const firstFenceSeg = run.segments.find((s) => s.segmentKind !== "gate_opening");
   const mergedRunVars = { ...payload.variables, ...(run.variables ?? {}), ...(firstFenceSeg?.variables ?? {}) };
   const runColour = String(mergedRunVars.colour_code ?? mergedRunVars.colour ?? "B");
@@ -548,26 +549,26 @@ function calculateHorizontalSlatRun(
     const postColour = String(vars.post_colour_code ?? colour);
     const slatSize = toNumber(vars.slat_size_mm, 65), slatGap = toNumber(vars.slat_gap_mm, 5);
     const finishFamily = String(vars.finish_family ?? runFinishFamily), economySlats = finishFamily === "economy";
-    const slatStockLengthMm = economySlats ? cfg.stockLengths.slat.economy
-      : finishFamily === "alumawood" ? cfg.stockLengths.slat.awood
-      : cfg.stockLengths.slat.standard;
+    const slatStockLengthMm = economySlats ? cfg.slat.stockLengths.slat.economy
+      : finishFamily === "alumawood" ? cfg.slat.stockLengths.slat.awood
+      : cfg.slat.stockLengths.slat.standard;
     const segmentWidthMm = toNumber(segment.segmentWidthMm, 0);
     const targetHeightMm = toNumber(segment.targetHeightMm ?? vars.target_height_mm, 1800);
     if (segmentWidthMm <= 0) continue;
 
     const slatDesignWidth = designSlatWidthMm(cfg, slatSize);
-    const numSlats = Math.max(1, Math.floor((targetHeightMm + slatGap - cfg.geometry.slatHeightDeduction) / (slatDesignWidth + slatGap)));
-    const actualHeightMm = Math.round(numSlats * (slatDesignWidth + slatGap) - slatGap + cfg.geometry.slatHeightDeduction);
+    const numSlats = Math.max(1, Math.floor((targetHeightMm + slatGap - cfg.slat.geometry.slatHeightDeduction) / (slatDesignWidth + slatGap)));
+    const actualHeightMm = Math.round(numSlats * (slatDesignWidth + slatGap) - slatGap + cfg.slat.geometry.slatHeightDeduction);
     const baygPanelQty = isBayg ? Math.max(1, Math.round(toNumber(vars.panel_quantity, 1))) : 1;
     const segMaxPanel = clampPostSpacing(vars.max_panel_width_mm, cfg.panelRules.maxPanelWidthMm);
     const numPanels = isBayg ? baygPanelQty : Math.max(1, Math.ceil(segmentWidthMm / segMaxPanel));
     const panelWidthMm = isBayg ? segmentWidthMm : segmentWidthMm / numPanels;
     if (!isBayg) internalPanelPosts += Math.max(0, numPanels - 1);
 
-    const slatCutMm = Math.max(1, panelWidthMm - cfg.geometry.slatCutDeduction);
-    const sideFrameCutMm = Math.max(1, actualHeightMm - cfg.geometry.sideFrameCutDeduction);
-    const csrCutMm = Math.max(1, actualHeightMm - cfg.geometry.csrCutDeduction);
-    const numCsrPerPanel = csrCountForPanel(panelWidthMm, cfg.panelRules.csrThresholds);
+    const slatCutMm = Math.max(1, panelWidthMm - cfg.slat.geometry.slatCutDeduction);
+    const sideFrameCutMm = Math.max(1, actualHeightMm - cfg.slat.geometry.sideFrameCutDeduction);
+    const csrCutMm = Math.max(1, actualHeightMm - cfg.slat.geometry.csrCutDeduction);
+    const numCsrPerPanel = csrCountForPanel(panelWidthMm, cfg.slat.csrThresholds);
 
     const runLeftT = run.leftBoundary?.type ?? "product_post";
     const runRightT = run.rightBoundary?.type ?? "product_post";
@@ -579,15 +580,15 @@ function calculateHorizontalSlatRun(
     const sideFramePieces = (leftSideFrames + rightSideFrames) * numPanels;
     const fSectionPieces = wallFixings * numPanels;
     const slatsPerStock = Math.max(1, Math.floor(slatStockLengthMm / slatCutMm));
-    const sideFramesPerStock = Math.max(1, Math.floor(cfg.stockLengths.frame.sideFrame / sideFrameCutMm));
-    const csrPerStock = Math.max(1, Math.floor(cfg.stockLengths.frame.sideFrame / csrCutMm));
+    const sideFramesPerStock = Math.max(1, Math.floor(cfg.slat.stockLengths.frame.sideFrame / sideFrameCutMm));
+    const csrPerStock = Math.max(1, Math.floor(cfg.slat.stockLengths.frame.sideFrame / csrCutMm));
     const slatStocks = Math.ceil((numSlats * numPanels) / slatsPerStock);
     const sideFrameStocks = Math.ceil(sideFramePieces / sideFramesPerStock);
     const fSectionStocks = Math.ceil(fSectionPieces / sideFramesPerStock);
     const csrStocks = Math.ceil((numCsrPerPanel * numPanels) / csrPerStock);
     const usesPresetSpacers = String(vars.slat_gap_mode ?? "spacer") !== "custom";
     const spacerEachQty = 2 * Math.max(0, numSlats - 1) * numPanels;
-    const spacerPacks = isBayg || !usesPresetSpacers ? 0 : Math.ceil(spacerEachQty / cfg.packSizes.spacers);
+    const spacerPacks = isBayg || !usesPresetSpacers ? 0 : Math.ceil(spacerEachQty / cfg.slat.packSizes.spacers);
     const baygSpacers = isBayg ? spacerEachQty : 0;
     const hasLouvreField = cfg.fields.some((f) => f.field_key === "louvre_treatment");
     const louvreTreatment = hasLouvreField && slatSize === 65
@@ -595,9 +596,9 @@ function calculateHorizontalSlatRun(
     if ((vars.louvre_treatment === true || vars.louvre_treatment === "true") && !louvreTreatment) {
       sink.warnings.push("Louvre treatment is only available for horizontal slat systems with 65mm slats.");
     }
-    const slatFixingScrews = louvreTreatment ? 0 : numSlats * 2 * numPanels * cfg.packSizes.screwWasteFactor;
-    const screwPacks = Math.ceil((slatFixingScrews + numCsrPerPanel * numPanels * 4) / cfg.packSizes.slatScrews);
-    const g = cfg.geometry;
+    const slatFixingScrews = louvreTreatment ? 0 : numSlats * 2 * numPanels * cfg.slat.packSizes.screwWasteFactor;
+    const screwPacks = Math.ceil((slatFixingScrews + numCsrPerPanel * numPanels * 4) / cfg.slat.packSizes.slatScrews);
+    const g = cfg.slat.geometry;
     const fSectionScrewQty = fSectionPieces > 0
       ? Math.max(g.fSectionScrewMinPerPiece, Math.ceil((sideFrameCutMm - g.fSectionScrewStartOffset) / g.fSectionScrewSpacing) + 1) * 2 * fSectionPieces
       : 0;
@@ -610,32 +611,34 @@ function calculateHorizontalSlatRun(
 
     const base = { runId: run.runId, segmentId: segment.segmentId };
     const isAW = finishFamily === "alumawood" && ALUMAWOOD_CORE_COLOURS.has(colour);
-    const louvreBracketColour = cfg.colours.standard.includes(colour) ? colour : cfg.colours.louvreBracketFallback;
+    const louvreBracketColour = cfg.colours.standard.includes(colour) ? colour : cfg.slat.colours.louvreBracketFallback;
     const csrCapCol = csrCapColour(postColour);
-    const csrPlateColour = cfg.colours.csrPlate.includes(colourSkuSuffix(postColour)) ? colourSkuSuffix(postColour) : "MN";
+    const csrPlateColour = cfg.slat.colours.csrPlate.includes(colourSkuSuffix(postColour)) ? colourSkuSuffix(postColour) : "MN";
 
     emit(lines, { ...base, sku: slatInternalSku(cfg, finishFamily, economySlats, slatSize, colour), category: "slat", quantity: slatStocks, unit: "length", notes: `${numSlats} slats/panel, ${Math.round(slatCutMm)}mm cuts from ${slatStockLengthMm}mm stock` });
-    emit(lines, { ...base, sku: isku(cfg.internalSkus.louvreBracket, { colour: louvreBracketColour }), category: "bracket", quantity: louvreTreatment ? numSlats * numPanels : 0, unit: "pack", notes: "Louvre installation brackets" });
-    emit(lines, { ...base, sku: isku(isAW ? cfg.internalSkus.frame.sideFrameAW : cfg.internalSkus.frame.sideFrame, { colour }), category: "side_frame", quantity: sideFrameStocks, unit: "length", notes: `${sideFramePieces} pieces at ${Math.round(sideFrameCutMm)}mm` });
-    emit(lines, { ...base, sku: isku(isAW ? cfg.internalSkus.frame.cfcAW : cfg.internalSkus.frame.cfc, { colour }), category: "cfc_cover", quantity: sideFrameStocks, unit: "length", notes: "Auto-added 1:1 with side frame stock" });
-    emit(lines, { ...base, sku: cfg.internalSkus.sideFameCap, category: "accessory", quantity: sideFramePieces, unit: "each", notes: "Side frame caps" });
-    emit(lines, { ...base, sku: isku(isAW ? cfg.internalSkus.frame.csrAW : cfg.internalSkus.frame.csr, { colour }), category: "centre_support_rail", quantity: csrStocks, unit: "length", notes: numCsrPerPanel > 0 ? `${numCsrPerPanel} CSR/panel at ${Math.round(csrCutMm)}mm` : undefined });
-    emit(lines, { ...base, sku: isku(cfg.internalSkus.frame.csrCap, { colour: csrCapCol }), category: "accessory", quantity: numCsrPerPanel * numPanels, unit: "each", notes: "CSR caps" });
-    emit(lines, { ...base, sku: isku(isAW ? cfg.internalSkus.frame.fSectionAW : cfg.internalSkus.frame.fSection, { colour }), category: "f_section", quantity: fSectionStocks, unit: "length", notes: `${fSectionPieces} wall termination pieces` });
-    emit(lines, { ...base, sku: isku(cfg.internalSkus.screws.xpFixing, { colour: standardAccessoryColour(postColour) }), category: "screw", quantity: Math.ceil(fSectionScrewQty / cfg.packSizes.xpScrews), unit: "pack", notes: "F-section fixing screws" });
-    emit(lines, { ...base, sku: isku(cfg.internalSkus.spacer, { gapCode: gapCode(slatGap) }), category: "accessory", quantity: spacerPacks, unit: "pack", notes: `${spacerEachQty} spacers total` });
-    emit(lines, { ...base, sku: isku(cfg.internalSkus.spacerEach, { gapCode: gapCode(slatGap) }), category: "accessory", quantity: baygSpacers, unit: "each", notes: `${Math.max(0, numSlats - 1)} gaps x 2 ends x ${numPanels} panel(s)` });
-    emit(lines, { ...base, sku: cfg.internalSkus.screws.slatFixing, category: "screw", quantity: screwPacks, unit: "pack", notes: "Screening screws" });
+    emit(lines, { ...base, sku: isku(cfg.slat.internalSkus.louvreBracket, { colour: louvreBracketColour }), category: "bracket", quantity: louvreTreatment ? numSlats * numPanels : 0, unit: "pack", notes: "Louvre installation brackets" });
+    emit(lines, { ...base, sku: isku(isAW ? cfg.slat.internalSkus.frame.sideFrameAW : cfg.slat.internalSkus.frame.sideFrame, { colour }), category: "side_frame", quantity: sideFrameStocks, unit: "length", notes: `${sideFramePieces} pieces at ${Math.round(sideFrameCutMm)}mm` });
+    emit(lines, { ...base, sku: isku(isAW ? cfg.slat.internalSkus.frame.cfcAW : cfg.slat.internalSkus.frame.cfc, { colour }), category: "cfc_cover", quantity: sideFrameStocks, unit: "length", notes: "Auto-added 1:1 with side frame stock" });
+    emit(lines, { ...base, sku: cfg.slat.internalSkus.sideFameCap, category: "accessory", quantity: sideFramePieces, unit: "each", notes: "Side frame caps" });
+    emit(lines, { ...base, sku: isku(isAW ? cfg.slat.internalSkus.frame.csrAW : cfg.slat.internalSkus.frame.csr, { colour }), category: "centre_support_rail", quantity: csrStocks, unit: "length", notes: numCsrPerPanel > 0 ? `${numCsrPerPanel} CSR/panel at ${Math.round(csrCutMm)}mm` : undefined });
+    emit(lines, { ...base, sku: isku(cfg.slat.internalSkus.frame.csrCap, { colour: csrCapCol }), category: "accessory", quantity: numCsrPerPanel * numPanels, unit: "each", notes: "CSR caps" });
+    emit(lines, { ...base, sku: isku(isAW ? cfg.slat.internalSkus.frame.fSectionAW : cfg.slat.internalSkus.frame.fSection, { colour }), category: "f_section", quantity: fSectionStocks, unit: "length", notes: `${fSectionPieces} wall termination pieces` });
+    emit(lines, { ...base, sku: isku(cfg.slat.internalSkus.screws.xpFixing, { colour: standardAccessoryColour(postColour) }), category: "screw", quantity: Math.ceil(fSectionScrewQty / cfg.slat.packSizes.xpScrews), unit: "pack", notes: "F-section fixing screws" });
+    emit(lines, { ...base, sku: isku(cfg.slat.internalSkus.spacer, { gapCode: gapCode(slatGap) }), category: "accessory", quantity: spacerPacks, unit: "pack", notes: `${spacerEachQty} spacers total` });
+    emit(lines, { ...base, sku: isku(cfg.slat.internalSkus.spacerEach, { gapCode: gapCode(slatGap) }), category: "accessory", quantity: baygSpacers, unit: "each", notes: `${Math.max(0, numSlats - 1)} gaps x 2 ends x ${numPanels} panel(s)` });
+    emit(lines, { ...base, sku: cfg.slat.internalSkus.screws.slatFixing, category: "screw", quantity: screwPacks, unit: "pack", notes: "Screening screws" });
     emitCornerLines(lines, sink.warnings, base, segment.variables, "left", finishFamily, colour, actualHeightMm, cfg);
     emitCornerLines(lines, sink.warnings, base, segment.variables, "right", finishFamily, colour, actualHeightMm, cfg);
     if (panelWidthMm > cfg.panelRules.maxPanelWidthMm) sink.warnings.push(`Panel width ${Math.round(panelWidthMm)}mm exceeds recommended ${cfg.panelRules.maxPanelWidthMm}mm; split into more panels.`);
 
-    // Extra rules (discriminated union — new rule types added in code, suppliers supply params)
-    for (const rule of cfg.extraRules ?? []) {
-      if (rule.type === "extra_component_above_height" && actualHeightMm > rule.aboveHeightMm) {
-        emit(lines, { ...base, sku: rule.internalSku, category: "accessory", quantity: rule.qtyPerPanel * numPanels, unit: "each", notes: rule.notes ?? `Extra component above ${rule.aboveHeightMm}mm height` });
-      }
-    }
+    // Extra rules (typed extension hook — see calculators/shared.ts)
+    applyExtraRules(cfg.extraRules, {
+      ...base,
+      actualHeightMm,
+      numPanels,
+      panelWidthMm,
+      variables: { ...mergedRunVars, ...(segment.variables ?? {}) },
+    }, lines, sink.warnings);
   }
 
   const postCount = isBayg ? 0 : runPostBoundaryCount(run) + internalPanelPosts;
@@ -661,9 +664,14 @@ export function quickScreenCalculator(
   sink: Sink,
 ): QtyLine[] {
   const cfg = ctx.configs.get(run.productCode) ?? ctx.configs.get("QSHS");
-  if (!cfg) return [];
-  if (cfg.strategy.fence === "vertical_slat") {
-    return calculateVerticalSlatRun(payload, run, sink, cfg, ctx.components, ctx.resolveInternalSku);
+  // The slat block is this calculator's contract: no slat config → no slat BOM.
+  if (!cfg?.slat) {
+    sink.warnings.push(`No slat configuration for product "${run.productCode}" — the QuickScreen calculator cannot price this run.`);
+    return [];
   }
-  return calculateHorizontalSlatRun(payload, run, sink, cfg, ctx.components, ctx.resolveInternalSku);
+  const scfg = cfg as SlatProductConfig;
+  if (scfg.strategy.fence === "vertical_slat") {
+    return calculateVerticalSlatRun(payload, run, sink, scfg, ctx.components, ctx.resolveInternalSku);
+  }
+  return calculateHorizontalSlatRun(payload, run, sink, scfg, ctx.components, ctx.resolveInternalSku);
 }

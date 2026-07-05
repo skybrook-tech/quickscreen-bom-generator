@@ -1,5 +1,6 @@
 // colorbond_test.ts — offline assertion tests for the Colorbond calculator.
-// Runs calculateLocalBom end-to-end against synthetic data + BASE_CONFIGS.
+// Runs calculateLocalBom end-to-end with no ctx (the unpriced-offline path):
+// quantities and SKUs are exact; prices are $0 by design (DB-only pricing).
 //
 //   npx deno test --no-check --allow-read --allow-env \
 //     supabase/functions/bom-calculator-static/calculators/colorbond_test.ts
@@ -7,10 +8,13 @@
 import { assertEquals } from "https://deno.land/std@0.224.0/assert/mod.ts";
 import {
   calculateLocalBom,
+  makeCalcContext,
+  suggestAccessories,
   type CanonicalPayload,
   type CanonicalRun,
   type CanonicalSegment,
 } from "../engine.ts";
+import { BASE_CONFIGS } from "../config/base.ts";
 
 type Vars = Record<string, string | number | boolean>;
 
@@ -117,4 +121,31 @@ Deno.test("CB post_cap=false suppresses cap lines", () => {
   const r = calculateLocalBom(cbPayload(cbRun([cbSeg("s1", 7095, 1800)], { vars: { post_cap: false } })));
   const l = r.lines as Line[];
   assertEquals(qty(l, "CB-POSTCAP-DBL") + qty(l, "CB-POSTCAP-SGL"), 0);
+});
+
+Deno.test("CB depot-availability warnings fire per profile (extraRules variable_warning)", () => {
+  const goTrim = calculateLocalBom(cbPayload(cbRun([cbSeg("s1", 2365, 1800)], { vars: { profile: "GO-TRIM" } })));
+  assertEquals(goTrim.warnings.some((w) => w.includes("Newcastle depot only")), true, "GO-TRIM should warn Newcastle-only");
+
+  const goLine = calculateLocalBom(cbPayload(cbRun([cbSeg("s1", 2365, 1800)])));  // default profile GO-LINE
+  assertEquals(goLine.warnings.some((w) => w.includes("Brisbane & Gold Coast depots only")), true, "GO-LINE should warn Brisbane/GC-only");
+  // De-duplicated: multi-segment runs repeat the rule but the warning appears once.
+  const multi = calculateLocalBom(cbPayload(cbRun([cbSeg("s1", 2365, 1800), cbSeg("s2", 2365, 1800)])));
+  assertEquals(multi.warnings.filter((w) => w.includes("Brisbane & Gold Coast depots only")).length, 1);
+
+  const goZag = calculateLocalBom(cbPayload(cbRun([cbSeg("s1", 2365, 1500)], { vars: { profile: "GO-ZAG" } })));
+  assertEquals(goZag.warnings.some((w) => w.includes("depot")), false, "GO-ZAG is stocked at all depots — no warning");
+});
+
+Deno.test("CB run gets NO slat-system accessory suggestions (no slat config block)", () => {
+  const ctx = makeCalcContext({
+    dbComponents: [],
+    dbPricingRules: [],
+    configs: new Map(Object.entries(BASE_CONFIGS)),
+  });
+  const p = cbPayload(cbRun([cbSeg("s1", 7095, 1800)]));
+  const r = calculateLocalBom(p, "tier1", ctx);
+  const suggestions = suggestAccessories(p, r.lines, "tier1", ctx);
+  const xp = suggestions.filter((s) => (s.sku ?? "").startsWith("XP-") || (s.sku ?? "").startsWith("SS-POSTPLUG"));
+  assertEquals(xp.length, 0, `Colorbond runs must not receive slat accessories, got: ${xp.map((s) => s.sku).join(", ")}`);
 });
