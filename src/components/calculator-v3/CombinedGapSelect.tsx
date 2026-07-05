@@ -1,9 +1,7 @@
 import { useMemo } from "react";
 import {
   combinedGapChoicesForConfig,
-  combinedGapChoicesForSystem,
   gapChoiceId,
-  normaliseGapMode,
   normaliseGapModeConfig,
   parseGapChoiceId,
   type GapMode,
@@ -12,8 +10,6 @@ import type { UiCalculatorConfig } from "../../types/calculatorConfig.types";
 import { FormField } from "../shared/FormField";
 
 export interface CombinedGapSelectProps {
-  /** @deprecated pass `config` instead — product codes are no longer branched on in v3. */
-  productCode?: string;
   config?: UiCalculatorConfig;
   mode: unknown;
   gapMm: unknown;
@@ -21,22 +17,16 @@ export interface CombinedGapSelectProps {
 }
 
 export function CombinedGapSelect({
-  productCode,
   config,
   mode,
   gapMm,
   onChange,
 }: CombinedGapSelectProps) {
   const choices = useMemo(
-    () =>
-      config
-        ? combinedGapChoicesForConfig(config, mode, gapMm)
-        : combinedGapChoicesForSystem(productCode ?? "", mode, gapMm),
-    [config, gapMm, mode, productCode],
+    () => (config ? combinedGapChoicesForConfig(config, mode, gapMm) : []),
+    [config, gapMm, mode],
   );
-  const currentMode = config
-    ? normaliseGapModeConfig(config, mode)
-    : normaliseGapMode(productCode ?? "", mode);
+  const currentMode = normaliseGapModeConfig(config, mode);
   const currentGap = Math.max(0, Math.round(Number(gapMm) || 9));
   const currentId = gapChoiceId(currentMode, currentGap);
   const value = choices.some((choice) => choice.id === currentId)

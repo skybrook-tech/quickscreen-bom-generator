@@ -4,7 +4,7 @@ import { useCalculator } from "../../../context/CalculatorContext";
 import type { CanonicalRun, CanonicalSegment } from "../../../types/canonical.types";
 import { defaultGateVariables } from "../../../lib/gateOptionRules";
 import { defaultVariablesFromFields } from "../../../hooks/useProductVariables";
-import { clampPostSpacing } from "../../../lib/productOptionRules";
+import { clampPostSpacing } from "../../../lib/postSpacing";
 import { runFields, segmentOnlyFields } from "../../../lib/runFieldOverrides";
 import { Button } from "../../shared/Button";
 import { SegmentRow } from "./SegmentRow";

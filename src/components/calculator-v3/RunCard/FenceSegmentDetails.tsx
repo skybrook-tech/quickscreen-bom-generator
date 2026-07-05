@@ -2,9 +2,7 @@ import { useMemo } from "react";
 import { useCalculator } from "../../../context/CalculatorContext";
 import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import type { CanonicalSegment } from "../../../types/canonical.types";
-import {
-  clampPostSpacing,
-} from "../../../lib/productOptionRules";
+import { clampPostSpacing } from "../../../lib/postSpacing";
 import {
   patchSegmentVariables,
 } from "../../../lib/segmentTermination";

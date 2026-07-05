@@ -8,7 +8,7 @@ import {
   mergeCanonicalPreservingSegmentMeta,
 } from '../canvas/canonicalAdapter';
 import { calcRunStats } from '../../lib/runStats';
-import { clampPostSpacing } from '../../lib/productOptionRules';
+import { clampPostSpacing } from '../../lib/postSpacing';
 import {
   GATE_SEGMENT_STUB_KEYS,
 } from '../../lib/segmentTermination';

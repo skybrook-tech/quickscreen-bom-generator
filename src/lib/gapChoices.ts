@@ -1,4 +1,3 @@
-import { gapOptionsForSystem } from "./productOptionRules";
 import type { UiCalculatorConfig } from "../types/calculatorConfig.types";
 
 export type GapMode = "spacer" | "custom";
@@ -19,15 +18,6 @@ function gapRulesFromConfig(config: UiCalculatorConfig | undefined): GapRulesSou
   return config?.gapRules;
 }
 
-/**
- * @deprecated use `supportsCustomGapConfig` with the resolved config — product
- * codes are no longer meant to be branched on in v3 client code. Kept for the
- * gapChoices test and v4 paths.
- */
-export function supportsCustomGap(productCode: string) {
-  return productCode === "QSHS" || productCode === "VS";
-}
-
 export function supportsCustomGapConfig(config: UiCalculatorConfig | undefined): boolean {
   const rules = gapRulesFromConfig(config);
   return rules ? rules.allowCustom : false;
@@ -35,10 +25,6 @@ export function supportsCustomGapConfig(config: UiCalculatorConfig | undefined):
 
 export function normaliseGapModeConfig(config: UiCalculatorConfig | undefined, mode: unknown): GapMode {
   return supportsCustomGapConfig(config) && mode === "custom" ? "custom" : "spacer";
-}
-
-export function normaliseGapMode(productCode: string, mode: unknown): GapMode {
-  return supportsCustomGap(productCode) && mode === "custom" ? "custom" : "spacer";
 }
 
 export function gapChoiceId(mode: GapMode, gapMm: number) {
@@ -114,14 +100,4 @@ export function combinedGapChoicesForConfig(
   const min = config.gapRules.customMinMm || CUSTOM_GAP_MIN_MM;
   const max = config.gapRules.customMaxMm || CUSTOM_GAP_MAX_MM;
   return [...spacerChoices, ...customChoicesFor(min, max, currentMode, currentGap)];
-}
-
-export function combinedGapChoicesForSystem(
-  productCode: string,
-  currentMode: unknown,
-  currentGap: unknown,
-): CombinedGapChoice[] {
-  const spacerChoices = spacerChoicesFor(gapOptionsForSystem(productCode));
-  if (!supportsCustomGap(productCode)) return spacerChoices;
-  return [...spacerChoices, ...customChoicesFor(CUSTOM_GAP_MIN_MM, CUSTOM_GAP_MAX_MM, currentMode, currentGap)];
 }

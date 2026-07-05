@@ -1,17 +1,18 @@
-// productOptionRules.ts — LEGACY / v4-only.
+// productOptionRules.ts — LEGACY, being retired.
 //
-// The v3 calculator no longer branches on product codes: it sends the current
+// The calculator no longer branches on product codes: it sends the current
 // variables to get-calculator-config and renders the resolved option lists /
 // height ladder / normalisedVariables returned by the backend (see
-// supabase/functions/bom-calculator-static/config/optionRules.ts + resolve.ts).
+// supabase/functions/bom-calculator-static/config/resolve.ts), and
+// useRunReconciliation reconciles run variables to the resolved
+// `config.normalisedVariables` after load.
 //
 // The product-code-keyed helpers below (finishOptionsForSystem,
-// slatOptionsForSystem, normaliseVariablesForSystem, applyProductOptionRules,
-// etc.) remain ONLY because calculator-v4, calculatorV3Helpers, and the gap
-// choices test still import them. Do NOT add new v3 call sites — use the
-// resolved `UiCalculatorConfig` instead.
+// slatOptionsForSystem, normaliseVariablesForSystem, initialVariablesForSystem)
+// remain ONLY as the deferred "normaliser core" still imported by
+// calculatorV3Helpers and the product-switch paths. Do NOT add new call sites —
+// use the resolved `UiCalculatorConfig` instead.
 
-import type { SchemaField } from "../components/calculator-v3/SchemaDrivenForm";
 import {
   deriveHeights,
   derivedHeightForSlatCount,
@@ -19,14 +20,13 @@ import {
   type DerivedHeight,
 } from "./heights";
 import type { UiCalculatorConfig } from "../types/calculatorConfig.types";
+import { clampPostSpacing } from "./postSpacing";
 
 type Variables = Record<string, string | number | boolean>;
 
 const STANDARD_COLOURS = ["B", "MN", "G", "SM", "W", "BS", "D", "M", "P", "PB", "S"];
 const ALUMAWOOD_COLOURS = ["KWI", "WRC"];
 const ECONOMY_COLOURS = ["B", "MN", "SM"];
-export const MIN_POST_SPACING_MM = 100;
-export const MAX_POST_SPACING_MM = 3000;
 const DEFAULT_SLAT_GAP_MM = 9;
 
 const SYSTEM_MAX_PANEL_WIDTH: Record<string, number> = {
@@ -61,38 +61,6 @@ export function defaultGateInfillForCode(productCode: string): "horizontal" | "v
   return VERTICAL_GATE_CODES.has(productCode) ? "vertical" : "horizontal";
 }
 
-export function clampPostSpacing(value: unknown, fallback = 2600) {
-  const spacing = Number(value);
-  const resolved = Number.isFinite(spacing) ? spacing : fallback;
-  return Math.min(MAX_POST_SPACING_MM, Math.max(MIN_POST_SPACING_MM, Math.round(resolved)));
-}
-
-function optionField(
-  productCode: string,
-  name: string,
-  label: string,
-  options: Array<string | number>,
-  defaultValue: string | number,
-  sortOrder: number,
-): SchemaField {
-  return {
-    id: `${productCode}-${name}-job-synthetic`,
-    field_key: name,
-    label,
-    control_type: "select",
-    data_type: typeof defaultValue === "number" ? "number" : "enum",
-    required: true,
-    default_value_json: defaultValue,
-    options_json: options,
-    visible_when_json: {},
-    sort_order: sortOrder,
-  };
-}
-
-function cloneField(field: SchemaField, patch: Partial<SchemaField>): SchemaField {
-  return { ...field, ...patch };
-}
-
 export function finishOptionsForSystem(productCode: string) {
   if (productCode === "XPL") return ["standard", "alumawood"];
   if (productCode === "QSHS" || productCode === "VS") {
@@ -108,16 +76,15 @@ export function slatOptionsForSystem(productCode: string, variables: Variables) 
   return [65, 90];
 }
 
-export function gapOptionsForSystem(productCode: string) {
+// Internal to the deferred normaliser core (normaliseVariablesForSystem); no
+// longer part of the public API — the resolved config's slat_gap_mm options +
+// gapRules are the client-facing source (see gapChoices.combinedGapChoicesForConfig).
+function gapOptionsForSystem(productCode: string) {
   if (productCode === "XPL") return [5, 9, 20];
   if (productCode === "BAYG") return [5, 9, 20];
   if (productCode === "QSHS") return [5, 9, 12, 15, 20, 30];
   if (productCode === "VS") return [5, 9, 20];
   return [];
-}
-
-export function heightOptionsForSystem(productCode: string, variables: Variables, config?: UiCalculatorConfig) {
-  return heightEntriesForSystem(productCode, variables, config).map((item) => item.height);
 }
 
 export function heightEntriesForSystem(
@@ -307,88 +274,4 @@ export function normaliseVariablesForSystem(
   }
 
   return next;
-}
-
-export function applyProductOptionRules(
-  productCode: string,
-  fields: SchemaField[],
-  variables: Variables,
-): SchemaField[] {
-  const byKey = new Map(fields.map((field) => [field.field_key, field]));
-  const finishField = optionField(
-    productCode,
-    "finish_family",
-    "Slat range",
-    finishOptionsForSystem(productCode),
-    "standard",
-    5,
-  );
-
-  const result: SchemaField[] = [finishField];
-
-  for (const field of fields) {
-    if (field.field_key.endsWith("_stock_length_mm")) continue;
-
-    if (field.field_key === "colour_code") {
-      result.push(
-        cloneField(field, {
-          options_json: colourOptionsForSystem(variables),
-        }),
-      );
-      continue;
-    }
-
-    if (field.field_key === "post_colour_code") {
-      result.push(
-        cloneField(field, {
-          options_json: postColourOptionsForSystem(variables),
-        }),
-      );
-      continue;
-    }
-
-    if (field.field_key === "slat_size_mm") {
-      result.push(
-        cloneField(field, {
-          options_json: slatOptionsForSystem(productCode, variables),
-        }),
-      );
-      continue;
-    }
-
-    // slat_gap_mm, mounting_type/method, post_system, post_size, target_height_mm
-    // are fully defined by config/forms/fence.ts now (control_type, label,
-    // default, options). Nothing left to filter here — pass them through as-is
-    // so the combined_gap renderer (and everything else config-driven) isn't
-    // clobbered by a stale override.
-    if (field.field_key !== "finish_family") result.push(field);
-  }
-
-  if (!byKey.has("colour_code")) {
-    result.push(
-      optionField(
-        productCode,
-        "colour_code",
-        "Colour",
-        colourOptionsForSystem(variables),
-        "B",
-        10,
-      ),
-    );
-  }
-
-  if (!byKey.has("post_colour_code")) {
-    result.push(
-      optionField(
-        productCode,
-        "post_colour_code",
-        "Post colour",
-        postColourOptionsForSystem(variables),
-        "B",
-        25,
-      ),
-    );
-  }
-
-  return result.sort((a, b) => a.sort_order - b.sort_order);
 }

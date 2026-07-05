@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useCalculator } from "../../../context/CalculatorContext";
 import { useCalculatorConfig } from "../../../hooks/useCalculatorConfig";
 import type { CanonicalSegment } from "../../../types/canonical.types";
-import { Check, ChevronDown, ChevronUp, Plus, RefreshCcw, X } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, RefreshCcw, X } from "lucide-react";
 import { ConfirmButton } from "../../shared/ConfirmButton";
 import {
   GATE_SEGMENT_STUB_KEYS,
@@ -19,7 +19,7 @@ import {
   gatePatchForAlternative,
   validateGateWidth,
 } from "../../../lib/gateConstraints";
-import { clampPostSpacing } from "../../../lib/productOptionRules";
+import { clampPostSpacing } from "../../../lib/postSpacing";
 import {
   derivedHeightForSlatCount,
   nearestDerivedHeight,
@@ -414,13 +414,6 @@ export function SegmentRow({
         }),
       },
     });
-  }
-
-  function setMapHover(value: string | null) {
-    if (typeof window === "undefined") return;
-    window.dispatchEvent(
-      new CustomEvent("qsbom:hover-map-label", { detail: value }),
-    );
   }
 
   const lengthValue = gate || isPanelStrategy ? Number(seg.segmentWidthMm ?? 0) : parseFloat(((seg.segmentWidthMm ?? 0) / 1000).toFixed(2))
