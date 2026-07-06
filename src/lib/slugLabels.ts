@@ -1,8 +1,9 @@
 /**
- * Human-readable labels for raw slug values that come from the database
- * (product_variables.options_json) and appear in form controls or spec chips.
+ * Human-readable labels for raw slug values that come from the resolved
+ * calculator config (field options_json) and appear in form controls or
+ * spec chips.
  *
- * Extend this map when new slugs appear in seed data.
+ * Extend this map when new slugs appear in field config.
  */
 export const SLUG_LABELS: Record<string, string> = {
   // Mounting methods

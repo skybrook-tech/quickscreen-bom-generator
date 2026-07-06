@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Package, GitBranch, Variable, Puzzle, ChevronRight } from 'lucide-react';
+import { Package, ChevronRight } from 'lucide-react';
 import { AdminLayout } from '../../components/admin/AdminLayout';
 import { useAdminProducts } from '../../hooks/useAdminProducts';
 
@@ -19,7 +19,7 @@ export function ProductsIndexPage() {
   return (
     <AdminLayout
       title="Products"
-      subtitle="All fences, gates, and other product types. Click a product to view and edit its engine configuration."
+      subtitle="All fences, gates, and other product types. Click a product to view its components."
     >
       {isLoading && (
         <div className="text-sm text-brand-muted animate-pulse">Loading products…</div>
@@ -43,11 +43,6 @@ export function ProductsIndexPage() {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {items.map((product) => {
-                  const ruleCount = product.product_rules?.[0]?.count ?? 0;
-                  const varCount = product.product_variables?.[0]?.count ?? 0;
-                  const selectorCount = product.product_component_selectors?.[0]?.count ?? 0;
-                  const ruleSetCount = product.rule_sets?.[0]?.count ?? 0;
-
                   return (
                     <Link
                       key={product.id}
@@ -103,28 +98,11 @@ export function ProductsIndexPage() {
                         </div>
                       )}
 
-                      <div className="grid grid-cols-3 gap-2 pt-2 border-t border-brand-border/50">
-                        <div className="flex items-center gap-1.5 text-xs text-brand-muted">
-                          <GitBranch size={11} />
-                          <span>{ruleSetCount} set{ruleSetCount !== 1 ? 's' : ''}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-xs text-brand-muted">
-                          <Variable size={11} />
-                          <span>{varCount} var{varCount !== 1 ? 's' : ''}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-xs text-brand-muted">
-                          <Puzzle size={11} />
-                          <span>{ruleCount} rule{ruleCount !== 1 ? 's' : ''}</span>
-                        </div>
-                        <div className="col-span-3 flex items-center justify-between mt-1">
-                          <span className="text-xs text-brand-muted">
-                            {selectorCount} selector{selectorCount !== 1 ? 's' : ''}
-                          </span>
-                          <ChevronRight
-                            size={13}
-                            className="text-brand-border group-hover:text-brand-accent transition-colors"
-                          />
-                        </div>
+                      <div className="flex items-center justify-end pt-2 border-t border-brand-border/50">
+                        <ChevronRight
+                          size={13}
+                          className="text-brand-border group-hover:text-brand-accent transition-colors"
+                        />
                       </div>
                     </Link>
                   );

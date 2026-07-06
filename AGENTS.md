@@ -25,7 +25,7 @@ Staff and trade customers can:
 
 **Phases 0–7 are complete (Phase 7 included V1 removal). The live calculator is the "static engine" — a code-configured (not DB-driven) BOM engine.** The React app is the primary codebase.
 
-> **⚠️ Architecture note.** An earlier plan built a *fully data-driven* engine (`bom-calculator` reading rules from seeded Postgres tables). That approach was abandoned and **its code has been deleted** — specs remain in [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/); its rule tables persist only until migration compaction. The live engine is `bom-calculator-static` + `get-calculator-config`, configured by TypeScript + per-product JSON **field files** under `supabase/functions/bom-calculator-static/config/`. The canonical live-architecture reference is [`docs/configurable-static-calculator-plan.md`](docs/configurable-static-calculator-plan.md).
+> **⚠️ Architecture note.** An earlier plan built a *fully data-driven* engine (`bom-calculator` reading rules from seeded Postgres tables). That approach was abandoned and **its code, DB rule tables, and seed sections have all been deleted** (migration compaction, 2026-07) — specs remain in [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/). The live engine is `bom-calculator-static` + `get-calculator-config`, configured by TypeScript + per-product JSON **field files** under `supabase/functions/bom-calculator-static/config/`. The canonical live-architecture reference is [`docs/configurable-static-calculator-plan.md`](docs/configurable-static-calculator-plan.md); the agreed forward direction (vendor model, price freezing) is [`docs/vendor-model-plan.md`](docs/vendor-model-plan.md).
 
 - See `docs/tasks.md` for the full current task status.
 
@@ -36,7 +36,7 @@ v2 was retired in an earlier cleanup. v1 was removed — the `/new` route, `Main
 | Path | Page | Edge functions | Purpose |
 |---|---|---|---|
 | `/` | — | — | Redirects to `/fence-calculator`. |
-| `/fence-calculator`, `/calculator`, `/quote/:quoteId` | `CalculatorV3Page` | `bom-calculator-static` (BOM) + `get-calculator-config` (fields) | Static BOM engine. The calculator function (`config/calculators/`) is product-agnostic; per-product behaviour lives in code-configured `BASE_CONFIGS` (`config/base.ts`) + JSON field files (`config/products/*/fields.json`). Searchable fence product picker + gate list modal + typeahead extra-items panel. Scope: **QSHS/VS/XPL/BAYG fences + QS_GATE gate**. Adding a fence family = new field file + config registration (see § "Add a fence family"). |
+| `/fence-calculator`, `/calculator`, `/quote/:quoteId` | `CalculatorV3Page` | `bom-calculator-static` (BOM) + `get-calculator-config` (fields) | Static BOM engine. The calculator function (`config/calculators/`) is product-agnostic; per-product behaviour lives in code-configured `BASE_CONFIGS` (`config/base.ts`) + JSON field files (`config/products/*/fields.json`). Searchable fence product picker + gate list modal + typeahead extra-items panel. Scope: **QSHS/VS/XPL/BAYG slat fences + COLORBOND steel fence + QS_GATE gate**. Adding a fence family = new field file + config registration (see § "Add a fence family"). |
 
 ### Current Architecture
 
@@ -73,7 +73,7 @@ v2 was retired in an earlier cleanup. v1 was removed — the `/new` route, `Main
 
 ## 3. Project Structure
 
-Source lives in `src/` with these top-level directories: `components/` (auth, bom, calculator, calculator-v3, canvas, contact, fence, gate, layout, quote, shared, wizard), `context/`, `hooks/`, `lib/`, `pages/`, `schemas/`, `types/`, `utils/`.
+Source lives in `src/` with these top-level directories: `components/` (admin, auth, brand, calculator, calculator-v3, canvas, fence, gate, layout, quote, shared, ui), `context/`, `hooks/`, `lib/`, `pages/`, `schemas/`, `types/`, `utils/`.
 
 Edge functions are in `supabase/functions/`: `bom-calculator-static` (the BOM engine), `get-calculator-config` (resolves field/option config for the client), `search-products`, plus `_shared` (auth + CORS helpers). The old data-driven engine functions (`bom-calculator`, `calculate-pricing`) have been **deleted** — specs live in [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/).
 
@@ -86,9 +86,9 @@ The live engine's configuration lives entirely under `supabase/functions/bom-cal
 - `calculators/shared.ts` — `applyExtraRules`, the **typed extension hook**: new rule TYPES (e.g. `extra_component_above_height`, `warning`, `variable_warning`) are added in code with tests; products/suppliers only supply values via `config.extraRules` (e.g. Colorbond depot-availability warnings). Never reintroduce a generic expression language here.
 - `engine.ts` — aggregation, pricing, BOM metadata, suggested accessories (slat-gated). **DB-only**: components + pricing come exclusively from the DB ctx; with no ctx (offline/tests) runs are UNPRICED ($0, correct SKUs/quantities). The former "synthetic" catalogue lives in `engine_test_fixtures.ts` (test-only) so the snapshot suite stays price-bearing.
 
-Database migrations are in `supabase/migrations/` (001–010 are shared catalog + pricing infrastructure; the rule tables from 011–014 belonged to the deleted data-driven engine and are slated for removal in a future **migration compaction** — 018's `quote_runs`/`quote_run_segments` are LIVE (quote persistence), and 022's product flattening is used by the catalog).
+Database migrations are in `supabase/migrations/` — a **single squashed `001_init.sql`** (2026-07 compaction of the former 001–032: schema dump minus the dead rule-engine tables, plus the hand-appended `on_auth_user_created` trigger on `auth.users` and the ACL pins for the no-RLS pricing tables — pg_dump captures neither). New schema changes are new numbered migrations on top of it.
 
-**DB seeds** (via `supabase db reset`): `supabase/seeds/organizations.sql` (the org) plus the **per-product JSON files** under `supabase/seeds/glass-outlet/products/*.json` and `price_catalogue.json`, applied by `seed-products.js`. The LIVE sections are `products`, `product_components`, and `pricing_rules` (the static engine reads these from the DB). The rule-engine sections still present in older files (`rule_sets`, `product_rules`, selectors, companions, …) feed dead tables and will be stripped during migration compaction. To change live calculation behaviour, edit the static engine config (above); to change catalogue/pricing facts, edit the seed JSON.
+**DB seeds** (via `supabase db reset`): `supabase/seeds/organizations.sql` (the org) plus the **per-product JSON files** under `supabase/seeds/glass-outlet/products/*.json` and `price_catalogue.json`, applied by `seed-products.js`. Files contain LIVE sections only: `products`, `product_components`, and `pricing_rules` (the static engine reads these from the DB); the old rule-engine sections were stripped in the 2026-07 compaction. To change live calculation behaviour, edit the static engine config (above); to change catalogue/pricing facts, edit the seed JSON.
 
 `seed-auth.js` and `seed-images.js` handle auth users and image uploads respectively.
 
@@ -105,26 +105,22 @@ Run `ls src/` or `ls src/components/` for the current file list — the director
 
 ## 4. Business Rules & Validation
 
-### Fence Configuration fields
+**Where rules live (LIVE path):** field/option definitions and their conditional cascades are in `supabase/functions/bom-calculator-static/config/products/<code>/fields.json` (`options_when_json`, `visible_when_json`, `snap_*`); numeric/geometry rules (colour sets, height ladders, panel rules, gate rules, stock lengths, pack sizes) are in `config/base.ts` per-product `BASE_<CODE>_CONFIG`; invalid variables are snapped server-side by `config/normalise.ts` (`normaliseVariables`) — both in `get-calculator-config` (client display) and in `engine.ts` per run before calculation. **To change or check a rule, read those files — not the client.**
 
-`src/schemas/fence.schema.ts` — key fields: `systemType` (QSHS/VS/XPL/BAYG), `totalRunLength` (m, positive), `targetHeight` (300–2400mm), `slatSize` (65/90mm), `slatGap` (5/9/20mm), `colour`, `maxPanelWidth` (2600/2000mm), `leftTermination`/`rightTermination` (post/wall), `postMounting` (concreted-in-ground/base-plated/core-drilled), `corners` (int ≥ 0).
+> ⚠️ **Legacy schemas**: `src/schemas/fence.schema.ts` / `gate.schema.ts` and `FenceConfigContext` are v1-era leftovers still imported by legacy canvas/gate components and quote metadata. They are NOT where live validation happens — do not add rules there.
 
-### Gate Configuration fields
+### Key business facts (as encoded in the live config)
 
-`src/schemas/gate.schema.ts` — key fields: `gateType` (single-swing/double-swing/sliding), `openingWidth`, `gateHeight` (match-fence or 600–2400mm), `colour`/`slatGap`/`slatSize` (match-fence or explicit), `gatePostSize` (50×50/65×65/75×75/100×100), `hingeType`, `latchType`.
+- **XPL forces 65mm slats**; economy finish restricts to 65mm and the economy colour palette; alumawood+90mm restricts colours to WRC — all via `options_when_json` cascades, snapped by `normaliseVariables`.
+- **Swing gates (single/double) always use 65mm blades** — 90mm slats are sliding-gate-only.
+- **Max recommended swing gate width**: 1200mm. Standard gate heights: 900–2100mm ladder.
+- **Panel width**: `panelRules.maxPanelWidthMm` per product (QSHS 2600, BAYG 3000, COLORBOND 3125); `clampPostSpacing` (`src/lib/postSpacing.ts`) clamps client-side.
+- **Heights**: `heightUi.mode` per product — `"ladder"` (slat-derived, QSHS/VS/XPL), `"options"` (discrete manufactured heights, COLORBOND 1500/1800/2100), or `"freeform"`. See § 6a for the N:0 sentinel gotcha.
+- **Stock lengths** are config (`slat.stockLengths` in `base.ts`), e.g. slat 6100/6500/5800 by finish, rail 5800 fence.
 
-### Validation rules enforced in reducer and form
+### Colours — short codes, per-product sets
 
-- **XPL system forces 65mm slats** — enforced in `FenceConfigContext` reducer on every SET_FIELD action
-- **Swing gates (single/double) always use 65mm blades** — 90mm slats are only available for sliding gates
-- **Max recommended swing gate width**: 1200mm
-- **Standard gate heights**: 900, 1050, 1200, 1500, 1800, 1950, 2100mm
-- **Panel width options**: 2600mm (standard), 2000mm (high-wind areas)
-- **Stock lengths**: slat 5800mm, rail 5800mm, post 3000mm (typical)
-
-### Colours (Colorbond brand names — must be spelled exactly)
-
-`black-satin`, `monument-matt`, `woodland-grey-matt`, `surfmist-matt`, `pearl-white-gloss`, `basalt-satin`, `dune-satin`, `mill`, `primrose` _(limited)_, `paperbark` _(limited)_, `palladium-silver-pearl`
+Variables and SKUs use **short codes** (`B`, `MN`, `G`, `SM`, `W`, `BS`, `D`, `M`, `P`, `PB`, `S`, `KWI`, `WRC`); long Colorbond brand names (`black-satin`, `monument-matt`, …) appear only in legacy schemas/UI labels (`COLOUR_NAMES` maps code→name). **Colour sets differ per product** (`colours.standard/economy/alumawood/gate` in `base.ts`): e.g. QSHS standard includes `B`, but COLORBOND's set is `MN/G/SM/BS/PB/P` — **no `B`**. Colour codes are interpolated directly into SKU templates (`CB-GLINE-{sheetHeight}-{colour}`), so an out-of-set colour silently produces a nonexistent SKU that prices at $0 (see § 15 debugging).
 
 ### Gate hardware
 
@@ -138,36 +134,37 @@ Run `ls src/` or `ls src/components/` for the current file list — the director
 
 Every table includes `org_id`. RLS policies use `public.user_org_id()` (a `SECURITY DEFINER STABLE` function on profiles) to scope all access. Never trust client-sent `org_id` — always resolve from the authenticated user's JWT.
 
-| Migration | Table / View                | Key design notes                                                                                                                                    |
-| --------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 001       | `organisations`             | Seeds Glass Outlet org (`slug = 'glass-outlet'`). No RLS.                                                                                           |
-| 002       | `profiles`                  | `public.user_org_id()` helper; signup trigger defaults new users to Glass Outlet org.                                                                  |
-| 003       | `quotes`                    | RLS: users see **all org quotes** (staff visibility), but can only insert/update/delete their own.                                                   |
-| 004       | `product_pricing` _(legacy)_| Renamed to `pricing_rules` in migration 008. Do not reference directly.                                                                             |
-| 005       | `products`                  | **No RLS**. Root products + variants via `parent_id` FK. `UNIQUE(org_id, system_type) WHERE parent_id IS NULL`. `UNIQUE(parent_id, system_type) WHERE parent_id IS NOT NULL`. |
-| 006       | `product_components`        | **No RLS**. Single source of truth per SKU: name, description, category, unit, default_price, system_types[], active. SKU unique per org.            |
-| 007       | _(seed)_                    | Seed now populates `products`, `product_components`, and `pricing_rules` in new format.                                                              |
-| 008       | `pricing_rules`             | **No RLS**. Rule-based pricing: `component_id` FK, `tier_code` (tier1/2/3), `rule` (math.js expression, NULL = always), `price`, `priority`.        |
-| 008       | `pricing_rules_with_sku`    | View joining `pricing_rules` + `product_components`. Used by edge functions for sku-based lookups. No RLS (service role only).                       |
-| 009       | `products` + image_url      | Adds `image_url` to products. Populated via `seed-images.js`.                                                                                        |
-| 010       | `products` RLS              | `authenticated` SELECT on products (metadata only, no pricing).                                                                                      |
-| 011–014   | `rule_sets`/`rule_versions`, `product_rules`/`_constraints`/`_validations`/`_variables`, `product_component_selectors`, `product_companion_rules`/`product_warnings` | **Dead** (the data-driven engine was deleted) — tables remain only until migration compaction. See [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/). |
-| 018       | `quote_runs`, `quote_run_segments` | Persistent canonical payload for quotes. FK → `quotes.id`. RLS matches `quotes` pattern.                                                   |
-| 019       | `user_role` enum            | Adds `admin` value for trace/debug panel access.                                                                                                     |
+The schema lives in a **single squashed migration** (`supabase/migrations/001_init.sql`, 2026-07 compaction — the former 001–032 numbering survives only in git history). Nine tables + one view:
+
+| Table / View                | Key design notes                                                                                                                                    |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `organisations`             | Glass Outlet org seeded by `seeds/organizations.sql` (`slug = 'glass-outlet'`). No RLS.                                                              |
+| `profiles`                  | `public.user_org_id()` helper; `on_auth_user_created` trigger on `auth.users` defaults new users to Glass Outlet org. `user_role` enum (`user`/`staff`/`admin` — admin unlocks trace panel). |
+| `quotes`                    | RLS: users see **all org quotes** (staff visibility), but can only insert/update/delete their own. `bom` JSONB freezes the priced summary at save.   |
+| `quote_runs`, `quote_run_segments` | Persistent canonical payload for quotes. FK → `quotes.id`. RLS matches `quotes` pattern. No per-line prices (see `docs/vendor-model-plan.md` § 3). |
+| `products`                  | FLAT (no parent/variant hierarchy); `product_type` distinguishes fence/gate/other; `image_url` via `seed-images.js`. RLS+grant: `authenticated` SELECT (metadata only). `chk_system_types_values` on `product_components` constrains allowed codes (currently QSHS/VS/XPL/BAYG/GATE/COLORBOND — extending it = new migration). |
+| `product_components`        | **No RLS** (table grants only: no `anon`; `authenticated` read/write for the admin UI). Single source of truth per SKU; SKU unique per org; `internal_sku` column remaps canonical internal SKUs → supplier SKUs. |
+| `pricing_rules`             | **No RLS** (same grant posture). `component_id` FK, `tier_code` (tier1/2/3), `rule` (only `qty >= N`-style quantity gates are evaluated — see engine `matchesPriceRule`), `price`, `priority`. |
+| `pricing_rules_with_sku`    | View joining `pricing_rules` + `product_components`. Used by edge functions for sku-based lookups. No `anon`/`authenticated` grants (service role only). |
+| `supplier_product_calculator_configs` | Per-org sparse `CalculatorConfig` JSONB patches, deep-merged over `BASE_CONFIGS` at request time (`config/merge.ts`). Org-read RLS, service-role write. |
+
+The dead data-driven-engine tables (`rule_sets`, `rule_versions`, `product_rules`, `product_constraints`, `product_validations`, `product_variables`, `product_component_selectors`, `product_companion_rules`, `product_warnings`) and `colour_options` were **dropped in the compaction** — schemas documented in [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/) and recoverable from git history.
+
+⚠️ When adding migrations on top of `001_init.sql`: Supabase's `ALTER DEFAULT PRIVILEGES` grants ALL to `anon`/`authenticated` on every new table — tables holding pricing IP without RLS must explicitly REVOKE (see the ACL block at the end of `001_init.sql`), and anything on the `auth` schema (triggers) is never captured by `supabase db dump`.
 
 ---
 
 ## 5a. Live engine configuration (static engine)
 
-The live BOM engine (`bom-calculator-static`) is **not** driven by DB tables — it is configured in code under `supabase/functions/bom-calculator-static/config/`. The migration-011–014 engine tables (`product_rules`, `product_variables`, `product_component_selectors`, `product_companion_rules`, `product_warnings`, etc.) belong to the **parked** data-driven engine and are not read by the live path. See [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/) if you need their shapes.
+The live BOM engine (`bom-calculator-static`) is **not** driven by DB rule tables — it is configured in code under `supabase/functions/bom-calculator-static/config/` (the DB supplies only catalogue facts: components, prices, per-org config-override patches). The retired data-driven engine's rule tables were dropped in the 2026-07 compaction; see [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/) if you need their shapes.
 
 | Config artefact | Purpose |
 |---|---|
 | `config/base.ts` → `BASE_CONFIGS` | One `CalculatorConfig` per product (defaults, strategy, panel/gate rules, colours, display) |
 | `config/products/<code>/fields.json` | Per-product field + option definitions (the client renders these) |
 | `config/resolve.ts` / `normalise.ts` / `merge.ts` | Resolve base config + variables → UI-safe projection (`get-calculator-config` output) |
-| `calculators/registry.ts` + `quickscreen.ts` | Product-agnostic calculators, keyed by `productCode` |
-| `engine.ts` | Component catalogue, line aggregation, pricing |
+| `calculators/registry.ts` + `quickscreen.ts` + `colorbond.ts` | Calculators keyed by `productCode`; each guards on its strategy block |
+| `engine.ts` | Run dispatch + per-run variable normalisation, line aggregation, pricing |
 
 **To change live calculation behaviour:** edit the config artefacts above and redeploy the function. See [`docs/configurable-static-calculator-plan.md`](docs/configurable-static-calculator-plan.md) and § "Add a fence family" below.
 
@@ -198,10 +195,10 @@ const orgId = profile.org_id;
 
 1. CORS + JWT → resolve `{ orgId, role, pricingTier }`
 2. Validate payload (Zod)
-3. Load the resolved `CalculatorConfig` per `productCode` from `config/` (`merge` BASE_CONFIGS + supplier overrides → `resolve`/`normalise` variables and option lists)
-4. Dispatch each run to the calculator from `calculators/registry.ts` (all fence products currently share `quickScreenCalculator`, which branches on `config.strategy.fence`, not on product code)
-5. Resolve SKUs + companions from the config/component catalogue; aggregate lines by SKU; tag with `runId`/`segmentId`/`productCode`; split into `runResults[]`
-6. Warnings/errors/assumptions collected; **pricing stage last + non-fatal** (missing price → `unitPrice=0` + warning, BOM still returned)
+3. Load `product_components` + `pricing_rules_with_sku` **org-wide** (paginated `loadAllPages` — PostgREST caps at 1000 rows/page; there is NO per-product filter, the whole org catalogue is always in ctx) and the resolved `CalculatorConfig` per `productCode` from `config/` (`merge` BASE_CONFIGS + supplier overrides → `resolve`/`normalise`)
+4. Per run: `normaliseRunVariables` snaps the run's effective variables to its product's config (safety net for invalid inherited values, e.g. a colour carried across a product switch), then dispatch to the calculator from `calculators/registry.ts` (`QSHS/VS/XPL/BAYG` → `quickScreenCalculator` branching on `config.strategy.fence`; `COLORBOND` → `colorbondCalculator`)
+5. Resolve internal → supplier SKUs + companions; aggregate lines by SKU; tag with `runId`/`segmentId`/`productCode`; split into `runResults[]`
+6. Warnings/errors/assumptions collected; **pricing stage last + non-fatal** (missing price → `unitPrice=0` + `"No local price found for SKU …"` assumption, BOM still returned — a $0 line means the emitted SKU string isn't in the org catalogue, usually a template-interpolation mismatch, not a load failure)
 7. Strip `trace`/most of `computed` for non-admin
 
 **Trace gating:** `role === 'admin'` → full `trace[]` + `computed{}`. Non-admin → `trace: []` and only `actual_height_mm` retained in `computed` (needed by `AchievedHeightBadge`).
@@ -214,7 +211,20 @@ See [`docs/configurable-static-calculator-plan.md`](docs/configurable-static-cal
 
 ### Removed functions
 
-`bom-calculator` (the fully data-driven engine) and `calculate-pricing` have been **deleted from the repo** (2026-07). Their pipeline specs live in [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/) for reference. Their DB rule tables (migrations 011–014) still exist and will be dropped in a future migration compaction.
+`bom-calculator` (the fully data-driven engine) and `calculate-pricing` have been **deleted from the repo** (2026-07), and their DB rule tables were **dropped in the migration compaction** (2026-07). Their pipeline specs live in [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/) for reference.
+
+---
+
+## 6a. Runs, segments & mixed products (v3 state model)
+
+The canonical payload is `{ runs: CanonicalRun[], variables: {} }` (v3 no longer uses payload-level variables). Each run has `productCode`, `variables`, and `segments[]`. **Read this before touching product-switch, height, or segment-override code** — the flow is subtle:
+
+- **Per-section product override**: a segment can use a different product than its run via `seg.variables.product_code` (NOT the top-level `seg.productCode` — that's a v4 leftover). `null`/absent = inherit the run's product. Effective segment variables everywhere are `{ ...run.variables, ...seg.variables }`.
+- **Send-time expansion**: `expandSectionSystemOverrides` (`src/hooks/useBomCalculator.ts`) splits override segments into **synthetic runs** (`runId` = `${run.runId}-${code}`, spreading the parent run's variables) just before invoking `bom-calculator-static`. These synthetic runs exist only inside the mutation — they are never rendered, never in state, and never client-reconciled. Anything that must hold for them has to be guaranteed at write time (segment state) or server-side (`normaliseRunVariables`).
+- **Reconciliation scope**: `useRunReconciliation` (called once per run in `RunCardInner`) diffs `config.normalisedVariables` against **run** variables only and dispatches `UPSERT_RUN`. It **never touches segment variables** — segment values are only corrected when written (see next point) plus the server safety net.
+- **Section product switch** (`FenceSegmentDetails.onSystemTypeChange`): switching a section AWAY from the run product sets its variables to the target product's **full defaults** (`configForProduct(allConfigs, code).normalisedVariables`) + `product_code`; switching BACK empties them so it inherits the run. **Height & width are preserved** across the switch; height is snapped to the target product's ladder via `nearestDerivedHeight`.
+- **State mechanics**: `patchSegmentVariables` (`src/lib/segmentTermination.ts`) only **merges** (`null`/`undefined`/`""` deletes that one key) — to replace or empty a segment's whole variable set, build the segment object and dispatch it directly; the `UPSERT_SEGMENT` reducer **replaces the whole segment**. New runs/scopes are seeded from `normalisedVariables` (see `buildInitialFencePayload` in `src/lib/newQuotePayload.ts`).
+- **Height & width storage**: width = top-level `seg.segmentWidthMm` only. Height is stored **redundantly**: top-level `seg.targetHeightMm` AND `variables.target_height_mm` + `variables.slat_count` (gates also `gate_height_mm`). `slat_count` is a ladder-derivation artifact; **options-mode ladders (COLORBOND) emit every entry with the `N: 0` sentinel** — `derivedHeightForSlatCount` (`src/lib/heights.ts`) treats `n <= 0` as "no slat count" so lookups fall through to `nearestDerivedHeight(target_height_mm)`. Don't re-introduce an `N === 0` match: it silently pins options-mode heights to the first entry.
 
 ---
 
@@ -225,7 +235,7 @@ See [`docs/configurable-static-calculator-plan.md`](docs/configurable-static-cal
 1. **AI Job Description Parsing** — natural language → fence config via Claude API. Requires `parse-job-description` edge function with `ANTHROPIC_API_KEY`, `useAIParse` hook, `JobDescriptionParser` component.
 2. **AI BOM Review** — BOM sanity check via Claude API. Requires `review-bom` edge function, `useAIReview` hook, `BOMReviewer` component.
 
-When v2 is ready, `FenceConfigContext` needs a `SET_CONFIG` bulk-update action for the AI parse result.
+When v2 is ready, the AI parse result should seed the v3 `CalculatorContext` payload (see the existing non-AI describe-fence parser: `src/lib/describeFenceParser.ts` + `buildRunFromDescription`) — not the legacy `FenceConfigContext`.
 
 ---
 
@@ -324,11 +334,15 @@ VITE_SUPABASE_ANON_KEY=your-local-anon-key
 
 ## 14. Testing
 
-**Engine tests:** Deno unit tests for the live static engine live under `supabase/functions/bom-calculator-static/` (`engine_test.ts` with snapshot fixtures under `__snapshots__/`, and `config/resolve_test.ts` for config resolution). Run with `deno test`.
+**Engine tests (the real regression suite):** Deno unit tests for the live static engine — `engine_test.ts` (snapshot scenarios, fixture catalogue in `engine_test_fixtures.ts`), `config/resolve_test.ts` (config/normalise resolution), `calculators/colorbond_test.ts`. Deno is **not installed globally** — run via `npm run test:unit:static` (= `npx deno test --allow-read --allow-env supabase/functions/bom-calculator-static/`). Update snapshots after an *intentional* change with `npm run test:unit:static:update` and review the diff.
 
-**Client tests:** Vitest unit tests colocated with source (`*.test.ts`/`*.test.tsx`). Run with `npm run test`.
+**DB integration tests:** `npm run test:integration` (= `integration_db_test.ts`, gated on `RUN_DB_TESTS=1`; needs `supabase start` + a seeded DB + `SUPABASE_SERVICE_ROLE_KEY` in env). Runs the edge function's own loaders (`db.ts`) + engine against the **seeded** catalogue and asserts on emitted components (sku + quantity — **prices deliberately ignored**, so price edits never break it). Covers what the offline suite can't: loader pagination past the PostgREST 1000-row cap and SKU resolution against real seeds. CI runs it in the `db-integration` job. Update the hardcoded expectations only after an intentional calculation/catalogue change.
 
-Cypress E2E coverage is a follow-up phase. `SchemaDrivenForm` emits `data-testid={field_key}` so future selectors can be written against the `/fence-calculator` route.
+**Type check:** `npm run typecheck` (fast) or `npm run build` (typecheck + bundle — run before committing).
+
+**Client tests:** Vitest tests are colocated (`*.test.ts(x)`), but ⚠️ **the jsdom vitest runner is currently broken repo-wide** (`html-encoding-sniffer`/`@exodus/bytes` ESM interop in node_modules — pre-existing). `npm run test` only targets `useGoogleMaps.test.tsx` and fails with `ERR_REQUIRE_ESM` before running anything. Don't treat that failure as caused by your change, and don't claim client-test coverage from it — verify client changes via `npm run build` + driving the app.
+
+Cypress E2E coverage is a follow-up phase (`npm run cy:open`). `SchemaDrivenForm` emits `data-testid={field_key}` so future selectors can be written against the `/fence-calculator` route.
 
 > The data-driven engine and its Deno tests (TC-V3-1…8) were deleted with the function — see [`docs/_deprecated/data-driven-approach/`](docs/_deprecated/data-driven-approach/).
 
@@ -339,15 +353,18 @@ Cypress E2E coverage is a follow-up phase. `SchemaDrivenForm` emits `data-testid
 - **Never put pricing numbers, margin percentages, or wholesale costs in client-side code.** Use obviously fake values (e.g. $1.00) with a `// TODO: real pricing in edge function` comment if needed during development.
 - **The canvas is a vanilla JS port, not a rewrite.** `canvasEngine.ts` is pure TypeScript — no React, no JSX, no hooks. Do not refactor it using react-konva or any React canvas library.
 - **Australian context**: Currency is AUD, GST is 10%, measurements are metric (mm for heights/widths, m for run lengths). Postcodes are 4 digits.
-- **Colour names are Colorbond brand names** — spelled exactly as listed in Section 4. The engine normalises long names to short codes (`black-satin` → `B`); on the client, `useCalculatorConfig`'s `normalisedVariables` carries the resolved short codes.
+- **Colours are short codes with per-product sets** (see § 4). Live variables/SKUs use codes (`B`, `MN`, `BS`, …), and each product's valid set differs — always validate against the target product's `colours.*`/`normalisedVariables`, never assume a colour carries across products.
 - **Multi-tenancy: every table has `org_id`.** Edge functions always scope queries by `org_id` resolved from the user's JWT. RLS policies use `public.user_org_id()`. The client never sends `org_id`.
 - **Always update `docs/tasks.md` after completing any task or group of tasks.** Tick off `[x]`, update the Phases Overview table, and update the "Current Phase" header. Do this before responding to the user.
-- **The live calculator is the static engine, not the DB-driven one.** To change calculation behaviour, edit the config under `supabase/functions/bom-calculator-static/config/` (see § 5a). Do **not** edit the parked `supabase/functions/bom-calculator/index.ts` or seed the `product_rules`/`product_variables`/etc. tables — the live path does not read them. The `supabase/seeds/glass-outlet/products/*.json` files and the `seed-mapper` skill feed the parked data-driven engine.
+- **The live calculator is the static engine, not the DB-driven one.** To change calculation behaviour, edit the config under `supabase/functions/bom-calculator-static/config/` (see § 5a) — the DB rule tables no longer exist (dropped in the 2026-07 compaction). The `supabase/seeds/glass-outlet/products/*.json` files contain only LIVE sections (`products` / `product_components` / `pricing_rules` — the engine prices from these DB rows): edit + `npm run seed:products` to change catalogue/pricing facts.
 - **Client code must not branch on product code.** Fetch the resolved `UiCalculatorConfig` via `useCalculatorConfig` (single product) or `useAllCalculatorConfigs` (map of every product, for seed/product-switch paths that need a *target* product's config) and read `strategy.fence`, `gapRules`, `panelRules`, `gateRules`, resolved field `options_json`, and `normalisedVariables`; let `useRunReconciliation` snap run variables to `config.normalisedVariables` after a change. The legacy `src/lib/productOptionRules.ts` has been **removed** — there is no client-side per-product normaliser. (`clampPostSpacing` lives in `src/lib/postSpacing.ts`.)
 - **Products table is flat** (post migration 022). No parent/variant hierarchy — every product has `parent_id = NULL`. The `product_type` column distinguishes fences from gates from other catalog items. Don't reintroduce a `WHERE parent_id IS NULL` filter.
 - **Admin trace access** requires `profiles.role = 'admin'`. The seeded `admin@glass-outlet.com` / `123456` user has it. New admins: `UPDATE profiles SET role = 'admin' WHERE email = ...`.
 - **Legacy routes are gone.** `/new` (v1 `MainApp` + `calculate-bom`) and `/fence-calculator-v4` (`CalculatorV4Page` + `CalculatorContextV4` + `calculator-v4/`) have been removed. The only calculator route is `/fence-calculator` (`CalculatorV3Page`), backed by `bom-calculator-static` + `get-calculator-config`.
 - **Canonical payload** is the single JSON shape shared by canvas, form, engine, and `quote_runs`/`quote_run_segments`. `runId` and `segmentId` are stable across round-trips. Do not regenerate them in adapter code — that breaks load/save. See `docs/canonical-payload.md`.
+- **Debugging $0 / unpriced BOM lines** — work the chain in this order before writing code: (1) components + pricing load **org-wide** (§ 6), so "only one product's pricing loaded" is never the cause; (2) check the data is seeded: `psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -c "select sku, default_price from product_components where sku like 'CB-%' limit 5"` (local DB is on **54322**; API on 54321); (3) if seeded, the emitted SKU string doesn't match a catalogue row — diff the SKU template interpolation (colour code, height, width tokens in `config/base.ts` `skus:` templates) against the seeded SKUs. Invalid inherited variables (product switches) are the classic cause.
+- **Verify claims against the running system, not just docs.** `docs/tasks.md` is an append-only log and its older entries can contradict current code (files listed as deleted may have been re-added). The engine config (`config/base.ts` + `fields.json`), the DB (psql), and a live edge-function call outrank any doc. When behaviour differs between products, diff their `BASE_<CODE>_CONFIG` blocks first — most "bugs" are config-set mismatches, not calculator logic.
+- **Verification bar for calculator changes**: `npm run test:unit:static` green + `npm run build` green, and for anything touching run/segment state, drive `/fence-calculator` in the app (client reducer/UI paths have no working automated coverage — § 14).
 
 ---
 
@@ -379,9 +396,11 @@ Login with a seeded test account:
 |---|---|
 | `npm run dev` | Start the app (http://localhost:5173) |
 | `npm run build` | TypeScript check + bundle — run before committing |
+| `npm run typecheck` | TypeScript check only (fast) |
+| `npm run test:unit:static` | Engine regression suite (Deno via npx — see § 14) |
 | `npm run db:reset` | Reset DB to a clean seeded state |
-| `supabase start` | Start the local Supabase backend |
-| `supabase stop` | Stop the local Supabase backend |
+| `npm run seed:products` | Re-apply product/component/pricing seed JSON only |
+| `supabase start` / `supabase stop` | Start/stop the local Supabase backend (DB on 54322, API on 54321) |
 | `npm run cy:open` | Open Cypress interactive test runner |
 
 ### Git workflow
