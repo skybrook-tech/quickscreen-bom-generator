@@ -369,3 +369,38 @@ Deno.test("O04 DB component internal_sku override remaps slat supplier SKU", asy
 
   await assertSnapshot(t, project(result));
 });
+
+// O05: A COLORBOND run that inherited an invalid colour (e.g. "B", the QSHS
+// default, carried over when a section switches product) is normalised to the
+// product default ("MN") before calc, so it emits catalogue SKUs (…-MN) that
+// can be priced instead of nonexistent …-B SKUs that would price $0.
+Deno.test("O05 COLORBOND run snaps inherited invalid colour before calc", () => {
+  const p = payload(
+    [run("r1", "COLORBOND", [seg("s1", 4000, { height: 1800 })], {
+      vars: {
+        colour_code: "B", // invalid for Colorbond (set is MN/G/SM/BS/PB/P)
+        profile: "GO-LINE",
+        max_panel_width_mm: 2365,
+        mounting_type: "in_ground",
+        target_height_mm: 1800,
+      },
+    })],
+  );
+  const result = calculateLocalBom(p, "tier1", makeFixtureCtx());
+
+  // No emitted SKU should carry the invalid "-B" colour token…
+  const invalidColourLines = result.lines.filter((l) => /-B$/.test(l.sku));
+  assertEquals(invalidColourLines.map((l) => l.sku), [], "no SKU should use the invalid colour B");
+
+  // …and the colour-bearing lines should use the snapped default "MN".
+  const sheetLine = result.lines.find((l) => l.sku === "CB-GLINE-1790-MN");
+  assertNotEquals(sheetLine, undefined, "Colorbond sheet SKU should be built with MN");
+  const railLine = result.lines.find((l) => l.sku === "CB-RAIL-2365-MN");
+  assertNotEquals(railLine, undefined, "Colorbond rail SKU should be built with MN");
+
+  // A warning should surface the colour substitution.
+  const colourWarning = result.warnings.find(
+    (w) => w.includes('"B"') && w.includes("COLORBOND") && w.includes('"MN"'),
+  );
+  assertNotEquals(colourWarning, undefined, "a colour-substitution warning should be emitted");
+});

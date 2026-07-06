@@ -44,6 +44,7 @@ import type {
   CanonicalPayload, CanonicalRun, SeedComponent, LocalPricingRule, CalcContext, QtyLine, ScopeInfo,
 } from "./config/types.ts";
 import { BASE_CONFIGS } from "./config/base.ts";
+import { normaliseVariables } from "./config/normalise.ts";
 import { makeInternalSkuResolver } from "./resolve.ts";
 import { calculatorFor } from "./calculators/registry.ts";
 import { roundMoney, COLOUR_NAMES, clampPostSpacing, toNumber } from "./engine-utils.ts";
@@ -372,6 +373,33 @@ function aggregateBomLinesWithSources(
 
 // ─── Main entry point ─────────────────────────────────────────────────────────
 
+// Snap a run's effective variables to its product config's valid options before
+// calculation. Keys the reconciliation cascade may correct (colour, slat size,
+// gap, panel width, …) are repaired here as a server-side safety net — the
+// client run-level reconciliation applies the same normaliser, so for a valid
+// run this is a no-op. Emits a warning when the colour is snapped so the change
+// is visible in the BOM.
+function normaliseRunVariables(
+  run: CanonicalRun,
+  payload: CanonicalPayload,
+  ctx: CalcContext,
+  warnings: string[],
+): CanonicalRun {
+  const cfg = ctx.configs?.get(run.productCode);
+  if (!cfg) return run;
+  const effective = { ...(payload.variables ?? {}), ...(run.variables ?? {}) };
+  const normalised = normaliseVariables(
+    cfg,
+    effective as Record<string, string | number | boolean>,
+  ) as CanonicalRun["variables"];
+  const beforeColour = effective.colour_code;
+  const afterColour = normalised?.colour_code;
+  if (beforeColour !== undefined && afterColour !== undefined && String(beforeColour) !== String(afterColour)) {
+    warnings.push(`Colour "${beforeColour}" is not available for ${run.productCode} — using "${afterColour}".`);
+  }
+  return { ...run, variables: normalised };
+}
+
 export function calculateLocalBom(
   payload: CanonicalPayload,
   pricingTier: PricingTier = "tier1",
@@ -397,7 +425,13 @@ export function calculateLocalBom(
   // Per-run: call the registered calculator, then resolve internal → supplier SKUs
   const runResults = payload.runs.map((run, index) => {
     const calc = calculatorFor(run.productCode);
-    const internalLines = calc(resolvedCtx, run, payload, sink);
+    // Normalise the run's effective variables against its config before calc.
+    // This snaps any invalid inherited value (e.g. a colour_code carried over
+    // from a different product when a section switches product) to the target
+    // product's valid option/default — otherwise the calculator would build
+    // SKUs that don't exist in the catalogue and every affected line prices $0.
+    const runForCalc = normaliseRunVariables(run, payload, resolvedCtx, warnings);
+    const internalLines = calc(resolvedCtx, runForCalc, payload, sink);
     // Resolve internal SKUs → supplier SKUs before aggregation
     const resolvedLines = internalLines.map((line) => ({ ...line, sku: resolvedCtx.resolveInternalSku(line.sku) }));
     return { runId: run.runId, label: `Run ${index + 1} - ${run.productCode}`, productCode: run.productCode, items: resolvedLines };

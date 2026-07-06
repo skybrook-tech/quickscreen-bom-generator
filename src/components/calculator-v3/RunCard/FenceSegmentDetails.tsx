@@ -7,6 +7,7 @@ import {
 } from "../../../hooks/useCalculatorConfig";
 import type { CanonicalSegment } from "../../../types/canonical.types";
 import { clampPostSpacing } from "../../../lib/postSpacing";
+import { nearestDerivedHeight } from "../../../lib/heights";
 import {
   patchSegmentVariables,
 } from "../../../lib/segmentTermination";
@@ -101,17 +102,51 @@ export function FenceSegmentDetails({ runId, seg }: Props) {
   // normalisation is backend-driven on the next resolve; this only bridges the
   // one structural + quantity gap the run-scoped reconciliation won't touch.
   function onSystemTypeChange(nextProductCode: string) {
-    const productOverride = nextProductCode === runProductCode ? null : nextProductCode;
-    const isPanel = configForProduct(allConfigs, nextProductCode)?.strategy.fence === "panel";
-    const panelQuantityPatch = isPanel
-      ? { panel_quantity: seg.variables?.panel_quantity ?? 1 }
-      : {};
-    upsertSegment(
-      patchSegmentVariables(seg, {
-        product_code: productOverride,
-        ...panelQuantityPatch,
-      }),
+    const targetConfig = configForProduct(allConfigs, nextProductCode);
+
+    // Preserve the section's geometry across the switch. Width is a top-level
+    // segment field (survives via ...seg). Height must survive too, but snapped
+    // to a value the target product actually offers — its height ladder differs
+    // (QSHS is slat-derived; Colorbond is [1500,1800,2100]), and an out-of-ladder
+    // height builds catalogue SKUs that don't exist and prices $0.
+    const currentHeight = Number(
+      seg.targetHeightMm ??
+        displayVariables.target_height_mm ??
+        runVariables.target_height_mm ??
+        1800,
     );
+    const heightEntry = targetConfig
+      ? nearestDerivedHeight(targetConfig.heightLadder.entries, currentHeight)
+      : undefined;
+    const height = heightEntry?.height ?? currentHeight;
+    const heightVars: Record<string, number> = {
+      target_height_mm: height,
+      ...(heightEntry ? { slat_count: heightEntry.N } : {}),
+    };
+
+    // Back to the run product → inherit the run again: drop all overrides, keep
+    // only geometry. Keep an explicit height override only when it differs from
+    // the run height (otherwise fully inherit).
+    if (nextProductCode === runProductCode) {
+      const runHeight = Number(
+        runVariables.target_height_mm ?? runConfig?.defaults.targetHeightMm ?? 1800,
+      );
+      const nextVars = Math.round(height) !== Math.round(runHeight) ? heightVars : undefined;
+      upsertSegment({ ...seg, variables: nextVars, targetHeightMm: height });
+      return;
+    }
+
+    // Differ from the run product → set ALL variables to the target product's
+    // defaults (do not inherit from the run), plus the product_code override and
+    // the preserved height. Panel-strategy products keep a panel_quantity seed.
+    const isPanel = targetConfig?.strategy.fence === "panel";
+    const nextVars: Record<string, string | number | boolean> = {
+      ...(targetConfig?.normalisedVariables ?? {}),
+      product_code: nextProductCode,
+      ...heightVars,
+      ...(isPanel ? { panel_quantity: Number(seg.variables?.panel_quantity ?? 1) } : {}),
+    };
+    upsertSegment({ ...seg, variables: nextVars, targetHeightMm: height });
   }
 
   if (!config || !runConfig) return null;
