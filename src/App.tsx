@@ -14,7 +14,6 @@ import { CalculatorV3Page } from "./pages/CalculatorV3Page";
 import { ProductsIndexPage } from "./pages/admin/ProductsIndexPage";
 import { ProductDetailPage } from "./pages/admin/ProductDetailPage";
 import { ComponentsIndexPage } from "./pages/admin/ComponentsIndexPage";
-import { ColoursAdminPage } from "./pages/admin/ColoursAdminPage";
 import { ThemeProvider, useTheme } from "./context/ThemeContext";
 import { ProfileProvider } from "./context/ProfileContext";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -83,14 +82,6 @@ const router = createBrowserRouter([
         element: (
           <AdminGuard>
             <ComponentsIndexPage />
-          </AdminGuard>
-        ),
-      },
-      {
-        path: "/admin/colours",
-        element: (
-          <AdminGuard>
-            <ColoursAdminPage />
           </AdminGuard>
         ),
       },

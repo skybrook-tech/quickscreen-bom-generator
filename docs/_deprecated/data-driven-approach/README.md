@@ -15,11 +15,18 @@ function reading calculation rules from seeded Postgres tables
   `supabase/functions/bom-calculator-static/config/base.ts` plus per-product
   `supabase/functions/bom-calculator-static/config/products/*/fields.json`.
 
-The `bom-calculator` and `calculate-pricing` edge functions and the
-migrations-011–014/018 engine tables have **no client references**.
-
-The data-driven approach was parked (not deleted) because it may be revived
-later. Until then, treat everything in this folder as historical/aspirational.
+> **Update (2026-07 migration compaction):** nothing of this engine exists in the
+> running system anymore. The `bom-calculator` and `calculate-pricing` edge
+> functions were deleted from the repo, the engine DB tables (`rule_sets`,
+> `rule_versions`, `product_rules`, `product_constraints`, `product_validations`,
+> `product_variables`, `product_component_selectors`, `product_companion_rules`,
+> `product_warnings`) and `colour_options` were **dropped** when migrations were
+> squashed into `001_init.sql`, and the rule-engine sections were stripped from
+> the seed JSONs. Everything is recoverable from git history; these docs are the
+> record of what it was and why it was retired (see §7–§8 of
+> `data-driven-calculator-architecture.md`). The decision to retire it
+> permanently — and the architecture that supersedes it — is
+> [`docs/vendor-model-plan.md`](../../vendor-model-plan.md).
 
 **For the live architecture and how to add a fence family, see:**
 - [`AGENTS.md`](../../../AGENTS.md) (§ "Add a fence family")

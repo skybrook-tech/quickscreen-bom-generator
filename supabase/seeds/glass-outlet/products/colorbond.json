@@ -6,7 +6,7 @@
       "product_type": "fence",
       "compatible_with_system_types": [],
       "name": "Colorbond Steel Fence",
-      "description": "Colorbond steel sheet fencing \u2014 bay-based panels (channel/steel posts, top & bottom rails, overlapping infill sheets). GO-Line, GO-Zag and GO-Trim profiles at 1500/1800/2100mm.",
+      "description": "Colorbond steel sheet fencing — bay-based panels (channel/steel posts, top & bottom rails, overlapping infill sheets). GO-Line, GO-Zag and GO-Trim profiles at 1500/1800/2100mm.",
       "active": true,
       "sort_order": 5,
       "metadata": {
@@ -2801,7 +2801,7 @@
         "bomCategory": "screening",
         "seed_source": "colorbond MVP gap-fill",
         "price_estimated": true,
-        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier"
+        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier"
       },
       "active": true,
       "subCategory": "sheets",
@@ -2821,7 +2821,7 @@
         "bomCategory": "screening",
         "seed_source": "colorbond MVP gap-fill",
         "price_estimated": true,
-        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier"
+        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier"
       },
       "active": true,
       "subCategory": "sheets",
@@ -2841,7 +2841,7 @@
         "bomCategory": "screening",
         "seed_source": "colorbond MVP gap-fill",
         "price_estimated": true,
-        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier"
+        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier"
       },
       "active": true,
       "subCategory": "sheets",
@@ -2861,7 +2861,7 @@
         "bomCategory": "screening",
         "seed_source": "colorbond MVP gap-fill",
         "price_estimated": true,
-        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier"
+        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier"
       },
       "active": true,
       "subCategory": "sheets",
@@ -2881,7 +2881,7 @@
         "bomCategory": "screening",
         "seed_source": "colorbond MVP gap-fill",
         "price_estimated": true,
-        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier"
+        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier"
       },
       "active": true,
       "subCategory": "sheets",
@@ -2901,7 +2901,7 @@
         "bomCategory": "screening",
         "seed_source": "colorbond MVP gap-fill",
         "price_estimated": true,
-        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier"
+        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier"
       },
       "active": true,
       "subCategory": "sheets",
@@ -2921,7 +2921,7 @@
         "bomCategory": "screening",
         "seed_source": "colorbond MVP gap-fill",
         "price_estimated": true,
-        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier"
+        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier"
       },
       "active": true,
       "subCategory": "sheets",
@@ -2941,7 +2941,7 @@
         "bomCategory": "screening",
         "seed_source": "colorbond MVP gap-fill",
         "price_estimated": true,
-        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier"
+        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier"
       },
       "active": true,
       "subCategory": "sheets",
@@ -2961,7 +2961,7 @@
         "bomCategory": "screening",
         "seed_source": "colorbond MVP gap-fill",
         "price_estimated": true,
-        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier"
+        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier"
       },
       "active": true,
       "subCategory": "sheets",
@@ -2981,7 +2981,7 @@
         "bomCategory": "screening",
         "seed_source": "colorbond MVP gap-fill",
         "price_estimated": true,
-        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier"
+        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier"
       },
       "active": true,
       "subCategory": "sheets",
@@ -3001,7 +3001,7 @@
         "bomCategory": "screening",
         "seed_source": "colorbond MVP gap-fill",
         "price_estimated": true,
-        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier"
+        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier"
       },
       "active": true,
       "subCategory": "sheets",
@@ -3021,7 +3021,7 @@
         "bomCategory": "screening",
         "seed_source": "colorbond MVP gap-fill",
         "price_estimated": true,
-        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier"
+        "price_note": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier"
       },
       "active": true,
       "subCategory": "sheets",
@@ -8086,7 +8086,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8097,7 +8097,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8108,7 +8108,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8119,7 +8119,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8130,7 +8130,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8141,7 +8141,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8152,7 +8152,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8163,7 +8163,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8174,7 +8174,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8185,7 +8185,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8196,7 +8196,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8207,7 +8207,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8218,7 +8218,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8229,7 +8229,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8240,7 +8240,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8251,7 +8251,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8262,7 +8262,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8273,7 +8273,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8284,7 +8284,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8295,7 +8295,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8306,7 +8306,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8317,7 +8317,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8328,7 +8328,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8339,7 +8339,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8350,7 +8350,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8361,7 +8361,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8372,7 +8372,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8383,7 +8383,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8394,7 +8394,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8405,7 +8405,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8416,7 +8416,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8427,7 +8427,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8438,7 +8438,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8449,7 +8449,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8460,7 +8460,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     },
     {
@@ -8471,7 +8471,7 @@
       "priority": 1,
       "valid_from": null,
       "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) \u2014 confirm with supplier",
+      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
       "active": true
     }
   ]
