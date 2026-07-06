@@ -20,8 +20,24 @@ jobs:
 
       - run: npm run build
 
-  integration:
-    name: Deno integration tests
+  engine-tests:
+    name: Engine regression suite (Deno)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      # Same suite as `npm run test:unit:static` — snapshot scenarios, config
+      # resolution, calculators. Prices from the fixture catalogue; no DB.
+      # (integration_db_test.ts self-ignores here without RUN_DB_TESTS.)
+      - name: Run engine tests
+        run: deno test --allow-read --allow-env supabase/functions/bom-calculator-static/
+
+  db-integration:
+    name: DB integration tests (seeded catalogue)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -55,17 +71,12 @@ jobs:
       - name: Reset DB + seed
         run: npm run db:reset
 
-      - name: Serve edge functions
-        run: supabase functions serve --no-verify-jwt &
-
-      - name: Wait for edge runtime
-        run: sleep 5
-
-      - name: Run Deno tests
-        run: npm run test:integration
-        env:
-          TEST_USER_EMAIL: test@glass-outlet.com
-          TEST_USER_PASSWORD: "123456"
+      # Runs the edge function's own loaders + engine (db.ts + engine.ts)
+      # against the seeded DB and asserts on emitted components (sku + qty,
+      # prices ignored). Covers what the offline suite can't: loader
+      # pagination and SKU resolution against the real seeded catalogue.
+      - name: Run DB integration tests
+        run: RUN_DB_TESTS=1 deno test --allow-read --allow-env --allow-net supabase/functions/bom-calculator-static/integration_db_test.ts
 
       - name: Stop Supabase
         run: supabase stop
