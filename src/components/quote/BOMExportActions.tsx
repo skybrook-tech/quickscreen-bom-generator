@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { pdf, PDFViewer } from "@react-pdf/renderer";
 import Papa from "papaparse";
 import { BomV3PDFTemplate } from "./BomV3PDFTemplate";
-import { SlideOutPane } from "../calculator-v4/shared/SlideOutPane";
+import { SlideOutPane } from "../shared/SlideOutPane";
 import type { CalculatorBOMResult, BOMLineItem } from "../../types/bom.types";
 import { stripParentheticalDispatchCode } from "../../lib/displayText";
 

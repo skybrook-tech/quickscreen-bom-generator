@@ -1,10 +1,12 @@
 import { useCalculator } from "../../context/CalculatorContext";
-import type { CanonicalPayload, CanonicalRun } from "../../types/canonical.types";
-import { initialVariablesForSystem } from "../../lib/productOptionRules";
+import type { CanonicalRun } from "../../types/canonical.types";
 import { localFenceProducts } from "../../lib/localSeedData";
+import { useFenceProducts } from "../../hooks/useProducts";
+import { useAllCalculatorConfigs, configForProduct } from "../../hooks/useCalculatorConfig";
+import { buildInitialFencePayload } from "../../lib/newQuotePayload";
 import type { ParseResult } from "../../lib/describeFenceParser";
 import { DescribeFenceBox } from "../calculator/DescribeFenceBox";
-import { RunCard } from "./RunCard";
+import { RunCard } from "./RunCard/RunCard";
 
 export function RunListV3({
   autoOpenFirstRunId,
@@ -20,46 +22,22 @@ export function RunListV3({
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
   const hasRuns = Boolean(payload?.runs.length);
+  const fenceProductsQuery = useFenceProducts();
+  const fenceProducts = fenceProductsQuery.data ?? localFenceProducts;
+
+  // Resolved config for every product; used to seed a fresh run's variables
+  // from the target product's normalised defaults.
+  const allConfigs = useAllCalculatorConfigs();
 
   if (!payload) return null;
   const currentPayload = payload;
 
-  function createPayloadForSystem(productCode: string): CanonicalPayload {
-    const variables = initialVariablesForSystem(productCode);
-    const runId = crypto.randomUUID();
-    return {
-      productCode,
-      schemaVersion: "v1",
-      variables,
-      ...(currentPayload.propertyAnchor
-        ? { propertyAnchor: currentPayload.propertyAnchor }
-        : {}),
-      ...(currentPayload.snapshot ? { snapshot: currentPayload.snapshot } : {}),
-      runs: [
-        {
-          runId,
-          productCode,
-          variables,
-          leftBoundary: { type: "product_post" },
-          rightBoundary: { type: "product_post" },
-          segments: [
-            {
-              segmentId: crypto.randomUUID(),
-              sortOrder: 1,
-              segmentKind: "panel",
-              segmentWidthMm: 0,
-              targetHeightMm: 1800,
-              variables: productCode === "BAYG" ? { panel_quantity: 1 } : undefined,
-            },
-          ],
-          corners: [],
-        },
-      ],
-    };
-  }
-
   function startFirstRun(productCode: string) {
-    const nextPayload = createPayloadForSystem(productCode);
+    const nextPayload = buildInitialFencePayload(
+      productCode,
+      configForProduct(allConfigs, productCode),
+      currentPayload,
+    );
     const firstRun = nextPayload.runs[0];
     dispatch({ type: "SET_PAYLOAD", payload: nextPayload });
     window.setTimeout(() => {
@@ -70,8 +48,9 @@ export function RunListV3({
   function addRun() {
     const firstRun = payload!.runs[0];
     const productCode = firstRun?.productCode ?? payload!.productCode;
+    // Copy defaults from the first run only (v3: runs are the sole source of
+    // truth; payload.variables is empty).
     const variables = {
-      ...(payload!.variables ?? {}),
       ...(firstRun?.variables ?? {}),
     };
     const newRun: CanonicalRun = {
@@ -87,7 +66,10 @@ export function RunListV3({
           segmentKind: "panel",
           segmentWidthMm: 0,
           targetHeightMm: 1800,
-          variables: productCode === "BAYG" ? { panel_quantity: 1 } : undefined,
+          variables:
+            configForProduct(allConfigs, productCode)?.strategy.fence === "panel"
+              ? { panel_quantity: 1 }
+              : undefined,
         },
       ],
       corners: [],
@@ -101,24 +83,19 @@ export function RunListV3({
         <section className="space-y-3 rounded-2xl border border-brand-primary/30 bg-brand-primary/5 p-3">
           <p className="text-sm font-black text-brand-text">Choose a fence system</p>
           <div className="grid gap-2">
-            {localFenceProducts.map((product) => (
+            {fenceProducts.map((product) => (
               <button
                 key={product.system_type}
                 type="button"
                 onClick={() => startFirstRun(product.system_type)}
-                className="flex min-h-[88px] items-center justify-between gap-3 rounded-lg border border-brand-primary bg-brand-primary px-4 py-4 text-left text-white shadow-sm transition hover:bg-brand-primary/90 hover:shadow-md"
+                disabled={!allConfigs}
+                className="flex min-h-[88px] items-center justify-between gap-3 rounded-lg border border-brand-primary bg-brand-primary px-4 py-4 text-left text-white shadow-sm transition hover:bg-brand-primary/90 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50"
                 data-testid={`landing-system-${product.system_type}`}
               >
                 <span className="grid gap-1">
                   <span className="text-2xl font-black">{product.system_type}</span>
                   <span className="text-sm font-extrabold leading-tight">
-                    {product.system_type === "QSHS"
-                      ? "Quick Screen Horizontal Slats"
-                      : product.system_type === "VS"
-                        ? "Vertical Slats"
-                        : product.system_type === "XPL"
-                          ? "Xpress Plus"
-                          : "Build As You Go"}
+                    {product.name}
                   </span>
                 </span>
                 <span className="rounded-full bg-white/15 px-2 py-0.5 text-xs">{product.system_type}</span>

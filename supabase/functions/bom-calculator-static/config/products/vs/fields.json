@@ -1,0 +1,331 @@
+{
+  "fields": [
+    {
+      "field_key": "finish_family",
+      "label": "Slat range",
+      "group": "slats_colours",
+      "control_type": "select",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "standard",
+      "options_json": [
+        {
+          "value": "standard",
+          "label": "Standard slats"
+        },
+        {
+          "value": "economy",
+          "label": "Economy slats"
+        },
+        {
+          "value": "alumawood",
+          "label": "Alumawood timber-look"
+        }
+      ],
+      "options_when_json": [{ "intersect_ref": "finishFamilies" }],
+      "visible_when_json": {},
+      "sort_order": 5,
+      "show_in_run_summary": true,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "colour_code",
+      "render_hint": "colour",
+      "label": "Colour",
+      "group": "slats_colours",
+      "control_type": "colour_palette",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "B",
+      "options_json": [],
+      "options_when_json": [
+        { "when": { "finish_family": "economy" }, "options_ref": "colours.economy" },
+        { "when": { "finish_family": "alumawood", "slat_size_mm": 90 }, "options_ref": "colours.alumawood", "intersect": ["WRC"] },
+        { "when": { "finish_family": "alumawood" }, "options_ref": "colours.alumawood" },
+        { "options_ref": "colours.standard" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 10,
+      "show_in_run_summary": true,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "slat_size_mm",
+      "label": "Slat Size",
+      "group": "slats_colours",
+      "control_type": "select",
+      "data_type": "enum",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 65,
+      "options_json": [
+        {
+          "value": 65,
+          "label": "65mm slat"
+        },
+        {
+          "value": 90,
+          "label": "90mm slat"
+        }
+      ],
+      "options_when_json": [
+        { "when": { "finish_family": "economy" }, "intersect": [65] },
+        {}
+      ],
+      "visible_when_json": {},
+      "sort_order": 20,
+      "show_in_run_summary": true,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "slat_gap_mm",
+      "label": "Slat gap",
+      "group": "slats_colours",
+      "control_type": "combined_gap",
+      "data_type": "number",
+      "unit": "mm",
+      "required": true,
+      "default_value_json": 20,
+      "options_json": [
+        5,
+        9,
+        20
+      ],
+      "snap_unless_json": { "slat_gap_mode": "custom" },
+      "visible_when_json": {},
+      "sort_order": 30,
+      "show_in_run_summary": true,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "mounting_type",
+      "label": "Post mounting type",
+      "group": "posts_mounting",
+      "control_type": "select",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "in_ground",
+      "options_json": [
+        {
+          "value": "in_ground",
+          "label": "Concreted in ground"
+        },
+        {
+          "value": "base_plate",
+          "label": "Base-plated to slab"
+        },
+        {
+          "value": "core_drill",
+          "label": "Core-drilled into concrete"
+        }
+      ],
+      "aliases": ["mounting_method"],
+      "visible_when_json": {},
+      "sort_order": 40,
+      "show_in_run_summary": true,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "post_system",
+      "label": "Post size",
+      "group": "posts_mounting",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "standard_50",
+      "options_json": [
+        {
+          "value": "standard_50",
+          "label": "50mm Post Standard"
+        },
+        {
+          "value": "standard_65",
+          "label": "65mm Post Standard HD"
+        }
+      ],
+      "snap_to_options": false,
+      "visible_when_json": {},
+      "sort_order": 42,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "post_size",
+      "label": "Standard post size",
+      "group": "posts_mounting",
+      "control_type": "select",
+      "data_type": "enum",
+      "unit": "mm",
+      "default_value_json": "50",
+      "options_json": [
+        {
+          "value": "50",
+          "label": "50mm Post Standard"
+        },
+        {
+          "value": "65",
+          "label": "65mm Post Standard HD"
+        }
+      ],
+      "snap_to_options": false,
+      "visible_when_json": {},
+      "sort_order": 45,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "post_colour_code",
+      "render_hint": "colour",
+      "label": "Post colour",
+      "group": "slats_colours",
+      "control_type": "colour_palette_optional",
+      "data_type": "enum",
+      "default_value_json": "B",
+      "options_json": [],
+      "follows_field": "colour_code",
+      "options_when_json": [
+        { "when": { "finish_family": "alumawood" }, "options_ref": ["colours.alumawood", "colours.standard"] },
+        { "options_ref": "colours.standard" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 15,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "post_fixing_material_sku",
+      "label": "Post-fixing material",
+      "group": "posts_mounting",
+      "control_type": "post_fixing_select",
+      "data_type": "string",
+      "options_json": [],
+      "visible_when_json": {},
+      "sort_order": 50,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "base_plate_substrate",
+      "label": "Substrate",
+      "group": "posts_mounting",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "concrete",
+      "options_json": [
+        {
+          "value": "concrete",
+          "label": "Concrete"
+        },
+        {
+          "value": "timber",
+          "label": "Timber"
+        }
+      ],
+      "visible_when_json": {
+        "mounting_type": "base_plate"
+      },
+      "sort_order": 52,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "max_panel_width_mm",
+      "label": "Max Post Spacing",
+      "group": "posts_mounting",
+      "control_type": "number",
+      "data_type": "number",
+      "unit": "mm",
+      "default_value_json": 2600,
+      "visible_when_json": {},
+      "sort_order": 60,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "left_boundary_type",
+      "label": "Left Boundary",
+      "group": "posts_mounting",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "post",
+      "options_json": [
+        {
+          "value": "post",
+          "label": "Post"
+        },
+        {
+          "value": "wall",
+          "label": "Wall"
+        }
+      ],
+      "visible_when_json": {},
+      "sort_order": 70,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    },
+    {
+      "field_key": "right_boundary_type",
+      "label": "Right Boundary",
+      "group": "posts_mounting",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "post",
+      "options_json": [
+        {
+          "value": "post",
+          "label": "Post"
+        },
+        {
+          "value": "wall",
+          "label": "Wall"
+        }
+      ],
+      "visible_when_json": {},
+      "sort_order": 80,
+      "settings_for": [
+        "run",
+        "segment"
+      ]
+    }
+  ],
+  "fieldGroups": [
+    {
+      "key": "slats_colours",
+      "label": "Slats, colours and spacings",
+      "sort_order": 20
+    },
+    {
+      "key": "posts_mounting",
+      "label": "Post size, mounting and spacing",
+      "sort_order": 30
+    }
+  ]
+}

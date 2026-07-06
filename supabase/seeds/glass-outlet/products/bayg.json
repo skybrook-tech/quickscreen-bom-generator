@@ -12,30 +12,6 @@
         "allowedAngles": [
           90
         ],
-        "options": {
-          "slatSize": [
-            "65",
-            "90"
-          ],
-          "slatGap": [
-            "5",
-            "9",
-            "20"
-          ],
-          "colour": [
-            "B",
-            "MN",
-            "G",
-            "SM",
-            "W",
-            "BS",
-            "D",
-            "M",
-            "P",
-            "PB",
-            "S"
-          ]
-        },
         "notes": "BAYG uses BAYG_ScrHts height table (not XPL_Ht) to determine slat count. Spacers sold individually per run, not in 50-packs."
       }
     }

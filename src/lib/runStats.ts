@@ -1,5 +1,5 @@
 import type { CanonicalRun } from '../types/canonical.types';
-import { clampPostSpacing } from './productOptionRules';
+import { clampPostSpacing } from './postSpacing';
 
 export interface RunStats {
   panels: number;

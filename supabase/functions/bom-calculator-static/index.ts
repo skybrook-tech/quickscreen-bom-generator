@@ -1,13 +1,13 @@
 // bom-calculator-static — static-rules BOM engine
-// Loads component metadata and pricing from the DB (same tables as bom-calculator),
+// Loads component metadata and pricing from the DB (the only price source),
 // then runs the static calculation logic from engine.ts.
 //
 // Pipeline:
 //   1. CORS + JWT → resolveUserProfile → { orgId, pricingTier }
-//   2. Parallel: fetch product_components + pricing_rules_with_sku for the org
-//   3. initEngineData(dbComponents, dbPricing) — merges with synthetic fallbacks
-//   4. calculateLocalBom(payload, tier) → BOM lines + run results
-//   5. suggestAccessories(payload, lines, tier) → suggested accessory items
+//   2. Parallel: fetch product_components + pricing_rules_with_sku + configs for the org
+//   3. makeCalcContext({ dbComponents, dbPricingRules, configs })
+//   4. calculateLocalBom(payload, tier, ctx) → BOM lines + run results
+//   5. suggestAccessories(payload, lines, tier, ctx) → suggested accessory items
 //   6. computeGateHardwareHints(payload) → per-gate weight estimates + ranked hardware
 //   7. Return combined response
 
@@ -18,36 +18,67 @@ import type { PricingTier, SeedComponent, LocalPricingRule } from "./engine.ts";
 import {
   calculateLocalBom,
   computeGateHardwareHints,
-  initEngineData,
+  makeCalcContext,
   suggestAccessories,
 } from "./engine.ts";
+import { loadCalculatorConfigs } from "./config/merge.ts";
 
-async function loadDbComponents(
-  supabaseAdmin: ReturnType<typeof createClient>,
-  orgId: string,
-): Promise<SeedComponent[]> {
-  const { data, error } = await supabaseAdmin
-    .from("product_components")
-    .select("sku, name, description, category, unit, default_price, system_types, active")
-    .eq("org_id", orgId)
-    .eq("active", true);
-  if (error) throw new Error(`Components lookup failed: ${error.message}`);
-  return (data ?? []) as SeedComponent[];
+// PostgREST caps un-ranged selects at db.max_rows (default 1000), and the
+// catalogue is larger than that (2k+ components, 15k+ pricing rules) — so all
+// loaders MUST paginate or the engine silently prices from a truncated
+// catalogue. Pages of 1000 until a short page.
+const DB_PAGE_SIZE = 1000;
+
+async function loadAllPages<T>(
+  // deno-lint-ignore no-explicit-any
+  buildQuery: (from: number, to: number) => any,
+  label: string,
+): Promise<T[]> {
+  const rows: T[] = [];
+  for (let page = 0; ; page++) {
+    const from = page * DB_PAGE_SIZE;
+    const { data, error } = await buildQuery(from, from + DB_PAGE_SIZE - 1);
+    if (error) throw new Error(`${label} lookup failed: ${error.message}`);
+    const batch = (data ?? []) as T[];
+    rows.push(...batch);
+    if (batch.length < DB_PAGE_SIZE) return rows;
+  }
 }
 
-async function loadDbPricing(
-  supabaseAdmin: ReturnType<typeof createClient>,
+function loadDbComponents(
+  // deno-lint-ignore no-explicit-any
+  supabaseAdmin: any,
+  orgId: string,
+): Promise<SeedComponent[]> {
+  return loadAllPages<SeedComponent>(
+    (from, to) => supabaseAdmin
+      .from("product_components")
+      .select("sku, name, description, category, unit, default_price, system_types, active, internal_sku")
+      .eq("org_id", orgId)
+      .eq("active", true)
+      .order("sku", { ascending: true })
+      .range(from, to),
+    "Components",
+  );
+}
+
+function loadDbPricing(
+  // deno-lint-ignore no-explicit-any
+  supabaseAdmin: any,
   orgId: string,
 ): Promise<LocalPricingRule[]> {
   // Load all tiers — priceForSku falls back to tier1 when the requested tier has no rule
-  const { data, error } = await supabaseAdmin
-    .from("pricing_rules_with_sku")
-    .select("sku, price, rule, priority, tier_code")
-    .eq("org_id", orgId)
-    .eq("active", true)
-    .order("priority", { ascending: false });
-  if (error) throw new Error(`Pricing lookup failed: ${error.message}`);
-  return (data ?? []) as LocalPricingRule[];
+  return loadAllPages<LocalPricingRule>(
+    (from, to) => supabaseAdmin
+      .from("pricing_rules_with_sku")
+      .select("sku, price, rule, priority, tier_code")
+      .eq("org_id", orgId)
+      .eq("active", true)
+      .order("priority", { ascending: false })
+      .order("id", { ascending: true }) // unique tiebreaker → stable pagination
+      .range(from, to),
+    "Pricing",
+  );
 }
 
 Deno.serve(async (req: Request) => {
@@ -74,15 +105,16 @@ Deno.serve(async (req: Request) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    const [dbComponents, dbPricing] = await Promise.all([
+    const [dbComponents, dbPricing, configs] = await Promise.all([
       loadDbComponents(supabaseAdmin, orgId),
       loadDbPricing(supabaseAdmin, orgId),
+      loadCalculatorConfigs(supabaseAdmin, orgId),
     ]);
 
-    initEngineData(dbComponents, dbPricing);
+    const ctx = makeCalcContext({ dbComponents, dbPricingRules: dbPricing, configs });
 
-    const bomResult = calculateLocalBom(payload, tier);
-    const suggestedItems = suggestAccessories(payload, bomResult.lines ?? [], tier);
+    const bomResult = calculateLocalBom(payload, tier, ctx);
+    const suggestedItems = suggestAccessories(payload, bomResult.lines ?? [], tier, ctx);
     const gateHardwareHints = computeGateHardwareHints(payload);
 
     const response = {

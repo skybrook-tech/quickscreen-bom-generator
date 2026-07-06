@@ -8,7 +8,7 @@ import {
   mergeCanonicalPreservingSegmentMeta,
 } from '../canvas/canonicalAdapter';
 import { calcRunStats } from '../../lib/runStats';
-import { clampPostSpacing } from '../../lib/productOptionRules';
+import { clampPostSpacing } from '../../lib/postSpacing';
 import {
   GATE_SEGMENT_STUB_KEYS,
 } from '../../lib/segmentTermination';
@@ -19,7 +19,6 @@ import {
 import type { CanvasGateVisual, CanvasLayout, CanvasPrintRunSummary } from '../canvas/canvasEngine';
 import type { initCanvasEngine } from '../canvas/canvasEngine';
 import type { CanonicalMapSnapshot } from '../../types/canonical.types';
-import { RunDetailsPanel } from './RunDetailsPanel';
 
 interface LayoutCanvasV3Props {
   mapExpanded?: boolean;
@@ -34,7 +33,6 @@ interface LayoutCanvasV3Props {
 export function LayoutCanvasV3({
   mapExpanded = false,
   onMapExpandedChange,
-  showRunDetails = true,
   jobName,
   propertyAnchor,
   mapSnapshot,
@@ -43,6 +41,13 @@ export function LayoutCanvasV3({
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
   const { data: products } = useProducts();
+
+  // v3: runs are the sole source of truth. Job-level defaults the canvas
+  // previously read from payload.variables now come from the first run.
+  const firstRunVars = useMemo<Record<string, string | number | boolean>>(
+    () => ({ ...(payload?.runs[0]?.variables ?? {}) }),
+    [payload?.runs],
+  );
 
   // Ref to engine API for pushing form-driven layout changes to canvas
   const engineRef = useRef<ReturnType<typeof initCanvasEngine> | null>(null);
@@ -68,19 +73,19 @@ export function LayoutCanvasV3({
   // Order matches the non-boundary flat segment order in the engine (allSegmentsFlat).
   const segmentPanelWidths = useMemo(() => {
     if (!payload) return [];
-    const jobMax = clampPostSpacing(payload.variables.max_panel_width_mm, 2600);
+    const jobMax = clampPostSpacing(firstRunVars.max_panel_width_mm, 2600);
     return payload.runs.flatMap((run) =>
       run.segments
         .filter((s) => s.segmentKind !== "gate_opening")
         .map((s) => clampPostSpacing(s.variables?.max_panel_width_mm, jobMax)),
     );
-  }, [payload]);
+  }, [payload, firstRunVars]);
 
   // Pre-computed stats text using the shared calcRunStats utility.
   // Pushed to the canvas engine overlay so it always matches the form's RunCard display.
   const runStatsTexts = useMemo(() => {
     if (!payload) return { global: '', perRun: [] as string[] };
-    const jobMax = clampPostSpacing(payload.variables.max_panel_width_mm, 2600);
+    const jobMax = clampPostSpacing(firstRunVars.max_panel_width_mm, 2600);
     const perRun = payload.runs.map((run, i) => {
       const s = calcRunStats(run, jobMax);
       return [`Run ${i + 1}`, `${s.fenceSegments} ${s.fenceSegments === 1 ? 'section' : 'sections'}`, `${s.panels} ${s.panels === 1 ? 'panel' : 'panels'}`, `${s.posts} ${s.posts === 1 ? 'post' : 'posts'}`, `${s.corners} ${s.corners === 1 ? 'corner' : 'corners'}`].join(' - ');
@@ -94,11 +99,11 @@ export function LayoutCanvasV3({
     );
     const global = [`${payload.runs.length} ${payload.runs.length === 1 ? 'run' : 'runs'}`, `${totals.segs} ${totals.segs === 1 ? 'section' : 'sections'}`, `${totals.panels} ${totals.panels === 1 ? 'panel' : 'panels'}`, `${totals.posts} ${totals.posts === 1 ? 'post' : 'posts'}`, `${totals.corners} ${totals.corners === 1 ? 'corner' : 'corners'}`].join(' - ');
     return { global, perRun };
-  }, [payload]);
+  }, [payload, firstRunVars]);
 
   const printRuns = useMemo<CanvasPrintRunSummary[]>(() => {
     if (!payload) return [];
-    const jobMax = clampPostSpacing(payload.variables.max_panel_width_mm, 2600);
+    const jobMax = clampPostSpacing(firstRunVars.max_panel_width_mm, 2600);
     const formatVariable = (value: unknown) =>
       value === undefined || value === null || value === "" ? undefined : String(value);
 
@@ -114,7 +119,7 @@ export function LayoutCanvasV3({
           segment.targetHeightMm ??
           segment.variables?.target_height_mm ??
           run.variables?.target_height_mm ??
-          payload.variables.target_height_mm;
+          firstRunVars.target_height_mm;
         return {
           label: `R${runIndex + 1}S${sectionIndex + 1}`,
           lengthM,
@@ -131,7 +136,7 @@ export function LayoutCanvasV3({
       return {
         label: run.displayName || `Run ${runIndex + 1}`,
         systemType: run.productCode || payload.productCode,
-        colour: formatVariable(run.variables?.colour ?? payload.variables.colour),
+        colour: formatVariable(run.variables?.colour ?? firstRunVars.colour),
         totalLengthM:
           run.segments.reduce((sum, segment) => sum + (segment.segmentWidthMm ?? 0), 0) /
           1000,
@@ -141,7 +146,7 @@ export function LayoutCanvasV3({
         sections,
       };
     });
-  }, [payload]);
+  }, [payload, firstRunVars]);
 
   const gateVisuals = useMemo<Record<string, CanvasGateVisual>>(() => {
     if (!payload) return {};
@@ -165,7 +170,7 @@ export function LayoutCanvasV3({
             gateType,
             swingDirection: String(
               segment.variables?.[GATE_SEGMENT_STUB_KEYS.openingDirection] ??
-                fallbackDirection,
+              fallbackDirection,
             ) as CanvasGateVisual['swingDirection'],
             slidingSide: String(
               segment.variables?.[GATE_SEGMENT_STUB_KEYS.slidingSide] ?? 'front',
@@ -189,7 +194,7 @@ export function LayoutCanvasV3({
       const generated = canvasLayoutToCanonical(
         layout,
         payload.productCode,
-        payload.variables,
+        firstRunVars,
         stableIdsRef.current,
       );
       const canonical = mergeCanonicalPreservingSegmentMeta(payload, generated);
@@ -222,7 +227,7 @@ export function LayoutCanvasV3({
       const generated = canvasLayoutToCanonical(
         layout,
         payload.productCode,
-        payload.variables,
+        firstRunVars,
         stableIdsRef.current,
       );
       const canonical = mergeCanonicalPreservingSegmentMeta(payload, generated);
@@ -268,7 +273,7 @@ export function LayoutCanvasV3({
     } catch {
       // Invalid payload shape — ignore
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [payload]);
 
   return (
@@ -279,7 +284,7 @@ export function LayoutCanvasV3({
         onEngineReady={(engine) => { engineRef.current = engine; }}
         allowedAngles={allowedAngles}
         segmentPanelWidths={segmentPanelWidths}
-        jobPanelWidth={clampPostSpacing(payload?.variables.max_panel_width_mm, 2600)}
+        jobPanelWidth={clampPostSpacing(firstRunVars.max_panel_width_mm as number | undefined, 2600)}
         runStatsTexts={runStatsTexts}
         gateVisuals={gateVisuals}
         jobName={jobName}
@@ -290,7 +295,6 @@ export function LayoutCanvasV3({
         onMapSnapshotChange={onMapSnapshotChange}
         printRuns={printRuns}
       />
-      {showRunDetails && !mapExpanded && <RunDetailsPanel payload={payload} />}
     </div>
   );
 }

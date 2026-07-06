@@ -1,0 +1,34 @@
+{
+  "id": "V1",
+  "description": "VS baseline: 10m straight run, 65mm/5mm, black-satin, in-ground, 1800mm. VS vertical-slat system (static uses a separate vertical path).",
+  "payload": {
+    "productCode": "VS",
+    "schemaVersion": "v2",
+    "variables": {
+      "colour_code": "black-satin",
+      "slat_size_mm": 65,
+      "slat_gap_mm": 5,
+      "mounting_type": "in_ground",
+      "max_panel_width_mm": 2600
+    },
+    "runs": [
+      {
+        "runId": "run-001",
+        "productCode": "VS",
+        "segments": [
+          {
+            "segmentId": "seg-001",
+            "sortOrder": 0,
+            "kind": "fence",
+            "productCode": "VS",
+            "segmentWidthMm": 10000,
+            "targetHeightMm": 1800,
+            "postSize": "50",
+            "leftTermination": { "kind": "system" },
+            "rightTermination": { "kind": "system" }
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -16,7 +16,6 @@ import "../lib/geo/coordinates.test";
 import "../lib/googleMaps/staticSnapshot.test";
 import "../lib/manifestAssets.test";
 import "../lib/mobileShell.test";
-import "../pages/CalculatorV4Page.smoke.test";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 

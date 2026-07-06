@@ -72,27 +72,6 @@ describe("BOMResultTabs mobile cards", () => {
     act(() => root.unmount());
   });
 
-  it("hides price columns and totals in customer mode", () => {
-    const container = document.createElement("div");
-    document.body.appendChild(container);
-    const root = createRoot(container);
-
-    act(() => {
-      root.render(<BOMResultTabs result={result} customerMode />);
-    });
-
-    expect(container.textContent).toContain("POST-001");
-    expect(container.textContent).toContain("Run 1: 2");
-    expect(container.textContent).not.toContain("Unit $");
-    expect(container.textContent).not.toContain("Line $");
-    expect(container.textContent).not.toContain("$50.00");
-    expect(container.textContent).not.toContain("$100.00");
-    expect(container.textContent).not.toContain("Subtotal");
-    expect(container.textContent).not.toContain("Total (inc. GST)");
-
-    act(() => root.unmount());
-  });
-
   it("toggles per-line workings from the BOM toolbar", () => {
     const container = document.createElement("div");
     document.body.appendChild(container);

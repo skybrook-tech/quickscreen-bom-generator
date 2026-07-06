@@ -1,0 +1,22 @@
+version: "0.5"
+
+processes:
+  app:
+    command: zsh -l -i -c 'npm run dev'
+    working_dir: ./
+    is_tty: true
+
+  cursor:
+    command: zsh -l -i -c '/Applications/Cursor_personal.app/Contents/MacOS/Cursor --user-data-dir=$HOME/.cursor_personal --extensions-dir=$HOME/.curso_personal/extensions'
+    working_dir: ./
+    is_tty: true
+
+  supabase:
+    command: zsh -l -i -c 'supabase start'
+    working_dir: ./
+    is_tty: true
+
+  supabase_functions:
+    command: zsh -l -i -c 'supabase functions serve'
+    working_dir: ./
+    is_tty: true

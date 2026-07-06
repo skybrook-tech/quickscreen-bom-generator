@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
-import { localProducts } from '../lib/localSeedData';
+import { localProducts, localFenceProducts } from '../lib/localSeedData';
 
 export interface Product {
   id: string;
   name: string;
   system_type: string;
+  product_type?: string;
   description: string | null;
   image_url: string | null;
   active: boolean;
@@ -33,11 +34,24 @@ export function useProducts() {
 
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, system_type, description, image_url, active, sort_order, metadata')
+        .select('id, name, system_type, product_type, description, image_url, active, sort_order, metadata')
         .order('active', { ascending: false })
         .order('sort_order', { ascending: true });
       if (error) return localProducts;
       return data && data.length > 0 ? (data as Product[]) : localProducts;
     },
   });
+}
+
+/** Convenience hook: only fence-type products (excludes gates, other). */
+export function useFenceProducts() {
+  const query = useProducts();
+  return {
+    ...query,
+    data: query.data
+      ? query.data.filter(
+          (p) => p.product_type === 'fence' || (!p.product_type && localFenceProducts.some((lp) => lp.system_type === p.system_type)),
+        )
+      : localFenceProducts,
+  };
 }

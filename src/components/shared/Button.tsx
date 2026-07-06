@@ -6,15 +6,20 @@ interface ButtonProps {
   onClick: () => void;
   className?: string;
   variant?: keyof typeof variants;
-  icon: LucideIcon;
+  icon?: LucideIcon;
   size?: keyof typeof sizes;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
+  title?: string;
+  ariaLabel?: string;
+  iconPosition?: "left" | "right";
 }
 
 const sharedStyles = "rounded-lg flex items-center gap-2 hover:opacity-70";
 
 const variants = {
   secondary:
-    "bg-brand-bg border border-brand-border text-brand-text hover:bg-brand-border/20",
+    "border border-brand-border text-brand-muted hover:border-brand-primary hover:text-brand-primary",
   primary: "bg-brand-accent text-brand-bg hover:bg-brand-accent/80",
   danger: "bg-brand-danger text-white hover:bg-brand-danger/90",
   warning: "bg-brand-warning text-white hover:bg-brand-warning/90",
@@ -38,14 +43,24 @@ export function Button({
   className,
   icon: IconNode,
   size = "medium",
+  type = "button",
+  disabled = false,
+  title,
+  ariaLabel,
+  iconPosition = "left",
 }: ButtonProps) {
   return (
     <button
       className={cn(sharedStyles, variants[variant], sizes[size], className)}
       onClick={onClick}
+      type={type}
+      disabled={disabled}
+      title={title}
+      aria-label={ariaLabel}
     >
-      {IconNode && <IconNode size={16} />}
+      {iconPosition === "left" && IconNode && <IconNode size={16} />}
       {children}
+      {iconPosition === "right" && IconNode && <IconNode size={16} />}
     </button>
   );
 }
