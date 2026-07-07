@@ -357,8 +357,22 @@ export type ColorbondConfig = {
     skuToken: string;  // "GLINE" (used in the sheet SKU)
     heights: number[]; // allowed FINISHED heights, e.g. [1500, 1800, 2100]
   }>;
+  // Post-cap counting rule (typed vendor knob — docs/vendor-model-plan.md §4a).
+  // "single_double" (default, Glass Outlet): double-sided caps on interior
+  // back-to-back joins + 2 single-sided caps per segment.
+  // "half_posts" (Amazing Fencing): one cap per channel-post pair —
+  // ceil(channelPosts / 2) of skus.capDouble; capSingle unused.
+  capRule?: "single_double" | "half_posts";
   // Finished height → channel-post stock height, per mounting method.
   postHeightByFinished: Record<string, { in_ground: number; sharkfin_baseplate?: number }>;
+  // Finished height → on-site cut-down note appended to the channel-post line
+  // (e.g. AF 1200mm: the 2100mm C-post is cut down 300mm). Keeps quotes honest
+  // about stock lengths that need cutting.
+  cutDownNoteByFinished?: Record<string, string>;
+  // BOM-line note for the terminal-post line. Defaults to the Glass Outlet
+  // wording (65×65 steel post, free top cap); vendors whose terminal post
+  // differs override it.
+  terminalPostNote?: string;
   skus: {
     sheet: SkuTemplate;        // "CB-{profile}-{sheetHeight}-{colour}"
     rail: SkuTemplate;         // "CB-RAIL-{bayWidth}-{colour}"

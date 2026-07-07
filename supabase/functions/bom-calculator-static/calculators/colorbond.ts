@@ -108,25 +108,38 @@ export function colorbondCalculator(
       cb.postHeightByFinished[String(finished)]?.[mounting as "in_ground" | "sharkfin_baseplate"]
       ?? cb.postHeightByFinished[String(finished)]?.in_ground
       ?? 2400;
+    const cutDownNote = cb.cutDownNoteByFinished?.[String(finished)];
     emit(lines, {
       runId: run.runId, segmentId: segId,
       sku: isku(cb.skus.channelPost, { postHeight, colour }),
       category: "post", quantity: channelPosts, unit: "each",
-      notes: `${cb.channelPostsPerBay} channel posts per bay × ${numBays} bay(s) at ${postHeight}mm for ${finished}mm ${mounting}`,
+      notes: `${cb.channelPostsPerBay} channel posts per bay × ${numBays} bay(s) at ${postHeight}mm for ${finished}mm ${mounting}`
+        + (cutDownNote ? ` — ${cutDownNote}` : ""),
     });
     if (includeCaps) {
-      // Double-sided caps cover the back-to-back pairs at interior joins;
-      // single-sided caps cover the one-way posts at the segment ends.
-      emit(lines, {
-        runId: run.runId, segmentId: segId,
-        sku: cb.skus.capDouble, category: "cap", quantity: interiorJoins, unit: "each",
-        notes: "double-sided caps for back-to-back channel-post joins",
-      });
-      emit(lines, {
-        runId: run.runId, segmentId: segId,
-        sku: cb.skus.capSingle, category: "cap", quantity: 2, unit: "each",
-        notes: "single-sided caps for one-way channel posts at segment ends",
-      });
+      if ((cb.capRule ?? "single_double") === "half_posts") {
+        // One cap covers each back-to-back channel-post pair (vendor rule:
+        // ceil(posts / 2), odd post out still gets a cap).
+        emit(lines, {
+          runId: run.runId, segmentId: segId,
+          sku: cb.skus.capDouble, category: "cap",
+          quantity: Math.ceil(channelPosts / 2), unit: "each",
+          notes: "post caps at one per channel-post pair (ceil(posts/2))",
+        });
+      } else {
+        // Double-sided caps cover the back-to-back pairs at interior joins;
+        // single-sided caps cover the one-way posts at the segment ends.
+        emit(lines, {
+          runId: run.runId, segmentId: segId,
+          sku: cb.skus.capDouble, category: "cap", quantity: interiorJoins, unit: "each",
+          notes: "double-sided caps for back-to-back channel-post joins",
+        });
+        emit(lines, {
+          runId: run.runId, segmentId: segId,
+          sku: cb.skus.capSingle, category: "cap", quantity: 2, unit: "each",
+          notes: "single-sided caps for one-way channel posts at segment ends",
+        });
+      }
     }
 
     // Tek-screw pack per bay
@@ -155,11 +168,21 @@ export function colorbondCalculator(
     ?? run.runId;
   const terminalPosts = terminalPostCount(run);
   if (terminalPosts > 0) {
+    // {postHeight} is available to vendor templates whose terminal post is a
+    // height-dependent stock item (e.g. AF terminates runs in C-posts);
+    // templates without the token (GO's fixed 65×65) ignore it.
+    const runFinished = Math.round(
+      toNumber(runVars.target_height_mm, cfg.defaults.targetHeightMm),
+    );
+    const terminalPostHeight =
+      cb.postHeightByFinished[String(runFinished)]?.[runMounting as "in_ground" | "sharkfin_baseplate"]
+      ?? cb.postHeightByFinished[String(runFinished)]?.in_ground
+      ?? 2400;
     emit(lines, {
       runId: run.runId, segmentId: anchorSegId,
-      sku: isku(cb.skus.terminalPost, { colour: runColour }),
+      sku: isku(cb.skus.terminalPost, { colour: runColour, postHeight: terminalPostHeight }),
       category: "post", quantity: terminalPosts, unit: "each",
-      notes: "65×65 steel posts at run ends/corners (free top cap included)",
+      notes: cb.terminalPostNote ?? "65×65 steel posts at run ends/corners (free top cap included)",
     });
   }
 
