@@ -1,11 +1,15 @@
 // seed-products.js
 //
-// Loads every product file under supabase/seeds/glass-outlet/products/*.json,
+// Loads every product file under supabase/seeds/<org-slug>/products/*.json
+// (one directory per tenant org, e.g. glass-outlet/, amazing-fencing/),
 // validates each against supabase/seeds/schemas/product-file.schema.json,
 // resolves business-key FKs via on-the-fly lookups against Postgres, and
 // upserts every section in dependency order via @supabase/supabase-js.
 //
-// LIVE sections only: products, product_components, pricing_rules.
+// LIVE sections: products, product_components, pricing_rules, and
+// calculator_configs (per-org sparse CalculatorConfig overlay patches written
+// to supplier_product_calculator_configs — deep-merged over BASE_CONFIGS by
+// the edge functions at request time).
 // The static engine (bom-calculator-static) reads these from the DB; all
 // calculation rules live in code+config under
 // supabase/functions/bom-calculator-static/config/.
@@ -18,7 +22,7 @@ import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import Ajv from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, basename } from 'node:path';
 
@@ -38,8 +42,17 @@ console.log('VITE_SUPABASE_URL', supabaseUrl);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
-const PRODUCTS_DIR = resolve(ROOT, 'glass-outlet', 'products');
 const SCHEMA_DIR = resolve(ROOT, 'schemas');
+
+// Every directory under supabase/seeds/ that contains a products/ subdir is an
+// org seed dir; its name must equal the org's slug (cross-checked against each
+// file's org_slug in loadFile so a copy-pasted org_slug can't silently seed one
+// org's SKUs into another).
+function discoverOrgProductDirs() {
+  return readdirSync(ROOT, { withFileTypes: true })
+    .filter((d) => d.isDirectory() && existsSync(resolve(ROOT, d.name, 'products')))
+    .map((d) => ({ orgSlug: d.name, dir: resolve(ROOT, d.name, 'products') }));
+}
 
 // ── Load + compile schemas ──────────────────────────────────────────────────
 
@@ -195,15 +208,89 @@ async function upsertPricingRules(orgId, rows) {
   console.log(`  pricing_rules: ${inserted} inserted, ${updated} updated`);
 }
 
+// Top-level keys of the engine's CalculatorConfig (config/types.ts). An overlay
+// patch containing anything else is a typo (e.g. "colourbond") that deepMerge
+// would silently carry along — reject it loudly at seed time instead.
+const CALCULATOR_CONFIG_TOP_LEVEL_KEYS = new Set([
+  'productCode',
+  'configVersion',
+  'strategy',
+  'colours',
+  'display',
+  'finishFamilies',
+  'heightUi',
+  'panelRules',
+  'postFixingMaterials',
+  'gateRules',
+  'defaults',
+  'fields',
+  'formGroups',
+  'extraRules',
+  'slat',
+  'colorbond',
+  'timberPaling',
+]);
+
+async function upsertCalculatorConfigs(orgId, rows) {
+  if (!rows?.length) return;
+  let inserted = 0;
+  let updated = 0;
+  for (const r of rows) {
+    const unknownKeys = Object.keys(r.config).filter(
+      (k) => !CALCULATOR_CONFIG_TOP_LEVEL_KEYS.has(k),
+    );
+    if (unknownKeys.length) {
+      throw new Error(
+        `calculator_configs (${r.product_code}): unknown top-level config key(s): ${unknownKeys.join(', ')}`,
+      );
+    }
+    const row = {
+      org_id: orgId,
+      product_code: r.product_code,
+      config: r.config,
+      notes: r.notes ?? null,
+      is_current: true,
+      active: true,
+    };
+    const { data: existing, error: lookupErr } = await supabase
+      .from('supplier_product_calculator_configs')
+      .select('id')
+      .eq('org_id', orgId)
+      .eq('product_code', r.product_code)
+      .eq('is_current', true)
+      .eq('active', true)
+      .maybeSingle();
+    if (lookupErr) throw new Error(`calculator_configs lookup (${r.product_code}): ${lookupErr.message}`);
+    if (existing) {
+      const { error } = await supabase
+        .from('supplier_product_calculator_configs')
+        .update(row)
+        .eq('id', existing.id);
+      if (error) throw new Error(`calculator_configs update (${r.product_code}): ${error.message}`);
+      updated++;
+    } else {
+      const { error } = await supabase.from('supplier_product_calculator_configs').insert(row);
+      if (error) throw new Error(`calculator_configs insert (${r.product_code}): ${error.message}`);
+      inserted++;
+    }
+  }
+  console.log(`  calculator_configs: ${inserted} inserted, ${updated} updated`);
+}
+
 // ── Main per-file loader ────────────────────────────────────────────────────
 
-async function loadFile(path) {
+async function loadFile(path, expectedOrgSlug) {
   const raw = JSON.parse(readFileSync(path, 'utf8'));
   if (!validateFile(raw)) {
     const errs = validateFile.errors
       .map((e) => `  ${e.instancePath} ${e.message}`)
       .join('\n');
     throw new Error(`${basename(path)} failed schema validation:\n${errs}`);
+  }
+  if (raw.org_slug !== expectedOrgSlug) {
+    throw new Error(
+      `${basename(path)}: org_slug "${raw.org_slug}" does not match its seed directory "${expectedOrgSlug}"`,
+    );
   }
   const orgId = await resolveOrgId(raw.org_slug);
   console.log(`${basename(path)} (org=${raw.org_slug}):`);
@@ -212,6 +299,7 @@ async function loadFile(path) {
   await upsertProducts(orgId, raw.products);
   await upsertProductComponents(orgId, raw.product_components);
   await upsertPricingRules(orgId, raw.pricing_rules);
+  await upsertCalculatorConfigs(orgId, raw.calculator_configs);
 }
 
 // ── Post-load row-count floors ──────────────────────────────────────────────
@@ -250,20 +338,34 @@ async function verifyRowCounts() {
 // ── Main ────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const files = readdirSync(PRODUCTS_DIR)
-    .filter((f) => f.endsWith('.json') && !f.startsWith('_'))
-    .sort()
-    .map((f) => resolve(PRODUCTS_DIR, f));
-
-  if (files.length === 0) {
-    console.log(`No product files found in ${PRODUCTS_DIR}`);
+  const orgDirs = discoverOrgProductDirs();
+  if (orgDirs.length === 0) {
+    console.log(`No org product directories found under ${ROOT}`);
     return;
   }
 
-  console.log(`Found ${files.length} product file(s): ${files.map((p) => basename(p)).join(', ')}`);
+  let total = 0;
+  for (const { orgSlug, dir } of orgDirs) {
+    const files = readdirSync(dir)
+      .filter((f) => f.endsWith('.json') && !f.startsWith('_'))
+      .sort()
+      .map((f) => resolve(dir, f));
 
-  for (const path of files) {
-    await loadFile(path);
+    if (files.length === 0) {
+      console.log(`${orgSlug}: no product files (skipping)`);
+      continue;
+    }
+
+    console.log(`${orgSlug}: ${files.length} product file(s): ${files.map((p) => basename(p)).join(', ')}`);
+    for (const path of files) {
+      await loadFile(path, orgSlug);
+    }
+    total += files.length;
+  }
+
+  if (total === 0) {
+    console.log('No product files found in any org directory.');
+    return;
   }
 
   await verifyRowCounts();

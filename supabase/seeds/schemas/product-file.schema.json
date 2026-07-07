@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "product-file.schema.json",
   "title": "product-file",
-  "description": "One JSON file per product (e.g. qshs.json, vs.json, qs_gate.json). Groups all table rows under table-name keys. Gates are authored in their own file (e.g. qs_gate.json), not nested under a fence file. The Node upserter at supabase/seeds/tools/seed-products.js reads files matching this schema and upserts each section in dependency order (products → product_components → pricing_rules). Calculation rules are NOT seed data — they live in code+config under supabase/functions/bom-calculator-static/config/.",
+  "description": "One JSON file per product (e.g. qshs.json, vs.json, qs_gate.json), living under supabase/seeds/<org-slug>/products/. Groups all table rows under table-name keys. Gates are authored in their own file (e.g. qs_gate.json), not nested under a fence file. The Node upserter at supabase/seeds/tools/seed-products.js reads files matching this schema and upserts each section in dependency order (products → product_components → pricing_rules → calculator_configs). Calculation rules are NOT seed data — they live in code+config under supabase/functions/bom-calculator-static/config/; calculator_configs carries only per-org sparse overlay patches deep-merged over those base configs.",
   "type": "object",
   "additionalProperties": false,
   "required": ["org_slug"],
@@ -13,6 +13,20 @@
     },
     "products":           { "$ref": "products.schema.json" },
     "product_components": { "$ref": "product_components.schema.json" },
-    "pricing_rules":      { "$ref": "pricing_rules.schema.json" }
+    "pricing_rules":      { "$ref": "pricing_rules.schema.json" },
+    "calculator_configs": {
+      "type": "array",
+      "description": "Per-org sparse CalculatorConfig overlay patches, upserted into supplier_product_calculator_configs and deep-merged over BASE_CONFIGS at request time. Arrays in a patch REPLACE the base array wholesale (e.g. fields, profiles); objects merge recursively. Top-level config keys are validated against the engine's CalculatorConfig shape by the seeder.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["product_code", "config"],
+        "properties": {
+          "product_code": { "type": "string", "description": "Must match a BASE_CONFIGS key (config/base.ts) — the edge functions silently ignore overlay rows for unknown product codes." },
+          "config":       { "type": "object", "description": "Sparse Partial<CalculatorConfig> patch." },
+          "notes":        { "type": "string" }
+        }
+      }
+    }
   }
 }

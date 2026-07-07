@@ -6,3 +6,12 @@ VALUES (
   '{"cssVars":{"--brand-bg":"#dadada","--brand-card":"#ffffff","--brand-border":"#b8b8b8","--brand-accent":"90 138 50","--brand-accent-hover":"#4a7228","--brand-muted":"#666666","--brand-text":"#1a1a1a","--brand-header-bg":"#1a1a1a","--brand-header-text":"#ffffff","--brand-radius":"0.375rem","--brand-radius-sm":"0.25rem"},"branding":{"title":"FENCE","titleItalic":"builder","subtitle":"QuickScreen aluminium slat fencing calculator","hideThemeToggle":true}}'
 )
 ON CONFLICT (slug) DO UPDATE SET branding = EXCLUDED.branding;
+
+-- Amazing Fencing — second tenant org (Colorbond + Timber Paling supplier/installer)
+INSERT INTO organisations (name, slug, branding)
+VALUES (
+  'Amazing Fencing',
+  'amazing-fencing',
+  '{"cssVars":{"--brand-bg":"#dadada","--brand-card":"#ffffff","--brand-border":"#b8b8b8","--brand-accent":"196 88 27","--brand-accent-hover":"#a34a15","--brand-muted":"#666666","--brand-text":"#1a1a1a","--brand-header-bg":"#1f1a16","--brand-header-text":"#ffffff","--brand-radius":"0.375rem","--brand-radius-sm":"0.25rem"},"branding":{"title":"FENCE","titleItalic":"builder","subtitle":"Amazing Fencing calculator","hideThemeToggle":true}}'
+)
+ON CONFLICT (slug) DO UPDATE SET branding = EXCLUDED.branding;
