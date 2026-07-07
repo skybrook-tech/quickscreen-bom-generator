@@ -17,13 +17,28 @@ if (!serviceRoleKey) {
 const supabase = createClient(supabaseUrl, serviceRoleKey);
 
 async function main() {
-  const { data: org } = await supabase
+  let org = null;
+
+  const { data: orgData } = await supabase
     .from("organisations")
     .select("id")
     .eq("slug", "glass-outlet")
     .single();
 
-  if (!org) throw new Error("Org not found (did you run your SQL seed first?)");
+  if (!orgData) {
+    const { data: newOrgData } = await supabase
+      .from("organisations")
+      .insert({
+        name: "The Glass Outlet",
+        slug: "glass-outlet",
+      })
+      .select()
+      .single();
+      
+    org = newOrgData;
+  } else {
+    org = orgData;
+  }
 
   // ── Regular test user ────────────────────────────────────────────────────────
   await supabase.auth.admin.createUser({
