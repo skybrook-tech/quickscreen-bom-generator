@@ -5,7 +5,15 @@
 // `config.extraRules`. This is the sanctioned alternative to a generic
 // expression language — see AGENTS.md ("code owns algorithms, data owns facts").
 
-import type { CalculatorConfig, QtyLine } from "../config/types.ts";
+import type { CalculatorConfig, CanonicalRun, QtyLine } from "../config/types.ts";
+
+// Terminal posts for post-and-panel fences: one per post-typed run boundary +
+// one per corner. Shared by the colorbond and timber-paling calculators.
+export function terminalPostCount(run: CanonicalRun): number {
+  return (run.leftBoundary?.type === "product_post" ? 1 : 0)
+    + (run.rightBoundary?.type === "product_post" ? 1 : 0)
+    + (run.corners?.length ?? 0);
+}
 
 /** Per-segment context the rules can read. Provide what your calculator knows. */
 export type ExtraRuleContext = {

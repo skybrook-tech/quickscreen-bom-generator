@@ -214,6 +214,14 @@ export const syntheticComponents: SeedComponent[] = [
     }
     return out;
   })(),
+  // ── Timber paling fencing (priced from the AF supplier doc, tier1 default) —
+  //    just enough of the catalogue for the S19 snapshot to be price-bearing.
+  component("AF-PAL-100x16-1800", "CCA Pine Paling 1800mm", "Treated pine paling, 1800×100×16mm H3", "paling", "each", 2.14, ["TIMBER_PALING"]),
+  component("AF-RAIL-PINE-75x38-4800", "Pine Rail 75×38×4800mm", "Treated pine rail, 75×38×4800mm H3", "rail", "each", 10.37, ["TIMBER_PALING"]),
+  component("AF-POST-PINE-100x75-2400", "CCA Pine Post 2400mm", "Treated pine post, 2400×100×75mm H4", "post", "each", 17.14, ["TIMBER_PALING"]),
+  component("AF-NAIL-COIL-45-250", "Coil Nails 45mm (250pk)", "45mm ring-shank galvanised coil nails, pack of 250", "fixing", "pack", 2.96, ["TIMBER_PALING"]),
+  component("AF-SCR-BB-14g-100-500", "Batten Screws 14g×100 (500pk)", "14g × 100mm galvanised batten screws, pack of 500", "fixing", "pack", 14.56, ["TIMBER_PALING"]),
+  component("AF-CON-RAPID-30", "Rapid Set Concrete 30kg", "Rapid set concrete 30kg bag", "mounting", "bag", 13.25, ["TIMBER_PALING"]),
 ];
 
 export const syntheticPricingRules: LocalPricingRule[] = [
@@ -278,4 +286,11 @@ export const syntheticPricingRules: LocalPricingRule[] = [
   ...pricing("AW-65BP-SET-TR", 10.3, 9.59, 8.24), ...pricing("AW-DC-2P-TR", 5.25, 4.68, 4.2),
   ...pricing("AW-65DC-2P-TR", 5.51, 4.95, 4.41), ...pricing("AW-DR-TR", 3.52, 3.28, 2.82),
   ...pricing("AW-65DR-TR", 4.73, 4.41, 3.79),
+  // Timber paling (AF supplier doc tiers) — S19 snapshot pricing
+  ...pricing("AF-PAL-100x16-1800", 2.14, 1.78, 1.51),
+  ...pricing("AF-RAIL-PINE-75x38-4800", 10.37, 8.64, 7.34),
+  ...pricing("AF-POST-PINE-100x75-2400", 17.14, 14.28, 12.14),
+  ...pricing("AF-NAIL-COIL-45-250", 2.96, 2.47, 2.10),
+  ...pricing("AF-SCR-BB-14g-100-500", 14.56, 12.13, 10.31),
+  ...pricing("AF-CON-RAPID-30", 13.25, 11.04, 9.38),
 ];

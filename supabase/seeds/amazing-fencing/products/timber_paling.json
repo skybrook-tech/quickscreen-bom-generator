@@ -1,0 +1,1386 @@
+{
+  "org_slug": "amazing-fencing",
+  "products": [
+    {
+      "system_type": "TIMBER_PALING",
+      "product_type": "fence",
+      "compatible_with_system_types": [],
+      "name": "Timber Paling Fence",
+      "description": "Timber boundary paling fencing — butted or lapped-and-capped, treated pine or hardwood, heights 1200–2400mm. Amazing Fencing supply.",
+      "active": true,
+      "sort_order": 3,
+      "metadata": {
+        "allowedAngles": [
+          90
+        ],
+        "options": {
+          "paling_style": [
+            "butted",
+            "lapped_capped"
+          ],
+          "species": [
+            "pine",
+            "hardwood"
+          ]
+        }
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "AF-PAL-100x16-1200",
+      "name": "CCA Pine Paling 100×16×1200mm",
+      "description": "Treated pine paling, 1200×100×16mm H3",
+      "category": "paling",
+      "unit": "each",
+      "default_price": 0.4,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "screening",
+        "supplier_order_code": "AF-PAL-100x16-1200"
+      },
+      "active": true,
+      "subCategory": "palings",
+      "sortPriority": 40
+    },
+    {
+      "sku": "AF-PAL-100x16-1500",
+      "name": "CCA Pine Paling 100×16×1500mm",
+      "description": "Treated pine paling, 1500×100×16mm H3",
+      "category": "paling",
+      "unit": "each",
+      "default_price": 1.85,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "screening",
+        "supplier_order_code": "AF-PAL-100x16-1500"
+      },
+      "active": true,
+      "subCategory": "palings",
+      "sortPriority": 40
+    },
+    {
+      "sku": "AF-PAL-100x16-1800",
+      "name": "CCA Pine Paling 100×16×1800mm",
+      "description": "Treated pine paling, 1800×100×16mm H3",
+      "category": "paling",
+      "unit": "each",
+      "default_price": 2.14,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "screening",
+        "supplier_order_code": "AF-PAL-100x16-1800"
+      },
+      "active": true,
+      "subCategory": "palings",
+      "sortPriority": 40
+    },
+    {
+      "sku": "AF-PAL-100x16-2400",
+      "name": "CCA Pine Paling 100×16×2400mm",
+      "description": "Treated pine paling, 2400×100×16mm H3 (also cut down for 2100mm fences)",
+      "category": "paling",
+      "unit": "each",
+      "default_price": 3.0,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "screening",
+        "supplier_order_code": "AF-PAL-100x16-2400"
+      },
+      "active": true,
+      "subCategory": "palings",
+      "sortPriority": 40
+    },
+    {
+      "sku": "AF-PAL-PP-100x16-1200",
+      "name": "CCA Pine Paddle Pop Paling 1.2m",
+      "description": "Rounded-top picket paling, 1200×100×16mm H3",
+      "category": "paling",
+      "unit": "each",
+      "default_price": 1.56,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "screening",
+        "supplier_order_code": "AF-PAL-PP-100x16-1200"
+      },
+      "active": true,
+      "subCategory": "palings",
+      "sortPriority": 45
+    },
+    {
+      "sku": "AF-PAL-PP-100x16-1500",
+      "name": "CCA Pine Paddle Pop Paling 1.5m",
+      "description": "Rounded-top picket paling, 1500×100×16mm H3",
+      "category": "paling",
+      "unit": "each",
+      "default_price": 2.04,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "screening",
+        "supplier_order_code": "AF-PAL-PP-100x16-1500"
+      },
+      "active": true,
+      "subCategory": "palings",
+      "sortPriority": 45
+    },
+    {
+      "sku": "AF-POST-PINE-100x75-1800",
+      "name": "CCA Pine Post 100×75×1800mm",
+      "description": "Treated pine post, 1800×100×75mm H4",
+      "category": "post",
+      "unit": "each",
+      "default_price": 12.85,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-POST-PINE-100x75-1800"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-POST-PINE-100x75-2400",
+      "name": "CCA Pine Post 100×75×2400mm",
+      "description": "Treated pine post, 2400×100×75mm H4 (also cut to 2100mm for 1500mm fences)",
+      "category": "post",
+      "unit": "each",
+      "default_price": 17.14,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-POST-PINE-100x75-2400"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-POST-PINE-100x75-3000",
+      "name": "CCA Pine Post 100×75×3000mm",
+      "description": "Treated pine post, 3000×100×75mm H4 (also cut to 2700mm for 2100mm fences)",
+      "category": "post",
+      "unit": "each",
+      "default_price": 21.42,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-POST-PINE-100x75-3000"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-1800",
+      "name": "H4 Hardwood Post 100×75×1800mm",
+      "description": "Hardwood post, 1800×100×75mm H4",
+      "category": "post",
+      "unit": "each",
+      "default_price": 20.17,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-POST-HWD-100x75-1800"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-2100",
+      "name": "H4 Hardwood Post 100×75×2100mm",
+      "description": "Hardwood post, 2100×100×75mm H4",
+      "category": "post",
+      "unit": "each",
+      "default_price": 24.95,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-POST-HWD-100x75-2100"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-2400",
+      "name": "H4 Hardwood Post 100×75×2400mm",
+      "description": "Hardwood post, 2400×100×75mm H4",
+      "category": "post",
+      "unit": "each",
+      "default_price": 26.92,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-POST-HWD-100x75-2400"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-2700",
+      "name": "H4 Hardwood Post 100×75×2700mm",
+      "description": "Hardwood post, 2700×100×75mm H4",
+      "category": "post",
+      "unit": "each",
+      "default_price": 30.52,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-POST-HWD-100x75-2700"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-3000",
+      "name": "H4 Hardwood Post 100×75×3000mm",
+      "description": "Hardwood post, 3000×100×75mm H4",
+      "category": "post",
+      "unit": "each",
+      "default_price": 34.09,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-POST-HWD-100x75-3000"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-RAIL-PINE-75x38-4800",
+      "name": "Pine Rail 75×38×4800mm",
+      "description": "Treated pine rail, 75×38×4800mm H3",
+      "category": "rail",
+      "unit": "each",
+      "default_price": 10.37,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "frames_and_covers",
+        "supplier_order_code": "AF-RAIL-PINE-75x38-4800"
+      },
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
+    },
+    {
+      "sku": "AF-RAIL-PINE-100x38-4800",
+      "name": "Pine Rail 100×38×4800mm",
+      "description": "Treated pine rail, 100×38×4800mm H3",
+      "category": "rail",
+      "unit": "each",
+      "default_price": 13.82,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "frames_and_covers",
+        "supplier_order_code": "AF-RAIL-PINE-100x38-4800"
+      },
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 22
+    },
+    {
+      "sku": "AF-RAIL-PINE-ARR-100x38",
+      "name": "Pine Arrissed Rail 100×38",
+      "description": "Eased-edge treated pine rail, 100×38×4800mm H3",
+      "category": "rail",
+      "unit": "each",
+      "default_price": 15.55,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "frames_and_covers",
+        "supplier_order_code": "AF-RAIL-PINE-ARR-100x38"
+      },
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 23
+    },
+    {
+      "sku": "AF-RAIL-HWD-75x38-4800",
+      "name": "Hardwood Rail 75×38×4800mm",
+      "description": "Hardwood rail, 75×38×4800mm H3",
+      "category": "rail",
+      "unit": "each",
+      "default_price": 21.41,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "frames_and_covers",
+        "supplier_order_code": "AF-RAIL-HWD-75x38-4800"
+      },
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
+    },
+    {
+      "sku": "AF-RAIL-HWD-100x38-4800",
+      "name": "Hardwood Rail 100×38×4800mm",
+      "description": "Hardwood rail, 100×38×4800mm H3",
+      "category": "rail",
+      "unit": "each",
+      "default_price": 32.11,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "frames_and_covers",
+        "supplier_order_code": "AF-RAIL-HWD-100x38-4800"
+      },
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 22
+    },
+    {
+      "sku": "AF-CAP-75x50-4800",
+      "name": "Pine Capping Rail 75×50×4800mm",
+      "description": "Treated pine capping rail, 75×50×4800mm H3 (lapped-and-capped style)",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 19.8,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "frames_and_covers",
+        "supplier_order_code": "AF-CAP-75x50-4800"
+      },
+      "active": true,
+      "subCategory": "capping",
+      "sortPriority": 25
+    },
+    {
+      "sku": "AF-NAIL-COIL-45-250",
+      "name": "Coil Nails 45mm Ring Galv (250pk)",
+      "description": "45mm ring-shank galvanised coil nails, pack of 250 — butted palings + lapped back layer",
+      "category": "fixing",
+      "unit": "pack",
+      "default_price": 2.96,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "fasteners_and_screws",
+        "supplier_order_code": "AF-NAIL-COIL-45-250"
+      },
+      "active": true,
+      "subCategory": "nails",
+      "sortPriority": 60
+    },
+    {
+      "sku": "AF-NAIL-COIL-57-250",
+      "name": "Coil Nails 57mm Ring Galv (250pk)",
+      "description": "57mm ring-shank galvanised coil nails, pack of 250 — lapped front (overlapping) layer",
+      "category": "fixing",
+      "unit": "pack",
+      "default_price": 4.56,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "fasteners_and_screws",
+        "supplier_order_code": "AF-NAIL-COIL-57-250"
+      },
+      "active": true,
+      "subCategory": "nails",
+      "sortPriority": 60
+    },
+    {
+      "sku": "AF-SCR-BB-14g-100-500",
+      "name": "Batten Screws 14g×100mm Galv (500pk)",
+      "description": "14g × 100mm galvanised batten screws, pack of 500 — rail-to-post fixing",
+      "category": "fixing",
+      "unit": "pack",
+      "default_price": 14.56,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "fasteners_and_screws",
+        "supplier_order_code": "AF-SCR-BB-14g-100-500"
+      },
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 62
+    },
+    {
+      "sku": "AF-CON-RAPID-30",
+      "name": "Rapid Set Concrete 30kg",
+      "description": "Rapid set concrete 30kg bag — pine post footings",
+      "category": "mounting",
+      "unit": "bag",
+      "default_price": 13.25,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "tools_and_consumables",
+        "supplier_order_code": "AF-CON-RAPID-30"
+      },
+      "active": true,
+      "subCategory": "concrete",
+      "sortPriority": 90
+    },
+    {
+      "sku": "AF-CON-POSTMIX-30",
+      "name": "Post Mix Concrete 30kg",
+      "description": "Post mix concrete 30kg bag — hardwood post footings / Colorbond posts",
+      "category": "mounting",
+      "unit": "bag",
+      "default_price": 11.76,
+      "system_types": [
+        "COLORBOND",
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "tools_and_consumables",
+        "supplier_order_code": "AF-CON-POSTMIX-30"
+      },
+      "active": true,
+      "subCategory": "concrete",
+      "sortPriority": 90
+    },
+    {
+      "sku": "AF-CON-GP-20",
+      "name": "GP Cement 20kg",
+      "description": "General purpose cement, 20kg bag",
+      "category": "mounting",
+      "unit": "bag",
+      "default_price": 8.02,
+      "system_types": [
+        "TIMBER_PALING"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (tier pricing verified 2026-07-08)",
+        "bomCategory": "tools_and_consumables",
+        "supplier_order_code": "AF-CON-GP-20"
+      },
+      "active": true,
+      "subCategory": "concrete",
+      "sortPriority": 92
+    }
+  ],
+  "pricing_rules": [
+    {
+      "sku": "AF-PAL-100x16-1200",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 0.4,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-100x16-1200",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 0.33,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-100x16-1200",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 0.28,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-100x16-1500",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 1.85,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-100x16-1500",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 1.54,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-100x16-1500",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 1.31,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-100x16-1800",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 2.14,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-100x16-1800",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 1.78,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-100x16-1800",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 1.51,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-100x16-2400",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 3.0,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-100x16-2400",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 2.5,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-100x16-2400",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 2.13,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-PP-100x16-1200",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 1.56,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-PP-100x16-1200",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 1.3,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-PP-100x16-1200",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 1.11,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-PP-100x16-1500",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 2.04,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-PP-100x16-1500",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 1.7,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-PAL-PP-100x16-1500",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 1.45,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-PINE-100x75-1800",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 12.85,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-PINE-100x75-1800",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 10.71,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-PINE-100x75-1800",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 9.1,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-PINE-100x75-2400",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 17.14,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-PINE-100x75-2400",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 14.28,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-PINE-100x75-2400",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 12.14,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-PINE-100x75-3000",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 21.42,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-PINE-100x75-3000",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 17.85,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-PINE-100x75-3000",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 15.17,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-1800",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 20.17,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-1800",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 16.81,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-1800",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 14.29,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-2100",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 24.95,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-2100",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 20.79,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-2100",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 17.67,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-2400",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 26.92,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-2400",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 22.43,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-2400",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 19.07,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-2700",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 30.52,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-2700",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 25.43,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-2700",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 21.62,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-3000",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 34.09,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-3000",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 28.41,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-POST-HWD-100x75-3000",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 24.15,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-PINE-75x38-4800",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 10.37,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-PINE-75x38-4800",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 8.64,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-PINE-75x38-4800",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 7.34,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-PINE-100x38-4800",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 13.82,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-PINE-100x38-4800",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 11.52,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-PINE-100x38-4800",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 9.79,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-PINE-ARR-100x38",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 15.55,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-PINE-ARR-100x38",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 12.96,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-PINE-ARR-100x38",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 11.02,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-HWD-75x38-4800",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 21.41,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-HWD-75x38-4800",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 17.84,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-HWD-75x38-4800",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 15.16,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-HWD-100x38-4800",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 32.11,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-HWD-100x38-4800",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 26.76,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-RAIL-HWD-100x38-4800",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 22.75,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-CAP-75x50-4800",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 19.8,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-CAP-75x50-4800",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 16.5,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-CAP-75x50-4800",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 14.03,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-NAIL-COIL-45-250",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 2.96,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-NAIL-COIL-45-250",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 2.47,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-NAIL-COIL-45-250",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 2.1,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-NAIL-COIL-57-250",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 4.56,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-NAIL-COIL-57-250",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 3.8,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-NAIL-COIL-57-250",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 3.23,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-SCR-BB-14g-100-500",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 14.56,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-SCR-BB-14g-100-500",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 12.13,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-SCR-BB-14g-100-500",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 10.31,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-CON-RAPID-30",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 13.25,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-CON-RAPID-30",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 11.04,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-CON-RAPID-30",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 9.38,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-CON-POSTMIX-30",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 11.76,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-CON-POSTMIX-30",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 9.8,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-CON-POSTMIX-30",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 8.33,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-CON-GP-20",
+      "tier_code": "tier1",
+      "rule": "qty >= 1",
+      "price": 8.02,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-CON-GP-20",
+      "tier_code": "tier2",
+      "rule": "qty >= 1",
+      "price": 6.68,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    },
+    {
+      "sku": "AF-CON-GP-20",
+      "tier_code": "tier3",
+      "rule": "qty >= 1",
+      "price": 5.68,
+      "priority": 1,
+      "valid_from": null,
+      "valid_to": null,
+      "notes": "Amazing Fencing supplier doc; verified 2026-07-08",
+      "active": true
+    }
+  ]
+}

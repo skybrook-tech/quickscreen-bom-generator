@@ -6,6 +6,7 @@
 import type { CalcContext, CanonicalRun, CanonicalPayload, QtyLine } from "../config/types.ts";
 import { quickScreenCalculator } from "./quickscreen.ts";
 import { colorbondCalculator } from "./colorbond.ts";
+import { timberPalingCalculator } from "./timber-paling.ts";
 
 type Sink = { warnings: string[]; computed: Record<string, Record<string, Record<string, unknown>>> };
 
@@ -25,6 +26,8 @@ const CALCULATORS: Record<string, Calculator> = {
   XPL:  quickScreenCalculator,
   // Colorbond steel fencing — bay-based, its own (non-slat) calculator.
   COLORBOND: colorbondCalculator,
+  // Timber paling fencing — posts + rails + palings, its own calculator.
+  TIMBER_PALING: timberPalingCalculator,
 };
 
 function unsupportedCalculator(productCode: string): Calculator {

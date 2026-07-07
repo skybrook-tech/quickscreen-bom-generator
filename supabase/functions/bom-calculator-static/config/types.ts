@@ -23,8 +23,9 @@ export type CalculatorConfig = {
   strategy: {
     // "colorbond_sheet" is a non-slat, bay-based steel-fence strategy handled by
     // its own registered calculator (calculators/colorbond.ts) — it never enters
-    // quickScreenCalculator's slat branches.
-    fence: "horizontal_slat" | "vertical_slat" | "panel" | "colorbond_sheet";
+    // quickScreenCalculator's slat branches. "timber_paling" is likewise its own
+    // calculator (calculators/timber-paling.ts) reading the timberPaling block.
+    fence: "horizontal_slat" | "vertical_slat" | "panel" | "colorbond_sheet" | "timber_paling";
   };
 
   // Colour availability & fallback. Currently in code; will move to a DB table
@@ -160,6 +161,11 @@ export type CalculatorConfig = {
   // COLORBOND config; read exclusively by calculators/colorbond.ts. Slat products
   // leave this undefined. See docs / the catalogue recipe for the source rules.
   colorbond?: ColorbondConfig;
+
+  // Timber paling fencing data (posts + rails + palings, butted or
+  // lapped-and-capped). Only present on the TIMBER_PALING config; read
+  // exclusively by calculators/timber-paling.ts.
+  timberPaling?: TimberPalingConfig;
 };
 
 // Slat-screening strategy block — everything only the QuickScreen calculator
@@ -420,6 +426,69 @@ export type ColorbondConfig = {
     tekScrewPack: SkuTemplate; // "CB-TS-{colour}-15PK"
     sharkfin: SkuTemplate;     // "CB-SHARKFIN-{colour}"
     concrete: SkuTemplate;     // "GROUT-CONCRETE"
+  };
+};
+
+// Timber paling fencing — quantity rules + SKU templates for the post/rail/
+// paling calculator (calculators/timber-paling.ts). Placeholders:
+// {palingLength} (= fence height), {species} (PINE | HWD), {postLength},
+// {railLength}, {cappingLength}. Source: the supplier's BOM-by-height doc
+// (catalogues/amazing-fencing/) — layer paling counts are the supplier's
+// PUBLISHED per-bay numbers (butted 27 already includes their 5% wastage);
+// extraWastageFactor exists so an overlay can add margin without re-deriving.
+export type TimberPalingConfig = {
+  bayWidthMm: number;          // 2400 (post centres)
+  railStockLengthMm: number;   // 4800
+  railSpanBays: number;        // 2 — one 4.8m rail piece spans 2 bays per row
+  // Rail rows by fence height: first entry with maxHeightMm >= height wins.
+  // No matching entry = unmapped height → the calculator warns and skips
+  // (never silently defaults).
+  railsByHeight: Array<{ maxHeightMm: number; rails: number }>;
+  extraWastageFactor: number;  // multiplier on paling totals before ceil (1.0)
+  styles: {
+    butted: {
+      layers: Array<{
+        palingsPerBay: number;          // 27 (incl. published 5% wastage)
+        nailsPerPalingPerRail: number;  // 2
+        nailSkuKey: "nails45Pack" | "nails57Pack";
+      }>;
+    };
+    lapped_capped: {
+      layers: Array<{
+        palingsPerBay: number;          // back 19 / front 19
+        nailsPerPalingPerRail: number;  // back 1 / front 2
+        nailSkuKey: "nails45Pack" | "nails57Pack";
+      }>;
+      capping: { stockLengthMm: number; lengthsPerBay: number }; // 4800, 0.5
+    };
+  };
+  battenScrewsPerRailPiece: number; // 2 (rail-to-post batten screws)
+  packSizes: { nails45: number; nails57: number; battenScrews: number }; // 250/250/500
+  // Fence height (mm, string key) → post stock length per species. Pine comes
+  // in fewer stock lengths, so some heights use a longer post cut down on site
+  // (note it in cutDownNotes).
+  postStockByFenceHeight: Record<string, { pine: number; hardwood: number }>;
+  // Fence height → species → on-site cut-down note for the post line.
+  postCutDownNotes?: Record<string, Partial<Record<"pine" | "hardwood", string>>>;
+  // Fence height → paling stock length when it differs from the fence height
+  // (e.g. 2100mm fences use 2400mm palings cut down — there is no 2100 paling
+  // stock). Missing key = paling length equals fence height.
+  palingLengthByFenceHeight?: Record<string, number>;
+  // Fence height → note for the paling line (e.g. 2100 palings cut from 2400).
+  palingCutDownNotes?: Record<string, string>;
+  concrete: {
+    pineSku: SkuTemplate;     // "AF-CON-RAPID-30" (rapid set for pine)
+    hardwoodSku: SkuTemplate; // "AF-CON-POSTMIX-30" (post mix for hardwood)
+    bagsPerPost: number;      // 1
+  };
+  skus: {
+    paling: SkuTemplate;          // "AF-PAL-100x16-{palingLength}"
+    post: SkuTemplate;            // "AF-POST-{species}-100x75-{postLength}"
+    rail: SkuTemplate;            // "AF-RAIL-{species}-75x38-{railLength}"
+    cappingRail: SkuTemplate;     // "AF-CAP-75x50-{cappingLength}"
+    nails45Pack: SkuTemplate;     // "AF-NAIL-COIL-45-250"
+    nails57Pack: SkuTemplate;     // "AF-NAIL-COIL-57-250"
+    battenScrewPack: SkuTemplate; // "AF-SCR-BB-14g-100-500"
   };
 };
 

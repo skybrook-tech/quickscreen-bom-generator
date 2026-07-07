@@ -25,7 +25,7 @@ export type UiCalculatorConfig = {
     description: string;
   };
   strategy: {
-    fence: "horizontal_slat" | "vertical_slat" | "panel" | "colorbond_sheet";
+    fence: "horizontal_slat" | "vertical_slat" | "panel" | "colorbond_sheet" | "timber_paling";
   };
   colours: {
     standard: string[];

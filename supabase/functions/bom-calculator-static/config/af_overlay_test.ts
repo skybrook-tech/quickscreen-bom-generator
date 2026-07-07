@@ -259,6 +259,45 @@ Deno.test("AF terminal posts are C-posts at the run height (no GO 65×65 leakage
   assert(!l.some((line) => line.sku.startsWith("XPSG-")), "GO terminal-post SKU must not leak into AF quotes");
 });
 
+// ── Timber paling parity (no overlay — AF's rules ARE the base config) ───────
+
+const timberSeed = readSeed("timber_paling.json");
+const timberSeedSkus = new Set((timberSeed.product_components ?? []).map((c) => c.sku));
+
+Deno.test("AF timber parity guard: every emitted SKU across styles × species × heights exists in the seed catalogue", () => {
+  for (const style of ["butted", "lapped_capped"]) {
+    for (const species of ["pine", "hardwood"]) {
+      for (const height of [1200, 1500, 1800, 2100, 2400]) {
+        const r = calculateLocalBom({
+          runs: [{
+            runId: "r1",
+            productCode: "TIMBER_PALING",
+            segments: [{
+              segmentId: "s1", segmentKind: "panel", segmentWidthMm: 7200,
+              targetHeightMm: height,
+              variables: {},
+            }],
+            leftBoundary: { type: "product_post" },
+            rightBoundary: { type: "product_post" },
+            corners: [{ type: "90" }],
+            variables: {
+              paling_style: style, species, mounting_type: "in_ground",
+              target_height_mm: height,
+            },
+          }],
+          variables: {},
+        });
+        const unknown = (r.lines as Line[]).map((l) => l.sku).filter((sku) => !timberSeedSkus.has(sku));
+        assertEquals(
+          unknown,
+          [],
+          `style=${style} species=${species} height=${height}: emitted SKU(s) missing from AF timber seed: ${unknown.join(", ")}`,
+        );
+      }
+    }
+  }
+});
+
 Deno.test("AF overlay never leaks other GO SKU templates (full-SKU-map override)", () => {
   const cb = afConfig().colorbond!;
   for (const [key, template] of Object.entries(cb.skus)) {

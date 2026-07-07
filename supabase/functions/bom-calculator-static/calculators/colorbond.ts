@@ -17,7 +17,7 @@ import type {
 import {
   GATE_SEGMENT_STUB_KEYS, gateMovementOrDefault, isku, knownSelectedSku, toNumber,
 } from "../engine-utils.ts";
-import { applyExtraRules } from "./shared.ts";
+import { applyExtraRules, terminalPostCount } from "./shared.ts";
 
 type Sink = {
   warnings: string[];
@@ -27,13 +27,6 @@ type Sink = {
 function emit(lines: QtyLine[], line: QtyLine): void {
   if (!Number.isFinite(line.quantity) || line.quantity <= 0) return;
   lines.push({ ...line, quantity: Math.ceil(line.quantity) });
-}
-
-// 65×65 terminal posts: one per post-typed run boundary + one per corner.
-function terminalPostCount(run: CanonicalRun): number {
-  return (run.leftBoundary?.type === "product_post" ? 1 : 0)
-    + (run.rightBoundary?.type === "product_post" ? 1 : 0)
-    + (run.corners?.length ?? 0);
 }
 
 function nearest(options: number[], value: number): number {

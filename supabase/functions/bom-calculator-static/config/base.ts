@@ -7,7 +7,7 @@
 // Changing calculation behaviour for Glass Outlet = edit these objects.
 // Adding a new supplier = deep-merge a patch over one of these.
 
-import type { CalculatorConfig, ColorbondConfig, SlatConfig, FormFieldDef } from "./types.ts";
+import type { CalculatorConfig, ColorbondConfig, SlatConfig, TimberPalingConfig, FormFieldDef } from "./types.ts";
 import qshsFields from "./products/qshs/fields.json" with { type: "json" };
 import vsFields from "./products/vs/fields.json" with { type: "json" };
 import xplFields from "./products/xpl/fields.json" with { type: "json" };
@@ -15,6 +15,7 @@ import baygFields from "./products/bayg/fields.json" with { type: "json" };
 import qsGateFields from "./products/qs_gate/fields.json" with { type: "json" };
 import colorbondFields from "./products/colorbond/fields.json" with { type: "json" };
 import cbGateFields from "./products/cb_gate/fields.json" with { type: "json" };
+import timberPalingFields from "./products/timber_paling/fields.json" with { type: "json" };
 
 type ProductFieldFile = {
   fields: FormFieldDef[];
@@ -29,6 +30,7 @@ const PRODUCT_FIELD_FILES: Record<string, ProductFieldFile> = {
   QS_GATE: qsGateFields as ProductFieldFile,
   COLORBOND: colorbondFields as ProductFieldFile,
   CB_GATE: cbGateFields as ProductFieldFile,
+  TIMBER_PALING: timberPalingFields as ProductFieldFile,
 };
 
 // ─── Shared colour palette ────────────────────────────────────────────────────
@@ -484,6 +486,103 @@ export const BASE_COLORBOND_CONFIG: CalculatorConfig = {
   formGroups: PRODUCT_FIELD_FILES.COLORBOND.fieldGroups,
 };
 
+// ─── Timber paling fencing (posts + rails + palings, non-slat) ────────────────
+// Base values are Amazing Fencing's build rules + SKUs (the first timber
+// supplier — no Glass Outlet timber catalogue exists). A future second timber
+// vendor varies facts via a supplier_product_calculator_configs overlay.
+// Source: catalogues/amazing-fencing/amazing_fencing_bom_breakdown_by_height.md
+
+const DISPLAY_TIMBER_PALING: CalculatorConfig["display"] = {
+  name: "Timber Paling Fence",
+  shortName: "Timber Paling",
+  description: "Butted or lapped-and-capped timber paling fencing, treated pine or hardwood",
+};
+
+const TIMBER_PALING_DATA: TimberPalingConfig = {
+  bayWidthMm: 2400,
+  railStockLengthMm: 4800,
+  railSpanBays: 2,
+  railsByHeight: [
+    { maxHeightMm: 1200, rails: 2 },
+    { maxHeightMm: 2100, rails: 3 },
+    { maxHeightMm: 2400, rails: 4 },
+  ],
+  extraWastageFactor: 1.0, // supplier's published paling counts already include wastage
+  styles: {
+    butted: {
+      layers: [{ palingsPerBay: 27, nailsPerPalingPerRail: 2, nailSkuKey: "nails45Pack" }],
+    },
+    lapped_capped: {
+      layers: [
+        { palingsPerBay: 19, nailsPerPalingPerRail: 1, nailSkuKey: "nails45Pack" }, // back layer
+        { palingsPerBay: 19, nailsPerPalingPerRail: 2, nailSkuKey: "nails57Pack" }, // front (overlapping) layer
+      ],
+      capping: { stockLengthMm: 4800, lengthsPerBay: 0.5 },
+    },
+  },
+  battenScrewsPerRailPiece: 2,
+  packSizes: { nails45: 250, nails57: 250, battenScrews: 500 },
+  postStockByFenceHeight: {
+    "1200": { pine: 1800, hardwood: 1800 },
+    "1500": { pine: 2400, hardwood: 2100 },
+    "1800": { pine: 2400, hardwood: 2400 },
+    "2100": { pine: 3000, hardwood: 2700 },
+    "2400": { pine: 3000, hardwood: 3000 },
+  },
+  postCutDownNotes: {
+    "1500": { pine: "2400mm pine post cut down to 2100mm on site" },
+    "2100": { pine: "3000mm pine post cut down to 2700mm on site" },
+  },
+  palingLengthByFenceHeight: {
+    "2100": 2400, // no 2100 paling stock — 2400 palings cut down
+  },
+  palingCutDownNotes: {
+    "2100": "2400mm palings cut down to 2100mm on site",
+  },
+  concrete: {
+    pineSku: "AF-CON-RAPID-30",
+    hardwoodSku: "AF-CON-POSTMIX-30",
+    bagsPerPost: 1,
+  },
+  skus: {
+    paling: "AF-PAL-100x16-{palingLength}",
+    post: "AF-POST-{species}-100x75-{postLength}",
+    rail: "AF-RAIL-{species}-75x38-{railLength}",
+    cappingRail: "AF-CAP-75x50-{cappingLength}",
+    nails45Pack: "AF-NAIL-COIL-45-250",
+    nails57Pack: "AF-NAIL-COIL-57-250",
+    battenScrewPack: "AF-SCR-BB-14g-100-500",
+  },
+};
+
+export const BASE_TIMBER_PALING_CONFIG: CalculatorConfig = {
+  productCode: "TIMBER_PALING",
+  configVersion: "1.0.0",
+  strategy: { fence: "timber_paling" },
+  // Timber has no colour choice — a single "NA" pseudo-colour satisfies the
+  // required colours shape (normaliseVariables snaps any inherited colour to
+  // it; no timber SKU template carries {colour}).
+  colours: {
+    standard: ["NA"],
+    economy: [],
+    alumawood: [],
+    gate: [],
+    fallback: "NA",
+    names: { ...COLOUR_NAMES, NA: "Natural timber" },
+    swatches: { ...COLOUR_SWATCHES, NA: "#a07850" },
+  },
+  display: DISPLAY_TIMBER_PALING,
+  finishFamilies: ["standard"],
+  heightUi: { mode: "options", heightOptions: [1200, 1500, 1800, 2100, 2400] },
+  panelRules: { maxPanelWidthMm: 2400, minPostSpacingMm: 100, maxPostSpacingMm: 2400 },
+  postFixingMaterials: POST_FIXING_MATERIALS,
+  gateRules: { ...GATE_RULES, supported: false }, // timber gates = v2
+  defaults: { targetHeightMm: 1800, colour: "NA", mountingType: "in_ground" },
+  timberPaling: TIMBER_PALING_DATA,
+  fields: PRODUCT_FIELD_FILES.TIMBER_PALING.fields,
+  formGroups: PRODUCT_FIELD_FILES.TIMBER_PALING.fieldGroups,
+};
+
 // CB_GATE mirrors the QS_GATE pattern: no fence strategy of its own — Colorbond
 // gates are calculated inline by calculators/colorbond.ts (kit/bundle modes).
 // This entry exists purely so get-calculator-config can serve the gate-segment
@@ -504,4 +603,5 @@ export const BASE_CONFIGS: Record<string, CalculatorConfig> = {
   QS_GATE: BASE_QS_GATE_CONFIG,
   COLORBOND: BASE_COLORBOND_CONFIG,
   CB_GATE: BASE_CB_GATE_CONFIG,
+  TIMBER_PALING: BASE_TIMBER_PALING_CONFIG,
 };

@@ -272,6 +272,19 @@ Deno.test("S18 COLORBOND fence with kit gate (single swing)", async (t) => {
   );
 });
 
+Deno.test("S19 TIMBER_PALING butted pine 4800mm @ 1800", async (t) => {
+  const tpVars = {
+    paling_style: "butted",
+    species: "pine",
+    mounting_type: "in_ground",
+    target_height_mm: 1800,
+  };
+  await snap(
+    t,
+    payload([run("r1", "TIMBER_PALING", [seg("s1", 4800, { height: 1800 })], { vars: tpVars })]),
+  );
+});
+
 Deno.test("S17a QSHS baseline tier2 pricing", async (t) => {
   await snap(t, payload([run("r1", "QSHS", [seg("s1", 10000)])], { ...BASE_QSHS }), "tier2");
 });

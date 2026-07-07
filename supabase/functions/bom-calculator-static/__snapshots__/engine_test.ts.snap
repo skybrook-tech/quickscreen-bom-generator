@@ -2505,6 +2505,89 @@ snapshot[`S18 COLORBOND fence with kit gate (single swing) 1`] = `
 }
 `;
 
+snapshot[`S19 TIMBER_PALING butted pine 4800mm @ 1800 1`] = `
+{
+  assumptions: [],
+  computed: {
+    r1: {
+      s1: {
+        num_bays: 2,
+        paling_style: "butted",
+        palings_per_layer: [
+          54,
+        ],
+        post_stock_mm: 2400,
+        rail_pieces: 3,
+        rail_rows: 3,
+        species: "pine",
+      },
+    },
+  },
+  lines: [
+    {
+      category: "fixings",
+      lineTotal: 39.75,
+      notes: "1 bag(s) per post — rapid set for pine posts",
+      quantity: 3,
+      sku: "AF-CON-RAPID-30",
+      unit: "bag",
+      unitPrice: 13.25,
+    },
+    {
+      category: "fixings",
+      lineTotal: 5.92,
+      notes: "324 × 45mm ring-shank coil nails in packs of 250",
+      quantity: 2,
+      sku: "AF-NAIL-COIL-45-250",
+      unit: "pack",
+      unitPrice: 2.96,
+    },
+    {
+      category: "tools_and_consumables",
+      lineTotal: 115.56,
+      notes: "27 palings per 2400mm bay × 2 bay(s), single layer (wastage included)",
+      quantity: 54,
+      sku: "AF-PAL-100x16-1800",
+      unit: "each",
+      unitPrice: 2.14,
+    },
+    {
+      category: "posts_and_mounting",
+      lineTotal: 51.42,
+      notes: "100×75mm pine posts, 2400mm stock",
+      quantity: 3,
+      sku: "AF-POST-PINE-100x75-2400",
+      unit: "each",
+      unitPrice: 17.14,
+    },
+    {
+      category: "frames_and_covers",
+      lineTotal: 31.11,
+      notes: "3 rail row(s) for 1800mm, 4800mm rails spanning 2 bays × 2 bay(s)",
+      quantity: 3,
+      sku: "AF-RAIL-PINE-75x38-4800",
+      unit: "each",
+      unitPrice: 10.37,
+    },
+    {
+      category: "fasteners_and_screws",
+      lineTotal: 14.56,
+      notes: "2 batten screws per rail piece × 3 rail piece(s), packs of 500",
+      quantity: 1,
+      sku: "AF-SCR-BB-14g-100-500",
+      unit: "pack",
+      unitPrice: 14.56,
+    },
+  ],
+  totals: {
+    grandTotal: 284.15,
+    gst: 25.83,
+    subtotal: 258.32,
+  },
+  warnings: [],
+}
+`;
+
 snapshot[`S17a QSHS baseline tier2 pricing 1`] = `
 {
   assumptions: [
