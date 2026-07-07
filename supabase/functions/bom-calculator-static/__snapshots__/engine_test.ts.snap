@@ -2357,6 +2357,154 @@ snapshot[`S16 multi-run QSHS + VS 1`] = `
 }
 `;
 
+snapshot[`S18 COLORBOND fence with kit gate (single swing) 1`] = `
+{
+  assumptions: [
+    "No local price found for SKU CB-1800GS-MN-2PK.",
+    "No local price found for SKU CB-CPOST-2400-MN.",
+    "No local price found for SKU CB-GATE-R-830-MN.",
+    "No local price found for SKU CB-GLINE-1790-MN.",
+    "No local price found for SKU CB-HINGE-MN-2PK.",
+    "No local price found for SKU CB-LATCH-MN.",
+    "No local price found for SKU CB-POSTCAP-DBL.",
+    "No local price found for SKU CB-POSTCAP-SGL.",
+    "No local price found for SKU CB-RAIL-2365-MN.",
+    "No local price found for SKU CB-TS-MN-15PK.",
+    "No local price found for SKU GROUT-CONCRETE.",
+    "No local price found for SKU XPSG-2700-ST65-MN.",
+  ],
+  computed: {
+    r1: {
+      g1: {
+        gate_height_mm: 1800,
+        gate_leaf_count: 1,
+        gate_mode: "kit",
+        gate_movement: "single_swing",
+        gate_opening_width_mm: 900,
+      },
+    },
+  },
+  lines: [
+    {
+      category: "screening",
+      lineTotal: 0,
+      notes: "gate stile pack (left + right stile) per leaf × 1 (hangs off run posts — no extra gate posts)",
+      quantity: 1,
+      sku: "CB-1800GS-MN-2PK",
+      unit: "pack",
+      unitPrice: 0,
+    },
+    {
+      category: "posts_and_mounting",
+      lineTotal: 0,
+      notes: "2 channel posts per bay × 2 bay(s) at 2400mm for 1800mm in_ground",
+      quantity: 4,
+      sku: "CB-CPOST-2400-MN",
+      unit: "each",
+      unitPrice: 0,
+    },
+    {
+      category: "tools_and_consumables",
+      lineTotal: 0,
+      notes: "top + bottom gate rails per leaf × 1",
+      quantity: 2,
+      sku: "CB-GATE-R-830-MN",
+      unit: "each",
+      unitPrice: 0,
+    },
+    {
+      category: "screening",
+      lineTotal: 0,
+      notes: "3 infill sheets per 2365mm bay × 2 bay(s); infill sheet per leaf × 1",
+      quantity: 7,
+      sku: "CB-GLINE-1790-MN",
+      unit: "each",
+      unitPrice: 0,
+    },
+    {
+      category: "fasteners_and_screws",
+      lineTotal: 0,
+      notes: "Selected hinge hardware (per leaf)",
+      quantity: 1,
+      sku: "CB-HINGE-MN-2PK",
+      unit: "each",
+      unitPrice: 0,
+    },
+    {
+      category: "gate_hardware",
+      lineTotal: 0,
+      notes: "Selected latch / lock hardware",
+      quantity: 1,
+      sku: "CB-LATCH-MN",
+      unit: "each",
+      unitPrice: 0,
+    },
+    {
+      category: "caps_and_plugs",
+      lineTotal: 0,
+      notes: "double-sided caps for back-to-back channel-post joins",
+      quantity: 1,
+      sku: "CB-POSTCAP-DBL",
+      unit: "each",
+      unitPrice: 0,
+    },
+    {
+      category: "caps_and_plugs",
+      lineTotal: 0,
+      notes: "single-sided caps for one-way channel posts at segment ends",
+      quantity: 2,
+      sku: "CB-POSTCAP-SGL",
+      unit: "each",
+      unitPrice: 0,
+    },
+    {
+      category: "frames_and_covers",
+      lineTotal: 0,
+      notes: "top + bottom rail per bay × 2 bay(s)",
+      quantity: 4,
+      sku: "CB-RAIL-2365-MN",
+      unit: "each",
+      unitPrice: 0,
+    },
+    {
+      category: "fasteners_and_screws",
+      lineTotal: 0,
+      notes: "tek-screw pack (15) per bay × 2 bay(s); tek-screw pack per leaf × 1",
+      quantity: 3,
+      sku: "CB-TS-MN-15PK",
+      unit: "pack",
+      unitPrice: 0,
+    },
+    {
+      category: "fixings",
+      lineTotal: 0,
+      notes: "1 concrete bag(s) per post footing",
+      quantity: 3,
+      sku: "GROUT-CONCRETE",
+      unit: "bag",
+      unitPrice: 0,
+    },
+    {
+      category: "posts_and_mounting",
+      lineTotal: 0,
+      notes: "65×65 steel posts at run ends/corners (free top cap included)",
+      quantity: 2,
+      sku: "XPSG-2700-ST65-MN",
+      unit: "each",
+      unitPrice: 0,
+    },
+  ],
+  totals: {
+    grandTotal: 0,
+    gst: 0,
+    subtotal: 0,
+  },
+  warnings: [
+    "GO-Line infill sheets are stocked at the Brisbane & Gold Coast depots only — confirm availability for other regions.",
+  ],
+}
+`;
+
 snapshot[`S17a QSHS baseline tier2 pricing 1`] = `
 {
   assumptions: [

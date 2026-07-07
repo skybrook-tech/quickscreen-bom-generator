@@ -258,7 +258,7 @@ export function useCalculatorBom(
       runResult.items.filter(
         (item) =>
           item.sources?.some((source) => source.scopeKind === "gate") ||
-          item.productCode === "QS_GATE" ||
+          item.productCode?.endsWith("_GATE") ||
           gateSegments.some((segment) => segment.segmentId === item.segmentId),
       ),
     );

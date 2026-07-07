@@ -582,7 +582,7 @@
   "calculator_configs": [
     {
       "product_code": "COLORBOND",
-      "notes": "Amazing Fencing Colorbond overlay — source: catalogues/amazing-fencing/. Heights 1200–2400 in 300mm steps; 3 sheets per bay at both bay widths; cap rule ceil(posts/2); runs terminate in C-posts; in-ground mounting only. Components are UNPRICED pending an AF price list. Arrays here REPLACE base arrays (fields, profiles, extraRules).",
+      "notes": "Amazing Fencing Colorbond overlay — source: catalogues/amazing-fencing/. Heights 1200–2400 in 300mm steps; 3 sheets per bay at both bay widths; cap rule ceil(posts/2); runs terminate in C-posts; in-ground mounting only. Components are UNPRICED pending an AF price list. Arrays here REPLACE base arrays (fields, profiles, extraRules). Gates: pre-built GP bundles (SGL/DBL × 900–2100mm) + hardware kits.",
       "config": {
         "heightUi": {
           "mode": "options",
@@ -672,6 +672,29 @@
             "tekScrewPack": "AF-CBD-SCREW-TEK-35",
             "sharkfin": "AF-CBD-SHARKFIN-NOT-AVAILABLE",
             "concrete": "AF-CON-POSTMIX-30"
+          },
+          "gates": {
+            "mode": "bundle",
+            "bundle": {
+              "widthsMm": [
+                900,
+                1200,
+                1500,
+                1800,
+                2100
+              ],
+              "singleHardwareKitCodes": [
+                "BUTT-HINGE",
+                "D-LATCH"
+              ],
+              "doubleHardwareKitCodes": [
+                "DOUBLE-SET"
+              ],
+              "skus": {
+                "gate": "AF-CBD-GATE-STD-{leaf}-{gateWidth}",
+                "hardwareKit": "AF-CBD-GATEHW-{kitCode}"
+              }
+            }
           }
         },
         "fields": [
@@ -821,7 +844,19 @@
             "label": "Bay width, mounting and boundaries",
             "sort_order": 30
           }
-        ]
+        ],
+        "gateRules": {
+          "supported": true,
+          "gateProductCode": "CB_GATE",
+          "defaultInfill": "horizontal",
+          "maxWidthMm": {
+            "pedestrianHorizontal": 2100,
+            "pedestrianVertical": 2100,
+            "slidingHorizontal": 2100,
+            "slidingVertical": 2100
+          },
+          "doubleSwingMaxLeafWidthMm": 1100
+        }
       }
     }
   ]

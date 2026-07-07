@@ -5,12 +5,18 @@
 // terminals/corners, tek-screw packs, caps, and mounting (in-ground concrete or
 // shark-fin base plate). Reads its rules from `cfg.colorbond`. Emits SUPPLIER
 // SKUs directly (Colorbond has clean order codes; the orchestrator's
-// resolveInternalSku returns unmapped SKUs unchanged). MVP: fence only, no gates.
+// resolveInternalSku returns unmapped SKUs unchanged).
+//
+// Gates: `cfg.colorbond.gates` selects "kit" (fabricated from stiles + rails +
+// infill sheet + tek pack, GO catalogue p7/p17) or "bundle" (pre-built gate
+// SKU + hardware kits, Amazing Fencing). No gates config → loud warning.
 
 import type {
-  CalcContext, CanonicalRun, CanonicalPayload, QtyLine,
+  CalcContext, CanonicalRun, CanonicalPayload, CanonicalSegment, QtyLine,
 } from "../config/types.ts";
-import { isku, toNumber } from "../engine-utils.ts";
+import {
+  GATE_SEGMENT_STUB_KEYS, gateMovementOrDefault, isku, knownSelectedSku, toNumber,
+} from "../engine-utils.ts";
 import { applyExtraRules } from "./shared.ts";
 
 type Sink = {
@@ -28,6 +34,162 @@ function terminalPostCount(run: CanonicalRun): number {
   return (run.leftBoundary?.type === "product_post" ? 1 : 0)
     + (run.rightBoundary?.type === "product_post" ? 1 : 0)
     + (run.corners?.length ?? 0);
+}
+
+function nearest(options: number[], value: number): number {
+  return options.reduce(
+    (best, o) => (Math.abs(o - value) < Math.abs(best - value) ? o : best),
+    options[0],
+  );
+}
+
+// Colorbond gate segment (kit or bundle mode — see cfg.colorbond.gates).
+// Gates hang off the run's channel/terminal posts: no extra gate posts in v1.
+function calculateColorbondGateSegment(
+  run: CanonicalRun,
+  segment: CanonicalSegment,
+  runVars: Record<string, unknown>,
+  cfg: NonNullable<ReturnType<CalcContext["configs"]["get"]>>,
+  sink: Sink,
+): QtyLine[] {
+  const lines: QtyLine[] = [];
+  const cb = cfg.colorbond!;
+  const gates = cb.gates;
+  const base = { runId: run.runId, segmentId: segment.segmentId };
+  if (!gates || !cfg.gateRules.supported) {
+    sink.warnings.push(
+      `Gates are not configured for this Colorbond catalogue — the gate opening was NOT included in the BOM.`,
+    );
+    return lines;
+  }
+
+  const vars = { ...runVars, ...(segment.variables ?? {}) };
+  const movement = gateMovementOrDefault(vars[GATE_SEGMENT_STUB_KEYS.gateMovement]);
+  if (movement === "sliding") {
+    sink.warnings.push(
+      "Sliding gates are not available for Colorbond fencing — the gate opening was NOT included in the BOM.",
+    );
+    return lines;
+  }
+  const leafCount = movement === "double_swing" ? 2 : 1;
+  const colour = String(vars[GATE_SEGMENT_STUB_KEYS.colourCode] ?? vars.colour_code ?? cfg.colours.fallback);
+  const openingWidthMm = toNumber(segment.segmentWidthMm, 900);
+  const gateHeightMm = Math.round(toNumber(
+    segment.targetHeightMm ?? vars[GATE_SEGMENT_STUB_KEYS.gateHeightMm],
+    toNumber(runVars.target_height_mm, cfg.defaults.targetHeightMm),
+  ));
+
+  sink.computed[run.runId] = sink.computed[run.runId] ?? {};
+  sink.computed[run.runId][segment.segmentId] = {
+    ...(sink.computed[run.runId][segment.segmentId] ?? {}),
+    gate_movement: movement, gate_leaf_count: leafCount, gate_mode: gates.mode,
+    gate_opening_width_mm: Math.round(openingWidthMm), gate_height_mm: gateHeightMm,
+  };
+
+  if (gates.mode === "bundle") {
+    const bundle = gates.bundle;
+    if (!bundle) {
+      sink.warnings.push("Colorbond gate config is set to bundle mode but has no bundle catalogue — gate NOT included in the BOM.");
+      return lines;
+    }
+    const leaf = leafCount === 2 ? "DBL" : "SGL";
+    const snappedWidth = nearest(bundle.widthsMm, openingWidthMm);
+    if (snappedWidth !== Math.round(openingWidthMm)) {
+      sink.warnings.push(
+        `Gate opening ${Math.round(openingWidthMm)}mm snapped to the nearest ${snappedWidth}mm pre-built gate bundle.`,
+      );
+    }
+    emit(lines, {
+      ...base,
+      sku: isku(bundle.skus.gate, { leaf, gateWidth: snappedWidth, gateHeight: gateHeightMm, colour }),
+      category: "gate", quantity: 1, unit: "each",
+      notes: `pre-built ${leafCount === 2 ? "double" : "single"} gate bundle, ${snappedWidth}mm opening (hangs off run posts — no extra gate posts)`,
+    });
+    const kitCodes = leafCount === 2 ? bundle.doubleHardwareKitCodes : bundle.singleHardwareKitCodes;
+    for (const kitCode of kitCodes) {
+      emit(lines, {
+        ...base,
+        sku: isku(bundle.skus.hardwareKit, { kitCode, colour }),
+        category: "hardware", quantity: 1, unit: "each",
+        notes: `${kitCode} gate hardware kit`,
+      });
+    }
+    const dropBoltSku = knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.dropBoltType]);
+    if (dropBoltSku) {
+      emit(lines, { ...base, sku: dropBoltSku, category: "hardware", quantity: 1, unit: "each", notes: "Selected drop bolt" });
+    }
+    return lines;
+  }
+
+  // ── Kit mode (fabricated gate) ──────────────────────────────────────────────
+  const kit = gates.kit;
+  if (!kit) {
+    sink.warnings.push("Colorbond gate config is set to kit mode but has no kit rules — gate NOT included in the BOM.");
+    return lines;
+  }
+  const stileHeight = nearest(kit.stileHeights, gateHeightMm);
+  if (stileHeight !== gateHeightMm) {
+    sink.warnings.push(
+      `Colorbond gate stiles come in ${kit.stileHeights.join("/")}mm — ${gateHeightMm}mm gate snapped to ${stileHeight}mm.`,
+    );
+  }
+  const leafWidthMm = openingWidthMm / leafCount;
+  if (Math.abs(leafWidthMm - kit.nominalLeafWidthMm) > kit.leafWidthToleranceMm) {
+    sink.warnings.push(
+      `Assembled Colorbond kit gates are ~${kit.nominalLeafWidthMm}mm per leaf — this opening gives ${Math.round(leafWidthMm)}mm per leaf. Confirm the opening or use a custom gate.`,
+    );
+  }
+
+  const profileCode = String(vars.profile ?? cb.profiles[0]?.code ?? "GO-LINE");
+  const profile = cb.profiles.find((p) => p.code === profileCode) ?? cb.profiles[0];
+  const sheetHeight = stileHeight - cb.sheetHeightOffsetMm;
+
+  emit(lines, {
+    ...base,
+    sku: isku(kit.skus.stilePack, { stileHeight, colour }),
+    category: "gate", quantity: leafCount, unit: "pack",
+    notes: `gate stile pack (left + right stile) per leaf × ${leafCount} (hangs off run posts — no extra gate posts)`,
+  });
+  emit(lines, {
+    ...base,
+    sku: isku(kit.skus.gateRail, { colour }),
+    category: "gate_rail", quantity: kit.railsPerLeaf * leafCount, unit: "each",
+    notes: `top + bottom gate rails per leaf × ${leafCount}`,
+  });
+  emit(lines, {
+    ...base,
+    sku: isku(kit.skus.infillSheet, { profile: profile?.skuToken ?? "GLINE", sheetHeight, colour }),
+    category: "accessory", quantity: kit.sheetsPerLeaf * leafCount, unit: "each",
+    notes: `infill sheet per leaf × ${leafCount}`,
+  });
+  emit(lines, {
+    ...base,
+    sku: isku(kit.skus.tekScrewPack, { colour }),
+    category: "fixing", quantity: kit.tekPacksPerLeaf * leafCount, unit: "pack",
+    notes: `tek-screw pack per leaf × ${leafCount}`,
+  });
+
+  const hingeSku = knownSelectedSku(isku(String(vars[GATE_SEGMENT_STUB_KEYS.hingeType] ?? ""), { colour }));
+  const latchSku = knownSelectedSku(isku(String(vars[GATE_SEGMENT_STUB_KEYS.latchType] ?? ""), { colour }));
+  if (hingeSku) {
+    emit(lines, { ...base, sku: hingeSku, category: "hardware", quantity: leafCount, unit: "each", notes: "Selected hinge hardware (per leaf)" });
+  } else {
+    sink.warnings.push("No hinge selected for the Colorbond gate — hinges are NOT included in the BOM.");
+  }
+  if (latchSku) {
+    emit(lines, { ...base, sku: latchSku, category: "hardware", quantity: 1, unit: "each", notes: "Selected latch / lock hardware" });
+  } else {
+    sink.warnings.push("No latch selected for the Colorbond gate — a latch is NOT included in the BOM.");
+  }
+  // Drop bolts secure the standing leaf — double gates only.
+  const dropBoltSku = movement === "double_swing"
+    ? knownSelectedSku(vars[GATE_SEGMENT_STUB_KEYS.dropBoltType])
+    : undefined;
+  if (dropBoltSku) {
+    emit(lines, { ...base, sku: dropBoltSku, category: "hardware", quantity: 1, unit: "each", notes: "Selected drop bolt" });
+  }
+
+  return lines;
 }
 
 export function colorbondCalculator(
@@ -53,7 +215,10 @@ export function colorbondCalculator(
   let totalInteriorJoins = 0;
 
   for (const segment of run.segments) {
-    if (segment.segmentKind === "gate_opening") continue; // no Colorbond gate in MVP
+    if (segment.segmentKind === "gate_opening") {
+      lines.push(...calculateColorbondGateSegment(run, segment, runVars, cfg, sink));
+      continue;
+    }
     const segId = segment.segmentId;
     const vars = { ...runVars, ...(segment.variables ?? {}) };
 

@@ -202,6 +202,16 @@ export const syntheticComponents: SeedComponent[] = [
     }
     out.push(component("CB-POSTCAP-SGL", "Post cap single sided", "Colorbond channel post cap, single sided - Black", "cap", "each", 0, ["COLORBOND"]));
     out.push(component("CB-POSTCAP-DBL", "Post cap double sided", "Colorbond channel post cap, double sided - Black", "cap", "each", 0, ["COLORBOND"]));
+    // Gate kit parts (catalogue p17-19): stile 2-packs per height, 830mm gate
+    // rails, colour-matched butt hinges + D-latch kits.
+    for (const h of [1500, 1800, 2100]) for (const c of steelColours) {
+      out.push(component(`CB-${h}GS-${c}-2PK`, `Gate stile pack ${h}mm ${c}`, `Colorbond gate stile pack of 2 (left + right), ${h}mm - ${c}`, "gate", "pack", 0, ["COLORBOND"]));
+    }
+    for (const c of steelColours) {
+      out.push(component(`CB-GATE-R-830-${c}`, `Gate rail 830mm ${c}`, `Colorbond gate top/bottom rail, 830mm - ${c}`, "gate_rail", "each", 0, ["COLORBOND"]));
+      out.push(component(`CB-HINGE-${c}-2PK`, `Butt hinge pair ${c}`, `Colorbond butt hinge pair incl. 17 tek screws - ${c}`, "hardware", "pack", 0, ["COLORBOND"]));
+      out.push(component(`CB-LATCH-${c}`, `D latch kit ${c}`, `Colorbond D latch kit incl. striker + extender - ${c}`, "hardware", "each", 0, ["COLORBOND"]));
+    }
     return out;
   })(),
 ];

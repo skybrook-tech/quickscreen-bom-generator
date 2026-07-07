@@ -14,6 +14,7 @@ import xplFields from "./products/xpl/fields.json" with { type: "json" };
 import baygFields from "./products/bayg/fields.json" with { type: "json" };
 import qsGateFields from "./products/qs_gate/fields.json" with { type: "json" };
 import colorbondFields from "./products/colorbond/fields.json" with { type: "json" };
+import cbGateFields from "./products/cb_gate/fields.json" with { type: "json" };
 
 type ProductFieldFile = {
   fields: FormFieldDef[];
@@ -27,6 +28,7 @@ const PRODUCT_FIELD_FILES: Record<string, ProductFieldFile> = {
   BAYG: baygFields as ProductFieldFile,
   QS_GATE: qsGateFields as ProductFieldFile,
   COLORBOND: colorbondFields as ProductFieldFile,
+  CB_GATE: cbGateFields as ProductFieldFile,
 };
 
 // ─── Shared colour palette ────────────────────────────────────────────────────
@@ -266,6 +268,27 @@ const COLORBOND_DATA: ColorbondConfig = {
     "1800": { in_ground: 2400 },
     "2100": { in_ground: 3000 },
   },
+  // Kit-fabricated gates (catalogue p7 recipe + p17 gate parts): per leaf, one
+  // stile 2-pack (left + right, 1520/1820/2120mm), 2 gate rails, 1 infill
+  // sheet, 1 tek pack; hinges/latch/drop bolt come from the CB_GATE fields.
+  // Assembled single gates are 900mm edge-to-edge (p17 trade tip).
+  gates: {
+    mode: "kit",
+    kit: {
+      nominalLeafWidthMm: 900,
+      leafWidthToleranceMm: 100,
+      stileHeights: [1500, 1800, 2100],
+      railsPerLeaf: 2,
+      sheetsPerLeaf: 1,
+      tekPacksPerLeaf: 1,
+      skus: {
+        stilePack: "CB-{stileHeight}GS-{colour}-2PK",
+        gateRail: "CB-GATE-R-830-{colour}",
+        infillSheet: "CB-{profile}-{sheetHeight}-{colour}",
+        tekScrewPack: "CB-TS-{colour}-15PK",
+      },
+    },
+  },
   skus: {
     sheet: "CB-{profile}-{sheetHeight}-{colour}",
     rail: "CB-RAIL-{bayWidth}-{colour}",
@@ -426,7 +449,19 @@ export const BASE_COLORBOND_CONFIG: CalculatorConfig = {
   // Bay widths go up to 3125mm; keep spacing headroom above that.
   panelRules: { ...PANEL_RULES_STD, maxPanelWidthMm: 3125, maxPostSpacingMm: 3200 },
   postFixingMaterials: POST_FIXING_MATERIALS,
-  gateRules: { ...GATE_RULES, supported: false },
+  // Swing gates only (kit-fabricated, ~900mm leaves) — no Colorbond sliding gates.
+  gateRules: {
+    ...GATE_RULES,
+    supported: true,
+    gateProductCode: "CB_GATE",
+    maxWidthMm: {
+      pedestrianHorizontal: 2100,
+      pedestrianVertical: 2100,
+      slidingHorizontal: 2100,
+      slidingVertical: 2100,
+    },
+    doubleSwingMaxLeafWidthMm: 1100,
+  },
   defaults: { targetHeightMm: 1800, colour: "MN", mountingType: "in_ground" },
   colorbond: COLORBOND_DATA,
   // Depot availability from the catalogue (p10-11): GO-Line = Brisbane & Gold
@@ -449,6 +484,18 @@ export const BASE_COLORBOND_CONFIG: CalculatorConfig = {
   formGroups: PRODUCT_FIELD_FILES.COLORBOND.fieldGroups,
 };
 
+// CB_GATE mirrors the QS_GATE pattern: no fence strategy of its own — Colorbond
+// gates are calculated inline by calculators/colorbond.ts (kit/bundle modes).
+// This entry exists purely so get-calculator-config can serve the gate-segment
+// fields under a stable productCode, and so per-org overlays can replace the
+// gate fields (e.g. Amazing Fencing's pre-built bundle options).
+export const BASE_CB_GATE_CONFIG: CalculatorConfig = {
+  ...BASE_COLORBOND_CONFIG,
+  productCode: "CB_GATE",
+  fields: PRODUCT_FIELD_FILES.CB_GATE.fields,
+  formGroups: PRODUCT_FIELD_FILES.CB_GATE.fieldGroups,
+};
+
 export const BASE_CONFIGS: Record<string, CalculatorConfig> = {
   QSHS: BASE_QSHS_CONFIG,
   BAYG: BASE_BAYG_CONFIG,
@@ -456,4 +503,5 @@ export const BASE_CONFIGS: Record<string, CalculatorConfig> = {
   XPL:  BASE_XPL_CONFIG,
   QS_GATE: BASE_QS_GATE_CONFIG,
   COLORBOND: BASE_COLORBOND_CONFIG,
+  CB_GATE: BASE_CB_GATE_CONFIG,
 };

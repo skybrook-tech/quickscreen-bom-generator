@@ -373,6 +373,43 @@ export type ColorbondConfig = {
   // wording (65×65 steel post, free top cap); vendors whose terminal post
   // differs override it.
   terminalPostNote?: string;
+  // Colorbond gate support. Absent → gate segments emit nothing + a loud
+  // warning (set gateRules.supported accordingly). Two typed modes:
+  // "kit"    — gate fabricated from parts (GO catalogue p7/p17: 2× stiles per
+  //            leaf via a 2-pack, 2× gate rails, 1× infill sheet, tek pack,
+  //            plus hinge/latch/drop-bolt hardware from the gate fields).
+  // "bundle" — pre-built gate SKU snapped to the nearest catalogue width,
+  //            plus hardware kits (Amazing Fencing GP bundles).
+  // Placeholders: {stileHeight}, {sheetHeight}, {profile}, {colour} (kit);
+  // {leaf} (SGL|DBL), {gateWidth}, {gateHeight}, {kitCode} (bundle).
+  gates?: {
+    mode: "kit" | "bundle";
+    kit?: {
+      nominalLeafWidthMm: number;   // 900 — assembled kit-gate leaf width
+      leafWidthToleranceMm: number; // warn when the opening deviates further
+      stileHeights: number[];       // available stile-pack heights (snap + warn)
+      railsPerLeaf: number;         // 2 (top + bottom)
+      sheetsPerLeaf: number;        // 1 infill sheet per leaf
+      tekPacksPerLeaf: number;      // 1
+      skus: {
+        stilePack: SkuTemplate;     // "CB-{stileHeight}GS-{colour}-2PK"
+        gateRail: SkuTemplate;      // "CB-GATE-R-830-{colour}"
+        infillSheet: SkuTemplate;   // "CB-{profile}-{sheetHeight}-{colour}"
+        tekScrewPack: SkuTemplate;  // "CB-TS-{colour}-15PK"
+      };
+    };
+    bundle?: {
+      widthsMm: number[];           // catalogue gate widths, e.g. [900..2100]
+      // Hardware kit codes offered for each movement; every listed code must
+      // interpolate into skus.hardwareKit as {kitCode}.
+      singleHardwareKitCodes: string[]; // e.g. ["BUTT-HINGE", "D-LATCH"]
+      doubleHardwareKitCodes: string[]; // e.g. ["DOUBLE-SET"]
+      skus: {
+        gate: SkuTemplate;          // "AF-CBD-GATE-STD-{leaf}-{gateWidth}"
+        hardwareKit: SkuTemplate;   // "AF-CBD-GATEHW-{kitCode}"
+      };
+    };
+  };
   skus: {
     sheet: SkuTemplate;        // "CB-{profile}-{sheetHeight}-{colour}"
     rail: SkuTemplate;         // "CB-RAIL-{bayWidth}-{colour}"

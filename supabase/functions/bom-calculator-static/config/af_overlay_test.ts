@@ -35,8 +35,11 @@ function readSeed(name: string): SeedFile {
 }
 
 const seed = readSeed("colorbond.json");
+const gateSeed = readSeed("cb_gate.json");
 const overlay = seed.calculator_configs?.find((c) => c.product_code === "COLORBOND");
-const seedSkus = new Set((seed.product_components ?? []).map((c) => c.sku));
+const seedSkus = new Set(
+  [...(seed.product_components ?? []), ...(gateSeed.product_components ?? [])].map((c) => c.sku),
+);
 
 function afConfig(): CalculatorConfig {
   assert(overlay, "AF colorbond.json must carry a COLORBOND calculator_configs overlay");
@@ -97,29 +100,79 @@ Deno.test("AF overlay merges over base and resolves a UI config", () => {
   assertEquals(ui.heightLadder.entries.length, 5);
 });
 
-Deno.test("AF parity guard: every emitted SKU across heights × bay widths exists in the seed catalogue", () => {
+function gateSeg(id: string, widthMm: number, height: number, vars: Vars = {}): CanonicalSegment {
+  return {
+    segmentId: id, segmentKind: "gate_opening", segmentWidthMm: widthMm,
+    targetHeightMm: height, variables: vars,
+  };
+}
+
+Deno.test("AF parity guard: every emitted SKU across heights × bay widths × gates exists in the seed catalogue", () => {
   const ctx = afCtx();
   for (const height of [1200, 1500, 1800, 2100, 2400]) {
     for (const bay of [2360, 3100]) {
-      // two bays wide + a corner: exercises sheets, rails, channel posts, caps,
-      // terminal posts, concrete, and the interior-join path
-      const r = calculateLocalBom(
-        payload(run(
-          [seg("s1", bay * 2, height, { max_panel_width_mm: bay })],
-          { target_height_mm: height, max_panel_width_mm: bay },
-          [{ type: "90" }],
-        )),
-        "tier1",
-        ctx,
-      );
-      const unknown = (r.lines as Line[]).map((l) => l.sku).filter((sku) => !seedSkus.has(sku));
-      assertEquals(
-        unknown,
-        [],
-        `height=${height} bay=${bay}: emitted SKU(s) missing from AF seed catalogue: ${unknown.join(", ")}`,
-      );
+      for (const movement of ["single_swing", "double_swing"]) {
+        // two bays + a corner + a gate: exercises sheets, rails, channel posts,
+        // caps, terminal posts, concrete, the interior-join path, and bundles
+        const r = calculateLocalBom(
+          payload(run(
+            [
+              seg("s1", bay * 2, height, { max_panel_width_mm: bay }),
+              gateSeg("g1", movement === "double_swing" ? 1800 : 900, height, {
+                gate_movement: movement,
+                drop_bolt_type: movement === "double_swing" ? "AF-CBD-GATEHW-DROP-BOLT" : "none",
+              }),
+            ],
+            { target_height_mm: height, max_panel_width_mm: bay },
+            [{ type: "90" }],
+          )),
+          "tier1",
+          ctx,
+        );
+        const unknown = (r.lines as Line[]).map((l) => l.sku).filter((sku) => !seedSkus.has(sku));
+        assertEquals(
+          unknown,
+          [],
+          `height=${height} bay=${bay} gate=${movement}: emitted SKU(s) missing from AF seed catalogue: ${unknown.join(", ")}`,
+        );
+      }
     }
   }
+});
+
+Deno.test("AF bundle gate (single): snapped width bundle + butt hinges + D latch", () => {
+  const ctx = afCtx();
+  const r = calculateLocalBom(
+    payload(run([seg("s1", 2360, 1800), gateSeg("g1", 1000, 1800)])),
+    "tier1",
+    ctx,
+  );
+  const l = r.lines as Line[];
+  assertEquals(qty(l, "AF-CBD-GATE-STD-SGL-900"), 1); // 1000mm snapped to 900 bundle
+  assertEquals(qty(l, "AF-CBD-GATEHW-BUTT-HINGE"), 1);
+  assertEquals(qty(l, "AF-CBD-GATEHW-D-LATCH"), 1);
+  assertEquals(qty(l, "AF-CBD-GATEHW-DOUBLE-SET"), 0);
+  assert(
+    r.warnings.some((w) => w.includes("snapped to the nearest 900mm")),
+    "width snap must be surfaced as a warning",
+  );
+});
+
+Deno.test("AF bundle gate (double): DBL bundle + double set + drop bolt", () => {
+  const ctx = afCtx();
+  const r = calculateLocalBom(
+    payload(run([
+      seg("s1", 2360, 1800),
+      gateSeg("g1", 1800, 1800, { gate_movement: "double_swing", drop_bolt_type: "AF-CBD-GATEHW-DROP-BOLT" }),
+    ])),
+    "tier1",
+    ctx,
+  );
+  const l = r.lines as Line[];
+  assertEquals(qty(l, "AF-CBD-GATE-STD-DBL-1800"), 1);
+  assertEquals(qty(l, "AF-CBD-GATEHW-DOUBLE-SET"), 1);
+  assertEquals(qty(l, "AF-CBD-GATEHW-DROP-BOLT"), 1);
+  assertEquals(qty(l, "AF-CBD-GATEHW-BUTT-HINGE"), 0);
 });
 
 Deno.test("AF capRule=half_posts: caps = ceil(channel posts / 2)", () => {
