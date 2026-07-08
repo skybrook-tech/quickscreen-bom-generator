@@ -23,17 +23,21 @@ export function useProductSearch(query: string) {
   return useQuery<ProductSearchItem[]>({
     queryKey: ['product-search', trimmed],
     queryFn: async () => {
+      // The local-fixture search is Glass Outlet's catalogue — only valid as a
+      // fallback when no backend is configured (offline dev). With a live
+      // backend, no-session/error must fail empty/loud, never show another
+      // tenant's components.
       if (!isSupabaseConfigured) return searchLocalProducts(trimmed, 10);
 
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return searchLocalProducts(trimmed, 10);
+      if (!session) return [];
 
       const response = await supabase.functions.invoke('search-products', {
         body: { query: trimmed, limit: 10 },
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
 
-      if (response.error) return searchLocalProducts(trimmed, 10);
+      if (response.error) throw response.error;
       // Map default_price from the edge function response to unitPrice
       return ((response.data?.items ?? []) as Array<Record<string, unknown>>).map((item) => ({
         sku: item.sku as string,

@@ -1,6 +1,5 @@
 import { useCalculator } from "../../context/CalculatorContext";
 import type { CanonicalRun } from "../../types/canonical.types";
-import { localFenceProducts } from "../../lib/localSeedData";
 import { useFenceProducts } from "../../hooks/useProducts";
 import { useAllCalculatorConfigs, configForProduct } from "../../hooks/useCalculatorConfig";
 import { buildInitialFencePayload } from "../../lib/newQuotePayload";
@@ -22,8 +21,7 @@ export function RunListV3({
   const { state, dispatch } = useCalculator();
   const payload = state.payload;
   const hasRuns = Boolean(payload?.runs.length);
-  const fenceProductsQuery = useFenceProducts();
-  const fenceProducts = fenceProductsQuery.data ?? localFenceProducts;
+  const fenceProducts = useFenceProducts().data;
 
   // Resolved config for every product; used to seed a fresh run's variables
   // from the target product's normalised defaults.

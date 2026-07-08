@@ -88,7 +88,7 @@ The live engine's configuration lives entirely under `supabase/functions/bom-cal
 
 Database migrations are in `supabase/migrations/` — a **single squashed `001_init.sql`** (2026-07 compaction of the former 001–032: schema dump minus the dead rule-engine tables, plus the hand-appended `on_auth_user_created` trigger on `auth.users` and the ACL pins for the no-RLS pricing tables — pg_dump captures neither). New schema changes are new numbered migrations on top of it.
 
-**DB seeds** (via `supabase db reset`): `supabase/seeds/organizations.sql` (the tenant orgs) plus the **per-product JSON files** under `supabase/seeds/<org-slug>/products/*.json` (one directory per org — `glass-outlet/`, `amazing-fencing/`; `seed-products.js` discovers org dirs and cross-checks each file's `org_slug` against its directory name). Files contain LIVE sections only: `products`, `product_components`, `pricing_rules`, and optional `calculator_configs` (per-org sparse `CalculatorConfig` overlay patches upserted into `supplier_product_calculator_configs` — key-allowlisted at seed time; arrays REPLACE, objects merge). To change live calculation behaviour, edit the static engine config (above) or an org's overlay; to change catalogue/pricing facts, edit the seed JSON.
+**DB seeds** (via `supabase db reset`): `supabase/seeds/organizations.sql` (the tenant orgs) plus the **per-product JSON files** under `supabase/seeds/<org-slug>/products/*.json` (one directory per org — `glass-outlet/`, `amazing-fencing/`; `seed-products.js` discovers org dirs and cross-checks each file's `org_slug` against its directory name). Files contain LIVE sections only: `products`, `product_components`, `pricing_rules`, and optional `calculator_configs` (per-org sparse `CalculatorConfig` overlay patches upserted into `supplier_product_calculator_configs` — key-allowlisted at seed time; arrays REPLACE, objects merge). To change live calculation behaviour, edit the static engine config (above) or an org's overlay; to change catalogue/pricing facts, edit the seed JSON. **Onboarding a new tenant org does NOT need a db reset** — `npm run seed:products -- --org <slug>` seeds one org incrementally, and the seeder refuses to overwrite rows edited in the app (`metadata.managed_by: "ui"`) unless `--force` is passed. Full workflow + data-ownership model: [`supabase/seeds/README.md`](supabase/seeds/README.md).
 
 `seed-auth.js` and `seed-images.js` handle auth users and image uploads respectively.
 
@@ -401,7 +401,8 @@ Login with a seeded test account:
 | `npm run typecheck` | TypeScript check only (fast) |
 | `npm run test:unit:static` | Engine regression suite (Deno via npx — see § 14) |
 | `npm run db:reset` | Reset DB to a clean seeded state |
-| `npm run seed:products` | Re-apply product/component/pricing seed JSON only |
+| `npm run seed:products` | Re-apply ALL orgs' product/component/pricing seed JSON (guarded — won't clobber app-edited rows) |
+| `npm run seed:products -- --org <slug>` | Seed one org only — the tenant-onboarding path, no db reset (see `supabase/seeds/README.md`) |
 | `supabase start` / `supabase stop` | Start/stop the local Supabase backend (DB on 54322, API on 54321) |
 | `npm run cy:open` | Open Cypress interactive test runner |
 
