@@ -183,6 +183,23 @@ From the coupling audit; each is small and independently shippable:
 | 7 | `catalogue_gate` strategy (pre-built gate bundles, § 4a) | 3 |
 | 8 | Timber family (skeleton calculator + `TimberConfig` + stepping) when the business needs it | 3 recommended |
 
+> **Status 2026-07-08 — items 6/7/8 delivered via the ORG overlay, not item 3.**
+> Amazing Fencing was onboarded as a **tenant org** (`amazing-fencing`, per-org
+> seed dir `supabase/seeds/amazing-fencing/`), resolving the § 4a classification
+> question: its build parameters ride `supplier_product_calculator_configs`
+> keyed by org — the "same mechanism" path. The § 2 `suppliers` table,
+> `supplier_id` columns, and vendor picker remain **unbuilt** (they become
+> relevant when one org carries two vendors of the same system).
+> Delivered: `capRule` + cut-down-note + terminal-post knobs on
+> `ColorbondConfig` (§ 4a); the catalogue-gate idea landed as
+> `ColorbondConfig.gates` with `kit` (GO fabricated, catalogue p7/p17) and
+> `bundle` (AF pre-built) modes under a `CB_GATE` fields product — a general
+> `catalogue_gate` strategy can still be extracted when a non-Colorbond vendor
+> needs it. Timber shipped as `TIMBER_PALING` (flat-ground v1, **no stepping**
+> — deferred, contra § 4) with AF's parameters as the base config. § 3 frozen
+> quote lines is still open: quotes saved before it will silently reprice AF
+> Colorbond from $0 once its price list arrives.
+
 ## 8. Revisit signals (how we'd know this was wrong)
 
 - Org/supplier overlay patches start needing **conditionals** faster than typed `extraRules` can absorb them → the facts-vs-logic split is leaking; reconsider a constrained rules layer.
