@@ -16,10 +16,20 @@ export default {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
+        shimmer: {
+          "0%": { backgroundPosition: "200% 0" },
+          "100%": { backgroundPosition: "-200% 0" },
+        },
+        progressSlide: {
+          "0%": { transform: "translateX(-120%)" },
+          "100%": { transform: "translateX(420%)" },
+        },
       },
       animation: {
         "fade-in-up": "fadeInUp 0.25s ease-out forwards",
         "fade-in": "fadeIn 0.2s ease-out forwards",
+        shimmer: "shimmer 1.8s linear infinite",
+        "progress-slide": "progressSlide 1.2s ease-in-out infinite",
       },
       colors: {
         brand: {

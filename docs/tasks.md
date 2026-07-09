@@ -541,6 +541,7 @@ Enables reliable LLM authoring and sets up an in-app AI import feature later
 - [x] BOM workings toggle: added a top-of-BOM control to show or hide per-line source/workings text across mobile cards and desktop line items.
 - [x] Preview BOM fallback fix: top-level edge-function error payloads now fall back to the local BOM calculator instead of rendering an empty BOM result.
 - [x] Print BOM cleanup: print output now suppresses run/section labels and mobile price-break/source chips, uses the desktop BOM table for printing, and keeps the Glass Outlet logo visible with print-specific sizing.
+- [x] BOM recalculating state polish: first calculation renders a shimmering skeleton BOM table instead of a bare spinner; recalculations keep the stale BOM visible but dimmed/non-interactive under a sweeping header progress bar and a floating status pill that cycles fence-themed progress messages; grand total dims while pending. All animations respect `prefers-reduced-motion`.
 - [ ] Stage 3 — in-app AI import feature backed by the same JSON Schemas (not scheduled)
 
 ---
