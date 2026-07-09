@@ -50,7 +50,8 @@ const FILE_TO_SYSTEM_TYPE = {
   "glass-shower-screen":     "GLASS-SHOWER",
   "hamptons":                "HAMPTONS",
   "move-shutters":           "MOVE-SHUTTERS",
-  // glass-outlet-logo.png is handled separately (uploaded to organisations.logo_url)
+  // logo.png / glass-outlet-logo.png are org logos, not product images —
+  // seeded to organisations.logo_url by tools/seed-org-logos.js, skipped here.
 };
 
 async function main() {
@@ -77,31 +78,8 @@ async function main() {
 
   if (!org) throw new Error("Org not found — run SQL seeds first");
 
-  // 3. Upload org logo and update organisations.logo_url
-  const logoFilename = "glass-outlet-logo.png";
-  const logoBuffer = fs.readFileSync(path.join(ASSETS_DIR, logoFilename));
-
-  const { error: logoUploadError } = await supabase.storage
-    .from(BUCKET)
-    .upload(logoFilename, logoBuffer, { contentType: "image/png", upsert: true });
-
-  if (logoUploadError) {
-    console.error(`  error uploading ${logoFilename}: ${logoUploadError.message}`);
-  } else {
-    const logoUrl = `${supabaseUrl}/storage/v1/object/public/${BUCKET}/${logoFilename}`;
-    const { error: logoUpdateError } = await supabase
-      .from("organisations")
-      .update({ logo_url: logoUrl })
-      .eq("slug", "glass-outlet");
-
-    if (logoUpdateError) {
-      console.error(`  error updating org logo_url: ${logoUpdateError.message}`);
-    } else {
-      console.log(`  ok    ${logoFilename} → organisations.logo_url`);
-    }
-  }
-
-  // 4. Upload each mapped image and update the product row
+  // 3. Upload each mapped image and update the product row.
+  //    (Org logo lives in organisations.logo_url, seeded by tools/seed-org-logos.js.)
   const files = fs.readdirSync(ASSETS_DIR).filter((f) => f.endsWith(".png"));
 
   for (const filename of files) {

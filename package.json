@@ -30,11 +30,13 @@
     "seed:glass-outlet": "node supabase/seeds/glass-outlet/seed-images.js",
     "seed:products": "node supabase/seeds/tools/seed-products.js",
     "seed:products:remote": "NODE_ENV=production node supabase/seeds/tools/seed-products.js",
+    "seed:org-logos": "node supabase/seeds/tools/seed-org-logos.js",
+    "seed:org-logos:remote": "NODE_ENV=production node supabase/seeds/tools/seed-org-logos.js",
     "prices:import": "node scripts/import-glassoutlet-prices.mjs",
     "prices:brief-at": "node scripts/build-brief-at-pricing-seed.mjs",
-    "db:reset": "npx supabase@latest db reset && npm run seed:products && npm run seed:auth",
+    "db:reset": "npx supabase@latest db reset && npm run seed:products && npm run seed:org-logos && npm run seed:auth",
     "db:push-remote": "npx supabase@latest db push",
-    "db:seed-remote": "npm run db:push-remote && npm run seed:products:remote",
+    "db:seed-remote": "npm run db:push-remote && npm run seed:products:remote && npm run seed:org-logos:remote",
     "setup": "npx supabase@latest start && npm run db:reset"
   },
   "devDependencies": {

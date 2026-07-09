@@ -3,7 +3,7 @@ import { BOMResultTabs } from "../shared/BOMResultTabs";
 import { ExtraItemsPanel } from "./ExtraItemsPanel";
 import { SuggestedAccessoriesPanel } from "./SuggestedAccessoriesPanel";
 import { MobileBomTotals } from "../shared/MobileBomTotals";
-import { GlassOutletLogo } from "../brand/GlassOutletLogo";
+import { BrandLogo } from "../brand/BrandLogo";
 import { JobNameEditor } from "../calculator/JobNameEditor";
 import { formatMoney, lineKey } from "../../lib/calculatorV3Helpers";
 import { useCalculatorBomState } from "../../context/CalculatorBomStateContext";
@@ -36,11 +36,7 @@ export function CalculatorBomPane() {
       <div className="mb-4 flex flex-col gap-4 border-b border-brand-border pb-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <div className="mb-3 flex flex-wrap items-center gap-3">
-            <GlassOutletLogo
-              className="text-brand-primary"
-              iconClassName="h-10 w-12"
-              textClassName="text-2xl"
-            />
+            <BrandLogo size="sm" />
             <div className="h-10 w-px bg-brand-border" />
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-muted">
               Bill of Materials

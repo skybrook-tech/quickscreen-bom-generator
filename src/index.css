@@ -177,24 +177,20 @@ body {
     break-inside: avoid;
   }
 
-  body[data-print-bom="true"] #root [data-print-logo] svg {
+  /* Org logo image (data-driven logo) */
+  body[data-print-bom="true"] #root img[data-print-logo] {
     display: block !important;
-    width: 50px !important;
-    height: 50px !important;
-    flex-shrink: 0 !important;
-    overflow: visible !important;
+    height: 44px !important;
+    width: auto !important;
+    max-width: 200px !important;
+    object-fit: contain !important;
   }
 
-  body[data-print-bom="true"] #root [data-print-logo-symbol],
-  body[data-print-bom="true"] #root [data-print-logo-symbol] rect {
+  /* Initials-badge fallback when an org has no logo image */
+  body[data-print-bom="true"] #root div[data-print-logo] {
     color: #1e40af !important;
-    stroke: #1e40af !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
-
-  body[data-print-bom="true"] #root [data-print-logo] span {
-    color: #1e40af !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
   body[data-print-bom="true"] #root [data-print-job-name] {

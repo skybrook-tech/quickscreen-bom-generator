@@ -7,6 +7,7 @@ import { BomV3PDFTemplate } from "./BomV3PDFTemplate";
 import { SlideOutPane } from "../shared/SlideOutPane";
 import type { CalculatorBOMResult, BOMLineItem } from "../../types/bom.types";
 import { stripParentheticalDispatchCode } from "../../lib/displayText";
+import { useProfile } from "../../context/ProfileContext";
 
 interface BOMExportActionsProps {
   result: CalculatorBOMResult;
@@ -48,6 +49,7 @@ export function BOMExportActions({
   const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false);
   const [csving, setCsving] = useState(false);
   const [copying, setCopying] = useState(false);
+  const { orgName, logoUrl } = useProfile();
 
   const effectiveItems = applyOverrides(result.allItems, removedSkus, qtyOverrides);
   const subtotal = parseFloat(
@@ -133,6 +135,8 @@ export function BOMExportActions({
       customerEmail={customerEmail}
       siteAddress={siteAddress}
       validUntil={validUntil}
+      orgName={orgName}
+      logoUrl={logoUrl}
     />
   );
 

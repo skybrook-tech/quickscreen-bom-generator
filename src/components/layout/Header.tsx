@@ -15,7 +15,9 @@ import { NavLink } from 'react-router-dom';
 import { cn } from '../../lib';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../hooks/useAuth';
+import { useProfile } from '../../context/ProfileContext';
 import { useTheme } from '../../context/ThemeContext';
+import { BrandLogo } from '../brand/BrandLogo';
 import type { TenantBranding } from '../../lib/tenantThemes';
 
 /**
@@ -121,13 +123,19 @@ export function Header({
   mobileTitle,
   jobTitle,
   brandLogoSrc,
-  brandLogoAlt = "The Glass Outlet",
+  brandLogoAlt,
   priceLabel,
   onClearJobRequest,
   clearJobDisabled = false,
 }: HeaderProps = {}) {
   const { user } = useAuth();
   const { theme, toggle } = useTheme();
+  // Props win; otherwise fall back to the logged-in org's branding/logo so every
+  // page gets org-driven branding without threading props through each AppShell.
+  const { logoUrl, orgName, tenantTheme } = useProfile();
+  const effectiveBranding = branding ?? tenantTheme?.branding;
+  const effectiveLogoSrc = brandLogoSrc ?? logoUrl;
+  const effectiveLogoAlt = brandLogoAlt ?? orgName ?? 'Logo';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [offline, setOffline] = useState(() => navigator.onLine === false);
 
@@ -227,21 +235,25 @@ export function Header({
                 {compactJobTitle}
               </span>
             </div>
-          ) : brandLogoSrc ? (
+          ) : effectiveLogoSrc ? (
             <img
-              src={brandLogoSrc}
-              alt={brandLogoAlt}
+              src={effectiveLogoSrc}
+              alt={effectiveLogoAlt}
+              data-print-logo
               className="h-8 w-auto max-w-[9rem] shrink-0 object-contain sm:h-10 sm:max-w-[12rem]"
             />
           ) : (
-            <div className="min-w-0 leading-tight">
-              <p className="truncate text-base font-black tracking-tight text-brand-text sm:text-lg">
-                {branding?.title ?? 'The Glass Outlet'}{branding?.titleItalic && <em>{branding.titleItalic}</em>}
-              </p>
-              <p className="truncate text-xs font-semibold text-brand-muted">
-                {branding?.subtitle ?? 'QuickScreen BOM Generator'}
-                {!branding && <span className="hidden sm:inline"> · Powered by SkyBrookAI</span>}
-              </p>
+            <div className="flex min-w-0 items-center gap-2.5">
+              <BrandLogo size="sm" />
+              <div className="min-w-0 leading-tight">
+                <p className="truncate text-base font-black tracking-tight text-brand-text sm:text-lg">
+                  {effectiveBranding?.title ?? orgName ?? 'QuickScreen'}
+                  {effectiveBranding?.titleItalic && <em>{effectiveBranding.titleItalic}</em>}
+                </p>
+                <p className="truncate text-xs font-semibold text-brand-muted">
+                  {effectiveBranding?.subtitle ?? 'QuickScreen BOM Generator'}
+                </p>
+              </div>
             </div>
           )}
         </div>

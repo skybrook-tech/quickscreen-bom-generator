@@ -30,6 +30,8 @@ on a mismatch, so a copy-pasted file can't seed one org's SKUs into another.
 | `npm run seed:products` | Seed **all** orgs' product files (upsert; respects the ownership guard below) |
 | `npm run seed:products -- --org <slug>` | Seed **one** org only — the onboarding default; never touches other orgs' rows |
 | `npm run seed:products -- --org <slug> --force` | Also overwrite rows edited in the app (`managed_by=ui`) and reclaim them for the seed |
+| `npm run seed:org-logos` | Upload each org's `assets/logo.*` to storage and set `organisations.logo_url` (all orgs) |
+| `npm run seed:org-logos -- --org <slug>` | Seed **one** org's logo only — the onboarding default |
 | `npm run seed:auth` | Create/verify test users for every org in the `ORGS` array (idempotent) |
 | `npm run db:reset` | Full reset: migrations + `organizations.sql` + all seeds — **only needed for schema changes**, never for onboarding |
 
@@ -57,14 +59,23 @@ migrations. For a new org `acme-fencing`:
    ```bash
    npm run seed:products -- --org acme-fencing
    ```
-4. **Users**: add the org + users to the `ORGS` array in `seed-auth.js`, then
+4. **Logo** (optional): drop the org's logo at
+   `supabase/seeds/acme-fencing/assets/logo.png` (or `.jpg`/`.webp`/`.svg`) and
+   run `npm run seed:org-logos -- --org acme-fencing`. **Omit this** to have the
+   app render a generic initials badge (e.g. "AF") instead — nothing else is
+   required. For the PDF export logo, prefer PNG/JPG (react-pdf can't render SVG).
+5. **Users**: add the org + users to the `ORGS` array in `seed-auth.js`, then
    `npm run seed:auth`. (The signup trigger reads `user_metadata.org_id`;
    the script verifies every profile landed in the intended org.)
-5. Log in as the new org's user — the product picker shows only their
-   `products` rows (RLS-scoped).
+6. Log in as the new org's user — the product picker shows only their
+   `products` rows (RLS-scoped), and the header/catalogue/PDF show their logo (or
+   initials badge).
 
-Images are currently Glass-Outlet-only (`glass-outlet/seed-images.js`); see the
-warning in that file before adapting it (flat storage keys collide across orgs).
+**Logos** are org-driven via `organisations.logo_url`, owned by the org-agnostic
+`tools/seed-org-logos.js` (org-prefixed storage keys `logos/<slug>.<ext>` — no
+cross-org collision). **Product images** remain Glass-Outlet-only
+(`glass-outlet/seed-images.js`); see the warning in that file before adapting it
+(flat storage keys collide across orgs).
 
 ## Data ownership: `managed_by` (seed vs app edits)
 

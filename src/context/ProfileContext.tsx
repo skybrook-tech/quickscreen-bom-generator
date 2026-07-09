@@ -13,6 +13,10 @@ interface ProfileContextValue {
   user: User | null;
   role: string | null;
   orgId: string | null;
+  /** The org's display name (used for the logo initials fallback + brand text). */
+  orgName: string | null;
+  /** The org's logo image URL, or null → render an initials badge instead. */
+  logoUrl: string | null;
   isAdmin: boolean;
   /** Full theme config loaded from this org's branding JSONB, or null. */
   tenantTheme: TenantTheme | null;
@@ -24,6 +28,8 @@ const ProfileContext = createContext<ProfileContextValue>({
   user: null,
   role: null,
   orgId: null,
+  orgName: null,
+  logoUrl: null,
   isAdmin: false,
   tenantTheme: null,
   isLoading: true,
@@ -45,14 +51,18 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('role, org_id, organisation:organisations(branding)')
+        .select('role, org_id, organisation:organisations(name, logo_url, branding)')
         .eq('id', user!.id)
         .single();
       if (error) throw error;
       return data as unknown as {
         role: string;
         org_id: string;
-        organisation: { branding: TenantTheme | null } | null;
+        organisation: {
+          name: string | null;
+          logo_url: string | null;
+          branding: TenantTheme | null;
+        } | null;
       };
     },
   });
@@ -67,6 +77,8 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
         user,
         role: profile?.role ?? null,
         orgId: profile?.org_id ?? null,
+        orgName: profile?.organisation?.name ?? null,
+        logoUrl: profile?.organisation?.logo_url ?? null,
         isAdmin: profile?.role === 'admin',
         tenantTheme: profile?.organisation?.branding
           ? adjustThemeContrast(profile.organisation.branding)
