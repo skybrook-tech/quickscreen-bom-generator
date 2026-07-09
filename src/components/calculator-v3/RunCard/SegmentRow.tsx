@@ -441,7 +441,7 @@ export function SegmentRow({
 
   return (
     <div className={`border-t py-1 ${isLastSegment ? "border-b" : ""}`}>
-      <div className="relative cursor-pointer overflow-hidden rounded-[0.9rem] text-sm font-semibold"
+      <div className="group/segrow relative cursor-pointer overflow-hidden rounded-[0.9rem] text-sm font-semibold"
         onDoubleClick={(event) => {
           const target = event.target as HTMLElement;
           if (target.closest("button,input,select,textarea,a")) return;
@@ -455,7 +455,7 @@ export function SegmentRow({
             <div className="grid grid-cols-[minmax(0,1fr)_auto_auto_auto_auto] items-center gap-2">
               <p className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-left text-lg font-black text-brand-text">
                 {titleLabel}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-4">
 
                   <InlineEdit
                     label="Length"

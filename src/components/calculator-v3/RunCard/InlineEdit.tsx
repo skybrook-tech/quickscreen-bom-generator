@@ -111,13 +111,17 @@ export function InlineEdit({
   const cancel = () => setEditing(false);
 
   /** Inherit parent `color` (segment header uses fence/gate border accent). */
+  // `group-hover/segrow:` variants mirror the local hover state so hovering
+  // anywhere on the parent SegmentRow lights up the edit affordance too.
   const ink = onAccentSurface ? "text-white" : "text-current";
   const inkHover = onAccentSurface
-    ? "group-hover/inline:text-white"
-    : "opacity-95 group-hover/inline:opacity-100";
-  const rowHoverBg = onAccentSurface ? "hover:bg-white/15" : "hover:bg-black/5";
+    ? "group-hover/inline:text-white group-hover/segrow:text-white"
+    : "opacity-95 group-hover/inline:opacity-100 group-hover/segrow:opacity-100";
+  const rowHoverBg = onAccentSurface
+    ? "hover:bg-white/15 group-hover/segrow:bg-white/15"
+    : "hover:bg-black/5 group-hover/segrow:bg-black/5";
   const pencil = onAccentSurface
-    ? "text-white/70 group-hover/inline:text-white"
+    ? "text-white/70 group-hover/inline:text-white group-hover/segrow:text-white"
     : "text-current";
 
   const labelEl = Icon ? (
@@ -305,7 +309,7 @@ export function InlineEdit({
       <Edit2
         size={9}
         className={cn(
-          "opacity-0 group-hover/inline:opacity-70 transition-opacity absolute -top-1.5 -right-2",
+          "opacity-0 group-hover/inline:opacity-70 group-hover/segrow:opacity-70 transition-opacity absolute -top-1.5 -right-2",
           pencil,
           className,
         )}
