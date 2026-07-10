@@ -1,0 +1,21 @@
+{
+  "org_slug": "glass-outlet",
+  "products": [
+    {
+      "system_type": "CB_GATE",
+      "product_type": "gate",
+      "name": "Colorbond Gate",
+      "description": "Kit-fabricated Colorbond steel swing gate (single or double). Per leaf: gate stile 2-pack (integrated U channel + stile caps), 2 gate rails, 1 infill sheet and a tek-screw pack; hinges and latch selected per gate. Assembled single gates are ~900mm wide edge-to-edge.",
+      "active": true,
+      "sort_order": 11,
+      "compatible_with_system_types": ["COLORBOND"],
+      "metadata": {
+        "product_family": "gate",
+        "default_layout_type": "single_gate",
+        "options": {
+          "colour": ["MN", "G", "SM", "BS", "PB", "P"]
+        }
+      }
+    }
+  ]
+}

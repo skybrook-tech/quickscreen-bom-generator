@@ -1,6 +1,14 @@
 // seed-images.js
 //
 // Uploads product images to Supabase Storage and updates products.image_url.
+// GLASS OUTLET ONLY — hardcoded to slug 'glass-outlet'.
+//
+// ⚠️ Multi-org warning: storage object keys here are FLAT filenames (e.g.
+// "colorbond.png"). Do NOT clone this script for another org without
+// prefixing object keys with the org slug (e.g. "amazing-fencing/colorbond.png")
+// — two orgs sharing a filename would silently overwrite each other's images.
+// (Amazing Fencing images are deferred; its product cards render without
+// image_url.)
 //
 // Run after `supabase db reset`:
 //   node supabase/seeds/glass-outlet/seed-images.js

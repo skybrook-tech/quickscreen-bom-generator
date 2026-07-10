@@ -1,0 +1,119 @@
+{
+  "fields": [
+    {
+      "field_key": "gate_movement",
+      "label": "Gate type",
+      "group": "type_size",
+      "control_type": "select",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "single_swing",
+      "options_json": [
+        { "value": "single_swing", "label": "Single swing" },
+        { "value": "double_swing", "label": "Double swing" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 10,
+      "show_in_run_summary": true,
+      "settings_for": ["segment"]
+    },
+    {
+      "field_key": "match_run_height",
+      "label": "Match fence height",
+      "group": "type_size",
+      "control_type": "toggle",
+      "data_type": "boolean",
+      "default_value_json": true,
+      "visible_when_json": {},
+      "sort_order": 20,
+      "settings_for": ["segment"]
+    },
+    {
+      "field_key": "gate_height_mm",
+      "label": "Gate height",
+      "group": "type_size",
+      "control_type": "select",
+      "data_type": "number",
+      "unit": "mm",
+      "default_value_json": 1800,
+      "options_json": [
+        { "value": 1500, "label": "1500mm" },
+        { "value": 1800, "label": "1800mm" },
+        { "value": 2100, "label": "2100mm" }
+      ],
+      "visible_when_json": { "match_run_height": false },
+      "sort_order": 30,
+      "settings_for": ["segment"]
+    },
+    {
+      "field_key": "colour_code",
+      "render_hint": "colour",
+      "label": "Gate colour",
+      "group": "type_size",
+      "control_type": "colour_palette",
+      "data_type": "enum",
+      "default_value_json": "MN",
+      "options_json": [],
+      "options_when_json": [{ "options_ref": "colours.gate" }],
+      "visible_when_json": {},
+      "sort_order": 40,
+      "show_in_run_summary": true,
+      "settings_for": ["segment"]
+    },
+    {
+      "field_key": "hinge_type",
+      "label": "Hinges",
+      "group": "hardware",
+      "control_type": "select",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "CB-HINGE-{colour}-2PK",
+      "options_json": [
+        { "value": "CB-HINGE-{colour}-2PK", "label": "Butt hinge pair (colour matched, incl. tek screws)" },
+        { "value": "KF-H-FT", "label": "D&D Kwik Fit hinge pair — fixed tension (self closing)" },
+        { "value": "KF-H-NT", "label": "D&D Kwik Fit hinge pair — no tension" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 50,
+      "settings_for": ["segment"]
+    },
+    {
+      "field_key": "latch_type",
+      "label": "Latch",
+      "group": "hardware",
+      "control_type": "select",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "CB-LATCH-{colour}",
+      "options_json": [
+        { "value": "CB-LATCH-{colour}", "label": "D latch kit (colour matched, incl. striker + extender)" },
+        { "value": "LL-DL-KA", "label": "Lokk Latch Deluxe — keyed alike" },
+        { "value": "LL-DL", "label": "Lokk Latch Deluxe — keyed to differ" },
+        { "value": "LLAA", "label": "Lokk Latch" },
+        { "value": "none", "label": "No latch" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 60,
+      "settings_for": ["segment"]
+    },
+    {
+      "field_key": "drop_bolt_type",
+      "label": "Drop bolt",
+      "group": "hardware",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "SS-0300DB-B",
+      "options_json": [
+        { "value": "SS-0300DB-B", "label": "300mm drop bolt — black" },
+        { "value": "none", "label": "No drop bolt" }
+      ],
+      "visible_when_json": { "gate_movement": "double_swing" },
+      "sort_order": 70,
+      "settings_for": ["segment"]
+    }
+  ],
+  "fieldGroups": [
+    { "key": "type_size", "label": "Gate Type & Size", "sort_order": 10 },
+    { "key": "hardware", "label": "Hardware", "sort_order": 20 }
+  ]
+}

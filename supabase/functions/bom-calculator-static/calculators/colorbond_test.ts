@@ -137,6 +137,79 @@ Deno.test("CB depot-availability warnings fire per profile (extraRules variable_
   assertEquals(goZag.warnings.some((w) => w.includes("depot")), false, "GO-ZAG is stocked at all depots — no warning");
 });
 
+// ── Gates (kit mode — GO catalogue p7/p17 recipe) ────────────────────────────
+
+function cbGateSeg(id: string, widthMm: number, height: number, vars: Vars = {}): CanonicalSegment {
+  return {
+    segmentId: id, segmentKind: "gate_opening", segmentWidthMm: widthMm,
+    targetHeightMm: height,
+    variables: {
+      hinge_type: "CB-HINGE-{colour}-2PK",
+      latch_type: "CB-LATCH-{colour}",
+      ...vars,
+    },
+  };
+}
+
+Deno.test("CB kit gate (single): stile pack + 2 rails + 1 sheet + tek pack + hinge pair + latch", () => {
+  const r = calculateLocalBom(cbPayload(cbRun([cbSeg("s1", 2365, 1800), cbGateSeg("g1", 900, 1800)])));
+  const l = r.lines as Line[];
+  assertEquals(qty(l, "CB-1800GS-MN-2PK"), 1);   // one stile 2-pack per leaf
+  assertEquals(qty(l, "CB-GATE-R-830-MN"), 2);   // top + bottom gate rails
+  assertEquals(qty(l, "CB-GLINE-1790-MN"), 3 + 1); // 3 fence sheets + 1 gate infill
+  assertEquals(qty(l, "CB-TS-MN-15PK"), 1 + 1);  // fence bay pack + gate pack
+  assertEquals(qty(l, "CB-HINGE-MN-2PK"), 1);    // hinge pair per leaf
+  assertEquals(qty(l, "CB-LATCH-MN"), 1);
+});
+
+Deno.test("CB kit gate (double): doubled kit + drop bolt", () => {
+  const r = calculateLocalBom(cbPayload(cbRun([
+    cbSeg("s1", 2365, 1800),
+    cbGateSeg("g1", 1800, 1800, { gate_movement: "double_swing", drop_bolt_type: "SS-0300DB-B" }),
+  ])));
+  const l = r.lines as Line[];
+  assertEquals(qty(l, "CB-1800GS-MN-2PK"), 2);
+  assertEquals(qty(l, "CB-GATE-R-830-MN"), 4);
+  assertEquals(qty(l, "CB-GLINE-1790-MN"), 3 + 2);
+  assertEquals(qty(l, "CB-HINGE-MN-2PK"), 2);    // hinge pair per leaf
+  assertEquals(qty(l, "CB-LATCH-MN"), 1);
+  assertEquals(qty(l, "SS-0300DB-B"), 1);
+});
+
+Deno.test("CB kit gate snaps off-ladder heights to the nearest stile pack and warns", () => {
+  const r = calculateLocalBom(cbPayload(cbRun([cbSeg("s1", 2365, 1800), cbGateSeg("g1", 900, 2000)])));
+  assertEquals(qty(r.lines as Line[], "CB-2100GS-MN-2PK"), 1); // 2000 → 2100 stile
+  assertEquals(r.warnings.some((w) => w.includes("snapped to 2100mm")), true);
+});
+
+Deno.test("CB kit gate warns when the opening deviates from the ~900mm assembled leaf", () => {
+  const r = calculateLocalBom(cbPayload(cbRun([cbSeg("s1", 2365, 1800), cbGateSeg("g1", 1400, 1800)])));
+  assertEquals(r.warnings.some((w) => w.includes("~900mm per leaf")), true);
+});
+
+Deno.test("CB kit gate without hinge/latch selection emits neither and warns loudly", () => {
+  const r = calculateLocalBom(cbPayload(cbRun([
+    cbSeg("s1", 2365, 1800),
+    { segmentId: "g1", segmentKind: "gate_opening", segmentWidthMm: 900, targetHeightMm: 1800, variables: {} },
+  ])));
+  const l = r.lines as Line[];
+  assertEquals(qty(l, "CB-HINGE-MN-2PK"), 0);
+  assertEquals(r.warnings.some((w) => w.includes("No hinge selected")), true);
+  assertEquals(r.warnings.some((w) => w.includes("No latch selected")), true);
+  // The kit itself still lands
+  assertEquals(qty(l, "CB-1800GS-MN-2PK"), 1);
+});
+
+Deno.test("CB sliding gate is rejected with a warning (swing only)", () => {
+  const r = calculateLocalBom(cbPayload(cbRun([
+    cbSeg("s1", 2365, 1800),
+    cbGateSeg("g1", 3000, 1800, { gate_movement: "sliding" }),
+  ])));
+  const l = r.lines as Line[];
+  assertEquals(qty(l, "CB-1800GS-MN-2PK"), 0);
+  assertEquals(r.warnings.some((w) => w.includes("Sliding gates are not available")), true);
+});
+
 Deno.test("CB run gets NO slat-system accessory suggestions (no slat config block)", () => {
   const ctx = makeCalcContext({
     dbComponents: [],

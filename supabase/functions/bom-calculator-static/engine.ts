@@ -412,10 +412,14 @@ export function calculateLocalBom(
 
   payload.runs.forEach((run, runIndex) => {
     let gateIndex = 0;
+    // Gate segments are scoped under the fence product's configured gate UI
+    // product code (QS_GATE for slat systems, CB_GATE for Colorbond, …).
+    const gateProductCode =
+      resolvedCtx.configs.get(run.productCode)?.gateRules.gateProductCode ?? "QS_GATE";
     run.segments.forEach((segment) => {
       if (segment.segmentKind === "gate_opening") {
         gateIndex += 1;
-        scopeBySegmentId.set(segment.segmentId, { scopeKind: "gate", scopeId: segment.segmentId, scopeLabel: `R${runIndex + 1} G${gateIndex}`, productCode: "QS_GATE" });
+        scopeBySegmentId.set(segment.segmentId, { scopeKind: "gate", scopeId: segment.segmentId, scopeLabel: `R${runIndex + 1} G${gateIndex}`, productCode: gateProductCode });
         return;
       }
       scopeBySegmentId.set(segment.segmentId, { scopeKind: "fence_run", scopeId: run.runId, scopeLabel: `Run ${runIndex + 1}`, productCode: run.productCode });

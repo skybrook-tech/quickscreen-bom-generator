@@ -1,0 +1,411 @@
+{
+  "org_slug": "amazing-fencing",
+  "products": [
+    {
+      "system_type": "CB_GATE",
+      "product_type": "gate",
+      "name": "Colorbond Gate",
+      "description": "Pre-built Colorbond steel swing gate bundles (single or double, 0.9–2.1m) with butt hinge / D-latch / double-set hardware kits. Amazing Fencing supply.",
+      "active": true,
+      "sort_order": 2,
+      "compatible_with_system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "product_family": "gate",
+        "default_layout_type": "single_gate"
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "AF-CBD-GATE-STD-SGL-900",
+      "name": "Amazing Fencing Standard Single Gate 0.9m (GP Bundle)",
+      "description": "Standard single gate, 0.9m wide, GP Bundle — swing gate bundle",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "gates",
+        "supplier_order_code": "AF-CBD-GATE-STD-SGL-0.9"
+      },
+      "active": true,
+      "subCategory": "gates",
+      "sortPriority": 30
+    },
+    {
+      "sku": "AF-CBD-GATE-STD-SGL-1200",
+      "name": "Amazing Fencing Standard Single Gate 1.2m (GP Bundle)",
+      "description": "Standard single gate, 1.2m wide, GP Bundle — swing gate bundle",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "gates",
+        "supplier_order_code": "AF-CBD-GATE-STD-SGL-1.2"
+      },
+      "active": true,
+      "subCategory": "gates",
+      "sortPriority": 30
+    },
+    {
+      "sku": "AF-CBD-GATE-STD-SGL-1500",
+      "name": "Amazing Fencing Standard Single Gate 1.5m (GP Bundle)",
+      "description": "Standard single gate, 1.5m wide, GP Bundle — swing gate bundle",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "gates",
+        "supplier_order_code": "AF-CBD-GATE-STD-SGL-1.5"
+      },
+      "active": true,
+      "subCategory": "gates",
+      "sortPriority": 30
+    },
+    {
+      "sku": "AF-CBD-GATE-STD-SGL-1800",
+      "name": "Amazing Fencing Standard Single Gate 1.8m (GP Bundle)",
+      "description": "Standard single gate, 1.8m wide, GP Bundle — swing gate bundle",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "gates",
+        "supplier_order_code": "AF-CBD-GATE-STD-SGL-1.8"
+      },
+      "active": true,
+      "subCategory": "gates",
+      "sortPriority": 30
+    },
+    {
+      "sku": "AF-CBD-GATE-STD-SGL-2100",
+      "name": "Amazing Fencing Standard Single Gate 2.1m (GP Bundle)",
+      "description": "Standard single gate, 2.1m wide, GP Bundle — swing gate bundle",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "gates",
+        "supplier_order_code": "AF-CBD-GATE-STD-SGL-2.1"
+      },
+      "active": true,
+      "subCategory": "gates",
+      "sortPriority": 30
+    },
+    {
+      "sku": "AF-CBD-GATE-STD-DBL-900",
+      "name": "Amazing Fencing Standard Double Gate 0.9m (GP Bundle)",
+      "description": "Standard double gate, 0.9m wide, GP Bundle — swing gate bundle, 2 leaves",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "gates",
+        "supplier_order_code": "AF-CBD-GATE-STD-DBL-0.9"
+      },
+      "active": true,
+      "subCategory": "gates",
+      "sortPriority": 30
+    },
+    {
+      "sku": "AF-CBD-GATE-STD-DBL-1200",
+      "name": "Amazing Fencing Standard Double Gate 1.2m (GP Bundle)",
+      "description": "Standard double gate, 1.2m wide, GP Bundle — swing gate bundle, 2 leaves",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "gates",
+        "supplier_order_code": "AF-CBD-GATE-STD-DBL-1.2"
+      },
+      "active": true,
+      "subCategory": "gates",
+      "sortPriority": 30
+    },
+    {
+      "sku": "AF-CBD-GATE-STD-DBL-1500",
+      "name": "Amazing Fencing Standard Double Gate 1.5m (GP Bundle)",
+      "description": "Standard double gate, 1.5m wide, GP Bundle — swing gate bundle, 2 leaves",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "gates",
+        "supplier_order_code": "AF-CBD-GATE-STD-DBL-1.5"
+      },
+      "active": true,
+      "subCategory": "gates",
+      "sortPriority": 30
+    },
+    {
+      "sku": "AF-CBD-GATE-STD-DBL-1800",
+      "name": "Amazing Fencing Standard Double Gate 1.8m (GP Bundle)",
+      "description": "Standard double gate, 1.8m wide, GP Bundle — swing gate bundle, 2 leaves",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "gates",
+        "supplier_order_code": "AF-CBD-GATE-STD-DBL-1.8"
+      },
+      "active": true,
+      "subCategory": "gates",
+      "sortPriority": 30
+    },
+    {
+      "sku": "AF-CBD-GATE-STD-DBL-2100",
+      "name": "Amazing Fencing Standard Double Gate 2.1m (GP Bundle)",
+      "description": "Standard double gate, 2.1m wide, GP Bundle — swing gate bundle, 2 leaves",
+      "category": "gate",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "gates",
+        "supplier_order_code": "AF-CBD-GATE-STD-DBL-2.1"
+      },
+      "active": true,
+      "subCategory": "gates",
+      "sortPriority": 30
+    },
+    {
+      "sku": "AF-CBD-GATEHW-BUTT-HINGE",
+      "name": "Butt Hinges (pair)",
+      "description": "Pair of butt hinges for gate",
+      "category": "hardware",
+      "unit": "pack",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "gates",
+        "supplier_order_code": "AF-CBD-GATEHW-BUTT-HINGE"
+      },
+      "active": true,
+      "subCategory": "gate_hardware",
+      "sortPriority": 40
+    },
+    {
+      "sku": "AF-CBD-GATEHW-D-LATCH",
+      "name": "D Latch + Striker + Handle",
+      "description": "D-latch kit",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "gates",
+        "supplier_order_code": "AF-CBD-GATEHW-D-LATCH"
+      },
+      "active": true,
+      "subCategory": "gate_hardware",
+      "sortPriority": 40
+    },
+    {
+      "sku": "AF-CBD-GATEHW-DOUBLE-SET",
+      "name": "Double Gate Hardware Set",
+      "description": "Hardware kit for double swing gate (full kit)",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "gates",
+        "supplier_order_code": "AF-CBD-GATEHW-DOUBLE-SET"
+      },
+      "active": true,
+      "subCategory": "gate_hardware",
+      "sortPriority": 40
+    },
+    {
+      "sku": "AF-CBD-GATEHW-DROP-BOLT",
+      "name": "Drop Bolt",
+      "description": "Drop bolt for double gates",
+      "category": "hardware",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "gates",
+        "supplier_order_code": "AF-CBD-GATEHW-DROP-BOLT"
+      },
+      "active": true,
+      "subCategory": "gate_hardware",
+      "sortPriority": 40
+    }
+  ],
+  "calculator_configs": [
+    {
+      "product_code": "CB_GATE",
+      "notes": "Amazing Fencing Colorbond gate fields — pre-built bundles need no hinge/latch/colour selection (hardware kits are config-driven: single → BUTT-HINGE + D-LATCH, double → DOUBLE-SET). fields REPLACES the base kit-mode field list wholesale.",
+      "config": {
+        "fields": [
+          {
+            "field_key": "gate_movement",
+            "label": "Gate type",
+            "group": "type_size",
+            "control_type": "select",
+            "data_type": "enum",
+            "required": true,
+            "default_value_json": "single_swing",
+            "options_json": [
+              {
+                "value": "single_swing",
+                "label": "Single swing"
+              },
+              {
+                "value": "double_swing",
+                "label": "Double swing"
+              }
+            ],
+            "visible_when_json": {},
+            "sort_order": 10,
+            "show_in_run_summary": true,
+            "settings_for": [
+              "segment"
+            ]
+          },
+          {
+            "field_key": "match_run_height",
+            "label": "Match fence height",
+            "group": "type_size",
+            "control_type": "toggle",
+            "data_type": "boolean",
+            "default_value_json": true,
+            "visible_when_json": {},
+            "sort_order": 20,
+            "settings_for": [
+              "segment"
+            ]
+          },
+          {
+            "field_key": "gate_height_mm",
+            "label": "Gate height",
+            "group": "type_size",
+            "control_type": "select",
+            "data_type": "number",
+            "unit": "mm",
+            "default_value_json": 1800,
+            "options_json": [
+              {
+                "value": 1200,
+                "label": "1200mm"
+              },
+              {
+                "value": 1500,
+                "label": "1500mm"
+              },
+              {
+                "value": 1800,
+                "label": "1800mm"
+              },
+              {
+                "value": 2100,
+                "label": "2100mm"
+              },
+              {
+                "value": 2400,
+                "label": "2400mm"
+              }
+            ],
+            "visible_when_json": {
+              "match_run_height": false
+            },
+            "sort_order": 30,
+            "settings_for": [
+              "segment"
+            ]
+          },
+          {
+            "field_key": "drop_bolt_type",
+            "label": "Drop bolt",
+            "group": "hardware",
+            "control_type": "select",
+            "data_type": "enum",
+            "default_value_json": "AF-CBD-GATEHW-DROP-BOLT",
+            "options_json": [
+              {
+                "value": "AF-CBD-GATEHW-DROP-BOLT",
+                "label": "Drop bolt (for the standing leaf)"
+              },
+              {
+                "value": "none",
+                "label": "No drop bolt"
+              }
+            ],
+            "visible_when_json": {
+              "gate_movement": "double_swing"
+            },
+            "sort_order": 40,
+            "settings_for": [
+              "segment"
+            ]
+          }
+        ],
+        "formGroups": [
+          {
+            "key": "type_size",
+            "label": "Gate Type & Size",
+            "sort_order": 10
+          },
+          {
+            "key": "hardware",
+            "label": "Hardware",
+            "sort_order": 20
+          }
+        ]
+      }
+    }
+  ]
+}

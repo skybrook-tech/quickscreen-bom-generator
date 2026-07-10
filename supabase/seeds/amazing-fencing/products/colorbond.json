@@ -1,0 +1,863 @@
+{
+  "org_slug": "amazing-fencing",
+  "products": [
+    {
+      "system_type": "COLORBOND",
+      "product_type": "fence",
+      "compatible_with_system_types": [],
+      "name": "Colorbond Steel Fence",
+      "description": "Colorbond steel sheet fencing — 2.36m / 3.10m bays, heights 1200–2400mm. Amazing Fencing supply.",
+      "active": true,
+      "sort_order": 1,
+      "metadata": {
+        "allowedAngles": [
+          90
+        ],
+        "options": {
+          "colour": [
+            "MN",
+            "G",
+            "SM",
+            "BS",
+            "PB",
+            "P"
+          ]
+        }
+      }
+    }
+  ],
+  "product_components": [
+    {
+      "sku": "AF-CBD-SHEET-1200",
+      "name": "Amazing Fencing Colorbond INFILL SHEET 1200mm high",
+      "description": "Colorbond sheet 1.5m high CUT DOWN to 1.2m on site",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "screening",
+        "supplier_order_code": "AF-CBD-SHEET-1.5"
+      },
+      "active": true,
+      "subCategory": "sheets",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-CBD-SHEET-1500",
+      "name": "Amazing Fencing Colorbond INFILL SHEET 1500mm high",
+      "description": "Colorbond sheet 1.5m high",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "screening",
+        "supplier_order_code": "AF-CBD-SHEET-1.5"
+      },
+      "active": true,
+      "subCategory": "sheets",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-CBD-SHEET-1800",
+      "name": "Amazing Fencing Colorbond INFILL SHEET 1800mm high",
+      "description": "Colorbond sheet 1.8m high",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "screening",
+        "supplier_order_code": "AF-CBD-SHEET-1.8"
+      },
+      "active": true,
+      "subCategory": "sheets",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-CBD-SHEET-2100",
+      "name": "Amazing Fencing Colorbond INFILL SHEET 2100mm high",
+      "description": "Colorbond sheet 2.1m high",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "screening",
+        "supplier_order_code": "AF-CBD-SHEET-2.1"
+      },
+      "active": true,
+      "subCategory": "sheets",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-CBD-SHEET-2400",
+      "name": "Amazing Fencing Colorbond INFILL SHEET 2400mm high",
+      "description": "Colorbond sheet 2.4m high",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "screening",
+        "supplier_order_code": "AF-CBD-SHEET-2.4"
+      },
+      "active": true,
+      "subCategory": "sheets",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-CBD-RAIL-2360",
+      "name": "Amazing Fencing Colorbond RAIL 2.35m (for 2360mm bay)",
+      "description": "Amazing Fencing Colorbond RAIL 2.35m (for 2360mm bay)",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "frames_and_covers",
+        "supplier_order_code": "AF-CBD-RAIL-2.35"
+      },
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
+    },
+    {
+      "sku": "AF-CBD-RAIL-3100",
+      "name": "Amazing Fencing Colorbond RAIL 3.10m (for 3100mm bay)",
+      "description": "Amazing Fencing Colorbond RAIL 3.10m (for 3100mm bay)",
+      "category": "rail",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "frames_and_covers",
+        "supplier_order_code": "AF-CBD-RAIL-3.10"
+      },
+      "active": true,
+      "subCategory": "rails",
+      "sortPriority": 20
+    },
+    {
+      "sku": "AF-CBD-CPOST-2100",
+      "name": "Amazing Fencing Colorbond C POST 2100mm",
+      "description": "Amazing Fencing Colorbond C POST 2100mm",
+      "category": "post",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-CBD-CPOST-2.1"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-CBD-CPOST-2400",
+      "name": "Amazing Fencing Colorbond C POST 2400mm",
+      "description": "Amazing Fencing Colorbond C POST 2400mm",
+      "category": "post",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-CBD-CPOST-2.4"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-CBD-CPOST-2700",
+      "name": "Amazing Fencing Colorbond C POST 2700mm",
+      "description": "Amazing Fencing Colorbond C POST 2700mm",
+      "category": "post",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-CBD-CPOST-2.7"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-CBD-CPOST-3000",
+      "name": "Amazing Fencing Colorbond C POST 3000mm",
+      "description": "Amazing Fencing Colorbond C POST 3000mm",
+      "category": "post",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-CBD-CPOST-3.0"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 50
+    },
+    {
+      "sku": "AF-CBD-CAP-100x100",
+      "name": "Amazing Fencing 100×100 Square Metal Post Cap",
+      "description": "Amazing Fencing 100×100 Square Metal Post Cap",
+      "category": "post",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "caps_and_plugs",
+        "supplier_order_code": "AF-CBD-CAP-100x100"
+      },
+      "active": true,
+      "subCategory": "caps",
+      "sortPriority": 10
+    },
+    {
+      "sku": "AF-CON-POSTMIX-30",
+      "name": "Post Mix Concrete 30kg bag",
+      "description": "Post Mix Concrete 30kg bag",
+      "category": "mounting",
+      "unit": "bag",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "tools_and_consumables",
+        "supplier_order_code": "AF-CON-POSTMIX-30"
+      },
+      "active": true,
+      "subCategory": "concrete",
+      "sortPriority": 90
+    },
+    {
+      "sku": "AF-CBD-SCREW-TEK-20",
+      "name": "Metal Tek Screw 20mm",
+      "description": "Tek screw 20mm for metal-to-metal fixing",
+      "category": "screw",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "fasteners_and_screws",
+        "supplier_order_code": "AF-CBD-SCREW-TEK-20"
+      },
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 60
+    },
+    {
+      "sku": "AF-CBD-SCREW-TEK-35",
+      "name": "Metal Tek Screw 35mm",
+      "description": "Tek screw 35mm for metal-to-metal fixing",
+      "category": "screw",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "fasteners_and_screws",
+        "supplier_order_code": "AF-CBD-SCREW-TEK-35"
+      },
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 60
+    },
+    {
+      "sku": "AF-CBD-SCREW-COLOURED-SD10",
+      "name": "Coloured Screw SD 10-16 × 16mm",
+      "description": "Hex coloured sheet screw",
+      "category": "screw",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "fasteners_and_screws",
+        "supplier_order_code": "AF-CBD-SCREW-COLOURED-SD10"
+      },
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 60
+    },
+    {
+      "sku": "AF-CBD-SCREW-BUGEL-50",
+      "name": "Bugel Batten Screw 50mm",
+      "description": "Bugel batten screw 50mm (wood-to-steel)",
+      "category": "screw",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "fasteners_and_screws",
+        "supplier_order_code": "AF-CBD-SCREW-BUGEL-50"
+      },
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 60
+    },
+    {
+      "sku": "AF-CBD-SCREW-BUGEL-75",
+      "name": "Bugel Batten Screw 75mm",
+      "description": "Bugel batten screw 75mm (wood-to-steel)",
+      "category": "screw",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "fasteners_and_screws",
+        "supplier_order_code": "AF-CBD-SCREW-BUGEL-75"
+      },
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 60
+    },
+    {
+      "sku": "AF-CBD-SCREW-BUGEL-100",
+      "name": "Bugel Batten Screw 100mm",
+      "description": "Bugel batten screw 100mm (wood-to-steel)",
+      "category": "screw",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "fasteners_and_screws",
+        "supplier_order_code": "AF-CBD-SCREW-BUGEL-100"
+      },
+      "active": true,
+      "subCategory": "screws",
+      "sortPriority": 60
+    },
+    {
+      "sku": "AF-CBD-TOUCHUP-PAINT",
+      "name": "Colour-matched Touch-up Paint",
+      "description": "Colour-matched Touch-up Paint",
+      "category": "accessory",
+      "unit": "each",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "tools_and_consumables",
+        "supplier_order_code": "AF-CBD-TOUCHUP-PAINT"
+      },
+      "active": true,
+      "subCategory": "consumables",
+      "sortPriority": 95
+    },
+    {
+      "sku": "AF-CBD-COLPOST-50x50-2.4",
+      "name": "Coloured Steel Post 50x50mm × 2.4m",
+      "description": "Coloured Steel Post 50x50mm × 2.4m",
+      "category": "post",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-CBD-COLPOST-50x50-2.4"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 55
+    },
+    {
+      "sku": "AF-CBD-COLPOST-50x50-3.0",
+      "name": "Coloured Steel Post 50x50mm × 3.0m",
+      "description": "Coloured Steel Post 50x50mm × 3.0m",
+      "category": "post",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-CBD-COLPOST-50x50-3.0"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 55
+    },
+    {
+      "sku": "AF-CBD-COLPOST-65x65-2.4",
+      "name": "Coloured Steel Post 65x65mm × 2.4m",
+      "description": "Coloured Steel Post 65x65mm × 2.4m",
+      "category": "post",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-CBD-COLPOST-65x65-2.4"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 55
+    },
+    {
+      "sku": "AF-CBD-COLPOST-65x65-3.0",
+      "name": "Coloured Steel Post 65x65mm × 3.0m",
+      "description": "Coloured Steel Post 65x65mm × 3.0m",
+      "category": "post",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-CBD-COLPOST-65x65-3.0"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 55
+    },
+    {
+      "sku": "AF-CBD-GALVPOST-50x50-2.4",
+      "name": "P/Coated Galvanised Post 50x50mm × 2.4m",
+      "description": "P/Coated Galvanised Post 50x50mm × 2.4m",
+      "category": "post",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-CBD-GALVPOST-50x50-2.4"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 55
+    },
+    {
+      "sku": "AF-CBD-GALVPOST-50x50-3.0",
+      "name": "P/Coated Galvanised Post 50x50mm × 3.0m",
+      "description": "P/Coated Galvanised Post 50x50mm × 3.0m",
+      "category": "post",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-CBD-GALVPOST-50x50-3.0"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 55
+    },
+    {
+      "sku": "AF-CBD-GALVPOST-65x65-2.4",
+      "name": "P/Coated Galvanised Post 65x65mm × 2.4m",
+      "description": "P/Coated Galvanised Post 65x65mm × 2.4m",
+      "category": "post",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-CBD-GALVPOST-65x65-2.4"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 55
+    },
+    {
+      "sku": "AF-CBD-GALVPOST-65x65-3.0",
+      "name": "P/Coated Galvanised Post 65x65mm × 3.0m",
+      "description": "P/Coated Galvanised Post 65x65mm × 3.0m",
+      "category": "post",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-CBD-GALVPOST-65x65-3.0"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 55
+    },
+    {
+      "sku": "AF-CBD-GALVPOST-65x65-4.0",
+      "name": "P/Coated Galvanised Post 65x65mm × 4.0m",
+      "description": "P/Coated Galvanised Post 65x65mm × 4.0m",
+      "category": "post",
+      "unit": "length",
+      "default_price": 0,
+      "system_types": [
+        "COLORBOND"
+      ],
+      "metadata": {
+        "price_source": "amazing_fencing_combined_products.md (unpriced — awaiting AF price list)",
+        "bomCategory": "posts_and_mounting",
+        "supplier_order_code": "AF-CBD-GALVPOST-65x65-4.0"
+      },
+      "active": true,
+      "subCategory": "posts",
+      "sortPriority": 55
+    }
+  ],
+  "calculator_configs": [
+    {
+      "product_code": "COLORBOND",
+      "notes": "Amazing Fencing Colorbond overlay — source: catalogues/amazing-fencing/. Heights 1200–2400 in 300mm steps; 3 sheets per bay at both bay widths; cap rule ceil(posts/2); runs terminate in C-posts; in-ground mounting only. Components are UNPRICED pending an AF price list. Arrays here REPLACE base arrays (fields, profiles, extraRules). Gates: pre-built GP bundles (SGL/DBL × 900–2100mm) + hardware kits.",
+      "config": {
+        "heightUi": {
+          "mode": "options",
+          "heightOptions": [
+            1200,
+            1500,
+            1800,
+            2100,
+            2400
+          ]
+        },
+        "panelRules": {
+          "maxPanelWidthMm": 3100,
+          "maxPostSpacingMm": 3200
+        },
+        "defaults": {
+          "targetHeightMm": 1800,
+          "colour": "MN",
+          "mountingType": "in_ground"
+        },
+        "extraRules": [
+          {
+            "id": "af-cbd-fixings-not-calculated",
+            "type": "warning",
+            "when": {
+              "field": "panelWidthMm",
+              "op": ">=",
+              "value": 0
+            },
+            "message": "Fixing screws (tek / coloured hex) are not auto-calculated for Amazing Fencing Colorbond — add AF-CBD-SCREW-* items to the quote as extras."
+          }
+        ],
+        "colorbond": {
+          "capRule": "half_posts",
+          "bayWidths": [
+            2360,
+            3100
+          ],
+          "sheetsPerBay": {
+            "2360": 3,
+            "3100": 3
+          },
+          "tekPacksPerBay": 0,
+          "sheetHeightOffsetMm": 0,
+          "postSpacingExtraMm": 0,
+          "profiles": [
+            {
+              "code": "AF-PANEL",
+              "skuToken": "PANEL",
+              "heights": [
+                1200,
+                1500,
+                1800,
+                2100,
+                2400
+              ]
+            }
+          ],
+          "postHeightByFinished": {
+            "1200": {
+              "in_ground": 2100
+            },
+            "1500": {
+              "in_ground": 2100
+            },
+            "1800": {
+              "in_ground": 2400
+            },
+            "2100": {
+              "in_ground": 2700
+            },
+            "2400": {
+              "in_ground": 3000
+            }
+          },
+          "cutDownNoteByFinished": {
+            "1200": "2100mm C-post cut down 300mm on site (1800mm post height)"
+          },
+          "terminalPostNote": "C-posts at run ends/corners",
+          "skus": {
+            "sheet": "AF-CBD-SHEET-{sheetHeight}",
+            "rail": "AF-CBD-RAIL-{bayWidth}",
+            "channelPost": "AF-CBD-CPOST-{postHeight}",
+            "terminalPost": "AF-CBD-CPOST-{postHeight}",
+            "capSingle": "AF-CBD-CAP-100x100",
+            "capDouble": "AF-CBD-CAP-100x100",
+            "tekScrewPack": "AF-CBD-SCREW-TEK-35",
+            "sharkfin": "AF-CBD-SHARKFIN-NOT-AVAILABLE",
+            "concrete": "AF-CON-POSTMIX-30"
+          },
+          "gates": {
+            "mode": "bundle",
+            "bundle": {
+              "widthsMm": [
+                900,
+                1200,
+                1500,
+                1800,
+                2100
+              ],
+              "singleHardwareKitCodes": [
+                "BUTT-HINGE",
+                "D-LATCH"
+              ],
+              "doubleHardwareKitCodes": [
+                "DOUBLE-SET"
+              ],
+              "skus": {
+                "gate": "AF-CBD-GATE-STD-{leaf}-{gateWidth}",
+                "hardwareKit": "AF-CBD-GATEHW-{kitCode}"
+              }
+            }
+          }
+        },
+        "fields": [
+          {
+            "field_key": "colour_code",
+            "render_hint": "colour",
+            "label": "Colour",
+            "group": "colour",
+            "control_type": "colour_palette",
+            "data_type": "enum",
+            "required": true,
+            "default_value_json": "MN",
+            "options_json": [],
+            "options_when_json": [
+              {
+                "options_ref": "colours.standard"
+              }
+            ],
+            "visible_when_json": {},
+            "sort_order": 10,
+            "show_in_run_summary": true,
+            "settings_for": [
+              "run",
+              "segment"
+            ]
+          },
+          {
+            "field_key": "max_panel_width_mm",
+            "label": "Bay width",
+            "group": "bay_mounting",
+            "control_type": "select",
+            "data_type": "number",
+            "unit": "mm",
+            "required": true,
+            "default_value_json": 2360,
+            "options_json": [
+              {
+                "value": 2360,
+                "label": "2360mm bay (3 sheets)"
+              },
+              {
+                "value": 3100,
+                "label": "3100mm bay (3 sheets)"
+              }
+            ],
+            "visible_when_json": {},
+            "sort_order": 40,
+            "show_in_run_summary": true,
+            "settings_for": [
+              "run",
+              "segment"
+            ]
+          },
+          {
+            "field_key": "mounting_type",
+            "label": "Post mounting",
+            "group": "bay_mounting",
+            "control_type": "select",
+            "data_type": "enum",
+            "required": true,
+            "default_value_json": "in_ground",
+            "options_json": [
+              {
+                "value": "in_ground",
+                "label": "Concreted in ground"
+              }
+            ],
+            "visible_when_json": {},
+            "sort_order": 50,
+            "show_in_run_summary": true,
+            "settings_for": [
+              "run",
+              "segment"
+            ]
+          },
+          {
+            "field_key": "post_cap",
+            "label": "Include post caps",
+            "group": "bay_mounting",
+            "control_type": "toggle",
+            "data_type": "boolean",
+            "default_value_json": true,
+            "visible_when_json": {},
+            "sort_order": 55,
+            "settings_for": [
+              "run",
+              "segment"
+            ]
+          },
+          {
+            "field_key": "left_boundary_type",
+            "label": "Left Boundary",
+            "group": "bay_mounting",
+            "control_type": "select",
+            "data_type": "enum",
+            "default_value_json": "post",
+            "options_json": [
+              {
+                "value": "post",
+                "label": "Post"
+              },
+              {
+                "value": "wall",
+                "label": "Wall"
+              }
+            ],
+            "visible_when_json": {},
+            "sort_order": 70,
+            "settings_for": [
+              "run",
+              "segment"
+            ]
+          },
+          {
+            "field_key": "right_boundary_type",
+            "label": "Right Boundary",
+            "group": "bay_mounting",
+            "control_type": "select",
+            "data_type": "enum",
+            "default_value_json": "post",
+            "options_json": [
+              {
+                "value": "post",
+                "label": "Post"
+              },
+              {
+                "value": "wall",
+                "label": "Wall"
+              }
+            ],
+            "visible_when_json": {},
+            "sort_order": 80,
+            "settings_for": [
+              "run",
+              "segment"
+            ]
+          }
+        ],
+        "formGroups": [
+          {
+            "key": "colour",
+            "label": "Colour",
+            "sort_order": 20
+          },
+          {
+            "key": "bay_mounting",
+            "label": "Bay width, mounting and boundaries",
+            "sort_order": 30
+          }
+        ],
+        "gateRules": {
+          "supported": true,
+          "gateProductCode": "CB_GATE",
+          "defaultInfill": "horizontal",
+          "maxWidthMm": {
+            "pedestrianHorizontal": 2100,
+            "pedestrianVertical": 2100,
+            "slidingHorizontal": 2100,
+            "slidingVertical": 2100
+          },
+          "doubleSwingMaxLeafWidthMm": 1100
+        }
+      }
+    }
+  ]
+}

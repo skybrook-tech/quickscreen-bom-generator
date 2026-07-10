@@ -105,15 +105,72 @@ const COLORBOND_3BAY_EXPECTED: Array<[string, number]> = [
   ["XPSG-2700-ST65-MN", 2],
 ];
 
-// ─── Shared context (one DB load for all tests) ───────────────────────────────
+// AF Colorbond goes through the org overlay (supplier_product_calculator_configs)
+// — this is the only automated coverage of the deep-merged DB overlay path.
+const AF_COLORBOND_2BAY: CanonicalPayload = {
+  variables: {},
+  runs: [{
+    runId: "r3",
+    productCode: "COLORBOND",
+    variables: { colour_code: "MN", target_height_mm: 1800, max_panel_width_mm: 2360 },
+    leftBoundary: { type: "product_post" },
+    rightBoundary: { type: "product_post" },
+    corners: [],
+    segments: [{
+      segmentId: "s3",
+      segmentKind: "panel",
+      segmentWidthMm: 4720,
+      targetHeightMm: 1800,
+      variables: {},
+    }],
+  }],
+} as unknown as CanonicalPayload;
 
-async function loadSeededCtx() {
+const AF_COLORBOND_2BAY_EXPECTED: Array<[string, number]> = [
+  ["AF-CBD-CAP-100x100", 2],   // capRule half_posts: ceil(4 channel posts / 2)
+  ["AF-CBD-CPOST-2400", 6],    // 4 channel + 2 terminal C-posts
+  ["AF-CBD-RAIL-2360", 4],
+  ["AF-CBD-SHEET-1800", 6],    // 3 sheets × 2 bays
+  ["AF-CON-POSTMIX-30", 3],    // 1 interior join + 2 terminal footings
+];
+
+const AF_TIMBER_BUTTED: CanonicalPayload = {
+  variables: {},
+  runs: [{
+    runId: "r4",
+    productCode: "TIMBER_PALING",
+    variables: { paling_style: "butted", species: "pine", target_height_mm: 1800 },
+    leftBoundary: { type: "product_post" },
+    rightBoundary: { type: "product_post" },
+    corners: [],
+    segments: [{
+      segmentId: "s4",
+      segmentKind: "panel",
+      segmentWidthMm: 4800,
+      targetHeightMm: 1800,
+      variables: {},
+    }],
+  }],
+} as unknown as CanonicalPayload;
+
+const AF_TIMBER_BUTTED_EXPECTED: Array<[string, number]> = [
+  ["AF-CON-RAPID-30", 3],
+  ["AF-NAIL-COIL-45-250", 2],
+  ["AF-PAL-100x16-1800", 54],
+  ["AF-POST-PINE-100x75-2400", 3],
+  ["AF-RAIL-PINE-75x38-4800", 3],
+  ["AF-SCR-BB-14g-100-500", 1],
+];
+
+// ─── Shared context (one DB load per org for all tests) ───────────────────────
+
+async function loadSeededCtx(orgSlug: string) {
   assert(SERVICE_ROLE_KEY, "SUPABASE_SERVICE_ROLE_KEY must be set for DB tests");
   const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
   const { data: org, error } = await admin
-    .from("organisations").select("id").eq("slug", "glass-outlet").single();
-  if (error || !org) throw new Error(`glass-outlet org not found: ${error?.message}`);
+    .from("organisations").select("id").eq("slug", orgSlug).single();
+  if (error || !org) throw new Error(`${orgSlug} org not found: ${error?.message}`);
 
   const [dbComponents, dbPricingRules, configs] = await Promise.all([
     loadDbComponents(admin, org.id),
@@ -124,10 +181,14 @@ async function loadSeededCtx() {
   return { ctx, dbComponents };
 }
 
-const seeded = RUN ? await loadSeededCtx() : null;
+const seeded = RUN ? await loadSeededCtx("glass-outlet") : null;
+const seededAf = RUN ? await loadSeededCtx("amazing-fencing") : null;
 
-function componentsOf(payload: CanonicalPayload): Array<[string, number]> {
-  const result = calculateLocalBom(payload, "tier1", seeded!.ctx);
+function componentsOf(
+  payload: CanonicalPayload,
+  ctx = seeded!.ctx,
+): Array<[string, number]> {
+  const result = calculateLocalBom(payload, "tier1", ctx);
   assertEquals(result.errors ?? [], [], "engine returned errors");
   return (result.lines ?? [])
     .map((l) => [l.sku, l.quantity] as [string, number])
@@ -171,6 +232,35 @@ Deno.test({
     for (const payload of [QSHS_10M, COLORBOND_3BAY]) {
       for (const [sku] of componentsOf(payload)) {
         assert(catalogue.has(sku), `emitted SKU not in seeded catalogue: ${sku}`);
+      }
+    }
+  },
+});
+
+Deno.test({
+  name: "DB-I05 AF COLORBOND run applies the org overlay (capRule, C-post terminals, AF SKUs)",
+  ignore: !RUN,
+  fn: () => {
+    assertEquals(componentsOf(AF_COLORBOND_2BAY, seededAf!.ctx), AF_COLORBOND_2BAY_EXPECTED);
+  },
+});
+
+Deno.test({
+  name: "DB-I06 AF TIMBER_PALING run emits the expected components (seeded DB, prices ignored)",
+  ignore: !RUN,
+  fn: () => {
+    assertEquals(componentsOf(AF_TIMBER_BUTTED, seededAf!.ctx), AF_TIMBER_BUTTED_EXPECTED);
+  },
+});
+
+Deno.test({
+  name: "DB-I07 every AF-emitted SKU resolves against AF's seeded catalogue",
+  ignore: !RUN,
+  fn: () => {
+    const catalogue = new Set(seededAf!.dbComponents.map((c) => c.sku));
+    for (const payload of [AF_COLORBOND_2BAY, AF_TIMBER_BUTTED]) {
+      for (const [sku] of componentsOf(payload, seededAf!.ctx)) {
+        assert(catalogue.has(sku), `emitted SKU not in AF seeded catalogue: ${sku}`);
       }
     }
   },

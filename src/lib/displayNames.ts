@@ -5,6 +5,8 @@ export const SYSTEM_NAMES: Record<string, string> = {
   BAYG: "BAY-G Infill Panels",
   QS_GATE: "QuickScreen Gate",
   COLORBOND: "Colorbond Steel Fence",
+  CB_GATE: "Colorbond Gate",
+  TIMBER_PALING: "Timber Paling Fence",
 };
 
 export const COLOUR_DISPLAY_NAMES: Record<string, string> = {

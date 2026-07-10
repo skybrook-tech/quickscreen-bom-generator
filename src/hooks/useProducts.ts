@@ -26,6 +26,13 @@ export interface Product {
   };
 }
 
+// The Glass Outlet build-time fixtures (localSeedData) are ONLY a valid
+// fallback when no backend is configured (offline dev). With a live backend,
+// falling back to them on error/empty would show Glass Outlet's catalogue to
+// OTHER tenant orgs (the products table is RLS-scoped per org) — fail loudly
+// with an error/empty state instead of silently showing the wrong tenant.
+const OFFLINE_FENCE_PRODUCTS = isSupabaseConfigured ? [] : localFenceProducts;
+
 export function useProducts() {
   return useQuery({
     queryKey: ['products'],
@@ -37,8 +44,10 @@ export function useProducts() {
         .select('id, name, system_type, product_type, description, image_url, active, sort_order, metadata')
         .order('active', { ascending: false })
         .order('sort_order', { ascending: true });
-      if (error) return localProducts;
-      return data && data.length > 0 ? (data as Product[]) : localProducts;
+      if (error) throw error;
+      // Empty is truthful (e.g. an org before its catalogue is seeded) — never
+      // substitute another org's fixtures.
+      return (data ?? []) as Product[];
     },
   });
 }
@@ -52,6 +61,6 @@ export function useFenceProducts() {
       ? query.data.filter(
           (p) => p.product_type === 'fence' || (!p.product_type && localFenceProducts.some((lp) => lp.system_type === p.system_type)),
         )
-      : localFenceProducts,
+      : OFFLINE_FENCE_PRODUCTS,
   };
 }
