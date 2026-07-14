@@ -20,6 +20,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
+import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -122,7 +123,12 @@ async function main() {
       .upload(key, buffer, { contentType: CONTENT_TYPES[ext] ?? "application/octet-stream", upsert: true });
     if (uploadError) throw new Error(`Upload failed for ${slug}: ${uploadError.message}`);
 
-    const logoUrl = `${supabaseUrl}/storage/v1/object/public/${BUCKET}/${key}`;
+    // Cache-bust: the storage key is stable across re-seeds, so browsers/CDN would
+    // keep serving a stale logo after a swap. A content-hash query string changes
+    // the URL only when the bytes change, forcing a refetch while staying cached
+    // between identical seeds. (Storage ignores the query param on public objects.)
+    const hash = crypto.createHash("sha1").update(buffer).digest("hex").slice(0, 10);
+    const logoUrl = `${supabaseUrl}/storage/v1/object/public/${BUCKET}/${key}?v=${hash}`;
     const { error: updateError } = await supabase
       .from("organisations")
       .update({ logo_url: logoUrl })
