@@ -91,7 +91,7 @@
       },
       "system_types": {
         "type": "array",
-        "description": "Which fencing systems this SKU applies to. Must be a subset of ['QSHS','VS','XPL','BAYG','GATE'] per the DB CHECK constraint.",
+        "description": "Which fencing systems this SKU applies to. Must match the chk_system_types_values DB CHECK constraint (the init migration + later migrations) — extend both together.",
         "items": {
           "type": "string",
           "enum": [
@@ -100,7 +100,8 @@
             "XPL",
             "BAYG",
             "GATE",
-            "COLORBOND"
+            "COLORBOND",
+            "TIMBER_PALING"
           ]
         }
       },

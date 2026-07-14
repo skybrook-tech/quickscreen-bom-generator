@@ -1,0 +1,87 @@
+{
+  "fields": [
+    {
+      "field_key": "paling_style",
+      "label": "Paling style",
+      "group": "style_species",
+      "control_type": "select",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "butted",
+      "options_json": [
+        { "value": "butted", "label": "Butted (single layer)" },
+        { "value": "lapped_capped", "label": "Lapped & capped (two layers + capping rail)" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 10,
+      "show_in_run_summary": true,
+      "settings_for": ["run", "segment"]
+    },
+    {
+      "field_key": "species",
+      "label": "Timber",
+      "group": "style_species",
+      "control_type": "select",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "pine",
+      "options_json": [
+        { "value": "pine", "label": "Treated pine (CCA H3/H4)" },
+        { "value": "hardwood", "label": "Hardwood posts & rails (H4)" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 20,
+      "show_in_run_summary": true,
+      "settings_for": ["run", "segment"]
+    },
+    {
+      "field_key": "mounting_type",
+      "label": "Post mounting",
+      "group": "posts_boundaries",
+      "control_type": "select",
+      "data_type": "enum",
+      "required": true,
+      "default_value_json": "in_ground",
+      "options_json": [
+        { "value": "in_ground", "label": "Concreted in ground" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 30,
+      "settings_for": ["run", "segment"]
+    },
+    {
+      "field_key": "left_boundary_type",
+      "label": "Left Boundary",
+      "group": "posts_boundaries",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "post",
+      "options_json": [
+        { "value": "post", "label": "Post" },
+        { "value": "wall", "label": "Wall" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 40,
+      "settings_for": ["run", "segment"]
+    },
+    {
+      "field_key": "right_boundary_type",
+      "label": "Right Boundary",
+      "group": "posts_boundaries",
+      "control_type": "select",
+      "data_type": "enum",
+      "default_value_json": "post",
+      "options_json": [
+        { "value": "post", "label": "Post" },
+        { "value": "wall", "label": "Wall" }
+      ],
+      "visible_when_json": {},
+      "sort_order": 50,
+      "settings_for": ["run", "segment"]
+    }
+  ],
+  "fieldGroups": [
+    { "key": "style_species", "label": "Style and timber", "sort_order": 20 },
+    { "key": "posts_boundaries", "label": "Posts and boundaries", "sort_order": 30 }
+  ]
+}

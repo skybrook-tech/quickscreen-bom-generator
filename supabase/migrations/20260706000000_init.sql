@@ -1,4 +1,4 @@
--- 001_init.sql — consolidated schema (squash of former migrations 001–032, 2026-07-06)
+-- 20260706000000_init.sql — consolidated schema (squash of former migrations 001–032, 2026-07-06)
 --
 -- Generated from `supabase db dump --local` at migration head 032, after
 -- dropping the dead data-driven-engine tables (rule_sets, rule_versions,
@@ -13,8 +13,9 @@
 -- the on_auth_user_created trigger (appended manually below — pg_dump does not
 -- emit triggers on auth.users).
 --
--- Catalogue/pricing DATA is seeded separately: `npm run seed:products`
--- (supabase/seeds/glass-outlet/products/*.json) + seeds/organizations.sql.
+-- Catalogue/pricing DATA is seeded separately: org rows via `npm run seed:orgs`
+-- (per-org seeds/<slug>/org.json), catalogue via `npm run seed:products`
+-- (supabase/seeds/<slug>/products/*.json).
 
 
 

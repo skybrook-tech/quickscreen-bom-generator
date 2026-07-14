@@ -70,16 +70,19 @@ export const lineKey = (line: BOMLineItem) =>
 const bomGroupKey = (line: BOMLineItem) =>
   `${line.sku}|${line.category}|${line.description}|${line.unit}`;
 
+// Gate UI product codes end in "_GATE" (QS_GATE, CB_GATE, …).
+const isGateProductCode = (code?: string) => !!code && code.endsWith("_GATE");
+
 export function sourceFromLine(line: BOMLineItem): BOMSource[] {
   return [
     {
       scopeKind:
-        line.productCode === "QS_GATE" || line.segmentId?.includes("gate")
+        isGateProductCode(line.productCode) || line.segmentId?.includes("gate")
           ? "gate"
           : "fence_run",
       scopeId: line.segmentId ?? line.runId ?? "global",
       scopeLabel:
-        line.productCode === "QS_GATE" ? "Gate" : line.runId ? "Run" : "Global",
+        isGateProductCode(line.productCode) ? "Gate" : line.runId ? "Run" : "Global",
       qty: line.quantity,
     },
   ];
@@ -499,7 +502,7 @@ export function buildRunFromDescription(
         segmentKind: "gate_opening",
         segmentWidthMm: gateWidth,
         targetHeightMm,
-        gateProductCode: "QS_GATE",
+        gateProductCode: config?.gateRules.gateProductCode ?? "QS_GATE",
         positionOnSegment: gateCenterFraction,
         gateAnchor: "center",
         ...canvasMeta,
@@ -759,7 +762,7 @@ export function buildConfirmGatePayload(
       segmentKind: "gate_opening",
       segmentWidthMm: gateWidth,
       targetHeightMm,
-      gateProductCode: "QS_GATE",
+      gateProductCode: config?.gateRules.gateProductCode ?? "QS_GATE",
       variables: gateVariables,
     };
     const rightSegment: CanonicalSegment = {

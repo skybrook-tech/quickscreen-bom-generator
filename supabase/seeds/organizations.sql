@@ -1,8 +1,0 @@
--- Seed the first org with full theme config in branding JSONB
-INSERT INTO organisations (name, slug, branding)
-VALUES (
-  'The Glass Outlet',
-  'glass-outlet',
-  '{"cssVars":{"--brand-bg":"#dadada","--brand-card":"#ffffff","--brand-border":"#b8b8b8","--brand-accent":"90 138 50","--brand-accent-hover":"#4a7228","--brand-muted":"#666666","--brand-text":"#1a1a1a","--brand-header-bg":"#1a1a1a","--brand-header-text":"#ffffff","--brand-radius":"0.375rem","--brand-radius-sm":"0.25rem"},"branding":{"title":"FENCE","titleItalic":"builder","subtitle":"QuickScreen aluminium slat fencing calculator","hideThemeToggle":true}}'
-)
-ON CONFLICT (slug) DO UPDATE SET branding = EXCLUDED.branding;

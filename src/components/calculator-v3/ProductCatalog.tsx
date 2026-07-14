@@ -1,7 +1,6 @@
-import { GlassOutletLogo } from "../brand/GlassOutletLogo";
+import { BrandLogo } from "../brand/BrandLogo";
 import { useFenceProducts } from "../../hooks/useProducts";
 import { useAllCalculatorConfigs } from "../../hooks/useCalculatorConfig";
-import { localFenceProducts } from "../../lib/localSeedData";
 import { DescribeFenceBox } from "../calculator/DescribeFenceBox";
 import type { ParseResult } from "../../lib/describeFenceParser";
 import type { Product } from "../../hooks/useProducts";
@@ -64,8 +63,10 @@ function ProductCard({
 }
 
 export function ProductCatalog({ onPick, onDescribeApply, initialDescription = "" }: ProductCatalogProps) {
+  // Org-scoped via RLS; useFenceProducts never substitutes another org's
+  // fixtures when a backend is configured (fail-empty, not fail-wrong-tenant).
   const fenceProductsQuery = useFenceProducts();
-  const products = fenceProductsQuery.data ?? localFenceProducts;
+  const products = fenceProductsQuery.data;
   const allConfigs = useAllCalculatorConfigs();
   const configsLoading = !allConfigs;
 
@@ -75,11 +76,7 @@ export function ProductCatalog({ onPick, onDescribeApply, initialDescription = "
       <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:44px_44px]" />
 
       <div className="relative mx-auto flex min-h-full max-w-5xl flex-col items-center gap-8 px-5 py-12">
-        <GlassOutletLogo
-          className="justify-center text-brand-primary"
-          iconClassName="h-14 w-16 sm:h-16 sm:w-20"
-          textClassName="text-3xl sm:text-4xl"
-        />
+        <BrandLogo size="lg" />
 
         <div className="text-center">
           <h1 className="text-2xl font-black tracking-tight text-brand-text sm:text-3xl">
@@ -101,9 +98,21 @@ export function ProductCatalog({ onPick, onDescribeApply, initialDescription = "
           ))}
         </div>
 
-        {configsLoading && (
+        {(configsLoading || fenceProductsQuery.isLoading) && (
           <p className="flex items-center gap-2 text-xs font-semibold text-brand-muted">
             <Loader2 size={14} className="animate-spin" /> Loading product options…
+          </p>
+        )}
+
+        {fenceProductsQuery.isError && (
+          <p className="text-xs font-semibold text-red-500">
+            Couldn't load your product catalogue — check your connection and refresh.
+          </p>
+        )}
+
+        {!fenceProductsQuery.isLoading && !fenceProductsQuery.isError && products.length === 0 && (
+          <p className="text-xs font-semibold text-brand-muted">
+            No products are set up for your organisation yet.
           </p>
         )}
 

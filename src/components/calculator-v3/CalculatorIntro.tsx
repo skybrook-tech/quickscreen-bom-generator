@@ -1,4 +1,4 @@
-import { GlassOutletLogo } from "../brand/GlassOutletLogo";
+import { BrandLogo } from "../brand/BrandLogo";
 import { JobNameEditor } from "../calculator/JobNameEditor";
 
 interface CalculatorIntroProps {
@@ -18,11 +18,7 @@ export function CalculatorIntro({
       <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:44px_44px]" />
       <div className="relative mx-auto flex min-h-full max-w-5xl flex-col items-center justify-center gap-8 px-5 py-12 text-center">
         <div className="space-y-8">
-          <GlassOutletLogo
-            className="justify-center text-brand-primary"
-            iconClassName="h-20 w-24 sm:h-24 sm:w-28 lg:h-28 lg:w-32"
-            textClassName="text-5xl sm:text-7xl lg:text-8xl"
-          />
+          <BrandLogo size="xl" className="mx-auto" />
           <form
             className="mx-auto w-full max-w-xl rounded-3xl border border-brand-border/70 bg-brand-card/80 p-5 text-left shadow-2xl backdrop-blur"
             onSubmit={(event) => {

@@ -12,6 +12,25 @@ export type TenantTheme = {
   branding: TenantBranding;
 };
 
+// Words ignored when deriving an org's initials badge.
+const INITIAL_STOPWORDS = new Set(['the', 'a', 'an', 'and', 'of', '&']);
+
+/**
+ * Derive a short initials badge from an org name for the no-logo fallback.
+ * Drops leading articles/conjunctions, takes the first letter of the first two
+ * significant words: "The Glass Outlet" → "GO", "Amazing Fencing" → "AF".
+ * A single significant word falls back to its first two characters ("Acme" → "AC").
+ */
+export function orgInitials(name: string | null | undefined): string {
+  const words = (name ?? '')
+    .trim()
+    .split(/\s+/)
+    .filter((w) => w && !INITIAL_STOPWORDS.has(w.toLowerCase()));
+  if (words.length === 0) return '?';
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return (words[0][0] + words[1][0]).toUpperCase();
+}
+
 type ContrastPair = { textVar: string; bgVar: string; threshold: number };
 
 const CONTRAST_PAIRS: ContrastPair[] = [

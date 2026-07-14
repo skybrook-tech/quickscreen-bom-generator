@@ -1,0 +1,25 @@
+{
+  "name": "Amazing Fencing",
+  "slug": "amazing-fencing",
+  "branding": {
+    "cssVars": {
+      "--brand-bg": "#dadada",
+      "--brand-card": "#ffffff",
+      "--brand-border": "#b8b8b8",
+      "--brand-accent": "196 88 27",
+      "--brand-accent-hover": "#a34a15",
+      "--brand-muted": "#666666",
+      "--brand-text": "#1a1a1a",
+      "--brand-header-bg": "#1f1a16",
+      "--brand-header-text": "#ffffff",
+      "--brand-radius": "0.375rem",
+      "--brand-radius-sm": "0.25rem"
+    },
+    "branding": {
+      "title": "FENCE",
+      "titleItalic": "builder",
+      "subtitle": "Amazing Fencing calculator",
+      "hideThemeToggle": true
+    }
+  }
+}

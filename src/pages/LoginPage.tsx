@@ -35,7 +35,7 @@ export function LoginPage() {
           <h1 className="text-brand-text text-2xl font-bold">
             QuickScreen BOM Generator
           </h1>
-          <p className="text-brand-muted text-sm mt-1">The Glass Outlet</p>
+          {/* Pre-login there is no org context — show the neutral platform brand. */}
         </div>
 
         <div className="bg-brand-card border border-brand-border rounded-lg p-6">
