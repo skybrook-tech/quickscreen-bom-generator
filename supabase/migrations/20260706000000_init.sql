@@ -1,4 +1,4 @@
--- 001_init.sql — consolidated schema (squash of former migrations 001–032, 2026-07-06)
+-- 20260706000000_init.sql — consolidated schema (squash of former migrations 001–032, 2026-07-06)
 --
 -- Generated from `supabase db dump --local` at migration head 032, after
 -- dropping the dead data-driven-engine tables (rule_sets, rule_versions,

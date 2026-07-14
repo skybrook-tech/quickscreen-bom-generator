@@ -91,7 +91,7 @@
       },
       "system_types": {
         "type": "array",
-        "description": "Which fencing systems this SKU applies to. Must match the chk_system_types_values DB CHECK constraint (001_init.sql + later migrations) — extend both together.",
+        "description": "Which fencing systems this SKU applies to. Must match the chk_system_types_values DB CHECK constraint (the init migration + later migrations) — extend both together.",
         "items": {
           "type": "string",
           "enum": [
