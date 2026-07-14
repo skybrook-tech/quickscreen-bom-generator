@@ -13,8 +13,9 @@
 -- the on_auth_user_created trigger (appended manually below — pg_dump does not
 -- emit triggers on auth.users).
 --
--- Catalogue/pricing DATA is seeded separately: `npm run seed:products`
--- (supabase/seeds/glass-outlet/products/*.json) + seeds/organizations.sql.
+-- Catalogue/pricing DATA is seeded separately: org rows via `npm run seed:orgs`
+-- (per-org seeds/<slug>/org.json), catalogue via `npm run seed:products`
+-- (supabase/seeds/<slug>/products/*.json).
 
 
 

@@ -33,6 +33,8 @@ double_confirm_changes = true
 enable_confirmations = false
 
 
+# Org rows (name/slug/branding) are seeded from per-org org.json via
+# `npm run seed:orgs` (tools/seed-orgs.js) — a service-role upsert that also
+# works on remote. No SQL seed file is applied on `db reset`.
 [db.seed]
-enabled = true
-sql_paths = ['./seeds/organizations.sql']
+enabled = false

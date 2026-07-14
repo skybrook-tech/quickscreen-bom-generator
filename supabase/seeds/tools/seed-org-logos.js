@@ -112,7 +112,7 @@ async function main() {
     if (orgError) throw new Error(`Failed to look up org "${slug}": ${orgError.message}`);
     if (!org) {
       throw new Error(
-        `Found ${path.basename(filePath)} for "${slug}" but no organisations row with that slug — seed the org first (organizations.sql).`,
+        `Found ${path.basename(filePath)} for "${slug}" but no organisations row with that slug — seed the org first (npm run seed:orgs).`,
       );
     }
 

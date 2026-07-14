@@ -4,17 +4,26 @@ Seed data is organised **per tenant org**, one directory per org slug:
 
 ```
 supabase/seeds/
-  organizations.sql            # org rows (name, slug, branding) — idempotent upserts
-  seed-auth.js                 # test/admin users per org (ORGS array)
+  seed-auth.js                 # test/admin login fixtures per org (USERS_BY_SLUG)
   schemas/                     # JSON Schemas the product seeder validates against
+  tools/orgs.js                # shared org.json loader (single source of org identity)
+  tools/seed-orgs.js           # upserts organisations rows from org.json
   tools/seed-products.js       # the product/catalogue seeder (see "Commands")
+  tools/seed-org-logos.js      # uploads each org's logo, sets organisations.logo_url
   glass-outlet/
+    org.json                   # org row: name, slug, branding (incl. cssVars)
     products/*.json            # per-product seed files (org_slug: "glass-outlet")
     seed-images.js             # GO product images (org-specific, see warning inside)
-    assets/
+    assets/logo.png            # org logo (optional; falls back to an initials badge)
   amazing-fencing/
+    org.json                   # org row: name, slug, branding
     products/*.json            # per-product seed files (org_slug: "amazing-fencing")
 ```
+
+Each org's identity + branding lives in **`<slug>/org.json`** (`name`, `slug`,
+`branding`), upserted by `npm run seed:orgs` — a service-role upsert that works
+the same locally and on remote (no `psql`), and **never overwrites live branding
+without `--force`**. It replaces the old `organizations.sql`.
 
 Each `products/*.json` file carries `org_slug` plus up to four sections, applied
 in dependency order: `products` → `product_components` → `pricing_rules` →
@@ -27,28 +36,36 @@ on a mismatch, so a copy-pasted file can't seed one org's SKUs into another.
 
 | Command | What it does |
 |---|---|
+| `npm run seed:orgs` | Upsert the `organisations` rows from every `<slug>/org.json` (insert-if-missing; preserves live branding) |
+| `npm run seed:orgs -- --org <slug>` | Upsert **one** org only — the onboarding default |
+| `npm run seed:orgs -- --force` | Also overwrite name + branding of existing orgs from `org.json` |
 | `npm run seed:products` | Seed **all** orgs' product files (upsert; respects the ownership guard below) |
 | `npm run seed:products -- --org <slug>` | Seed **one** org only — the onboarding default; never touches other orgs' rows |
 | `npm run seed:products -- --org <slug> --force` | Also overwrite rows edited in the app (`managed_by=ui`) and reclaim them for the seed |
 | `npm run seed:org-logos` | Upload each org's `assets/logo.*` to storage and set `organisations.logo_url` (all orgs) |
 | `npm run seed:org-logos -- --org <slug>` | Seed **one** org's logo only — the onboarding default |
-| `npm run seed:auth` | Create/verify test users for every org in the `ORGS` array (idempotent) |
-| `npm run db:reset` | Full reset: migrations + `organizations.sql` + all seeds — **only needed for schema changes**, never for onboarding |
+| `npm run seed:auth` | Create/verify test users for every org (from `org.json` + `USERS_BY_SLUG`; idempotent) |
+| `npm run db:reset` | Full reset: migrations + `seed:orgs` + `seed:products` + `seed:org-logos` + `seed:auth` — **only needed for schema changes**, never for onboarding |
 
-Remote variants (`seed:products:remote`, `seed:auth:remote`) read `.env.production`.
+Remote variants (`seed:orgs:remote`, `seed:products:remote`, `seed:org-logos:remote`,
+`seed:auth:remote`) read `.env.production`; `npm run db:seed-remote` chains push +
+all four in order. Because org rows are now a service-role upsert, **remote seeding
+no longer needs a manual `psql`.**
 
 ## Onboarding a new customer (no db reset)
 
 Everything is incremental and idempotent; a reset is only required for new
 migrations. For a new org `acme-fencing`:
 
-1. **Org row**: add an `INSERT ... ON CONFLICT (slug) DO UPDATE` block to
-   `organizations.sql` (keeps reset parity), then apply it to the live DB:
+1. **Org row**: create `supabase/seeds/acme-fencing/org.json`
+   (`name`, `slug: "acme-fencing"`, `branding`; copy an existing org's file as a
+   template), then upsert it:
    ```bash
-   psql "$DATABASE_URL" -f supabase/seeds/organizations.sql
+   npm run seed:orgs -- --org acme-fencing
    ```
-   ⚠️ This re-applies **branding** for existing orgs too (`DO UPDATE SET
-   branding`) — if an org's branding was changed live, update the SQL first.
+   Works against local or remote (reads `.env.local` / `.env.production`), no
+   `psql`. It **won't overwrite** an existing org's live branding — pass `--force`
+   to push `org.json` branding deliberately.
 2. **Catalogue**: create `supabase/seeds/acme-fencing/products/*.json`
    (`org_slug: "acme-fencing"`; copy an existing org's file as a template).
    If they reuse an existing product code (e.g. `COLORBOND`) with different
@@ -64,9 +81,10 @@ migrations. For a new org `acme-fencing`:
    run `npm run seed:org-logos -- --org acme-fencing`. **Omit this** to have the
    app render a generic initials badge (e.g. "AF") instead — nothing else is
    required. For the PDF export logo, prefer PNG/JPG (react-pdf can't render SVG).
-5. **Users**: add the org + users to the `ORGS` array in `seed-auth.js`, then
-   `npm run seed:auth`. (The signup trigger reads `user_metadata.org_id`;
-   the script verifies every profile landed in the intended org.)
+5. **Users**: add the org's login fixtures to `USERS_BY_SLUG` in `seed-auth.js`
+   (the org itself is already known from its `org.json`), then `npm run seed:auth`.
+   (The signup trigger reads `user_metadata.org_id`; the script verifies every
+   profile landed in the intended org.)
 6. Log in as the new org's user — the product picker shows only their
    `products` rows (RLS-scoped), and the header/catalogue/PDF show their logo (or
    initials badge).

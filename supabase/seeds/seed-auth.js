@@ -1,7 +1,8 @@
 // seed-auth.js
 //
-// Seeds test/admin auth users for every tenant org. Multi-org aware: add an
-// entry to ORGS below to seed users for a new org.
+// Seeds test/admin auth users for every tenant org. The org set + branding is
+// the canonical org.json list (loaded via tools/orgs.js); this file only owns
+// the *dev* login fixtures. Add users for a new org in USERS_BY_SLUG below.
 //
 // IMPORTANT: the handle_new_user trigger (on_auth_user_created) reads
 // raw_user_meta_data (= user_metadata) for org_id, NOT app_metadata. Users
@@ -10,6 +11,7 @@
 // profile actually landed in the intended org afterwards.
 import { createClient } from "@supabase/supabase-js";
 import dotenv from "dotenv";
+import { loadOrgDefs } from "./tools/orgs.js";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV || "local"}`, override: true });
 
@@ -27,27 +29,21 @@ const supabase = createClient(supabaseUrl, serviceRoleKey);
 
 const PASSWORD = "123456";
 
-const ORGS = [
-  {
-    slug: "glass-outlet",
-    name: "The Glass Outlet",
-    users: [
-      { email: "test@glass-outlet.com" },
-      // Admin unlocks the v3 trace panel at /fence-calculator
-      { email: "admin@glass-outlet.com", role: "admin" },
-    ],
-  },
-  {
-    slug: "amazing-fencing",
-    name: "Amazing Fencing",
-    users: [
-      { email: "test@amazing-fencing.com" },
-      { email: "admin@amazing-fencing.com", role: "admin" },
-    ],
-  },
-];
+// Dev login fixtures, keyed by org slug. Org identity/branding lives in each
+// org's org.json — this is only "who can log in" for local/testing.
+const USERS_BY_SLUG = {
+  "glass-outlet": [
+    { email: "test@glass-outlet.com" },
+    // Admin unlocks the v3 trace panel at /fence-calculator
+    { email: "admin@glass-outlet.com", role: "admin" },
+  ],
+  "amazing-fencing": [
+    { email: "test@amazing-fencing.com" },
+    { email: "admin@amazing-fencing.com", role: "admin" },
+  ],
+};
 
-async function resolveOrg({ slug, name }) {
+async function resolveOrg({ slug, name, branding }) {
   const { data: existing, error } = await supabase
     .from("organisations")
     .select("id")
@@ -56,11 +52,11 @@ async function resolveOrg({ slug, name }) {
   if (error) throw new Error(`org lookup (${slug}): ${error.message}`);
   if (existing) return existing;
 
-  // organizations.sql normally creates orgs on db reset; this fallback keeps
-  // the script usable against a database seeded another way.
+  // seed:orgs normally creates orgs first; this fallback (with branding from
+  // org.json) keeps the script usable standalone against an un-seeded org.
   const { data: created, error: insertError } = await supabase
     .from("organisations")
-    .insert({ name, slug })
+    .insert({ name, slug, branding })
     .select()
     .single();
   if (insertError) throw new Error(`org insert (${slug}): ${insertError.message}`);
@@ -135,10 +131,11 @@ async function ensureUser(org, { email, role }) {
 }
 
 async function main() {
-  for (const orgDef of ORGS) {
+  for (const orgDef of loadOrgDefs()) {
     const org = await resolveOrg(orgDef);
-    console.log(`${orgDef.slug} (${org.id}):`);
-    for (const user of orgDef.users) {
+    const users = USERS_BY_SLUG[orgDef.slug] ?? [];
+    console.log(`${orgDef.slug} (${org.id}): ${users.length} user(s)`);
+    for (const user of users) {
       await ensureUser({ ...org, slug: orgDef.slug }, user);
     }
   }

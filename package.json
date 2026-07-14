@@ -25,6 +25,8 @@
     "test:unit:static": "npx deno test --allow-read --allow-env supabase/functions/bom-calculator-static/",
     "test:unit:static:update": "npx deno test --allow-read --allow-write --allow-env supabase/functions/bom-calculator-static/engine_test.ts -- --update",
     "test:describe-fence": "node scripts/run-describe-fence-parser-tests.mjs",
+    "seed:orgs": "node supabase/seeds/tools/seed-orgs.js",
+    "seed:orgs:remote": "NODE_ENV=production node supabase/seeds/tools/seed-orgs.js",
     "seed:auth": "node supabase/seeds/seed-auth.js",
     "seed:auth:remote": "NODE_ENV=production node supabase/seeds/seed-auth.js",
     "seed:glass-outlet": "node supabase/seeds/glass-outlet/seed-images.js",
@@ -34,9 +36,9 @@
     "seed:org-logos:remote": "NODE_ENV=production node supabase/seeds/tools/seed-org-logos.js",
     "prices:import": "node scripts/import-glassoutlet-prices.mjs",
     "prices:brief-at": "node scripts/build-brief-at-pricing-seed.mjs",
-    "db:reset": "npx supabase@latest db reset && npm run seed:products && npm run seed:org-logos && npm run seed:auth",
+    "db:reset": "npx supabase@latest db reset && npm run seed:orgs && npm run seed:products && npm run seed:org-logos && npm run seed:auth",
     "db:push-remote": "npx supabase@latest db push",
-    "db:seed-remote": "npm run db:push-remote && npm run seed:products:remote && npm run seed:org-logos:remote",
+    "db:seed-remote": "npm run db:push-remote && npm run seed:orgs:remote && npm run seed:products:remote && npm run seed:org-logos:remote && npm run seed:auth:remote",
     "setup": "npx supabase@latest start && npm run db:reset"
   },
   "devDependencies": {
