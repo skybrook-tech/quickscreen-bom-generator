@@ -95,6 +95,20 @@ cross-org collision). **Product images** remain Glass-Outlet-only
 (`glass-outlet/seed-images.js`); see the warning in that file before adapting it
 (flat storage keys collide across orgs).
 
+## Pricing tiers are SPARSE
+
+`pricing_rules` stores **tier1 as the full price/qty-break schedule** and
+tier2/tier3 rows **only where that tier's price actually differs** (e.g. Amazing
+Fencing's timber trade tiers). The engine (`priceForSku`) overlays the requested
+tier's rows onto the tier1 base per `(rule, priority)` break at price time.
+
+Do **not** copy the same price across all three tiers — that was the pre-2026-07
+pattern (it tripled the table with no behavioural effect and hid the fact that
+tier pricing wasn't wired). The price importers under `scripts/` emit tier1 only.
+For a DB seeded before the slim, `tools/prune-duplicate-tier-rules.js` deletes
+the redundant tier2/3 exact-duplicates (dry-run by default, `--apply` to delete;
+rows whose price differs — including live customer edits — are never touched).
+
 ## Data ownership: `managed_by` (seed vs app edits)
 
 Two writers exist for catalogue/pricing data: the seed JSON in git, and —

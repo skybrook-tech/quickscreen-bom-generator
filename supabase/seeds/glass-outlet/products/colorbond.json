@@ -3041,52 +3041,8 @@
       "active": true
     },
     {
-      "sku": "CB-1500GS-B-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1500GS-B-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-1500GS-BS-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1500GS-BS-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1500GS-BS-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 41,
       "priority": 1,
@@ -3107,52 +3063,8 @@
       "active": true
     },
     {
-      "sku": "CB-1500GS-G-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1500GS-G-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-1500GS-M-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1500GS-M-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1500GS-M-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 41,
       "priority": 1,
@@ -3173,52 +3085,8 @@
       "active": true
     },
     {
-      "sku": "CB-1500GS-MN-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1500GS-MN-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-1500GS-P-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1500GS-P-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1500GS-P-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 41,
       "priority": 1,
@@ -3239,52 +3107,8 @@
       "active": true
     },
     {
-      "sku": "CB-1500GS-PB-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1500GS-PB-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-1500GS-SM-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1500GS-SM-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 41,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1500GS-SM-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 41,
       "priority": 1,
@@ -3305,52 +3129,8 @@
       "active": true
     },
     {
-      "sku": "CB-1800GS-B-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 71.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1800GS-B-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 71.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-1800GS-BS-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 71.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1800GS-BS-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 71.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1800GS-BS-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 71.76,
       "priority": 1,
@@ -3371,52 +3151,8 @@
       "active": true
     },
     {
-      "sku": "CB-1800GS-G-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 71.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1800GS-G-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 71.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-1800GS-M-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 61.36,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1800GS-M-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 61.36,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1800GS-M-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 61.36,
       "priority": 1,
@@ -3437,52 +3173,8 @@
       "active": true
     },
     {
-      "sku": "CB-1800GS-MN-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 71.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1800GS-MN-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 71.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-1800GS-P-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 71.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1800GS-P-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 71.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1800GS-P-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 71.76,
       "priority": 1,
@@ -3503,52 +3195,8 @@
       "active": true
     },
     {
-      "sku": "CB-1800GS-PB-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 71.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1800GS-PB-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 71.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-1800GS-SM-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 71.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1800GS-SM-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 71.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-1800GS-SM-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 71.76,
       "priority": 1,
@@ -3569,52 +3217,8 @@
       "active": true
     },
     {
-      "sku": "CB-2100GS-B-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 92.56,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-2100GS-B-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 92.56,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-2100GS-BS-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 92.56,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-2100GS-BS-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 92.56,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-2100GS-BS-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 92.56,
       "priority": 1,
@@ -3635,52 +3239,8 @@
       "active": true
     },
     {
-      "sku": "CB-2100GS-G-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 92.56,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-2100GS-G-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 92.56,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-2100GS-M-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 82.16,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-2100GS-M-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 82.16,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-2100GS-M-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 82.16,
       "priority": 1,
@@ -3701,52 +3261,8 @@
       "active": true
     },
     {
-      "sku": "CB-2100GS-MN-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 92.56,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-2100GS-MN-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 92.56,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-2100GS-P-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 92.56,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-2100GS-P-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 92.56,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-2100GS-P-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 92.56,
       "priority": 1,
@@ -3767,52 +3283,8 @@
       "active": true
     },
     {
-      "sku": "CB-2100GS-PB-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 92.56,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-2100GS-PB-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 92.56,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-2100GS-SM-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 92.56,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-2100GS-SM-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 92.56,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-2100GS-SM-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 92.56,
       "priority": 1,
@@ -3833,52 +3305,8 @@
       "active": true
     },
     {
-      "sku": "CB-CPOST-1800-B",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 8.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-1800-B",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 8.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-CPOST-1800-BS",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 8.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-1800-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 8.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-1800-BS",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 8.69,
       "priority": 1,
@@ -3899,52 +3327,8 @@
       "active": true
     },
     {
-      "sku": "CB-CPOST-1800-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 8.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-1800-G",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 8.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-CPOST-1800-MN",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 8.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-1800-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 8.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-1800-MN",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 8.69,
       "priority": 1,
@@ -3965,52 +3349,8 @@
       "active": true
     },
     {
-      "sku": "CB-CPOST-1800-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 8.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-1800-P",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 8.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-CPOST-1800-PB",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 8.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-1800-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 8.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-1800-PB",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 8.69,
       "priority": 1,
@@ -4031,52 +3371,8 @@
       "active": true
     },
     {
-      "sku": "CB-CPOST-1800-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 8.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-1800-SM",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 8.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-CPOST-2400-B",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 10.87,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-2400-B",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.87,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-2400-B",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 10.87,
       "priority": 1,
@@ -4097,52 +3393,8 @@
       "active": true
     },
     {
-      "sku": "CB-CPOST-2400-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.87,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-2400-BS",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 10.87,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-CPOST-2400-G",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 10.87,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-2400-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.87,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-2400-G",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 10.87,
       "priority": 1,
@@ -4163,52 +3415,8 @@
       "active": true
     },
     {
-      "sku": "CB-CPOST-2400-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.87,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-2400-MN",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 10.87,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-CPOST-2400-P",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 10.87,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-2400-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.87,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-2400-P",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 10.87,
       "priority": 1,
@@ -4229,52 +3437,8 @@
       "active": true
     },
     {
-      "sku": "CB-CPOST-2400-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.87,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-2400-PB",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 10.87,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-CPOST-2400-SM",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 10.87,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-2400-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.87,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-2400-SM",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 10.87,
       "priority": 1,
@@ -4295,52 +3459,8 @@
       "active": true
     },
     {
-      "sku": "CB-CPOST-3000-B",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 14.64,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-3000-B",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 14.64,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-CPOST-3000-BS",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 14.64,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-3000-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 14.64,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-3000-BS",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 14.64,
       "priority": 1,
@@ -4361,52 +3481,8 @@
       "active": true
     },
     {
-      "sku": "CB-CPOST-3000-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 14.64,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-3000-G",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 14.64,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-CPOST-3000-MN",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 14.64,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-3000-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 14.64,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-3000-MN",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 14.64,
       "priority": 1,
@@ -4427,52 +3503,8 @@
       "active": true
     },
     {
-      "sku": "CB-CPOST-3000-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 14.64,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-3000-P",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 14.64,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-CPOST-3000-PB",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 14.64,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-3000-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 14.64,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-3000-PB",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 14.64,
       "priority": 1,
@@ -4493,52 +3525,8 @@
       "active": true
     },
     {
-      "sku": "CB-CPOST-3000-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 14.64,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-CPOST-3000-SM",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 14.64,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GATE-R-830-B",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 4.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GATE-R-830-B",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 4.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GATE-R-830-B",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 4.69,
       "priority": 1,
@@ -4559,52 +3547,8 @@
       "active": true
     },
     {
-      "sku": "CB-GATE-R-830-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 4.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GATE-R-830-BS",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 4.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GATE-R-830-G",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 4.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GATE-R-830-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 4.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GATE-R-830-G",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 4.69,
       "priority": 1,
@@ -4625,52 +3569,8 @@
       "active": true
     },
     {
-      "sku": "CB-GATE-R-830-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 4.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GATE-R-830-MN",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 4.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GATE-R-830-P",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 4.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GATE-R-830-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 4.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GATE-R-830-P",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 4.69,
       "priority": 1,
@@ -4691,52 +3591,8 @@
       "active": true
     },
     {
-      "sku": "CB-GATE-R-830-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 4.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GATE-R-830-PB",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 4.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GATE-R-830-SM",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 4.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GATE-R-830-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 4.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GATE-R-830-SM",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 4.69,
       "priority": 1,
@@ -4757,52 +3613,8 @@
       "active": true
     },
     {
-      "sku": "CB-GLINE-1490-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1490-BS",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GLINE-1490-G",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1490-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1490-G",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 7.5,
       "priority": 1,
@@ -4823,52 +3635,8 @@
       "active": true
     },
     {
-      "sku": "CB-GLINE-1490-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1490-P",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GLINE-1490-PB",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1490-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1490-PB",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 7.5,
       "priority": 1,
@@ -4889,52 +3657,8 @@
       "active": true
     },
     {
-      "sku": "CB-GLINE-1490-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1490-SM",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GLINE-1790-BS",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1790-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1790-BS",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 18.65,
       "priority": 1,
@@ -4955,52 +3679,8 @@
       "active": true
     },
     {
-      "sku": "CB-GLINE-1790-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1790-G",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GLINE-1790-MN",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1790-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1790-MN",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 18.65,
       "priority": 1,
@@ -5021,52 +3701,8 @@
       "active": true
     },
     {
-      "sku": "CB-GLINE-1790-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1790-P",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GLINE-1790-PB",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1790-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1790-PB",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 18.65,
       "priority": 1,
@@ -5087,52 +3723,8 @@
       "active": true
     },
     {
-      "sku": "CB-GLINE-1790-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1790-SM",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GLINE-2090-BS",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-2090-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-2090-BS",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 22.19,
       "priority": 1,
@@ -5153,52 +3745,8 @@
       "active": true
     },
     {
-      "sku": "CB-GLINE-2090-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-2090-G",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GLINE-2090-MN",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-2090-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-2090-MN",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 22.19,
       "priority": 1,
@@ -5219,52 +3767,8 @@
       "active": true
     },
     {
-      "sku": "CB-GLINE-2090-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-2090-P",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GLINE-2090-PB",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-2090-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-2090-PB",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 22.19,
       "priority": 1,
@@ -5285,52 +3789,8 @@
       "active": true
     },
     {
-      "sku": "CB-GLINE-2090-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-2090-SM",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GZAG-1490-BS",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1490-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1490-BS",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 7.5,
       "priority": 1,
@@ -5351,52 +3811,8 @@
       "active": true
     },
     {
-      "sku": "CB-GZAG-1490-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1490-P",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GZAG-1490-PB",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1490-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1490-PB",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 7.5,
       "priority": 1,
@@ -5417,52 +3833,8 @@
       "active": true
     },
     {
-      "sku": "CB-GZAG-1790-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1790-BS",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GZAG-1790-G",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1790-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1790-G",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 18.65,
       "priority": 1,
@@ -5483,52 +3855,8 @@
       "active": true
     },
     {
-      "sku": "CB-GZAG-1790-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1790-MN",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GZAG-1790-P",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1790-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1790-P",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 18.65,
       "priority": 1,
@@ -5549,52 +3877,8 @@
       "active": true
     },
     {
-      "sku": "CB-GZAG-1790-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1790-PB",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GZAG-1790-SM",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1790-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1790-SM",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 18.65,
       "priority": 1,
@@ -5615,52 +3899,8 @@
       "active": true
     },
     {
-      "sku": "CB-GZAG-2090-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-2090-BS",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GZAG-2090-G",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-2090-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-2090-G",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 22.19,
       "priority": 1,
@@ -5681,52 +3921,8 @@
       "active": true
     },
     {
-      "sku": "CB-GZAG-2090-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-2090-MN",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GZAG-2090-P",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-2090-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-2090-P",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 22.19,
       "priority": 1,
@@ -5747,28 +3943,6 @@
       "active": true
     },
     {
-      "sku": "CB-GZAG-2090-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-2090-PB",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GZAG-2090-SM",
       "tier_code": "tier1",
       "rule": "qty >= 1",
@@ -5780,28 +3954,6 @@
       "active": true
     },
     {
-      "sku": "CB-GZAG-2090-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-2090-SM",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-HINGE-BS-2PK",
       "tier_code": "tier1",
       "rule": "qty >= 30",
@@ -5824,50 +3976,6 @@
       "active": true
     },
     {
-      "sku": "CB-HINGE-BS-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 30",
-      "price": 7.56,
-      "priority": 30,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-BS-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 8.22,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-BS-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 30",
-      "price": 7.56,
-      "priority": 30,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-BS-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 8.22,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-HINGE-G-2PK",
       "tier_code": "tier1",
       "rule": "qty >= 30",
@@ -5881,50 +3989,6 @@
     {
       "sku": "CB-HINGE-G-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 8.22,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-G-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 30",
-      "price": 7.56,
-      "priority": 30,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-G-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 8.22,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-G-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 30",
-      "price": 7.56,
-      "priority": 30,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-G-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 8.22,
       "priority": 1,
@@ -5956,50 +4020,6 @@
       "active": true
     },
     {
-      "sku": "CB-HINGE-M-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 30",
-      "price": 5.26,
-      "priority": 30,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-M-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 5.72,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-M-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 30",
-      "price": 5.26,
-      "priority": 30,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-M-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 5.72,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-HINGE-MN-2PK",
       "tier_code": "tier1",
       "rule": "qty >= 30",
@@ -6013,50 +4033,6 @@
     {
       "sku": "CB-HINGE-MN-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 8.22,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-MN-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 30",
-      "price": 7.56,
-      "priority": 30,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-MN-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 8.22,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-MN-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 30",
-      "price": 7.56,
-      "priority": 30,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-MN-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 8.22,
       "priority": 1,
@@ -6088,50 +4064,6 @@
       "active": true
     },
     {
-      "sku": "CB-HINGE-P-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 30",
-      "price": 7.56,
-      "priority": 30,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-P-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 8.22,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-P-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 30",
-      "price": 7.56,
-      "priority": 30,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-P-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 8.22,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-HINGE-PB-2PK",
       "tier_code": "tier1",
       "rule": "qty >= 30",
@@ -6145,50 +4077,6 @@
     {
       "sku": "CB-HINGE-PB-2PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 8.22,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-PB-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 30",
-      "price": 7.56,
-      "priority": 30,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-PB-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 8.22,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-PB-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 30",
-      "price": 7.56,
-      "priority": 30,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-PB-2PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 8.22,
       "priority": 1,
@@ -6220,50 +4108,6 @@
       "active": true
     },
     {
-      "sku": "CB-HINGE-SM-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 30",
-      "price": 7.56,
-      "priority": 30,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-SM-2PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 8.22,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-SM-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 30",
-      "price": 7.56,
-      "priority": 30,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-HINGE-SM-2PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 8.22,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-LATCH-B",
       "tier_code": "tier1",
       "rule": "qty >= 20",
@@ -6277,50 +4121,6 @@
     {
       "sku": "CB-LATCH-B",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 10.35,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-B",
-      "tier_code": "tier2",
-      "rule": "qty >= 20",
-      "price": 9.52,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-B",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.35,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-B",
-      "tier_code": "tier3",
-      "rule": "qty >= 20",
-      "price": 9.52,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-B",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 10.35,
       "priority": 1,
@@ -6352,50 +4152,6 @@
       "active": true
     },
     {
-      "sku": "CB-LATCH-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 20",
-      "price": 9.52,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.35,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-BS",
-      "tier_code": "tier3",
-      "rule": "qty >= 20",
-      "price": 9.52,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-BS",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 10.35,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-LATCH-G",
       "tier_code": "tier1",
       "rule": "qty >= 20",
@@ -6409,50 +4165,6 @@
     {
       "sku": "CB-LATCH-G",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 10.35,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 20",
-      "price": 9.52,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.35,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-G",
-      "tier_code": "tier3",
-      "rule": "qty >= 20",
-      "price": 9.52,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-G",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 10.35,
       "priority": 1,
@@ -6484,50 +4196,6 @@
       "active": true
     },
     {
-      "sku": "CB-LATCH-M",
-      "tier_code": "tier2",
-      "rule": "qty >= 20",
-      "price": 6.22,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-M",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 6.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-M",
-      "tier_code": "tier3",
-      "rule": "qty >= 20",
-      "price": 6.22,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-M",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 6.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-LATCH-MN",
       "tier_code": "tier1",
       "rule": "qty >= 20",
@@ -6541,50 +4209,6 @@
     {
       "sku": "CB-LATCH-MN",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 10.35,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 20",
-      "price": 9.52,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.35,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-MN",
-      "tier_code": "tier3",
-      "rule": "qty >= 20",
-      "price": 9.52,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-MN",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 10.35,
       "priority": 1,
@@ -6616,50 +4240,6 @@
       "active": true
     },
     {
-      "sku": "CB-LATCH-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 20",
-      "price": 9.52,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.35,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-P",
-      "tier_code": "tier3",
-      "rule": "qty >= 20",
-      "price": 9.52,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-P",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 10.35,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-LATCH-PB",
       "tier_code": "tier1",
       "rule": "qty >= 20",
@@ -6682,50 +4262,6 @@
       "active": true
     },
     {
-      "sku": "CB-LATCH-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 20",
-      "price": 9.52,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.35,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-PB",
-      "tier_code": "tier3",
-      "rule": "qty >= 20",
-      "price": 9.52,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-PB",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 10.35,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-LATCH-SM",
       "tier_code": "tier1",
       "rule": "qty >= 20",
@@ -6739,50 +4275,6 @@
     {
       "sku": "CB-LATCH-SM",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 10.35,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 20",
-      "price": 9.52,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.35,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-SM",
-      "tier_code": "tier3",
-      "rule": "qty >= 20",
-      "price": 9.52,
-      "priority": 20,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet Aluminium Pool Fence Prices.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-LATCH-SM",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 10.35,
       "priority": 1,
@@ -6803,52 +4295,8 @@
       "active": true
     },
     {
-      "sku": "CB-POSTCAP-DBL",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 1.6,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-POSTCAP-DBL",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 1.6,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-POSTCAP-SGL",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 1.26,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-POSTCAP-SGL",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 1.26,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-POSTCAP-SGL",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 1.26,
       "priority": 1,
@@ -6869,52 +4317,8 @@
       "active": true
     },
     {
-      "sku": "CB-RAIL-2365-B",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.98,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-2365-B",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 10.98,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-RAIL-2365-BS",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 10.98,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-2365-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.98,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-2365-BS",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 10.98,
       "priority": 1,
@@ -6935,52 +4339,8 @@
       "active": true
     },
     {
-      "sku": "CB-RAIL-2365-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.98,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-2365-G",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 10.98,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-RAIL-2365-MN",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 10.98,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-2365-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.98,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-2365-MN",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 10.98,
       "priority": 1,
@@ -7001,52 +4361,8 @@
       "active": true
     },
     {
-      "sku": "CB-RAIL-2365-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.98,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-2365-P",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 10.98,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-RAIL-2365-PB",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 10.98,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-2365-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.98,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-2365-PB",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 10.98,
       "priority": 1,
@@ -7067,52 +4383,8 @@
       "active": true
     },
     {
-      "sku": "CB-RAIL-2365-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 10.98,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-2365-SM",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 10.98,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-RAIL-3125-B",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 14.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-3125-B",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 14.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-3125-B",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 14.76,
       "priority": 1,
@@ -7133,52 +4405,8 @@
       "active": true
     },
     {
-      "sku": "CB-RAIL-3125-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 14.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-3125-BS",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 14.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-RAIL-3125-G",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 14.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-3125-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 14.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-3125-G",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 14.76,
       "priority": 1,
@@ -7199,52 +4427,8 @@
       "active": true
     },
     {
-      "sku": "CB-RAIL-3125-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 14.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-3125-MN",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 14.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-RAIL-3125-P",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 14.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-3125-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 14.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-3125-P",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 14.76,
       "priority": 1,
@@ -7265,52 +4449,8 @@
       "active": true
     },
     {
-      "sku": "CB-RAIL-3125-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 14.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-3125-PB",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 14.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-RAIL-3125-SM",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 14.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-3125-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 14.76,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-RAIL-3125-SM",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 14.76,
       "priority": 1,
@@ -7331,52 +4471,8 @@
       "active": true
     },
     {
-      "sku": "CB-SHARKFIN-B",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 19.92,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SHARKFIN-B",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 19.92,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-SHARKFIN-BS",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 19.92,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SHARKFIN-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 19.92,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SHARKFIN-BS",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 19.92,
       "priority": 1,
@@ -7397,52 +4493,8 @@
       "active": true
     },
     {
-      "sku": "CB-SHARKFIN-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 19.92,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SHARKFIN-G",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 19.92,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-SHARKFIN-M",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 17.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SHARKFIN-M",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 17.69,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SHARKFIN-M",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 17.69,
       "priority": 1,
@@ -7463,52 +4515,8 @@
       "active": true
     },
     {
-      "sku": "CB-SHARKFIN-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 19.92,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SHARKFIN-MN",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 19.92,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-SHARKFIN-P",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 19.92,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SHARKFIN-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 19.92,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SHARKFIN-P",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 19.92,
       "priority": 1,
@@ -7529,52 +4537,8 @@
       "active": true
     },
     {
-      "sku": "CB-SHARKFIN-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 19.92,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SHARKFIN-PB",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 19.92,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-SHARKFIN-SM",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 19.92,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SHARKFIN-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 19.92,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SHARKFIN-SM",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 19.92,
       "priority": 1,
@@ -7595,52 +4559,8 @@
       "active": true
     },
     {
-      "sku": "CB-SLEEPER-2365",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 20.02,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SLEEPER-2365",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 20.02,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-SLEEPER-3125",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 30.68,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SLEEPER-3125",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 30.68,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-SLEEPER-3125",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 30.68,
       "priority": 1,
@@ -7661,52 +4581,8 @@
       "active": true
     },
     {
-      "sku": "CB-TCGS-B",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 0.74,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-TCGS-B",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 0.74,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-TS-B-15PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 0.88,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-TS-B-15PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 0.88,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-TS-B-15PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 0.88,
       "priority": 1,
@@ -7727,52 +4603,8 @@
       "active": true
     },
     {
-      "sku": "CB-TS-BS-15PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 0.88,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-TS-BS-15PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 0.88,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-TS-G-15PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 0.88,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-TS-G-15PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 0.88,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-TS-G-15PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 0.88,
       "priority": 1,
@@ -7793,52 +4625,8 @@
       "active": true
     },
     {
-      "sku": "CB-TS-M-15PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 0.77,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-TS-M-15PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 0.77,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-TS-MN-15PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 0.88,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-TS-MN-15PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 0.88,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-TS-MN-15PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 0.88,
       "priority": 1,
@@ -7859,52 +4647,8 @@
       "active": true
     },
     {
-      "sku": "CB-TS-P-15PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 0.88,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-TS-P-15PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 0.88,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-TS-PB-15PK",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 0.88,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-TS-PB-15PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 0.88,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-TS-PB-15PK",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 0.88,
       "priority": 1,
@@ -7925,52 +4669,8 @@
       "active": true
     },
     {
-      "sku": "CB-TS-SM-15PK",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 0.88,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
-      "sku": "CB-TS-SM-15PK",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 0.88,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Glass Outlet CSV Glass Outlet colorbond and Supersleeper Pricelist.csv; verified 2026-04-19",
-      "active": true
-    },
-    {
       "sku": "CB-GLINE-1490-MN",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Colour/height availability to confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1490-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Colour/height availability to confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GLINE-1490-MN",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 7.5,
       "priority": 1,
@@ -7991,52 +4691,8 @@
       "active": true
     },
     {
-      "sku": "CB-GZAG-1490-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Colour/height availability to confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1490-MN",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Colour/height availability to confirm with supplier",
-      "active": true
-    },
-    {
       "sku": "CB-GZAG-1490-G",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Colour/height availability to confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1490-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Colour/height availability to confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1490-G",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 7.5,
       "priority": 1,
@@ -8057,52 +4713,8 @@
       "active": true
     },
     {
-      "sku": "CB-GZAG-1490-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Colour/height availability to confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GZAG-1490-SM",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 7.5,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Colour/height availability to confirm with supplier",
-      "active": true
-    },
-    {
       "sku": "CB-GTRIM-1790-MN",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-1790-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-1790-MN",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 18.65,
       "priority": 1,
@@ -8123,52 +4735,8 @@
       "active": true
     },
     {
-      "sku": "CB-GTRIM-1790-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-1790-G",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
       "sku": "CB-GTRIM-1790-SM",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-1790-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-1790-SM",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 18.65,
       "priority": 1,
@@ -8189,52 +4757,8 @@
       "active": true
     },
     {
-      "sku": "CB-GTRIM-1790-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-1790-BS",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
       "sku": "CB-GTRIM-1790-PB",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-1790-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-1790-PB",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 18.65,
       "priority": 1,
@@ -8255,52 +4779,8 @@
       "active": true
     },
     {
-      "sku": "CB-GTRIM-1790-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-1790-P",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 18.65,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
       "sku": "CB-GTRIM-2090-MN",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-2090-MN",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-2090-MN",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 22.19,
       "priority": 1,
@@ -8321,52 +4801,8 @@
       "active": true
     },
     {
-      "sku": "CB-GTRIM-2090-G",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-2090-G",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
       "sku": "CB-GTRIM-2090-SM",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-2090-SM",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-2090-SM",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 22.19,
       "priority": 1,
@@ -8387,28 +4823,6 @@
       "active": true
     },
     {
-      "sku": "CB-GTRIM-2090-BS",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-2090-BS",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
       "sku": "CB-GTRIM-2090-PB",
       "tier_code": "tier1",
       "rule": "qty >= 1",
@@ -8420,52 +4834,8 @@
       "active": true
     },
     {
-      "sku": "CB-GTRIM-2090-PB",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-2090-PB",
-      "tier_code": "tier3",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
       "sku": "CB-GTRIM-2090-P",
       "tier_code": "tier1",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-2090-P",
-      "tier_code": "tier2",
-      "rule": "qty >= 1",
-      "price": 22.19,
-      "priority": 1,
-      "valid_from": null,
-      "valid_to": null,
-      "notes": "Price estimated from GO-Line sibling height; GO-Trim not in the pricelist (Newcastle-only) — confirm with supplier",
-      "active": true
-    },
-    {
-      "sku": "CB-GTRIM-2090-P",
-      "tier_code": "tier3",
       "rule": "qty >= 1",
       "price": 22.19,
       "priority": 1,
