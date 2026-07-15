@@ -56,7 +56,6 @@ const ANOMALY_SKUS = new Set([
   "ENDURO-SSRES",
   "MR-FLGG-S",
 ]);
-const TIER_CODES = ["tier1", "tier2", "tier3"];
 
 function markdownCells(line) {
   return line
@@ -210,19 +209,21 @@ function rowsFromTable(table) {
 }
 
 function pricingRowsFor(entry) {
-  return TIER_CODES.flatMap((tierCode) =>
-    entry.tiers.map((tier) => ({
-      sku: entry.sku,
-      tier_code: tierCode,
-      rule: `qty >= ${tier.min_qty}`,
-      price: tier.unit_price,
-      priority: tier.min_qty,
-      valid_from: capturedDate,
-      valid_to: null,
-      notes: `Glass Outlet supplier portal; captured ${capturedDate}; ${entry.source_url}`,
-      active: true,
-    })),
-  );
+  // tier1 only: seeds store sparse tiers (tier1 base + tier2/3 rows only where
+  // a tier's price differs — the engine overlays at price time). Do NOT
+  // triplicate across TIER_CODES; that was the pre-2026-07 pattern the
+  // pricing-rules slim removed.
+  return entry.tiers.map((tier) => ({
+    sku: entry.sku,
+    tier_code: "tier1",
+    rule: `qty >= ${tier.min_qty}`,
+    price: tier.unit_price,
+    priority: tier.min_qty,
+    valid_from: capturedDate,
+    valid_to: null,
+    notes: `Glass Outlet supplier portal; captured ${capturedDate}; ${entry.source_url}`,
+    active: true,
+  }));
 }
 
 function productComponentFor(entry) {
@@ -403,7 +404,9 @@ BEGIN
     LOOP
       priority_value := (tier->>'min_qty')::int;
 
-      FOREACH tier_code_value IN ARRAY ARRAY['tier1','tier2','tier3']
+      -- tier1 only: seeds/DB store sparse tiers (tier1 base + overrides); the
+      -- engine overlays at price time. Do not triplicate across tiers.
+      FOREACH tier_code_value IN ARRAY ARRAY['tier1']
       LOOP
         UPDATE pricing_rules
         SET org_id = org_id_value,

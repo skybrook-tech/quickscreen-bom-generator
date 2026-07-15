@@ -105,7 +105,6 @@ const validateFile = ajv.compile(loadSchema('product-file'));
 
 const cache = {
   orgIdBySlug: new Map(),
-  componentIdBySku: new Map(), // key: `${orgId}|${sku}` → id
 };
 
 // ── managed_by ownership guard ──────────────────────────────────────────────
@@ -157,23 +156,30 @@ async function resolveOrgId(slug) {
   return data.id;
 }
 
-async function resolveComponentId(orgId, sku) {
-  const key = `${orgId}|${sku}`;
-  if (cache.componentIdBySku.has(key)) return cache.componentIdBySku.get(key);
-  const { data, error } = await supabase
-    .from('product_components')
-    .select('id')
-    .eq('org_id', orgId)
-    .eq('sku', sku)
-    .maybeSingle();
-  if (error) throw new Error(`resolveComponentId(${sku}): ${error.message}`);
-  if (!data) throw new Error(`product_component not found: sku=${sku}`);
-  cache.componentIdBySku.set(key, data.id);
-  return data.id;
-}
-
-function invalidateComponentCache() {
-  cache.componentIdBySku.clear();
+// Resolve many SKUs → component id in bulk (chunked `.in()` selects), instead of
+// one round trip per SKU. Fails loud listing any SKU with no component row.
+async function bulkResolveComponentIds(orgId, skus) {
+  const idBySku = new Map();
+  const distinct = [...new Set(skus)];
+  const CHUNK = 200; // keep PostgREST in() URLs well under length limits
+  for (let i = 0; i < distinct.length; i += CHUNK) {
+    const chunk = distinct.slice(i, i + CHUNK);
+    const { data, error } = await supabase
+      .from('product_components')
+      .select('id, sku')
+      .eq('org_id', orgId)
+      .in('sku', chunk);
+    if (error) throw new Error(`bulkResolveComponentIds: ${error.message}`);
+    for (const row of data ?? []) idBySku.set(row.sku, row.id);
+  }
+  const missing = distinct.filter((s) => !idBySku.has(s));
+  if (missing.length) {
+    throw new Error(
+      `product_component not found for ${missing.length} SKU(s): ` +
+      `${missing.slice(0, 10).join(', ')}${missing.length > 10 ? ` (+${missing.length - 10} more)` : ''}`,
+    );
+  }
+  return idBySku;
 }
 
 // ── Per-section upserters ───────────────────────────────────────────────────
@@ -232,7 +238,6 @@ async function upsertProductComponents(orgId, rows) {
     .from('product_components')
     .upsert(toUpsert, { onConflict: 'org_id,sku', ignoreDuplicates: false });
   if (error) throw new Error(`product_components: ${error.message}`);
-  invalidateComponentCache();
   const reclaimed = rows.filter((r) => managed.get(r.sku) === 'ui').length;
   console.log(
     `  product_components: ${toUpsert.length} upserted`
@@ -249,44 +254,85 @@ async function upsertPricingRules(orgId, rows) {
   // (e.g. price_catalogue.json).
   const ruleSkus = [...new Set(rows.map((r) => r.sku))];
   assertNotUiManaged(await fetchManagedBySku(orgId, ruleSkus), ruleSkus, 'pricing_rules');
-  // pricing_rules' unique index is partial (WHERE active = true), so
-  // supabase-js .upsert() with onConflict can't target it. Use check-then-insert/update.
-  let inserted = 0;
-  let updated = 0;
+
+  // pricing_rules' unique index is partial (WHERE active = true), so supabase-js
+  // .upsert() with onConflict can't target it. But we can still batch: resolve
+  // all component ids at once, bulk-fetch the existing ACTIVE rules for those
+  // components, then partition into a bulk INSERT (new) + a bulk upsert-by-id
+  // (existing). This turns ~2 round trips PER RULE (pathological against a
+  // remote DB — 14.8k rules ≈ 30k sequential requests) into a handful of batches.
+  const idBySku = await bulkResolveComponentIds(orgId, ruleSkus);
+  const componentIds = [...new Set(rows.map((r) => idBySku.get(r.sku)))];
+
+  // Bulk-fetch existing rules keyed by (component_id | tier_code | priority | active).
+  // `active` is in the key because the unique index is partial (WHERE active=true):
+  // inactive rows are unconstrained, so an inactive seed row that isn't matched
+  // gets re-inserted every run (a slow leak of duplicate inactive rows). Matching
+  // both states keeps re-seeding idempotent. A component can have many rules
+  // (tiers × qty-break priorities), so a chunk of 200 components can exceed
+  // PostgREST's 1000-row/response cap — page each chunk with .range() or truncated
+  // results would be mis-classified as inserts and collide with rows already there.
+  const existingIdByKey = new Map();
+  const READ_CHUNK = 200;
+  const PAGE = 1000;
+  for (let i = 0; i < componentIds.length; i += READ_CHUNK) {
+    const chunk = componentIds.slice(i, i + READ_CHUNK);
+    for (let from = 0; ; from += PAGE) {
+      const { data, error } = await supabase
+        .from('pricing_rules')
+        .select('id, component_id, tier_code, priority, active')
+        .in('component_id', chunk)
+        .range(from, from + PAGE - 1);
+      if (error) throw new Error(`pricing_rules bulk lookup: ${error.message}`);
+      for (const row of data ?? []) {
+        existingIdByKey.set(`${row.component_id}|${row.tier_code}|${row.priority}|${row.active}`, row.id);
+      }
+      if (!data || data.length < PAGE) break;
+    }
+  }
+
+  // Collapse incoming rows by their unique key (last wins — matches the old
+  // sequential "last update wins" behaviour and avoids a bulk-insert index clash
+  // if a file carries duplicate (sku, tier, priority) rows).
+  const rowByKey = new Map();
   for (const r of rows) {
-    const componentId = await resolveComponentId(orgId, r.sku);
-    const row = {
+    const componentId = idBySku.get(r.sku);
+    const priority = r.priority ?? 0;
+    const key = `${componentId}|${r.tier_code}|${priority}|${r.active}`;
+    rowByKey.set(key, {
       org_id: orgId,
       component_id: componentId,
       tier_code: r.tier_code,
       rule: r.rule ?? null,
       price: r.price,
-      priority: r.priority ?? 0,
+      priority,
       valid_from: r.valid_from ?? null,
       valid_to: r.valid_to ?? null,
       notes: r.notes ?? null,
       active: r.active,
-    };
-    const { data: existing, error: lookupErr } = await supabase
-      .from('pricing_rules')
-      .select('id')
-      .eq('component_id', componentId)
-      .eq('tier_code', r.tier_code)
-      .eq('priority', r.priority ?? 0)
-      .eq('active', true)
-      .maybeSingle();
-    if (lookupErr) throw new Error(`pricing_rules lookup (${r.sku} ${r.tier_code}): ${lookupErr.message}`);
-    if (existing) {
-      const { error } = await supabase.from('pricing_rules').update(row).eq('id', existing.id);
-      if (error) throw new Error(`pricing_rules update (${r.sku} ${r.tier_code}): ${error.message}`);
-      updated++;
-    } else {
-      const { error } = await supabase.from('pricing_rules').insert(row);
-      if (error) throw new Error(`pricing_rules insert (${r.sku} ${r.tier_code}): ${error.message}`);
-      inserted++;
-    }
+    });
   }
-  console.log(`  pricing_rules: ${inserted} inserted, ${updated} updated`);
+
+  const inserts = [];
+  const updates = [];
+  for (const [key, row] of rowByKey) {
+    const existingId = existingIdByKey.get(key);
+    if (existingId) updates.push({ id: existingId, ...row });
+    else inserts.push(row);
+  }
+
+  const WRITE_CHUNK = 500;
+  for (let i = 0; i < inserts.length; i += WRITE_CHUNK) {
+    const { error } = await supabase.from('pricing_rules').insert(inserts.slice(i, i + WRITE_CHUNK));
+    if (error) throw new Error(`pricing_rules insert: ${error.message}`);
+  }
+  for (let i = 0; i < updates.length; i += WRITE_CHUNK) {
+    const { error } = await supabase
+      .from('pricing_rules')
+      .upsert(updates.slice(i, i + WRITE_CHUNK), { onConflict: 'id' });
+    if (error) throw new Error(`pricing_rules update: ${error.message}`);
+  }
+  console.log(`  pricing_rules: ${inserts.length} inserted, ${updates.length} updated`);
 }
 
 // Top-level keys of the engine's CalculatorConfig (config/types.ts). An overlay

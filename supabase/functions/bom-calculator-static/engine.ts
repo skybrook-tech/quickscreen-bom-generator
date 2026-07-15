@@ -167,8 +167,20 @@ function matchesPriceRule(rule: string | null | undefined, qty: number): boolean
 export function priceForSku(sku: string, qty: number, tier: PricingTier, pricingRules?: LocalPricingRule[], components?: SeedComponent[]): number {
   const rules = pricingRules ?? [];
   const comps = components ?? [];
-  const explicitRules = rules.filter((r) => r.sku === sku && r.rule != null).sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
-  const exMatch = explicitRules.find((r) => matchesPriceRule(r.rule, qty));
+  // Qty-gated rules are TIER-AWARE with a tier1 base: seeds store the full
+  // break schedule on tier1 and sparse tier2/tier3 rows only where a tier's
+  // price differs. Overlay the requested tier's rows onto tier1 per
+  // (rule, priority) break, then match by quantity.
+  const gated = rules.filter((r) => r.sku === sku && r.rule != null);
+  const byBreak = new Map<string, LocalPricingRule>();
+  for (const r of gated) if (r.tier_code === "tier1") byBreak.set(`${r.rule}|${r.priority ?? 0}`, r);
+  for (const r of gated) if (r.tier_code === tier) byBreak.set(`${r.rule}|${r.priority ?? 0}`, r);
+  const explicitRules = [...byBreak.values()].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+  const exMatch = explicitRules.find((r) => matchesPriceRule(r.rule, qty))
+    // Last-resort legacy path: gated rows exist but none on tier1/this tier
+    // (shouldn't happen with seeded data) — match across all tiers rather
+    // than silently pricing $0.
+    ?? gated.sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0)).find((r) => matchesPriceRule(r.rule, qty));
   if (exMatch) return exMatch.price;
   const tierRules = rules.filter((r) => r.sku === sku && r.tier_code === tier && !r.rule).sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
   if (tierRules.length > 0) return tierRules[0].price;

@@ -8,7 +8,6 @@ const csvDir =
   process.env.GLASS_OUTLET_PRICE_CSV_DIR ??
   path.resolve(repoRoot, "..", "Glass Outlet csv pricelist");
 const verifiedDate = process.env.GLASS_OUTLET_PRICE_VERIFIED_DATE ?? "2026-05-09";
-const tierCodes = ["tier1", "tier2", "tier3"];
 
 function isSku(value) {
   return (
@@ -120,19 +119,21 @@ function inferUnit(sku, name) {
 }
 
 function pricingRowsFor(sku, priceInfo) {
-  return tierCodes.flatMap((tierCode) =>
-    priceInfo.tiers.map((tier) => ({
-      sku,
-      tier_code: tierCode,
-      rule: `qty >= ${tier.minQty}`,
-      price: tier.unitPrice,
-      priority: tier.minQty,
-      valid_from: null,
-      valid_to: null,
-      notes: `Glass Outlet CSV ${priceInfo.sourceFile}; verified ${verifiedDate}`,
-      active: true,
-    })),
-  );
+  // tier1 only: the CSV carries a single price column, and seeds store sparse
+  // tiers (tier1 base + tier2/3 rows only where a tier's price differs — the
+  // engine overlays at price time). Do NOT triplicate across tierCodes; that
+  // was the pre-2026-07 pattern the pricing-rules slim removed.
+  return priceInfo.tiers.map((tier) => ({
+    sku,
+    tier_code: "tier1",
+    rule: `qty >= ${tier.minQty}`,
+    price: tier.unitPrice,
+    priority: tier.minQty,
+    valid_from: null,
+    valid_to: null,
+    notes: `Glass Outlet CSV ${priceInfo.sourceFile}; verified ${verifiedDate}`,
+    active: true,
+  }));
 }
 
 function updateLocalPriceBreaks(priceRulesBySku) {
